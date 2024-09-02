@@ -23,6 +23,7 @@ import {
   GetApplicationAttachmentResponse,
   GetApplicationAttachmentsResponse,
 } from '../models/getApplicationAttachments.response'
+import { DeleteApplicationAttachmentInput } from '../models/deleteApplicationAttachment.input'
 
 @Scopes(ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -113,5 +114,15 @@ export class OfficialJournalOfIcelandApplicationResolver {
     input: AddApplicationAttachmentInput,
   ) {
     return this.ojoiApplicationService.getApplicationAttachments(input)
+  }
+
+  @Mutation(() => AddApplicationAttachmentResponse, {
+    name: 'officialJournalOfIcelandApplicationDeleteAttachment',
+  })
+  deleteAttachment(
+    @Args('input', { type: () => DeleteApplicationAttachmentInput })
+    input: DeleteApplicationAttachmentInput,
+  ) {
+    return this.ojoiApplicationService.deleteApplicationAttachment(input)
   }
 }

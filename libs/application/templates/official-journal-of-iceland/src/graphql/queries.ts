@@ -278,3 +278,13 @@ export const GET_APPLICATION_ATTACHMENTS_QUERY = gql`
     }
   }
 `
+
+export const DELETE_APPLICATION_ATTACHMENT_MUTATION = gql`
+  mutation DeleteApplicationAttachment(
+    $input: OfficialJournalOfIcelandApplicationDeleteApplicationAttachmentInput!
+  ) {
+    officialJournalOfIcelandApplicationDeleteAttachment(input: $input) {
+      success
+    }
+  }
+`

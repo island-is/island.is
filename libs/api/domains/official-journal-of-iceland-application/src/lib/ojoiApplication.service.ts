@@ -15,6 +15,7 @@ import {
 } from './mappers'
 import { AddApplicationAttachmentResponse } from '../models/addApplicationAttachment.response'
 import { GetApplicationAttachmentInput } from '../models/getApplicationAttachment.input'
+import { DeleteApplicationAttachmentInput } from '../models/deleteApplicationAttachment.input'
 
 @Injectable()
 export class OfficialJournalOfIcelandApplicationService {
@@ -115,5 +116,18 @@ export class OfficialJournalOfIcelandApplicationService {
       id: input.applicationId,
       type: mapGetAttachmentType(input.attachmentType),
     })
+  }
+
+  async deleteApplicationAttachment(input: DeleteApplicationAttachmentInput) {
+    try {
+      await this.ojoiApplicationService.deleteApplicationAttachment({
+        id: input.applicationId,
+        attachmentId: input.attachmentId,
+      })
+
+      return { success: true }
+    } catch (error) {
+      return { success: false }
+    }
   }
 }

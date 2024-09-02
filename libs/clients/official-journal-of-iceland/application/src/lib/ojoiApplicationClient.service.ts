@@ -15,6 +15,7 @@ import {
   PresignedUrlResponse,
   AddApplicationAttachmentRequest,
   GetApplicationAttachmentsRequest,
+  DeleteApplicationAttachmentRequest,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -142,5 +143,11 @@ export class OfficialJournalOfIcelandApplicationClientService {
 
   async getApplicationAttachments(params: GetApplicationAttachmentsRequest) {
     return this.ojoiApplicationApi.getApplicationAttachments(params)
+  }
+
+  async deleteApplicationAttachment(
+    params: DeleteApplicationAttachmentRequest,
+  ) {
+    await this.ojoiApplicationApi.deleteApplicationAttachment(params)
   }
 }

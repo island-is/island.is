@@ -1,6 +1,7 @@
 import { UploadFile } from '@island.is/island-ui/core'
 import {
   ADD_APPLICATION_ATTACHMENT_MUTATION,
+  DELETE_APPLICATION_ATTACHMENT_MUTATION,
   GET_APPLICATION_ATTACHMENTS_QUERY,
   GET_PRESIGNED_URL_MUTATION,
 } from '../graphql/queries'
@@ -92,6 +93,14 @@ export const useFileUpload = ({
     },
   })
 
+  const [deleteApplicationAttachmentMutation] = useMutation<{
+    officialJournalOfIcelandApplicationDeleteAttachment: AddAttachmentResponse
+  }>(DELETE_APPLICATION_ATTACHMENT_MUTATION, {
+    onCompleted() {
+      refetch()
+    },
+  })
+
   /**
    *
    * @param newFiles comes from the onChange function on the fileInput component
@@ -122,31 +131,21 @@ export const useFileUpload = ({
   }
 
   /**
-   * On remove handler
    * Deletes the file from the database and S3
-   * @param key key of the file
    */
   const onRemove = async (file: UploadFile) => {
-    console.log('onRemove', file.key)
+    if (!file.key) {
+      return
+    }
 
-    setFiles(files.filter((f) => f.key !== file.key))
-
-    // if (!file) {
-    //   return
-    // }
-
-    // const { data } = await addApplicationMutation({
-    //   variables: {
-    //     input: {
-    //       applicationId: applicationId,
-    //       attachmentId: key,
-    //     },
-    //   },
-    // })
-
-    // if (data?.officialJournalOfIcelandApplicationAddAttachment.success) {
-    //   setFiles(files.filter((f) => f.key !== key))
-    // }
+    deleteApplicationAttachmentMutation({
+      variables: {
+        input: {
+          applicationId: applicationId,
+          attachmentId: file.key,
+        },
+      },
+    })
   }
 
   /**
