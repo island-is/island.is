@@ -66,9 +66,10 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
     runQuery({
       variables: {
         parentCategory: machineCategory,
+        subCategory: machineSubCategory,
       },
     })
-  }, [machineCategory])
+  }, [machineCategory, machineSubCategory])
 
   setBeforeSubmitCallback?.(async () => {
     setDisplayError(false)

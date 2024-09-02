@@ -1,4 +1,5 @@
 import { CSSProperties, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useQueryState } from 'next-usequerystate'
 import { useQuery } from '@apollo/client/react'
 
@@ -19,7 +20,6 @@ import {
 import { sortAlpha } from '@island.is/shared/utils'
 import { SyslumennListCsvExport } from '@island.is/web/components'
 import { MasterLicence } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import {
@@ -28,6 +28,7 @@ import {
   prepareCsvString,
 } from '../../utils'
 import { GET_MASTER_LICENCES_QUERY } from './queries'
+import { translation as t } from './translation.strings'
 
 const DEFAULT_PAGE_SIZE = 20
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
@@ -44,7 +45,7 @@ interface MasterListProps {
 type ListState = 'loading' | 'loaded' | 'error'
 
 const MasterList = ({ slice }: MasterListProps) => {
-  const n = useNamespace(slice.json ?? {})
+  const { formatMessage } = useIntl()
   const [listState, setListState] = useState<ListState>('loading')
   const [licences, setLicences] = useState<
     Query['getMasterLicences']['licences']
@@ -116,10 +117,10 @@ const MasterList = ({ slice }: MasterListProps) => {
     return new Promise<string>((resolve, reject) => {
       if (licences) {
         const headerRow = [
-          n('csvHeaderMasterLicenceName', 'Nafn') as string,
-          n('csvHeaderMasterLicenseProfession', 'Iðngrein') as string,
-          n('csvHeaderMasterLicenceDateOfPublication', 'Útgáfuár') as string,
-          n('csvHeaderMasterLicenceNationalId', 'Kennitala') as string,
+          formatMessage(t.csvHeaderMasterLicenceName),
+          formatMessage(t.csvHeaderMasterLicenseProfession),
+          formatMessage(t.csvHeaderMasterLicenceDateOfPublication),
+          formatMessage(t.csvHeaderMasterLicenceNationalId),
         ]
         const dataRows = []
         for (const licence of licences) {
@@ -139,10 +140,7 @@ const MasterList = ({ slice }: MasterListProps) => {
   }
 
   // Filter - Profession
-  const allLicenceProfessionOption = n(
-    'filterLicenceProfessionAll',
-    'Allar tegundir',
-  ) as string
+  const allLicenceProfessionOption = formatMessage(t.filterLicenceProfessionAll)
 
   // Filter
   const filteredMasterLicences = getSortedAndFilteredList(
@@ -185,11 +183,8 @@ const MasterList = ({ slice }: MasterListProps) => {
       )}
       {listState === 'error' && (
         <AlertMessage
-          title={n('errorTitle', 'Villa')}
-          message={n(
-            'errorMessage',
-            'Ekki tókst að sækja lista yfir meistarabréfin.',
-          )}
+          title={formatMessage(t.errorTitle)}
+          message={formatMessage(t.errorMessage)}
           type="error"
         />
       )}
@@ -207,9 +202,8 @@ const MasterList = ({ slice }: MasterListProps) => {
                   icon="chevronDown"
                   size="sm"
                   isSearchable
-                  label={n(
-                    'alcoholLicencesFilterLicenceProfession',
-                    'Iðngrein',
+                  label={formatMessage(
+                    t.alcoholLicencesFilterLicenceProfession,
                   )}
                   name="licenceProfessionSelect"
                   options={availableLicenceProfessionOptions}
@@ -226,7 +220,7 @@ const MasterList = ({ slice }: MasterListProps) => {
               <GridColumn paddingBottom={[1, 1, 1]} span={'12/12'}>
                 <Input
                   name="licencesSearchInput"
-                  placeholder={n('searchPlaceholder', 'Leita')}
+                  placeholder={formatMessage(t.searchPlaceholder)}
                   backgroundColor={['blue', 'blue', 'white']}
                   size="sm"
                   icon={{
@@ -237,19 +231,10 @@ const MasterList = ({ slice }: MasterListProps) => {
                 />
                 <Box textAlign="right" marginRight={1} marginTop={1}>
                   <SyslumennListCsvExport
-                    defaultLabel={n(
-                      'csvButtonLabelDefault',
-                      'Sækja öll leyfi (CSV)',
-                    )}
-                    loadingLabel={n(
-                      'csvButtonLabelLoading',
-                      'Sæki öll leyfi...',
-                    )}
-                    errorLabel={n(
-                      'csvButtonLabelError',
-                      'Ekki tókst að sækja leyfi, reyndu aftur',
-                    )}
-                    csvFilenamePrefix={n('csvFileTitlePrefix', 'Meistarabréf')}
+                    defaultLabel={formatMessage(t.csvButtonLabelDefault)}
+                    loadingLabel={formatMessage(t.csvButtonLabelLoading)}
+                    errorLabel={formatMessage(t.csvButtonLabelError)}
+                    csvFilenamePrefix={formatMessage(t.csvFileTitlePrefix)}
                     csvStringProvider={csvStringProvider}
                   />
                 </Box>
@@ -260,9 +245,7 @@ const MasterList = ({ slice }: MasterListProps) => {
       )}
       {listState === 'loaded' && filteredMasterLicences.length === 0 && (
         <Box display="flex" marginTop={4} justifyContent="center">
-          <Text variant="h3">
-            {n('noLicencesFound', 'Engar niðurstöður fundust.')}
-          </Text>
+          <Text variant="h3">{formatMessage(t.noLicencesFound)}</Text>
         </Box>
       )}
       {listState === 'loaded' && filteredMasterLicences.length > 0 && (
@@ -271,11 +254,11 @@ const MasterList = ({ slice }: MasterListProps) => {
             <T.Table>
               <T.Head>
                 <T.Row>
-                  <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
-                  <T.HeadData>{n('profession', 'Iðngrein')}</T.HeadData>
-                  <T.HeadData>{n('dateOfPublication', 'Útgáfuár')}</T.HeadData>
+                  <T.HeadData>{formatMessage(t.name)}</T.HeadData>
+                  <T.HeadData>{formatMessage(t.profession)}</T.HeadData>
+                  <T.HeadData>{formatMessage(t.dateOfPublication)}</T.HeadData>
                   <T.HeadData align="right">
-                    {n('nationalId', 'Kennitala')}
+                    {formatMessage(t.nationalId)}
                   </T.HeadData>
                 </T.Row>
               </T.Head>

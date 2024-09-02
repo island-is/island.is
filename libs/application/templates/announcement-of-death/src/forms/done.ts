@@ -11,7 +11,6 @@ import { Form, FormModes } from '@island.is/application/types'
 import CoatOfArms from '../assets/CoatOfArms'
 import { m } from '../lib/messages'
 import {
-  extraInfo,
   files,
   firearmApplicant,
   inheritance,
@@ -66,7 +65,6 @@ export const done: Form = buildForm({
             ...inheritance,
             ...properties,
             ...files,
-            ...extraInfo,
           ],
         }),
       ],
