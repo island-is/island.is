@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -11,11 +11,9 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   isDraftingConclusion: boolean | undefined
-  setIsDraftingConclusion: React.Dispatch<
-    React.SetStateAction<boolean | undefined>
-  >
+  setIsDraftingConclusion: Dispatch<SetStateAction<boolean | undefined>>
 }
 
 const DraftConclusionModal: FC<Props> = ({

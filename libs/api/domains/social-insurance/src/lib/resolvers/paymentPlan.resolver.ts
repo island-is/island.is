@@ -1,6 +1,6 @@
 import { Audit } from '@island.is/nest/audit'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import {
   IdsUserGuard,
   ScopesGuard,
@@ -17,6 +17,8 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { Payments } from '../models/payments/payments.model'
+import { TemporaryCalculation } from '../models/temporaryCalculation.model'
+import { TemporaryCalculationInput } from '../dtos/temporaryCalculation.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -44,5 +46,13 @@ export class PaymentPlanResolver {
   @Audit()
   async(@CurrentUser() user: User): Promise<Payments | undefined> {
     return this.service.getPayments(user)
+  }
+
+  @Query(() => TemporaryCalculation)
+  async getTemporaryCalculations(
+    @Args('input') input: TemporaryCalculationInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.service.getTemporaryCalculations(user, input)
   }
 }
