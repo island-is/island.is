@@ -28,7 +28,6 @@ const OverviewV1 = () => {
   useNamespaces('sp.occupational-licenses')
   const organizations =
     (data?.getOrganizations?.items as Array<Organization>) ?? []
-
   const generateUrl = (route: string, id: string, type: string) =>
     route
       .replace(':id', id)

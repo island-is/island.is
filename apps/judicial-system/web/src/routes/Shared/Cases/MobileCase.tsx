@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren } from 'react'
+import { FC, PropsWithChildren, ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
@@ -18,8 +18,8 @@ import { displayCaseType } from './utils'
 import * as styles from './MobileCase.css'
 
 interface CategoryCardProps {
-  heading: string | React.ReactNode
-  tags?: React.ReactNode
+  heading: string | ReactNode
+  tags?: ReactNode
   onClick: () => void
   isLoading?: boolean
 }

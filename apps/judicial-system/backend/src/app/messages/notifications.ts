@@ -195,15 +195,15 @@ export const notifications = {
   }),
   postponedCourtDateEmail: defineMessages({
     subject: {
-      id: 'judicial.system.backend:notifications.postponed_court_date_email.subject',
-      defaultMessage: 'Frestun - nýtt þinghald í máli {courtCaseNumber}',
+      id: 'judicial.system.backend:notifications.postponed_court_date_email.subject_v1',
+      defaultMessage: 'Nýtt þinghald í máli {courtCaseNumber}',
       description:
         'Notaður sem titill á pósti til sækjanda og verjenda þegar þinghaldi er frestað',
     },
     body: {
-      id: 'judicial.system.backend:notifications.postponed_court_date_email.body_v3',
+      id: 'judicial.system.backend:notifications.postponed_court_date_email.body_v4',
       defaultMessage:
-        '{courtName} boðar til þinghalds í máli {courtCaseNumber}.<br />Fyrirtaka mun fara fram {courtDate}.<br /><br />{courtRoomText}<br /><br />{judgeText}<br /><br />{hasAccessToRvg, select, false {Hægt er að nálgast gögn málsins hjá {courtName}} other {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+        '{courtName} boðar til þinghalds í máli {courtCaseNumber}.<br />Fyrirtaka mun fara fram {courtDate}.<br /><br />Tegund þinghalds: {courtSessionTypeName}.<br /><br />{courtRoomText}<br /><br />{judgeText}<br /><br />{hasAccessToRvg, select, false {Hægt er að nálgast gögn málsins hjá {courtName}} other {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
       description:
         'Notaður sem texti á pósti til sækjanda og verjenda þegar þinghaldi er frestað',
     },
@@ -221,7 +221,7 @@ export const notifications = {
       defaultMessage:
         '{court} boðar til þingfestingar í máli {courtCaseNumber}.',
       description:
-        'Notaður sem texti í pósti sem tilgreinir að dómstól boði til þingfestingar',
+        'Notaður sem texti í pósti sem tilgreinir að dómstóll boði til þingfestingar',
     },
     courtDate: {
       id: 'judicial.system.backend:notifications.prosecutor_court_date_email.court_date',
