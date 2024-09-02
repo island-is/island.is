@@ -1,3 +1,6 @@
+import { PropsWithChildren } from 'react'
+import { IntlConfig, IntlProvider } from 'react-intl'
+
 import {
   FaqList,
   type FaqListProps,
@@ -72,11 +75,12 @@ import {
   TeamList,
   TwoColumnText,
 } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
 
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
-import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
+import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
 import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSkuldara'
@@ -84,67 +88,116 @@ import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
 
+interface TranslationNamespaceProviderProps {
+  messages: IntlConfig['messages']
+}
+
+const TranslationNamespaceProvider = ({
+  messages,
+  children,
+}: PropsWithChildren<TranslationNamespaceProviderProps>) => {
+  const { activeLocale } = useI18n()
+
+  return (
+    <IntlProvider locale={activeLocale} messages={messages}>
+      {children}
+    </IntlProvider>
+  )
+}
+
 export const webRenderConnectedComponent = (
   slice: ConnectedComponent & { componentType?: string },
 ) => {
-  const data = slice.json ?? {}
+  let connectedComponent = null
 
   switch (slice.componentType) {
     case 'Fiskistofa/ShipSearch':
-      return <ShipSearch namespace={data} />
+      connectedComponent = <ShipSearch />
+      break
     case 'Fiskistofa/ShipSearchSidebarInput':
-      return <SidebarShipSearchInput namespace={data} />
+      connectedComponent = <SidebarShipSearchInput />
+      break
     case 'Fiskistofa/StraddlingStockCalculator':
-      return <StraddlingStockCalculator namespace={data} />
+      connectedComponent = <StraddlingStockCalculator />
+      break
     case 'Fiskistofa/CatchQuotaCalculator':
-      return <CatchQuotaCalculator namespace={data} />
+      connectedComponent = <CatchQuotaCalculator />
+      break
     case 'Fiskistofa/SelectedShip':
-      return <SelectedShip />
+      connectedComponent = <SelectedShip />
+      break
     case 'ElectronicRegistrations/MonthlyStatistics':
-      return <MonthlyStatistics slice={slice} />
+      connectedComponent = <MonthlyStatistics slice={slice} />
+      break
     case 'Fiskistofa/ShipSearchBoxedInput':
-      return <ShipSearchBoxedInput namespace={data} />
+      connectedComponent = <ShipSearchBoxedInput />
+      break
     case 'Áfengisleyfi/AlcoholLicences':
-      return <AlcoholLicencesList slice={slice} />
+      connectedComponent = <AlcoholLicencesList slice={slice} />
+      break
     case 'Tækifærisleyfi/TemporaryEventLicences':
-      return <TemporaryEventLicencesList slice={slice} />
+      connectedComponent = <TemporaryEventLicencesList slice={slice} />
+      break
     case 'Verðbréfamiðlarar/Brokers':
-      return <BrokersList slice={slice} />
+      connectedComponent = <BrokersList slice={slice} />
+      break
     case 'PublicVehicleSearch':
-      return <PublicVehicleSearch slice={slice} />
+      connectedComponent = <PublicVehicleSearch />
+      break
     case 'AircraftSearch':
-      return <AircraftSearch slice={slice} />
+      connectedComponent = <AircraftSearch slice={slice} />
+      break
     case 'DrivingInstructorList':
-      return <DrivingInstructorList slice={slice} />
+      connectedComponent = <DrivingInstructorList slice={slice} />
+      break
     case 'PlateAvailableSearch':
-      return <PlateAvailableSearch slice={slice} />
+      connectedComponent = <PlateAvailableSearch />
+      break
     case 'HousingBenefitCalculator':
-      return <HousingBenefitCalculator slice={slice} />
+      connectedComponent = <HousingBenefitCalculator slice={slice} />
+      break
     case 'PublicShipSearch':
-      return <PublicShipSearch slice={slice} />
+      connectedComponent = <PublicShipSearch />
+      break
     case 'Meistaraleyfi/MasterLicences':
-      return <MasterList slice={slice} />
+      connectedComponent = <MasterList slice={slice} />
+      break
     case 'Vinnueftirlitid/Namskeid':
-      return (
+      connectedComponent = (
         <AdministrationOfOccupationalSafetyAndHealthCourses slice={slice} />
       )
-    case 'KilometerFee':
-      return <KilometerFee slice={slice} />
-    case 'SpecificHousingBenefitSupportCalculator':
-      return <SpecificHousingBenefitSupportCalculator slice={slice} />
-    case 'GrindavikResidentialPropertyPurchaseCalculator':
-      return <GrindavikResidentialPropertyPurchaseCalculator slice={slice} />
-    case 'Sveinslisti/JourneymanList':
-      return <JourneymanList slice={slice} />
-    case 'Starfsrettindi/ProfessionRights':
-      return <ProfessionRights slice={slice} />
-    case 'Ums/CostOfLivingCalculator':
-      return <UmsCostOfLivingCalculator slice={slice} />
-    default:
       break
+    case 'KilometerFee':
+      connectedComponent = <KilometerFee slice={slice} />
+      break
+    case 'SpecificHousingBenefitSupportCalculator':
+      connectedComponent = <SpecificHousingBenefitSupportCalculator />
+      break
+    case 'GrindavikResidentialPropertyPurchaseCalculator':
+      connectedComponent = (
+        <GrindavikResidentialPropertyPurchaseCalculator slice={slice} />
+      )
+      break
+    case 'Sveinslisti/JourneymanList':
+      connectedComponent = <JourneymanList slice={slice} />
+      break
+    case 'Starfsrettindi/ProfessionRights':
+      connectedComponent = <ProfessionRights slice={slice} />
+      break
+    case 'Ums/CostOfLivingCalculator':
+      connectedComponent = <UmsCostOfLivingCalculator />
+      break
+    default:
+      connectedComponent = renderConnectedComponent(slice)
   }
 
-  return renderConnectedComponent(slice)
+  return (
+    <TranslationNamespaceProvider
+      messages={slice.translationStrings ?? slice.json ?? {}}
+    >
+      {connectedComponent}
+    </TranslationNamespaceProvider>
+  )
 }
 
 const defaultRenderComponent = {

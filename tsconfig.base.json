@@ -702,6 +702,7 @@
       ],
       "@island.is/clients/mms": ["libs/clients/mms/general/src/index.ts"],
       "@island.is/clients/mms/frigg": ["libs/clients/mms/frigg/src/index.ts"],
+      "@island.is/clients/mms/grade": ["libs/clients/mms/grade/src/index.ts"],
       "@island.is/clients/municipalities-financial-aid": [
         "libs/clients/municipalities-financial-aid/src/index.ts"
       ],
@@ -743,6 +744,9 @@
       ],
       "@island.is/clients/signature-collection": [
         "libs/clients/signature-collection/src/index.ts"
+      ],
+      "@island.is/clients/smart-solutions-v2": [
+        "libs/clients/smart-solutions-v2/src/index.ts"
       ],
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
