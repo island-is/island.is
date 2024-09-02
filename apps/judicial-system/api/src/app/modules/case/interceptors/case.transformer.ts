@@ -118,8 +118,10 @@ export const getIndictmentInfo = (
   ).toISOString()
 
   if (defendants) {
-    const verdictViewDates = defendants?.map(
-      (defendant) => defendant.verdictViewDate,
+    const verdictViewDates = defendants?.map((defendant) =>
+      defendant.verdictViewDate
+        ? new Date(defendant.verdictViewDate)
+        : undefined,
     )
 
     const verdictAppealDeadline =

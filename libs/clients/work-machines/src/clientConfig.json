@@ -1238,6 +1238,13 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "subCategory",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {

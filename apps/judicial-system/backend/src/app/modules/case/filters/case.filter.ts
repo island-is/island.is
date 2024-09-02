@@ -186,8 +186,8 @@ const canPrisonSystemUserAccessCase = (
   // Check case type access
   if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
     if (isIndictmentCase(theCase.type)) {
-      const verdictViewDates = theCase.defendants?.map((defendant) =>
-        defendant.verdictViewDate?.toISOString(),
+      const verdictViewDates = theCase.defendants?.map(
+        (defendant) => defendant.verdictViewDate,
       )
 
       const indictmentVerdictAppealDeadline =

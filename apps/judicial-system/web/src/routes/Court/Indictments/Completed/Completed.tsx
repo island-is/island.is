@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -57,7 +57,7 @@ const Completed: FC = () => {
 
   const handleNextButtonClick = useCallback(async () => {
     const allSucceeded = await handleUpload(
-      uploadFiles.filter((file) => !file.key),
+      uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
     if (!allSucceeded) {
@@ -93,8 +93,11 @@ const Completed: FC = () => {
   )
 
   const handleCriminalRecordUpdateUpload = useCallback(
-    (files: File[], category: CaseFileCategory) => {
-      addUploadFiles(files, { category, status: 'done' })
+    (files: File[]) => {
+      addUploadFiles(files, {
+        category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+        status: 'done',
+      })
     },
     [addUploadFiles],
   )
@@ -165,13 +168,8 @@ const Completed: FC = () => {
                   description={formatMessage(core.uploadBoxDescription, {
                     fileEndings: '.pdf',
                   })}
-                  onChange={(files) =>
-                    handleCriminalRecordUpdateUpload(
-                      files,
-                      CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-                    )
-                  }
-                  onRemove={(file) => handleRemoveFile(file)}
+                  onChange={handleCriminalRecordUpdateUpload}
+                  onRemove={handleRemoveFile}
                 />
               </Box>
             )}

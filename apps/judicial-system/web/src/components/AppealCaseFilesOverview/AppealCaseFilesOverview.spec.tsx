@@ -1,4 +1,3 @@
-import React from 'react'
 import { IntlProvider } from 'react-intl'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { render, screen } from '@testing-library/react'

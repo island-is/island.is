@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
