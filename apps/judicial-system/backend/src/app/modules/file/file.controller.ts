@@ -37,6 +37,7 @@ import {
   prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../guards'
 import {
   Case,
@@ -133,6 +134,7 @@ export class FileController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,

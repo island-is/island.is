@@ -548,6 +548,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,

@@ -14,6 +14,7 @@ import {
   isDistrictCourtUser,
   isPrisonSystemUser,
   isProsecutionUser,
+  isPublicProsecutorUser,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -70,6 +71,10 @@ export class ViewCaseFileGuard implements CanActivate {
       theCase.appealState &&
       [CaseAppealState.COMPLETED].includes(theCase.appealState)
     ) {
+      return true
+    }
+
+    if (isPublicProsecutorUser(user)) {
       return true
     }
 
