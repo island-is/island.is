@@ -4,6 +4,7 @@ export { SocialInsuranceAdministrationClientConfig } from './lib/socialInsurance
 export {
   DocumentTypeEnum,
   Employer,
+  IncomeTypes,
   IncomePlanStatus,
 } from './lib/socialInsuranceAdministrationClient.type'
 export { ApplicationDTO } from './lib/dto/application.dto'

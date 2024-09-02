@@ -193,6 +193,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/id-card'),
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: () =>
     import('@island.is/application/templates/health-insurance-declaration'),
+  [ApplicationTypes.INCOME_PLAN]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/income-plan'
+    ),
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: () =>
     import('@island.is/application/templates/new-primary-school'),
   [ApplicationTypes.MACHINE_REGISTRATION]: () =>
