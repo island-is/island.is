@@ -1,4 +1,4 @@
-import { type PropsWithChildren, useMemo } from 'react'
+import { type PropsWithChildren, useMemo, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import NumberFormat from 'react-number-format'
 import {
@@ -10,6 +10,7 @@ import {
 
 import {
   Box,
+  Button,
   GridColumn,
   GridRow,
   Input,
@@ -17,12 +18,16 @@ import {
   RadioButton,
   Select,
   Stack,
+  Table,
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
 import type { ConnectedComponent } from '@island.is/web/graphql/schema'
+import { formatCurrency } from '@island.is/web/utils/currency'
 
+import { MarkdownText } from '../../Organization'
 import { translations as t } from './translations.strings'
+import * as styles from './ParentalLeaveCalculator.css'
 
 interface FieldProps {
   heading: string
@@ -61,13 +66,26 @@ enum WorkPercentage {
   OPTION_2 = 'option2',
 }
 
+enum ParentalLeavePeriod {
+  MONTH = 'month',
+  THREE_WEEKS = 'threeWeeks',
+  TWO_WEEKS = 'twoWeeks',
+}
+
+enum Screen {
+  FORM = 'form',
+  RESULTS = 'results',
+}
+
 interface ParentalLeaveCalculatorProps {
   slice: ConnectedComponent
 }
 
-export const ParentalLeaveCalculator = ({
-  slice,
-}: ParentalLeaveCalculatorProps) => {
+interface ScreenProps extends ParentalLeaveCalculatorProps {
+  changeScreen: () => void
+}
+
+const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
   const { formatMessage } = useIntl()
 
   const statusOptions = useMemo<Option<Status>[]>(() => {
@@ -129,6 +147,23 @@ export const ParentalLeaveCalculator = ({
     ]
   }, [formatMessage, slice.configJson?.unionOptions])
 
+  const parentalLeavePeriodOptions = useMemo<Option<string>[]>(() => {
+    return [
+      {
+        label: formatMessage(t.parentalLeavePeriod.monthOption),
+        value: ParentalLeavePeriod.MONTH,
+      },
+      {
+        label: formatMessage(t.parentalLeavePeriod.threeWeeksOption),
+        value: ParentalLeavePeriod.THREE_WEEKS,
+      },
+      {
+        label: formatMessage(t.parentalLeavePeriod.twoWeeksOption),
+        value: ParentalLeavePeriod.TWO_WEEKS,
+      },
+    ]
+  }, [formatMessage])
+
   const [status, setStatus] = useQueryState<Status>(
     'status',
     parseAsStringEnum(Object.values(Status)).withDefault(Status.PARENTAL_LEAVE),
@@ -148,6 +183,20 @@ export const ParentalLeaveCalculator = ({
     'personalDiscount',
     parseAsInteger,
   )
+  const [parentalLeavePeriod, setParentalLeavePeriod] = useQueryState(
+    'parentalLeavePeriod',
+    parseAsStringEnum(Object.values(ParentalLeavePeriod)),
+  )
+  const [parentalLeaveRatio, setParentalLeaveRatio] = useQueryState(
+    'parentalLeaveRatio',
+    parseAsInteger,
+  )
+
+  const calculate = () => {
+    console.log('TEST')
+    // TODO: validate
+    changeScreen()
+  }
 
   return (
     <Box background="blue100" paddingY={[3, 3, 5]} paddingX={[3, 3, 3, 3, 12]}>
@@ -293,7 +342,306 @@ export const ParentalLeaveCalculator = ({
             }}
           />
         </Field>
+        <Field
+          heading={formatMessage(t.parentalLeavePeriod.heading)}
+          description={formatMessage(t.parentalLeavePeriod.description)}
+        >
+          <Select
+            onChange={(option) => {
+              setParentalLeavePeriod(
+                (option?.value as ParentalLeavePeriod) ?? null,
+              )
+            }}
+            value={parentalLeavePeriodOptions.find(
+              (option) => option.value === parentalLeavePeriod,
+            )}
+            label={formatMessage(t.parentalLeavePeriod.label)}
+            options={parentalLeavePeriodOptions}
+          />
+        </Field>
+        <Field
+          heading={formatMessage(t.parentalLeaveRatio.heading)}
+          description={formatMessage(t.parentalLeaveRatio.description)}
+        >
+          <NumberFormat
+            onValueChange={({ value }) => {
+              setParentalLeaveRatio(Number(value))
+            }}
+            label={formatMessage(t.parentalLeaveRatio.label)}
+            value={String(parentalLeaveRatio || '')}
+            customInput={Input}
+            name="parentalLeaveRatio"
+            id="parentalLeaveRatio"
+            type="text"
+            inputMode="numeric"
+            suffix={formatMessage(t.parentalLeaveRatio.suffix)}
+            placeholder={formatMessage(t.parentalLeaveRatio.placeholder)}
+            format={(value) => {
+              const maxParentalLeaveRatio =
+                slice.configJson?.maxParentalLeaveRatio ?? 100
+              if (Number(value) > maxParentalLeaveRatio) {
+                value = String(maxParentalLeaveRatio)
+              }
+              return `${value}${formatMessage(t.parentalLeaveRatio.suffix)}`
+            }}
+          />
+        </Field>
+        <Button onClick={calculate}>{formatMessage(t.calculate)}</Button>
       </Stack>
     </Box>
+  )
+}
+
+const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
+  const { formatMessage } = useIntl()
+
+  const [status, setStatus] = useQueryState<Status>(
+    'status',
+    parseAsStringEnum(Object.values(Status)).withDefault(Status.PARENTAL_LEAVE),
+  )
+  const [birthyear, setBirthyear] = useQueryState('birthyear', parseAsInteger)
+  const [workPercentage, setWorkPercentage] = useQueryState(
+    'workPercentage',
+    parseAsStringEnum(Object.values(WorkPercentage)),
+  )
+  const [income, setIncome] = useQueryState('income', parseAsInteger)
+  const [
+    additionalPensionFundingPercentage,
+    setAdditionalPensionFundingPercentage,
+  ] = useQueryState('additionalPensionFunding', parseAsInteger)
+  const [union, setUnion] = useQueryState('union', parseAsString)
+  const [personalDiscount, setPersonalDiscount] = useQueryState(
+    'personalDiscount',
+    parseAsInteger,
+  )
+  const [parentalLeavePeriod, setParentalLeavePeriod] = useQueryState(
+    'parentalLeavePeriod',
+    parseAsStringEnum(Object.values(ParentalLeavePeriod)),
+  )
+  const [parentalLeaveRatio, setParentalLeaveRatio] = useQueryState(
+    'parentalLeaveRatio',
+    parseAsInteger,
+  )
+
+  // TODO: calculate
+  const mainResultBeforeDeduction = 440000
+  const mainResultAfterDeduction = 242471
+
+  return (
+    <Stack space={5}>
+      <Stack space={3}>
+        <Box background="blue100" paddingY={3} paddingX={4} textAlign="center">
+          <Box className={styles.resultBorder} paddingY={2} paddingX={3}>
+            <Stack space={2}>
+              <Text variant="h3">{formatMessage(t.results.mainHeading)}</Text>
+              <Text>
+                {formatMessage(t.results.mainDescription, {
+                  ratio: parentalLeaveRatio,
+                })}
+              </Text>
+              <Text fontWeight="semiBold" variant="h3">
+                {formatCurrency(
+                  mainResultAfterDeduction,
+                  formatMessage(t.results.currencySuffix),
+                )}
+              </Text>
+              <Text>{formatMessage(t.results.mainDisclaimer)}</Text>
+            </Stack>
+          </Box>
+        </Box>
+
+        <Button onClick={changeScreen} variant="text" preTextIcon="arrowBack">
+          {formatMessage(t.results.changeAssumptions)}
+        </Button>
+      </Stack>
+
+      <Stack space={3}>
+        <Table.Table>
+          <Table.Head>
+            <Table.HeadData>
+              {formatMessage(t.results.incomePrerequisitesHeading)}
+            </Table.HeadData>
+            <Table.HeadData align="right">
+              {formatMessage(t.results.perMonth)}
+            </Table.HeadData>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row>
+              <Table.Data>
+                <MarkdownText>
+                  {formatMessage(t.results.incomePrerequisitesDescription)}
+                </MarkdownText>
+              </Table.Data>
+              <Table.Data />
+            </Table.Row>
+            <Table.Row>
+              <Table.Data>
+                <Text fontWeight="semiBold">
+                  {formatMessage(t.results.incomePrerequisitesSubHeading)}
+                </Text>
+              </Table.Data>
+              <Table.Data align="right">
+                <Text whiteSpace="nowrap">550.000 krónur</Text>
+              </Table.Data>
+            </Table.Row>
+          </Table.Body>
+        </Table.Table>
+
+        <Table.Table>
+          <Table.Head>
+            <Table.HeadData>
+              {formatMessage(t.results.mainResultBeforeDeductionHeading)}
+            </Table.HeadData>
+            <Table.HeadData align="right">
+              {formatMessage(t.results.perMonth)}
+            </Table.HeadData>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row>
+              <Table.Data>
+                <Text fontWeight="semiBold">
+                  {formatMessage(
+                    t.results.mainResultBeforeDeductionDescription,
+                    {
+                      ratio: parentalLeaveRatio,
+                    },
+                  )}
+                </Text>
+              </Table.Data>
+              <Table.Data align="right">
+                <Text whiteSpace="nowrap">
+                  {formatCurrency(
+                    mainResultBeforeDeduction,
+                    formatMessage(t.results.currencySuffix),
+                  )}
+                </Text>
+              </Table.Data>
+            </Table.Row>
+          </Table.Body>
+        </Table.Table>
+
+        <Table.Table>
+          <Table.Head>
+            <Table.HeadData>
+              {formatMessage(t.results.deductionHeading)}
+            </Table.HeadData>
+            <Table.HeadData align="right">
+              {formatMessage(t.results.amount)}
+            </Table.HeadData>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row>
+              <Table.Data>
+                <Text fontWeight="semiBold">
+                  {formatMessage(t.results.pensionFunding)}
+                </Text>
+              </Table.Data>
+              <Table.Data align="right">
+                <Text whiteSpace="nowrap">
+                  {formatCurrency(
+                    17600,
+                    formatMessage(t.results.currencySuffix),
+                  )}
+                </Text>
+              </Table.Data>
+            </Table.Row>
+            <Table.Row>
+              <Table.Data>
+                <Text fontWeight="semiBold">
+                  {formatMessage(t.results.additionalPensionFunding)}
+                </Text>
+              </Table.Data>
+              <Table.Data align="right">
+                <Text whiteSpace="nowrap">
+                  {formatCurrency(0, formatMessage(t.results.currencySuffix))}
+                </Text>
+              </Table.Data>
+            </Table.Row>
+            <Table.Row>
+              <Table.Data>
+                <Stack space={2}>
+                  <Text fontWeight="semiBold">
+                    {formatMessage(t.results.tax)}
+                  </Text>
+                  <Text>
+                    {formatMessage(t.results.totalTax)} -{' '}
+                    {formatCurrency(
+                      132972,
+                      formatMessage(t.results.currencySuffix),
+                    )}
+                  </Text>
+                  <Text>
+                    {formatMessage(t.results.usedPersonalDiscount)} -{' '}
+                    {formatCurrency(
+                      64926,
+                      formatMessage(t.results.currencySuffix),
+                    )}
+                  </Text>
+                </Stack>
+              </Table.Data>
+              <Table.Data align="right" style={{ verticalAlign: 'top' }}>
+                <Text whiteSpace="nowrap">
+                  {formatCurrency(
+                    68046,
+                    formatMessage(t.results.currencySuffix),
+                  )}
+                </Text>
+              </Table.Data>
+            </Table.Row>
+            <Table.Row>
+              <Table.Data>
+                <Text fontWeight="semiBold">
+                  {formatMessage(t.results.unionFee)}
+                </Text>
+              </Table.Data>
+              <Table.Data align="right">
+                <Text whiteSpace="nowrap">
+                  {formatCurrency(0, formatMessage(t.results.currencySuffix))}
+                </Text>
+              </Table.Data>
+            </Table.Row>
+          </Table.Body>
+        </Table.Table>
+      </Stack>
+    </Stack>
+  )
+}
+
+export const ParentalLeaveCalculator = ({
+  slice,
+}: ParentalLeaveCalculatorProps) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [activeScreen, setActiveScreen] = useQueryState(
+    'activeScreen',
+    parseAsStringEnum(Object.values(Screen)).withDefault(Screen.FORM),
+  )
+
+  return (
+    <div ref={containerRef}>
+      {activeScreen !== Screen.RESULTS && (
+        <FormScreen
+          slice={slice}
+          changeScreen={() => {
+            setActiveScreen(Screen.RESULTS)
+            window.scrollTo({
+              behavior: 'smooth',
+              top: containerRef.current?.offsetTop ?? 0,
+            })
+          }}
+        />
+      )}
+      {activeScreen === Screen.RESULTS && (
+        <ResultsScreen
+          slice={slice}
+          changeScreen={() => {
+            setActiveScreen(Screen.FORM)
+            window.scrollTo({
+              behavior: 'smooth',
+              top: containerRef.current?.offsetTop ?? 0,
+            })
+          }}
+        />
+      )}
+    </div>
   )
 }

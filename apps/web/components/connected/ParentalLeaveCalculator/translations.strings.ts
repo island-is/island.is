@@ -1,4 +1,4 @@
-import { defineMessages } from 'react-intl'
+import { defineMessage, defineMessages } from 'react-intl'
 
 export const translations = {
   status: defineMessages({
@@ -192,6 +192,186 @@ export const translations = {
       defaultMessage: '%',
       description:
         'Viðskeyti á eftir því sem notandi slær inn í "Hlutfall persónuafsláttar" reit',
+    },
+  }),
+  parentalLeavePeriod: defineMessages({
+    heading: {
+      id: 'web.parentalLeaveCalculator:parentalLeavePeriod.heading',
+      defaultMessage: 'Tímabil fæðingarorlofs (Lágmark 2 vikur)',
+      description: 'Heading fyrir ofan "Tímabil fæðingarorlofs" dropdown',
+    },
+    description: {
+      id: 'web.parentalLeaveCalculator:parentalLeavePeriod.description',
+      defaultMessage:
+        'Útreikningar miðast við mánuð í fæðingarorlofi eða hluta úr mánuði.',
+      description: 'Lýsing fyrir ofan "Hlutfall persónuafsláttar" dropdown',
+    },
+    label: {
+      id: 'web.parentalLeaveCalculator:parentalLeavePeriod.label',
+      defaultMessage: 'Tímabil fæðingarorlofs',
+      description: 'Label á "Tímabil fæðingarorlofs" dropdown',
+    },
+    placeholder: {
+      id: 'web.parentalLeaveCalculator:parentalLeavePeriod.placeholder',
+      defaultMessage: 'Veldu',
+      description: 'Placeholder á "Hlutfall persónuafsláttar" dropdown',
+    },
+    twoWeeksOption: {
+      id: 'web.parentalLeaveCalculator:parentalLeavePeriod.twoWeeksOption',
+      defaultMessage: '2 vikur',
+      description: 'Valmöguleiki um 2 vikur í fæðingarorlofstímabili',
+    },
+    threeWeeksOption: {
+      id: 'web.parentalLeaveCalculator:parentalLeavePeriod.threeWeeksOption',
+      defaultMessage: '3 vikur',
+      description: 'Valmöguleiki um 3 vikur í fæðingarorlofstímabili',
+    },
+    monthOption: {
+      id: 'web.parentalLeaveCalculator:parentalLeavePeriod.monthOption',
+      defaultMessage: '1 mánuður',
+      description: 'Valmöguleiki um 1 mánuð í fæðingarorlofstímabili',
+    },
+  }),
+  parentalLeaveRatio: defineMessages({
+    heading: {
+      id: 'web.parentalLeaveCalculator:parentalLeaveRatio.heading',
+      defaultMessage: 'Hlutfall fæðingarorlofs',
+      description: 'Heading fyrir ofan "Hlutfall fæðingarorlofs" reit',
+    },
+    description: {
+      id: 'web.parentalLeaveCalculator:parentalLeaveRatio.description',
+      defaultMessage:
+        'Hægt er að velja lægra hlutfall fæðingarorlofs ef foreldri vill t.d. dreifa greiðslum yfir lengra tímabil eða vinna samhliða fæðingarorlofi.',
+      description: 'Lýsing fyrir ofan "Hlutfall fæðingarorlofs" reit',
+    },
+    tooltip: {
+      id: 'web.parentalLeaveCalculator:parentalLeaveRatio.tooltip',
+      defaultMessage:
+        'Dæmi um lægra hlutfall fæðingarorlofs: 3 mánuðir dreift á 4,5 mánuði = 66% hlutfall eða 6 mánuðir dreift á 9 mánuði = 66% hlutfall. 3 mánuðir dreift á 6 mánuði = 50% hlutfall eða 6 mánuðir dreift á 12 mánuði = 50% hlutfall. 3 mánuðir dreift á 9 mánuði = 33% hlutfall eða 6 mánuðir dreift á 18 mánuði = 33% hlutfall. 3 mánuðir dreift á 12 mánuði = 25% hlutfall eða 6 mánuðir dreift á 24 mánuði = 25% hlutfall.',
+      description: 'Tooltip fyrir ofan "Hlutfall fæðingarorlofs" reit',
+    },
+    label: {
+      id: 'web.parentalLeaveCalculator:parentalLeaveRatio.label',
+      defaultMessage: 'Hlutfall fæðingarorlofs',
+      description: 'Label á "Hlutfall fæðingarorlofs" reit',
+    },
+    placeholder: {
+      id: 'web.parentalLeaveCalculator:parentalLeaveRatio.placeholder',
+      defaultMessage: '%',
+      description: 'Placeholder á "Hlutfall fæðingarorlofs" reit',
+    },
+    suffix: {
+      id: 'web.parentalLeaveCalculator:parentalLeaveRatio.suffix',
+      defaultMessage: '%',
+      description:
+        'Viðskeyti á eftir því sem notandi slær inn í "Hlutfall fæðingarorlofs" reit',
+    },
+  }),
+  calculate: defineMessage({
+    id: 'web.parentalLeaveCalculator:calculate',
+    defaultMessage: 'Reikna',
+    description: 'Texti á "Reikna" hnapp',
+  }),
+  results: defineMessages({
+    mainHeading: {
+      id: 'web.parentalLeaveCalculator:results.mainHeading',
+      defaultMessage: 'Fæðingarorlof á mánuði',
+      description: 'Niðurstöðuskjár - Aðal heading',
+    },
+    mainDescription: {
+      id: 'web.parentalLeaveCalculator:results.mmainHeading',
+      defaultMessage: '{ratio}% fæðingarorlof á mánuði (eftir frádrátt)',
+      description:
+        'Niðurstöðuskjár - Lýsing á hve mikið fæðingarorlof á mánuði notandi valdi',
+    },
+    currencySuffix: {
+      id: 'web.parentalLeaveCalculator:results.currencySuffix',
+      defaultMessage: ' krónur',
+      description: 'Niðurstöðuskjár - Viðskeyti eftir krónutölu',
+    },
+    mainDisclaimer: {
+      id: 'web.parentalLeaveCalculator:results.mainDisclaimer',
+      defaultMessage:
+        'Vinsamlega hafðu í huga að reiknivélin reiknar greiðslur miðað við þær forsendur sem þú gefur upp. Líkanið er einungis til leiðbeiningar en veitir ekki bindandi upplýsingar um endanlega afgreiðslu máls eða greiðslufjárhæðir.',
+      description: 'Niðurstöðuskjár - Texti fyrir neðan aðalkrónutölu',
+    },
+    incomePrerequisitesHeading: {
+      id: 'web.parentalLeaveCalculator:results.incomePrerequisitesHeading',
+      defaultMessage: 'Launaforsendur',
+      description: 'Niðurstöðuskjár - Heading fyrir "Launaforsendur" lið',
+    },
+    incomePrerequisitesSubHeading: {
+      id: 'web.parentalLeaveCalculator:results.incomePrerequisitesSubHeading',
+      defaultMessage:
+        'Uppgefnar meðaltekjur innanlands á mánuði miðað við árið 2024',
+      description: 'Niðurstöðuskjár - Subheading fyrir "Launaforsendur" lið',
+    },
+    incomePrerequisitesDescription: {
+      id: 'web.parentalLeaveCalculator:results.incomePrerequisitesDescription',
+      defaultMessage: `Fæðingarorlof nemur aldrei meira en 80% af uppgefnum launum\nFæðingarorlof er aldrei hærra en 700.000 krónur á mánuði\nFæðingarorlof er aldrei lægra en 160.538 krónur fyrir 25-49% starfshlutfall og 222.494 krónur fyrir 50-100% starfshlutfall`,
+      description: 'Niðurstöðuskjár - Lýsing fyrir "Launaforsendur" lið',
+    },
+    mainResultBeforeDeductionHeading: {
+      id: 'web.parentalLeaveCalculator:results.mainResultBeforeDeductionHeading',
+      defaultMessage: 'Niðurstaða',
+      description:
+        'Niðurstöðuskjár - Heading fyrir niðurstöðulið (fyrir frádrátt)',
+    },
+    mainResultBeforeDeductionDescription: {
+      id: 'web.parentalLeaveCalculator:results.mainResultBeforeDeductionDescription',
+      defaultMessage: '{ratio}% fæðingarorlof á mánuði (fyrir frádrátt)',
+      description:
+        'Niðurstöðuskjár - Lýsing á hve mikið fæðingarorlof á mánuði notandi valdi fyrir niðurstöðulið (fyrir frádrátt)',
+    },
+    deductionHeading: {
+      id: 'web.parentalLeaveCalculator:results.deductionHeading',
+      defaultMessage: 'Frádreginn kostnaður',
+      description: 'Niðurstöðuskjár - Heading fyrir "Frádreginn kostnaður" lið',
+    },
+    amount: {
+      id: 'web.parentalLeaveCalculator:results.amount',
+      defaultMessage: 'Upphæð',
+      description: 'Niðurstöðuskjár - Upphæð',
+    },
+    perMonth: {
+      id: 'web.parentalLeaveCalculator:results.perMonth',
+      defaultMessage: 'Á mánuði',
+      description: 'Niðurstöðuskjár - Á mánuði',
+    },
+    pensionFunding: {
+      id: 'web.parentalLeaveCalculator:results.pensionFunding',
+      defaultMessage: 'Lífeyrissjóðir',
+      description: 'Niðurstöðuskjár - Lífeyrissjóðir',
+    },
+    additionalPensionFunding: {
+      id: 'web.parentalLeaveCalculator:results.pensionFunding',
+      defaultMessage: 'Viðbótalífeyrissparnaður',
+      description: 'Niðurstöðuskjár - Viðbótalífeyrissparnaður',
+    },
+    tax: {
+      id: 'web.parentalLeaveCalculator:results.tax',
+      defaultMessage: 'Frádreginn skattur',
+      description: 'Niðurstöðuskjár - Frádreginn skattur',
+    },
+    totalTax: {
+      id: 'web.parentalLeaveCalculator:results.totalTax',
+      defaultMessage: 'Heildarskattur',
+      description: 'Niðurstöðuskjár - Heildarskattur',
+    },
+    usedPersonalDiscount: {
+      id: 'web.parentalLeaveCalculator:results.usedPersonalDiscount',
+      defaultMessage: 'Nýttur persónuafsláttur',
+      description: 'Niðurstöðuskjár - Nýttur persónuafsláttur',
+    },
+    unionFee: {
+      id: 'web.parentalLeaveCalculator:results.unionFee',
+      defaultMessage: 'Stéttarfélagsgjöld',
+      description: 'Niðurstöðuskjár - Stéttarfélagsgjöld',
+    },
+    changeAssumptions: {
+      id: 'web.parentalLeaveCalculator:results.changeAssumptions',
+      defaultMessage: 'Breyta forsendum',
+      description: 'Niðurstöðuskjár - Breyta forsendum',
     },
   }),
 }
