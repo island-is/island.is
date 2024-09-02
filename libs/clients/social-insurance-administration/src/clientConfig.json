@@ -2364,7 +2364,7 @@
           "amountDec": { "type": "number", "format": "double" }
         },
         "additionalProperties": false
-      },      
+      },
       "TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto": {
         "type": "object",
         "properties": {
