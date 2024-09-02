@@ -19,9 +19,8 @@ export class FinancialStatementIndividualElectionModule {
           load: [FinancialStatementsInaoClientConfig],
         }),
         FinancialStatementsInaoClientModule,
-        AttachmentS3Service,
       ],
-      providers: [FinancialStatementIndividualElectionService],
+      providers: [FinancialStatementIndividualElectionService, AttachmentS3Service],
       exports: [FinancialStatementIndividualElectionService],
     }
   }

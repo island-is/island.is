@@ -20,9 +20,8 @@ export class FinancialStatementsInaoTemplateModule {
           load: [FinancialStatementsInaoClientConfig],
         }),
         FinancialStatementsInaoClientModule,
-        AttachmentS3Service,
       ],
-      providers: [FinancialStatementsInaoTemplateService],
+      providers: [FinancialStatementsInaoTemplateService, AttachmentS3Service],
       exports: [FinancialStatementsInaoTemplateService],
     }
   }

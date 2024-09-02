@@ -38,7 +38,7 @@ export class SharedTemplateAPIModule {
         AttachmentS3Service,
         S3Service,
       ],
-      exports: [SharedTemplateApiService, AttachmentS3Service],
+      exports: [SharedTemplateApiService, AttachmentS3Service, S3Service],
     }
   }
 }

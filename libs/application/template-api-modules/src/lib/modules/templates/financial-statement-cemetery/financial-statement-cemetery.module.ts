@@ -19,9 +19,8 @@ export class FinancialStatementCemeteryTemplateModule {
           load: [FinancialStatementsInaoClientConfig],
         }),
         FinancialStatementsInaoClientModule,
-        AttachmentS3Service,
       ],
-      providers: [FinancialStatementCemeteryTemplateService],
+      providers: [FinancialStatementCemeteryTemplateService, AttachmentS3Service],
       exports: [FinancialStatementCemeteryTemplateService],
     }
   }
