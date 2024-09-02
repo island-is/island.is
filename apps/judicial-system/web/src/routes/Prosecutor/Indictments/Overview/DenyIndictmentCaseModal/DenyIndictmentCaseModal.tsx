@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'

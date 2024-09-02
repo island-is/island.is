@@ -1,6 +1,6 @@
-import * as React from 'react'
+import { SVGProps } from 'react'
 
-const Trash = ({ ...props }: React.SVGProps<SVGSVGElement>) => {
+const Trash = ({ ...props }: SVGProps<SVGSVGElement>) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

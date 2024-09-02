@@ -15,3 +15,15 @@ export enum SubpoenaType {
   ABSENCE = 'ABSENCE',
   ARREST = 'ARREST',
 }
+
+export enum DefendantPlea {
+  GUILTY = 'GUILTY',
+  NOT_GUILTY = 'NOT_GUILTY',
+  NO_PLEA = 'NO_PLEA',
+}
+
+export enum ServiceRequirement {
+  REQUIRED = 'REQUIRED',
+  NOT_REQUIRED = 'NOT_REQUIRED',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
+}

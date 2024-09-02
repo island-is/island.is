@@ -25,6 +25,7 @@ export const OverviewSection = buildSection({
           id: 'submit',
           placement: 'footer',
           title: overview.labels.approveButton,
+          refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
