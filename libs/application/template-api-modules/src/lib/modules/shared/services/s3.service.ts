@@ -5,9 +5,7 @@ import { Inject, Injectable, Optional } from '@nestjs/common'
 
 @Injectable()
 export class S3Service {
-  constructor(@Optional() @Inject() private s3Client: S3Client) {
-    this.s3Client ?? new S3Client()
-  }
+  constructor(@Inject() private s3Client: S3Client) {}
 
   public async getFileContentAsBase64(
     fileName: string,
