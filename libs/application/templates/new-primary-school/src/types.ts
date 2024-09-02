@@ -9,7 +9,6 @@ export interface RelativesRow {
   phoneNumber: string
   nationalId: string
   relation: string
-  canPickUpChild: string[]
 }
 
 export interface SiblingsRow {

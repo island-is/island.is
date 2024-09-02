@@ -299,16 +299,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Eyða aðstandanda',
       description: 'Remove relative',
     },
-    relativesCanPickUpChild: {
-      id: 'dess.nps.application:childrenNParents.relatives.can.pick.up.child',
-      defaultMessage: 'Má sækja barn í skólann',
-      description: 'Can pick up the child from school',
-    },
-    relativesCanPickUpChildTableHeader: {
-      id: 'dess.nps.application:childrenNParents.relatives.can.pick.up.child.table.header',
-      defaultMessage: 'Má sækja barn',
-      description: 'Can pick up the child',
-    },
   }),
 
   primarySchool: defineMessages({
