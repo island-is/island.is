@@ -65,16 +65,26 @@ export const IncomePlanForm: Form = buildForm({
               id: 'incomePlanTable',
               title: incomePlanFormMessage.info.section,
               description: (application: Application) => {
-                const { incomePlanConditions } = getApplicationExternalData(
-                  application.externalData,
-                )
+                const { incomePlanConditions, latestIncomePlan } =
+                  getApplicationExternalData(application.externalData)
 
-                return {
-                  ...incomePlanFormMessage.incomePlan.description,
-                  values: {
-                    incomePlanYear: incomePlanConditions.incomePlanYear,
-                  },
-                }
+                // If applicant has accepted income plan then we display different text.
+                const hasLatestIncomePlan = !isEmpty(latestIncomePlan)
+
+                return hasLatestIncomePlan
+                  ? {
+                      ...incomePlanFormMessage.incomePlan
+                        .currentIncomePlanDescription,
+                      values: {
+                        incomePlanYear: incomePlanConditions.incomePlanYear,
+                      },
+                    }
+                  : {
+                      ...incomePlanFormMessage.incomePlan.description,
+                      values: {
+                        incomePlanYear: incomePlanConditions.incomePlanYear,
+                      },
+                    }
               },
               formTitle: incomePlanFormMessage.incomePlan.registerIncome,
               addItemButtonText: incomePlanFormMessage.incomePlan.addIncome,
