@@ -1,7 +1,9 @@
-import { useLazyQuery } from '@apollo/client'
 import { useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import isEqual from 'lodash/isEqual'
 import { useRouter } from 'next/router'
+import { useLazyQuery } from '@apollo/client'
+
 import {
   AlertMessage,
   AsyncSearchInput,
@@ -9,14 +11,14 @@ import {
   Table,
   Text,
 } from '@island.is/island-ui/core'
-import { PUBLIC_VEHICLE_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicVehicleSearch'
 import {
-  ConnectedComponent,
   GetPublicVehicleSearchQuery,
   GetPublicVehicleSearchQueryVariables,
 } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { PUBLIC_VEHICLE_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicVehicleSearch'
+
+import { translation as translationStrings } from './translation.strings'
 
 const numberFormatter = new Intl.NumberFormat('de-DE')
 
@@ -40,18 +42,14 @@ const formatVehicleType = (vehicleInformation?: {
   }`
 }
 
-interface PublicVehicleSearchProps {
-  slice: ConnectedComponent
-}
-
-const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
+const PublicVehicleSearch = () => {
   const [hasFocus, setHasFocus] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const { format } = useDateUtils()
   const router = useRouter()
   const queryParamInitialized = useRef(false)
 
-  const n = useNamespace(slice?.json ?? {})
+  const { formatMessage } = useIntl()
 
   const [search, { loading, data, error, called }] = useLazyQuery<
     GetPublicVehicleSearchQuery,
@@ -117,12 +115,6 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
 
   return (
     <Box>
-      <Text>
-        {n(
-          'inputEyebrowText',
-          'Skráningarnúmer, fastanúmer eða verksmiðjunúmer:',
-        )}
-      </Text>
       <Box marginTop={2} marginBottom={3}>
         <AsyncSearchInput
           buttonProps={{
@@ -135,7 +127,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
           inputProps={{
             name: 'public-vehicle-search',
             inputSize: 'large',
-            placeholder: n('inputPlaceholder', 'Leita í ökutækjaskrá'),
+            placeholder: formatMessage(translationStrings.inputPlaceholder),
             colored: true,
             onChange: (ev) => setSearchValue(ev.target.value.toUpperCase()),
             value: searchValue,
@@ -153,15 +145,15 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
       {called && !loading && !error && vehicleWasNotFound && (
         <Box>
           <Text fontWeight="semiBold">
-            {n('noVehicleFound', 'Ekkert ökutæki fannst')}
+            {formatMessage(translationStrings.noVehicleFound)}
           </Text>
         </Box>
       )}
       {called && !loading && error && (
         <AlertMessage
           type="error"
-          title={n('errorOccurredTitle', 'Villa kom upp')}
-          message={n('errorOccurredMessage', 'Ekki tókst að sækja ökutæki')}
+          title={formatMessage(translationStrings.errorOccurredTitle)}
+          message={formatMessage(translationStrings.errorOccurredMessage)}
         />
       )}
       {vehicleInformation && (
@@ -170,7 +162,9 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
             <Table.Head>
               <Table.HeadData>
                 <Text fontWeight="semiBold">
-                  {n('vehicleInformationTableHeaderText', 'Niðurstaða leitar:')}
+                  {formatMessage(
+                    translationStrings.vehicleInformationTableHeaderText,
+                  )}
                 </Text>
               </Table.HeadData>
               <Table.HeadData />
@@ -180,7 +174,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('vehicleCommercialName', 'Tegund:')}
+                      {formatMessage(translationStrings.vehicleCommercialName)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -192,7 +186,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('regno', 'Skráningarnúmer:')}
+                      {formatMessage(translationStrings.regno)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -204,7 +198,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('permno', 'Fastanúmer:')}
+                      {formatMessage(translationStrings.permno)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -216,7 +210,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('vin', 'Verksmiðjunúmer:')}
+                      {formatMessage(translationStrings.vin)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -228,7 +222,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('firstRegDate', 'Fyrst skráð:')}
+                      {formatMessage(translationStrings.firstRegDate)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -240,7 +234,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('co2NEDC', 'CO2-gildi (NEDC):')}
+                      {formatMessage(translationStrings.co2NEDC)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -252,7 +246,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('weightedCo2NEDC', 'Vegið CO2-gildi (NEDC):')}
+                      {formatMessage(translationStrings.weightedCo2NEDC)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -264,7 +258,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('Co2WLTP', 'CO2-gildi (WLTP):')}
+                      {formatMessage(translationStrings.Co2WLTP)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -276,7 +270,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('weightedCo2WLTP', 'Vegið CO2-gildi (WLTP):')}
+                      {formatMessage(translationStrings.weightedCo2WLTP)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -288,7 +282,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('mass', 'Eigin þyngd:')}
+                      {formatMessage(translationStrings.mass)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -302,7 +296,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('massLaden', 'Leyfð heildarþyngd:')}
+                      {formatMessage(translationStrings.massLaden)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -316,7 +310,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('vehicleStatus', 'Staða:')}
+                      {formatMessage(translationStrings.vehicleStatus)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -328,7 +322,9 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('nextVehicleMainInspection', 'Næsta skoðun:')}
+                      {formatMessage(
+                        translationStrings.nextVehicleMainInspection,
+                      )}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -340,14 +336,6 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
           </Table.Table>
         </Box>
       )}
-      <Box marginTop={2}>
-        <Text variant="small">
-          {n(
-            'moreInfoText',
-            'Hægt er að fletta upp bílnúmerum á Mínum síðum og fá þar ítarlegri upplýsingar',
-          )}
-        </Text>
-      </Box>
     </Box>
   )
 }

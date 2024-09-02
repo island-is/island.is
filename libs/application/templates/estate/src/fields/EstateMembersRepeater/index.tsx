@@ -12,7 +12,6 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import * as kennitala from 'kennitala'
-import { EstateRegistrant } from '@island.is/clients/syslumenn'
 import { Answers, EstateMember } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
@@ -175,7 +174,12 @@ export const EstateMembersRepeater: FC<
           ...acc,
           <Box marginTop={index > 0 ? 7 : 0} key={index}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
-              <Text variant="h4">{formatMessage(m.estateMember)}</Text>
+              <Text
+                color={member.enabled ? 'currentColor' : 'dark300'}
+                variant="h4"
+              >
+                {formatMessage(m.estateMember)}
+              </Text>
               <Box>
                 <Button
                   variant="text"
@@ -349,13 +353,12 @@ export const EstateMembersRepeater: FC<
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <InputController
+                    <PhoneInputController
                       id={`${id}[${index}].advocate.phone`}
                       name={`${id}[${index}].advocate.phone`}
                       label={formatMessage(m.phone)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
-                      format="###-####"
                       defaultValue={member.advocate?.phone || ''}
                       error={
                         error && error[index] && error[index].advocate?.phone
