@@ -8,6 +8,7 @@ import {
   prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../../../guards'
 import { FileController } from '../../file.controller'
 
@@ -26,6 +27,7 @@ describe('FileController - Get case file signed url rules', () => {
     expect(rules).toHaveLength(9)
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(prosecutorRepresentativeRule)
+    expect(rules).toContain(publicProsecutorStaffRule)
     expect(rules).toContain(districtCourtJudgeRule)
     expect(rules).toContain(districtCourtRegistrarRule)
     expect(rules).toContain(districtCourtAssistantRule)
