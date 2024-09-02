@@ -24,7 +24,7 @@ describe('FileController - Get case file signed url rules', () => {
   })
 
   it('should give permission to roles', () => {
-    expect(rules).toHaveLength(9)
+    expect(rules).toHaveLength(10)
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(prosecutorRepresentativeRule)
     expect(rules).toContain(publicProsecutorStaffRule)
