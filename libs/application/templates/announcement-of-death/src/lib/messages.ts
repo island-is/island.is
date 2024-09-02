@@ -232,9 +232,14 @@ export const m = defineMessages({
     defaultMessage: 'Skráning vörsluaðila:',
     description: '',
   },
+  firearmsApplicant: {
+    id: 'aod.application:firearmsApplicant',
+    defaultMessage: 'Skráður vörsluaðili',
+    description: '',
+  },
   firearmsApplicantOverviewHeader: {
     id: 'aod.application:firearmsApplicantOverviewHeader',
-    defaultMessage: 'Skotvopn - vörsluaðili',
+    defaultMessage: 'Skotvopn',
     description: '',
   },
   firearmsApplicantName: {
