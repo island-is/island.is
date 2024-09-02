@@ -13,15 +13,19 @@ const OrganDonation = () => {
   useNamespaces('sp.health')
 
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useGetDonorStatusQuery()
+  const { data, loading, error } = useGetDonorStatusQuery({
+    fetchPolicy: 'no-cache',
+  })
   const donorStatus = data?.HealthDirectorateOrganDonation.donor
 
+  //TODO: Move this to service
   const exceptionText: string = donorStatus?.limitations?.hasLimitations
     ? [
         donorStatus?.limitations.comment,
         donorStatus?.limitations.organList?.join(', '),
-      ].join(':') ?? ''
+      ].join(':') + '.' ?? ''
     : donorStatus?.limitations?.comment ?? ''
+
   return (
     <Box>
       <IntroHeader
@@ -57,7 +61,9 @@ const OrganDonation = () => {
             <ActionCard
               heading={
                 donorStatus?.isDonor
-                  ? formatMessage(m.iAmOrganDonor)
+                  ? donorStatus.limitations?.hasLimitations
+                    ? formatMessage(m.iAmOrganDonorWithExceptions)
+                    : formatMessage(m.iAmOrganDonor)
                   : formatMessage(m.iAmNotOrganDonor)
               }
               text={exceptionText}
@@ -65,6 +71,7 @@ const OrganDonation = () => {
                 url: HealthPaths.HealthOrganDonationRegistration,
                 label: formatMessage(m.changeTake),
                 centered: true,
+                variant: 'text',
               }}
             />
           </Box>

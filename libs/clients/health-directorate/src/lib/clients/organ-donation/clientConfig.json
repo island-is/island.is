@@ -195,12 +195,7 @@
           "exceptionComment": { "type": "string" },
           "registrationDate": { "format": "date-time", "type": "string" }
         },
-        "required": [
-          "isDonor",
-          "exceptions",
-          "exceptionComment",
-          "registrationDate"
-        ]
+        "required": ["isDonor", "exceptions"]
       },
       "HttpProblemResponse": {
         "type": "object",
@@ -232,7 +227,7 @@
           "exceptions": { "type": "array", "items": { "type": "string" } },
           "exceptionComment": { "type": "string" }
         },
-        "required": ["isDonor", "exceptions", "exceptionComment"]
+        "required": ["isDonor", "exceptions"]
       },
       "Locale": { "type": "string", "enum": ["en", "is"] },
       "OrganDto": {

@@ -5,6 +5,7 @@ import {
   Text,
   Button,
   toast,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -24,14 +25,14 @@ import {
   useUpdateOrganDonationInfoMutation,
 } from '../OrganDonation/OrganDonation.generated'
 
+const OPT_IN = 'opt-in'
+const OPT_IN_EXCEPTIONS = 'opt-in-exceptions'
+const OPT_OUT = 'opt-out'
+
 export const Form2 = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
-
-  const OPT_IN = 'opt-in'
-  const OPT_IN_EXCEPTIONS = 'opt-in-exceptions'
-  const OPT_OUT = 'opt-out'
 
   const { data, loading } = useGetOrgansListQuery({
     variables: { locale: lang },
@@ -40,11 +41,15 @@ export const Form2 = () => {
   const isDonor = data?.HealthDirectorateOrganDonation.donor?.isDonor
   const hasLimitations =
     data?.HealthDirectorateOrganDonation.donor?.limitations?.hasLimitations
+  const limitations = data?.HealthDirectorateOrganDonation.organList
+  const selectedLimitations =
+    data?.HealthDirectorateOrganDonation.donor?.limitations?.organIds
   const donorStatus = isDonor
     ? hasLimitations
       ? OPT_IN_EXCEPTIONS
       : OPT_IN
     : OPT_OUT
+  const [radioValue, setRadioValue] = useState<string | undefined>(donorStatus)
 
   const [updateDonorStatus] = useUpdateOrganDonationInfoMutation({
     onCompleted: () => {
@@ -55,21 +60,19 @@ export const Form2 = () => {
       toast.error(formatMessage(messages.registrationFailed))
     },
   })
-  const limitations = data?.HealthDirectorateOrganDonation.organList
-  const [radioValue, setRadioValue] = useState<string | undefined>()
 
   useEffect(() => {
-    if (radioValue === undefined) {
+    if (radioValue !== donorStatus) {
       setRadioValue(donorStatus)
     }
-  }, [data])
+  }, [donorStatus])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     const data = Object.fromEntries(formData.entries())
 
-    const idKey = 'organ-donation-limitation-'
+    const idKey = 'selected-limitations-'
     const limitations = Object.keys(data)
       .filter((key) => key.includes(idKey))
       .map((key) => key.replace(idKey, '').toLowerCase())
@@ -93,84 +96,92 @@ export const Form2 = () => {
       <Text variant="eyebrow" color="purple400" marginBottom={1}>
         {formatMessage(messages.changeTake)}
       </Text>
-
-      <form onSubmit={onSubmit}>
-        <Stack space={2}>
+      {/* TODO: Better loading state */}
+      {loading && <LoadingDots />}
+      {!loading && (
+        <form onSubmit={onSubmit}>
+          <Stack space={2}>
+            <Box
+              background="blue100"
+              borderRadius="large"
+              border="standard"
+              borderColor="blue200"
+              padding={3}
+            >
+              <RadioButton
+                id={`organ-donation-0`}
+                name="organ-registration-value"
+                label={formatMessage(messages.organDonationRegistrationOptIn)}
+                value={OPT_IN}
+                checked={radioValue === OPT_IN}
+                onChange={() => setRadioValue(OPT_IN)}
+              />
+            </Box>
+            <Box
+              background="blue100"
+              borderRadius="large"
+              border="standard"
+              borderColor="blue200"
+              padding={3}
+            >
+              <RadioButton
+                id={`organ-donation-1`}
+                name="organ-registration-value"
+                label={formatMessage(
+                  messages.organDonationRegistrationException,
+                )}
+                value={OPT_IN_EXCEPTIONS}
+                checked={radioValue === OPT_IN_EXCEPTIONS}
+                onChange={() => setRadioValue(OPT_IN_EXCEPTIONS)}
+              />
+              {limitations &&
+                limitations.length > 0 &&
+                radioValue === OPT_IN_EXCEPTIONS && (
+                  <Limitations
+                    data={limitations}
+                    selected={selectedLimitations ?? []}
+                  />
+                )}
+            </Box>
+            <Box
+              background="blue100"
+              borderRadius="large"
+              border="standard"
+              borderColor="blue200"
+              padding={3}
+            >
+              <RadioButton
+                id={`organ-donation-2`}
+                name="organ-registration-value"
+                label={formatMessage(messages.organDonationRegistrationOptOut)}
+                value={OPT_OUT}
+                checked={radioValue === OPT_OUT}
+                onChange={() => setRadioValue(OPT_OUT)}
+              />
+            </Box>
+          </Stack>
           <Box
-            background="blue100"
-            borderRadius="large"
-            border="standard"
-            borderColor="blue200"
-            padding={3}
+            display="flex"
+            justifyContent="flexEnd"
+            marginTop={3}
+            className={styles.buttonContainer}
           >
-            <RadioButton
-              id={`organ-donation-0`}
-              name="organ-registration-value"
-              label={formatMessage(messages.organDonationRegistrationOptIn)}
-              value={OPT_IN}
-              checked={radioValue === OPT_IN}
-              onChange={() => setRadioValue(OPT_IN)}
-            />
-          </Box>
-          <Box
-            background="blue100"
-            borderRadius="large"
-            border="standard"
-            borderColor="blue200"
-            padding={3}
-          >
-            <RadioButton
-              id={`organ-donation-1`}
-              name="organ-registration-value"
-              label={formatMessage(messages.organDonationRegistrationException)}
-              value={OPT_IN_EXCEPTIONS}
-              checked={radioValue === OPT_IN_EXCEPTIONS}
-              onChange={() => setRadioValue(OPT_IN_EXCEPTIONS)}
-            />
-            {limitations &&
-              limitations.length > 0 &&
-              radioValue === OPT_IN_EXCEPTIONS && (
-                <Limitations data={limitations} />
-              )}
-          </Box>
-          <Box
-            background="blue100"
-            borderRadius="large"
-            border="standard"
-            borderColor="blue200"
-            padding={3}
-          >
-            <RadioButton
-              id={`organ-donation-2`}
-              name="organ-registration-value"
-              label={formatMessage(messages.organDonationRegistrationOptOut)}
-              value={OPT_OUT}
-              checked={radioValue === OPT_OUT}
-              onChange={() => setRadioValue(OPT_OUT)}
-            />
-          </Box>
-        </Stack>
-        <Box
-          display="flex"
-          justifyContent="flexEnd"
-          marginTop={3}
-          className={styles.buttonContainer}
-        >
-          <LinkResolver href={HealthPaths.HealthOrganDonation}>
-            <Button size="small" variant="ghost">
-              {formatMessage(coreMessages.buttonCancel)}
+            <LinkResolver href={HealthPaths.HealthOrganDonation}>
+              <Button size="small" variant="ghost">
+                {formatMessage(coreMessages.buttonCancel)}
+              </Button>
+            </LinkResolver>
+            <Button
+              size="small"
+              type="submit"
+              loading={loading}
+              disabled={radioValue === undefined}
+            >
+              {formatMessage(coreMessages.codeConfirmation)}
             </Button>
-          </LinkResolver>
-          <Button
-            size="small"
-            type="submit"
-            loading={loading}
-            disabled={radioValue === undefined}
-          >
-            {formatMessage(coreMessages.codeConfirmation)}
-          </Button>
-        </Box>
-      </form>
+          </Box>
+        </form>
+      )}
     </Box>
   )
 }

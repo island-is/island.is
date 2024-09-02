@@ -2,8 +2,9 @@
 export const tagSelector = (str: string) => {
   const obj = {
     expired: 'blue',
-    vaccinated: 'mint',
     unvaccinated: 'red',
+    undetermined: 'purple',
+    valid: 'mint',
   }
 
   return (obj as any)?.[str] || 'blue'

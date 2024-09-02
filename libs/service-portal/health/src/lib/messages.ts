@@ -998,6 +998,10 @@ export const messages = defineMessages({
     id: 'sp.health:i-am-organ-donor',
     defaultMessage: 'Ég er líffæragjafi.',
   },
+  iAmOrganDonorWithExceptions: {
+    id: 'sp.health:i-am-organ-donor-w-exceptions',
+    defaultMessage: 'Ég heimila líffæragjöf, með takmörkunum.',
+  },
   iAmNotOrganDonor: {
     id: 'sp.health:i-am-not-organ-donor',
     defaultMessage: 'Ég banna líffæragjöf.',
@@ -1106,5 +1110,17 @@ export const messages = defineMessages({
     id: 'sp.health:health-directorate-error-title',
     defaultMessage:
       'Ekki tókst að sækja gögn frá Embætti Landlæknis. Vinsamlegast reynið aftur síðar',
+  },
+  medicinePrescriptions: {
+    id: 'sp.health:medicine-prescriptions',
+    defaultMessage: 'Lyfjaávísanir',
+  },
+  medicineDelegation: {
+    id: 'sp.health:medicine-delegation',
+    defaultMessage: 'Lyfjaumboð',
+  },
+  medicinePaymentParticipation: {
+    id: 'sp.health:medicine-payment-participation',
+    defaultMessage: 'Greiðsluþátttaka',
   },
 })

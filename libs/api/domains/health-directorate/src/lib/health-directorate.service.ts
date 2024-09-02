@@ -20,16 +20,27 @@ export class HealthDirectorateService {
   ) {}
 
   /* Organ Donation */
-  async getDonorStatus(auth: Auth): Promise<Donor> {
+  async getDonorStatus(auth: Auth, locale: Locale): Promise<Donor> {
     const data: OrganDonorDto | null =
       await this.organDonationApi.getOrganDonation(auth)
-
+    // Fetch organ list to get all names in correct language to sort out the names of the organs the user has limitations for
+    const organLang: organLocale =
+      locale === 'is' ? organLocale.Is : organLocale.En
+    const limitations = await this.organDonationApi.getDonationExceptions(
+      auth,
+      organLang,
+    )
+    // Filter organ list to get the names
+    const organList =
+      limitations?.filter((item) => data?.exceptions?.includes(item.id)) ?? []
+    const organListNames: string[] = organList.map((item) => item.name)
     const donorStatus: Donor = {
-      isDonor: data?.isDonor || false,
+      isDonor: data?.isDonor ?? true,
       limitations: {
         hasLimitations:
           ((data?.exceptions?.length ?? 0) > 0 && data?.isDonor) ?? false,
-        organList: data?.exceptions,
+        organList: organListNames,
+        organIds: data?.exceptions,
         comment: data?.exceptionComment,
       },
     }
@@ -74,7 +85,9 @@ export class HealthDirectorateService {
           isFeatured: item.isFeatured,
           status: item.vaccinationStatus,
           statusName: item.vaccinationStatusName,
-          lastVaccinationDate: item.lastVaccinationDate,
+          statusColor: item.vaccinationStatusColor,
+          lastVaccinationDate: item.lastVaccinationDate ?? null,
+          comments: item.comments,
           vaccinationsInfo: item.vaccinations?.map(
             (vaccination: VaccinationDto) => {
               return {

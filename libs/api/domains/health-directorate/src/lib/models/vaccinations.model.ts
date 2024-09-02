@@ -23,7 +23,7 @@ export class Info {
   name?: string
 
   @Field(() => Date, { nullable: true })
-  date?: Date
+  date?: Date | null
 
   @Field(() => Age, { nullable: true })
   age?: Age
@@ -52,14 +52,17 @@ export class Vaccination {
   @Field(() => Boolean, { nullable: true })
   isFeatured?: boolean
 
-  @Field()
-  status!: string
+  @Field({ nullable: true })
+  status?: string
 
   @Field({ nullable: true })
   statusName?: string
 
+  @Field({ nullable: true })
+  statusColor?: string
+
   @Field(() => Date, { nullable: true })
-  lastVaccinationDate?: Date
+  lastVaccinationDate?: Date | null
 
   @Field(() => [Info], { nullable: true })
   vaccinationsInfo?: Info[]

@@ -17,6 +17,7 @@ query getOrgansList($locale: String) {
       isDonor
       limitations {
         hasLimitations
+        organIds
       }
     }
     organList {

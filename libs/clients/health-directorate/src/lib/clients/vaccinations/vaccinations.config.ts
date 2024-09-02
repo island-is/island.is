@@ -14,8 +14,8 @@ export const HealthDirectorateVaccinationsClientConfig = defineConfig<
   load(env) {
     return {
       xroadPath: env.required(
-        'XROAD_HEALTH_DIRECTORATE_PATH',
-        'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
+        'XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH',
+        'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1',
       ),
       scope: ['@landlaeknir.is/vaccinations'],
     }

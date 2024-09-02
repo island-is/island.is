@@ -40,7 +40,7 @@ export class HealthDirectorateResolver {
     locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<OrganDonation> {
-    const data = await this.api.getDonorStatus(user)
+    const data = await this.api.getDonorStatus(user, locale)
     return { donor: data, locale: locale }
   }
   @ResolveField('organList', () => [Organ], {

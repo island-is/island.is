@@ -11,6 +11,12 @@ export class Limitations {
   })
   organList?: string[]
 
+  @Field(() => [String], {
+    nullable: true,
+    description: 'List of organ IDs NOT to donate',
+  })
+  organIds?: string[]
+
   @Field({
     nullable: true,
     description: 'Text to display if user does not want to donate all organs',

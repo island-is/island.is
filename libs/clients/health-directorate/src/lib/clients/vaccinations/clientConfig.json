@@ -684,13 +684,14 @@
         "type": "oauth2",
         "flows": {
           "authorizationCode": {
-            "authorizationUrl": "undefined/connect/authorize",
-            "tokenUrl": "undefined/connect/token",
+            "authorizationUrl": "https://identity-server.dev01.devland.is/connect/authorize",
+            "tokenUrl": "https://identity-server.dev01.devland.is/connect/token",
             "scopes": {
               "openid": "openid",
               "vaccination": "vaccination",
-              "@landlaeknir.is/vaccinations:admin": "Manage vaccination data",
-              "@landlaeknir.is/vaccinations": "Get vaccination data for a user"
+              "@landlaeknir.is/vaccinations:admin": "Manage disease- and vaccine data",
+              "@landlaeknir.is/vaccinations": "Get vaccination data for a user",
+              "@landlaeknir.is/vaccinations:read": "Get disease- and vaccine data"
             }
           }
         }
@@ -702,10 +703,10 @@
         "properties": {
           "id": { "type": "number" },
           "nationalId": { "type": "string", "example": "1234567890" },
-          "code": { "type": "string", "example": "J07BJ51" },
-          "codingSystem": { "type": "string", "example": "ATC" },
-          "codeDescription": { "type": "string", "example": "ATC" },
-          "vaccineName": { "type": "string", "example": "ATC" },
+          "vaccineCode": { "type": "string", "example": "J07BJ51" },
+          "vaccineCodingSystem": { "type": "string", "example": "ATC" },
+          "vaccineCodeDescription": { "type": "string" },
+          "vaccineCodeDescriptionShort": { "type": "string" },
           "vaccineUrl": { "type": "string" },
           "vaccinationDate": {
             "format": "date-time",
@@ -722,10 +723,10 @@
         "required": [
           "id",
           "nationalId",
-          "code",
-          "codingSystem",
-          "codeDescription",
-          "vaccineName",
+          "vaccineCode",
+          "vaccineCodingSystem",
+          "vaccineCodeDescription",
+          "vaccineCodeDescriptionShort",
           "vaccineUrl",
           "vaccinationDate",
           "vaccinationAge",
@@ -798,12 +799,7 @@
         "required": [
           "diseaseId",
           "diseaseName",
-          "diseaseDescription",
           "isFeatured",
-          "vaccinationStatus",
-          "vaccinationStatusName",
-          "vaccinationStatusColor",
-          "lastVaccinationDate",
           "vaccinations",
           "comments"
         ]
