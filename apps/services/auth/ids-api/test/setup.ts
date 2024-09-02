@@ -85,10 +85,6 @@ class MockUserProfile {
   meUserProfileControllerFindUserProfile = jest.fn().mockResolvedValue({})
 }
 
-class MockDelegationsIndexService {
-  indexDelegations = jest.fn().mockImplementation(() => Promise.resolve())
-}
-
 interface SetupOptions {
   user: User
   scopes?: Scopes

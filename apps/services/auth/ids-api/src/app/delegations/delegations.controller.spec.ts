@@ -145,6 +145,9 @@ describe('DelegationsController', () => {
       )
       nationalRegistryApi = app.get(NationalRegistryClientService)
       delegationIndexService = app.get(DelegationsIndexService)
+      delegationIndexService.indexDelegations = jest
+        .fn()
+        .mockImplementation(() => Promise.resolve())
       factory = new FixtureFactory(app)
     })
 
