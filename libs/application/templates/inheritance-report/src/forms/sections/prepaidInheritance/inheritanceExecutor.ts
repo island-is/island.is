@@ -41,6 +41,7 @@ export const inheritanceExecutor = buildSection({
           title: m.phone,
           width: 'half',
           required: true,
+          disableDropdown: false,
         }),
         buildDescriptionField({
           id: 'description_empty',
