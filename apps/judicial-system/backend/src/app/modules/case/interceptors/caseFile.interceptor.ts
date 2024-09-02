@@ -26,14 +26,11 @@ export class CaseFileInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((data: Case) => {
-        const returnData = data
         if (
           isPrisonStaffUser(user) ||
           data.appealState !== CaseAppealState.COMPLETED
         ) {
           data.caseFiles?.splice(0, data.caseFiles.length)
-
-          return data
         } else if (isPrisonSystemUser(user)) {
           data.caseFiles?.splice(
             0,
@@ -42,11 +39,9 @@ export class CaseFileInterceptor implements NestInterceptor {
               (cf) => cf.category === CaseFileCategory.APPEAL_RULING,
             ),
           )
-
-          return returnData
-        } else {
-          return returnData
         }
+
+        return data
       }),
     )
   }
