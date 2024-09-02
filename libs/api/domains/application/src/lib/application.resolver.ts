@@ -135,38 +135,6 @@ export class ApplicationResolver {
     return this.applicationService.assignApplication(input, user)
   }
 
-  @Mutation(() => PresignedUrlResponse, { nullable: true })
-  async generatePdfPresignedUrl(
-    @Args('input') input: GeneratePdfInput,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponse> {
-    return this.applicationService.generatePdfPresignedUrl(input, user)
-  }
-
-  @Mutation(() => RequestFileSignatureResponse, { nullable: true })
-  requestFileSignature(
-    @Args('input') input: RequestFileSignatureInput,
-    @CurrentUser() user: User,
-  ): Promise<RequestFileSignatureResponse> {
-    return this.applicationService.requestFileSignature(input, user)
-  }
-
-  @Mutation(() => UploadSignedFileResponse, { nullable: true })
-  uploadSignedFile(
-    @Args('input') input: UploadSignedFileInput,
-    @CurrentUser() user: User,
-  ): Promise<UploadSignedFileResponse> {
-    return this.applicationService.uploadSignedFile(input, user)
-  }
-
-  @Query(() => PresignedUrlResponse, { nullable: true })
-  getPresignedUrl(
-    @Args('input') input: GetPresignedUrlInput,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponse> {
-    return this.applicationService.presignedUrl(input, user)
-  }
-
   @Query(() => PresignedUrlResponse, { nullable: true })
   attachmentPresignedURL(
     @Args('input') input: AttachmentPresignedUrlInput,

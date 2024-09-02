@@ -203,47 +203,6 @@ export class ApplicationService {
     })
   }
 
-  async generatePdfPresignedUrl(input: GeneratePdfInput, auth: Auth) {
-    const { id, ...generatePdfDto } = input
-    return await this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerGeneratePdf({
-      id,
-      generatePdfDto,
-    })
-  }
-
-  async requestFileSignature(input: RequestFileSignatureInput, auth: Auth) {
-    const { id, ...requestFileSignatureDto } = input
-    return await this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerRequestFileSignature({
-      id,
-      requestFileSignatureDto,
-    })
-  }
-
-  async uploadSignedFile(input: UploadSignedFileInput, auth: Auth) {
-    const { id, ...uploadSignedFileDto } = input
-    return await this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerUploadSignedFile({
-      id,
-      uploadSignedFileDto,
-    })
-  }
-
-  async presignedUrl(input: GetPresignedUrlInput, auth: Auth) {
-    const { id, type } = input
-
-    return await this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerGetPresignedUrl({
-      id,
-      pdfType: type,
-    })
-  }
-
   async attachmentPresignedURL(input: AttachmentPresignedUrlInput, auth: Auth) {
     const { id, attachmentKey } = input
 
