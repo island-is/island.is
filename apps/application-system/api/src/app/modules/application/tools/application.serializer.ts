@@ -147,6 +147,9 @@ export class ApplicationSerializer
         history,
         draftFinishedSteps: application.draftFinishedSteps,
         draftTotalSteps: application.draftTotalSteps,
+        historyButton: actionCardMeta.historyButton
+          ? intl.formatMessage(actionCardMeta.historyButton)
+          : null,
       },
       name: getApplicationNameTranslationString(
         template,

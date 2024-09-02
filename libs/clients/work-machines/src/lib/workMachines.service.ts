@@ -133,6 +133,7 @@ export class WorkMachinesClientService {
       .apiMachinesGet(input)
       .catch(handle404)
   }
+
   getWorkMachineById = async (
     user: User,
     input: GetMachineRequest,

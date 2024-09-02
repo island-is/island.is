@@ -262,18 +262,6 @@ export enum RequestSharedWithDefender {
   NOT_SHARED = 'NOT_SHARED',
 }
 
-export enum DefendantPlea {
-  GUILTY = 'GUILTY',
-  NOT_GUILTY = 'NOT_GUILTY',
-  NO_PLEA = 'NO_PLEA',
-}
-
-export enum ServiceRequirement {
-  REQUIRED = 'REQUIRED',
-  NOT_REQUIRED = 'NOT_REQUIRED',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
-}
-
 export enum CourtSessionType {
   MAIN_HEARING = 'MAIN_HEARING',
   OTHER = 'OTHER',
@@ -443,25 +431,4 @@ export const isRequestCaseTransition = (
   return Object.values(RequestCaseTransition).includes(
     transition as RequestCaseTransition,
   )
-}
-
-export type DistrictCourts =
-  | 'Héraðsdómur Reykjavíkur'
-  | 'Héraðsdómur Reykjaness'
-  | 'Héraðsdómur Vesturlands'
-  | 'Héraðsdómur Vestfjarða'
-  | 'Héraðsdómur Norðurlands vestra'
-  | 'Héraðsdómur Norðurlands eystra'
-  | 'Héraðsdómur Austurlands'
-  | 'Héraðsdómur Suðurlands'
-
-export const DistrictCourtLocation: Record<DistrictCourts, string> = {
-  'Héraðsdómur Reykjavíkur': 'Dómhúsið við Lækjartorg, Reykjavík',
-  'Héraðsdómur Reykjaness': 'Fjarðargata 9, Hafnarfirði',
-  'Héraðsdómur Vesturlands': 'Bjarnarbraut 8, Borgarnesi',
-  'Héraðsdómur Vestfjarða': 'Hafnarstræti 9, Ísafirði',
-  'Héraðsdómur Norðurlands vestra': 'Skagfirðingabraut 21, Sauðárkróki',
-  'Héraðsdómur Norðurlands eystra': 'Hafnarstræti 107, 4. hæð, Akureyri',
-  'Héraðsdómur Austurlands': 'Lyngás 15, Egilsstöðum',
-  'Héraðsdómur Suðurlands': 'Austurvegur 4, Selfossi',
 }
