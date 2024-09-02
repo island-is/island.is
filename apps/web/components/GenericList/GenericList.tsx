@@ -576,19 +576,13 @@ export const GenericListWrapper = ({
         <GridRow rowGap={3}>
           {!itemsAreClickable &&
             items.map((item) => (
-              <GridColumn
-                key={item.id}
-                span={['1/1', '1/1', '1/1', '1/1', '1/2']}
-              >
+              <GridColumn key={item.id} span="1/1">
                 <NonClickableItem item={item} />
               </GridColumn>
             ))}
           {itemsAreClickable &&
             items.map((item) => (
-              <GridColumn
-                key={item.id}
-                span={['1/1', '1/1', '1/1', '1/1', '1/2']}
-              >
+              <GridColumn key={item.id} span="1/1">
                 <ClickableItem item={item} />
               </GridColumn>
             ))}
