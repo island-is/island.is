@@ -22,9 +22,9 @@ import { UnendorseList } from '../queries'
 
 import Skeleton from '../Skeletons/Skeleton'
 import {
+  useGetPetitionEndorsementsPaginated,
   useGetSingleEndorsement,
   useGetSinglePetition,
-  useGetSinglePetitionEndorsements,
 } from '../hooks'
 import {
   EndorsementList,
@@ -44,7 +44,7 @@ const ViewSignedList = () => {
   const userHasSigned = useGetSingleEndorsement(listId)
   const [unSignList, { loading: isLoading }] = useMutation(UnendorseList, {
     onCompleted: () => {
-      refetchSinglePetitionEndorsements()
+      refetch()
     },
   })
 
@@ -56,8 +56,7 @@ const ViewSignedList = () => {
 
   const [modalIsOpen, setModalIsOpen] = useState(false)
 
-  const { petitionEndorsements, refetchSinglePetitionEndorsements } =
-    useGetSinglePetitionEndorsements(listId)
+  const { endorsements, refetch } = useGetPetitionEndorsementsPaginated(listId)
 
   useEffect(() => {
     setHasSigned(userHasSigned ? true : false)
@@ -115,7 +114,7 @@ const ViewSignedList = () => {
                     </Text>
                     <Text variant="default">
                       {
-                        (petitionEndorsements as PaginatedEndorsementResponse)
+                        (endorsements as PaginatedEndorsementResponse)
                           .totalCount
                       }
                     </Text>
@@ -180,15 +179,7 @@ const ViewSignedList = () => {
             )}
           </Box>
 
-          {isListOpen && (
-            <PetitionsTable
-              petitionSigners={
-                petitionEndorsements as PaginatedEndorsementResponse
-              }
-              listId={listId}
-              canEdit={false}
-            />
-          )}
+          {isListOpen && <PetitionsTable listId={listId} canEdit={false} />}
         </>
       ) : (
         <Skeleton />

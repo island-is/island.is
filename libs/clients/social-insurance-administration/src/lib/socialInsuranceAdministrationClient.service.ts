@@ -5,6 +5,7 @@ import {
   ApplicantApi,
   ApplicationApi,
   GeneralApi,
+  IncomePlanApi,
   PaymentPlanApi,
   PensionCalculatorApi,
   DeathBenefitsApi,
@@ -18,6 +19,7 @@ import {
 } from '../../gen/fetch'
 import { handle404 } from '@island.is/clients/middlewares'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
+import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -29,6 +31,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly currencyApi: GeneralApi,
     private readonly pensionCalculatorApi: PensionCalculatorApi,
     private readonly deathBenefitsApi: DeathBenefitsApi,
+    private readonly incomePlanApi: IncomePlanApi,
   ) {}
 
   private applicationApiWithAuth = (user: User) =>
@@ -49,6 +52,9 @@ export class SocialInsuranceAdministrationClientService {
   private deathBenefitsApiWithAuth = (user: User) =>
     this.deathBenefitsApi.withMiddleware(new AuthMiddleware(user as Auth))
 
+  private incomePlanApiWithAuth = (user: User) =>
+    this.incomePlanApi.withMiddleware(new AuthMiddleware(user as Auth))
+
   getPaymentPlan(
     user: User,
   ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
@@ -63,6 +69,18 @@ export class SocialInsuranceAdministrationClientService {
     return await this.paymentPlanApiWithAuth(user)
       .apiProtectedV1PaymentPlanLegitimatepaymentsGet()
       .catch(handle404)
+  }
+
+  async getLatestIncomePlan(user: User): Promise<IncomePlanDto | null> {
+    const incomePlan = await this.incomePlanApiWithAuth(user)
+      .apiProtectedV1IncomePlanLatestIncomePlanGet()
+      .catch(handle404)
+
+    if (!incomePlan) {
+      return null
+    }
+
+    return mapIncomePlanDto(incomePlan) ?? null
   }
 
   sendApplication(
@@ -103,7 +121,9 @@ export class SocialInsuranceAdministrationClientService {
   ): Promise<TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn> {
     return this.applicantApiWithAuth(
       user,
-    ).apiProtectedV1ApplicantApplicationTypeEligibleGet({ applicationType })
+    ).apiProtectedV1ApplicantApplicationTypeEligibleGet({
+      applicationType,
+    })
   }
 
   async getCurrencies(user: User): Promise<Array<string>> {

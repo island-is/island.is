@@ -31,8 +31,8 @@ export const survivorsBenefitsFormMessage: MessageDir = {
     isNotEligibleDescription: {
       id: 'sb.application:is.not.eligible.description#markdown',
       defaultMessage:
-        'Ástæður fyrir því gætu verið eftirfarandi.\n* Þú ert ekki með skráð lögheimili á Íslandi.\n* Þú ert með ellilífeyri sjómanna.\n* Þú ert 67 ára eða eldri\n\nEf þú telur þessi atriði ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
-      description: `The reasons for this could be the following.\n* You do not have a registered domicile in Iceland.\n* You have a sailor's pension.\n* You are 67 or older.\n\nIf you do not think these points apply to you, please contact [tr@tr.is](mailto:tr @tr.is)`,
+        'Ástæður fyrir því gætu verið eftirfarandi.\n* Þú ert ekki með skráð lögheimili á Íslandi.\n* Þú ert 67 ára eða eldri.\n* Þú átt maka sem er lifandi.\n\nEf þú telur þessi atriði ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description: `The reasons for this could be the following.\n* You do not have a registered domicile in Iceland.\n* You are 67 or older.\n* You have a spouse who is alive.\n\nIf you do not think these points apply to you, please contact [tr@tr.is](mailto:tr @tr.is)`,
     },
   }),
 

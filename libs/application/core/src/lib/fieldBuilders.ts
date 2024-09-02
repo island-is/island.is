@@ -171,6 +171,8 @@ export function buildRadioField(
     backgroundColor,
     space,
     required,
+    widthWithIllustration,
+    hasIllustration,
   } = data
 
   return {
@@ -181,6 +183,8 @@ export function buildRadioField(
     backgroundColor,
     space,
     required,
+    widthWithIllustration,
+    hasIllustration,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
@@ -273,6 +277,8 @@ export function buildTextField(
     rows,
     required,
     maxLength,
+    max,
+    min,
     readOnly,
     rightAlign,
     onChange,
@@ -290,6 +296,8 @@ export function buildTextField(
     maxLength,
     readOnly,
     rightAlign,
+    max,
+    min,
     onChange,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
@@ -602,8 +610,10 @@ export function buildImageField(
     marginTop,
     marginBottom,
     condition,
-    imageWidth = 'full',
     titleVariant = 'h4',
+    // imageWidth and imagePosition can be arrays [sm,  md, lg, xl] for different screen sizes
+    imageWidth = 'full',
+    imagePosition = 'left',
   } = data
   return {
     children: undefined,
@@ -616,6 +626,7 @@ export function buildImageField(
     marginBottom,
     condition,
     titleVariant,
+    imagePosition,
     type: FieldTypes.IMAGE,
     component: FieldComponents.IMAGE,
   }
@@ -630,6 +641,8 @@ export function buildPdfLinkButtonField(
     verificationLinkUrl,
     getPdfFiles,
     setViewPdfFile,
+    viewPdfFile = false,
+    downloadButtonTitle,
   } = data
   return {
     ...extractCommonFields(data),
@@ -638,6 +651,10 @@ export function buildPdfLinkButtonField(
     verificationLinkUrl,
     getPdfFiles,
     setViewPdfFile,
+    viewPdfFile,
+    downloadButtonTitle:
+      downloadButtonTitle ||
+      coreDefaultFieldMessages.defaultDownloadButtonTitle,
     children: undefined,
     type: FieldTypes.PDF_LINK_BUTTON,
     component: FieldComponents.PDF_LINK_BUTTON,

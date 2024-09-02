@@ -12,7 +12,7 @@ import {
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
-import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
+import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 
@@ -25,7 +25,7 @@ interface Then {
 
 type GivenWhenThen = (
   theCase: Case,
-  notificationDto: SendInternalNotificationDto,
+  notificationDto: CaseNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send court date notifications', () => {
@@ -51,7 +51,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
 
     givenWhenThen = async (
       theCase: Case,
-      notificationDto: SendInternalNotificationDto,
+      notificationDto: CaseNotificationDto,
     ) => {
       const then = {} as Then
 
@@ -67,7 +67,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
   describe('notification sent', () => {
     let then: Then
 
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.COURT_DATE,
     }
@@ -117,7 +117,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
   describe('link not sent to defender', () => {
     let then: Then
 
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.COURT_DATE,
     }
@@ -163,10 +163,10 @@ describe('InternalNotificationController - Send court date notifications', () =>
     })
   })
 
-  describe('notification sent for postponed indictment', () => {
+  describe('notification sent for indictment', () => {
     let then: Then
 
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.COURT_DATE,
     }
@@ -195,16 +195,16 @@ describe('InternalNotificationController - Send court date notifications', () =>
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutorName, address: prosecutorEmail }],
-          subject: `Frestun - nýtt þinghald í máli ${courtCaseNumber}`,
-          html: `Héraðsdómur Reykjavíkur boðar til þinghalds í máli ${courtCaseNumber}.<br />Fyrirtaka mun fara fram 2. maí 2024, kl. 14:32.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/akaera/stadfesta/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          subject: `Nýtt þinghald í máli ${courtCaseNumber}`,
+          html: `Héraðsdómur Reykjavíkur boðar til þinghalds í máli ${courtCaseNumber}.<br />Fyrirtaka mun fara fram 2. maí 2024, kl. 14:32.<br /><br />Tegund þinghalds: Óþekkt.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/akaera/stadfesta/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
 
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
-          subject: `Frestun - nýtt þinghald í máli ${courtCaseNumber}`,
-          html: `Héraðsdómur Reykjavíkur boðar til þinghalds í máli ${courtCaseNumber}.<br />Fyrirtaka mun fara fram 2. maí 2024, kl. 14:32.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Hægt er að nálgast gögn málsins hjá Héraðsdómur Reykjavíkur.`,
+          subject: `Nýtt þinghald í máli ${courtCaseNumber}`,
+          html: `Héraðsdómur Reykjavíkur boðar til þinghalds í máli ${courtCaseNumber}.<br />Fyrirtaka mun fara fram 2. maí 2024, kl. 14:32.<br /><br />Tegund þinghalds: Óþekkt.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Hægt er að nálgast gögn málsins hjá Héraðsdómur Reykjavíkur.`,
         }),
       )
 

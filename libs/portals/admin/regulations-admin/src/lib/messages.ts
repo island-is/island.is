@@ -341,6 +341,10 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-label-deleteConfirmation',
     defaultMessage: 'Ertu alveg viss um að þú viljir eyða ',
   },
+  uploadingWordDocument: {
+    id: 'ap.regulations-admin:uploading-word-document',
+    defaultMessage: 'Hleð inn Word skjali',
+  },
 })
 
 export const impactMsgs = defineMessages({
@@ -384,6 +388,11 @@ export const impactMsgs = defineMessages({
   deleteConfirmation: {
     id: 'ap.regulations-admin:draft-label-impact-deleteConfirmation',
     defaultMessage: 'Ertu viss um að þú viljir eyða þessari skráningu?',
+  },
+
+  specificDateApply: {
+    id: 'ap.regulations-admin:change-applied-on-specific-date',
+    defaultMessage: 'Breyting tekur gildi á ákveðinni dagsetningu',
   },
 
   // ---------------------------------------------------------------------------

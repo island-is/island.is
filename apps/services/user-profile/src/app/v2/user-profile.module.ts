@@ -29,8 +29,8 @@ import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegatio
       UserDeviceTokens,
       ActorProfile,
     ]),
-    EmailModule.register(environment.emailOptions),
-    SmsModule.register(environment.smsOptions),
+    EmailModule,
+    SmsModule,
     IslykillApiModule.register({
       ...environment.islykillConfig,
     }),

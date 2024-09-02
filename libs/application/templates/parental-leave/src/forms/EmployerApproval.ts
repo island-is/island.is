@@ -112,12 +112,12 @@ export const EmployerApproval: Form = buildForm({
                 }),
               ],
             }),
+            buildDescriptionField({
+              id: 'final.approve',
+              title: coreMessages.thanks,
+              description: coreMessages.thanksDescription,
+            }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'final.approve',
-          title: coreMessages.thanks,
-          description: coreMessages.thanksDescription,
         }),
       ],
     }),

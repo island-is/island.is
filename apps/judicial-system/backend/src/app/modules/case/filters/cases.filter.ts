@@ -263,9 +263,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
               ],
             },
             {
-              defender_national_id: {
-                [Op.or]: [user.nationalId, formattedNationalId],
-              },
+              defender_national_id: [user.nationalId, formattedNationalId],
             },
           ],
         },
@@ -280,9 +278,10 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
               ],
             },
             {
-              '$defendants.defender_national_id$': {
-                [Op.or]: [user.nationalId, formattedNationalId],
-              },
+              '$defendants.defender_national_id$': [
+                user.nationalId,
+                formattedNationalId,
+              ],
             },
           ],
         },

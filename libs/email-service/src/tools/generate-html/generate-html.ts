@@ -8,7 +8,7 @@ import example from './example'
 
 const writeFile = util.promisify(fs.writeFile)
 
-async function generate() {
+const generate = async () => {
   const module = await createTestingEmailModule()
 
   const adapterService = module.get(AdapterService)

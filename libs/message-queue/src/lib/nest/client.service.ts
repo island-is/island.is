@@ -14,7 +14,7 @@ import {
   Message,
 } from '@aws-sdk/client-sqs'
 import { AbortController } from '@aws-sdk/abort-controller'
-import type { Logger } from '@island.is/logging'
+import { type Logger } from '@island.is/logging'
 
 @Injectable()
 export class ClientService {

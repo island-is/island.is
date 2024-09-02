@@ -173,6 +173,7 @@ export const slices = gql`
         }
       }
     }
+    dividerOnTop
   }
 
   fragment FaqListFields on FaqList {
@@ -270,6 +271,17 @@ export const slices = gql`
   fragment TeamListFields on TeamList {
     __typename
     id
+    variant
+    filterTags {
+      id
+      title
+      slug
+      genericTagGroup {
+        id
+        title
+        slug
+      }
+    }
     teamMembers {
       name
       title
@@ -534,6 +546,7 @@ export const slices = gql`
     intro
     defaultFieldNamespace
     fields {
+      id
       title
       name
       placeholder
@@ -546,6 +559,7 @@ export const slices = gql`
     aboutYouHeadingText
     questionsHeadingText
     recipientFormFieldDecider {
+      id
       title
       placeholder
       type
@@ -835,6 +849,7 @@ export const slices = gql`
     xAxisValueType
     customStyleConfig
     reduceAndRoundValue
+    yAxisLabel
   }
 
   fragment ChartNumberBoxFields on ChartNumberBox {
@@ -864,6 +879,41 @@ export const slices = gql`
         id
         title
         slug
+      }
+    }
+  }
+
+  fragment LatestGenericListItemsFields on LatestGenericListItems {
+    title
+    genericList {
+      itemType
+    }
+    seeMorePage {
+      ... on OrganizationSubpage {
+        id
+        title
+        slug
+        organizationPage {
+          slug
+        }
+      }
+    }
+    seeMoreLinkText
+    itemResponse {
+      items {
+        id
+        date
+        title
+        cardIntro {
+          ...HtmlFields
+        }
+        filterTags {
+          id
+          title
+          slug
+        }
+        slug
+        assetUrl
       }
     }
   }
@@ -912,6 +962,7 @@ export const slices = gql`
     ...ChartNumberBoxFields
     ...FeaturedEventsFields
     ...GenericListFields
+    ...LatestGenericListItemsFields
   }
 
   fragment AllSlices on Slice {

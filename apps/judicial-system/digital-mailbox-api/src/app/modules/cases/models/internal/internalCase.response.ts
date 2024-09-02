@@ -28,7 +28,6 @@ interface Defendant {
   defenderEmail?: string
   defenderPhoneNumber?: string
   defenderChoice?: DefenderChoice
-  acceptCompensationClaim?: boolean
 }
 
 interface DateLog {

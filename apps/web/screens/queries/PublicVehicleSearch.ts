@@ -10,6 +10,7 @@ export const PUBLIC_VEHICLE_SEARCH_QUERY = gql`
       vehicleCommercialName
       color
       newRegDate
+      firstRegDate
       vehicleStatus
       nextVehicleMainInspection
       co2

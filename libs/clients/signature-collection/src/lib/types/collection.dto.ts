@@ -13,6 +13,32 @@ export enum CollectionStatus {
   Inactive = 'inactive',
 }
 
+// We are storing this enum such that an unknown category maps to 0
+// Then the rest is ordered to reflect the numerical values present in the
+// Signature Collection API (see /Tegund/Kosning in the API)
+export enum CollectionType {
+  OtherUnknown,
+  Parliamentary,
+  Presidential,
+  Referendum, // is: Þjóðaratkvæðagreiðsla
+  OtherSameRulesAsParliamentary,
+  LocalGovernmental, // is: Sveitarstjórnarkosningar
+  SpecialLocalGovernmental,
+  ResidentPoll, // is: Íbúakönnun
+  ForeignResidentPoll,
+}
+
+export const getCollectionTypeFromNumber = (
+  nr: number | undefined,
+): CollectionType => {
+  // Make sure to add to the enum and iterate on the numbers
+  // if needed and when other types of collections are added.
+  if (nr && nr > 0 && nr <= 8) {
+    return nr as CollectionType
+  }
+  return CollectionType.OtherUnknown
+}
+
 export interface Collection {
   id: string
   startTime: Date
@@ -25,6 +51,7 @@ export interface Collection {
   candidates: Candidate[]
   processed: boolean
   status: CollectionStatus
+  collectionType: CollectionType
 }
 
 const getStatus = ({
@@ -82,6 +109,7 @@ export const mapCollection = (
       'Received partial collection information from the national registry.',
     )
   }
+  const collectionType = getCollectionTypeFromNumber(kosning?.kosningTegundNr)
   const isActive = startTime < new Date() && endTime > new Date()
   const processed = collection.lokadHandvirkt ?? false
   const hasActiveLists = collection.opnirListar ?? false
@@ -99,7 +127,7 @@ export const mapCollection = (
     startTime,
     endTime,
     isActive,
-    isPresidential: collection.kosningTegund == 'Forsetakosning',
+    isPresidential: collectionType === CollectionType.Presidential,
     isSignatureCollection: kosning?.erMedmaelakosning ?? false,
     candidates: candidates
       ? candidates.map((candidate) => mapCandidate(candidate))
@@ -107,5 +135,6 @@ export const mapCollection = (
     areas: areas.map((area) => mapArea(area)),
     processed,
     status,
+    collectionType,
   }
 }

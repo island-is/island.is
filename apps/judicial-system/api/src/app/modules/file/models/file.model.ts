@@ -57,4 +57,7 @@ export class CaseFile {
 
   @Field(() => String, { nullable: true })
   readonly policeFileId?: string
+
+  @Field(() => String, { nullable: true })
+  readonly submittedBy?: string
 }

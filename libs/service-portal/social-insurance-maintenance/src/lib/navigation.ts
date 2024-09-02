@@ -4,6 +4,7 @@ import { SocialInsuranceMaintenancePaths } from './paths'
 
 export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
   name: m.socialInsuranceMaintenance,
+  description: m.socialInsuranceMaintenanceIntro,
   path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceRoot,
   icon: {
     icon: 'cardWithCheckmark',
@@ -22,6 +23,17 @@ export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
         {
           name: m.paymentsReasoning,
           path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePaymentsReasoning,
+          navHide: true,
+        },
+      ],
+    },
+    {
+      name: m.incomePlan,
+      path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlan,
+      children: [
+        {
+          name: m.latestIncomePlan,
+          path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
           navHide: true,
         },
       ],
