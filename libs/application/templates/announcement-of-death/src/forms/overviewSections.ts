@@ -11,8 +11,7 @@ import { format as formatNationalId } from 'kennitala'
 import { m } from '../lib/messages'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import format from 'date-fns/format'
-import { Asset, Answers as AODAnswers, PropertiesEnum } from '../types'
-import { FormatMessage } from '@island.is/localization'
+import { Answers as AODAnswers, PropertiesEnum } from '../types'
 import { getFileRecipientName } from '../lib/utils'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
 
@@ -329,13 +328,26 @@ export const files: Field[] = [
 
 export const firearmApplicant: Field[] = [
   buildDividerField({
-    condition: (answers) =>
-      showInDone(answers.viewOverview) && answers.hadFirearms === YES,
+    condition: (answers) => showInDone(answers.viewOverview),
   }),
   buildDescriptionField({
     id: 'firearmApplicant',
     title: m.firearmsApplicantOverviewHeader,
     titleVariant: 'h3',
+    condition: (answers) => showInDone(answers.viewOverview),
+  }),
+  buildKeyValueField({
+    label: m.firearmsHadFirearms,
+    width: 'full',
+    value: ({ answers }) =>
+      answers.hadFirearms === YES ? m.firearmsYes : m.firearmsNo,
+    condition: (answers) => showInDone(answers.viewOverview),
+  }),
+  buildDescriptionField({
+    id: 'firearmApplicantInfo',
+    title: m.firearmsApplicant,
+    titleVariant: 'h3',
+    space: 2,
     condition: (answers) =>
       showInDone(answers.viewOverview) && answers.hadFirearms === YES,
   }),
