@@ -223,7 +223,7 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
           answers.estateMembers.members.filter((member) => !member?.dummy),
         ),
         hadFirearms: answers.hadFirearms,
-        firearm: JSON.stringify(answers.firearmApplicant),
+        firearm: JSON.stringify(answers.firearmApplicant) ?? {},
         bankcodeSecuritiesOrShares: otherProperties.includes(
           PropertiesEnum.ACCOUNTS,
         )
