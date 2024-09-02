@@ -6,7 +6,8 @@ import {
 } from '@aws-sdk/client-s3'
 import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { S3Service } from './s3.service'
 
 export interface AttachmentData {
   key: string
@@ -17,10 +18,7 @@ export interface AttachmentData {
 
 @Injectable()
 export class AttachmentS3Service {
-  private readonly s3Client: S3Client
-  constructor() {
-    this.s3Client = new S3Client()
-  }
+  constructor(@Inject(S3Service) private s3Service: S3Service) {}
 
   public async getFiles(
     application: Application,
@@ -61,32 +59,10 @@ export class AttachmentS3Service {
           return { key: '', fileContent: '', answerKey, fileName: '' }
         }
         const fileContent =
-          (await this.getApplicationFilecontentAsBase64(url)) ?? ''
+          (await this.s3Service.getFileContentAsBase64(url)) ?? ''
 
         return { key, fileContent, answerKey, fileName: name }
       }),
     )
-  }
-
-  private async getApplicationFilecontentAsBase64(
-    fileName: string,
-  ): Promise<string | undefined> {
-    const { bucket, key } = AmazonS3URI(fileName)
-    const uploadBucket = bucket
-    try {
-      const { Body } = await this.s3Client.send(
-        new GetObjectCommand({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-      );
-    
-      return await Body?.transformToString('base64');
-
-    } catch (error) {
-      logger.error('Error occurred while fetching file from S3')
-      logger.error(error)
-      return undefined
-    }
   }
 }
