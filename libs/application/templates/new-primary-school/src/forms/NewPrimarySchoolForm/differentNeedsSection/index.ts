@@ -5,7 +5,6 @@ import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { allergiesAndIntolerancesSubSection } from './allergiesAndIntolerancesSubSection'
 import { languageSubSection } from './languageSubSection'
 import { supportSubSection } from './supportSubSection'
-import { useOfFootageSubSection } from './useOfFootageSubSection'
 
 export const differentNeedsSection = buildSection({
   id: 'differentNeedsSection',
@@ -19,6 +18,5 @@ export const differentNeedsSection = buildSection({
     languageSubSection,
     allergiesAndIntolerancesSubSection,
     supportSubSection,
-    useOfFootageSubSection,
   ],
 })

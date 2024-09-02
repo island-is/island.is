@@ -186,26 +186,6 @@ export const dataSchema = z.object({
     specialSupport: z.enum([YES, NO]),
     requestMeeting: z.array(z.enum([YES, NO])).optional(),
   }),
-  photography: z
-    .object({
-      photographyConsent: z.enum([YES, NO]),
-      photoSchoolPublication: z.enum([YES, NO]).optional(),
-      photoMediaPublication: z.enum([YES, NO]).optional(),
-    })
-    .refine(
-      ({ photographyConsent, photoSchoolPublication }) =>
-        photographyConsent === YES ? !!photoSchoolPublication : true,
-      {
-        path: ['photoSchoolPublication'],
-      },
-    )
-    .refine(
-      ({ photographyConsent, photoMediaPublication }) =>
-        photographyConsent === YES ? !!photoMediaPublication : true,
-      {
-        path: ['photoMediaPublication'],
-      },
-    ),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

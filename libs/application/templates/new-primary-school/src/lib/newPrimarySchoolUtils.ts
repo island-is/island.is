@@ -136,21 +136,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'schools.newSchool.school',
   ) as string
 
-  const photographyConsent = getValueViaPath(
-    answers,
-    'photography.photographyConsent',
-  ) as YesOrNo
-
-  const photoSchoolPublication = getValueViaPath(
-    answers,
-    'photography.photoSchoolPublication',
-  ) as YesOrNo
-
-  const photoMediaPublication = getValueViaPath(
-    answers,
-    'photography.photoMediaPublication',
-  ) as YesOrNo
-
   return {
     childNationalId,
     childInfo,
@@ -174,10 +159,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     developmentalAssessment,
     specialSupport,
     requestMeeting,
-    photographyConsent,
-    photoSchoolPublication,
-    photoMediaPublication,
-
     startDate,
     schoolMunicipality,
     selectedSchool,

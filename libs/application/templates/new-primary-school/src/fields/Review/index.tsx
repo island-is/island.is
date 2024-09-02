@@ -20,7 +20,6 @@ import { AllergiesAndIntolerances } from './review-groups/AllergiesAndIntoleranc
 import { Child } from './review-groups/Child'
 import { Languages } from './review-groups/Languages'
 import { Parents } from './review-groups/Parents'
-import { Photography } from './review-groups/Photography'
 import { ReasonForApplication } from './review-groups/ReasonForApplication'
 import { Relatives } from './review-groups/Relatives'
 import { Siblings } from './review-groups/Siblings'
@@ -169,7 +168,6 @@ export const Review: FC<ReviewScreenProps> = ({
           <Languages {...childProps} />
           <AllergiesAndIntolerances {...childProps} />
           <Support {...childProps} />
-          <Photography {...childProps} />
         </>
       )}
     </>
