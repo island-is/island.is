@@ -66,13 +66,13 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
       }
     }
 
-    if (isPrisonSystemUser(user) && caseFile.category) {
-      if (
-        isCompletedCase(theCase.state) &&
-        prisonSystemCaseFileCategories.includes(caseFile.category)
-      ) {
-        return true
-      }
+    if (
+      caseFile.category &&
+      isCompletedCase(theCase.state) &&
+      isPrisonSystemUser(user) &&
+      prisonSystemCaseFileCategories.includes(caseFile.category)
+    ) {
+      return true
     }
 
     throw new ForbiddenException(`Forbidden for ${user.role}`)
