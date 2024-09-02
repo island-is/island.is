@@ -1,10 +1,13 @@
-import React, { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { isCompletedCase } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isDefenceUser,
+} from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
@@ -50,6 +53,10 @@ const IndictmentOverview: FC = () => {
     isCompletedCase(workingCase.state) &&
     workingCase.indictmentReviewer?.id === user?.id &&
     Boolean(!workingCase.indictmentReviewDecision)
+  const canAddFiles =
+    isDefenceUser(user) &&
+    workingCase.indictmentDecision !==
+      IndictmentDecision.POSTPONING_UNTIL_VERDICT
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -119,9 +126,24 @@ const IndictmentOverview: FC = () => {
         {workingCase.caseFiles && (
           <Box
             component="section"
-            marginBottom={shouldDisplayReviewDecision ? 5 : 10}
+            marginBottom={shouldDisplayReviewDecision || canAddFiles ? 5 : 10}
           >
             <IndictmentCaseFilesList workingCase={workingCase} />
+          </Box>
+        )}
+        {canAddFiles && (
+          <Box display="flex" justifyContent="flexEnd" marginBottom={10}>
+            <Button
+              size="small"
+              icon="add"
+              onClick={() =>
+                router.push(
+                  `${constants.DEFENDER_ADD_FILES_ROUTE}/${workingCase.id}`,
+                )
+              }
+            >
+              {formatMessage(strings.addDocumentsButtonText)}
+            </Button>
           </Box>
         )}
         {shouldDisplayReviewDecision && (

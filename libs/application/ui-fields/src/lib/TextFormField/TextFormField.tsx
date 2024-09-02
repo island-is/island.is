@@ -39,6 +39,8 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     maxLength,
     dataTestId,
     rightAlign,
+    max,
+    min,
     onChange = () => undefined,
   } = field
   const { clearErrors } = useFormContext()
@@ -89,6 +91,8 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           rows={rows}
           required={required}
           rightAlign={rightAlign}
+          max={max}
+          min={min}
         />
       </Box>
     </div>
