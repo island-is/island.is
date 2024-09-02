@@ -18,7 +18,6 @@ import {
   SiblingsRow,
 } from '../types'
 import {
-  Gender,
   ReasonForApplicationOptions,
   SiblingRelationOptions,
 } from './constants'
@@ -355,22 +354,6 @@ export const getSiblingRelationOptionLabel = (
 ) => {
   const relationOptions = getSiblingRelationOptions()
   return relationOptions.find((option) => option.value === value)?.label ?? ''
-}
-
-export const formatGender = (genderCode?: string): Gender | undefined => {
-  switch (genderCode) {
-    case '1':
-    case '3':
-      return Gender.MALE
-    case '2':
-    case '4':
-      return Gender.FEMALE
-    case '7':
-    case '8':
-      return Gender.OTHER
-    default:
-      return undefined
-  }
 }
 
 export const getOptionsListByType = async (

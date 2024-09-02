@@ -215,16 +215,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu fornafn',
       description: 'Select pronoun',
     },
-    childInfoGender: {
-      id: 'dess.nps.application:childrenNParents.child.info.gender',
-      defaultMessage: 'Kyn',
-      description: 'Gender',
-    },
-    childInfoGenderPlaceholder: {
-      id: 'dess.nps.application:childrenNParents.child.info.gender.placeholder',
-      defaultMessage: 'Veldu kyn',
-      description: 'Select gender',
-    },
     differentPlaceOfResidence: {
       id: 'dess.nps.application:childrenNParents.child.info.different.place.of.residence',
       defaultMessage: 'Er dvalarstaður barns annað en skráð lögheimili?',

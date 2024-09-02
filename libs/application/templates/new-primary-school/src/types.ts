@@ -35,7 +35,6 @@ export type ChildInformation = {
     postalCode: string
     city: string
   }
-  gender: string
   preferredName: string
   pronouns: string[]
   differentPlaceOfResidence: string
