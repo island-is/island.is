@@ -28,11 +28,18 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
   }
 
   async candidate({ auth }: TemplateApiModuleActionProps) {
-    const candidate = this.signatureCollectionClientService.getSignee(auth)
+    const candidate = await this.signatureCollectionClientService.getSignee(
+      auth,
+    )
+
+    if (!candidate.hasPartyBallotLetter) {
+      throw new TemplateApiError(errorMessages.partyBallotLetter, 405)
+    }
+
     return candidate
   }
 
-  async parliamentaryCollection() {
+  async parliamentaryCollection({ auth }: TemplateApiModuleActionProps) {
     const currentCollection =
       await this.signatureCollectionClientService.currentCollection()
     if (currentCollection.collectionType !== CollectionType.Parliamentary) {
@@ -41,6 +48,15 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
         405,
       )
     }
+
+    const candidateInCollection = currentCollection.candidates.some(
+      (candidate) => candidate.nationalId === auth.nationalId,
+    )
+
+    if (!candidateInCollection) {
+      throw new TemplateApiError(errorMessages.partyBallotLetter, 405)
+    }
+
     return currentCollection
   }
 

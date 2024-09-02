@@ -400,6 +400,8 @@ export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {
     nationalId: estateRaw.kennitala ?? '',
     relation: estateRaw.tengsl ?? 'Annað',
     advocate: estateRaw.malsvari ? mapAdvocate(estateRaw.malsvari) : undefined,
+    email: estateRaw.netfang ?? '',
+    phone: estateRaw.simi ?? '',
   }
 }
 
