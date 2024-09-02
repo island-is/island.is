@@ -1,10 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import {
-  BaseTemplateAPIModuleConfig,
-  TemplateApiModuleActionProps,
-} from '../../../types'
+import { TemplateApiModuleActionProps } from '../../../types'
 import {
   DataUploadResponse,
   EstateAsset,
@@ -26,18 +23,12 @@ import {
 
 import { isPerson } from 'kennitala'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import {
-  Application,
-  ApplicationConfigurations,
-  ApplicationTypes,
-} from '@island.is/application/types'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import { coreErrorMessages } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { generateFirearmApplicantEmail } from './emailGenerators/firearmApplicantNotification'
 import { SharedTemplateApiService } from '../../shared'
 import { generateRequestReviewSms } from './smsGenerators/requestReviewSms'
-import { getConfigValue } from '../../shared/shared.utils'
-import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class AnnouncementOfDeathService extends BaseTemplateApiService {
@@ -45,7 +36,6 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
   ) {
     super(ApplicationTypes.ANNOUNCEMENT_OF_DEATH)
   }
@@ -146,14 +136,8 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
 
   private async sendSmsNotification(phone: string, application: Application) {
     try {
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
-      const link = `${clientLocationOrigin}/${ApplicationConfigurations.AnnouncementOfDeath.slug}/${application.id}`
-
       await this.sharedTemplateAPIService.sendSms(
-        (_) => generateRequestReviewSms(application, link),
+        (_) => generateRequestReviewSms(application),
         application,
       )
     } catch (error) {
