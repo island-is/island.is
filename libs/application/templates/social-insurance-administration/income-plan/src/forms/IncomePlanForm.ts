@@ -11,7 +11,12 @@ import {
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getCurrencies } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
@@ -59,7 +64,18 @@ export const IncomePlanForm: Form = buildForm({
             buildTableRepeaterField({
               id: 'incomePlanTable',
               title: incomePlanFormMessage.info.section,
-              description: incomePlanFormMessage.incomePlan.description,
+              description: (application: Application) => {
+                const { incomePlanConditions } = getApplicationExternalData(
+                  application.externalData,
+                )
+
+                return {
+                  ...incomePlanFormMessage.incomePlan.description,
+                  values: {
+                    incomePlanYear: incomePlanConditions.incomePlanYear,
+                  },
+                }
+              },
               formTitle: incomePlanFormMessage.incomePlan.registerIncome,
               addItemButtonText: incomePlanFormMessage.incomePlan.addIncome,
               saveItemButtonText: incomePlanFormMessage.incomePlan.saveIncome,
