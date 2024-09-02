@@ -163,10 +163,6 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   return (
     <Box>
-      <Box marginTop={2} as="p">
-        <Text>{formatMessage(m.assetOverviewDescription)}</Text>
-      </Box>
-      <Box marginTop={6} />
       {sections.map(
         ({ data, title, total, totalTitle, showTotalFirst }, index) => {
           const totalRow = totalTitle && total && (

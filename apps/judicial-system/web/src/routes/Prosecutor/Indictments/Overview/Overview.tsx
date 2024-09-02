@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import {
   AlertMessage,
   Box,
+  Button,
   RadioButton,
   Text,
   toast,
@@ -40,7 +41,7 @@ import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCas
 import { overview as strings } from './Overview.strings'
 import * as styles from './Overview.css'
 
-const Overview: FC<unknown> = () => {
+const Overview: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
@@ -203,9 +204,37 @@ const Overview: FC<unknown> = () => {
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
         )}
-        <Box marginBottom={userCanSendIndictmentToCourt ? 5 : 10}>
+        <Box
+          marginBottom={
+            workingCase.indictmentDecision !==
+              IndictmentDecision.POSTPONING_UNTIL_VERDICT ||
+            userCanSendIndictmentToCourt
+              ? 5
+              : 10
+          }
+        >
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
+        {workingCase.indictmentDecision !==
+        IndictmentDecision.POSTPONING_UNTIL_VERDICT ? (
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            marginBottom={userCanSendIndictmentToCourt ? 5 : 10}
+          >
+            <Button
+              size="small"
+              icon="add"
+              onClick={() =>
+                router.push(
+                  `${constants.INDICTMENTS_ADD_FILES_ROUTE}/${workingCase.id}`,
+                )
+              }
+            >
+              {formatMessage(strings.addDocumentsButtonText)}
+            </Button>
+          </Box>
+        ) : null}
         {userCanSendIndictmentToCourt && (
           <Box marginBottom={10}>
             <SectionHeading

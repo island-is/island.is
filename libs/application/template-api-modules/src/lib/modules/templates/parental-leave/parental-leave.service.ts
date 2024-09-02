@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { S3 } from 'aws-sdk'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 import cloneDeep from 'lodash/cloneDeep'
@@ -82,7 +83,6 @@ import {
   generateEmployerRejectedApplicationSms,
   generateOtherParentRejectedApplicationSms,
 } from './smsGenerators'
-import { AwsService } from '@island.is/nest/aws'
 
 interface VMSTError {
   type: string
@@ -105,6 +105,8 @@ interface AnswerPeriod {
 
 @Injectable()
 export class ParentalLeaveService extends BaseTemplateApiService {
+  s3 = new S3()
+
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private parentalLeaveApi: ParentalLeaveApi,
@@ -115,7 +117,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
     private readonly childrenService: ChildrenService,
     private readonly nationalRegistryApi: NationalRegistryClientService,
-    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
   }
@@ -386,16 +387,16 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       )
 
       const Key = `${application.id}/${filename}`
-      const file = await this.awsService.getFileBase64({
-        bucket: this.attachmentBucket,
-        fileName: Key,
-      })
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
 
-      if (!file) {
+      if (!fileContent) {
         throw new Error('File content was undefined')
       }
 
-      return file
+      return fileContent.toString('base64')
     } catch (e) {
       this.logger.error('Cannot get ' + fileUpload + ' attachment', { e })
       throw new Error('Failed to get the ' + fileUpload + ' attachment')
@@ -433,7 +434,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       state === States.RESIDENCE_GRANT_APPLICATION
     ) {
       if (residenceGrantFiles) {
-        residenceGrantFiles.forEach(async (_item, index) => {
+        residenceGrantFiles.forEach(async (item, index) => {
           const pdf = await this.getPdf(
             application,
             index,
@@ -448,7 +449,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
 
     if (changeEmployerFile) {
-      changeEmployerFile.forEach(async (_item, index) => {
+      changeEmployerFile.forEach(async (item, index) => {
         const pdf = await this.getPdf(
           application,
           index,
@@ -464,7 +465,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     // We don't want to send old files to VMST again
     if (applicationFundId && applicationFundId !== '') {
       if (additionalDocuments) {
-        additionalDocuments.forEach(async (_val, i) => {
+        additionalDocuments.forEach(async (val, i) => {
           const pdf = await this.getPdf(
             application,
             i,
@@ -1391,7 +1392,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return periods
   }
 
-  async sendApplication({ application }: TemplateApiModuleActionProps) {
+  async sendApplication({
+    application,
+    params = undefined,
+  }: TemplateApiModuleActionProps) {
     const {
       isSelfEmployed,
       isReceivingUnemploymentBenefits,

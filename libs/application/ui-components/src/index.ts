@@ -12,6 +12,7 @@ export {
   formatPhoneNumber,
   removeCountryCode,
   formatCurrency,
+  formatCurrencyWithoutSuffix,
 } from './utilities/formatters'
 export { handleServerError } from './utilities/handleServerError'
 export { InputImageUpload } from './components/InputImageUpload/InputImageUpload'

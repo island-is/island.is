@@ -1,9 +1,10 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
   AlertBanner,
   CaseFilesAccordionItem,
@@ -44,6 +45,7 @@ const CourtOfAppealOverview = () => {
     court,
     judge,
     registrar,
+    caseType,
   } = useInfoCardItems()
 
   const handleNavigationTo = (destination: string) =>
@@ -95,7 +97,10 @@ const CourtOfAppealOverview = () => {
                     court,
                     prosecutor(workingCase.type),
                     judge,
-                    registrar,
+                    ...(isInvestigationCase(workingCase.type)
+                      ? [caseType]
+                      : []),
+                    ...(workingCase.registrar ? [registrar] : []),
                   ],
                   columns: 2,
                 },
