@@ -7,7 +7,10 @@ export const authSchema = z.strictObject({
   scopes: z.string().array(),
   allowedRedirectUris: z.string().array(),
   secret: z.string(),
-  callbacksLoginRedirectUri: z.string(),
+  callbacksRedirectUris: z.strictObject({
+    login: z.string(),
+    logout: z.string(),
+  }),
 })
 
 export const environmentSchema = z.strictObject({
@@ -29,6 +32,16 @@ export const environmentSchema = z.strictObject({
    * Identity server configuration
    */
   auth: authSchema,
+  /**
+   * Enable CORS configuration
+   */
+  enableCors: z
+    .object({
+      origin: z.string().array(),
+      methods: z.enum(['GET', 'POST']).array(),
+      credentials: z.boolean().optional(),
+    })
+    .optional(),
 })
 
 export type BffEnvironmentSchema = z.infer<typeof environmentSchema>

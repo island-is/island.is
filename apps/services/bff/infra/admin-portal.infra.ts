@@ -12,11 +12,10 @@ export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
-      BFF_CALLBACKS_LOGIN_REDIRECT_URI: {
-        dev: 'https://beta.dev01.devland.is/stjornbord/bff/callbacks/login',
-        staging:
-          'https://beta.staging01.devland.is/stjornbord/bff/callbacks/login',
-        prod: 'https://island.is/stjornbord/bff/callbacks/login',
+      BFF_CALLBACKS_BASE_PATH: {
+        dev: 'https://beta.dev01.devland.is/stjornbord/bff/callbacks',
+        staging: 'https://beta.staging01.devland.is/stjornbord/bff/callbacks',
+        prod: 'https://island.is/stjornbord/bff/callbacks',
       },
       IDENTITY_SERVER_CLIENT_SCOPES: json([
         '@admin.island.is/delegation-system',

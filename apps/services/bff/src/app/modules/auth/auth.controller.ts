@@ -7,10 +7,12 @@ import {
   ValidationPipe,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
-import { Response, Request } from 'express'
+import { Request, Response } from 'express'
 import { AuthService } from './auth.service'
 import { CallbackLoginQuery } from './queries/callback-login.query'
 import { LoginQuery } from './queries/login.query'
+import { LogoutQuery } from './queries/logout.query'
+import { CallbackLogoutQuery } from './queries/callback-logout.query'
 
 const authValidationPipe = new ValidationPipe({
   transform: true,
@@ -35,11 +37,29 @@ export class AuthController {
   }
 
   @Get('callbacks/login')
-  async callback(
+  async callbackLogin(
     @Res() res: Response,
     @Query(authValidationPipe)
     query: CallbackLoginQuery,
   ): Promise<void> {
-    return this.authService.callback(res, query)
+    return this.authService.callbackLogin(res, query)
+  }
+
+  @Get('logout')
+  async logout(
+    @Res() res: Response,
+    @Query(authValidationPipe)
+    query: LogoutQuery,
+  ): Promise<void> {
+    return this.authService.logout({ res, query })
+  }
+
+  @Get('callbacks/logout')
+  async callbackLogout(
+    @Res() res: Response,
+    @Query(authValidationPipe)
+    query: CallbackLogoutQuery,
+  ): Promise<void> {
+    return this.authService.callbackLogout(res, query)
   }
 }

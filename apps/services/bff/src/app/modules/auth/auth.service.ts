@@ -2,15 +2,18 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { Request, Response } from 'express'
+import { jwtDecode } from 'jwt-decode'
 
 import { uuid } from 'uuidv4'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { CacheService } from '../cache/cache.service'
+import { CachedTokenResponse, IdTokenData, TokenResponse } from './auth.types'
+import { PKCEService } from './pkce.service'
 import { CallbackLoginQuery } from './queries/callback-login.query'
 import { LoginQuery } from './queries/login.query'
-import { PKCEService } from './pkce.service'
-import { TokenResponse } from './auth.types'
+import { LogoutQuery } from './queries/logout.query'
+import { CallbackLogoutQuery } from './queries/callback-logout.query'
 
 export type ParResponse = {
   request_uri: string
@@ -77,7 +80,10 @@ export class AuthService {
 
       return await response.json()
     } catch (error) {
-      this.logger.error(`Error making request to ${endpoint}:`, error)
+      this.logger.error(
+        `Error making request to ${endpoint}:`,
+        JSON.stringify(error),
+      )
 
       throw new BadRequestException(`Failed to fetch from ${endpoint}`)
     }
@@ -98,7 +104,7 @@ export class AuthService {
     return this.postRequest<ParResponse>('/connect/par', {
       client_id: this.config.auth.clientId,
       client_secret: this.config.auth.secret,
-      redirect_uri: this.config.auth.callbacksLoginRedirectUri,
+      redirect_uri: this.config.auth.callbacksRedirectUris.login,
       response_type: 'code',
       response_mode: 'query',
       scope: ['openid', 'profile', this.config.auth.scopes].join(' '),
@@ -122,11 +128,27 @@ export class AuthService {
       code,
       client_secret: this.config.auth.secret,
       client_id: this.config.auth.clientId,
-      redirect_uri: this.config.auth.callbacksLoginRedirectUri,
+      redirect_uri: this.config.auth.callbacksRedirectUris.login,
       code_verifier: codeVerifier,
     })
   }
 
+  /**
+   * Get the origin URL from the request headers and add the global prefix
+   */
+  private getOriginUrl(req: Request) {
+    return `${(req.headers['origin'] || req.headers['referer'] || '')
+      // Remove trailing slash and add global prefix
+      .replace(/\/$/, '')}${environment.globalPrefix}`
+  }
+
+  /**
+   * This method initiates the login flow.
+   * It validates the target_link_uri and generates a unique session id, for a login attempt.
+   * It also generates a code verifier and code challenge to enhance security.
+   * The login attempt data is saved in the cache and a PAR request is made to the identity server.
+   * The user is then redirected to the identity server login page.
+   */
   async login({
     req,
     res,
@@ -157,11 +179,7 @@ export class AuthService {
     )
 
     // Get the calling URL
-    const originUrl = `${(
-      req.headers['origin'] ||
-      req.headers['referer'] ||
-      ''
-    ).replace(/\/$/, '')}${environment.globalPrefix}`
+    const originUrl = this.getOriginUrl(req)
 
     await this.cacheService.save({
       key: this.cacheService.createSessionKeyType('attempt', sid),
@@ -183,7 +201,15 @@ export class AuthService {
     )
   }
 
-  async callback(res: Response, query: CallbackLoginQuery) {
+  /**
+   * Callback for the login flow
+   * This method is called from the identity server after the user has logged in
+   * and the authorization code has been issued.
+   * The authorization code is then exchanged for tokens.
+   * We then save the tokens as well as decoded id token to the cache and create a session cookie.
+   * Finally, we redirect the user back to the original URL.
+   */
+  async callbackLogin(res: Response, query: CallbackLoginQuery) {
     // Get login attempt from cache
     const loginAttemptData = await this.cacheService.get<{
       targetLinkUri?: string
@@ -198,12 +224,18 @@ export class AuthService {
       codeVerifier: loginAttemptData.codeVerifier,
     })
 
-    const sid = uuid()
+    const userProfile: IdTokenData = jwtDecode(tokenResponse.id_token)
+    const sid = userProfile.sid
+    const value: CachedTokenResponse = {
+      ...tokenResponse,
+      originUrl: loginAttemptData.originUrl,
+      userProfile,
+    }
 
     // Save the tokenResponse to the cache
     await this.cacheService.save({
       key: this.cacheService.createSessionKeyType('current', sid),
-      value: tokenResponse,
+      value,
       ttl: 60 * 60 * 1000, // 1 hour
     })
 
@@ -222,5 +254,57 @@ export class AuthService {
     return res.redirect(
       loginAttemptData.targetLinkUri || loginAttemptData.originUrl,
     )
+  }
+
+  /**
+   * This method initiates the logout flow.
+   * It gets necessary data from the cache and constructs a logout URL.
+   * The user is then redirected to the identity server logout page.
+   */
+  async logout({ res, query: { sid } }: { res: Response; query: LogoutQuery }) {
+    const currentLoginCacheKey = this.cacheService.createSessionKeyType(
+      'current',
+      sid,
+    )
+
+    const cachedTokenResponse =
+      await this.cacheService.get<CachedTokenResponse>(currentLoginCacheKey)
+
+    const searchParams = new URLSearchParams({
+      id_token_hint: cachedTokenResponse.id_token,
+      post_logout_redirect_uri: this.config.auth.callbacksRedirectUris.logout,
+    })
+
+    return res.redirect(`${this.baseUrl}/connect/endsession?${searchParams}`)
+  }
+
+  /**
+   * Callback for the logout flow.
+   * This method is called from the identity server after the user has logged out.
+   * We clean up the current login from the cache and delete the session cookie.
+   * Finally, we redirect the user back to the original URL.
+   */
+  async callbackLogout(res: Response, { sid }: CallbackLogoutQuery) {
+    if (!sid) {
+      this.logger.error('Logout failed: No session id provided')
+
+      throw new BadRequestException('Logout failed')
+    }
+
+    const currentLoginCacheKey = this.cacheService.createSessionKeyType(
+      'current',
+      sid,
+    )
+
+    const cachedTokenResponse =
+      await this.cacheService.get<CachedTokenResponse>(currentLoginCacheKey)
+
+    // Clean up current login from the cache since we have a successful logout.
+    await this.cacheService.delete(currentLoginCacheKey)
+
+    // Delete session cookie
+    res.clearCookie('sid')
+
+    return res.redirect(cachedTokenResponse.originUrl)
   }
 }
