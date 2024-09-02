@@ -30,6 +30,30 @@ export const translations = {
         'Fæðingarstyrkur utan vinnumarkaða -  valmöguleiki í "Val um stöðu" dropdown',
     },
   }),
+  legalDomicile: defineMessages({
+    heading: {
+      id: 'web.parentalLeaveCalculator:legalDomicile.heading',
+      defaultMessage: 'Átt þú lögheimili á Íslandi',
+      description:
+        'Heading fyrir ofan "Átt þú lögheimili á Íslandi" radio takka',
+    },
+    tooltip: {
+      id: 'web.parentalLeaveCalculator:legalDomicile.tooltip',
+      defaultMessage:
+        'Nánari upplýsingar um það hvað telst vera samfellt starf hjá starfsmönnum eða sjálfstætt starfandi einstaklingum og upplýsingar um önnur tilvik sem teljast jafnframt til þátttöku á innlendum vinnumarkaði má finna undir flipanum réttindi foreldra á innlendum vinnumarkaði á heimasíðu Fæðingarorlofssjóðs.',
+      description: 'Tooltip fyrir ofan "Lögheimli á íslandi" dropdown',
+    },
+    yes: {
+      id: 'web.parentalLeaveCalculator:legalDomicile.yes',
+      defaultMessage: 'Já',
+      description: 'Já',
+    },
+    no: {
+      id: 'web.parentalLeaveCalculator:legalDomicile.no',
+      defaultMessage: 'Nei',
+      description: 'Nei',
+    },
+  }),
   childBirthYear: defineMessages({
     heading: {
       id: 'web.parentalLeaveCalculator:childBirthYear.heading',
@@ -273,16 +297,41 @@ export const translations = {
     description: 'Texti á "Reikna" hnapp',
   }),
   results: defineMessages({
-    mainHeading: {
-      id: 'web.parentalLeaveCalculator:results.mainHeading',
+    mainParentalLeaveHeading: {
+      id: 'web.parentalLeaveCalculator:results.mainParentalLeaveHeading',
       defaultMessage: 'Fæðingarorlof á mánuði',
-      description: 'Niðurstöðuskjár - Aðal heading',
+      description: 'Niðurstöðuskjár - Aðal heading fyrir fæðingarorlof',
     },
-    mainDescription: {
-      id: 'web.parentalLeaveCalculator:results.mmainHeading',
+    mainParentalLeaveDescription: {
+      id: 'web.parentalLeaveCalculator:results.mainParentalLeaveDescription',
       defaultMessage: '{ratio}% fæðingarorlof á mánuði (eftir frádrátt)',
       description:
-        'Niðurstöðuskjár - Lýsing á hve mikið fæðingarorlof á mánuði notandi valdi',
+        'Niðurstöðuskjár - Lýsing á prósentutölu fæðingarorlofs á mánuði sem notandi valdi',
+    },
+    mainStudentHeading: {
+      id: 'web.parentalLeaveCalculator:results.mainStudentHeading',
+      defaultMessage: 'Fæðingarstyrkur námsmanna á mánuði',
+      description:
+        'Niðurstöðuskjár - Aðal heading fyrir fæðingarstyrk námsmanna',
+    },
+    mainStudentDescription: {
+      id: 'web.parentalLeaveCalculator:results.mainStudentDescription',
+      defaultMessage:
+        '{ratio}% fæðingarstyrkur námsmanna á mánuði (eftir frádrátt)',
+      description:
+        'Niðurstöðuskjár - Lýsing á prósentutölu fæðingarstyrks á mánuði sem notandi valdi',
+    },
+    mainOutsideWorkforceHeading: {
+      id: 'web.parentalLeaveCalculator:results.mainOutsideWorkforceHeading',
+      defaultMessage: 'Fæðingarstyrkur á mánuði',
+      description:
+        'Niðurstöðuskjár - Aðal heading fyrir fæðingarstyrk utan vinnumarkaðs',
+    },
+    mainOutsideWorkforceDescription: {
+      id: 'web.parentalLeaveCalculator:results.mainOutsideWorkforceDescription',
+      defaultMessage: '{ratio}% fæðingarstyrkur á mánuði (eftir frádrátt)',
+      description:
+        'Niðurstöðuskjár - Lýsing á prósentutölu fæðingarstyrks á mánuði sem notandi valdi',
     },
     currencySuffix: {
       id: 'web.parentalLeaveCalculator:results.currencySuffix',

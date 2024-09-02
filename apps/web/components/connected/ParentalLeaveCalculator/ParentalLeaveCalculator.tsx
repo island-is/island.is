@@ -13,6 +13,7 @@ import {
   Button,
   GridColumn,
   GridRow,
+  Inline,
   Input,
   type Option,
   RadioButton,
@@ -31,19 +32,24 @@ import * as styles from './ParentalLeaveCalculator.css'
 
 interface FieldProps {
   heading: string
+  headingTooltip?: string
   description?: string
   tooltip?: string
 }
 
 const Field = ({
   heading,
+  headingTooltip,
   description,
   tooltip,
   children,
 }: PropsWithChildren<FieldProps>) => {
   return (
     <Stack space={2}>
-      <Text variant="h3">{heading}</Text>
+      <Inline flexWrap="nowrap" space={1} alignY="center">
+        <Text variant="h3">{heading}</Text>
+        {headingTooltip && <Tooltip text={headingTooltip} />}
+      </Inline>
       {description && (
         <Text variant="medium">
           {description}
@@ -75,6 +81,11 @@ enum ParentalLeavePeriod {
 enum Screen {
   FORM = 'form',
   RESULTS = 'results',
+}
+
+enum LegalDomicileInIceland {
+  YES = 'y',
+  NO = 'n',
 }
 
 interface ParentalLeaveCalculatorProps {
@@ -191,6 +202,10 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
     'parentalLeaveRatio',
     parseAsInteger,
   )
+  const [legalDomicileInIceland, setLegalDomicileInIceland] = useQueryState(
+    'legalDomicileInIceland',
+    parseAsStringEnum(Object.values(LegalDomicileInIceland)),
+  )
 
   const calculate = () => {
     console.log('TEST')
@@ -212,6 +227,44 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
           />
         </Field>
 
+        {status === Status.OUTSIDE_WORKFORCE && (
+          <Field
+            heading={formatMessage(t.legalDomicile.heading)}
+            headingTooltip={formatMessage(t.legalDomicile.tooltip)}
+          >
+            <GridRow rowGap={1}>
+              <GridColumn span={['1/1', '1/2']}>
+                <RadioButton
+                  id={LegalDomicileInIceland.YES}
+                  onChange={() => {
+                    setLegalDomicileInIceland(LegalDomicileInIceland.YES)
+                  }}
+                  checked={
+                    legalDomicileInIceland === LegalDomicileInIceland.YES
+                  }
+                  value={LegalDomicileInIceland.YES}
+                  backgroundColor="white"
+                  large={true}
+                  label={formatMessage(t.legalDomicile.yes)}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']}>
+                <RadioButton
+                  id={LegalDomicileInIceland.NO}
+                  onChange={() => {
+                    setLegalDomicileInIceland(LegalDomicileInIceland.NO)
+                  }}
+                  checked={legalDomicileInIceland === LegalDomicileInIceland.NO}
+                  value={LegalDomicileInIceland.NO}
+                  backgroundColor="white"
+                  large={true}
+                  label={formatMessage(t.legalDomicile.no)}
+                />
+              </GridColumn>
+            </GridRow>
+          </Field>
+        )}
+
         <Field
           heading={formatMessage(t.childBirthYear.heading)}
           description={formatMessage(t.childBirthYear.description)}
@@ -226,95 +279,106 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
           />
         </Field>
 
-        <Field
-          heading={formatMessage(t.workPercentage.heading)}
-          description={formatMessage(t.workPercentage.description)}
-          tooltip={formatMessage(t.workPercentage.tooltip)}
-        >
-          <GridRow rowGap={1}>
-            <GridColumn span={['1/1', '1/2']}>
-              <RadioButton
-                id={WorkPercentage.OPTION_1}
-                onChange={() => {
-                  setWorkPercentage(WorkPercentage.OPTION_1)
-                }}
-                checked={workPercentage === WorkPercentage.OPTION_1}
-                value={WorkPercentage.OPTION_1}
-                backgroundColor="white"
-                large={true}
-                label={formatMessage(t.workPercentage.option1)}
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']}>
-              <RadioButton
-                id={WorkPercentage.OPTION_2}
-                onChange={() => {
-                  setWorkPercentage(WorkPercentage.OPTION_2)
-                }}
-                checked={workPercentage === WorkPercentage.OPTION_2}
-                value={WorkPercentage.OPTION_2}
-                backgroundColor="white"
-                large={true}
-                label={formatMessage(t.workPercentage.option2)}
-              />
-            </GridColumn>
-          </GridRow>
-        </Field>
+        {status === Status.PARENTAL_LEAVE && (
+          <Field
+            heading={formatMessage(t.workPercentage.heading)}
+            description={formatMessage(t.workPercentage.description)}
+            tooltip={formatMessage(t.workPercentage.tooltip)}
+          >
+            <GridRow rowGap={1}>
+              <GridColumn span={['1/1', '1/2']}>
+                <RadioButton
+                  id={WorkPercentage.OPTION_1}
+                  onChange={() => {
+                    setWorkPercentage(WorkPercentage.OPTION_1)
+                  }}
+                  checked={workPercentage === WorkPercentage.OPTION_1}
+                  value={WorkPercentage.OPTION_1}
+                  backgroundColor="white"
+                  large={true}
+                  label={formatMessage(t.workPercentage.option1)}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']}>
+                <RadioButton
+                  id={WorkPercentage.OPTION_2}
+                  onChange={() => {
+                    setWorkPercentage(WorkPercentage.OPTION_2)
+                  }}
+                  checked={workPercentage === WorkPercentage.OPTION_2}
+                  value={WorkPercentage.OPTION_2}
+                  backgroundColor="white"
+                  large={true}
+                  label={formatMessage(t.workPercentage.option2)}
+                />
+              </GridColumn>
+            </GridRow>
+          </Field>
+        )}
 
-        <Field
-          heading={formatMessage(t.income.heading)}
-          description={formatMessage(t.income.description)}
-        >
-          <NumberFormat
-            onValueChange={({ value }) => {
-              setIncome(Number(value))
-            }}
-            label={formatMessage(t.income.label)}
-            tooltip={formatMessage(t.income.tooltip)}
-            value={String(income || '')}
-            customInput={Input}
-            name="income"
-            id="income"
-            type="text"
-            inputMode="numeric"
-            thousandSeparator="."
-            decimalSeparator=","
-            suffix={formatMessage(t.income.inputSuffix)}
-            placeholder={formatMessage(t.income.inputPlaceholder)}
-            maxLength={
-              formatMessage(t.income.inputSuffix).length +
-              (slice.configJson?.incomeInputMaxLength ?? 12)
-            }
-          />
-        </Field>
-        <Field
-          heading={formatMessage(t.additionalPensionFunding.heading)}
-          description={formatMessage(t.additionalPensionFunding.description)}
-        >
-          <Select
-            onChange={(option) => {
-              setAdditionalPensionFundingPercentage(option?.value ?? null)
-            }}
-            value={additionalPensionFundingOptions.find(
-              (option) => option.value === additionalPensionFundingPercentage,
-            )}
-            label={formatMessage(t.additionalPensionFunding.label)}
-            options={additionalPensionFundingOptions}
-          />
-        </Field>
-        <Field
-          heading={formatMessage(t.union.heading)}
-          description={formatMessage(t.union.description)}
-        >
-          <Select
-            onChange={(option) => {
-              setUnion(option?.value ?? null)
-            }}
-            value={unionOptions.find((option) => option.value === union)}
-            label={formatMessage(t.union.label)}
-            options={unionOptions}
-          />
-        </Field>
+        {status === Status.PARENTAL_LEAVE && (
+          <Field
+            heading={formatMessage(t.income.heading)}
+            description={formatMessage(t.income.description)}
+          >
+            <NumberFormat
+              onValueChange={({ value }) => {
+                setIncome(Number(value))
+              }}
+              label={formatMessage(t.income.label)}
+              tooltip={formatMessage(t.income.tooltip)}
+              value={String(income || '')}
+              customInput={Input}
+              name="income"
+              id="income"
+              type="text"
+              inputMode="numeric"
+              thousandSeparator="."
+              decimalSeparator=","
+              suffix={formatMessage(t.income.inputSuffix)}
+              placeholder={formatMessage(t.income.inputPlaceholder)}
+              maxLength={
+                formatMessage(t.income.inputSuffix).length +
+                (slice.configJson?.incomeInputMaxLength ?? 12)
+              }
+            />
+          </Field>
+        )}
+
+        {status === Status.PARENTAL_LEAVE && (
+          <Field
+            heading={formatMessage(t.additionalPensionFunding.heading)}
+            description={formatMessage(t.additionalPensionFunding.description)}
+          >
+            <Select
+              onChange={(option) => {
+                setAdditionalPensionFundingPercentage(option?.value ?? null)
+              }}
+              value={additionalPensionFundingOptions.find(
+                (option) => option.value === additionalPensionFundingPercentage,
+              )}
+              label={formatMessage(t.additionalPensionFunding.label)}
+              options={additionalPensionFundingOptions}
+            />
+          </Field>
+        )}
+
+        {status === Status.PARENTAL_LEAVE && (
+          <Field
+            heading={formatMessage(t.union.heading)}
+            description={formatMessage(t.union.description)}
+          >
+            <Select
+              onChange={(option) => {
+                setUnion(option?.value ?? null)
+              }}
+              value={unionOptions.find((option) => option.value === union)}
+              label={formatMessage(t.union.label)}
+              options={unionOptions}
+            />
+          </Field>
+        )}
+
         <Field
           heading={formatMessage(t.personalDiscount.heading)}
           description={formatMessage(t.personalDiscount.description)}
@@ -342,50 +406,57 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
             }}
           />
         </Field>
-        <Field
-          heading={formatMessage(t.parentalLeavePeriod.heading)}
-          description={formatMessage(t.parentalLeavePeriod.description)}
-        >
-          <Select
-            onChange={(option) => {
-              setParentalLeavePeriod(
-                (option?.value as ParentalLeavePeriod) ?? null,
-              )
-            }}
-            value={parentalLeavePeriodOptions.find(
-              (option) => option.value === parentalLeavePeriod,
-            )}
-            label={formatMessage(t.parentalLeavePeriod.label)}
-            options={parentalLeavePeriodOptions}
-          />
-        </Field>
-        <Field
-          heading={formatMessage(t.parentalLeaveRatio.heading)}
-          description={formatMessage(t.parentalLeaveRatio.description)}
-        >
-          <NumberFormat
-            onValueChange={({ value }) => {
-              setParentalLeaveRatio(Number(value))
-            }}
-            label={formatMessage(t.parentalLeaveRatio.label)}
-            value={String(parentalLeaveRatio || '')}
-            customInput={Input}
-            name="parentalLeaveRatio"
-            id="parentalLeaveRatio"
-            type="text"
-            inputMode="numeric"
-            suffix={formatMessage(t.parentalLeaveRatio.suffix)}
-            placeholder={formatMessage(t.parentalLeaveRatio.placeholder)}
-            format={(value) => {
-              const maxParentalLeaveRatio =
-                slice.configJson?.maxParentalLeaveRatio ?? 100
-              if (Number(value) > maxParentalLeaveRatio) {
-                value = String(maxParentalLeaveRatio)
-              }
-              return `${value}${formatMessage(t.parentalLeaveRatio.suffix)}`
-            }}
-          />
-        </Field>
+
+        {status === Status.PARENTAL_LEAVE && (
+          <Field
+            heading={formatMessage(t.parentalLeavePeriod.heading)}
+            description={formatMessage(t.parentalLeavePeriod.description)}
+          >
+            <Select
+              onChange={(option) => {
+                setParentalLeavePeriod(
+                  (option?.value as ParentalLeavePeriod) ?? null,
+                )
+              }}
+              value={parentalLeavePeriodOptions.find(
+                (option) => option.value === parentalLeavePeriod,
+              )}
+              label={formatMessage(t.parentalLeavePeriod.label)}
+              options={parentalLeavePeriodOptions}
+            />
+          </Field>
+        )}
+
+        {status === Status.PARENTAL_LEAVE && (
+          <Field
+            heading={formatMessage(t.parentalLeaveRatio.heading)}
+            description={formatMessage(t.parentalLeaveRatio.description)}
+          >
+            <NumberFormat
+              onValueChange={({ value }) => {
+                setParentalLeaveRatio(Number(value))
+              }}
+              label={formatMessage(t.parentalLeaveRatio.label)}
+              value={String(parentalLeaveRatio || '')}
+              customInput={Input}
+              name="parentalLeaveRatio"
+              id="parentalLeaveRatio"
+              type="text"
+              inputMode="numeric"
+              suffix={formatMessage(t.parentalLeaveRatio.suffix)}
+              placeholder={formatMessage(t.parentalLeaveRatio.placeholder)}
+              format={(value) => {
+                const maxParentalLeaveRatio =
+                  slice.configJson?.maxParentalLeaveRatio ?? 100
+                if (Number(value) > maxParentalLeaveRatio) {
+                  value = String(maxParentalLeaveRatio)
+                }
+                return `${value}${formatMessage(t.parentalLeaveRatio.suffix)}`
+              }}
+            />
+          </Field>
+        )}
+
         <Button onClick={calculate}>{formatMessage(t.calculate)}</Button>
       </Stack>
     </Box>
@@ -427,16 +498,35 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
   const mainResultBeforeDeduction = 440000
   const mainResultAfterDeduction = 242471
 
+  const mainSection = {
+    [Status.PARENTAL_LEAVE]: {
+      heading: t.results.mainParentalLeaveHeading,
+      description: t.results.mainParentalLeaveDescription,
+    },
+    [Status.STUDENT]: {
+      heading: t.results.mainStudentHeading,
+      description: t.results.mainStudentDescription,
+    },
+    [Status.OUTSIDE_WORKFORCE]: {
+      heading: t.results.mainOutsideWorkforceHeading,
+      description: t.results.mainOutsideWorkforceDescription,
+    },
+  }
+
+  const ratio = status === Status.PARENTAL_LEAVE ? parentalLeaveRatio : 100
+
   return (
     <Stack space={5}>
       <Stack space={3}>
         <Box background="blue100" paddingY={3} paddingX={4} textAlign="center">
           <Box className={styles.resultBorder} paddingY={2} paddingX={3}>
             <Stack space={2}>
-              <Text variant="h3">{formatMessage(t.results.mainHeading)}</Text>
+              <Text variant="h3">
+                {formatMessage(mainSection[status].heading)}
+              </Text>
               <Text>
-                {formatMessage(t.results.mainDescription, {
-                  ratio: parentalLeaveRatio,
+                {formatMessage(mainSection[status].description, {
+                  ratio,
                 })}
               </Text>
               <Text fontWeight="semiBold" variant="h3">
