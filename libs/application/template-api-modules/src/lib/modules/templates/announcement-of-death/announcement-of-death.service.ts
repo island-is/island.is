@@ -24,7 +24,7 @@ import {
 import { isPerson } from 'kennitala'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { Application, ApplicationTypes } from '@island.is/application/types'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, YES } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { generateFirearmApplicantEmail } from './emailGenerators/firearmApplicantNotification'
 import { SharedTemplateApiService } from '../../shared'
@@ -223,7 +223,10 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
           answers.estateMembers.members.filter((member) => !member?.dummy),
         ),
         hadFirearms: answers.hadFirearms,
-        firearm: JSON.stringify(answers.firearmApplicant) ?? {},
+        firearm:
+          answers.hadFirearms === YES
+            ? JSON.stringify(answers.firearmApplicant)
+            : '',
         bankcodeSecuritiesOrShares: otherProperties.includes(
           PropertiesEnum.ACCOUNTS,
         )
