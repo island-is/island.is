@@ -4,7 +4,7 @@
 
 This application template allows applicants to apply for survivors benefits.
 
-![](./assets/old-age-pension-flow-chart.png)
+![Survivors Benefits flow chart](./src/assets/survivors-benefits.png)
 
 ### States
 
@@ -20,29 +20,29 @@ Valid applicant will be able to advance to this state where they can start the a
 
 #### Tryggingastofnun submitted
 
-When applicant has sent in the application to TR the application is in this state. Here the application can be edited.
+When the applicant has sent in the application to TR, the application is in this state. In this state the application can be edited.
 
 #### Tryggingastofnun in review
 
-For application to be in this state, TR need to make a state change when they start to review the application. Here the application cannot be edited.
+For application to be in this state, TR need to make a state change when they start to review the application. In this state the application cannot be edited.
 
 #### Additional document required
 
-If TR needs additional documents to finish processing the application they can make a state change so the applicant can add their missing documents.
+If TR needs additional documents to finish processing the application they can make a state change so the applicant can add any missing documents.
 
 #### Approved
 
-Application have been approved by TR.
+Application has been approved by TR.
 
 #### Rejected
 
-Application have been rejected by TR.
+Application has been rejected by TR.
 
 ### Localisation
 
 All localisation can be found on Contentful.
 
-- [Old age pension application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/sb.application)
+- [Survivors benefits application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/sb.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
 When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../../localization/README.md#message-extraction).
