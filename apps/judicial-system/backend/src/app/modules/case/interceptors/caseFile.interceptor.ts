@@ -9,13 +9,13 @@ import {
 } from '@nestjs/common'
 
 import {
+  CaseAppealState,
   CaseFileCategory,
   isPrisonStaffUser,
   isPrisonSystemUser,
   User,
 } from '@island.is/judicial-system/types'
 
-import { CaseFile } from '../../file'
 import { Case } from '../models/case.model'
 
 @Injectable()
@@ -27,7 +27,10 @@ export class CaseFileInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((data: Case) => {
         const returnData = data
-        if (isPrisonStaffUser(user)) {
+        if (
+          isPrisonStaffUser(user) ||
+          data.appealState !== CaseAppealState.COMPLETED
+        ) {
           data.caseFiles?.splice(0, data.caseFiles.length)
 
           return data
