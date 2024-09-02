@@ -68,7 +68,7 @@ export const Child = ({
           </GridColumn>
         </GridRow>
         {(childInfo.preferredName ||
-          childInfo.pronouns ||
+          childInfo.pronouns?.length > 0 ||
           differentPlaceOfResidence === YES) && (
           <GridRow rowGap={2}>
             {childInfo.preferredName && (
