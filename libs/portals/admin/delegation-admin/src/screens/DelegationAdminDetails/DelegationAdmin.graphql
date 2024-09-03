@@ -1,11 +1,11 @@
 query getCustomDelegationsAdmin($nationalId: String!) {
-  authAdminDelegationAdmin (nationalId: $nationalId) {
+  authAdminDelegationAdmin(nationalId: $nationalId) {
     name
     nationalId
     incoming {
       id
       validTo
-      domain{
+      domain {
         name
         organisationLogoKey
         organisationLogoUrl
