@@ -74,12 +74,6 @@ export const createSubpoena = (
   setTitle(doc, formatMessage(strings.title))
 
   if (dateLog) {
-    addConfirmation(doc, {
-      actor: theCase.judge?.name || '',
-      title: theCase.judge?.title,
-      institution: theCase.judge?.institution?.name || '',
-      date: dateLog.date,
-    })
     addEmptyLines(doc, 5)
   }
 
@@ -181,6 +175,15 @@ export const createSubpoena = (
   addNormalText(doc, formatMessage(strings.deadline), 'Times-Roman')
 
   addFooter(doc)
+
+  if (dateLog) {
+    addConfirmation(doc, {
+      actor: theCase.judge?.name || '',
+      title: theCase.judge?.title,
+      institution: theCase.judge?.institution?.name || '',
+      date: dateLog.date,
+    })
+  }
 
   doc.end()
 

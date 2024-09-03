@@ -22,6 +22,10 @@ export const largeFontSize = 18
 export const hugeFontSize = 26
 export const giganticFontSize = 33
 
+const lightGray = '#FAFAFA'
+const darkGray = '#CBCBCB'
+const gold = '#ADA373'
+
 const setFont = (doc: PDFKit.PDFDocument, font?: string) => {
   if (font) {
     doc.font(font)
@@ -115,8 +119,6 @@ export const addConfirmation = (
   doc: PDFKit.PDFDocument,
   confirmation: Confirmation,
 ) => {
-  const lightGray = '#FAFAFA'
-  const darkGray = '#CBCBCB'
   const pageMargin = calculatePt(18)
   const shaddowHeight = calculatePt(90)
   const coatOfArmsWidth = calculatePt(105)
@@ -129,17 +131,20 @@ export const addConfirmation = (
   const shaddowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
   const titleWidth = institutionWidth + confirmedByWidth
 
+  // Draw the shadow
   doc
     .rect(pageMargin, pageMargin + calculatePt(8), shaddowWidth, shaddowHeight)
     .fill(lightGray)
     .stroke()
 
+  // Draw the coat of arms
   doc
     .rect(coatOfArmsX, pageMargin, coatOfArmsWidth, coatOfArmsHeight)
     .fillAndStroke('white', darkGray)
 
   addCoatOfArms(doc, calculatePt(49), calculatePt(33))
 
+  // Draw the title
   doc
     .rect(coatOfArmsX + coatOfArmsWidth, pageMargin, titleWidth, titleHeight)
     .fillAndStroke(lightGray, darkGray)
@@ -157,6 +162,7 @@ export const addConfirmation = (
     pageMargin + calculatePt(12),
   )
 
+  // Draw the institution
   doc
     .rect(
       coatOfArmsX + coatOfArmsWidth,
@@ -177,6 +183,7 @@ export const addConfirmation = (
     confirmedByWidth - calculatePt(16),
   )
 
+  // Draw the actor
   doc
     .rect(
       coatOfArmsX + coatOfArmsWidth + confirmedByWidth,
@@ -201,7 +208,6 @@ export const addConfirmation = (
     pageMargin + titleHeight + calculatePt(32),
   )
 
-  // doc.translate(-150, 0)
   doc.fillColor('black')
 }
 
@@ -209,9 +215,6 @@ export const addIndictmentConfirmation = (
   doc: PDFKit.PDFDocument,
   confirmation: Confirmation,
 ) => {
-  const lightGray = '#FAFAFA'
-  const darkGray = '#CBCBCB'
-  const gold = '#ADA373'
   const pageMargin = calculatePt(18)
   const shaddowHeight = calculatePt(90)
   const coatOfArmsWidth = calculatePt(105)
