@@ -63,7 +63,7 @@ export class SubpoenaResponse {
       (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
     )
     const arraignmentDate = subpoenaDateLog?.date ?? ''
-    const subpoenaCreatedDate = subpoenaDateLog?.created ?? ''
+    const subpoenaCreatedDate = subpoenaDateLog?.created ?? '' //TODO: Change to subpoena created in RLS
 
     return {
       caseId: internalCase.id,
