@@ -24,6 +24,7 @@ import {
   useGetOrgansListQuery,
   useUpdateOrganDonationInfoMutation,
 } from '../OrganDonation/OrganDonation.generated'
+import { Loader } from './Loader'
 
 const OPT_IN = 'opt-in'
 const OPT_IN_EXCEPTIONS = 'opt-in-exceptions'
@@ -98,8 +99,7 @@ export const Form2 = () => {
       <Text variant="eyebrow" color="purple400" marginBottom={1}>
         {formatMessage(messages.changeTake)}
       </Text>
-      {/* TODO: Better loading state */}
-      {loading && <LoadingDots />}
+      {loading && <Loader />}
       {!loading && (
         <form onSubmit={onSubmit}>
           <Stack space={2}>

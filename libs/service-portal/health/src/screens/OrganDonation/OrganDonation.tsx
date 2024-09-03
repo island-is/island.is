@@ -1,6 +1,7 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
+  CardLoader,
   IntroHeader,
   LinkResolver,
 } from '@island.is/service-portal/core'
@@ -35,50 +36,49 @@ const OrganDonation = () => {
         title={formatMessage(m.organDonation)}
         intro={formatMessage(m.organDonationDescription)}
       />
+      <Box>
+        <LinkResolver
+          href={formatMessage(m.organDonationLink)}
+          key="organ-donation"
+        >
+          <Button variant="utility" size="small" icon="open" iconType="outline">
+            {formatMessage(m.readAboutOrganDonation)}
+          </Button>
+        </LinkResolver>
+      </Box>
+      {loading && (
+        <Box marginY={4}>
+          <CardLoader />
+        </Box>
+      )}
       {!error && !loading && donorStatus !== null && (
-        <>
-          <Box>
-            <LinkResolver
-              href={formatMessage(m.organDonationLink)}
-              key="organ-donation"
-            >
-              <Button
-                variant="utility"
-                size="small"
-                icon="open"
-                iconType="outline"
-              >
-                {formatMessage(m.readAboutOrganDonation)}
-              </Button>
-            </LinkResolver>
-          </Box>
-          <Box>
-            <Text
-              variant="eyebrow"
-              color="purple400"
-              marginTop={5}
-              marginBottom={1}
-            >
-              {formatMessage(m.takeOnOrganDonation)}
-            </Text>
-            <ActionCard
-              heading={
-                donorStatus?.isDonor
-                  ? donorStatus.limitations?.hasLimitations
-                    ? formatMessage(m.iAmOrganDonorWithExceptions)
-                    : formatMessage(m.iAmOrganDonor)
-                  : formatMessage(m.iAmNotOrganDonor)
-              }
-              text={cardText}
-              cta={{
-                url: HealthPaths.HealthOrganDonationRegistration,
-                label: formatMessage(m.changeTake),
-                centered: true,
-                variant: 'text',
-              }}
-            />
-          </Box>
-        </>
+        <Box>
+          <Text
+            variant="eyebrow"
+            color="purple400"
+            marginTop={5}
+            marginBottom={1}
+          >
+            {formatMessage(m.takeOnOrganDonation)}
+          </Text>
+          <ActionCard
+            heading={
+              donorStatus?.isDonor
+                ? donorStatus.limitations?.hasLimitations
+                  ? formatMessage(m.iAmOrganDonorWithExceptions)
+                  : formatMessage(m.iAmOrganDonor)
+                : formatMessage(m.iAmNotOrganDonor)
+            }
+            text={cardText}
+            cta={{
+              url: HealthPaths.HealthOrganDonationRegistration,
+              label: formatMessage(m.changeTake),
+              centered: true,
+              variant: 'text',
+            }}
+            loading={loading}
+          />
+        </Box>
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && data === null && (
