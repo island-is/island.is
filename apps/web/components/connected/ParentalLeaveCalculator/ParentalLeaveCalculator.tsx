@@ -1,4 +1,4 @@
-import { type PropsWithChildren, useMemo, useRef } from 'react'
+import { type PropsWithChildren, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import NumberFormat from 'react-number-format'
 import {
@@ -9,6 +9,7 @@ import {
 } from 'next-usequerystate'
 
 import {
+  AlertMessage,
   Box,
   Button,
   GridColumn,
@@ -499,6 +500,24 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
   )
 }
 
+type YearConfig = {
+  [year: string]: {
+    'Skyldu lífeyrir': number
+    Persónuafsláttur: number
+    'Skattmörk þrep 1': number
+    'Skattmörk þrep 2': number
+    'Skattprósenta þrep 1': number
+    'Skattprósenta þrep 2': number
+    'Skattprósenta þrep 3': number
+    'Fæðingarstyrkur hægri': number
+    'Fæðingarstyrkur lægri': number
+    'Hlutfall fæðingarorlofs': number
+    'Fæðingarstyrkur almennur': number
+    'Fæðingarstyrkur námsmanna': number
+    'Hámarks laun fyrir fæðingarorlof': number
+  }
+}
+
 const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
   const { formatMessage } = useIntl()
 
@@ -533,6 +552,26 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
     'legalDomicileInIceland',
     parseAsStringEnum(Object.values(LegalDomicileInIceland)),
   )
+
+  const yearConfig: YearConfig | undefined = slice.configJson?.yearConfig
+
+  const constants = yearConfig?.[String(birthyear)]
+
+  // TODO: make a zod.parse check instead
+  if (!constants) {
+    return (
+      <Stack space={3}>
+        <AlertMessage
+          type="error"
+          title={formatMessage(t.error.title)}
+          message={formatMessage(t.error.message)}
+        />
+        <Button onClick={changeScreen} variant="text" preTextIcon="arrowBack">
+          {formatMessage(t.results.changeAssumptions)}
+        </Button>
+      </Stack>
+    )
+  }
 
   // TODO: calculate
   const mainResultBeforeDeduction = 440000
@@ -744,10 +783,7 @@ export const ParentalLeaveCalculator = ({
   slice,
 }: ParentalLeaveCalculatorProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [activeScreen, setActiveScreen] = useQueryState(
-    'activeScreen',
-    parseAsStringEnum(Object.values(Screen)).withDefault(Screen.FORM),
-  )
+  const [activeScreen, setActiveScreen] = useState(Screen.FORM)
 
   return (
     <div ref={containerRef}>

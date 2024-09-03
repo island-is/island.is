@@ -1,4 +1,4 @@
-import { defineMessage, defineMessages } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 export const translations = {
   status: defineMessages({
@@ -192,6 +192,19 @@ export const translations = {
       defaultMessage: 'Engin',
       description:
         'Valmöguleiki ef það er engin stéttarfélagsgjöld til staðar hjá viðkomandi',
+    },
+  }),
+  error: defineMessages({
+    title: {
+      id: 'web.parentalLeaveCalculator:error.title',
+      defaultMessage: 'Villa',
+      description: 'Titill á villuskilaboðum ef ekki tekst að reikna',
+    },
+    message: {
+      id: 'web.parentalLeaveCalculator:error.message',
+      defaultMessage: 'Ekki tókst að reikna',
+      description:
+        'Villutexti ef ekki tekst að reikna (ef það t.d. vantar fasta í vefumsjónarkerfi)',
     },
   }),
   personalDiscount: defineMessages({
