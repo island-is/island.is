@@ -45,6 +45,7 @@ export const NationalRegistryUserParentB = NationalRegistryUserApi.configure({
     ...defaultParams,
     icelandicCitizenship: false,
   },
+  externalDataId: 'nationalRegistryParentB',
 })
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({

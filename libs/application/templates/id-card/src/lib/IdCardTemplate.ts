@@ -91,7 +91,7 @@ const IdCardTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.ID_CARD,
-  name: determineMessageFromApplicationAnswers,
+  name: applicationMessage.name, // TODO make dynamic if possible
   featureFlag: Features.idCardApplication,
   dataSchema: IdCardSchema,
   translationNamespaces: [ApplicationConfigurations.IdCard.translation],
@@ -212,8 +212,8 @@ const IdCardTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/Review').then((val) =>
-                  Promise.resolve(val.Review),
+                import('../forms/ParentB').then((val) =>
+                  Promise.resolve(val.ParentB),
                 ),
               actions: [
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
@@ -245,7 +245,7 @@ const IdCardTemplate: ApplicationTemplate<
         meta: {
           name: 'Rejected',
           status: 'rejected',
-          lifecycle: pruneAfterDays(3 * 30), // TODO HOW MANY DAYS SHOULD THIS BE?
+          lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.rejectApplication,
           }),
@@ -271,7 +271,7 @@ const IdCardTemplate: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          lifecycle: pruneAfterDays(3 * 30), // TODO HOW MANY DAYS SHOULD THIS BE?
+          lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),

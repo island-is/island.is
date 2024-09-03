@@ -3,12 +3,13 @@ import {
   buildMultiField,
   buildSection,
   getValueViaPath,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import { state } from '../../../lib/messages'
 
-export const StateSection = buildSection({
-  id: 'reviewState',
+export const StateParentBSection = buildSection({
+  id: 'reviewStateParentB',
   title: state.general.sectionTitle,
   children: [
     buildMultiField({
@@ -30,6 +31,12 @@ export const StateSection = buildSection({
         },
       }),
       children: [
+        buildAlertMessageField({
+          id: 'stateAlertMessage',
+          title: '',
+          message: state.labels.alertMessage,
+          alertType: 'info',
+        }),
         buildActionCardListField({
           id: 'approvalActionCard',
           doesNotRequireAnswer: true,
