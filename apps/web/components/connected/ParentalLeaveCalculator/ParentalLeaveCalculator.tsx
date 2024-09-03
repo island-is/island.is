@@ -23,6 +23,7 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
+import { sortAlpha } from '@island.is/shared/utils'
 import type { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
@@ -143,8 +144,12 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
   }, [formatMessage, slice.configJson?.additionalPensionFundingOptions])
 
   const unionOptions = useMemo<Option<string | null>[]>(() => {
-    const options: { label: string; multiplier: number }[] =
-      slice.configJson?.unionOptions ?? []
+    const options: { label: string; multiplier: number }[] = slice.configJson
+      ?.unionOptions
+      ? [...slice.configJson.unionOptions]
+      : []
+
+    options.sort(sortAlpha('label'))
 
     return [
       {
