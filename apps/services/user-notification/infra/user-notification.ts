@@ -2,6 +2,7 @@ import {
   Base,
   Client,
   NationalRegistryB2C,
+  RskCompanyInfo,
 } from '../../../../infra/src/dsl/xroad'
 import {
   json,
@@ -68,7 +69,7 @@ export const userNotificationServiceSetup = (services: {
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(Base, Client, NationalRegistryB2C)
+    .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .liveness('/liveness')
     .readiness('/health/check')
     .ingress({
@@ -156,7 +157,7 @@ export const userNotificationWorkerSetup = (services: {
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(Base, Client, NationalRegistryB2C)
+    .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .liveness('/liveness')
     .readiness('/health/check')
 

@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+
 import {
   Box,
   BoxProps,
@@ -11,11 +13,12 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useNamespace } from '@island.is/web/hooks'
+import { SpanType } from '@island.is/island-ui/core/types'
+import { theme } from '@island.is/island-ui/theme'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { theme } from '@island.is/island-ui/theme'
-import { SpanType } from '@island.is/island-ui/core/types'
+
+import { translation as translationStrings } from './translation.strings'
 
 const INPUT_COLUMN_SPAN: SpanType = [
   '12/12',
@@ -40,20 +43,9 @@ const SEARCH_BUTTON_JUSTIFY_CONTENT: BoxProps['justifyContent'] = [
 ]
 const SEARCH_BUTTON_MARGIN_TOP: ResponsiveSpace = [3, 3, 3, 3, 0]
 
-interface ShipSearchBoxedInputProps {
-  namespace: {
-    shipDetailsHref?: string
-    shipSearchHref?: string
-    placeholder?: string
-    label?: string
-    title?: string
-    description?: string
-  }
-}
-
-const ShipSearchBoxedInput = ({ namespace }: ShipSearchBoxedInputProps) => {
+const ShipSearchBoxedInput = () => {
   const { width } = useWindowSize()
-  const n = useNamespace(namespace)
+  const { formatMessage } = useIntl()
   const [searchValue, setSearchValue] = useState('')
   const router = useRouter()
 
@@ -61,10 +53,11 @@ const ShipSearchBoxedInput = ({ namespace }: ShipSearchBoxedInputProps) => {
     const searchValueIsNumber =
       !isNaN(Number(searchValue)) && searchValue.length > 0
     if (searchValueIsNumber) {
-      const pathname = n('shipDetailsHref', '/v/gagnasidur-fiskistofu')
+      const pathname = formatMessage(translationStrings.shipDetailsHref)
       const query = {
         ...router.query,
-        [n('shipDetailsNumberQueryParam', 'nr')]: searchValue,
+        [formatMessage(translationStrings.shipDetailsNumberQueryParam)]:
+          searchValue,
         selectedTab: router.query?.selectedTab ?? 'skip',
       }
 
@@ -84,20 +77,17 @@ const ShipSearchBoxedInput = ({ namespace }: ShipSearchBoxedInputProps) => {
     } else {
       const query = { ...router.query, name: searchValue }
       router.push({
-        pathname: n('shipSearchHref', '/s/fiskistofa/skipaleit'),
+        pathname: formatMessage(translationStrings.shipSearchHref),
         query,
       })
     }
   }
 
-  const label = n('label', 'Skipaskrárnúmer eða nafn skips')
-  const placeholder = n('placeholder', '')
-  const title = n('title', 'Skipaleit')
-  const description = n(
-    'description',
-    'Upplýsingar um skip, veiðiheimildir, landanir og fleira',
-  )
-  const searchButtonText = n('searcButtonText', 'Leita')
+  const label = formatMessage(translationStrings.label)
+  const placeholder = formatMessage(translationStrings.placeholder)
+  const title = formatMessage(translationStrings.title)
+  const description = formatMessage(translationStrings.description)
+  const searchButtonText = formatMessage(translationStrings.searcButtonText)
 
   return (
     <Box background="blue100" padding="containerGutter" borderRadius="large">

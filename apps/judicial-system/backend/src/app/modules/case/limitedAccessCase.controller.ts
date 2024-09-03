@@ -182,10 +182,7 @@ export class LimitedAccessCaseController {
       user,
     )
 
-    this.eventService.postEvent(
-      transition.transition as unknown as CaseEvent,
-      updatedCase,
-    )
+    this.eventService.postEvent(transition.transition, updatedCase)
 
     return updatedCase
   }
