@@ -143,7 +143,13 @@ export const incomePlanFormMessage: MessageDir = {
     description: {
       id: 'ip.application:income.plan.description',
       defaultMessage:
-        'Hér er tillaga að tekjuáætlun. Upplýsingar um launatekjur eru fengnar úr staðgreiðsluskrá og fjármagnstekjur eru sóttar í nýjasta skattframtal. Þú getur breytt upphæðum, fjarlægt tekjur og/eða bætt við tekjum sem ekki er búið að setja inn. Tekjur á ári eru sýndar í þeim gjaldmiðli sem þær voru greiddar í.',
+        'Hér er tillaga að tekjuáætlun fyrir árið {incomePlanYear}. Upplýsingar um launatekjur eru fengnar úr staðgreiðsluskrá og fjármagnstekjur eru sóttar í nýjasta skattframtal. Þú getur breytt upphæðum, fjarlægt tekjur og/eða bætt við tekjum sem ekki er búið að setja inn. Tekjur á ári eru sýndar í þeim gjaldmiðli sem þær voru greiddar í.',
+      description: 'english translation',
+    },
+    currentIncomePlanDescription: {
+      id: 'ip.application:income.plan.current.income.plandescription',
+      defaultMessage:
+        'Hér fyrir neðan er sú tekjuáætlun sem nú er í gildi fyrir árið {incomePlanYear}. Hér getur þú breytt upphæðum, fjarlægt tekjur og/eða bætt við tekjum sem ekki er búið að setja inn.',
       description: 'english translation',
     },
     registerIncome: {
