@@ -134,7 +134,7 @@ const VehiclesModule = React.memo(
                 )
               }
             >
-              <FormattedMessage id="home.vehicles" />
+              <FormattedMessage id="homeOptions.vehicles" />
             </Heading>
           </TouchableOpacity>
           {loading && !data ? (

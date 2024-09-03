@@ -178,7 +178,7 @@ const LicensesModule = React.memo(
                 )
               }
             >
-              <FormattedMessage id="home.licenses" />
+              <FormattedMessage id="homeOptions.licenses" />
             </Heading>
           </TouchableOpacity>
           {(loading || loadingPassport) && !data ? (

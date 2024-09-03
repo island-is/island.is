@@ -132,7 +132,7 @@ const AirDiscountModule = React.memo(
                 )
               }
             >
-              <FormattedMessage id="home.airDiscount" />
+              <FormattedMessage id="homeOptions.airDiscount" />
             </Heading>
           </TouchableOpacity>
           {loading && !data ? (

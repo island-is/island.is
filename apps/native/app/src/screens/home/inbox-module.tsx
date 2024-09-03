@@ -91,7 +91,7 @@ const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
               )
             }
           >
-            <FormattedMessage id="home.inbox" />
+            <FormattedMessage id="homeOptions.inbox" />
           </Heading>
         </TouchableOpacity>
         {loading && !data ? (

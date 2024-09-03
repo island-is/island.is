@@ -169,10 +169,6 @@ export const en: TranslatedMessages = {
   'home.screenTitle': 'Overview',
   'home.applicationsStatus': 'Applications',
   'home.allApplications': 'Digital applications',
-  'home.inbox': 'Latest in inbox',
-  'home.vehicles': 'Vehicles',
-  'home.airDiscount': 'Air discount scheme',
-  'home.licenses': 'Licenses',
   'home.welcomeText': 'Hi',
   'home.goodDay': 'Good day,',
   'home.onboardingModule.card1':
