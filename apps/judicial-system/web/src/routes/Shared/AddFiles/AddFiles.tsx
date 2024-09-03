@@ -1,14 +1,11 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import isValid from 'date-fns/isValid'
-import parseISO from 'date-fns/parseISO'
 import { useRouter } from 'next/router'
 
-import { Box, Text, toast } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { isDefenceUser } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
-import { errors as errorMessages } from '@island.is/judicial-system-web/messages/Core/errors'
 import {
   FormContentContainer,
   FormContext,
@@ -33,6 +30,7 @@ const AddFiles: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
+  const [editCount, setEditCount] = useState(0)
   const [visibleModal, setVisibleModal] = useState<'sendFiles'>()
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -67,32 +65,20 @@ const AddFiles: FC = () => {
   }
 
   const handleRename = useCallback(
-    async (fileId: string, newName?: string, newDisplayDate?: string) => {
+    async (fileId: string, newName: string, newDisplayDate: string) => {
       const fileToUpdate = uploadFiles.find((file) => file.id === fileId)
 
       if (!fileToUpdate) {
         return
       }
 
-      let newDate: Date | undefined
-
-      if (newDisplayDate) {
-        const [day, month, year] = newDisplayDate.split('.')
-        newDate = parseISO(`${year}-${month}-${day}`)
-
-        if (!isValid(newDate)) {
-          toast.error(formatMessage(errorMessages.invalidDateErrorMessage))
-          return
-        }
-      }
-
       updateUploadFile({
         ...fileToUpdate,
-        userGeneratedFilename: newName || fileToUpdate.userGeneratedFilename, // Do not allow the empty string
-        displayDate: newDate?.toISOString() ?? fileToUpdate.displayDate,
+        userGeneratedFilename: newName,
+        displayDate: newDisplayDate,
       })
     },
-    [formatMessage, updateUploadFile, uploadFiles],
+    [updateUploadFile, uploadFiles],
   )
 
   const handleNextButtonClick = useCallback(async () => {
@@ -131,6 +117,7 @@ const AddFiles: FC = () => {
           onChange={handleChange}
           onDelete={removeUploadFile}
           onRename={handleRename}
+          setEditCount={setEditCount}
         />
       </FormContentContainer>
       <FormContentContainer isFooter>
@@ -142,7 +129,9 @@ const AddFiles: FC = () => {
               : formatMessage(strings.nextButtonText)
           }
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
-          nextIsDisabled={uploadFiles.length === 0 || !allFilesDoneOrError}
+          nextIsDisabled={
+            uploadFiles.length === 0 || !allFilesDoneOrError || editCount > 0
+          }
           onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>
