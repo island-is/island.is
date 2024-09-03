@@ -39,5 +39,6 @@ export const environment: BffEnvironmentSchema = {
       login: `${callbacksBaseRedirectPath}/login`,
       logout: `${callbacksBaseRedirectPath}/logout`,
     },
+    logoutRedirectUri: requiredString('BFF_LOGOUT_REDIRECT_PATH'),
   },
 }

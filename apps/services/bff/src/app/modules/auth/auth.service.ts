@@ -107,7 +107,7 @@ export class AuthService {
       redirect_uri: this.config.auth.callbacksRedirectUris.login,
       response_type: 'code',
       response_mode: 'query',
-      scope: ['openid', 'profile', this.config.auth.scopes].join(' '),
+      scope: ['openid', 'profile', ...this.config.auth.scopes].join(' '),
       state: sid,
       code_challenge: codeChallenge,
       code_challenge_method: 'S256',
@@ -228,7 +228,6 @@ export class AuthService {
     const sid = userProfile.sid
     const value: CachedTokenResponse = {
       ...tokenResponse,
-      originUrl: loginAttemptData.originUrl,
       userProfile,
     }
 
@@ -273,6 +272,7 @@ export class AuthService {
     const searchParams = new URLSearchParams({
       id_token_hint: cachedTokenResponse.id_token,
       post_logout_redirect_uri: this.config.auth.callbacksRedirectUris.logout,
+      state: encodeURIComponent(JSON.stringify({ sid })),
     })
 
     return res.redirect(`${this.baseUrl}/connect/endsession?${searchParams}`)
@@ -284,20 +284,27 @@ export class AuthService {
    * We clean up the current login from the cache and delete the session cookie.
    * Finally, we redirect the user back to the original URL.
    */
-  async callbackLogout(res: Response, { sid }: CallbackLogoutQuery) {
+  async callbackLogout(res: Response, { state }: CallbackLogoutQuery) {
+    if (!state) {
+      this.logger.error('Logout failed: No state param provided')
+
+      throw new BadRequestException('Logout failed')
+    }
+
+    const { sid } = JSON.parse(decodeURIComponent(state))
+
     if (!sid) {
-      this.logger.error('Logout failed: No session id provided')
+      this.logger.error(
+        'Logout failed: Invalid state param provided. No sid (session id) found',
+      )
 
       throw new BadRequestException('Logout failed')
     }
 
     const currentLoginCacheKey = this.cacheService.createSessionKeyType(
       'current',
-      sid,
+      state,
     )
-
-    const cachedTokenResponse =
-      await this.cacheService.get<CachedTokenResponse>(currentLoginCacheKey)
 
     // Clean up current login from the cache since we have a successful logout.
     await this.cacheService.delete(currentLoginCacheKey)
@@ -305,6 +312,6 @@ export class AuthService {
     // Delete session cookie
     res.clearCookie('sid')
 
-    return res.redirect(cachedTokenResponse.originUrl)
+    return res.redirect(environment.auth.logoutRedirectUri)
   }
 }

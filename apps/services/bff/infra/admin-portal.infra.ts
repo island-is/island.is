@@ -17,8 +17,14 @@ export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
         staging: 'https://beta.staging01.devland.is/stjornbord/bff/callbacks',
         prod: 'https://island.is/stjornbord/bff/callbacks',
       },
+      BFF_LOGOUT_REDIRECT_PATH: {
+        dev: 'https://beta.dev01.devland.is',
+        staging: 'https://beta.staging01.devland.is',
+        prod: 'https://island.is',
+      },
       IDENTITY_SERVER_CLIENT_SCOPES: json([
         '@admin.island.is/delegation-system',
+        '@admin.island.is/delegation-system:admin',
         '@admin.island.is/ads',
         '@admin.island.is/bff',
         '@admin.island.is/ads:explicit',

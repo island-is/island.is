@@ -11,6 +11,7 @@ export const authSchema = z.strictObject({
     login: z.string(),
     logout: z.string(),
   }),
+  logoutRedirectUri: z.string(),
 })
 
 export const environmentSchema = z.strictObject({

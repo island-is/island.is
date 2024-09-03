@@ -72,12 +72,8 @@ export interface IdTokenData {
 }
 
 export type CachedTokenResponse = TokenResponse & {
-  userProfile: IdTokenData
   /**
-   * Stores the original URL to facilitate user redirection during the `/logout/callback` process.
-   * This is necessary because the `/logout/callback` endpoint is invoked by the identity server,
-   * meaning we cannot obtain the original URL from the incoming request not does the identity server
-   * send query parameters to the callback URL.
+   * Decoded id token
    */
-  originUrl: string
+  userProfile: IdTokenData
 }
