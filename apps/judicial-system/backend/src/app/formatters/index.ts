@@ -29,7 +29,7 @@ export {
   formatPostponedCourtDateEmailNotification,
   stripHtmlTags,
 } from './formatters'
-export { IndictmentConfirmation } from './pdfHelpers'
+export { Confirmation as IndictmentConfirmation } from './pdfHelpers'
 export { getRequestPdfAsBuffer, getRequestPdfAsString } from './requestPdf'
 export { getRulingPdfAsBuffer, getRulingPdfAsString } from './rulingPdf'
 export { createCaseFilesRecord } from './caseFilesRecordPdf'

@@ -5,7 +5,7 @@ import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 import { coatOfArms } from './coatOfArms'
 import { policeStar } from './policeStar'
 
-export interface IndictmentConfirmation {
+export interface Confirmation {
   actor: string
   title?: string
   institution: string
@@ -106,9 +106,108 @@ export const addPoliceStar = (doc: PDFKit.PDFDocument) => {
   doc.scale(25).translate(-270, -70)
 }
 
+// A small confirmation contains info on the court and the person who confirmed
+export const addSmallConfirmation = (doc: PDFKit.PDFDocument) => {
+  doc
+}
+
+export const addConfirmation = (
+  doc: PDFKit.PDFDocument,
+  confirmation: Confirmation,
+) => {
+  const lightGray = '#FAFAFA'
+  const darkGray = '#CBCBCB'
+  const pageMargin = calculatePt(18)
+  const shaddowHeight = calculatePt(90)
+  const coatOfArmsWidth = calculatePt(105)
+  const coatOfArmsHeight = calculatePt(90)
+  const coatOfArmsX = pageMargin + calculatePt(8)
+  const titleHeight = calculatePt(32)
+  const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
+  const confirmedByWidth = calculatePt(160)
+  const institutionWidth = confirmedByWidth + calculatePt(48)
+  const shaddowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
+  const titleWidth = institutionWidth + confirmedByWidth
+
+  doc
+    .rect(pageMargin, pageMargin + calculatePt(8), shaddowWidth, shaddowHeight)
+    .fill(lightGray)
+    .stroke()
+
+  doc
+    .rect(coatOfArmsX, pageMargin, coatOfArmsWidth, coatOfArmsHeight)
+    .fillAndStroke('white', darkGray)
+
+  addCoatOfArms(doc, calculatePt(49), calculatePt(33))
+
+  doc
+    .rect(coatOfArmsX + coatOfArmsWidth, pageMargin, titleWidth, titleHeight)
+    .fillAndStroke(lightGray, darkGray)
+  doc.fill('black')
+  doc.font('Times-Bold')
+  doc
+    .fontSize(calculatePt(smallFontSize))
+    .text('Réttarvörslugátt', titleX, pageMargin + calculatePt(12))
+  doc.font('Times-Roman')
+  // The X value here is approx. 8px after the title
+  doc.text('Rafræn staðfesting', calculatePt(210), pageMargin + calculatePt(12))
+  doc.text(
+    formatDate(confirmation.date) || '',
+    shaddowWidth - calculatePt(24),
+    pageMargin + calculatePt(12),
+  )
+
+  doc
+    .rect(
+      coatOfArmsX + coatOfArmsWidth,
+      pageMargin + titleHeight,
+      confirmedByWidth,
+      shaddowHeight - titleHeight,
+    )
+    .fillAndStroke('white', darkGray)
+  doc.fill('black')
+  doc.font('Times-Bold')
+  doc.text('Dómstóll', titleX, pageMargin + titleHeight + calculatePt(16))
+  doc.font('Times-Roman')
+  drawTextWithEllipsis(
+    doc,
+    confirmation.institution,
+    titleX,
+    pageMargin + titleHeight + calculatePt(32),
+    confirmedByWidth - calculatePt(16),
+  )
+
+  doc
+    .rect(
+      coatOfArmsX + coatOfArmsWidth + confirmedByWidth,
+      pageMargin + titleHeight,
+      institutionWidth,
+      shaddowHeight - titleHeight,
+    )
+    .fillAndStroke('white', darkGray)
+  doc.fill('black')
+  doc.font('Times-Bold')
+  doc.text(
+    'Samþykktaraðili',
+    titleX + confirmedByWidth,
+    pageMargin + titleHeight + calculatePt(16),
+  )
+  doc.font('Times-Roman')
+  doc.text(
+    `${confirmation.actor}${
+      confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
+    }`,
+    titleX + confirmedByWidth,
+    pageMargin + titleHeight + calculatePt(32),
+  )
+
+  // doc.translate(-150, 0)
+  doc.fillColor('black')
+}
+
 export const addIndictmentConfirmation = (
   doc: PDFKit.PDFDocument,
-  confirmation: IndictmentConfirmation,
+  confirmation: Confirmation,
 ) => {
   const lightGray = '#FAFAFA'
   const darkGray = '#CBCBCB'
