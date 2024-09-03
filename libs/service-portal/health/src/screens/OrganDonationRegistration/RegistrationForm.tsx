@@ -41,9 +41,11 @@ export const Form2 = () => {
   const isDonor = data?.HealthDirectorateOrganDonation.donor?.isDonor
   const hasLimitations =
     data?.HealthDirectorateOrganDonation.donor?.limitations?.hasLimitations
-  const limitations = data?.HealthDirectorateOrganDonation.organList
+  const allLimitations = data?.HealthDirectorateOrganDonation.organList
   const selectedLimitations =
-    data?.HealthDirectorateOrganDonation.donor?.limitations?.organIds
+    data?.HealthDirectorateOrganDonation.donor?.limitations?.limitedOrgansList?.map(
+      (item) => item.id,
+    )
   const donorStatus = isDonor
     ? hasLimitations
       ? OPT_IN_EXCEPTIONS
@@ -134,11 +136,11 @@ export const Form2 = () => {
                 checked={radioValue === OPT_IN_EXCEPTIONS}
                 onChange={() => setRadioValue(OPT_IN_EXCEPTIONS)}
               />
-              {limitations &&
-                limitations.length > 0 &&
+              {allLimitations &&
+                allLimitations.length > 0 &&
                 radioValue === OPT_IN_EXCEPTIONS && (
                   <Limitations
-                    data={limitations}
+                    data={allLimitations}
                     selected={selectedLimitations ?? []}
                   />
                 )}

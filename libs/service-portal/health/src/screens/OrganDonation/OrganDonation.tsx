@@ -9,6 +9,7 @@ import { Button, Box, Text } from '@island.is/island-ui/core'
 import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetDonorStatusQuery } from './OrganDonation.generated'
+
 const OrganDonation = () => {
   useNamespaces('sp.health')
 
@@ -17,14 +18,16 @@ const OrganDonation = () => {
     fetchPolicy: 'no-cache',
   })
   const donorStatus = data?.HealthDirectorateOrganDonation.donor
-
-  //TODO: Move this to service
-  const exceptionText: string = donorStatus?.limitations?.hasLimitations
-    ? [
-        donorStatus?.limitations.comment,
-        donorStatus?.limitations.organList?.join(', '),
-      ].join(':') + '.' ?? ''
-    : donorStatus?.limitations?.comment ?? ''
+  const cardText: string = donorStatus?.isDonor
+    ? donorStatus?.limitations?.hasLimitations
+      ? [
+          formatMessage(m.iAmOrganDonorWithExceptionsText),
+          donorStatus?.limitations.limitedOrgansList
+            ?.map((organ) => organ.name)
+            .join(', '),
+        ].join(' ') + '.' ?? ''
+      : formatMessage(m.iAmOrganDonorText)
+    : formatMessage(m.iAmNotOrganDonorText)
 
   return (
     <Box>
@@ -66,7 +69,7 @@ const OrganDonation = () => {
                     : formatMessage(m.iAmOrganDonor)
                   : formatMessage(m.iAmNotOrganDonor)
               }
-              text={exceptionText}
+              text={cardText}
               cta={{
                 url: HealthPaths.HealthOrganDonationRegistration,
                 label: formatMessage(m.changeTake),

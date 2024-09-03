@@ -4,7 +4,10 @@ query getDonorStatus($locale: String) {
       isDonor
       limitations {
         hasLimitations
-        organList
+        limitedOrgansList {
+          id
+          name
+        }
         comment
       }
     }
@@ -17,7 +20,10 @@ query getOrgansList($locale: String) {
       isDonor
       limitations {
         hasLimitations
-        organIds
+        limitedOrgansList {
+          id
+          name
+        }
       }
     }
     organList {

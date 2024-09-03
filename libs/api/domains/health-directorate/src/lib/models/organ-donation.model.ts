@@ -1,21 +1,23 @@
 import { ObjectType, Field, InputType } from '@nestjs/graphql'
 
+@ObjectType('HealthDirectorateOrganDonationOrgan')
+export class Organ {
+  @Field()
+  id!: string
+
+  @Field()
+  name!: string
+}
 @ObjectType('HealthDirectorateOrganDonationLimitations')
 export class Limitations {
   @Field(() => Boolean)
   hasLimitations!: boolean
 
-  @Field(() => [String], {
+  @Field(() => [Organ], {
     nullable: true,
     description: 'List of organs NOT to donate',
   })
-  organList?: string[]
-
-  @Field(() => [String], {
-    nullable: true,
-    description: 'List of organ IDs NOT to donate',
-  })
-  organIds?: string[]
+  limitedOrgansList?: Organ[]
 
   @Field({
     nullable: true,
@@ -31,15 +33,6 @@ export class Donor {
 
   @Field(() => Limitations, { nullable: true })
   limitations?: Limitations
-}
-
-@ObjectType('HealthDirectorateOrganDonationOrgan')
-export class Organ {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field({ nullable: true })
-  name?: string
 }
 
 @ObjectType('HealthDirectorateOrganDonation')

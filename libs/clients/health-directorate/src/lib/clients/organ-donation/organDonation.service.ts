@@ -7,6 +7,7 @@ import {
   MeOrganDonorStatusApi,
   OrganDonorDto,
   OrganDto,
+  UpdateOrganDonorDto,
 } from './gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -24,9 +25,12 @@ export class HealthDirectorateOrganDonationService {
     return this.organDonationApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  public async getOrganDonation(auth: Auth): Promise<OrganDonorDto | null> {
+  public async getOrganDonation(
+    auth: Auth,
+    input: Locale,
+  ): Promise<OrganDonorDto | null> {
     const organDonation = await this.organDonationApiWithAuth(auth)
-      .meDonorStatusControllerGetOrganDonorStatus()
+      .meDonorStatusControllerGetOrganDonorStatus({ locale: input })
       .catch(handle404)
 
     if (!organDonation) {
@@ -41,7 +45,7 @@ export class HealthDirectorateOrganDonationService {
 
   public async updateOrganDonation(
     auth: Auth,
-    input: OrganDonorDto,
+    input: UpdateOrganDonorDto,
   ): Promise<void> {
     await this.organDonationApiWithAuth(auth)
       .meDonorStatusControllerUpdateOrganDonorStatus({
