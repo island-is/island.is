@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   AuthDelegationProvider,
@@ -51,6 +52,8 @@ interface FindAvailableInput {
 @Injectable()
 export class DelegationsIncomingService {
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    protected readonly logger: Logger,
     @InjectModel(Client)
     private clientModel: typeof Client,
     @InjectModel(ClientAllowedScope)
@@ -79,7 +82,11 @@ export class DelegationsIncomingService {
     }
 
     // Index incoming delegations
-    void this.delegationsIndexService.indexDelegations(user)
+    try {
+      void this.delegationIndexService.indexDelegations(user)
+    } catch {
+      this.logger.error('Failed to index delegations')
+    }
 
     const delegationPromises = []
 
