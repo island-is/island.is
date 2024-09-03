@@ -16,6 +16,7 @@ import {
   IndividualDto,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { ConfigType } from '@island.is/nest/config'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import {
@@ -154,6 +155,10 @@ export const setupWithAuth = async ({
         .useValue(createMockEinstaklingurApi(nationalRegistryUser))
         .overrideProvider(RskRelationshipsClient)
         .useValue(RskProcuringClientMock)
+        .overrideProvider(CompanyRegistryClientService)
+        .useValue({
+          getCompany: jest.fn().mockResolvedValue({}),
+        })
         .overrideProvider(DelegationConfig.KEY)
         .useValue(delegationConfig)
         .overrideProvider(FeatureFlagService)
