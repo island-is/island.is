@@ -17,16 +17,6 @@ import set from 'lodash/set'
 import addYears from 'date-fns/addYears'
 import { addWeekdays, getWeekendDates } from '../lib/utils'
 
-type Channel = {
-  email: string
-  phone: string
-}
-
-type CategoryOption = {
-  label: string
-  value: string
-}
-
 export const Publishing = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
 
