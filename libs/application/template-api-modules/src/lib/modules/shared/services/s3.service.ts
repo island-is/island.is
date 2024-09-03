@@ -1,11 +1,11 @@
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'
-import { Inject, Injectable, Optional } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 @Injectable()
 export class S3Service {
-  constructor(@Inject() private s3Client: S3Client) {}
+  constructor(@Inject(S3Client) private s3Client: S3Client) {}
 
   public async getFileContentAsBase64(
     fileName: string,

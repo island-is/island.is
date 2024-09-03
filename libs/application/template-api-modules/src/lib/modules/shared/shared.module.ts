@@ -12,6 +12,7 @@ import { SmsModule } from '@island.is/nova-sms'
 import { PaymentModule } from '@island.is/application/api/payment'
 import { AttachmentS3Service } from './services'
 import { S3Service } from './services/s3.service'
+import { S3Client } from '@aws-sdk/client-s3'
 
 export class SharedTemplateAPIModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -35,10 +36,14 @@ export class SharedTemplateAPIModule {
           provide: BaseTemplateApiApplicationService,
           useClass: config.applicationService,
         },
-        AttachmentS3Service,
+        {
+          provide: S3Client,
+          useValue: new S3Client()
+        },
         S3Service,
+        AttachmentS3Service,
       ],
-      exports: [SharedTemplateApiService, AttachmentS3Service, S3Service],
+      exports: [SharedTemplateApiService, S3Service, AttachmentS3Service],
     }
   }
 }
