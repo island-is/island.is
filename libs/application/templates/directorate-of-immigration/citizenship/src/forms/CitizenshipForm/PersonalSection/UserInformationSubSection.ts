@@ -58,10 +58,6 @@ export const UserInformationSubSection = buildSubSection({
               undefined,
             ) as NationalRegistryIndividual | undefined
 
-            if (individual?.givenName && individual.familyName) {
-              return `${individual?.givenName} ${individual?.familyName}`
-            }
-
             return individual?.fullName
           },
         }),
