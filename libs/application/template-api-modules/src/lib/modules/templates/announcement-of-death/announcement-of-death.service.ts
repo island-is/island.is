@@ -12,6 +12,7 @@ import {
 } from '@island.is/clients/syslumenn'
 import {
   Answers as aodAnswers,
+  FirearmApplicant,
   PropertiesEnum,
 } from '@island.is/application/templates/announcement-of-death/types'
 import { NationalRegistry, RoleConfirmationEnum, PickRole } from './types'
@@ -226,7 +227,12 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         firearm:
           answers.hadFirearms === YES
             ? JSON.stringify(answers.firearmApplicant)
-            : '',
+            : JSON.stringify({
+                email: '',
+                phone: '',
+                name: '',
+                nationalId: '',
+              }),
         bankcodeSecuritiesOrShares: otherProperties.includes(
           PropertiesEnum.ACCOUNTS,
         )
