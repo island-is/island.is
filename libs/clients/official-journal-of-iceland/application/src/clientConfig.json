@@ -252,7 +252,7 @@
         }
       }
     },
-    "/api/v1/applications/{id}/attachments/{attachmentId}": {
+    "/api/v1/applications/{id}/attachments": {
       "delete": {
         "operationId": "deleteApplicationAttachment",
         "parameters": [
@@ -263,9 +263,9 @@
             "schema": { "type": "string" }
           },
           {
-            "name": "attachmentId",
+            "name": "key",
             "required": true,
-            "in": "path",
+            "in": "query",
             "schema": { "type": "string" }
           }
         ],

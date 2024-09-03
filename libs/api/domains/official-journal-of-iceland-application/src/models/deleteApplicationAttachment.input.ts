@@ -8,5 +8,5 @@ export class DeleteApplicationAttachmentInput {
   applicationId!: string
 
   @Field(() => String)
-  attachmentId!: string
+  key!: string
 }

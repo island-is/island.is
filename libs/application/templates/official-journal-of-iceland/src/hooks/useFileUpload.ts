@@ -74,6 +74,7 @@ export const useFileUpload = ({
         attachmentType: attachmentType,
       },
     },
+    fetchPolicy: 'no-cache',
     onCompleted(data) {
       const currentFiles =
         data.officialJournalOfIcelandApplicationGetAttachments.attachments.map(
@@ -82,11 +83,11 @@ export const useFileUpload = ({
               name: attachment.originalFileName,
               size: attachment.fileSize,
               type: attachment.fileFormat,
-              key: attachment.id,
-              url: attachment.fileLocation,
+              key: attachment.fileLocation,
+              status: 'done',
             } as UploadFile),
         )
-      setFiles(currentFiles)
+      setFiles((prevFiles) => [...prevFiles, ...currentFiles])
     },
     onError() {
       setFiles([])
@@ -117,16 +118,18 @@ export const useFileUpload = ({
       const url = await getPresignedUrl(name, type)
 
       if (!url) {
-        throw new Error('Failed to get presigned URL')
+        file.status = 'error'
+        return
       }
 
-      try {
-        uploadToS3(url, file as File)
-        addApplicationAttachments(url, file as File)
-        setFiles([...files, file])
-      } catch (e) {
-        console.error(e)
-      }
+      const loc = new URL(url).pathname
+
+      uploadToS3(url, file as File)
+      addApplicationAttachments(loc, file as File)
+
+      file.key = loc
+
+      setFiles((prevFiles) => [...prevFiles, file])
     })
   }
 
@@ -134,18 +137,16 @@ export const useFileUpload = ({
    * Deletes the file from the database and S3
    */
   const onRemove = async (file: UploadFile) => {
-    if (!file.key) {
-      return
-    }
-
     deleteApplicationAttachmentMutation({
       variables: {
         input: {
           applicationId: applicationId,
-          attachmentId: file.key,
+          key: file.key,
         },
       },
     })
+
+    setFiles(files.filter((f) => f.key !== file.key))
   }
 
   /**
@@ -193,14 +194,12 @@ export const useFileUpload = ({
    * @param url presigned URL
    * @param file file to upload
    */
-  const addApplicationAttachments = (url: string, file: File) => {
+  const addApplicationAttachments = (url: string, file: UploadFile) => {
     const type = file?.type?.split('/')[1]
     const name = file?.name?.split('.').slice(0, -1).join('.')
     if (!type || !name) {
       return
     }
-
-    const loc = new URL(url).pathname
 
     addApplicationMutation({
       variables: {
@@ -211,9 +210,15 @@ export const useFileUpload = ({
           originalFileName: file.name,
           fileFormat: type,
           fileExtension: type,
-          fileLocation: loc,
+          fileLocation: url,
           fileSize: file.size,
         },
+      },
+      onCompleted() {
+        file.status = 'done'
+      },
+      onError() {
+        file.status = 'error'
       },
     })
   }

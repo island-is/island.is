@@ -120,9 +120,10 @@ export class OfficialJournalOfIcelandApplicationService {
 
   async deleteApplicationAttachment(input: DeleteApplicationAttachmentInput) {
     try {
+      console.log(input)
       await this.ojoiApplicationService.deleteApplicationAttachment({
         id: input.applicationId,
-        attachmentId: input.attachmentId,
+        key: input.key,
       })
 
       return { success: true }
