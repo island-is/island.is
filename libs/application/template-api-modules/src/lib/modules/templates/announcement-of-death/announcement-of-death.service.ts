@@ -12,6 +12,7 @@ import {
 } from '@island.is/clients/syslumenn'
 import {
   Answers as aodAnswers,
+  FirearmApplicant,
   PropertiesEnum,
 } from '@island.is/application/templates/announcement-of-death/types'
 import { NationalRegistry, RoleConfirmationEnum, PickRole } from './types'
@@ -29,6 +30,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { generateFirearmApplicantEmail } from './emailGenerators/firearmApplicantNotification'
 import { SharedTemplateApiService } from '../../shared'
 import { generateRequestReviewSms } from './smsGenerators/requestReviewSms'
+import { FirearmApplicant } from 'libs/application/templates/announcement-of-death/src/fields'
 
 @Injectable()
 export class AnnouncementOfDeathService extends BaseTemplateApiService {
@@ -226,7 +228,12 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         firearm:
           answers.hadFirearms === YES
             ? JSON.stringify(answers.firearmApplicant)
-            : '',
+            : JSON.stringify({
+                email: '',
+                phone: '',
+                name: '',
+                nationalId: '',
+              }),
         bankcodeSecuritiesOrShares: otherProperties.includes(
           PropertiesEnum.ACCOUNTS,
         )
