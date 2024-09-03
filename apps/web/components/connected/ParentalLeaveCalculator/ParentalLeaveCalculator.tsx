@@ -207,6 +207,13 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
     parseAsStringEnum(Object.values(LegalDomicileInIceland)),
   )
 
+  // TODO: up next
+  // const canCalculate = () => {
+  //   let value =
+  //     Object.values(Status).includes(status) &&
+  //     yearOptions.some((year) => year.value === birthyear)
+  // }
+
   const calculate = () => {
     console.log('TEST')
     // TODO: validate
@@ -457,7 +464,9 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
           </Field>
         )}
 
-        <Button onClick={calculate}>{formatMessage(t.calculate)}</Button>
+        <Button onClick={calculate}>
+          {formatMessage(t.calculate.buttonText)}
+        </Button>
       </Stack>
     </Box>
   )
@@ -466,39 +475,40 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
 const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
   const { formatMessage } = useIntl()
 
-  const [status, setStatus] = useQueryState<Status>(
+  const [status] = useQueryState<Status>(
     'status',
     parseAsStringEnum(Object.values(Status)).withDefault(Status.PARENTAL_LEAVE),
   )
-  const [birthyear, setBirthyear] = useQueryState('birthyear', parseAsInteger)
-  const [workPercentage, setWorkPercentage] = useQueryState(
+  const [birthyear] = useQueryState('birthyear', parseAsInteger)
+  const [workPercentage] = useQueryState(
     'workPercentage',
     parseAsStringEnum(Object.values(WorkPercentage)),
   )
-  const [income, setIncome] = useQueryState('income', parseAsInteger)
-  const [
-    additionalPensionFundingPercentage,
-    setAdditionalPensionFundingPercentage,
-  ] = useQueryState('additionalPensionFunding', parseAsInteger)
-  const [union, setUnion] = useQueryState('union', parseAsString)
-  const [personalDiscount, setPersonalDiscount] = useQueryState(
-    'personalDiscount',
+  const [income] = useQueryState('income', parseAsInteger)
+  const [additionalPensionFundingPercentage] = useQueryState(
+    'additionalPensionFunding',
     parseAsInteger,
   )
-  const [parentalLeavePeriod, setParentalLeavePeriod] = useQueryState(
+  const [union] = useQueryState('union', parseAsString)
+  const [personalDiscount] = useQueryState('personalDiscount', parseAsInteger)
+  const [parentalLeavePeriod] = useQueryState(
     'parentalLeavePeriod',
     parseAsStringEnum(Object.values(ParentalLeavePeriod)),
   )
-  const [parentalLeaveRatio, setParentalLeaveRatio] = useQueryState(
+  const [parentalLeaveRatio] = useQueryState(
     'parentalLeaveRatio',
     parseAsInteger,
+  )
+  const [legalDomicileInIceland] = useQueryState(
+    'legalDomicileInIceland',
+    parseAsStringEnum(Object.values(LegalDomicileInIceland)),
   )
 
   // TODO: calculate
   const mainResultBeforeDeduction = 440000
   const mainResultAfterDeduction = 242471
 
-  const mainSection = {
+  const mainSectionKeys = {
     [Status.PARENTAL_LEAVE]: {
       heading: t.results.mainParentalLeaveHeading,
       description: t.results.mainParentalLeaveDescription,
@@ -522,10 +532,10 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
           <Box className={styles.resultBorder} paddingY={2} paddingX={3}>
             <Stack space={2}>
               <Text variant="h3">
-                {formatMessage(mainSection[status].heading)}
+                {formatMessage(mainSectionKeys[status].heading)}
               </Text>
               <Text>
-                {formatMessage(mainSection[status].description, {
+                {formatMessage(mainSectionKeys[status].description, {
                   ratio,
                 })}
               </Text>
@@ -593,7 +603,7 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
                   {formatMessage(
                     t.results.mainResultBeforeDeductionDescription,
                     {
-                      ratio: parentalLeaveRatio,
+                      ratio,
                     },
                   )}
                 </Text>

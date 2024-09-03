@@ -183,7 +183,7 @@ export const translations = {
       description: 'Label á "Stéttarfélagsgjöld" dropdown',
     },
     none: {
-      id: 'web.parentalLeaveCalculator:additionalPensionFunding.none',
+      id: 'web.parentalLeaveCalculator:union.none',
       defaultMessage: 'Engin',
       description:
         'Valmöguleiki ef það er engin stéttarfélagsgjöld til staðar hjá viðkomandi',
@@ -291,10 +291,12 @@ export const translations = {
         'Viðskeyti á eftir því sem notandi slær inn í "Hlutfall fæðingarorlofs" reit',
     },
   }),
-  calculate: defineMessage({
-    id: 'web.parentalLeaveCalculator:calculate',
-    defaultMessage: 'Reikna',
-    description: 'Texti á "Reikna" hnapp',
+  calculate: defineMessages({
+    buttonText: {
+      id: 'web.parentalLeaveCalculator:calculate',
+      defaultMessage: 'Reikna',
+      description: 'Texti á "Reikna" hnapp',
+    },
   }),
   results: defineMessages({
     mainParentalLeaveHeading: {
@@ -356,7 +358,7 @@ export const translations = {
       description: 'Niðurstöðuskjár - Subheading fyrir "Launaforsendur" lið',
     },
     incomePrerequisitesDescription: {
-      id: 'web.parentalLeaveCalculator:results.incomePrerequisitesDescription',
+      id: 'web.parentalLeaveCalculator:results.incomePrerequisitesDescription#markdown',
       defaultMessage: `Fæðingarorlof nemur aldrei meira en 80% af uppgefnum launum\nFæðingarorlof er aldrei hærra en 700.000 krónur á mánuði\nFæðingarorlof er aldrei lægra en 160.538 krónur fyrir 25-49% starfshlutfall og 222.494 krónur fyrir 50-100% starfshlutfall`,
       description: 'Niðurstöðuskjár - Lýsing fyrir "Launaforsendur" lið',
     },
@@ -393,7 +395,7 @@ export const translations = {
       description: 'Niðurstöðuskjár - Lífeyrissjóðir',
     },
     additionalPensionFunding: {
-      id: 'web.parentalLeaveCalculator:results.pensionFunding',
+      id: 'web.parentalLeaveCalculator:results.additionalPensionFunding',
       defaultMessage: 'Viðbótalífeyrissparnaður',
       description: 'Niðurstöðuskjár - Viðbótalífeyrissparnaður',
     },
