@@ -11,6 +11,7 @@ import { SharedTemplateApiService } from './shared.service'
 import { SmsModule } from '@island.is/nova-sms'
 import { PaymentModule } from '@island.is/application/api/payment'
 import { AttachmentS3Service } from './services'
+import { sharedModuleConfig } from './shared.config'
 
 export class SharedTemplateAPIModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -20,7 +21,7 @@ export class SharedTemplateAPIModule {
       module: SharedTemplateAPIModule,
       imports: [
         ConfigModule.forRoot({
-          load: [configuration],
+          load: [configuration, sharedModuleConfig],
         }),
         EmailModule,
         SmsModule,

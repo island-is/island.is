@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { ConfigType } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 import {
   Application,
@@ -11,11 +11,9 @@ import {
   AssignmentSmsTemplateGenerator,
   AttachmentEmailTemplateGenerator,
   BaseTemplateApiApplicationService,
-  BaseTemplateAPIModuleConfig,
   EmailTemplateGenerator,
   SmsTemplateGenerator,
 } from '../../types'
-import { getConfigValue } from './shared.utils'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
@@ -24,6 +22,7 @@ import AmazonS3URI from 'amazon-s3-uri'
 import { PaymentService } from '@island.is/application/api/payment'
 import { User } from '@island.is/auth-nest-tools'
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
+import { sharedModuleConfig } from './shared.config'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -35,8 +34,8 @@ export class SharedTemplateApiService {
     private readonly emailService: EmailService,
     @Inject(SmsService)
     private readonly smsService: SmsService,
-    @Inject(ConfigService)
-    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
     @Inject(BaseTemplateApiApplicationService)
     private readonly applicationService: BaseTemplateApiApplicationService,
     private readonly paymentService: PaymentService,
@@ -47,7 +46,8 @@ export class SharedTemplateApiService {
   async createAssignToken(application: Application, expiresIn: number) {
     const token = await this.applicationService.createAssignToken(
       application,
-      getConfigValue(this.configService, 'jwtSecret'),
+      // getConfigValue(this.configService, 'jwtSecret'),
+      this.config.jwtSecret,
       expiresIn,
     )
 
@@ -57,11 +57,13 @@ export class SharedTemplateApiService {
   async sendSms(
     smsTemplateGenerator: SmsTemplateGenerator,
     application: Application,
-  ) {
-    const clientLocationOrigin = getConfigValue(
-      this.configService,
-      'clientLocationOrigin',
-    ) as string
+  ): Promise<any> {
+    // const clientLocationOrigin = getConfigValue(
+    //   this.configService,
+    //   'clientLocationOrigin',
+    // ) as string
+
+    const clientLocationOrigin = this.config.clientLocationOrigin
 
     const { phoneNumber, message } = smsTemplateGenerator(application, {
       clientLocationOrigin,
@@ -74,11 +76,13 @@ export class SharedTemplateApiService {
     smsTemplateGenerator: AssignmentSmsTemplateGenerator,
     application: Application,
     token: string,
-  ) {
-    const clientLocationOrigin = getConfigValue(
-      this.configService,
-      'clientLocationOrigin',
-    ) as string
+  ): Promise<any> {
+    // const clientLocationOrigin = getConfigValue(
+    //   this.configService,
+    //   'clientLocationOrigin',
+    // ) as string
+
+    const clientLocationOrigin = this.config.clientLocationOrigin
 
     const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
 
@@ -95,15 +99,19 @@ export class SharedTemplateApiService {
     application: Application,
     locale = 'is',
   ) {
-    const clientLocationOrigin = getConfigValue(
-      this.configService,
-      'clientLocationOrigin',
-    ) as string
+    // const clientLocationOrigin = getConfigValue(
+    //   this.configService,
+    //   'clientLocationOrigin',
+    // ) as string
 
-    const email = getConfigValue(
-      this.configService,
-      'email',
-    ) as BaseTemplateAPIModuleConfig['email']
+    const clientLocationOrigin = this.config.clientLocationOrigin
+
+    // const email = getConfigValue(
+    //   this.configService,
+    //   'email',
+    // ) as BaseTemplateAPIModuleConfig['email']
+
+    const email = this.config.email
 
     const template = templateGenerator({
       application,
@@ -123,15 +131,19 @@ export class SharedTemplateApiService {
     token: string,
     locale = 'is',
   ) {
-    const clientLocationOrigin = getConfigValue(
-      this.configService,
-      'clientLocationOrigin',
-    ) as string
+    // const clientLocationOrigin = getConfigValue(
+    //   this.configService,
+    //   'clientLocationOrigin',
+    // ) as string
 
-    const email = getConfigValue(
-      this.configService,
-      'email',
-    ) as BaseTemplateAPIModuleConfig['email']
+    const clientLocationOrigin = this.config.clientLocationOrigin
+
+    // const email = getConfigValue(
+    //   this.configService,
+    //   'email',
+    // ) as BaseTemplateAPIModuleConfig['email']
+
+    const email = this.config.email
 
     const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
 
@@ -157,15 +169,19 @@ export class SharedTemplateApiService {
     recipientEmail: string,
     locale = 'is',
   ) {
-    const clientLocationOrigin = getConfigValue(
-      this.configService,
-      'clientLocationOrigin',
-    ) as string
+    // const clientLocationOrigin = getConfigValue(
+    //   this.configService,
+    //   'clientLocationOrigin',
+    // ) as string
 
-    const email = getConfigValue(
-      this.configService,
-      'email',
-    ) as BaseTemplateAPIModuleConfig['email']
+    const clientLocationOrigin = this.config.clientLocationOrigin
+
+    // const email = getConfigValue(
+    //   this.configService,
+    //   'email',
+    // ) as BaseTemplateAPIModuleConfig['email']
+
+    const email = this.config.email
 
     const template = templateGenerator(
       {
@@ -188,10 +204,12 @@ export class SharedTemplateApiService {
     query: string,
     variables?: Record<string, unknown>,
   ): Promise<GraphqlGatewayResponse<T>> {
-    const baseApiUrl = getConfigValue(
-      this.configService,
-      'baseApiUrl',
-    ) as string
+    // const baseApiUrl = getConfigValue(
+    //   this.configService,
+    //   'baseApiUrl',
+    // ) as string
+
+    const baseApiUrl = this.config.baseApiUrl
 
     return fetch(`${baseApiUrl}/api/graphql`, {
       method: 'POST',
@@ -283,9 +301,11 @@ export class SharedTemplateApiService {
       return Promise.reject('expiration must be positive')
     }
 
-    const bucket = this.configService.get('attachmentBucket') as
-      | string
-      | undefined
+    // const bucket = this.configService.get('attachmentBucket') as
+    //   | string
+    //   | undefined
+
+    const bucket = this.config.attachmentBucket
 
     if (bucket == undefined) {
       return Promise.reject('could not find s3 bucket')

@@ -42,6 +42,7 @@ import { SmsService } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { PaymentService } from '@island.is/application/api/payment'
+import { sharedModuleConfig } from '../../shared/shared.config'
 
 const nationalId = '1234564321'
 let id = 0
@@ -233,6 +234,12 @@ describe('ParentalLeaveService', () => {
         {
           provide: BaseTemplateApiApplicationService,
           useValue: {},
+        },
+        {
+          provide: sharedModuleConfig.KEY,
+          useValue: {
+            clientLocationOrigin: 'http://localhost:4200',
+          },
         },
         SharedTemplateApiService,
         {

@@ -18,6 +18,7 @@ import { MockFeatureFlagService } from './mockFeatureFlagService'
 import * as uuid from 'uuidv4'
 import jwt from 'jsonwebtoken'
 import { coreHistoryMessages } from '@island.is/application/core'
+import { sharedModuleConfig } from '@island.is/application/template-api-modules'
 
 let app: INestApplication
 
@@ -56,6 +57,21 @@ class MockContentfulRepository {
   }
 }
 
+class MockSharedConfig {
+  load() {
+    return {
+      jwtSecret: 'supersecret',
+      clientLocationOrigin: 'http://localhost:4200',
+      email: {
+        sender: 'Devland.is',
+        address: 'development@island.is',
+      },
+      baseApiUrl: 'http://localhost:4444',
+      attachmentBucket: 'attachmentBucket',
+    }
+  }
+}
+
 let server: request.SuperTest<request.Test>
 // eslint-disable-next-line local-rules/disallow-kennitalas
 const nationalId = '1234564321'
@@ -74,6 +90,8 @@ beforeAll(async () => {
         .useClass(MockFeatureFlagService)
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
+        .overrideProvider(sharedModuleConfig.KEY)
+        .useClass(MockSharedConfig)
         .overrideGuard(IdsUserGuard)
         .useValue(mockAuthGuard),
   })

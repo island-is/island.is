@@ -1,5 +1,6 @@
 export { TemplateAPIModule } from './modules/template-api.module'
 export { TemplateAPIService } from './modules/template-api.service'
+export { sharedModuleConfig } from './modules/shared'
 export { BaseTemplateAPIModuleConfig as TemplateAPIConfig } from './types'
 export {
   BaseTemplateApiApplicationService,
