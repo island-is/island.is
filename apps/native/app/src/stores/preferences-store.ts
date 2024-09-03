@@ -28,9 +28,10 @@ export interface PreferencesStore extends State {
   homeScreenEnableGraphicWidget: boolean
   homeScreenEnableInboxWidget: boolean
   homeScreenEnableApplicationsWidget: boolean
-  homeScreenEnableLicenseWidget: boolean
-  homeScreenEnableVehicleWidget: boolean
+  homeScreenEnableLicensesWidget: boolean
+  homeScreenEnableVehiclesWidget: boolean
   homeScreenEnableAirDiscountWidget: boolean
+  homeScreenWidgetsInitialized: boolean
   lastUsedPasskey: number
   notificationsNewDocuments: boolean
   notificationsAppUpdates: boolean
@@ -65,9 +66,10 @@ const defaultPreferences = {
   homeScreenEnableGraphicWidget: true,
   homeScreenEnableInboxWidget: true,
   homeScreenEnableApplicationsWidget: true,
-  homeScreenEnableLicenseWidget: true,
-  homeScreenEnableVehicleWidget: true,
+  homeScreenEnableLicensesWidget: true,
+  homeScreenEnableVehiclesWidget: true,
   homeScreenEnableAirDiscountWidget: true,
+  homeScreenWidgetsInitialized: false,
   lastUsedPasskey: 0,
   notificationsNewDocuments: true,
   notificationsAppUpdates: true,
