@@ -30,7 +30,6 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { generateFirearmApplicantEmail } from './emailGenerators/firearmApplicantNotification'
 import { SharedTemplateApiService } from '../../shared'
 import { generateRequestReviewSms } from './smsGenerators/requestReviewSms'
-import { FirearmApplicant } from 'libs/application/templates/announcement-of-death/src/fields'
 
 @Injectable()
 export class AnnouncementOfDeathService extends BaseTemplateApiService {
