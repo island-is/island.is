@@ -8,17 +8,17 @@ import { uuid } from 'uuidv4'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { CacheService } from '../cache/cache.service'
-import { CachedTokenResponse, IdTokenData, TokenResponse } from './auth.types'
+import {
+  CachedTokenResponse,
+  IdTokenData,
+  ParResponse,
+  TokenResponse,
+} from './auth.types'
 import { PKCEService } from './pkce.service'
 import { CallbackLoginQuery } from './queries/callback-login.query'
 import { LoginQuery } from './queries/login.query'
 import { LogoutQuery } from './queries/logout.query'
 import { CallbackLogoutQuery } from './queries/callback-logout.query'
-
-export type ParResponse = {
-  request_uri: string
-  expires_in: number
-}
 
 @Injectable()
 export class AuthService {
