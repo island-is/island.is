@@ -107,7 +107,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const isUsingEpiPen = getValueViaPath(
     answers,
     'allergiesAndIntolerances.isUsingEpiPen',
-  ) as YesOrNo
+  ) as string[]
 
   const developmentalAssessment = getValueViaPath(
     answers,
