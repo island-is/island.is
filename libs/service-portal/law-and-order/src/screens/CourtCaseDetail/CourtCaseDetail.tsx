@@ -158,7 +158,8 @@ const CourtCaseDetail = () => {
           </Box>
         )}
         {error && !loading && <Problem error={error} noBorder={false} />}
-        {!error &&
+        {/* No actions are being returned in the moment - might revisit later */}
+        {/* {!error &&
           !loading &&
           courtCase?.actions &&
           courtCase.actions.length > 0 && (
@@ -174,16 +175,16 @@ const CourtCaseDetail = () => {
                     size="default"
                     variant="utility"
                     key={`'courtcase-button-'${y}`}
-                    onClick={() => alert('hleður niður PDF')}
+                    onClick={() => alert('hleður niður PDF')} // TODO: Implement download
                   >
                     {x.title}
                   </Button>
                 )
               })}
             </Box>
-          )}
+          )} */}
       </Box>
-      {!error && !loading && courtCase && (
+      {!error && courtCase && (
         <>
           {courtCase?.data?.groups && (
             <InfoLines groups={courtCase?.data?.groups} loading={loading} />
