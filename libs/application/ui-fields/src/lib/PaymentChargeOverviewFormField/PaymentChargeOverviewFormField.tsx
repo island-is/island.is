@@ -35,6 +35,7 @@ export const PaymentChargeOverviewFormField: FC<
     )
     return { ...chargeWithInfo, extraLabel: charge.extraLabel }
   })
+
   // calculate total price for all selected charge items
   const totalPrice = selectedChargeWithInfoList.reduce(
     (sum, charge) => sum + (charge?.priceAmount || 0),

@@ -63,7 +63,7 @@ export const idInformation = {
       description: 'Information alert for type of ID',
     },
     chosenApplicantsDescription: {
-      id: 'id.application:idInformation.labels.chosenApplicantsDescription',
+      id: 'id.application:idInformation.labels.chosenApplicantsDescription#markdown',
       defaultMessage:
         'Þú getur sótt um nafnskírteini / ferðaskilríki fyrir þig og eftirfarandi einstaklinga í þinni umsjón. Veldu þann einstakling sem þú vilt hefja umsókn fyrir og haltu síðan áfram í næsta skref.',
       description: 'description of chosen applicants page',

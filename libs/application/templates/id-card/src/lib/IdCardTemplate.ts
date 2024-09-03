@@ -292,6 +292,10 @@ const IdCardTemplate: ApplicationTemplate<
             },
           ],
           actionCard: {
+            tag: {
+              label: 'YAYYY', // TODO
+              variant: 'mint',
+            },
             pendingAction: {
               title: coreHistoryMessages.applicationReceived,
               content: '',

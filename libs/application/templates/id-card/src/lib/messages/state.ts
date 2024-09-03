@@ -13,7 +13,7 @@ export const state = {
       description: 'Review state page title',
     },
     description: {
-      id: 'id.application:state.general.description',
+      id: 'id.application:state.general.description#markdown',
       defaultMessage: `{guardianName} hefur sótt um nafnkskírteini 
       sem er ferðaskilríki fyrir: {childName}.  Samþykki beggja forsjáraðila 
       þarf til að útgáfa þess sé heimil. Í þessu ferli getur þú afgreitt 
