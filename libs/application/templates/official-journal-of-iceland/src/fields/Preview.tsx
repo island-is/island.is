@@ -1,4 +1,9 @@
-import { Box, Button, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { signatureConfig } from '../components/htmlEditor/config/signatureConfig'
 import { advertisementTemplate } from '../components/htmlEditor/templates/content'
@@ -10,109 +15,85 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
 import { PDF_QUERY, PDF_URL_QUERY, TYPE_QUERY } from '../graphql/queries'
+import { HTMLText } from '@island.is/regulations-tools/types'
+import { getAdvertMarkup, getSignatureMarkup } from '../lib/utils'
+import { SignatureType, SignatureTypes } from '../lib/constants'
+import { useApplication } from '../hooks/useUpdateApplication'
+import { error } from '../lib/messages'
 
-export const Preview = (props: OJOIFieldBaseProps) => {
-  // const { formatMessage: f } = useLocale()
-  // const { answers, id } = props.application
-  // const { advert, signature } = answers
+type Entity = {
+  id: string
+  title: string
+  slug: string
+}
 
-  // const { data, loading } = useQuery(TYPE_QUERY, {
-  //   variables: {
-  //     params: {
-  //       id: advert?.type,
-  //     },
-  //   },
-  // })
+type TypeResponse = {
+  officialJournalOfIcelandType: {
+    type: Entity
+  }
+}
 
-  // const type = data?.officialJournalOfIcelandType?.type?.title
+export const Preview = ({ application }: OJOIFieldBaseProps) => {
+  const { application: currentApplication } = useApplication({
+    applicationId: application.id,
+  })
 
-  // const { data: pdfUrlData } = useQuery(PDF_URL_QUERY, {
-  //   variables: {
-  //     id: id,
-  //   },
-  // })
+  const { formatMessage: f } = useLocale()
 
-  // const { data: pdfData } = useQuery(PDF_QUERY, {
-  //   variables: {
-  //     id: id,
-  //   },
-  // })
+  const {
+    data: typeData,
+    loading: typeLoading,
+    error: typeError,
+  } = useQuery<TypeResponse>(TYPE_QUERY, {
+    variables: {
+      params: {
+        id: currentApplication.answers.advert?.typeId,
+      },
+    },
+  })
 
-  // if (loading) {
-  //   return (
-  //     <SkeletonLoader height={40} space={2} repeat={5} borderRadius="large" />
-  //   )
-  // }
+  if (typeLoading) {
+    return (
+      <SkeletonLoader height={40} space={2} repeat={5} borderRadius="large" />
+    )
+  }
 
-  // const onCopyPreviewLink = () => {
-  //   if (!pdfData) {
-  //     return
-  //   }
+  if (typeError) {
+    return (
+      <AlertMessage
+        type="error"
+        message={f(error.fetchFailedMessage)}
+        title={f(error.fetchFailedTitle)}
+      />
+    )
+  }
 
-  //   const url = pdfData.officialJournalOfIcelandApplicationGetPdfUrl.url
+  /**
+   * TOOD: Fetch S3 URL for PDF if the user requests it
+   */
 
-  //   navigator.clipboard.writeText(url)
-  // }
+  const signatureMarkup = getSignatureMarkup({
+    signatures: currentApplication.answers.signatures,
+    type: currentApplication.answers.misc?.signatureType as SignatureTypes,
+  })
 
-  // const onOpenPdfPreview = () => {
-  //   if (!pdfData) {
-  //     return
-  //   }
+  const advertMarkup = getAdvertMarkup({
+    type: typeData?.officialJournalOfIcelandType.type.title,
+    title: currentApplication.answers.advert?.title,
+    html: currentApplication.answers.advert?.html,
+  })
 
-  //   window.open(
-  //     `data:application/pdf,${pdfData.officialJournalOfIcelandApplicationGetPdf.pdf}`,
-  //     '_blank',
-  //   )
-  // }
+  const combinedHtml = `${advertMarkup}<br />${signatureMarkup}` as HTMLText
 
   return (
-    <>
-      {/* <Box display="flex" columnGap={2}>
-        {!!pdfUrlData && (
-          <Button
-            onClick={onOpenPdfPreview}
-            variant="utility"
-            icon="download"
-            iconType="outline"
-          >
-            {f(preview.buttons.fetchPdf)}
-          </Button>
-        )}
-        {!!pdfData && (
-          <Button
-            onClick={onCopyPreviewLink}
-            variant="utility"
-            icon="link"
-            iconType="outline"
-          >
-            {f(preview.buttons.copyPreviewLink)}
-          </Button>
-        )}
-      </Box>
-      <Box border="standard" borderRadius="large">
-        <HTMLEditor
-          name="preview.document"
-          config={signatureConfig}
-          readOnly={true}
-          hideWarnings={true}
-          value={advertisementTemplate({
-            category: type,
-            content: advert?.document,
-            title: advert?.title,
-            signature:
-              signature?.type === 'regular'
-                ? regularSignatureTemplate({
-                    signatureGroups: signature?.regular,
-                    additionalSignature: signature?.additional,
-                  })
-                : committeeSignatureTemplate({
-                    signature: signature?.committee,
-                    additionalSignature: signature?.additional,
-                  }),
-            readonly: true,
-          })}
-        />
-      </Box> */}
-    </>
+    <Box border="standard" borderRadius="large">
+      <HTMLEditor
+        name="preview.document"
+        config={signatureConfig}
+        readOnly={true}
+        hideWarnings={true}
+        value={combinedHtml}
+      />
+    </Box>
   )
 }

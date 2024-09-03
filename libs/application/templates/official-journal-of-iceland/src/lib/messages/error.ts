@@ -16,6 +16,26 @@ export const error = defineMessages({
     defaultMessage: 'Villa kom upp við vistun gagna',
     description: 'Error message when data is not submitted',
   },
+  fetchXFailedTitle: {
+    id: 'ojoi.application:error.fetchXFailedTitle',
+    defaultMessage: 'Ekki tókst að sækja {x}',
+    description: 'Error message when fetching x fails',
+  },
+  fetchXFailedMessage: {
+    id: 'ojoi.application:error.fetchXFailedMessage',
+    defaultMessage: 'Villa kom upp við að sækja {x}',
+    description: 'Error message when fetching x fails',
+  },
+  fetchFailedTitle: {
+    id: 'ojoi.application:error.fetchFailedTitle',
+    defaultMessage: 'Ekki tókst að sækja gögn',
+    description: 'Error message when fetching fails',
+  },
+  fetchFailedMessage: {
+    id: 'ojoi.application:error.fetchFailedMessage',
+    defaultMessage: 'Villa kom upp við að sækja gögn',
+    description: 'Error message when fetching fails',
+  },
   xIsNotValid: {
     id: 'ojoi.application:error.xIsNotValid',
     defaultMessage: '{x} er ekki gilt',

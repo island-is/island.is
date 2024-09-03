@@ -9,8 +9,10 @@ import { OJOISelectController } from '../components/input/OJOISelectController'
 import { useTypes } from '../hooks/useTypes'
 import { OJOIInputController } from '../components/input/OJOIInputController'
 import { OJOIHtmlController } from '../components/input/OJOIHtmlController'
+import { useFormContext } from 'react-hook-form'
 
 export const Advert = ({ application }: OJOIFieldBaseProps) => {
+  const { setValue } = useFormContext()
   const { departments, loading: loadingDepartments } = useDepartments()
   const {
     useLazyTypes,
@@ -97,6 +99,9 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             applicationId={application.id}
             name={InputFields.advert.html}
             defaultValue={application.answers?.advert?.html}
+            // we have use setValue from useFormContext to update the value
+            // because this is not a controlled component
+            onChange={(value) => setValue(InputFields.advert.html, value)}
           />
         </Box>
       </FormGroup>

@@ -249,7 +249,7 @@ export const getSignatureMarkup = ({
 }: {
   signatures: z.infer<typeof partialSchema>['signatures']
   type: SignatureTypes
-}) => {
+}): HTMLText => {
   if (signatures === undefined) {
     return ''
   }
@@ -276,4 +276,29 @@ export const getSignatureMarkup = ({
   }
 
   return ''
+}
+
+export const getAdvertMarkup = ({
+  type,
+  title,
+  html,
+}: {
+  type?: string
+  title?: string
+  html?: string
+}) => {
+  const typeMarkup = type
+    ? `<p align="center" style="margin-bottom: 0;">${type.toUpperCase()}</p>`
+    : ''
+  const titleMarkup = title
+    ? `<p align="center"><strong>${title}</strong></p>`
+    : ''
+
+  return `
+    <div class="advert">
+      ${typeMarkup}
+      ${titleMarkup}
+      ${html}
+    </div>
+  ` as HTMLText
 }

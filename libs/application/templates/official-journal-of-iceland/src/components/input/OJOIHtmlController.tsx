@@ -55,7 +55,13 @@ export const OJOIHtmlController = ({
         classes={classes}
         fileUploader={fileUploader}
         valueRef={valueRef}
-        onChange={() => debouncedOnUpdateApplicationHandler(onChangeHandler())}
+        onChange={() => {
+          // add little bit of delay for valueRef to update
+          setTimeout(
+            () => debouncedOnUpdateApplicationHandler(onChangeHandler()),
+            100,
+          )
+        }}
         onBlur={() => debouncedOnUpdateApplicationHandler(onChangeHandler())}
       />
     </Box>
