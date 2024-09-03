@@ -1,14 +1,10 @@
 import { SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  DatePickerController,
-  InputController,
-} from '@island.is/shared/form-fields'
+import { DatePickerController } from '@island.is/shared/form-fields'
 import { MessageDescriptor } from 'react-intl'
-import { DEBOUNCE_INPUT_TIMER, OJOJ_INPUT_HEIGHT } from '../../lib/constants'
+import { OJOJ_INPUT_HEIGHT } from '../../lib/constants'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import set from 'lodash/set'
-import debounce from 'lodash/debounce'
 
 type Props = {
   name: string
@@ -18,6 +14,9 @@ type Props = {
   loading?: boolean
   applicationId: string
   disabled?: boolean
+  excludeDates?: Date[]
+  minDate?: Date
+  maxDate?: Date
   onChange?: (value: string) => void
 }
 
@@ -29,6 +28,9 @@ export const OJOIDateController = ({
   loading,
   applicationId,
   disabled,
+  excludeDates,
+  minDate,
+  maxDate,
   onChange,
 }: Props) => {
   const { formatMessage: f } = useLocale()
@@ -69,6 +71,9 @@ export const OJOIDateController = ({
       backgroundColor="blue"
       defaultValue={defaultValue}
       disabled={disabled}
+      excludeDates={excludeDates}
+      minDate={minDate}
+      maxDate={maxDate}
       onChange={(e) =>
         debouncedOnUpdateApplicationHandler(
           handleChange(e),

@@ -1,5 +1,5 @@
 import { useUserInfo } from '@island.is/auth/react'
-import { Box, Stack } from '@island.is/island-ui/core'
+import { Stack } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import { Property } from '../components/property/Property'
 import {
@@ -12,46 +12,52 @@ import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
 import { MINIMUM_WEEKDAYS } from '../lib/constants'
 import { addWeekdays } from '../lib/utils'
+import { useCategories } from '../hooks/useCategories'
 
 export const Summary = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f, formatDate } = useLocale()
 
-  // const user = useUserInfo()
+  const user = useUserInfo()
 
-  // const { answers } = application
+  const { answers } = application
 
-  // const { data, loading } = useQuery(TYPE_QUERY, {
-  //   variables: {
-  //     params: {
-  //       id: application?.answers?.advert?.type,
-  //     },
-  //   },
-  // })
+  const { data } = useQuery(TYPE_QUERY, {
+    variables: {
+      params: {
+        id: application?.answers?.advert?.typeId,
+      },
+    },
+  })
 
-  // const { data: priceData } = useQuery(GET_PRICE_QUERY, {
-  //   variables: { id: application.id },
-  // })
+  const { data: priceData } = useQuery(GET_PRICE_QUERY, {
+    variables: { id: application.id },
+  })
 
-  // const price =
-  //   priceData?.officialJournalOfIcelandApplicationGetPrice?.price ?? 0
+  const price =
+    priceData?.officialJournalOfIcelandApplicationGetPrice?.price ?? 0
 
-  // const type = data?.officialJournalOfIcelandType?.type?.title
+  const type = data?.officialJournalOfIcelandType?.type?.title
 
-  // const { data: department } = useQuery(DEPARTMENT_QUERY, {
-  //   variables: {
-  //     params: {
-  //       id: answers?.advert?.department,
-  //     },
-  //   },
-  // })
+  const { data: department } = useQuery(DEPARTMENT_QUERY, {
+    variables: {
+      params: {
+        id: answers?.advert?.departmentId,
+      },
+    },
+  })
 
-  // const today = new Date()
-  // const estimatedDate = addWeekdays(today, MINIMUM_WEEKDAYS)
+  const { categories } = useCategories()
+
+  const selectedCategories = categories?.filter((c) =>
+    answers?.advert?.categories?.includes(c.id),
+  )
+
+  const today = new Date()
+  const estimatedDate = addWeekdays(today, MINIMUM_WEEKDAYS)
 
   return (
     <Stack space={0} dividers>
-      <Box></Box>
-      {/* <Property name={f(summary.properties.sender)} value={user.profile.name} />
+      <Property name={f(summary.properties.sender)} value={user.profile.name} />
       <Property name={f(summary.properties.type)} value={type} />
       <Property
         name={f(summary.properties.title)}
@@ -72,10 +78,8 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
       <Property name={f(summary.properties.estimatedPrice)} value={price} />
       <Property
         name={f(summary.properties.classification)}
-        value={answers?.publishing?.contentCategories
-          .map((c) => c.label)
-          .join(', ')}
-      /> */}
+        value={selectedCategories?.map((c) => c.title).join(', ')}
+      />
     </Stack>
   )
 }

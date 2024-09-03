@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { error } from './messages'
-import { AnswerOption, FileNames } from './constants'
+import { AnswerOption } from './constants'
 
 export const memberItemSchema = z
   .object({
@@ -36,7 +36,7 @@ export const committeeSignatureSchema = regularSignatureItemSchema
   })
   .partial()
 
-const channelSchema = z
+export const channelSchema = z
   .object({
     email: z.string(),
     phone: z.string(),
@@ -53,19 +53,6 @@ const advertSchema = z
     categories: z.array(z.string()).optional(),
     channels: z.array(channelSchema).optional(),
     message: z.string().optional(),
-  })
-  .partial()
-
-const fileSchema = z.object({
-  name: z.string().optional(),
-  key: z.string().optional(),
-  url: z.string().optional(),
-})
-
-const attachmentSchema = z
-  .object({
-    files: z.array(fileSchema).optional(),
-    fileNames: z.enum([FileNames.ADDITIONS, FileNames.DOCUMENT]).optional(),
   })
   .partial()
 
@@ -98,7 +85,6 @@ export const partialSchema = z.object({
     .partial()
     .optional(),
   misc: miscSchema.optional(),
-  attachments: z.array(attachmentSchema).optional(),
 })
 
 const advertValidation = (advert: z.infer<typeof advertSchema>) => {
