@@ -114,6 +114,9 @@ const Completed: FC = () => {
       CaseIndictmentRulingDecision.FINE,
     ].includes(workingCase.indictmentRulingDecision)
 
+  const isRuling =
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
   const stepIsValid = () =>
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
       ? workingCase.defendants?.every(
@@ -150,134 +153,127 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        {!sentToPublicProsecutor && (
-          <>
-            {isRulingOrFine && (
-              <Box marginBottom={5} component="section">
-                <SectionHeading
-                  title={formatMessage(strings.criminalRecordUpdateTitle)}
-                />
-                <InputFileUpload
-                  fileList={uploadFiles.filter(
-                    (file) =>
-                      file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-                  )}
-                  accept="application/pdf"
-                  header={formatMessage(core.uploadBoxTitle)}
-                  buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-                  description={formatMessage(core.uploadBoxDescription, {
-                    fileEndings: '.pdf',
-                  })}
-                  onChange={handleCriminalRecordUpdateUpload}
-                  onRemove={handleRemoveFile}
-                />
-              </Box>
-            )}
-            {workingCase.indictmentRulingDecision ===
-              CaseIndictmentRulingDecision.RULING && (
-              <Box marginBottom={10}>
-                <SectionHeading
-                  title={formatMessage(strings.serviceRequirementTitle)}
-                />
-                {workingCase.defendants?.map((defendant, index) => (
-                  <Box
-                    key={defendant.id}
-                    component="section"
-                    marginBottom={
-                      workingCase.defendants &&
-                      workingCase.defendants.length - 1 === index
-                        ? 10
-                        : 3
-                    }
-                  >
-                    <BlueBox>
-                      <SectionHeading
-                        title={defendant.name || ''}
-                        marginBottom={2}
-                        heading="h4"
-                        required
-                      />
-                      <Box marginBottom={2}>
-                        <RadioButton
-                          id={`defendant-${defendant.id}-service-requirement-not-applicable`}
-                          name={`defendant-${defendant.id}-service-requirement`}
-                          checked={
-                            defendant.serviceRequirement ===
-                            ServiceRequirement.NOT_APPLICABLE
-                          }
-                          onChange={() => {
-                            setAndSendDefendantToServer(
-                              {
-                                defendantId: defendant.id,
-                                caseId: workingCase.id,
-                                serviceRequirement:
-                                  ServiceRequirement.NOT_APPLICABLE,
-                              },
-                              setWorkingCase,
-                            )
-                          }}
-                          large
-                          backgroundColor="white"
-                          label={formatMessage(
-                            strings.serviceRequirementNotApplicable,
-                          )}
-                        />
-                      </Box>
-                      <Box marginBottom={2}>
-                        <RadioButton
-                          id={`defendant-${defendant.id}-service-requirement-required`}
-                          name={`defendant-${defendant.id}-service-requirement`}
-                          checked={
-                            defendant.serviceRequirement ===
-                            ServiceRequirement.REQUIRED
-                          }
-                          onChange={() => {
-                            setAndSendDefendantToServer(
-                              {
-                                defendantId: defendant.id,
-                                caseId: workingCase.id,
-                                serviceRequirement: ServiceRequirement.REQUIRED,
-                              },
-                              setWorkingCase,
-                            )
-                          }}
-                          large
-                          backgroundColor="white"
-                          label={formatMessage(
-                            strings.serviceRequirementRequired,
-                          )}
-                        />
-                      </Box>
-                      <RadioButton
-                        id={`defendant-${defendant.id}-service-requirement-not-required`}
-                        name={`defendant-${defendant.id}-service-requirement`}
-                        checked={
-                          defendant.serviceRequirement ===
-                          ServiceRequirement.NOT_REQUIRED
-                        }
-                        onChange={() => {
-                          setAndSendDefendantToServer(
-                            {
-                              defendantId: defendant.id,
-                              caseId: workingCase.id,
-                              serviceRequirement:
-                                ServiceRequirement.NOT_REQUIRED,
-                            },
-                            setWorkingCase,
-                          )
-                        }}
-                        large
-                        backgroundColor="white"
-                        label={formatMessage(
-                          strings.serviceRequirementNotRequired,
-                        )}
-                      />
-                    </BlueBox>
+        {!sentToPublicProsecutor && isRulingOrFine && (
+          <Box marginBottom={isRuling ? 5 : 10} component="section">
+            <SectionHeading
+              title={formatMessage(strings.criminalRecordUpdateTitle)}
+            />
+            <InputFileUpload
+              fileList={uploadFiles.filter(
+                (file) =>
+                  file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+              )}
+              accept="application/pdf"
+              header={formatMessage(core.uploadBoxTitle)}
+              buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+              description={formatMessage(core.uploadBoxDescription, {
+                fileEndings: '.pdf',
+              })}
+              onChange={handleCriminalRecordUpdateUpload}
+              onRemove={handleRemoveFile}
+            />
+          </Box>
+        )}
+        {isRuling && (
+          <Box marginBottom={10} component="section">
+            <SectionHeading
+              title={formatMessage(strings.serviceRequirementTitle)}
+            />
+            {workingCase.defendants?.map((defendant, index) => (
+              <Box
+                key={defendant.id}
+                component="section"
+                marginBottom={
+                  workingCase.defendants &&
+                  workingCase.defendants.length - 1 === index
+                    ? 10
+                    : 3
+                }
+              >
+                <BlueBox>
+                  <SectionHeading
+                    title={defendant.name || ''}
+                    marginBottom={2}
+                    heading="h4"
+                    required
+                  />
+                  <Box marginBottom={2}>
+                    <RadioButton
+                      id={`defendant-${defendant.id}-service-requirement-not-applicable`}
+                      name={`defendant-${defendant.id}-service-requirement`}
+                      checked={
+                        defendant.serviceRequirement ===
+                        ServiceRequirement.NOT_APPLICABLE
+                      }
+                      disabled={sentToPublicProsecutor}
+                      onChange={() => {
+                        setAndSendDefendantToServer(
+                          {
+                            defendantId: defendant.id,
+                            caseId: workingCase.id,
+                            serviceRequirement:
+                              ServiceRequirement.NOT_APPLICABLE,
+                          },
+                          setWorkingCase,
+                        )
+                      }}
+                      large
+                      backgroundColor="white"
+                      label={formatMessage(
+                        strings.serviceRequirementNotApplicable,
+                      )}
+                    />
                   </Box>
-                ))}
+                  <Box marginBottom={2}>
+                    <RadioButton
+                      id={`defendant-${defendant.id}-service-requirement-required`}
+                      name={`defendant-${defendant.id}-service-requirement`}
+                      checked={
+                        defendant.serviceRequirement ===
+                        ServiceRequirement.REQUIRED
+                      }
+                      disabled={sentToPublicProsecutor}
+                      onChange={() => {
+                        setAndSendDefendantToServer(
+                          {
+                            defendantId: defendant.id,
+                            caseId: workingCase.id,
+                            serviceRequirement: ServiceRequirement.REQUIRED,
+                          },
+                          setWorkingCase,
+                        )
+                      }}
+                      large
+                      backgroundColor="white"
+                      label={formatMessage(strings.serviceRequirementRequired)}
+                    />
+                  </Box>
+                  <RadioButton
+                    id={`defendant-${defendant.id}-service-requirement-not-required`}
+                    name={`defendant-${defendant.id}-service-requirement`}
+                    checked={
+                      defendant.serviceRequirement ===
+                      ServiceRequirement.NOT_REQUIRED
+                    }
+                    disabled={sentToPublicProsecutor}
+                    onChange={() => {
+                      setAndSendDefendantToServer(
+                        {
+                          defendantId: defendant.id,
+                          caseId: workingCase.id,
+                          serviceRequirement: ServiceRequirement.NOT_REQUIRED,
+                        },
+                        setWorkingCase,
+                      )
+                    }}
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.serviceRequirementNotRequired)}
+                  />
+                </BlueBox>
               </Box>
-            )}
-          </>
+            ))}
+          </Box>
         )}
       </FormContentContainer>
       <FormContentContainer isFooter>

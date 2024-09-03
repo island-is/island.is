@@ -1,20 +1,14 @@
 import { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+
 import { AsyncSearchInput, Box, Text } from '@island.is/island-ui/core'
-import { useNamespace } from '@island.is/web/hooks'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
-interface SidebarShipSearchInputProps {
-  namespace: {
-    shipDetailsHref?: string
-    shipSearchHref?: string
-    placeholder?: string
-    label?: string
-  }
-}
+import { translation as translationStrings } from './translation.strings'
 
-const SidebarShipSearchInput = ({ namespace }: SidebarShipSearchInputProps) => {
-  const n = useNamespace(namespace)
+const SidebarShipSearchInput = () => {
+  const { formatMessage } = useIntl()
   const [searchValue, setSearchValue] = useState('')
   const router = useRouter()
   const [hasFocus, setHasFocus] = useState(false)
@@ -23,10 +17,11 @@ const SidebarShipSearchInput = ({ namespace }: SidebarShipSearchInputProps) => {
     const searchValueIsNumber =
       !isNaN(Number(searchValue)) && searchValue.length > 0
     if (searchValueIsNumber) {
-      const pathname = n('shipDetailsHref', '/v/gagnasidur-fiskistofu')
+      const pathname = formatMessage(translationStrings.shipDetailsHref)
       const query = {
         ...router.query,
-        [n('shipDetailsNumberQueryParam', 'nr')]: searchValue,
+        [formatMessage(translationStrings.shipDetailsNumberQueryParam)]:
+          searchValue,
         selectedTab: router.query?.selectedTab ?? 'skip',
       }
 
@@ -46,14 +41,14 @@ const SidebarShipSearchInput = ({ namespace }: SidebarShipSearchInputProps) => {
     } else {
       const query = { ...router.query, name: searchValue }
       router.push({
-        pathname: n('shipSearchHref', '/s/fiskistofa/skipaleit'),
+        pathname: formatMessage(translationStrings.shipSearchHref),
         query,
       })
     }
   }
 
-  const label = n('label', 'Skoða skip')
-  const placeholder = n('placeholder', 'Skipaskrárnúmer eða nafn')
+  const label = formatMessage(translationStrings.label)
+  const placeholder = formatMessage(translationStrings.placeholder)
 
   return (
     <Box>
