@@ -8,9 +8,10 @@ const randomBytesAsync = promisify(crypto.randomBytes)
 export class PKCEService {
   /**
    * Generate a PKCE code verifier
+   * Generates a 50-character long verifier by default
    */
   public async generateCodeVerifier(): Promise<string> {
-    return this.generateVerifier(50) // Generates a 50-character long verifier by default
+    return this.generateVerifier(50)
   }
 
   /**

@@ -12,9 +12,9 @@ export class CacheService {
 
   /**
    * Creates s unique key with session id.
-   * type is either 'attempt' or 'current'
-   * attempt represents the login attempt
-   * current represents the current login session
+   * Type is either 'attempt' or 'current'.
+   * `attempt` represents the login attempt.
+   * `current` represents the current login session.
    */
   public createSessionKeyType(type: 'attempt' | 'current', sid: string) {
     return `${type}_${sid}`

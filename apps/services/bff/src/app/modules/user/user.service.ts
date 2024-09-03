@@ -27,8 +27,8 @@ export class UserService {
           this.cacheService.createSessionKeyType('current', sid),
         )
 
-      if (!cachedTokenResponse) {
-        throw new Error()
+      if (!cachedTokenResponse.userProfile) {
+        throw new Error('userProfile not found in cache')
       }
 
       return cachedTokenResponse.userProfile
