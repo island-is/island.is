@@ -5,7 +5,6 @@ import { logger } from '@island.is/logging'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 import { objectToXML } from '../../shared/shared.utils'
 import is from 'date-fns/locale/is'
-import { BucketService } from './bucket/bucket.service'
 import format from 'date-fns/format'
 import {
   ApplyHealthInsuranceInputs,
@@ -14,6 +13,7 @@ import {
   GetVistaSkjalBody,
   VistaSkjalInput,
 } from './types/health-insurance-types'
+import { S3Service } from '../../shared/services/s3.service'
 
 const formatDate = (date: Date) => {
   return format(new Date(date), 'yyyy-MM-dd', {
@@ -34,7 +34,7 @@ const formatDate = (date: Date) => {
 export const insuranceToXML = async (
   inputObj: VistaSkjalInput,
   attachmentNames: string[],
-  bucketService: BucketService,
+  s3Service: S3Service,
 ) => {
   logger.debug(`--- Starting to convert application to XML ---`)
   const vistaSkjalBody: GetVistaSkjalBody = {
@@ -93,11 +93,14 @@ export const insuranceToXML = async (
     }
     for (let i = 0; i < arrAttachments.length; i++) {
       const filename = arrAttachments[i]
+      const content = await s3Service.getFileContentAsBase64(attachmentNames[i])
+      if(!content){
+        throw new Error('error getting file:' + filename)
+      }
+      
       const fylgiskjal: Fylgiskjal = {
         heiti: filename,
-        innihald: await bucketService.getFileContentAsBase64(
-          attachmentNames[i],
-        ),
+        innihald: content,
       }
       fylgiskjol.fylgiskjal.push(fylgiskjal)
     }

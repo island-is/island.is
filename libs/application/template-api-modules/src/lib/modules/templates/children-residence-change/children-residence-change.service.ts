@@ -13,7 +13,6 @@ import {
 } from '@island.is/application/templates/family-matters-core/utils'
 import { Override } from '@island.is/application/templates/family-matters-core/types'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
-import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import {
   generateApplicationSubmittedEmail,
@@ -26,6 +25,7 @@ import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { S3Service } from '../../shared/services/s3.service'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -36,17 +36,16 @@ type props = Override<
 
 @Injectable()
 export class ChildrenResidenceChangeService extends BaseTemplateApiService {
-  s3: S3
-
   constructor(
     private readonly syslumennService: SyslumennService,
     @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly smsService: SmsService,
     private nationalRegistryApi: NationalRegistryClientService,
+    @Inject(S3Service)
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE)
-    this.s3 = new S3()
   }
 
   async submitApplication({ application }: props) {
@@ -54,10 +53,13 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const { nationalRegistry } = externalData
     const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
-    const file = await this.s3
-      .getObject({ Bucket: this.presignedBucket, Key: s3FileName })
-      .promise()
-    const fileContent = file.Body as Buffer
+    const file = await this.s3Service.getFileFromBucket(this.presignedBucket, s3FileName)
+    if(!file){
+      throw new Error('File content was undefined')
+    }
+    // Body interface here states that a stream can only be converted once, make sure the first call here isnt destructive
+    const fileContentBase64 = await file?.Body?.transformToString('base64')
+    const fileContentBinary = await file?.Body?.transformToString('binary')
 
     const selectedChildren = getSelectedChildrenFromExternalData(
       externalData.childrenCustodyInformation.data,
@@ -73,14 +75,14 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     )
     const currentAddress = childResidenceInfo?.current?.address
 
-    if (!fileContent) {
+    if (!fileContentBase64 || !fileContentBinary) {
       throw new Error('File content was undefined')
     }
 
     const attachments: Attachment[] = [
       {
         name: `Lögheimilisbreyting-barns-${applicant.nationalId}.pdf`,
-        content: fileContent.toString('base64'),
+        content: fileContentBase64,
       },
     ]
 
@@ -152,7 +154,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
         await this.sharedTemplateAPIService.sendEmailWithAttachment(
           generateSyslumennNotificationEmail,
           application as unknown as Application,
-          fileContent.toString('binary'),
+          fileContentBinary,
           syslumennData.email,
         )
         return undefined
@@ -162,7 +164,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       (props) =>
         generateApplicationSubmittedEmail(
           props,
-          fileContent.toString('binary'),
+          fileContentBinary,
           answers.parentA.email,
           syslumennData.name,
           response?.caseNumber,
@@ -174,7 +176,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       (props) =>
         generateApplicationSubmittedEmail(
           props,
-          fileContent.toString('binary'),
+          fileContentBinary,
           answers.parentB.email,
           syslumennData.name,
           response?.caseNumber,

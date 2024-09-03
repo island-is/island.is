@@ -36,6 +36,7 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementClientService: FinancialStatementsInaoClientService,
+    @Inject(AttachmentS3Service)
     private attachmentService: AttachmentS3Service,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY)

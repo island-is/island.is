@@ -1516,6 +1516,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/lib-storage@npm:3.637.0":
+  version: 3.637.0
+  resolution: "@aws-sdk/lib-storage@npm:3.637.0"
+  dependencies:
+    "@smithy/abort-controller": ^3.1.1
+    "@smithy/middleware-endpoint": ^3.1.0
+    "@smithy/smithy-client": ^3.2.0
+    buffer: 5.6.0
+    events: 3.3.0
+    stream-browserify: 3.0.0
+    tslib: ^2.6.2
+  peerDependencies:
+    "@aws-sdk/client-s3": ^3.637.0
+  checksum: dc90cfe6874b4ca23f3ebac2a11ef6b751abadaaa9c04777d13b096e8ef3bb764100d06cd97f48f803cacb2642725f36e1237d00cde6ffe02bd429658c944c6a
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/md5-js@npm:3.127.0":
   version: 3.127.0
   resolution: "@aws-sdk/md5-js@npm:3.127.0"
@@ -1868,6 +1885,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/s3-request-presigner@npm:3.637.0":
+  version: 3.637.0
+  resolution: "@aws-sdk/s3-request-presigner@npm:3.637.0"
+  dependencies:
+    "@aws-sdk/signature-v4-multi-region": 3.635.0
+    "@aws-sdk/types": 3.609.0
+    "@aws-sdk/util-format-url": 3.609.0
+    "@smithy/middleware-endpoint": ^3.1.0
+    "@smithy/protocol-http": ^4.1.0
+    "@smithy/smithy-client": ^3.2.0
+    "@smithy/types": ^3.3.0
+    tslib: ^2.6.2
+  checksum: 3e96a96650324133a88ac92e97be5527a610612073226d8a4a22d8fc3f0fe98a374a15dbe7352c1f30b801b4fb71b6ccb7156ba7b1fbd6c9c79feb0aa2414ec1
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/service-error-classification@npm:3.127.0":
   version: 3.127.0
   resolution: "@aws-sdk/service-error-classification@npm:3.127.0"
@@ -2066,6 +2099,18 @@ __metadata:
     "@smithy/util-endpoints": ^2.0.5
     tslib: ^2.6.2
   checksum: 55fe86f46f77b3d41ac5c15bbb58b7271175327dc59958ff16a58822ebe26c5ab0bc577dfaaddcbb76466702bee58cd7066eac10d6fa0b43357bddf2cd3dba2f
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-format-url@npm:3.609.0":
+  version: 3.609.0
+  resolution: "@aws-sdk/util-format-url@npm:3.609.0"
+  dependencies:
+    "@aws-sdk/types": 3.609.0
+    "@smithy/querystring-builder": ^3.0.3
+    "@smithy/types": ^3.3.0
+    tslib: ^2.6.2
+  checksum: 487a666cc4f6a3a8bcd27839fda7b79a3dccc81a7bd694a9903c6ea3695e1cc7cb2e538421335db5fb59460a148cc1a4a0a6e4796c5241a0ab406c4190f781d9
   languageName: node
   linkType: hard
 
@@ -26968,6 +27013,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"buffer@npm:5.6.0":
+  version: 5.6.0
+  resolution: "buffer@npm:5.6.0"
+  dependencies:
+    base64-js: ^1.0.2
+    ieee754: ^1.1.4
+  checksum: d659494c5032dd39d03d2912e64179cc44c6340e7e9d1f68d3840e7ab4559989fbce92b4950174593c38d05268224235ba404f0878775cab2a616b6dcad9c23e
+  languageName: node
+  linkType: hard
+
 "buffer@npm:^5.4.3, buffer@npm:^5.5.0, buffer@npm:^5.7.1":
   version: 5.7.1
   resolution: "buffer@npm:5.7.1"
@@ -33315,7 +33370,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"events@npm:^3.2.0, events@npm:^3.3.0":
+"events@npm:3.3.0, events@npm:^3.2.0, events@npm:^3.3.0":
   version: 3.3.0
   resolution: "events@npm:3.3.0"
   checksum: f6f487ad2198aa41d878fa31452f1a3c00958f46e9019286ff4787c84aac329332ab45c9cdc8c445928fc6d7ded294b9e005a7fce9426488518017831b272780
@@ -38476,6 +38531,8 @@ __metadata:
     "@aws-sdk/client-sqs": 3.145.0
     "@aws-sdk/client-ssm": 3.145.0
     "@aws-sdk/credential-provider-node": 3.145.0
+    "@aws-sdk/lib-storage": 3.637.0
+    "@aws-sdk/s3-request-presigner": 3.637.0
     "@azure/msal-node": 1.14.4
     "@babel/core": 7.22.5
     "@babel/plugin-proposal-decorators": 7.22.5

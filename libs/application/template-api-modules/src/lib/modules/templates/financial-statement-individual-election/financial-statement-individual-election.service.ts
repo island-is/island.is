@@ -33,6 +33,7 @@ export class FinancialStatementIndividualElectionService extends BaseTemplateApi
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementIndividualClientService: FinancialStatementsInaoClientService,
+    @Inject(AttachmentS3Service)
     private attachmentService: AttachmentS3Service,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION)

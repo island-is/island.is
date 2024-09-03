@@ -2,8 +2,8 @@ import { getValueViaPath } from '@island.is/application/core'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 
 import { logger } from '@island.is/logging'
-import { Injectable } from '@nestjs/common'
-import { S3Service } from './s3.service'
+import { Inject, Injectable } from '@nestjs/common'
+import { S3Service } from '../../../shared/services/s3.service'
 
 export interface AttachmentData {
   key: string
@@ -14,7 +14,7 @@ export interface AttachmentData {
 
 @Injectable()
 export class ApplicationAttachmentService {
-  constructor(private readonly s3Service: S3Service) {}
+  constructor(@Inject(S3Service) private readonly s3Service: S3Service) {}
 
   public async getFiles(
     application: Application,
@@ -62,7 +62,7 @@ export class ApplicationAttachmentService {
           return { key: '', fileContent: '', answerKey, fileName: '' }
         }
         const fileContent =
-          (await this.s3Service.getFilecontentAsBase64(url)) ?? ''
+          (await this.s3Service.getFileContentAsBase64(url)) ?? ''
 
         return { key, fileContent, answerKey, fileName: name }
       }),

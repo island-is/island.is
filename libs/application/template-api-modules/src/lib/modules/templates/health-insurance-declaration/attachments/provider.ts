@@ -1,6 +1,6 @@
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 import { AttachmentS3Service } from '../../../shared/services'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 export interface DocumentBuildInfo {
   key: string
@@ -21,7 +21,10 @@ export interface DocumentInfo {
 
 @Injectable()
 export class ApplicationAttachmentProvider {
-  constructor(private attachmentService: AttachmentS3Service) {}
+  constructor(
+    @Inject(AttachmentS3Service)
+    private attachmentService: AttachmentS3Service
+  ) {}
 
   public async getFiles(
     attachmentAnswers: string[],

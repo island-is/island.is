@@ -55,6 +55,7 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementsClientService: FinancialStatementsInaoClientService,
+    @Inject(AttachmentS3Service)
     private attachmentService: AttachmentS3Service,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENTS_INAO)

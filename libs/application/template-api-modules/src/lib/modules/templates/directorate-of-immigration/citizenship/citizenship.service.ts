@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -27,11 +27,14 @@ import { NationalRegistryClientService } from '@island.is/clients/national-regis
 import { YES } from '@island.is/application/core'
 import { Auth } from '@island.is/auth-nest-tools'
 import { ApplicantInformation } from './types'
+import { AttachmentS3Service } from '../../../shared/services'
 
 @Injectable()
 export class CitizenshipService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    @Inject(AttachmentS3Service)
+    private readonly attachmentS3Service: AttachmentS3Service,
     private readonly directorateOfImmigrationClient: DirectorateOfImmigrationClient,
     private readonly nationalRegistryApi: NationalRegistryClientService,
   ) {
@@ -419,7 +422,7 @@ export class CitizenshipService extends BaseTemplateApiService {
     return await Promise.all(
       attachments?.map(async (file) => {
         const base64 =
-          await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
+          await this.attachmentS3Service.getAttachmentContentAsBase64(
             application,
             file.key,
           )
