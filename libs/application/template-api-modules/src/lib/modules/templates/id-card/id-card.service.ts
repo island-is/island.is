@@ -47,7 +47,6 @@ export class IdCardService extends BaseTemplateApiService {
       auth,
       params?.type,
     )
-    console.log('identityDocument', identityDocument)
     if (!identityDocument) {
       throw new TemplateApiError(
         {
@@ -68,7 +67,6 @@ export class IdCardService extends BaseTemplateApiService {
       passport: identityDocument.userPassport,
       children: identityDocument.childPassports,
     }
-    console.log('applicantInformation', applicantInformation)
     const applicantIDWithinLimits = isAvailableForApplication(
       'ID',
       applicantInformation,
