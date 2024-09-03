@@ -126,8 +126,8 @@ export const addConfirmation = (
   const coatOfArmsX = pageMargin + calculatePt(8)
   const titleHeight = calculatePt(32)
   const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
-  const confirmedByWidth = calculatePt(160)
-  const institutionWidth = confirmedByWidth + calculatePt(48)
+  const institutionWidth = calculatePt(160)
+  const confirmedByWidth = institutionWidth + calculatePt(48)
   const shaddowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
   const titleWidth = institutionWidth + confirmedByWidth
 
@@ -167,7 +167,7 @@ export const addConfirmation = (
     .rect(
       coatOfArmsX + coatOfArmsWidth,
       pageMargin + titleHeight,
-      confirmedByWidth,
+      institutionWidth,
       shaddowHeight - titleHeight,
     )
     .fillAndStroke('white', darkGray)
@@ -180,15 +180,15 @@ export const addConfirmation = (
     confirmation.institution,
     titleX,
     pageMargin + titleHeight + calculatePt(32),
-    confirmedByWidth - calculatePt(16),
+    institutionWidth - calculatePt(16),
   )
 
   // Draw the actor
   doc
     .rect(
-      coatOfArmsX + coatOfArmsWidth + confirmedByWidth,
+      coatOfArmsX + coatOfArmsWidth + institutionWidth,
       pageMargin + titleHeight,
-      institutionWidth,
+      confirmedByWidth,
       shaddowHeight - titleHeight,
     )
     .fillAndStroke('white', darkGray)
@@ -196,7 +196,7 @@ export const addConfirmation = (
   doc.font('Times-Bold')
   doc.text(
     'Samþykktaraðili',
-    titleX + confirmedByWidth,
+    titleX + institutionWidth,
     pageMargin + titleHeight + calculatePt(16),
   )
   doc.font('Times-Roman')
@@ -204,7 +204,7 @@ export const addConfirmation = (
     `${confirmation.actor}${
       confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
     }`,
-    titleX + confirmedByWidth,
+    titleX + institutionWidth,
     pageMargin + titleHeight + calculatePt(32),
   )
 
