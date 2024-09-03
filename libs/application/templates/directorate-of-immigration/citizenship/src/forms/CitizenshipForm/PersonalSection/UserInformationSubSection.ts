@@ -58,7 +58,11 @@ export const UserInformationSubSection = buildSubSection({
               undefined,
             ) as NationalRegistryIndividual | undefined
 
-            return `${individual?.givenName} ${individual?.familyName}`
+            if (individual?.givenName && individual.familyName) {
+              return `${individual?.givenName} ${individual?.familyName}`
+            }
+
+            return individual?.fullName
           },
         }),
         buildTextField({
