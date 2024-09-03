@@ -166,7 +166,9 @@ export class AuthService {
         this.config.auth.allowedRedirectUris,
       )
     ) {
-      throw new BadRequestException('Invalid target_link_uri')
+      this.logger.error('Invalid target_link_uri provided:', targetLinkUri)
+
+      throw new BadRequestException('Login failed')
     }
 
     // Generate a unique session id to be used in the login flow
@@ -196,9 +198,12 @@ export class AuthService {
 
     const parResponse = await this.fetchPAR({ sid, codeChallenge, loginHint })
 
-    return res.redirect(
-      `${this.baseUrl}/connect/authorize?request_uri=${parResponse.request_uri}&client_id=${this.config.auth.clientId}`,
-    )
+    const searchParams = new URLSearchParams({
+      request_uri: parResponse.request_uri,
+      client_id: this.config.auth.clientId,
+    }).toString()
+
+    return res.redirect(`${this.baseUrl}/connect/authorize?${searchParams}`)
   }
 
   /**
