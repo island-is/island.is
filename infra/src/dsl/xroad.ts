@@ -194,12 +194,12 @@ export const Finance = new XroadConf({
   env: {
     XROAD_FINANCES_PATH: {
       dev: 'IS-DEV/GOV/10021/FJS-Public/financeIsland',
-      staging: 'IS-DEV/GOV/10021/FJS-Public/financeIsland',
+      staging: 'IS-TEST/GOV/10021/FJS-Public/financeIsland',
       prod: 'IS/GOV/5402697509/FJS-Public/financeIsland',
     },
     XROAD_FINANCES_V2_PATH: {
       dev: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2',
-      staging: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2',
+      staging: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2',
       prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2',
     },
     XROAD_HMS_LOANS_PATH: {
@@ -506,7 +506,7 @@ export const PaymentSchedule = new XroadConf({
   env: {
     XROAD_PAYMENT_SCHEDULE_PATH: {
       dev: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1',
-      staging: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1',
+      staging: 'IS-TEST/GOV/10021/FJS-Public/paymentSchedule_v1',
       prod: 'IS/GOV/5402697509/FJS-Public/paymentSchedule_v1',
     },
   },
@@ -634,7 +634,7 @@ export const ChargeFjsV2 = new XroadConf({
   env: {
     XROAD_CHARGE_FJS_V2_PATH: {
       dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
-      staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+      staging: 'IS-TEST/GOV/10021/FJS-Public/chargeFJS_v2',
       prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
     },
   },
@@ -644,7 +644,7 @@ export const EnergyFunds = new XroadConf({
   env: {
     XROAD_ENERGY_FUNDS_PATH: {
       dev: 'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1',
-      staging: 'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1',
+      staging: 'IS-TEST/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1',
       prod: 'IS/GOV/5402697509/FJS-Public/ElectricCarSubSidyService_v1',
     },
   },
@@ -654,7 +654,7 @@ export const VehicleServiceFjsV1 = new XroadConf({
   env: {
     XROAD_VEHICLE_SERVICE_FJS_V1_PATH: {
       dev: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1',
-      staging: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1',
+      staging: 'IS-TEST/GOV/10021/FJS-Public/VehicleServiceFJS_v1',
       prod: 'IS/GOV/5402697509/FJS-Public/VehicleServiceFJS_v1',
     },
   },
@@ -712,7 +712,7 @@ export const IcelandicGovernmentInstitutionVacancies = new XroadConf({
   env: {
     XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: {
       dev: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1',
-      staging: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1',
+      staging: 'IS-TEST/GOV/10021/FJS-Protected/recruitment-v1',
       prod: 'IS/GOV/5402697509/FJS-Protected/recruitment-v1',
     },
   },
