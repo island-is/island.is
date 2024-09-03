@@ -140,16 +140,24 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     homeScreenWidgetsInitialized,
   } = usePreferencesStore()
 
-  const applicationsRes = useListApplicationsQuery()
-
-  const inboxRes = useListDocumentsQuery({
-    variables: { input: { page: 1, pageSize: 3 } },
+  const applicationsRes = useListApplicationsQuery({
+    skip: !homeScreenEnableApplicationsWidget,
   })
 
-  const licensesRes = useGetLicensesData()
+  const inboxRes = useListDocumentsQuery({
+    variables: {
+      input: { page: 1, pageSize: 3 },
+    },
+    skip: !homeScreenEnableInboxWidget,
+  })
+
+  const licensesRes = useGetLicensesData({
+    skipFetching: !homeScreenEnableLicensesWidget,
+  })
 
   const airDiscountRes = useGetAirDiscountQuery({
     fetchPolicy: 'network-only',
+    skip: !homeScreenEnableAirDiscountWidget,
   })
 
   const vehiclesRes = useListVehiclesQuery({
@@ -161,6 +169,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         showHistory: false,
       },
     },
+    skip: !homeScreenEnableVehiclesWidget,
   })
 
   useEffect(() => {

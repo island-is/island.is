@@ -59,7 +59,7 @@ const validateLicensesInitialData = ({
   return false
 }
 
-const useGetLicensesData = () => {
+const useGetLicensesData = ({ skipFetching }: { skipFetching: boolean }) => {
   // Query list of licenses
   const { data, loading, error, refetch } = useListLicensesQuery({
     variables: {
@@ -76,6 +76,7 @@ const useGetLicensesData = () => {
         ],
       },
     },
+    skip: skipFetching,
   })
 
   // Additional licenses
@@ -84,7 +85,7 @@ const useGetLicensesData = () => {
     loading: loadingPassport,
     error: errorPassport,
     refetch: refetchPassport,
-  } = useGetIdentityDocumentQuery()
+  } = useGetIdentityDocumentQuery({ skip: skipFetching })
 
   return {
     data,
