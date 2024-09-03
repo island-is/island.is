@@ -511,7 +511,7 @@ export class InternalCaseService {
       )
     })
 
-    this.eventService.postEvent(CaseEvent.ARCHIVE, theCase)
+    this.eventService.postEvent('ARCHIVE', theCase)
 
     return { caseArchived: true }
   }
