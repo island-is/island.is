@@ -26,6 +26,8 @@ import { DelegationsIndexService } from './delegations-index.service'
 import { DelegationDTO } from './dto/delegation.dto'
 import { MergedDelegationDTO } from './dto/merged-delegation.dto'
 
+import type { Logger } from '@island.is/logging'
+
 const UNKNOWN_NAME = 'Óþekkt nafn'
 
 type ClientDelegationInfo = Pick<
@@ -83,7 +85,7 @@ export class DelegationsIncomingService {
 
     // Index incoming delegations
     try {
-      void this.delegationIndexService.indexDelegations(user)
+      void this.delegationsIndexService.indexDelegations(user)
     } catch {
       this.logger.error('Failed to index delegations')
     }
