@@ -22,6 +22,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
+  Confirmation,
   createCaseFilesRecord,
   createIndictment,
   createSubpoena,
@@ -29,7 +30,6 @@ import {
   getCustodyNoticePdfAsBuffer,
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
-  IndictmentConfirmation,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant } from '../defendant'
@@ -206,7 +206,7 @@ export class PdfService {
       )
     }
 
-    let confirmation: IndictmentConfirmation | undefined = undefined
+    let confirmation: Confirmation | undefined = undefined
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       if (theCase.indictmentHash) {
