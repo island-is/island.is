@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { PKCEService } from './pkce.service'
 
+const ALLOWED_VERIFIER_CHARACTERS_REGEX = /^[a-zA-Z0-9-._~]+$/
+
 describe('PKCEService', () => {
   let service: PKCEService
 
@@ -22,7 +24,8 @@ describe('PKCEService', () => {
       it(`should generate a verifier of ${description}`, async () => {
         const verifier = await service.generateVerifier(length)
         expect(verifier).toHaveLength(length)
-        expect(verifier).toMatch(/^[a-zA-Z0-9-._~]+$/) // Check allowed characters
+        // Check allowed characters
+        expect(verifier).toMatch(ALLOWED_VERIFIER_CHARACTERS_REGEX)
       })
     })
   })
@@ -31,7 +34,8 @@ describe('PKCEService', () => {
     it('should generate a code verifier of default length 50', async () => {
       const verifier = await service.generateCodeVerifier()
       expect(verifier).toHaveLength(50)
-      expect(verifier).toMatch(/^[a-zA-Z0-9-._~]+$/) // Match allowed characters
+      // Check allowed characters
+      expect(verifier).toMatch(ALLOWED_VERIFIER_CHARACTERS_REGEX)
     })
   })
 
@@ -40,7 +44,8 @@ describe('PKCEService', () => {
       const verifier = 'testVerifier123'
       const challenge = await service.generateCodeChallenge(verifier)
       expect(challenge).toBeDefined()
-      expect(challenge).toMatch(/^[a-zA-Z0-9-_]+$/) // Match base64url format
+      // Match base64url format
+      expect(challenge).toMatch(/^[a-zA-Z0-9-_]+$/)
     })
   })
 
