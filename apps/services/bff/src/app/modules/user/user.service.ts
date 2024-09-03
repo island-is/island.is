@@ -1,4 +1,5 @@
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { Request } from 'express'
 
