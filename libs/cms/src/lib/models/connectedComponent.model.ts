@@ -1,10 +1,11 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import graphqlTypeJson from 'graphql-type-json'
+import graphqlTypeJson, { GraphQLJSONObject } from 'graphql-type-json'
 import {
   ISliceConnectedComponent,
   ISliceConnectedComponentFields,
 } from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
+import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
 export class ConnectedComponent {
@@ -25,6 +26,9 @@ export class ConnectedComponent {
 
   @Field(() => graphqlTypeJson, { nullable: true })
   configJson?: Record<string, any> | null
+
+  @CacheField(() => GraphQLJSONObject, { nullable: true })
+  translationStrings!: Record<string, string>
 }
 
 const parseJson = (fields: ISliceConnectedComponentFields) => {
@@ -71,4 +75,5 @@ export const mapConnectedComponent = ({
   type: fields?.type ?? 'None',
   json: fields?.json ? parseJson(fields) : null,
   configJson: fields?.config,
+  translationStrings: fields?.translationNamespace?.fields?.strings || {},
 })

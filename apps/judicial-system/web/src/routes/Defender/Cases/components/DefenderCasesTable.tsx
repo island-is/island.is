@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { AnimatePresence } from 'framer-motion'
@@ -28,7 +28,7 @@ import {
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCaseList,
-  useSortCases,
+  useSort,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './DefenderCasesTable.css'
@@ -45,8 +45,26 @@ export const DefenderCasesTable: FC<Props> = ({
   loading,
 }) => {
   const { formatMessage } = useIntl()
-  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
-    useSortCases('created', 'descending', cases)
+
+  const getColumnValue = (
+    entry: CaseListEntry,
+    column: keyof CaseListEntry,
+  ) => {
+    if (
+      column === 'defendants' &&
+      entry.defendants &&
+      entry.defendants.length > 0
+    ) {
+      return entry.defendants[0].name ?? ''
+    }
+    return entry.created
+  }
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } = useSort(
+    'created',
+    'descending',
+    cases,
+    getColumnValue,
+  )
   const { isOpeningCaseId, LoadingIndicator, showLoading, handleOpenCase } =
     useCaseList()
 

@@ -1,18 +1,6 @@
 import { Environment } from './environment.interface'
 
-type EnvironmentKeys =
-  | 'attachmentBucket'
-  | 'baseApiUrl'
-  | 'clientLocationOrigin'
-  | 'email'
-  | 'generalPetition'
-  | 'islykill'
-  | 'jwtSecret'
-  | 'presignBucket'
-  | 'userProfile'
-  | 'xRoadBasePathWithEnv'
-
-const devConfig: Environment<EnvironmentKeys> = {
+const devConfig = {
   production: false,
   environment: 'local',
   name: 'local',
@@ -36,8 +24,8 @@ const devConfig: Environment<EnvironmentKeys> = {
     jwtSecret: 'supersecret',
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl: 'http://localhost:4444',
-    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET ?? '',
-    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET ?? '',
+    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
+    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     generalPetition: {
       endorsementsApiBasePath: 'http://localhost:4246',
     },
@@ -45,60 +33,59 @@ const devConfig: Environment<EnvironmentKeys> = {
       serviceBasePath: 'http://localhost:3366',
     },
     islykill: {
-      cert: process.env.ISLYKILL_CERT ?? '',
-      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
-      basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
+      cert: process.env.ISLYKILL_CERT,
+      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
     },
   },
 
   contentful: {
-    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN ?? '',
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
-}
+} as Environment
 
-// TODO: Remove empty-string defaulting
-const prodConfig: Environment<EnvironmentKeys> = {
+const prodConfig = {
   production: true,
-  environment: process.env.ENVIRONMENT ?? '',
-  name: process.env.name ?? '',
-  baseApiUrl: process.env.GRAPHQL_API_URL ?? '',
+  environment: process.env.ENVIRONMENT,
+  name: process.env.name,
+  baseApiUrl: process.env.GRAPHQL_API_URL,
   audit: {
     defaultNamespace: '@island.is/applications',
-    groupName: process.env.AUDIT_GROUP_NAME ?? '',
+    groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'application-system-api',
   },
   auth: {
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: ['@island.is', '@admin.island.is'],
     allowClientNationalId: true,
   },
   templateApi: {
-    clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN ?? '',
+    clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN,
     email: {
-      sender: process.env.EMAIL_FROM_NAME ?? '',
-      address: process.env.EMAIL_FROM ?? '',
+      sender: process.env.EMAIL_FROM_NAME,
+      address: process.env.EMAIL_FROM,
     },
-    jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
+    jwtSecret: process.env.AUTH_JWT_SECRET,
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
-    baseApiUrl: process.env.GRAPHQL_API_URL ?? '',
-    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET ?? '',
-    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET ?? '',
+    baseApiUrl: process.env.GRAPHQL_API_URL,
+    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
+    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     generalPetition: {
-      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH ?? '',
+      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
     },
     userProfile: {
-      serviceBasePath: process.env.SERVICE_USER_PROFILE_URL ?? '',
+      serviceBasePath: process.env.SERVICE_USER_PROFILE_URL,
     },
     islykill: {
-      cert: process.env.ISLYKILL_CERT ?? '',
-      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
-      basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
+      cert: process.env.ISLYKILL_CERT,
+      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
     },
   },
   contentful: {
-    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN ?? '',
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
-}
+} as Environment
 
 export default process.env.PROD_MODE === 'true' ||
 process.env.NODE_ENV === 'production'

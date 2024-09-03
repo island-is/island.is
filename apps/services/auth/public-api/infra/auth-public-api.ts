@@ -58,7 +58,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
       COMPANY_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
       PASSKEY_CORE_ALLOWED_ORIGINS: json([
         // Origin for iOS app.
-        'island.is',
+        'https://island.is',
         // Origin for Android test app
         'android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0',
         // Origin for Android prod app

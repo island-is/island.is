@@ -90,6 +90,7 @@ export const TIME_FORMAT = 'HH:mm'
 export const DEFENDER_CASES_ROUTE = '/verjandi/krofur'
 export const DEFENDER_ROUTE = '/verjandi/krafa'
 export const DEFENDER_INDICTMENT_ROUTE = '/verjandi/akaera'
+export const DEFENDER_ADD_FILES_ROUTE = '/verjandi/akaera/gogn'
 
 export const DEFENDER_APPEAL_ROUTE = '/verjandi/kaera'
 export const DEFENDER_APPEAL_FILES_ROUTE = '/verjandi/kaera/gogn'
@@ -189,6 +190,7 @@ export const INDICTMENTS_TRAFFIC_VIOLATION_ROUTE = '/akaera/akaera'
 export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
+export const INDICTMENTS_ADD_FILES_ROUTE = '/akaera/gogn'
 //#endregion Prosecutor user routes
 
 //#region Admin user routes

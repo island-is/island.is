@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
@@ -57,9 +58,12 @@ export class LimitedAccessFileController {
   ) {}
 
   @UseGuards(
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseWriteGuard,
-    CaseCompletedGuard,
   )
   @RolesRules(defenderRule)
   @Post('file/url')
@@ -78,9 +82,12 @@ export class LimitedAccessFileController {
   }
 
   @UseGuards(
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseWriteGuard,
-    CaseCompletedGuard,
     LimitedAccessWriteCaseFileGuard,
   )
   @RolesRules(defenderRule)

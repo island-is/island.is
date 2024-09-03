@@ -1,5 +1,8 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
 
+import { toast } from '@island.is/island-ui/core'
+import { errors } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
   UserContext,
@@ -16,6 +19,7 @@ interface Parameters {
 const useFileList = ({ caseId }: Parameters) => {
   const { limitedAccess } = useContext(UserContext)
   const { setWorkingCase } = useContext(FormContext)
+  const { formatMessage } = useIntl()
   const [fileNotFound, setFileNotFound] = useState<boolean>()
 
   const [
@@ -29,6 +33,9 @@ const useFileList = ({ caseId }: Parameters) => {
         window.open(data.getSignedUrl.url, '_blank')
       }
     },
+    onError: () => {
+      toast.error(formatMessage(errors.openDocument))
+    },
   })
 
   const [
@@ -41,6 +48,9 @@ const useFileList = ({ caseId }: Parameters) => {
       if (data?.limitedAccessGetSignedUrl?.url) {
         window.open(data.limitedAccessGetSignedUrl.url, '_blank')
       }
+    },
+    onError: () => {
+      toast.error(formatMessage(errors.openDocument))
     },
   })
 

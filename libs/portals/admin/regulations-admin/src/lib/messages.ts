@@ -341,6 +341,15 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-label-deleteConfirmation',
     defaultMessage: 'Ertu alveg viss um að þú viljir eyða ',
   },
+  uploadingWordDocument: {
+    id: 'ap.regulations-admin:uploading-word-document',
+    defaultMessage: 'Hleð inn Word skjali',
+  },
+  diffPrecisionWarning: {
+    id: 'ap.regulations-admin:diff-precision-warning',
+    defaultMessage:
+      'Vakin er athygli á því að kerfið útbýr tillögu að breytingareglugerð sem starfsmaður þarf að rýna gaumgæfilega áður en haldið er áfram. Ekki er öruggt að inngangsliðir og efnisákvæði færist réttilega inn í breytingareglugerðina.',
+  },
 })
 
 export const impactMsgs = defineMessages({

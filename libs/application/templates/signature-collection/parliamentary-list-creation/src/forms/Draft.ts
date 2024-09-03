@@ -1,7 +1,6 @@
 import {
   buildActionCardListField,
   buildCheckboxField,
-  buildCustomField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
@@ -21,7 +20,9 @@ import Logo from '../../assets/Logo'
 
 import { m } from '../lib/messages'
 import { formatPhone } from '../lib/utils'
-import { Constituencies, Manager, Supervisor } from '../lib/constants'
+import { Manager, Supervisor } from '../lib/constants'
+import { Collection } from '@island.is/clients/signature-collection'
+import { Signee } from '@island.is/clients/signature-collection'
 
 export const Draft: Form = buildForm({
   id: 'ParliamentaryListCreationDraft',
@@ -60,14 +61,18 @@ export const Draft: Form = buildForm({
               title: m.listName,
               width: 'full',
               readOnly: true,
-              defaultValue: 'Flokkur 1',
+              defaultValue: (application: Application) =>
+                (application.externalData.candidate.data as Signee)
+                  .partyBallotLetterInfo?.name ?? '',
             }),
             buildTextField({
               id: 'list.letter',
               title: m.listLetter,
               width: 'half',
               readOnly: true,
-              defaultValue: 'F',
+              defaultValue: (application: Application) =>
+                (application.externalData.candidate.data as Signee)
+                  .partyBallotLetterInfo?.letter ?? '',
             }),
             buildTextField({
               id: 'list.nationalId',
@@ -145,16 +150,31 @@ export const Draft: Form = buildForm({
               id: 'constituency',
               title: '',
               large: true,
-              defaultValue: Constituencies,
-              options: Constituencies.map((constituency) => ({
-                label: constituency,
-                value: constituency,
-              })),
+              defaultValue: (application: Application) => {
+                const collection = application.externalData
+                  .parliamentaryCollection.data as Collection
+
+                if (!collection?.areas) {
+                  return []
+                }
+
+                return collection.areas.map((area) => `${area.id}|${area.name}`)
+              },
+              options: (application) => {
+                return (
+                  application.externalData.parliamentaryCollection
+                    .data as Collection
+                )?.areas.map((area) => ({
+                  value: `${area.id}|${area.name}`,
+                  label: area.name,
+                }))
+              },
             }),
           ],
         }),
       ],
     }),
+    /* Hiding this screen as for now
     buildSection({
       id: 'managers',
       title: m.managersAndSupervisors,
@@ -209,10 +229,15 @@ export const Draft: Form = buildForm({
                   label: m.constituency,
                   width: 'full',
                   isMulti: true,
-                  options: Constituencies.map((constituency) => ({
-                    label: constituency,
-                    value: constituency,
-                  })),
+                  options: (application) => {
+                    return (
+                      application.externalData.parliamentaryCollection
+                        .data as Collection
+                    )?.areas.map((area) => ({
+                      value: `${area.id}|${area.name}`,
+                      label: area.name,
+                    }))
+                  },
                 },
               },
               table: {
@@ -220,13 +245,18 @@ export const Draft: Form = buildForm({
                 rows: ['nationalId', 'name', 'constituency'],
                 format: {
                   nationalId: (v) => formatNationalId(v),
+                  constituency: (v) => {
+                    return (v as unknown as string[])
+                      .map((e) => e.split('|')[1])
+                      .join(', ')
+                  },
                 },
               },
             }),
           ],
         }),
       ],
-    }),
+    }),*/
     buildSection({
       id: 'overview',
       title: m.overview,
@@ -246,15 +276,9 @@ export const Draft: Form = buildForm({
             }),
             buildKeyValueField({
               label: m.listName,
-              width: 'half',
+              width: 'full',
               value: ({ answers }) =>
                 getValueViaPath(answers, 'list.name') ?? '',
-            }),
-            buildKeyValueField({
-              label: m.nationalId,
-              width: 'half',
-              value: ({ answers }) =>
-                getValueViaPath(answers, 'list.nationalId') ?? '',
             }),
             buildDescriptionField({
               id: 'space',
@@ -266,6 +290,12 @@ export const Draft: Form = buildForm({
               width: 'half',
               value: ({ answers }) =>
                 getValueViaPath(answers, 'list.letter') ?? '',
+            }),
+            buildKeyValueField({
+              label: m.nationalId,
+              width: 'half',
+              value: ({ answers }) =>
+                getValueViaPath(answers, 'list.nationalId') ?? '',
             }),
             buildDescriptionField({
               id: 'space1',
@@ -325,7 +355,6 @@ export const Draft: Form = buildForm({
               title: m.listsOverviewHeader,
               titleVariant: 'h3',
               space: 'gutter',
-              marginBottom: 5,
             }),
             buildActionCardListField({
               id: 'listsInOverview',
@@ -333,7 +362,7 @@ export const Draft: Form = buildForm({
               title: '',
               items: ({ answers }) => {
                 return (answers.constituency as string[]).map((c: string) => ({
-                  heading: 'Flokkur 1 - ' + c,
+                  heading: 'Flokkur 1 - ' + c.split('|')[1],
                   progressMeter: {
                     currentProgress: 0,
                     maxProgress: 350,
@@ -342,7 +371,7 @@ export const Draft: Form = buildForm({
                 }))
               },
             }),
-            buildDescriptionField({
+            /*buildDescriptionField({
               id: 'space4',
               title: '',
               space: 'gutter',
@@ -397,11 +426,13 @@ export const Draft: Form = buildForm({
                       ' - ' +
                       formatNationalId(s.supervisor.nationalId) +
                       ' - ' +
-                      s.constituency,
+                      (s.constituency as unknown as string[])
+                        .map((c) => c.split('|')[1])
+                        .join(', '),
                   )
                   .join('\n')
               },
-            }),
+            }),*/
             buildSubmitField({
               id: 'submit',
               placement: 'footer',

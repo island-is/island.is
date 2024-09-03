@@ -122,4 +122,9 @@ export const errors = defineMessages({
     defaultMessage: 'Upp kom villa við að skrá aðgerð',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að skrá atburð',
   },
+  openDocument: {
+    id: 'judicial.system.core:errors.open_document',
+    defaultMessage: 'Upp kom villa við að opna skjal',
+    description: 'Notaður sem villuskilaboð þegar ekki gengur að opna skjal',
+  },
 })

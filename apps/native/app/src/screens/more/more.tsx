@@ -7,10 +7,7 @@ import {
   ScrollView,
   TouchableHighlight,
 } from 'react-native'
-import {
-  Navigation,
-  NavigationFunctionComponent,
-} from 'react-native-navigation'
+import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import styled, { useTheme } from 'styled-components/native'
 import assetsIcon from '../../assets/icons/assets.png'
@@ -44,7 +41,9 @@ const { useNavigationOptions, getNavigationOptions } =
         title: {
           text: intl.formatMessage({ id: 'profile.screenTitle' }),
         },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+        rightButtons: initialized
+          ? getRightButtons({ icons: ['settings'], theme: theme as any })
+          : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -85,7 +84,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons(),
+    rightButtons: getRightButtons({ icons: ['settings'] }),
   })
 
   useNavigationComponentDidAppear(() => {
