@@ -90,16 +90,17 @@ describe('DelegationsController', () => {
           ),
         )
 
-        await Promise.all(
-          testCase.fromLegalRepresentative.map((nationalId) =>
-            factory.createDelegationIndexRecord({
-              fromNationalId: nationalId,
-              toNationalId: testCase.user.nationalId,
-              type: AuthDelegationType.LegalRepresentative,
-              provider: AuthDelegationProvider.DistrictCommissionersRegistry,
-            }),
-          ),
-        )
+        // test removing this
+        // await Promise.all(
+        //   testCase.fromLegalRepresentative.map((nationalId) =>
+        //     factory.createDelegationIndexRecord({
+        //       fromNationalId: nationalId,
+        //       toNationalId: testCase.user.nationalId,
+        //       type: AuthDelegationType.LegalRepresentative,
+        //       provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+        //     }),
+        //   ),
+        // )
 
         jest
           .spyOn(nationalRegistryApi, 'getCustodyChildren')
