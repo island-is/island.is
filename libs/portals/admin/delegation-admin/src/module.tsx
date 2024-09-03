@@ -10,9 +10,6 @@ const DelegationAdminScreen = lazy(() =>
   import('./screens/DelegationAdminDetails/DelegationAdmin'),
 )
 const RootScreen = lazy(() => import('./screens/Root'))
-const DelegateAdminCreateScreen = lazy(() =>
-  import('./screens/DelegationAdminCreate/DelegationAdminCreate'),
-)
 
 const allowedScopes: string[] = [
   AdminPortalScope.delegationSystem,
@@ -32,17 +29,7 @@ export const delegationAdminModule: PortalModule = {
         index: true,
         action: FindDelegationForNationalId(props),
         element: <RootScreen />,
-        children: [
-          // When ready for Create
-          // {
-          //   name: m.delegationAdmin,
-          //   path: DelegationAdminPaths.DelegationAdminCreate,
-          //   element: <DelegateAdminCreateScreen />,
-          //   handle: {
-          //     backPath: DelegationAdminPaths.Root,
-          //   },
-          // },
-        ],
+        children: [],
       },
       {
         name: m.delegationAdmin,
