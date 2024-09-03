@@ -29,4 +29,16 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:delegationAdminDelegationT',
     defaultMessage: 'Umboð til notanda',
   },
+  delegationFromNotFound: {
+    id: 'admin.delegationAdmin:delegationAdminDelegationFromNotFound',
+    defaultMessage: 'Engin umboð frá notanda fundust',
+  },
+  delegationToNotFound: {
+    id: 'admin.delegationAdmin:delegationAdminDelegationToNotFound',
+    defaultMessage: 'Engin umboð til notanda fundust',
+  },
+  nationalIdNotFound: {
+    id: 'admin.delegationAdmin:nationalIdNotFound',
+    defaultMessage: 'Kennitala fannst ekki',
+  },
 })

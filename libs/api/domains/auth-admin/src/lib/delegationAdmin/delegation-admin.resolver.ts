@@ -1,4 +1,11 @@
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { NotFoundException, UseGuards } from '@nestjs/common'
 
 import { DelegationAdminService } from './delegation-admin.service'
@@ -45,6 +52,14 @@ export class DelegationAdminResolver {
       incoming: delegations.incoming,
       outgoing: delegations.outgoing,
     }
+  }
+
+  @Mutation(() => Boolean, { name: 'authDeleteAdminDelegation' })
+  async deleteDelegationSystem(
+    @Args('id') id: string,
+    @CurrentUser() user: User,
+  ) {
+    return this.delegationAdminService.deleteDelegationAdmin(user, id)
   }
 
   @ResolveField('from', () => Identity)

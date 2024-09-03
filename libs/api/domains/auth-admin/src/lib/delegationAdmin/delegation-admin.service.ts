@@ -24,4 +24,19 @@ export class DelegationAdminService {
       xQueryNationalId: nationalId,
     })
   }
+
+  async deleteDelegationAdmin(
+    user: User,
+    delegationId: string,
+  ): Promise<boolean> {
+    try {
+      await this.delegationsWithAuth(user).delegationAdminControllerDelete({
+        delegationId,
+      })
+
+      return true
+    } catch {
+      return false
+    }
+  }
 }

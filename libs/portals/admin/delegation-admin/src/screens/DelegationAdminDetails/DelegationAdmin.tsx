@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Tabs } from '@island.is/island-ui/core'
+import { Box, Stack, Tabs } from '@island.is/island-ui/core'
 import { BackButton } from '@island.is/portals/admin/core'
 import { useLocale } from '@island.is/localization'
 import { useLoaderData, useNavigate } from 'react-router-dom'
@@ -9,15 +9,12 @@ import { m } from '../../lib/messages'
 import React from 'react'
 import DelegationList from '../../components/DelegationList'
 import { AuthCustomDelegation } from '@island.is/api/schema'
+import { DelegationsEmptyState } from '@island.is/portals/shared-modules/delegations'
 
 const DelegationAdminScreen = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const delegationAdmin = useLoaderData() as DelegationAdminResult
-
-  // const openCreateClientModal = () => {
-  //   navigate(DelegationAdminPaths.DelegationAdminCreate)
-  // }
 
   return (
     <Stack space="containerGutter">
@@ -27,12 +24,6 @@ const DelegationAdminScreen = () => {
           title={delegationAdmin.name}
           intro={delegationAdmin.nationalId}
         />
-        {/*Uncomment when ready for create delegation module*/}
-        {/*<Box>*/}
-        {/*  <Button size={'small'} onClick={openCreateClientModal}>*/}
-        {/*    {formatMessage(m.createNewDelegation)}*/}
-        {/*  </Button>*/}
-        {/*</Box>*/}
       </Box>
       <Tabs
         contentBackground="white"
@@ -49,7 +40,10 @@ const DelegationAdminScreen = () => {
                   }
                 />
               ) : (
-                'Noting to show'
+                <DelegationsEmptyState
+                  message={formatMessage(m.delegationFromNotFound)}
+                  imageAlt={formatMessage(m.delegationFromNotFound)}
+                />
               ),
           },
           {
@@ -63,7 +57,10 @@ const DelegationAdminScreen = () => {
                   }
                 />
               ) : (
-                'Noting to show'
+                <DelegationsEmptyState
+                  message={formatMessage(m.delegationToNotFound)}
+                  imageAlt={formatMessage(m.delegationToNotFound)}
+                />
               ),
           },
         ]}

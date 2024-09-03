@@ -15,3 +15,8 @@ export const delegationScopes = [
   AuthScope.delegations,
   AdminPortalScope.delegations,
 ]
+
+export const DelegationAdminScopes = {
+  read: '@admin.island.is/delegation-system',
+  amdin: '@admin.island.is/delegation-system:admin',
+}

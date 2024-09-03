@@ -19,7 +19,7 @@ const Root = () => {
     if (actionData?.errors) {
       setError({
         hasError: true,
-        message: formatMessage('test'),
+        message: formatMessage(m.nationalIdNotFound),
       })
     } else {
       setError({
@@ -28,11 +28,6 @@ const Root = () => {
       })
     }
   }, [actionData])
-
-  // Open create module
-  // const openCreateClientModal = () => {
-  //   navigate(DelegationAdminPaths.DelegationAdminCreate)
-  // }
 
   const onFocus = () => setFocused(true)
   const onBlur = () => setFocused(false)
@@ -43,12 +38,6 @@ const Root = () => {
           title={m.delegationAdmin}
           intro={m.delegationAdminDescription}
         />
-        {/*Uncomment when ready for create delegation module*/}
-        {/*<Box>*/}
-        {/*  <Button size={'small'} onClick={openCreateClientModal}>*/}
-        {/*    {formatMessage(m.createNewDelegation)}*/}
-        {/*  </Button>*/}
-        {/*</Box>*/}
       </Box>
       <Form method="post">
         <Box style={{ maxWidth: '550px' }}>
