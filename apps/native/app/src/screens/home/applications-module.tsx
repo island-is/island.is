@@ -14,34 +14,62 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
 import { useTheme } from 'styled-components'
+import { ApolloError } from '@apollo/client'
 
 import leJobss3 from '../../assets/illustrations/le-jobs-s3.png'
-import { Application } from '../../graphql/types/schema'
+import {
+  ListApplicationsQuery,
+  useListApplicationsQuery,
+} from '../../graphql/types/schema'
 import { navigateTo } from '../../lib/deep-linking'
 import { useBrowser } from '../../lib/use-browser'
 import { getApplicationUrl } from '../../utils/applications-utils'
 import { screenWidth } from '../../utils/dimensions'
 
 interface ApplicationsModuleProps {
-  applications: Application[]
+  data: ListApplicationsQuery | undefined
   loading: boolean
+  error?: ApolloError | undefined
   componentId: string
   hideAction?: boolean
   hideSeeAllButton?: boolean
 }
 
-export const ApplicationsModule = React.memo(
+const validateApplicationsInitialData = ({
+  data,
+  loading,
+}: {
+  data: ListApplicationsQuery | undefined
+  loading: boolean
+}) => {
+  if (loading) {
+    return true
+  }
+  // Only show widget initially if there are applications
+  if (data?.applicationApplications?.length !== 0) {
+    return true
+  }
+  return false
+}
+
+const ApplicationsModule = React.memo(
   ({
-    applications,
+    data,
     loading,
+    error,
     componentId,
     hideAction,
     hideSeeAllButton = false,
   }: ApplicationsModuleProps) => {
     const intl = useIntl()
     const theme = useTheme()
+    const applications = data?.applicationApplications ?? []
     const count = applications.length
     const { openBrowser } = useBrowser()
+
+    if (error && !data) {
+      return null
+    }
 
     const children = applications.slice(0, 3).map((application) => (
       <StatusCard
@@ -148,3 +176,9 @@ export const ApplicationsModule = React.memo(
     )
   },
 )
+
+export {
+  ApplicationsModule,
+  useListApplicationsQuery,
+  validateApplicationsInitialData,
+}

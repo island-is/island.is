@@ -16,10 +16,6 @@ import {
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import {
-  Application,
-  useListApplicationsQuery,
-} from '../../graphql/types/schema'
 
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useAndroidNotificationPermission } from '../../hooks/use-android-notification-permission'
@@ -30,14 +26,37 @@ import { isAndroid } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { handleInitialNotification } from '../../utils/lifecycle/setup-notifications'
 import { testIDs } from '../../utils/test-ids'
-import { ApplicationsModule } from './applications-module'
+import {
+  ApplicationsModule,
+  useListApplicationsQuery,
+  validateApplicationsInitialData,
+} from './applications-module'
 import { HelloModule } from './hello-module'
-import { InboxModule } from './inbox-module'
+import {
+  InboxModule,
+  useListDocumentsQuery,
+  validateInboxInitialData,
+} from './inbox-module'
 import { OnboardingModule } from './onboarding-module'
-import { VehiclesModule } from './vehicles-module'
-import { usePreferencesStore } from '../../stores/preferences-store'
-import { AirDiscountModule } from './air-discount-module'
-import { LicensesModule } from './licenses-module'
+import {
+  VehiclesModule,
+  useListVehiclesQuery,
+  validateVehiclesInitialData,
+} from './vehicles-module'
+import {
+  preferencesStore,
+  usePreferencesStore,
+} from '../../stores/preferences-store'
+import {
+  AirDiscountModule,
+  useGetAirDiscountQuery,
+  validateAirDiscountInitialData,
+} from './air-discount-module'
+import {
+  LicensesModule,
+  validateLicensesInitialData,
+  useGetLicensesData,
+} from './licenses-module'
 
 interface ListItem {
   id: string
@@ -113,19 +132,79 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
   const {
-    homeScreenEnableVehicleWidget,
+    homeScreenEnableVehiclesWidget,
     homeScreenEnableAirDiscountWidget,
     homeScreenEnableApplicationsWidget,
     homeScreenEnableInboxWidget,
-    homeScreenEnableLicenseWidget,
+    homeScreenEnableLicensesWidget,
+    homeScreenWidgetsInitialized,
   } = usePreferencesStore()
 
   const applicationsRes = useListApplicationsQuery()
 
+  const inboxRes = useListDocumentsQuery({
+    variables: { input: { page: 1, pageSize: 3 } },
+  })
+
+  const licensesRes = useGetLicensesData()
+
+  const airDiscountRes = useGetAirDiscountQuery({
+    fetchPolicy: 'network-only',
+  })
+
+  const vehiclesRes = useListVehiclesQuery({
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 15,
+        showDeregeristered: false,
+        showHistory: false,
+      },
+    },
+  })
+
+  useEffect(() => {
+    // If widgets have not been initialized, validate data and set state accordingly
+    if (!homeScreenWidgetsInitialized) {
+      const shouldShowInboxWidget = validateInboxInitialData({ ...inboxRes })
+
+      const shouldShowLicensesWidget = validateLicensesInitialData({
+        ...licensesRes,
+      })
+
+      const shouldShowApplicationsWidget = validateApplicationsInitialData({
+        ...applicationsRes,
+      })
+
+      const shouldShowVehiclesWidget = validateVehiclesInitialData({
+        ...vehiclesRes,
+      })
+
+      const shouldShowAirDiscountWidget = validateAirDiscountInitialData({
+        ...airDiscountRes,
+      })
+
+      preferencesStore.setState({
+        homeScreenEnableInboxWidget: shouldShowInboxWidget,
+        homeScreenEnableLicensesWidget: shouldShowLicensesWidget,
+        homeScreenEnableApplicationsWidget: shouldShowApplicationsWidget,
+        homeScreenEnableVehiclesWidget: shouldShowVehiclesWidget,
+        homeScreenEnableAirDiscountWidget: shouldShowAirDiscountWidget,
+        homeScreenWidgetsInitialized: true,
+      })
+    }
+  }, [licensesRes, applicationsRes, inboxRes, airDiscountRes, vehiclesRes])
+
   useConnectivityIndicator({
     componentId,
     rightButtons: getRightButtons({ icons: ['notifications', 'options'] }),
-    queryResult: applicationsRes,
+    queryResult: [
+      applicationsRes,
+      inboxRes,
+      licensesRes,
+      airDiscountRes,
+      vehiclesRes,
+    ],
     refetching,
   })
 
@@ -151,13 +230,29 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     setRefetching(true)
 
     try {
-      await applicationsRes.refetch()
+      homeScreenEnableApplicationsWidget && (await applicationsRes.refetch())
+      homeScreenEnableInboxWidget && (await inboxRes.refetch())
+      homeScreenEnableLicensesWidget && (await licensesRes.refetch())
+      homeScreenEnableLicensesWidget && (await licensesRes.refetchPassport())
+      homeScreenEnableAirDiscountWidget && (await airDiscountRes.refetch())
+      homeScreenEnableVehiclesWidget && (await vehiclesRes.refetch())
     } catch (err) {
       // noop
     }
 
     setRefetching(false)
-  }, [applicationsRes])
+  }, [
+    applicationsRes,
+    inboxRes,
+    licensesRes,
+    airDiscountRes,
+    vehiclesRes,
+    homeScreenEnableVehiclesWidget,
+    homeScreenEnableAirDiscountWidget,
+    homeScreenEnableApplicationsWidget,
+    homeScreenEnableLicensesWidget,
+    homeScreenEnableInboxWidget,
+  ])
 
   if (!ui.initializedApp) {
     return null
@@ -175,33 +270,32 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
     {
       id: 'inbox',
-      component: homeScreenEnableInboxWidget ? <InboxModule /> : null,
+      component: homeScreenEnableInboxWidget ? (
+        <InboxModule {...inboxRes} />
+      ) : null,
     },
     {
       id: 'licenses',
-      component: homeScreenEnableLicenseWidget ? <LicensesModule /> : null,
+      component: homeScreenEnableLicensesWidget ? (
+        <LicensesModule {...licensesRes} />
+      ) : null,
     },
     {
       id: 'applications',
       component: homeScreenEnableApplicationsWidget ? (
-        <ApplicationsModule
-          applications={
-            (applicationsRes.data?.applicationApplications ??
-              []) as Application[]
-          }
-          loading={applicationsRes.loading}
-          componentId={componentId}
-        />
+        <ApplicationsModule {...applicationsRes} componentId={componentId} />
       ) : null,
     },
     {
       id: 'vehicles',
-      component: homeScreenEnableVehicleWidget ? <VehiclesModule /> : null,
+      component: homeScreenEnableVehiclesWidget ? (
+        <VehiclesModule {...vehiclesRes} />
+      ) : null,
     },
     {
       id: 'air-discount',
       component: homeScreenEnableAirDiscountWidget ? (
-        <AirDiscountModule />
+        <AirDiscountModule {...airDiscountRes} />
       ) : null,
     },
   ].filter(Boolean) as Array<{

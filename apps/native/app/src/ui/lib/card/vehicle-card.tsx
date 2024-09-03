@@ -21,7 +21,7 @@ const Host = styled.View<{ minHeight?: number }>`
   )};
   align-items: center;
   justify-content: space-between;
-  min-height: ${({ minHeight }) => minHeight}px;
+  min-height: ${({ minHeight }) => (minHeight ? minHeight + 'px' : 'auto')};
 `
 
 const Content = styled.View`

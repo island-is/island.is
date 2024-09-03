@@ -10,10 +10,14 @@ import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { ApolloError } from '@apollo/client'
 
 import leCompanys3 from '../../assets/illustrations/le-company-s3.png'
 import { navigateTo } from '../../lib/deep-linking'
-import { useListDocumentsQuery } from '../../graphql/types/schema'
+import {
+  ListDocumentsQuery,
+  useListDocumentsQuery,
+} from '../../graphql/types/schema'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { InboxCard } from '@ui/lib/card/inbox-card'
 
@@ -25,14 +29,35 @@ const EmptyWrapper = styled.View`
   margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
-export const InboxModule = React.memo(() => {
+interface InboxModuleProps {
+  data: ListDocumentsQuery | undefined
+  loading: boolean
+  error?: ApolloError | undefined
+}
+
+const validateInboxInitialData = ({
+  data,
+  loading,
+}: {
+  data: ListDocumentsQuery | undefined
+  loading: boolean
+}) => {
+  if (loading) {
+    return true
+  }
+
+  // Only show widget initially if there are documents in the inbox
+  if (data?.documentsV2?.data?.length !== 0) {
+    return true
+  }
+
+  return false
+}
+
+const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
   const theme = useTheme()
   const intl = useIntl()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
-
-  const { data, loading, error } = useListDocumentsQuery({
-    variables: { input: { page: 1, pageSize: 3 } },
-  })
 
   if (error && !data) {
     return null
@@ -116,3 +141,5 @@ export const InboxModule = React.memo(() => {
     </SafeAreaView>
   )
 })
+
+export { InboxModule, useListDocumentsQuery, validateInboxInitialData }
