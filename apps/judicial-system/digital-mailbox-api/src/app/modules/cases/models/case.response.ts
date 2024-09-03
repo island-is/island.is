@@ -40,6 +40,7 @@ export class CaseResponse {
       caseId: res.id,
       data: {
         caseNumber: `${t.caseNumber} ${res.courtCaseNumber}`,
+        acknowledged: false, // TODO: Connect to real data
         groups: [
           {
             label: t.defendant,

@@ -69,6 +69,7 @@ export class SubpoenaResponse {
       caseId: internalCase.id,
       data: {
         title: t.subpoena,
+        acknowledged: false, // TODO: Connect to real data
         groups: [
           {
             label: `${t.caseNumber} ${internalCase.courtCaseNumber}`,
