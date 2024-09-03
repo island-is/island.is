@@ -192,7 +192,7 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
   const [union, setUnion] = useQueryState('union', parseAsString)
   const [personalDiscount, setPersonalDiscount] = useQueryState(
     'personalDiscount',
-    parseAsInteger,
+    parseAsInteger.withDefault(100),
   )
   const [parentalLeavePeriod, setParentalLeavePeriod] = useQueryState(
     'parentalLeavePeriod',
@@ -200,24 +200,35 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
   )
   const [parentalLeaveRatio, setParentalLeaveRatio] = useQueryState(
     'parentalLeaveRatio',
-    parseAsInteger,
+    parseAsInteger.withDefault(100),
   )
   const [legalDomicileInIceland, setLegalDomicileInIceland] = useQueryState(
     'legalDomicileInIceland',
     parseAsStringEnum(Object.values(LegalDomicileInIceland)),
   )
 
-  // TODO: up next
-  // const canCalculate = () => {
-  //   let value =
-  //     Object.values(Status).includes(status) &&
-  //     yearOptions.some((year) => year.value === birthyear)
-  // }
+  const canCalculate = () => {
+    let value =
+      Object.values(Status).includes(status) &&
+      yearOptions.some((year) => year.value === birthyear)
 
-  const calculate = () => {
-    console.log('TEST')
-    // TODO: validate
-    changeScreen()
+    if (status === Status.OUTSIDE_WORKFORCE) {
+      value = value && legalDomicileInIceland === LegalDomicileInIceland.YES
+    }
+
+    if (status === Status.PARENTAL_LEAVE) {
+      value =
+        value &&
+        typeof income === 'number' &&
+        income > 0 &&
+        !!workPercentage &&
+        Object.values(WorkPercentage).includes(workPercentage) &&
+        parentalLeavePeriodOptions.some(
+          (option) => option.value === parentalLeavePeriod,
+        )
+    }
+
+    return value
   }
 
   return (
@@ -242,6 +253,9 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
             <GridRow rowGap={1}>
               <GridColumn span={['1/1', '1/2']}>
                 <RadioButton
+                  hasError={
+                    legalDomicileInIceland === LegalDomicileInIceland.NO
+                  }
                   id={LegalDomicileInIceland.YES}
                   onChange={() => {
                     setLegalDomicileInIceland(LegalDomicileInIceland.YES)
@@ -257,6 +271,9 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
               </GridColumn>
               <GridColumn span={['1/1', '1/2']}>
                 <RadioButton
+                  hasError={
+                    legalDomicileInIceland === LegalDomicileInIceland.NO
+                  }
                   id={LegalDomicileInIceland.NO}
                   onChange={() => {
                     setLegalDomicileInIceland(LegalDomicileInIceland.NO)
@@ -269,6 +286,11 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
                 />
               </GridColumn>
             </GridRow>
+            {legalDomicileInIceland === LegalDomicileInIceland.NO && (
+              <Text fontWeight="semiBold" color="red400">
+                {formatMessage(t.legalDomicile.dontHaveRight)}
+              </Text>
+            )}
           </Field>
         )}
 
@@ -464,7 +486,7 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
           </Field>
         )}
 
-        <Button onClick={calculate}>
+        <Button disabled={!canCalculate()} onClick={changeScreen}>
           {formatMessage(t.calculate.buttonText)}
         </Button>
       </Stack>
@@ -475,31 +497,34 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
 const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
   const { formatMessage } = useIntl()
 
-  const [status] = useQueryState<Status>(
+  const [status, setStatus] = useQueryState<Status>(
     'status',
     parseAsStringEnum(Object.values(Status)).withDefault(Status.PARENTAL_LEAVE),
   )
-  const [birthyear] = useQueryState('birthyear', parseAsInteger)
-  const [workPercentage] = useQueryState(
+  const [birthyear, setBirthyear] = useQueryState('birthyear', parseAsInteger)
+  const [workPercentage, setWorkPercentage] = useQueryState(
     'workPercentage',
     parseAsStringEnum(Object.values(WorkPercentage)),
   )
-  const [income] = useQueryState('income', parseAsInteger)
-  const [additionalPensionFundingPercentage] = useQueryState(
-    'additionalPensionFunding',
-    parseAsInteger,
+  const [income, setIncome] = useQueryState('income', parseAsInteger)
+  const [
+    additionalPensionFundingPercentage,
+    setAdditionalPensionFundingPercentage,
+  ] = useQueryState('additionalPensionFunding', parseAsInteger)
+  const [union, setUnion] = useQueryState('union', parseAsString)
+  const [personalDiscount, setPersonalDiscount] = useQueryState(
+    'personalDiscount',
+    parseAsInteger.withDefault(100),
   )
-  const [union] = useQueryState('union', parseAsString)
-  const [personalDiscount] = useQueryState('personalDiscount', parseAsInteger)
-  const [parentalLeavePeriod] = useQueryState(
+  const [parentalLeavePeriod, setParentalLeavePeriod] = useQueryState(
     'parentalLeavePeriod',
     parseAsStringEnum(Object.values(ParentalLeavePeriod)),
   )
-  const [parentalLeaveRatio] = useQueryState(
+  const [parentalLeaveRatio, setParentalLeaveRatio] = useQueryState(
     'parentalLeaveRatio',
-    parseAsInteger,
+    parseAsInteger.withDefault(100),
   )
-  const [legalDomicileInIceland] = useQueryState(
+  const [legalDomicileInIceland, setLegalDomicileInIceland] = useQueryState(
     'legalDomicileInIceland',
     parseAsStringEnum(Object.values(LegalDomicileInIceland)),
   )
@@ -523,7 +548,10 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
     },
   }
 
-  const ratio = status === Status.PARENTAL_LEAVE ? parentalLeaveRatio : 100
+  const ratio =
+    status === Status.PARENTAL_LEAVE && parentalLeaveRatio < 100
+      ? parentalLeaveRatio
+      : 100
 
   return (
     <Stack space={5}>

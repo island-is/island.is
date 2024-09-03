@@ -53,6 +53,11 @@ export const translations = {
       defaultMessage: 'Nei',
       description: 'Nei',
     },
+    dontHaveRight: {
+      id: 'web.parentalLeaveCalculator:legalDomicile.dontHaveRight',
+      defaultMessage: 'Réttur ekki til staðar miðað við uppgefnar forsendur.',
+      description: 'Réttur ekki til staðar miðað við uppgefnar forsendur.',
+    },
   }),
   childBirthYear: defineMessages({
     heading: {
