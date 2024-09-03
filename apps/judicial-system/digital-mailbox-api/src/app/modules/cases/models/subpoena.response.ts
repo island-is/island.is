@@ -25,6 +25,9 @@ class SubpoenaData {
   @ApiProperty({ type: () => String })
   title!: string
 
+  @ApiProperty({ type: Boolean })
+  acknowledged?: boolean
+
   @ApiProperty({ type: () => [Groups] })
   groups!: Groups[]
 }

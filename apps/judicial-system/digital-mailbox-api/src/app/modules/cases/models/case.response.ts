@@ -11,6 +11,9 @@ class IndictmentCaseData {
   @ApiProperty({ type: String })
   caseNumber!: string
 
+  @ApiProperty({ type: Boolean })
+  acknowledged?: boolean
+
   @ApiProperty({ type: [Groups] })
   groups!: Groups[]
 }
