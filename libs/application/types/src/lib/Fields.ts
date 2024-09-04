@@ -68,7 +68,7 @@ type TableRepeaterOptions =
   | RepeaterOption[]
   | ((
       application: Application,
-      activeField: Record<string, string>,
+      activeField?: Record<string, string>,
     ) => RepeaterOption[] | [])
 
 export type TableRepeaterItem = {
@@ -94,6 +94,19 @@ export type TableRepeaterItem = {
         application: Application,
         activeField?: Record<string, string>,
       ) => boolean)
+  updateValueObj?: {
+    valueModifier: (activeField?: Record<string, string>) => unknown
+    watchValues:
+      | string
+      | string[]
+      | ((
+          activeField?: Record<string, string>,
+        ) => string | string[] | undefined)
+  }
+  defaultValue?: (
+    application: Application,
+    activeField?: Record<string, string>,
+  ) => unknown
 } & (
   | {
       component: 'input'

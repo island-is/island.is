@@ -6,6 +6,7 @@ import {
   TaxInfo,
   ApplicantInfo,
   Employer,
+  IncomePlanInfo,
 } from '../socialInsuranceAdministrationClient.type'
 
 export interface ApplicationDTO {
@@ -25,4 +26,5 @@ export interface ApplicationDTO {
   uploads?: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>
   employment?: string
   employers?: Array<Employer>
+  incomePlan?: IncomePlanInfo
 }
