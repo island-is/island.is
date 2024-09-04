@@ -66,54 +66,6 @@ const OwnerView = () => {
           </Box>
         ))}
       </Box>
-      {/* Ábyrgðaraðilar - hlutverk tekið út eins og staðan er */}
-      {/*<Box>
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="baseline"
-          marginBottom={3}
-        >
-          <Text variant="h4">
-            {formatMessage(m.managers) + ' '}
-            <Tooltip
-              placement="right"
-              text="info"
-              color="blue400"
-              iconSize="medium"
-            />
-          </Text>
-          <LookupPerson
-            collectionId={'1'}
-            title={formatMessage(m.addManager)}
-          />
-        </Box>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>{formatMessage(m.personName)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.personNationalId)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.constituency)}</T.HeadData>
-              <T.HeadData></T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            <T.Row>
-              <T.Data>{'Nafni Nafnason'}</T.Data>
-              <T.Data>{'010130-3019'}</T.Data>
-              <T.Data width={'40%'}>
-                {formatMessage(m.allConstituencies)}
-              </T.Data>
-              <T.Data width={'12%'}>
-                <Box display={'flex'} justifyContent={'flexEnd'}>
-                  <DeletePerson />
-                </Box>
-              </T.Data>
-            </T.Row>
-          </T.Body>
-        </T.Table>
-      </Box>*/}
-      {/* Umsjónaraðilar */}
       <Box>
         <Box
           display="flex"
@@ -127,7 +79,6 @@ const OwnerView = () => {
           </Text>
           <LookupPerson
             collectionId={'1'}
-            withConstituencies
             title={formatMessage(m.addSupervisor)}
           />
         </Box>

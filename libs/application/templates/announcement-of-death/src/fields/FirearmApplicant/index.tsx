@@ -107,12 +107,9 @@ export const FirearmApplicant: FC<
             backgroundColor="blue"
             icon={name ? 'checkmarkCircle' : undefined}
             loading={queryLoading}
+            required
             error={
-              getErrorViaPath(
-                errors,
-                'pickRole.electPerson.lookupError.message',
-              ) ||
-              getErrorViaPath(errors, 'pickRole.electPerson.nationalId') ||
+              getErrorViaPath(errors, 'firearmApplicant.nationalId') ||
               undefined
             }
           />
@@ -126,6 +123,7 @@ export const FirearmApplicant: FC<
               application,
               formatMessage,
             )}
+            readOnly
           />
         </GridColumn>
       </GridRow>
@@ -139,6 +137,10 @@ export const FirearmApplicant: FC<
               application,
               formatMessage,
             )}
+            error={
+              getErrorViaPath(errors, 'firearmApplicant.phone') || undefined
+            }
+            required
           />
         </GridColumn>
         <GridColumn span="6/12">
@@ -146,6 +148,10 @@ export const FirearmApplicant: FC<
             id={fieldNames.firearmApplicantEmail}
             name={fieldNames.firearmApplicantEmail}
             label={formatText(m.applicantsEmail, application, formatMessage)}
+            error={
+              getErrorViaPath(errors, 'firearmApplicant.email') || undefined
+            }
+            required
           />
         </GridColumn>
       </GridRow>
