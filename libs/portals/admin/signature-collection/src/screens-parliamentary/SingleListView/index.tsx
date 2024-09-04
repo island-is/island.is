@@ -1,12 +1,11 @@
-import {
-  GridColumn,
-  GridContainer,
-  GridRow,
-} from '@island.is/island-ui/core'
+import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { m, parliamentaryMessages } from '../../lib/messages'
+import ActionExtendDeadline from '../components/extendDeadline'
+import Signees from '../components/signees'
+import ActionReviewComplete from '../components/completeReview'
 
 const SingleListView = () => {
   const { formatMessage } = useLocale()
@@ -29,11 +28,14 @@ const SingleListView = () => {
           span={['12/12', '12/12', '12/12', '8/12']}
         >
           <IntroHeader
-            title={'Listi A'}
+            title={'Norðausturkjördæmi - Listi A'}
             intro={formatMessage(parliamentaryMessages.signatureListsIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
           />
+          <ActionExtendDeadline listId={'1'} endTime={'2021-09-30T00:00:00Z'} />
+          <Signees numberOfSignatures={0} />
+          <ActionReviewComplete listId={'1'} />
         </GridColumn>
       </GridRow>
     </GridContainer>

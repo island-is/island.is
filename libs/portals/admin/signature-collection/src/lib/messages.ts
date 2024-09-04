@@ -504,6 +504,17 @@ export const parliamentaryMessages = defineMessages({
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed etiam, ut inquit, in vita et in voluptate locum ponamus, isdem et in dolore et in odio.',
     description: '',
   },
+  compareListsButton: {
+    id: 'admin-portal.signature-collection-parliamentary:compareListsButton',
+    defaultMessage: 'Bera saman lista',
+    description: '',
+  },
+  singleConstituencyIntro: {
+    id: 'admin-portal.signature-collection-parliamentary:singleConstituencyIntro',
+    defaultMessage:
+      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið í Norðausturkjördæmi.',
+    description: '',
+  },
 })
 
 export const createCollectionErrorMessages = defineMessages({

@@ -8,6 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../lib/navigation'
 import { m, parliamentaryMessages } from '../lib/messages'
+import CompareLists from './components/compareLists'
 
 const ParliamentaryRoot = () => {
   const { formatMessage } = useLocale()
@@ -42,6 +43,7 @@ const ParliamentaryRoot = () => {
             placeholder={formatMessage(m.searchInListPlaceholder)}
             backgroundColor="white"
           />
+          <CompareLists collectionId="1" />
         </GridColumn>
       </GridRow>
     </GridContainer>

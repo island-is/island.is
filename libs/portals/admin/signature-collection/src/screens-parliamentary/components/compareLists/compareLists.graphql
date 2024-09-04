@@ -1,0 +1,15 @@
+mutation BulkCompare($input: SignatureCollectionNationalIdsInput!) {
+  signatureCollectionAdminBulkCompareSignaturesAllLists(input: $input) {
+    id
+    listId
+    listTitle
+    signee {
+      name
+      nationalId
+      address
+    }
+    isDigital
+    valid
+    created
+  }
+}

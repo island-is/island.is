@@ -1,7 +1,7 @@
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { m, parliamentaryMessages } from '../../lib/messages'
 import {
   ActionCard,
   GridColumn,
@@ -35,7 +35,7 @@ export const SingleConstituencyView = () => {
         >
           <IntroHeader
             title={formatMessage('Norðausturkjördæmi')}
-            intro={formatMessage(m.signatureListsIntro)}
+            intro={formatMessage(parliamentaryMessages.singleConstituencyIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
           />
@@ -65,7 +65,7 @@ export const SingleConstituencyView = () => {
                 <ActionCard
                   heading={'Listi B'}
                   progressMeter={{
-                    currentProgress: 0,
+                    currentProgress: 50,
                     maxProgress: 130,
                     withLabel: true,
                   }}
@@ -77,19 +77,7 @@ export const SingleConstituencyView = () => {
                 <ActionCard
                   heading={'Listi C'}
                   progressMeter={{
-                    currentProgress: 70,
-                    maxProgress: 130,
-                    withLabel: true,
-                  }}
-                  cta={{
-                    label: 'Skoða nánar',
-                    variant: 'text',
-                  }}
-                />
-                <ActionCard
-                  heading={'Listi D'}
-                  progressMeter={{
-                    currentProgress: 50,
+                    currentProgress: 100,
                     maxProgress: 130,
                     withLabel: true,
                   }}
