@@ -40,7 +40,7 @@ import {
 
 import { nowFactory } from '../../factories'
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { User } from '../user'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
