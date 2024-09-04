@@ -11,6 +11,7 @@ import {
 import {
   CaseAppealState,
   CaseFileCategory,
+  isDefenceUser,
   isPrisonStaffUser,
   isPrisonSystemUser,
   User,
@@ -26,6 +27,10 @@ export class CaseFileInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((data: Case) => {
+        if (isDefenceUser(user)) {
+          return data
+        }
+
         if (
           isPrisonStaffUser(user) ||
           data.appealState !== CaseAppealState.COMPLETED
