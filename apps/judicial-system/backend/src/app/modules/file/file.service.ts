@@ -27,6 +27,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createConfirmedIndictment } from '../../formatters'
+import { createConfirmedRuling } from '../../formatters/confirmedRulingPdf'
 import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -181,18 +182,36 @@ export class FileService {
 
     return this.userService
       .findByNationalId(confirmationEvent.nationalId)
-      .then((user) =>
-        createConfirmedIndictment(
-          {
-            actor: user.name,
-            title: user.title,
-            institution: user.institution?.name ?? '',
-            date: confirmationEvent.created,
-          },
-          pdf,
-        ),
-      )
+      .then((user) => {
+        if (file.category === CaseFileCategory.INDICTMENT) {
+          return createConfirmedIndictment(
+            {
+              actor: user.name,
+              title: user.title,
+              institution: user.institution?.name ?? '',
+              date: confirmationEvent.created,
+            },
+            pdf,
+          )
+        }
+
+        if (file.category === CaseFileCategory.RULING && theCase.rulingDate) {
+          return createConfirmedRuling(
+            {
+              actor: theCase.judge?.name ?? '',
+              title: theCase.judge?.title,
+              institution: theCase.judge?.institution?.name ?? '',
+              date: theCase.rulingDate,
+            },
+            pdf,
+          )
+        }
+      })
       .then((confirmedPdf) => {
+        if (!confirmedPdf) {
+          throw new Error('Failed to create confirmed PDF')
+        }
+
         const binaryPdf = confirmedPdf.toString('binary')
         const hash = CryptoJS.MD5(binaryPdf).toString(CryptoJS.enc.Hex)
 
@@ -214,16 +233,27 @@ export class FileService {
   async getCaseFileFromS3(theCase: Case, file: CaseFile): Promise<Buffer> {
     if (
       isIndictmentCase(theCase.type) &&
-      hasIndictmentCaseBeenSubmittedToCourt(theCase.state) &&
-      file.category === CaseFileCategory.INDICTMENT
+      hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
     ) {
-      return this.awsS3Service.getConfirmedIndictmentCaseObject(
-        theCase.type,
-        file.key,
-        !file.hash,
-        (content: Buffer) =>
-          this.confirmIndictmentCaseFile(theCase, file, content),
-      )
+      if (file.category === CaseFileCategory.INDICTMENT) {
+        return this.awsS3Service.getConfirmedIndictmentCaseObject(
+          theCase.type,
+          file.key,
+          !file.hash,
+          (content: Buffer) =>
+            this.confirmIndictmentCaseFile(theCase, file, content),
+        )
+      }
+
+      if (file.category === CaseFileCategory.RULING) {
+        return this.awsS3Service.getConfirmedIndictmentCaseObject(
+          theCase.type,
+          file.key,
+          !file.hash,
+          (content: Buffer) =>
+            this.confirmIndictmentCaseFile(theCase, file, content),
+        )
+      }
     }
 
     return this.awsS3Service.getObject(theCase.type, file.key)
@@ -360,7 +390,8 @@ export class FileService {
     if (
       isIndictmentCase(theCase.type) &&
       hasIndictmentCaseBeenSubmittedToCourt(theCase.state) &&
-      file.category === CaseFileCategory.INDICTMENT
+      (file.category === CaseFileCategory.INDICTMENT ||
+        file.category === CaseFileCategory.RULING)
     ) {
       return this.awsS3Service.getConfirmedIndictmentCaseSignedUrl(
         theCase.type,
