@@ -46,7 +46,6 @@ export class SharedTemplateApiService {
   async createAssignToken(application: Application, expiresIn: number) {
     const token = await this.applicationService.createAssignToken(
       application,
-      // getConfigValue(this.configService, 'jwtSecret'),
       this.config.jwtSecret,
       expiresIn,
     )
@@ -58,11 +57,6 @@ export class SharedTemplateApiService {
     smsTemplateGenerator: SmsTemplateGenerator,
     application: Application,
   ): Promise<any> {
-    // const clientLocationOrigin = getConfigValue(
-    //   this.configService,
-    //   'clientLocationOrigin',
-    // ) as string
-
     const clientLocationOrigin = this.config.clientLocationOrigin
 
     const { phoneNumber, message } = smsTemplateGenerator(application, {
@@ -77,11 +71,6 @@ export class SharedTemplateApiService {
     application: Application,
     token: string,
   ): Promise<any> {
-    // const clientLocationOrigin = getConfigValue(
-    //   this.configService,
-    //   'clientLocationOrigin',
-    // ) as string
-
     const clientLocationOrigin = this.config.clientLocationOrigin
 
     const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
@@ -99,17 +88,7 @@ export class SharedTemplateApiService {
     application: Application,
     locale = 'is',
   ) {
-    // const clientLocationOrigin = getConfigValue(
-    //   this.configService,
-    //   'clientLocationOrigin',
-    // ) as string
-
     const clientLocationOrigin = this.config.clientLocationOrigin
-
-    // const email = getConfigValue(
-    //   this.configService,
-    //   'email',
-    // ) as BaseTemplateAPIModuleConfig['email']
 
     const email = this.config.email
 
@@ -131,18 +110,7 @@ export class SharedTemplateApiService {
     token: string,
     locale = 'is',
   ) {
-    // const clientLocationOrigin = getConfigValue(
-    //   this.configService,
-    //   'clientLocationOrigin',
-    // ) as string
-
     const clientLocationOrigin = this.config.clientLocationOrigin
-
-    // const email = getConfigValue(
-    //   this.configService,
-    //   'email',
-    // ) as BaseTemplateAPIModuleConfig['email']
-
     const email = this.config.email
 
     const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
@@ -169,18 +137,7 @@ export class SharedTemplateApiService {
     recipientEmail: string,
     locale = 'is',
   ) {
-    // const clientLocationOrigin = getConfigValue(
-    //   this.configService,
-    //   'clientLocationOrigin',
-    // ) as string
-
     const clientLocationOrigin = this.config.clientLocationOrigin
-
-    // const email = getConfigValue(
-    //   this.configService,
-    //   'email',
-    // ) as BaseTemplateAPIModuleConfig['email']
-
     const email = this.config.email
 
     const template = templateGenerator(
@@ -204,11 +161,6 @@ export class SharedTemplateApiService {
     query: string,
     variables?: Record<string, unknown>,
   ): Promise<GraphqlGatewayResponse<T>> {
-    // const baseApiUrl = getConfigValue(
-    //   this.configService,
-    //   'baseApiUrl',
-    // ) as string
-
     const baseApiUrl = this.config.baseApiUrl
 
     return fetch(`${baseApiUrl}/api/graphql`, {
@@ -300,10 +252,6 @@ export class SharedTemplateApiService {
     if (expiration <= 0) {
       return Promise.reject('expiration must be positive')
     }
-
-    // const bucket = this.configService.get('attachmentBucket') as
-    //   | string
-    //   | undefined
 
     const bucket = this.config.attachmentBucket
 
