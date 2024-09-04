@@ -221,12 +221,12 @@ export const serviceSetup = (services: {
       ),
       XROAD_COURT_BANKRUPTCY_CERT_PATH: {
         dev: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
-        staging: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
+        staging: 'IS-TEST/GOV/10019/Domstolasyslan/JusticePortal-v1',
         prod: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1',
       },
       XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: {
         dev: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
-        staging: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
+        staging: 'IS-TEST/GOV/10047/UA-Protected/kvortun-v1/',
         prod: 'IS/GOV/5605882089/UA-Protected/kvortun-v1',
       },
       NOVA_ACCEPT_UNAUTHORIZED: {
