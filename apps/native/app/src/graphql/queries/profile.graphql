@@ -13,6 +13,12 @@ query GetProfile {
   }
 }
 
+query GetUserLocale {
+  getUserProfile {
+    locale
+  }
+}
+
 query GetFrontPageImage($input: GetFrontpageInput!) {
   getFrontpage(input: $input) {
     imageMobile {
