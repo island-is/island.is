@@ -1,8 +1,4 @@
-import {
-  GridColumn,
-  GridContainer,
-  GridRow,
-} from '@island.is/island-ui/core'
+import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
