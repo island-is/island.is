@@ -7,7 +7,7 @@ import { Form, FormModes } from '@island.is/application/types'
 // import { Logo } from '../../assets/Logo'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { reviewConfirmation } from '../lib/messages'
-import { getChosenApplicant } from '../utils'
+import { getChosenApplicant, hasSecondGuardian } from '../utils'
 import { IdentityDocumentChild } from '@island.is/clients/passports'
 
 export const Approved: Form = buildForm({
@@ -58,21 +58,13 @@ export const Approved: Form = buildForm({
           externalData,
           applicantNationalId,
         )
-        const applicantChildren = getValueViaPath(
+
+        const applicantHasSecondGuardian = hasSecondGuardian(
+          formValue,
           externalData,
-          'identityDocument.data.childPassports',
-          [],
-        ) as Array<IdentityDocumentChild>
-
-        const chosenChild = applicantChildren.filter(
-          (x) => x.childNationalId === applicantNationalId,
-        )?.[0]
-
-        return (
-          !chosenApplicant.isApplicant &&
-          chosenChild &&
-          !!chosenChild.secondParent
         )
+
+        return !chosenApplicant.isApplicant && applicantHasSecondGuardian
       },
     }),
     buildAlertMessageField({
@@ -91,21 +83,13 @@ export const Approved: Form = buildForm({
           externalData,
           applicantNationalId,
         )
-        const applicantChildren = getValueViaPath(
+
+        const applicantHasSecondGuardian = hasSecondGuardian(
+          formValue,
           externalData,
-          'identityDocument.data.childPassports',
-          [],
-        ) as Array<IdentityDocumentChild>
-
-        const chosenChild = applicantChildren.filter(
-          (x) => x.childNationalId === applicantNationalId,
-        )?.[0]
-
-        return (
-          !chosenApplicant.isApplicant &&
-          chosenChild &&
-          !!chosenChild.secondParent
         )
+
+        return !chosenApplicant.isApplicant && applicantHasSecondGuardian
       },
     }),
   ],
