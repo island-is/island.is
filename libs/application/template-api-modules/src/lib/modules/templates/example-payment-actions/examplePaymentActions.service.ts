@@ -66,6 +66,7 @@ export class ExamplePaymentActionsService extends BaseTemplateApiService {
 
     // Note: after this point, you can be asured that the payment has been made, so you can
     // safely do appropriate api calls at this point.
+    throw new Error('External api call fails here !! oh no...')
 
     return {
       success: true,
