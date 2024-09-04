@@ -84,27 +84,28 @@ export class EndorsementListService {
       before: query.before,
       primaryKeyField: 'counter',
       orderOption: [
-        ['endorsementCounter', 'DESC'],
-        ['counter', 'DESC'],
+        ['endorsement_count', 'DESC'],
+        // ['counter', 'DESC'],
       ],
-      where: where,
-      attributes: {
-        include: [
-          [
-            Sequelize.fn('COUNT', Sequelize.col('endorsements.id')),
-            'endorsementCounter',
-          ],
-        ],
-      },
-      include: [
-        {
-          model: Endorsement,
-          required: false, // Required false for left outer join so that counts come for 0 as well
-          duplicating: false,
-          attributes: [],
-        },
-      ],
-      group: ['EndorsementList.id'],
+      where: where
+      // REMOVE THIS WHEN READY .............................................
+      // attributes: {
+      //   include: [
+      //     [
+      //       Sequelize.fn('COUNT', Sequelize.col('endorsements.id')),
+      //       'endorsementCounter',
+      //     ],
+      //   ],
+      // },
+      // include: [
+      //   {
+      //     model: Endorsement,
+      //     required: false, // Required false for left outer join so that counts come for 0 as well
+      //     duplicating: false,
+      //     attributes: [],
+      //   },
+      // ],
+      // group: ['EndorsementList.id'],
     })
   }
 
