@@ -44,7 +44,7 @@ export const createConfirmedRuling = async (
     color: lightGray,
   })
 
-  // // Draw the box around the coat of arms
+  // Draw the box around the coat of arms
   doc.drawRectangle({
     x: coatOfArmsX,
     y: height - shaddowHeight - pageMargin + calculatePt(8),
