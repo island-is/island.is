@@ -83,7 +83,7 @@ export class EndorsementListService {
       before: query.before,
       primaryKeyField: 'counter',
       orderOption: [
-        ['endorsement_count', 'DESC'],
+        ['counter', 'DESC'],
       ],
       where: where
     })

@@ -31,14 +31,14 @@ export class Endorsement extends Model {
   })
   id!: string;
 
-  @ApiProperty({ type: Number, description: 'A counter for the endorsement', nullable: true })
+  @ApiProperty({ type: Number, description: 'An index used for cursor based pagination', nullable: true })
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
   counter!: number;
 
-  @ApiProperty({ type: String, description: 'The endorser\'s unique identifier' })
+  @ApiProperty({ type: String, description: 'The endorsers nationalId' })
   @Column({
     type: DataType.STRING,
     allowNull: false,
