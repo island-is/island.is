@@ -1148,6 +1148,6 @@ export const messages = defineMessages({
   },
   process: {
     id: 'sp.health:process',
-    defaultMessage: 'Staða',
+    defaultMessage: 'Afgreiðslur',
   },
 })

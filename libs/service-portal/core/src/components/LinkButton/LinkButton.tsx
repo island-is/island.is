@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from '@island.is/island-ui/core'
+import { Button, ButtonProps, Icon } from '@island.is/island-ui/core'
 import { isExternalLink } from '../../utils/isExternalLink'
 import LinkResolver from '../LinkResolver/LinkResolver'
 import * as styles from './LinkButton.css'
@@ -58,7 +58,7 @@ export const LinkButton = ({
           size={size ?? 'small'}
           variant="text"
           unfocusable
-          icon={isExternal ? 'open' : undefined}
+          icon={isExternal ? 'open' : icon ?? undefined}
           iconType={isExternal ? 'outline' : undefined}
         >
           {text}

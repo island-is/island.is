@@ -46,8 +46,12 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
         data?.map((item, i) => ({
           id: item?.diseaseId ?? `${i}`,
           name: item?.diseaseName ?? '',
+
           vaccine: item?.diseaseName ?? '',
           date: formatDate(item?.lastVaccinationDate) ?? '',
+          status: item?.vaccinationsStatusName ?? '',
+
+          tag: tagSelector(item?.vaccinationStatus ?? ''),
 
           children: (
             <VaccinationsDetailTable
@@ -87,8 +91,6 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
               footerText={item.comments ?? []}
             />
           ),
-          status: item?.vaccinationsStatusName ?? '',
-          tag: tagSelector(item?.vaccinationStatus ?? ''),
         })) ?? []
       }
     />
