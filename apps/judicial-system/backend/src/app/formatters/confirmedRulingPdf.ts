@@ -23,11 +23,10 @@ export const createConfirmedRuling = async (
   const white = rgb(1, 1, 1)
   const { height } = doc.getSize()
   const pageMargin = calculatePt(18)
-  const shaddowHeight = calculatePt(90)
+  const shaddowHeight = calculatePt(70)
   const coatOfArmsWidth = calculatePt(105)
-  const coatOfArmsHeight = calculatePt(90)
   const coatOfArmsX = pageMargin + calculatePt(8)
-  const titleHeight = calculatePt(32)
+  const titleHeight = calculatePt(24)
   const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
   const institutionWidth = calculatePt(160)
   const confirmedByWidth = institutionWidth + calculatePt(48)
@@ -35,7 +34,7 @@ export const createConfirmedRuling = async (
   const titleWidth = institutionWidth + confirmedByWidth
   const shaddowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
 
-  // Draw the shaddow
+  // Draw the shadow
   doc.drawRectangle({
     x: pageMargin,
     y: height - shaddowHeight - pageMargin,
@@ -49,13 +48,13 @@ export const createConfirmedRuling = async (
     x: coatOfArmsX,
     y: height - shaddowHeight - pageMargin + calculatePt(8),
     width: coatOfArmsWidth,
-    height: coatOfArmsHeight,
+    height: shaddowHeight,
     color: rgb(1, 1, 1),
     borderColor: darkGray,
     borderWidth: 1,
   })
 
-  PDFKitCoatOfArms(doc, height)
+  PDFKitCoatOfArms(doc, height + 8)
 
   doc.drawRectangle({
     x: coatOfArmsX + coatOfArmsWidth,
@@ -73,21 +72,21 @@ export const createConfirmedRuling = async (
   )
   doc.drawText('Réttarvörslugátt', {
     x: titleX,
-    y: height - pageMargin - titleHeight + calculatePt(20),
+    y: height - pageMargin - titleHeight + calculatePt(16),
     size: calculatePt(smallFontSize),
     font: timesRomanBoldFont,
   })
 
   doc.drawText('Rafræn staðfesting', {
     x: 158,
-    y: height - pageMargin - titleHeight + calculatePt(20),
+    y: height - pageMargin - titleHeight + calculatePt(16),
     size: calculatePt(smallFontSize),
     font: timesRomanFont,
   })
 
   doc.drawText(formatDate(confirmation.date) || '', {
     x: shaddowWidth - calculatePt(24),
-    y: height - pageMargin - titleHeight + calculatePt(20),
+    y: height - pageMargin - titleHeight + calculatePt(16),
     size: calculatePt(smallFontSize),
     font: timesRomanFont,
   })
@@ -95,7 +94,7 @@ export const createConfirmedRuling = async (
   // Draw the "Institution" box
   doc.drawRectangle({
     x: coatOfArmsX + coatOfArmsWidth,
-    y: height - pageMargin - titleHeight - confirmedByHeight,
+    y: height - pageMargin - titleHeight - confirmedByHeight + calculatePt(12),
     width: institutionWidth,
     height: shaddowHeight - titleHeight,
     color: white,
@@ -105,7 +104,7 @@ export const createConfirmedRuling = async (
 
   doc.drawText('Dómstóll', {
     x: titleX,
-    y: height - pageMargin - titleHeight - calculatePt(15),
+    y: height - pageMargin - titleHeight - calculatePt(10),
     size: calculatePt(smallFontSize),
     font: timesRomanBoldFont,
   })
@@ -113,7 +112,7 @@ export const createConfirmedRuling = async (
   if (confirmation?.institution) {
     doc.drawText(confirmation.institution, {
       x: titleX,
-      y: height - pageMargin - titleHeight - calculatePt(29),
+      y: height - pageMargin - titleHeight - calculatePt(22),
       font: timesRomanFont,
       size: calculatePt(smallFontSize),
     })
@@ -122,7 +121,7 @@ export const createConfirmedRuling = async (
   // Draw the "Institution" box
   doc.drawRectangle({
     x: coatOfArmsX + coatOfArmsWidth + institutionWidth,
-    y: height - pageMargin - titleHeight - confirmedByHeight,
+    y: height - pageMargin - titleHeight - confirmedByHeight + calculatePt(12),
     width: confirmedByWidth,
     height: shaddowHeight - titleHeight,
     color: white,
@@ -132,7 +131,7 @@ export const createConfirmedRuling = async (
 
   doc.drawText('Samþykktaraðili', {
     x: titleX + institutionWidth,
-    y: height - pageMargin - titleHeight - calculatePt(15),
+    y: height - pageMargin - titleHeight - calculatePt(10),
     size: calculatePt(smallFontSize),
     font: timesRomanBoldFont,
   })
@@ -151,7 +150,7 @@ export const createConfirmedRuling = async (
       }`,
       { type: timesRomanFont, size: calculatePt(smallFontSize) },
       titleX + institutionWidth,
-      height - pageMargin - titleHeight - calculatePt(29),
+      height - pageMargin - titleHeight - calculatePt(22),
       confirmedByWidth - 16,
     )
   }
