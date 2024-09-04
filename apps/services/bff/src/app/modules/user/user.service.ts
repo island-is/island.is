@@ -3,8 +3,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { Request } from 'express'
 
-import { CachedTokenResponse, IdTokenData } from '../auth/auth.types'
+import { CachedTokenResponse } from '../auth/auth.types'
 import { CacheService } from '../cache/cache.service'
+import { BffUser } from '@island.is/shared/types'
 
 @Injectable()
 export class UserService {
@@ -15,7 +16,7 @@ export class UserService {
     private readonly cacheService: CacheService,
   ) {}
 
-  public async getUser(req: Request): Promise<IdTokenData> {
+  public async getUser(req: Request): Promise<BffUser> {
     const sid = req.cookies['sid']
 
     if (!sid) {
@@ -32,7 +33,13 @@ export class UserService {
         throw new Error('userProfile not found in cache')
       }
 
-      return cachedTokenResponse.userProfile
+      return {
+        scopes: cachedTokenResponse.scopes,
+        profile: {
+          ...cachedTokenResponse.userProfile,
+          dateOfBirth: new Date(cachedTokenResponse.userProfile.birthdate),
+        },
+      }
     } catch (error) {
       this.logger.error('Error getting user from cache: ', error)
 

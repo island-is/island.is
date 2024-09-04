@@ -6,6 +6,7 @@ import { environment } from '../environment'
 import { BffConfig } from './bff.config'
 import { AuthModule as AppAuthModule } from './modules/auth/auth.module'
 import { UserModule } from './modules/user/user.module'
+import { ProxyModule } from './modules/proxy/proxy.module'
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UserModule } from './modules/user/user.module'
     }),
     UserModule,
     AppAuthModule,
+    ProxyModule,
   ],
 })
 export class AppModule {}

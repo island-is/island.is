@@ -12,6 +12,7 @@ const issuer = requiredString('IDENTITY_SERVER_ISSUER_URL')
 
 export const environment: BffEnvironmentSchema = {
   production: isProduction,
+  clientBasePath: requiredString('BFF_CLIENT_BASE_PATH'),
   globalPrefix: requiredString('BFF_API_URL_PREFIX'),
   audit: {
     groupName: requiredString('AUDIT_GROUP_NAME'),

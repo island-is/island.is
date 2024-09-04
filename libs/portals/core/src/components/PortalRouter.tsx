@@ -19,6 +19,7 @@ import { PortalModule, PortalRoute } from '../types/portalCore'
 import { PortalMeta, PortalProvider } from './PortalProvider'
 import { prepareRouterData } from '../utils/router/prepareRouterData'
 import { m } from '../lib/messages'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 type PortalRouterProps = {
   modules: PortalModule[]
@@ -37,7 +38,7 @@ export const PortalRouter = ({
   const { formatMessage } = useLocale()
   const router = useRef<ReturnType<typeof createBrowserRouter>>()
   const [error, setError] = useState<Error | null>(null)
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const featureFlagClient = useFeatureFlagClient()
   const [routerData, setRouterData] = useState<{
     modules: PortalModule[]

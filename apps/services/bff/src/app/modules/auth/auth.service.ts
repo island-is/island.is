@@ -5,21 +5,19 @@ import { ConfigType } from '@nestjs/config'
 import { Request, Response } from 'express'
 import { jwtDecode } from 'jwt-decode'
 
+import { IdTokenClaims } from '@island.is/shared/types'
 import { uuid } from 'uuidv4'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { CacheService } from '../cache/cache.service'
-import {
-  CachedTokenResponse,
-  IdTokenData,
-  ParResponse,
-  TokenResponse,
-} from './auth.types'
+import { IdsService } from '../ids/ids.service'
+import { CachedTokenResponse } from './auth.types'
 import { PKCEService } from './pkce.service'
 import { CallbackLoginQuery } from './queries/callback-login.query'
+import { CallbackLogoutQuery } from './queries/callback-logout.query'
 import { LoginQuery } from './queries/login.query'
 import { LogoutQuery } from './queries/logout.query'
-import { CallbackLogoutQuery } from './queries/callback-logout.query'
+import omit from 'lodash/omit'
 
 @Injectable()
 export class AuthService {
@@ -34,6 +32,7 @@ export class AuthService {
 
     private readonly pkceService: PKCEService,
     private readonly cacheService: CacheService,
+    private readonly idsService: IdsService,
   ) {
     this.baseUrl = this.config.auth.issuer
   }
@@ -60,87 +59,12 @@ export class AuthService {
   }
 
   /**
-   * Reusable fetch fn to make POST requests
-   */
-  private async postRequest<T>(
-    endpoint: string,
-    body: Record<string, string>,
-  ): Promise<T> {
-    try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(body).toString(),
-      })
-
-      if (!response.ok) {
-        throw new BadRequestException(`HTTP error! Status: ${response.status}`)
-      }
-
-      return await response.json()
-    } catch (error) {
-      this.logger.error(
-        `Error making request to ${endpoint}:`,
-        JSON.stringify(error),
-      )
-
-      throw new BadRequestException(`Failed to fetch from ${endpoint}`)
-    }
-  }
-
-  /**
-   * Fetches the PAR (Pushed Authorization Requests) from the Ids
-   */
-  private async fetchPAR({
-    sid,
-    codeChallenge,
-    loginHint,
-  }: {
-    sid: string
-    codeChallenge: string
-    loginHint?: string
-  }) {
-    return this.postRequest<ParResponse>('/connect/par', {
-      client_id: this.config.auth.clientId,
-      client_secret: this.config.auth.secret,
-      redirect_uri: this.config.auth.callbacksRedirectUris.login,
-      response_type: 'code',
-      response_mode: 'query',
-      scope: ['openid', 'profile', ...this.config.auth.scopes].join(' '),
-      state: sid,
-      code_challenge: codeChallenge,
-      code_challenge_method: 'S256',
-      ...(loginHint && { login_hint: loginHint }),
-    })
-  }
-
-  // Fetches tokens using the authorization code and code verifier
-  private async fetchTokens({
-    code,
-    codeVerifier,
-  }: {
-    code: string
-    codeVerifier: string
-  }) {
-    return this.postRequest<TokenResponse>('/connect/token', {
-      grant_type: 'authorization_code',
-      code,
-      client_secret: this.config.auth.secret,
-      client_id: this.config.auth.clientId,
-      redirect_uri: this.config.auth.callbacksRedirectUris.login,
-      code_verifier: codeVerifier,
-    })
-  }
-
-  /**
    * Get the origin URL from the request headers and add the global prefix
    */
   private getOriginUrl(req: Request) {
     return `${(req.headers['origin'] || req.headers['referer'] || '')
-      // Remove trailing slash and add global prefix
-      .replace(/\/$/, '')}${environment.globalPrefix}`
+      // Remove trailing slash and add the client base path
+      .replace(/\/$/, '')}${environment.clientBasePath}`
   }
 
   /**
@@ -197,7 +121,11 @@ export class AuthService {
       ttl: 60 * 60 * 24 * 7 * 1000, // 1 week
     })
 
-    const parResponse = await this.fetchPAR({ sid, codeChallenge, loginHint })
+    const parResponse = await this.idsService.getPar({
+      sid,
+      codeChallenge,
+      loginHint,
+    })
 
     const searchParams = new URLSearchParams({
       request_uri: parResponse.request_uri,
@@ -225,15 +153,16 @@ export class AuthService {
     }>(this.cacheService.createSessionKeyType('attempt', query.state))
 
     // Get tokens and user information from the authorization code
-    const tokenResponse = await this.fetchTokens({
+    const tokenResponse = await this.idsService.getTokens({
       code: query.code,
       codeVerifier: loginAttemptData.codeVerifier,
     })
 
-    const userProfile: IdTokenData = jwtDecode(tokenResponse.id_token)
+    const userProfile: IdTokenClaims = jwtDecode(tokenResponse.id_token)
     const sid = userProfile.sid
     const value: CachedTokenResponse = {
-      ...tokenResponse,
+      ...omit(tokenResponse, ['scope']),
+      scopes: tokenResponse.scope.split(' '),
       userProfile,
     }
 

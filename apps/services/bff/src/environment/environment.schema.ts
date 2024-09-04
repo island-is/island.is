@@ -18,6 +18,10 @@ export const environmentSchema = z.strictObject({
   production: z.boolean(),
   port: z.number(),
   /**
+   * The client base path
+   */
+  clientBasePath: z.string(),
+  /**
    * The global prefix for the API
    */
   globalPrefix: z.string(),

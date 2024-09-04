@@ -7,17 +7,17 @@ import {
 } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
+import { createBffUrlGenerator } from '@island.is/react-spa/bff'
+import { AdminPortalPaths } from './lib/paths'
 
-import { authLink } from '@island.is/auth/react'
+const bffUrlGenerator = createBffUrlGenerator(AdminPortalPaths.Base)
 
-const uri =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:4444/api/graphql'
-    : '/api/graphql'
+const uri = bffUrlGenerator('/api/graphql')
 
 const httpLink = new HttpLink({
   uri: ({ operationName }) => `${uri}?op=${operationName}`,
   fetch,
+  credentials: 'include',
 })
 
 const retryLink = new RetryLink()
@@ -34,7 +34,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 })
 
 export const client = new ApolloClient({
-  link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
+  link: ApolloLink.from([retryLink, errorLink, httpLink]),
   cache: new InMemoryCache({
     typePolicies: {
       UserProfile: {

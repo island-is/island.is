@@ -1,7 +1,9 @@
-import { Controller, Get, Req, VERSION_NEUTRAL } from '@nestjs/common'
 import type { Request } from 'express'
+
+import type { BffUser } from '@island.is/shared/types'
+import { Controller, Get, Req, VERSION_NEUTRAL } from '@nestjs/common'
+
 import { UserService } from './user.service'
-import { IdTokenData } from '../auth/auth.types'
 
 @Controller({
   path: 'user',
@@ -11,7 +13,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async getUser(@Req() req: Request): Promise<IdTokenData> {
+  async getUser(@Req() req: Request): Promise<BffUser> {
     return this.userService.getUser(req)
   }
 }
