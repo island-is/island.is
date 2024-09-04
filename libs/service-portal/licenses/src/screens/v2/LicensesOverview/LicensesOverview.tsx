@@ -137,6 +137,36 @@ export const LicensesOverviewV2 = () => {
                   licenses.filter((license) => license.isOwnerChildOfUser),
                 ),
               },
+              {
+                label: 'GRILLIÐ',
+                content: generateLicenseStack(
+                  licenses.filter((license) => license.isOwnerChildOfUser),
+                ),
+              },
+              {
+                label: 'ER',
+                content: generateLicenseStack(
+                  licenses.filter((license) => license.isOwnerChildOfUser),
+                ),
+              },
+              {
+                label: 'ALVEG',
+                content: generateLicenseStack(
+                  licenses.filter((license) => license.isOwnerChildOfUser),
+                ),
+              },
+              {
+                label: 'AÐ',
+                content: generateLicenseStack(
+                  licenses.filter((license) => license.isOwnerChildOfUser),
+                ),
+              },
+              {
+                label: 'LOKA',
+                content: generateLicenseStack(
+                  licenses.filter((license) => license.isOwnerChildOfUser),
+                ),
+              },
             ]}
           />
         </Box>
