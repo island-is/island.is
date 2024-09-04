@@ -115,11 +115,10 @@ export const addConfirmation = (
   confirmation: Confirmation,
 ) => {
   const pageMargin = calculatePt(18)
-  const shaddowHeight = calculatePt(90)
+  const shaddowHeight = calculatePt(70)
   const coatOfArmsWidth = calculatePt(105)
-  const coatOfArmsHeight = calculatePt(90)
   const coatOfArmsX = pageMargin + calculatePt(8)
-  const titleHeight = calculatePt(32)
+  const titleHeight = calculatePt(24)
   const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
   const institutionWidth = calculatePt(160)
   const confirmedByWidth = institutionWidth + calculatePt(48)
@@ -134,10 +133,10 @@ export const addConfirmation = (
 
   // Draw the coat of arms
   doc
-    .rect(coatOfArmsX, pageMargin, coatOfArmsWidth, coatOfArmsHeight)
+    .rect(coatOfArmsX, pageMargin, coatOfArmsWidth, shaddowHeight)
     .fillAndStroke('white', darkGray)
 
-  addCoatOfArms(doc, calculatePt(49), calculatePt(33))
+  addCoatOfArms(doc, calculatePt(49), calculatePt(24))
 
   // Draw the title
   doc
@@ -147,14 +146,14 @@ export const addConfirmation = (
   doc.font('Times-Bold')
   doc
     .fontSize(calculatePt(smallFontSize))
-    .text('Réttarvörslugátt', titleX, pageMargin + calculatePt(12))
+    .text('Réttarvörslugátt', titleX, pageMargin + calculatePt(9))
   doc.font('Times-Roman')
   // The X value here is approx. 8px after the title
-  doc.text('Rafræn staðfesting', calculatePt(210), pageMargin + calculatePt(12))
+  doc.text('Rafræn staðfesting', calculatePt(210), pageMargin + calculatePt(9))
   doc.text(
     formatDate(confirmation.date) || '',
     shaddowWidth - calculatePt(24),
-    pageMargin + calculatePt(12),
+    pageMargin + calculatePt(9),
   )
 
   // Draw the institution
@@ -168,13 +167,13 @@ export const addConfirmation = (
     .fillAndStroke('white', darkGray)
   doc.fill('black')
   doc.font('Times-Bold')
-  doc.text('Dómstóll', titleX, pageMargin + titleHeight + calculatePt(16))
+  doc.text('Dómstóll', titleX, pageMargin + titleHeight + calculatePt(10))
   doc.font('Times-Roman')
   drawTextWithEllipsis(
     doc,
     confirmation.institution,
     titleX,
-    pageMargin + titleHeight + calculatePt(32),
+    pageMargin + titleHeight + calculatePt(22),
     institutionWidth - calculatePt(16),
   )
 
@@ -192,7 +191,7 @@ export const addConfirmation = (
   doc.text(
     'Samþykktaraðili',
     titleX + institutionWidth,
-    pageMargin + titleHeight + calculatePt(16),
+    pageMargin + titleHeight + calculatePt(10),
   )
   doc.font('Times-Roman')
   doc.text(
@@ -200,7 +199,7 @@ export const addConfirmation = (
       confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
     }`,
     titleX + institutionWidth,
-    pageMargin + titleHeight + calculatePt(32),
+    pageMargin + titleHeight + calculatePt(22),
   )
 
   doc.fillColor('black')
