@@ -7,6 +7,7 @@ import {
   parseAsStringEnum,
   useQueryState,
 } from 'next-usequerystate'
+import { z } from 'zod'
 
 import {
   AlertMessage,
@@ -500,21 +501,63 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
   )
 }
 
-type YearConfig = {
-  [year: string]: {
-    'Skyldu lífeyrir': number
-    Persónuafsláttur: number
-    'Skattmörk þrep 1': number
-    'Skattmörk þrep 2': number
-    'Skattprósenta þrep 1': number
-    'Skattprósenta þrep 2': number
-    'Skattprósenta þrep 3': number
-    'Fæðingarstyrkur hægri': number
-    'Fæðingarstyrkur lægri': number
-    'Hlutfall fæðingarorlofs': number
-    'Fæðingarstyrkur almennur': number
-    'Fæðingarstyrkur námsmanna': number
-    'Hámarks laun fyrir fæðingarorlof': number
+const yearConfigSchema = z.object({
+  Persónuafsláttur: z.number(),
+  'Skattmörk þrep 1': z.number(),
+  'Skattmörk þrep 2': z.number(),
+  'Skattprósenta þrep 1': z.number(),
+  'Skattprósenta þrep 2': z.number(),
+  'Skattprósenta þrep 3': z.number(),
+  'Fæðingarstyrkur hærri': z.number(),
+  'Fæðingarstyrkur lægri': z.number(),
+  'Hlutfall fæðingarorlofs': z.number(),
+  'Fæðingarstyrkur almennur': z.number(),
+  'Fæðingarstyrkur námsmanna': z.number(),
+  'Hámarks laun fyrir fæðingarorlof': z.number(),
+})
+
+const calculateResults = (
+  input: {
+    status: Status | null
+    income: number | null
+    personalDiscount: number | null
+    additionalPensionFundingPercentage: number | null
+    union: string | null
+    parentalLeavePeriod: ParentalLeavePeriod | null
+    parentalLeaveRatio: number | null
+    birthyear: number | null
+    workPercentage: WorkPercentage | null
+    legalDomicileInIceland: LegalDomicileInIceland | null
+  },
+  slice: ParentalLeaveCalculatorProps['slice'],
+) => {
+  const yearConfig = slice.configJson?.yearConfig?.[String(input.birthyear)]
+  const parseResult = yearConfigSchema.safeParse(yearConfig)
+  if (!parseResult.success) {
+    return null
+  }
+
+  const constants = {
+    personalDiscount: parseResult.data['Persónuafsláttur'],
+    taxBracket1: parseResult.data['Skattmörk þrep 1'],
+    taxBracket2: parseResult.data['Skattmörk þrep 2'],
+    taxRate1: parseResult.data['Skattprósenta þrep 1'],
+    taxRate2: parseResult.data['Skattprósenta þrep 2'],
+    taxRate3: parseResult.data['Skattprósenta þrep 3'],
+    paternityLeaveHigh: parseResult.data['Fæðingarstyrkur hærri'],
+    paternityLeaveLow: parseResult.data['Fæðingarstyrkur lægri'],
+    paternityLeaveRatio: parseResult.data['Hlutfall fæðingarorlofs'],
+    paternityLeaveGeneral: parseResult.data['Fæðingarstyrkur almennur'],
+    paternityLeaveStudent: parseResult.data['Fæðingarstyrkur námsmanna'],
+    maxIncome: parseResult.data['Hámarks laun fyrir fæðingarorlof'],
+  }
+
+  const mainResultBeforeDeduction = 440000
+  const mainResultAfterDeduction = 242471
+
+  return {
+    mainResultBeforeDeduction,
+    mainResultAfterDeduction,
   }
 }
 
@@ -553,12 +596,23 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
     parseAsStringEnum(Object.values(LegalDomicileInIceland)),
   )
 
-  const yearConfig: YearConfig | undefined = slice.configJson?.yearConfig
+  const results = calculateResults(
+    {
+      status,
+      birthyear,
+      workPercentage,
+      income,
+      additionalPensionFundingPercentage,
+      union,
+      personalDiscount,
+      parentalLeavePeriod,
+      parentalLeaveRatio,
+      legalDomicileInIceland,
+    },
+    slice,
+  )
 
-  const constants = yearConfig?.[String(birthyear)]
-
-  // TODO: make a zod.parse check instead
-  if (!constants) {
+  if (!results) {
     return (
       <Stack space={3}>
         <AlertMessage
@@ -572,10 +626,6 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
       </Stack>
     )
   }
-
-  // TODO: calculate
-  const mainResultBeforeDeduction = 440000
-  const mainResultAfterDeduction = 242471
 
   const mainSectionKeys = {
     [Status.PARENTAL_LEAVE]: {
@@ -653,7 +703,12 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
                 </Text>
               </Table.Data>
               <Table.Data align="right">
-                <Text whiteSpace="nowrap">550.000 krónur</Text>
+                <Text whiteSpace="nowrap">
+                  {formatCurrency(
+                    income,
+                    formatMessage(t.results.currencySuffix),
+                  )}
+                </Text>
               </Table.Data>
             </Table.Row>
           </Table.Body>
