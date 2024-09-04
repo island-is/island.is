@@ -255,7 +255,7 @@ export const JudicialAdministration = new XroadConf({
   env: {
     XROAD_COURT_BANKRUPTCY_CERT_PATH: {
       dev: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
-      staging: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
+      staging: 'IS-TEST/GOV/10019/Domstolasyslan/JusticePortal-v1',
       prod: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1',
     },
   },
@@ -269,7 +269,7 @@ export const OccupationalLicenses = new XroadConf({
   env: {
     XROAD_HEALTH_DIRECTORATE_PATH: {
       dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
-      staging: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
+      staging: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
       prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/landlaeknir',
     },
   },
@@ -279,7 +279,7 @@ export const DistrictCommissionersPCard = new XroadConf({
   env: {
     XROAD_DISTRICT_COMMISSIONERS_P_CARD_PATH: {
       dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
-      staging: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
+      staging: 'IS-TEST/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
       prod: 'IS/GOV/5512201410/Syslumenn-Protected/IslandMinarSidur',
     },
   },
@@ -288,7 +288,7 @@ export const DistrictCommissionersLicenses = new XroadConf({
   env: {
     XROAD_DISTRICT_COMMISSIONERS_LICENSES_PATH: {
       dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/RettindiIslandis',
-      staging: 'IS-DEV/GOV/10016/Syslumenn-Protected/RettindiIslandis',
+      staging: 'IS-TEST/GOV/10016/Syslumenn-Protected/RettindiIslandis',
       prod: 'IS/GOV/5512201410/Syslumenn-Protected/RettindiIslandis',
     },
   },
@@ -308,7 +308,7 @@ export const Hunting = new XroadConf({
   env: {
     XROAD_HUNTING_LICENSE_PATH: {
       dev: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api',
-      staging: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api',
+      staging: 'IS-TEST/GOV/10009/Umhverfisstofnun-Protected/api',
       prod: 'IS/GOV/7010022880/Umhverfisstofnun-Protected/api',
     },
   },
@@ -458,7 +458,7 @@ export const NationalRegistryAuthB2C = new XroadConf({
     },
     NATIONAL_REGISTRY_B2C_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
-      staging: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
+      staging: 'IS-TEST/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
       prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
     },
   },
@@ -664,17 +664,17 @@ export const TransportAuthority = new XroadConf({
   env: {
     XROAD_VEHICLE_CODETABLES_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1',
-      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Codetables-V1',
     },
     XROAD_VEHICLE_INFOLOCKS_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1',
-      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Infolocks-V1',
     },
     XROAD_VEHICLE_OPERATORS_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3',
-      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Operators-V3',
     },
     XROAD_VEHICLE_OWNER_CHANGE_PATH: {
@@ -697,12 +697,12 @@ export const TransportAuthority = new XroadConf({
     },
     XROAD_VEHICLE_PRINTING_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
-      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Printing-V1',
     },
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1',
-      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Okuritar-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Okuritar-V1',
     },
   },
@@ -728,7 +728,7 @@ export const AircraftRegistry = new XroadConf({
   env: {
     XROAD_AIRCRAFT_REGISTRY_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
-      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Loftfaraskra-V1',
     },
   },
@@ -754,7 +754,7 @@ export const ShipRegistry = new XroadConf({
   env: {
     XROAD_SHIP_REGISTRY_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
-      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-V1',
     },
   },
@@ -764,7 +764,7 @@ export const DirectorateOfImmigration = new XroadConf({
   env: {
     XROAD_DIRECTORATE_OF_IMMIGRATION_PATH: {
       dev: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1',
-      staging: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1',
+      staging: 'IS-TEST/GOV/10011/UTL-Protected/Utl-Umsokn-v1',
       prod: 'IS/GOV/6702696399/UTL-Protected/Utl-Umsokn-v1',
     },
   },
@@ -864,7 +864,7 @@ export const OfficialJournalOfIceland = new XroadConf({
   env: {
     XROAD_OFFICIAL_JOURNAL_PATH: {
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
-      staging: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/official-journal',
       prod: 'IS/GOV/10014/DMR-Protected/official-journal',
     },
   },
@@ -874,7 +874,7 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
   env: {
     XROAD_OFFICIAL_JOURNAL_APPLICATION_PATH: {
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
-      staging: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/official-journal-application',
       prod: 'IS/GOV/10014/DMR-Protected/official-journal-application',
     },
   },
@@ -884,7 +884,7 @@ export const Frigg = new XroadConf({
   env: {
     XROAD_MMS_FRIGG_PATH: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
-      staging: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
+      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-api',
       prod: 'IS/GOV/10066/MMS-Protected/frigg-api',
     },
   },
