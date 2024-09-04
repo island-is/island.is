@@ -57,19 +57,15 @@ class MockContentfulRepository {
   }
 }
 
-class MockSharedConfig {
-  load() {
-    return {
-      jwtSecret: 'supersecret',
-      clientLocationOrigin: 'http://localhost:4200',
-      email: {
-        sender: 'Devland.is',
-        address: 'development@island.is',
-      },
-      baseApiUrl: 'http://localhost:4444',
-      attachmentBucket: 'attachmentBucket',
-    }
-  }
+const mockConfig = {
+  jwtSecret: 'supersecret',
+  clientLocationOrigin: 'http://localhost:4200',
+  email: {
+    sender: 'Devland.is',
+    address: 'development@island.is',
+  },
+  baseApiUrl: 'http://localhost:4444',
+  attachmentBucket: 'attachmentBucket',
 }
 
 let server: request.SuperTest<request.Test>
@@ -91,7 +87,7 @@ beforeAll(async () => {
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
         .overrideProvider(sharedModuleConfig.KEY)
-        .useClass(MockSharedConfig)
+        .useValue(mockConfig)
         .overrideGuard(IdsUserGuard)
         .useValue(mockAuthGuard),
   })

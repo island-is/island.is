@@ -237,9 +237,7 @@ describe('ParentalLeaveService', () => {
         },
         {
           provide: sharedModuleConfig.KEY,
-          useValue: {
-            clientLocationOrigin: 'http://localhost:4200',
-          },
+          useValue: {},
         },
         SharedTemplateApiService,
         {
