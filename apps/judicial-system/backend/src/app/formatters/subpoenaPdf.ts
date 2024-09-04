@@ -181,7 +181,7 @@ export const createSubpoena = (
       actor: theCase.judge?.name || '',
       title: theCase.judge?.title,
       institution: theCase.judge?.institution?.name || '',
-      date: dateLog.date,
+      date: dateLog.created,
     })
   }
 
