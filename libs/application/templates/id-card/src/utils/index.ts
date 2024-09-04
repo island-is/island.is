@@ -19,15 +19,8 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
   return phone?.formatNational() || phoneNumber
 }
 
-export const hasReviewerApproved = (answers: FormValue) => {
-  const hasApproved = getValueViaPath(
-    answers,
-    'secondGuardianInformation.approved',
-    '',
-  ) as string
-
-  return hasApproved
-}
+export const hasReviewerApproved = (answers: FormValue): string =>
+  getValueViaPath(answers, 'secondGuardianInformation.approved', '') as string
 
 export const getCombinedApplicantInformation = (externalData: any) => {
   const applicantName = getValueViaPath(

@@ -12,7 +12,6 @@ import {
   getCombinedApplicantInformation,
   isAvailableForApplication,
 } from '../../../utils'
-import { Application } from '@island.is/application/types'
 
 export const TypeOfIdSubSection = buildSubSection({
   id: Routes.TYPEOFID,
@@ -43,11 +42,9 @@ export const TypeOfIdSubSection = buildSubSection({
                 undefined,
               ) as Array<IdentityDocumentChild> | undefined
 
-              combinedAppplicantInformation.passport =
-                childPassports &&
-                childPassports.find(
-                  (x) => x.childNationalId === chosenApplicant.nationalId,
-                )?.passports?.[0]
+              combinedAppplicantInformation.passport = childPassports?.find(
+                (x) => x.childNationalId === chosenApplicant.nationalId,
+              )?.passports?.[0]
             }
 
             const IIDisabled = !isAvailableForApplication(
@@ -90,11 +87,9 @@ export const TypeOfIdSubSection = buildSubSection({
                 undefined,
               ) as Array<IdentityDocumentChild> | undefined
 
-              combinedAppplicantInformation.passport =
-                childPassports &&
-                childPassports.find(
-                  (x) => x.childNationalId === chosenApplicant.nationalId,
-                )?.passports?.[0]
+              combinedAppplicantInformation.passport = childPassports?.find(
+                (x) => x.childNationalId === chosenApplicant.nationalId,
+              )?.passports?.[0]
             }
             const IIDisabled = !isAvailableForApplication(
               'II',

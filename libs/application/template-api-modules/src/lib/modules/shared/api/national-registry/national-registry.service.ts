@@ -55,18 +55,17 @@ export class NationalRegistryService extends BaseTemplateApiService {
     if (params?.allowIfChildHasCitizenship) {
       const children = await this.nationalRegistryApi.getCustodyChildren(auth)
       if (children.length > 0) {
-        if (children.length > 0) {
-          let foundChildWithIcelandicCitizenship = false
-          children.map(async (child) => {
-            const individual = await this.getIndividual(child)
-            if (individual?.citizenship?.code === 'IS') {
-              foundChildWithIcelandicCitizenship = true
-            }
-          })
-          //if child validates with icelandic citizenship, then do not check parents citizenship
-          if (foundChildWithIcelandicCitizenship) {
-            params = { ...params, icelandicCitizenship: false }
+        let foundChildWithIcelandicCitizenship = false
+        for (const child of children) {
+          const individual = await this.getIndividual(child)
+          if (individual?.citizenship?.code === 'IS') {
+            foundChildWithIcelandicCitizenship = true
+            break
           }
+        }
+        //if child validates with icelandic citizenship, then do not check parents citizenship
+        if (foundChildWithIcelandicCitizenship) {
+          params = { ...params, icelandicCitizenship: false }
         }
       }
     }

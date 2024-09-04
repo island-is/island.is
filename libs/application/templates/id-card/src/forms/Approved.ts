@@ -45,7 +45,7 @@ export const Approved: Form = buildForm({
       id: 'uiForms.conclusionAlertInfo1',
       title: '',
       alertType: 'info',
-      message: reviewConfirmation.general.infoMessageText2,
+      message: reviewConfirmation.general.infoMessageText1,
       marginBottom: 0,
       condition: (formValue, externalData) => {
         const applicantNationalId = getValueViaPath(
