@@ -3,10 +3,9 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
-  ForbiddenException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { col, Op, Sequelize } from 'sequelize'
+import { Op } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
@@ -85,27 +84,8 @@ export class EndorsementListService {
       primaryKeyField: 'counter',
       orderOption: [
         ['endorsement_count', 'DESC'],
-        // ['counter', 'DESC'],
       ],
       where: where
-      // REMOVE THIS WHEN READY .............................................
-      // attributes: {
-      //   include: [
-      //     [
-      //       Sequelize.fn('COUNT', Sequelize.col('endorsements.id')),
-      //       'endorsementCounter',
-      //     ],
-      //   ],
-      // },
-      // include: [
-      //   {
-      //     model: Endorsement,
-      //     required: false, // Required false for left outer join so that counts come for 0 as well
-      //     duplicating: false,
-      //     attributes: [],
-      //   },
-      // ],
-      // group: ['EndorsementList.id'],
     })
   }
 

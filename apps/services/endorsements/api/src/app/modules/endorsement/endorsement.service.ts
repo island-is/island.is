@@ -167,13 +167,8 @@ export class EndorsementService {
     }
 
     try {
-      // Create the endorsement and store the result
       const createdEndorsement = await this.endorsementModel.create(endorsement);
-  
-      // Update the count after creating the endorsement
       await this.updateEndorsementCountOnList(endorsementList.id);
-  
-      // Return the created endorsement
       return createdEndorsement;
     } catch (error) {
       // map meaningful sequelize errors to custom errors, else return error

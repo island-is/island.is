@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger';
 import {
   BelongsTo,
   Column,
@@ -8,10 +8,10 @@ import {
   Model,
   Table,
   UpdatedAt,
-} from 'sequelize-typescript'
-import { EndorsementList } from '../../endorsementList/endorsementList.model'
-import { EndorsementMetadata } from './endorsementMetadata.model'
-import { EndorsementListOpen } from './endorsementListOpen.model'
+} from 'sequelize-typescript';
+import { EndorsementList } from '../../endorsementList/endorsementList.model';
+import { EndorsementMetadata } from './endorsementMetadata.model';
+import { EndorsementListOpen } from './endorsementListOpen.model';
 
 @Table({
   tableName: 'endorsement',
@@ -23,56 +23,52 @@ import { EndorsementListOpen } from './endorsementListOpen.model'
   ],
 })
 export class Endorsement extends Model {
-  @ApiProperty()
+  @ApiProperty({ type: String, description: 'The unique identifier of the endorsement' })
   @Column({
     type: DataType.UUID,
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  id!: string
+  id!: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: Number, description: 'A counter for the endorsement', nullable: true })
   @Column({
-    type: DataType.NUMBER,
+    type: DataType.INTEGER,
     allowNull: true,
   })
-  counter!: number
+  counter!: number;
 
-  @ApiProperty()
+  @ApiProperty({ type: String, description: 'The endorser\'s unique identifier' })
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  endorser!: string
+  endorser!: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: String, description: 'The ID of the endorsement list this endorsement belongs to' })
   @ForeignKey(() => EndorsementList)
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  endorsementListId!: string
+  endorsementListId!: string;
 
-  @ApiProperty({ type: EndorsementListOpen, required: false })
+  @ApiProperty({ type: () => EndorsementListOpen, description: 'The endorsement list this endorsement belongs to', required: false })
   @BelongsTo(() => EndorsementList, 'endorsementListId')
-  endorsementList?: EndorsementListOpen
+  endorsementList?: EndorsementListOpen;
 
-  @ApiProperty({ type: EndorsementMetadata })
+  @ApiProperty({ type: () => EndorsementMetadata, description: 'Metadata associated with the endorsement' })
   @Column({
     type: DataType.JSONB,
     allowNull: false,
   })
-  meta!: EndorsementMetadata
+  meta!: EndorsementMetadata;
 
-  @ApiProperty({
-    type: String,
-  })
+  @ApiProperty({ type: Date, description: 'The date when the endorsement was created' })
   @CreatedAt
-  readonly created!: Date
+  readonly created!: Date;
 
-  @ApiProperty({
-    type: String,
-  })
+  @ApiProperty({ type: Date, description: 'The date when the endorsement was last modified' })
   @UpdatedAt
-  readonly modified!: Date
+  readonly modified!: Date;
 }
