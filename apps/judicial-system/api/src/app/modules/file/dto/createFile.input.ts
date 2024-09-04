@@ -65,4 +65,9 @@ export class CreateFileInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly policeFileId?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly userGeneratedFilename?: string
 }

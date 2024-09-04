@@ -306,8 +306,11 @@ export class CitizenshipService extends BaseTemplateApiService {
             }
           }) || [],
         isFormerIcelandicCitizen: answers.formerIcelander === YES,
-        givenName: individual?.givenName,
-        familyName: individual?.familyName,
+        givenName:
+          individual?.givenName ||
+          individual?.fullName.split(' ').slice(0, -1).join(' '), //if given name is not available then remove last name and return the rest of the name as the given name
+        familyName:
+          individual?.familyName || individual?.fullName.split(' ').pop(),
         fullName: individual?.fullName,
         address: individual?.address?.streetAddress,
         postalCode: individual?.address?.postalCode,

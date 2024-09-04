@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { displayFirstPlusRemaining } from '@island.is/judicial-system/formatters'

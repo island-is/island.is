@@ -198,6 +198,7 @@ export const slices = gql`
     json
     configJson
     componentType: type
+    translationStrings
   }
 
   fragment StatisticsFields on Statistics {
@@ -883,6 +884,41 @@ export const slices = gql`
     }
   }
 
+  fragment LatestGenericListItemsFields on LatestGenericListItems {
+    title
+    genericList {
+      itemType
+    }
+    seeMorePage {
+      ... on OrganizationSubpage {
+        id
+        title
+        slug
+        organizationPage {
+          slug
+        }
+      }
+    }
+    seeMoreLinkText
+    itemResponse {
+      items {
+        id
+        date
+        title
+        cardIntro {
+          ...HtmlFields
+        }
+        filterTags {
+          id
+          title
+          slug
+        }
+        slug
+        assetUrl
+      }
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
@@ -927,6 +963,7 @@ export const slices = gql`
     ...ChartNumberBoxFields
     ...FeaturedEventsFields
     ...GenericListFields
+    ...LatestGenericListItemsFields
   }
 
   fragment AllSlices on Slice {

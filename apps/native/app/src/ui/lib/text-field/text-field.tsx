@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import { TextInput, TextInputProps } from 'react-native'
 import styled from 'styled-components/native'
 import { dynamicColor, font } from '../../utils'
+import { Typography } from '../typography/typography'
 
 const Host = styled.Pressable`
   padding: ${({ theme }) => theme.spacing[1]}px;
@@ -21,28 +22,23 @@ const Host = styled.Pressable`
   }))};
 `
 
-const Label = styled.Text`
-  ${font({
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: '600',
-  })}
-
+const Label = styled(Typography)`
   color: ${dynamicColor((props) => ({
     dark: 'foreground',
     light: props.theme.color.blue400,
   }))};
-  margin-bottom: 4px;
+  margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
-const Input = styled(TextInput)`
+const Input = styled.TextInput<{ value: string }>`
   padding-left: ${({ theme }) => theme.spacing[1]}px;
   padding-top: 0px;
   padding-bottom: 0px;
+
   ${font({
     fontSize: 16,
     lineHeight: 20,
-    fontWeight: '600',
+    fontWeight: ({ value }) => (value === '' ? 400 : 600),
   })}
 `
 
@@ -65,7 +61,7 @@ export const TextField = ({
 
   return (
     <Host onPress={() => inputRef.current?.focus()} style={style}>
-      <Label>{label}</Label>
+      <Label variant="eyebrow">{label}</Label>
       <Input onChangeText={onChange} value={value} ref={inputRef} {...rest} />
     </Host>
   )

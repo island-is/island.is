@@ -41,6 +41,9 @@ export class RecyclingRequestService {
     disposalStation: string,
     vehicle: VehicleModel,
   ) {
+    const apiVersion = '3.0'
+    const apiVersionParam = '?api-version=' + apiVersion
+
     try {
       const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
         environment.samgongustofa
@@ -51,10 +54,12 @@ export class RecyclingRequestService {
       const jsonAuthBody = JSON.stringify(jsonObj)
       const headerAuthRequest = {
         'Content-Type': 'application/json',
+        'Api-version': apiVersion,
       }
+
       // TODO: saved jToken and use it in next 7 days ( until it expires )
       const authRes = await lastValueFrom(
-        this.httpService.post(restAuthUrl, jsonAuthBody, {
+        this.httpService.post(restAuthUrl + apiVersionParam, jsonAuthBody, {
           headers: headerAuthRequest,
         }),
       )
@@ -78,12 +83,13 @@ export class RecyclingRequestService {
       const headerDeRegRequest = {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + jToken,
+        'Api-version': apiVersion,
       }
 
       console.log('Sending TO Samgögnustafa', jsonDeRegBody)
 
       const deRegRes = await lastValueFrom(
-        this.httpService.post(restDeRegUrl, jsonDeRegBody, {
+        this.httpService.post(restDeRegUrl + apiVersionParam, jsonDeRegBody, {
           headers: headerDeRegRequest,
         }),
       )
@@ -95,10 +101,11 @@ export class RecyclingRequestService {
           `Failed on deregisterd on deRegisterVehicle with status: ${deRegRes.statusText}`,
         )
       }
-    } catch (err) {
-      delete err?.data
-      delete err?.response?.config?.data
-      this.logger.error(`Failed to deregister vehicle`, { error: err })
+    } catch (error) {
+      if (error?.config) {
+        error.config.data = undefined
+      }
+      this.logger.error(`Failed to deregister vehicle`, { error })
       throw new Error(`Failed to deregister vehicle ${vehiclePermno.slice(-3)}`)
     }
   }

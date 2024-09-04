@@ -46,14 +46,6 @@ interface NotificationsActions {
 
 type NotificationsStore = NotificationsState & NotificationsActions
 
-const rightButtonScreens = [
-  ComponentRegistry.HomeScreen,
-  ComponentRegistry.InboxScreen,
-  ComponentRegistry.WalletScreen,
-  ComponentRegistry.ApplicationsScreen,
-  ComponentRegistry.MoreScreen,
-]
-
 const initialState: NotificationsState = {
   unseenCount: 0,
   pushToken: undefined,
@@ -123,12 +115,13 @@ export const notificationsStore = create<NotificationsStore>(
       updateNavigationUnseenCount(unseenCount: number) {
         set({ unseenCount })
 
-        rightButtonScreens.forEach((componentId) => {
-          Navigation.mergeOptions(componentId, {
-            topBar: {
-              rightButtons: getRightButtons({ unseenCount }),
-            },
-          })
+        Navigation.mergeOptions(ComponentRegistry.HomeScreen, {
+          topBar: {
+            rightButtons: getRightButtons({
+              unseenCount,
+              icons: ['notifications'],
+            }),
+          },
         })
       },
       async checkUnseen() {

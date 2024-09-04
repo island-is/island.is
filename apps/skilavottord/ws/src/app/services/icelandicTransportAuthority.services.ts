@@ -56,8 +56,9 @@ export class IcelandicTransportAuthorityServices {
 
       return authRes.data['jwtToken']
     } catch (error) {
-      delete error?.config
-      delete error?.response?.config?.data
+      if (error?.config) {
+        error.config.data = undefined
+      }
       logger.error('car-recycling: Authentication failed on information', error)
       throw error
     }

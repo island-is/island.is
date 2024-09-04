@@ -42,7 +42,6 @@ import { SmsService } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { PaymentService } from '@island.is/application/api/payment'
-import { AwsService } from '@island.is/nest/aws'
 
 const nationalId = '1234564321'
 let id = 0
@@ -240,7 +239,6 @@ describe('ParentalLeaveService', () => {
           provide: APPLICATION_ATTACHMENT_BUCKET,
           useValue: 'attachmentBucket',
         },
-        AwsService,
       ],
     }).compile()
 
