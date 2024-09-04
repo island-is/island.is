@@ -117,49 +117,4 @@ export class S3Service {
       return undefined
     }
   }
-
-  public async uploadFileFromStream(
-    stream: Response,
-    filename: string,
-    bucket: string
-  ): Promise<string | null> {
-    const { passThrough, donePromise } = this.uploadFromStream(filename, bucket)
-
-    stream.body.pipe(passThrough)
-
-    const result = await donePromise
-    const oneMinutePlus = 65 // leave extra 5 seconds for network delay
-    try {
-        const signedUrl = await this.getSignedUrlPromise(bucket, result.Key ?? '', oneMinutePlus)
-        if(!signedUrl) {
-            throw new Error('Unable to get signed url from uploaded data')
-        }
-        return signedUrl
-      } catch (error) {
-        this.logger.error('Error occurred while fetching file from S3')
-        this.logger.error(error)
-        return null
-      }
-  }
-
-  private uploadFromStream(
-    fileName: string,
-    bucket: string,
-  ): { passThrough: stream.PassThrough, donePromise: Promise<CompleteMultipartUploadCommandOutput> } {
-    const passThrough = new stream.PassThrough()
-    const uploadParams: PutObjectCommandInput = {
-        Bucket: bucket,
-        Key: fileName,
-        Body: passThrough,
-        ContentLength: passThrough.readableLength,
-        ContentType: 'application/pdf'
-    }
-
-    const donePromise = new Upload({
-        client: this.s3Client,
-        params: uploadParams,
-      }).done()
-
-    return { passThrough, donePromise }
-  }
 }

@@ -23,7 +23,7 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
   }, [location])
 
   return (
-    <Box background="black">
+    <Box background="red600">
       <GridContainer>
         <UIHeader
           info={
