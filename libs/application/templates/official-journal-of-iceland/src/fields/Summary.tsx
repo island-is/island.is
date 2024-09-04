@@ -18,8 +18,12 @@ import { ZodCustomIssue } from 'zod'
 import { useType } from '../hooks/useType'
 import { useDepartment } from '../hooks/useDepartment'
 import { usePrice } from '../hooks/usePrice'
+import { useEffect } from 'react'
 
-export const Summary = ({ application }: OJOIFieldBaseProps) => {
+export const Summary = ({
+  application,
+  setSubmitButtonDisabled,
+}: OJOIFieldBaseProps) => {
   const { formatMessage: f, formatDate } = useLocale()
   const { application: currentApplication } = useApplication({
     applicationId: application.id,
@@ -49,6 +53,14 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
   const estimatedDate = addWeekdays(today, MINIMUM_WEEKDAYS)
 
   const validationCheck = validationSchema.safeParse(currentApplication.answers)
+
+  useEffect(() => {
+    if (validationCheck.success) {
+      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+    } else {
+      setSubmitButtonDisabled && setSubmitButtonDisabled(true)
+    }
+  }, [validationCheck, setSubmitButtonDisabled])
 
   return (
     <>
