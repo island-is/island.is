@@ -24,7 +24,7 @@
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/vehicles"
+        "cwd": "libs/clients/vehicles-mileage"
       }
     },
     "codegen/backend-client": {
