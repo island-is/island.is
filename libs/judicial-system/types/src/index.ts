@@ -33,6 +33,7 @@ export {
   isDefenceUser,
   isAdminUser,
   isCoreUser,
+  isPrisonAdminUser,
   isPublicProsecutor,
 } from './lib/user'
 export type { User } from './lib/user'
