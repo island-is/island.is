@@ -59,7 +59,7 @@ class MockContentfulRepository {
 
 const mockConfig = {
   jwtSecret: 'supersecret',
-  clientLocationOrigin: 'http://localhost:4200',
+  clientLocationOrigin: 'http://localhost:4242',
   email: {
     sender: 'Devland.is',
     address: 'development@island.is',
