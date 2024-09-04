@@ -18,7 +18,10 @@ export const sectionDigitalLicenseInfo = buildSubSection({
         buildAlertMessageField({
           id: 'digitalLicenseInfo',
           title: m.digitalLicenseInfoAlertTitle,
-          message: ({ answers }) => answers.applicationFor === B_TEMP ? m.digitalLicenseInfoAlertMessageBTemp : m.digitalLicenseInfoAlertMessageBFull,
+          message: ({ answers }) =>
+            answers.applicationFor === B_TEMP
+              ? m.digitalLicenseInfoAlertMessageBTemp
+              : m.digitalLicenseInfoAlertMessageBFull,
           alertType: 'info',
         }),
       ],
