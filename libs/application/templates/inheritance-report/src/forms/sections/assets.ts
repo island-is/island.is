@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildMultiField,
@@ -679,12 +680,30 @@ export const assets = buildSection({
       id: 'assetOverview',
       title: m.assetOverview,
       children: [
-        buildCustomField({
+        buildMultiField({
+          id: 'assetOverview',
           title: m.assetOverview,
           description: m.assetOverviewDescription,
-          id: 'overviewAssets',
-          doesNotRequireAnswer: true,
-          component: 'OverviewAssets',
+          children: [
+            buildCustomField({
+              title: '',
+              id: 'overviewAssets',
+              doesNotRequireAnswer: true,
+              component: 'OverviewAssets',
+            }),
+            buildDescriptionField({
+              id: 'space',
+              title: '',
+              marginBottom: 'containerGutter',
+            }),
+            buildCheckboxField({
+              id: 'assetsConfirmation',
+              title: '',
+              large: false,
+              backgroundColor: 'white',
+              options: [{ value: YES, label: m.assetsOverviewConfirmation }],
+            }),
+          ],
         }),
       ],
     }),

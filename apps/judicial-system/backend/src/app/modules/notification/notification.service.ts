@@ -56,11 +56,7 @@ export class NotificationService {
         break
       case NotificationType.COURT_DATE:
         if (eventOnly) {
-          this.eventService.postEvent(
-            CaseEvent.SCHEDULE_COURT_DATE,
-            theCase,
-            true,
-          )
+          this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase, true)
 
           // We still want to send the defender a link to the case even if
           // the judge chooses not to send a calendar invitation
