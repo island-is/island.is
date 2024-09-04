@@ -482,6 +482,30 @@ export const m = defineMessages({
   },
 })
 
+export const parliamentaryMessages = defineMessages({
+  listTitle: {
+    id: 'admin-portal.signature-collection-parliamentary:listTitle',
+    defaultMessage: 'Alþingiskosningar',
+    description: '',
+  },
+  signatureListsTitle: {
+    id: 'admin-portal.signature-collection-parliamentary:signatureLists',
+    defaultMessage: 'Meðmælasafnanir - Alþingiskosningar',
+    description: '',
+  },
+  signatureListsDescription: {
+    id: 'admin-portal.signature-collection-parliamentary:signatureListsDescription',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    description: '',
+  },
+  signatureListsIntro: {
+    id: 'admin-portal.signature-collection-parliamentary:signatureListsIntro',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed etiam, ut inquit, in vita et in voluptate locum ponamus, isdem et in dolore et in odio.',
+    description: '',
+  },
+})
+
 export const createCollectionErrorMessages = defineMessages({
   age: {
     id: 'admin-portal.signature-collection:error.age',

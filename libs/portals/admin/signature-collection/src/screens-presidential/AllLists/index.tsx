@@ -282,7 +282,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                                 icon: 'arrowForward',
                                 onClick: () => {
                                   navigate(
-                                    SignatureCollectionPaths.SignatureList.replace(
+                                    SignatureCollectionPaths.PresidentialList.replace(
                                       ':id',
                                       list.id,
                                     ),
