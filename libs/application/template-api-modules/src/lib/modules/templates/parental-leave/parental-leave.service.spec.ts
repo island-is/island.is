@@ -42,6 +42,7 @@ import { SmsService } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { PaymentService } from '@island.is/application/api/payment'
+import { S3Service } from '../../shared/services/s3.service'
 
 const nationalId = '1234564321'
 let id = 0
@@ -229,6 +230,10 @@ describe('ParentalLeaveService', () => {
         {
           provide: SmsService,
           useClass: MockSmsService,
+        },
+        {
+          provide: S3Service,
+          useValue: {}
         },
         {
           provide: BaseTemplateApiApplicationService,

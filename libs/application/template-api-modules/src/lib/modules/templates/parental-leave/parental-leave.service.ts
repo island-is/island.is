@@ -116,7 +116,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
     private readonly childrenService: ChildrenService,
     private readonly nationalRegistryApi: NationalRegistryClientService,
-    @Inject(S3Service)
     private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)

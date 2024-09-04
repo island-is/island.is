@@ -8,6 +8,7 @@ import {
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { ApplicationTypes } from '@island.is/application/types'
+import { S3Service } from '../../shared/services/s3.service'
 
 describe('SocialInsuranceAdministrationService', () => {
   let socialInsuranceAdministrationService: SocialInsuranceAdministrationService
@@ -32,6 +33,10 @@ describe('SocialInsuranceAdministrationService', () => {
         {
           provide: APPLICATION_ATTACHMENT_BUCKET,
           useValue: 'attachmentBucket',
+        },
+        {
+          provide: S3Service,
+          useValue: {}
         },
       ],
     }).compile()

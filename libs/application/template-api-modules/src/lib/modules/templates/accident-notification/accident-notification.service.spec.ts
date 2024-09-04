@@ -19,9 +19,9 @@ import type { Locale } from '@island.is/shared/types'
 import { createApplication } from '@island.is/application/testing'
 import get from 'lodash/get'
 import set from 'lodash/set'
-import { S3Service } from './attachments/s3.service'
 import { SmsService } from '@island.is/nova-sms'
 import { PaymentService } from '@island.is/application/api/payment'
+import { S3Service } from '../../shared/services/s3.service'
 const nationalId = '1234564321'
 let id = 0
 
@@ -103,7 +103,7 @@ describe('AccidentNotificationService', () => {
         {
           provide: S3Service,
           useClass: jest.fn(() => ({
-            getFilecontentAsBase64: jest.fn(),
+            getFileContentAsBase64: jest.fn(),
           })),
         },
         {
@@ -213,7 +213,7 @@ describe('AccidentNotificationService', () => {
       }
 
       jest
-        .spyOn(s3Service, 'getFilecontentAsBase64')
+        .spyOn(s3Service, 'getFileContentAsBase64')
         .mockResolvedValueOnce(
           Buffer.from('some content', 'utf-8') as unknown as string,
         )

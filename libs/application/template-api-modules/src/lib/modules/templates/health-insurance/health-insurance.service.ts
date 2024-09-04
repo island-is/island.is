@@ -23,7 +23,6 @@ export class HealthInsuranceService extends BaseTemplateApiService {
   constructor(
     private documentApi: DocumentApi,
     private personApi: PersonApi,
-    @Inject(S3Service)
     private s3Service: S3Service,
   ) {
     super(ApplicationTypes.HEALTH_INSURANCE)
