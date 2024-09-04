@@ -11,12 +11,13 @@ import React, { FC, useState } from 'react'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 
 import {
+  CheckboxController,
   InputController,
-  RadioController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { PlateInfo } from '@island.is/skilavottord-web/utils/consts'
+
 import { Control, FieldValues } from 'react-hook-form'
+import { PlateInfo } from '@island.is/skilavottord-web/utils/consts'
 
 interface BoxProps {
   vehicleId: string
@@ -44,7 +45,7 @@ export const CarDetailsBox: FC<React.PropsWithChildren<BoxProps>> = ({
     },
   } = useI18n()
 
-  isDeregistered = true
+  //isDeregistered = true
 
   const [missingPlates, setMissingPlates] = useState(false)
 
@@ -86,7 +87,7 @@ export const CarDetailsBox: FC<React.PropsWithChildren<BoxProps>> = ({
           </Box>
         )}
       </Box>
-      {!isDeregistered && (
+      {isDeregistered && (
         <Box>
           <SelectController
             label="Fjöldi skráningarmerkja skilað með ökutækinu"
@@ -102,21 +103,16 @@ export const CarDetailsBox: FC<React.PropsWithChildren<BoxProps>> = ({
             }}
           />
 
-          <RadioController
+          <CheckboxController
             split="1/2"
             id="plateInfo"
             name="plateInfo"
             backgroundColor="blue"
             defaultValue={[]}
-            largeButtons
             options={[
               {
                 label: 'Skráningarmerkin eru týnd',
                 value: PlateInfo.PLATE_LOST,
-              },
-              {
-                label: 'Skráningarmerkjunum hefur verið eytt',
-                value: PlateInfo.PLATE_DESTROYED,
               },
             ]}
             disabled={!missingPlates}

@@ -68,3 +68,35 @@ export class VehicleInformationMini {
   @Field()
   vehicleStatus: string
 }
+
+@ObjectType()
+export class Traffic {
+  constructor(
+    permno: string,
+    outInStatus: string,
+    useStatus: string,
+    useStatusName: string,
+    useDate: string,
+  ) {
+    this.permno = permno
+    this.outInStatus = outInStatus
+    this.useStatus = useStatus
+    this.useStatusName = useStatusName
+    this.useDate = useDate
+  }
+
+  @Field()
+  permno: string
+
+  @Field()
+  outInStatus: string
+
+  @Field()
+  useStatus: string
+
+  @Field()
+  useStatusName: string
+
+  @Field()
+  useDate: string
+}

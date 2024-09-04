@@ -72,15 +72,15 @@ export class RecyclingRequestService {
         explanation: 'Rafrænt afskráning',
         mileage: vehicle.mileage ?? 0,
         plateCount: vehicle.plateCount,
-        destroyed: vehicle.plateDestroyed ?? 0,
-        lost: vehicle.plateLost ?? 0,
+        lost: vehicle.plateLost ? 1 : 0,
       })
 
-      console.log('XXXXjsonDeRegBodyXXXXXX', jsonDeRegBody)
       const headerDeRegRequest = {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + jToken,
       }
+
+      console.log('Sending TO Samgögnustafa', jsonDeRegBody)
 
       const deRegRes = await lastValueFrom(
         this.httpService.post(restDeRegUrl, jsonDeRegBody, {

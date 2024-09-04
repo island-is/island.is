@@ -5,15 +5,11 @@ import { RecyclingRequestModule } from '../recyclingRequest/recyclingRequest.mod
 
 import { SamgongustofaService } from './samgongustofa.service'
 import { SamgongustofaResolver } from './samgongustofa.resolver'
-import { IcelandicTransportAuthorityModule } from '../../services/icelandicTransportAuthority.module'
+import { TransportService } from './transport/transport.service'
 
 @Module({
-  imports: [
-    HttpModule,
-    forwardRef(() => RecyclingRequestModule),
-    forwardRef(() => IcelandicTransportAuthorityModule),
-  ],
-  providers: [SamgongustofaResolver, SamgongustofaService],
+  imports: [HttpModule, forwardRef(() => RecyclingRequestModule)],
+  providers: [SamgongustofaResolver, SamgongustofaService, TransportService],
   exports: [SamgongustofaService],
 })
 export class SamgongustofaModule {}

@@ -51,6 +51,17 @@ const SkilavottordVehicleReadyToDeregisteredQuery = gql`
   }
 `
 
+const SkilavottordTrafficQuery = gql`
+  query skilavottordTrafficQuery($permno: String!) {
+    skilavottordTraffic(permno: $permno) {
+      permno
+      outInStatus
+      useStatus
+      useStatusName
+    }
+  }
+`
+
 const SkilavottordVehicleInformationQuery = gql`
   query skilavottordVehicleInformationQuery($permno: String!) {
     skilavottordVehicleInformation(permno: $permno) {
@@ -86,7 +97,6 @@ const UpdateSkilavottordVehicleInfoMutation = gql`
     $permno: String!
     $mileage: Float!
     $plateCount: Float!
-    $plateDestroyed: Float!
     $plateLost: Float!
     $deregistered: Boolean!
   ) {
@@ -94,7 +104,7 @@ const UpdateSkilavottordVehicleInfoMutation = gql`
       permno: $permno
       mileage: $mileage
       plateCount: $plateCount
-      plateDestroyed: $plateDestroyed
+
       plateLost: $plateLost
       deregistered: $deregistered
     )
@@ -130,17 +140,22 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
 
   const vehicle = data?.skilavottordVehicleReadyToDeregistered
 
-  const { data: info, loading: loadingInfo } = useQuery<Query>(
-    SkilavottordVehicleInformationQuery,
+  const { data: traffic, loading: loadingTraffic } = useQuery<Query>(
+    SkilavottordTrafficQuery,
     {
       variables: { permno: id },
     },
   )
 
-  const vehicleInfo = info?.skilavottordVehicleInformation
-  console.log('vehicleInfo', vehicleInfo)
+  const vehicleTrafficData = traffic?.skilavottordTraffic
+  console.log(
+    'vehicle TRAFFIC',
+    vehicleTrafficData?.outInStatus.toLocaleUpperCase(),
+  )
   const isDeregistered =
-    vehicleInfo?.vehicleStatus.toLocaleLowerCase() === 'afskráð'
+    vehicleTrafficData?.outInStatus.toLocaleUpperCase() === 'OUT'
+
+  console.log('fsadfadsfa ', { isDeregistered })
 
   const [
     setRecyclingRequest,
@@ -190,7 +205,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
     console.log('handleConfirm', {
       plateCountValue,
       plateLostValue: plateInfo === PlateInfo.PLATE_LOST ? 1 : 0,
-      plateDestroyedValue: plateInfo === PlateInfo.PLATE_DESTROYED ? 1 : 0,
+
       isDeregistered,
       mileageValue,
     })
@@ -201,8 +216,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
         permno: vehicle?.vehicleId,
         mileage: newMileage,
         plateCount: plateCountValue,
-        plateLost: plateInfo === PlateInfo.PLATE_LOST ? 1 : 0,
-        plateDestroyed: plateInfo === PlateInfo.PLATE_DESTROYED ? 1 : 0,
+        plateLost: plateInfo === PlateInfo.PLATE_LOST ? true : false,
         deregistered: isDeregistered,
       },
     })
@@ -287,7 +301,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
           </Stack>
         ) : (
           <Box>
-            {loading || loadingInfo ? (
+            {loading || loadingTraffic ? (
               <Box textAlign="center">
                 <LoadingDots large />
               </Box>

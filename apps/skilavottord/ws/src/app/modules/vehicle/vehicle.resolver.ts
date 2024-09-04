@@ -109,7 +109,6 @@ export class VehicleResolver {
     @Args('permno') permno: string,
     @Args('mileage') mileage: number,
     @Args('plateCount') plateCount: number,
-    @Args('plateDestroyed') plateDestroyed: number,
     @Args('plateLost') plateLost: number,
     @Args('deregistered') deregistered: boolean,
   ) {
@@ -117,7 +116,6 @@ export class VehicleResolver {
       permno,
       mileage,
       plateCount,
-      plateDestroyed,
       plateLost,
       deregistered,
     })
@@ -126,7 +124,6 @@ export class VehicleResolver {
       permno,
       mileage,
       plateCount,
-      plateDestroyed,
       plateLost,
       deregistered,
     )

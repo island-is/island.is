@@ -64,7 +64,7 @@ export class VehicleService {
     permno: string,
     mileage: number,
     plateCount: number,
-    plateDestroyed: number,
+
     plateLost: number,
     deregistered: boolean,
   ): Promise<boolean> {
@@ -72,7 +72,6 @@ export class VehicleService {
     if (findVehicle) {
       findVehicle.mileage = mileage ?? 0
       findVehicle.plateCount = plateCount ?? 0
-      findVehicle.plateDestroyed = plateDestroyed ?? 0
       findVehicle.plateLost = plateLost ?? 0
       findVehicle.deregistered = deregistered ?? false
       await findVehicle.save()

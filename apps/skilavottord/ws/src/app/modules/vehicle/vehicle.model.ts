@@ -91,12 +91,6 @@ export class VehicleModel extends Model<VehicleModel> {
   @Column({
     type: DataType.INTEGER,
   })
-  plateDestroyed?: number
-
-  @Field({ nullable: true })
-  @Column({
-    type: DataType.INTEGER,
-  })
   plateCount?: number
 
   @Field({ nullable: true })
