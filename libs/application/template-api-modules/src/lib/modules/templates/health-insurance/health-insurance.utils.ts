@@ -94,10 +94,10 @@ export const insuranceToXML = async (
     for (let i = 0; i < arrAttachments.length; i++) {
       const filename = arrAttachments[i]
       const content = await s3Service.getFileContentAsBase64(attachmentNames[i])
-      if(!content){
+      if (!content) {
         throw new Error('error getting file:' + filename)
       }
-      
+
       const fylgiskjal: Fylgiskjal = {
         heiti: filename,
         innihald: content,

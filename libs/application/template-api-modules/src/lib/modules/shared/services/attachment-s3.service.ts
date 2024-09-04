@@ -1,10 +1,16 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationWithAttachments as Application, ApplicationWithAttachments } from '@island.is/application/types'
+import {
+  ApplicationWithAttachments as Application,
+  ApplicationWithAttachments,
+} from '@island.is/application/types'
 import { logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { S3Service } from './s3.service'
 import { ConfigService } from '@nestjs/config'
-import { BaseTemplateApiApplicationService, BaseTemplateAPIModuleConfig } from '../../../types'
+import {
+  BaseTemplateApiApplicationService,
+  BaseTemplateAPIModuleConfig,
+} from '../../../types'
 
 export interface AttachmentData {
   key: string
@@ -73,7 +79,11 @@ export class AttachmentS3Service {
     application: ApplicationWithAttachments,
     attachmentKey: string,
   ): Promise<string> {
-    const fileContent = (await this.s3Service.getFileFromApplicationWithAttachments(application, attachmentKey))
+    const fileContent =
+      await this.s3Service.getFileFromApplicationWithAttachments(
+        application,
+        attachmentKey,
+      )
     return fileContent?.Body?.transformToString('base64') || ''
   }
 
@@ -81,12 +91,20 @@ export class AttachmentS3Service {
     application: ApplicationWithAttachments,
     attachmentKey: string,
   ): Promise<Blob> {
-    const file = await this.s3Service.getFileFromApplicationWithAttachments(application, attachmentKey)
+    const file = await this.s3Service.getFileFromApplicationWithAttachments(
+      application,
+      attachmentKey,
+    )
     const fileArrayBuffer = await file?.Body?.transformToByteArray()
-    return new Blob([fileArrayBuffer as ArrayBuffer], { type: file?.ContentType })
+    return new Blob([fileArrayBuffer as ArrayBuffer], {
+      type: file?.ContentType,
+    })
   }
 
-  public async getAttachmentUrl(key: string, expiration: number): Promise<string> {
+  public async getAttachmentUrl(
+    key: string,
+    expiration: number,
+  ): Promise<string> {
     if (expiration <= 0) {
       return Promise.reject('expiration must be positive')
     }

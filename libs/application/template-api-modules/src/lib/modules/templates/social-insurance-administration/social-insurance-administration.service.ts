@@ -49,7 +49,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
     @Inject(S3Service)
-    private readonly s3Service: S3Service
+    private readonly s3Service: S3Service,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -378,8 +378,11 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getPdf(key: string) {
-    const fileContent = await this.s3Service.getFileContentAsBase64FromBucket(this.attachmentBucket, key)
-    
+    const fileContent = await this.s3Service.getFileContentAsBase64FromBucket(
+      this.attachmentBucket,
+      key,
+    )
+
     if (!fileContent) {
       throw new Error('File content was undefined')
     }

@@ -53,8 +53,11 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const { nationalRegistry } = externalData
     const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
-    const file = await this.s3Service.getFileFromBucket(this.presignedBucket, s3FileName)
-    if(!file){
+    const file = await this.s3Service.getFileFromBucket(
+      this.presignedBucket,
+      s3FileName,
+    )
+    if (!file) {
       throw new Error('File content was undefined')
     }
     // Body interface here states that a stream can only be converted once, make sure the first call here isnt destructive

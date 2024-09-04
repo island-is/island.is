@@ -65,7 +65,7 @@ export class PSignSubmissionService extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(S3Service)
-    private readonly s3Service: S3Service
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.P_SIGN)
   }
@@ -208,7 +208,10 @@ export class PSignSubmissionService extends BaseTemplateApiService {
     const { bucket, key } = AmazonS3URI(fileName)
 
     const uploadBucket = bucket
-    const fileContent = await this.s3Service.getFileContentAsBase64FromBucket(uploadBucket, key)
+    const fileContent = await this.s3Service.getFileContentAsBase64FromBucket(
+      uploadBucket,
+      key,
+    )
     return fileContent || ''
   }
 }

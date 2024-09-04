@@ -117,7 +117,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly childrenService: ChildrenService,
     private readonly nationalRegistryApi: NationalRegistryClientService,
     @Inject(S3Service)
-    private readonly s3Service: S3Service
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
   }
@@ -388,7 +388,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       )
 
       const Key = `${application.id}/${filename}`
-      const fileContent = await this.s3Service.getFileContentAsBase64FromBucket(this.attachmentBucket, Key)
+      const fileContent = await this.s3Service.getFileContentAsBase64FromBucket(
+        this.attachmentBucket,
+        Key,
+      )
 
       if (!fileContent) {
         throw new Error('File content was undefined')
