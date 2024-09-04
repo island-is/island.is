@@ -27,6 +27,11 @@ export class SignatureCollectionSharedClientService {
       includeInactive: true,
     })
 
+    // Note: In the future, we may want to consider adding an optional parameter
+    //       for filtering on CollectionType, as we may have multiple
+    //       collections running at the same time. (not projected to happen currently)
+    //       So keep CollectionType in mind if you're working on this
+    //       for that reason, future programmer.
     const current = (
       res
         .map(mapCollection)

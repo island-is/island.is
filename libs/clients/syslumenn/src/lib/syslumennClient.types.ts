@@ -404,6 +404,7 @@ export interface JourneymanLicence {
 export interface ProfessionRight {
   name?: string
   profession?: string
+  nationalId?: string
 }
 
 export interface VehicleRegistration {

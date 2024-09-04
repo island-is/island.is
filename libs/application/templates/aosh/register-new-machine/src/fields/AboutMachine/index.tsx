@@ -57,7 +57,13 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
     { subCat: string; registrationNumberPrefix: string }[]
   >([])
   const [registrationNumberPrefix, setRegistrationNumberPrefix] =
-    useState<string>('')
+    useState<string>(
+      getValueViaPath(
+        application.answers,
+        'machine.aboutMachine.registrationNumberPrefix',
+        '',
+      ) as string,
+    )
   const [subCategoryDisabled, setSubCategoryDisabled] = useState<boolean>(
     fromService || (!fromService && !subCategory.length),
   )

@@ -18,9 +18,7 @@ export const mapToStudent = (
     !data?.graduationDate ||
     !data?.trackNumber ||
     !data?.school ||
-    !data?.faculty ||
-    !data?.studyProgram ||
-    !data?.degree
+    !data?.faculty
   ) {
     return null
   }

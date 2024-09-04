@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'

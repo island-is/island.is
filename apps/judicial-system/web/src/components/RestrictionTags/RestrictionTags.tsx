@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 
 import { Box, Tag } from '@island.is/island-ui/core'
 import { getShortRestrictionByValue } from '@island.is/judicial-system/formatters'
