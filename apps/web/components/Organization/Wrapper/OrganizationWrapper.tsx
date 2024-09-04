@@ -1,4 +1,11 @@
-import React, { ReactNode, useEffect, useMemo, useState } from 'react'
+import React, {
+  PropsWithChildren,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { IntlConfig, IntlProvider } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -838,25 +845,54 @@ const getActiveNavigationItemTitle = (
     }
   }
 }
+
+interface TranslationNamespaceProviderProps {
+  messages: IntlConfig['messages']
+}
+
+const TranslationNamespaceProvider = ({
+  messages,
+  children,
+}: PropsWithChildren<TranslationNamespaceProviderProps>) => {
+  const { activeLocale } = useI18n()
+
+  return (
+    <IntlProvider locale={activeLocale} messages={messages}>
+      {children}
+    </IntlProvider>
+  )
+}
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 const renderConnectedComponent = (slice) => {
   if (!slice?.componentType) return null
 
+  let connectedComponent = null
+
   switch (slice.componentType) {
     case 'LatestNewsCard':
-      return (
+      connectedComponent = (
         <LatestNewsCardConnectedComponent key={slice?.id} {...slice?.json} />
       )
+      break
     case 'Fiskistofa/ShipSearchSidebarInput':
-      return (
-        <SidebarShipSearchInput key={slice?.id} namespace={slice?.json ?? {}} />
-      )
+      connectedComponent = <SidebarShipSearchInput key={slice?.id} />
+      break
     case 'OrganizationSearchBox':
-      return <SearchBox key={slice?.id} {...slice?.json} />
+      connectedComponent = <SearchBox key={slice?.id} {...slice?.json} />
+      break
     default:
       return null
   }
+
+  return (
+    <TranslationNamespaceProvider
+      messages={slice.translationStrings ?? slice.json ?? {}}
+    >
+      {connectedComponent}
+    </TranslationNamespaceProvider>
+  )
 }
 
 export const OrganizationWrapper: React.FC<
