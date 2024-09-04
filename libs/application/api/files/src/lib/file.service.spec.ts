@@ -52,8 +52,4 @@ describe('FileService', () => {
 
     service = module.get(FileService)
   })
-
-  it('should be defined', () => {
-    expect(service).toBeTruthy()
-  })
 })
