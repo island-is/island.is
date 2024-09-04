@@ -2,7 +2,8 @@ import { Body, Controller, Param, Post, ParseUUIDPipe } from '@nestjs/common'
 import { Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
 import { ApplicationService } from '@island.is/application/api/core'
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
+import addMonths from 'date-fns/addMonths'
 
 @ApiTags('payment-callback')
 @Controller()
@@ -30,8 +31,7 @@ export class PaymentCallbackController {
 
     const application = await this.applicationService.findOneById(applicationId)
     if (application) {
-      const oneMonthFromNow = new Date()
-      oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1)
+      const oneMonthFromNow = addMonths(new Date(), 1)
       //Applications payment states are default to be pruned in 24 hours.
       //If the application is paid, we want to hold on to it for longer in case we get locked in an error state.
 

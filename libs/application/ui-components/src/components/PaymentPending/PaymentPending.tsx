@@ -102,7 +102,7 @@ export const PaymentPending: FC<
           <AlertMessage
             type="error"
             title={msg(coreErrorMessages.paymentSubmitFailed)}
-            message="Villa hefur komið upp við áframhaldandi vinnslu. Vinsamlegast reynið aftur síðar. Ef villa endurtekur sig vinsamlegast hafið samband við island@island.is."
+            message={msg(coreErrorMessages.paymentSubmitFailedDescription)}
           />
         </Box>
         <Box>

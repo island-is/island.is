@@ -18,7 +18,7 @@ export interface CallbackResult {
   data?: Callback
 }
 
-export enum paidStatus {
+export enum PaidStatus {
   paid = 'paid',
   cancelled = 'cancelled',
   recreated = 'recreated',
@@ -37,7 +37,7 @@ export class Callback {
   readonly chargeItemSubject!: string
 
   @IsNotEmpty()
-  @IsEnum(paidStatus)
-  @ApiProperty({ enum: paidStatus })
-  readonly status!: paidStatus
+  @IsEnum(PaidStatus)
+  @ApiProperty({ enum: PaidStatus })
+  readonly status!: PaidStatus
 }
