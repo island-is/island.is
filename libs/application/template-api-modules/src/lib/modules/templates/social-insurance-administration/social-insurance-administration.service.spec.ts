@@ -36,7 +36,7 @@ describe('SocialInsuranceAdministrationService', () => {
         },
         {
           provide: S3Service,
-          useValue: {}
+          useValue: {},
         },
       ],
     }).compile()
