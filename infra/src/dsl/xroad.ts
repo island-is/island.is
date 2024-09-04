@@ -693,7 +693,7 @@ export const TransportAuthority = new XroadConf({
     XROAD_VEHICLE_PLATE_RENEWAL_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
       staging:
-        'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
+        'IS-TEST/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
     },
     XROAD_VEHICLE_PRINTING_PATH: {
