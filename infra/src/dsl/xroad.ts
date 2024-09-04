@@ -664,7 +664,8 @@ export const TransportAuthority = new XroadConf({
   env: {
     XROAD_VEHICLE_CODETABLES_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1',
-      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1',
+      staging:
+        'IS-TEST/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Codetables-V1',
     },
     XROAD_VEHICLE_INFOLOCKS_PATH: {
