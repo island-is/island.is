@@ -1037,6 +1037,15 @@ export const messages = defineMessages({
     defaultMessage:
       'Landlæknir hefur umsjón með gögnum um þínar bólusetningar.',
   },
+  landlaeknirMedicinePrescriptionsTooltip: {
+    id: 'sp.health:landlaeknir-prescriptions-tooltip',
+    defaultMessage:
+      'Landlæknir hefur umsjón með gögnum um þínar lyfjaávísanir.',
+  },
+  landlaeknirMedicineDelegationTooltip: {
+    id: 'sp.health:landlaeknir-delegation-tooltip',
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þín lyfjaumboð.',
+  },
   readAboutVaccinations: {
     id: 'sp.health:read-about-vaccinations',
     defaultMessage: 'Lesa  um bólusetningar',
@@ -1115,8 +1124,30 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-delegation',
     defaultMessage: 'Lyfjaumboð',
   },
+  medicineDelegationIntroText: {
+    id: 'sp.health:medicine-delegation-intro-text',
+    defaultMessage:
+      'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstakt umboð fyrir þig. Hér getur þú skráð þá aðila sem þú veitir umboð til að sækja lyf í apótek fyrir þig.',
+  },
   medicinePaymentParticipation: {
     id: 'sp.health:medicine-payment-participation',
-    defaultMessage: 'Greiðsluþátttaka',
+    defaultMessage: 'Greiðsluþáttaka',
+  },
+  medicinePrescriptionIntroText: {
+    id: 'sp.health:medicine-prescription-intro-text',
+    defaultMessage:
+      'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjasögu. Þú getur sótt um lyfjaendurnýjun þegar á við.',
+  },
+  medicinePrescriptionHistory: {
+    id: 'sp.health:medicine-prescription-history',
+    defaultMessage: 'Lyfjasagan',
+  },
+  usedFor: {
+    id: 'sp.health:used-for',
+    defaultMessage: 'Notað við',
+  },
+  process: {
+    id: 'sp.health:process',
+    defaultMessage: 'Staða',
   },
 })

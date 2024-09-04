@@ -3,15 +3,17 @@ import {
   Box,
   SkeletonLoader,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import { useGetDrugCertificatesQuery } from '../Medicine/Medicine.generated'
-import { SECTION_GAP } from '../Medicine/constants'
-import { ActionCard, m } from '@island.is/service-portal/core'
+import {
+  ActionCard,
+  IntroHeader,
+  m,
+  SJUKRATRYGGINGAR_SLUG,
+} from '@island.is/service-portal/core'
 import { HealthPaths } from '../../lib/paths'
-import { MedicineWrapper } from '../Medicine/wrapper/MedicineWrapper'
 import { Problem } from '@island.is/react-spa/shared'
 
 export const MedicineLicense = () => {
@@ -20,12 +22,14 @@ export const MedicineLicense = () => {
   const { data, error, loading } = useGetDrugCertificatesQuery()
 
   return (
-    <MedicineWrapper pathname={HealthPaths.HealthMedicineCertificates} >
-      <Box marginBottom={SECTION_GAP}>
-        <Text variant="h5" marginBottom={1}>
-          {formatMessage(messages.medicineLicenseTitle)}
-        </Text>
-        <Text>{formatMessage(messages.medicineLicenseIntroText)}</Text>
+    <>
+      <Box>
+        <IntroHeader
+          title={formatMessage(messages.medicineLicenseTitle)}
+          intro={formatMessage(messages.medicineLicenseIntroText)}
+          serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+          serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+        />
       </Box>
       {error ? (
         <Problem error={error} noBorder={false} />
@@ -82,7 +86,7 @@ export const MedicineLicense = () => {
           )}
         </Box>
       )}
-    </MedicineWrapper>
+    </>
   )
 }
 

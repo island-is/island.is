@@ -3,7 +3,7 @@ import { SortableTable, formatDate } from '@island.is/service-portal/core'
 import { messages } from '../../../lib/messages'
 import { Vaccine } from '../dataStructure'
 import { tagSelector } from '../../../utils/tagSelector'
-import { VaccinationsDetailTable } from './VaccinationsDetailTable'
+import { HealthTable as VaccinationsDetailTable } from '../../../components/Table/HealthTable'
 import { DetailHeader, DetailRow } from '../../../utils/types'
 import { ATC_URL_BASE } from '../../../utils/constants'
 import { HealthDirectorateVaccinations } from '@island.is/api/schema'
@@ -52,6 +52,7 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
           children: (
             <VaccinationsDetailTable
               headerData={headerDataDetail}
+              noDataMessage={formatMessage(messages.noVaccinesRegistered)}
               rowData={item.vaccinations?.map(
                 (vaccination, i): Array<DetailRow> => {
                   return [

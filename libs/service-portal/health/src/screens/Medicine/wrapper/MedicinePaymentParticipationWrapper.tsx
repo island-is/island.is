@@ -9,7 +9,7 @@ import { messages as m } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
 import { SECTION_GAP } from '../constants'
 
-export const MedicineWrapper = ({
+export const MedicinePaymentParticipationWrapper = ({
   children,
   pathname,
 }: {
@@ -17,6 +17,15 @@ export const MedicineWrapper = ({
   pathname?: string
 }) => {
   const { formatMessage } = useLocale()
+
+  const medicineChildren = healthNavigation.children?.find(
+    (itm) => itm.name === m.medicineTitle,
+  )
+
+  const paymentParticipationChildren =
+    medicineChildren?.children?.find(
+      (item) => item.name === m.medicinePaymentParticipation,
+    )?.children ?? []
 
   return (
     <Box>
@@ -31,11 +40,7 @@ export const MedicineWrapper = ({
         <TabNavigation
           label={formatMessage(m.medicineTitle)}
           pathname={pathname}
-          items={
-            healthNavigation.children?.find(
-              (itm) => itm.name === m.medicineTitle,
-            )?.children ?? []
-          }
+          items={paymentParticipationChildren}
         />
       </Hidden>
       <Box paddingY={SECTION_GAP}>{children}</Box>

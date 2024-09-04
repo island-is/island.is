@@ -31,8 +31,20 @@ const MedicinePurchase = lazy(() =>
   import('./screens/Medicine/MedicinePurchase'),
 )
 
-const MedicineLicence = lazy(() => import('./screens/MedicineLicense/MedicineLicense'))
+const MedicineLicence = lazy(() =>
+  import('./screens/MedicineLicense/MedicineLicense'),
+)
 
+const MedicineCalculator = lazy(() =>
+  import('./screens/Medicine/MedicineCalculator'),
+)
+
+const MedicinePrescriptions = lazy(() =>
+  import('./screens/MedicinePrescriptions/MedicinePrescriptions'),
+)
+const MedicinePrescriptionHistory = lazy(() =>
+  import('./screens/MedicinePrescriptions/MedicinePrescriptionHistory'),
+)
 const HealthCenterRegistration = lazy(() =>
   import('./screens/HealthCenterRegistration/HealthCenterRegistration'),
 )
@@ -41,12 +53,12 @@ const DentistRegistration = lazy(() =>
   import('./screens/DentistRegistration/DentistRegistration'),
 )
 
-const MedicineCalculator = lazy(() =>
-  import('./screens/Medicine/MedicineCalculator'),
-)
-
 const MedicineCertificate = lazy(() =>
   import('./screens/MedicineCertificate/MedicineCertificate'),
+)
+
+const MedicineDelegation = lazy(() =>
+  import('./screens/MedicineDelegation/MedicineDelegation'),
 )
 
 const PaymentParticipation = lazy(() =>
@@ -163,7 +175,41 @@ export const healthModule: PortalModule = {
       name: hm.medicineTitle,
       path: HealthPaths.HealthMedicine,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
-      element: <Navigate to={HealthPaths.HealthMedicinePurchase} replace />,
+      element: <Navigate to={HealthPaths.HealthMedicinePrescription} replace />,
+    },
+    {
+      name: hm.medicinePrescriptions,
+      path: HealthPaths.HealthMedicinePrescription,
+      // key: 'HealthMedicineHD', TODO: Add feature flag
+      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      element: <MedicinePrescriptions />,
+    },
+    {
+      name: hm.medicinePrescriptions,
+      path: HealthPaths.HealthMedicinePrescriptionOverview,
+      // key: 'HealthMedicineHD', TODO: Add feature flag
+      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      element: <Navigate to={HealthPaths.HealthMedicinePrescription} />,
+    },
+    {
+      name: hm.medicinePrescriptionHistory,
+      path: HealthPaths.HealthMedicinePrescriptionHistory,
+      // key: 'HealthMedicineHD', TODO: Add feature flag
+      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      element: <MedicinePrescriptionHistory />,
+    },
+    {
+      name: hm.medicineDelegation,
+      path: HealthPaths.HealthMedicineDelegation,
+      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      element: <MedicineDelegation />,
+    },
+    {
+      name: hm.medicinePaymentParticipation,
+      path: HealthPaths.HealthMedicinePaymentParticipation,
+      // key: 'HealthMedicineHD', TODO: Add feature flag
+      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      element: <MedicinePurchase />,
     },
     {
       name: hm.medicinePurchaseTitle,
@@ -193,6 +239,7 @@ export const healthModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicineCertificate />,
     },
+
     {
       name: hm.healthCenterRegistrationTitle,
       path: HealthPaths.HealthCenterRegistration,
