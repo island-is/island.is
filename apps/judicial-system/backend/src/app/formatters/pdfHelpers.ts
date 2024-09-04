@@ -110,11 +110,6 @@ export const addPoliceStar = (doc: PDFKit.PDFDocument) => {
   doc.scale(25).translate(-270, -70)
 }
 
-// A small confirmation contains info on the court and the person who confirmed
-export const addSmallConfirmation = (doc: PDFKit.PDFDocument) => {
-  doc
-}
-
 export const addConfirmation = (
   doc: PDFKit.PDFDocument,
   confirmation: Confirmation,
