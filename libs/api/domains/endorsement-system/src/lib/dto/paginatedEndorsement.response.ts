@@ -1,13 +1,16 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { PageInfoResponse } from './pageInfo.response'
 import { Endorsement } from '../models/endorsement.model'
+import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
 export class PaginatedEndorsementResponse {
   @Field()
   totalCount!: number
-  @Field(() => [Endorsement])
+
+  @CacheField(() => [Endorsement])
   data!: Endorsement[]
-  @Field(() => PageInfoResponse)
+
+  @CacheField(() => PageInfoResponse)
   pageInfo!: PageInfoResponse
 }

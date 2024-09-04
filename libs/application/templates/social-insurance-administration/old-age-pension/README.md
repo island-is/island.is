@@ -4,7 +4,7 @@
 
 This application template allows applicants to apply for old age pension.
 
-![](./assets/old-age-pension-flow-chart.png)
+![](../core/assets/tr-applications-flow-chart.png)
 
 ### States
 

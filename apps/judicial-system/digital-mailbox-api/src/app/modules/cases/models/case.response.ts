@@ -11,6 +11,9 @@ class IndictmentCaseData {
   @ApiProperty({ type: String })
   caseNumber!: string
 
+  @ApiProperty({ type: Boolean })
+  acknowledged?: boolean
+
   @ApiProperty({ type: [Groups] })
   groups!: Groups[]
 }
@@ -37,6 +40,7 @@ export class CaseResponse {
       caseId: res.id,
       data: {
         caseNumber: `${t.caseNumber} ${res.courtCaseNumber}`,
+        acknowledged: false, // TODO: Connect to real data
         groups: [
           {
             label: t.defendant,

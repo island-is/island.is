@@ -7,12 +7,7 @@ import {
   formatDOB,
   lowercase,
 } from '@island.is/judicial-system/formatters'
-import {
-  DateType,
-  DistrictCourtLocation,
-  DistrictCourts,
-  SubpoenaType,
-} from '@island.is/judicial-system/types'
+import { DateType, SubpoenaType } from '@island.is/judicial-system/types'
 
 import { subpoena as strings } from '../messages'
 import { Case } from '../modules/case'
@@ -26,6 +21,28 @@ import {
   addNormalText,
   setTitle,
 } from './pdfHelpers'
+
+type DistrictCourts =
+  | 'Héraðsdómur Reykjavíkur'
+  | 'Héraðsdómur Reykjaness'
+  | 'Héraðsdómur Vesturlands'
+  | 'Héraðsdómur Vestfjarða'
+  | 'Héraðsdómur Norðurlands vestra'
+  | 'Héraðsdómur Norðurlands eystra'
+  | 'Héraðsdómur Austurlands'
+  | 'Héraðsdómur Suðurlands'
+
+// TODO: Move to databas
+const DistrictCourtLocation: Record<DistrictCourts, string> = {
+  'Héraðsdómur Reykjavíkur': 'Dómhúsið við Lækjartorg, Reykjavík',
+  'Héraðsdómur Reykjaness': 'Fjarðargata 9, Hafnarfirði',
+  'Héraðsdómur Vesturlands': 'Bjarnarbraut 8, Borgarnesi',
+  'Héraðsdómur Vestfjarða': 'Hafnarstræti 9, Ísafirði',
+  'Héraðsdómur Norðurlands vestra': 'Skagfirðingabraut 21, Sauðárkróki',
+  'Héraðsdómur Norðurlands eystra': 'Hafnarstræti 107, 4. hæð, Akureyri',
+  'Héraðsdómur Austurlands': 'Lyngás 15, Egilsstöðum',
+  'Héraðsdómur Suðurlands': 'Austurvegur 4, Selfossi',
+}
 
 export const createSubpoena = (
   theCase: Case,
