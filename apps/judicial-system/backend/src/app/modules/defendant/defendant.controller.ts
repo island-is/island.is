@@ -27,6 +27,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import {
   indictmentCases,
+  ServiceRequirement,
   SubpoenaType,
   type User,
 } from '@island.is/judicial-system/types'
@@ -109,6 +110,17 @@ export class DefendantController {
     @Body() defendantToUpdate: UpdateDefendantDto,
   ): Promise<Defendant> {
     this.logger.debug(`Updating defendant ${defendantId} of case ${caseId}`)
+
+    // If the defendant was present at the court hearing,
+    // then set the verdict view date to the case ruling date
+    if (
+      defendantToUpdate.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+    ) {
+      defendantToUpdate = {
+        ...defendantToUpdate,
+        verdictViewDate: theCase.rulingDate,
+      }
+    }
 
     return this.defendantService.update(
       theCase,
