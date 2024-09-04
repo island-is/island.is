@@ -68,7 +68,7 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
