@@ -32,12 +32,6 @@ export class FileService {
     private readonly awsService: AwsService,
   ) {}
 
-  async getAttachmentPresignedURL(fileName: string) {
-    const { bucket, key } = AmazonS3URI(fileName)
-    const url = await this.awsService.getPresignedUrl(bucket, key)
-    return { url }
-  }
-
   async deleteAttachmentsForApplication(
     application: Pick<Application, 'id' | 'attachments'>,
   ): Promise<AttachmentDeleteResult> {

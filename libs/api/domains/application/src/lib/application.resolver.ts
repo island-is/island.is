@@ -18,8 +18,6 @@ import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
 import { ApplicationApplicationInput } from './dto/applicationApplication.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
-import { PresignedUrlResponse } from './dto/presignedUrl.response'
-import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -126,21 +124,5 @@ export class ApplicationResolver {
     @CurrentUser() user: User,
   ): Promise<Application> {
     return this.applicationService.assignApplication(input, user)
-  }
-
-  @Query(() => PresignedUrlResponse, { nullable: true })
-  attachmentPresignedURL(
-    @Args('input') input: AttachmentPresignedUrlInput,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponse> {
-    return this.applicationService.attachmentPresignedURL(input, user)
-  }
-
-  @Mutation(() => Application, { nullable: true })
-  async deleteApplication(
-    @Args('input') input: DeleteApplicationInput,
-    @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.applicationService.deleteApplication(input, user)
   }
 }

@@ -40,7 +40,6 @@ import {
   FormValue,
   ExternalData,
   TemplateApi,
-  PdfTypes,
   ApplicationStatus,
   ApplicationTemplate,
   ApplicationContext,
@@ -69,17 +68,11 @@ import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
-import { GeneratePdfDto } from './dto/generatePdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
-import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
-import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
 import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
-import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
-import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.response.dto'
-import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { verifyToken } from './utils/tokenUtils'
 import { getApplicationLifecycle } from './utils/application'
@@ -87,7 +80,6 @@ import { DecodedAssignmentToken } from './types'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
-import { Documentation } from '@island.is/nest/swagger'
 import { EventObject } from 'xstate'
 import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
 import { DelegationGuard } from './guards/delegation.guard'
@@ -96,7 +88,6 @@ import { PaymentService } from '@island.is/application/api/payment'
 import { ApplicationChargeService } from './charge/application-charge.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 import { ApplicationActionService } from './application-action.service'
@@ -889,48 +880,6 @@ export class ApplicationController {
     })
 
     return updatedApplication
-  }
-
-  @Get('applications/:id/attachments/:attachmentKey/presigned-url')
-  @Scopes(ApplicationScope.read)
-  @Documentation({
-    description: 'Gets a presigned url for attachments',
-    response: { status: 200, type: PresignedUrlResponseDto },
-    request: {
-      query: {},
-      params: {
-        id: {
-          type: 'string',
-          description: 'application id',
-          required: true,
-        },
-        attachmentKey: {
-          type: 'string',
-          description: 'key for attachment',
-          required: true,
-        },
-      },
-    },
-  })
-  async getAttachmentPresignedURL(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Param('attachmentKey') attachmentKey: string,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
-
-    if (!existingApplication.attachments) {
-      throw new NotFoundException('Attachments not found')
-    }
-
-    try {
-      const str = attachmentKey as keyof typeof existingApplication.attachments
-      const fileName = existingApplication.attachments[str]
-      return await this.fileService.getAttachmentPresignedURL(fileName)
-    } catch (error) {
-      throw new NotFoundException('Attachment not found')
-    }
   }
 
   @Scopes(ApplicationScope.write)
