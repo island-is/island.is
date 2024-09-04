@@ -1,12 +1,18 @@
-import { CompleteMultipartUploadCommandOutput, GetObjectCommand, GetObjectCommandOutput, PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
+import {
+  CompleteMultipartUploadCommandOutput,
+  GetObjectCommand,
+  GetObjectCommandOutput,
+  PutObjectCommandInput,
+  S3Client,
+} from '@aws-sdk/client-s3'
 import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationWithAttachments } from '@island.is/application/types'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import stream from 'stream'
 import { Response } from 'node-fetch'
-import { Upload } from "@aws-sdk/lib-storage";
+import { Upload } from '@aws-sdk/lib-storage'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @Injectable()
@@ -16,17 +22,22 @@ export class S3Service {
     @Inject(LOGGER_PROVIDER) protected readonly logger: Logger,
   ) {}
 
-  public async getSignedUrlPromise(bucket: string, key: string, expiration: number
+  public async getSignedUrlPromise(
+    bucket: string,
+    key: string,
+    expiration: number,
   ): Promise<string> {
     try {
-        const command = new GetObjectCommand({Bucket: bucket, Key: key });
-        const url = await getSignedUrl(this.s3Client, command, { expiresIn: expiration });
-        return url ?? ''
-      } catch (error) {
-        this.logger.error('Error occurred while fetching file from S3')
-        this.logger.error(error)
-        return ''
-      }
+      const command = new GetObjectCommand({ Bucket: bucket, Key: key })
+      const url = await getSignedUrl(this.s3Client, command, {
+        expiresIn: expiration,
+      })
+      return url ?? ''
+    } catch (error) {
+      this.logger.error('Error occurred while fetching file from S3')
+      this.logger.error(error)
+      return ''
+    }
   }
 
   public async getFileFromBucket(
@@ -54,11 +65,11 @@ export class S3Service {
     attachmentKey: string,
   ): Promise<GetObjectCommandOutput | undefined> {
     const fileName = (
-        application.attachments as {
-          [key: string]: string
-        }
-      )[attachmentKey]
-    
+      application.attachments as {
+        [key: string]: string
+      }
+    )[attachmentKey]
+
     const { bucket, key } = AmazonS3URI(fileName)
     const uploadBucket = bucket
     try {

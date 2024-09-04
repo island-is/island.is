@@ -325,7 +325,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         const fileName = (application.attachments as ApplicationAttachments)[
           attachmentAnswer?.key
         ]
-        const content = (await this.s3Service.getFileContentAsBase64(fileName) || '')
+        const content =
+          (await this.s3Service.getFileContentAsBase64(fileName)) || ''
         attachments.push({ name, content } as Attachment)
       }
     }

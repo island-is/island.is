@@ -21,9 +21,7 @@ export interface DocumentInfo {
 
 @Injectable()
 export class ApplicationAttachmentProvider {
-  constructor(
-    private attachmentService: AttachmentS3Service
-  ) {}
+  constructor(private attachmentService: AttachmentS3Service) {}
 
   public async getFiles(
     attachmentAnswers: string[],

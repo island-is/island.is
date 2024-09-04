@@ -21,7 +21,7 @@ export class DataProtectionComplaintService extends BaseTemplateApiService {
     private readonly tokenMiddleware: TokenMiddleware,
     private readonly applicationAttachmentProvider: ApplicationAttachmentProvider,
     private readonly pdfFileProvider: PdfFileProvider,
-    private readonly attachmentS3Service: AttachmentS3Service
+    private readonly attachmentS3Service: AttachmentS3Service,
   ) {
     super(ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT)
   }
