@@ -281,9 +281,10 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
             (props) => generateRequestReviewEmail(props, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
               `Error sending email about initReview to ${recipientList[i].email}`,
+              e,
             )
           })
       }
@@ -295,9 +296,18 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               generateRequestReviewSms(application, options, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about initReview to ${recipientList[i].phone}`,
+              `Error sending sms about initReview to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${
+                recipientList[i].ssn === application.applicant
+                  ? 'Applicant'
+                  : `Assignee index ${application.assignees.findIndex(
+                      (assignee) => assignee === recipientList[i].ssn,
+                    )}`
+              }`,
+              e,
             )
           })
       }
@@ -402,9 +412,10 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               generateRequestReviewEmail(props, newlyAddedRecipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
               `Error sending email about addReview to ${newlyAddedRecipientList[i].email}`,
+              e,
             )
           })
       }
@@ -419,9 +430,18 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               ),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about addReview to ${newlyAddedRecipientList[i].phone}`,
+              `Error sending sms about addReview to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${
+                newlyAddedRecipientList[i].ssn === application.applicant
+                  ? 'Applicant'
+                  : `Assignee index ${application.assignees.findIndex(
+                      (assignee) => assignee === newlyAddedRecipientList[i].ssn,
+                    )}`
+              }`,
+              e,
             )
           })
       }
@@ -458,9 +478,10 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               ),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
               `Error sending email about rejectApplication to ${recipientList[i].email}`,
+              e,
             )
           })
       }
@@ -476,9 +497,18 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               ),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about rejectApplication to ${recipientList[i].phone}`,
+              `Error sending sms about rejectApplication to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${
+                recipientList[i].ssn === application.applicant
+                  ? 'Applicant'
+                  : `Assignee index ${application.assignees.findIndex(
+                      (assignee) => assignee === recipientList[i].ssn,
+                    )}`
+              }`,
+              e,
             )
           })
       }
@@ -582,9 +612,10 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               generateApplicationSubmittedEmail(props, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
               `Error sending email about submitApplication to ${recipientList[i].email}`,
+              e,
             )
           })
       }
@@ -596,9 +627,18 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               generateApplicationSubmittedSms(application, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about submitApplication to ${recipientList[i].phone}`,
+              `Error sending sms about rejectApplication to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${
+                recipientList[i].ssn === application.applicant
+                  ? 'Applicant'
+                  : `Assignee index ${application.assignees.findIndex(
+                      (assignee) => assignee === recipientList[i].ssn,
+                    )}`
+              }`,
+              e,
             )
           })
       }
