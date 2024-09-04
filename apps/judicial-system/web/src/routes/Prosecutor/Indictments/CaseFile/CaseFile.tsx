@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { LayoutGroup } from 'framer-motion'
 import router from 'next/router'
@@ -24,6 +24,8 @@ const CaseFile = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
+  const [editCount, setEditCount] = useState<number>(0)
+
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
@@ -70,6 +72,7 @@ const CaseFile = () => {
                   }
                   subtypes={workingCase.indictmentSubtypes}
                   crimeScenes={workingCase.crimeScenes}
+                  setEditCount={setEditCount}
                 />
               ))}
             </Accordion>
@@ -98,6 +101,7 @@ const CaseFile = () => {
             handleNavigationTo(constants.INDICTMENTS_PROCESSING_ROUTE)
           }
           nextIsLoading={isLoadingWorkingCase}
+          nextIsDisabled={editCount > 0}
         />
       </FormContentContainer>
     </PageLayout>
