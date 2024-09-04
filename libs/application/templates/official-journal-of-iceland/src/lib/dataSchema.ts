@@ -136,17 +136,48 @@ const signatureValidation = (
   return true
 }
 
-const validationSchema = z.object({
-  advert: advertSchema.refine((advert) => advertValidation(advert), {
-    params: error.applicationValidationError,
-    path: ['advert'],
+export const validationSchema = z.object({
+  advert: z.object({
+    departmentId: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingDepartment,
+      }),
+    typeId: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingType,
+      }),
+    title: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingTitle,
+      }),
+    html: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingHtml,
+      }),
+    requestedDate: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        // TODO: Add date validation
+        params: error.missingRequestedDate,
+      }),
+    categories: z
+      .array(z.string())
+      .optional()
+      .refine((value) => Array.isArray(value) && value.length > 0, {
+        params: error.noCategorySelected,
+      }),
+    channels: z.array(channelSchema).optional(),
+    message: z.string().optional(),
   }),
-  signature: z
-    .array(regularSignatureItemSchema)
-    .refine((signatures) => signatureValidation(signatures), {
-      params: error.signaturesValidationError,
-      path: ['signatures'],
-    }),
 })
 
 type Flatten<T> = T extends any[] ? T[number] : T

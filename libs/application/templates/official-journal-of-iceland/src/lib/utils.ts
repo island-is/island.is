@@ -8,11 +8,12 @@ import {
   regularSignatureSchema,
 } from './dataSchema'
 import { getValueViaPath } from '@island.is/application/core'
-import { InputFields, OJOIApplication } from './types'
+import { InputFields, OJOIApplication, RequiredInputFieldsNames } from './types'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { SignatureTypes } from './constants'
+import { MessageDescriptor } from 'react-intl'
 
 export const countDaysAgo = (date: Date) => {
   const now = new Date()
@@ -301,4 +302,12 @@ export const getAdvertMarkup = ({
       ${html}
     </div>
   ` as HTMLText
+}
+
+export const parseZodIssue = (issue: z.ZodCustomIssue) => {
+  const path = issue.path.join('.')
+  return {
+    name: getValueViaPath(RequiredInputFieldsNames, path) as string,
+    message: issue?.params as MessageDescriptor,
+  }
 }

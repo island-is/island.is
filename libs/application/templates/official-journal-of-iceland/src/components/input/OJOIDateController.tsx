@@ -4,6 +4,7 @@ import { DatePickerController } from '@island.is/shared/form-fields'
 import { MessageDescriptor } from 'react-intl'
 import { OJOJ_INPUT_HEIGHT } from '../../lib/constants'
 import { useApplication } from '../../hooks/useUpdateApplication'
+import { useFormContext } from 'react-hook-form'
 import set from 'lodash/set'
 
 type Props = {
@@ -34,9 +35,33 @@ export const OJOIDateController = ({
   onChange,
 }: Props) => {
   const { formatMessage: f } = useLocale()
-  const { debouncedOnUpdateApplicationHandler, application } = useApplication({
+  const {
+    debouncedOnUpdateApplicationHandler,
+    application,
+    updateApplication,
+  } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
+
+  if (loading) {
+    return (
+      <SkeletonLoader
+        borderRadius="standard"
+        display="block"
+        height={OJOJ_INPUT_HEIGHT}
+      />
+    )
+  }
+
+  // if defaultValue is passed and there is no value set we must set it in the application state
+  if (defaultValue && !application.answers.advert?.requestedDate) {
+    setValue(name, defaultValue)
+    const currentAnswers = structuredClone(application.answers)
+    const updatedAnswers = set(currentAnswers, name, defaultValue)
+    updateApplication(updatedAnswers)
+  }
 
   const placeholderText =
     typeof placeholder === 'string' ? placeholder : f(placeholder)
@@ -48,16 +73,6 @@ export const OJOIDateController = ({
     const newAnswers = set(currentAnswers, name, value)
 
     return newAnswers
-  }
-
-  if (loading) {
-    return (
-      <SkeletonLoader
-        borderRadius="standard"
-        display="block"
-        height={OJOJ_INPUT_HEIGHT}
-      />
-    )
   }
 
   return (

@@ -52,6 +52,16 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
     },
   })
 
+  if (!currentApplication.answers.advert?.typeId) {
+    return (
+      <AlertMessage
+        type="warning"
+        message={f(error.missingType)}
+        title={f(error.missingType)}
+      />
+    )
+  }
+
   if (typeLoading) {
     return (
       <SkeletonLoader height={40} space={2} repeat={5} borderRadius="large" />

@@ -34,6 +34,17 @@ export const InputFields = {
   },
 }
 
+export const RequiredInputFieldsNames = {
+  [Routes.ADVERT]: {
+    departmentId: 'Deild',
+    typeId: 'Tegund',
+    title: 'Titill',
+    html: 'Auglýsing',
+    requestedDate: 'Útgáfudagur',
+    categories: 'Efnisflokkar',
+  },
+}
+
 export enum TemplateApiActions {
   departments = 'getDepartments',
   types = 'getAdvertTypes',

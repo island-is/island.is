@@ -1,6 +1,41 @@
 import { defineMessages } from 'react-intl'
 
 export const error = defineMessages({
+  missingFieldsTitle: {
+    id: 'ojoi.application:error.missingFieldsTitle',
+    defaultMessage: 'Fylla þarf út eftirfarandi reiti',
+    description: 'Error message when fields are missing',
+  },
+  noCategorySelected: {
+    id: 'ojoi.application:error.noCategorySelected',
+    defaultMessage: 'Enginn efnisflokkur valinn, vinsamlegast veldu efnisflokk',
+    description: 'Error message when no category is selected',
+  },
+  missingType: {
+    id: 'ojoi.application:error.missingType',
+    defaultMessage: 'Tegund innsendingar má ekki vera tóm',
+    description: 'Error message when type is missing',
+  },
+  missingDepartment: {
+    id: 'ojoi.application:error.missingDepartment',
+    defaultMessage: 'Deild innsendingar má ekki vera tóm',
+    description: 'Error message when department is missing',
+  },
+  missingTitle: {
+    id: 'ojoi.application:error.missingTitle',
+    defaultMessage: 'Titill innsendingar má ekki vera tóm',
+    description: 'Error message when title is missing',
+  },
+  missingHtml: {
+    id: 'ojoi.application:error.missingHtml',
+    defaultMessage: 'Auglýsing má ekki vera tóm',
+    description: 'Error message when html is missing',
+  },
+  missingRequestedDate: {
+    id: 'ojoi.application:error.missingRequestedDate',
+    defaultMessage: 'Útgáfudagsetning má ekki vera tóm',
+    description: 'Error message when requested date is missing',
+  },
   applicationValidationError: {
     id: 'ojoi.application:error.applicationValidationError',
     defaultMessage: 'Umsókn er ekki rétt útfyllt',

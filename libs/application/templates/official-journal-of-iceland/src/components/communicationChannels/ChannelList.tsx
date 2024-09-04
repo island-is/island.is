@@ -32,6 +32,10 @@ export const ChannelList = ({ applicationId, onEditChannel }: Props) => {
     updateApplication(updatedAnswers)
   }
 
+  if (channels.length === 0) {
+    return null
+  }
+
   return (
     <T.Table>
       <T.Head>
