@@ -32,7 +32,7 @@ type DistrictCourts =
   | 'Héraðsdómur Austurlands'
   | 'Héraðsdómur Suðurlands'
 
-// TODO: Move to databas
+// TODO: Use from institution database
 const DistrictCourtLocation: Record<DistrictCourts, string> = {
   'Héraðsdómur Reykjavíkur': 'Dómhúsið við Lækjartorg, Reykjavík',
   'Héraðsdómur Reykjaness': 'Fjarðargata 9, Hafnarfirði',
