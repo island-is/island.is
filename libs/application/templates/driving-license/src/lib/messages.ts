@@ -105,11 +105,6 @@ export const m = defineMessages({
     defaultMessage: 'Sýslumannsembætti',
     description: 'Information',
   },
-  pickupLocationTitle: {
-    id: 'dl.application:pickuplocation',
-    defaultMessage: 'Afhendingarstaður',
-    description: 'location for pickup',
-  },
   informationApplicant: {
     id: 'dl.application:information.applicant',
     defaultMessage: 'Umsækjandi',
@@ -432,6 +427,31 @@ export const m = defineMessages({
     description:
       'Your application for a full driving license has been received. Before a full driving license can be applied for, you must bring the following to the district commissioner.',
   },
+  digitalLicenseInfoTitle: {
+    id: 'dl.application:digitalLicenseInfoTitle',
+    defaultMessage: 'Stafrænt ökuskírteini',
+    description: 'Digital driving license',
+  },
+  digitalLicenseInfoDescription: {
+    id: 'dl.application:digitalLicenseInfoDescription',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    description: 'Digital driving license',
+  },
+  digitalLicenseInfoAlertTitle: {
+    id: 'dl.application:digitalLicenseInfoAlertTitle',
+    defaultMessage: 'Athugið',
+    description: 'Digital driving license',
+  },
+  digitalLicenseInfoAlertMessageBTemp: {
+    id: 'dl.application:digitalLicenseInfoAlertMessageBTemp#markdown',
+    defaultMessage: 'Þú ert að sækja um bráðabirgðaökuskírteini. Ökuskírteini þitt verður einungis gefið út sem stafrænt ökuskírteini og verður aðgengilegt fyrir þig um leið og öll skilyrði fyrir bráðabirgðaökuskírteini eru uppfyllt.',
+    description: 'Digital driving license',
+  },
+  digitalLicenseInfoAlertMessageBFull: {
+    id: 'dl.application:digitalLicenseInfoAlertMessageBFull#markdown',
+    defaultMessage: 'Þú ert að sækja um fullnaðarökuskírteini. Ökuskírteini þitt verður núna einungis gefið út sem stafrænt ökuskírteini og verður aðgengilegt fyrir þig þegar þú hefur lokið þessari pöntun um fullnaðarökuskírteini. Fullnaðarökuskírteini þitt verður framleitt í plasti í byrjun febrúar 2025 og sent til þín með Póstinum, á skráð lögheimili þitt um leið og plastökuskírteinið er tilbúið.',
+    description: 'Digital driving license',
+  },
   congratulationsTempHelpText: {
     id: 'dl.application:congratulationsTempHelpText',
     defaultMessage:
@@ -558,11 +578,6 @@ export const m = defineMessages({
     id: 'dl.application:districtCommisionerTitle',
     defaultMessage: 'Sýslumannsembætti',
     description: 'Title for district commissioner',
-  },
-  districtCommisionerPickup: {
-    id: 'dl.application:districtCommisionerPickup',
-    defaultMessage: 'Afhending',
-    description: 'Pickup for district commissioner',
   },
   chooseDistrictCommisionerForFullLicense: {
     id: 'dl.application:chooseDistrictCommisionerForFullLicense',
