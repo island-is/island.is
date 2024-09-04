@@ -33,7 +33,6 @@ import { AttachmentS3Service } from '../../../shared/services'
 export class CitizenshipService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    @Inject(AttachmentS3Service)
     private readonly attachmentS3Service: AttachmentS3Service,
     private readonly directorateOfImmigrationClient: DirectorateOfImmigrationClient,
     private readonly nationalRegistryApi: NationalRegistryClientService,

@@ -7,7 +7,6 @@ import {
   FinancialStatementsInaoClientModule,
 } from '@island.is/clients/financial-statements-inao'
 import { FinancialStatementCemeteryTemplateService } from './financial-statement-cemetery.service'
-import { AttachmentS3Service } from '../../shared/services'
 
 export class FinancialStatementCemeteryTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -21,8 +20,7 @@ export class FinancialStatementCemeteryTemplateModule {
         FinancialStatementsInaoClientModule,
       ],
       providers: [
-        FinancialStatementCemeteryTemplateService,
-        AttachmentS3Service,
+        FinancialStatementCemeteryTemplateService
       ],
       exports: [FinancialStatementCemeteryTemplateService],
     }

@@ -22,7 +22,6 @@ export interface DocumentInfo {
 @Injectable()
 export class ApplicationAttachmentProvider {
   constructor(
-    @Inject(AttachmentS3Service)
     private attachmentService: AttachmentS3Service
   ) {}
 

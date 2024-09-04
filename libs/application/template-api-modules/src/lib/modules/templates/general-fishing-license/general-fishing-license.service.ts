@@ -21,7 +21,6 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    @Inject(AttachmentS3Service)
     private readonly attachmentS3Service: AttachmentS3Service,
     private readonly fishingLicenceApi: FishingLicenseService,
     private readonly umsoknirApi: UmsoknirApi,
