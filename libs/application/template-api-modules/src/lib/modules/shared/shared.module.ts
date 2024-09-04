@@ -38,7 +38,7 @@ export class SharedTemplateAPIModule {
         },
         {
           provide: S3Client,
-          useValue: new S3Client()
+          useValue: new S3Client(),
         },
         S3Service,
         AttachmentS3Service,
