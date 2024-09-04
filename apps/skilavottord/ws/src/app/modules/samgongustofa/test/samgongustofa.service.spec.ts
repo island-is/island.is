@@ -10,6 +10,7 @@ import {
 
 import { SamgongustofaService } from '../samgongustofa.service'
 import { MockData } from './mock-data'
+import { TransportService } from '../transport/transport.service'
 
 const recyclingRequestModel = {
   id: '1234',
@@ -49,6 +50,10 @@ describe('skilavottordApiTest', () => {
             useClass: jest.fn(() => ({
               findAllWithPermno: () => ({}),
             })),
+          },
+          {
+            provide: TransportService,
+            useClass: jest.fn(() => ({})),
           },
         ],
       }).compile()

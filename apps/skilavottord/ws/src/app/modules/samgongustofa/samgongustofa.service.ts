@@ -7,7 +7,7 @@ import { environment } from '../../../environments'
 import { RecyclingRequestService } from '../recyclingRequest'
 import { Traffic, VehicleInformation } from './samgongustofa.model'
 
-import { Logger, logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { logger } from '@island.is/logging'
 import { TransportService } from './transport/transport.service'
 
 @Injectable()
@@ -16,7 +16,6 @@ export class SamgongustofaService {
     private httpService: HttpService,
     @Inject(forwardRef(() => RecyclingRequestService))
     private recyclingRequestService: RecyclingRequestService,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private transportService: TransportService,
   ) {}
 
