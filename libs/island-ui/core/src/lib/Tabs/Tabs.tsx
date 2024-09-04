@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect, useState } from 'react'
+import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 import isNumber from 'lodash/isNumber'
 import { useWindowSize } from 'react-use'
@@ -29,6 +29,7 @@ interface TabInterface {
   contentBackground?: Colors
   size?: 'xs' | 'sm' | 'md'
   onChange?(id: string): void
+  //DEPRECATED
   onlyRenderSelectedTab?: boolean
 }
 
@@ -66,7 +67,7 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    if (width < theme.breakpoints.md) {
+    if (width < theme.breakpoints.lg) {
       return setIsMobile(true)
     }
     setIsMobile(false)
@@ -80,58 +81,103 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab.currentId])
 
+  /**
+    Tab value can be either an id or an index.
+  */
+  const getSelectedTabIndex = (): number => {
+    const id = tab.selectedId
+
+    if (!id) {
+      return -1
+    }
+
+    //Assuming that the id is a string of some king
+    const tabsIndex = tabs.findIndex((t) => t.id === id)
+    if (tabsIndex >= 0) {
+      //id found, returning index
+      return tabsIndex
+    }
+    //Otherwise, return the index
+    const index = Number.parseInt(id)
+
+    if (Number.isNaN(index)) {
+      //Somehting is wrong
+      return -1
+    }
+
+    return index
+  }
+
   return (
     <Box position="relative">
       <Box background={contentBackground} className={styles.bg} />
       <Box position="relative" paddingY="none">
-        {isMobile && (
-          <div className={styles.select}>
-            <Select
-              size={size}
-              name={label}
-              label={label}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              onChange={(opt) => {
-                tab.setCurrentId(opt?.value)
-                tab.move(opt?.value ?? null)
-              }}
-              options={selectOptions}
-              defaultValue={
-                isNumber(selected)
-                  ? selectOptions[parseInt(selected)]
-                  : selectOptions.find((opt) => opt.value === selected)
-              }
-              isSearchable={false}
-            />
-          </div>
-        )}
+        <Box hidden={!isMobile && tabs.length <= 6}>
+          <Select
+            size={size}
+            name={label}
+            label={label}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            onChange={(opt) => {
+              tab.setCurrentId(opt?.value)
+              tab.move(opt?.value ?? null)
+            }}
+            options={selectOptions}
+            defaultValue={
+              isNumber(selected)
+                ? selectOptions[parseInt(selected)]
+                : selectOptions.find((opt) => opt.value === selected)
+            }
+            isSearchable={false}
+          />
+        </Box>
         <TabList
-          className={styles.tabList}
           {...tab}
           wrap={wrap}
           aria-label={label}
+          className={cn(styles.tabList, {
+            [styles.hidden]: isMobile || tabs.length > 6,
+          })}
         >
-          {tabs.map(({ label, disabled, id }, index) => (
-            <FocusableBox
-              {...tab}
-              component={Tab}
-              type="button"
-              key={index}
-              disabled={disabled}
-              id={id ?? `${index}`}
-              justifyContent="center"
-              aria-label={label}
-              className={cn(styles.tab, {
-                [styles.tabSelected]: id
-                  ? id === tab.selectedId
-                  : index.toString() === tab.selectedId,
-                [styles.tabDisabled]: disabled,
-              })}
-            >
-              {label}
-            </FocusableBox>
-          ))}
+          {tabs.map(({ label, disabled, id }, index) => {
+            const isTabSelected = id
+              ? id === tab.selectedId
+              : index.toString() === tab.selectedId
+
+            const selectedTabIndex = getSelectedTabIndex()
+
+            const isPreviousToSelectedTab = index + 1 === selectedTabIndex
+            const isNextToSelectedTab = index - 1 === selectedTabIndex
+
+            return (
+              <FocusableBox
+                {...tab}
+                component={Tab}
+                type="button"
+                display="flex"
+                key={index}
+                disabled={disabled}
+                id={id ?? `${index}`}
+                justifyContent="center"
+                aria-label={label}
+                className={cn(styles.tab, {
+                  [styles.tabSelected]: isTabSelected,
+                  [styles.tabNotSelected]:
+                    !isTabSelected &&
+                    !isPreviousToSelectedTab &&
+                    !isNextToSelectedTab,
+                  [styles.tabPreviousToSelectedTab]: isPreviousToSelectedTab,
+                  [styles.tabNextToSelectedTab]: isNextToSelectedTab,
+                })}
+              >
+                <div className={styles.borderElement} />
+                <div className={styles.circleElement} />
+                <span className={styles.squareElement} />
+                <span className={styles.tabText}>{label}</span>
+              </FocusableBox>
+            )
+          })}
         </TabList>
         {tabs.map(({ content, id }, index) => (
           <TabPanel {...tab} key={index} className={styles.tabPanel}>
