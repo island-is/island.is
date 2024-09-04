@@ -1,4 +1,4 @@
-import React, { createContext, FC, ReactNode } from 'react'
+import React, { createContext, FC, ReactNode, useEffect } from 'react'
 import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
 import { usePopoverState, Popover, PopoverDisclosure } from 'reakit/Popover'
 import { Box } from '../Box/Box'
@@ -52,7 +52,7 @@ export interface FilterProps {
 /**
  * Datatype to use for Filter context.
  * Provides the Filter's childs access to shared values,
- * like the `isDialog` state with out bloating the childs props.
+ * like the `isDialog` state without bloating the childs props.
  */
 interface FilterContextValue {
   variant?: FilterProps['variant']
@@ -61,6 +61,31 @@ interface FilterContextValue {
 export const FilterContext = createContext<FilterContextValue>({
   variant: undefined,
 })
+
+let initialBodyPosition: string | null = null
+
+const usePreventBodyScroll = (preventBodyScroll: boolean) => {
+  useEffect(() => {
+    const isBrowser = typeof window !== 'undefined'
+    if (!isBrowser || !preventBodyScroll) {
+      return
+    }
+
+    if (initialBodyPosition === null) {
+      initialBodyPosition = window.document.body.style.position || 'static'
+    }
+
+    window.document.body.style.position = preventBodyScroll
+      ? 'fixed'
+      : initialBodyPosition
+
+    return () => {
+      if (initialBodyPosition !== null) {
+        window.document.body.style.position = initialBodyPosition
+      }
+    }
+  }, [preventBodyScroll])
+}
 
 export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   labelClearAll = '',
@@ -78,7 +103,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   children,
   popoverFlip = true,
 }) => {
-  const dialog = useDialogState()
+  const dialog = useDialogState({ modal: true })
   const popover = usePopoverState({
     placement: 'bottom-start',
     unstable_flip: popoverFlip,
@@ -86,6 +111,8 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   })
 
   const hasFilterInput = !!filterInput
+
+  usePreventBodyScroll(dialog.visible && variant === 'dialog')
 
   return (
     <FilterContext.Provider value={{ variant }}>
@@ -171,7 +198,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
               />
             </Box>
           </DialogDisclosure>
-          <Dialog {...dialog}>
+          <Dialog {...dialog} preventBodyScroll={false}>
             <Box
               background="white"
               position="fixed"
