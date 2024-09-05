@@ -49,13 +49,12 @@ export class LawAndOrderService {
     const singleCase = await this.api.getCase(id, user, locale)
     if (singleCase === null) return null
 
-    const randomBoolean = Math.random() < 0.75
     let data: CourtCase = {}
 
     data = {
       data: {
         id: singleCase?.caseId ?? id,
-        acknowledged: randomBoolean, // temp while waiting for pósthólfs api
+        acknowledged: singleCase.data.acknowledged,
         caseNumber: singleCase?.data.caseNumber,
         caseNumberTitle: singleCase?.data.caseNumber,
         groups: singleCase?.data.groups,
@@ -79,9 +78,9 @@ export class LawAndOrderService {
     data = {
       data: {
         id: subpoena?.caseId ?? id,
-        acknowledged: undefined,
-        chosenDefender: subpoena?.defenderInfo.defenderName,
-        defenderChoice: subpoena?.defenderInfo.defenderChoice,
+        acknowledged: subpoena?.data.acknowledged,
+        chosenDefender: subpoena?.defenderInfo?.defenderName,
+        defenderChoice: subpoena?.defenderInfo?.defenderChoice,
         groups: subpoena?.data.groups,
       },
       actions: undefined,
