@@ -591,6 +591,16 @@ const calculateResults = (
 
     mainResultBeforeDeduction *= input.parentalLeaveRatio / 100
 
+    let paternityLeavePeriodMultiplier = 1
+
+    if (input.parentalLeavePeriod === ParentalLeavePeriod.THREE_WEEKS) {
+      paternityLeavePeriodMultiplier = 2 / 3
+    } else if (input.parentalLeavePeriod === ParentalLeavePeriod.TWO_WEEKS) {
+      paternityLeavePeriodMultiplier = 1 / 2
+    }
+
+    mainResultBeforeDeduction *= paternityLeavePeriodMultiplier
+
     let taxStep = 1
 
     if (mainResultBeforeDeduction > constants.taxBracket1) {
@@ -608,7 +618,13 @@ const calculateResults = (
     }
 
     usedPersonalDiscount =
-      constants.personalDiscount * ((input.personalDiscount ?? 0) / 100)
+      constants.personalDiscount *
+      ((input.personalDiscount ?? 0) / 100) *
+      paternityLeavePeriodMultiplier
+
+    if (usedPersonalDiscount > totalTax) {
+      usedPersonalDiscount = totalTax
+    }
 
     additionalPensionFunding =
       mainResultBeforeDeduction *
@@ -628,7 +644,6 @@ const calculateResults = (
         100)
 
     /* --- After deduction --- */
-
     mainResultAfterDeduction = mainResultBeforeDeduction
     mainResultAfterDeduction -= unionFee
     mainResultAfterDeduction =
