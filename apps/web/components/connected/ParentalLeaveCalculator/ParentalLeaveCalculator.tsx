@@ -545,11 +545,11 @@ const calculateResults = (
     taxRate1: parseResult.data['Skattprósenta þrep 1'],
     taxRate2: parseResult.data['Skattprósenta þrep 2'],
     taxRate3: parseResult.data['Skattprósenta þrep 3'],
-    paternityLeaveHigh: parseResult.data['Fæðingarstyrkur hærri'],
-    paternityLeaveLow: parseResult.data['Fæðingarstyrkur lægri'],
-    paternityLeaveRatio: parseResult.data['Hlutfall fæðingarorlofs'],
-    paternityLeaveGeneral: parseResult.data['Fæðingarstyrkur almennur'],
-    paternityLeaveStudent: parseResult.data['Fæðingarstyrkur námsmanna'],
+    parentalLeaveHigh: parseResult.data['Fæðingarstyrkur hærri'],
+    parentalLeaveLow: parseResult.data['Fæðingarstyrkur lægri'],
+    parentalLeaveRatio: parseResult.data['Hlutfall fæðingarorlofs'],
+    parentalLeaveGeneral: parseResult.data['Fæðingarstyrkur almennur'],
+    parentalLeaveStudent: parseResult.data['Fæðingarstyrkur námsmanna'],
     maxIncome: parseResult.data['Hámarks laun fyrir fæðingarorlof'],
     pensionFundingRequiredPercentage: parseResult.data['Skyldu lífeyrir'],
   }
@@ -571,18 +571,18 @@ const calculateResults = (
     }
 
     mainResultBeforeDeduction =
-      input.income * (constants.paternityLeaveRatio / 100)
+      input.income * (constants.parentalLeaveRatio / 100)
 
     if (
       input.workPercentage === WorkPercentage.OPTION_1 &&
-      mainResultBeforeDeduction < constants.paternityLeaveLow
+      mainResultBeforeDeduction < constants.parentalLeaveLow
     ) {
-      mainResultBeforeDeduction = constants.paternityLeaveLow
+      mainResultBeforeDeduction = constants.parentalLeaveLow
     } else if (
       input.workPercentage === WorkPercentage.OPTION_2 &&
-      mainResultBeforeDeduction < constants.paternityLeaveHigh
+      mainResultBeforeDeduction < constants.parentalLeaveHigh
     ) {
-      mainResultBeforeDeduction = constants.paternityLeaveHigh
+      mainResultBeforeDeduction = constants.parentalLeaveHigh
     }
 
     if (mainResultBeforeDeduction > constants.maxIncome) {
@@ -594,7 +594,7 @@ const calculateResults = (
     let paternityLeavePeriodMultiplier = 1
 
     if (input.parentalLeavePeriod === ParentalLeavePeriod.THREE_WEEKS) {
-      paternityLeavePeriodMultiplier = 2 / 3
+      paternityLeavePeriodMultiplier = 3 / 4
     } else if (input.parentalLeavePeriod === ParentalLeavePeriod.TWO_WEEKS) {
       paternityLeavePeriodMultiplier = 1 / 2
     }
@@ -653,13 +653,16 @@ const calculateResults = (
   }
 
   return {
-    mainResultBeforeDeduction,
-    mainResultAfterDeduction,
-    unionFee,
-    pensionFunding,
-    totalTax,
-    usedPersonalDiscount,
-    additionalPensionFunding,
+    results: {
+      mainResultBeforeDeduction,
+      mainResultAfterDeduction,
+      unionFee,
+      pensionFunding,
+      totalTax,
+      usedPersonalDiscount,
+      additionalPensionFunding,
+    },
+    constants,
   }
 }
 
@@ -698,7 +701,7 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
     parseAsStringEnum(Object.values(LegalDomicileInIceland)),
   )
 
-  const results = calculateResults(
+  const calculation = calculateResults(
     {
       status,
       birthyear,
@@ -714,7 +717,7 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
     slice,
   )
 
-  if (!results) {
+  if (!calculation) {
     return (
       <Stack space={3}>
         <AlertMessage
@@ -728,6 +731,8 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
       </Stack>
     )
   }
+
+  const { results, constants } = calculation
 
   const mainSectionKeys = {
     [Status.PARENTAL_LEAVE]: {
@@ -844,8 +849,25 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
           <Table.Body>
             <Table.Row>
               <Table.Data>
-                <MarkdownText>
-                  {formatMessage(t.results.incomePrerequisitesDescription)}
+                <MarkdownText replaceNewLinesWithBreaks={false}>
+                  {formatMessage(t.results.incomePrerequisitesDescription, {
+                    maxIncome: formatCurrencyUtil(
+                      constants.maxIncome,
+                      '',
+                      Math.ceil,
+                    ),
+                    parentalLeaveRatio: constants.parentalLeaveRatio,
+                    parentalLeaveLow: formatCurrencyUtil(
+                      constants.parentalLeaveLow,
+                      '',
+                      Math.ceil,
+                    ),
+                    parentalLeaveHigh: formatCurrencyUtil(
+                      constants.parentalLeaveHigh,
+                      '',
+                      Math.ceil,
+                    ),
+                  })}
                 </MarkdownText>
               </Table.Data>
               <Table.Data />

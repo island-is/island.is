@@ -402,7 +402,7 @@ export const translations = {
     },
     incomePrerequisitesDescription: {
       id: 'web.parentalLeaveCalculator:results.incomePrerequisitesDescription#markdown',
-      defaultMessage: `Fæðingarorlof nemur aldrei meira en 80% af uppgefnum launum\nFæðingarorlof er aldrei hærra en 700.000 krónur á mánuði\nFæðingarorlof er aldrei lægra en 160.538 krónur fyrir 25-49% starfshlutfall og 222.494 krónur fyrir 50-100% starfshlutfall`,
+      defaultMessage: `Fæðingarorlof nemur aldrei meira en {parentalLeaveRatio}% af uppgefnum launum\nFæðingarorlof er aldrei hærra en {maxIncome} krónur á mánuði\nFæðingarorlof er aldrei lægra en {parentalLeaveLow} krónur fyrir 25-49% starfshlutfall og {parentalLeaveHigh} krónur fyrir 50-100% starfshlutfall`,
       description: 'Niðurstöðuskjár - Lýsing fyrir "Launaforsendur" lið',
     },
     mainResultBeforeDeductionHeading: {
