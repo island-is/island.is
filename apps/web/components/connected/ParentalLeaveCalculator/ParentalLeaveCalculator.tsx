@@ -27,7 +27,7 @@ import {
 } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
 import type { ConnectedComponent } from '@island.is/web/graphql/schema'
-import { formatCurrency } from '@island.is/web/utils/currency'
+import { formatCurrency as formatCurrencyUtil } from '@island.is/web/utils/currency'
 
 import { MarkdownText } from '../../Organization'
 import { translations as t } from './translations.strings'
@@ -146,7 +146,7 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
   }, [formatMessage, slice.configJson?.additionalPensionFundingOptions])
 
   const unionOptions = useMemo<Option<string | null>[]>(() => {
-    const options: { label: string; multiplier: number }[] = slice.configJson
+    const options: { label: string; percentage: number }[] = slice.configJson
       ?.unionOptions
       ? [...slice.configJson.unionOptions]
       : []
@@ -514,6 +514,7 @@ const yearConfigSchema = z.object({
   'Fæðingarstyrkur almennur': z.number(),
   'Fæðingarstyrkur námsmanna': z.number(),
   'Hámarks laun fyrir fæðingarorlof': z.number(),
+  'Skyldu lífeyrir': z.number(),
 })
 
 const calculateResults = (
@@ -550,48 +551,135 @@ const calculateResults = (
     paternityLeaveGeneral: parseResult.data['Fæðingarstyrkur almennur'],
     paternityLeaveStudent: parseResult.data['Fæðingarstyrkur námsmanna'],
     maxIncome: parseResult.data['Hámarks laun fyrir fæðingarorlof'],
+    pensionFundingRequiredPercentage: parseResult.data['Skyldu lífeyrir'],
   }
 
-  const mainResultBeforeDeduction = 440000
-  const mainResultAfterDeduction = 242471
+  let mainResultBeforeDeduction = 0
+  let mainResultAfterDeduction = 0
+  let unionFee = 0
+  let totalTax = 0
+  let usedPersonalDiscount = 0
+  let additionalPensionFunding = 0
+  let pensionFunding = 0
+
+  if (input.status === Status.PARENTAL_LEAVE) {
+    if (
+      typeof input.income !== 'number' ||
+      typeof input.parentalLeaveRatio !== 'number'
+    ) {
+      return null
+    }
+
+    mainResultBeforeDeduction =
+      input.income * (constants.paternityLeaveRatio / 100)
+
+    if (
+      input.workPercentage === WorkPercentage.OPTION_1 &&
+      mainResultBeforeDeduction < constants.paternityLeaveLow
+    ) {
+      mainResultBeforeDeduction = constants.paternityLeaveLow
+    } else if (
+      input.workPercentage === WorkPercentage.OPTION_2 &&
+      mainResultBeforeDeduction < constants.paternityLeaveHigh
+    ) {
+      mainResultBeforeDeduction = constants.paternityLeaveHigh
+    }
+
+    if (mainResultBeforeDeduction > constants.maxIncome) {
+      mainResultBeforeDeduction = constants.maxIncome
+    }
+
+    mainResultBeforeDeduction *= input.parentalLeaveRatio / 100
+
+    let taxStep = 1
+
+    if (mainResultBeforeDeduction > constants.taxBracket1) {
+      taxStep = 2
+    } else if (mainResultBeforeDeduction > constants.taxBracket2) {
+      taxStep = 3
+    }
+
+    if (taxStep === 1) {
+      totalTax = mainResultBeforeDeduction * (constants.taxRate1 / 100)
+    } else if (taxStep === 2) {
+      totalTax = mainResultBeforeDeduction * (constants.taxRate2 / 100)
+    } else if (taxStep === 3) {
+      totalTax = mainResultBeforeDeduction * (constants.taxRate3 / 100)
+    }
+
+    usedPersonalDiscount =
+      constants.personalDiscount * ((input.personalDiscount ?? 0) / 100)
+
+    additionalPensionFunding =
+      mainResultBeforeDeduction *
+      (input.additionalPensionFundingPercentage ?? 0 / 100)
+
+    pensionFunding =
+      mainResultBeforeDeduction *
+      (constants.pensionFundingRequiredPercentage / 100)
+
+    /* --- After deduction --- */
+
+    mainResultAfterDeduction = mainResultBeforeDeduction
+
+    const unionOptions: { label: string; percentage: number }[] =
+      slice.configJson?.unionOptions ?? []
+
+    unionFee =
+      mainResultBeforeDeduction *
+      ((unionOptions.find((option) => option.label === input.union)
+        ?.percentage ?? 0) /
+        100)
+
+    mainResultAfterDeduction -= unionFee
+    mainResultAfterDeduction =
+      mainResultAfterDeduction - (totalTax - usedPersonalDiscount)
+    mainResultAfterDeduction -= additionalPensionFunding
+    mainResultAfterDeduction -= pensionFunding
+  }
 
   return {
     mainResultBeforeDeduction,
     mainResultAfterDeduction,
+    unionFee,
+    pensionFunding,
+    totalTax,
+    usedPersonalDiscount,
+    additionalPensionFunding,
   }
 }
 
 const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
   const { formatMessage } = useIntl()
 
-  const [status, setStatus] = useQueryState<Status>(
+  const [status] = useQueryState<Status>(
     'status',
     parseAsStringEnum(Object.values(Status)).withDefault(Status.PARENTAL_LEAVE),
   )
-  const [birthyear, setBirthyear] = useQueryState('birthyear', parseAsInteger)
-  const [workPercentage, setWorkPercentage] = useQueryState(
+  const [birthyear] = useQueryState('birthyear', parseAsInteger)
+  const [workPercentage] = useQueryState(
     'workPercentage',
     parseAsStringEnum(Object.values(WorkPercentage)),
   )
-  const [income, setIncome] = useQueryState('income', parseAsInteger)
-  const [
-    additionalPensionFundingPercentage,
-    setAdditionalPensionFundingPercentage,
-  ] = useQueryState('additionalPensionFunding', parseAsInteger)
-  const [union, setUnion] = useQueryState('union', parseAsString)
-  const [personalDiscount, setPersonalDiscount] = useQueryState(
+  const [income] = useQueryState('income', parseAsInteger)
+  const [additionalPensionFundingPercentage] = useQueryState(
+    'additionalPensionFunding',
+    parseAsInteger,
+  )
+  const [union] = useQueryState('union', parseAsString)
+  const [personalDiscount] = useQueryState(
     'personalDiscount',
     parseAsInteger.withDefault(100),
   )
-  const [parentalLeavePeriod, setParentalLeavePeriod] = useQueryState(
+  const [parentalLeavePeriod] = useQueryState(
     'parentalLeavePeriod',
     parseAsStringEnum(Object.values(ParentalLeavePeriod)),
   )
-  const [parentalLeaveRatio, setParentalLeaveRatio] = useQueryState(
+  const [parentalLeaveRatio] = useQueryState(
     'parentalLeaveRatio',
     parseAsInteger.withDefault(100),
   )
-  const [legalDomicileInIceland, setLegalDomicileInIceland] = useQueryState(
+  const [legalDomicileInIceland] = useQueryState(
     'legalDomicileInIceland',
     parseAsStringEnum(Object.values(LegalDomicileInIceland)),
   )
@@ -647,6 +735,13 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
       ? parentalLeaveRatio
       : 100
 
+  const formatCurrency = (value: number | null | undefined) =>
+    formatCurrencyUtil(
+      value,
+      formatMessage(t.results.currencySuffix),
+      Math.ceil,
+    )
+
   return (
     <Stack space={5}>
       <Stack space={3}>
@@ -662,10 +757,7 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
                 })}
               </Text>
               <Text fontWeight="semiBold" variant="h3">
-                {formatCurrency(
-                  mainResultAfterDeduction,
-                  formatMessage(t.results.currencySuffix),
-                )}
+                {formatCurrency(results.mainResultAfterDeduction)}
               </Text>
               <Text>{formatMessage(t.results.mainDisclaimer)}</Text>
             </Stack>
@@ -703,12 +795,7 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
                 </Text>
               </Table.Data>
               <Table.Data align="right">
-                <Text whiteSpace="nowrap">
-                  {formatCurrency(
-                    income,
-                    formatMessage(t.results.currencySuffix),
-                  )}
-                </Text>
+                <Text whiteSpace="nowrap">{formatCurrency(income)}</Text>
               </Table.Data>
             </Table.Row>
           </Table.Body>
@@ -737,10 +824,7 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
               </Table.Data>
               <Table.Data align="right">
                 <Text whiteSpace="nowrap">
-                  {formatCurrency(
-                    mainResultBeforeDeduction,
-                    formatMessage(t.results.currencySuffix),
-                  )}
+                  {formatCurrency(results.mainResultBeforeDeduction)}
                 </Text>
               </Table.Data>
             </Table.Row>
@@ -765,10 +849,7 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
               </Table.Data>
               <Table.Data align="right">
                 <Text whiteSpace="nowrap">
-                  {formatCurrency(
-                    17600,
-                    formatMessage(t.results.currencySuffix),
-                  )}
+                  {formatCurrency(results.pensionFunding)}
                 </Text>
               </Table.Data>
             </Table.Row>
@@ -780,7 +861,7 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
               </Table.Data>
               <Table.Data align="right">
                 <Text whiteSpace="nowrap">
-                  {formatCurrency(0, formatMessage(t.results.currencySuffix))}
+                  {formatCurrency(results.additionalPensionFunding)}
                 </Text>
               </Table.Data>
             </Table.Row>
@@ -792,25 +873,18 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
                   </Text>
                   <Text>
                     {formatMessage(t.results.totalTax)} -{' '}
-                    {formatCurrency(
-                      132972,
-                      formatMessage(t.results.currencySuffix),
-                    )}
+                    {formatCurrency(results.totalTax)}
                   </Text>
                   <Text>
                     {formatMessage(t.results.usedPersonalDiscount)} -{' '}
-                    {formatCurrency(
-                      64926,
-                      formatMessage(t.results.currencySuffix),
-                    )}
+                    {formatCurrency(results.usedPersonalDiscount)}
                   </Text>
                 </Stack>
               </Table.Data>
               <Table.Data align="right" style={{ verticalAlign: 'top' }}>
                 <Text whiteSpace="nowrap">
                   {formatCurrency(
-                    68046,
-                    formatMessage(t.results.currencySuffix),
+                    results.totalTax - results.usedPersonalDiscount,
                   )}
                 </Text>
               </Table.Data>
@@ -823,7 +897,7 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
               </Table.Data>
               <Table.Data align="right">
                 <Text whiteSpace="nowrap">
-                  {formatCurrency(0, formatMessage(t.results.currencySuffix))}
+                  {formatCurrency(results.unionFee)}
                 </Text>
               </Table.Data>
             </Table.Row>
