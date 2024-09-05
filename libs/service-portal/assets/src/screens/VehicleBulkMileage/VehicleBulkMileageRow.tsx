@@ -13,9 +13,9 @@ import { isReadDateToday } from '../../utils/readDate'
 interface Props {
   vehicle: VehicleType
   onPost: (vehicleId: string) => void
-  onBulkPost: (vehicleId: string) => void
+  //onBulkPost: (vehicleId: string) => void
   onSave: (vehicleId: string) => void
-  onBulkPostComplete: (vehicleId: string) => void
+  //onBulkPostComplete: (vehicleId: string) => void
   children?: ReactNode
 }
 
@@ -24,9 +24,9 @@ export const VehicleBulkMileageRow = ({
   children,
   onSave,
   onPost,
-  onBulkPost,
-  onBulkPostComplete,
-}: Props) => {
+}: //onBulkPost,
+//onBulkPostComplete,
+Props) => {
   const { formatMessage } = useLocale()
 
   const {
@@ -35,16 +35,19 @@ export const VehicleBulkMileageRow = ({
     formState: { errors },
   } = useFormContext()
 
+  /*
   useEffect(() => {
     if (vehicle.mileageUploadedFromFile) {
       setValue(vehicle.vehicleId, vehicle.mileageUploadedFromFile)
     }
   }, [vehicle.mileageUploadedFromFile])
+  */
 
   const onSaveButtonClick = () => {
     onSave(vehicle.vehicleId)
   }
 
+  /*
   useEffect(() => {
     switch (vehicle?.submissionStatus) {
       case 'submit-all':
@@ -62,6 +65,7 @@ export const VehicleBulkMileageRow = ({
         return
     }
   }, [vehicle?.submissionStatus, vehicle.vehicleId])
+  */
 
   return (
     <ExpandRow

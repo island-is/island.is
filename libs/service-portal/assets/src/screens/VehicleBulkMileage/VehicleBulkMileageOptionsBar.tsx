@@ -10,13 +10,15 @@ import {
 import { useLocale } from '@island.is/localization'
 import { vehicleMessage } from '../../lib/messages'
 import { m } from '@island.is/service-portal/core'
-import VehicleBulkMileageFileUploader from './VehicleBulkMileageFileUploader'
+import VehicleBulkMileageFileUploader, {
+  MileageRecord,
+} from './VehicleBulkMileageFileUploader'
 import VehicleBulkMileageFileDownloader from './VehicleBulkMileageFileDownloader'
 
 interface Props {
   onPageSizeClick: (pageSize: number) => void
   currentPageSize: number
-  onFileUploadComplete?: () => void
+  onFileUploadComplete?: (records: Array<MileageRecord>) => void
 }
 
 export const VehicleBulkMileageOptionsBar = ({
@@ -30,7 +32,9 @@ export const VehicleBulkMileageOptionsBar = ({
     <Box display="flex" justifyContent="spaceBetween">
       <Inline space={2}>
         <VehicleBulkMileageFileDownloader />
-        <VehicleBulkMileageFileUploader />
+        <VehicleBulkMileageFileUploader
+          onUploadFileParseComplete={onFileUploadComplete}
+        />
         <Filter
           labelClear={formatMessage(m.clearFilter)}
           labelClearAll={formatMessage(m.clearAllFilters)}

@@ -13,6 +13,8 @@ import VehicleBulkMileageTable from './VehicleBulkMileageTable'
 import { SubmissionState, VehicleType } from './types'
 import { VehicleBulkMileageOptionsBar } from './VehicleBulkMileageOptionsBar'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useVehicleBulkMileagePostMutation } from './VehicleBulkMileage.generated'
+import { MileageRecord } from './VehicleBulkMileageFileUploader'
 
 interface FormData {
   [key: string]: number
@@ -28,6 +30,9 @@ const VehicleBulkMileage = () => {
 
   const methods = useForm<FormData>()
 
+  const [vehicleBulkMileagePostMutation, { data, loading, error }] =
+    useVehicleBulkMileagePostMutation()
+
   useEffect(() => {
     const newVehicles = dummy.filter(
       (du) => !vehicles.find((v) => v.vehicleId === du.vehicleId),
@@ -36,6 +41,43 @@ const VehicleBulkMileage = () => {
       setVehicles([...vehicles, ...newVehicles])
     }
   }, [pageSize, page])
+
+  console.log(loading)
+  console.log(data)
+  console.log(error)
+
+  const onFileUploadComplete = (records: Array<MileageRecord>) => {
+    vehicleBulkMileagePostMutation({
+      variables: {
+        input: {
+          originCode: 'ISLAND.IS',
+          mileageData: records.map((r) => ({
+            mileageNumber: r.mileage,
+            vehicleId: r.vehicleId,
+          })),
+        },
+      },
+    })
+  }
+
+  const postMileage = async (
+    mileages: Array<{
+      vehicleId: string
+      mileage: number
+    }>,
+  ) => {
+    vehicleBulkMileagePostMutation({
+      variables: {
+        input: {
+          mileageData: mileages.map((m) => ({
+            mileageNumber: m.mileage,
+            vehicleId: m.vehicleId,
+          })),
+          originCode: 'ISLAND.IS',
+        },
+      },
+    })
+  }
 
   const updateVehicleStatus = async (
     status: SubmissionState,
@@ -82,6 +124,7 @@ const VehicleBulkMileage = () => {
           <VehicleBulkMileageOptionsBar
             onPageSizeClick={(size) => setPageSize(size)}
             currentPageSize={pageSize}
+            onFileUploadComplete={onFileUploadComplete}
           />
           <VehicleBulkMileageTable
             updateVehicleStatus={updateVehicleStatus}

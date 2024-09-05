@@ -2,17 +2,21 @@ import { Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useRef } from 'react'
 import { vehicleMessage } from '../../lib/messages'
-import { useFormContext } from 'react-hook-form'
 
 interface Props {
-  onUploadFileParseComplete?: () => void
+  onUploadFileParseComplete?: (records: Array<MileageRecord>) => void
 }
 
-const VehicleBulkMileageFileUploader = () => {
+export interface MileageRecord {
+  vehicleId: string
+  mileage: number
+}
+
+const VehicleBulkMileageFileUploader = ({
+  onUploadFileParseComplete,
+}: Props) => {
   const { formatMessage } = useLocale()
   const inputRef = useRef<HTMLInputElement>(null)
-
-  const { getValues, setValue } = useFormContext()
 
   const handleFileUploadButtonClick = () => {
     if (inputRef.current) {
@@ -45,10 +49,7 @@ const VehicleBulkMileageFileUploader = () => {
     }
     await reader.read().then(parseChunk)
 
-    const uploadedOdometerStatuses: Array<{
-      vehicleId: string
-      mileage: number
-    }> = []
+    const uploadedOdometerStatuses: Array<MileageRecord> = []
 
     const isMileageEvenOrOdd =
       parsedLines[0] === 'ökutæki' || parsedLines[0] === 'Ökutæki'
@@ -59,6 +60,11 @@ const VehicleBulkMileageFileUploader = () => {
       const vehicleId =
         isMileageEvenOrOdd === 'even' ? parsedLines[i + 1] : parsedLines[i]
 
+      console.log(parsedLines)
+      if (!parsedLines[i] || !parsedLines[i + 1]) {
+        continue
+      }
+
       uploadedOdometerStatuses.push({
         vehicleId,
         mileage: parseInt(
@@ -67,20 +73,8 @@ const VehicleBulkMileageFileUploader = () => {
       })
     }
 
-    const formKeys = Object.keys(getValues())
-
-    formKeys.forEach((key) => {
-      const matchedVehicle = uploadedOdometerStatuses.find(
-        (m) => m.vehicleId === key,
-      )
-      if (matchedVehicle) {
-        setValue(key, matchedVehicle?.mileage, {
-          shouldValidate: true,
-          shouldDirty: true,
-          shouldTouch: true,
-        })
-      }
-    })
+    onUploadFileParseComplete &&
+      onUploadFileParseComplete(uploadedOdometerStatuses)
   }
 
   return (

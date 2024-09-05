@@ -34,6 +34,11 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { mileageDetailConstructor } from '../utils/helpers'
+import { VehiclesBulkMileageReadingResponse } from '../models/bulkMileageReading.model'
+import { PostVehicleBulkMileageInput } from '../dto/postBulkVehicleMileage.input'
+import { VehiclesBulkMileageRegistrationRequestCollection } from '../models/bulkMileageRegistrationRequestsCollection.model'
+import { VehiclesBulkMileageRegistrationRequestVehicleCollection } from '../models/bulkMileageRegistrationRequestVehicleCollection.model'
+import { BulkVehicleMileageRequestVehicleCollectionInput } from '../dto/getBulkVehicleMileageRequestVehicle.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalVehicleMileagePageEnabled)
@@ -53,6 +58,30 @@ export class VehiclesMileageResolver {
     @CurrentUser() user: User,
   ) {
     return this.vehiclesService.getVehicleMileage(user, input)
+  }
+
+  @Query(() => VehiclesBulkMileageRegistrationRequestCollection, {
+    name: 'vehicleBulkMileageRegistrationRequestCollcetion',
+    nullable: true,
+  })
+  @Audit()
+  getVehicleMileageRegistrationRequests(@CurrentUser() user: User) {
+    return this.vehiclesService.getBulkMileageReadingRequests(user)
+  }
+
+  @Query(() => VehiclesBulkMileageRegistrationRequestVehicleCollection, {
+    name: 'vehicleBulkMileageRegistrationRequestVehicleCollcetion',
+    nullable: true,
+  })
+  @Audit()
+  getVehicleMileageRegistrationRequestsById(
+    @CurrentUser() user: User,
+    @Args('input') input: BulkVehicleMileageRequestVehicleCollectionInput,
+  ) {
+    return this.vehiclesService.getBulkMileageReadingRequestById(
+      user,
+      input.vehicleId,
+    )
   }
 
   @Mutation(() => VehicleMileageDetail, {
@@ -91,6 +120,18 @@ export class VehiclesMileageResolver {
     if (!res) return undefined
 
     return mileageDetailConstructor(res[0])
+  }
+
+  @Mutation(() => VehiclesBulkMileageReadingResponse, {
+    name: 'vehicleBulkMileagePost',
+    nullable: true,
+  })
+  @Audit()
+  async postBulkMileageReading(
+    @Args('input') input: PostVehicleBulkMileageInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.vehiclesService.postBulkMileageReading(user, input)
   }
 
   @ResolveField('canRegisterMileage', () => Boolean, {

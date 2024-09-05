@@ -13,21 +13,16 @@ import {
   PersidnoLookupResultDto,
   CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
 } from '@island.is/clients/vehicles'
+import { isDefined } from '@island.is/shared/utils'
 import {
-  BulkMileageReadingRequestDetailDto,
-  BulkMileageReadingRequestDto,
   BulkMileageReadingRequestResultDto,
   CanregistermileagePermnoGetRequest,
   GetMileageReadingRequest,
-  GetbulkmileagereadingrequestsPersidnoGetRequest,
   GetbulkmileagereadingrequeststatusGuidGetRequest,
   MileageReadingApi,
   MileageReadingDto,
   PostMileageReadingModel,
-  PutMileageReadingModel,
-  RequestbulkmileagereadingPostRequest,
   RequiresmileageregistrationPermnoGetRequest,
-  ReturnTypeMessage,
   RootPostRequest,
   RootPutRequest,
 } from '@island.is/clients/vehicles-mileage'
@@ -45,7 +40,13 @@ import {
 import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 import { mileageDetailConstructor } from '../utils/helpers'
-import { handle201, handle404 } from '@island.is/clients/middlewares'
+import { FetchError, handle404 } from '@island.is/clients/middlewares'
+import { VehiclesBulkMileageReadingResponse } from '../models/bulkMileageReading.model'
+import { VehiclesBulkMileageRegistrationRequestCollection } from '../models/bulkMileageRegistrationRequestsCollection.model'
+import { VehiclesBulkMileageRegistrationRequestVehicleCollection } from '../models/bulkMileageRegistrationRequestVehicleCollection.model'
+import { PostVehicleBulkMileageInput } from '../dto/postBulkVehicleMileage.input'
+import { VehiclesBulkMileageRegistrationRequest } from '../models/bulkMileageRegistrationRequest.model'
+import el from 'date-fns/locale/el'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -352,34 +353,109 @@ export class VehiclesService {
 
   async postBulkMileageReading(
     auth: User,
-    input: RequestbulkmileagereadingPostRequest['postBulkMileageReadingModel'],
-  ): Promise<BulkMileageReadingRequestResultDto | null> {
+    input: PostVehicleBulkMileageInput,
+  ): Promise<VehiclesBulkMileageReadingResponse | null> {
     if (!input) {
       return null
     }
 
-    const res = await this.getMileageWithAuth(
-      auth,
-    ).requestbulkmileagereadingPost({ postBulkMileageReadingModel: input })
+    const res: BulkMileageReadingRequestResultDto =
+      await this.getMileageWithAuth(auth)
+        .requestbulkmileagereadingPostRaw({
+          postBulkMileageReadingModel: {
+            reportingPersidno: auth.nationalId,
+            originCode: input.originCode,
+            mileageData: input.mileageData.map((m) => ({
+              permno: m.vehicleId,
+              mileage: m.mileageNumber,
+            })),
+          },
+        })
+        .then((res) => {
+          return res.value()
+        })
+        .catch((e) => {
+          if (e instanceof FetchError && e.status === 429) {
+            this.logger.info(e)
+            return {
+              guid: '123',
+              errorMessage: 'Too many requests at one. Wait a few minutess',
+            }
+          }
+          throw e
+        })
 
-    return res
+    if (!res.guid) {
+      this.logger.info(
+        'Missing guid from bulk mileage reading registration response',
+      )
+      return null
+    }
+
+    return {
+      vehicleId: res.guid,
+      errorMessage: res.errorMessage ?? undefined,
+    }
   }
 
   async getBulkMileageReadingRequests(
     auth: User,
-  ): Promise<Array<BulkMileageReadingRequestDto> | null> {
-    return this.getMileageWithAuth(
+  ): Promise<VehiclesBulkMileageRegistrationRequestCollection | null> {
+    const res = await this.getMileageWithAuth(
       auth,
     ).getbulkmileagereadingrequestsPersidnoGet({ persidno: auth.nationalId })
+
+    return {
+      requests: res
+        .map((r) => {
+          if (!r.guid) {
+            return null
+          }
+
+          return {
+            guid: r.guid,
+            reportingPersonNationalId: r.reportingPersidno ?? undefined,
+            reportingPersonName: r.reportingPersidnoName ?? undefined,
+            originCode: r.originCode ?? undefined,
+            originName: r.originName ?? undefined,
+            dateRequested: r.dateInserted ?? undefined,
+            dateStarted: r.dateStarted ?? undefined,
+            dateFinished: r.dateFinished ?? undefined,
+          }
+        })
+        .filter(isDefined),
+    }
   }
 
   async getBulkMileageReadingRequestById(
     auth: User,
     input: GetbulkmileagereadingrequeststatusGuidGetRequest['guid'],
-  ): Promise<Array<BulkMileageReadingRequestDetailDto>> {
-    return this.getMileageWithAuth(
+  ): Promise<VehiclesBulkMileageRegistrationRequestVehicleCollection> {
+    const data = await this.getMileageWithAuth(
       auth,
     ).getbulkmileagereadingrequeststatusGuidGet({ guid: input })
+
+    return {
+      vehicles: data
+        .map((d) => {
+          if (!d.guid || !d.permno) {
+            return null
+          }
+          return {
+            guid: d.guid,
+            permNo: d.permno,
+            mileage: d.mileage ?? undefined,
+            returnCode: d.returnCode ?? undefined,
+            errors: d.errors
+              ? d.errors?.map((e) => ({
+                  code: e.errorCode ?? undefined,
+                  message: e.errorText ?? undefined,
+                }))
+              : undefined,
+          }
+        })
+        .filter(isDefined),
+    }
   }
 
   async canRegisterMileage(

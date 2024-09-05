@@ -18,14 +18,14 @@ export const VehicleBulkMileageSaveButton = ({
 
   const tag = useMemo(() => {
     switch (submissionState) {
-      case 'success':
-      case 'waiting-success': {
+      //case 'waiting-success':
+      case 'success': {
         return {
           text: formatMessage(coreMessages.saved),
           icon: 'checkmarkCircle' as const,
         }
       }
-      case 'waiting-failure':
+      //case 'waiting-failure':
       case 'failure': {
         return {
           text: formatMessage(coreMessages.errorTitle),

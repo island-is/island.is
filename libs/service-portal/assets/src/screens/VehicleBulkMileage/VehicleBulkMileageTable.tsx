@@ -52,6 +52,7 @@ const VehicleBulkMileageTable = ({
     }
   }
 
+  /*
   const onRowBulkPost = async (vehicleId: string) => {
     const formValue = await getValueFromForm(vehicleId, true)
     if (!formValue) {
@@ -64,7 +65,8 @@ const VehicleBulkMileageTable = ({
       //post
       updateVehicleStatus('waiting-failure', vehicleId)
     }
-  }
+    }
+
 
   const onRowBulkPostComplete = async (vehicleId: string) => {
     const formKeys = Object.keys(getValues())
@@ -87,6 +89,7 @@ const VehicleBulkMileageTable = ({
       updateVehicles(newVehicles)
     }
 
+
     const nextVehicleFormKeyIndex = vehicleFormKeyIndex + 1
     updateVehicleStatus('submit-all', formKeys[nextVehicleFormKeyIndex])
   }
@@ -95,7 +98,7 @@ const VehicleBulkMileageTable = ({
     const firstVehicleId = Object.keys(getValues())[0]
     updateVehicleStatus('submit-all', firstVehicleId)
   }
-
+*/
   const onRowSave = async (vehicleId: string) => {
     onRowPost(vehicleId)
   }
@@ -107,8 +110,8 @@ const VehicleBulkMileageTable = ({
         vehicle={item}
         onSave={onRowSave}
         onPost={onRowPost}
-        onBulkPost={onRowBulkPost}
-        onBulkPostComplete={onRowBulkPostComplete}
+        //onBulkPost={onRowBulkPost}
+        //onBulkPostComplete={onRowBulkPostComplete}
       >
         <NestedFullTable
           headerArray={[
@@ -149,13 +152,13 @@ const VehicleBulkMileageTable = ({
           </T.Table>
         </form>
       </Box>
-      <Box marginTop={2} display="flex">
+      {/*<Box marginTop={2} display="flex">
         <Box marginLeft="auto">
           <Button onClick={() => onBulkPostClick()}>
             {formatMessage(vehicleMessage.saveAllVisible)}
           </Button>
         </Box>
-      </Box>
+      </Box> */}
     </>
   )
 }
