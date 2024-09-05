@@ -1,24 +1,31 @@
 import { useUserInfo } from '@island.is/auth/react'
 import {
   AlertMessage,
+  Box,
   Bullet,
   BulletList,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { Property } from '../components/property/Property'
-import { error, summary } from '../lib/messages'
+import { advert, error, publishing, summary } from '../lib/messages'
 import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
 import { MINIMUM_WEEKDAYS } from '../lib/constants'
 import { addWeekdays, parseZodIssue } from '../lib/utils'
 import { useCategories } from '../hooks/useCategories'
-import { validationSchema } from '../lib/dataSchema'
+import {
+  advertValidationSchema,
+  publishingValidationSchema,
+  signatureValidationSchema,
+} from '../lib/dataSchema'
 import { useApplication } from '../hooks/useUpdateApplication'
 import { ZodCustomIssue } from 'zod'
 import { useType } from '../hooks/useType'
 import { useDepartment } from '../hooks/useDepartment'
 import { usePrice } from '../hooks/usePrice'
 import { useEffect } from 'react'
+import { signatures } from '../lib/messages/signatures'
 
 export const Summary = ({
   application,
@@ -52,36 +59,116 @@ export const Summary = ({
   const today = new Date()
   const estimatedDate = addWeekdays(today, MINIMUM_WEEKDAYS)
 
-  const validationCheck = validationSchema.safeParse(currentApplication.answers)
+  const advertValidationCheck = advertValidationSchema.safeParse(
+    currentApplication.answers,
+  )
+
+  const signatureValidationCheck = signatureValidationSchema.safeParse({
+    signatures: currentApplication.answers.signatures,
+    misc: currentApplication.answers.misc,
+  })
+
+  const publishingCheck = publishingValidationSchema.safeParse(
+    currentApplication.answers.advert,
+  )
 
   useEffect(() => {
-    if (validationCheck.success) {
+    if (
+      advertValidationCheck.success &&
+      signatureValidationCheck.success &&
+      publishingCheck.success
+    ) {
       setSubmitButtonDisabled && setSubmitButtonDisabled(false)
     } else {
       setSubmitButtonDisabled && setSubmitButtonDisabled(true)
     }
-  }, [validationCheck, setSubmitButtonDisabled])
+  }, [
+    advertValidationCheck,
+    signatureValidationCheck,
+    publishingCheck,
+    setSubmitButtonDisabled,
+  ])
 
   return (
     <>
-      {!validationCheck.success && (
-        <AlertMessage
-          type="warning"
-          title={f(error.missingFieldsTitle)}
-          message={
-            <BulletList color="black">
-              {validationCheck.error.issues.map((issue) => {
-                const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
-                return (
-                  <Bullet key={issue.path.join('.')}>
-                    {f(parsedIssue.message)}
-                  </Bullet>
-                )
+      <Box
+        hidden={
+          advertValidationCheck.success &&
+          signatureValidationCheck.success &&
+          publishingCheck.success
+        }
+      >
+        <Stack space={2}>
+          {!advertValidationCheck.success && (
+            <AlertMessage
+              type="warning"
+              title={f(error.missingFieldsTitle, {
+                x: f(advert.general.section),
               })}
-            </BulletList>
-          }
-        />
-      )}
+              message={
+                <BulletList color="black">
+                  {advertValidationCheck.error.issues.map((issue) => {
+                    const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
+                    return (
+                      <Bullet key={issue.path.join('.')}>
+                        {f(parsedIssue.message)}
+                      </Bullet>
+                    )
+                  })}
+                </BulletList>
+              }
+            />
+          )}
+          {!signatureValidationCheck.success && (
+            <AlertMessage
+              type="warning"
+              title={f(error.missingFieldsTitle, {
+                x: f(signatures.general.section, {
+                  abbreviation: 'a',
+                }),
+              })}
+              message={
+                <Stack space={1}>
+                  <Text>
+                    {f(error.missingSignatureFieldsMessage, {
+                      x: <strong>{f(advert.general.section)}</strong>,
+                    })}
+                  </Text>
+                  <BulletList color="black">
+                    {signatureValidationCheck.error.issues.map((issue) => {
+                      const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
+                      return (
+                        <Bullet key={issue.path.join('.')}>
+                          {f(parsedIssue.message)}
+                        </Bullet>
+                      )
+                    })}
+                  </BulletList>
+                </Stack>
+              }
+            />
+          )}
+          {!publishingCheck.success && (
+            <AlertMessage
+              type="warning"
+              title={f(error.missingFieldsTitle)}
+              message={
+                <BulletList color="black">
+                  {publishingCheck.error.issues.map((issue) => {
+                    const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
+                    return (
+                      <Bullet key={issue.path.join('.')}>
+                        {f(parsedIssue.message)}
+                      </Bullet>
+                    )
+                  })}
+                </BulletList>
+              }
+            />
+          )}
+        </Stack>
+      </Box>
+
       <Stack space={0} dividers>
         <Property
           name={f(summary.properties.sender)}

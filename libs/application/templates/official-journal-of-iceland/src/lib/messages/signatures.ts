@@ -13,6 +13,11 @@ export const signatures = {
         'Hér má velja þá uppsetningu undirrritana sem best á við. Mikilvægt er að tryggja samræmi við frumtexta, til dæmis varðandi stað og dagsetningu.',
       description: 'Intro of the signatures section',
     },
+    section: {
+      id: 'ojoi.application:signatures.general.section',
+      defaultMessage: 'Undirritunarkafl{abbreviation}',
+      description: 'Title of the signatures section',
+    },
   }),
   headings: defineMessages({
     signedBy: {

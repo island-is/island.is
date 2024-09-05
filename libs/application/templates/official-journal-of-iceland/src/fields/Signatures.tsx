@@ -45,7 +45,7 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
       const currentAnswers = structuredClone(application.answers)
       const newAnswers = set(
         currentAnswers,
-        InputFields.other.signatureType,
+        InputFields.misc.signatureType,
         tabId,
       )
 

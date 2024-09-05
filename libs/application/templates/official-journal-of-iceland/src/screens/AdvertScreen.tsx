@@ -7,10 +7,11 @@ import { Button } from '@island.is/island-ui/core'
 import { Advert } from '../fields/Advert'
 import { Signatures } from '../fields/Signatures'
 import { AdvertModal } from '../fields/AdvertModal'
+import { useFormContext } from 'react-hook-form'
 
 export const AdvertScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
-
+  const { setValue } = useFormContext()
   const [modalToggle, setModalToggle] = useState(false)
   const [selectedAdvertId, setSelectedAdvertId] = useState<string | null>(null)
 

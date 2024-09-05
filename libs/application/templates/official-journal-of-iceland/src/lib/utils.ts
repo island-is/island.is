@@ -71,12 +71,11 @@ export const getEmptyMember = () => ({
 export const getRegularSignature = (
   signatureCount: number,
   memberCount: number,
-): z.infer<typeof regularSignatureSchema> =>
+) =>
   Array.from({ length: signatureCount }).map(() => ({
     institution: '',
     date: '',
     members: Array.from({ length: memberCount }).map(() => getEmptyMember()),
-    additionalSignature: '',
     html: '',
   }))
 
@@ -87,7 +86,6 @@ export const getCommitteeSignature = (
   date: '',
   chairman: getEmptyMember(),
   members: Array.from({ length: memberCount }).map(() => getEmptyMember()),
-  additionalSignature: '',
   html: '',
 })
 

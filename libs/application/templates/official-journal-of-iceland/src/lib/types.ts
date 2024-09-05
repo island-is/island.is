@@ -28,7 +28,7 @@ export const InputFields = {
       committee: 'signatures.additionalSignature.committee',
     },
   },
-  other: {
+  [Routes.MISC]: {
     signatureType: 'misc.signatureType',
     selectedTemplate: 'misc.selectedTemplate',
   },

@@ -30,6 +30,7 @@ export enum Routes {
   PUBLISHING = 'publishing',
   SUMMARY = 'summary',
   COMPLETE = 'complete',
+  MISC = 'misc',
 }
 
 // this will be replaced with correct values once the api is ready

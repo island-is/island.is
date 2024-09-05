@@ -1,10 +1,60 @@
 import { defineMessages } from 'react-intl'
 
 export const error = defineMessages({
+  fetchApplicationFailedTitle: {
+    id: 'ojoi.application:error.fetchApplicationFailedTitle',
+    defaultMessage: 'Ekki tókst að sækja umsókn',
+    description: 'Error message when fetching application fails',
+  },
+  fetchApplicationFailedMessage: {
+    id: 'ojoi.application:error.fetchApplicationFailedMessage',
+    defaultMessage: 'Villa kom upp við að sækja umsókn, reyndu aftur síðar',
+    description: 'Error message when fetching application fails',
+  },
+  missingChairmanName: {
+    id: 'ojoi.application:error.missingChairmanName',
+    defaultMessage: 'Nafn formanns vantar',
+    description: 'Error message when chairman name is missing',
+  },
+  missingCommitteeMemberName: {
+    id: 'ojoi.application:error.missingCommitteeMemberName',
+    defaultMessage: 'Nafn nefndarmanns vantar',
+    description: 'Error message when committee member name is missing',
+  },
+  missingSignatureInstitution: {
+    id: 'ojoi.application:error.missingSignatureInstitution',
+    defaultMessage: 'Nafn stofnunar vantar',
+    description: 'Error message when signature institution is missing',
+  },
+  missingSignatureDate: {
+    id: 'ojoi.application:error.missingSignatureDate',
+    defaultMessage: 'Dagsetning undirskriftar vantar',
+    description: 'Error message when signature date is missing',
+  },
+  missingSignatureType: {
+    id: 'ojoi.application:error.missingSignatureType',
+    defaultMessage: 'Tegund undirskriftar vantar',
+    description: 'Error message when signature type is missing',
+  },
   missingFieldsTitle: {
     id: 'ojoi.application:error.missingFieldsTitle',
-    defaultMessage: 'Fylla þarf út eftirfarandi reiti',
+    defaultMessage: 'Fylla þarf út eftirfarandi reiti í {x}',
     description: 'Error message when fields are missing',
+  },
+  missingSignatureFieldsMessage: {
+    id: 'ojoi.application:error.missingSignatureFieldsMessage',
+    defaultMessage: 'Undirritunarkafli er undir {x}',
+    description: 'Error message when signature fields are missing',
+  },
+  noSignatureMembers: {
+    id: 'ojoi.application:error.noSignatureMembers',
+    defaultMessage: 'Engin undirskriftarmenn valdir',
+    description: 'Error message when no signature members are selected',
+  },
+  missingSignatureMember: {
+    id: 'ojoi.application:error.missingSignatureMember',
+    defaultMessage: 'Nafn undirskriftar meðlims vantar',
+    description: 'Error message when signature member is missing',
   },
   noCategorySelected: {
     id: 'ojoi.application:error.noCategorySelected',
@@ -13,22 +63,22 @@ export const error = defineMessages({
   },
   missingType: {
     id: 'ojoi.application:error.missingType',
-    defaultMessage: 'Tegund innsendingar má ekki vera tóm',
+    defaultMessage: 'Velja þarf tegund innsendingar',
     description: 'Error message when type is missing',
   },
   missingDepartment: {
     id: 'ojoi.application:error.missingDepartment',
-    defaultMessage: 'Deild innsendingar má ekki vera tóm',
+    defaultMessage: 'Velja þarf deild innsendingar',
     description: 'Error message when department is missing',
   },
   missingTitle: {
     id: 'ojoi.application:error.missingTitle',
-    defaultMessage: 'Titill innsendingar má ekki vera tóm',
+    defaultMessage: 'Fylla þarf út titill innsendingar',
     description: 'Error message when title is missing',
   },
   missingHtml: {
     id: 'ojoi.application:error.missingHtml',
-    defaultMessage: 'Auglýsing má ekki vera tóm',
+    defaultMessage: 'Innihald innsendingar má ekki vera autt',
     description: 'Error message when html is missing',
   },
   missingRequestedDate: {

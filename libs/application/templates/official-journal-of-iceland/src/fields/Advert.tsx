@@ -87,7 +87,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
       <FormGroup title={advert.headings.materialForPublication}>
         <Box className={styles.inputWrapper}>
           <OJOISelectController
-            name={InputFields.other.selectedTemplate}
+            name={InputFields.misc.selectedTemplate}
             label={advert.inputs.template.label}
             placeholder={advert.inputs.template.placeholder}
             applicationId={application.id}
