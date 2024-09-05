@@ -317,16 +317,41 @@ export const translations = {
     },
   }),
   results: defineMessages({
-    mainParentalLeaveHeading: {
-      id: 'web.parentalLeaveCalculator:results.mainParentalLeaveHeading',
+    mainParentalLeaveHeadingMonth: {
+      id: 'web.parentalLeaveCalculator:results.mainParentalLeaveHeadingMonth',
       defaultMessage: 'Fæðingarorlof á mánuði',
-      description: 'Niðurstöðuskjár - Aðal heading fyrir fæðingarorlof',
+      description:
+        'Niðurstöðuskjár - Aðal heading fyrir fæðingarorlof á mánuði',
     },
-    mainParentalLeaveDescription: {
-      id: 'web.parentalLeaveCalculator:results.mainParentalLeaveDescription',
+    mainParentalLeaveDescriptionMonth: {
+      id: 'web.parentalLeaveCalculator:results.mainParentalLeaveDescriptionMonth',
       defaultMessage: '{ratio}% fæðingarorlof á mánuði (eftir frádrátt)',
       description:
         'Niðurstöðuskjár - Lýsing á prósentutölu fæðingarorlofs á mánuði sem notandi valdi',
+    },
+    mainParentalLeaveHeadingThreeWeeks: {
+      id: 'web.parentalLeaveCalculator:results.mainParentalLeaveHeadingThreeWeeks',
+      defaultMessage: 'Fæðingarorlof á 3 vikum',
+      description:
+        'Niðurstöðuskjár - Aðal heading fyrir fæðingarorlof á 3 vikum',
+    },
+    mainParentalLeaveDescriptionThreeWeeks: {
+      id: 'web.parentalLeaveCalculator:results.mainParentalLeaveDescriptionThreeWeeks',
+      defaultMessage: '{ratio}% fæðingarorlof á 3 vikum (eftir frádrátt)',
+      description:
+        'Niðurstöðuskjár - Lýsing á prósentutölu fæðingarorlofs á 3 vikum sem notandi valdi',
+    },
+    mainParentalLeaveHeadingTwoWeeks: {
+      id: 'web.parentalLeaveCalculator:results.mainParentalLeaveHeadingTwoWeeks',
+      defaultMessage: 'Fæðingarorlof á 2 vikum',
+      description:
+        'Niðurstöðuskjár - Aðal heading fyrir fæðingarorlof á 2 vikum',
+    },
+    mainParentalLeaveDescriptionTwoWeeks: {
+      id: 'web.parentalLeaveCalculator:results.mainParentalLeaveDescriptionTwoWeeks',
+      defaultMessage: '{ratio}% fæðingarorlof á 2 vikum (eftir frádrátt)',
+      description:
+        'Niðurstöðuskjár - Lýsing á prósentutölu fæðingarorlofs á 2 vikum sem notandi valdi',
     },
     mainStudentHeading: {
       id: 'web.parentalLeaveCalculator:results.mainStudentHeading',
@@ -386,11 +411,36 @@ export const translations = {
       description:
         'Niðurstöðuskjár - Heading fyrir niðurstöðulið (fyrir frádrátt)',
     },
-    mainResultBeforeDeductionDescription: {
-      id: 'web.parentalLeaveCalculator:results.mainResultBeforeDeductionDescription',
+    mainResultBeforeDeductionDescriptionMonth: {
+      id: 'web.parentalLeaveCalculator:results.mainResultBeforeDeductionDescriptionMonth',
       defaultMessage: '{ratio}% fæðingarorlof á mánuði (fyrir frádrátt)',
       description:
-        'Niðurstöðuskjár - Lýsing á hve mikið fæðingarorlof á mánuði notandi valdi fyrir niðurstöðulið (fyrir frádrátt)',
+        'Niðurstöðuskjár - Lýsing á hve mikið fæðingarorlof á mánuði notandi fær (fyrir frádrátt)',
+    },
+    mainResultBeforeDeductionDescriptionThreeWeeks: {
+      id: 'web.parentalLeaveCalculator:results.mainResultBeforeDeductionDescriptionThreeWeeks',
+      defaultMessage: '{ratio}% fæðingarorlof á 3 vikum (fyrir frádrátt)',
+      description:
+        'Niðurstöðuskjár - Lýsing á hve mikið fæðingarorlof notandi fær á 3 vikum (fyrir frádrátt)',
+    },
+    mainResultBeforeDeductionDescriptionTwoWeeks: {
+      id: 'web.parentalLeaveCalculator:results.mainResultBeforeDeductionDescriptionTwoWeeks',
+      defaultMessage: '{ratio}% fæðingarorlof á 2 vikum (fyrir frádrátt)',
+      description:
+        'Niðurstöðuskjár - Lýsing á hve mikið fæðingarorlof á 2 vikum notandi fær (fyrir frádrátt)',
+    },
+    mainResultBeforeDeductionDescriptionStudent: {
+      id: 'web.parentalLeaveCalculator:results.mainResultBeforeDeductionDescriptionStudent',
+      defaultMessage:
+        '{ratio}% fæðingarstyrkur námsmanna á mánuði (fyrir frádrátt)',
+      description:
+        'Niðurstöðuskjár - Lýsing á hve mikið fæðingarstyrkur námsmanna er (fyrir frádrátt)',
+    },
+    mainResultBeforeDeductionDescriptionOutsideWorkforce: {
+      id: 'web.parentalLeaveCalculator:results.mainResultBeforeDeductionDescriptionOutsideWorkforce',
+      defaultMessage: '{ratio}% fæðingarstyrkur á mánuði (fyrir frádrátt)',
+      description:
+        'Niðurstöðuskjár - Lýsing á hve mikið fæðingarstyrkur utan vinnumarkaðar er (fyrir frádrátt)',
     },
     deductionHeading: {
       id: 'web.parentalLeaveCalculator:results.deductionHeading',

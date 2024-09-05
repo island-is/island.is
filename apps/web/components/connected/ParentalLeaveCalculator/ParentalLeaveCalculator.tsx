@@ -731,8 +731,18 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
 
   const mainSectionKeys = {
     [Status.PARENTAL_LEAVE]: {
-      heading: t.results.mainParentalLeaveHeading,
-      description: t.results.mainParentalLeaveDescription,
+      [ParentalLeavePeriod.TWO_WEEKS]: {
+        heading: t.results.mainParentalLeaveHeadingTwoWeeks,
+        description: t.results.mainParentalLeaveDescriptionTwoWeeks,
+      },
+      [ParentalLeavePeriod.THREE_WEEKS]: {
+        heading: t.results.mainParentalLeaveHeadingThreeWeeks,
+        description: t.results.mainParentalLeaveDescriptionThreeWeeks,
+      },
+      [ParentalLeavePeriod.MONTH]: {
+        heading: t.results.mainParentalLeaveHeadingMonth,
+        description: t.results.mainParentalLeaveDescriptionMonth,
+      },
     },
     [Status.STUDENT]: {
       heading: t.results.mainStudentHeading,
@@ -756,6 +766,29 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
       Math.ceil,
     )
 
+  let mainResultBeforeDeductionPrefixKey =
+    t.results.mainResultBeforeDeductionDescriptionMonth
+
+  if (status === Status.PARENTAL_LEAVE) {
+    if (parentalLeavePeriod === ParentalLeavePeriod.THREE_WEEKS) {
+      mainResultBeforeDeductionPrefixKey =
+        t.results.mainResultBeforeDeductionDescriptionThreeWeeks
+    } else if (parentalLeavePeriod === ParentalLeavePeriod.TWO_WEEKS) {
+      mainResultBeforeDeductionPrefixKey =
+        t.results.mainResultBeforeDeductionDescriptionTwoWeeks
+    }
+  }
+
+  if (status === Status.STUDENT) {
+    mainResultBeforeDeductionPrefixKey =
+      t.results.mainResultBeforeDeductionDescriptionStudent
+  }
+
+  if (status === Status.OUTSIDE_WORKFORCE) {
+    mainResultBeforeDeductionPrefixKey =
+      t.results.mainResultBeforeDeductionDescriptionOutsideWorkforce
+  }
+
   return (
     <Stack space={5}>
       <Stack space={3}>
@@ -763,12 +796,27 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
           <Box className={styles.resultBorder} paddingY={2} paddingX={3}>
             <Stack space={2}>
               <Text variant="h3">
-                {formatMessage(mainSectionKeys[status].heading)}
+                {status === Status.PARENTAL_LEAVE
+                  ? formatMessage(
+                      mainSectionKeys[status][
+                        parentalLeavePeriod ?? ParentalLeavePeriod.MONTH
+                      ].heading,
+                    )
+                  : formatMessage(mainSectionKeys[status].heading)}
               </Text>
               <Text>
-                {formatMessage(mainSectionKeys[status].description, {
-                  ratio,
-                })}
+                {status === Status.PARENTAL_LEAVE
+                  ? formatMessage(
+                      mainSectionKeys[status][
+                        parentalLeavePeriod ?? ParentalLeavePeriod.MONTH
+                      ].description,
+                      {
+                        ratio,
+                      },
+                    )
+                  : formatMessage(mainSectionKeys[status].heading, {
+                      ratio,
+                    })}
               </Text>
               <Text fontWeight="semiBold" variant="h3">
                 {formatCurrency(results.mainResultAfterDeduction)}
@@ -828,12 +876,9 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
             <Table.Row>
               <Table.Data>
                 <Text fontWeight="semiBold">
-                  {formatMessage(
-                    t.results.mainResultBeforeDeductionDescription,
-                    {
-                      ratio,
-                    },
-                  )}
+                  {formatMessage(mainResultBeforeDeductionPrefixKey, {
+                    ratio,
+                  })}
                 </Text>
               </Table.Data>
               <Table.Data align="right">
