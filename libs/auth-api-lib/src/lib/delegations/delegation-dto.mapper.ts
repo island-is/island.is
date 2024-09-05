@@ -1,5 +1,3 @@
-import { AuthDelegationType } from '@island.is/shared/types'
-
 import { DelegationRecordDTO } from './dto/delegation-index.dto'
 import { DelegationDTO } from './dto/delegation.dto'
 import { MergedDelegationDTO } from './dto/merged-delegation.dto'
@@ -23,7 +21,7 @@ export class DelegationDTOMapper {
     return {
       fromNationalId: dto.fromNationalId,
       toNationalId: dto.toNationalId,
-      types: [dto.type as AuthDelegationType],
+      types: dto.type,
     }
   }
 }
