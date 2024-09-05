@@ -23,7 +23,6 @@ export type Child = {
   nationalId: string
   otherParent: object
   livesWithApplicant: boolean
-  domicileInIceland: boolean
   livesWithBothParents: boolean
   genderCode: string
 }

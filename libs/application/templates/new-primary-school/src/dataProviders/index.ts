@@ -20,3 +20,9 @@ export const OptionsApi = defineTemplateApi({
   externalDataId: 'KeyOptions',
   namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
 })
+
+export const ChildrenApi = defineTemplateApi({
+  action: 'getChildren',
+  externalDataId: 'children',
+  namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
+})
