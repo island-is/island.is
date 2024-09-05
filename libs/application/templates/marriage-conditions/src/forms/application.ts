@@ -4,7 +4,6 @@ import {
   buildMultiField,
   buildCustomField,
   buildTextField,
-  buildSubmitField,
   buildDescriptionField,
   buildSubSection,
   buildRadioField,
@@ -13,13 +12,14 @@ import {
   buildDateField,
   buildExternalDataProvider,
   buildAlertMessageField,
+  buildSubmitField,
 } from '@island.is/application/core'
 import {
   Form,
   FormModes,
   Application,
-  DefaultEvents,
   NationalRegistryIndividual,
+  DefaultEvents,
 } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { Individual } from '../types'
@@ -447,48 +447,15 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 title: '',
                 component: 'ApplicationOverview',
               }),
-            ],
-          }),
-        ],
-      }),
-      buildSection({
-        id: 'paymentTotal',
-        title: m.payment,
-        children: [
-          buildMultiField({
-            id: 'payment',
-            title: '',
-            children: [
-              buildCustomField(
-                {
-                  id: 'payment',
-                  title: '',
-                  component: 'PaymentInfo',
-                },
-                {
-                  allowFakeData,
-                  // TODO: When/if real data enters the payment catalog, remove this
-                  fakePayments: [
-                    {
-                      priceAmount: 2800,
-                      chargeItemCode: 'AY153',
-                    },
-                    {
-                      priceAmount: 2700,
-                      chargeItemCode: 'AY154',
-                    },
-                  ],
-                },
-              ),
               buildSubmitField({
-                id: 'submitPayment',
+                id: 'submitApplication',
                 title: '',
                 placement: 'footer',
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {
-                    event: DefaultEvents.PAYMENT,
-                    name: m.proceedToPayment,
+                    event: DefaultEvents.APPROVE,
+                    name: m.spouseContinue,
                     type: 'primary',
                   },
                 ],

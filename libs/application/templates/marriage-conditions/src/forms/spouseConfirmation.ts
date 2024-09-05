@@ -275,15 +275,48 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                 title: '',
                 component: 'ApplicationOverview',
               }),
+            ],
+          }),
+        ],
+      }),
+      buildSection({
+        id: 'paymentTotal',
+        title: m.payment,
+        children: [
+          buildMultiField({
+            id: 'payment',
+            title: '',
+            children: [
+              buildCustomField(
+                {
+                  id: 'payment',
+                  title: '',
+                  component: 'PaymentInfo',
+                },
+                {
+                  allowFakeData,
+                  // TODO: When/if real data enters the payment catalog, remove this
+                  fakePayments: [
+                    {
+                      priceAmount: 2800,
+                      chargeItemCode: 'AY153',
+                    },
+                    {
+                      priceAmount: 2700,
+                      chargeItemCode: 'AY154',
+                    },
+                  ],
+                },
+              ),
               buildSubmitField({
-                id: 'submitApplication',
+                id: 'submitPayment',
                 title: '',
                 placement: 'footer',
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {
-                    event: DefaultEvents.SUBMIT,
-                    name: m.submitApplication,
+                    event: DefaultEvents.PAYMENT,
+                    name: m.proceedToPayment,
                     type: 'primary',
                   },
                 ],

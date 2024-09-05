@@ -25,6 +25,7 @@ import {
   MarriageCondtionsFeatureFlags,
 } from './getApplicationFeatureFlags'
 import {
+  BirthCertificateApi,
   DistrictCommissionersPaymentCatalogApi,
   MaritalStatusApi,
   ReligionCodesApi,
@@ -90,6 +91,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 UserProfileApi,
                 DistrictsApi,
                 MaritalStatusApi,
+                //BirthCertificateApi,
                 ReligionCodesApi,
                 DistrictCommissionersPaymentCatalogApi,
               ],
@@ -109,11 +111,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: ['AY129'],
-        submitTarget: States.SPOUSE_CONFIRM,
-      }),
       [States.SPOUSE_CONFIRM]: {
         entry: 'assignToSpouse',
         meta: {
@@ -155,6 +152,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 UserProfileApi,
+                BirthCertificateApi,
                 DistrictsApi,
                 MaritalStatusApi,
                 ReligionCodesApi,
@@ -180,6 +178,11 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.DONE },
         },
       },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: ['AY129'],
+        submitTarget: States.DONE,
+      }),
       [States.DONE]: {
         meta: {
           name: 'Done',

@@ -572,7 +572,7 @@ export class SyslumennService {
     const { id, api } = await this.createApi()
     const res = await api.erfdafjarskatturGet({
       audkenni: id,
-      malsnumer: caseNumber,
+      //TODO: This is a temporary solution until the API is updated?
     })
 
     return mapInheritanceTax(res)
@@ -670,6 +670,15 @@ export class SyslumennService {
   async checkCriminalRecord(nationalId: string) {
     const { id, api } = await this.createApi()
     return await api.kannaSakavottordGet({
+      audkenni: id,
+      kennitala: nationalId,
+    })
+  }
+
+  async checkBirthCertificate(nationalId: string) {
+    const { id, api } = await this.createApi()
+    console.log('🚀 ~ SyslumennService ~ checkBirthCertificate ~ id:', id)
+    return await api.kannaKonnunarvottordGet({
       audkenni: id,
       kennitala: nationalId,
     })

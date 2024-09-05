@@ -20,10 +20,7 @@ import {
   MarriageConditionsFakeData,
 } from '@island.is/application/templates/marriage-conditions/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
@@ -86,17 +83,22 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     }
   }
 
-  async assignSpouse({ application, auth }: TemplateApiModuleActionProps) {
-    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+  async checkBirthCertificate({ auth }: TemplateApiModuleActionProps) {
+    return await this.syslumennService.checkBirthCertificate(auth.nationalId)
+  }
 
-    if (!isPayment?.fulfilled) {
-      return {
-        success: false,
-      }
-    }
+  // TODO: Change name?
+  async assignSpouse({ application }: TemplateApiModuleActionProps) {
+    // const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+    //   auth,
+    //   application.id,
+    // )
+
+    // if (!isPayment?.fulfilled) {
+    //   return {
+    //     success: false,
+    //   }
+    // }
 
     await this.sharedTemplateAPIService.sendEmail(
       generateAssignOtherSpouseApplicationEmail,
