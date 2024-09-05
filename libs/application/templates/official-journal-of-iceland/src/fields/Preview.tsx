@@ -61,15 +61,15 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
 
   return (
     <Stack space={4}>
-      <Box hidden={!hasMarkup && !!typeError}>
-        <Stack space={2}>
-          {typeError && (
-            <AlertMessage
-              type="error"
-              message={f(error.fetchFailedMessage)}
-              title={f(error.fetchFailedTitle)}
-            />
-          )}
+      <Stack space={2}>
+        {typeError && (
+          <AlertMessage
+            type="error"
+            message={f(error.fetchFailedMessage)}
+            title={f(error.fetchFailedTitle)}
+          />
+        )}
+        {!hasMarkup && (
           <AlertMessage
             type="warning"
             title={f(preview.errors.noContent)}
@@ -85,8 +85,8 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
               </Stack>
             }
           />
-        </Stack>
-      </Box>
+        )}
+      </Stack>
       <Box border="standard" borderRadius="large">
         <HTMLEditor
           name="preview.document"
