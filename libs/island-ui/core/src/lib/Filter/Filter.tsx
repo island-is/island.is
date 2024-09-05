@@ -63,6 +63,7 @@ export const FilterContext = createContext<FilterContextValue>({
 })
 
 let initialBodyPosition: string | null = null
+let initialScrollPosition: number | null = null
 
 const usePreventBodyScroll = (preventBodyScroll: boolean) => {
   useEffect(() => {
@@ -74,14 +75,23 @@ const usePreventBodyScroll = (preventBodyScroll: boolean) => {
     if (initialBodyPosition === null) {
       initialBodyPosition = window.document.body.style.position || 'static'
     }
+    if (initialScrollPosition === null) {
+      initialScrollPosition = window.scrollY
+    }
 
-    window.document.body.style.position = preventBodyScroll
-      ? 'fixed'
-      : initialBodyPosition
+    // Prevent scrolling on the body element
+    window.document.body.style.position = 'fixed'
 
     return () => {
       if (initialBodyPosition !== null) {
         window.document.body.style.position = initialBodyPosition
+        initialBodyPosition = null
+      }
+      if (initialScrollPosition !== null) {
+        // When setting the body position to fixed, the scroll position resets to 0
+        // Here we are restoring the scroll position
+        window.scrollTo(0, initialScrollPosition)
+        initialScrollPosition = null
       }
     }
   }, [preventBodyScroll])
