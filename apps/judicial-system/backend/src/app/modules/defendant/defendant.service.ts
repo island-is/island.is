@@ -2,6 +2,7 @@ import { literal, Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
+  forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -25,9 +26,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
+import { PdfService } from '../case/pdf.service'
 import { CourtService } from '../court'
+import { PoliceService } from '../police'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
-import { CreateSubpoenaDto } from './dto/createSubpoena.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { Defendant } from './models/defendant.model'
@@ -39,6 +41,8 @@ export class DefendantService {
   constructor(
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
+    @Inject(forwardRef(() => PoliceService))
+    private readonly policeService: PoliceService,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -352,18 +356,37 @@ export class DefendantService {
       })
   }
 
-  async createSubpoena(
+  async deliverSubpoenaToPolice(
+    theCase: Case,
     defendant: Defendant,
-    newSubpoena: CreateSubpoenaDto,
-    theCase?: Case,
-  ): Promise<Subpoena> {
+    subpoenaFile: string,
+    user: User,
+  ): Promise<DeliverResponse> {
     const subpoena = await this.subpoenaModel.create({
-      ...newSubpoena,
       defendantId: defendant.id,
       caseId: theCase?.id || null,
     })
 
-    return subpoena
+    const createdSubpoena = await this.policeService.createSubpoena(
+      theCase,
+      defendant,
+      subpoenaFile,
+      user,
+    )
+
+    if (!createdSubpoena) {
+      this.logger.error('Failed to create subpoena file for police')
+      return Promise.resolve({ delivered: false })
+    }
+
+    await this.subpoenaModel.update(
+      { subpoenaFileId: createdSubpoena.subpoenaFileId },
+      { where: { id: subpoena.id } },
+    )
+
+    console.log('subpoena id', subpoena.id)
+
+    return Promise.resolve({ delivered: true })
   }
 
   async updateSubpoena(

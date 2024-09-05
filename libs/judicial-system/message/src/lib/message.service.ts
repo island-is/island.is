@@ -192,7 +192,7 @@ export class MessageService {
     })
   }
 
-  async sendMessagesToQueue(
+  async  sendMessagesToQueue(
     messages: Message[],
     isRetry = false,
   ): Promise<void> {

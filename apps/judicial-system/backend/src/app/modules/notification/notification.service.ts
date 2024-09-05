@@ -11,7 +11,7 @@ import { type User } from '@island.is/judicial-system/types'
 import { CaseState, NotificationType } from '@island.is/judicial-system/types'
 
 import { type Case } from '../case'
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { SendNotificationResponse } from './models/sendNotification.response'
 
 @Injectable()
@@ -69,6 +69,14 @@ export class NotificationService {
           ]
         } else {
           messages = [this.getNotificationMessage(type, user, theCase)]
+          theCase.defendants?.forEach((defendant) => {
+            messages.push({
+              type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+              user,
+              caseId: theCase.id,
+              elementId: defendant.id,
+            })
+          })
         }
         break
       case NotificationType.HEADS_UP:

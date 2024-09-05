@@ -34,6 +34,7 @@ import {
   CaseReadGuard,
   CurrentCase,
 } from '../case'
+import { Defendant } from '../defendant'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -116,23 +117,29 @@ export class PoliceController {
     )
   }
 
-  @RolesRules(
-    prosecutorRule,
-    prosecutorRepresentativeRule,
-    districtCourtJudgeRule,
-  )
-  @Post('subpoena')
-  @ApiOkResponse({
-    type: CreateSubpoenaResponse,
-    description: 'Creates a subpoena for a case',
-  })
-  createSubpoena(
-    @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
-    @CurrentCase() theCase: Case,
-  ): Promise<CreateSubpoenaResponse> {
-    this.logger.debug(`Creating a subpoena for case ${caseId}`)
+  // @RolesRules(
+  //   prosecutorRule,
+  //   prosecutorRepresentativeRule,
+  //   districtCourtJudgeRule,
+  // )
+  // @Post('subpoena/:defendantId')
+  // @ApiOkResponse({
+  //   type: CreateSubpoenaResponse,
+  //   description: 'Creates a subpoena for a case',
+  // })
+  // createSubpoena(
+  //   @Param('caseId') caseId: string,
+  //   @Param('defendantId') defendantId: string,
+  //   @CurrentHttpUser() user: User,
+  //   @CurrentCase() theCase: Case,
+  // ): Promise<CreateSubpoenaResponse> {
+  //   this.logger.debug(`Creating a subpoena for case ${caseId}`)
 
-    return this.policeService.createSubpoena(theCase, user)
-  }
+  //   return this.policeService.createSubpoena(
+  //     theCase,
+  //     { id: defendantId } as Defendant,
+  //     '',
+  //     user,
+  //   )
+  // }
 }

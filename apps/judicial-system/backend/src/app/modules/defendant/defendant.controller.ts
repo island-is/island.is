@@ -50,7 +50,6 @@ import {
   PdfService,
 } from '../case'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
-import { CreateSubpoenaDto } from './dto/createSubpoena.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
@@ -193,35 +192,35 @@ export class DefendantController {
     res.end(pdf)
   }
 
-  @UseGuards(
-    CaseExistsGuard,
-    new CaseTypeGuard(indictmentCases),
-    CaseReadGuard,
-    DefendantExistsGuard,
-  )
-  @RolesRules(
-    districtCourtJudgeRule,
-    districtCourtRegistrarRule,
-    districtCourtAssistantRule,
-  )
-  @Post(':defendantId/subpoena')
-  @ApiOkResponse({
-    type: Defendant,
-    description: 'Creates new subpoena',
-  })
-  async createSubpoena(
-    @Param('caseId') caseId: string,
-    @Param('defendantId') defendantId: string,
-    @CurrentCase() theCase: Case,
-    @CurrentDefendant() defendant: Defendant,
-    @Body() subpoena: CreateSubpoenaDto,
-  ): Promise<Subpoena> {
-    this.logger.debug(
-      `Creating new subpoena for ${defendantId} of case ${caseId} `,
-    )
+  // @UseGuards(
+  //   CaseExistsGuard,
+  //   new CaseTypeGuard(indictmentCases),
+  //   CaseReadGuard,
+  //   DefendantExistsGuard,
+  // )
+  // @RolesRules(
+  //   districtCourtJudgeRule,
+  //   districtCourtRegistrarRule,
+  //   districtCourtAssistantRule,
+  // )
+  // @Post(':defendantId/subpoena')
+  // @ApiOkResponse({
+  //   type: Defendant,
+  //   description: 'Creates new subpoena',
+  // })
+  // async createSubpoena(
+  //   @Param('caseId') caseId: string,
+  //   @Param('defendantId') defendantId: string,
+  //   @CurrentCase() theCase: Case,
+  //   @CurrentDefendant() defendant: Defendant,
+  //   @Body() subpoena: CreateSubpoenaDto,
+  // ): Promise<Subpoena> {
+  //   this.logger.debug(
+  //     `Creating new subpoena for ${defendantId} of case ${caseId} `,
+  //   )
 
-    return this.defendantService.createSubpoena(defendant, subpoena, theCase)
-  }
+  //   return this.defendantService.createSubpoena(defendant, subpoena, theCase)
+  // }
 
   @UseGuards(
     CaseExistsGuard,

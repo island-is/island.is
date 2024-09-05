@@ -27,6 +27,7 @@ import { CaseState, CaseType } from '@island.is/judicial-system/types'
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
+import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
@@ -114,13 +115,6 @@ export class PoliceService {
     gotuNumer: z.string().nullish(),
     sveitafelag: z.string().nullish(),
     postnumer: z.string().nullish(),
-  })
-  private courtDocumentStructure = z.object({
-    documentBase64: z.string().min(1),
-    documentName: z.string().min(1),
-    ssn: z.string().min(10).max(10),
-    documentTypeID: z.optional(z.number().int()),
-    courtRegistrationDate: z.optional(z.string().datetime()),
   })
   private responseStructure = z.object({
     malsnumer: z.string(),
@@ -517,20 +511,16 @@ export class PoliceService {
 
   async createSubpoena(
     workingCase: Case,
+    defendant: Defendant,
+    subpoena: string,
     user: User,
   ): Promise<CreateSubpoenaResponse> {
-    const documentName = 'Fyrirkall'
-    const defendantNationalId = workingCase.defendants
-      ? workingCase.defendants[0].nationalId
-      : '9999999999'
+    const documentName = `Fyrirkall í máli ${workingCase.courtCaseNumber}`
 
-    // const fakepdf = {
-    //   name: 'fyrikrall.pdf',
-    //   mimeType: 'application/pdf',
-    //   buffer: Buffer.from(
-    //     "%PDF-1.2 \n9 0 obj\n<<\n>>\nstream\nBT/ 32 Tf(  TESTING   )' ET\nendstream\nendobj\n4 0 obj\n<<\n/Type /Page\n/Parent 5 0 R\n/Contents 9 0 R\n>>\nendobj\n5 0 obj\n<<\n/Kids [4 0 R ]\n/Count 1\n/Type /Pages\n/MediaBox [ 0 0 175 50 ]\n>>\nendobj\n3 0 obj\n<<\n/Pages 5 0 R\n/Type /Catalog\n>>\nendobj\ntrailer\n<<\n/Root 3 0 R\n>>\n%%EOF",
-    //   ),
-    // }
+    const defendantNationalId = defendant.nationalId
+    const arraignmentInfo = workingCase.dateLogs?.find(
+      (dateLog) => dateLog.dateType === 'ARRAIGNMENT_DATE',
+    )
 
     return this.fetchPoliceCaseApi(`${this.xRoadPath}/CreateSubpoena`, {
       method: 'POST',
@@ -542,20 +532,27 @@ export class PoliceService {
       },
       agent: this.agent,
       body: JSON.stringify({
-        // documentTypeId: 1,
-        // documentName: documentName,
-        // documentBase64: Base64.btoa('Test content'),
-        // ssn: defendantNationalId,
-        courtRegistrationDate: new Date().toISOString(),
+        documentName: documentName,
+        documentBase64: Base64.btoa('Test content'),
+        courtRegistrationDate: arraignmentInfo?.date,
+        prosecutorSsn: workingCase.prosecutor?.nationalId,
+        prosecutedSsn: defendantNationalId,
+        courtAddress: workingCase.court?.address,
+        courtRoomNumber: arraignmentInfo?.location || '',
+        courtCeremony: 'Þingfesting',
+        lokeCaseNumber: workingCase.policeCaseNumbers?.[0],
+        courtCaseNumber: workingCase.courtCaseNumber,
+        fileTypeCode: 'BRTNG',
       }),
     } as RequestInit)
       .then(async (res) => {
         if (res.ok) {
-          console.log(res)
-          return { key: 'test' } as CreateSubpoenaResponse
+          const subpoenaFileId = await res.json()
+
+          return { subpoenaFileId }
         }
 
-        const response = await res.text()
+        const response = await res.json()
         throw response
       })
       .catch((reason) => {
@@ -574,6 +571,8 @@ export class PoliceService {
           'Failed to create subpoena',
           {
             caseId: workingCase.id,
+            defendantId: defendant?.nationalId,
+            actor: user?.name,
           },
           reason,
         )
