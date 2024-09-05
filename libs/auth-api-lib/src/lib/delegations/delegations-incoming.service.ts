@@ -82,11 +82,9 @@ export class DelegationsIncomingService {
     }
 
     // Index incoming delegations
-    try {
-      void this.delegationsIndexService.indexDelegations(user)
-    } catch {
-      this.logger.error('Failed to index delegations')
-    }
+    void this.delegationsIndexService
+      .indexDelegations(user)
+      .catch((error) => this.logger.error('Failed to index delegations', error))
 
     const delegationPromises = []
 
