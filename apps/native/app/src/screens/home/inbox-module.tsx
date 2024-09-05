@@ -47,7 +47,7 @@ const validateInboxInitialData = ({
   }
 
   // Only show widget initially if there are documents in the inbox
-  if (data?.documentsV2?.data?.length !== 0) {
+  if (data?.documentsV2?.data.length) {
     return true
   }
 
