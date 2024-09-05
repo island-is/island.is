@@ -39,7 +39,7 @@ const ParliamentaryRoot = () => {
           <FilterInput
             name="searchSignee"
             value={''}
-            onChange={(v) => {}}
+            onChange={() => console.log('search')}
             placeholder={formatMessage(m.searchInListPlaceholder)}
             backgroundColor="white"
           />
