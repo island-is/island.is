@@ -99,7 +99,7 @@ export const assets = buildSection({
                   },
                 ],
                 assetKey: 'assets',
-                calcWithShareValue: true,
+                calcWithShareValue: false,
                 repeaterButtonText: m.addRealEstate,
                 sumField: 'propertyValuation',
               },
