@@ -109,17 +109,9 @@ export class VehicleResolver {
     @Args('permno') permno: string,
     @Args('mileage') mileage: number,
     @Args('plateCount') plateCount: number,
-    @Args('plateLost') plateLost: number,
+    @Args('plateLost') plateLost: boolean,
     @Args('deregistered') deregistered: boolean,
   ) {
-    console.log('updateSkilavottordVehicleInfo -Resolver', {
-      permno,
-      mileage,
-      plateCount,
-      plateLost,
-      deregistered,
-    })
-
     return await this.vehicleService.updateVehicleInfo(
       permno,
       mileage,

@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { useRouter } from 'next/router'
-import React, { FC, useContext, useEffect } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 
 import {
   Box,
@@ -18,7 +18,7 @@ import {
 
 import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import {
-  CarDetailsBox,
+  CarDetailsBox2,
   NotFound,
   OutlinedError,
   ProcessPageLayout,
@@ -35,7 +35,7 @@ import {
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { getYear } from '@island.is/skilavottord-web/utils/dateUtils'
 import { FormProvider, useForm } from 'react-hook-form'
-import { PlateInfo } from '@island.is/skilavottord-web/utils/consts'
+import { OutInUsage } from '@island.is/skilavottord-web/utils/consts'
 
 const SkilavottordVehicleReadyToDeregisteredQuery = gql`
   query skilavottordVehicleReadyToDeregisteredQuery($permno: String!) {
@@ -58,16 +58,6 @@ const SkilavottordTrafficQuery = gql`
       outInStatus
       useStatus
       useStatusName
-    }
-  }
-`
-
-const SkilavottordVehicleInformationQuery = gql`
-  query skilavottordVehicleInformationQuery($permno: String!) {
-    skilavottordVehicleInformation(permno: $permno) {
-      permno
-      ownerSocialSecurityNumber
-      vehicleStatus
     }
   }
 `
@@ -97,14 +87,13 @@ const UpdateSkilavottordVehicleInfoMutation = gql`
     $permno: String!
     $mileage: Float!
     $plateCount: Float!
-    $plateLost: Float!
+    $plateLost: Boolean!
     $deregistered: Boolean!
   ) {
     updateSkilavottordVehicleInfo(
       permno: $permno
       mileage: $mileage
       plateCount: $plateCount
-
       plateLost: $plateLost
       deregistered: $deregistered
     )
@@ -128,7 +117,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
   const { id } = router.query
 
   const mileageValue = watch('mileage')
-  const plateInfo = watch('plateInfo')
+  const plateLost = watch('plateLost')
   const plateCountValue = watch('plateCount')
 
   const { data, loading } = useQuery<Query>(
@@ -152,10 +141,14 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
     'vehicle TRAFFIC',
     vehicleTrafficData?.outInStatus.toLocaleUpperCase(),
   )
-  const isDeregistered =
+  const outInStatus =
     vehicleTrafficData?.outInStatus.toLocaleUpperCase() === 'OUT'
+      ? OutInUsage.OUT
+      : OutInUsage.IN
 
-  console.log('fsadfadsfa ', { isDeregistered })
+  const useStatus = vehicleTrafficData?.useStatus
+
+  console.log('fsadfadsfa ', { outInStatus })
 
   const [
     setRecyclingRequest,
@@ -202,11 +195,11 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
       newMileage = +mileageValue.trim().replace(/\./g, '')
     }
 
+    console.log('plateLost', { plateLost })
     console.log('handleConfirm', {
       plateCountValue,
-      plateLostValue: plateInfo === PlateInfo.PLATE_LOST ? 1 : 0,
-
-      isDeregistered,
+      plateLostValue: plateLost?.length ? true : false,
+      outInStatus,
       mileageValue,
     })
 
@@ -216,8 +209,8 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
         permno: vehicle?.vehicleId,
         mileage: newMileage,
         plateCount: plateCountValue,
-        plateLost: plateInfo === PlateInfo.PLATE_LOST ? true : false,
-        deregistered: isDeregistered,
+        plateLost: plateLost?.length ? true : false,
+        deregistered: false, //isDeregistered, ?? Finna út úr hvort afksráð í stað úr umferð
       },
     })
 
@@ -285,7 +278,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
             <Text variant="h1">{t.titles.success}</Text>
             <Text variant="intro">{t.info.success}</Text>
             <FormProvider {...methods}>
-              <CarDetailsBox
+              <CarDetailsBox2
                 vehicleId={vehicle.vehicleId}
                 vehicleType={vehicle.vehicleType}
                 modelYear={getYear(vehicle.newregDate)}
@@ -294,8 +287,9 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
                   vehicle.recyclingRequests[0].nameOfRequestor
                 }
                 mileage={vehicle.mileage || 0}
-                showMileage
                 isDeregistered
+                outInStatus={outInStatus}
+                useStatus={useStatus || ''}
               />
             </FormProvider>
           </Stack>

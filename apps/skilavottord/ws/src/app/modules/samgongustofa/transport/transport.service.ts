@@ -25,6 +25,7 @@ export class TransportService {
 
       const headerAuthRequest = {
         'Content-Type': 'application/json',
+        'Api-version': '3.0',
       }
 
       const authRes = await lastValueFrom(
@@ -41,8 +42,10 @@ export class TransportService {
 
       return authRes.data['jwtToken']
     } catch (error) {
-      delete error?.config
-      delete error?.response?.config?.data
+      if (error?.config) {
+        error.config.data = undefined
+      }
+
       logger.error('car-recycling: Authentication failed', error)
       throw error
     }
@@ -52,10 +55,7 @@ export class TransportService {
     restURL: string,
     queryParams: { [key: string]: string } | undefined,
   ) {
-    console.log('DOGet  #1')
     const jwtToken = await this.authenticate()
-
-    console.log('DOGet   #2', { restURL })
 
     let fullUrl = restURL
 
@@ -70,8 +70,6 @@ export class TransportService {
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + jwtToken,
     }
-
-    console.log('fullUrl', fullUrl)
 
     const result = await lastValueFrom(
       this.httpService.get(fullUrl, {

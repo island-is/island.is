@@ -83,9 +83,9 @@ export class VehicleModel extends Model<VehicleModel> {
 
   @Field({ nullable: true })
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.BOOLEAN,
   })
-  plateLost?: number
+  plateLost?: boolean
 
   @Field({ nullable: true })
   @Column({

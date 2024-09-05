@@ -344,13 +344,11 @@ export class SamgongustofaService {
       const url = this.transportService.getRegistrationURL()
 
       const result = await this.transportService.doGet(
-        url + 'traffic/' + 'LT579',
+        url + 'traffic/' + permno,
         undefined,
       )
 
       if (result.status === 200) {
-        console.log('GOT TRAFFIC', result.data)
-
         // Get the latest registered traffic data
         return Object.values(result.data).reduce(
           (prev: Traffic, current: Traffic) =>
