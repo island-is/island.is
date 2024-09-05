@@ -21,6 +21,8 @@
 
 /*                                                                                                       @island-is/core
 /libs/api/domains/identity/                                                                              @island-is/core
+# Edge case escaping the /infra/ and **/infra/ devops patterns below
+/libs/infra-nest-server/src/lib/infra/                                                                   @island-is/core
 /libs/testing/                                                                                           @island-is/core
 /libs/nest/swagger/                                                                                      @island-is/core
 
