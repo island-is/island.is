@@ -120,7 +120,7 @@ export const expandAnswers = (
     },
     approveExternalData: answers.approveExternalData,
     assets: {
-      assetsTotal: answers.assets.assetsTotal ?? 0,
+      assetsTotal: answers.assets.realEstate?.total ?? 0,
       bankAccounts: {
         data: (answers.assets.bankAccounts?.data ?? []).map((account) => {
           return {
