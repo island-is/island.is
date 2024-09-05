@@ -80,7 +80,7 @@ export {
   courtSessionTypeNames,
 } from './lib/case'
 
-export { getIndictmentVerdictAppealDeadline } from './lib/indictmentCase'
+export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
 
 export type {
   CrimeScene,

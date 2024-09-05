@@ -3,10 +3,10 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
-  DateType,
-  getIndictmentVerdictAppealDeadline,
+  getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
   InstitutionType,
   isCourtOfAppealsUser,
@@ -19,10 +19,10 @@ import {
   isRequestCase,
   isRestrictionCase,
   RequestSharedWithDefender,
+  ServiceRequirement,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory } from '../../../factories'
 import { Case } from '../models/case.model'
 import { DateLog } from '../models/dateLog.model'
 
@@ -186,22 +186,23 @@ const canPrisonSystemUserAccessCase = (
   // Check case type access
   if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
     if (isIndictmentCase(theCase.type)) {
-      const verdictViewDates = theCase.defendants?.map(
-        (defendant) => defendant.verdictViewDate,
+      const verdictInfo = theCase.defendants?.map<[boolean, Date | undefined]>(
+        (defendant) => [
+          theCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.RULING &&
+            defendant.serviceRequirement !== ServiceRequirement.NOT_REQUIRED,
+          defendant.verdictViewDate,
+        ],
       )
 
-      const indictmentVerdictAppealDeadline =
-        getIndictmentVerdictAppealDeadline(verdictViewDates)
-
-      if (!indictmentVerdictAppealDeadline) {
-        return false
-      }
+      const [_, indictmentVerdictAppealDeadlineExpired] =
+        getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
 
       if (
         theCase.state === CaseState.COMPLETED &&
         theCase.indictmentReviewDecision ===
           IndictmentCaseReviewDecision.ACCEPT &&
-        indictmentVerdictAppealDeadline < nowFactory()
+        indictmentVerdictAppealDeadlineExpired
       ) {
         return true
       }
