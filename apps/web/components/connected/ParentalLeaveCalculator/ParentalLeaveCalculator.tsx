@@ -612,15 +612,11 @@ const calculateResults = (
 
     additionalPensionFunding =
       mainResultBeforeDeduction *
-      (input.additionalPensionFundingPercentage ?? 0 / 100)
+      ((input.additionalPensionFundingPercentage ?? 0) / 100)
 
     pensionFunding =
       mainResultBeforeDeduction *
       (constants.pensionFundingRequiredPercentage / 100)
-
-    /* --- After deduction --- */
-
-    mainResultAfterDeduction = mainResultBeforeDeduction
 
     const unionOptions: { label: string; percentage: number }[] =
       slice.configJson?.unionOptions ?? []
@@ -631,6 +627,9 @@ const calculateResults = (
         ?.percentage ?? 0) /
         100)
 
+    /* --- After deduction --- */
+
+    mainResultAfterDeduction = mainResultBeforeDeduction
     mainResultAfterDeduction -= unionFee
     mainResultAfterDeduction =
       mainResultAfterDeduction - (totalTax - usedPersonalDiscount)
