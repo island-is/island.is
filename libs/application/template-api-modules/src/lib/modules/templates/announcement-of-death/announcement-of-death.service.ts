@@ -128,21 +128,29 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
     if (!applicant) return
 
     if (applicant.phone) {
-      await this.sendSmsNotification(applicant.phone, application)
+      await this.sendSmsNotification(application, applicant)
     }
     if (applicant.email) {
       await this.sendEmailNotification(applicant.email, application)
     }
   }
 
-  private async sendSmsNotification(phone: string, application: Application) {
+  private async sendSmsNotification(
+    application: Application,
+    firearmApplicant: FirearmApplicant,
+  ) {
     try {
       await this.sharedTemplateAPIService.sendSms(
         (_) => generateRequestReviewSms(application),
         application,
       )
     } catch (error) {
-      this.logger.error(`Error sending SMS to ${phone}`, error)
+      this.logger.error(
+        `Error sending sms about submit application to 
+        a phonenumber in application: ID: ${application.id}, 
+        role: ${firearmApplicant.nationalId}`,
+      ),
+        error
     }
   }
 
