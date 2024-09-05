@@ -19,6 +19,13 @@ export const preview = {
       description: 'Title of the preview section',
     },
   }),
+  errors: defineMessages({
+    noContent: {
+      id: 'ojoi.application:preview.errors.noContent',
+      defaultMessage: 'Innihald innsendingar er ekki útfyllt',
+      description: 'Error message when content is missing',
+    },
+  }),
   buttons: defineMessages({
     fetchPdf: {
       id: 'ojoi.application:preview.buttons.fetchPdf',

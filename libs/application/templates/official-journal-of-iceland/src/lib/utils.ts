@@ -293,11 +293,13 @@ export const getAdvertMarkup = ({
     ? `<p align="center"><strong>${title}</strong></p>`
     : ''
 
+  const htmlMarkup = html ? html : ''
+
   return `
     <div class="advert">
       ${typeMarkup}
       ${titleMarkup}
-      ${html}
+      ${htmlMarkup}
     </div>
   ` as HTMLText
 }

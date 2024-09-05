@@ -81,6 +81,11 @@ export const error = defineMessages({
     defaultMessage: 'Innihald innsendingar má ekki vera autt',
     description: 'Error message when html is missing',
   },
+  missingHtmlMessage: {
+    id: 'ojoi.application:error.missingHtmlMessage',
+    defaultMessage: 'Innsending samanstendur af eftirfarandi reitum',
+    description: 'Error message when html is missing',
+  },
   missingRequestedDate: {
     id: 'ojoi.application:error.missingRequestedDate',
     defaultMessage: 'Útgáfudagsetning má ekki vera tóm',

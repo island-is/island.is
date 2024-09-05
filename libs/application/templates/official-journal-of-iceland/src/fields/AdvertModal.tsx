@@ -17,7 +17,7 @@ import { useQuery } from '@apollo/client'
 import { ADVERTS_QUERY } from '../graphql/queries'
 import debounce from 'lodash/debounce'
 import { DEBOUNCE_INPUT_TIMER } from '../lib/constants'
-import { ChangeEvent, ReactNode, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { OfficialJournalOfIcelandGraphqlResponse } from '../lib/types'
 type Props = {
   visible: boolean

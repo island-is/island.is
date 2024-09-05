@@ -1,37 +1,22 @@
 import {
   AlertMessage,
   Box,
-  Button,
+  Bullet,
+  BulletList,
   SkeletonLoader,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { signatureConfig } from '../components/htmlEditor/config/signatureConfig'
-import { advertisementTemplate } from '../components/htmlEditor/templates/content'
-import { preview } from '../lib/messages'
-import {
-  OJOIFieldBaseProps,
-  OfficialJournalOfIcelandGraphqlResponse,
-} from '../lib/types'
+import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
-import { useQuery } from '@apollo/client'
-import { PDF_QUERY, PDF_URL_QUERY, TYPE_QUERY } from '../graphql/queries'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { getAdvertMarkup, getSignatureMarkup } from '../lib/utils'
-import { SignatureType, SignatureTypes } from '../lib/constants'
+import { SignatureTypes } from '../lib/constants'
 import { useApplication } from '../hooks/useUpdateApplication'
-import { error } from '../lib/messages'
-
-type Entity = {
-  id: string
-  title: string
-  slug: string
-}
-
-type TypeResponse = {
-  officialJournalOfIcelandType: {
-    type: Entity
-  }
-}
+import { advert, error, preview } from '../lib/messages'
+import { useType } from '../hooks/useType'
 
 export const Preview = ({ application }: OJOIFieldBaseProps) => {
   const { application: currentApplication } = useApplication({
@@ -41,46 +26,18 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
 
   const {
-    data: typeData,
-    loading: typeLoading,
+    type,
+    loading,
     error: typeError,
-  } = useQuery<TypeResponse>(TYPE_QUERY, {
-    variables: {
-      params: {
-        id: currentApplication.answers.advert?.typeId,
-      },
-    },
+  } = useType({
+    typeId: currentApplication.answers.advert?.typeId,
   })
 
-  if (!currentApplication.answers.advert?.typeId) {
-    return (
-      <AlertMessage
-        type="warning"
-        message={f(error.missingType)}
-        title={f(error.missingType)}
-      />
-    )
-  }
-
-  if (typeLoading) {
+  if (loading) {
     return (
       <SkeletonLoader height={40} space={2} repeat={5} borderRadius="large" />
     )
   }
-
-  if (typeError) {
-    return (
-      <AlertMessage
-        type="error"
-        message={f(error.fetchFailedMessage)}
-        title={f(error.fetchFailedTitle)}
-      />
-    )
-  }
-
-  /**
-   * TOOD: Fetch S3 URL for PDF if the user requests it
-   */
 
   const signatureMarkup = getSignatureMarkup({
     signatures: currentApplication.answers.signatures,
@@ -88,22 +45,57 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
   })
 
   const advertMarkup = getAdvertMarkup({
-    type: typeData?.officialJournalOfIcelandType.type.title,
+    type: type?.title,
     title: currentApplication.answers.advert?.title,
     html: currentApplication.answers.advert?.html,
   })
 
-  const combinedHtml = `${advertMarkup}<br />${signatureMarkup}` as HTMLText
+  const hasMarkup =
+    !!currentApplication.answers.advert?.html ||
+    type?.title ||
+    currentApplication.answers.advert?.title
+
+  const combinedHtml = hasMarkup
+    ? (`${advertMarkup}<br />${signatureMarkup}` as HTMLText)
+    : (`${signatureMarkup}` as HTMLText)
 
   return (
-    <Box border="standard" borderRadius="large">
-      <HTMLEditor
-        name="preview.document"
-        config={signatureConfig}
-        readOnly={true}
-        hideWarnings={true}
-        value={combinedHtml}
-      />
-    </Box>
+    <Stack space={4}>
+      <Box hidden={!hasMarkup && !!typeError}>
+        <Stack space={2}>
+          {typeError && (
+            <AlertMessage
+              type="error"
+              message={f(error.fetchFailedMessage)}
+              title={f(error.fetchFailedTitle)}
+            />
+          )}
+          <AlertMessage
+            type="warning"
+            title={f(preview.errors.noContent)}
+            message={
+              <Stack space={1}>
+                <Text>{f(error.missingHtmlMessage)}</Text>
+                <BulletList space={1} color="black">
+                  <Bullet>{f(advert.inputs.department.label)}</Bullet>
+                  <Bullet>{f(advert.inputs.type.label)}</Bullet>
+                  <Bullet>{f(advert.inputs.title.label)}</Bullet>
+                  <Bullet>{f(advert.inputs.editor.label)}</Bullet>
+                </BulletList>
+              </Stack>
+            }
+          />
+        </Stack>
+      </Box>
+      <Box border="standard" borderRadius="large">
+        <HTMLEditor
+          name="preview.document"
+          config={signatureConfig}
+          readOnly={true}
+          hideWarnings={true}
+          value={combinedHtml}
+        />
+      </Box>
+    </Stack>
   )
 }
