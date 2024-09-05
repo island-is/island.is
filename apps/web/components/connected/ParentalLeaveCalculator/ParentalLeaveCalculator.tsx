@@ -562,6 +562,70 @@ const calculateResults = (
   let additionalPensionFunding = 0
   let pensionFunding = 0
 
+  if (input.status === Status.STUDENT) {
+    mainResultBeforeDeduction = constants.parentalLeaveStudent
+
+    let taxStep = 1
+
+    if (mainResultBeforeDeduction > constants.taxBracket1) {
+      taxStep = 2
+    } else if (mainResultBeforeDeduction > constants.taxBracket2) {
+      taxStep = 3
+    }
+
+    if (taxStep === 1) {
+      totalTax = mainResultBeforeDeduction * (constants.taxRate1 / 100)
+    } else if (taxStep === 2) {
+      totalTax = mainResultBeforeDeduction * (constants.taxRate2 / 100)
+    } else if (taxStep === 3) {
+      totalTax = mainResultBeforeDeduction * (constants.taxRate3 / 100)
+    }
+
+    usedPersonalDiscount =
+      constants.personalDiscount * ((input.personalDiscount ?? 100) / 100)
+
+    if (usedPersonalDiscount > totalTax) {
+      usedPersonalDiscount = totalTax
+    }
+
+    mainResultAfterDeduction = mainResultBeforeDeduction
+
+    mainResultAfterDeduction =
+      mainResultAfterDeduction - (totalTax - usedPersonalDiscount)
+  }
+
+  if (input.status === Status.OUTSIDE_WORKFORCE) {
+    mainResultBeforeDeduction = constants.parentalLeaveGeneral
+
+    let taxStep = 1
+
+    if (mainResultBeforeDeduction > constants.taxBracket1) {
+      taxStep = 2
+    } else if (mainResultBeforeDeduction > constants.taxBracket2) {
+      taxStep = 3
+    }
+
+    if (taxStep === 1) {
+      totalTax = mainResultBeforeDeduction * (constants.taxRate1 / 100)
+    } else if (taxStep === 2) {
+      totalTax = mainResultBeforeDeduction * (constants.taxRate2 / 100)
+    } else if (taxStep === 3) {
+      totalTax = mainResultBeforeDeduction * (constants.taxRate3 / 100)
+    }
+
+    usedPersonalDiscount =
+      constants.personalDiscount * ((input.personalDiscount ?? 100) / 100)
+
+    if (usedPersonalDiscount > totalTax) {
+      usedPersonalDiscount = totalTax
+    }
+
+    mainResultAfterDeduction = mainResultBeforeDeduction
+
+    mainResultAfterDeduction =
+      mainResultAfterDeduction - (totalTax - usedPersonalDiscount)
+  }
+
   if (input.status === Status.PARENTAL_LEAVE) {
     if (
       typeof input.income !== 'number' ||
@@ -837,53 +901,55 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
       </Stack>
 
       <Stack space={3}>
-        <Table.Table>
-          <Table.Head>
-            <Table.HeadData>
-              {formatMessage(t.results.incomePrerequisitesHeading)}
-            </Table.HeadData>
-            <Table.HeadData align="right">
-              {formatMessage(t.results.perMonth)}
-            </Table.HeadData>
-          </Table.Head>
-          <Table.Body>
-            <Table.Row>
-              <Table.Data>
-                <MarkdownText replaceNewLinesWithBreaks={false}>
-                  {formatMessage(t.results.incomePrerequisitesDescription, {
-                    maxIncome: formatCurrencyUtil(
-                      constants.maxIncome,
-                      '',
-                      Math.ceil,
-                    ),
-                    parentalLeaveRatio: constants.parentalLeaveRatio,
-                    parentalLeaveLow: formatCurrencyUtil(
-                      constants.parentalLeaveLow,
-                      '',
-                      Math.ceil,
-                    ),
-                    parentalLeaveHigh: formatCurrencyUtil(
-                      constants.parentalLeaveHigh,
-                      '',
-                      Math.ceil,
-                    ),
-                  })}
-                </MarkdownText>
-              </Table.Data>
-              <Table.Data />
-            </Table.Row>
-            <Table.Row>
-              <Table.Data>
-                <Text fontWeight="semiBold">
-                  {formatMessage(t.results.incomePrerequisitesSubHeading)}
-                </Text>
-              </Table.Data>
-              <Table.Data align="right">
-                <Text whiteSpace="nowrap">{formatCurrency(income)}</Text>
-              </Table.Data>
-            </Table.Row>
-          </Table.Body>
-        </Table.Table>
+        {status === Status.PARENTAL_LEAVE && (
+          <Table.Table>
+            <Table.Head>
+              <Table.HeadData>
+                {formatMessage(t.results.incomePrerequisitesHeading)}
+              </Table.HeadData>
+              <Table.HeadData align="right">
+                {formatMessage(t.results.perMonth)}
+              </Table.HeadData>
+            </Table.Head>
+            <Table.Body>
+              <Table.Row>
+                <Table.Data>
+                  <MarkdownText replaceNewLinesWithBreaks={false}>
+                    {formatMessage(t.results.incomePrerequisitesDescription, {
+                      maxIncome: formatCurrencyUtil(
+                        constants.maxIncome,
+                        '',
+                        Math.ceil,
+                      ),
+                      parentalLeaveRatio: constants.parentalLeaveRatio,
+                      parentalLeaveLow: formatCurrencyUtil(
+                        constants.parentalLeaveLow,
+                        '',
+                        Math.ceil,
+                      ),
+                      parentalLeaveHigh: formatCurrencyUtil(
+                        constants.parentalLeaveHigh,
+                        '',
+                        Math.ceil,
+                      ),
+                    })}
+                  </MarkdownText>
+                </Table.Data>
+                <Table.Data />
+              </Table.Row>
+              <Table.Row>
+                <Table.Data>
+                  <Text fontWeight="semiBold">
+                    {formatMessage(t.results.incomePrerequisitesSubHeading)}
+                  </Text>
+                </Table.Data>
+                <Table.Data align="right">
+                  <Text whiteSpace="nowrap">{formatCurrency(income)}</Text>
+                </Table.Data>
+              </Table.Row>
+            </Table.Body>
+          </Table.Table>
+        )}
 
         <Table.Table>
           <Table.Head>
