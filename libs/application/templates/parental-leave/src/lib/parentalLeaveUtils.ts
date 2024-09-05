@@ -254,6 +254,30 @@ export const getTransferredDays = (
   return days
 }
 
+export const getPersonaldays = (application: Application) => {
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+  const maximumDaysToSpend = getAvailableRightsInDays(application)
+  const maximumMultipleBirthsDaysToSpend = getMultipleBirthsDays(application)
+  const maximumAdditionalSingleParentDaysToSpend =
+    getAdditionalSingleParentRightsInDays(application)
+  const transferredDays = getTransferredDays(application, selectedChild)
+  const personalDays =
+    maximumDaysToSpend -
+    maximumAdditionalSingleParentDaysToSpend -
+    maximumMultipleBirthsDaysToSpend -
+    Math.max(transferredDays, 0)
+  return personalDays
+}
+
+export const getPersonalDaysInMonths = (application: Application) =>
+  daysToMonths(getPersonaldays(application)).toFixed(1)
+
 export const getMultipleBirthsDays = (application: Application) => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -396,6 +420,11 @@ export const getAvailablePersonalRightsInMonths = (application: Application) =>
  */
 export const getAvailableRightsInMonths = (application: Application) =>
   daysToMonths(getAvailableRightsInDays(application))
+
+export const getTransferredDaysInMonths = (
+  application: Application,
+  selectedChild: ChildInformation,
+) => daysToMonths(getTransferredDays(application, selectedChild)).toFixed(1)
 
 export const getSpouse = (
   application: Application,
