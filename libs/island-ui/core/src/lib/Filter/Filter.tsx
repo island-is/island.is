@@ -1,4 +1,4 @@
-import React, { createContext, FC, ReactNode, useEffect } from 'react'
+import React, { createContext, FC, ReactNode } from 'react'
 import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
 import { usePopoverState, Popover, PopoverDisclosure } from 'reakit/Popover'
 import { Box } from '../Box/Box'
@@ -6,6 +6,8 @@ import { Button } from '../Button/Button'
 import { Inline } from '../Inline/Inline'
 import { Stack } from '../Stack/Stack'
 import { Text } from '../Text/Text'
+import { usePreventBodyScroll } from './usePreventBodyScroll'
+
 import * as styles from './Filter.css'
 
 export interface FilterProps {
@@ -61,41 +63,6 @@ interface FilterContextValue {
 export const FilterContext = createContext<FilterContextValue>({
   variant: undefined,
 })
-
-let initialBodyPosition: string | null = null
-let initialScrollPosition: number | null = null
-
-const usePreventBodyScroll = (preventBodyScroll: boolean) => {
-  useEffect(() => {
-    const isBrowser = typeof window !== 'undefined'
-    if (!isBrowser || !preventBodyScroll) {
-      return
-    }
-
-    if (initialBodyPosition === null) {
-      initialBodyPosition = window.document.body.style.position || 'static'
-    }
-    if (initialScrollPosition === null) {
-      initialScrollPosition = window.scrollY
-    }
-
-    // Prevent scrolling on the body element
-    window.document.body.style.position = 'fixed'
-
-    return () => {
-      if (initialBodyPosition !== null) {
-        window.document.body.style.position = initialBodyPosition
-        initialBodyPosition = null
-      }
-      if (initialScrollPosition !== null) {
-        // When setting the body position to fixed, the scroll position resets to 0
-        // Here we are restoring the scroll position
-        window.scrollTo(0, initialScrollPosition)
-        initialScrollPosition = null
-      }
-    }
-  }, [preventBodyScroll])
-}
 
 export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   labelClearAll = '',
