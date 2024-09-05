@@ -99,7 +99,6 @@ const VehiclesModule = React.memo(
             : {
                 width: '100%',
                 paddingHorizontal: 0,
-                paddingRight: theme.spacing[2],
               }
         }
       />

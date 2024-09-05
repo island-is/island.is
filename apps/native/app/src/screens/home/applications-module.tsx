@@ -137,7 +137,7 @@ const ApplicationsModule = React.memo(
             {intl.formatMessage({ id: 'home.applicationsStatus' })}
           </Heading>
         </TouchableOpacity>
-        {loading ? (
+        {loading && !data ? (
           <StatusCardSkeleton />
         ) : (
           <>
