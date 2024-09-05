@@ -10,7 +10,7 @@ export class ProxyController {
   constructor(private proxyService: ProxyService) {}
 
   @Post()
-  async login(@Req() req: Request, @Res() res: Response): Promise<any> {
-    return this.proxyService.proxyRequest(req)
+  async proxyRequest(@Req() req: Request, @Res() res: Response): Promise<void> {
+    return this.proxyService.proxyRequest({ req, res })
   }
 }

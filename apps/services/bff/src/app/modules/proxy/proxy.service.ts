@@ -1,12 +1,19 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
-import { Request } from 'express'
-
+import { ConfigType } from '@nestjs/config'
+import { Request, Response } from 'express'
+import fetch from 'node-fetch'
+import { BffConfig } from '../../bff.config'
+import { isExpired } from '../../utils/isExpired'
+import { AuthService } from '../auth/auth.service'
 import { CachedTokenResponse } from '../auth/auth.types'
 import { CacheService } from '../cache/cache.service'
-import { Observable } from 'rxjs'
 import { IdsService } from '../ids/ids.service'
+
+const defaultHeaders = {
+  'Content-Type': 'application/json',
+}
 
 @Injectable()
 export class ProxyService {
@@ -14,12 +21,29 @@ export class ProxyService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
 
+    @Inject(BffConfig.KEY)
+    private readonly config: ConfigType<typeof BffConfig>,
+
     private readonly cacheService: CacheService,
     private readonly idsService: IdsService,
+    private readonly authService: AuthService,
   ) {}
 
-  public async proxyRequest(req: Request): Promise<any> {
-    //Promise<Observable<any>> {
+  /**
+   * Proxies an incoming HTTP request to a target GraphQL API, handling authentication, token refresh,
+   * and response streaming. This method checks for a valid session ID (sid) from cookies, retrieves
+   * the cached authentication token, and refreshes it if expired. It then forwards the request
+   * to the target GraphQL API using the appropriate headers, including the refreshed token.
+   * The response from the target API is streamed back to the client, preserving headers
+   * and managing any errors that occur during the streaming process.
+   */
+  public async proxyRequest({
+    req,
+    res,
+  }: {
+    req: Request
+    res: Response
+  }): Promise<void> {
     const sid = req.cookies['sid']
 
     if (!sid) {
@@ -27,39 +51,62 @@ export class ProxyService {
     }
 
     try {
-      // TODO this is a work in progress
-      // A proxy for the [island.is](http://island.is) GraphQL API, which:
-
-      // 1. Reads session information from redis using session cookie.
-      // 2. Performs token refresh using the refresh token if the access token is expired.
-      // 3. Forwards request parameters to the GraphQL API endpoint, including the user’s access token.
-      // 4. Returns 401 if token refresh fails or no session information is found.
-
-      const cachedTokenResponse =
+      let cachedTokenResponse =
         await this.cacheService.get<CachedTokenResponse>(
           this.cacheService.createSessionKeyType('current', sid),
         )
 
-      // Check if the access token is expired
-
-      if (cachedTokenResponse.expires_in) {
-        // Refresh the token
-        const newTokenResponse = await this.idsService.refreshToken(
+      if (isExpired(cachedTokenResponse.accessTokenExp)) {
+        const tokenResponse = await this.idsService.refreshToken(
           cachedTokenResponse.refresh_token,
         )
-
-        console.log('newTokenResponse', newTokenResponse)
+        cachedTokenResponse = await this.authService.updateTokenCache(
+          tokenResponse,
+        )
       }
 
-      if (!cachedTokenResponse.userProfile) {
-        throw new Error('userProfile not found in cache')
+      const targetUrl = `${this.config.graphqlApiEndpont}?${
+        req.url.split('?')[1]
+      }`
+
+      const response = await fetch(targetUrl, {
+        method: 'POST',
+        headers: {
+          ...defaultHeaders,
+          Authorization: `Bearer ${cachedTokenResponse.access_token}`,
+        },
+        body: JSON.stringify(req.body),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`)
       }
 
-      //return cachedTokenResponse.userProfile
+      // Set headers from the target response to the client response
+      res.status(response.status)
+
+      Object.entries(defaultHeaders).forEach(([key, value]) => {
+        res.setHeader(key, value)
+      })
+
+      // Pipe the response body directly to the client
+      response.body.pipe(res)
+
+      response.body.on('error', (err) => {
+        this.logger.error('Proxy stream error:', err)
+
+        res.status(err.status || 500).send('Failed to proxy request')
+      })
+
+      // Make sure to end the response when the stream ends
+      // so that the client knows the request is complete
+      response.body.on('end', () => {
+        res.end()
+      })
     } catch (error) {
-      this.logger.error('Error getting user from cache: ', error)
+      this.logger.error('Error during proxy request processing: ', error)
 
-      throw new UnauthorizedException()
+      res.status(error.status || 500).send('Failed to proxy request')
     }
   }
 }

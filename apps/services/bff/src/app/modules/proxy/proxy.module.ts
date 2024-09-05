@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common'
-import { CacheModule } from '../cache/cache.module'
-import { CacheService } from '../cache/cache.service'
+import { AuthModule } from '../auth/auth.module'
+import { IdsService } from '../ids/ids.service'
 import { ProxyController } from './proxy.controller'
 import { ProxyService } from './proxy.service'
-import { IdsService } from '../ids/ids.service'
 
 @Module({
-  imports: [CacheModule],
+  imports: [AuthModule],
   controllers: [ProxyController],
-  providers: [ProxyService, CacheService, IdsService],
+  providers: [ProxyService, IdsService],
 })
 export class ProxyModule {}

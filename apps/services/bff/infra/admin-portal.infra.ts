@@ -1,5 +1,17 @@
 import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
+const generateWebBaseUrls = (path = '') => {
+  if (!path.startsWith('/')) {
+    path = `/${path}`
+  }
+
+  return {
+    dev: `https://beta.dev01.devland.is${path}`,
+    staging: `https://beta.staging01.devland.is${path}`,
+    prod: `https://island.is${path}`,
+  }
+}
+
 export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
   service('services-bff-admin-portal')
     .namespace('services-bff')
@@ -12,16 +24,9 @@ export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
-      BFF_CALLBACKS_BASE_PATH: {
-        dev: 'https://beta.dev01.devland.is/stjornbord/bff/callbacks',
-        staging: 'https://beta.staging01.devland.is/stjornbord/bff/callbacks',
-        prod: 'https://island.is/stjornbord/bff/callbacks',
-      },
-      BFF_LOGOUT_REDIRECT_PATH: {
-        dev: 'https://beta.dev01.devland.is',
-        staging: 'https://beta.staging01.devland.is',
-        prod: 'https://island.is',
-      },
+      BFF_CALLBACKS_BASE_PATH: generateWebBaseUrls('/stjornbord/bff/callbacks'),
+      BFF_LOGOUT_REDIRECT_PATH: generateWebBaseUrls(),
+      BFF_PROXY_API_ENDPOINT: generateWebBaseUrls('/api/graphql'),
       IDENTITY_SERVER_CLIENT_SCOPES: json([
         '@admin.island.is/delegation-system',
         '@admin.island.is/delegation-system:admin',

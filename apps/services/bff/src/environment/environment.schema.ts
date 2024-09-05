@@ -1,3 +1,4 @@
+import { graphql } from 'graphql'
 import { z } from 'zod'
 
 export const authSchema = z.strictObject({
@@ -21,6 +22,10 @@ export const environmentSchema = z.strictObject({
    * The client base path
    */
   clientBasePath: z.string(),
+  /**
+   * Our main GraphQL API endpoint
+   */
+  graphqlApiEndpont: z.string(),
   /**
    * The global prefix for the API
    */

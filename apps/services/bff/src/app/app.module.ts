@@ -7,11 +7,13 @@ import { BffConfig } from './bff.config'
 import { AuthModule as AppAuthModule } from './modules/auth/auth.module'
 import { UserModule } from './modules/user/user.module'
 import { ProxyModule } from './modules/proxy/proxy.module'
+import { CacheModule } from './modules/cache/cache.module'
 
 @Module({
   imports: [
     AuditModule.forRoot(environment.audit),
     BaseAuthModule.register(environment.auth),
+    CacheModule.register(),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [IdsClientConfig, BffConfig],

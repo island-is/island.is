@@ -9,10 +9,12 @@ const callbacksBaseRedirectPath = requiredString('BFF_CALLBACKS_BASE_PATH')
   .replace(/\/$/, '')
 
 const issuer = requiredString('IDENTITY_SERVER_ISSUER_URL')
+const logoutRedirectUri = requiredString('BFF_LOGOUT_REDIRECT_PATH')
 
 export const environment: BffEnvironmentSchema = {
   production: isProduction,
   clientBasePath: requiredString('BFF_CLIENT_BASE_PATH'),
+  graphqlApiEndpont: requiredString('BFF_PROXY_API_ENDPOINT'),
   globalPrefix: requiredString('BFF_API_URL_PREFIX'),
   audit: {
     groupName: requiredString('AUDIT_GROUP_NAME'),
@@ -40,6 +42,6 @@ export const environment: BffEnvironmentSchema = {
       login: `${callbacksBaseRedirectPath}/login`,
       logout: `${callbacksBaseRedirectPath}/logout`,
     },
-    logoutRedirectUri: requiredString('BFF_LOGOUT_REDIRECT_PATH'),
+    logoutRedirectUri,
   },
 }

@@ -6,18 +6,19 @@ import { Request, Response } from 'express'
 import { jwtDecode } from 'jwt-decode'
 
 import { IdTokenClaims } from '@island.is/shared/types'
+import omit from 'lodash/omit'
 import { uuid } from 'uuidv4'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
+import { TokenResponse } from '../ids/ids.types'
 import { CachedTokenResponse } from './auth.types'
 import { PKCEService } from './pkce.service'
 import { CallbackLoginQuery } from './queries/callback-login.query'
 import { CallbackLogoutQuery } from './queries/callback-logout.query'
 import { LoginQuery } from './queries/login.query'
 import { LogoutQuery } from './queries/logout.query'
-import omit from 'lodash/omit'
 
 @Injectable()
 export class AuthService {
@@ -56,6 +57,36 @@ export class AuthService {
 
     // Check if the URL matches any of the allowed patterns
     return regexPatterns.some((regex) => regex.test(uri))
+  }
+
+  /**
+   * Formats and updates the token cache with new token response data.
+   */
+  public async updateTokenCache(
+    tokenResponse: TokenResponse,
+  ): Promise<CachedTokenResponse> {
+    const userProfile: IdTokenClaims = jwtDecode(tokenResponse.id_token)
+    const decodedAccessToken = jwtDecode(tokenResponse.access_token)
+
+    const value: CachedTokenResponse = {
+      ...omit(tokenResponse, ['scope']),
+      scopes: tokenResponse.scope.split(' '),
+      userProfile,
+      accessTokenExp:
+        // Prefer the exact expiration time from the access token
+        decodedAccessToken.exp ||
+        // Fallback to token response expiration time in seconds
+        new Date(Date.now() + tokenResponse.expires_in * 1000).getTime(),
+    }
+
+    // Save the tokenResponse to the cache
+    await this.cacheService.save({
+      key: this.cacheService.createSessionKeyType('current', userProfile.sid),
+      value,
+      ttl: 60 * 60 * 1000, // 1 hour
+    })
+
+    return value
   }
 
   /**
@@ -158,20 +189,7 @@ export class AuthService {
       codeVerifier: loginAttemptData.codeVerifier,
     })
 
-    const userProfile: IdTokenClaims = jwtDecode(tokenResponse.id_token)
-    const sid = userProfile.sid
-    const value: CachedTokenResponse = {
-      ...omit(tokenResponse, ['scope']),
-      scopes: tokenResponse.scope.split(' '),
-      userProfile,
-    }
-
-    // Save the tokenResponse to the cache
-    await this.cacheService.save({
-      key: this.cacheService.createSessionKeyType('current', sid),
-      value,
-      ttl: 60 * 60 * 1000, // 1 hour
-    })
+    const value = await this.updateTokenCache(tokenResponse)
 
     // Clean up the login attempt from the cache since we have a successful login.
     await this.cacheService.delete(
@@ -179,7 +197,7 @@ export class AuthService {
     )
 
     // Create session cookie with successful login session id
-    res.cookie('sid', sid, {
+    res.cookie('sid', value.userProfile.sid, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',

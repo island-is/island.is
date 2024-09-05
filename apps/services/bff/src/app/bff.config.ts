@@ -9,6 +9,7 @@ const BffConfigSchema = z.object({
     nodes: z.array(z.string()),
     ssl: z.boolean(),
   }),
+  graphqlApiEndpont: z.string(),
   auth: authSchema,
 })
 
@@ -17,6 +18,7 @@ export const BffConfig = defineConfig({
   schema: BffConfigSchema,
   load(env) {
     return {
+      graphqlApiEndpont: env.required('BFF_PROXY_API_ENDPOINT'),
       redis: {
         nodes: env.requiredJSON('REDIS_URL_NODE_01', [
           'localhost:7000',

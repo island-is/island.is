@@ -3,9 +3,12 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { Request } from 'express'
 
+import { BffUser } from '@island.is/shared/types'
+import { isExpired } from '../../utils/isExpired'
+import { AuthService } from '../auth/auth.service'
 import { CachedTokenResponse } from '../auth/auth.types'
 import { CacheService } from '../cache/cache.service'
-import { BffUser } from '@island.is/shared/types'
+import { IdsService } from '../ids/ids.service'
 
 @Injectable()
 export class UserService {
@@ -14,7 +17,19 @@ export class UserService {
     private logger: Logger,
 
     private readonly cacheService: CacheService,
+    private readonly idsService: IdsService,
+    private readonly authService: AuthService,
   ) {}
+
+  private formatUserResponse(value: CachedTokenResponse): BffUser {
+    return {
+      scopes: value.scopes,
+      profile: {
+        ...value.userProfile,
+        dateOfBirth: new Date(value.userProfile.birthdate),
+      },
+    }
+  }
 
   public async getUser(req: Request): Promise<BffUser> {
     const sid = req.cookies['sid']
@@ -33,13 +48,21 @@ export class UserService {
         throw new Error('userProfile not found in cache')
       }
 
-      return {
-        scopes: cachedTokenResponse.scopes,
-        profile: {
-          ...cachedTokenResponse.userProfile,
-          dateOfBirth: new Date(cachedTokenResponse.userProfile.birthdate),
-        },
+      // Check if the access token is expired
+      if (isExpired(cachedTokenResponse.accessTokenExp)) {
+        // Get new token data with refresh token
+        const tokenResponse = await this.idsService.refreshToken(
+          cachedTokenResponse.refresh_token,
+        )
+
+        // Update cache with new token data
+        const value: CachedTokenResponse =
+          await this.authService.updateTokenCache(tokenResponse)
+
+        return this.formatUserResponse(value)
       }
+
+      return this.formatUserResponse(cachedTokenResponse)
     } catch (error) {
       this.logger.error('Error getting user from cache: ', error)
 

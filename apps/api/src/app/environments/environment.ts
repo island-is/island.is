@@ -96,7 +96,9 @@ const prodConfig = () => ({
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
+  enableCors: undefined,
 })
+
 const devConfig = () => ({
   production: false,
   xroad: {
@@ -206,7 +208,13 @@ const devConfig = () => ({
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
+  enableCors: {
+    origin: 'http://localhost:3333',
+    methods: ['POST'],
+    credentials: true,
+  },
 })
+
 export const getConfig =
   process.env.PROD_MODE === 'true' || process.env.NODE_ENV === 'production'
     ? prodConfig()
