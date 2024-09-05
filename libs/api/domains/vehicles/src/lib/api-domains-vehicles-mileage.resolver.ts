@@ -90,7 +90,7 @@ export class VehiclesMileageResolver {
 
     if (!res) return undefined
 
-    return mileageDetailConstructor(res)
+    return mileageDetailConstructor(res[0])
   }
 
   @ResolveField('canRegisterMileage', () => Boolean, {

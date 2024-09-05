@@ -14,12 +14,20 @@ import {
   CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
 } from '@island.is/clients/vehicles'
 import {
+  BulkMileageReadingRequestDetailDto,
+  BulkMileageReadingRequestDto,
+  BulkMileageReadingRequestResultDto,
   CanregistermileagePermnoGetRequest,
   GetMileageReadingRequest,
+  GetbulkmileagereadingrequestsPersidnoGetRequest,
+  GetbulkmileagereadingrequeststatusGuidGetRequest,
   MileageReadingApi,
+  MileageReadingDto,
   PostMileageReadingModel,
   PutMileageReadingModel,
+  RequestbulkmileagereadingPostRequest,
   RequiresmileageregistrationPermnoGetRequest,
+  ReturnTypeMessage,
   RootPostRequest,
   RootPutRequest,
 } from '@island.is/clients/vehicles-mileage'
@@ -37,7 +45,7 @@ import {
 import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 import { mileageDetailConstructor } from '../utils/helpers'
-import { handle404 } from '@island.is/clients/middlewares'
+import { handle201, handle404 } from '@island.is/clients/middlewares'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -304,17 +312,24 @@ export class VehiclesService {
       throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
     }
 
-    const res = await this.getMileageWithAuth(auth).rootPost({
+    const res = await this.getMileageWithAuth(auth).rootPostRaw({
       postMileageReadingModel: input,
     })
 
-    return res
+    if (res.raw.status === 200) {
+      this.logger.info(
+        'Tried to post already existing mileage reading. Should use PUT',
+      )
+      return null
+    }
+
+    return res.value()
   }
 
   async putMileageReading(
     auth: User,
     input: RootPutRequest['putMileageReadingModel'],
-  ): Promise<PutMileageReadingModel | null> {
+  ): Promise<Array<MileageReadingDto> | null> {
     if (!input) return null
 
     const isAllowed = await this.isAllowedMileageRegistration(
@@ -333,6 +348,38 @@ export class VehiclesService {
       putMileageReadingModel: input,
     })
     return res
+  }
+
+  async postBulkMileageReading(
+    auth: User,
+    input: RequestbulkmileagereadingPostRequest['postBulkMileageReadingModel'],
+  ): Promise<BulkMileageReadingRequestResultDto | null> {
+    if (!input) {
+      return null
+    }
+
+    const res = await this.getMileageWithAuth(
+      auth,
+    ).requestbulkmileagereadingPost({ postBulkMileageReadingModel: input })
+
+    return res
+  }
+
+  async getBulkMileageReadingRequests(
+    auth: User,
+  ): Promise<Array<BulkMileageReadingRequestDto> | null> {
+    return this.getMileageWithAuth(
+      auth,
+    ).getbulkmileagereadingrequestsPersidnoGet({ persidno: auth.nationalId })
+  }
+
+  async getBulkMileageReadingRequestById(
+    auth: User,
+    input: GetbulkmileagereadingrequeststatusGuidGetRequest['guid'],
+  ): Promise<Array<BulkMileageReadingRequestDetailDto>> {
+    return this.getMileageWithAuth(
+      auth,
+    ).getbulkmileagereadingrequeststatusGuidGet({ guid: input })
   }
 
   async canRegisterMileage(
