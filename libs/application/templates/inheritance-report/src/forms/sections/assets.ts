@@ -691,6 +691,11 @@ export const assets = buildSection({
               doesNotRequireAnswer: true,
               component: 'OverviewAssets',
             }),
+            buildCustomField({
+              title: '',
+              id: 'assets.assetsTotal',
+              component: 'SetTotalAssets',
+            }),
             buildDescriptionField({
               id: 'space',
               title: '',
