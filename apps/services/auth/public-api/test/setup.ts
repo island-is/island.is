@@ -155,10 +155,6 @@ export const setupWithAuth = async ({
         .useValue(createMockEinstaklingurApi(nationalRegistryUser))
         .overrideProvider(RskRelationshipsClient)
         .useValue(RskProcuringClientMock)
-        .overrideProvider(CompanyRegistryClientService)
-        .useValue({
-          getCompany: jest.fn().mockResolvedValue({}),
-        })
         .overrideProvider(DelegationConfig.KEY)
         .useValue(delegationConfig)
         .overrideProvider(FeatureFlagService)
