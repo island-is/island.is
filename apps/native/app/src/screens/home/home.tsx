@@ -137,7 +137,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     homeScreenEnableApplicationsWidget,
     homeScreenEnableInboxWidget,
     homeScreenEnableLicensesWidget,
-    homeScreenWidgetsInitialized,
+    homeScreenWidgetsInitialised,
   } = usePreferencesStore()
 
   const applicationsRes = useListApplicationsQuery({
@@ -174,7 +174,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   useEffect(() => {
     // If widgets have not been initialized, validate data and set state accordingly
-    if (!homeScreenWidgetsInitialized) {
+    if (!homeScreenWidgetsInitialised) {
       const shouldShowInboxWidget = validateInboxInitialData({ ...inboxRes })
 
       const shouldShowLicensesWidget = validateLicensesInitialData({
@@ -212,7 +212,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         return
       }
 
-      preferencesStore.setState({ homeScreenWidgetsInitialized: true })
+      preferencesStore.setState({ homeScreenWidgetsInitialised: true })
     }
   }, [
     licensesRes.loading,
