@@ -23,6 +23,7 @@ import {
   CaseFileState,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
+  isCompletedCase,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
@@ -195,7 +196,11 @@ export class FileService {
           )
         }
 
-        if (file.category === CaseFileCategory.RULING && theCase.rulingDate) {
+        if (
+          file.category === CaseFileCategory.RULING &&
+          isCompletedCase(theCase.state) &&
+          theCase.rulingDate
+        ) {
           return createConfirmedPdf(
             {
               actor: theCase.judge?.name ?? '',
@@ -232,11 +237,11 @@ export class FileService {
   }
 
   async getCaseFileFromS3(theCase: Case, file: CaseFile): Promise<Buffer> {
-    if (
-      isIndictmentCase(theCase.type) &&
-      hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
-    ) {
-      if (file.category === CaseFileCategory.INDICTMENT) {
+    if (isIndictmentCase(theCase.type)) {
+      if (
+        file.category === CaseFileCategory.INDICTMENT &&
+        hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
+      ) {
         return this.awsS3Service.getConfirmedIndictmentCaseObject(
           theCase.type,
           file.key,
@@ -246,7 +251,10 @@ export class FileService {
         )
       }
 
-      if (file.category === CaseFileCategory.RULING) {
+      if (
+        file.category === CaseFileCategory.RULING &&
+        isCompletedCase(theCase.state)
+      ) {
         return this.awsS3Service.getConfirmedIndictmentCaseObject(
           theCase.type,
           file.key,

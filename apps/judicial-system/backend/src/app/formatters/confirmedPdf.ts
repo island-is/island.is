@@ -338,11 +338,11 @@ export const createConfirmedPdf = async (
   const pdfDoc = await PDFDocument.load(pdf)
 
   if (fileType === CaseFileCategory.INDICTMENT) {
-    createIndictmentConfirmation(confirmation, pdfDoc)
+    await createIndictmentConfirmation(confirmation, pdfDoc)
   }
 
   if (fileType === CaseFileCategory.RULING) {
-    createRulingConfirmation(confirmation, pdfDoc)
+    await createRulingConfirmation(confirmation, pdfDoc)
   }
 
   const pdfBytes = await pdfDoc.save()
