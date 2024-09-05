@@ -16,6 +16,7 @@ import { ClientDelegationType } from '../clients/models/client-delegation-type.m
 import { Client } from '../clients/models/client.model'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 import { ApiScope } from '../resources/models/api-scope.model'
+import { UNKNOWN_NAME } from './constants/names'
 import { DelegationDTOMapper } from './delegation-dto.mapper'
 import { DelegationProviderService } from './delegation-provider.service'
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
@@ -27,9 +28,6 @@ import { DelegationDTO } from './dto/delegation.dto'
 import { MergedDelegationDTO } from './dto/merged-delegation.dto'
 
 import type { Logger } from '@island.is/logging'
-
-const UNKNOWN_NAME = 'Óþekkt nafn'
-
 type ClientDelegationInfo = Pick<
   Client,
   'supportedDelegationTypes' | 'requireApiScopes'
