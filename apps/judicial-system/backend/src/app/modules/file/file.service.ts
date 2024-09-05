@@ -26,8 +26,7 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { createConfirmedIndictment } from '../../formatters'
-import { createConfirmedRuling } from '../../formatters/confirmedRulingPdf'
+import { createConfirmedPdf } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -184,7 +183,7 @@ export class FileService {
       .findByNationalId(confirmationEvent.nationalId)
       .then((user) => {
         if (file.category === CaseFileCategory.INDICTMENT) {
-          return createConfirmedIndictment(
+          return createConfirmedPdf(
             {
               actor: user.name,
               title: user.title,
@@ -192,11 +191,12 @@ export class FileService {
               date: confirmationEvent.created,
             },
             pdf,
+            CaseFileCategory.INDICTMENT,
           )
         }
 
         if (file.category === CaseFileCategory.RULING && theCase.rulingDate) {
-          return createConfirmedRuling(
+          return createConfirmedPdf(
             {
               actor: theCase.judge?.name ?? '',
               title: theCase.judge?.title,
@@ -204,6 +204,7 @@ export class FileService {
               date: theCase.rulingDate,
             },
             pdf,
+            CaseFileCategory.RULING,
           )
         }
       })
