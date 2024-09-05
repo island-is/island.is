@@ -2,14 +2,16 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import {
+  IndividualDto,
+  NationalRegistryClientService,
+} from '@island.is/clients/national-registry-v2'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
-import { isDefined } from '@island.is/shared/utils'
 
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 import { ClientDelegationType } from '../clients/models/client-delegation-type.model'
@@ -81,9 +83,7 @@ export class DelegationsIncomingService {
     }
 
     // Index incoming delegations
-    void this.delegationsIndexService
-      .indexDelegations(user)
-      .catch((error) => this.logger.error('Failed to index delegations', error))
+    void this.delegationsIndexService.indexDelegations(user)
 
     const delegationPromises = []
 
@@ -273,37 +273,23 @@ export class DelegationsIncomingService {
       DelegationDTOMapper.recordToMergedDelegationDTO(d),
     )
 
-    const persons = (
-      await Promise.all(
-        merged.map((d) =>
-          this.nationalRegistryClient
-            .getIndividual(d.fromNationalId)
-            .catch((error) => error),
-        ),
-      )
-    )
-      .filter(this.isNotError)
-      .filter(isDefined)
-      .map((individual) => ({
-        nationalId: individual.nationalId,
-        name: individual.name ?? UNKNOWN_NAME,
-      }))
-
-    merged.forEach((d) => {
-      const person = persons.find((p) => p.nationalId === d.fromNationalId)
-      if (person) {
-        d.fromName = person.name
+    const updateName = async (
+      mergedDelegation: MergedDelegationDTO,
+    ): Promise<void> => {
+      try {
+        const fromIndividual: IndividualDto | null =
+          await this.nationalRegistryClient.getIndividual(
+            mergedDelegation.fromNationalId,
+          )
+        mergedDelegation.fromName = fromIndividual?.name ?? UNKNOWN_NAME
+      } catch (error) {
+        mergedDelegation.fromName = UNKNOWN_NAME
       }
-    })
+    }
+
+    await Promise.all(merged.map((d) => updateName(d)))
 
     return merged
-  }
-
-  /**
-   * Checks if item is not an instance of Error
-   */
-  private isNotError<T>(item: T | Error): item is T {
-    return item instanceof Error === false
   }
 
   private getClientDelegationInfo(
