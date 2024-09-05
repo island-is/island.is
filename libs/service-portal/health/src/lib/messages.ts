@@ -1150,4 +1150,28 @@ export const messages = defineMessages({
     id: 'sp.health:process',
     defaultMessage: 'Afgreiðslur',
   },
+  lastDispensed: {
+    id: 'sp.health:last-dispensed',
+    defaultMessage: 'Síðast afgreitt',
+  },
+  type: {
+    id: 'sp.health:type',
+    defaultMessage: 'Tegund',
+  },
+  renew: {
+    id: 'sp.health:renew',
+    defaultMessage: 'Endurnýja',
+  },
+  moreDetailedInfo: {
+    id: 'sp.health:more-detailed-info',
+    defaultMessage: 'Nánari upplýsingar',
+  },
+  dispenseHistory: {
+    id: 'sp.health:dispense-history',
+    defaultMessage: 'Afgreiðslusaga',
+  },
+  version: {
+    id: 'sp.health:version',
+    defaultMessage: 'Útgáfa',
+  },
 })

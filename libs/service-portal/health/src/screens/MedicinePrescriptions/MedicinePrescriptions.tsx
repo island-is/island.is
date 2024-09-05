@@ -8,7 +8,12 @@ import { HealthPaths } from '../../lib/paths'
 
 import DispensingContainer from './DispensingContainer'
 import NestedInfoLines from '../Medicine/components/NestedInfoLines/NestedInfoLines'
-import { MedicinePrescriptionsData } from '../Medicine/utils/mockData'
+import {
+  MedicineDispenseData,
+  MedicinePrescriptionDetailData,
+  MedicinePrescriptionDetailData2,
+  MedicinePrescriptionsData,
+} from '../Medicine/utils/mockData'
 
 const MedicinePrescriptions = () => {
   const { formatMessage } = useLocale()
@@ -44,7 +49,7 @@ const MedicinePrescriptions = () => {
                 item?.status.type === 'renew' ? (
                   <LinkButton
                     to={item.status.data}
-                    text="Endurnýja"
+                    text={formatMessage(messages.renew)}
                     icon="reload"
                   />
                 ) : item?.status.type === 'tooltip' ? (
@@ -56,71 +61,18 @@ const MedicinePrescriptions = () => {
               children: (
                 <Box padding={1} background={'blue100'}>
                   <NestedInfoLines
-                    label={'Nánari upplýsingar'}
-                    data={[
-                      {
-                        title: 'Lyf',
-                        type: 'link',
-                        href: HealthPaths.HealthMedicine,
-                        value: 'Esomeprazol Actavis 40mg',
-                      },
-                      {
-                        title: 'Tegund',
-                        value: 'Önnur lyf með verkun á taugakerfið',
-                      },
-                      {
-                        title: 'Notað við',
-                        value: 'Verkir',
-                      },
-                      {
-                        title: 'Ávísað magn',
-                        value: '100 ml',
-                      },
-                      {
-                        title: 'Notkunarleiðbeiningar',
-                        value: '2 ml 1 sinni á dag',
-                      },
-                    ]}
+                    label={formatMessage(messages.moreDetailedInfo)}
+                    data={MedicinePrescriptionDetailData}
                   />
 
                   <DispensingContainer
-                    label="Afgreiðslusaga"
-                    data={[
-                      {
-                        title: '1. afgreiðsla',
-                        value: 'Sótt í Árbæjarapótek 01.08.2023',
-                        icon: {
-                          type: 'checkmark',
-                          color: 'mint600',
-                        },
-                      },
-                      {
-                        title: '2. afgreiðsla',
-                        value: '01.08.2023',
-                        icon: {
-                          type: 'remove',
-                          color: 'dark300',
-                        },
-                      },
-                    ]}
+                    label={formatMessage(messages.dispenseHistory)}
+                    data={MedicineDispenseData}
                   />
 
                   <NestedInfoLines
-                    label={'Útgáfa'}
-                    data={[
-                      {
-                        title: 'Útgáfudagur',
-                        value: '06.06.2024',
-                      },
-                      {
-                        title: 'Læknir',
-                        value: 'Gunnar Gunnarsson',
-                      },
-                      {
-                        title: 'Gildir til',
-                        value: '05.06.2025',
-                      },
-                    ]}
+                    label={formatMessage(messages.version)}
+                    data={MedicinePrescriptionDetailData2}
                   />
                 </Box>
               ),
