@@ -199,10 +199,28 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         homeScreenEnableApplicationsWidget: shouldShowApplicationsWidget,
         homeScreenEnableVehiclesWidget: shouldShowVehiclesWidget,
         homeScreenEnableAirDiscountWidget: shouldShowAirDiscountWidget,
-        homeScreenWidgetsInitialized: true,
       })
+
+      // Don't set initialized state if any of the queries are still loading
+      if (
+        licensesRes.loading ||
+        applicationsRes.loading ||
+        inboxRes.loading ||
+        airDiscountRes.loading ||
+        vehiclesRes.loading
+      ) {
+        return
+      }
+
+      preferencesStore.setState({ homeScreenWidgetsInitialized: true })
     }
-  }, [licensesRes, applicationsRes, inboxRes, airDiscountRes, vehiclesRes])
+  }, [
+    licensesRes.loading,
+    applicationsRes.loading,
+    inboxRes.loading,
+    airDiscountRes.loading,
+    vehiclesRes.loading,
+  ])
 
   useConnectivityIndicator({
     componentId,
