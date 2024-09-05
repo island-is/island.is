@@ -12,7 +12,7 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import { useCategories } from '../hooks/useCategories'
-import { MINIMUM_WEEKDAYS, OJOJ_INPUT_HEIGHT } from '../lib/constants'
+import { MINIMUM_WEEKDAYS, OJOI_INPUT_HEIGHT } from '../lib/constants'
 import set from 'lodash/set'
 import addYears from 'date-fns/addYears'
 import { addWeekdays, getWeekendDates } from '../lib/utils'
@@ -33,7 +33,7 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
   } = useCategories()
 
   if (categoryLoading) {
-    return <SkeletonLoader height={OJOJ_INPUT_HEIGHT} repeat={2} />
+    return <SkeletonLoader height={OJOI_INPUT_HEIGHT} repeat={2} />
   }
 
   if (categoryError) {

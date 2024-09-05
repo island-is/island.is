@@ -1,6 +1,6 @@
 import { HTMLText } from '@island.is/regulations'
 import { Editor, EditorFileUploader } from '@island.is/regulations-tools/Editor'
-import { useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { classes, editorWrapper } from '../htmlEditor/HTMLEditor.css'
 import { baseConfig } from '../htmlEditor/config/baseConfig'
 import { Box } from '@island.is/island-ui/core'
@@ -12,6 +12,7 @@ type Props = {
   name: string
   defaultValue?: string
   onChange?: (value: HTMLText) => void
+  editorKey?: string
 }
 
 export const OJOIHtmlController = ({
@@ -19,6 +20,7 @@ export const OJOIHtmlController = ({
   name,
   onChange,
   defaultValue,
+  editorKey,
 }: Props) => {
   const { debouncedOnUpdateApplicationHandler, application } = useApplication({
     applicationId,
@@ -51,6 +53,7 @@ export const OJOIHtmlController = ({
       })}
     >
       <Editor
+        key={editorKey}
         config={baseConfig}
         classes={classes}
         fileUploader={fileUploader}

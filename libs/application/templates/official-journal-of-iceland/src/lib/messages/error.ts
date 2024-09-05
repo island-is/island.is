@@ -1,6 +1,16 @@
 import { defineMessages } from 'react-intl'
 
 export const error = defineMessages({
+  fetchAdvertFailed: {
+    id: 'ojoi.application:error.fetchAdvertFailed',
+    defaultMessage: 'Ekki tókst að sækja auglýsingu',
+    description: 'Error message when fetching advert fails',
+  },
+  fetchAdvertFailedMessage: {
+    id: 'ojoi.application:error.fetchAdvertFailedMessage',
+    defaultMessage: 'Villa kom upp við að sækja auglýsingu, reyndu aftur síðar',
+    description: 'Error message when fetching advert fails',
+  },
   fetchApplicationFailedTitle: {
     id: 'ojoi.application:error.fetchApplicationFailedTitle',
     defaultMessage: 'Ekki tókst að sækja umsókn',

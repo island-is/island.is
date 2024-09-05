@@ -5,7 +5,7 @@ import {
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import {
-  OJOJ_INPUT_HEIGHT,
+  OJOI_INPUT_HEIGHT,
   SignatureType,
   SignatureTypes,
 } from '../../lib/constants'
@@ -96,7 +96,7 @@ export const InstitutionSignature = ({
   }
 
   if (applicationLoading) {
-    return <SkeletonLoader repeat={5} height={OJOJ_INPUT_HEIGHT} space={2} />
+    return <SkeletonLoader repeat={5} height={OJOI_INPUT_HEIGHT} space={2} />
   }
 
   const { institution, date } = getSignatureDefaultValues(

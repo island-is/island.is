@@ -10,9 +10,17 @@ import { useTypes } from '../hooks/useTypes'
 import { OJOIInputController } from '../components/input/OJOIInputController'
 import { OJOIHtmlController } from '../components/input/OJOIHtmlController'
 import { useFormContext } from 'react-hook-form'
+import { useApplication } from '../hooks/useUpdateApplication'
 
-export const Advert = ({ application }: OJOIFieldBaseProps) => {
+type Props = OJOIFieldBaseProps & {
+  timeStamp: string
+}
+
+export const Advert = ({ application, timeStamp }: Props) => {
   const { setValue } = useFormContext()
+  const { application: currentApplication } = useApplication({
+    applicationId: application.id,
+  })
   const { departments, loading: loadingDepartments } = useDepartments()
   const {
     useLazyTypes,
@@ -98,7 +106,8 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
           <OJOIHtmlController
             applicationId={application.id}
             name={InputFields.advert.html}
-            defaultValue={application.answers?.advert?.html}
+            defaultValue={currentApplication.answers?.advert?.html}
+            editorKey={timeStamp}
             // we have use setValue from useFormContext to update the value
             // because this is not a controlled component
             onChange={(value) => setValue(InputFields.advert.html, value)}

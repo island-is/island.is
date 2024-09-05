@@ -2,7 +2,7 @@ import { SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { DatePickerController } from '@island.is/shared/form-fields'
 import { MessageDescriptor } from 'react-intl'
-import { OJOJ_INPUT_HEIGHT } from '../../lib/constants'
+import { OJOI_INPUT_HEIGHT } from '../../lib/constants'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import { useFormContext } from 'react-hook-form'
 import set from 'lodash/set'
@@ -50,7 +50,7 @@ export const OJOIDateController = ({
       <SkeletonLoader
         borderRadius="standard"
         display="block"
-        height={OJOJ_INPUT_HEIGHT}
+        height={OJOI_INPUT_HEIGHT}
       />
     )
   }

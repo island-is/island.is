@@ -1,6 +1,6 @@
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import * as styles from './Property.css'
-import { OJOJ_INPUT_HEIGHT } from '../../lib/constants'
+import { OJOI_INPUT_HEIGHT } from '../../lib/constants'
 type Props = {
   name?: string
   value?: string
@@ -15,7 +15,7 @@ export const Property = ({ name, value, loading = false }: Props) => {
   return (
     <Box className={styles.propertyWrap}>
       {loading ? (
-        <SkeletonLoader height={OJOJ_INPUT_HEIGHT} borderRadius="standard" />
+        <SkeletonLoader height={OJOI_INPUT_HEIGHT} borderRadius="standard" />
       ) : (
         <>
           <Box className={styles.property}>

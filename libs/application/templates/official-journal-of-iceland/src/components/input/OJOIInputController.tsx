@@ -2,7 +2,7 @@ import { SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { MessageDescriptor } from 'react-intl'
-import { OJOJ_INPUT_HEIGHT } from '../../lib/constants'
+import { OJOI_INPUT_HEIGHT } from '../../lib/constants'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import set from 'lodash/set'
 
@@ -54,7 +54,7 @@ export const OJOIInputController = ({
       <SkeletonLoader
         borderRadius="standard"
         display="block"
-        height={OJOJ_INPUT_HEIGHT}
+        height={OJOI_INPUT_HEIGHT}
       />
     )
   }

@@ -17,6 +17,9 @@ export enum ApplicationAttachmentType {
   ADDITIONS = 'fylgiskjol',
 }
 
+export const DEFAULT_PAGE = 1
+export const DEFAULT_PAGE_SIZE = 10
+
 export const MINIMUM_WEEKDAYS = 10
 
 export enum Routes {
@@ -53,7 +56,7 @@ export enum FileNames {
   ADDITIONS = 'additions',
 }
 
-export const OJOJ_INPUT_HEIGHT = 64
+export const OJOI_INPUT_HEIGHT = 64
 
 export type SignatureType = 'regular' | 'committee'
 export enum SignatureTypes {
