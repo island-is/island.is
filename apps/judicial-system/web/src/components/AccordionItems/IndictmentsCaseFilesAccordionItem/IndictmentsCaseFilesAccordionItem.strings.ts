@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const indictmentsCaseFilesAccordionItem = defineMessages({
+export const strings = defineMessages({
   title: {
     id: 'judicial.system.core:indictments_case_files_accordion_item.title',
     defaultMessage: 'Gögn úr LÖKE máli {policeCaseNumber}',
@@ -73,9 +73,9 @@ export const indictmentsCaseFilesAccordionItem = defineMessages({
     defaultMessage: 'Ekki tókst að endurraða skjölum',
     description: 'Notaður sem villuboð þegar endurröðun á skjölum mistókst.',
   },
-  removeFailedErrorMessage: {
-    id: 'judicial.system.core:indictments_case_files_accordion_item.remove_failed_error_message',
-    defaultMessage: 'Ekki tókst að eyða skjali',
-    description: 'Notaður sem villuboð þegar eyða skjali mistókst.',
+  renameFailedErrorMessage: {
+    id: 'judicial.system.core:indictments_case_files_accordion_item.rename_failed_error_message',
+    defaultMessage: 'Ekki tókst að endurnefna skjal',
+    description: 'Notaður sem villuboð þegar endurnefning á skjali mistókst.',
   },
 })

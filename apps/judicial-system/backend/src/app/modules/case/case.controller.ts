@@ -150,7 +150,7 @@ export class CaseController {
 
     const createdCase = await this.caseService.create(caseToCreate, user)
 
-    this.eventService.postEvent(CaseEvent.CREATE, createdCase as Case)
+    this.eventService.postEvent('CREATE', createdCase)
 
     return createdCase
   }
@@ -419,10 +419,7 @@ export class CaseController {
     )
 
     // No need to wait
-    this.eventService.postEvent(
-      transition.transition as unknown as CaseEvent,
-      updatedCase ?? theCase,
-    )
+    this.eventService.postEvent(transition.transition, updatedCase ?? theCase)
 
     return updatedCase ?? theCase
   }
@@ -891,7 +888,7 @@ export class CaseController {
 
     const extendedCase = await this.caseService.extend(theCase, user)
 
-    this.eventService.postEvent(CaseEvent.EXTEND, extendedCase as Case)
+    this.eventService.postEvent('EXTEND', extendedCase as Case)
 
     return extendedCase
   }

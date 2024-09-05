@@ -11,7 +11,6 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   defineTemplateApi,
-  JurisdictionApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
   NationalRegistryUserApi,
@@ -133,7 +132,6 @@ const template: ApplicationTemplate<
                   },
                 }),
                 DrivingAssessmentApi,
-                JurisdictionApi,
                 QualityPhotoApi,
                 ExistingApplicationApi.configure({
                   params: {
