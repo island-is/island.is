@@ -23,7 +23,7 @@ export class DelegationRecordDTO {
 
   @IsString()
   @ApiProperty({ type: String })
-  type: AuthDelegationType
+  type!: AuthDelegationType
 }
 
 export class PaginatedDelegationRecordDTO {

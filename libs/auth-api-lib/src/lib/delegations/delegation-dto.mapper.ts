@@ -21,7 +21,7 @@ export class DelegationDTOMapper {
     return {
       fromNationalId: dto.fromNationalId,
       toNationalId: dto.toNationalId,
-      types: dto.type,
+      types: [dto.type],
     }
   }
 }

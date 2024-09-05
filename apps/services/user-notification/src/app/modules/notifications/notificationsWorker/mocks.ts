@@ -1,6 +1,9 @@
 import faker from 'faker'
 
-import { DelegationRecordDTO } from '@island.is/clients/auth/delegation-api'
+import {
+  AuthDelegationType,
+  DelegationRecordDTO,
+} from '@island.is/clients/auth/delegation-api'
 import { UserProfileDto } from '@island.is/clients/user-profile'
 import { Features } from '@island.is/feature-flags'
 import { createNationalId } from '@island.is/testing/fixtures'
