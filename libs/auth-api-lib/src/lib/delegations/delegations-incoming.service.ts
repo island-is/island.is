@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   AuthDelegationProvider,
@@ -27,7 +27,6 @@ import { DelegationsIndexService } from './delegations-index.service'
 import { DelegationDTO } from './dto/delegation.dto'
 import { MergedDelegationDTO } from './dto/merged-delegation.dto'
 
-import type { Logger } from '@island.is/logging'
 type ClientDelegationInfo = Pick<
   Client,
   'supportedDelegationTypes' | 'requireApiScopes'
