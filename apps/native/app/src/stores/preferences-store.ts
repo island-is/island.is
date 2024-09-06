@@ -7,9 +7,9 @@ import { getDefaultOptions } from '../utils/get-default-options'
 import { getThemeWithPreferences } from '../utils/get-theme-with-preferences'
 import { getApolloClientAsync } from '../graphql/client'
 import {
-  GetUserLocaleDocument,
-  GetUserLocaleQuery,
-  GetUserLocaleQueryVariables,
+  GetProfileDocument,
+  GetProfileQuery,
+  GetProfileQueryVariables,
 } from '../graphql/types/schema'
 
 export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US'
@@ -73,10 +73,10 @@ export const preferencesStore = create<PreferencesStore>(
 
         try {
           const res = await client.query<
-            GetUserLocaleQuery,
-            GetUserLocaleQueryVariables
+            GetProfileQuery,
+            GetProfileQueryVariables
           >({
-            query: GetUserLocaleDocument,
+            query: GetProfileDocument,
           })
 
           const locale = res.data?.getUserProfile?.locale
