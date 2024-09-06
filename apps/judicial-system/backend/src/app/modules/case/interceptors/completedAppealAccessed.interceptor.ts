@@ -20,7 +20,7 @@ import { EventLogService } from '../../event-log'
 import { Case } from '../models/case.model'
 
 @Injectable()
-export class CaseInterceptor implements NestInterceptor {
+export class CompletedAppealAccessedInterceptor implements NestInterceptor {
   constructor(private readonly eventLogService: EventLogService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<Case> {
