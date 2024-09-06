@@ -1,5 +1,6 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { LogreglanLogo } from '../../assets'
 import { m } from '../../lib/messages'
 import { subSectionTempInfo } from './subSectionTempInfo'
 import { subSectionOtherCountry } from './subSectionOtherCountry'
@@ -7,13 +8,12 @@ import { subSectionOtherCountryDirections } from './subSectionOtherCountryDirect
 import { subSectionQualityPhoto } from './subSectionQualityPhoto'
 import { subSectionHealthDeclaration } from './subSectionHealthDeclaration'
 import { subSectionSummary } from './subSectionSummary'
-import { Syslumenn } from '../../assets'
 import { subSectionPhone } from './subSectionPhone'
 
 export const draft: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
   title: '',
-  logo: Syslumenn,
+  logo: LogreglanLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

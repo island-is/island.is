@@ -22,6 +22,7 @@ import { BE } from '../../lib/constants'
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
   title: m.healthDeclarationSectionTitle,
+  condition: (answers) => hasNoDrivingLicenseInOtherCountry(answers),
   children: [
     buildMultiField({
       id: 'overview',
@@ -61,6 +62,7 @@ export const subSectionHealthDeclaration = buildSubSection({
             component: 'HealthDeclaration',
           },
           {
+            title: m.healthDeclarationMultiFieldSubTitle,
             label: m.healthDeclaration1,
           },
         ),

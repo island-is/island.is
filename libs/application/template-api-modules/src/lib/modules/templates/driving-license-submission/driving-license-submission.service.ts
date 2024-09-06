@@ -176,7 +176,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         })
     }
 
-    if (applicationFor === 'B-full-renewal-65') {
+    /*if (applicationFor === 'B-full-renewal-65') {
       const healthCertificate: string = await this.getBase64EncodedAttachment(
         application,
       )
@@ -187,7 +187,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           Base64EncodedHealthCertificate: healthCertificate,
         },
       )
-    } else if (applicationFor === 'B-full') {
+    } else */
+    if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId as number,
         needsToPresentHealthCertificate: needsHealthCert || remarks,

@@ -64,8 +64,15 @@ export const subSectionTempInfo = buildSubSection({
           value: ({ externalData: { nationalRegistry } }) => {
             const address = (nationalRegistry.data as NationalRegistryUser)
               .address
-            return `${address?.streetAddress}${
-              address?.postalCode ? ', ' + address?.postalCode : ''
+
+            if (!address) {
+              return ''
+            }
+
+            const { streetAddress, postalCode, city } = address
+
+            return `${streetAddress}${
+              city ? ', ' + postalCode + ' ' + city : ''
             }`
           },
           width: 'half',
