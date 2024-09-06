@@ -63,10 +63,6 @@ export class OfficialJournalOfIcelandApplicationResolver {
     return this.ojoiApplicationService.getPdfUrl(id)
   }
 
-  getPdf(@Args('id') id: string) {
-    return this.ojoiApplicationService.getPdf(id)
-  }
-
   @Mutation(() => GetPresignedUrlResponse, {
     name: 'officialJournalOfIcelandApplicationGetPresignedUrl',
   })
