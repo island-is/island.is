@@ -2,7 +2,6 @@ import {
   defineTemplateApi,
   InstitutionNationalIds,
   PaymentCatalogApi,
-  defineTemplateApi,
 } from '@island.is/application/types'
 export {
   NationalRegistryUserApi,
