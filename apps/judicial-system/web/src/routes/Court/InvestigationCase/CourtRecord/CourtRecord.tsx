@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -12,6 +12,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { lowercase } from '@island.is/judicial-system/formatters'
 import {
   closedCourt,
   core,
@@ -120,7 +121,9 @@ const CourtRecord: FC = () => {
     } else {
       if (workingCase.prosecutor) {
         autofillAttendees.push(
-          `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
+          `${workingCase.prosecutor.name} ${lowercase(
+            workingCase.prosecutor.title,
+          )}`,
         )
       }
 

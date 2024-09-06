@@ -139,11 +139,26 @@ export const m = defineMessages({
     id: 'service.portal:amount',
     defaultMessage: 'Upphæð',
   },
+  approved: {
+    id: 'service.portal:approved',
+    defaultMessage: 'Samþykkt',
+  },
+  processed: {
+    id: 'service.portal:processed',
+    defaultMessage: 'Afgreitt',
+  },
+  rejected: {
+    id: 'service.portal:rejected',
+    defaultMessage: 'Hafnað',
+  },
+  unknown: {
+    id: 'service.portal:unknown',
+    defaultMessage: 'Óþekkt',
+  },
   view: {
     id: 'service.portal:view',
     defaultMessage: 'Skoða',
   },
-
   chooseDate: {
     id: 'service.portal:choose-date',
     defaultMessage: 'Veldu dagsetningu',
@@ -512,6 +527,14 @@ export const m = defineMessages({
   signatureCollectionLists: {
     id: 'service.portal:signatureCollectionLists',
     defaultMessage: 'Meðmælasöfnun',
+  },
+  signatureCollectionParliamentaryLists: {
+    id: 'service.portal:signatureCollectionParliamentaryLists',
+    defaultMessage: 'Alþingiskosningar - Meðmælasöfnun',
+  },
+  signatureCollectionPresidentialLists: {
+    id: 'service.portal:signatureCollectionPresidentialLists',
+    defaultMessage: 'Forsetakosningar - Meðmælasöfnun',
   },
   notifications: {
     id: 'service.portal:notifications',
@@ -1440,6 +1463,19 @@ export const m = defineMessages({
     defaultMessage:
       'Einstaklingar geta átt rétt á greiðslum frá Tryggingastofnun (TR) til að bæta afkomu sína og hag. Allar greiðslur frá TR þarf að sækja sérstaklega um.',
   },
+  incomePlan: {
+    id: 'service.portal:income-plan',
+    defaultMessage: 'Tekjuáætlun',
+  },
+  latestIncomePlan: {
+    id: 'service.portal:latest-income-plan',
+    defaultMessage: 'Yfirlit yfir núverandi tekjuáætlun',
+  },
+  incomePlanDescription: {
+    id: 'service.portal:income-plan',
+    defaultMessage:
+      'Ellilífeyrir, örorkulífeyrir, endurhæfingarlífeyrir og tengdar greiðslur eru tekjutengdar og reiknast út frá tekjuáætlun. Þegar sótt er um lífeyri þarf alltaf að skila inn tekjuáætlun. Hér er hægt að skoða gildandi tekjuáætlun.',
+  },
   paymentPlan: {
     id: 'service.portal:payment-plan',
     defaultMessage: 'Greiðsluáætlun',
@@ -1563,5 +1599,9 @@ export const m = defineMessages({
   readMoreAbout: {
     id: 'service.portal:read-more-about',
     defaultMessage: 'Lesa meira um {arg}',
+  },
+  submit: {
+    id: 'service.portal:submit',
+    defaultMessage: 'Staðfesta',
   },
 })

@@ -5,7 +5,6 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
-  DateType,
   getIndictmentVerdictAppealDeadline,
   IndictmentCaseReviewDecision,
   InstitutionType,
@@ -24,6 +23,7 @@ import {
 
 import { nowFactory } from '../../../factories'
 import { Case } from '../models/case.model'
+import { DateLog } from '../models/dateLog.model'
 
 const canProsecutionUserAccessCase = (
   theCase: Case,
@@ -185,8 +185,8 @@ const canPrisonSystemUserAccessCase = (
   // Check case type access
   if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
     if (isIndictmentCase(theCase.type)) {
-      const verdictViewDates = theCase.defendants?.map((defendant) =>
-        defendant.verdictViewDate?.toISOString(),
+      const verdictViewDates = theCase.defendants?.map(
+        (defendant) => defendant.verdictViewDate,
       )
 
       const indictmentVerdictAppealDeadline =
@@ -269,9 +269,7 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
     return false
   }
 
-  const arraignmentDate = theCase.dateLogs?.find(
-    (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-  )?.date
+  const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
 
   // Check submitted case access
   const canDefenderAccessSubmittedCase =

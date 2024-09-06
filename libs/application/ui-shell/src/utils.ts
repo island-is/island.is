@@ -8,7 +8,7 @@ import {
   RecordObject,
   SubmitField,
 } from '@island.is/application/types'
-import { FormScreen } from './types'
+import { FormScreen, MOCKPAYMENT } from './types'
 import pick from 'lodash/pick'
 import get from 'lodash/get'
 
@@ -114,6 +114,8 @@ export function extractAnswersToSubmitFromScreen(
   }
 
   switch (screen.type) {
+    case FormItemTypes.EXTERNAL_DATA_PROVIDER:
+      return pick(data, [screenId, MOCKPAYMENT])
     case FormItemTypes.MULTI_FIELD:
       return pick(
         data,

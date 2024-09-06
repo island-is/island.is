@@ -1,17 +1,17 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 
 import {
   calculatePt,
+  Confirmation,
   drawTextWithEllipsisPDFKit,
-  IndictmentConfirmation,
   smallFontSize,
 } from './pdfHelpers'
 import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 
 export const createConfirmedIndictment = async (
-  confirmation: IndictmentConfirmation,
+  confirmation: Confirmation,
   indictmentPDF: Buffer,
 ): Promise<Buffer> => {
   const pdfDoc = await PDFDocument.load(indictmentPDF)
@@ -115,14 +115,14 @@ export const createConfirmedIndictment = async (
   if (confirmation?.actor) {
     timesRomanFont.widthOfTextAtSize(
       `${confirmation.actor}${
-        confirmation.title ? `, ${confirmation.title}` : ''
+        confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
       }`,
       calculatePt(smallFontSize),
     )
     drawTextWithEllipsisPDFKit(
       doc,
       `${confirmation.actor}${
-        confirmation.title ? `, ${confirmation.title}` : ''
+        confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
       }`,
       { type: timesRomanFont, size: calculatePt(smallFontSize) },
       titleX,

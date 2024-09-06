@@ -1,11 +1,10 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Option, Select, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { isCompletedCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -39,15 +38,10 @@ import { strings } from './Overview.strings'
 type VisibleModal = 'REVIEWER_ASSIGNED' | 'DEFENDANT_VIEWS_VERDICT'
 
 export const isDefendantInfoActionButtonDisabled = (defendant: Defendant) => {
-  switch (defendant.serviceRequirement) {
-    case ServiceRequirement.NOT_APPLICABLE:
-    case ServiceRequirement.NOT_REQUIRED:
-      return true
-    case ServiceRequirement.REQUIRED:
-      return defendant.verdictViewDate !== null
-    default:
-      return false
-  }
+  return (
+    defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED ||
+    Boolean(defendant.verdictViewDate)
+  )
 }
 
 export const Overview = () => {
@@ -89,7 +83,7 @@ export const Overview = () => {
     const updatedDefendant = {
       caseId: workingCase.id,
       defendantId: selectedDefendant.id,
-      verdictViewDate: formatDateForServer(new Date()),
+      verdictViewDate: formatDateForServer(new Date()), // TODO: Let the server override this date as we cannot trust the client date
     }
 
     setAndSendDefendantToServer(updatedDefendant, setWorkingCase)
@@ -143,20 +137,15 @@ export const Overview = () => {
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment
-            defendantInfoActionButton={
-              isCompletedCase(workingCase.state) &&
-              workingCase.indictmentReviewer !== null
-                ? {
-                    text: fm(strings.displayVerdict),
-                    onClick: (defendant) => {
-                      setSelectedDefendant(defendant)
-                      setModalVisible('DEFENDANT_VIEWS_VERDICT')
-                    },
-                    icon: 'mailOpen',
-                    isDisabled: isDefendantInfoActionButtonDisabled,
-                  }
-                : undefined
-            }
+            defendantInfoActionButton={{
+              text: fm(strings.displayVerdict),
+              onClick: (defendant) => {
+                setSelectedDefendant(defendant)
+                setModalVisible('DEFENDANT_VIEWS_VERDICT')
+              },
+              icon: 'mailOpen',
+              isDisabled: isDefendantInfoActionButtonDisabled,
+            }}
             displayAppealExpirationInfo={true}
           />
         </Box>

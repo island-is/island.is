@@ -180,7 +180,7 @@ export const is = {
   'home.onboardingModule.card4':
     'Notendum er bent á að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á',
   'home.vehicleModule.summary':
-    'Skrá kílómetrastöðu  rafmagns- og tengiltvinnbíla',
+    'Skrá kílómetrastöðu rafmagns- og tengiltvinnbíla',
   'home.vehicleModule.button': 'Mín ökutæki',
   'button.seeAll': 'Sjá allt',
 
@@ -195,10 +195,6 @@ export const is = {
   'inbox.emptyListTitle': 'Hér eru engin skjöl sem stendur',
   'inbox.emptyListDescription':
     'Þegar þú færð send rafræn skjöl frá hinu opinbera birtast þau hér.',
-  'inbox.filterButtonTitle': 'Sía',
-  'inbox.filterOpenedTagTitle': 'Ólesið',
-  'inbox.filterArchivedTagTitle': 'Geymsla',
-  'inbox.filterStarredTagTitle': 'Stjörnumerkt',
   'inbox.markAllAsReadPromptTitle': 'Viltu merkja öll skjöl sem lesin?',
   'inbox.markAllAsReadPromptDescription': 'Þessi aðgerð er ekki afturkræf',
   'inbox.markAllAsReadPromptCancel': 'Hætta við',
@@ -211,6 +207,20 @@ export const is = {
   'inboxFilters.unreadOnly': 'Sýna einungis ólesið',
   'inboxFilters.starred': 'Stjörnumerkt',
   'inboxFilters.archived': 'Geymsla',
+  'inbox.filterButtonTitle': 'Sía',
+  'inbox.filterOpenedTagTitle': 'Ólesið',
+  'inbox.filterArchivedTagTitle': 'Geymsla',
+  'inbox.filterStarredTagTitle': 'Stjörnumerkt',
+  'inbox.filterOrganizationTitle': 'Stofnun',
+  'inbox.filterCategoryTitle': 'Flokkur',
+  'inbox.filterDatesTitle': 'Dagsetningar',
+  'inbox.filterClearButton': 'Hreinsa',
+  'inbox.filterApplyButton': 'Sjá valið',
+  'inbox.filterDateFromLabel': 'Dagsetning frá',
+  'inbox.filterDateToLabel': 'Dagsetning til',
+  'inbox.filterDatePlaceholder': 'Veldu dagsetningu',
+  'inbox.filterDateConfirm': 'Staðfesta',
+  'inbox.filterDateCancel': 'Hætta við',
 
   // document detail
   'documentDetail.screenTitle': 'Skjal',
@@ -480,8 +490,8 @@ export const is = {
   'edit.phone.inputlabel': 'Símanúmer',
   'edit.phone.button': 'Vista',
   'edit.phone.button.empty': 'Vista tómt',
-  'edit.phone.button.error': 'Villa',
-  'edit.phone.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
+  'edit.phone.error': 'Villa',
+  'edit.phone.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit email
   'edit.email.screenTitle': 'Breyta Netfangi',
@@ -489,8 +499,8 @@ export const is = {
   'edit.email.inputlabel': 'Netfang',
   'edit.email.button': 'Vista',
   'edit.email.button.empty': 'Vista tómt',
-  'edit.email.button.error': 'Villa',
-  'edit.email.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
+  'edit.email.error': 'Villa',
+  'edit.email.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Breyta banka upplýsingum',
@@ -500,6 +510,8 @@ export const is = {
   'edit.bankinfo.inputlabel.book': 'Hb.',
   'edit.bankinfo.inputlabel.number': 'Reikningsnúmer',
   'edit.bankinfo.button': 'Vista',
+  'edit.bankinfo.error': 'Villa',
+  'edit.bankinfo.errorMessage': 'Gat ekki vistað reikningsupplýsingar',
 
   // edit confirm
   'edit.confirm.screenTitle': 'Staðfesta aðgerð',
@@ -513,6 +525,8 @@ export const is = {
   'edit.confirm.inputlabel': 'Öryggisnúmer',
   'edit.cancel.button': 'Hætta við',
   'edit.confirm.button': 'Staðfesta',
+  'edit.confirm.error': 'Villa',
+  'edit.confirm.errorMessage': 'Gat ekki uppfært upplýsingar',
 
   // air discount
   'airDiscount.screenTitle': 'Loftbrú',

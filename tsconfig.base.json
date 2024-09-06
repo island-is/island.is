@@ -113,6 +113,9 @@
       "@island.is/api/domains/form-system": [
         "libs/api/domains/form-system/src/index.ts"
       ],
+      "@island.is/api/domains/health-directorate": [
+        "libs/api/domains/health-directorate/src/index.ts"
+      ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],
@@ -287,6 +290,9 @@
       ],
       "@island.is/application/templates/aosh/deregister-machine": [
         "libs/application/templates/aosh/deregister-machine/src/index.ts"
+      ],
+      "@island.is/application/templates/aosh/register-new-machine": [
+        "libs/application/templates/aosh/register-new-machine/src/index.ts"
       ],
       "@island.is/application/templates/aosh/request-for-inspection": [
         "libs/application/templates/aosh/request-for-inspection/src/index.ts"
@@ -495,6 +501,9 @@
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
       ],
+      "@island.is/application/templates/social-insurance-administration/income-plan": [
+        "libs/application/templates/social-insurance-administration/income-plan/src/index.ts"
+      ],
       "@island.is/application/templates/social-insurance-administration/old-age-pension": [
         "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"
       ],
@@ -693,6 +702,7 @@
       ],
       "@island.is/clients/mms": ["libs/clients/mms/general/src/index.ts"],
       "@island.is/clients/mms/frigg": ["libs/clients/mms/frigg/src/index.ts"],
+      "@island.is/clients/mms/grade": ["libs/clients/mms/grade/src/index.ts"],
       "@island.is/clients/municipalities-financial-aid": [
         "libs/clients/municipalities-financial-aid/src/index.ts"
       ],
@@ -734,6 +744,9 @@
       ],
       "@island.is/clients/signature-collection": [
         "libs/clients/signature-collection/src/index.ts"
+      ],
+      "@island.is/clients/smart-solutions-v2": [
+        "libs/clients/smart-solutions-v2/src/index.ts"
       ],
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"

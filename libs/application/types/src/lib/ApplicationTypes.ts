@@ -73,7 +73,9 @@ export enum ApplicationTypes {
   ID_CARD = 'IdCard',
   HEALTH_INSURANCE_DECLARATION = 'HealthInsuranceDeclaration',
   STREET_REGISTRATION = 'StreetRegistration',
+  INCOME_PLAN = 'IncomePlan',
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
+  MACHINE_REGISTRATION = 'MachineRegistration',
 }
 
 export const ApplicationConfigurations = {
@@ -377,8 +379,16 @@ export const ApplicationConfigurations = {
     slug: 'gotuskraning-taekis',
     translation: 'aosh.sr.application',
   },
+  [ApplicationTypes.INCOME_PLAN]: {
+    slug: 'tekjuaaetlun',
+    translation: ['ip.application', 'sia.application', 'uiForms.application'],
+  },
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     slug: 'nyr-grunnskoli',
     translation: ['dess.nps.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.MACHINE_REGISTRATION]: {
+    slug: 'nyskraning-taekis',
+    translation: ['aosh.rnm.application'],
   },
 }
