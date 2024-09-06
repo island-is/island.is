@@ -23,6 +23,7 @@ export class UserService {
 
   private formatUserResponse(value: CachedTokenResponse): BffUser {
     return {
+      scope: value.scope,
       scopes: value.scopes,
       profile: {
         ...value.userProfile,

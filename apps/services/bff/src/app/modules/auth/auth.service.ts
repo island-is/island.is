@@ -6,7 +6,6 @@ import { Request, Response } from 'express'
 import { jwtDecode } from 'jwt-decode'
 
 import { IdTokenClaims } from '@island.is/shared/types'
-import omit from 'lodash/omit'
 import { uuid } from 'uuidv4'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
@@ -69,7 +68,7 @@ export class AuthService {
     const decodedAccessToken = jwtDecode(tokenResponse.access_token)
 
     const value: CachedTokenResponse = {
-      ...omit(tokenResponse, ['scope']),
+      ...tokenResponse,
       scopes: tokenResponse.scope.split(' '),
       userProfile,
       accessTokenExp:

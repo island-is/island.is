@@ -2,7 +2,7 @@ import { IdTokenClaims } from '@island.is/shared/types'
 
 import { TokenResponse } from '../ids/ids.types'
 
-export type CachedTokenResponse = Omit<TokenResponse, 'scope'> & {
+export type CachedTokenResponse = TokenResponse & {
   scopes: string[]
 
   /**

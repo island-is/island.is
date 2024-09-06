@@ -33,10 +33,6 @@ export const BffProvider = ({
       })
 
       if (!res.ok) {
-        dispatch({
-          type: ActionType.SIGNIN_FAILURE,
-        })
-
         window.location.href = bffUrlGenerator('/login')
 
         return
