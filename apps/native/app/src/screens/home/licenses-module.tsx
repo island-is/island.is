@@ -121,7 +121,7 @@ const LicensesModule = React.memo(
 
     const allLicenses = [...(licenses ?? []), ...(passport ?? [])]
 
-    const children = allLicenses
+    const items = allLicenses
       .filter(
         (license) =>
           license.__typename === 'GenericUserLicense' ||
@@ -200,8 +200,8 @@ const LicensesModule = React.memo(
                   link={null}
                 />
               )}
-              {count === 1 && children?.slice(0, 1)}
-              {count >= 2 && <ViewPager>{children}</ViewPager>}
+              {count === 1 && items}
+              {count >= 2 && <ViewPager>{items}</ViewPager>}
             </>
           )}
         </Host>

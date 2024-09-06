@@ -71,7 +71,7 @@ const ApplicationsModule = React.memo(
       return null
     }
 
-    const children = applications.slice(0, 3).map((application) => (
+    const items = applications.slice(0, 3).map((application) => (
       <StatusCard
         key={application.id}
         title={application.name ?? ''}
@@ -168,8 +168,8 @@ const ApplicationsModule = React.memo(
                 }
               />
             )}
-            {count === 1 && children.slice(0, 1)}
-            {count >= 2 && <ViewPager>{children}</ViewPager>}
+            {count === 1 && items}
+            {count >= 2 && <ViewPager>{items}</ViewPager>}
           </>
         )}
       </SafeAreaView>

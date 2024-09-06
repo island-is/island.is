@@ -7,7 +7,7 @@ import {
   GeneralCardSkeleton,
 } from '@ui'
 
-import React from 'react'
+import React, { useMemo } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -58,30 +58,37 @@ const VehiclesModule = React.memo(
   ({ data, loading, error }: VehiclesModuleProps) => {
     const theme = useTheme()
     const intl = useIntl()
-    if (error && !data) {
-      return null
-    }
 
     const vehicles = data?.vehiclesList?.vehicleList
 
     // Reorder vehicles so vehicles that require mileage registration are shown first
-    const reorderedVehicles = vehicles
-      ? [...vehicles]?.sort((a, b) => {
-          if (a.requiresMileageRegistration && !b.requiresMileageRegistration) {
-            return -1
-          } else if (
-            !a.requiresMileageRegistration &&
-            b.requiresMileageRegistration
-          ) {
-            return 1
-          }
-          return 0
-        })
-      : vehicles
+    const reorderedVehicles = useMemo(
+      () =>
+        vehicles
+          ? [...vehicles]?.sort((a, b) => {
+              if (
+                a.requiresMileageRegistration &&
+                !b.requiresMileageRegistration
+              ) {
+                return -1
+              } else if (
+                !a.requiresMileageRegistration &&
+                b.requiresMileageRegistration
+              ) {
+                return 1
+              }
+              return 0
+            })
+          : vehicles,
+      [vehicles],
+    )
+    if (error && !data) {
+      return null
+    }
 
     const count = reorderedVehicles?.length ?? 0
 
-    const children = reorderedVehicles?.slice(0, 3).map((vehicle, index) => (
+    const items = reorderedVehicles?.slice(0, 3).map((vehicle, index) => (
       <VehicleItem
         key={vehicle.permno}
         item={vehicle}
@@ -150,8 +157,8 @@ const VehiclesModule = React.memo(
                   link={null}
                 />
               )}
-              {count === 1 && children?.slice(0, 1)}
-              {count >= 2 && <ViewPager>{children}</ViewPager>}
+              {count === 1 && items}
+              {count >= 2 && <ViewPager>{items}</ViewPager>}
             </>
           )}
         </Host>

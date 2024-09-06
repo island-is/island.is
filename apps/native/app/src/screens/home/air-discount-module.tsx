@@ -76,7 +76,7 @@ const AirDiscountModule = React.memo(
 
     const count = discounts?.length ?? 0
 
-    const children = discounts?.slice(0, 3).map(({ discountCode, user }) => (
+    const items = discounts?.slice(0, 3).map(({ discountCode, user }) => (
       <AirDiscountCard
         key={`loftbru-item-${discountCode}`}
         name={user.name}
@@ -150,8 +150,8 @@ const AirDiscountModule = React.memo(
                   link={null}
                 />
               )}
-              {count === 1 && children?.slice(0, 1)}
-              {count >= 2 && <ViewPager>{children}</ViewPager>}
+              {count === 1 && items}
+              {count >= 2 && <ViewPager>{items}</ViewPager>}
             </>
           )}
         </Host>
