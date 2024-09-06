@@ -809,10 +809,10 @@ export const m = defineMessages({
       'Umsækjandi með ökuskírteini utan EES getur sótt um að skipta yfir í íslenskt ökuskírteini eftir 6 mánaða fasta búsetu. Taka þarf bæði bóklegt og verklegt próf og öðlast fullnaðarskírteini.',
     description: 'Driving license from other country description',
   },
-  institution: {
-    id: 'dl.application:institution',
-    defaultMessage: 'Sýslumenn',
-    description: '',
+  nationalCommissionerOfPolice: {
+    id: 'dl.application:nationalCommissionerOfPolice',
+    defaultMessage: 'Ríkislögreglustjóri',
+    description: 'National Commissioner of Police',
   },
   countryDirectionsTitle: {
     id: 'dl.application:countryDirectionsTitle',

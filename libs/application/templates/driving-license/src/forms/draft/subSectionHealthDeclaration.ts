@@ -22,7 +22,7 @@ import { BE } from '../../lib/constants'
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
   title: m.healthDeclarationSectionTitle,
-  condition: (answers) => hasNoDrivingLicenseInOtherCountry(answers),
+  condition: hasNoDrivingLicenseInOtherCountry,
   children: [
     buildMultiField({
       id: 'overview',

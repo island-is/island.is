@@ -17,7 +17,6 @@ import {
   GlassesCheckApi,
   SyslumadurPaymentCatalogApi,
 } from '../../dataProviders'
-
 export const sectionExternalData = buildSubSection({
   id: 'externalData',
   title: m.externalDataSection,
@@ -45,11 +44,6 @@ export const sectionExternalData = buildSubSection({
         }),
         buildDataProviderItem({
           provider: GlassesCheckApi,
-          title: '',
-          subTitle: '',
-        }),
-        buildDataProviderItem({
-          provider: QualityPhotoApi,
           title: '',
           subTitle: '',
         }),

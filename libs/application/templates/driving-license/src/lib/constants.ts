@@ -52,7 +52,3 @@ export interface DrivingLicenseFakeData {
   howManyDaysHaveYouLivedInIceland: string | number
   age: number
 }
-
-export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf, .txt, .odt'
-
-export const FILE_SIZE_LIMIT = 10000000 // 10MB
