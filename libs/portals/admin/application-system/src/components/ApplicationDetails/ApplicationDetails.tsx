@@ -102,9 +102,6 @@ export const ApplicationDetails = ({
             <Box padding={4} background="purple100" borderRadius="large">
               <GridRow rowGap={3}>
                 <GridColumn span={['2/2', '2/2', '1/2']}>
-                  <ValueLine title={formatMessage(m.name)}>{actor}</ValueLine>
-                </GridColumn>
-                <GridColumn span={['2/2', '2/2', '1/2']}>
                   <ValueLine title={formatMessage(m.nationalId)}>
                     {actor}
                   </ValueLine>
