@@ -63,17 +63,23 @@ const formatAffectedAndPlaceAffectedAtEnd = (
     }
   }
 
+  const extractArticleNumber = (str: string): number | null => {
+    const match = str.match(/(\d+)\. gr/)
+    return match ? parseInt(match[1], 10) : null
+  }
+
   let articleNumber = 0
   const gildsTakaKeepArray: HTMLText[] = []
-  const articleKeepArray: HTMLText[] = []
+  const articleKeepArray: { text: HTMLText; originalIndex: number }[] = []
   const impactAffectArray: HTMLText[] = []
+
   groups.forEach((item) => {
     const affectedImpacts: HTMLText[] = []
     item.formattedRegBody.forEach((body) => {
       if (isGildisTaka(body)) {
         gildsTakaKeepArray.push(body)
       } else {
-        articleKeepArray.push(body)
+        articleKeepArray.push({ text: body, originalIndex: articleNumber })
         affectedImpacts.push(`${articleNumber + 1}. gr.` as HTMLText)
         articleNumber++
       }
@@ -85,13 +91,36 @@ const formatAffectedAndPlaceAffectedAtEnd = (
     impactAffectArray.push(impactAffectedString as HTMLText)
   })
 
+  // Sort the articleKeepArray based on extracted article numbers
+  articleKeepArray.sort((a, b) => {
+    const numA = extractArticleNumber(a.text as string)
+    const numB = extractArticleNumber(b.text as string)
+    return (numA || 0) - (numB || 0)
+  })
+
+  // Reassign the article numbers in affectedImpacts based on the new order
+  const updatedImpactAffectArray = impactAffectArray.map((impact, index) => {
+    const match = impact.match(/(\d+)\. gr\./g)
+    if (match) {
+      match.forEach((m, i) => {
+        const oldNumber = parseInt(m.match(/(\d+)/)![1], 10)
+        const newNumber =
+          articleKeepArray.findIndex(
+            (item) => item.originalIndex === oldNumber - 1,
+          ) + 1
+        impact = impact.replace(m, `${newNumber}. gr.`) as HTMLText
+      })
+    }
+    return impact as HTMLText
+  })
+
   const uniqueGildistaka = uniq(gildsTakaKeepArray)
-  const joinedAffected = impactAffectArray.join('. ')
+  const joinedAffected = updatedImpactAffectArray.join('. ')
   const gildistakaReturn = flatten([...uniqueGildistaka, joinedAffected]).join(
     '',
   ) as HTMLText
 
-  return [...articleKeepArray, gildistakaReturn]
+  return [...articleKeepArray.map((item) => item.text), gildistakaReturn]
 }
 
 const removeRegNamePrefix = (name: string) => {
