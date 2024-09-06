@@ -70,7 +70,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateVaccinations',
   })
   @Audit()
-  getVaccinations(@CurrentUser() user: User): Promise<Vaccinations> {
+  getVaccinations(@CurrentUser() user: User): Promise<Vaccinations | null> {
     return this.api.getVaccinations(user)
   }
 }

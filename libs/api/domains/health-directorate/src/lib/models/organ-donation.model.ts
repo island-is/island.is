@@ -38,7 +38,7 @@ export class Donor {
 @ObjectType('HealthDirectorateOrganDonation')
 export class OrganDonation {
   @Field(() => Donor, { nullable: true })
-  donor?: Donor
+  donor?: Donor | null
 
   @Field(() => [Organ], { nullable: true })
   organList?: Array<Organ>
