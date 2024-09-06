@@ -21,7 +21,7 @@ export const done: Form = buildForm({
           ? m.applicationDoneAlertMessageBE
           : answers.applicationFor === B_FULL_RENEWAL_65
           ? m.applicationDoneAlertMessage65Renewal
-          : m.applicationDoneAlertMessageBFull ,
+          : m.applicationDoneAlertMessageBFull,
       expandableHeader: m.nextStepsTitle,
       expandableDescription: ({ answers, externalData }) =>
         answers.applicationFor === B_TEMP
