@@ -18,9 +18,14 @@ import {
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  ApplicationWithAttachments as Application,
+} from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import AmazonS3URI from 'amazon-s3-uri'
+
+import { S3 } from 'aws-sdk'
 import {
   mapValuesToIndividualtype,
   mapValuesToPartytype,
@@ -28,7 +33,6 @@ import {
 } from './mappers/mapValuesToUsertype'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { SharedTemplateApiService } from '../../shared'
 
 export interface AttachmentData {
   key: string
@@ -52,12 +56,48 @@ export interface DataResponse {
 
 @Injectable()
 export class FinancialStatementsInaoTemplateService extends BaseTemplateApiService {
+  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementsClientService: FinancialStatementsInaoClientService,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENTS_INAO)
+    this.s3 = new S3()
+  }
+
+  private async getAttachment(application: Application): Promise<string> {
+    const attachments: AttachmentData[] | undefined = getValueViaPath(
+      application.answers,
+      'attachments.file',
+    ) as Array<{ key: string; name: string }>
+
+    const attachmentKey = attachments[0].key
+
+    const fileName = (
+      application.attachments as {
+        [key: string]: string
+      }
+    )[attachmentKey]
+
+    if (!fileName) {
+      return Promise.reject({})
+    }
+
+    const { bucket, key } = AmazonS3URI(fileName)
+
+    const uploadBucket = bucket
+    try {
+      const file = await this.s3
+        .getObject({
+          Bucket: uploadBucket,
+          Key: key,
+        })
+        .promise()
+      const fileContent = file.Body as Buffer
+      return fileContent?.toString('base64') || ''
+    } catch (error) {
+      throw new Error('Villa kom kom upp við að senda umsókn')
+    }
   }
 
   async getUserType({ auth }: TemplateApiModuleActionProps) {
@@ -76,16 +116,6 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
     const answers = application.answers
     const externalData = application.externalData
     const currentUserType = getCurrentUserType(answers, externalData)
-
-    const getAttachment = async (): Promise<string> => {
-      const file = await this.sharedTemplateAPIService.getS3File(
-        application,
-        'attachments.file',
-        'base64',
-      )
-      if (!file) throw new Error('Error submitting application')
-      return file
-    }
 
     if (currentUserType === FSIUSERTYPE.INDIVIDUAL) {
       const electionIncomeLimit = getValueViaPath(
@@ -107,7 +137,9 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
       ) as string
       const clientEmail = getValueViaPath(answers, 'about.email') as string
 
-      const fileName = noValueStatement ? undefined : await getAttachment()
+      const fileName = noValueStatement
+        ? undefined
+        : await this.getAttachment(application)
 
       this.logger.info(
         `PostFinancialStatementForPersonalElection => clientNationalId: '${nationalId}', actorNationalId: '${
@@ -199,7 +231,7 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
       ) as string
       const clientEmail = getValueViaPath(answers, 'about.email') as string
 
-      const fileName = await getAttachment()
+      const fileName = await this.getAttachment(application)
 
       const client = {
         nationalId: nationalId,
@@ -274,7 +306,7 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
 
       const file = getValueViaPath(answers, 'attachments.file')
 
-      const fileName = file ? await getAttachment() : undefined
+      const fileName = file ? await this.getAttachment(application) : undefined
 
       const client = {
         nationalId: nationalId,

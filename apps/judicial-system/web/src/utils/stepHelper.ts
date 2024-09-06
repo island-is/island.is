@@ -77,7 +77,7 @@ export const createCaseResentExplanation = (
   workingCase: Case,
   explanation?: string,
 ) => {
-  const now = new Date()
+  const now = new Date() // TODO: Find a way to set this message server side as we cannot trust the client date.
 
   return `${
     workingCase.caseResentExplanation

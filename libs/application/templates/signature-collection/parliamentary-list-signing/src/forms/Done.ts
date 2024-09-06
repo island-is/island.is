@@ -34,20 +34,6 @@ export const Done: Form = buildForm({
           title: m.listSigned,
           description: m.listSignedDescription,
           children: [
-            buildDescriptionField({
-              id: 'nextStepsTitle',
-              title: m.nextSteps,
-              titleVariant: 'h3',
-              marginBottom: 1,
-            }),
-            //Set up separately for even spacing
-            buildDescriptionField({
-              id: 'nextStepsDescription',
-              title: '',
-              description: m.nextStepsDescription,
-              titleVariant: 'h3',
-              marginBottom: 5,
-            }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
               title: '',

@@ -7,12 +7,7 @@ import {
   formatDOB,
   lowercase,
 } from '@island.is/judicial-system/formatters'
-import {
-  DateType,
-  DistrictCourtLocation,
-  DistrictCourts,
-  SubpoenaType,
-} from '@island.is/judicial-system/types'
+import { DateType, SubpoenaType } from '@island.is/judicial-system/types'
 
 import { subpoena as strings } from '../messages'
 import { Case } from '../modules/case'
@@ -69,7 +64,7 @@ export const createSubpoena = (
   if (theCase.court?.name) {
     addNormalText(
       doc,
-      DistrictCourtLocation[theCase.court.name as DistrictCourts],
+      theCase.court.address || 'Ekki skráð', // the latter shouldn't happen, if it does we have an problem with the court data
       'Times-Roman',
     )
   }

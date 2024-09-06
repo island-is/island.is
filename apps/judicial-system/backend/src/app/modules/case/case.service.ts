@@ -1671,7 +1671,7 @@ export class CaseService {
         await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
         if (receivingCase) {
-          this.eventService.postEvent(CaseEvent.RECEIVE, updatedCase)
+          this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
         }
 
         if (returnUpdatedCase) {
