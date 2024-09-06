@@ -861,7 +861,7 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
   return (
     <Stack space={5}>
       <Stack space={3}>
-        <Box background="blue100" paddingY={3} paddingX={4} textAlign="center">
+        <Box background="blue100" paddingY={3} paddingX={4}>
           <Box className={styles.resultBorder} paddingY={2} paddingX={3}>
             <Stack space={2}>
               <Text variant="h3">
@@ -883,7 +883,7 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
                         ratio,
                       },
                     )
-                  : formatMessage(mainSectionKeys[status].heading, {
+                  : formatMessage(mainSectionKeys[status].description, {
                       ratio,
                     })}
               </Text>
@@ -902,53 +902,50 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
 
       <Stack space={3}>
         {status === Status.PARENTAL_LEAVE && (
-          <Table.Table>
-            <Table.Head>
-              <Table.HeadData>
-                {formatMessage(t.results.incomePrerequisitesHeading)}
-              </Table.HeadData>
-              <Table.HeadData align="right">
-                {formatMessage(t.results.perMonth)}
-              </Table.HeadData>
-            </Table.Head>
-            <Table.Body>
-              <Table.Row>
-                <Table.Data>
-                  <MarkdownText replaceNewLinesWithBreaks={false}>
-                    {formatMessage(t.results.incomePrerequisitesDescription, {
-                      maxIncome: formatCurrencyUtil(
-                        constants.maxIncome,
-                        '',
-                        Math.ceil,
-                      ),
-                      parentalLeaveRatio: constants.parentalLeaveRatio,
-                      parentalLeaveLow: formatCurrencyUtil(
-                        constants.parentalLeaveLow,
-                        '',
-                        Math.ceil,
-                      ),
-                      parentalLeaveHigh: formatCurrencyUtil(
-                        constants.parentalLeaveHigh,
-                        '',
-                        Math.ceil,
-                      ),
-                    })}
-                  </MarkdownText>
-                </Table.Data>
-                <Table.Data />
-              </Table.Row>
-              <Table.Row>
-                <Table.Data>
-                  <Text fontWeight="semiBold">
-                    {formatMessage(t.results.incomePrerequisitesSubHeading)}
-                  </Text>
-                </Table.Data>
-                <Table.Data align="right">
-                  <Text whiteSpace="nowrap">{formatCurrency(income)}</Text>
-                </Table.Data>
-              </Table.Row>
-            </Table.Body>
-          </Table.Table>
+          <Stack space={3}>
+            <MarkdownText replaceNewLinesWithBreaks={false}>
+              {formatMessage(t.results.incomePrerequisitesDescription, {
+                maxIncome: formatCurrencyUtil(
+                  constants.maxIncome,
+                  '',
+                  Math.ceil,
+                ),
+                parentalLeaveRatio: constants.parentalLeaveRatio,
+                parentalLeaveLow: formatCurrencyUtil(
+                  constants.parentalLeaveLow,
+                  '',
+                  Math.ceil,
+                ),
+                parentalLeaveHigh: formatCurrencyUtil(
+                  constants.parentalLeaveHigh,
+                  '',
+                  Math.ceil,
+                ),
+              })}
+            </MarkdownText>
+            <Table.Table>
+              <Table.Head>
+                <Table.HeadData>
+                  {formatMessage(t.results.incomePrerequisitesHeading)}
+                </Table.HeadData>
+                <Table.HeadData align="right">
+                  {formatMessage(t.results.perMonth)}
+                </Table.HeadData>
+              </Table.Head>
+              <Table.Body>
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {formatMessage(t.results.incomePrerequisitesSubHeading)}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text whiteSpace="nowrap">{formatCurrency(income)}</Text>
+                  </Table.Data>
+                </Table.Row>
+              </Table.Body>
+            </Table.Table>
+          </Stack>
         )}
 
         <Table.Table>
