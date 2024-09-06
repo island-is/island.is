@@ -502,7 +502,8 @@ export const m = defineMessages({
   },
   applicationDoneAlertMessage65Renewal: {
     id: 'dl.application:applicationDoneAlertMessage65Renewal',
-    defaultMessage: 'Umsókn þín um endurnýjun ökuskírteina fyrir 65 og eldra hefur verið móttekin.',
+    defaultMessage:
+      'Umsókn þín um endurnýjun ökuskírteina fyrir 65 og eldra hefur verið móttekin.',
     description: 'Application received',
   },
   applicationDoneAlertMessageBE: {

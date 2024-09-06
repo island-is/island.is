@@ -6,7 +6,13 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { DrivingLicense } from '../../lib/types'
-import { B_FULL, B_FULL_RENEWAL_65, B_TEMP, BE, DrivingLicenseFakeData } from '../../lib/constants'
+import {
+  B_FULL,
+  B_FULL_RENEWAL_65,
+  B_TEMP,
+  BE,
+  DrivingLicenseFakeData,
+} from '../../lib/constants'
 
 export const sectionApplicationFor = (allowBELicense = false) =>
   buildSubSection({
