@@ -85,7 +85,7 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                   subLabel:
                     m.applicationForRenewalLicenseDescription.defaultMessage,
                   value: B_FULL_RENEWAL_65,
-                  disabled: !currentLicense,
+                  disabled: !currentLicense || ((fakeData && fakeData.age) ? fakeData.age < 65 : age < 65),
                 },
               ]
 
