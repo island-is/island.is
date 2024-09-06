@@ -12,17 +12,12 @@ import { UseGuards } from '@nestjs/common'
 import { CaseGetPriceResponse } from '../models/getPrice.response'
 import { GetPdfUrlResponse } from '../models/getPdfUrlResponse'
 import { GetPdfResponse } from '../models/getPdfResponse'
-import { UploadAttachmentsInput } from '../models/uploadAttachments.input'
-import { UploadAttachmentsResponse } from '../models/uploadAttachments.response'
 import { GetPresignedUrlInput } from '../models/getPresignedUrl.input'
 import { GetPresignedUrlResponse } from '../models/getPresignedUrl.response'
 import { AddApplicationAttachmentResponse } from '../models/addApplicationAttachment.response'
 import { AddApplicationAttachmentInput } from '../models/addApplicationAttachment.input'
 import { GetApplicationAttachmentInput } from '../models/getApplicationAttachment.input'
-import {
-  GetApplicationAttachmentResponse,
-  GetApplicationAttachmentsResponse,
-} from '../models/getApplicationAttachments.response'
+import { GetApplicationAttachmentsResponse } from '../models/getApplicationAttachments.response'
 import { DeleteApplicationAttachmentInput } from '../models/deleteApplicationAttachment.input'
 
 @Scopes(ApiScope.internal)
@@ -41,12 +36,12 @@ export class OfficialJournalOfIcelandApplicationResolver {
     return this.ojoiApplicationService.getComments(input)
   }
 
-  // @Query(() => PostCommentResponse, {
-  //   name: 'officialJournalOfIcelandApplicationPostComment',
-  // })
-  // postComment(@Args('input') input: PostCommentInput) {
-  //   return this.ojoiApplicationService.postComment(input)
-  // }
+  @Mutation(() => PostCommentResponse, {
+    name: 'officialJournalOfIcelandApplicationPostComment',
+  })
+  postComment(@Args('input') input: PostCommentInput) {
+    return this.ojoiApplicationService.postComment(input)
+  }
 
   @Query(() => Boolean, {
     name: 'officialJournalOfIcelandApplicationPostApplication',
@@ -74,16 +69,6 @@ export class OfficialJournalOfIcelandApplicationResolver {
   })
   getPdf(@Args('id') id: string) {
     return this.ojoiApplicationService.getPdf(id)
-  }
-
-  @Mutation(() => UploadAttachmentsResponse, {
-    name: 'officialJournalOfIcelandApplicationUploadAttachments',
-  })
-  uploadAttachments(
-    @Args('input', { type: () => UploadAttachmentsInput })
-    input: UploadAttachmentsInput,
-  ) {
-    return this.ojoiApplicationService.uploadAttachments(input)
   }
 
   @Mutation(() => GetPresignedUrlResponse, {

@@ -36,8 +36,17 @@ export class OfficialJournalOfIcelandApplicationClientService {
     return await this.ojoiApplicationApi.getComments(params)
   }
 
-  async postComment(params: PostCommentRequest): Promise<void> {
-    await this.ojoiApplicationApi.postComment(params)
+  async postComment(params: PostCommentRequest): Promise<boolean> {
+    try {
+      await this.ojoiApplicationApi.postComment(params)
+      return true
+    } catch (error) {
+      this.logger.warn('Failed to post comment', {
+        error,
+        category: LOG_CATEGORY,
+      })
+      return false
+    }
   }
 
   async postApplication(params: PostApplicationRequest): Promise<boolean> {
@@ -94,41 +103,6 @@ export class OfficialJournalOfIcelandApplicationClientService {
       }
     }
   }
-
-  async uploadAttachments(
-    id: string,
-    buffer: Buffer,
-  ): Promise<S3UploadFilesResponse> {
-    try {
-      const blob = new Blob([buffer])
-
-      const uploadFilesResponse =
-        await this.ojoiApplicationApi.uploadApplicationAttachment({
-          id: id,
-          files: [blob],
-        })
-
-      console.log(uploadFilesResponse)
-
-      return uploadFilesResponse
-    } catch (error) {
-      if (error.response) {
-        const json = await error.response.json()
-
-        this.logger.warn('Failed to upload attachments', {
-          error: {
-            message: json.message,
-            status: json.statusCode,
-            name: json.error,
-          },
-          category: LOG_CATEGORY,
-        })
-      }
-
-      throw error
-    }
-  }
-
   async getPresignedUrl(
     params: GetPresignedUrlRequest,
   ): Promise<PresignedUrlResponse> {

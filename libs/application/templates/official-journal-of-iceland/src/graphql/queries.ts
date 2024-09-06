@@ -227,20 +227,6 @@ export const PDF_QUERY = gql`
   }
 `
 
-export const UPLOAD_ATTACHMENTS_MUTATION = gql`
-  mutation UploadAttachments(
-    $input: OfficialJournalOfIcelandApplicationUploadAttachmentsInput!
-  ) {
-    officialJournalOfIcelandApplicationUploadAttachments(input: $input) {
-      files {
-        filename
-        size
-        url
-      }
-    }
-  }
-`
-
 export const GET_PRESIGNED_URL_MUTATION = gql`
   mutation GetPresignedUrl(
     $input: OfficialJournalOfIcelandApplicationGetPresignedUrlInput!
@@ -284,6 +270,39 @@ export const DELETE_APPLICATION_ATTACHMENT_MUTATION = gql`
     $input: OfficialJournalOfIcelandApplicationDeleteApplicationAttachmentInput!
   ) {
     officialJournalOfIcelandApplicationDeleteAttachment(input: $input) {
+      success
+    }
+  }
+`
+
+export const GET_COMMENTS_QUERY = gql`
+  query GetComments(
+    $input: OfficialJournalOfIcelandApplicationGetCommentsInput!
+  ) {
+    officialJournalOfIcelandApplicationGetComments(input: $input) {
+      comments {
+        id
+        createdAt
+        internal
+        type
+        caseStatus
+        state
+        task {
+          from
+          to
+          title
+          comment
+        }
+      }
+    }
+  }
+`
+
+export const POST_COMMENT_MUTATION = gql`
+  mutation AddComment(
+    $input: OfficialJournalOfIcelandApplicationPostCommentInput!
+  ) {
+    officialJournalOfIcelandApplicationPostComment(input: $input) {
       success
     }
   }

@@ -1,6 +1,17 @@
 import { defineMessages } from 'react-intl'
 
 export const error = defineMessages({
+  fetchCommentsFailedTitle: {
+    id: 'ojoi.application:error.fetchCommentsFailedTitle',
+    defaultMessage: 'Ekki tókst að sækja athugasemdir',
+    description: 'Error message when fetching comments fails',
+  },
+  fetchCommentsFailedMessage: {
+    id: 'ojoi.application:error.fetchCommentsFailedMessage',
+    defaultMessage:
+      'Villa kom upp við að sækja athugasemdir, reyndu aftur síðar',
+    description: 'Error message when fetching comments fails',
+  },
   fetchAdvertFailed: {
     id: 'ojoi.application:error.fetchAdvertFailed',
     defaultMessage: 'Ekki tókst að sækja auglýsingu',
