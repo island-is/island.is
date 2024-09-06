@@ -20,12 +20,15 @@ export class HealthDirectorateService {
   ) {}
 
   /* Organ Donation */
-  async getDonorStatus(auth: Auth, locale: Locale): Promise<Donor> {
+  async getDonorStatus(auth: Auth, locale: Locale): Promise<Donor | null> {
     const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
     const data: OrganDonorDto | null =
       await this.organDonationApi.getOrganDonation(auth, lang)
     // Fetch organ list to get all names in correct language to sort out the names of the organs the user has limitations for
 
+    if (data === null) {
+      return null
+    }
     const donorStatus: Donor = {
       isDonor: data?.isDonor ?? true,
       limitations: {
@@ -63,8 +66,11 @@ export class HealthDirectorateService {
   }
 
   /* Vaccinations */
-  async getVaccinations(auth: Auth): Promise<Vaccinations> {
+  async getVaccinations(auth: Auth): Promise<Vaccinations | null> {
     const data = await this.vaccinationApi.getVaccinationDiseaseDetail(auth)
+    if (data === null) {
+      return null
+    }
     const vaccinations: Array<Vaccination> =
       data?.map((item) => {
         return {
@@ -87,7 +93,7 @@ export class HealthDirectorateService {
                 url: vaccination.vaccineUrl,
                 comment: vaccination.generalComment,
                 rejected: vaccination.rejected,
-              } as Info
+              }
             },
           ),
         }
