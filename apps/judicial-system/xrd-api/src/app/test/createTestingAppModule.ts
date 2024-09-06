@@ -7,6 +7,10 @@ import {
   auditTrailModuleConfig,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
+import {
+  lawyersModuleConfig,
+  LawyersService,
+} from '@island.is/judicial-system/lawyers'
 
 import appConfigModule from '../app.config'
 import { AppController } from '../app.controller'
@@ -17,7 +21,7 @@ export const createTestingAppModule = async () => {
     imports: [
       ConfigModule.forRoot({
         isGlobal: true,
-        load: [auditTrailModuleConfig, appConfigModule],
+        load: [auditTrailModuleConfig, appConfigModule, lawyersModuleConfig],
       }),
     ],
     controllers: [AppController],
@@ -32,6 +36,7 @@ export const createTestingAppModule = async () => {
       },
       AuditTrailService,
       AppService,
+      LawyersService,
     ],
   }).compile()
 

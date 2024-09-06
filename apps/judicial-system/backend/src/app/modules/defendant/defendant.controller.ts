@@ -1,11 +1,17 @@
+import { Response } from 'express'
+
 import {
   Body,
   Controller,
   Delete,
+  Get,
+  Header,
   Inject,
   Param,
   Patch,
   Post,
+  Query,
+  Res,
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -19,7 +25,12 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import type { User } from '@island.is/judicial-system/types'
+import {
+  indictmentCases,
+  ServiceRequirement,
+  SubpoenaType,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -27,8 +38,17 @@ import {
   districtCourtRegistrarRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../guards'
-import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import {
+  Case,
+  CaseExistsGuard,
+  CaseReadGuard,
+  CaseTypeGuard,
+  CaseWriteGuard,
+  CurrentCase,
+  PdfService,
+} from '../case'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
@@ -42,6 +62,7 @@ import { DefendantService } from './defendant.service'
 @ApiTags('defendants')
 export class DefendantController {
   constructor(
+    private readonly pdfService: PdfService,
     private readonly defendantService: DefendantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -71,6 +92,7 @@ export class DefendantController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    publicProsecutorStaffRule,
   )
   @Patch(':defendantId')
   @ApiOkResponse({
@@ -86,6 +108,17 @@ export class DefendantController {
     @Body() defendantToUpdate: UpdateDefendantDto,
   ): Promise<Defendant> {
     this.logger.debug(`Updating defendant ${defendantId} of case ${caseId}`)
+
+    // If the defendant was present at the court hearing,
+    // then set the verdict view date to the case ruling date
+    if (
+      defendantToUpdate.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+    ) {
+      defendantToUpdate = {
+        ...defendantToUpdate,
+        verdictViewDate: theCase.rulingDate,
+      }
+    }
 
     return this.defendantService.update(
       theCase,
@@ -114,5 +147,47 @@ export class DefendantController {
     )
 
     return { deleted }
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+    DefendantExistsGuard,
+  )
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Get(':defendantId/subpoena')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the subpoena for a given defendant as a pdf document',
+  })
+  async getSubpoenaPdf(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @Res() res: Response,
+    @Query('arraignmentDate') arraignmentDate?: Date,
+    @Query('location') location?: string,
+    @Query('subpoenaType') subpoenaType?: SubpoenaType,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the subpoena for defendant ${defendantId} of case ${caseId} as a pdf document`,
+    )
+
+    const pdf = await this.pdfService.getSubpoenaPdf(
+      theCase,
+      defendant,
+      arraignmentDate,
+      location,
+      subpoenaType,
+    )
+
+    res.end(pdf)
   }
 }

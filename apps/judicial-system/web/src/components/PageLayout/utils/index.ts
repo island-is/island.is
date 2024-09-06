@@ -1,9 +1,6 @@
 import { IntlFormatters } from 'react-intl'
 
-import {
-  isIndictmentCase,
-  isInvestigationCase,
-} from '@island.is/judicial-system/types'
+import { isInvestigationCase } from '@island.is/judicial-system/types'
 import { sections as m } from '@island.is/judicial-system-web/messages'
 import {
   CaseDecision,
@@ -26,8 +23,6 @@ export const formatCaseResult = (
   } else if (caseResult === CaseState.ACCEPTED) {
     if (isInvestigationCase(caseType)) {
       return formatMessage(m.caseResults.investigationAccepted)
-    } else if (isIndictmentCase(caseType)) {
-      return formatMessage(m.caseResults.indictmentClosed)
     } else {
       const isAlternativeTravelBan =
         workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
@@ -38,6 +33,8 @@ export const formatCaseResult = (
     }
   } else if (caseResult === CaseState.DISMISSED) {
     return formatMessage(m.caseResults.dissmissed)
+  } else if (caseResult === CaseState.COMPLETED) {
+    return formatMessage(m.caseResults.indictmentClosed)
   } else {
     return formatMessage(m.caseResults.result)
   }

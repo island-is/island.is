@@ -139,11 +139,26 @@ export const m = defineMessages({
     id: 'service.portal:amount',
     defaultMessage: 'Upphæð',
   },
+  approved: {
+    id: 'service.portal:approved',
+    defaultMessage: 'Samþykkt',
+  },
+  processed: {
+    id: 'service.portal:processed',
+    defaultMessage: 'Afgreitt',
+  },
+  rejected: {
+    id: 'service.portal:rejected',
+    defaultMessage: 'Hafnað',
+  },
+  unknown: {
+    id: 'service.portal:unknown',
+    defaultMessage: 'Óþekkt',
+  },
   view: {
     id: 'service.portal:view',
     defaultMessage: 'Skoða',
   },
-
   chooseDate: {
     id: 'service.portal:choose-date',
     defaultMessage: 'Veldu dagsetningu',
@@ -233,6 +248,15 @@ export const m = defineMessages({
     id: 'service.portal:could-not-fetch',
     defaultMessage: 'Tókst ekki að sækja',
   },
+  couldNotFetchAllItems: {
+    id: 'service.portal:could-not-fetch-all-items',
+    defaultMessage: 'Ekki tókst að sækja öll gögn',
+  },
+  couldNotFetchAllItemsDetail: {
+    id: 'service.portal:could-not-fetch-all-items-detail',
+    defaultMessage:
+      'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja gögn frá eftirfarandi aðilum: {arg}. Verið er að vinna í að lagfæra tenginuna.',
+  },
   somethingWrong: {
     id: 'service.portal:something-went-wrong',
     defaultMessage: 'Eitthvað fór úrskeiðis',
@@ -240,6 +264,10 @@ export const m = defineMessages({
   fetching: {
     id: 'service.portal:fetching',
     defaultMessage: 'Sæki',
+  },
+  fetchLicense: {
+    id: 'service.portal:fetch-license',
+    defaultMessage: 'Sækja leyfisbréf',
   },
   assets: {
     id: 'service.portal:assets',
@@ -332,6 +360,15 @@ export const m = defineMessages({
     defaultMessage: 'Valmynd',
     id: 'service.portal:menu',
   },
+  menuButtonAria: {
+    id: 'service.portal:menu-button-aria',
+    description: 'Lýsing á notendavalmynd fyrir skjálesara',
+    defaultMessage: 'Valmynd fyrir yfirlit',
+  },
+  notificationButtonAria: {
+    id: 'service.portal:notification-button-aria',
+    defaultMessage: 'Valmynd fyrir tilkynningar',
+  },
   middleLinksTitle: {
     defaultMessage: 'Þjónustuflokkar',
     id: 'service.portal:footer-middle-links-title',
@@ -370,6 +407,14 @@ export const m = defineMessages({
   messages: {
     id: 'service.portal:messages',
     defaultMessage: 'Skilaboð',
+  },
+  expired: {
+    id: 'service.portal:expired',
+    defaultMessage: 'Útrunnið',
+  },
+  valid: {
+    id: 'service.portal:valid',
+    defaultMessage: 'Í gildi',
   },
   today: {
     id: 'service.portal:today',
@@ -482,6 +527,26 @@ export const m = defineMessages({
   signatureCollectionLists: {
     id: 'service.portal:signatureCollectionLists',
     defaultMessage: 'Meðmælasöfnun',
+  },
+  signatureCollectionParliamentaryLists: {
+    id: 'service.portal:signatureCollectionParliamentaryLists',
+    defaultMessage: 'Alþingiskosningar - Meðmælasöfnun',
+  },
+  signatureCollectionPresidentialLists: {
+    id: 'service.portal:signatureCollectionPresidentialLists',
+    defaultMessage: 'Forsetakosningar - Meðmælasöfnun',
+  },
+  notifications: {
+    id: 'service.portal:notifications',
+    defaultMessage: 'Tilkynningar',
+  },
+  notificationsUnread: {
+    id: 'service.portal:notifications-unread-a11y',
+    defaultMessage: 'Þú átt ólesnar tilkynningar',
+  },
+  notificationsViewAll: {
+    id: 'service.portal:notifications-view-all',
+    defaultMessage: 'Sjá allar tilkynningar',
   },
   viewSignatureList: {
     id: 'service.portal:viewSignatureList',
@@ -638,6 +703,14 @@ export const m = defineMessages({
     defaultMessage:
       'Hér getur þú gert greiðsluáætlun ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
   },
+  financeHousingBenefits: {
+    id: 'service.portal:finance-housing-benefits',
+    defaultMessage: 'Húsnæðisbætur',
+  },
+  financeHousingBenefitsDesc: {
+    id: 'service.portal:finance-housing-benefits-description',
+    defaultMessage: 'Hér sérð þú sundurliðun húsnæðisbóta',
+  },
   financeClaims: {
     id: 'service.portal:finance-claims',
     defaultMessage: 'Kröfur',
@@ -696,6 +769,14 @@ export const m = defineMessages({
     id: 'service.portal:my-settings',
     defaultMessage: 'Mínar stillingar',
   },
+  mySettingsInformation: {
+    id: 'service.portal:my-settings-information',
+    defaultMessage: 'Upplýsingar',
+  },
+  mySettingsNotifications: {
+    id: 'service.portal:my-settings-notifications',
+    defaultMessage: 'Tilkynningar',
+  },
   lists: {
     id: 'service.portal:lists',
     defaultMessage: 'Listar',
@@ -744,6 +825,10 @@ export const m = defineMessages({
   educationDegree: {
     id: 'service.portal:educationDegree',
     defaultMessage: 'Prófgráður',
+  },
+  noTranscriptForDownload: {
+    id: 'service.portal:educationCareerNoTranscriptForDownload',
+    defaultMessage: 'Námsmat ófáanlegt',
   },
   accessControl: {
     id: 'service.portal:accessControl',
@@ -1220,6 +1305,10 @@ export const m = defineMessages({
     id: 'service.portal:userprofile-tooltip',
     defaultMessage: 'Ísland.is hefur umsjón með gögnum á þínum stillingum.',
   },
+  notificationsProfileTooltip: {
+    id: 'service.portal:notifications-tooltip',
+    defaultMessage: 'Ísland.is hefur umsjón með tilkynningum.',
+  },
 
   universityOfIcelandTooltip: {
     id: 'service.portal:uni-iceland-tooltip',
@@ -1234,6 +1323,11 @@ export const m = defineMessages({
     id: 'service.portal:real-estate-tooltip',
     defaultMessage:
       'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um fasteignir.',
+  },
+  hmsHousingBenefitsTooltip: {
+    id: 'service.portal:housing-benefits-tooltip',
+    defaultMessage:
+      'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um húsnæðisbætur.',
   },
   socialInsuranceTooltip: {
     id: 'service.portal:social-insurance-tooltip',
@@ -1304,6 +1398,10 @@ export const m = defineMessages({
     id: 'service.portal:remove-from-storage',
     defaultMessage: 'Flytja í pósthólf',
   },
+  goToArg: {
+    id: 'service.portal:go-to-arg',
+    defaultMessage: 'Fara til {arg}',
+  },
   openDocumentAriaLabel: {
     id: 'service.portal:open-document',
     defaultMessage: 'Opna {subject}',
@@ -1356,10 +1454,27 @@ export const m = defineMessages({
     id: 'service.portal:social-insurance-maintenance',
     defaultMessage: 'Framfærsla',
   },
+  socialInsuranceMaintenanceIntro: {
+    id: 'service.portal:social-insurance-maintenance-intro',
+    defaultMessage: 'Yfirlit yfir greiðslur frá almannatryggingum',
+  },
   socialInsuranceMaintenanceDescription: {
     id: 'service.portal:social-insurance-maintenance-description',
     defaultMessage:
       'Einstaklingar geta átt rétt á greiðslum frá Tryggingastofnun (TR) til að bæta afkomu sína og hag. Allar greiðslur frá TR þarf að sækja sérstaklega um.',
+  },
+  incomePlan: {
+    id: 'service.portal:income-plan',
+    defaultMessage: 'Tekjuáætlun',
+  },
+  latestIncomePlan: {
+    id: 'service.portal:latest-income-plan',
+    defaultMessage: 'Yfirlit yfir núverandi tekjuáætlun',
+  },
+  incomePlanDescription: {
+    id: 'service.portal:income-plan',
+    defaultMessage:
+      'Ellilífeyrir, örorkulífeyrir, endurhæfingarlífeyrir og tengdar greiðslur eru tekjutengdar og reiknast út frá tekjuáætlun. Þegar sótt er um lífeyri þarf alltaf að skila inn tekjuáætlun. Hér er hægt að skoða gildandi tekjuáætlun.',
   },
   paymentPlan: {
     id: 'service.portal:payment-plan',
@@ -1480,5 +1595,13 @@ export const m = defineMessages({
     id: 'service.portal:no-data-variable-found-detail-variation-masculine',
     defaultMessage:
       'Ef þú telur að þú eigir að vera með skráðann {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+  readMoreAbout: {
+    id: 'service.portal:read-more-about',
+    defaultMessage: 'Lesa meira um {arg}',
+  },
+  submit: {
+    id: 'service.portal:submit',
+    defaultMessage: 'Staðfesta',
   },
 })

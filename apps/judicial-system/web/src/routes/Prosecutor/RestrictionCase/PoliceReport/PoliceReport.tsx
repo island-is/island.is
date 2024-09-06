@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -21,7 +21,7 @@ import {
 import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-export const PoliceReport: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const PoliceReport = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const router = useRouter()

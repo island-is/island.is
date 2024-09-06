@@ -1,0 +1,15 @@
+mutation UpdateUserProfileSettings($input: UpdateUserProfileInput!) {
+  updateProfile(input: $input) {
+    nationalId
+    documentNotifications
+    canNudge
+  }
+}
+
+query UserProfileSettings {
+  getUserProfile {
+    nationalId
+    documentNotifications
+    canNudge
+  }
+}

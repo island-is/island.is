@@ -12,17 +12,20 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import * as kennitala from 'kennitala'
-import { EstateRegistrant } from '@island.is/clients/syslumenn'
 import { Answers, EstateMember } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 import {
+  CheckboxController,
   InputController,
+  PhoneInputController,
   SelectController,
 } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
 import {
   EstateTypes,
+  NO,
+  YES,
   heirAgeValidation,
   relationWithApplicant,
 } from '../../lib/constants'
@@ -34,7 +37,7 @@ export const EstateMembersRepeater: FC<
 > = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { getValues, setError } = useFormContext()
+  const { getValues, setValue, setError } = useFormContext()
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
@@ -103,7 +106,6 @@ export const EstateMembersRepeater: FC<
   }
 
   const estateData = getEstateDataFromApplication(application)
-
   const relationsWithApplicant = relationWithApplicant.map((relation) => ({
     value: relation,
     label: relation,
@@ -153,6 +155,9 @@ export const EstateMembersRepeater: FC<
   return (
     <Box>
       {fields.reduce((acc, member: GenericFormField<EstateMember>, index) => {
+        const noContact =
+          values?.estate?.estateMembers?.[index]?.noContactInfo?.[0]
+
         if (member.nationalId === application.applicant) {
           const relation = getValueViaPath<string>(
             application.answers,
@@ -169,7 +174,12 @@ export const EstateMembersRepeater: FC<
           ...acc,
           <Box marginTop={index > 0 ? 7 : 0} key={index}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
-              <Text variant="h4">{formatMessage(m.estateMember)}</Text>
+              <Text
+                color={member.enabled ? 'currentColor' : 'dark300'}
+                variant="h4"
+              >
+                {formatMessage(m.estateMember)}
+              </Text>
               <Box>
                 <Button
                   variant="text"
@@ -258,22 +268,41 @@ export const EstateMembersRepeater: FC<
                       disabled={!member.enabled}
                       defaultValue={member.email || ''}
                       error={error && error[index] && error[index].email}
-                      required
+                      required={noContact !== YES}
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <InputController
+                    <PhoneInputController
                       id={`${id}[${index}].phone`}
                       name={`${id}[${index}].phone`}
                       label={formatMessage(m.phone)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
-                      format="###-####"
                       defaultValue={member.phone || ''}
                       error={error && error[index] && error[index].phone}
-                      required
+                      required={noContact !== YES}
                     />
                   </GridColumn>
+                  {selectedEstate === EstateTypes.estateWithoutAssets && (
+                    <GridColumn span="1/1" paddingBottom={2}>
+                      <Box width="half">
+                        <CheckboxController
+                          id={`${id}[${index}].noContactInfo`}
+                          name={`${id}[${index}].noContactInfo`}
+                          defaultValue={[]}
+                          options={[
+                            {
+                              label: formatMessage(m.noContactInfo),
+                              value: YES,
+                            },
+                          ]}
+                          onSelect={(val) => {
+                            setValue(`${id}[${index}].noContactInfo`, val)
+                          }}
+                        />
+                      </Box>
+                    </GridColumn>
+                  )}
                 </>
               )}
             </GridRow>
@@ -324,13 +353,12 @@ export const EstateMembersRepeater: FC<
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <InputController
+                    <PhoneInputController
                       id={`${id}[${index}].advocate.phone`}
                       name={`${id}[${index}].advocate.phone`}
                       label={formatMessage(m.phone)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
-                      format="###-####"
                       defaultValue={member.advocate?.phone || ''}
                       error={
                         error && error[index] && error[index].advocate?.phone
@@ -362,17 +390,19 @@ export const EstateMembersRepeater: FC<
       }, [] as JSX.Element[])}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
         return (
-          <Box key={member.id} hidden={member.initial}>
-            <AdditionalEstateMember
-              application={application}
-              field={member}
-              fieldName={id}
-              index={index}
-              relationOptions={relations}
-              relationWithApplicantOptions={relationsWithApplicant}
-              remove={remove}
-              error={error && error[index] ? error[index] : null}
-            />
+          <Box>
+            {!member.initial && (
+              <AdditionalEstateMember
+                application={application}
+                field={member}
+                fieldName={id}
+                index={index}
+                relationOptions={relations}
+                relationWithApplicantOptions={relationsWithApplicant}
+                remove={remove}
+                error={error && error[index] ? error[index] : null}
+              />
+            )}
           </Box>
         )
       })}

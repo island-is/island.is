@@ -11,15 +11,30 @@ export const tag = style({
   }),
 })
 
-export const avatar = style({
+export const image = style({
   display: 'none',
   ...themeUtils.responsiveStyle({
     sm: {
       display: 'flex',
       width: 66,
+    },
+  }),
+})
+
+export const avatar = style({
+  ...themeUtils.responsiveStyle({
+    sm: {
       height: 66,
     },
   }),
+})
+
+export const circleImg = style({
+  height: 'auto',
+  width: 'auto',
+  display: 'flex',
+  maxHeight: 38,
+  maxWidth: 38,
 })
 
 export const button = style({

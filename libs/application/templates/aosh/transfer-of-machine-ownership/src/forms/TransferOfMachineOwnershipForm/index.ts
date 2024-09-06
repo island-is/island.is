@@ -25,8 +25,8 @@ export const TransferOfMachineOwnershipForm: Form = buildForm({
     informationSection,
     buildFormPaymentChargeOverviewSection({
       sectionTitle: payment.general.sectionTitle,
-      getSelectedChargeItems: (_) =>
-        getChargeItemCodes().map((x) => ({
+      getSelectedChargeItems: (application) =>
+        getChargeItemCodes(application).map((x) => ({
           chargeItemCode: x,
         })),
     }),

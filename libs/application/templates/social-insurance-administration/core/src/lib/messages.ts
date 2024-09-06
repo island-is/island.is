@@ -48,21 +48,34 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       description:
         'I understand that the above information will be collected during the application process',
     },
-    contactInfoTitle: {
-      id: 'sia.application:prerequisites.contact.info.title',
-      defaultMessage: 'Netfang og símanúmer',
-      description: 'Email and phone number',
-    },
     skraInformationTitle: {
       id: 'sia.application:prerequisites.national.registry.title',
       defaultMessage: 'Upplýsingar frá Þjóðskrá',
       description: 'Information from Registers Iceland',
     },
-    socialInsuranceAdministrationInformationDescription: {
-      id: 'sia.application:prerequisites.socialInsuranceAdministration.description',
+    contactInfoTitle: {
+      id: 'sia.application:prerequisites.contact.info.title',
+      defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',
+      description: 'My information on My pages Ísland.is',
+    },
+    contactInfoDescription: {
+      id: 'sia.application:prerequisites.contact.info.description',
       defaultMessage:
-        'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar á mínar síður hjá Tryggingastofnun.',
-      description: 'english translation',
+        'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
+      description:
+        'Information about your telephone number and email address to facilitate the application process.',
+    },
+    socialInsuranceAdministrationTitle: {
+      id: 'sia.application:prerequisites.social.insurance.administration.title',
+      defaultMessage: 'Upplýsingar frá Tryggingastofnun',
+      description: 'Information from Social Insurance Administration',
+    },
+    socialInsuranceAdministrationDescription: {
+      id: 'sia.application:prerequisites.social.insurance.administration.description',
+      defaultMessage:
+        'Upplýsingar um bankareikning sóttar á mínar síður hjá Tryggingastofnun.',
+      description:
+        'Information regarding bank account is retrieved from My Pages at the Social Insurance Administration.',
     },
     socialInsuranceAdministrationInformationTitle: {
       id: 'sia.application:prerequisites.socialInsuranceAdministration.title',
@@ -110,24 +123,12 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Upplýsingar um þig',
       description: 'Information about you',
     },
-    subSectionTitle: {
-      id: 'sia.application:info.sub.section.title',
-      defaultMessage: 'Netfang og símanúmer',
-      description: 'Email and phone number',
-    },
     infoSubSectionDescription: {
       id: 'sia.application:applicant.info.sub.section.description#markdown',
       defaultMessage:
-        'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt með því að fara inn á Mínar síður TR. Athugið að ef að aðrar upplýsingar eru ekki réttar þarf að breyta þeim í þjóðskrá.',
+        'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt með því að fara inn á Mínar síður á Ísland.is. Athugið að ef að aðrar upplýsingar eru ekki réttar þarf að breyta þeim í þjóðskrá.',
       description:
-        'Here is information about you. Please review the email address and phone number to ensure that the information is correct. Note that if the following information is not correct, it must be changed at Registers Iceland and then come back to complete the application.',
-    },
-    subSectionDescription: {
-      id: 'sia.application:info.sub.section.description',
-      defaultMessage:
-        'Netfang og símanúmer er sótt frá Tryggingastofnun. Ef símanúmerið er ekki rétt eða vantar getur þú skráð það hérna fyrir neðan.',
-      description:
-        'Email address and phone number is retrieved from the Social Insurance Administration. If the phone number is incorrect or missing you can register the correct one below.',
+        'Please review the email address and phone number to ensure that the information is correct. Email address can be changed by logging into My pages at Ísland.is. Note that if the following information is not correct, it must be changed at Registers Iceland.',
     },
     applicantEmail: {
       id: 'sia.application:info.applicant.email',
@@ -487,6 +488,16 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Kennitala',
       description: 'Icelandic ID number',
     },
+    address: {
+      id: 'sia.application:confirm.address',
+      defaultMessage: 'Heimili',
+      description: 'Address',
+    },
+    municipality: {
+      id: 'sia.application:confirm.municipality',
+      defaultMessage: 'Sveitarfélag',
+      description: 'Municipality',
+    },
     submitButton: {
       id: 'sia.application:confirm.submit.button',
       defaultMessage: 'Senda inn umsókn',
@@ -572,17 +583,6 @@ export const errorMessages = defineMessages({
     id: 'sia.application:error.period',
     defaultMessage: 'Ógildur mánuður.',
     description: 'Invalid month.',
-  },
-  noEmailFound: {
-    id: 'sia.application:error.no.email.found.title',
-    defaultMessage: 'Ekkert netfang skráð',
-    description: 'english translation',
-  },
-  noEmailFoundDescription: {
-    id: 'sia.application:error.no.email.found.description#markdown',
-    defaultMessage:
-      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það [hér](https://minarsidur.tr.is/min-sida) og komdu svo aftur til að sækja um.',
-    description: 'english translation',
   },
   iban: {
     id: 'sia.application:error.iban',
@@ -677,5 +677,10 @@ export const statesMessages = defineMessages({
     id: 'sia.application:pending.tag',
     defaultMessage: 'Í bið',
     description: 'Pending',
+  },
+  inProgressTag: {
+    id: 'sia.application:in.progress.tag',
+    defaultMessage: 'Í vinnslu',
+    description: 'In progress',
   },
 })

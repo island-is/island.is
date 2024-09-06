@@ -1,4 +1,3 @@
-import React from 'react'
 import faker from 'faker'
 import { MockedProvider } from '@apollo/client/testing'
 import { act, render, screen, within } from '@testing-library/react'

@@ -120,6 +120,7 @@
           "type": "string"
         }
       ],
+      "default": "./tools/executors/node/webpack.config.js",
       "description": "Path to a function which takes a webpack config, context and returns the resulting webpack config. See https://nx.dev/guides/customize-webpack"
     },
     "buildLibsFromSource": {

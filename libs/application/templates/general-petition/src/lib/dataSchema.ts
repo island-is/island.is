@@ -9,12 +9,24 @@ const FileSchema = z.object({
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
-  return phone && phone.isValid()
+  return phone && phone.isValid() && phoneNumber.length > 0
+}
+
+const isWorkday = (date: Date): boolean => {
+  const day = date.getDay()
+  return day !== 0 && day !== 6
+}
+
+const adjustToNextWorkday = (date: Date): Date => {
+  while (!isWorkday(date)) {
+    date.setDate(date.getDate() + 1)
+  }
+  return date
 }
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-export const isValidEmail = (value: string) => emailRegex.test(value)
+export const isValidEmail = (value: string): boolean => emailRegex.test(value)
 
 export const GeneralPetitionSchema = z.object({
   approveTermsAndConditions: z
@@ -48,16 +60,39 @@ export const GeneralPetitionSchema = z.object({
           m.validationSelectDate.defaultMessage as string,
         ),
     })
-    .refine(
-      ({ dateFrom, dateTil }) =>
-        !dateFrom || !dateTil || new Date(dateFrom) <= new Date(dateTil),
-      {
-        message: m.validationTilBeforeFrom.defaultMessage as string,
-        path: ['dateTil'],
-      },
-    ),
-  phone: z.string().refine((v) => isValidPhoneNumber(v)),
-  email: z.string().refine((v) => isValidEmail(v)),
+    .superRefine(({ dateFrom, dateTil }, ctx) => {
+      const from = new Date(dateFrom)
+      const to = new Date(dateTil)
+
+      // Ensure dateFrom is before dateTil
+      if (from >= to) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: m.validationTilBeforeFrom.defaultMessage as string,
+          path: ['dateTil'],
+        })
+      }
+
+      // Ensure dateTil is within 3 months from dateFrom
+      const maxEndDate = new Date(from)
+      maxEndDate.setMonth(maxEndDate.getMonth() + 3)
+      if (to > maxEndDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: m.validationDateTooFarInFuture.defaultMessage as string,
+          path: ['dateTil'],
+        })
+      }
+    }),
+  phone: z.string().refine((v) => isValidPhoneNumber(v), {
+    message: m.validationPhone.defaultMessage as string,
+  }),
+  email: z
+    .string()
+    .min(3)
+    .refine((v) => isValidEmail(v), {
+      message: m.validationEmail.defaultMessage as string,
+    }),
 })
 
 export type File = z.TypeOf<typeof FileSchema>

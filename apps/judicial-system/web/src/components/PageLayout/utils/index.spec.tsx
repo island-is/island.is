@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { IntlFormatters, useIntl } from 'react-intl'
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
@@ -16,9 +16,9 @@ import { formatCaseResult } from './'
 interface Props {
   getMessage: (formatMessage: IntlFormatters['formatMessage']) => string
 }
-const Message: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const Message: FC<Props> = ({ getMessage }) => {
   const { formatMessage } = useIntl()
-  const message = props.getMessage(formatMessage)
+  const message = getMessage(formatMessage)
   return <span data-testid="message">{message}</span>
 }
 

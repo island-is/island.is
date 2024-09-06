@@ -14,6 +14,9 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       category
       key
       policeCaseNumber
+      userGeneratedFilename
+      displayDate
+      submittedBy
     }
     defendants {
       id
@@ -27,7 +30,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      defendantWaivesRightToCounsel
+      defenderChoice
+      verdictViewDate
     }
     defenderName
     defenderNationalId
@@ -130,9 +134,32 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
     }
+    arraignmentDate {
+      date
+      location
+    }
+    courtDate {
+      date
+      location
+    }
     prosecutorsOffice {
       id
       name
+    }
+    postponedIndefinitelyExplanation
+    indictmentDecision
+    indictmentRulingDecision
+    indictmentCompletedDate
+    indictmentReviewDecision
+    indictmentReviewer {
+      id
+      name
+    }
+    courtSessionType
+    eventLogs {
+      id
+      created
+      eventType
     }
   }
 }

@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 export class PresignedPost {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   url!: string
 
-  @ApiProperty()
+  @ApiProperty({ type: Object })
   fields!: { [key: string]: string }
+
+  @ApiProperty({ type: String })
+  key!: string
 }

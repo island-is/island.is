@@ -3,14 +3,24 @@ import { useIntl } from 'react-intl'
 import {
   Navigation,
   NavigationFunctionComponent,
+  OptionsTopBarButton,
 } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
 import styled from 'styled-components/native'
+import { LICENSE_SCANNER_DONE } from '../../constants/navigation-buttons'
 import {
   VerifyLicenseBarcodeError,
   VerifyLicenseBarcodeMutation,
 } from '../../graphql/types/schema'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { StackRegistry } from '../../utils/component-registry'
+
+const RIGHT_BUTTONS: OptionsTopBarButton[] = [
+  {
+    id: LICENSE_SCANNER_DONE,
+    systemItem: 'done',
+  },
+]
 
 const Host = styled.View`
   flex: 1;
@@ -23,15 +33,16 @@ interface LicenseScanDetailScreenProps {
 
 export const LicenseScanDetailScreen: NavigationFunctionComponent<
   LicenseScanDetailScreenProps
-> = ({ verifyLicenseBarcode: { licenseType, data, error } }) => {
+> = ({ componentId, verifyLicenseBarcode: { licenseType, data, error } }) => {
   const intl = useIntl()
+  useConnectivityIndicator({ componentId, rightButtons: RIGHT_BUTTONS })
 
   // We need to cast licenseType to SupportedGenericLicenseTypes because not all GenericLicenseTypes are supported
   const type = licenseType as unknown as SupportedGenericLicenseTypes
   const isExpired = error === VerifyLicenseBarcodeError.Expired
 
   useNavigationButtonPress(({ buttonId }) => {
-    if (buttonId === 'LICENSE_SCANNER_DONE') {
+    if (buttonId === LICENSE_SCANNER_DONE) {
       Navigation.dismissModal(StackRegistry.LicenseScannerStack)
     }
   })
@@ -60,11 +71,6 @@ LicenseScanDetailScreen.options = {
     title: {
       text: '',
     },
-    rightButtons: [
-      {
-        id: 'LICENSE_SCANNER_DONE',
-        systemItem: 'done',
-      },
-    ],
+    rightButtons: RIGHT_BUTTONS,
   },
 }

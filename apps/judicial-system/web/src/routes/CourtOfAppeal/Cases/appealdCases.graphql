@@ -25,7 +25,7 @@ query AppealedCases($input: CaseListQueryInput) {
       nationalId
       name
       noNationalId
-      defendantWaivesRightToCounsel
+      defenderChoice
     }
     appealedDate
     initialRulingDate

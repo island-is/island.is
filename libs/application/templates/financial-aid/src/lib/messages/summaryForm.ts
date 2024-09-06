@@ -45,6 +45,19 @@ export const summaryForm = {
       description: 'Summary form when fails to submit application',
     },
   }),
+  childrenAidAlert: defineMessages({
+    aidGoesToInstution: {
+      id: 'fa.application:section.summaryForm.childrenAidAlert.aidGoesToInstution',
+      defaultMessage:
+        'Styrkur vegna barna er greiddur beint til viðeigandi skólastofnunar.',
+      description: 'Alert banner when children aid goes to instution',
+    },
+    aidGoesToUser: {
+      id: 'fa.application:section.summaryForm.general.aidGoesToUser',
+      defaultMessage: 'Styrkur vegna barna bætist við þessa upphæð.',
+      description: 'Alert banner when children aid is paid from municipality',
+    },
+  }),
   userInfo: defineMessages({
     name: {
       id: 'fa.application:section.summaryForm.userInfo.name',
@@ -60,6 +73,34 @@ export const summaryForm = {
       id: 'fa.application:section.summaryForm.userInfo.nationalId',
       defaultMessage: 'Kennitala',
       description: 'Summary form users information title of national id ',
+    },
+  }),
+  childrenInfo: defineMessages({
+    title: {
+      id: 'fa.application:section.summaryForm.childrenInfo.title',
+      defaultMessage: 'Börn',
+      description: 'Summary form children information title ',
+    },
+    name: {
+      id: 'fa.application:section.summaryForm.childrenInfo.name',
+      defaultMessage: 'Nafn',
+      description: 'Summary form children information title of name ',
+    },
+    nationalId: {
+      id: 'fa.application:section.summaryForm.childrenInfo.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'Summary form children information title of national id ',
+    },
+    school: {
+      id: 'fa.application:section.summaryForm.childrenInfo.school',
+      defaultMessage: 'Skóli',
+      description: 'Summary form children information title of school ',
+    },
+    comment: {
+      id: 'fa.application:section.summaryForm.childrenInfo.comment',
+      defaultMessage: 'Athugasemd',
+      description:
+        'Summary form children information title of children comment ',
     },
   }),
   formInfo: defineMessages({

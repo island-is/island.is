@@ -1,4 +1,11 @@
-import React, { ReactNode, useEffect, useMemo, useState } from 'react'
+import React, {
+  PropsWithChildren,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { IntlConfig, IntlProvider } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -14,6 +21,7 @@ import {
   GridRow,
   Inline,
   Link,
+  LinkV2,
   Navigation,
   NavigationItem,
   ProfileCard,
@@ -123,10 +131,12 @@ interface WrapperProps {
   showExternalLinks?: boolean
   showReadSpeaker?: boolean
   isSubpage?: boolean
+  backLink?: { text: string; url: string }
 }
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  isSubpage?: boolean
 }
 
 const darkThemes = ['hms']
@@ -192,10 +202,10 @@ export const getThemeConfig = (
 
 export const OrganizationHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
-> = ({ organizationPage }) => {
+> = ({ organizationPage, isSubpage }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
-    () => JSON.parse(organizationPage?.organization?.namespace?.fields ?? '{}'),
+    () => JSON.parse(organizationPage?.organization?.namespace?.fields || '{}'),
     [organizationPage?.organization?.namespace?.fields],
   )
   const n = useNamespace(namespace)
@@ -214,6 +224,36 @@ export const OrganizationHeader: React.FC<
   const logoAltText = organizationPage.organization?.title
     ? organizationLogoAltText
     : organizationLogoAltTextFallback
+
+  const defaultProps: DefaultHeaderProps = {
+    fullWidth: organizationPage.themeProperties.fullWidth ?? false,
+    image: organizationPage.defaultHeaderImage?.url,
+    background: getBackgroundStyle(organizationPage.themeProperties),
+    title: organizationPage.title,
+    logo: organizationPage.organization?.logo?.url,
+    logoHref: linkResolver('organizationpage', [organizationPage.slug]).href,
+    titleColor:
+      (organizationPage.themeProperties
+        .textColor as DefaultHeaderProps['titleColor']) || 'dark400',
+    imagePadding: organizationPage.themeProperties.imagePadding || '20px',
+    imageIsFullHeight:
+      organizationPage.themeProperties.imageIsFullHeight ?? true,
+    imageObjectFit:
+      organizationPage.themeProperties.imageObjectFit === 'cover'
+        ? 'cover'
+        : 'contain',
+    imageObjectPosition:
+      organizationPage.themeProperties.imageObjectPosition === 'left'
+        ? 'left'
+        : organizationPage.themeProperties.imageObjectPosition === 'right'
+        ? 'right'
+        : 'center',
+    logoAltText: logoAltText,
+    titleSectionPaddingLeft: organizationPage.themeProperties
+      .titleSectionPaddingLeft as ResponsiveSpace,
+    mobileBackground: organizationPage.themeProperties.mobileBackgroundColor,
+    isSubpage: isSubpage && n('smallerSubpageHeader', false),
+  }
 
   switch (organizationPage.theme) {
     case 'syslumenn':
@@ -238,7 +278,12 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'digital_iceland':
-      return (
+      return n('useDefaultDigitalIcelandHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          titleClassName={styles.digitalIcelandHeaderTitle}
+        />
+      ) : (
         <DigitalIcelandHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -394,47 +439,15 @@ export const OrganizationHeader: React.FC<
           logoAltText={logoAltText}
         />
       )
-    default:
+    case 'tryggingastofnun':
       return (
         <DefaultHeader
-          fullWidth={organizationPage.themeProperties.fullWidth ?? false}
-          image={organizationPage.defaultHeaderImage?.url}
-          background={getBackgroundStyle(organizationPage.themeProperties)}
-          title={organizationPage.title}
-          logo={organizationPage.organization?.logo?.url}
-          logoHref={
-            linkResolver('organizationpage', [organizationPage.slug]).href
-          }
-          titleColor={
-            (organizationPage.themeProperties
-              .textColor as DefaultHeaderProps['titleColor']) ?? 'dark400'
-          }
-          imagePadding={organizationPage.themeProperties.imagePadding || '20px'}
-          imageIsFullHeight={
-            organizationPage.themeProperties.imageIsFullHeight ?? true
-          }
-          imageObjectFit={
-            organizationPage.themeProperties.imageObjectFit === 'cover'
-              ? 'cover'
-              : 'contain'
-          }
-          imageObjectPosition={
-            organizationPage.themeProperties.imageObjectPosition === 'left'
-              ? 'left'
-              : organizationPage.themeProperties.imageObjectPosition === 'right'
-              ? 'right'
-              : 'center'
-          }
-          logoAltText={logoAltText}
-          titleSectionPaddingLeft={
-            organizationPage.themeProperties
-              .titleSectionPaddingLeft as ResponsiveSpace
-          }
-          mobileBackground={
-            organizationPage.themeProperties.mobileBackgroundColor
-          }
+          {...defaultProps}
+          customTitleColor={n('tryggingastofnunHeaderTitleColor', '#007339')}
         />
       )
+    default:
+      return <DefaultHeader {...defaultProps} />
   }
 }
 
@@ -522,7 +535,7 @@ export const OrganizationFooter: React.FC<
     : organizations.find((x) => x?.footerItems?.length > 0)
 
   const namespace = useMemo(
-    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    () => JSON.parse(organization?.namespace?.fields || '{}'),
     [],
   )
   const n = useNamespace(namespace)
@@ -832,25 +845,54 @@ const getActiveNavigationItemTitle = (
     }
   }
 }
+
+interface TranslationNamespaceProviderProps {
+  messages: IntlConfig['messages']
+}
+
+const TranslationNamespaceProvider = ({
+  messages,
+  children,
+}: PropsWithChildren<TranslationNamespaceProviderProps>) => {
+  const { activeLocale } = useI18n()
+
+  return (
+    <IntlProvider locale={activeLocale} messages={messages}>
+      {children}
+    </IntlProvider>
+  )
+}
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 const renderConnectedComponent = (slice) => {
   if (!slice?.componentType) return null
 
+  let connectedComponent = null
+
   switch (slice.componentType) {
     case 'LatestNewsCard':
-      return (
+      connectedComponent = (
         <LatestNewsCardConnectedComponent key={slice?.id} {...slice?.json} />
       )
+      break
     case 'Fiskistofa/ShipSearchSidebarInput':
-      return (
-        <SidebarShipSearchInput key={slice?.id} namespace={slice?.json ?? {}} />
-      )
+      connectedComponent = <SidebarShipSearchInput key={slice?.id} />
+      break
     case 'OrganizationSearchBox':
-      return <SearchBox key={slice?.id} {...slice?.json} />
+      connectedComponent = <SearchBox key={slice?.id} {...slice?.json} />
+      break
     default:
       return null
   }
+
+  return (
+    <TranslationNamespaceProvider
+      messages={slice.translationStrings ?? slice.json ?? {}}
+    >
+      {connectedComponent}
+    </TranslationNamespaceProvider>
+  )
 }
 
 export const OrganizationWrapper: React.FC<
@@ -872,6 +914,7 @@ export const OrganizationWrapper: React.FC<
   showExternalLinks = false,
   showReadSpeaker = true,
   isSubpage = true,
+  backLink,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
@@ -913,7 +956,10 @@ export const OrganizationWrapper: React.FC<
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
-      <OrganizationHeader organizationPage={organizationPage} />
+      <OrganizationHeader
+        organizationPage={organizationPage}
+        isSubpage={isSubpage}
+      />
       {!minimal && (
         <SidebarLayout
           paddingTop={[2, 2, 9]}
@@ -922,21 +968,39 @@ export const OrganizationWrapper: React.FC<
           fullWidthContent={fullWidthContent}
           sidebarContent={
             <SidebarContainer>
-              <Navigation
-                baseId="pageNav"
-                items={navigationData.items}
-                title={navigationData.title}
-                activeItemTitle={activeNavigationItemTitle}
-                renderLink={(link, item) => {
-                  return item?.href ? (
-                    <NextLink href={item?.href} legacyBehavior>
-                      {link}
-                    </NextLink>
-                  ) : (
-                    link
-                  )
-                }}
-              />
+              <Stack space={3}>
+                {backLink && (
+                  <Box display={['none', 'none', 'block']} printHidden>
+                    <LinkV2 href={backLink.url}>
+                      <Button
+                        preTextIcon="arrowBack"
+                        preTextIconType="filled"
+                        size="small"
+                        type="button"
+                        variant="text"
+                        truncate
+                      >
+                        {backLink.text}
+                      </Button>
+                    </LinkV2>
+                  </Box>
+                )}
+                <Navigation
+                  baseId="pageNav"
+                  items={navigationData.items}
+                  title={navigationData.title}
+                  activeItemTitle={activeNavigationItemTitle}
+                  renderLink={(link, item) => {
+                    return item?.href ? (
+                      <NextLink href={item?.href} legacyBehavior>
+                        {link}
+                      </NextLink>
+                    ) : (
+                      link
+                    )
+                  }}
+                />
+              </Stack>
               {showSecondaryMenu && (
                 <>
                   {organizationPage.secondaryMenu &&
@@ -1016,7 +1080,7 @@ export const OrganizationWrapper: React.FC<
                   }}
                 />
               </Box>
-              {organizationPage.secondaryMenu && (
+              {organizationPage.secondaryMenu && secondaryNavList.length > 0 && (
                 <Box marginY={2}>
                   <Navigation
                     baseId="secondaryNav"

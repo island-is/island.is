@@ -4,6 +4,7 @@
   "sourceRoot": "apps/icelandic-names-registry/backend/src",
   "projectType": "application",
   "prefix": "icelandic-names-registry-backend",
+  "tags": ["scope:nest"],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -56,12 +57,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/icelandic-names-registry/backend/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -69,14 +65,13 @@
         "{workspaceRoot}/coverage/apps/icelandic-names-registry/backend"
       ],
       "options": {
-        "jestConfig": "apps/icelandic-names-registry/backend/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/icelandic-names-registry/backend/jest.config.ts"
       }
     },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/icelandic-names-registry/backend"
       }
     },
@@ -108,7 +103,8 @@
         "cwd": "apps/icelandic-names-registry/backend"
       }
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

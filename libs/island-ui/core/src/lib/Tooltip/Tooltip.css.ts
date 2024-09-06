@@ -29,6 +29,9 @@ export const icon = style({
   display: 'inline-block',
   lineHeight: 1,
   position: 'relative',
+  backgroundColor: 'transparent',
+  padding: 0,
+  border: 0,
 })
 
 export const fullWidth = style({

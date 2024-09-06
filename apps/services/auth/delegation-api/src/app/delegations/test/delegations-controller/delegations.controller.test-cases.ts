@@ -4,7 +4,10 @@ import {
   scopes,
   TestCase,
 } from './delegations.controller-test-types'
-import { PersonalRepresentativeDelegationType } from '@island.is/auth-api-lib'
+import {
+  DelegationDirection,
+  PersonalRepresentativeDelegationType,
+} from '@island.is/auth-api-lib'
 
 const person1 = createNationalId('person')
 const person2 = createNationalId('person')
@@ -23,7 +26,7 @@ export const validTestCases: Record<
     message: 'Should only return legal guardian delegations',
     testCase: new TestCase({
       requestUser: {
-        fromNationalId: person1,
+        nationalId: person1,
         scope: scopes.legalGuardian.name,
       },
       toParents: [
@@ -44,7 +47,7 @@ export const validTestCases: Record<
     message: 'Should only return procuration delegations',
     testCase: new TestCase({
       requestUser: {
-        fromNationalId: company1,
+        nationalId: company1,
         scope: scopes.procurationHolder.name,
       },
       toParents: [
@@ -68,7 +71,7 @@ export const validTestCases: Record<
     message: 'Should only return custom delegations',
     testCase: new TestCase({
       requestUser: {
-        fromNationalId: company1,
+        nationalId: company1,
         scope: scopes.custom.name,
       },
       toCustom: [
@@ -94,7 +97,7 @@ export const validTestCases: Record<
       'Should only return custom delegations that have the same scope as the request and have valid validTo date',
     testCase: new TestCase({
       requestUser: {
-        fromNationalId: company1,
+        nationalId: company1,
         scope: scopes.custom.name,
       },
       toCustom: [
@@ -120,7 +123,7 @@ export const validTestCases: Record<
     message: 'Should not return any delegations for scope that grants nothing',
     testCase: new TestCase({
       requestUser: {
-        fromNationalId: company1,
+        nationalId: company1,
         scope: scopes.none.name,
       },
       toCustom: [
@@ -143,7 +146,7 @@ export const validTestCases: Record<
     message: 'Should only return personal representative delegations',
     testCase: new TestCase({
       requestUser: {
-        fromNationalId: company1,
+        nationalId: company1,
         scope: scopes.representative.name,
       },
       toCustom: [
@@ -167,7 +170,7 @@ export const validTestCases: Record<
       'Should only return personal representative delegations if the scope has permission for the right type and it has valid validTo date',
     testCase: new TestCase({
       requestUser: {
-        fromNationalId: company1,
+        nationalId: company1,
         scope: scopes.representative.name,
       },
       toRepresentative: [
@@ -194,7 +197,7 @@ export const validTestCases: Record<
       'Should only return delegations that are from the requested national id ',
     testCase: new TestCase({
       requestUser: {
-        fromNationalId: company1,
+        nationalId: company1,
         scope: scopes.all.name,
       },
       toRepresentative: [
@@ -227,6 +230,37 @@ export const validTestCases: Record<
       expectedTo: [],
     }),
   },
+  incomingDelegations: {
+    message: 'should only return incoming delegations for the national id',
+    testCase: new TestCase({
+      requestUser: {
+        nationalId: person1,
+        scope: scopes.all.name,
+        direction: DelegationDirection.INCOMING,
+      },
+      toCustom: [
+        {
+          fromNationalId: person3,
+          toNationalId: person1,
+          scopes: [scopes.all.name],
+        },
+      ],
+      toProcurationHolders: [
+        {
+          fromNationalId: person2,
+          toNationalId: person1,
+        },
+      ],
+      toParents: [
+        {
+          fromNationalId: child1,
+          toNationalId: person1,
+        },
+      ],
+      scopes: [scopes.all], // has grants for all delegations
+      expectedFrom: [person3, person2, child1],
+    }),
+  },
 }
 
 export const invalidTestCases: Record<
@@ -238,7 +272,7 @@ export const invalidTestCases: Record<
     errorMessage: 'Invalid scope',
     testCase: new TestCase({
       requestUser: {
-        fromNationalId: company1,
+        nationalId: company1,
         scope: 'non-existing-scope',
       },
       scopes: [scopes.none],
@@ -250,7 +284,7 @@ export const invalidTestCases: Record<
     errorMessage: 'Invalid national id',
     testCase: new TestCase({
       requestUser: {
-        fromNationalId: 'invalid-national-id',
+        nationalId: 'invalid-national-id',
         scope: scopes.representative.name,
       },
       scopes: [scopes.representative],

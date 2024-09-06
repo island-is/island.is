@@ -12,7 +12,7 @@ export const PCardClientConfig = defineConfig<z.infer<typeof schema>>({
   schema,
   load: (env) => ({
     xRoadServicePath: env.required(
-      'XROAD_DISTRICT_COMMISSIONERS_PATH',
+      'XROAD_DISTRICT_COMMISSIONERS_P_CARD_PATH',
       'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
     ),
     scope: [DistrictCommissionersScope.pCardScope],

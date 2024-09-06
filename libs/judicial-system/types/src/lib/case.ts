@@ -1,5 +1,7 @@
 import flatten from 'lodash/flatten'
 
+import { CaseFileCategory } from './file'
+
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -36,20 +38,24 @@ export enum CaseType {
 export enum IndictmentSubtype {
   AGGRAVATED_ASSAULT = 'AGGRAVATED_ASSAULT',
   ALCOHOL_LAWS = 'ALCOHOL_LAWS',
+  ANIMAL_PROTECTION = 'ANIMAL_PROTECTION',
   ASSAULT_LEADING_TO_DEATH = 'ASSAULT_LEADING_TO_DEATH',
   ATTEMPTED_MURDER = 'ATTEMPTED_MURDER',
+  BODILY_INJURY = 'BODILY_INJURY',
   BREAKING_AND_ENTERING = 'BREAKING_AND_ENTERING',
   CHILD_PROTECTION_LAWS = 'CHILD_PROTECTION_LAWS',
   COVER_UP = 'COVER_UP',
   CUSTOMS_VIOLATION = 'CUSTOMS_VIOLATION',
   DOMESTIC_VIOLENCE = 'DOMESTIC_VIOLENCE',
   EMBEZZLEMENT = 'EMBEZZLEMENT',
+  FOREIGN_NATIONALS = 'FOREIGN_NATIONALS',
   FRAUD = 'FRAUD',
   INDECENT_EXPOSURE = 'INDECENT_EXPOSURE',
   INTIMATE_RELATIONS = 'INTIMATE_RELATIONS',
   LEGAL_ENFORCEMENT_LAWS = 'LEGAL_ENFORCEMENT_LAWS',
   LOOTING = 'LOOTING',
   MAJOR_ASSAULT = 'MAJOR_ASSAULT',
+  MEDICINES_OFFENSE = 'MEDICINES_OFFENSE',
   MINOR_ASSAULT = 'MINOR_ASSAULT',
   MONEY_LAUNDERING = 'MONEY_LAUNDERING',
   MURDER = 'MURDER',
@@ -89,10 +95,33 @@ export enum CaseState {
   WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
+  WAITING_FOR_CANCELLATION = 'WAITING_FOR_CANCELLATION',
+  COMPLETED = 'COMPLETED',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
-  DELETED = 'DELETED',
   DISMISSED = 'DISMISSED',
+  DELETED = 'DELETED',
+}
+
+export enum IndictmentCaseState {
+  DRAFT = CaseState.DRAFT,
+  WAITING_FOR_CONFIRMATION = CaseState.WAITING_FOR_CONFIRMATION,
+  SUBMITTED = CaseState.SUBMITTED,
+  RECEIVED = CaseState.RECEIVED,
+  WAITING_FOR_CANCELLATION = CaseState.WAITING_FOR_CANCELLATION,
+  COMPLETED = CaseState.COMPLETED,
+  DELETED = CaseState.DELETED,
+}
+
+export enum RequestCaseState {
+  NEW = CaseState.NEW,
+  DRAFT = CaseState.DRAFT,
+  SUBMITTED = CaseState.SUBMITTED,
+  RECEIVED = CaseState.RECEIVED,
+  ACCEPTED = CaseState.ACCEPTED,
+  REJECTED = CaseState.REJECTED,
+  DISMISSED = CaseState.DISMISSED,
+  DELETED = CaseState.DELETED,
 }
 
 export enum CaseAppealState {
@@ -103,22 +132,51 @@ export enum CaseAppealState {
 }
 
 export enum CaseTransition {
-  OPEN = 'OPEN',
-  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
-  SUBMIT = 'SUBMIT',
-  RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
-  REJECT = 'REJECT',
-  DELETE = 'DELETE',
-  DISMISS = 'DISMISS',
-  REOPEN = 'REOPEN',
   APPEAL = 'APPEAL',
-  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  ASK_FOR_CANCELLATION = 'ASK_FOR_CANCELLATION',
+  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
+  COMPLETE = 'COMPLETE',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
-  REOPEN_APPEAL = 'REOPEN_APPEAL',
-  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
+  DELETE = 'DELETE',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
+  DISMISS = 'DISMISS',
+  OPEN = 'OPEN',
+  RECEIVE = 'RECEIVE',
+  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  REJECT = 'REJECT',
+  REOPEN = 'REOPEN',
+  REOPEN_APPEAL = 'REOPEN_APPEAL',
   RETURN_INDICTMENT = 'RETURN_INDICTMENT',
+  SUBMIT = 'SUBMIT',
+  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
+}
+
+export enum IndictmentCaseTransition {
+  ASK_FOR_CANCELLATION = CaseTransition.ASK_FOR_CANCELLATION,
+  ASK_FOR_CONFIRMATION = CaseTransition.ASK_FOR_CONFIRMATION,
+  COMPLETE = CaseTransition.COMPLETE,
+  DELETE = CaseTransition.DELETE,
+  DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
+  RECEIVE = CaseTransition.RECEIVE,
+  RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
+  SUBMIT = CaseTransition.SUBMIT,
+}
+
+export enum RequestCaseTransition {
+  ACCEPT = CaseTransition.ACCEPT,
+  APPEAL = CaseTransition.APPEAL,
+  COMPLETE_APPEAL = CaseTransition.COMPLETE_APPEAL,
+  DELETE = CaseTransition.DELETE,
+  DISMISS = CaseTransition.DISMISS,
+  OPEN = CaseTransition.OPEN,
+  RECEIVE = CaseTransition.RECEIVE,
+  RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
+  REJECT = CaseTransition.REJECT,
+  REOPEN = CaseTransition.REOPEN,
+  REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
+  SUBMIT = CaseTransition.SUBMIT,
+  WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -159,6 +217,14 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
+export enum IndictmentDecision {
+  POSTPONING = 'POSTPONING',
+  SCHEDULING = 'SCHEDULING',
+  POSTPONING_UNTIL_VERDICT = 'POSTPONING_UNTIL_VERDICT',
+  COMPLETING = 'COMPLETING',
+  REDISTRIBUTING = 'REDISTRIBUTING',
+}
+
 export enum CaseAppealRulingDecision {
   ACCEPTING = 'ACCEPTING',
   REPEAL = 'REPEAL',
@@ -170,6 +236,19 @@ export enum CaseAppealRulingDecision {
   DISCONTINUED = 'DISCONTINUED',
 }
 
+export enum CaseIndictmentRulingDecision {
+  RULING = 'RULING',
+  FINE = 'FINE',
+  DISMISSAL = 'DISMISSAL',
+  CANCELLATION = 'CANCELLATION',
+  MERGE = 'MERGE',
+}
+
+export enum IndictmentCaseReviewDecision {
+  APPEAL = 'APPEAL',
+  ACCEPT = 'ACCEPT',
+}
+
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
@@ -179,14 +258,32 @@ export enum SessionArrangements {
 
 export enum RequestSharedWithDefender {
   READY_FOR_COURT = 'READY_FOR_COURT',
-  COURT_DATE = 'COURT_DATE',
+  COURT_DATE = 'COURT_DATE', // TODO: Rename to ARRAIGNMENT_DATE at some point
   NOT_SHARED = 'NOT_SHARED',
 }
 
-export enum DefendantPlea {
-  GUILTY = 'GUILTY',
-  NOT_GUILTY = 'NOT_GUILTY',
-  NO_PLEA = 'NO_PLEA',
+export enum CourtSessionType {
+  MAIN_HEARING = 'MAIN_HEARING',
+  OTHER = 'OTHER',
+  APPRAISER_SUMMONS = 'APPRAISER_SUMMONS',
+  VERDICT = 'VERDICT',
+  MAIN_HEARING_CONTINUATION = 'MAIN_HEARING_CONTINUATION',
+  HEARING = 'HEARING',
+  ORAL_ARGUMENTS = 'ORAL_ARGUMENTS',
+  RULING = 'RULING',
+  ARRAIGNMENT = 'ARRAIGNMENT',
+}
+
+export const courtSessionTypeNames = {
+  MAIN_HEARING: 'Aðalmeðferð',
+  OTHER: 'Annað',
+  APPRAISER_SUMMONS: 'Dómkvaðning matsmanna',
+  VERDICT: 'Dómsuppsaga',
+  MAIN_HEARING_CONTINUATION: 'Framhald aðalmeðferðar',
+  HEARING: 'Fyrirtaka',
+  ORAL_ARGUMENTS: 'Munnlegur málflutningur',
+  RULING: 'Uppkvaðning úrskurðar',
+  ARRAIGNMENT: 'Þingfesting',
 }
 
 export const indictmentCases = [CaseType.INDICTMENT]
@@ -229,6 +326,10 @@ export const isInvestigationCase = (type?: CaseType | null): boolean => {
   return Boolean(type && investigationCases.includes(type))
 }
 
+export const isRequestCase = (type?: CaseType | null): boolean => {
+  return Boolean(type && (isRestrictionCase(type) || isInvestigationCase(type)))
+}
+
 export const acceptedCaseDecisions = [
   CaseDecision.ACCEPTING,
   CaseDecision.ACCEPTING_PARTIALLY,
@@ -240,31 +341,59 @@ export const isAcceptingCaseDecision = (
   return Boolean(decision && acceptedCaseDecisions.includes(decision))
 }
 
-export const completedCaseStates = [
+export const completedRequestCaseStates = [
   CaseState.ACCEPTED,
   CaseState.REJECTED,
   CaseState.DISMISSED,
 ]
 
+export const completedIndictmentCaseStates = [CaseState.COMPLETED]
+
+export const completedCaseStates = completedRequestCaseStates.concat(
+  completedIndictmentCaseStates,
+)
+
 export const isCompletedCase = (state?: CaseState | null): boolean => {
   return Boolean(state && completedCaseStates.includes(state))
 }
 
-export const isTrafficViolationCase = (
-  indictmentSubtypes?: IndictmentSubtypeMap,
-  type?: CaseType,
+export const hasIndictmentCaseBeenSubmittedToCourt = (
+  state?: CaseState | null,
 ): boolean => {
-  if (!indictmentSubtypes || type !== CaseType.INDICTMENT) {
+  return Boolean(
+    state &&
+      [
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+        ...completedIndictmentCaseStates,
+      ].includes(state),
+  )
+}
+
+export const isTrafficViolationCase = (theCase: {
+  type?: CaseType | null
+  indictmentSubtypes?: IndictmentSubtypeMap
+  caseFiles?: { category?: CaseFileCategory | null }[] | null
+}): boolean => {
+  if (
+    theCase.type !== CaseType.INDICTMENT ||
+    !theCase.indictmentSubtypes ||
+    theCase.caseFiles?.some(
+      (file) => file.category === CaseFileCategory.INDICTMENT,
+    )
+  ) {
     return false
   }
 
-  const flatIndictmentSubtypes = flatten(Object.values(indictmentSubtypes))
+  const flatIndictmentSubtypes = flatten(
+    Object.values(theCase.indictmentSubtypes),
+  )
 
-  return Boolean(
+  return (
     flatIndictmentSubtypes.length > 0 &&
-      flatIndictmentSubtypes.every(
-        (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
-      ),
+    flatIndictmentSubtypes.every(
+      (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
+    )
   )
 }
 
@@ -274,23 +403,32 @@ export const getStatementDeadline = (appealReceived: Date): string => {
   ).toISOString()
 }
 
-export const prosecutorCanSelectDefenderForInvestigationCase = (
-  type?: CaseType | null,
-): boolean => {
-  return Boolean(
-    type &&
-      [
-        CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
-        CaseType.EXPULSION_FROM_HOME,
-        CaseType.PAROLE_REVOCATION,
-        CaseType.PSYCHIATRIC_EXAMINATION,
-        CaseType.RESTRAINING_ORDER,
-        CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
-        CaseType.OTHER,
-      ].includes(type),
+export const isIndictmentCaseState = (
+  state: string,
+): state is IndictmentCaseState => {
+  return Object.values(IndictmentCaseState).includes(
+    state as IndictmentCaseState,
   )
 }
 
-export type IndictmentConfirmation =
-  | { actor: string; institution: string; date: Date }
-  | undefined
+export const isRequestCaseState = (
+  state: string,
+): state is RequestCaseState => {
+  return Object.values(RequestCaseState).includes(state as RequestCaseState)
+}
+
+export const isIndictmentCaseTransition = (
+  transition: string,
+): transition is IndictmentCaseTransition => {
+  return Object.values(IndictmentCaseTransition).includes(
+    transition as IndictmentCaseTransition,
+  )
+}
+
+export const isRequestCaseTransition = (
+  transition: string,
+): transition is RequestCaseTransition => {
+  return Object.values(RequestCaseTransition).includes(
+    transition as RequestCaseTransition,
+  )
+}

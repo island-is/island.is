@@ -1,9 +1,14 @@
 import {
+  indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseTypeGuard, CaseWriteGuard } from '../../../case'
+import {
+  CaseCompletedGuard,
+  CaseTypeGuard,
+  CaseWriteGuard,
+} from '../../../case'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
 
 describe('LimitedAccessFileController - Create presigned post guards', () => {
@@ -21,7 +26,11 @@ describe('LimitedAccessFileController - Create presigned post guards', () => {
     expect(guards).toHaveLength(2)
     expect(guards[0]).toBeInstanceOf(CaseTypeGuard)
     expect(guards[0]).toEqual({
-      allowedCaseTypes: [...restrictionCases, ...investigationCases],
+      allowedCaseTypes: [
+        ...restrictionCases,
+        ...investigationCases,
+        ...indictmentCases,
+      ],
     })
     expect(new guards[1]()).toBeInstanceOf(CaseWriteGuard)
   })

@@ -12,6 +12,7 @@ import {
   Form,
   FormModes,
   NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { pensionSupplementFormMessage } from '../lib/messages'
 import {
@@ -64,11 +65,19 @@ export const PrerequisitesForm: Form = buildForm({
                 pensionSupplementFormMessage.pre.skraInformationSubTitle,
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationApplicantApi,
+              provider: UserProfileApi,
               title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
               subTitle:
+                socialInsuranceAdministrationMessage.pre.contactInfoDescription,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationApplicantApi,
+              title:
                 socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationInformationDescription,
+                  .socialInsuranceAdministrationTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationDescription,
             }),
             buildDataProviderItem({
               id: 'sia.privacy',
@@ -112,26 +121,6 @@ export const PrerequisitesForm: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'info',
-      title: socialInsuranceAdministrationMessage.info.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'additionalInfo',
-      title: socialInsuranceAdministrationMessage.additionalInfo.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirm',
-      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'conclusion',
-      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
-      children: [],
     }),
   ],
 })

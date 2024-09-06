@@ -246,6 +246,7 @@ export class ApplicationController {
       ApplicationEventType.INPROGRESS,
       ApplicationEventType.ASSIGNCASE,
       ApplicationEventType.NEW,
+      ApplicationEventType.DATECHANGED,
     ]
 
     const applicantUpdateEvents = [

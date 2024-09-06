@@ -118,5 +118,7 @@ export class WorkerService implements OnModuleDestroy {
 
       this.status = Status.Stopped
     }
+
+    this.client.dispose()
   }
 }

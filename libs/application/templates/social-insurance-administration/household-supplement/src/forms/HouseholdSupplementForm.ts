@@ -19,7 +19,6 @@ import {
   Form,
   FormModes,
   FormValue,
-  NationalRegistryIndividual,
   NationalRegistrySpouse,
   YES,
 } from '@island.is/application/types'
@@ -32,7 +31,6 @@ import {
   getApplicationExternalData,
   getAvailableYears,
 } from '../lib/householdSupplementUtils'
-import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
   BankAccountType,
   MONTHS,
@@ -58,11 +56,6 @@ export const HouseholdSupplementForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: 'externalData',
-      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
-      children: [],
-    }),
-    buildSection({
       id: 'infoSection',
       title: socialInsuranceAdministrationMessage.info.section,
       children: [
@@ -84,9 +77,10 @@ export const HouseholdSupplementForm: Form = buildForm({
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
-                    const nationalRegistry = application.externalData
-                      .nationalRegistry.data as NationalRegistryIndividual
-                    return nationalRegistry.fullName
+                    const { applicantName } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return applicantName
                   },
                 }),
                 buildTextField({
@@ -108,9 +102,10 @@ export const HouseholdSupplementForm: Form = buildForm({
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
-                    const nationalRegistry = application.externalData
-                      .nationalRegistry.data as NationalRegistryIndividual
-                    return nationalRegistry?.address?.streetAddress
+                    const { applicantAddress } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return applicantAddress
                   },
                 }),
                 buildTextField({
@@ -122,9 +117,10 @@ export const HouseholdSupplementForm: Form = buildForm({
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
-                    const nationalRegistry = application.externalData
-                      .nationalRegistry.data as NationalRegistryIndividual
-                    return nationalRegistry?.address?.postalCode
+                    const { applicantPostalCode } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return applicantPostalCode
                   },
                 }),
                 buildTextField({
@@ -136,9 +132,10 @@ export const HouseholdSupplementForm: Form = buildForm({
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
-                    const nationalRegistry = application.externalData
-                      .nationalRegistry.data as NationalRegistryIndividual
-                    return nationalRegistry?.address?.locality
+                    const { applicantLocality } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return applicantLocality
                   },
                 }),
                 buildTextField({
@@ -150,10 +147,10 @@ export const HouseholdSupplementForm: Form = buildForm({
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.emailAddress
+                    const { userProfileEmail } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return userProfileEmail
                   },
                 }),
                 buildPhoneField({
@@ -163,10 +160,10 @@ export const HouseholdSupplementForm: Form = buildForm({
                       .applicantPhonenumber,
                   width: 'half',
                   defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.phoneNumber
+                    const { userProfilePhoneNumber } =
+                      getApplicationExternalData(application.externalData) || ''
+
+                    return userProfilePhoneNumber
                   },
                 }),
                 buildDescriptionField({

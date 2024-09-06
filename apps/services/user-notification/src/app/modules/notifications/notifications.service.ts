@@ -8,15 +8,10 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import { Cache } from 'cache-manager'
-
 import { paginate } from '@island.is/nest/pagination'
 import type { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
-
 import { Notification } from './notification.model'
-import axios from 'axios'
 import { ArgumentDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import {
@@ -27,44 +22,69 @@ import {
   UnseenNotificationsCountDto,
   UnreadNotificationsCountDto,
 } from './dto/notification.dto'
-
-const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
-const CONTENTFUL_GQL_ENDPOINT =
-  'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
+import type { Locale } from '@island.is/shared/types'
+import { mapToContentfulLocale, mapToLocale, cleanString } from './utils'
+import {
+  CmsService,
+  GetTemplateByTemplateId,
+  GetTemplates,
+  GetOrganizationByNationalId,
+} from '@island.is/clients/cms'
 
 /**
  * These are the properties that can be replaced in the template
  */
 const ALLOWED_REPLACE_PROPS: Array<keyof HnippTemplate> = [
-  'notificationTitle',
-  'notificationBody',
-  'notificationDataCopy',
-  'clickAction',
-  'clickActionWeb',
+  'title',
+  'externalBody',
+  'internalBody',
   'clickActionUrl',
 ]
 
-/**
- * Finds {{key}} in string
- */
-const ARG_REPLACE_REGEX = new RegExp(/{{[^{}]*}}/)
+type SenderOrganization = {
+  title: string
+}
 
 @Injectable()
 export class NotificationsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
+    private readonly cmsService: CmsService,
   ) {}
 
-  private async formatAndMapNotification(
+  async getSenderOrganizationTitle(
+    senderId: string,
+    locale?: Locale,
+  ): Promise<SenderOrganization | undefined> {
+    locale = mapToLocale(locale as Locale)
+    const queryVariables = {
+      nationalId: senderId,
+      locale: mapToContentfulLocale(locale),
+    }
+    const res = await this.cmsService.fetchData(
+      GetOrganizationByNationalId,
+      queryVariables,
+    )
+    const items = res.organizationCollection.items
+    if (items.length > 0) {
+      const [item] = items
+      item.title = cleanString(item.title)
+      return item
+    } else {
+      this.logger.warn(`No org found for senderId: ${senderId}`, { senderId })
+    }
+  }
+
+  async formatAndMapNotification(
     notification: Notification,
     templateId: string,
-    locale: string,
+    locale?: Locale,
     template?: HnippTemplate,
   ): Promise<RenderedNotificationDto> {
+    locale = mapToLocale(locale as Locale)
     try {
       // If template is not provided, fetch it
       if (!template) {
@@ -72,9 +92,11 @@ export class NotificationsService {
       }
 
       // Format the template with arguments from the notification
-      const formattedTemplate = this.formatArguments(
+      const formattedTemplate = await this.formatArguments(
         notification.args,
         template,
+        notification.senderId,
+        locale,
       )
 
       // Map to RenderedNotificationDto
@@ -82,10 +104,9 @@ export class NotificationsService {
         id: notification.id,
         messageId: notification.messageId,
         senderId: notification.senderId || '',
-        title: formattedTemplate.notificationTitle,
-        body: formattedTemplate.notificationBody,
-        dataCopy: formattedTemplate.notificationDataCopy,
-        clickAction: formattedTemplate.clickAction,
+        title: formattedTemplate.title,
+        externalBody: formattedTemplate.externalBody,
+        internalBody: formattedTemplate.internalBody,
         clickActionUrl: formattedTemplate.clickActionUrl,
         created: notification.created,
         updated: notification.updated,
@@ -98,98 +119,35 @@ export class NotificationsService {
     }
   }
 
-  async addToCache(key: string, item: object) {
-    return await this.cacheManager.set(key, item)
-  }
-
-  async getFromCache(key: string) {
-    return await this.cacheManager.get(key)
-  }
-
-  mapLocale(locale?: string | null | undefined): string {
-    return locale === 'en' ? locale : 'is-IS'
-  }
-
-  async getTemplates(
-    locale?: string | null | undefined,
-  ): Promise<HnippTemplate[]> {
-    const mappedLocale = this.mapLocale(locale)
-
-    this.logger.info(
-      'Fetching templates from Contentful GQL for locale: ' + mappedLocale,
-    )
-
-    const contentfulHnippTemplatesQuery = {
-      query: `{
-      hnippTemplateCollection(locale: "${mappedLocale}") {
-        items {
-          templateId
-          notificationTitle
-          notificationBody
-          notificationDataCopy
-          clickAction
-          clickActionWeb
-          clickActionUrl
-          category
-          args
-        }
-      }
-    }`,
+  async getTemplates(locale?: Locale): Promise<HnippTemplate[]> {
+    locale = mapToLocale(locale as Locale)
+    const queryVariables = {
+      locale: mapToContentfulLocale(locale),
     }
-
-    const res = await axios
-      .post(CONTENTFUL_GQL_ENDPOINT, contentfulHnippTemplatesQuery, {
-        headers: {
-          'content-type': 'application/json',
-          authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      })
-      .then((response) => {
-        for (const item of response.data.data.hnippTemplateCollection.items) {
-          // contentful returns null for empty arrays
-          if (item.args == null) item.args = []
-        }
-        return response.data
-      })
-      .catch((error) => {
-        if (error.response) {
-          throw new BadRequestException(error.response.data)
-        } else {
-          throw new BadRequestException('Bad Request')
-        }
-      })
-    return res.data.hnippTemplateCollection.items
+    const res = await this.cmsService.fetchData(GetTemplates, queryVariables)
+    return res.hnippTemplateCollection.items
   }
 
   async getTemplate(
     templateId: string,
-    locale?: string | null | undefined,
+    locale?: Locale,
   ): Promise<HnippTemplate> {
-    locale = this.mapLocale(locale)
-    //check cache
-    const cacheKey = `${templateId}-${locale}`
-    const cachedTemplate = await this.getFromCache(cacheKey)
-
-    if (cachedTemplate) {
-      this.logger.info(`cache hit for: ${cacheKey}`)
-
-      return cachedTemplate as HnippTemplate
+    locale = mapToLocale(locale as Locale)
+    const queryVariables = {
+      templateId,
+      locale: mapToContentfulLocale(locale),
     }
-
-    try {
-      for (const template of await this.getTemplates(locale)) {
-        if (template.templateId == templateId) {
-          await this.addToCache(cacheKey, template)
-          return template
-        }
-      }
-
-      throw new NotFoundException(`Template: ${templateId} not found`)
-    } catch {
-      throw new NotFoundException(`Template: ${templateId} not found`)
+    const res = await this.cmsService.fetchData(
+      GetTemplateByTemplateId,
+      queryVariables,
+    )
+    const items = res.hnippTemplateCollection.items
+    if (items.length > 0) {
+      return items[0]
+    } else {
+      throw new NotFoundException(`Template not found for ID: ${templateId}`)
     }
   }
-
   /**
    * Checks if the arguments provided in the request body are valid for the template and checks if the number of arguments match
    */
@@ -231,42 +189,61 @@ export class NotificationsService {
     }
   }
 
-  formatArguments(args: ArgumentDto[], template: HnippTemplate): HnippTemplate {
-    if (args.length > 0) {
-      Object.keys(template).forEach((key) => {
+  /**
+   * Replaces the placeholders in the template with the values provided in the request body
+   */
+  async formatArguments(
+    args: ArgumentDto[],
+    template: HnippTemplate,
+    senderId?: string,
+    locale?: Locale,
+  ): Promise<HnippTemplate> {
+    // Fetch and update organization name if needed
+    if (senderId && args.some((arg) => arg.key === 'organization')) {
+      try {
+        const sender = await this.getSenderOrganizationTitle(senderId, locale)
+        if (sender?.title) {
+          args = args.map((arg) =>
+            arg.key === 'organization' ? { ...arg, value: sender.title } : arg,
+          )
+        }
+      } catch (error) {
+        this.logger.error('Error fetching sender organization title:', {
+          senderId,
+          locale,
+        })
+      }
+    }
+
+    // Deep clone the template to avoid modifying the original
+    const formattedTemplate = JSON.parse(JSON.stringify(template))
+
+    args.forEach((arg) => {
+      Object.keys(formattedTemplate).forEach((key) => {
         const templateKey = key as keyof HnippTemplate
 
         if (
           ALLOWED_REPLACE_PROPS.includes(templateKey) &&
-          templateKey !== 'args'
+          typeof formattedTemplate[templateKey] === 'string'
         ) {
-          const value = template[templateKey] as string
-
-          if (value && ARG_REPLACE_REGEX.test(value)) {
-            for (const arg of args) {
-              const regexTarget = new RegExp(`{{${arg.key}}}`, 'g')
-              const newValue = value.replace(regexTarget, arg.value)
-              if (newValue !== value) {
-                // finds {{key}} in string and replace with value
-                template[templateKey] = value.replace(regexTarget, arg.value)
-                break
-              }
-            }
-          }
+          formattedTemplate[templateKey] = formattedTemplate[
+            templateKey
+          ].replace(new RegExp(`{{${arg.key}}}`, 'g'), arg.value)
         }
       })
-    }
+    })
 
-    return template
+    return formattedTemplate
   }
 
   async findOne(
     user: User,
     id: number,
-    locale: string,
+    locale?: Locale,
   ): Promise<RenderedNotificationDto> {
+    locale = mapToLocale(locale as Locale)
     const notification = await this.notificationModel.findOne({
-      where: { id: id, recipient: user.nationalId },
+      where: { id, recipient: user.nationalId },
     })
 
     if (!notification) {
@@ -284,7 +261,8 @@ export class NotificationsService {
     user: User,
     query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
-    const templates = await this.getTemplates(query.locale)
+    const locale = mapToLocale(query.locale as Locale)
+    const templates = await this.getTemplates(locale)
     const paginatedListResponse = await paginate({
       Model: this.notificationModel,
       limit: query.limit || 10,
@@ -305,7 +283,7 @@ export class NotificationsService {
           return this.formatAndMapNotification(
             notification,
             notification.templateId,
-            query.locale,
+            locale,
             template,
           )
         } else {
@@ -324,8 +302,9 @@ export class NotificationsService {
     user: User,
     id: number,
     updateNotificationDto: UpdateNotificationDto,
-    locale: string,
+    locale?: Locale,
   ): Promise<RenderedNotificationDto> {
+    locale = mapToLocale(locale as Locale)
     const [numberOfAffectedRows, [updatedNotification]] =
       await this.notificationModel.update(updateNotificationDto, {
         where: {
@@ -394,6 +373,20 @@ export class NotificationsService {
       this.logger.error('Error marking all notifications as seen:', error)
       throw new InternalServerErrorException(
         'Error marking all notifications as seen',
+      )
+    }
+  }
+
+  async markAllAsRead(user: User): Promise<void> {
+    try {
+      await this.notificationModel.update(
+        { read: true },
+        { where: { recipient: user.nationalId, read: false } },
+      )
+    } catch (error) {
+      this.logger.error('Error marking all notifications as read:', error)
+      throw new InternalServerErrorException(
+        'Error marking all notifications as read',
       )
     }
   }

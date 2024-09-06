@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/service-portal/src",
   "projectType": "application",
+  "tags": ["scope:portals-mypages"],
   "generators": {},
   "targets": {
     "build": {
@@ -76,16 +77,12 @@
       ]
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/service-portal/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/service-portal/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/service-portal/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/service-portal"]
     },
@@ -115,7 +112,8 @@
         "parallel": true
       }
     },
-    "docker-static": {}
-  },
-  "tags": ["scope:portals-mypages"]
+    "docker-static": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-static`"
+    }
+  }
 }

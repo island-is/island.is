@@ -1,4 +1,10 @@
-import React, { createContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  FC,
+  PropsWithChildren,
+  useEffect,
+  useState,
+} from 'react'
 
 import { Feature } from '@island.is/judicial-system/types'
 import { getFeature } from '@island.is/judicial-system-web/src/services/api'
@@ -11,9 +17,7 @@ const availableFeatures = Object.values(Feature)
 
 export const FeatureContext = createContext<FeatureProvider>({ features: [] })
 
-const FeatureProvider: React.FC<React.PropsWithChildren<unknown>> = ({
-  children,
-}) => {
+const FeatureProvider: FC<PropsWithChildren> = ({ children }) => {
   const [features, setFeatures] = useState<Feature[]>([])
 
   useEffect(() => {

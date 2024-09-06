@@ -4,13 +4,20 @@ import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
 import { Category } from './models/v2/category.model'
 import { MailAction } from './models/v2/bulkMailAction.input'
-import { PaginatedDocuments, Document } from './models/v2/document.model'
+import {
+  PaginatedDocuments,
+  Document,
+  DocumentPageNumber,
+} from './models/v2/document.model'
+import type { ConfigType } from '@island.is/nest/config'
 import { DocumentsInput } from './models/v2/documents.input'
 import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
 import { Sender } from './models/v2/sender.model'
 import { FileType } from './models/v2/documentContent.model'
 import { HEALTH_CATEGORY_ID } from './document.types'
 import { Type } from './models/v2/type.model'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
 
 const LOG_CATEGORY = 'documents-api-v2'
 @Injectable()
@@ -18,6 +25,8 @@ export class DocumentServiceV2 {
   constructor(
     private documentService: DocumentsClientV2Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(DownloadServiceConfig.KEY)
+    private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
   ) {}
 
   async findDocumentById(
@@ -30,10 +39,10 @@ export class DocumentServiceV2 {
     )
 
     if (!document) {
-      return null
+      return null // Null document logged in clients-documents-v2
     }
 
-    let type
+    let type: FileType
     switch (document.fileType) {
       case 'html':
         type = FileType.HTML
@@ -53,6 +62,7 @@ export class DocumentServiceV2 {
       publicationDate: document.date,
       id: documentId,
       name: document.fileName,
+      downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${documentId}`,
       sender: {
         id: document.senderNationalId,
         name: document.senderName,
@@ -88,10 +98,14 @@ export class DocumentServiceV2 {
     const documents = await this.documentService.getDocumentList({
       ...restOfInput,
       categoryId: mutableCategoryIds.join(),
+      nationalId,
     })
 
-    if (!documents?.totalCount) {
-      throw new Error('Incomplete response')
+    if (typeof documents?.totalCount !== 'number') {
+      this.logger.warn('Document total count unavailable', {
+        category: LOG_CATEGORY,
+        totalCount: documents?.totalCount,
+      })
     }
 
     const documentData: Array<Document> =
@@ -104,6 +118,7 @@ export class DocumentServiceV2 {
           return {
             ...d,
             id: d.id,
+            downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${d.id}`,
             sender: {
               name: d.senderName,
               id: d.senderNationalId,
@@ -114,7 +129,7 @@ export class DocumentServiceV2 {
 
     return {
       data: documentData,
-      totalCount: documents?.totalCount,
+      totalCount: documents?.totalCount ?? 0,
       unreadCount: documents?.unreadCount,
       pageInfo: {
         hasNextPage: false,
@@ -185,14 +200,16 @@ export class DocumentServiceV2 {
     nationalId: string,
     documentId: string,
     pageSize: number,
-  ): Promise<number> {
+  ): Promise<DocumentPageNumber> {
     const res = await this.documentService.getPageNumber(
       nationalId,
       documentId,
       pageSize,
     )
 
-    return res ?? 1
+    return {
+      pageNumber: res ?? 1,
+    }
   }
 
   async getPaperMailInfo(
@@ -228,6 +245,19 @@ export class DocumentServiceV2 {
     return {
       wantsPaper: res.wantsPaper,
       nationalId: res.kennitala,
+    }
+  }
+
+  async markAllMailAsRead(
+    nationalId: string,
+  ): Promise<DocumentV2MarkAllMailAsRead> {
+    this.logger.debug('Marking all mail as read', {
+      category: LOG_CATEGORY,
+    })
+    const res = await this.documentService.markAllMailAsRead(nationalId)
+
+    return {
+      success: res.success,
     }
   }
 

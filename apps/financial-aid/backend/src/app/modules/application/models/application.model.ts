@@ -25,6 +25,7 @@ import { ApplicationFileModel } from '../../file/models/file.model'
 import { StaffModel } from '../../staff/models/staff.model'
 import { AmountModel } from '../../amount/models/amount.model'
 import { DirectTaxPaymentModel } from '../../directTaxPayment/models'
+import { ChildrenModel } from '../../children/models/children.model'
 
 @Table({
   tableName: 'applications',
@@ -47,6 +48,13 @@ export class ApplicationModel extends Model {
   @UpdatedAt
   @ApiProperty()
   modified: Date
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  @ApiProperty()
+  appliedDate: Date
 
   @Column({
     type: DataType.STRING,
@@ -163,11 +171,18 @@ export class ApplicationModel extends Model {
   interview: boolean
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
   formComment: string
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  childrenComment: string
 
   @Column({
     type: DataType.STRING,
@@ -246,6 +261,10 @@ export class ApplicationModel extends Model {
   @HasMany(() => ApplicationEventModel, 'applicationId')
   @ApiProperty({ type: ApplicationEventModel, isArray: true })
   applicationEvents?: ApplicationEventModel[]
+
+  @HasMany(() => ChildrenModel, 'applicationId')
+  @ApiProperty({ type: ChildrenModel, isArray: true })
+  children?: ChildrenModel[]
 
   @HasMany(() => AmountModel, 'applicationId')
   @ApiProperty({ type: AmountModel, nullable: true })

@@ -2,10 +2,14 @@
 export default {
   displayName: 'clients-signature-collection',
   preset: '../../../jest.preset.js',
+  globals: {},
   testEnvironment: 'node',
   transform: {
-    '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
+    '^.+\\.[tj]sx?$': [
+      'ts-jest',
+      { tsconfig: `${__dirname}/tsconfig.spec.json` },
+    ],
   },
-  moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/libs/clients/signature-collection',
+  moduleFileExtensions: ['ts', 'js'],
+  coverageDirectory: '<rootDir>/coverage/libs/clients/signature-collection',
 }

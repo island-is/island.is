@@ -1,7 +1,6 @@
-import * as s from './Ball.css'
-
-import React, { ReactNode } from 'react'
 import cn from 'classnames'
+
+import * as s from './Ball.css'
 
 // ---------------------------------------------------------------------------
 export type BallColor = 'green' | 'yellow' | 'red'

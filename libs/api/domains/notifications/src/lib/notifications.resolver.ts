@@ -1,56 +1,35 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { IdsUserGuard, CurrentUser } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
+import { DocumentsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import { Inject, NotFoundException, UseGuards } from '@nestjs/common'
 import { NotificationsService } from './notifications.service'
 import {
+  NotificationsMarkAllAsSeenResponse,
   MarkNotificationReadResponse,
   NotificationResponse,
-  NotificationsInput,
-  NotificationsResponse,
+  NotificationsMarkAllAsReadResponse,
 } from './notifications.model'
 import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 const LOG_CATEGORY = 'notifications-resolver'
+export const AUDIT_NAMESPACE = 'notifications-resolver'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
+@Audit({ namespace: AUDIT_NAMESPACE })
+@Scopes(DocumentsScope.main)
 export class NotificationsResolver {
   constructor(
     private readonly service: NotificationsService,
+    private readonly auditService: AuditService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Query(() => NotificationsResponse, {
-    name: 'notifications',
-    nullable: true,
-  })
-  async getNotifications(
-    @CurrentUser() user: User,
-    @Args('input', { type: () => NotificationsInput, nullable: true })
-    input: NotificationsInput,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
-  ): Promise<NotificationsResponse | null> {
-    let notifications: NotificationsResponse | null
-
-    try {
-      notifications = await this.service.getNotifications(locale, user, input)
-    } catch (e) {
-      this.logger.error('failed to get notifications', {
-        locale,
-        category: LOG_CATEGORY,
-        error: e,
-      })
-      throw e
-    }
-
-    return notifications
-  }
-
   @Query(() => NotificationResponse, {
-    name: 'notification',
+    name: 'userNotification',
     nullable: true,
   })
   async getNotification(
@@ -62,7 +41,15 @@ export class NotificationsResolver {
   ) {
     let notification
     try {
-      notification = await this.service.getNotification(id, locale, user)
+      notification = await this.auditService.auditPromise(
+        {
+          auth: user,
+          namespace: AUDIT_NAMESPACE,
+          action: 'getNotification',
+          resources: `${id}`,
+        },
+        this.service.getNotification(id, locale, user),
+      )
     } catch (e) {
       this.logger.error('failed to get notification by id', {
         id,
@@ -85,6 +72,48 @@ export class NotificationsResolver {
     return notification
   }
 
+  @Mutation(() => NotificationsMarkAllAsSeenResponse, {
+    name: 'markAllNotificationsSeen',
+    nullable: true,
+  })
+  @Audit()
+  async markAllNotificationsAsSeen(@CurrentUser() user: User) {
+    let result
+
+    try {
+      result = await this.service.markAllNotificationsAsSeen(user)
+    } catch (e) {
+      this.logger.error('failed to mark all notifications as seen', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw e
+    }
+
+    return result
+  }
+
+  @Mutation(() => NotificationsMarkAllAsReadResponse, {
+    name: 'markAllNotificationsRead',
+    nullable: true,
+  })
+  @Audit()
+  async markAllNotificationsAsRead(@CurrentUser() user: User) {
+    let result
+
+    try {
+      result = await this.service.markAllNotificationsAsRead(user)
+    } catch (e) {
+      this.logger.error('failed to mark all notifications as read', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw e
+    }
+
+    return result
+  }
+
   @Mutation(() => MarkNotificationReadResponse, {
     name: 'markNotificationAsRead',
     nullable: true,
@@ -99,7 +128,15 @@ export class NotificationsResolver {
     let result
 
     try {
-      result = await this.service.markNotificationAsRead(id, locale, user)
+      result = await this.auditService.auditPromise(
+        {
+          auth: user,
+          namespace: AUDIT_NAMESPACE,
+          action: 'getNotification',
+          resources: `${id}`,
+        },
+        this.service.markNotificationAsRead(id, locale, user),
+      )
     } catch (e) {
       this.logger.error('failed to mark notification as read', {
         id,

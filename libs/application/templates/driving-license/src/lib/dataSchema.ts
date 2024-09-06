@@ -1,6 +1,5 @@
 import { z } from 'zod'
-import { YES, NO, B_FULL_RENEWAL_65 } from './constants'
-import { B_FULL, B_TEMP } from '../lib/constants'
+import { YES, NO, B_FULL_RENEWAL_65, BE, B_TEMP, B_FULL } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { hasYes } from '@island.is/application/core'
 
@@ -43,17 +42,21 @@ export const dataSchema = z.object({
         path: ['attachment'],
       },
     ),
-  contactGlassesMismatch: z.boolean(),
   healthDeclarationAge65: z.object({
     attachment: z.array(FileSchema).nonempty(),
   }),
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  healthDeclarationValidForBELicense: z
+    .array(z.string())
+    .refine((v) => v === undefined || v.length === 0),
+  contactGlassesMismatch: z.boolean(),
   willBringQualityPhoto: z.union([
     z.array(z.enum([YES, NO])).nonempty(),
     z.enum([YES, NO]),
   ]),
   requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum([YES, NO])).nonempty(),
-  applicationFor: z.enum([B_FULL, B_TEMP, B_FULL_RENEWAL_65]),
+  applicationFor: z.enum([B_FULL, B_TEMP, B_FULL_RENEWAL_65, BE]),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   drivingInstructor: z.string().min(1),

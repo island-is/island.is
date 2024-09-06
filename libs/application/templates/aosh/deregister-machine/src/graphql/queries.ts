@@ -8,8 +8,8 @@ export const IDENTITY_QUERY = `
 `
 
 export const GET_MACHINE_DETAILS = `
-query GetMachineDetails($id: String!) {
-  getWorkerMachineDetails(id: $id) {
+query GetMachineDetails($id: String!, $rel: String!) {
+  getWorkerMachineDetails(id: $id, rel: $rel) {
     id
     regNumber
     type
@@ -25,8 +25,8 @@ query GetMachineDetails($id: String!) {
 `
 
 export const GET_MACHINE_BY_REGNO = `
-query GetMachineByRegno($regno: String!) {
-  getWorkerMachineByRegno(regno: $regno) {
+query GetMachineByRegno($regno: String!, $rel: String!) {
+  getWorkerMachineByRegno(regno: $regno, rel: $rel) {
     id
     regNumber
     type

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { DatePicker, Input } from '@island.is/island-ui/core'
@@ -8,7 +8,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { BlueBox, TimeInputField } from '../../components'
-import { dateTime as strings } from './DateTime.strings'
+import { strings } from './DateTime.strings'
 import * as styles from './DateTime.css'
 
 interface Props {
@@ -30,25 +30,24 @@ interface Props {
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
-const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const {
-    name,
-    datepickerLabel = 'Veldu dagsetningu',
-    datepickerPlaceholder = 'Veldu dagsetningu',
-    minDate,
-    maxDate,
-    selectedDate,
-    timeLabel,
-    disabled,
-    required = false,
-    blueBox = true,
-    locked = false,
-    backgroundColor = 'white',
-    size = 'md',
-    dateOnly = false,
-    defaultTime = '',
-    onChange,
-  } = props
+const DateTime: FC<Props> = ({
+  name,
+  datepickerLabel = 'Veldu dagsetningu',
+  datepickerPlaceholder = 'Veldu dagsetningu',
+  minDate,
+  maxDate,
+  selectedDate,
+  timeLabel,
+  disabled,
+  required = false,
+  blueBox = true,
+  locked = false,
+  backgroundColor = 'white',
+  size = 'md',
+  dateOnly = false,
+  defaultTime = '',
+  onChange,
+}) => {
   const { formatMessage } = useIntl()
 
   const getTimeFromDate = (date: Date | undefined): string =>
@@ -118,7 +117,7 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
     )
   }
 
-  const onTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onTimeChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newTime = event.target.value
 
     setCurrentTime(newTime)
@@ -134,7 +133,7 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
     sendToParent(currentDate, newTime)
   }
 
-  const onTimeBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  const onTimeBlur = (event: FocusEvent<HTMLInputElement>) => {
     const time = event.target.value
 
     const validations: Validation[] = ['empty', 'time-format']

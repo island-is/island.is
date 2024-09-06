@@ -53,14 +53,15 @@ import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
-import { CaseInterceptor } from './interceptors/case.interceptor'
+import { CaseFileInterceptor } from './interceptors/caseFile.interceptor'
+import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
 import {
   LimitedAccessCaseService,
   LimitedAccessUpdateCase,
 } from './limitedAccessCase.service'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('limited access cases')
@@ -68,7 +69,7 @@ export class LimitedAccessCaseController {
   constructor(
     private readonly limitedAccessCaseService: LimitedAccessCaseService,
     private readonly eventService: EventService,
-    private readonly pdfService: PDFService,
+    private readonly pdfService: PdfService,
 
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -85,7 +86,7 @@ export class LimitedAccessCaseController {
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
   })
-  @UseInterceptors(CaseInterceptor)
+  @UseInterceptors(CompletedAppealAccessedInterceptor, CaseFileInterceptor)
   async getById(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
@@ -159,6 +160,7 @@ export class LimitedAccessCaseController {
 
     const update: LimitedAccessUpdateCase = transitionCase(
       transition.transition,
+      theCase.type,
       theCase.state,
       theCase.appealState,
     )
@@ -181,10 +183,7 @@ export class LimitedAccessCaseController {
       user,
     )
 
-    this.eventService.postEvent(
-      transition.transition as unknown as CaseEvent,
-      updatedCase,
-    )
+    this.eventService.postEvent(transition.transition, updatedCase)
 
     return updatedCase
   }

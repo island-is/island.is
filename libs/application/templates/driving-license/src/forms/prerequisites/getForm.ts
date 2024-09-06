@@ -7,10 +7,12 @@ import { sectionApplicationFor } from './sectionApplicationFor'
 import { sectionRequirements } from './sectionRequirements'
 import { sectionExistingApplication } from './sectionExistingApplication'
 import { Syslumenn } from '../../assets'
+import { sectionDigitalLicenseInfo } from './sectionDigitalLicenseInfo'
 
 export const getForm = ({
   allowFakeData = false,
   allowPickLicense = false,
+  allowBELicense = false,
 }): Form =>
   buildForm({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
@@ -27,7 +29,8 @@ export const getForm = ({
           ...(allowFakeData ? [sectionFakeData] : []),
           sectionExternalData,
           sectionExistingApplication,
-          ...(allowPickLicense ? [sectionApplicationFor] : []),
+          ...(allowPickLicense ? [sectionApplicationFor(allowBELicense)] : []),
+          sectionDigitalLicenseInfo,
           sectionRequirements,
         ],
       }),
@@ -42,7 +45,7 @@ export const getForm = ({
         children: [],
       }),
       buildSection({
-        id: 'confim',
+        id: 'confirm',
         title: m.applicationDone,
         children: [],
       }),

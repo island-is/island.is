@@ -8,7 +8,8 @@ import { getConfig } from '../../config'
 import { GetFinanceStatus } from '../../graphql/types/finance.types'
 import { useGetFinanceStatusQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { openBrowser } from '../../lib/rn-island'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useBrowser } from '../../lib/use-browser'
 import { FinanceStatusCardContainer } from './components/finance-status-card-container'
 import { LightButton } from './components/light-button'
 
@@ -36,11 +37,15 @@ const { useNavigationOptions, getNavigationOptions } =
 
 export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
+
+  const { openBrowser } = useBrowser()
   const theme = useTheme()
   const intl = useIntl()
   const res = useGetFinanceStatusQuery({
     errorPolicy: 'ignore',
   })
+
+  useConnectivityIndicator({ componentId, queryResult: res })
 
   // Convert JSON scalars to types
   const financeStatusData: GetFinanceStatus = res.data?.getFinanceStatus ?? {
@@ -96,6 +101,8 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
     />
   ))
 
+  const showLoading = res.loading && !res.data
+
   return (
     <ScrollView style={{ flex: 1 }}>
       <SafeAreaView style={{ marginHorizontal: 16 }}>
@@ -127,7 +134,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
           </Typography>
         }
         subtitle={
-          res.loading ? (
+          showLoading ? (
             <Skeleton
               active
               style={{ borderRadius: 4, width: 150 }}
@@ -168,7 +175,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
         />
       </SafeAreaView>
       <SafeAreaView style={{ marginHorizontal: 16 }}>
-        {res.loading
+        {showLoading
           ? skeletonItems
           : organizations.length > 0 || financeStatusZero
           ? organizations.map((org, i) =>

@@ -68,7 +68,6 @@ export const overview = {
     defaultMessage: 'Hætta við',
     description: 'Texti í takka í modal glugga á Yfirlit ákæru skefi í ákærum.',
   }),
-
   indictmentSentToCourt: defineMessage({
     id: 'judicial.system.indictments:overview.indictment_sent_to_court',
     defaultMessage: 'Ákæra hefur verið send dómstól',
@@ -98,5 +97,42 @@ export const overview = {
     defaultMessage: 'Ákæra endursend',
     description:
       'Notaður sem titill á "Ákæra endursend" hluta af yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
+  }),
+  askForCancellationButtonText: defineMessage({
+    id: 'judicial.system.indictments:overview.ask_for_cancellation_button_text',
+    defaultMessage: 'Afturkalla ákæru',
+    description:
+      'Texti á takka til að afturkalla ákæru á Yfirlit ákæru skefi í ákærum.',
+  }),
+  askForCancellationModalTitle: defineMessage({
+    id: 'judicial.system.indictments:overview.ask_for_cancellation_modal_title',
+    defaultMessage: 'Viltu afturkall ákæru?',
+    description:
+      'Titill í afturkalla modal glugga á Yfirlit ákæru skefi í ákærum.',
+  }),
+  askForCancellationModalText: defineMessage({
+    id: 'judicial.system.indictments:overview.ask_for_cancellation_modal_text',
+    defaultMessage:
+      'Dómurinn fær tilkynningu um afturköllun ákæru ásamt verjanda hafi verjandi verið skráður.',
+    description:
+      'Texti í afturkalla modal glugga á Yfirlit ákæru skefi í ákærum.',
+  }),
+  askForCancellationPrimaryButtonText: defineMessage({
+    id: 'judicial.system.indictments:overview.ask_for_cancellation_primary_button_text',
+    defaultMessage: 'Afturkalla ákæru',
+    description:
+      'Texti í staðfesta takka í afturkalla modal glugga á Yfirlit ákæru skefi í ákærum.',
+  }),
+  askForCancellationSecondaryButtonText: defineMessage({
+    id: 'judicial.system.indictments:overview.ask_for_cancellation_secondary_button_text',
+    defaultMessage: 'Hætta við',
+    description:
+      'Texti í hætta við takka í afturkalla modal glugga á Yfirlit ákæru skefi í ákærum.',
+  }),
+  addDocumentsButtonText: defineMessage({
+    id: 'judicial.system.indictments:overview.add_documents_button_text',
+    defaultMessage: 'Bæta við gögnum',
+    description:
+      'Texti á takka til að bæta við skjölum á Yfirlit ákæru skefi í ákærum.',
   }),
 }

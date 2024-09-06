@@ -12,7 +12,9 @@ export enum RelationEnum {
   SIBLING = 'sibling',
   SPOUSE = 'spouse',
 }
-export enum OtherPropertiesEnum {
+export enum PropertiesEnum {
+  REAL_ESTATE = 'realEstate',
+  VEHICLES = 'vehicles',
   ACCOUNTS = 'accounts',
   OWN_BUSINESS = 'ownBusiness',
   RESIDENCE = 'residence',
@@ -50,7 +52,7 @@ export type Answers = {
   knowledgeOfOtherWills: 'yes' | 'no'
   marriageSettlement: boolean
   occupationRightViaCondominium: boolean
-  otherProperties: OtherPropertiesEnum
+  otherProperties: PropertiesEnum
   ownBusinessManagement: boolean
   roleConfirmation: RoleConfirmationEnum
   vehicles: {
@@ -68,6 +70,7 @@ export interface EstateMember {
   dateOfBirth?: string
   custodian?: string
   foreignCitizenship?: ('yes' | 'no')[]
+  noContactInfo?: ('Yes' | 'No')[]
   enabled?: boolean
   phone?: string
   email?: string

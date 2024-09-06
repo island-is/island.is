@@ -459,11 +459,27 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             id: 'payment',
             title: '',
             children: [
-              buildCustomField({
-                id: 'payment',
-                title: '',
-                component: 'PaymentInfo',
-              }),
+              buildCustomField(
+                {
+                  id: 'payment',
+                  title: '',
+                  component: 'PaymentInfo',
+                },
+                {
+                  allowFakeData,
+                  // TODO: When/if real data enters the payment catalog, remove this
+                  fakePayments: [
+                    {
+                      priceAmount: 2800,
+                      chargeItemCode: 'AY153',
+                    },
+                    {
+                      priceAmount: 2700,
+                      chargeItemCode: 'AY154',
+                    },
+                  ],
+                },
+              ),
               buildSubmitField({
                 id: 'submitPayment',
                 title: '',

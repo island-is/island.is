@@ -1,4 +1,3 @@
-import { Locale } from 'locale'
 import groupBy from 'lodash/groupBy'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -19,6 +18,7 @@ import {
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import { ServiceWebWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -41,6 +41,7 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import { Screen } from '../../../types'
@@ -103,6 +104,11 @@ const SubPage: Screen<SubPageProps> = ({
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
   const institutionSlugBelongsToMannaudstorg =
     institutionSlug.includes('mannaudstorg')
+
+  const institutionSlugBelongsToTryggingastofnun =
+    institutionSlug.includes('tryggingastofnun') ||
+    institutionSlug.includes('social-insurance-administration')
+
   // Already filtered by category, simply
   const categoryDescription = supportQNAs[0]?.category?.description ?? ''
   const categoryTitle = supportQNAs[0]?.category?.title
@@ -388,26 +394,28 @@ const SubPage: Screen<SubPageProps> = ({
                 </GridRow>
               </GridContainer>
 
-              <Box marginTop={[10, 10, 20]}>
-                <ContactBanner
-                  slug={institutionSlug}
-                  cantFindWhatYouAreLookingForText={o(
-                    'cantFindWhatYouAreLookingForText',
-                    n(
+              {!institutionSlugBelongsToTryggingastofnun && (
+                <Box marginTop={[10, 10, 20]}>
+                  <ContactBanner
+                    slug={institutionSlug}
+                    cantFindWhatYouAreLookingForText={o(
                       'cantFindWhatYouAreLookingForText',
-                      'Finnurðu ekki það sem þig vantar?',
-                    ),
-                  )}
-                  contactUsText={o(
-                    'contactUsText',
-                    n('contactUsText', 'Hafa samband'),
-                  )}
-                  howCanWeHelpText={o(
-                    'howCanWeHelpText',
-                    n('howCanWeHelpText', 'Hvernig getum við aðstoðað?'),
-                  )}
-                />
-              </Box>
+                      n(
+                        'cantFindWhatYouAreLookingForText',
+                        'Finnurðu ekki það sem þig vantar?',
+                      ),
+                    )}
+                    contactUsText={o(
+                      'contactUsText',
+                      n('contactUsText', 'Hafa samband'),
+                    )}
+                    howCanWeHelpText={o(
+                      'howCanWeHelpText',
+                      n('howCanWeHelpText', 'Hvernig getum við aðstoðað?'),
+                    )}
+                  />
+                </Box>
+              )}
             </GridColumn>
           </GridRow>
         </GridContainer>
@@ -424,16 +432,18 @@ SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
   const categorySlug = slugs[1]
   const questionSlug = slugs[2] ?? undefined
 
-  if (single(query.q)) {
+  const q = single(query.q)
+
+  if (q) {
     if (res) {
       res.writeHead(302, {
-        Location: linkResolver(
-          'supportqna',
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          [organizationSlug, categorySlug, single(query.q)],
-          locale as Locale,
-        ).href,
+        Location: encodeURI(
+          linkResolver(
+            'supportqna',
+            [organizationSlug, categorySlug, q],
+            locale as Locale,
+          ).href,
+        ),
       })
       res.end()
     }
@@ -511,6 +521,13 @@ SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
       },
     }),
   ])
+
+  if (
+    categorySlug &&
+    (!singleSupportCategory || !singleSupportCategory?.data?.getSupportCategory)
+  ) {
+    throw new CustomNextError(404, 'Support category not found')
+  }
 
   const organizationNamespace = JSON.parse(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

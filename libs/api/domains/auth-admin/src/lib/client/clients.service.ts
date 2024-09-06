@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
+import groupBy from 'lodash/groupBy'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CreateClientType,
   MeClientsControllerCreateRequest,
-  MeClientsControllerUpdateRequest,
 } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
 
@@ -22,59 +22,50 @@ import { Client } from './models/client.model'
 import { ClientAllowedScope } from './models/client-allowed-scope.model'
 import { environments } from '../shared/constants/environments'
 import { DeleteClientInput } from './dto/delete-client.input'
+import { ClientsPayload } from './dto/clients.payload'
+import { RevokeSecretsInput } from './dto/revoke-secrets.input'
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
-  async getClients(user: User, tenantId: string) {
-    const clients = await Promise.all([
-      this.adminDevApiWithAuth(user)
-        ?.meClientsControllerFindByTenantId({
-          tenantId,
-        })
-        .catch((error) => this.handleError(error, Environment.Development)),
-      this.adminStagingApiWithAuth(user)
-        ?.meClientsControllerFindByTenantId({
-          tenantId,
-        })
-        .catch((error) => this.handleError(error, Environment.Staging)),
-      this.adminProdApiWithAuth(user)
-        ?.meClientsControllerFindByTenantId({
-          tenantId,
-        })
-        .catch((error) => this.handleError(error, Environment.Production)),
-    ])
+  async getClients(user: User, tenantId: string): Promise<ClientsPayload> {
+    const clientsSettledPromises = await Promise.allSettled(
+      environments.map(async (environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meClientsControllerFindByTenantIdRaw({
+            tenantId,
+          }),
+        ),
+      ),
+    )
 
-    const clientsMap = new Map<string, ClientEnvironment[]>()
+    const clientsEnvironments = this.handleSettledPromises(
+      clientsSettledPromises,
+      {
+        mapper: (clients, index): ClientEnvironment[] =>
+          clients.map(
+            (client): ClientEnvironment => ({
+              ...client,
+              id: this.formatClientId(client.clientId, environments[index]),
+              environment: environments[index],
+            }),
+          ),
+        prefixErrorMessage: `Failed to find applications for tenant ${tenantId}`,
+      },
+    ).flat()
 
-    for (const [index, env] of environments.entries()) {
-      for (const client of clients[index] ?? []) {
-        if (!clientsMap.has(client.clientId)) {
-          clientsMap.set(client.clientId, [])
-        }
+    const groupedClients = groupBy(clientsEnvironments, 'clientId')
 
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        clientsMap.get(client.clientId)!.push({
-          ...client,
-          id: this.formatClientId(client.clientId, env),
-          environment: env,
-        })
-      }
-    }
-
-    const clientsArray: Client[] = []
-    for (const [clientId, environments] of clientsMap.entries()) {
-      clientsArray.push({
+    const clients: Client[] = Object.entries(groupedClients)
+      .map(([clientId, clients]) => ({
         clientId,
-        clientType: environments[0].clientType,
-        environments,
-      })
-    }
-
-    clientsArray.sort((a, b) => a.clientId.localeCompare(b.clientId))
+        clientType: clients[0].clientType,
+        environments: clients,
+      }))
+      .sort((a, b) => a.clientId.localeCompare(b.clientId))
 
     return {
-      data: clientsArray,
-      totalCount: clientsArray.length,
+      data: clients,
+      totalCount: clients.length,
       pageInfo: { hasNextPage: false },
     }
   }
@@ -87,14 +78,13 @@ export class ClientsService extends MultiEnvironmentService {
   ): Promise<Client | null> {
     const settledClientsPromises = await Promise.allSettled(
       environments.map(async (environment) =>
-        this.adminApiByEnvironmentWithAuth(
-          environment,
-          user,
-        )?.meClientsControllerFindByTenantIdAndClientId({
-          tenantId,
-          clientId,
-          includeArchived,
-        }),
+        this.makeRequest(user, environment, (api) =>
+          api.meClientsControllerFindByTenantIdAndClientIdRaw({
+            tenantId,
+            clientId,
+            includeArchived,
+          }),
+        ),
       ),
     )
 
@@ -126,12 +116,11 @@ export class ClientsService extends MultiEnvironmentService {
   ): Promise<CreateClientResponse[]> {
     const settledPromises = await Promise.allSettled(
       input.environments.map(async (environment) => {
-        const tenant = await this.adminApiByEnvironmentWithAuth(
-          environment,
-          user,
-        )?.meTenantsControllerFindById({
-          tenantId: input.tenantId,
-        })
+        const tenant = await this.makeRequest(user, environment, (api) =>
+          api.meTenantsControllerFindByIdRaw({
+            tenantId: input.tenantId,
+          }),
+        )
 
         const applicationRequest: MeClientsControllerCreateRequest = {
           tenantId: input.tenantId,
@@ -140,13 +129,13 @@ export class ClientsService extends MultiEnvironmentService {
             clientType: input.clientType as string as CreateClientType,
             clientName: input.displayName,
             contactEmail: tenant?.contactEmail,
+            supportedDelegationTypes: input.supportedDelegationTypes,
           },
         }
 
-        return this.adminApiByEnvironmentWithAuth(
-          environment,
-          user,
-        )?.meClientsControllerCreate(applicationRequest)
+        return this.makeRequest(user, environment, (api) =>
+          api.meClientsControllerCreateRaw(applicationRequest),
+        )
       }),
     )
 
@@ -161,106 +150,111 @@ export class ClientsService extends MultiEnvironmentService {
 
   async patchClient(
     user: User,
-    input: PatchClientInput,
+    {
+      clientId,
+      tenantId,
+      environments,
+      ...adminPatchClientDto
+    }: PatchClientInput,
   ): Promise<ClientEnvironment[]> {
-    const { clientId, tenantId, environments, ...adminPatchClientDto } = input
-
     if (Object.keys(adminPatchClientDto).length === 0) {
       throw new Error('Nothing provided to update')
     }
 
-    const updateData: MeClientsControllerUpdateRequest = {
-      tenantId: input.tenantId,
-      clientId: input.clientId,
-      adminPatchClientDto: adminPatchClientDto,
-    }
-
     const updated = await Promise.allSettled(
-      input.environments.map(async (environment) => {
-        return this.adminApiByEnvironmentWithAuth(
-          environment,
-          user,
-        )?.meClientsControllerUpdate(updateData)
-      }),
+      environments.map(async (environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meClientsControllerUpdateRaw({
+            tenantId,
+            clientId,
+            adminPatchClientDto,
+          }),
+        ),
+      ),
     )
 
     return this.handleSettledPromises(updated, {
       mapper: (client, index) => ({
         ...client,
-        id: this.formatClientId(client.clientId, input.environments[index]),
-        environment: input.environments[index],
+        id: this.formatClientId(client.clientId, environments[index]),
+        environment: environments[index],
       }),
-      prefixErrorMessage: `Failed to update application ${input.clientId}`,
+      prefixErrorMessage: `Failed to update application ${clientId}`,
     })
   }
 
   async getClientSecrets(
     user: User,
-    input: ClientSecretInput,
+    { environment, clientId, tenantId }: ClientSecretInput,
   ): Promise<ClientSecret[]> {
-    const secrets = await this.adminApiByEnvironmentWithAuth(
-      input.environment,
-      user,
-    )?.meClientSecretsControllerFindAll({
-      tenantId: input.tenantId,
-      clientId: input.clientId,
-    })
+    const secrets = await this.makeRequest(user, environment, (api) =>
+      api.meClientSecretsControllerFindAllRaw({
+        tenantId,
+        clientId,
+      }),
+    )
 
     return secrets ?? []
   }
 
   async publishClient(
     user: User,
-    input: PublishClientInput,
+    {
+      sourceEnvironment,
+      targetEnvironment,
+      clientId,
+      tenantId,
+    }: PublishClientInput,
   ): Promise<ClientEnvironment> {
     // Fetch the client from source environment
-
-    const sourceInput = await this.adminApiByEnvironmentWithAuth(
-      input.sourceEnvironment,
+    const sourceInput = await this.makeRequest(
       user,
+      sourceEnvironment,
+      (sourceApi) =>
+        sourceApi.meClientsControllerFindByTenantIdAndClientIdRaw({
+          tenantId,
+          clientId,
+          includeArchived: false,
+        }),
     )
-      ?.meClientsControllerFindByTenantIdAndClientId({
-        tenantId: input.tenantId,
-        clientId: input.clientId,
-        includeArchived: false,
-      })
-      .catch((error) => this.handleError(error, input.sourceEnvironment))
 
     if (!sourceInput) {
-      throw new Error(`Client ${input.clientId} not found`)
+      throw new Error(`Client ${clientId} not found in ${sourceEnvironment}`)
     }
 
-    const created = await this.adminApiByEnvironmentWithAuth(
-      input.targetEnvironment,
+    const created = await this.makeRequest(
       user,
-    )?.meClientsControllerCreate({
-      tenantId: input.tenantId,
-      adminCreateClientDto: {
-        ...sourceInput,
-        clientId: input.clientId,
-        clientType:
-          CreateClientType[
-            sourceInput.clientType as keyof typeof CreateClientType
-          ],
-        clientName:
-          sourceInput.displayName.find(({ locale }) => locale === 'is')
-            ?.value || sourceInput.clientId,
-        //exclude the uris
-        postLogoutRedirectUris: [],
-        redirectUris: [],
-      },
-    })
+      targetEnvironment,
+      (targetApi) =>
+        targetApi.meClientsControllerCreateRaw({
+          tenantId,
+          adminCreateClientDto: {
+            ...sourceInput,
+            clientId,
+            clientType:
+              CreateClientType[
+                sourceInput.clientType as keyof typeof CreateClientType
+              ],
+            clientName:
+              sourceInput.displayName.find(({ locale }) => locale === 'is')
+                ?.value || sourceInput.clientId,
+            //exclude the uris
+            postLogoutRedirectUris: [],
+            redirectUris: [],
+          },
+        }),
+    )
 
     if (!created) {
       throw new Error(
-        `Failed to create client ${input.clientId} on ${input.targetEnvironment}`,
+        `Failed to create client ${clientId} on ${targetEnvironment}`,
       )
     }
 
     return {
       ...created,
-      id: this.formatClientId(created.clientId, input.targetEnvironment),
-      environment: input.targetEnvironment,
+      id: this.formatClientId(created.clientId, targetEnvironment),
+      environment: targetEnvironment,
     }
   }
 
@@ -270,15 +264,14 @@ export class ClientsService extends MultiEnvironmentService {
 
   async getAllowedScopes(
     user: User,
-    input: ClientAllowedScopeInput,
+    { environment, clientId, tenantId }: ClientAllowedScopeInput,
   ): Promise<ClientAllowedScope[]> {
-    const apiScopes = await this.adminApiByEnvironmentWithAuth(
-      input.environment,
-      user,
-    )?.meClientsScopesControllerFindAll({
-      tenantId: input.tenantId,
-      clientId: input.clientId,
-    })
+    const apiScopes = await this.makeRequest(user, environment, (api) =>
+      api.meClientsScopesControllerFindAllRaw({
+        tenantId,
+        clientId,
+      }),
+    )
 
     return (
       apiScopes?.map(({ name, displayName, description, domainName }) => ({
@@ -292,85 +285,103 @@ export class ClientsService extends MultiEnvironmentService {
 
   async rotateSecret(
     user: User,
-    input: RotateSecretInput,
+    { environment, revokeOldSecrets, clientId, tenantId }: RotateSecretInput,
   ): Promise<ClientSecret> {
-    const adminApi = this.adminApiByEnvironmentWithAuth(input.environment, user)
+    if (revokeOldSecrets) {
+      const secrets = await this.makeRequest(user, environment, (api) =>
+        api.meClientSecretsControllerFindAllRaw({
+          tenantId,
+          clientId,
+        }),
+      )
 
-    if (!adminApi) {
-      throw new Error(`Environment ${input.environment} not configured`)
-    }
-
-    if (input.revokeOldSecrets) {
-      const secrets = await adminApi.meClientSecretsControllerFindAll({
-        tenantId: input.tenantId,
-        clientId: input.clientId,
-      })
       if (secrets && secrets.length > 0) {
         // We don't care about the result of the delete as we can't have it in a single transaction between environments.
         // If it fails the UI will prompt the user about there being old secrets and they can clear them.
         await Promise.allSettled(
           secrets.map((secret) =>
-            adminApi.meClientSecretsControllerDelete({
-              tenantId: input.tenantId,
-              clientId: input.clientId,
-              secretId: secret.secretId,
-            }),
+            this.makeRequest(user, environment, (api) =>
+              api.meClientSecretsControllerDeleteRaw({
+                tenantId,
+                clientId,
+                secretId: secret.secretId,
+              }),
+            ),
           ),
         )
       }
     }
 
-    return adminApi.meClientSecretsControllerCreate({
-      tenantId: input.tenantId,
-      clientId: input.clientId,
-    })
+    const newSecret = await this.makeRequest(user, environment, (api) =>
+      api.meClientSecretsControllerCreateRaw({
+        tenantId,
+        clientId,
+      }),
+    )
+
+    if (!newSecret) {
+      throw new Error(
+        `Failed to create secret for client ${clientId} in ${environment}`,
+      )
+    }
+
+    return newSecret
   }
 
   async deleteClient(user: User, input: DeleteClientInput): Promise<boolean> {
-    const response = environments.map((env) => ({
+    const targets = environments.map((env) => ({
       environment: env,
       success: true,
     }))
 
     await Promise.all(
-      response.map((resp, index) =>
-        this.adminApiByEnvironmentWithAuth(resp.environment, user)
-          ?.meClientsControllerDelete({
-            tenantId: input.tenantId,
-            clientId: input.clientId,
-          })
-          .catch((error) => {
-            response[index].success = false
-            this.handleError(error, resp.environment)
-          }),
-      ),
+      targets.map(async (target) => {
+        const response = await this.makeRequest(
+          user,
+          target.environment,
+          (api) =>
+            api.meClientsControllerDeleteRaw({
+              tenantId: input.tenantId,
+              clientId: input.clientId,
+            }),
+        ).catch((error) => {
+          target.success = false
+          this.handleError(error, target.environment)
+        })
+
+        if (!response) {
+          target.success = false
+        }
+      }),
     )
 
-    return response.some((resp) => resp.success)
+    return targets.some((target) => target.success)
   }
 
-  async revokeSecret(user: User, input: RotateSecretInput) {
-    const adminApi = this.adminApiByEnvironmentWithAuth(input.environment, user)
-
-    if (!adminApi) {
-      throw new Error(`Environment ${input.environment} not configured`)
-    }
-
+  async revokeSecret(
+    user: User,
+    { environment, clientId, tenantId }: RevokeSecretsInput,
+  ) {
     // We consider the first secret to be the active one and the rest as the old secrets to revoke
-    const [_, ...oldSecrets] = await adminApi.meClientSecretsControllerFindAll({
-      tenantId: input.tenantId,
-      clientId: input.clientId,
-    })
+    const [_, ...oldSecrets] =
+      (await this.makeRequest(user, environment, (api) =>
+        api.meClientSecretsControllerFindAllRaw({
+          tenantId,
+          clientId,
+        }),
+      )) ?? []
 
     // We revoke the old secrets
     if (oldSecrets && oldSecrets.length > 0) {
       await Promise.all(
         oldSecrets.map((secret) =>
-          adminApi.meClientSecretsControllerDelete({
-            tenantId: input.tenantId,
-            clientId: input.clientId,
-            secretId: secret.secretId,
-          }),
+          this.makeRequest(user, environment, (api) =>
+            api.meClientSecretsControllerDeleteRaw({
+              tenantId,
+              clientId,
+              secretId: secret.secretId,
+            }),
+          ),
         ),
       )
     }

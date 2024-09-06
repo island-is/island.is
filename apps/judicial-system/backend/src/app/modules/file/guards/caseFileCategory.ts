@@ -15,9 +15,12 @@ export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
 export const defenderCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
-  CaseFileCategory.COVER_LETTER,
   CaseFileCategory.INDICTMENT,
   CaseFileCategory.CRIMINAL_RECORD,
   CaseFileCategory.COST_BREAKDOWN,
   CaseFileCategory.CASE_FILE,
+  CaseFileCategory.PROSECUTOR_CASE_FILE,
+  CaseFileCategory.DEFENDANT_CASE_FILE,
 ]
+
+export const prisonAdminCaseFileCategories = [CaseFileCategory.APPEAL_RULING]

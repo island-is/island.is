@@ -81,6 +81,11 @@ export const m = defineMessages({
     defaultMessage: 'Staðfesta',
     description: '',
   },
+  noContactInfo: {
+    id: 'es.application:noContactInfo',
+    defaultMessage: 'Án upplýsinga um samskipti',
+    description: '',
+  },
 
   // Data collection - external data providers
   dataCollectionTitle: {
@@ -953,8 +958,13 @@ export const m = defineMessages({
     description: '',
   },
   notFilledOut: {
-    id: 'es.application:notFilledOut',
+    id: 'es.application:notFilledOut#markdown',
     defaultMessage: 'Ekki fyllt út',
+    description: '',
+  },
+  notFilledOutItalic: {
+    id: 'es.application:notFilledOut#markdown',
+    defaultMessage: '*Ekki fyllt út*',
     description: '',
   },
 

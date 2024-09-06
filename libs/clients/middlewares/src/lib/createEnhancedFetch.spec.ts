@@ -206,20 +206,4 @@ describe('EnhancedFetch', () => {
     )
     expect(env.fetch).toHaveBeenCalledTimes(2)
   })
-
-  it('can be configured to open circuit for 400 errors', async () => {
-    // Arrange
-    env = setupTestEnv({ treat400ResponsesAsErrors: true })
-    env.fetch.mockResolvedValue(fakeResponse('Error', { status: 400 }))
-    await env.enhancedFetch(testUrl).catch(() => null)
-
-    // Act
-    const promise = env.enhancedFetch(testUrl)
-
-    // Assert
-    await expect(promise).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"Breaker is open"`,
-    )
-    expect(env.fetch).toHaveBeenCalledTimes(1)
-  })
 })

@@ -33,3 +33,14 @@ export const fitContent = style({
 export const alignSelfToFlexEnd = style({
   alignSelf: 'flex-end',
 })
+
+export const hiddenOnScreen = style({
+  '@media': {
+    screen: {
+      display: 'none',
+    },
+    print: {
+      display: 'block',
+    },
+  },
+})

@@ -8,24 +8,25 @@ import {
   NewDrivingAssessmentResult,
   RequirementKey,
   ApplicationEligibility,
-  DrivingLicenseCategory,
   QualityPhotoResult,
   DrivingLicenseApplicationType,
   NewTemporaryDrivingLicenseInput,
   ApplicationEligibilityRequirement,
   QualitySignatureResult,
   Renewal65AndOver,
+  NewBEDrivingLicenseInput,
+  DrivinglicenseDuplicateValidityStatus,
 } from './drivingLicense.type'
 import {
   CanApplyErrorCodeBFull,
   CanApplyErrorCodeBTemporary,
   Disqualification,
-  DriverLicenseWithoutImages,
   DriversLicense,
   DrivingAssessment,
   DrivingLicenseApi,
   TeacherV4,
   PostTemporaryLicenseWithHealthDeclaration as HealthDeclaration,
+  DriverLicenseWithoutImages,
 } from '@island.is/clients/driving-license'
 import {
   BLACKLISTED_JURISDICTION,
@@ -45,6 +46,7 @@ import {
 import { info } from 'kennitala'
 import { computeCountryResidence } from '@island.is/residence-history'
 import { Jurisdiction } from './graphql/models'
+import addMonths from 'date-fns/addMonths'
 
 const LOGTAG = '[api-domains-driving-license]'
 
@@ -72,7 +74,10 @@ export class DrivingLicenseService {
     const drivingLicesnes = await this.drivingLicenseApi
       .getAllDriverLicenses(token)
       .catch((e) => {
-        this.logger.log(`${LOGTAG} Error fetching all driver licenses`, e)
+        this.logger.warn(`Error fetching all driver licenses`, {
+          error: e,
+          category: LOGTAG,
+        })
       })
     return drivingLicesnes ?? []
   }
@@ -351,10 +356,15 @@ export class DrivingLicenseService {
     }
   }
 
-  async canApplyFor(type: 'B-full' | 'B-temp', token: string) {
+  async canApplyFor(type: 'B-full' | 'B-temp' | 'BE', token: string) {
     if (type === 'B-full') {
       return this.drivingLicenseApi.getCanApplyForCategoryFull({
         category: 'B',
+        token,
+      })
+    } else if (type === 'BE') {
+      return this.drivingLicenseApi.getCanApplyForCategoryFull({
+        category: 'BE',
         token,
       })
     } else if (type === 'B-temp') {
@@ -375,6 +385,51 @@ export class DrivingLicenseService {
       studentSSN,
       token,
     })
+  }
+
+  async canGetNewDuplicate(
+    token: string,
+  ): Promise<DrivinglicenseDuplicateValidityStatus> {
+    const license = await this.drivingLicenseApi.getCurrentLicense({
+      token,
+    })
+
+    if (license.comments?.some((comment) => comment?.nr == '400')) {
+      return {
+        canGetNewDuplicate: false,
+        meta: '',
+      }
+    }
+
+    const inSixMonths = addMonths(new Date(), 6)
+
+    for (const category of license.categories ?? []) {
+      if (category.expires === null) {
+        // Technically this will result in the wrong error message
+        // towards the user, however, contacting the registry
+        // with the category information should result in the error
+        // being discovered anyway. We log it here for good measure though.
+        this.logger.warn(`${LOGTAG} Category has no expiration date`, {
+          category: category.name,
+        })
+        return {
+          canGetNewDuplicate: false,
+          meta: category.name,
+        }
+      }
+
+      if (category.expires < inSixMonths) {
+        return {
+          canGetNewDuplicate: false,
+          meta: category.name,
+        }
+      }
+    }
+
+    return {
+      canGetNewDuplicate: true,
+      meta: '',
+    }
   }
 
   async drivingLicenseDuplicateSubmission(params: {
@@ -435,7 +490,7 @@ export class DrivingLicenseService {
     input: NewDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postCreateDrivingLicenseFull({
-      category: DrivingLicenseCategory.B,
+      category: input.licenseCategory,
       jurisdictionId: input.jurisdictionId,
       willBringHealthCertificate: input.needsToPresentHealthCertificate,
       nationalIdApplicant: nationalId,
@@ -462,6 +517,26 @@ export class DrivingLicenseService {
     return {
       success: response.isOk ?? false,
       errorMessage: response.errorCode ?? null,
+    }
+  }
+  
+  async applyForBELicense(
+    nationalId: User['nationalId'],
+    auth: User['authorization'],
+    input: NewBEDrivingLicenseInput,
+  ): Promise<NewDrivingLicenseResult> {
+    const response = await this.drivingLicenseApi.postApplyForBELicense({
+      nationalIdApplicant: nationalId,
+      token: auth,
+      jurisdictionId: input.jurisdiction,
+      instructorSSN: input.instructorSSN,
+      email: input.studentEmail,
+      phoneNumber: input.primaryPhoneNumber,
+    })
+
+    return {
+      success: response,
+      errorMessage: null,
     }
   }
 

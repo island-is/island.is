@@ -30,21 +30,26 @@ export const GET_LIFE_EVENT_QUERY = gql`
   ${slices}
 `
 
-export const GET_LIFE_EVENTS_QUERY = gql`
-  query GetLifeEvents($input: GetLifeEventsInput!) {
-    getLifeEvents(input: $input) {
+export const GET_LIFE_EVENTS_FOR_OVERVIEW_QUERY = gql`
+  query GetLifeEventsForOverview($input: GetLifeEventsInput!) {
+    getLifeEventsForOverview(input: $input) {
       id
       title
+      shortTitle
       slug
-      intro
-      thumbnail {
+      tinyThumbnail {
         url
         title
       }
-      image {
-        url
+      featured {
         title
+        attention
+        thing {
+          slug
+          type
+        }
       }
+      seeMoreText
     }
   }
 `

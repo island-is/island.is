@@ -1,12 +1,21 @@
 import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common'
 import { join } from 'path'
 import { InjectModel } from '@nestjs/sequelize'
+import { isCompany } from 'kennitala'
 
 import { User } from '@island.is/auth-nest-tools'
-import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
-import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
+import { DocumentsScope } from '@island.is/auth/scopes'
+import {
+  EinstaklingurDTONafnAllt,
+  NationalRegistryV3ClientService,
+} from '@island.is/clients/national-registry-v3'
+import {
+  UserProfileDto,
+  V2UsersApi,
+  ActorProfileDto,
+} from '@island.is/clients/user-profile'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
-import { EmailService, Message, Body } from '@island.is/email-service'
+import { Body, EmailService, Message } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -15,22 +24,33 @@ import {
   QueueService,
   WorkerService,
 } from '@island.is/message-queue'
+import { type ConfigType } from '@island.is/nest/config'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-import { DocumentsScope } from '@island.is/auth/scopes'
+import type { Locale } from '@island.is/shared/types'
 
+import { UserNotificationsConfig } from '../../../../config'
 import { MessageProcessorService } from '../messageProcessor.service'
 import { NotificationDispatchService } from '../notificationDispatch.service'
 import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { NotificationsService } from '../notifications.service'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 import { Notification } from '../notification.model'
+import {
+  CompanyExtendedInfo,
+  CompanyRegistryClientService,
+} from '@island.is/clients/rsk/company-registry'
 
-export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 const WORK_STARTING_HOUR = 8 // 8 AM
 const WORK_ENDING_HOUR = 23 // 11 PM
 
 type HandleNotification = {
-  profile: UserProfileDto
+  profile: {
+    nationalId: string
+    email?: string | null
+    documentNotifications: boolean
+    emailNotifications: boolean
+    locale?: string
+  }
   messageId: string
   message: CreateHnippNotificationDto
 }
@@ -44,22 +64,28 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     private readonly userProfileApi: V2UsersApi,
     private readonly delegationsApi: DelegationsApi,
     private readonly nationalRegistryService: NationalRegistryV3ClientService,
+    private readonly companyRegistryService: CompanyRegistryClientService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly emailService: EmailService,
+
     @InjectWorker('notifications')
     private readonly worker: WorkerService,
+
+    @InjectQueue('notifications')
+    private readonly queue: QueueService,
+
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-    @Inject(IS_RUNNING_AS_WORKER)
-    private readonly isRunningAsWorker: boolean,
-    @Inject(EmailService)
-    private readonly emailService: EmailService,
+
+    @Inject(UserNotificationsConfig.KEY)
+    private readonly config: ConfigType<typeof UserNotificationsConfig>,
+
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
-    @InjectQueue('notifications') private readonly queue: QueueService,
   ) {}
 
   onApplicationBootstrap() {
-    if (this.isRunningAsWorker) {
+    if (this.config.isWorker) {
       void this.run()
     }
   }
@@ -69,7 +95,15 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     messageId,
     message,
   }: HandleNotification) {
-    // don't send message unless user wants this type of notification
+    // don't send message unless user wants this type of notification and national id is a person.
+    if (isCompany(profile.nationalId)) {
+      this.logger.info(
+        'User is not a person and will not receive document notifications',
+        { messageId },
+      )
+
+      return
+    }
     if (!profile.documentNotifications) {
       this.logger.info(
         'User does not have notifications enabled this message type',
@@ -85,7 +119,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
     const notification = await this.messageProcessor.convertToNotification(
       message,
-      profile,
+      profile.locale as Locale,
     )
 
     await this.notificationDispatch.sendPushNotification({
@@ -98,18 +132,18 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   createEmail({
     isEnglish,
     recipientEmail,
-    template,
     formattedTemplate,
     fullName,
+    subjectId,
   }: {
     isEnglish: boolean
     recipientEmail: string | null
-    template: HnippTemplate
     formattedTemplate: HnippTemplate
     fullName: string
+    subjectId?: string
   }): Message {
     if (!recipientEmail) {
-      throw new Error('User does not have email notifications enabled')
+      throw new Error('Missing recipient email address')
     }
 
     const generateBody = (): Body[] => {
@@ -117,7 +151,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         {
           component: 'Image',
           context: {
-            src: join(__dirname, `./assets/images/logo.jpg`),
+            src: join(__dirname, `./assets/images/island-2x-logo.png`),
             alt: 'Ísland.is logo',
           },
         },
@@ -130,13 +164,13 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         {
           component: 'Heading',
           context: {
-            copy: formattedTemplate.notificationTitle,
+            copy: formattedTemplate.title,
           },
         },
         {
           component: 'Copy',
           context: {
-            copy: formattedTemplate.notificationBody,
+            copy: formattedTemplate.externalBody,
           },
         },
         {
@@ -145,10 +179,16 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         ...(formattedTemplate.clickActionUrl
           ? [
               {
-                component: 'Button',
+                component: 'ImageWithLink',
                 context: {
-                  copy: `${isEnglish ? 'View on' : 'Skoða á'} island.is`,
-                  href: formattedTemplate.clickActionUrl,
+                  src: join(
+                    __dirname,
+                    `./assets/images/${
+                      isEnglish ? 'en' : 'is'
+                    }-button-open.png`,
+                  ),
+                  alt: isEnglish ? 'Open mailbox' : 'Opna Pósthólf',
+                  href: this.getClickActionUrl(formattedTemplate, subjectId),
                 },
               },
               {
@@ -174,15 +214,15 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     return {
       from: {
         name: 'Ísland.is',
-        address: 'no-reply@island.is',
+        address: this.config.emailFromAddress,
       },
       to: {
         name: fullName,
         address: recipientEmail,
       },
-      subject: template.notificationTitle,
+      subject: formattedTemplate.title,
       template: {
-        title: template.notificationTitle,
+        title: formattedTemplate.title,
         body: generateBody(),
       },
     }
@@ -208,38 +248,53 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       return
     }
 
-    if (!profile.email && !profile.emailNotifications) {
-      this.logger.info('User does not have email notifications enabled', {
-        messageId,
-      })
+    if (!profile.email || !profile.emailNotifications) {
+      this.logger.info(
+        'User does not have registered email or email notifications enabled',
+        {
+          messageId,
+        },
+      )
 
       return
     }
 
-    const [template, individual] = await Promise.all([
-      this.notificationsService.getTemplate(message.templateId, profile.locale),
-      this.nationalRegistryService.getName(profile.nationalId),
-    ])
+    const template = await this.notificationsService.getTemplate(
+      message.templateId,
+      profile.locale as Locale,
+    )
 
-    const fullName = individual?.fulltNafn ?? ''
+    let fullName = message.onBehalfOf?.name ?? ''
+
+    // if we don't have a full name, we try to get it from the national registry
+    if (!fullName) {
+      // we always use the name of the original recipient in the email
+      const nationalIdOfOriginalRecipient =
+        message.onBehalfOf?.nationalId ?? profile.nationalId
+
+      fullName = await this.getFullName(nationalIdOfOriginalRecipient)
+    }
+
     const isEnglish = profile.locale === 'en'
 
-    const formattedTemplate = this.notificationsService.formatArguments(
+    const formattedTemplate = await this.notificationsService.formatArguments(
       message.args,
       // We need to shallow copy the template here so that the
       // in-memory cache is not modified.
       {
         ...template,
       },
+      message?.senderId,
+      profile.locale as Locale,
     )
 
     try {
       const emailContent = this.createEmail({
+        formattedTemplate,
         isEnglish,
         recipientEmail: profile.email ?? null,
-        template,
-        formattedTemplate,
         fullName,
+        subjectId: message.onBehalfOf?.subjectId,
       })
 
       await this.emailService.sendEmail(emailContent)
@@ -315,10 +370,21 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           }
         }
 
-        const profile =
-          await this.userProfileApi.userProfileControllerFindUserProfile({
-            xParamNationalId: message.recipient,
-          })
+        // get actor profile if sending to delegation holder, else get user profile
+        let profile: UserProfileDto | ActorProfileDto
+
+        if (message.onBehalfOf) {
+          profile =
+            await this.userProfileApi.userProfileControllerGetActorProfile({
+              xParamToNationalId: message.recipient,
+              xParamFromNationalId: message.onBehalfOf.nationalId,
+            })
+        } else {
+          profile =
+            await this.userProfileApi.userProfileControllerFindUserProfile({
+              xParamNationalId: message.recipient,
+            })
+        }
 
         // can't send message if user has no user profile
         if (!profile) {
@@ -329,8 +395,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
         this.logger.info('User found for message', { messageId })
 
-        const handleNotificationArgs = {
-          profile,
+        const handleNotificationArgs: HandleNotification = {
+          profile: { ...profile, nationalId: message.recipient },
           messageId,
           message,
         }
@@ -360,17 +426,27 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
               const delegations =
                 await this.delegationsApi.delegationsControllerGetDelegationRecords(
                   {
-                    xQueryFromNationalId: message.recipient,
+                    xQueryNationalId: message.recipient,
                     scope: DocumentsScope.main,
                   },
                 )
+
+              let recipientName = ''
+
+              if (delegations.data.length > 0) {
+                recipientName = await this.getFullName(message.recipient)
+              }
 
               await Promise.all(
                 delegations.data.map((delegation) =>
                   this.queue.add({
                     ...message,
                     recipient: delegation.toNationalId,
-                    onBehalfOf: message.recipient,
+                    onBehalfOf: {
+                      nationalId: message.recipient,
+                      name: recipientName,
+                      subjectId: delegation.subjectId,
+                    },
                   }),
                 ),
               )
@@ -385,5 +461,45 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         await Promise.all(notificationPromises)
       },
     )
+  }
+
+  private async getFullName(nationalId: string): Promise<string> {
+    let identity: CompanyExtendedInfo | EinstaklingurDTONafnAllt | null
+
+    if (isCompany(nationalId)) {
+      identity = await this.companyRegistryService.getCompany(nationalId)
+      return identity?.name ?? ''
+    }
+
+    identity = await this.nationalRegistryService.getName(nationalId)
+    return identity?.fulltNafn ?? ''
+  }
+
+  /* Private methods */
+
+  // When sending email to delegation holder we want to use third party login if we have a subjectId and are sending to a service portal url
+  private getClickActionUrl(
+    formattedTemplate: HnippTemplate,
+    subjectId?: string,
+  ) {
+    if (!formattedTemplate.clickActionUrl) {
+      return ''
+    }
+
+    if (!subjectId) {
+      return formattedTemplate.clickActionUrl
+    }
+
+    const shouldUseThirdPartyLogin = formattedTemplate.clickActionUrl.includes(
+      this.config.servicePortalClickActionUrl,
+    )
+
+    return shouldUseThirdPartyLogin
+      ? `${
+          this.config.servicePortalClickActionUrl
+        }/login?login_hint=${subjectId}&target_link_uri=${encodeURI(
+          formattedTemplate.clickActionUrl,
+        )}`
+      : formattedTemplate.clickActionUrl
   }
 }

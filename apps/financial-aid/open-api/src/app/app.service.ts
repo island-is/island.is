@@ -9,6 +9,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import appModuleConfig from './app.config'
 import { FilterApplicationsDto } from './app.dto'
+import { isDateValid } from './helpers'
 import { ApplicationModel } from './models'
 
 @Injectable()
@@ -33,6 +34,8 @@ export class AppService {
       `${this.config.backend.url}/api/financial-aid/open-api-applications/getAll`,
     )
     url.searchParams.append('startDate', filters.startDate)
+    isDateValid(filters.startDate, 'startDate')
+
     url.searchParams.append(
       'endDate',
       filters.endDate ??
@@ -40,6 +43,9 @@ export class AppService {
           representation: 'date',
         }),
     )
+    if (filters.endDate) {
+      isDateValid(filters.endDate, 'endDate')
+    }
     if (filters.state) {
       url.searchParams.append('state', filters.state)
     }

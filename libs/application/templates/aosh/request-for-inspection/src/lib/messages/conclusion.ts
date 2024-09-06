@@ -30,7 +30,7 @@ export const conclusion = {
       description: 'Conclusion seller alert message',
     },
     alertTitle: {
-      id: 'aosh.rifm.application:conclusion.default.alertMessage',
+      id: 'aosh.rifm.application:conclusion.default.alertTitle',
       defaultMessage: 'Beiðni um skoðun á tæki hefur verið móttekin!',
       description: 'Conclusion seller alert title',
     },

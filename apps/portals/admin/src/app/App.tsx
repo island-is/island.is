@@ -22,6 +22,7 @@ export const App = () => (
               portalMeta={{
                 portalType: 'admin',
                 basePath: AdminPortalPaths.Base,
+                portalTitle: 'Stjórnborð - Ísland.is',
               }}
             />
           </FeatureFlagProvider>

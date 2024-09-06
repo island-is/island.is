@@ -17,6 +17,7 @@ import { NationalRegistryClientService } from '@island.is/clients/national-regis
 import { AssetsXRoadService } from '@island.is/api/domains/assets'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
+import { EES } from './EES'
 
 @Injectable()
 export class NationalRegistryService extends BaseTemplateApiService {
@@ -32,7 +33,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
     const individual = await this.getIndividual(auth.nationalId)
-
     //Check if individual is found in national registry
     if (!individual) {
       throw new TemplateApiError(
@@ -73,6 +73,10 @@ export class NationalRegistryService extends BaseTemplateApiService {
     if (params?.ageToValidate && !isChild) {
       this.validateAge(params, individual)
     }
+
+    if (params?.citizenshipWithinEES) {
+      this.validateCitizenshipWithinEES(individual)
+    }
   }
 
   private async validateChildren(
@@ -84,6 +88,22 @@ export class NationalRegistryService extends BaseTemplateApiService {
       if (individual) {
         this.validateIndividual(individual, true, params)
       }
+    }
+  }
+
+  private validateCitizenshipWithinEES(individual: NationalRegistryIndividual) {
+    const isWithinEES = EES.some(
+      (country) => country.alpha2Code === individual.citizenship?.code,
+    )
+    if (!isWithinEES) {
+      // If individuals citizenship is not within EES
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryCitizenshipNotWithinEES,
+          summary: coreErrorMessages.nationalRegistryCitizenshipNotWithinEES,
+        },
+        400,
+      )
     }
   }
 

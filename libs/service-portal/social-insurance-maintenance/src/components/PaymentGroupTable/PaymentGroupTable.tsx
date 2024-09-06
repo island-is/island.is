@@ -1,3 +1,4 @@
+import { SocialInsurancePaymentGroupType } from '@island.is/api/schema'
 import { Table, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
@@ -7,33 +8,14 @@ import {
   amountFormat,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
-import { useGetPaymentPlanLazyQuery } from './PaymentGroupTable.generated'
-import { useEffect } from 'react'
-import { SocialInsurancePaymentGroupType } from '@island.is/api/schema'
+import { useGetPaymentPlanQuery } from './PaymentGroupTable.generated'
 import { PaymentGroupTableRow } from './PaymentGroupTableRow'
 
-type Props = {
-  selectedYear?: number
-}
-
-export const PaymentGroupTable = ({ selectedYear }: Props) => {
+export const PaymentGroupTable = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
 
-  const [getPaymentPlanQuery, { data, loading, error }] =
-    useGetPaymentPlanLazyQuery()
-
-  useEffect(() => {
-    if (selectedYear) {
-      getPaymentPlanQuery({
-        variables: {
-          input: {
-            year: selectedYear,
-          },
-        },
-      })
-    }
-  }, [getPaymentPlanQuery, selectedYear])
+  const { data, loading, error } = useGetPaymentPlanQuery()
 
   if (error && !loading) {
     return <Problem noBorder={false} size="small" />
@@ -53,73 +35,65 @@ export const PaymentGroupTable = ({ selectedYear }: Props) => {
           ]}
         />
 
-        {selectedYear &&
-          !loading &&
-          !error &&
-          data?.socialInsurancePaymentPlan && (
-            <Table.Body>
-              {data.socialInsurancePaymentPlan?.paymentGroups
-                ?.filter(
-                  (pg) => pg.type === SocialInsurancePaymentGroupType.PAYMENTS,
-                )
-                .map((pg, idx) => (
-                  <PaymentGroupTableRow
-                    key={`payment-group-idx-${idx}`}
-                    data={pg}
-                    formatMessage={formatMessage}
-                  />
-                ))}
-              <Table.Row>
-                <Table.Data colSpan={2}>
-                  <Text fontWeight="semiBold">
-                    {formatMessage(m.paymentsTotal)}
-                  </Text>
-                </Table.Data>
-                <Table.Data align="right" colSpan={2}>
-                  <Text fontWeight="semiBold">
-                    {amountFormat(
-                      data.socialInsurancePaymentPlan?.totalPayments,
-                    )}
-                  </Text>
-                </Table.Data>
-              </Table.Row>
-              {data.socialInsurancePaymentPlan?.paymentGroups
-                ?.filter(
-                  (pg) =>
-                    pg.type === SocialInsurancePaymentGroupType.SUBTRACTION,
-                )
-                .map((pg, idx) => (
-                  <PaymentGroupTableRow
-                    key={`payment-group-idx-subtraction-${idx}`}
-                    data={pg}
-                    formatMessage={formatMessage}
-                  />
-                ))}
-              <Table.Row>
-                <Table.Data align="left" colSpan={2}>
-                  <Text fontWeight="semiBold">
-                    {formatMessage(m.paymentsReceived)}
-                  </Text>
-                </Table.Data>
-                <Table.Data align="right">
-                  <Text fontWeight="semiBold">
-                    {amountFormat(
-                      data.socialInsurancePaymentPlan?.totalPaymentsReceived,
-                    )}
-                  </Text>
-                </Table.Data>
-              </Table.Row>
-            </Table.Body>
-          )}
-      </Table.Table>
-      {!selectedYear && <EmptyTable loading />}
-      {selectedYear && loading && !error && <EmptyTable loading={loading} />}
-      {selectedYear &&
-        !loading &&
-        !error &&
-        !data?.socialInsurancePaymentPlan && (
-          <EmptyTable message={formatMessage(m.noPaymentsFound)} />
+        {!loading && !error && data?.socialInsurancePaymentPlan && (
+          <Table.Body>
+            {data.socialInsurancePaymentPlan?.paymentGroups
+              ?.filter(
+                (pg) => pg.type === SocialInsurancePaymentGroupType.PAYMENTS,
+              )
+              .map((pg, idx) => (
+                <PaymentGroupTableRow
+                  key={`payment-group-idx-${idx}`}
+                  data={pg}
+                  formatMessage={formatMessage}
+                />
+              ))}
+            <Table.Row>
+              <Table.Data colSpan={2}>
+                <Text fontWeight="semiBold">
+                  {formatMessage(m.paymentsTotal)}
+                </Text>
+              </Table.Data>
+              <Table.Data align="right" colSpan={2}>
+                <Text fontWeight="semiBold">
+                  {amountFormat(data.socialInsurancePaymentPlan?.totalPayments)}
+                </Text>
+              </Table.Data>
+            </Table.Row>
+            {data.socialInsurancePaymentPlan?.paymentGroups
+              ?.filter(
+                (pg) => pg.type === SocialInsurancePaymentGroupType.SUBTRACTION,
+              )
+              .map((pg, idx) => (
+                <PaymentGroupTableRow
+                  key={`payment-group-idx-subtraction-${idx}`}
+                  data={pg}
+                  formatMessage={formatMessage}
+                />
+              ))}
+            <Table.Row>
+              <Table.Data align="left" colSpan={2}>
+                <Text fontWeight="semiBold">
+                  {formatMessage(m.paymentsReceived)}
+                </Text>
+              </Table.Data>
+              <Table.Data align="right">
+                <Text fontWeight="semiBold">
+                  {amountFormat(
+                    data.socialInsurancePaymentPlan?.totalPaymentsReceived,
+                  )}
+                </Text>
+              </Table.Data>
+            </Table.Row>
+          </Table.Body>
         )}
+      </Table.Table>
+      {!error && !data?.socialInsurancePaymentPlan && (
+        <EmptyTable
+          loading={loading}
+          message={formatMessage(m.noPaymentsFound)}
+        />
+      )}
     </>
   )
 }

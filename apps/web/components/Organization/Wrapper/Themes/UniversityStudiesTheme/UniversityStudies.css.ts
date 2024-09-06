@@ -3,10 +3,10 @@ import { style } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 const icelandicBackgroundImageUrl =
-  'https://images.ctfassets.net/8k0h54kbe6bj/4dlQwaChrcgyRLTSJ0CsPM/7d83caf105d1c665a5d1ae2ff28ba89e/herobanner_haskolanam.svg'
+  'https://images.ctfassets.net/8k0h54kbe6bj/3zIrIJoZVenDqJ25f9rTKS/58a2aea4b30b97fd3fa26bbd298b0815/haskolanam_banner_is.svg'
 
 const englishBackgroundImageUrl =
-  'https://images.ctfassets.net/8k0h54kbe6bj/4dlQwaChrcgyRLTSJ0CsPM/f389998a7a852a0c32dc2fc0534b7d85/Hero_banner__1_.svg'
+  'https://images.ctfassets.net/8k0h54kbe6bj/3zIrIJoZVenDqJ25f9rTKS/42b81a706e747767a85d7acbbe3897d8/haskolanam_banner_en.svg'
 
 const generateHeaderBackgroundStyle = (backgroundImageUrl: string) =>
   style({

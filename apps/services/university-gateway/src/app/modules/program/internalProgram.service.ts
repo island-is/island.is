@@ -172,7 +172,12 @@ export class InternalProgramService {
         const programWhere: {
           externalId: string
           specializationExternalId?: string
-        } = { externalId: programObj.externalId }
+          universityId: string
+        } = {
+          externalId: programObj.externalId,
+          universityId: programObj.universityId,
+        }
+
         if (specialization?.externalId) {
           programWhere.specializationExternalId = specialization.externalId
         }

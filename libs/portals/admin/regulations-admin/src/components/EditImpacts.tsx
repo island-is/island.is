@@ -138,6 +138,14 @@ export const EditImpacts = () => {
                 </Link>{' '}
                 hefur ekki verið flutt á island.is.
                 <br /> Vinsamlegast hafið samband við ritstjóra.
+                <br />
+                <Link
+                  color="blue400"
+                  underlineVisibility="hover"
+                  href="mailto:reglugerdir@dmr.is"
+                >
+                  reglugerdir@dmr.is
+                </Link>
               </h3>
             </Inline>
           ) : lastItem(draft.impacts[selRegOption.value])?.type === 'repeal' ? (

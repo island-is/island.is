@@ -9,11 +9,6 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import {
-  FeatureFlagGuard,
-  FeatureFlag,
-  Features,
-} from '@island.is/nest/feature-flags'
 import { DrugService } from './drug.service'
 import { DrugPeriod } from './models/drugPeroid.model'
 import { DrugBill } from './models/drugBill.model'
@@ -28,9 +23,7 @@ import { DrugCertificate } from './models/drugCertificate.model'
 import { DrugCertificateInput } from './dto/drugCertificate.input'
 
 @Resolver()
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalHealthRightsModule)
-@FeatureFlag(Features.servicePortalHealthMedicinePages)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/drug' })
 export class DrugResolver {
   constructor(private readonly drugService: DrugService) {}

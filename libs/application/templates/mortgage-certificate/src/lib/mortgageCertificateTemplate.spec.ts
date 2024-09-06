@@ -40,23 +40,23 @@ function buildApplication(
 
 describe('Mortgage certificate Application Template', () => {
   describe('state transitions', () => {
-    it('should transition from draft to payment info', () => {
+    it('should transition from prerequisiets info to draft', () => {
       const helper = new ApplicationTemplateHelper(
-        buildApplication(),
+        buildApplication({
+          state: States.PREREQUISITES,
+        }),
         MortgageCertificateTemplate,
       )
       const [hasChanged, newState] = helper.changeState({
         type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(States.PAYMENT_INFO)
+      expect(newState).toBe(States.DRAFT)
     })
 
-    it('should transition from payment info to payment', () => {
+    it('should transition from draft to payment', () => {
       const helper = new ApplicationTemplateHelper(
-        buildApplication({
-          state: States.PAYMENT_INFO,
-        }),
+        buildApplication(),
         MortgageCertificateTemplate,
       )
       const [hasChanged, newState] = helper.changeState({

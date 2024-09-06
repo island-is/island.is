@@ -1,6 +1,5 @@
 import React, { FC, useEffect } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
-
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { RepeaterProps, FieldBaseProps } from '@island.is/application/types'
 import {
@@ -17,14 +16,13 @@ import {
 } from '@island.is/shared/problem'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
-
 import { Timeline } from '../components/Timeline/Timeline'
 import {
   formatPeriods,
   getAvailableRightsInDays,
-  getExpectedDateOfBirthOrAdoptionDate,
   getApplicationAnswers,
   synchronizeVMSTPeriods,
+  getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
 } from '../../lib/parentalLeaveUtils'
 import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import { States } from '../../constants'
@@ -60,7 +58,7 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
     application.state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
 
   const showDescription = field?.props?.showDescription ?? true
-  const dob = getExpectedDateOfBirthOrAdoptionDate(application)
+  const dob = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
   const { formatMessage, locale } = useLocale()
   const rights = getAvailableRightsInDays(application)
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
@@ -70,8 +68,8 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
     variables: {
       applicationId: application.id,
       nationalId: application.applicant,
-      shouldNotCall: !shouldCall,
     },
+    skip: !shouldCall,
   })
 
   useEffect(() => {
@@ -85,7 +83,7 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
       setRepeaterItems,
       setFieldLoadingState,
     )
-  }, [loading])
+  }, [loading]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!editable) {

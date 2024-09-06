@@ -1,7 +1,6 @@
 import {
   buildForm,
   buildMultiField,
-  buildPhoneField,
   buildSection,
   buildSubSection,
   buildTextField,
@@ -13,7 +12,10 @@ import {
   buildRadioField,
   buildSelectField,
 } from '@island.is/application/core'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMultiField,
+  buildFormConclusionSection,
+} from '@island.is/application/ui-forms'
 import {
   Application,
   DefaultEvents,
@@ -33,7 +35,6 @@ import {
   MONTHS,
   fileUploadSharedProps,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import isEmpty from 'lodash/isEmpty'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
@@ -53,52 +54,19 @@ export const PensionSupplementForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: 'prerequisites',
-      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
-      children: [],
-    }),
-    buildSection({
       id: 'infoSection',
       title: socialInsuranceAdministrationMessage.info.section,
       children: [
         buildSubSection({
           id: 'info',
-          title: socialInsuranceAdministrationMessage.info.subSectionTitle,
+          title: socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
           children: [
-            buildMultiField({
-              id: 'applicantInfo',
-              title: socialInsuranceAdministrationMessage.info.subSectionTitle,
-              description:
-                socialInsuranceAdministrationMessage.info.subSectionDescription,
-              children: [
-                buildTextField({
-                  id: 'applicantInfo.email',
-                  title:
-                    socialInsuranceAdministrationMessage.info.applicantEmail,
-                  width: 'half',
-                  variant: 'email',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.emailAddress
-                  },
-                }),
-                buildPhoneField({
-                  id: 'applicantInfo.phonenumber',
-                  title:
-                    socialInsuranceAdministrationMessage.info
-                      .applicantPhonenumber,
-                  width: 'half',
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.phoneNumber
-                  },
-                }),
-              ],
+            applicantInformationMultiField({
+              emailRequired: false,
+              emailDisabled: true,
+              applicantInformationDescription:
+                socialInsuranceAdministrationMessage.info
+                  .infoSubSectionDescription,
             }),
           ],
         }),
@@ -323,7 +291,7 @@ export const PensionSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.title,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [
         buildMultiField({
           id: 'periodField',

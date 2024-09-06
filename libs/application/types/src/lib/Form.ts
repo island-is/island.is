@@ -86,6 +86,7 @@ export interface FormItem extends TestSupport {
   condition?: Condition
   readonly type: string
   readonly title: FormText
+  readonly nextButtonText?: FormText
 }
 
 export interface Section extends FormItem {
@@ -122,6 +123,7 @@ export interface ExternalDataProvider extends FormItem {
   isPartOfRepeater?: boolean
   dataProviders: DataProviderItem[]
   otherPermissions?: DataProviderPermissionItem[]
+  enableMockPayment?: boolean
   checkboxLabel?: StaticText
   subTitle?: StaticText
   description?: StaticText

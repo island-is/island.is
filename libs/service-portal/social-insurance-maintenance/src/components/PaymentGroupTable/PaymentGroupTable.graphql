@@ -1,5 +1,5 @@
-query getPaymentPlan($input: SocialInsurancePaymentPlanInput!) {
-  socialInsurancePaymentPlan(input: $input) {
+query getPaymentPlan {
+  socialInsurancePaymentPlan {
     totalPayments
     totalPaymentsSubtraction
     totalPaymentsReceived

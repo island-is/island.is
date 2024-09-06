@@ -16,6 +16,7 @@ import {
   ResidenceAbroadApi,
   StudyApi,
   TravelDocumentApi,
+  ApplicantApi,
 } from '../../gen/fetch'
 
 const configFactory = (
@@ -56,6 +57,7 @@ export const exportedApis = [
   ResidenceAbroadApi,
   StudyApi,
   TravelDocumentApi,
+  ApplicantApi,
 ].map((Api) => ({
   provide: Api,
   useFactory: (

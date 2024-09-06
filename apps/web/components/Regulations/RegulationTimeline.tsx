@@ -1,8 +1,8 @@
-import React from 'react'
 import { RegulationMaybeDiff } from '@island.is/regulations'
+
+import { useRegulationEffectPrepper } from './RegulationChangelog'
 import { RegulationsSidebarBox } from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import { useRegulationEffectPrepper } from './RegulationChangelog'
 
 export type RegulationTimelineProps = {
   regulation: RegulationMaybeDiff

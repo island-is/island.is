@@ -9,31 +9,38 @@ import {
 import { preview } from '../lib/messages'
 import {
   OJOIFieldBaseProps,
-  MinistryOfJusticeGraphqlResponse,
+  OfficialJournalOfIcelandGraphqlResponse,
 } from '../lib/types'
 import { useLocale } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
-import { TYPES_QUERY } from '../graphql/queries'
+import { PDF_QUERY, PDF_URL_QUERY, TYPE_QUERY } from '../graphql/queries'
 
 export const Preview = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
-  const { answers } = props.application
+  const { answers, id } = props.application
   const { advert, signature } = answers
 
-  const { data, loading } = useQuery<MinistryOfJusticeGraphqlResponse<'types'>>(
-    TYPES_QUERY,
-    {
-      variables: {
-        params: {
-          search: advert?.type,
-        },
+  const { data, loading } = useQuery(TYPE_QUERY, {
+    variables: {
+      params: {
+        id: advert?.type,
       },
     },
-  )
+  })
 
-  const category = data?.ministryOfJusticeTypes.types?.find(
-    (type) => type.id === advert?.type,
-  )
+  const type = data?.officialJournalOfIcelandType?.type?.title
+
+  const { data: pdfUrlData } = useQuery(PDF_URL_QUERY, {
+    variables: {
+      id: id,
+    },
+  })
+
+  const { data: pdfData } = useQuery(PDF_QUERY, {
+    variables: {
+      id: id,
+    },
+  })
 
   if (loading) {
     return (
@@ -41,25 +48,50 @@ export const Preview = (props: OJOIFieldBaseProps) => {
     )
   }
 
+  const onCopyPreviewLink = () => {
+    if (!pdfData) {
+      return
+    }
+
+    const url = pdfData.officialJournalOfIcelandApplicationGetPdfUrl.url
+
+    navigator.clipboard.writeText(url)
+  }
+
+  const onOpenPdfPreview = () => {
+    if (!pdfData) {
+      return
+    }
+
+    window.open(
+      `data:application/pdf,${pdfData.officialJournalOfIcelandApplicationGetPdf.pdf}`,
+      '_blank',
+    )
+  }
+
   return (
     <>
       <Box display="flex" columnGap={2}>
-        <Button
-          onClick={() => console.log('api logic not implemented')}
-          variant="utility"
-          icon="download"
-          iconType="outline"
-        >
-          {f(preview.buttons.fetchPdf)}
-        </Button>
-        <Button
-          onClick={() => console.log('api logic not implemented')}
-          variant="utility"
-          icon="link"
-          iconType="outline"
-        >
-          {f(preview.buttons.copyPreviewLink)}
-        </Button>
+        {!!pdfUrlData && (
+          <Button
+            onClick={onOpenPdfPreview}
+            variant="utility"
+            icon="download"
+            iconType="outline"
+          >
+            {f(preview.buttons.fetchPdf)}
+          </Button>
+        )}
+        {!!pdfData && (
+          <Button
+            onClick={onCopyPreviewLink}
+            variant="utility"
+            icon="link"
+            iconType="outline"
+          >
+            {f(preview.buttons.copyPreviewLink)}
+          </Button>
+        )}
       </Box>
       <Box border="standard" borderRadius="large">
         <HTMLEditor
@@ -68,7 +100,7 @@ export const Preview = (props: OJOIFieldBaseProps) => {
           readOnly={true}
           hideWarnings={true}
           value={advertisementTemplate({
-            category: category?.title,
+            category: type,
             content: advert?.document,
             title: advert?.title,
             signature:

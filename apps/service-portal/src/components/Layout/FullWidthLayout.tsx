@@ -19,6 +19,9 @@ import { IntroHeader, ServicePortalPaths } from '@island.is/service-portal/core'
 import { Link, matchPath, useNavigate } from 'react-router-dom'
 import { DocumentsPaths } from '@island.is/service-portal/documents'
 import { theme } from '@island.is/island-ui/theme'
+import { useAuth } from '@island.is/auth/react'
+import { DocumentsScope } from '@island.is/auth/scopes'
+import { FinancePaths } from '@island.is/service-portal/finance'
 
 interface FullWidthLayoutWrapperProps {
   activeParent?: PortalNavigationItem
@@ -29,6 +32,7 @@ interface FullWidthLayoutWrapperProps {
 type FullWidthLayoutProps = {
   isDashboard: boolean
   isDocuments: boolean
+  isFinance: boolean
 } & FullWidthLayoutWrapperProps
 
 export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
@@ -38,31 +42,35 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   children,
   isDashboard,
   isDocuments,
+  isFinance,
 }) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
+  const { userInfo } = useAuth()
   const [navItems, setNavItems] = useState<PortalNavigationItem[] | undefined>()
-  const [activeChild, setActiveChild] = useState<
-    PortalNavigationItem | undefined
-  >()
 
   useEffect(() => {
     const visibleNavItems =
       activeParent?.children?.filter((item) => !item.navHide) || undefined
     setNavItems(visibleNavItems)
-
-    const activeVisibleChild = visibleNavItems?.filter(
-      (item) => item.active,
-    )?.[0]
-    setActiveChild(activeVisibleChild)
   }, [activeParent?.children])
+
+  const hasDocumentsDelegationAccess = userInfo?.scopes?.includes(
+    DocumentsScope.main,
+  )
 
   return (
     <Box
       as="main"
       component="main"
-      className={isDocuments ? styles.fullWidthSplit : undefined}
-      paddingTop={9}
+      className={
+        isDocuments && hasDocumentsDelegationAccess
+          ? styles.fullWidthSplit
+          : undefined
+      }
+      paddingTop={
+        isDocuments || isDashboard ? undefined : isFinance ? [0, 0, 9] : 9
+      }
       style={{
         marginTop: height,
         minHeight: `calc(100vh - ${theme.headerHeight.large}px`,
@@ -148,12 +156,17 @@ const FullWidthLayoutWrapper: FC<FullWidthLayoutWrapperProps> = (props) => {
     matchPath(route, props.pathname),
   )
 
+  // Finance does not need extra padding in mobile
+  const isFinance = Object.values(FinancePaths).find((route) =>
+    matchPath(route, props.pathname),
+  )
   const isSpecialView = !!isDashboard || !!isDocuments
 
   return (
     <FullWidthLayout
       isDashboard={!!isDashboard}
       isDocuments={!!isDocuments}
+      isFinance={!!isFinance}
       {...props}
     >
       <ModuleAlertBannerSection paddingTop={isSpecialView ? 0 : 2} />

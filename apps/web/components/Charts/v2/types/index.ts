@@ -76,6 +76,7 @@ export interface CustomStyleConfig {
     domain?: AxisDomain
     interval?: AxisInterval
     tick?: BaseAxisProps['tick']
+    ticks?: (string | number)[]
   }
   xAxis?: {
     height?: number
@@ -89,5 +90,8 @@ export interface CustomStyleConfig {
     innerRadius?: number
     outerRadius?: number
     fontSize?: number
+  }
+  tooltip?: {
+    appendFractionToIntegers?: boolean
   }
 }

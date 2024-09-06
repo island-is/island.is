@@ -1,3 +1,1 @@
-import Header from './RettindagaeslaFatladsFolksHeader'
-
-export const RettindagaeslaFatladsFolksHeader = Header
+export * from './RettindagaeslaFatladsFolksHeader'

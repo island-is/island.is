@@ -35,6 +35,7 @@ type EstateMember = {
   relationWithApplicant?: string
   dateOfBirth?: string
   foreignCitizenship?: string | string[]
+  noContactInfo?: ('Yes' | 'No')[]
   phone?: string
   email?: string
   advocate?: Advocate

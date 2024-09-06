@@ -8,8 +8,16 @@ import {
   Response,
 } from '../nodeFetch'
 import { FetchError } from '../FetchError'
-import { CacheEntry, CacheMiddlewareConfig, CachePolicyInternal } from './types'
+import {
+  CacheEntry,
+  CacheEntryRaw,
+  CacheMiddlewareConfig,
+  CachePolicyInternal,
+} from './types'
 import { CacheResponse } from './CacheResponse'
+
+export const COMMON_HEADER_PATTERNS = ['X-Param', 'X-Query']
+const CACHE_KEY_SEPARATOR = '#'
 
 const DEBUG_NAMES = (process.env.ENHANCED_FETCH_DEBUG_CACHE ?? '')
   .split(',')
@@ -42,7 +50,7 @@ export function withCache({
     }
 
     const cacheKey = cacheKeyFor(request, isShared)
-    const entry = await cacheManager.get<CacheEntry>(cacheKey)
+    const entry = await getCacheEntry(cacheKey)
 
     if (!entry) {
       const response = await fetch(request).catch(handleFetchErrors)
@@ -66,12 +74,7 @@ export function withCache({
       return cacheResponse.getResponse()
     }
 
-    const { policy: policyRaw, body } = entry
-    let cacheResponse = CacheResponse.fromCache(
-      body,
-      CachePolicy.fromObject(policyRaw) as CachePolicyInternal,
-    )
-
+    let cacheResponse = CacheResponse.fromCache(entry.body, entry.policy)
     const satisfied = cacheResponse.policy.satisfiesWithoutRevalidation(
       policyRequestFrom(request),
     )
@@ -97,6 +100,29 @@ export function withCache({
     }
 
     return cacheResponse.getResponse()
+  }
+
+  const getCacheEntry = async (
+    cacheKey: string,
+  ): Promise<CacheEntry | undefined> => {
+    try {
+      // Catch potential errors from cacheManager.get() and CachePolicy.fromObject().
+      const entry = await cacheManager.get<CacheEntryRaw>(cacheKey)
+      if (entry && entry.body != null && entry.policy) {
+        return {
+          body: entry.body,
+          policy: CachePolicy.fromObject(entry.policy) as CachePolicyInternal,
+        }
+      }
+    } catch (err) {
+      logger.warn(
+        `Fetch cache (${name}): Error fetching from cache - ${err.message}`,
+        {
+          stack: err.stack,
+        },
+      )
+      return undefined
+    }
   }
 
   function handleFetchErrors(error: Error): Response {
@@ -257,29 +283,45 @@ export function withCache({
   return fetchWithCache
 }
 
-function defaultCacheKey(request: Request) {
+export function defaultCacheKey(request: Request) {
   // Here we trim the origin and the protocol from the URL to clean up cache
   // keys and increase cache hits in environments where the same API is routed
   // in different ways.
   // To avoid cache collisions, we additionally prefixed the cache key with the
   // Enhanced Cache name.
   const url = new URL(request.url)
-  return `${url.pathname}${url.search}`
+
+  // Add automatic calculation of cacheable headers value
+  const headersCacheKey = calculateHeadersCacheKey(request.headers)
+
+  return `${url.pathname}${url.search}${headersCacheKey}`
 }
 
-/**
- * Create a cache key that includes a header value based on a header name if header is present.
- *
- * This is required for clients that are using cache and the URL contains a static placeholder
- * for the resource identifier, e.g. /users/.national-id where the actual resource identifier is
- * passed in a header.
- */
-export function defaultCacheKeyWithHeader(header: string) {
-  return (request: Request) => {
-    const cacheKey = defaultCacheKey(request)
-    const paramHeader = request.headers.get(header)
-    return paramHeader ? `${cacheKey}#${paramHeader}` : cacheKey
+export function calculateHeadersCacheKey(requestHeaders: Headers): string {
+  const cacheableHeadersValues: string[] = []
+  const lowerCasedPatterns = COMMON_HEADER_PATTERNS.map((pattern) =>
+    pattern.toLowerCase(),
+  )
+
+  for (const [name, value] of requestHeaders) {
+    for (const pattern of lowerCasedPatterns) {
+      const nameLower = name.toLowerCase()
+      if (nameLower.startsWith(pattern)) {
+        cacheableHeadersValues.push(
+          `${nameLower}=${value.replace(
+            CACHE_KEY_SEPARATOR,
+            CACHE_KEY_SEPARATOR.repeat(2),
+          )}`,
+        )
+      }
+    }
   }
+
+  return cacheableHeadersValues.length > 0
+    ? `${CACHE_KEY_SEPARATOR}${cacheableHeadersValues.join(
+        CACHE_KEY_SEPARATOR,
+      )}`
+    : ''
 }
 
 function headersToObject(headers: Headers) {

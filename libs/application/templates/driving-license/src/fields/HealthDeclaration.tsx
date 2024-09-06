@@ -10,7 +10,7 @@ import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { NO, YES } from '../lib/constants'
+import { BE, NO, YES } from '../lib/constants'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -25,6 +25,7 @@ function HealthDeclaration({
   const {
     setValue,
     formState: { errors },
+    getValues,
   } = useFormContext()
   const props = field.props as { label: string }
 
@@ -42,7 +43,7 @@ function HealthDeclaration({
   }, [error, errors, setValue])
 
   const checkForGlassesMismatch = (value: string) => {
-    if (field.id === 'healthDeclaration.answers.usesContactGlasses') {
+    if (field.id === 'healthDeclaration.usesContactGlasses') {
       const glassesUsedPreviously = application.externalData.glassesCheck.data
 
       if (
@@ -82,13 +83,36 @@ function HealthDeclaration({
             },
           ]}
           onSelect={(value) => {
+            //TODO: Remove when RLS/SGS supports health certificate in BE license
+            if (application.answers.applicationFor === BE) {
+              const currValues = getValues(
+                'healthDeclarationValidForBELicense',
+              ) as string[]
+              if (
+                value === YES &&
+                !(currValues as string[])?.some((x) => x === field.id)
+              ) {
+                setValue('healthDeclarationValidForBELicense', [
+                  ...(currValues ?? []),
+                  field.id,
+                ])
+              } else {
+                setValue(
+                  'healthDeclarationValidForBELicense',
+                  currValues?.filter((x) => x !== field.id),
+                )
+              }
+            }
+            if (field.id === 'healthDeclaration.usesContactGlasses') {
+              checkForGlassesMismatch(value)
+            }
             if (field.id === 'healthDeclaration.answers.usesContactGlasses') {
               checkForGlassesMismatch(value)
             }
           }}
         />
-      </GridColumn>
-    </GridRow>
+        </GridColumn>
+      </GridRow>
   )
 }
 

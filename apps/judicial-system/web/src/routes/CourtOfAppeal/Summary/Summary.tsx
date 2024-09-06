@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -43,7 +43,7 @@ type ModalType =
   | 'AppealDiscontinued'
   | 'none'
 
-const Summary: React.FC = () => {
+const Summary: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)

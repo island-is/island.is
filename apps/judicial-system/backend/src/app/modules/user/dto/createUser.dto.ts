@@ -1,52 +1,58 @@
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator'
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+} from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import type { UserRole } from '@island.is/judicial-system/types'
+import { UserRole } from '@island.is/judicial-system/types'
 
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ type: String })
   readonly nationalId!: string
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ type: String })
   readonly name!: string
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ type: String })
   readonly title!: string
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ type: String })
   readonly mobileNumber!: string
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ type: String })
   readonly email!: string
 
   @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
+  @IsEnum(UserRole)
+  @ApiProperty({ enum: UserRole })
   readonly role!: UserRole
 
   @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
+  @IsUUID()
+  @ApiProperty({ type: String })
   readonly institutionId!: string
 
   @IsNotEmpty()
   @IsBoolean()
-  @ApiProperty()
+  @ApiProperty({ type: Boolean })
   readonly active!: boolean
 
   @IsNotEmpty()
   @IsBoolean()
-  @ApiProperty()
+  @ApiProperty({ type: Boolean })
   readonly canConfirmIndictment!: boolean
 }

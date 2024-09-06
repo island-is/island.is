@@ -3,24 +3,18 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/file-upload/src",
   "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/api/domains/file-upload/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/file-upload/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/file-upload/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/api/domains/file-upload"]
     }
-  },
-  "tags": ["lib:api", "scope:api"]
+  }
 }

@@ -23,10 +23,11 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const createGetMachineDetailsWrapper = (
     getMachineDetailsFunction: (variables: {
       regno: string
+      rel: string
     }) => Promise<ApolloQueryResult<any>>,
   ) => {
     return async (plate: string) => {
-      const variables = { regno: plate }
+      const variables = { regno: plate, rel: 'changeStatus' }
       const result = await getMachineDetailsFunction(variables)
       return result.data.getWorkerMachineByRegno // Adjust based on your query
     }

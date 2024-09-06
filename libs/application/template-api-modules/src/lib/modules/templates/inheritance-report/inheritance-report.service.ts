@@ -5,7 +5,7 @@ import {
   PersonType,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
-import { estateTransformer, getFakeData } from './utils'
+import { getFakeData } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -17,6 +17,7 @@ import { infer as zinfer } from 'zod'
 import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
 import type { Logger } from '@island.is/logging'
 import { expandAnswers } from './utils/mappers'
+import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -25,6 +26,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
+    private readonly nationalRegistryService: NationalRegistryXRoadService,
   ) {
     super(ApplicationTypes.INHERITANCE_REPORT)
   }
@@ -60,15 +62,9 @@ export class InheritanceReportService extends BaseTemplateApiService {
     // Loop through all inheritanceReportInfos and attach inheritanceTax to each
     await Promise.all(
       inheritanceReportInfos.map(async (inheritanceReportInfo) => {
-        // The dateOfDeath is marked as Date as per the openapi spec but is actually a string when received
-        const inheritanceDate =
-          typeof inheritanceReportInfo.dateOfDeath === 'string'
-            ? new Date(Date.parse(inheritanceReportInfo.dateOfDeath))
-            : inheritanceReportInfo.dateOfDeath ?? new Date()
-
         return new Promise<void>((resolve) => {
           this.syslumennService
-            .getInheritanceTax(new Date())
+            .getInheritanceTax(inheritanceReportInfo.caseNumber ?? '')
             .then((inheritanceTax) => {
               inheritanceReportInfo.inheritanceTax = inheritanceTax
               resolve()
@@ -129,5 +125,10 @@ export class InheritanceReportService extends BaseTemplateApiService {
       )
     }
     return { success: result.success, id: result.caseNumber }
+  }
+
+  async maritalStatus({ auth }: TemplateApiModuleActionProps) {
+    const spouse = await this.nationalRegistryService.getSpouse(auth.nationalId)
+    return { ...spouse, fullName: spouse?.name }
   }
 }

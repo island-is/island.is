@@ -13,14 +13,17 @@ import {
   SetQueueAttributesCommand,
   Message,
 } from '@aws-sdk/client-sqs'
-import type { Logger } from '@island.is/logging'
+import { AbortController } from '@aws-sdk/abort-controller'
+import { type Logger } from '@island.is/logging'
 
 @Injectable()
 export class ClientService {
   private client: SQSClient
+  private receiveMessagesAbortController: AbortController
 
   constructor(config: SQSClientConfig, private logger: Logger) {
     this.client = new SQSClient(config)
+    this.receiveMessagesAbortController = new AbortController()
   }
 
   async add(url: string, message: unknown): Promise<string> {
@@ -51,6 +54,9 @@ export class ClientService {
         MaxNumberOfMessages: maxNumMessages, // max allowed = 10
         WaitTimeSeconds: 20, // max allowed = 20
       }),
+      {
+        abortSignal: this.receiveMessagesAbortController.signal,
+      },
     )
 
     return messages
@@ -139,5 +145,13 @@ export class ClientService {
         }),
       )
     }
+  }
+
+  // Dispose of the client and abort any ongoing requests.
+  dispose() {
+    this.logger.debug('Aborting SQS requests')
+    this.receiveMessagesAbortController.abort()
+    this.logger.debug('Closing SQS client')
+    this.client.destroy()
   }
 }

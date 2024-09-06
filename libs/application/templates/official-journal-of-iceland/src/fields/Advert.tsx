@@ -6,7 +6,7 @@ import { ADVERT_QUERY, TYPES_QUERY } from '../graphql/queries'
 import { DEBOUNCE_INPUT_TIMER, INITIAL_ANSWERS } from '../lib/constants'
 import {
   InputFields,
-  MinistryOfJusticeGraphqlResponse,
+  OfficialJournalOfIcelandGraphqlResponse,
   OJOIFieldBaseProps,
 } from '../lib/types'
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
@@ -20,15 +20,16 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
-import { MinistryOfJusticeAdvert } from '@island.is/api/schema'
+import { OfficialJournalOfIcelandAdvert } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
+import * as styles from './Advert.css'
 
 type LocalState = typeof INITIAL_ANSWERS['advert']
-type TypeResonse = MinistryOfJusticeGraphqlResponse<'types'>
+type TypeResonse = OfficialJournalOfIcelandGraphqlResponse<'types'>
 
-type SelectedAdvertResponse = MinistryOfJusticeGraphqlResponse<
+type SelectedAdvertResponse = OfficialJournalOfIcelandGraphqlResponse<
   'advert',
-  MinistryOfJusticeAdvert
+  OfficialJournalOfIcelandAdvert
 >
 
 type Props = OJOIFieldBaseProps & {
@@ -41,12 +42,15 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
 
   const inputHeight = 64
 
-  const departments = externalData.departments.data.departments.map((d) => {
-    return {
-      label: d.title,
-      value: d.id,
-    }
-  })
+  const departments = externalData.departments.data.departments
+    .map((d) => {
+      return {
+        slug: d.slug,
+        label: d.title,
+        value: d.id,
+      }
+    })
+    .filter((d) => d.slug !== 'tolublod')
 
   const { setValue } = useFormContext()
 
@@ -99,18 +103,17 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
       await lazyTypesQuery({
         variables: {
           params: {
-            search: '',
-            page: '1',
             department: state.department,
           },
         },
-        onCompleted: (data) =>
-          setTypes(
-            data.ministryOfJusticeTypes.types.map((t) => ({
+        onCompleted: (data) => {
+          return setTypes(
+            data.officialJournalOfIcelandTypes.types.map((t) => ({
               label: t.title,
               value: t.id,
             })),
-          ),
+          )
+        },
       })
     }
 
@@ -129,7 +132,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
         })
 
         if (data) {
-          const { advert } = data.ministryOfJusticeAdvert
+          const { advert } = data.officialJournalOfIcelandAdvert
           setState({
             department: advert.department.id,
             type: advert.type.id,
@@ -167,7 +170,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
   return (
     <>
       <FormGroup>
-        <Box width="half">
+        <Box className={styles.inputWrapper}>
           <SelectController
             key={state.department}
             id={InputFields.advert.department}
@@ -178,16 +181,20 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
             defaultValue={state.department}
             size="sm"
             backgroundColor="blue"
-            onSelect={(opt) =>
-              setState((prev) => ({ ...prev, department: opt.value, type: '' }))
-            }
+            onSelect={(opt) => {
+              return setState((prev) => ({
+                ...prev,
+                department: opt.value,
+                type: '',
+              }))
+            }}
             error={
               errors && getErrorViaPath(errors, InputFields.advert.department)
             }
           />
         </Box>
         {loadingTypes ? (
-          <Box width="half">
+          <Box className={styles.inputWrapper}>
             <SkeletonLoader
               borderRadius="standard"
               display="block"
@@ -195,7 +202,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
             />
           </Box>
         ) : (
-          <Box width="half">
+          <Box className={styles.inputWrapper}>
             <SelectController
               id={InputFields.advert.type}
               name={InputFields.advert.type}
@@ -212,7 +219,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
             />
           </Box>
         )}
-        <Box width="full">
+        <Box>
           <InputController
             id={InputFields.advert.title}
             name={InputFields.advert.title}
@@ -231,7 +238,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
         </Box>
       </FormGroup>
       <FormGroup title={f(advert.headings.materialForPublication)}>
-        <Box width="half">
+        <Box className={styles.inputWrapper}>
           <InputController
             id={InputFields.advert.template}
             name={InputFields.advert.template}
@@ -251,8 +258,9 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
             }
           />
         </Box>
-        <Box width="full">
+        <Box>
           <HTMLEditor
+            title={f(advert.inputs.editor.label)}
             name={InputFields.advert.document}
             value={state.document as HTMLText}
             onChange={(value) => setState({ ...state, document: value })}

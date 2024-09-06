@@ -8,12 +8,13 @@ import {
 import {
   Form,
   FormModes,
+  GetTeacherRightsApi,
   HasTeachingRightsApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
-export const getInstructorRegistrations = (): Form => {
+export const getInstructorRegistrations = (allowBELicense = false): Form => {
   return buildForm({
     id: 'InstructorRegistrationsTemplate',
     title: '',
@@ -40,6 +41,11 @@ export const getInstructorRegistrations = (): Form => {
                 title: '',
                 subTitle: '',
               }),
+              buildDataProviderItem({
+                provider: allowBELicense ? GetTeacherRightsApi : undefined,
+                title: '',
+                subTitle: '',
+              }),
             ],
           }),
         ],
@@ -48,11 +54,16 @@ export const getInstructorRegistrations = (): Form => {
         id: 'students',
         title: m.studentsOverviewSideTitle,
         children: [
-          buildCustomField({
-            title: '',
-            id: 'table',
-            component: 'StudentsOverview',
-          }),
+          buildCustomField(
+            {
+              title: '',
+              id: 'table',
+              component: 'StudentsOverview',
+            },
+            {
+              allowBELicense: allowBELicense,
+            },
+          ),
         ],
       }),
     ],

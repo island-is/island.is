@@ -59,8 +59,6 @@ import {
 } from './utils'
 import * as styles from './PensionCalculator.css'
 
-const CURRENCY_INPUT_MAX_LENGTH = 15
-
 const lowercaseFirstLetter = (value: string | undefined) => {
   if (!value) return value
   return value[0].toLowerCase() + value.slice(1)
@@ -131,6 +129,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   const methods = useForm<CalculationInput>({
     defaultValues,
   })
+
+  const currencyInputMaxLength =
+    customPageData?.configJson?.currencyInputMaxLength ?? 14
 
   const maxMonthPensionDelay =
     customPageData?.configJson?.maxMonthPensionDelay ?? 156
@@ -940,7 +941,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -962,7 +963,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -988,7 +989,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -1010,7 +1011,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -1032,7 +1033,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -1058,7 +1059,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -1084,7 +1085,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -1106,7 +1107,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -1185,6 +1186,8 @@ PensionCalculator.getProps = async ({
 
   let defaultValues = convertQueryParametersToCalculationInput(query)
 
+  const dateOfCalculationsOptions = getDateOfCalculationsOptions(customPageData)
+
   defaultValues = {
     ...defaultValues,
     typeOfBasePension: defaultValues.typeOfBasePension
@@ -1193,13 +1196,16 @@ PensionCalculator.getProps = async ({
     typeOfPeriodIncome: defaultValues.typeOfPeriodIncome
       ? defaultValues.typeOfPeriodIncome
       : PeriodIncomeType.Month,
+    dateOfCalculations: defaultValues.dateOfCalculations
+      ? defaultValues.dateOfCalculations
+      : dateOfCalculationsOptions[0].value,
   }
 
   return {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     defaultValues,
-    dateOfCalculationsOptions: getDateOfCalculationsOptions(customPageData),
+    dateOfCalculationsOptions,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,

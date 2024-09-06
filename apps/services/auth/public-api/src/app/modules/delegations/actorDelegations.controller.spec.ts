@@ -1,38 +1,48 @@
 import { getModelToken } from '@nestjs/sequelize'
-import request from 'supertest'
 import times from 'lodash/times'
+import request from 'supertest'
 
 import {
+  ApiScope,
   Client,
+  ClientDelegationType,
   Delegation,
   DelegationDTO,
   DelegationDTOMapper,
+  DelegationProviderModel,
   DelegationScope,
+  DelegationTypeModel,
   MergedDelegationDTO,
   PersonalRepresentative,
+  PersonalRepresentativeDelegationTypeModel,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeType,
 } from '@island.is/auth-api-lib'
-import { AuthDelegationType } from '@island.is/shared/types'
 import { AuthScope } from '@island.is/auth/scopes'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import {
+  createClient,
+  createDelegation,
+  createDelegationModels,
+  getFakeName,
+} from '@island.is/services/auth/testing'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+  getPersonalRepresentativeDelegationType,
+  NationalRegistryClientPerson,
+} from '@island.is/shared/types'
 import {
   createCurrentUser,
   createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
-import { TestApp, getRequestMethod } from '@island.is/testing/nest'
-import { NationalRegistryClientPerson } from '@island.is/shared/types'
-import {
-  createDelegation,
-  getFakeName,
-  createDelegationModels,
-  createClient,
-} from '@island.is/services/auth/testing'
+import { getRequestMethod, TestApp } from '@island.is/testing/nest'
 
 import {
+  delegationTypes,
   Scopes,
   setupWithAuth,
   setupWithoutAuth,
@@ -57,10 +67,10 @@ const swapNames = (
   return delegation
 }
 
-function updateDelegationFromNameToPersonName(
+const updateDelegationFromNameToPersonName = (
   delegations: MergedDelegationDTO[] | MergedDelegationDTO,
   nationalRegistryUsers: NationalRegistryClientPerson[],
-) {
+) => {
   if (Array.isArray(delegations)) {
     return delegations.map((delegation) =>
       swapNames(delegation, nationalRegistryUsers),
@@ -77,6 +87,12 @@ const client = createClient({
   supportsLegalGuardians: true,
   supportsProcuringHolders: true,
   supportsPersonalRepresentatives: true,
+  supportedDelegationTypes: [
+    AuthDelegationType.Custom,
+    AuthDelegationType.LegalGuardian,
+    AuthDelegationType.ProcurationHolder,
+    AuthDelegationType.PersonalRepresentative,
+  ],
 })
 
 const user = createCurrentUser({
@@ -137,7 +153,7 @@ describe('ActorDelegationsController', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
     let delegationModel: typeof Delegation
-    let clientModel: typeof Client
+    let clientDelegationTypeModel: typeof ClientDelegationType
     let nationalRegistryApi: NationalRegistryClientService
 
     beforeAll(async () => {
@@ -155,19 +171,21 @@ describe('ActorDelegationsController', () => {
 
       // Get reference on Delegation and Client models to seed DB
       delegationModel = app.get<typeof Delegation>(getModelToken(Delegation))
-      clientModel = app.get<typeof Client>(getModelToken(Client))
+      clientDelegationTypeModel = app.get<typeof ClientDelegationType>(
+        getModelToken(ClientDelegationType),
+      )
       nationalRegistryApi = app.get(NationalRegistryClientService)
     })
 
     beforeEach(() => {
-      return clientModel.update(
+      return clientDelegationTypeModel.bulkCreate(
+        delegationTypes.map((type) => ({
+          clientId: client.clientId,
+          delegationType: type,
+        })),
         {
-          supportsCustomDelegation: true,
-          supportsLegalGuardians: true,
-          supportsProcuringHolders: true,
-          supportsPersonalRepresentatives: true,
+          updateOnDuplicate: ['modified'],
         },
-        { where: { clientId: client.clientId } },
       )
     })
 
@@ -562,10 +580,12 @@ describe('ActorDelegationsController', () => {
         await createDelegationModels(delegationModel, [
           mockDelegations.incoming,
         ])
-        await clientModel.update(
-          { supportsCustomDelegation: false },
-          { where: { clientId: client.clientId } },
-        )
+        await clientDelegationTypeModel.destroy({
+          where: {
+            clientId: client.clientId,
+            delegationType: AuthDelegationType.Custom,
+          },
+        })
 
         // Act
         const res = await server.get(`${path}${query}`)
@@ -609,11 +629,12 @@ describe('ActorDelegationsController', () => {
         })
 
         it('should not return delegations when client does not support legal guardian delegations', async () => {
-          // Arrange
-          await clientModel.update(
-            { supportsLegalGuardians: false },
-            { where: { clientId: client.clientId } },
-          )
+          await clientDelegationTypeModel.destroy({
+            where: {
+              clientId: client.clientId,
+              delegationType: AuthDelegationType.LegalGuardian,
+            },
+          })
 
           // Act
           const res = await server.get(`${path}${query}`)
@@ -691,10 +712,12 @@ describe('ActorDelegationsController', () => {
 
         it('should not return delegations when client does not support procuring holder delegations', async () => {
           // Arrange
-          await clientModel.update(
-            { supportsProcuringHolders: false },
-            { where: { clientId: client.clientId } },
-          )
+          await clientDelegationTypeModel.destroy({
+            where: {
+              clientId: client.clientId,
+              delegationType: AuthDelegationType.ProcurationHolder,
+            },
+          })
 
           // Act
           const res = await server.get(`${path}${query}`)
@@ -735,6 +758,9 @@ describe('ActorDelegationsController', () => {
         let prRightsModel: typeof PersonalRepresentativeRight
         let prRightTypeModel: typeof PersonalRepresentativeRightType
         let prTypeModel: typeof PersonalRepresentativeType
+        let delegationTypeModel: typeof DelegationTypeModel
+        let delegationProviderModel: typeof DelegationProviderModel
+        let prDelegationTypeModel: typeof PersonalRepresentativeDelegationTypeModel
 
         beforeAll(async () => {
           prTypeModel = app.get<typeof PersonalRepresentativeType>(
@@ -749,6 +775,15 @@ describe('ActorDelegationsController', () => {
           prRightsModel = app.get<typeof PersonalRepresentativeRight>(
             'PersonalRepresentativeRightRepository',
           )
+          delegationTypeModel = app.get<typeof DelegationTypeModel>(
+            getModelToken(DelegationTypeModel),
+          )
+          delegationProviderModel = app.get<typeof DelegationProviderModel>(
+            getModelToken(DelegationProviderModel),
+          )
+          prDelegationTypeModel = app.get<
+            typeof PersonalRepresentativeDelegationTypeModel
+          >(getModelToken(PersonalRepresentativeDelegationTypeModel))
 
           const prType = await prTypeModel.create({
             code: 'prTypeCode',
@@ -764,13 +799,26 @@ describe('ActorDelegationsController', () => {
             externalUserId: '1',
           })
 
+          const dt = await delegationTypeModel.create({
+            id: getPersonalRepresentativeDelegationType('prRightType'),
+            providerId: AuthDelegationProvider.PersonalRepresentativeRegistry,
+            name: `Personal Representative: prRightType`,
+            description: `Personal representative delegation type for right type prRightType`,
+          })
+
           const prRightType = await prRightTypeModel.create({
             code: 'prRightType',
             description: 'prRightTypeDescription',
           })
 
-          await prRightsModel.create({
+          const prr = await prRightsModel.create({
             rightTypeCode: prRightType.code,
+            personalRepresentativeId: pr.id,
+          })
+
+          await prDelegationTypeModel.create({
+            id: prr.id,
+            delegationTypeId: dt.id,
             personalRepresentativeId: pr.id,
           })
         })
@@ -823,10 +871,12 @@ describe('ActorDelegationsController', () => {
 
         it('should not return delegations when client does not support personal representative delegations', async () => {
           // Prepare
-          await clientModel.update(
-            { supportsPersonalRepresentatives: false },
-            { where: { clientId: client.clientId } },
-          )
+          await clientDelegationTypeModel.destroy({
+            where: {
+              clientId: client.clientId,
+              delegationType: AuthDelegationType.PersonalRepresentative,
+            },
+          })
 
           // Act
           const res = await server.get(`${path}${query}`)
@@ -881,6 +931,24 @@ describe('ActorDelegationsController', () => {
             force: true,
           })
           await prTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await prDelegationTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await delegationTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await delegationProviderModel.destroy({
             where: {},
             cascade: true,
             truncate: true,

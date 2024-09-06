@@ -26,51 +26,35 @@ export class User extends Model {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id!: string
 
   @CreatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   created!: Date
 
   @UpdatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   modified!: Date
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    unique: true,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.STRING, allowNull: false, unique: true })
+  @ApiProperty({ type: String })
   nationalId!: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.STRING, allowNull: false })
+  @ApiProperty({ type: String })
   name!: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.STRING, allowNull: false })
+  @ApiProperty({ type: String })
   title!: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.STRING, allowNull: false })
+  @ApiProperty({ type: String })
   mobileNumber!: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.STRING, allowNull: false })
+  @ApiProperty({ type: String })
   email!: string
 
   @Column({
@@ -82,28 +66,19 @@ export class User extends Model {
   role!: UserRole
 
   @ForeignKey(() => Institution)
-  @Column({
-    type: DataType.UUID,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   institutionId?: string
 
   @BelongsTo(() => Institution, 'institutionId')
   @ApiPropertyOptional({ type: () => Institution })
   institution?: Institution
 
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.BOOLEAN, allowNull: false })
+  @ApiProperty({ type: Boolean })
   active!: boolean
 
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.BOOLEAN, allowNull: false })
+  @ApiProperty({ type: Boolean })
   canConfirmIndictment!: boolean
 }

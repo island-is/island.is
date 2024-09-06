@@ -117,6 +117,12 @@ export const information = {
         defaultMessage: 'Skráning á núverandi plötustærð bíls er í ólagi',
         description: 'Plate type front error message',
       },
+      noPlateMatchError: {
+        id: 'ta.ovlp.application:information.labels.plateSize.noPlateMatchError',
+        defaultMessage:
+          'Plötutegund ekki til, vinsamlegast hafið samband við Samgönguskofu',
+        description: 'No plate match error message',
+      },
     }),
     plateDelivery: defineMessages({
       sectionTitle: {

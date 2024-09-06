@@ -23,6 +23,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       hyphenate,
       textLeft,
       CustomLink,
+      whiteBackground,
       ...props
     }: TagProps,
     ref,
@@ -35,6 +36,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       [styles.hyphenate]: hyphenate,
       [styles.textLeft]: textLeft,
       [styles.disabled]: disabled,
+      [styles.whiteBackground]: whiteBackground,
     })
 
     const isExternal = href && shouldLinkOpenInNewWindow(href)

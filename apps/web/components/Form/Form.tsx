@@ -1,19 +1,21 @@
-import { useState } from 'react'
-import slugify from '@sindresorhus/slugify'
-import { useMutation } from '@apollo/client/react'
+import { useMemo, useState } from 'react'
 import gql from 'graphql-tag'
+import { useMutation, useQuery } from '@apollo/client/react'
+import slugify from '@sindresorhus/slugify'
+
 import {
   Box,
-  Text,
-  Input,
-  Select,
-  RadioButton,
-  Stack,
-  Checkbox,
   Button,
+  Checkbox,
+  Input,
   InputFileUpload,
+  RadioButton,
+  Select,
+  Stack,
+  Text,
   UploadFile,
 } from '@island.is/island-ui/core'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import {
   Form as FormType,
   GenericFormMutation,
@@ -21,12 +23,16 @@ import {
   Mutation,
   MutationCreateUploadUrlArgs,
   PresignedPost,
+  Query,
+  QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
 import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import { isValidNationalId } from '@island.is/web/utils/isValidNationalId'
-import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
+
 import * as styles from './Form.css'
 
 const CREATE_UPLOAD_URL = gql`
@@ -37,6 +43,9 @@ const CREATE_UPLOAD_URL = gql`
     }
   }
 `
+const getUniqueFormFieldValue = (field: FormFieldProps['field']) => {
+  return slugify(field.title + '-' + field.id)
+}
 
 export enum FormFieldType {
   CHECKBOXES = 'checkboxes',
@@ -61,7 +70,6 @@ interface FormFieldProps {
 
 interface FormProps {
   form: FormType
-  namespace: Record<string, string>
 }
 
 export const FormField = ({
@@ -222,8 +230,28 @@ type ErrorData = {
   error?: string
 }
 
-export const Form = ({ form, namespace }: FormProps) => {
+export const Form = ({ form }: FormProps) => {
+  const { activeLocale } = useI18n()
+
+  const { data: namespaceResponse } = useQuery<Query, QueryGetNamespaceArgs>(
+    GET_NAMESPACE_QUERY,
+    {
+      variables: {
+        input: {
+          lang: activeLocale,
+          namespace: 'Forms',
+        },
+      },
+    },
+  )
+
+  const namespace = useMemo(
+    () => JSON.parse(namespaceResponse?.getNamespace?.fields || '{}'),
+    [namespaceResponse?.getNamespace?.fields],
+  )
+
   const n = useNamespace(namespace)
+
   const defaultNamespace = form.defaultFieldNamespace
 
   const defaultNameFieldIsShown = defaultNamespace?.displayNameField ?? true
@@ -232,7 +260,7 @@ export const Form = ({ form, namespace }: FormProps) => {
   const [data, setData] = useState<Record<string, string>>(() => {
     const fields = form.fields
       .filter((field) => field.type !== FormFieldType.INFORMATION)
-      .map((field): [string, string] => [slugify(field.title), ''])
+      .map((field): [string, string] => [getUniqueFormFieldValue(field), ''])
 
     if (defaultNameFieldIsShown) {
       fields.push(['name', ''])
@@ -248,7 +276,7 @@ export const Form = ({ form, namespace }: FormProps) => {
     Object.fromEntries(
       form.fields
         .filter((field) => field.type === FormFieldType.FILE)
-        .map((field) => [slugify(field.title), []]),
+        .map((field) => [getUniqueFormFieldValue(field), []]),
     ),
   )
   const [errors, setErrors] = useState<ErrorData[]>([])
@@ -268,24 +296,61 @@ export const Form = ({ form, namespace }: FormProps) => {
     setData({ ...data, [field]: String(value) })
   }
 
+  const requiredFieldText = n(
+    'requiredField',
+    activeLocale === 'is'
+      ? 'Þennan reit þarf að fylla út.'
+      : 'This field needs to be filled out.',
+  )
+
+  const requiredFileText = n(
+    'requiredFile',
+    activeLocale === 'is'
+      ? 'Þennan reit þarf að fylla út.'
+      : 'This field needs to be filled out.',
+  )
+
+  const requiredCheckboxText = n(
+    'requiredCheckbox',
+    activeLocale === 'is'
+      ? 'Þennan reit þarf að fylla út.'
+      : 'This field needs to be filled out.',
+  )
+
+  const invalidEmailText = n(
+    'formInvalidEmail',
+    activeLocale === 'is'
+      ? 'Þetta er ekki gilt netfang.'
+      : 'This is not a valid email.',
+  )
+
+  const invalidNationalIdText = n(
+    'formInvalidNationalId',
+    activeLocale === 'is'
+      ? 'Þetta er ekki gild kennitala.'
+      : 'This is not a valid national id.',
+  )
+
   const validate = () => {
     const err = Object.keys(data)
       .map((slug) => {
-        const field = form.fields.find((f) => slugify(f.title) === slug)
+        const field = form.fields.find(
+          (f) => getUniqueFormFieldValue(f) === slug,
+        )
 
         // Handle name and email
         if (!field) {
           if (slug === 'name' && !data['name']) {
             return {
               field: slug,
-              error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
+              error: requiredFieldText,
             }
           }
 
           if (slug === 'email' && !isValidEmail.test(data['email'])) {
             return {
               field: slug,
-              error: n('formInvalidEmail', 'Þetta er ekki gilt netfang.'),
+              error: invalidEmailText,
             }
           }
 
@@ -302,7 +367,7 @@ export const Form = ({ form, namespace }: FormProps) => {
         ) {
           return {
             field: slug,
-            error: n('formInvalidEmail', 'Þetta er ekki gilt netfang.'),
+            error: invalidEmailText,
           }
         }
 
@@ -312,7 +377,7 @@ export const Form = ({ form, namespace }: FormProps) => {
         ) {
           return {
             field: slug,
-            error: n('formInvalidNationalId', 'Þetta er ekki gild kennitala.'),
+            error: invalidNationalIdText,
           }
         }
 
@@ -324,7 +389,7 @@ export const Form = ({ form, namespace }: FormProps) => {
         ) {
           return {
             field: slug,
-            error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
+            error: requiredFieldText,
           }
         }
 
@@ -336,7 +401,7 @@ export const Form = ({ form, namespace }: FormProps) => {
         ) {
           return {
             field: slug,
-            error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
+            error: requiredCheckboxText,
           }
         }
 
@@ -347,7 +412,7 @@ export const Form = ({ form, namespace }: FormProps) => {
         ) {
           return {
             field: slug,
-            error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
+            error: requiredFileText,
           }
         }
 
@@ -378,7 +443,7 @@ export const Form = ({ form, namespace }: FormProps) => {
       form.fields
         .filter((field) => field.type !== FormFieldType.INFORMATION)
         .map((field) => {
-          const value = data[slugify(field.title)]
+          const value = data[getUniqueFormFieldValue(field)]
           if (field.type === FormFieldType.ACCEPT_TERMS) {
             return `${field.title}\nSvar: ${
               value === 'true'
@@ -409,8 +474,8 @@ export const Form = ({ form, namespace }: FormProps) => {
 
   /** Returns the value for the form field that decides what email the form will be sent to */
   const getRecipientFormFieldDeciderValue = (): string | undefined => {
-    if (!form?.recipientFormFieldDecider?.title) return undefined
-    return data[slugify(form.recipientFormFieldDecider.title)]
+    if (!form?.recipientFormFieldDecider?.id) return undefined
+    return data[getUniqueFormFieldValue(form.recipientFormFieldDecider)]
   }
 
   const uploadFile = async (
@@ -485,7 +550,7 @@ export const Form = ({ form, namespace }: FormProps) => {
             .map((field) => {
               return new Promise((resolve, reject) => {
                 Promise.all(
-                  fileList[slugify(field.title)].map((file) => {
+                  fileList[getUniqueFormFieldValue(field)].map((file) => {
                     return new Promise((resolve, reject) => {
                       createUploadUrl({
                         variables: {
@@ -497,7 +562,7 @@ export const Form = ({ form, namespace }: FormProps) => {
                             uploadFile(
                               file,
                               response.data.createUploadUrl,
-                              slugify(field.title),
+                              getUniqueFormFieldValue(field),
                             ).then(() =>
                               resolve(
                                 response.data?.createUploadUrl.fields.key,
@@ -512,7 +577,7 @@ export const Form = ({ form, namespace }: FormProps) => {
                   }),
                 )
                   .then((fileNames) =>
-                    resolve([slugify(field.title), fileNames]),
+                    resolve([getUniqueFormFieldValue(field), fileNames]),
                   )
                   .catch(() => reject())
               })
@@ -525,10 +590,10 @@ export const Form = ({ form, namespace }: FormProps) => {
             form.fields
               .filter((field) => field.type === FormFieldType.FILE)
               .map((field) => [
-                slugify(field.title),
+                getUniqueFormFieldValue(field),
                 JSON.stringify(
                   (files as string[][]).find(
-                    (file) => file[0] === slugify(field.title),
+                    (file) => file[0] === getUniqueFormFieldValue(field),
                   )?.[1],
                 ),
               ]),
@@ -574,7 +639,10 @@ export const Form = ({ form, namespace }: FormProps) => {
       {success && (
         <>
           <Text variant="h3" marginBottom={2} color="blue600">
-            {n('formSuccessTitle', 'Sending tókst!')}
+            {n(
+              'formSuccessTitle',
+              activeLocale === 'is' ? 'Sending tókst!' : 'Success',
+            )}
           </Text>
           <Text marginBottom={2}>{form.successText}</Text>
         </>
@@ -582,12 +650,19 @@ export const Form = ({ form, namespace }: FormProps) => {
       {failure && (
         <>
           <Text variant="h3" marginBottom={2} color="blue600">
-            {n('formErrorTitle', 'Úps, eitthvað fór úrskeiðis')}
+            {n(
+              'formErrorTitle',
+              activeLocale === 'is'
+                ? 'Úps, eitthvað fór úrskeiðis'
+                : 'Something went wrong',
+            )}
           </Text>
           <Text marginBottom={2}>
             {n(
               'formEmailUnknownError',
-              'Villa kom upp við sendingu. Reynið aftur síðar.',
+              activeLocale === 'is'
+                ? 'Villa kom upp við sendingu. Reynið aftur síðar.'
+                : 'An error occurred, please try again later.',
             )}
           </Text>
         </>
@@ -606,11 +681,18 @@ export const Form = ({ form, namespace }: FormProps) => {
               <Input
                 placeholder={
                   defaultNamespace?.namePlaceholder ??
-                  n('formNamePlaceholder', 'Nafnið þitt')
+                  n(
+                    'formNamePlaceholder',
+                    activeLocale === 'is' ? 'Nafnið þitt' : 'Your name',
+                  )
                 }
                 name="name"
                 label={
-                  defaultNamespace?.nameLabel ?? n('formFullName', 'Fullt nafn')
+                  defaultNamespace?.nameLabel ??
+                  n(
+                    'formFullName',
+                    activeLocale === 'is' ? 'Fullt nafn' : 'Full name',
+                  )
                 }
                 required={true}
                 value={data['name'] ?? ''}
@@ -625,11 +707,15 @@ export const Form = ({ form, namespace }: FormProps) => {
               <Input
                 placeholder={
                   defaultNamespace?.emailPlaceholder ??
-                  n('formEmailPlaceholder', 'Netfang')
+                  n(
+                    'formEmailPlaceholder',
+                    activeLocale === 'is' ? 'Netfang' : 'Email',
+                  )
                 }
                 name="email"
                 label={
-                  defaultNamespace?.emailLabel ?? n('formEmail', 'Netfang')
+                  defaultNamespace?.emailLabel ??
+                  n('formEmail', activeLocale === 'is' ? 'Netfang' : 'Email')
                 }
                 required={true}
                 value={data['email'] ?? ''}
@@ -648,7 +734,7 @@ export const Form = ({ form, namespace }: FormProps) => {
             {form.fields
               .filter((field) => field.type !== FormFieldType.FILE)
               .map((field) => {
-                const slug = slugify(field.title)
+                const slug = getUniqueFormFieldValue(field)
                 return (
                   <FormField
                     key={field.id}
@@ -679,13 +765,16 @@ export const Form = ({ form, namespace }: FormProps) => {
             {form.fields
               .filter((field) => field.type === FormFieldType.FILE)
               .map((field) => {
-                const slug = slugify(field.title)
+                const slug = getUniqueFormFieldValue(field)
                 return (
                   <InputFileUpload
                     key={slug}
                     header={field.title}
                     description={field.placeholder}
-                    buttonLabel={n('formSelectFiles', 'Veldu skrár')}
+                    buttonLabel={n(
+                      'formSelectFiles',
+                      activeLocale === 'is' ? 'Veldu skrár' : 'Select files',
+                    )}
                     accept={Object.values(fileExtensionWhitelist)}
                     fileList={fileList[slug]}
                     errorMessage={
@@ -707,7 +796,7 @@ export const Form = ({ form, namespace }: FormProps) => {
               })}
             <Box display="flex" justifyContent="flexEnd">
               <Button onClick={() => onSubmit()} loading={isSubmitting}>
-                {n('formSend', 'Senda')}
+                {n('formSend', activeLocale === 'is' ? 'Senda' : 'Submit')}
               </Button>
             </Box>
           </Stack>

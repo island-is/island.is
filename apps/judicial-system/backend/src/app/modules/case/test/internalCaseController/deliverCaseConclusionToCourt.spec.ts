@@ -77,6 +77,7 @@ describe('InternalCaseController - Deliver case conclusion to court', () => {
         caseId,
         courtName,
         courtCaseNumber,
+        false,
         decision,
         rulingDate,
         validToDate,

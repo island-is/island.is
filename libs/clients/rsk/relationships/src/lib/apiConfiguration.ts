@@ -1,7 +1,6 @@
 import {
   buildCacheControl,
   createEnhancedFetch,
-  defaultCacheKeyWithHeader,
 } from '@island.is/clients/middlewares'
 import {
   ConfigType,
@@ -37,7 +36,6 @@ export const RskRelationshipsConfigurationProvider = {
                   noPrefix: true,
                   ttl: 0,
                 }),
-                cacheKey: defaultCacheKeyWithHeader('X-Param-National-Id'),
                 shared: false,
                 overrideCacheControl: buildCacheControl({ maxAge: 60 * 10 }),
               },

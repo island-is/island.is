@@ -1,12 +1,13 @@
 import { ApplicationContext } from '@island.is/application/types'
 
+import { getValueViaPath } from '@island.is/application/core'
 import {
-  YES,
   NO,
-  PARENTAL_LEAVE,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
   States,
+  YES,
 } from '../constants'
 import {
   getApplicationAnswers,
@@ -14,8 +15,7 @@ import {
   requiresOtherParentApproval,
   residentGrantIsOpenForApplication,
 } from '../lib/parentalLeaveUtils'
-import { EmployerRow } from '../types'
-import { getValueViaPath } from '@island.is/application/core'
+import { EmployerRow, Period, YesOrNo } from '../types'
 
 export const allEmployersHaveApproved = (context: ApplicationContext) => {
   const employers = getValueViaPath<EmployerRow[]>(
@@ -25,7 +25,10 @@ export const allEmployersHaveApproved = (context: ApplicationContext) => {
   if (!employers) {
     return false
   }
-  return employers.every((e) => !!e.isApproved)
+
+  // We need to check if the employer has opened the application (has a value in 'reviewerNationalRegistryId')
+  // because it is not recorded if the employer has approved the application until after this check
+  return employers.every((e) => !!e.reviewerNationalRegistryId)
 }
 
 export const hasEmployer = (context: ApplicationContext) => {
@@ -72,25 +75,6 @@ export const currentDateStartTime = () => {
   return new Date(date).getTime()
 }
 
-export const findActionName = (context: ApplicationContext) => {
-  const { application } = context
-  const { state } = application
-  const { addEmployer, addPeriods } = getApplicationAnswers(application.answers)
-  if (
-    state === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE ||
-    state === States.RESIDENCE_GRANT_APPLICATION
-  )
-    return 'documentPeriod'
-  if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
-  if (state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS) {
-    if (addEmployer === YES && addPeriods === YES) return 'empper'
-    if (addEmployer === YES) return 'employer'
-    if (addPeriods === YES) return 'period'
-  }
-
-  return undefined
-}
-
 export const disableResidenceGrantApplication = (dateOfBirth: string) => {
   if (!residentGrantIsOpenForApplication(dateOfBirth)) return false
   return true
@@ -111,4 +95,51 @@ export const goToState = (
   )
   if (previousState === state) return true
   return false
+}
+
+export const restructureVMSTPeriods = (context: ApplicationContext) => {
+  const { application } = context
+  const { VMSTPeriods } = getApplicationExternalData(application.externalData)
+  const { periods } = getApplicationAnswers(application.answers)
+
+  const today = new Date()
+  const newPeriods: Period[] = []
+  VMSTPeriods?.forEach((period, index) => {
+    /*
+     ** VMST could change startDate but still return 'date_of_birth'
+     ** Make sure if period is in the past then we use the date they sent
+     */
+    let firstPeriodStart =
+      period.firstPeriodStart === 'date_of_birth'
+        ? 'actualDateOfBirth'
+        : 'specificDate'
+    if (new Date(period.from).getTime() <= today.getTime()) {
+      firstPeriodStart = 'specificDate'
+    }
+
+    let useLength = NO
+    if (firstPeriodStart === 'actualDateOfBirth') {
+      useLength = periods[0].useLength ?? NO
+    }
+
+    if (!period.rightsCodePeriod.includes('DVAL')) {
+      // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
+      const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+      const obj = {
+        startDate: period.from,
+        endDate: period.to,
+        ratio: period.ratio.split(',')[0],
+        rawIndex: index,
+        firstPeriodStart: firstPeriodStart,
+        useLength: useLength as YesOrNo,
+        rightCodePeriod: rightsCodePeriod,
+        daysToUse: period.days,
+        paid: period.paid,
+        approved: period.approved,
+      }
+      newPeriods.push(obj)
+    }
+  })
+
+  return newPeriods
 }

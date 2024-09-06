@@ -1,11 +1,12 @@
 import {
   buildForm,
-  buildCustomField,
   buildMultiField,
+  buildImageField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import CoatOfArms from '../assets/CoatOfArms'
 import { m } from '../lib/messages'
+import AOD from '../assets/AOD'
 
 export const delegated: Form = buildForm({
   id: 'delegated',
@@ -20,10 +21,11 @@ export const delegated: Form = buildForm({
       description: m.delegatedDescription,
       space: 1,
       children: [
-        buildCustomField({
+        buildImageField({
           id: 'completeStepImage',
           title: '',
-          component: 'Done',
+          image: AOD,
+          imagePosition: 'center',
         }),
       ],
     }),

@@ -42,32 +42,56 @@ describe('isApplicationForCondition', () => {
 describe('needsHealthCertificateCondition', () => {
   it('returns true when one ore more values in the list is marked yes', () => {
     expect(
-      needsHealthCertificateCondition(YES)({
-        healthDeclaration: {
-          usesContactGlasses: YES,
-          isAlcoholic: NO,
+      needsHealthCertificateCondition(YES)(
+        {
+          healthDeclaration: {
+            usesContactGlasses: YES,
+            isAlcoholic: NO,
+          },
         },
-      }),
+        { glassesCheck: { data: false, status: 'success', date: new Date() } },
+      ),
     ).toBe(true)
     expect(
-      needsHealthCertificateCondition(YES)({
-        healthDeclaration: {
-          usesContactGlasses: YES,
-          isAlcoholic: YES,
+      needsHealthCertificateCondition(YES)(
+        {
+          healthDeclaration: {
+            usesContactGlasses: YES,
+            isAlcoholic: YES,
+          },
         },
-      }),
+
+        { glassesCheck: { data: true, status: 'success', date: new Date() } },
+      ),
     ).toBe(true)
   })
 
   it('returns false when none of them are marked yes', () => {
     expect(
-      needsHealthCertificateCondition(YES)({
-        healthDeclaration: {
-          usesContactGlasses: NO,
-          isAlcoholic: NO,
+      needsHealthCertificateCondition(YES)(
+        {
+          healthDeclaration: {
+            usesContactGlasses: NO,
+            isAlcoholic: NO,
+          },
         },
-      }),
+        { glassesCheck: { data: false, status: 'success', date: new Date() } },
+      ),
     ).toBe(false)
+  })
+
+  it('returns true when glasses mismatch', () => {
+    expect(
+      needsHealthCertificateCondition(YES)(
+        {
+          healthDeclaration: {
+            usesContactGlasses: NO,
+            isAlcoholic: NO,
+          },
+        },
+        { glassesCheck: { data: true, status: 'success', date: new Date() } },
+      ),
+    ).toBe(true)
   })
 })
 

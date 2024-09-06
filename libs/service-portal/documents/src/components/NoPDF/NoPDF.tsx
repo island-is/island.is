@@ -5,6 +5,7 @@ import { Text, Box } from '@island.is/island-ui/core'
 import { EmptyImageSmall } from './EmptyImage'
 import { messages } from '../../utils/messages'
 import { Problem } from '@island.is/react-spa/shared'
+import { helperStyles } from '@island.is/island-ui/theme'
 import * as styles from '../OverviewDisplay/OverviewDisplay.css'
 
 type DocumentRendererProps = {
@@ -28,11 +29,16 @@ export const NoPDF: FC<DocumentRendererProps> = ({ text, error }) => {
       className={styles.docWrap}
     >
       {error ? (
-        <Problem
-          type="internal_service_error"
-          message={text}
-          title={formatMessage(m.errorFetch)}
-        />
+        <>
+          <Problem
+            type="internal_service_error"
+            message={text}
+            title={formatMessage(m.errorFetch)}
+          />
+          <p className={helperStyles.srOnly} role="alert">
+            {formatMessage(m.errorTitle)}. {formatMessage(m.errorFetch)}
+          </p>
+        </>
       ) : (
         <Box
           display="flex"

@@ -46,6 +46,13 @@ const serializeService: SerializeMethod<HelmService> = async (
     namespace,
     securityContext,
   } = serviceDef
+  const hackListForNonExistentTracer = [
+    'application-system-form',
+    'github-actions-cache',
+    'portals-admin',
+    'service-portal',
+    'island-ui-storybook',
+  ]
   const result: HelmService = {
     enabled: true,
     grantNamespaces: grantNamespaces,
@@ -82,7 +89,9 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
     securityContext,
   }
-
+  if (!hackListForNonExistentTracer.includes(serviceDef.name)) {
+    result.env.NODE_OPTIONS += ' -r dd-trace/init'
+  }
   // command and args
   if (serviceDef.cmds) {
     result.command = [serviceDef.cmds]
@@ -118,7 +127,7 @@ const serializeService: SerializeMethod<HelmService> = async (
         max: result.replicaCount.max,
       },
       metric: {
-        cpuAverageUtilization: 70,
+        cpuAverageUtilization: 90,
       },
     },
   }

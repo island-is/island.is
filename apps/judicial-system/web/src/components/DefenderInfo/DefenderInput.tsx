@@ -1,4 +1,6 @@
-import React, {
+import {
+  Dispatch,
+  FC,
   SetStateAction,
   useCallback,
   useContext,
@@ -42,13 +44,13 @@ interface PropertyValidation {
   validations: Validation[]
   errorMessageHandler: {
     errorMessage: string
-    setErrorMessage: React.Dispatch<React.SetStateAction<string>>
+    setErrorMessage: Dispatch<SetStateAction<string>>
   }
 }
 
 type InputType = 'defenderEmail' | 'defenderPhoneNumber'
 
-const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
+const DefenderInput: FC<Props> = ({
   onDefenderNotFound,
   disabled,
   defendantId,
@@ -166,7 +168,7 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
       defendantId: string,
       property: InputType,
       value: string,
-      setWorkingCase: React.Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<Case>>,
     ) => {
       let newValue = value
       const propertyValidation = propertyValidations(property)

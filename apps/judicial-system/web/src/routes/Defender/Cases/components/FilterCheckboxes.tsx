@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox } from '@island.is/island-ui/core'
@@ -14,7 +14,7 @@ interface Props {
   toggleFilter: (filter: keyof Props['filters']) => void
 }
 
-const FilterCheckboxes: React.FC<Props> = ({ filters, toggleFilter }) => {
+const FilterCheckboxes: FC<Props> = ({ filters, toggleFilter }) => {
   const { formatMessage } = useIntl()
 
   return (

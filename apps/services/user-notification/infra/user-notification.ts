@@ -2,6 +2,7 @@ import {
   Base,
   Client,
   NationalRegistryB2C,
+  RskCompanyInfo,
 } from '../../../../infra/src/dsl/xroad'
 import {
   json,
@@ -17,6 +18,37 @@ const imageName = `services-${serviceName}`
 const MAIN_QUEUE_NAME = serviceName
 const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
 
+const getEnv = (services: {
+  userProfileApi: ServiceBuilder<'service-portal-api'>
+}) => ({
+  MAIN_QUEUE_NAME,
+  DEAD_LETTER_QUEUE_NAME,
+  IDENTITY_SERVER_ISSUER_URL: {
+    dev: 'https://identity-server.dev01.devland.is',
+    staging: 'https://identity-server.staging01.devland.is',
+    prod: 'https://innskra.island.is',
+  },
+  USER_PROFILE_CLIENT_URL: ref(
+    (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
+  ),
+  AUTH_DELEGATION_API_URL: {
+    dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+    staging:
+      'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+    prod: 'https://auth-delegation-api.internal.innskra.island.is',
+  },
+  AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([
+    '@island.is/auth/delegations/index:system',
+  ]),
+  SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur',
+  EMAIL_FROM_ADDRESS: {
+    dev: 'development@island.is',
+    staging: 'development@island.is',
+    prod: 'noreply@island.is',
+  },
+  REDIS_USE_SSL: 'true',
+})
+
 export const userNotificationServiceSetup = (services: {
   userProfileApi: ServiceBuilder<'service-portal-api'>
 }): ServiceBuilder<typeof serviceName> =>
@@ -27,27 +59,8 @@ export const userNotificationServiceSetup = (services: {
     .db()
     .command('node')
     .args('--no-experimental-fetch', 'main.js')
-    .env({
-      MAIN_QUEUE_NAME,
-      DEAD_LETTER_QUEUE_NAME,
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
-      USER_PROFILE_CLIENT_URL: ref(
-        (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
-      ),
-      AUTH_DELEGATION_API_URL: {
-        dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
-        staging:
-          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
-        prod: 'https://auth-delegation-api.internal.innskra.island.is',
-      },
-      AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([
-        '@island.is/auth/delegations/index:system',
-      ]),
-    })
+    .redis()
+    .env(getEnv(services))
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
       CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
@@ -56,9 +69,9 @@ export const userNotificationServiceSetup = (services: {
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(Base, Client, NationalRegistryB2C)
+    .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness('/health/check')
     .ingress({
       primary: {
         host: {
@@ -94,7 +107,11 @@ export const userNotificationServiceSetup = (services: {
         memory: '256Mi',
       },
     })
-    .grantNamespaces('nginx-ingress-internal')
+    .grantNamespaces(
+      'nginx-ingress-internal',
+      'islandis',
+      'identity-server-delegation',
+    )
 
 export const userNotificationWorkerSetup = (services: {
   userProfileApi: ServiceBuilder<typeof serviceWorkerName>
@@ -107,37 +124,15 @@ export const userNotificationWorkerSetup = (services: {
     .args('--no-experimental-fetch', 'main.js', '--job=worker')
     .db()
     .migrations()
+    .redis()
     .env({
-      MAIN_QUEUE_NAME,
-      DEAD_LETTER_QUEUE_NAME,
+      ...getEnv(services),
       EMAIL_REGION: 'eu-west-1',
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
-      USER_PROFILE_CLIENT_URL: ref(
-        (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
-      ),
-      USER_NOTIFICATION_APP_PROTOCOL: {
-        dev: 'is.island.app.dev',
-        staging: 'is.island.app.dev', // intentionally set to dev - see firebase setup
-        prod: 'is.island.app',
-      },
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
-      AUTH_DELEGATION_API_URL: {
-        dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
-        staging:
-          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
-        prod: 'https://auth-delegation-api.internal.innskra.island.is',
-      },
-      AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([
-        '@island.is/auth/delegations/index:system',
-      ]),
     })
     .resources({
       limits: {
@@ -162,9 +157,9 @@ export const userNotificationWorkerSetup = (services: {
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(Base, Client, NationalRegistryB2C)
+    .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness('/health/check')
 
 export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
   typeof serviceCleanupWorkerName

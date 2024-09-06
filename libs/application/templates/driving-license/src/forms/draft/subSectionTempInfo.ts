@@ -23,8 +23,8 @@ export const subSectionTempInfo = buildSubSection({
   title: m.informationApplicant,
   condition: (answers) =>
     answers.applicationFor === B_TEMP ||
-    answers.applicationFor === B_FULL_RENEWAL_65,
-  children: [
+    answers.applicationFor === B_FULL_RENEWAL_65 || answers.applicationFor === BE,
+    children: [
     buildMultiField({
       id: 'info',
       title: m.informationApplicant,
@@ -41,6 +41,12 @@ export const subSectionTempInfo = buildSubSection({
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
           value: m.applicationForTempLicenseTitle,
+          condition: (answers) => answers.applicationFor === B_TEMP,
+        }),
+        buildKeyValueField({
+          label: m.drivingLicenseTypeRequested,
+          value: m.applicationForBELicenseTitle,
+          condition: (answers) => answers.applicationFor === BE,
         }),
         buildDividerField({
           title: '',
@@ -112,7 +118,7 @@ export const subSectionTempInfo = buildSubSection({
           }) => {
             return (data as TeacherV4[]).map(({ name, nationalId }) => ({
               value: nationalId,
-              label: name,
+              label: `${name} (${nationalId.substring(0, 6)})`,
             }))
           },
         }),

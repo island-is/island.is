@@ -80,7 +80,7 @@ export const messages = defineMessages({
       'Ekki tókst að birta umbeðið skjal, við bendum þér á að prófa að sækja skjalið. Ef ekki tekst að sækja skal beina fyrirspurn til sendanda skjals: {senderName}',
   },
   documentFetchError: {
-    id: 'sp.documents:fetch-error',
+    id: 'sp.documents:fetch-error-2',
     defaultMessage:
       'Ekki tókst að sækja umbeðið skjal, við bendum þér á að beina fyrirspurn til sendanda þess: {senderName}',
   },
@@ -91,5 +91,29 @@ export const messages = defineMessages({
   markAsBulkSelection: {
     id: 'sp.documents:mark-as-bulk-selection',
     defaultMessage: 'Merkja skjal fyrir fjöldaframkvæmd',
+  },
+  goToPage: {
+    id: 'sp.documents:go-to-page',
+    defaultMessage: 'Fara á síðu {page}',
+  },
+  selectAll: {
+    id: 'sp.documents:select-all',
+    defaultMessage: 'Velja allt',
+  },
+  successArchiveMulti: {
+    id: 'sp.documents:success-archive-messages',
+    defaultMessage: 'Skjöl sett í geymslu',
+  },
+  successArchive: {
+    id: 'sp.documents:success-archive-message',
+    defaultMessage: 'Skjal sett í geymslu',
+  },
+  successUnarchive: {
+    id: 'sp.documents:success-unarchive-message',
+    defaultMessage: 'Skjal tekið úr geymslu',
+  },
+  documentSearchLabel: {
+    id: 'sp.documents:search-label',
+    defaultMessage: 'Leita',
   },
 })

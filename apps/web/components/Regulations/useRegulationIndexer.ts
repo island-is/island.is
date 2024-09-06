@@ -1,10 +1,11 @@
+import { useMemo } from 'react'
+
 import {
+  HTMLText,
   Regulation,
   RegulationMaybeDiff,
-  HTMLText,
 } from '@island.is/regulations'
 import { NamespaceGetter } from '@island.is/web/hooks'
-import { useMemo } from 'react'
 
 type ItemType =
   | 'document' // Regulation, appendix, comments
@@ -154,6 +155,7 @@ type IndexerRet<Reg extends RegulationMaybeDiff> = {
   comments: HTMLText
 }
 
+// eslint-disable-next-line func-style
 function useRegulationIndexer<Reg extends RegulationMaybeDiff>(
   regulation: Reg,
   txt: NamespaceGetter<

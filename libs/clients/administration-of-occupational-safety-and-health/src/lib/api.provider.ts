@@ -10,7 +10,6 @@ export const ApiConfig = {
       fetchApi: createEnhancedFetch({
         name: 'clients-administration-of-occupational-safety-and-health',
         logErrorResponseBody: true,
-        treat400ResponsesAsErrors: true,
         organizationSlug: 'vinnueftirlitid',
       }),
       basePath: 'https://ws.ver.is/namskeid',

@@ -192,6 +192,12 @@ export const m = defineMessages({
       '* Athugið að nafn þitt er sýnilegt ábyrgðamanni listans en birtist ekki á vef eða hjá öðrum sem hafa skráð sig á lista.',
     description: '',
   },
+  hideNameInfoText: {
+    id: 'gpl.application:hideNameInfoText',
+    defaultMessage:
+      'Þjóðskrá Íslands afhendir undirskriftalistana til Þjóðskjalasafns Íslands í samræmi við afhendingar- og varðveisluskyldu samkvæmt lögum nr. 77/2014 um opinber skjalasöfn.',
+    description: '',
+  },
   agreeToTermsLabel: {
     id: 'gpl.application:agreeToTermsLabel',
     defaultMessage:
@@ -242,7 +248,24 @@ export const m = defineMessages({
   },
   validationTilBeforeFrom: {
     id: 'gpl.application:validationTilBeforeFrom',
-    defaultMessage: 'Lokadagsetning má ekki vera á undan upphafsdagsetningu',
+    defaultMessage:
+      'Lokadagsetning má ekki vera á undan eða sú sama og upphafsdagsetning',
+    description: '',
+  },
+  validationDateTooFarInFuture: {
+    id: 'gpl.application:validationDateTooFarInFuture',
+    defaultMessage:
+      'Gildistími má ekki vera lengri en 3 mánuðum frá upphafsdagsetningu',
+    description: '',
+  },
+  validationPhone: {
+    id: 'gpl.application:validationPhone',
+    defaultMessage: 'Vinsamlegast sláðu inn gilt símanúmer',
+    description: '',
+  },
+  validationEmail: {
+    id: 'gpl.application:validationEmail',
+    defaultMessage: 'Vinsamlegast sláðu inn gilt netfang',
     description: '',
   },
 

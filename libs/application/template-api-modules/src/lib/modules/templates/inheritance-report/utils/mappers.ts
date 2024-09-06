@@ -47,6 +47,13 @@ const estateMemberMapper = (element: EstateMember) => {
           email: '',
         }
       : undefined,
+    advocate2: element.advocate2
+      ? {
+          ...element.advocate2,
+          phone: '',
+          email: '',
+        }
+      : undefined,
   }
 }
 
@@ -88,9 +95,29 @@ export const estateTransformer = (estate: EstateInfo): InheritanceData => {
 
 export const expandAnswers = (
   answers: InheritanceReportSchema,
-): InheritanceReportSchema => {
+): Omit<InheritanceReportSchema, 'estateSelectionInfo'> & {
+  caseNumber: string
+} => {
   return {
+    applicationFor: answers.applicationFor ?? '',
     applicant: answers.applicant,
+    prePaidApplicant: answers.prePaidApplicant,
+    prepaidInheritance: answers.prepaidInheritance,
+    executors: {
+      executor: {
+        email: answers.executors?.executor.email ?? '',
+        phone: answers.executors?.executor.phone ?? '',
+        name: answers.executors?.executor.name ?? '',
+        nationalId: answers.executors?.executor.nationalId ?? '',
+      },
+      spouse: {
+        email: answers.executors?.spouse?.email ?? '',
+        phone: answers.executors?.spouse?.phone ?? '',
+        name: answers.executors?.spouse?.name ?? '',
+        nationalId: answers.executors?.spouse?.nationalId ?? '',
+      },
+      includeSpouse: undefined,
+    },
     approveExternalData: answers.approveExternalData,
     assets: {
       assetsTotal: answers.assets.assetsTotal ?? 0,
@@ -164,7 +191,8 @@ export const expandAnswers = (
       realEstate: {
         data: (answers.assets.realEstate?.data ?? []).map((realEstate) => {
           return {
-            assetNumber: realEstate.assetNumber ?? '',
+            assetNumber:
+              realEstate.assetNumber.replace('-', '').replace(/\D/g, '') ?? '',
             description: realEstate.description ?? '',
             propertyValuation: realEstate.propertyValuation ?? '0',
             share: realEstate.share ?? '0',
@@ -204,24 +232,30 @@ export const expandAnswers = (
         total: answers.assets.vehicles?.total ?? 0,
       },
     },
+    caseNumber: answers.estateInfoSelection,
     confirmAction: answers.confirmAction,
+    assetsConfirmation: answers.assetsConfirmation,
+    debtsConfirmation: answers.debtsConfirmation,
+    heirsConfirmation: answers.heirsConfirmation,
     debts: {
-      debtsTotal: answers.debts.debtsTotal ?? 0,
+      debtsTotal: answers?.debts?.debtsTotal ?? 0,
       domesticAndForeignDebts: {
-        data: (answers.debts.domesticAndForeignDebts?.data ?? []).map(
+        data: (answers.debts?.domesticAndForeignDebts?.data ?? []).map(
           (debt) => {
             return {
               assetNumber: debt.assetNumber ?? '',
               propertyValuation: debt.propertyValuation ?? 0,
               description: debt.description ?? '',
               nationalId: debt.nationalId ?? '',
+              debtType: debt.debtType ?? '',
             }
           },
         ),
-        total: answers.debts.domesticAndForeignDebts?.total ?? 0,
+        total: answers.debts?.domesticAndForeignDebts?.total ?? 0,
       },
-      publicCharges: (answers.debts.publicCharges ?? 0).toString(),
+      publicCharges: (answers.debts?.publicCharges ?? 0).toString(),
     },
+    estateInfoSelection: answers.estateInfoSelection,
     funeralCost: {
       build: answers?.funeralCost?.build ?? '',
       cremation: answers?.funeralCost?.cremation ?? '',
@@ -280,8 +314,13 @@ export const expandAnswers = (
     spouseTotal: answers.spouseTotal ?? 0,
     estateTotal: answers.estateTotal ?? 0,
     netPropertyForExchange: answers.netPropertyForExchange ?? 0,
-    hasCustomSpouseSharePercentage:
-      answers.hasCustomSpouseSharePercentage ?? [],
-    customSpouseSharePercentage: answers.customSpouseSharePercentage ?? '50',
+    customShare: {
+      hasCustomSpouseSharePercentage:
+        answers?.customShare?.hasCustomSpouseSharePercentage ?? 'No',
+      customSpouseSharePercentage:
+        answers?.customShare?.customSpouseSharePercentage ?? '50',
+      deceasedWasMarried: answers?.customShare?.deceasedWasMarried ?? '',
+      deceasedHadAssets: answers?.customShare?.deceasedHadAssets ?? '',
+    },
   }
 }

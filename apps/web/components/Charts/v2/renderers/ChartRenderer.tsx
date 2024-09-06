@@ -61,8 +61,14 @@ export const Chart = ({ slice }: ChartProps) => {
         activeLocale,
         slice.xAxisValueType || DEFAULT_XAXIS_VALUE_TYPE,
         slice.xAxisFormat || undefined,
+        slice.reduceAndRoundValue || undefined,
       )(value),
-    [activeLocale, slice.xAxisValueType, slice.xAxisFormat],
+    [
+      activeLocale,
+      slice.xAxisValueType,
+      slice.xAxisFormat,
+      slice.reduceAndRoundValue,
+    ],
   )
 
   const componentsWithAddedProps = useGetChartComponentsWithRenderProps(slice)

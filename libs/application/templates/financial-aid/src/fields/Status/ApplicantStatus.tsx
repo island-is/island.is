@@ -37,17 +37,14 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   return (
     <Box paddingBottom={5} className={styles.container}>
       <Header state={state} />
-
       {isWaitingForSpouse && (
         <SpouseAlert
           showCopyUrl={!application.externalData.sendSpouseEmail?.data.success}
         />
       )}
-
       {state === ApplicationState.APPROVED && (
         <ApprovedAlert events={currentApplication?.applicationEvents} />
       )}
-
       {state === ApplicationState.REJECTED && (
         <RejectionMessage
           rejectionComment={currentApplication?.rejection}
@@ -56,11 +53,9 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
           email={municipality.data?.email}
         />
       )}
-
       {state === ApplicationState.DATANEEDED && (
         <MissingFilesCard goToScreen={goToScreen} />
       )}
-
       {state !== ApplicationState.REJECTED && (
         <AidAmount
           application={application}
@@ -70,7 +65,6 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
           amount={currentApplication?.amount}
         />
       )}
-
       <Timeline
         state={state}
         created={currentApplication?.created ?? application.created}
@@ -81,7 +75,6 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
             : currentApplication?.spouseNationalId != null
         }
       />
-
       <MoreActions
         municipalityRulesPage={municipality.data?.rulesHomepage}
         municipalityEmail={municipality.data?.email}

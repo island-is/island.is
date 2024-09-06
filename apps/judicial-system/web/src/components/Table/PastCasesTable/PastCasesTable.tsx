@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { AnimatePresence } from 'framer-motion'
@@ -6,10 +6,15 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { isDistrictCourtUser } from '@island.is/judicial-system/types'
+import {
+  isDistrictCourtUser,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
+  CaseTag,
   ContextMenu,
+  getIndictmentCaseStateTag,
   TagAppealState,
   TagCaseState,
   UserContext,
@@ -25,10 +30,13 @@ import {
   TableContainer,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Case,
+  CaseListEntry,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCaseList,
-  useSortCases,
+  useSort,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -46,14 +54,32 @@ interface Props {
   testid?: string
 }
 
-const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { cases, loading = false, testid } = props
+const PastCasesTable: FC<Props> = ({ cases, loading = false, testid }) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
-  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
-    useSortCases('createdAt', 'descending', cases)
+
+  const getColumnValue = (
+    entry: CaseListEntry,
+    column: keyof CaseListEntry,
+  ) => {
+    if (
+      column === 'defendants' &&
+      entry.defendants &&
+      entry.defendants.length > 0
+    ) {
+      return entry.defendants[0].name ?? ''
+    }
+    return entry.created
+  }
+
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } = useSort(
+    'created',
+    'descending',
+    cases,
+    getColumnValue,
+  )
 
   const {
     withdrawAppealMenuOption,
@@ -108,10 +134,10 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 title={capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 )}
-                onClick={() => requestSort('defendant')}
-                sortAsc={getClassNamesFor('defendant') === 'ascending'}
-                sortDes={getClassNamesFor('defendant') === 'descending'}
-                isActive={isActiveColumn('defendant')}
+                onClick={() => requestSort('defendants')}
+                sortAsc={getClassNamesFor('defendants') === 'ascending'}
+                sortDes={getClassNamesFor('defendants') === 'descending'}
+                isActive={isActiveColumn('defendants')}
               />
             </th>
             <TableHeaderText title={formatMessage(tables.type)} />
@@ -120,10 +146,10 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 title={capitalize(
                   formatMessage(tables.created, { suffix: 'i' }),
                 )}
-                onClick={() => requestSort('createdAt')}
-                sortAsc={getClassNamesFor('createdAt') === 'ascending'}
-                sortDes={getClassNamesFor('createdAt') === 'descending'}
-                isActive={isActiveColumn('createdAt')}
+                onClick={() => requestSort('created')}
+                sortAsc={getClassNamesFor('created') === 'ascending'}
+                sortDes={getClassNamesFor('created') === 'descending'}
+                isActive={isActiveColumn('created')}
               />
             </th>
             <TableHeaderText title={formatMessage(tables.state)} />
@@ -133,6 +159,10 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
         }
       >
         {sortedData.map((column) => {
+          const indictmentCaseTag = isIndictmentCase(column.type)
+            ? getIndictmentCaseStateTag(column as Case, user)
+            : null
+
           return (
             <tr
               className={styles.row}
@@ -146,7 +176,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   appealCaseNumber={column.appealCaseNumber}
                 />
               </td>
-              <td className={cn(styles.td, styles.largeColumn)}>
+              <td className={styles.largeColumn}>
                 <DefendantInfo defendants={column.defendants} />
               </td>
               <td>
@@ -164,12 +194,21 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   marginRight={column.appealState ? 1 : 0}
                   marginBottom={column.appealState ? 1 : 0}
                 >
-                  <TagCaseState
-                    caseState={column.state}
-                    caseType={column.type}
-                    isCourtRole={isDistrictCourtUser(user)}
-                    isValidToDateInThePast={column.isValidToDateInThePast}
-                  />
+                  {indictmentCaseTag ? (
+                    <CaseTag
+                      color={indictmentCaseTag.color}
+                      text={formatMessage(indictmentCaseTag.text)}
+                    />
+                  ) : (
+                    <TagCaseState
+                      caseState={column.state}
+                      caseType={column.type}
+                      isCourtRole={isDistrictCourtUser(user)}
+                      isValidToDateInThePast={column.isValidToDateInThePast}
+                      indictmentRulingDecision={column.indictmentRulingDecision}
+                      indictmentDecision={column.indictmentDecision}
+                    />
+                  )}
                 </Box>
                 {column.appealState && (
                   <TagAppealState

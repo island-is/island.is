@@ -9,9 +9,8 @@ import { useEffect } from 'react'
 import { useFormContext, useFormState } from 'react-hook-form'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
 import { useLocale } from '@island.is/localization'
-import { getErrorViaPath } from '@island.is/application/core'
+import { YES, getErrorViaPath } from '@island.is/application/core'
 import { MessageDescriptor } from 'react-intl'
 
 export type DeceasedShareProps = {
@@ -24,6 +23,7 @@ export type DeceasedShareProps = {
   pushRight?: boolean
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
+  disabled?: boolean
 }
 
 export const DeceasedShare = ({
@@ -36,6 +36,7 @@ export const DeceasedShare = ({
   pushRight,
   paddingTop = 'none',
   paddingBottom = 'none',
+  disabled = false,
 }: DeceasedShareProps) => {
   const { errors } = useFormState()
   const { setValue, watch } = useFormContext()
@@ -49,7 +50,7 @@ export const DeceasedShare = ({
   const watchedCheckboxField = watch(checkboxFieldName)
   const watchedInputField = watch(inputFieldName)
 
-  const hasError = getErrorViaPath(errors, `${id}.${valueFieldName}`)
+  const error = getErrorViaPath(errors, `${id}.${valueFieldName}`)
   const checked = watchedCheckboxField?.[0] === YES
 
   useEffect(() => {
@@ -67,7 +68,7 @@ export const DeceasedShare = ({
         paddingBottom={paddingBottom}
       >
         <Box width="full">
-          <Box paddingBottom={checked ? 2 : 0} width="full">
+          <Box paddingBottom={checked ? 3 : 0} width="full">
             <CheckboxController
               name={checkboxFieldName}
               large={false}
@@ -75,6 +76,7 @@ export const DeceasedShare = ({
               labelVariant="default"
               strong={checked}
               defaultValue={watchedCheckboxField}
+              disabled={disabled}
               options={[
                 {
                   label: formatMessage(labelCheck),
@@ -88,7 +90,8 @@ export const DeceasedShare = ({
             <Box width="full">
               <ShareInput
                 name={inputFieldName}
-                errorMessage={hasError}
+                hasError={!!error}
+                errorMessage={error}
                 disabled={!checked}
                 label={formatMessage(labelInput)}
               />

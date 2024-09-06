@@ -12,6 +12,7 @@ import {
   IsBoolean,
 } from 'class-validator'
 import { Type } from 'class-transformer'
+import type { Locale } from '@island.is/shared/types'
 
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()
@@ -20,7 +21,7 @@ export class ExtendedPaginationDto extends PaginationDto {
     type: 'string',
   })
   @IsString()
-  locale!: string
+  locale!: Locale
 }
 
 class ArgItem {
@@ -94,19 +95,14 @@ export class RenderedNotificationDto {
 
   @ApiProperty({ example: 'Compelling nofication body' })
   @IsString()
-  body!: string
+  externalBody!: string
 
   @ApiPropertyOptional({ example: 'Extra body text for further viewing' })
   @IsString()
   @IsOptional()
-  dataCopy?: string
+  internalBody?: string
 
-  @ApiPropertyOptional({ example: '//inbox/document-uuid' })
-  @IsString()
-  @IsOptional()
-  clickAction?: string
-
-  @ApiPropertyOptional({ example: '//inbox/document-uuid' })
+  @ApiPropertyOptional({ example: 'https://island.is/minarsidur/postholf' })
   @IsString()
   @IsOptional()
   clickActionUrl?: string
@@ -135,17 +131,12 @@ export class Message {
 
   @ApiProperty({ example: 'Notification body text' })
   @IsString()
-  body!: string
+  externalBody!: string
 
   @ApiPropertyOptional({ example: 'Some data copy' })
   @IsOptional()
   @IsString()
-  dataCopy?: string
-
-  @ApiPropertyOptional({ example: 'click/action' })
-  @IsOptional()
-  @IsString()
-  clickAction?: string
+  internalBody?: string
 }
 
 export class PaginatedNotificationDto {

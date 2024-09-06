@@ -37,6 +37,7 @@ export const ArticleChatPanel = ({
     Component = (
       <LiveChatIncChatPanel
         {...liveChatIncConfig[activeLocale][organizationId ?? '']}
+        pushUp={pushUp}
       />
     )
   }

@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/air-discount-scheme/web",
   "projectType": "application",
+  "tags": ["scope:react-next"],
   "generators": {},
   "targets": {
     "build": {
@@ -30,7 +31,8 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node"
+        "target": "node",
+        "webpackConfig": "apps/air-discount-scheme/web/webpack.config.js"
       },
       "configurations": {
         "development": {},
@@ -84,18 +86,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/air-discount-scheme/web/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/air-discount-scheme/web/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/air-discount-scheme/web/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/air-discount-scheme/web"]
     },
@@ -126,7 +122,8 @@
         "{projectRoot}/graphql/possibleTypes.json"
       ]
     },
-    "docker-next": {}
-  },
-  "tags": ["scope:react-next"]
+    "docker-next": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
+    }
+  }
 }

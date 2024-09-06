@@ -23,7 +23,6 @@ export const NO_MULTIPLE_BIRTHS = '1'
 export const MINIMUM_PERIOD_LENGTH = 14
 
 export enum PLEvents {
-  MODIFY = 'MODIFY',
   CLOSED = 'CLOSED',
   ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
 }
@@ -35,7 +34,6 @@ export type Events =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ABORT }
   | { type: DefaultEvents.EDIT }
-  | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
   | { type: 'CLOSED' } // Ex: Close application
   | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
 
@@ -68,6 +66,12 @@ export enum ApiModuleActions {
   setChildrenInformation = 'setChildrenInformation',
   setBirthDateForNoPrimaryParent = 'setBirthDateForNoPrimaryParent',
   setBirthDate = 'setBirthDate',
+  /**
+   * Fetches and returns VMST periods for the given application.
+   * Need to add this to `onExit` in every state that reaches `EDIT_OR_ADD_EMPLOYERS_AND_PERIODS`,
+   * except states that are still pending employer approval.
+   */
+  setVMSTPeriods = 'setVMSTPeriods',
 }
 
 export enum StartDateOptions {
@@ -97,7 +101,6 @@ export enum States {
   EMPLOYER_ACTION = 'employerRequiresAction',
 
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
-  VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE = 'vinnumalastofnunApprovalAbortChange',
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
@@ -113,7 +116,6 @@ export enum States {
   EMPLOYER_EDITS_ACTION = 'employerRequiresActionOnEdits',
 
   VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
-  VINNUMALASTOFNUN_APPROVE_EDITS_ABORT = 'vinnumalastofnunApproveEditsAbort',
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 
   RESIDENCE_GRANT_APPLICATION = 'residenceGrantApplication',
@@ -141,6 +143,8 @@ export enum FileType {
   DOCUMENTPERIOD = 'documentPeriod',
   EMPPER = 'empper',
   EMPLOYER = 'employer',
+  EMPDOC = 'empdoc',
+  EMPDOCPER = 'empdocper',
 }
 
 export enum Languages {
@@ -158,6 +162,7 @@ export enum AttachmentTypes {
   ADOPTION = 'adoption',
   EMPLOYMENT_TERMINATION_CERTIFICATE = 'employmentTerminationCertificateFile',
   FILE = 'file',
+  CHANGE_EMPLOYER = 'changeEmployerFile',
 }
 
 export const AttachmentLabel: {
@@ -177,4 +182,6 @@ export const AttachmentLabel: {
     parentalLeaveFormMessages.attachmentScreen
       .employmentTerminationCertificateTitle,
   file: parentalLeaveFormMessages.attachmentScreen.title,
+  changeEmployerFile:
+    parentalLeaveFormMessages.attachmentScreen.changeEmployerTitle,
 }

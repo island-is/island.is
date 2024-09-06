@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -18,12 +18,12 @@ import { strings } from './ReturnIndictmentCaseModal.strings'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   onClose: () => void
   onComplete: () => void
 }
 
-const ReturnIndictmentModal: React.FC<React.PropsWithChildren<Props>> = ({
+const ReturnIndictmentModal: FC<Props> = ({
   workingCase,
   setWorkingCase,
   onClose,
@@ -54,6 +54,8 @@ const ReturnIndictmentModal: React.FC<React.PropsWithChildren<Props>> = ({
       return
     }
 
+    // TODO: Generally, we cannot trust the client date so we should let the server handle this instead.
+    //       There is already precedent for adding eplanatory strings on the server side when transitioning cases.
     const now = new Date()
     const prependedReturnedExplanation = `${formatMessage(
       strings.prependedReturnedExplanation,

@@ -24,8 +24,12 @@ import { ExamplePaymentActionsModule } from './example-payment-actions/examplePa
 import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { FinancialAidService } from './financial-aid/financial-aid.service'
+import { FinancialStatementCemeteryTemplateModule } from './financial-statement-cemetery/financial-statement-cemetery.module'
+import { FinancialStatementCemeteryTemplateService } from './financial-statement-cemetery/financial-statement-cemetery.service'
 import { FinancialStatementsInaoTemplateModule } from './financial-statements-inao/financial-statements-inao.module'
 import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
+import { FinancialStatementIndividualElectionModule } from './financial-statement-individual-election/financial-statement-individual-election.module'
+import { FinancialStatementIndividualElectionService } from './financial-statement-individual-election/financial-statement-individual-election.service'
 import { FundingGovernmentProjectsModule } from './funding-government-projects/funding-government-projects.module'
 import { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
 import { GeneralFishingLicenseModule } from './general-fishing-license/general-fishing-license.module'
@@ -73,6 +77,8 @@ import {
 } from './european-health-insurance-card'
 import { HealthcareLicenseCertificateModule } from './healthcare-license-certificate/healthcare-license-certificate.module'
 import { HealthcareLicenseCertificateService } from './healthcare-license-certificate/healthcare-license-certificate.service'
+import { HealthcareWorkPermitModule } from './healthcare-work-permit/healthcare-work-permit.module'
+import { HealthcareWorkPermitService } from './healthcare-work-permit/healthcare-work-permit.service'
 import { AnonymityInVehicleRegistryModule } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.module'
 import { AnonymityInVehicleRegistryService } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.service'
 import { ChangeCoOwnerOfVehicleModule } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.module'
@@ -105,8 +111,8 @@ import { CarRecyclingModule } from './car-recycling/car-recycling.module'
 import { CarRecyclingService } from './car-recycling/car-recycling.service'
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
-import { OfficialJournalOfIcelandModule } from './official-journal-of-iceland/official-journal-of-iceland.module'
-import { OfficialJournalOfIcelandService } from './official-journal-of-iceland/official-journal-of-iceland.service'
+import { OfficialJournalOfIcelandTemplateModule } from './official-journal-of-iceland/official-journal-of-iceland.module'
+import { OfficialJournalOfIcelandTemaplateService } from './official-journal-of-iceland/official-journal-of-iceland.service'
 import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
 import { ChangeMachineSupervisorTemplateModule } from './aosh/change-machine-supervisor/change-machine-supervisor.module'
@@ -119,10 +125,23 @@ import { HomeSupportModule } from './home-support/home-support.module'
 import { HomeSupportService } from './home-support/home-support.service'
 import { DeregisterMachineTemplateModule } from './aosh/deregister-machine/deregister-machine.module'
 import { DeregisterMachineTemplateService } from './aosh/deregister-machine/deregister-machine.service'
+import { RegisterNewMachineTemplateModule } from './aosh/register-new-machine/register-new-machine.module'
+import { RegisterNewMachineTemplateService } from './aosh/register-new-machine/register-new-machine.service'
 import { GrindavikHousingBuyoutModule } from './grindavik-housing-buyout/grindavik-housing-buyout.module'
 import { GrindavikHousingBuyoutService } from './grindavik-housing-buyout/grindavik-housing-buyout.service'
+import { StreetRegistrationTemplateModule } from './aosh/street-registration/street-registration.module'
+import { StreetRegistrationTemplateService } from './aosh/street-registration/street-registration.service'
 import { RequestInspectionTemplateModule } from './aosh/request-inspection/request-inspection.module'
 import { RequestInspectionTemplateService } from './aosh/request-inspection/request-inspection.service'
+import { HealthInsuranceDeclarationModule } from './health-insurance-declaration/health-insurance-declaration.module'
+import { HealthInsuranceDeclarationService } from './health-insurance-declaration/health-insurance-declaration.service'
+import { NewPrimarySchoolModule } from './new-primary-school/new-primary-school.module'
+import { NewPrimarySchoolService } from './new-primary-school/new-primary-school.service'
+
+import { IdCardModule } from './id-card/id-card.module'
+import { IdCardService } from './id-card/id-card.service'
+import { ParliamentaryListCreationModule } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.module'
+import { ParliamentaryListCreationService } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -141,8 +160,6 @@ export const modules = [
   AccidentNotificationModule,
   GeneralPetitionModule,
   CriminalRecordSubmissionModule,
-  GeneralFishingLicenseModule,
-  DataProtectionComplaintModule,
   PSignSubmissionModule,
   AnnouncementOfDeathModule,
   ExamplePaymentActionsModule,
@@ -153,7 +170,9 @@ export const modules = [
   DrivingSchoolConfirmationModule,
   PassportModule,
   OperatingLicenseModule,
+  FinancialStatementCemeteryTemplateModule,
   FinancialStatementsInaoTemplateModule,
+  FinancialStatementIndividualElectionModule,
   NoDebtCertificateModule,
   InheritanceReportModule,
   EstateTemplateModule,
@@ -167,7 +186,6 @@ export const modules = [
   OrderVehicleLicensePlateModule,
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
-  EstateTemplateModule,
   PassportAnnulmentModule,
   EuropeanHealthInsuranceCardModule,
   DrivingLicenseBookUpdateInstructorModule,
@@ -178,6 +196,7 @@ export const modules = [
   CitizenshipModule,
   EnergyFundsModule,
   HealthcareLicenseCertificateModule,
+  HealthcareWorkPermitModule,
   SignatureListCreationModule,
   SignatureListSigningModule,
   TransferOfMachineOwnershipTemplateModule,
@@ -185,9 +204,15 @@ export const modules = [
   ChangeMachineSupervisorTemplateModule,
   UniversityModule,
   DeregisterMachineTemplateModule,
+  RegisterNewMachineTemplateModule,
   GrindavikHousingBuyoutModule,
   RequestInspectionTemplateModule,
-  OfficialJournalOfIcelandModule,
+  OfficialJournalOfIcelandTemplateModule,
+  StreetRegistrationTemplateModule,
+  IdCardModule,
+  HealthInsuranceDeclarationModule,
+  NewPrimarySchoolModule,
+  ParliamentaryListCreationModule,
 ]
 
 export const services = [
@@ -207,8 +232,6 @@ export const services = [
   AccidentNotificationService,
   GeneralPetitionService,
   CriminalRecordSubmissionService,
-  GeneralFishingLicenseService,
-  DataProtectionComplaintService,
   PSignSubmissionService,
   AnnouncementOfDeathService,
   ExamplePaymentActionsService,
@@ -218,7 +241,9 @@ export const services = [
   DrivingSchoolConfirmationService,
   PassportService,
   OperatingLicenseService,
+  FinancialStatementCemeteryTemplateService,
   FinancialStatementsInaoTemplateService,
+  FinancialStatementIndividualElectionService,
   MarriageConditionsSubmissionService,
   NoDebtCertificateService,
   InheritanceReportService,
@@ -233,7 +258,6 @@ export const services = [
   OrderVehicleLicensePlateService,
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
-  EstateTemplateService,
   PassportAnnulmentService,
   EuropeanHealthInsuranceCardService,
   DrivingLicenseBookUpdateInstructorService,
@@ -244,6 +268,7 @@ export const services = [
   CitizenshipService,
   EnergyFundsService,
   HealthcareLicenseCertificateService,
+  HealthcareWorkPermitService,
   SignatureListCreationService,
   SignatureListSigningService,
   TransferOfMachineOwnershipTemplateService,
@@ -251,7 +276,13 @@ export const services = [
   ChangeMachineSupervisorTemplateService,
   UniversityService,
   DeregisterMachineTemplateService,
+  RegisterNewMachineTemplateService,
   GrindavikHousingBuyoutService,
   RequestInspectionTemplateService,
-  OfficialJournalOfIcelandService,
+  OfficialJournalOfIcelandTemaplateService,
+  StreetRegistrationTemplateService,
+  IdCardService,
+  HealthInsuranceDeclarationService,
+  NewPrimarySchoolService,
+  ParliamentaryListCreationService,
 ]

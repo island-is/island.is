@@ -8,6 +8,7 @@ import {
 import {
   AmountModel,
   ApplicationFileModel,
+  ChildrenModel,
   DirectTaxPaymentModel,
   StaffModel,
 } from './index'
@@ -109,4 +110,10 @@ export class ApplicationModel {
 
   @Field({ nullable: true })
   readonly navSuccess?: boolean
+
+  @Field({ nullable: true })
+  readonly childrenComment?: string
+
+  @Field(() => [ChildrenModel])
+  readonly children?: ChildrenModel[]
 }

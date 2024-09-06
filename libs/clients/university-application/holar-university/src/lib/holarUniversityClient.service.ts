@@ -17,12 +17,7 @@ export class HolarUniversityApplicationClient {
   async getPrograms(): Promise<IProgram[]> {
     const res = await this.programsApi.activeProgramsGet()
 
-    return mapUglaPrograms(res, (programExternalId: string, e: Error) => {
-      logger.error(
-        `Failed to map program with externalId ${programExternalId} (holar-university), reason:`,
-        e,
-      )
-    })
+    return mapUglaPrograms(res, 'holar-university')
   }
 
   async getCourses(programExternalId: string): Promise<ICourse[]> {

@@ -23,15 +23,15 @@ export class Institution extends Model {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id!: string
 
   @CreatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   created!: Date
 
   @UpdatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   modified!: Date
 
   @Column({
@@ -39,43 +39,31 @@ export class Institution extends Model {
     allowNull: false,
     values: Object.values(InstitutionType),
   })
-  @ApiProperty()
+  @ApiProperty({ enum: InstitutionType })
   type!: InstitutionType
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    unique: true,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.STRING, allowNull: false, unique: true })
+  @ApiProperty({ type: String })
   name!: string
 
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.BOOLEAN, allowNull: false })
+  @ApiProperty({ type: Boolean })
   active!: boolean
 
   @ForeignKey(() => Institution)
-  @Column({
-    type: DataType.UUID,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   defaultCourtId?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   policeCaseNumberPrefix?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   nationalId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  address?: string
 }

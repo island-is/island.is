@@ -3,21 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/social-insurance-administration/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/social-insurance-administration/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/clients/social-insurance-administration/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/social-insurance-administration/jest.config.ts"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/clients/social-insurance-administration"
@@ -29,6 +24,7 @@
         "commands": [
           "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10008/TR-Protected/getOpenAPI?serviceCode=external-v1 > src/clientConfig.json",
           "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false |  .components.schemas.ValidationProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.\"TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset\".properties.gildi += {\"type\": \"string\"}' src/clientConfig.json) > src/clientConfig.json",
           "cat <<< $(jq '.paths.\"/api/protected/v1/Application/{applicationGuid}/documents\".post.requestBody += {\"required\": \"true\"}' src/clientConfig.json) > src/clientConfig.json",
           "cat <<< $(jq '.paths.\"/api/protected/v1/Application/{applicationType}\".post.requestBody.content[].schema = {\"type\": \"object\"}' src/clientConfig.json) > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
@@ -44,6 +40,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

@@ -17,3 +17,18 @@ export const UNI_HI_SLUG = 'haskoli-islands'
 export const ISLAND_SYSLUMENN_SLUG = '/s/islandis'
 export const HEALTH_DIRECTORATE_SLUG = 'landlaeknir'
 export const HUGVERKASTOFAN_SLUG = 'hugverkastofan'
+
+export const MONTHS = [
+  'january',
+  'february',
+  'march',
+  'april',
+  'may',
+  'june',
+  'july',
+  'august',
+  'september',
+  'october',
+  'november',
+  'december',
+]

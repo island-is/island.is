@@ -7,6 +7,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { NO, YES, B_TEMP } from '../../lib/constants'
+
 import { isApplicationForCondition } from '../../lib/utils'
 
 export const subSectionOtherCountry = buildSubSection({

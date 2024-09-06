@@ -20,9 +20,6 @@ export const resolvers: Resolvers = {
     applicationApplication: (parent, args) => {
       return store.applications.find((a) => a.id === args.input.id) || null
     },
-    nationalRegistryFamily: () => {
-      return store.familyMembers
-    },
   },
   Mutation: {
     createApplication: (parent, args) => {

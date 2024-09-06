@@ -2,6 +2,5 @@ query getPreviousPayments {
   socialInsurancePayments {
     nextPayment
     previousPayment
-    paymentYears
   }
 }

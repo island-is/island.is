@@ -1,4 +1,5 @@
 import {
+  defineTemplateApi,
   InstitutionNationalIds,
   PaymentCatalogApi,
   defineTemplateApi,
@@ -9,7 +10,6 @@ export {
   UserProfileApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
-  JurisdictionApi,
   QualityPhotoApi,
   ExistingApplicationApi,
 } from '@island.is/application/types'

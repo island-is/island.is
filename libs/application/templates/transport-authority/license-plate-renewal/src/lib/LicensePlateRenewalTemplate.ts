@@ -30,6 +30,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes, getExtraData } from '../utils'
+import { isPaymentRequired } from '../utils/isPaymentRequired'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regno = getValueViaPath(
@@ -84,9 +85,14 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiActions.validateApplication,
+            }),
+            defineTemplateApi({
+              action: ApiActions.submitApplication,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -112,7 +118,16 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.PAYMENT,
+              cond: (application) => isPaymentRequired(application),
+            },
+            {
+              target: States.COMPLETED,
+              cond: (application) => !isPaymentRequired(application),
+            },
+          ],
         },
       },
       [States.PAYMENT]: buildPaymentState({

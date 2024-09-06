@@ -4,6 +4,7 @@ import {
   GetListInput,
   CreateListInput,
   BulkUploadInput,
+  ReasonKey,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
 import { List, ListStatus, mapList, mapListBase } from './types/list.dto'
@@ -279,5 +280,17 @@ export class SignatureCollectionAdminClientService {
     })
 
     return mapBulkResponse(signatures)
+  }
+
+  async removeCandidate(candidateId: string, auth: Auth): Promise<Success> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.candidateApi,
+        auth,
+      ).frambodIDRemoveFrambodAdminPost({ iD: parseInt(candidateId) })
+      return { success: res?.id === parseInt(candidateId) }
+    } catch (error) {
+      return { success: false, reasons: [ReasonKey.DeniedByService] }
+    }
   }
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 
 import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
@@ -9,7 +9,7 @@ interface Props {
   message: string
 }
 
-const IconAndText: React.FC<Props> = (props) => {
+const IconAndText: FC<Props> = (props) => {
   const { icon, iconColor, message } = props
 
   return (

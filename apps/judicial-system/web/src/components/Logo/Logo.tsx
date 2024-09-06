@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { FC, useContext } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -12,9 +12,7 @@ interface Props {
   defaultInstitution?: string | null
 }
 
-const Logo: React.FC<React.PropsWithChildren<Props>> = ({
-  defaultInstitution = '',
-}) => {
+const Logo: FC<Props> = ({ defaultInstitution = '' }) => {
   const { user } = useContext(UserContext)
   const institutionName = user?.institution?.name ?? defaultInstitution ?? ''
   const institutionNameArr = institutionName.split(' ')

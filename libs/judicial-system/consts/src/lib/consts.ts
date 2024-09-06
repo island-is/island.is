@@ -5,7 +5,7 @@ export const EXPIRES_IN_MILLISECONDS = EXPIRES_IN_SECONDS * 1000
 export const CSRF_COOKIE_NAME = 'judicial-system.csrf'
 export const ACCESS_TOKEN_COOKIE_NAME = 'judicial-system.token'
 export const CODE_VERIFIER_COOKIE_NAME = 'judicial-system.code_verifier'
-export const IDS_ID_TOKEN = 'judicial-system.ids.id_token'
+export const IDS_ID_TOKEN_NAME = 'judicial-system.ids.id_token'
 
 export const InvestigationCaseTypes = [
   {
@@ -86,31 +86,77 @@ export const InvestigationCaseTypes = [
 // Date/time formats
 export const TIME_FORMAT = 'HH:mm'
 
-// Routes
-export const CASES_ROUTE = '/krofur'
-export const USERS_ROUTE = '/notendur'
-export const CREATE_USER_ROUTE = '/notendur/nyr'
-export const CHANGE_USER_ROUTE = '/notendur/breyta'
-export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
-export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
+//#region Defence user routes
+export const DEFENDER_CASES_ROUTE = '/verjandi/krofur'
+export const DEFENDER_ROUTE = '/verjandi/krafa'
+export const DEFENDER_INDICTMENT_ROUTE = '/verjandi/akaera'
+export const DEFENDER_ADD_FILES_ROUTE = '/verjandi/akaera/gogn'
 
+export const DEFENDER_APPEAL_ROUTE = '/verjandi/kaera'
+export const DEFENDER_APPEAL_FILES_ROUTE = '/verjandi/kaera/gogn'
+export const DEFENDER_STATEMENT_ROUTE = '/verjandi/greinargerd'
+//#endregion Defence user routes
+
+//#region Public prosecutor user routes
+export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE =
+  '/rikissaksoknari/akaera/yfirlit'
+//#endregion Public prosecutor user routes
+
+//#region Prison user routes
+export const PRISON_CASES_ROUTE = '/fangelsi/krofur'
+export const PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE = '/fangelsi/krafa/yfirlit'
+export const PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE =
+  '/fangelsi/akaera/yfirlit'
+//#endregion Prison user routes
+
+//#region Court of appeals user routes
+export const COURT_OF_APPEAL_OVERVIEW_ROUTE = '/landsrettur/yfirlit'
+export const COURT_OF_APPEAL_CASES_ROUTE = '/landsrettur/krofur'
+export const COURT_OF_APPEAL_CASE_ROUTE = '/landsrettur/kaera'
+export const COURT_OF_APPEAL_RULING_ROUTE = '/landsrettur/urskurdur'
+export const COURT_OF_APPEAL_RESULT_ROUTE = '/landsrettur/nidurstada'
+export const COURT_OF_APPEAL_SUMMARY_ROUTE = '/landsrettur/samantekt'
+export const COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE = '/landsrettur/nidurfelling'
+//#endregion Court of appeals user routes
+
+//#region District court user routes
+export const RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE = '/domur/mottaka'
+export const RESTRICTION_CASE_COURT_OVERVIEW_ROUTE = '/domur/krafa'
+export const RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
+  '/domur/fyrirtokutimi'
+export const RESTRICTION_CASE_RULING_ROUTE = '/domur/urskurdur'
+export const RESTRICTION_CASE_COURT_RECORD_ROUTE = '/domur/thingbok'
+export const RESTRICTION_CASE_CONFIRMATION_ROUTE = '/domur/stadfesta'
+
+export const INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE =
+  '/domur/rannsoknarheimild/mottaka'
+export const INVESTIGATION_CASE_OVERVIEW_ROUTE =
+  '/domur/rannsoknarheimild/yfirlit'
+export const INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
+  '/domur/rannsoknarheimild/fyrirtaka'
+export const INVESTIGATION_CASE_RULING_ROUTE =
+  '/domur/rannsoknarheimild/urskurdur'
+export const INVESTIGATION_CASE_COURT_RECORD_ROUTE =
+  '/domur/rannsoknarheimild/thingbok'
+export const INVESTIGATION_CASE_CONFIRMATION_ROUTE =
+  '/domur/rannsoknarheimild/stadfesta'
+
+export const INDICTMENTS_COURT_OVERVIEW_ROUTE = '/domur/akaera/yfirlit'
+export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
+  '/domur/akaera/mottaka'
+export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
+export const INDICTMENTS_DEFENDER_ROUTE = '/domur/akaera/malflytjendur'
+export const INDICTMENTS_CONCLUSION_ROUTE = '/domur/akaera/nidurstada'
+export const INDICTMENTS_SUMMARY_ROUTE = '/domur/akaera/samantekt'
+export const INDICTMENTS_COMPLETED_ROUTE = '/domur/akaera/lokid'
+//#endregion District court user routes
+
+//#region Prosecutor user routes
 export const CREATE_RESTRICTION_CASE_ROUTE = '/krafa/ny/gaesluvardhald'
 export const CREATE_TRAVEL_BAN_ROUTE = '/krafa/ny/farbann'
 export const CREATE_INVESTIGATION_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
 export const CREATE_INDICTMENT_ROUTE = '/akaera/ny'
 
-export const DEFENDER_ROUTE = '/verjandi/krafa'
-export const DEFENDER_INDICTMENT_ROUTE = '/verjandi/akaera'
-export const DEFENDER_APPEAL_ROUTE = '/verjandi/kaera'
-export const DEFENDER_APPEAL_FILES_ROUTE = '/verjandi/kaera/gogn'
-export const DEFENDER_STATEMENT_ROUTE = '/verjandi/greinargerd'
-export const DEFENDER_CASES_ROUTE = '/verjandi/krofur'
-
-export const APPEAL_ROUTE = '/kaera'
-export const APPEAL_FILES_ROUTE = '/kaera/gogn'
-export const STATEMENT_ROUTE = '/greinargerd'
-
-/* PROSECUTOR ROUTES START */
 export const RESTRICTION_CASE_DEFENDANT_ROUTE = '/krafa/sakborningur'
 export const RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE = '/krafa/fyrirtaka'
 export const RESTRICTION_CASE_POLICE_DEMANDS_ROUTE =
@@ -132,6 +178,10 @@ export const INVESTIGATION_CASE_CASE_FILES_ROUTE =
 export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE =
   '/krafa/rannsoknarheimild/stadfesta'
 
+export const APPEAL_ROUTE = '/kaera'
+export const APPEAL_FILES_ROUTE = '/kaera/gogn'
+export const STATEMENT_ROUTE = '/greinargerd'
+
 export const INDICTMENTS_DEFENDANT_ROUTE = '/akaera/akaerdi'
 export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/akaera/malsgogn'
 export const INDICTMENTS_CASE_FILE_ROUTE = '/akaera/skjalaskra'
@@ -139,48 +189,20 @@ export const INDICTMENTS_PROCESSING_ROUTE = '/akaera/malsmedferd'
 export const INDICTMENTS_TRAFFIC_VIOLATION_ROUTE = '/akaera/akaera'
 export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
-/* PROSECUTOR ROUTES END */
+export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
+export const INDICTMENTS_ADD_FILES_ROUTE = '/akaera/gogn'
+//#endregion Prosecutor user routes
 
-/* DISTRICT COURT ROUTES START */
-export const RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE = '/domur/mottaka'
-export const RESTRICTION_CASE_COURT_OVERVIEW_ROUTE = '/domur/krafa'
-export const RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
-  '/domur/fyrirtokutimi'
-export const RESTRICTION_CASE_RULING_ROUTE = '/domur/urskurdur'
-export const RESTRICTION_CASE_COURT_RECORD_ROUTE = '/domur/thingbok'
-export const RESTRICTION_CASE_CONFIRMATION_ROUTE = '/domur/stadfesta'
+//#region Admin user routes
+export const USERS_ROUTE = '/notendur'
+export const CREATE_USER_ROUTE = '/notendur/nyr'
+export const CHANGE_USER_ROUTE = '/notendur/breyta'
+//#endregion Admin user routes
 
-export const INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE =
-  '/domur/rannsoknarheimild/mottaka'
-export const INVESTIGATION_CASE_OVERVIEW_ROUTE =
-  '/domur/rannsoknarheimild/yfirlit'
-export const INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
-  '/domur/rannsoknarheimild/fyrirtaka'
-export const INVESTIGATION_CASE_COURT_RECORD_ROUTE =
-  '/domur/rannsoknarheimild/thingbok'
-export const INVESTIGATION_CASE_RULING_ROUTE =
-  '/domur/rannsoknarheimild/urskurdur'
-export const INVESTIGATION_CASE_CONFIRMATION_ROUTE =
-  '/domur/rannsoknarheimild/stadfesta'
-
-export const INDICTMENTS_COURT_OVERVIEW_ROUTE = '/domur/akaera/yfirlit'
-export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
-  '/domur/akaera/mottaka'
-export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
-export const INDICTMENTS_DEFENDER_ROUTE = '/domur/akaera/malflytjendur'
-export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
-/* DISTRICT COURT ROUTES END */
-
-/* COURT OF APPEALS ROUTES START */
-export const COURT_OF_APPEAL_OVERVIEW_ROUTE = '/landsrettur/yfirlit'
-export const COURT_OF_APPEAL_CASES_ROUTE = '/landsrettur/krofur'
-export const COURT_OF_APPEAL_CASE_ROUTE = '/landsrettur/kaera'
-export const COURT_OF_APPEAL_RULING_ROUTE = '/landsrettur/urskurdur'
-export const COURT_OF_APPEAL_RESULT_ROUTE = '/landsrettur/nidurstada'
-export const COURT_OF_APPEAL_SUMMARY_ROUTE = '/landsrettur/samantekt'
-export const COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE = '/landsrettur/nidurfelling'
-
-/* COURT OF APPEALS ROUTES END */
+//#region Shared routes
+export const CASES_ROUTE = '/krofur'
+export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
+//#endregion Shared routes
 
 export const prosecutorRestrictionCasesRoutes = [
   RESTRICTION_CASE_DEFENDANT_ROUTE,
@@ -226,14 +248,6 @@ export const courtInvestigationCasesRoutes = [
   INVESTIGATION_CASE_RULING_ROUTE,
   INVESTIGATION_CASE_COURT_RECORD_ROUTE,
   INVESTIGATION_CASE_CONFIRMATION_ROUTE,
-]
-
-export const courtIndictmentRoutes = [
-  INDICTMENTS_COURT_OVERVIEW_ROUTE,
-  INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
-  INDICTMENTS_SUBPOENA_ROUTE,
-  INDICTMENTS_DEFENDER_ROUTE,
-  INDICTMENTS_COURT_RECORD_ROUTE,
 ]
 
 // Feedback

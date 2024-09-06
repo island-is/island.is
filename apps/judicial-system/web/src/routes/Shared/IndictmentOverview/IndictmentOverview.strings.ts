@@ -12,9 +12,15 @@ export const strings = defineMessages({
     defaultMessage: 'Máli lokið',
     description: 'Notaður sem titill á yfirliti ákæru þegar máli er lokið.',
   },
-  returnIndictmentButtonText: {
-    id: 'judicial.system.core:indictment_overview.return_indictment_button_text',
-    defaultMessage: 'Endursenda',
-    description: 'Notaður sem texti á takka til að endursenda ákæru.',
+  completeReview: {
+    id: 'judicial.system.core:indictment_overview.complete_review',
+    defaultMessage: 'Ljúka yfirlestri',
+    description: 'Notaður sem texti á takka til að loka yfirliti ákæru.',
+  },
+  addDocumentsButtonText: {
+    id: 'judicial.system.indictments:overview.add_documents_button_text',
+    defaultMessage: 'Bæta við gögnum',
+    description:
+      'Texti á takka til að bæta við skjölum á Yfirlit ákæru skefi í ákærum.',
   },
 })

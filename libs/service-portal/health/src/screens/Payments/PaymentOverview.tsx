@@ -80,8 +80,8 @@ export const PaymentOverview = () => {
     lazyOverviewQuery({
       variables: {
         input: {
-          dateFrom: formatDateFns(startDate, 'MM.dd.yyyy'),
-          dateTo: formatDateFns(endDate, 'MM.dd.yyyy'),
+          dateFrom: startDate,
+          dateTo: endDate,
           serviceTypeCode: selectedOptionId ?? '',
         },
       },
@@ -124,11 +124,17 @@ export const PaymentOverview = () => {
             </Stack>
           </Box>
 
-          <Stack space={SECTION_GAP}>
+          <Stack space={[CONTENT_GAP, SECTION_GAP]}>
             <Text variant="h5">{formatMessage(messages.invoices)}</Text>
             <GridContainer>
-              <GridRow marginBottom={CONTENT_GAP}>
-                <GridColumn span={'1/2'}>
+              <GridRow
+                marginBottom={CONTENT_GAP}
+                direction={['column', 'column', 'column', 'row']}
+              >
+                <GridColumn
+                  span={['6/8', '6/8', '6/8', '4/8']}
+                  paddingBottom={[CONTENT_GAP, CONTENT_GAP, CONTENT_GAP, 0]}
+                >
                   <DatePicker
                     size="xs"
                     label={formatMessage(m.dateFrom)}
@@ -139,7 +145,7 @@ export const PaymentOverview = () => {
                     locale={lang}
                   />
                 </GridColumn>
-                <GridColumn span={'1/2'}>
+                <GridColumn span={['6/8', '6/8', '6/8', '4/8']}>
                   <DatePicker
                     size="xs"
                     label={formatMessage(m.dateTo)}
@@ -152,8 +158,11 @@ export const PaymentOverview = () => {
                 </GridColumn>
               </GridRow>
               {!!options?.length && (
-                <GridRow alignItems="flexEnd">
-                  <GridColumn span={'5/8'}>
+                <GridRow direction="row" alignItems={['flexStart', 'flexEnd']}>
+                  <GridColumn
+                    span={['7/8', '7/8', '5/8']}
+                    paddingBottom={[CONTENT_GAP, CONTENT_GAP, 0]}
+                  >
                     <Select
                       value={
                         selectedOptionId
@@ -172,7 +181,7 @@ export const PaymentOverview = () => {
                       }
                     />
                   </GridColumn>
-                  <GridColumn span={'3/8'}>
+                  <GridColumn span={['4/8', '4/8', '3/8']}>
                     <Button fluid size="medium" onClick={() => onFetchBills()}>
                       {formatMessage(m.get)}
                     </Button>

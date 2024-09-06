@@ -2,15 +2,10 @@
   "name": "clients-icelandic-government-institution-vacancies",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/icelandic-government-institution-vacancies/src",
+  "tags": ["scope:client", "lib:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/icelandic-government-institution-vacancies/**/*.ts"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -18,8 +13,7 @@
         "{workspaceRoot}/coverage/libs/clients/icelandic-government-institution-vacancies"
       ],
       "options": {
-        "jestConfig": "libs/clients/icelandic-government-institution-vacancies/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/icelandic-government-institution-vacancies/jest.config.ts"
       }
     },
     "update-openapi-document": {
@@ -40,6 +34,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["scope:client", "lib:client"]
+  }
 }

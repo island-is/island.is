@@ -2,7 +2,6 @@ import {
   ApiResource,
   ApiScope,
   ApiScopeUserClaim,
-  ApiScopeDTO,
   IdentityResource,
   IdentityResourcesDTO,
   ResourcesService,
@@ -19,6 +18,7 @@ import {
   PagedRowsDto,
   Domain,
   DomainDTO,
+  CreateApiScopeDTO,
 } from '@island.is/auth-api-lib'
 import { NoContentException } from '@island.is/nest/problem'
 import {
@@ -434,7 +434,7 @@ export class ResourcesController {
   @Audit<ApiScope>({
     resources: (scope) => scope.name,
   })
-  async createApiScope(@Body() apiScope: ApiScopeDTO): Promise<ApiScope> {
+  async createApiScope(@Body() apiScope: CreateApiScopeDTO): Promise<ApiScope> {
     return this.resourcesService.createApiScope(apiScope)
   }
 
@@ -456,7 +456,7 @@ export class ResourcesController {
   @Put('api-scope/:name')
   @ApiOkResponse({ type: ApiScope })
   async updateApiScope(
-    @Body() apiScope: ApiScopeDTO,
+    @Body() apiScope: CreateApiScopeDTO,
     @Param('name') name: string,
     @CurrentUser() user: User,
   ): Promise<ApiScope> {

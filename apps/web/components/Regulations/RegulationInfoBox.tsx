@@ -1,16 +1,17 @@
-import * as RSBStyles from './RegulationsSidebarBox.css'
-import * as s from './RegulationInfoBox.css'
-
 import React, { useState } from 'react'
-import { Button, Hidden, Link, Text } from '@island.is/island-ui/core'
-import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+
+import { Button, Hidden, LinkV2, Text } from '@island.is/island-ui/core'
 import { RegulationMaybeDiff } from '@island.is/regulations'
+import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+
 import {
   RegulationsSidebarBox,
   RegulationsSidebarLink,
 } from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
+import * as s from './RegulationInfoBox.css'
+import * as RSBStyles from './RegulationsSidebarBox.css'
 
 export type RegulationInfoBoxProps = {
   regulation: RegulationMaybeDiff
@@ -19,6 +20,7 @@ export type RegulationInfoBoxProps = {
 
 export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
   const { regulation, texts } = props
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { ministry, lawChapters } = regulation
 
   const { linkToRegulationSearch } = useRegulationLinkResolver()
@@ -133,9 +135,13 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
             size="small"
             variant="text"
           >
-            <Link href={regulation.pdfVersion}>
-              <a rel={nonCurrent && 'nofollow'}>{txt('downloadPdf')}</a>
-            </Link>
+            <a
+              rel={nonCurrent && 'nofollow'}
+              href={regulation.pdfVersion}
+              style={{ textDecoration: 'none' }}
+            >
+              {txt('downloadPdf')}
+            </a>
           </Button>
         </Text>
 
@@ -146,6 +152,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
             size="small"
             type="button"
             variant="text"
+            as="button"
             onClick={() => {
               showCopyCheck()
               navigator.clipboard.writeText(document.location.href)
@@ -169,9 +176,9 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
               type="button"
               variant="text"
             >
-              <Link href={regulation.originalDoc}>
+              <LinkV2 href={regulation.originalDoc}>
                 {txt('originalDocLink')}
-              </Link>
+              </LinkV2>
             </Button>
           </Text>
         )}

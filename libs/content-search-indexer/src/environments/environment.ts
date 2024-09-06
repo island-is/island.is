@@ -5,4 +5,6 @@ export const environment = {
   locales: ['is', 'en'],
   bypassCacheSecret: process.env.APOLLO_BYPASS_CACHE_SECRET ?? '',
   runtimeEnvironment: process.env.ENVIRONMENT ?? 'local',
+  forceCacheInvalidationAfterIndexing:
+    process.env.FORCE_CACHE_INVALIDATION_AFTER_INDEXING ?? false,
 }

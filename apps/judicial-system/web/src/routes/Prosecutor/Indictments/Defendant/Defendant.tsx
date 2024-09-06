@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -102,7 +102,7 @@ const getPoliceCasesForUpdate = (
     [[], {}, {}],
   )
 
-const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Defendant = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -129,8 +129,9 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
         caseId: workingCase.id,
       },
     },
-    skip: !workingCase.id,
+    skip: workingCase.origin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
     onCompleted: (data) => {
       if (!data.policeCaseInfo) {
         return

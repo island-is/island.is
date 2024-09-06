@@ -13,7 +13,7 @@ import { ProviderErrorReason } from '@island.is/shared/problem'
 import {
   CreateListSchema,
   errorMessages,
-} from '@island.is/application/templates/signature-collection/signature-list-creation'
+} from '@island.is/application/templates/signature-collection/presidential-list-creation'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { SignatureCollection } from './types'
 import type { Logger } from '@island.is/logging'
@@ -26,7 +26,7 @@ export class SignatureListCreationService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {
-    super(ApplicationTypes.SIGNATURE_LIST_CREATION)
+    super(ApplicationTypes.PRESIDENTIAL_LIST_CREATION)
   }
 
   async createLists({ auth, application }: TemplateApiModuleActionProps) {

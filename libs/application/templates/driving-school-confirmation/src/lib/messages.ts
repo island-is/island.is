@@ -35,7 +35,7 @@ export const m = defineMessages({
     description: 'Data provider subtitle',
   },
   dataCollectionNoRightsError: {
-    id: 'dir.application:dataCollectionNoRightsError',
+    id: 'dsc.application:dataCollectionNoRightsError',
     defaultMessage:
       'Þú hefur ekki skráningarréttindi ökuskóla. Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða',
     description: 'Data provider no teaching rights error',
@@ -149,7 +149,7 @@ export const m = defineMessages({
     description: 'No name for given national Id',
   },
   invalidNationalIdValue: {
-    id: 'an.application:error.invalidNationalIdValue',
+    id: 'dsc.application:error.invalidNationalIdValue',
     defaultMessage: 'Kennitala er ekki á réttu sniðmáti',
     description: 'Error message when a value is invalid.',
   },

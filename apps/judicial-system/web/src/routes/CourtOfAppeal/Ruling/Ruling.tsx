@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { ChangeEvent, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -45,7 +45,7 @@ import { isCourtOfAppealRulingStepFieldsValid } from '@island.is/judicial-system
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
-const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
+const CourtOfAppealRuling = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -229,7 +229,9 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
               buttonLabel={formatMessage(strings.uploadButtonText)}
               onChange={(files) => {
                 handleUpload(
-                  addUploadFiles(files, CaseFileCategory.APPEAL_COURT_RECORD),
+                  addUploadFiles(files, {
+                    category: CaseFileCategory.APPEAL_COURT_RECORD,
+                  }),
                   updateUploadFile,
                 )
               }}
@@ -243,12 +245,14 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
               workingCase.state === CaseState.ACCEPTED &&
               (workingCase.decision === CaseDecision.ACCEPTING ||
                 workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
-              workingCase.appealRulingDecision ===
-                CaseAppealRulingDecision.CHANGED && (
+              (workingCase.appealRulingDecision ===
+                CaseAppealRulingDecision.CHANGED ||
+                workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY) && (
                 <RestrictionLength
                   workingCase={workingCase}
                   handleIsolationChange={(
-                    event: React.ChangeEvent<HTMLInputElement>,
+                    event: ChangeEvent<HTMLInputElement>,
                   ): void => {
                     setAndSendCaseToServer(
                       [
@@ -351,7 +355,9 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
                 buttonLabel={formatMessage(strings.uploadButtonText)}
                 onChange={(files) => {
                   handleUpload(
-                    addUploadFiles(files, CaseFileCategory.APPEAL_RULING),
+                    addUploadFiles(files, {
+                      category: CaseFileCategory.APPEAL_RULING,
+                    }),
                     updateUploadFile,
                   )
                 }}

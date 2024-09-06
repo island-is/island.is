@@ -15,8 +15,9 @@ describe('getCaseResubmittedText', () => {
 
   test('should format correctly when court date has been set and defender is set to receive access when the court date is set', () => {
     const theCase = {
-      courtDate: '2022-06-13T13:37:00Z',
+      id: 'abc',
       requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+      arraignmentDate: { date: '2022-06-13T13:37:00Z' },
     } as Case
 
     const res = fn(theCase)
@@ -27,14 +28,14 @@ describe('getCaseResubmittedText', () => {
   })
 
   it.each`
-    courtDate                 | requestSharedWithDefender
-    ${undefined}              | ${RequestSharedWithDefender.COURT_DATE}
-    ${'2022-06-13T13:37:00Z'} | ${undefined}
-    ${undefined}              | ${undefined}
+    id       | arraignmentDate                     | requestSharedWithDefender
+    ${'abc'} | ${undefined}                        | ${RequestSharedWithDefender.COURT_DATE}
+    ${'abc'} | ${{ date: '2022-06-13T13:37:00Z' }} | ${undefined}
+    ${'abc'} | ${undefined}                        | ${undefined}
   `(
     'should not include section about notification',
-    ({ courtDate, requestSharedWithDefender }) => {
-      const theCase = { courtDate, requestSharedWithDefender } as Case
+    ({ id, arraignmentDate, requestSharedWithDefender }) => {
+      const theCase = { id, arraignmentDate, requestSharedWithDefender } as Case
 
       const res = fn(theCase)
 

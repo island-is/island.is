@@ -1,4 +1,7 @@
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  coreHistoryMessages,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -9,12 +12,24 @@ import {
   defineTemplateApi,
   NationalRegistryUserApi,
   UserProfileApi,
+  DefaultEvents,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { m } from './messages'
 import { inheritanceReportSchema } from './dataSchema'
-import { ApiActions, InheritanceReportEvent, Roles, States } from './constants'
+import {
+  ApiActions,
+  ESTATE_INHERITANCE,
+  InheritanceReportEvent,
+  PREPAID_INHERITANCE,
+  Roles,
+  States,
+} from './constants'
 import { Features } from '@island.is/feature-flags'
-import { EstateOnEntryApi } from '../dataProviders'
+import { EstateOnEntryApi, MaritalStatusApi } from '../dataProviders'
+
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT]
 
 const InheritanceReportTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -22,14 +37,60 @@ const InheritanceReportTemplate: ApplicationTemplate<
   InheritanceReportEvent
 > = {
   type: ApplicationTypes.INHERITANCE_REPORT,
-  name: m.applicationName,
+  name: ({ answers }) =>
+    answers.applicationFor === PREPAID_INHERITANCE
+      ? m.prerequisitesTitle.defaultMessage +
+        ' - ' +
+        m.applicationNamePrepaid.defaultMessage
+      : answers.applicationFor === ESTATE_INHERITANCE
+      ? m.prerequisitesTitle.defaultMessage +
+        ' - ' +
+        m.applicationNameEstate.defaultMessage
+      : m.prerequisitesTitle.defaultMessage,
   institution: m.institution,
   dataSchema: inheritanceReportSchema,
+  translationNamespaces: [configuration.translation],
   featureFlag: Features.inheritanceReport,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
-    initial: States.draft,
+    initial: States.prerequisites,
     states: {
+      [States.prerequisites]: {
+        meta: {
+          name: '',
+          status: 'draft',
+          progress: 0,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.ESTATE_INHERITANCE_APPLICANT,
+              formLoader: async () => {
+                const getForm = await import('../forms/prerequisites').then(
+                  (val) => val.getForm,
+                )
+
+                return getForm()
+              },
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              write: 'all',
+              delete: true,
+            },
+          ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
+        },
+        on: {
+          SUBMIT: {
+            target: States.draft,
+          },
+        },
+      },
       [States.draft]: {
         meta: {
           name: '',
@@ -38,15 +99,31 @@ const InheritanceReportTemplate: ApplicationTemplate<
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: Roles.ESTATE_INHERITANCE_APPLICANT,
               formLoader: () =>
                 import('../forms/form').then((module) =>
-                  Promise.resolve(module.form),
+                  Promise.resolve(module.estateInheritanceForm),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
               api: [NationalRegistryUserApi, UserProfileApi, EstateOnEntryApi],
+            },
+            {
+              id: Roles.PREPAID_INHERITANCE_APPLICANT,
+              formLoader: () =>
+                import('../forms/form').then((module) =>
+                  Promise.resolve(module.prepaidInheritanceForm),
+                ),
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              write: 'all',
+              delete: true,
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                EstateOnEntryApi,
+                MaritalStatusApi,
+              ],
             },
           ],
         },
@@ -68,7 +145,15 @@ const InheritanceReportTemplate: ApplicationTemplate<
           }),
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: Roles.ESTATE_INHERITANCE_APPLICANT,
+              formLoader: () =>
+                import('../forms/done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.PREPAID_INHERITANCE_APPLICANT,
               formLoader: () =>
                 import('../forms/done').then((val) =>
                   Promise.resolve(val.done),
@@ -85,7 +170,10 @@ const InheritanceReportTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     if (application.applicant === nationalId) {
-      return Roles.APPLICANT
+      if (application.answers.applicationFor === PREPAID_INHERITANCE) {
+        return Roles.PREPAID_INHERITANCE_APPLICANT
+      }
+      return Roles.ESTATE_INHERITANCE_APPLICANT
     }
   },
 }

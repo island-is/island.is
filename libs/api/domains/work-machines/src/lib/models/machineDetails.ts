@@ -31,4 +31,7 @@ export class MachineDetails {
 
   @Field(() => String, { nullable: true })
   supervisorName?: string | null
+
+  @Field(() => Boolean, { nullable: true })
+  paymentRequiredForOwnerChange?: boolean | null
 }

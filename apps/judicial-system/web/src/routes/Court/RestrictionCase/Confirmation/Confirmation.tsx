@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -46,7 +46,7 @@ type VisibleModal =
   | 'registrarRequestRulingSignatureModal'
   | 'signingModal'
 
-const Confirmation: React.FC = () => {
+const Confirmation: FC = () => {
   const router = useRouter()
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Checkbox } from '@island.is/island-ui/core'
@@ -11,7 +11,7 @@ import { FormContext } from '../FormProvider/FormProvider'
 import { UserContext } from '../UserProvider/UserProvider'
 import { requestAppealRulingNotToBePublishedCheckbox as strings } from './RequestAppealRulingNotToBePublishedCheckbox.strings'
 
-const RequestAppealRulingNotToBePublishedCheckbox: React.FC = () => {
+const RequestAppealRulingNotToBePublishedCheckbox: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { updateCase } = useCase()

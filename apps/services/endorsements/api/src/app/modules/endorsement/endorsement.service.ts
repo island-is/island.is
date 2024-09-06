@@ -13,7 +13,8 @@ import { Op, UniqueConstraintError } from 'sequelize'
 import { EndorsementTag } from '../endorsementList/constants'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { AwsService } from '@island.is/nest/aws'
 
 interface FindEndorsementInput {
   listId: string
@@ -53,7 +54,8 @@ export class EndorsementService {
     private endorsementModel: typeof Endorsement,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private readonly nationalRegistryApiV2: NationalRegistryClientService,
+    private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
+    private readonly awsService: AwsService,
   ) {}
 
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
@@ -121,13 +123,15 @@ export class EndorsementService {
     if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
-    const person = await this.nationalRegistryApiV2.getIndividual(nationalId)
+    const person = await this.nationalRegistryApiV3.getAllDataIndividual(
+      nationalId,
+    )
     const endorsement = {
       endorser: nationalId,
       endorsementListId: endorsementList.id,
       meta: {
-        fullName: person?.fullName,
-        locality: person?.legalDomicile?.locality,
+        fullName: person?.fulltNafn?.fulltNafn,
+        locality: person?.heimilisfang?.sveitarfelag,
         showName,
       },
     }

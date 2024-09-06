@@ -8,10 +8,13 @@ import React, {
   useState,
 } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
-import { formatText, mergeAnswers } from '@island.is/application/core'
+import {
+  coreMessages,
+  formatText,
+  mergeAnswers,
+} from '@island.is/application/core'
 import {
   Application,
-  Answer,
   ExternalData,
   FormItemTypes,
   FormModes,
@@ -19,6 +22,7 @@ import {
   Schema,
   BeforeSubmitCallback,
   Section,
+  FormText,
 } from '@island.is/application/types'
 import {
   Box,
@@ -50,6 +54,7 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
+import { MessageDescriptor } from 'react-intl'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -113,6 +118,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
       resolver({ formValue, context, formatMessage }),
     context: { dataSchema, formNode: screen },
   })
+
   const [fieldLoadingState, setFieldLoadingState] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const refetch = useContext<() => void>(RefetchContext)
@@ -258,6 +264,8 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   const { width } = useWindowSize()
   const headerHeight = 85
 
+  const nextButtonText = screen.nextButtonText ?? coreMessages.buttonNext
+
   useEffect(() => {
     if (width < theme.breakpoints.md) {
       return setIsMobile(true)
@@ -315,6 +323,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     screen.type === FormItemTypes.REPEATER ||
     screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
   )
+
   return (
     <FormProvider {...hookFormData}>
       <Box
@@ -366,6 +375,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                 application={application}
                 addExternalData={addExternalData}
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
+                enableMockPayment={screen.enableMockPayment}
                 applicationId={applicationId}
                 externalData={externalData}
                 externalDataProvider={screen}
@@ -391,7 +401,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
         </GridColumn>
 
         <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
-
         <ScreenFooter
           submitButtonDisabled={submitButtonDisabled}
           application={application}
@@ -404,6 +413,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           submitField={submitField}
           loading={loading}
           canProceed={!isLoadingOrPending}
+          nextButtonText={nextButtonText}
         />
       </Box>
     </FormProvider>

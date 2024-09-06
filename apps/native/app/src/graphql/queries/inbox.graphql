@@ -1,3 +1,9 @@
+mutation MarkAllDocumentsAsRead {
+  documentsV2MarkAllAsRead {
+    success
+  }
+}
+
 query ListOrganizations {
   getOrganizations(input: { lang: "is-IS", perPage: 200 }) {
     items {
@@ -6,28 +12,39 @@ query ListOrganizations {
   }
 }
 
-query ListDocuments($input: GetDocumentListInput!) {
-  listDocumentsV2(input: $input) {
+query ListDocuments($input: DocumentsV2DocumentsInput!) {
+  documentsV2(input: $input) {
     data {
       ...ListDocument
     }
     totalCount
+    unreadCount
   }
 }
 
-query GetDocument($input: GetDocumentInput!) {
-  getDocument(input: $input) {
-    fileType
-    content
-    url
-    html
+query GetDocumentsCategoriesAndSenders {
+  getDocumentCategories {
+    id
+    name
+  }
+  getDocumentSenders {
+    id
+    name
   }
 }
 
-mutation PostMailActionMutation($input: PostMailActionResolverInput!) {
-  postMailAction(input: $input) {
+query GetDocument($input: DocumentInput!) {
+  documentV2(input: $input) {
+    ...ListDocument
+    content {
+      type
+      value
+    }
+  }
+}
+
+mutation PostMailActionMutation($input: DocumentsV2MailActionInput!) {
+  postMailActionV2(input: $input) {
     success
-    messageId
-    action
   }
 }

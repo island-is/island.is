@@ -29,37 +29,28 @@ export class CaseFile extends Model {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id!: string
 
   @CreatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   created!: Date
 
   @UpdatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   modified!: Date
 
   @ForeignKey(() => Case)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.UUID, allowNull: false })
+  @ApiProperty({ type: String })
   caseId!: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.STRING, allowNull: false })
+  @ApiProperty({ type: String })
   name!: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.STRING, allowNull: false })
+  @ApiProperty({ type: String })
   type!: string
 
   @Column({
@@ -78,59 +69,43 @@ export class CaseFile extends Model {
   @ApiProperty({ enum: CaseFileState })
   state!: CaseFileState
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   key?: string
 
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  @ApiProperty({ type: Number })
   size!: number
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   policeCaseNumber?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   userGeneratedFilename?: string
 
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  @ApiPropertyOptional({ type: Number })
   chapter?: number
 
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  @ApiPropertyOptional({ type: Number })
   orderWithinChapter?: number
 
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
   displayDate?: Date
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   policeFileId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  hash?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  submittedBy?: string
 }

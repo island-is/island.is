@@ -4,6 +4,7 @@ import {
   NO_ANSWER,
   buildCustomField,
   buildDateField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -21,6 +22,7 @@ import {
   FormModes,
 } from '@island.is/application/types'
 import {
+  FILE_SIZE_LIMIT,
   NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -268,6 +270,9 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                 parentalLeaveFormMessages.employer.registerEmployer,
               removeButtonTooltipText:
                 parentalLeaveFormMessages.employer.deleteEmployer,
+              editButtonTooltipText:
+                parentalLeaveFormMessages.employer.editEmployer,
+              editField: true,
               marginTop: 0,
               fields: {
                 email: {
@@ -339,6 +344,35 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
             }),
           ],
         }),
+        buildSubSection({
+          id: 'reviewUpload',
+          title: parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.changeEmployerFile',
+              title:
+                parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
+              introduction:
+                parentalLeaveFormMessages.fileUpload
+                  .additionalAttachmentDescription,
+              condition: (answers) => {
+                const { addEmployer } = getApplicationAnswers(answers)
+
+                return addEmployer === YES
+              },
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription:
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
+              uploadButtonLabel:
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
+              uploadMultiple: true,
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
@@ -383,6 +417,10 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
     }),
     buildFormConclusionSection({
       alertType: 'success',
+      alertTitle: parentalLeaveFormMessages.finalScreen.alertTitle,
+      alertMessage: parentalLeaveFormMessages.finalScreen.description,
+      multiFieldTitle: parentalLeaveFormMessages.finalScreen.title,
+      expandableIntro: parentalLeaveFormMessages.finalScreen.expandableIntro,
       expandableHeader: parentalLeaveFormMessages.finalScreen.title,
       expandableDescription: (application: Application) => {
         const nextSteps = getConclusionScreenSteps(application)

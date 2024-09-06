@@ -10,6 +10,9 @@ export class AmountModel {
   readonly aidAmount!: number
 
   @Field({ nullable: true })
+  readonly childrenAidAmount?: number
+
+  @Field({ nullable: true })
   readonly income!: number
 
   @Field()

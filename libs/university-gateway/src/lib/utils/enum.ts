@@ -11,6 +11,7 @@ type MapperResult<
   : never
 
 // Can be used when both TSourceEnum and TDestEnum have the same keys
+// Todo: add error handling
 export const mapEnumToEnum = <
   TSourceEnumObj,
   TDestEnumObj extends SymmetricalEnum<TSourceEnumObj>,
@@ -26,6 +27,7 @@ export const mapEnumToEnum = <
 // Can be used when TSourceEnum and TDestEnum are similar
 // will throw error if key does not exist in TDestEnum and
 // no defaultValue is provided
+// Todo: add error handling
 export const mapEnumToOtherEnum = <
   TSourceEnum,
   TDestEnum,
@@ -66,10 +68,11 @@ export const mapEnumToOtherEnum = <
 export const mapStringToEnum = <TDestEnum, TKeys extends string>(
   value: string | undefined,
   enumType: { [key in TKeys]: TDestEnum },
+  enumName: string,
   defaultValue: TDestEnum | undefined = undefined,
 ): TDestEnum => {
   if (!value) {
-    throw new Error(`Empty value for enum: ${enumType}`)
+    throw new EnumError('EMPTY_VALUE', `Empty value for enum: ${enumName}`)
   }
 
   const keys = Object.keys(enumType)
@@ -79,8 +82,24 @@ export const mapStringToEnum = <TDestEnum, TKeys extends string>(
 
   if (index < 0) {
     if (defaultValue) return defaultValue
-    throw new Error(`${value} does not exist in enum: ${enumType}`)
+    throw new EnumError(
+      'VALUE_NOT_SUPPORTED',
+      `${value} does not exist in enum: ${enumName}`,
+    )
   }
 
   return values[index] as TDestEnum
+}
+
+type EnumErrorName = 'VALUE_NOT_SUPPORTED' | 'EMPTY_VALUE'
+
+export class EnumError extends Error {
+  name: EnumErrorName
+  message: string
+
+  constructor(name: EnumErrorName, message: string) {
+    super()
+    this.name = name
+    this.message = message
+  }
 }

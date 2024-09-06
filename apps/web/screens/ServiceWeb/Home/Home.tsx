@@ -1,4 +1,4 @@
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 
 import {
@@ -91,6 +91,10 @@ const Home: Screen<HomeProps> = ({
 
   const institutionSlugBelongsToMannaudstorg =
     institutionSlug.includes('mannaudstorg')
+
+  const institutionSlugBelongsToTryggingastofnun =
+    institutionSlug.includes('tryggingastofnun') ||
+    institutionSlug.includes('social-insurance-administration')
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const headerTitle = institutionSlugBelongsToMannaudstorg
@@ -273,43 +277,44 @@ const Home: Screen<HomeProps> = ({
                     </GridRow>
                   </GridContainer>
                 </Box>
-
-                <Box marginY={[7, 10, 10]}>
-                  <GridContainer>
-                    <GridRow>
-                      <GridColumn
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore make web strict
-                        offset={[null, null, null, '1/12']}
-                        span={['12/12', '12/12', '12/12', '10/12']}
-                      >
-                        <Box marginY={[2, 2, 4]}>
-                          <ContactBanner
-                            slug={institutionSlug}
-                            cantFindWhatYouAreLookingForText={o(
-                              'cantFindWhatYouAreLookingForText',
-                              n(
+                {!institutionSlugBelongsToTryggingastofnun && (
+                  <Box marginY={[7, 10, 10]}>
+                    <GridContainer>
+                      <GridRow>
+                        <GridColumn
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
+                          offset={[null, null, null, '1/12']}
+                          span={['12/12', '12/12', '12/12', '10/12']}
+                        >
+                          <Box marginY={[2, 2, 4]}>
+                            <ContactBanner
+                              slug={institutionSlug}
+                              cantFindWhatYouAreLookingForText={o(
                                 'cantFindWhatYouAreLookingForText',
-                                'Finnurðu ekki það sem þig vantar?',
-                              ),
-                            )}
-                            contactUsText={o(
-                              'contactUsText',
-                              n('contactUsText', 'Hafa samband'),
-                            )}
-                            howCanWeHelpText={o(
-                              'howCanWeHelpText',
-                              n(
+                                n(
+                                  'cantFindWhatYouAreLookingForText',
+                                  'Finnurðu ekki það sem þig vantar?',
+                                ),
+                              )}
+                              contactUsText={o(
+                                'contactUsText',
+                                n('contactUsText', 'Hafa samband'),
+                              )}
+                              howCanWeHelpText={o(
                                 'howCanWeHelpText',
-                                'Hvernig getum við aðstoðað?',
-                              ),
-                            )}
-                          />
-                        </Box>
-                      </GridColumn>
-                    </GridRow>
-                  </GridContainer>
-                </Box>
+                                n(
+                                  'howCanWeHelpText',
+                                  'Hvernig getum við aðstoðað?',
+                                ),
+                              )}
+                            />
+                          </Box>
+                        </GridColumn>
+                      </GridRow>
+                    </GridContainer>
+                  </Box>
+                )}
               </>
             )
           }}

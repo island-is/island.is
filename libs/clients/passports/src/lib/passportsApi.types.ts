@@ -63,6 +63,8 @@ export interface PreregistrationInput {
   contactInfo?: ContactInfo
   documents?: Document[]
   deliveryName?: string
+  type?: string
+  subType?: string
 }
 
 export interface DocumentLossnInput {
@@ -79,6 +81,8 @@ export interface Passport {
 export type Gender = 'F' | 'M' | 'X'
 
 export type ExpiryStatus = 'EXPIRED' | 'LOST'
+
+export type IdentityDocumentTypes = 'I'
 
 export interface PreregisterResponse {
   success: boolean

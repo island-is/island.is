@@ -16,21 +16,24 @@ import {
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   Application,
   useListApplicationsQuery,
+  useListDocumentsQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { notificationsStore } from '../../stores/notifications-store'
+import { useAndroidNotificationPermission } from '../../hooks/use-android-notification-permission'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useNotificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
+import { isAndroid } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
+import { handleInitialNotification } from '../../utils/lifecycle/setup-notifications'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
-import { NotificationsModule } from './notifications-module'
+import { HelloModule } from './hello-module'
+import { InboxModule } from './inbox-module'
 import { OnboardingModule } from './onboarding-module'
-import { VehiclesModule } from './vehicles-module'
 
 interface ListItem {
   id: string
@@ -46,12 +49,9 @@ const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
       topBar: {
-        title: {
-          text: initialized
-            ? intl.formatMessage({ id: 'home.screenTitle' })
-            : '',
-        },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+        rightButtons: initialized
+          ? getRightButtons({ icons: ['notifications'], theme: theme as any })
+          : [],
       },
       bottomTab: {
         ...({
@@ -60,7 +60,7 @@ const { useNavigationOptions, getNavigationOptions } =
         // selectedIconColor: null as any,
         // iconColor: null as any,
         textColor: initialized
-          ? Platform.OS === 'android'
+          ? isAndroid
             ? theme.shade.foreground
             : { light: 'black', dark: 'white' }
           : theme.shade.background,
@@ -75,9 +75,6 @@ const { useNavigationOptions, getNavigationOptions } =
     {
       topBar: {
         rightButtons: [],
-        largeTitle: {
-          visible: true,
-        },
         scrollEdgeAppearance: {
           active: true,
           noBorder: true,
@@ -98,21 +95,25 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+
+  useAndroidNotificationPermission()
+  const syncToken = useNotificationsStore(({ syncToken }) => syncToken)
+  const checkUnseen = useNotificationsStore(({ checkUnseen }) => checkUnseen)
+  const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
 
-  useActiveTabItemPress(2, () => {
-    flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
+  const applicationsRes = useListApplicationsQuery()
+  const inboxRes = useListDocumentsQuery({
+    variables: { input: { page: 1, pageSize: 3 } },
   })
 
-  const applicationsRes = useListApplicationsQuery()
-
-  // Get feature flag for mileage
-  const isMileageEnabled = useFeatureFlag(
-    'isServicePortalVehicleMileagePageEnabled',
-    false,
-  )
-  const [loading, setLoading] = useState(false)
+  useConnectivityIndicator({
+    componentId,
+    rightButtons: getRightButtons({ icons: ['notifications'] }),
+    queryResult: applicationsRes,
+    refetching,
+  })
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<ListItem>) => item.component,
@@ -122,19 +123,25 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const scrollY = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
-    // Sync push tokens
-    notificationsStore.getState().actions.syncToken()
+    // Sync push tokens and unseen notifications
+    syncToken()
+    checkUnseen()
+
+    // Handle initial notification
+    handleInitialNotification()
   }, [])
 
-  const refetch = async () => {
-    setLoading(true)
+  const refetch = useCallback(async () => {
+    setRefetching(true)
+
     try {
       await applicationsRes.refetch()
     } catch (err) {
       // noop
     }
-    setLoading(false)
-  }
+
+    setRefetching(false)
+  }, [applicationsRes])
 
   if (!ui.initializedApp) {
     return null
@@ -142,8 +149,21 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   const data = [
     {
+      id: 'hello',
+      component: <HelloModule />,
+    },
+    {
       id: 'onboarding',
       component: <OnboardingModule />,
+    },
+    {
+      id: 'inbox',
+      component: (
+        <InboxModule
+          documents={inboxRes.data?.documentsV2?.data ?? []}
+          loading={inboxRes.loading}
+        />
+      ),
     },
     {
       id: 'applications',
@@ -157,16 +177,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           componentId={componentId}
         />
       ),
-    },
-    isMileageEnabled
-      ? {
-          id: 'vehicles',
-          component: <VehiclesModule />,
-        }
-      : null,
-    {
-      id: 'notifications',
-      component: <NotificationsModule componentId={componentId} />,
     },
   ].filter(Boolean) as Array<{
     id: string
@@ -194,10 +204,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           },
         )}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refetch} />
+          <RefreshControl refreshing={refetching} onRefresh={refetch} />
         }
       />
       <TopLine scrollY={scrollY} />
+
       <BottomTabsIndicator index={2} total={5} />
     </>
   )

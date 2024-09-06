@@ -10,6 +10,7 @@ import {
   VehiclePlateRenewalClient,
 } from '@island.is/clients/transport-authority/vehicle-plate-renewal'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { info } from 'kennitala'
 import { error } from '@island.is/application/templates/transport-authority/license-plate-renewal'
 
 @Injectable()
@@ -25,7 +26,6 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
     const result = await this.vehiclePlateRenewalClient.getMyPlateOwnerships(
       auth,
     )
-
     // Validate that user has at least 1 plate ownership
     if (!result || !result.length) {
       throw new TemplateApiError(
@@ -91,29 +91,62 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
   async submitApplication({
     application,
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const { paymentUrl } = application.externalData.createCharge.data as {
-      paymentUrl: string
-    }
-    if (!paymentUrl) {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
+    const age = info(auth.nationalId).age
+    if (age < 65 && application.state === 'draft') {
+      return
     }
 
-    const isPayment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
-
-    if (!isPayment?.fulfilled) {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
-    }
+    await this.handlePayment({
+      application,
+      auth,
+      currentUserLocale,
+    })
 
     const answers = application.answers as LicensePlateRenewalAnswers
     const regno = answers?.pickPlate?.regno
 
     // Submit the application
     await this.vehiclePlateRenewalClient.renewPlateOwnership(auth, regno)
+  }
+
+  private async handlePayment({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<string | null> {
+    const age = info(auth.nationalId).age
+
+    if (age < 65) {
+      // 1. Validate payment
+
+      // 1a. Make sure a paymentUrl was created
+
+      const { paymentUrl = '', id: paymentId = '' } = (application.externalData
+        ?.createCharge?.data ?? {}) as {
+        paymentUrl: string
+        id: string
+      }
+
+      if (!paymentUrl) {
+        throw new Error(
+          'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+        )
+      }
+
+      // 1b. Make sure payment is fulfilled (has been paid)
+      const payment: { fulfilled: boolean } | undefined =
+        await this.sharedTemplateAPIService.getPaymentStatus(
+          auth,
+          application.id,
+        )
+      if (!payment?.fulfilled) {
+        throw new Error(
+          'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+        )
+      }
+      return paymentId
+    }
+    return null
   }
 }

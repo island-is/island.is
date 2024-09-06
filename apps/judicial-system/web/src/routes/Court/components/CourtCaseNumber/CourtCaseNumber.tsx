@@ -1,68 +1,16 @@
-import React from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Button, Input, Text } from '@island.is/island-ui/core'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import { Box, Text } from '@island.is/island-ui/core'
+import { FormContext } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  UpdateCase,
-  useCase,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
+import CourtCaseNumberInput from './CourtCaseNumberInput'
 import { courtCaseNumber } from './CourtCaseNumber.strings'
-import * as styles from './CourtCaseNumber.css'
 
-interface Props {
-  workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  courtCaseNumberEM: string
-  setCourtCaseNumberEM: React.Dispatch<React.SetStateAction<string>>
-  createCourtCaseSuccess: boolean
-  setCreateCourtCaseSuccess: React.Dispatch<React.SetStateAction<boolean>>
-  handleCreateCourtCase: (wc: Case) => void
-  isCreatingCourtCase: boolean
-}
-
-const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    courtCaseNumberEM,
-    setCourtCaseNumberEM,
-    createCourtCaseSuccess,
-    setCreateCourtCaseSuccess,
-    handleCreateCourtCase,
-    isCreatingCourtCase,
-  } = props
-  const { updateCase } = useCase()
+const CourtCaseNumber: FC = () => {
   const { formatMessage } = useIntl()
-
-  const updateCourtCaseNumber = async (id: string, update: UpdateCase) => {
-    const isValid = validate([
-      [
-        update.courtCaseNumber,
-        [
-          'empty',
-          isIndictmentCase(workingCase.type)
-            ? 'S-case-number'
-            : 'R-case-number',
-        ],
-      ],
-    ]).isValid
-
-    if (!isValid) {
-      return
-    }
-
-    await updateCase(id, update)
-  }
+  const { workingCase, setWorkingCase } = useContext(FormContext)
 
   return (
     <>
@@ -74,90 +22,16 @@ const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = (props) => {
       <Box marginBottom={2}>
         <Text>
           {workingCase.state !== CaseState.SUBMITTED &&
+          workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
           workingCase.state !== CaseState.RECEIVED
             ? formatMessage(courtCaseNumber.explanationDisabled)
             : formatMessage(courtCaseNumber.explanation)}
         </Text>
       </Box>
-      <BlueBox>
-        <div className={styles.createCourtCaseContainer}>
-          <Box display="flex">
-            <div className={styles.createCourtCaseButton}>
-              <Button
-                size="small"
-                onClick={() => handleCreateCourtCase(workingCase)}
-                loading={isCreatingCourtCase}
-                disabled={Boolean(
-                  (workingCase.state !== CaseState.SUBMITTED &&
-                    workingCase.state !== CaseState.RECEIVED) ||
-                    workingCase.courtCaseNumber,
-                )}
-                fluid
-              >
-                {formatMessage(courtCaseNumber.createCaseButtonText)}
-              </Button>
-            </div>
-            <div className={styles.createCourtCaseInput}>
-              <Input
-                data-testid="courtCaseNumber"
-                name="courtCaseNumber"
-                label={formatMessage(courtCaseNumber.label)}
-                placeholder={formatMessage(courtCaseNumber.placeholder, {
-                  isIndictment: isIndictmentCase(workingCase.type),
-                  year: new Date().getFullYear(),
-                })}
-                autoComplete="off"
-                size="sm"
-                backgroundColor="white"
-                value={workingCase.courtCaseNumber ?? ''}
-                icon={
-                  workingCase.courtCaseNumber && createCourtCaseSuccess
-                    ? { name: 'checkmark' }
-                    : undefined
-                }
-                errorMessage={courtCaseNumberEM}
-                hasError={!isCreatingCourtCase && courtCaseNumberEM !== ''}
-                onChange={(event) => {
-                  setCreateCourtCaseSuccess(false)
-                  removeTabsValidateAndSet(
-                    'courtCaseNumber',
-                    event.target.value,
-                    [
-                      'empty',
-                      isIndictmentCase(workingCase.type)
-                        ? 'S-case-number'
-                        : 'R-case-number',
-                    ],
-                    setWorkingCase,
-                    courtCaseNumberEM,
-                    setCourtCaseNumberEM,
-                  )
-                }}
-                onBlur={(event) => {
-                  validateAndSendToServer(
-                    'courtCaseNumber',
-                    event.target.value,
-                    [
-                      'empty',
-                      isIndictmentCase(workingCase.type)
-                        ? 'S-case-number'
-                        : 'R-case-number',
-                    ],
-                    workingCase,
-                    updateCourtCaseNumber,
-                    setCourtCaseNumberEM,
-                  )
-                }}
-                disabled={
-                  workingCase.state !== CaseState.SUBMITTED &&
-                  workingCase.state !== CaseState.RECEIVED
-                }
-                required
-              />
-            </div>
-          </Box>
-        </div>
-      </BlueBox>
+      <CourtCaseNumberInput
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+      />
     </>
   )
 }

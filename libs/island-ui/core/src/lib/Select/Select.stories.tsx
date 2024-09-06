@@ -2,294 +2,149 @@ import React from 'react'
 
 import { withFigma } from '../../utils/withFigma'
 import { Select } from './Select'
-import { Option, SelectProps } from './Select.types'
+import type { Meta, StoryObj } from '@storybook/react'
 
-export default {
+const config: Meta<typeof Select> = {
   title: 'Form/Select',
   component: Select,
   parameters: withFigma('Select'),
+  argTypes: {
+    name: { description: 'Field name' },
+    label: { description: 'Label text', control: { type: 'text' } },
+    placeholder: { description: 'Placeholder text' },
+    backgroundColor: {
+      description: 'Background color',
+      options: ['white', 'blue'],
+      control: { type: 'radio' },
+      defaultValue: 'white',
+    },
+    noOptionsMessage: { description: 'No options message' },
+    size: {
+      description: 'Field size',
+      options: ['xs', 'sm', 'md'],
+      control: { type: 'radio' },
+    },
+    options: { description: 'Select options' },
+    isDisabled: { description: 'Is select field disabled' },
+    isClearable: { description: 'Is select field clearable' },
+    isSearchable: { description: 'Is select field searchable' },
+    isMulti: { description: 'Can select field select multiple options' },
+    required: { description: 'Is select field required' },
+    hasError: { description: 'Does select field has error' },
+    errorMessage: {
+      description: 'Error message description',
+      control: { type: 'text' },
+    },
+    icon: { description: 'Icon name' },
+  },
 }
 
-const Template = (args: SelectProps<Option<string>>) => <Select {...args} />
+export default config
+type SelectProps = StoryObj<typeof Select>
 
-export const Default = Template.bind({})
+const Template = (args) => (
+  <div style={{ height: 150, overflow: 'auto' }}>
+    <Select {...args} />
+  </div>
+)
+
+export const Default: SelectProps = Template.bind({})
 Default.args = {
-  name: 'select1',
-  label: 'Tegund fyrirtækis',
-  placeholder: 'Veldu tegund',
+  name: 'Select',
+  label: 'Select label text',
+  placeholder: 'Text',
+  noOptionsMessage: 'No options',
   options: [
     {
-      label: 'Valmöguleiki 1',
+      label: 'Text 1',
       value: '0',
     },
     {
-      label: 'Valmöguleiki 2',
+      label: 'Text 2',
       value: '1',
     },
     {
-      label: 'Valmöguleiki 3',
+      label: 'Text 3',
       value: '2',
     },
   ],
-  noOptionsMessage: 'Enginn valmöguleiki',
-} as SelectProps<Option<string>>
+  backgroundColor: 'white',
+  size: 'md',
+  isDisabled: false,
+  isClearable: false,
+  isSearchable: false,
+  isMulti: false,
+  hasError: false,
+  required: false,
+  errorMessage: undefined,
+  icon: undefined,
+}
 
-export const WithLabelAbove = Template.bind({})
-WithLabelAbove.args = {
-  name: 'select2',
-  label: 'Tegund valmöguleika',
-  placeholder: 'Veldu tegund',
-  options: [
-    {
-      label: 'Valmöguleiki 1',
-      value: '0',
-    },
-    {
-      label: 'Valmöguleiki 2',
-      value: '1',
-    },
-    {
-      label: 'Valmöguleiki 3',
-      value: '2',
-    },
-  ],
-  size: 'xs',
-  noOptionsMessage: 'Enginn valmöguleiki',
-} as SelectProps<Option<string>>
+export const BlueBackground = Template.bind({})
+BlueBackground.args = {
+  ...Default.args,
+  backgroundColor: 'blue',
+}
 
-export const NoOption = Template.bind({})
-NoOption.args = {
-  name: 'select2',
-  label: 'Tegund valmöguleika',
-  placeholder: 'Veldu tegund',
+export const NoOptions = Template.bind({})
+NoOptions.args = {
+  ...Default.args,
   options: [],
+  noOptionsMessage: 'No options',
+}
+
+export const Multiple = Template.bind({})
+Multiple.args = {
+  ...Default.args,
+  isMulti: true,
+}
+
+export const SizeSm = Template.bind({})
+SizeSm.args = {
+  ...Default.args,
+  size: 'sm',
+}
+
+export const SizeXs = Template.bind({})
+SizeXs.args = {
+  ...Default.args,
   size: 'xs',
-  noOptionsMessage: 'Enginn valmöguleiki',
-} as SelectProps<Option<string>>
+}
 
 export const Disabled = Template.bind({})
 Disabled.args = {
-  name: 'select3',
-  label: 'Tegund fyrirtækis',
-  placeholder: 'Veldu tegund',
-  options: [
-    {
-      label: 'Valmöguleiki 1',
-      value: '0',
-    },
-    {
-      label: 'Valmöguleiki 2',
-      value: '1',
-    },
-    {
-      label: 'Valmöguleiki 3',
-      value: '2',
-    },
-  ],
-  noOptionsMessage: 'Enginn valmöguleiki',
+  ...Default.args,
   isDisabled: true,
-} as SelectProps<Option<string>>
-
-export const Creatable = Template.bind({})
-Creatable.args = {
-  name: 'creatableSelect',
-  label: 'Color',
-  placeholder: 'Choose a color',
-  isCreatable: true,
-  options: [
-    {
-      label: 'Yellow',
-      value: 'yellow',
-    },
-    {
-      label: 'Red',
-      value: 'red',
-    },
-    {
-      label: 'Green',
-      value: 'green',
-    },
-    {
-      label: 'Blue',
-      value: 'blue',
-    },
-  ],
-} as SelectProps<Option<string>>
+}
 
 export const Clearable = Template.bind({})
 Clearable.args = {
-  name: 'clearableSelect',
-  label: 'Color',
-  placeholder: 'Choose a color',
+  ...Default.args,
   isClearable: true,
-  onChange: (option) =>
-    console.log(`Selected value changed: ${option}`, { option }),
-  options: [
-    {
-      label: 'Yellow',
-      value: 'yellow',
-    },
-    {
-      label: 'Red',
-      value: 'red',
-    },
-    {
-      label: 'Green',
-      value: 'green',
-    },
-    {
-      label: 'Blue',
-      value: 'blue',
-    },
-  ],
-} as SelectProps<Option<string>>
+}
 
-export const TempTest = () => (
-  <div style={{ height: 900 }}>
-    <h1>WIP</h1>
-    <div style={{ height: 30 }} />
-    <Template
-      name="select"
-      label="tester select"
-      size="md"
-      placeholder="placeholder test"
-      options={[
-        {
-          label: 'Valmöguleiki 1',
-          value: '0',
-        },
-        {
-          label: 'Valmöguleiki 2',
-          value: '1',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '3',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '4',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '5',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '6',
-        },
-      ]}
-      noOptionsMessage="Enginn valmöguleiki"
-    />
-    <div style={{ height: 30 }} />
-    <Template
-      name="select"
-      label="tester select"
-      size="sm"
-      placeholder="placeholder test"
-      options={[
-        {
-          label: 'Valmöguleiki 1',
-          value: '0',
-        },
-        {
-          label: 'Valmöguleiki 2',
-          value: '1',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '3',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '4',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '5',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '6',
-        },
-      ]}
-      noOptionsMessage="Enginn valmöguleiki"
-    />
-    <div style={{ height: 30 }} />
-    <Template
-      name="select"
-      label="tester select"
-      size="sm"
-      placeholder="placeholder test"
-      options={[
-        {
-          label: 'Valmöguleiki 1',
-          value: '0',
-        },
-        {
-          label: 'Valmöguleiki 2',
-          value: '1',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '3',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '4',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '5',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '6',
-        },
-      ]}
-      noOptionsMessage="Enginn valmöguleiki"
-      backgroundColor="blue"
-    />
-    <div style={{ height: 30 }} />
-    <Template
-      name="select"
-      label="With groups"
-      size="md"
-      placeholder="placeholder test"
-      menuIsOpen
-      formatGroupLabel={() => <p>Custom group label</p>}
-      options={[
-        {
-          label: 'Valmöguleiki 3',
-          value: '4',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '5',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '6',
-        },
-        {
-          label: 'group1',
-          options: [
-            {
-              label: 'Valmöguleiki 1',
-              value: '0',
-            },
-            {
-              label: 'Valmöguleiki 2',
-              value: '1',
-            },
-            {
-              label: 'Valmöguleiki 3',
-              value: '3',
-            },
-          ],
-        },
-      ]}
-      noOptionsMessage="Enginn valmöguleiki"
-    />
-  </div>
-)
+export const Searchable = Template.bind({})
+Searchable.args = {
+  ...Default.args,
+  isSearchable: true,
+  placeholder: 'Type to search',
+}
+
+export const WithDifferentIcon = Template.bind({})
+WithDifferentIcon.args = {
+  ...Default.args,
+  icon: 'ellipsisVertical',
+}
+
+export const Required = Template.bind({})
+Required.args = {
+  ...Default.args,
+  required: true,
+}
+
+export const HasError = Template.bind({})
+HasError.args = {
+  ...Default.args,
+  hasError: true,
+  errorMessage: 'This is an error message',
+}

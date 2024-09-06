@@ -106,3 +106,7 @@ export const heading = style({
     },
   },
 })
+
+export const clearBoth = style({
+  clear: 'both',
+})

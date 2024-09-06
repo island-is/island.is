@@ -1,0 +1,16 @@
+diff --git a/lib/interceptors/ClientRequest/ClientRequestOverride.js b/lib/interceptors/ClientRequest/ClientRequestOverride.js
+index e1e005c1055587ed12d1084dab3821b93572ca3d..9b2e40afa7ba62680c48df1ad033f738d4c5d3e7 100644
+--- a/lib/interceptors/ClientRequest/ClientRequestOverride.js
++++ b/lib/interceptors/ClientRequest/ClientRequestOverride.js
+@@ -122,9 +122,9 @@ function createClientRequestOverrideClass(middleware, performOriginalRequest, or
+                     callback();
+                 }
+             }
+-            setImmediate(function () {
++            setTimeout(function () {
+                 _this.emit('drain');
+-            });
++            }, 0);
+             return false;
+         };
+         this.end = function () {

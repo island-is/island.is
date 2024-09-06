@@ -18,7 +18,7 @@ export const externalData = {
       description: 'External data sub title',
     },
     description: {
-      id: 'doi.cs.application:externalData.dataProvider.description',
+      id: 'doi.cs.application:externalData.dataProvider.description#markdown',
       defaultMessage: `Mér er kunnugt um að ég get misst núverandi ríkisborgararétt minn við töku íslensks ríkisborgararéttar.\n\n Jafnframt lýsi ég því yfir að ég hef kynnt mér persónuverndarskilmála Útlendingastofnunar vegna umsókna um íslenskan ríkisborgararétt og heimila þar með Útlendingastofnun og lögregluembættum að afla þeirra upplýsinga um mig sem þessir aðilar telja nauðsynlegar til að meta umsókn mína, þar á meðal sakavottorðs hérlendis sem erlendis og upplýsinga frá skattyfirvöldum.`,
       description: 'External data description',
     },
@@ -115,6 +115,31 @@ export const externalData = {
       defaultMessage:
         'Upplýsingar um sektir, fangelsisrefsingar eða ólokin mál í refsivörslukerfinu.',
       description: 'National commissioner of police sub title',
+    },
+  }),
+  creditInfo: defineMessages({
+    title: {
+      id: 'doi.cs.application:externalData.creditInfo.title',
+      defaultMessage: 'Upplýsingar frá Credit Info',
+      description: 'Credit info title',
+    },
+    subTitle: {
+      id: 'doi.cs.application:externalData.creditInfo.subTitle',
+      defaultMessage:
+        'Upplýsingar um hvort árangurslaust fjárnám hafi verið gert hjá þér síðastliðin 3 ár, bú þitt tekið til gjaldþrotaskipta eða þú í vanskilum með skattgreiðslur.',
+      description: 'Credit info sub title',
+    },
+  }),
+  educationServices: defineMessages({
+    title: {
+      id: 'doi.cs.application:externalData.educationServices.title',
+      defaultMessage: 'Upplýsingar frá Miðstöð menntunar- og skólaþjónustu',
+      description: 'Education services title',
+    },
+    subTitle: {
+      id: 'doi.cs.application:externalData.educationServices.subTitle',
+      defaultMessage: 'Upplýsingar um skráningu og niðurstöðu íslenskuprófs.',
+      description: 'Education services sub title',
     },
   }),
 }

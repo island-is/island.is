@@ -9,7 +9,7 @@ export const Error404 = () => {
   return (
     <Layout seo={{ title: '404' }}>
       <CustomError statusCode={404} title={loc.title}>
-        <Text variant="h5" paddingBottom={3}>
+        <Text as="h2" variant="h5" paddingBottom={3}>
           {loc.notFoundText}
         </Text>
         <div>

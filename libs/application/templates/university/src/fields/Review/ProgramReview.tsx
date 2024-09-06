@@ -17,7 +17,7 @@ export const ProgramReview: FC<Props> = ({
   const answers = application.answers as UniversityApplication
 
   return (
-    <Box paddingBottom={4}>
+    <Box paddingBottom={4} paddingTop={4}>
       <Box></Box>
       <GridRow>
         <GridColumn span="1/2">

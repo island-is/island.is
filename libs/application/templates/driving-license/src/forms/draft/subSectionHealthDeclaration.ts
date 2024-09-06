@@ -6,12 +6,18 @@ import {
   buildAlertMessageField,
   hasYes,
   buildDescriptionField,
+  YES
 } from '@island.is/application/core'
-import { m } from '../../lib/messages'
-import { hasHealthRemarks } from '../../lib/utils/formUtils'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
 import { NationalRegistryUser } from '@island.is/api/schema'
 import { info } from 'kennitala'
+import { m } from '../../lib/messages'
+import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
+import {
+  hasHealthRemarks,
+  needsHealthCertificateCondition,
+} from '../../lib/utils/formUtils'
+import { BE } from '../../lib/constants'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
@@ -45,7 +51,8 @@ export const subSectionHealthDeclaration = buildSubSection({
           id: 'remarks',
           title: '',
           component: 'HealthRemarks',
-          condition: (_, externalData) => hasHealthRemarks(externalData),
+          condition: (answers, externalData) =>
+            hasHealthRemarks(externalData) && answers.applicationFor !== BE,
         }),
         buildCustomField(
           {
@@ -197,7 +204,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         )
       },
       children: [
-        buildFileUploadField({
+        /*buildFileUploadField({
           id: 'healthDeclarationAge65.attachment',
           title: '',
           maxSize: FILE_SIZE_LIMIT,
@@ -206,6 +213,21 @@ export const subSectionHealthDeclaration = buildSubSection({
           uploadHeader: m.uploadHeader,
           uploadDescription: m.uploadDescription,
           uploadButtonLabel: m.uploadButtonLabel,
+            answers.applicationFor !== BE &&
+            (answers.healthDeclaration as any)?.contactGlassesMismatch,
+        }),*/
+        //TODO: Remove when RLS/SGS supports health certificate in BE license
+        buildDescriptionField({
+          id: 'healthDeclarationValidForBELicense',
+          title: '',
+        }),
+        buildAlertMessageField({
+          id: 'healthDeclaration.BE',
+          title: '',
+          message: m.beLicenseHealthDeclarationRequiresHealthCertificate,
+          alertType: 'warning',
+          condition: (answers, externalData) =>
+            needsHealthCertificateCondition(YES)(answers, externalData),
         }),
       ],
     }),

@@ -1,13 +1,11 @@
-import React from 'react'
+import { FC } from 'react'
 import Head from 'next/head'
 
 interface Props {
   title: string
 }
 
-const PageHeader: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { title } = props
-
+const PageHeader: FC<Props> = ({ title }) => {
   return (
     <Head>
       <title>{title}</title>

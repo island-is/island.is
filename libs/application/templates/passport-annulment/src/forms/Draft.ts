@@ -16,7 +16,7 @@ import {
 
 import { m } from '../lib/messages'
 import { info } from './sections/info'
-import { overview } from './sections/overveiw'
+import { overview } from './sections/overview'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',

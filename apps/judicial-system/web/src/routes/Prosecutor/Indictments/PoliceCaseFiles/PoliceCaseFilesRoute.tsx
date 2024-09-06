@@ -1,4 +1,5 @@
-import React, {
+import {
+  FC,
   memo,
   useCallback,
   useContext,
@@ -53,15 +54,21 @@ import {
 import { useIndictmentPoliceCaseFilesQuery } from './indictmentPoliceCaseFiles.generated'
 import { strings } from './PoliceCaseFilesRoute.strings'
 
-const UploadFilesToPoliceCase: React.FC<
-  React.PropsWithChildren<{
-    caseId: string
-    policeCaseNumber: string
-    setAllUploaded: (allUploaded: boolean) => void
-    caseFiles: CaseFile[]
-    caseOrigin?: CaseOrigin | null
-  }>
-> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
+interface UploadFilesToPoliceCaseProps {
+  caseId: string
+  policeCaseNumber: string
+  setAllUploaded: (allUploaded: boolean) => void
+  caseFiles: CaseFile[]
+  caseOrigin?: CaseOrigin | null
+}
+
+const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
+  caseId,
+  policeCaseNumber,
+  setAllUploaded,
+  caseFiles,
+  caseOrigin,
+}) => {
   const { formatMessage } = useIntl()
   const {
     uploadFiles,
@@ -191,6 +198,17 @@ const UploadFilesToPoliceCase: React.FC<
     let currentChapter: number | undefined | null
     let currentOrderWithinChapter: number | undefined | null
 
+    const getCategory = (file: PoliceCaseFileCheck) => {
+      switch (file.type) {
+        case 'RVSK':
+          return CaseFileCategory.COST_BREAKDOWN
+        case 'REIKN':
+          return CaseFileCategory.CASE_FILE
+        default:
+          return CaseFileCategory.CASE_FILE_RECORD
+      }
+    }
+
     const filesToUpload = policeCaseFileList
       .filter((p) => selectedFiles.some((f) => f.id === p.id))
       .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
@@ -213,7 +231,7 @@ const UploadFilesToPoliceCase: React.FC<
           id: f.id,
           name: f.name,
           type: 'application/pdf',
-          category: CaseFileCategory.CASE_FILE,
+          category: getCategory(f),
           policeCaseNumber: f.policeCaseNumber,
           chapter: f.chapter ?? undefined,
           orderWithinChapter:
@@ -223,6 +241,7 @@ const UploadFilesToPoliceCase: React.FC<
               : undefined,
           displayDate: f.displayDate ?? undefined,
           policeFileId: f.id,
+          policeType: f.type,
         }
       })
 
@@ -249,12 +268,10 @@ const UploadFilesToPoliceCase: React.FC<
         buttonLabel={formatMessage(strings.inputFileUpload.buttonLabel)}
         onChange={(files) =>
           handleUpload(
-            addUploadFiles(
-              files,
-              CaseFileCategory.CASE_FILE,
-              undefined,
+            addUploadFiles(files, {
+              category: CaseFileCategory.CASE_FILE_RECORD,
               policeCaseNumber,
-            ),
+            }),
             updateUploadFile,
           )
         }
@@ -271,21 +288,21 @@ type AllUploadedState = {
   [policeCaseNumber: string]: boolean
 }
 
+interface PoliceUploadListMenuProps {
+  caseId: string
+  policeCaseNumbers?: string[] | null
+  subtypes?: IndictmentSubtypeMap
+  crimeScenes?: CrimeSceneMap
+  caseFiles?: CaseFile[] | null
+  setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
+  caseOrigin?: CaseOrigin | null
+}
+
 /* We need to make sure this list is not rerenderd unless the props are changing.
  * Since we passing `setAllUploaded` to the children and they are calling it within a useEffect
  * causing a endless rendering loop.
  */
-const PoliceUploadListMemo: React.FC<
-  React.PropsWithChildren<{
-    caseId: string
-    policeCaseNumbers?: string[] | null
-    subtypes?: IndictmentSubtypeMap
-    crimeScenes?: CrimeSceneMap
-    caseFiles?: CaseFile[] | null
-    setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
-    caseOrigin?: CaseOrigin | null
-  }>
-> = memo(
+const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
   ({
     caseId,
     policeCaseNumbers,
@@ -296,6 +313,7 @@ const PoliceUploadListMemo: React.FC<
     caseOrigin,
   }) => {
     const { formatMessage } = useIntl()
+
     return (
       <Box paddingBottom={4}>
         {policeCaseNumbers?.map((policeCaseNumber, index) => (

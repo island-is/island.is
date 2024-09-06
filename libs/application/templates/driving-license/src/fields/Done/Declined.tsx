@@ -5,7 +5,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import WarningSection from './WarningSection'
 
-export const Declined = ({ application }: FieldBaseProps): JSX.Element => {
+export const Declined = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
 
   return (

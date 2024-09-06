@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Box,
   SkeletonLoader,
@@ -22,6 +22,7 @@ import { Organization } from '@island.is/shared/types'
 import { institutionMapper } from '@island.is/application/types'
 import { getFilteredApplications } from '../../shared/utils'
 import { AdminApplication } from '../../types/adminApplication'
+import { ApplicationSystemPaths } from '../../lib/paths'
 
 const defaultFilters: ApplicationFilters = {
   nationalId: '',
@@ -154,7 +155,11 @@ const Overview = () => {
       <Breadcrumbs
         items={[
           { title: 'Ísland.is', href: '/stjornbord' },
-          { title: formatMessage(m.applicationSystem) },
+          {
+            title: formatMessage(m.applicationSystem),
+            href: `/stjornbord${ApplicationSystemPaths.Root}`,
+          },
+          { title: formatMessage(m.overview) },
         ]}
       />
       <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>

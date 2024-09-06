@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css'
+
 import { spacing, theme } from '@island.is/island-ui/theme'
 
 export const wrapper = style({

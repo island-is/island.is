@@ -2,9 +2,11 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType('NationalRegistryAddress')
 export class Address {
+  // Not available in V3 API
   @Field(() => ID, { nullable: true })
   code?: string | null
 
+  // Not available in V3 API
   @Field(() => String, { nullable: true })
   lastUpdated?: string | null
 

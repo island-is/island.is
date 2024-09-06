@@ -76,7 +76,7 @@ const SubscriptionTable = ({
   }
 
   return (
-    <Table>
+    <Table box={{ overflow: 'hidden' }}>
       <SubscriptionTableHeader currentTab={currentTab} />
       <Body>
         {dontShowNew ? (
@@ -86,7 +86,6 @@ const SubscriptionTable = ({
             key={subscribedToAllNewObj.key}
             item={subscribedToAllNewObj}
             idx={0}
-            mdBreakpoint={mdBreakpoint}
             currentTab={currentTab}
             isGeneralSubscription
             subscriptionArray={subscriptionArray}
@@ -100,7 +99,6 @@ const SubscriptionTable = ({
             key={subscribedToAllChangesObj.key}
             item={subscribedToAllChangesObj}
             idx={1}
-            mdBreakpoint={mdBreakpoint}
             currentTab={currentTab}
             isGeneralSubscription
             subscriptionArray={subscriptionArray}
@@ -116,7 +114,6 @@ const SubscriptionTable = ({
                 key={item.key}
                 item={item}
                 idx={idx + generalSubscriptionCount}
-                mdBreakpoint={mdBreakpoint}
                 currentTab={currentTab}
                 subscriptionArray={subscriptionArray}
                 setSubscriptionArray={setSubscriptionArray}

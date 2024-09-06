@@ -79,8 +79,11 @@ export const regulationContentStyling = (wrapper: string) => {
   styleRegulation('p,ul,ol,pre,table,blockquote', {
     fontFamily: 'inherit',
     marginBottom: typography.baseLineHeight + 'em',
-
     '@media': { print: { marginBottom: '.5em' } },
+  })
+
+  styleRegulation('a', {
+    color: theme.color.blue400,
   })
 
   styleRegulation(

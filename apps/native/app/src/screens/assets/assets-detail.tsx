@@ -24,7 +24,6 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
   useNavigationOptions(componentId)
 
   const { data, loading, error } = useGetAssetQuery({
-    fetchPolicy: 'cache-first',
     variables: {
       input: {
         assetId: item?.propertyNumber ?? '',
@@ -34,7 +33,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
 
   const intl = useIntl()
   const isError = !!error
-  const isLoading = loading
+  const isLoading = loading && !data
 
   const appraisal = data?.assetsDetail?.appraisal
   const unitsOfUse = data?.assetsDetail?.unitsOfUse
@@ -46,13 +45,13 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
         title={item?.defaultAddress?.displayShort}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
+        showLoading={loading}
       />
       <ScrollView style={{ flex: 1 }}>
         <View>
           <InputRow>
             <Input
               loading={isLoading}
-              error={isError}
               label={intl.formatMessage({ id: 'assetsDetail.propertyNumber' })}
               value={item?.propertyNumber}
               size="big"
@@ -63,7 +62,6 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
           <InputRow>
             <Input
               loading={isLoading}
-              error={isError}
               label={intl.formatMessage(
                 { id: 'assetsDetail.activeAppraisal' },
                 { activeYear: appraisal?.activeYear },
@@ -79,7 +77,6 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
             />
             <Input
               loading={isLoading}
-              error={isError}
               label={intl.formatMessage(
                 { id: 'assetsDetail.plannedAppraisal' },
                 { plannedYear: appraisal?.plannedYear },
@@ -103,7 +100,6 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
                 <InputRow>
                   <Input
                     loading={isLoading}
-                    error={isError}
                     label={intl.formatMessage({
                       id: 'assetsDetail.explanation',
                     })}
@@ -113,7 +109,6 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
                   />
                   <Input
                     loading={isLoading}
-                    error={isError}
                     label={intl.formatMessage({
                       id: 'assetsDetail.displaySize',
                     })}
@@ -126,7 +121,6 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
                 <InputRow>
                   <Input
                     loading={isLoading}
-                    error={isError}
                     label={intl.formatMessage({
                       id: 'assetsDetail.municipality',
                     })}
@@ -136,7 +130,6 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
                   />
                   <Input
                     loading={isLoading}
-                    error={isError}
                     label={intl.formatMessage({
                       id: 'assetsDetail.postNumber',
                     })}
@@ -150,7 +143,6 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
                   {unit?.buildYearDisplay ? (
                     <Input
                       loading={isLoading}
-                      error={isError}
                       label={intl.formatMessage({
                         id: 'assetsDetail.buildYearDisplay',
                       })}
@@ -161,7 +153,6 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
                   ) : null}
                   <Input
                     loading={isLoading}
-                    error={isError}
                     label={intl.formatMessage({ id: 'assetsDetail.marking' })}
                     value={unit?.marking}
                     noBorder

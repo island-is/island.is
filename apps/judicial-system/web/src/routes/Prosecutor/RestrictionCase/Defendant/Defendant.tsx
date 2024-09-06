@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -41,7 +41,7 @@ import {
   usePoliceCaseNumbers,
 } from '../../components'
 
-export const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Defendant = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [leadInvestigatorErrorMessage, setLeadInvestigatorErrorMessage] =

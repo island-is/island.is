@@ -123,7 +123,6 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
         ((applicationType === PARENTAL_GRANT ||
           applicationType === PARENTAL_GRANT_STUDENTS) &&
           employerLastSixMonths === YES)) && <Employment {...childProps} />}
-      <Comment {...childProps} />
       <ReviewGroup>
         <SummaryRights application={application} />
       </ReviewGroup>
@@ -148,6 +147,7 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
           </GridColumn>
         </GridRow>
       </ReviewGroup>
+      <Comment {...childProps} />
       <Attachments {...childProps} />
 
       {/**

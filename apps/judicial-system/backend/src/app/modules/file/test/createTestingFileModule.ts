@@ -7,19 +7,25 @@ import { Test } from '@nestjs/testing'
 import { IntlService } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule, ConfigType } from '@island.is/nest/config'
 
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import {
+  SharedAuthModule,
+  sharedAuthModuleConfig,
+} from '@island.is/judicial-system/auth'
+import { MessageService } from '@island.is/judicial-system/message'
 
-import { environment } from '../../../../environments'
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
+import { fileModuleConfig } from '../file.config'
 import { FileController } from '../file.controller'
 import { FileService } from '../file.service'
 import { InternalFileController } from '../internalFile.controller'
 import { LimitedAccessFileController } from '../limitedAccessFile.controller'
 import { CaseFile } from '../models/file.model'
 
+jest.mock('@island.is/judicial-system/message')
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../court/court.service.ts')
 jest.mock('../../case/case.service.ts')
@@ -27,9 +33,8 @@ jest.mock('../../case/case.service.ts')
 export const createTestingFileModule = async () => {
   const fileModule = await Test.createTestingModule({
     imports: [
-      SharedAuthModule.register({
-        jwtSecret: environment.auth.jwtSecret,
-        secretToken: environment.auth.secretToken,
+      ConfigModule.forRoot({
+        load: [sharedAuthModuleConfig, fileModuleConfig],
       }),
     ],
     controllers: [
@@ -38,6 +43,8 @@ export const createTestingFileModule = async () => {
       LimitedAccessFileController,
     ],
     providers: [
+      SharedAuthModule,
+      MessageService,
       CaseService,
       CourtService,
       AwsS3Service,
@@ -80,12 +87,18 @@ export const createTestingFileModule = async () => {
     })
     .compile()
 
+  const messageService = fileModule.get<MessageService>(MessageService)
+
   const awsS3Service = fileModule.get<AwsS3Service>(AwsS3Service)
 
   const courtService = fileModule.get<CourtService>(CourtService)
 
   const fileModel = await fileModule.resolve<typeof CaseFile>(
     getModelToken(CaseFile),
+  )
+
+  const fileConfig = fileModule.get<ConfigType<typeof fileModuleConfig>>(
+    fileModuleConfig.KEY,
   )
 
   const fileService = fileModule.get<FileService>(FileService)
@@ -105,9 +118,11 @@ export const createTestingFileModule = async () => {
 
   return {
     sequelize,
+    messageService,
     awsS3Service,
     courtService,
     fileModel,
+    fileConfig,
     fileService,
     fileController,
     internalFileController,

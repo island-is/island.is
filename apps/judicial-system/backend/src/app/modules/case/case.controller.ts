@@ -32,7 +32,11 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatDate,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
@@ -62,6 +66,7 @@ import {
   prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../guards'
 import { CaseEvent, EventService } from '../event'
 import { UserService } from '../user'
@@ -83,6 +88,7 @@ import {
   courtOfAppealsRegistrarUpdateRule,
   districtCourtAssistantTransitionRule,
   districtCourtAssistantUpdateRule,
+  districtCourtJudgeSignRulingRule,
   districtCourtJudgeTransitionRule,
   districtCourtJudgeUpdateRule,
   districtCourtRegistrarTransitionRule,
@@ -91,15 +97,15 @@ import {
   prosecutorRepresentativeUpdateRule,
   prosecutorTransitionRule,
   prosecutorUpdateRule,
+  publicProsecutorStaffUpdateRule,
 } from './guards/rolesRules'
-import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
-import { TransitionInterceptor } from './interceptors/transition.interceptor'
+import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('cases')
@@ -108,7 +114,7 @@ export class CaseController {
     private readonly caseService: CaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
-    private readonly pdfService: PDFService,
+    private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -144,7 +150,7 @@ export class CaseController {
 
     const createdCase = await this.caseService.create(caseToCreate, user)
 
-    this.eventService.postEvent(CaseEvent.CREATE, createdCase as Case)
+    this.eventService.postEvent('CREATE', createdCase)
 
     return createdCase
   }
@@ -159,6 +165,7 @@ export class CaseController {
     courtOfAppealsJudgeUpdateRule,
     courtOfAppealsRegistrarUpdateRule,
     courtOfAppealsAssistantUpdateRule,
+    publicProsecutorStaffUpdateRule,
   )
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -226,7 +233,9 @@ export class CaseController {
         ? `${theCase.rulingModifiedHistory}\n\n`
         : ''
       const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
-      update.rulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.rulingModifiedHistory}`
+      update.rulingModifiedHistory = `${history}${today} - ${
+        user.name
+      } ${lowercase(user.title)}\n\n${update.rulingModifiedHistory}`
     }
 
     if (update.caseResentExplanation) {
@@ -250,14 +259,21 @@ export class CaseController {
         ? `${theCase.appealRulingModifiedHistory}\n\n`
         : ''
       const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
-      update.appealRulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
+      update.appealRulingModifiedHistory = `${history}${today} - ${
+        user.name
+      } ${lowercase(user.title)}\n\n${update.appealRulingModifiedHistory}`
+    }
+
+    if (update.mergeCaseId && theCase.state !== CaseState.RECEIVED) {
+      throw new BadRequestException(
+        'Cannot merge case that is not in a received state',
+      )
     }
 
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
   @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
-  @UseInterceptors(TransitionInterceptor)
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -283,6 +299,7 @@ export class CaseController {
 
     const states = transitionCase(
       transition.transition,
+      theCase.type,
       theCase.state,
       theCase.appealState,
     )
@@ -295,19 +312,13 @@ export class CaseController {
         break
       case CaseTransition.SUBMIT:
         if (isIndictmentCase(theCase.type)) {
-          if (!user.canConfirmIndictment) {
-            throw new ForbiddenException(
-              `User ${user.id} does not have permission to confirm indictments`,
-            )
-          }
-          if (theCase.indictmentDeniedExplanation) {
-            update.indictmentDeniedExplanation = ''
-          }
+          update.indictmentDeniedExplanation = null
         }
         break
       case CaseTransition.ACCEPT:
       case CaseTransition.REJECT:
       case CaseTransition.DISMISS:
+      case CaseTransition.COMPLETE:
         update.rulingDate = isIndictmentCase(theCase.type)
           ? nowFactory()
           : theCase.courtEndTime
@@ -328,12 +339,12 @@ export class CaseController {
             ...update,
             ...transitionCase(
               CaseTransition.APPEAL,
+              theCase.type,
               states.state ?? theCase.state,
               states.appealState ?? theCase.appealState,
             ),
           }
         }
-
         break
       case CaseTransition.REOPEN:
         update.rulingDate = null
@@ -385,21 +396,19 @@ export class CaseController {
           update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
         }
         break
-      case CaseTransition.DENY_INDICTMENT:
-        if (!user.canConfirmIndictment) {
-          throw new ForbiddenException(
-            `User ${user.id} does not have permission to reject indictments`,
-          )
-        }
-        break
       case CaseTransition.ASK_FOR_CONFIRMATION:
-        if (theCase.indictmentReturnedExplanation) {
-          update.indictmentReturnedExplanation = ''
-        }
+        update.indictmentReturnedExplanation = null
         break
       case CaseTransition.RETURN_INDICTMENT:
-        update.courtCaseNumber = ''
+        update.courtCaseNumber = null
+        update.indictmentHash = null
         break
+      case CaseTransition.ASK_FOR_CANCELLATION:
+        if (theCase.indictmentDecision) {
+          throw new ForbiddenException(
+            `Cannot ask for cancellation of an indictment that is already in progress at the district court`,
+          )
+        }
     }
 
     const updatedCase = await this.caseService.update(
@@ -410,10 +419,7 @@ export class CaseController {
     )
 
     // No need to wait
-    this.eventService.postEvent(
-      transition.transition as unknown as CaseEvent,
-      updatedCase ?? theCase,
-    )
+    this.eventService.postEvent(transition.transition, updatedCase ?? theCase)
 
     return updatedCase ?? theCase
   }
@@ -422,6 +428,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
@@ -448,6 +455,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
@@ -457,11 +465,38 @@ export class CaseController {
   )
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
-  @UseInterceptors(CaseInterceptor)
+  @UseInterceptors(CompletedAppealAccessedInterceptor)
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
     this.logger.debug(`Getting case ${caseId} by id`)
 
     return theCase
+  }
+
+  @UseGuards(JwtAuthGuard, CaseExistsGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Get('case/:caseId/connectedCases')
+  @ApiOkResponse({ type: [Case], description: 'Gets all connected cases' })
+  async getConnectedCases(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<Case[]> {
+    this.logger.debug(`Getting connected cases for case ${caseId}`)
+
+    if (!theCase.defendants || theCase.defendants.length === 0) {
+      return []
+    }
+
+    const connectedCases = await Promise.all(
+      theCase.defendants.map((defendant) =>
+        this.caseService.getConnectedIndictmentCases(theCase.id, defendant),
+      ),
+    )
+
+    return connectedCases.flat()
   }
 
   @UseGuards(
@@ -763,12 +798,12 @@ export class CaseController {
 
   @UseGuards(
     JwtAuthGuard,
-    RolesGuard,
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(districtCourtJudgeRule)
+  @RolesRules(districtCourtJudgeSignRulingRule)
   @Post('case/:caseId/ruling/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
@@ -780,12 +815,6 @@ export class CaseController {
     @CurrentCase() theCase: Case,
   ): Promise<SigningServiceResponse> {
     this.logger.debug(`Requesting a signature for the ruling of case ${caseId}`)
-
-    if (user.id !== theCase.judgeId) {
-      throw new ForbiddenException(
-        'A ruling must be signed by the assigned judge',
-      )
-    }
 
     return this.caseService.requestRulingSignature(theCase).catch((error) => {
       if (error instanceof DokobitError) {
@@ -806,12 +835,12 @@ export class CaseController {
 
   @UseGuards(
     JwtAuthGuard,
-    RolesGuard,
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(districtCourtJudgeRule)
+  @RolesRules(districtCourtJudgeSignRulingRule)
   @Get('case/:caseId/ruling/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,
@@ -825,12 +854,6 @@ export class CaseController {
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(`Confirming a signature for the ruling of case ${caseId}`)
-
-    if (user.id !== theCase.judgeId) {
-      throw new ForbiddenException(
-        'A ruling must be signed by the assigned judge',
-      )
-    }
 
     return this.caseService.getRulingSignatureConfirmation(
       theCase,
@@ -865,7 +888,7 @@ export class CaseController {
 
     const extendedCase = await this.caseService.extend(theCase, user)
 
-    this.eventService.postEvent(CaseEvent.EXTEND, extendedCase as Case)
+    this.eventService.postEvent('EXTEND', extendedCase as Case)
 
     return extendedCase
   }

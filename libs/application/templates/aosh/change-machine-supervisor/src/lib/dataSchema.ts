@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { isValidNumber } from 'libphonenumber-js'
 
 export const MachineAnswersSchema = z.object({
   machine: z.object({
@@ -54,7 +55,7 @@ export const MachineAnswersSchema = z.object({
     )
     .refine(
       ({ phone, isOwner }) => {
-        return isOwner[0] === 'ownerIsSupervisor' || phone !== ''
+        return isOwner[0] === 'ownerIsSupervisor' || isValidNumber(phone ?? '')
       },
       { path: ['phone'] },
     ),

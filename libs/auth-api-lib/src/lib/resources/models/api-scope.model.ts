@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Optional } from 'sequelize'
 import {
   BelongsTo,
+  BelongsToMany,
   Column,
   CreatedAt,
   DataType,
@@ -20,6 +21,8 @@ import { ApiScopeGroup } from './api-scope-group.model'
 import { ApiScopeUserAccess } from './api-scope-user-access.model'
 import { ApiScopeUserClaim } from './api-scope-user-claim.model'
 import { Domain } from './domain.model'
+import { ApiScopeDelegationType } from './api-scope-delegation-type.model'
+import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
 
 interface ModelAttributes {
   name: string
@@ -254,9 +257,17 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   @HasMany(() => ApiScopeUserAccess)
   apiScopeUserAccesses?: ApiScopeUserAccess[]
 
+  @HasMany(() => ApiScopeDelegationType)
+  supportedDelegationTypes?: ApiScopeDelegationType[]
+
   @BelongsTo(() => Domain)
   @ApiPropertyOptional({ type: () => Domain })
   domain?: Domain
+
+  @BelongsToMany(() => DelegationTypeModel, () => ApiScopeDelegationType)
+  delegationTypes?: Array<
+    DelegationTypeModel & { ApiScopeDelegationType: ApiScopeDelegationType }
+  >
 
   toDTO(): ApiScopeDTO {
     return {
@@ -277,6 +288,10 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
       emphasize: this.emphasize,
       domainName: this.domainName,
       isAccessControlled: this.isAccessControlled ?? undefined,
+      supportedDelegationTypes:
+        this.supportedDelegationTypes?.map(
+          ({ delegationType }) => delegationType,
+        ) ?? [],
     }
   }
 }

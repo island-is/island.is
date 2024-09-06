@@ -3,14 +3,18 @@ import { Optional } from 'sequelize'
 import {
   ApiScopeDTO,
   ApiScopeUserAccessDTO,
+  Claim,
   ClientClaim,
   ClientGrantType,
   DelegationDTO,
   DelegationIndex,
+  DelegationProviderModel,
   DelegationScopeDTO,
+  DelegationTypeModel,
   IdentityResource,
   PersonalRepresentativeRightTypeDTO,
   PersonalRepresentativeTypeDTO,
+  UserIdentity,
 } from '@island.is/auth-api-lib'
 
 export type CreateClientClaim = Optional<
@@ -73,6 +77,7 @@ export type CreateDelegationIndexRecord = Optional<
     | 'type'
     | 'validTo'
     | 'customDelegationScopes'
+    | 'subjectId'
   >,
   | 'fromNationalId'
   | 'toNationalId'
@@ -80,9 +85,36 @@ export type CreateDelegationIndexRecord = Optional<
   | 'type'
   | 'validTo'
   | 'customDelegationScopes'
+  | 'subjectId'
 >
 
 export type CreatePersonalRepresentativeScopePermission = {
   rightTypeCode: string
   apiScopeName: string
 }
+
+export type CreateUserIdentity = Optional<
+  Pick<
+    UserIdentity,
+    'providerName' | 'providerSubjectId' | 'subjectId' | 'active' | 'name'
+  >,
+  'providerName' | 'providerSubjectId' | 'subjectId' | 'active' | 'name'
+>
+
+export type CreateClaim = Optional<
+  Pick<
+    Claim,
+    'subjectId' | 'type' | 'valueType' | 'value' | 'issuer' | 'originalIssuer'
+  >,
+  'subjectId' | 'type' | 'valueType' | 'value' | 'issuer' | 'originalIssuer'
+>
+
+export type CreateDelegationProvider = Optional<
+  Pick<DelegationProviderModel, 'id' | 'name' | 'description'>,
+  'id' | 'name' | 'description'
+>
+
+export type CreateDelegationType = Optional<
+  Pick<DelegationTypeModel, 'id' | 'name' | 'description' | 'providerId'>,
+  'id' | 'name' | 'description' | 'providerId'
+>

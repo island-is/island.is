@@ -7,9 +7,8 @@ import { NotificationType, User } from '@island.is/judicial-system/types'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
-import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
+import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification } from '../../models/notification.model'
 
 interface Then {
   result: DeliverResponse
@@ -19,12 +18,12 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  notificationDto: SendInternalNotificationDto,
+  notificationDto: CaseNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send defendants not updated at court notifications', () => {
   const userId = uuid()
-  const notificationDto: SendInternalNotificationDto = {
+  const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
     type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
   }
@@ -39,23 +38,18 @@ describe('InternalNotificationController - Send defendants not updated at court 
   } as Case
 
   let mockEmailService: EmailService
-  let mockNotificationModel: typeof Notification
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { emailService, notificationModel, internalNotificationController } =
+    const { emailService, internalNotificationController } =
       await createTestingNotificationModule()
 
     mockEmailService = emailService
-    mockNotificationModel = notificationModel
-
-    const mockFindAll = mockNotificationModel.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
 
     givenWhenThen = async (
       caseId: string,
       theCase: Case,
-      notificationDto: SendInternalNotificationDto,
+      notificationDto: CaseNotificationDto,
     ) => {
       const then = {} as Then
 
@@ -91,11 +85,19 @@ describe('InternalNotificationController - Send defendants not updated at court 
     let then: Then
 
     beforeEach(async () => {
-      const mockFindAll = mockNotificationModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce([
-        { recipients: [{ address: registrarEmail, success: true }] },
-      ])
-      then = await givenWhenThen(caseId, theCase, notificationDto)
+      then = await givenWhenThen(
+        caseId,
+        {
+          ...theCase,
+          notifications: [
+            {
+              type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+              recipients: [{ address: registrarEmail, success: true }],
+            },
+          ],
+        } as Case,
+        notificationDto,
+      )
     })
 
     it('should not send email', () => {

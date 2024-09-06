@@ -1,6 +1,9 @@
-import React, {
+import {
   createContext,
+  Dispatch,
   ReactNode,
+  SetStateAction,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -18,8 +21,11 @@ import { api } from '@island.is/judicial-system-web/src/services'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { UserContext } from '../UserProvider/UserProvider'
-import { useCaseLazyQuery } from './case.generated'
-import { useLimitedAccessCaseLazyQuery } from './limitedAccessCase.generated'
+import { CaseQuery, useCaseLazyQuery } from './case.generated'
+import {
+  LimitedAccessCaseQuery,
+  useLimitedAccessCaseLazyQuery,
+} from './limitedAccessCase.generated'
 
 type ProviderState =
   | 'fetch'
@@ -31,11 +37,16 @@ type ProviderState =
 
 interface FormProvider {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   isLoadingWorkingCase: boolean
   caseNotFound: boolean
   isCaseUpToDate: boolean
   refreshCase: () => void
+  getCase: (
+    id: string,
+    onCompleted: (theCase: Case) => void,
+    onError: () => void,
+  ) => void
 }
 
 interface Props {
@@ -60,8 +71,12 @@ export const FormContext = createContext<FormProvider>({
   isLoadingWorkingCase: true,
   caseNotFound: false,
   isCaseUpToDate: false,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  refreshCase: () => {},
+  refreshCase: () => {
+    return
+  },
+  getCase: () => {
+    return
+  },
 })
 
 const MaybeFormProvider = ({ children }: Props) => {
@@ -123,39 +138,37 @@ const FormProvider = ({ children }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.id, router.pathname])
 
-  const [getCase] = useCaseLazyQuery({
+  const [queryCase] = useCaseLazyQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
-    onCompleted: (caseData) => {
-      if (caseData && caseData.case) {
-        setWorkingCase(caseData.case)
-
-        // The case has been loaded from the server
-        setState('up-to-date')
-      }
-    },
-    onError: () => {
-      // The case was not found
-      setState('not-found')
-    },
   })
 
-  const [getLimitedAccessCase] = useLimitedAccessCaseLazyQuery({
+  const [queryLimitedAccessCase] = useLimitedAccessCaseLazyQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
-    onCompleted: (caseData) => {
-      if (caseData && caseData.limitedAccessCase) {
-        setWorkingCase(caseData.limitedAccessCase)
-
-        // The case has been loaded from the server
-        setState('up-to-date')
-      }
-    },
-    onError: () => {
-      // The case was not found
-      setState('not-found')
-    },
   })
+
+  const getCase = useCallback(
+    (id: string, onCompleted: (theCase: Case) => void, onError: () => void) => {
+      const promisedCase = limitedAccess
+        ? queryLimitedAccessCase({ variables: { input: { id } } })
+        : queryCase({ variables: { input: { id } } })
+
+      promisedCase
+        .then((caseData) => {
+          if (caseData && caseData.data) {
+            const data = caseData.data as CaseQuery & LimitedAccessCaseQuery
+            const theCase = data[limitedAccess ? 'limitedAccessCase' : 'case']
+
+            if (theCase) {
+              onCompleted(theCase)
+            }
+          }
+        })
+        .catch(onError)
+    },
+    [limitedAccess, queryCase, queryLimitedAccessCase],
+  )
 
   useEffect(() => {
     if (!isAuthenticated && router.pathname !== '/') {
@@ -167,20 +180,29 @@ const FormProvider = ({ children }: Props) => {
       id &&
       (state === 'fetch' || state === 'refresh')
     ) {
-      if (limitedAccess) {
-        getLimitedAccessCase({ variables: { input: { id } } })
-      } else {
-        getCase({ variables: { input: { id } } })
-      }
+      getCase(
+        id,
+        (theCase: Case) => {
+          setWorkingCase(theCase)
+
+          // The case has been loaded from the server
+          setState('up-to-date')
+        },
+        () => {
+          // The case was not found
+          setState('not-found')
+        },
+      )
     }
   }, [
-    getCase,
-    getLimitedAccessCase,
+    queryCase,
+    queryLimitedAccessCase,
     id,
     isAuthenticated,
     limitedAccess,
     router.pathname,
     state,
+    getCase,
   ])
 
   useEffect(() => {
@@ -207,6 +229,7 @@ const FormProvider = ({ children }: Props) => {
         isCaseUpToDate:
           !replacingCase && !replacingPath && state === 'up-to-date',
         refreshCase: () => setState('refresh'),
+        getCase,
       }}
     >
       {children}

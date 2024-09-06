@@ -31,9 +31,18 @@ export class PersonalRepresentativePublicDTO {
   @ApiProperty({
     example: '["health", "finance"]',
     description:
-      'A list of right typess that the personal representative has on behalf of represented person',
+      'A list of right types that the personal representative has on behalf of represented person',
   })
   rights!: string[]
+
+  @IsArray()
+  @ApiProperty({
+    example:
+      '["PersonalRepresentative:health", "PersonalRepresentative:finance"]',
+    description:
+      'A list of delegation types that the personal representative has on behalf of represented person',
+  })
+  prDelegationTypeCodes!: string[]
 
   static fromDTO(
     dto: PersonalRepresentativeDTO,
@@ -43,6 +52,7 @@ export class PersonalRepresentativePublicDTO {
       nationalIdPersonalRepresentative: dto.nationalIdPersonalRepresentative,
       nationalIdRepresentedPerson: dto.nationalIdRepresentedPerson,
       rights: dto.rights.map((rc) => rc.code),
+      prDelegationTypeCodes: dto.prDelegationTypes.map((dt) => dt.id),
     } as PersonalRepresentativePublicDTO
   }
 }

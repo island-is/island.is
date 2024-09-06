@@ -10,7 +10,10 @@ import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
-import { PersonalRepresentativeDelegationType } from '@island.is/auth-api-lib'
+import {
+  DelegationDirection,
+  PersonalRepresentativeDelegationType,
+} from '@island.is/auth-api-lib'
 import { createClient } from '@island.is/services/auth/testing'
 import { AuthScope } from '@island.is/auth/scopes'
 
@@ -44,18 +47,28 @@ type PersonalRepresentativeDelegationInput = DelegationRecordInput & {
 
 type GetDelegationIndexRecordsInput = {
   scope: string
-  fromNationalId: string
+  nationalId: string
+  direction?: DelegationDirection
 }
 
-export interface ITestCaseOptions {
+type TestCaseResults =
+  | {
+      expectedFrom: string[] // used to test incoming delegations
+      expectedTo?: never
+    }
+  | {
+      expectedTo: string[] // used to test outgoing delegations
+      expectedFrom?: never
+    }
+
+export type ITestCaseOptions = {
   requestUser: GetDelegationIndexRecordsInput
   toParents?: DelegationRecordInput[]
   toProcurationHolders?: DelegationRecordInput[]
   toCustom?: CustomDelegationRecordInput[]
   toRepresentative?: PersonalRepresentativeDelegationInput[]
   scopes?: Scope[]
-  expectedTo: string[]
-}
+} & TestCaseResults
 
 type Scope = {
   name: string
@@ -114,7 +127,8 @@ export class TestCase {
   toCustom: CustomDelegationRecordInput[]
   toRepresentative: PersonalRepresentativeDelegationInput[]
   scopes: Scope[]
-  expectedTo: string[]
+  expectedTo?: string[]
+  expectedFrom?: string[]
 
   constructor(options: ITestCaseOptions) {
     this.client = createClient({ clientId })
@@ -125,6 +139,7 @@ export class TestCase {
     this.toRepresentative = options.toRepresentative ?? []
     this.scopes = options.scopes ?? Object.values(scopes)
     this.expectedTo = options.expectedTo
+    this.expectedFrom = options.expectedFrom
   }
 
   get domain(): CreateDomain {
@@ -146,7 +161,7 @@ export class TestCase {
 
   get customDelegationRecord(): CreateDelegationIndexRecord[] {
     return this.toCustom.map((record) => ({
-      fromNationalId: record.fromNationalId ?? this.requestUser.fromNationalId,
+      fromNationalId: record.fromNationalId ?? this.requestUser.nationalId,
       toNationalId: record.toNationalId,
       provider: AuthDelegationProvider.Custom,
       type: AuthDelegationType.Custom,
@@ -157,7 +172,7 @@ export class TestCase {
 
   get procurationDelegationRecords(): CreateDelegationIndexRecord[] {
     return this.toProcurationHolders.map((record) => ({
-      fromNationalId: record.fromNationalId ?? this.requestUser.fromNationalId,
+      fromNationalId: record.fromNationalId ?? this.requestUser.nationalId,
       toNationalId: record.toNationalId,
       provider: AuthDelegationProvider.CompanyRegistry,
       type: AuthDelegationType.ProcurationHolder,
@@ -166,7 +181,7 @@ export class TestCase {
 
   get personalRepresentativeDelegationRecords(): CreateDelegationIndexRecord[] {
     return this.toRepresentative.map((record) => ({
-      fromNationalId: record.fromNationalId ?? this.requestUser.fromNationalId,
+      fromNationalId: record.fromNationalId ?? this.requestUser.nationalId,
       toNationalId: record.toNationalId,
       provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
       type: record.type,
@@ -176,7 +191,7 @@ export class TestCase {
 
   get wardDelegationRecords(): CreateDelegationIndexRecord[] {
     return this.toParents.map((record) => ({
-      fromNationalId: record.fromNationalId ?? this.requestUser.fromNationalId,
+      fromNationalId: record.fromNationalId ?? this.requestUser.nationalId,
       toNationalId: record.toNationalId,
       provider: AuthDelegationProvider.NationalRegistry,
       type: AuthDelegationType.LegalGuardian,

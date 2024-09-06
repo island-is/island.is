@@ -1,7 +1,38 @@
 import { gql } from '@apollo/client'
+
+export const GET_PRICE_QUERY = gql`
+  query GetPrice($id: String!) {
+    officialJournalOfIcelandApplicationGetPrice(id: $id) {
+      price
+    }
+  }
+`
+
+export const GET_APPLICATION_COMMENTS_QUERY = gql`
+  query GetApplicationComments(
+    $input: OfficialJournalOfIcelandApplicationGetCommentsInput!
+  ) {
+    officialJournalOfIcelandApplicationGetComments(input: $input) {
+      comments {
+        id
+        createdAt
+        internal
+        type
+        caseStatus
+        task {
+          from
+          to
+          title
+          comment
+        }
+      }
+    }
+  }
+`
+
 export const ADVERTS_QUERY = gql`
-  query Adverts($input: MinistryOfJusticeAdvertsInput!) {
-    ministryOfJusticeAdverts(input: $input) {
+  query Adverts($input: OfficialJournalOfIcelandAdvertsInput!) {
+    officialJournalOfIcelandAdverts(input: $input) {
       adverts {
         id
         department {
@@ -36,11 +67,6 @@ export const ADVERTS_QUERY = gql`
           title
           slug
         }
-        involvedParty {
-          id
-          title
-          slug
-        }
         document {
           isLegacy
           html
@@ -62,8 +88,8 @@ export const ADVERTS_QUERY = gql`
 `
 
 export const ADVERT_QUERY = gql`
-  query Advert($params: MinistryOfJusticeAdvertQuery!) {
-    ministryOfJusticeAdvert(params: $params) {
+  query Advert($params: OfficialJournalOfIcelandAdvertSingleParams!) {
+    officialJournalOfIcelandAdvert(params: $params) {
       advert {
         id
         department {
@@ -114,8 +140,8 @@ export const ADVERT_QUERY = gql`
 `
 
 export const TYPES_QUERY = gql`
-  query AdvertTypes($params: MinistryOfJusticeTypesInput!) {
-    ministryOfJusticeTypes(params: $params) {
+  query AdvertTypes($params: OfficialJournalOfIcelandTypesInput!) {
+    officialJournalOfIcelandTypes(params: $params) {
       types {
         id
         title
@@ -135,9 +161,38 @@ export const TYPES_QUERY = gql`
   }
 `
 
+export const DEPARTMENT_QUERY = gql`
+  query AdvertDepartment($params: OfficialJournalOfIcelandAdvertSingleParams!) {
+    officialJournalOfIcelandDepartment(params: $params) {
+      department {
+        id
+        title
+        slug
+      }
+    }
+  }
+`
+
+export const TYPE_QUERY = gql`
+  query AdvertType($params: OfficialJournalOfIcelandAdvertSingleParams!) {
+    officialJournalOfIcelandType(params: $params) {
+      type {
+        id
+        title
+        slug
+        department {
+          id
+          title
+          slug
+        }
+      }
+    }
+  }
+`
+
 export const DEPARTMENTS_QUERY = gql`
-  query AdvertDepartments($params: MinistryOfJusticeQueryInput!) {
-    ministryOfJusticeDepartments(params: $params) {
+  query AdvertDepartments($params: OfficialJournalOfIcelandQueryInput!) {
+    officialJournalOfIcelandDepartments(params: $params) {
       departments {
         id
         title
@@ -158,8 +213,8 @@ export const DEPARTMENTS_QUERY = gql`
 `
 
 export const CATEGORIES_QUERY = gql`
-  query AdvertCategories($params: MinistryOfJusticeQueryInput!) {
-    ministryOfJusticeCategories(params: $params) {
+  query AdvertCategories($params: OfficialJournalOfIcelandQueryInput!) {
+    officialJournalOfIcelandCategories(params: $params) {
       categories {
         id
         title
@@ -175,6 +230,22 @@ export const CATEGORIES_QUERY = gql`
         nextPage
         previousPage
       }
+    }
+  }
+`
+
+export const PDF_URL_QUERY = gql`
+  query PdfUrl($id: String!) {
+    officialJournalOfIcelandApplicationGetPdfUrl(id: $id) {
+      url
+    }
+  }
+`
+
+export const PDF_QUERY = gql`
+  query PdfDocument($id: String!) {
+    officialJournalOfIcelandApplicationGetPdf(id: $id) {
+      pdf
     }
   }
 `

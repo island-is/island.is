@@ -1,9 +1,11 @@
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { environment } from '../environments'
 import { AuditModule } from '@island.is/nest/audit'
+import { ConfigModule } from '@island.is/nest/config'
+import { emailModuleConfig } from '@island.is/email-service'
 
+import { environment } from '../environments'
 import {
   ApplicationModule,
   FileModule,
@@ -17,6 +19,7 @@ import {
   DirectTaxPaymentModule,
   OpenApiApplicationModule,
   ApiUserModule,
+  ChildrenModule,
 } from './modules'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -36,10 +39,15 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     MunicipalityModule,
     FileModule,
     ApplicationEventModule,
+    ChildrenModule,
     AidModule,
     PersonalTaxReturnModule,
     ApiUserModule,
     AuditModule.forRoot(environment.audit),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [emailModuleConfig],
+    }),
   ],
 })
 export class AppModule {}

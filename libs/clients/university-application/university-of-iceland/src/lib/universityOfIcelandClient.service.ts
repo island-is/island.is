@@ -2,16 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { ApplicationApi, CoursesApi, ProgramsApi } from '../../gen/fetch/apis'
 import {
   ApplicationStatus,
-  CourseSeason,
-  DegreeType,
-  FieldType,
   IApplication,
   ICourse,
   IProgram,
-  ModeOfDelivery,
-  Requirement,
-  Season,
-  mapStringToEnum,
 } from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 import { mapUglaPrograms } from './utils/mapUglaPrograms'
@@ -30,12 +23,7 @@ export class UniversityOfIcelandApplicationClient {
   async getPrograms(): Promise<IProgram[]> {
     const res = await this.programsApi.activeProgramsGet()
 
-    return mapUglaPrograms(res, (programExternalId: string, e: Error) => {
-      logger.error(
-        `Failed to map program with externalId ${programExternalId} (university-of-iceland), reason:`,
-        e,
-      )
-    })
+    return mapUglaPrograms(res, 'university-of-iceland')
   }
 
   async getCourses(programExternalId: string): Promise<ICourse[]> {
@@ -60,7 +48,7 @@ export class UniversityOfIcelandApplicationClient {
   async createApplication(
     application: IApplication,
   ): Promise<InlineResponse2004> {
-    const mappedApplication = mapUglaApplication(
+    const mappedApplication = await mapUglaApplication(
       application,
       (courseExternalId: string, e: Error) => {
         logger.error(
@@ -70,10 +58,7 @@ export class UniversityOfIcelandApplicationClient {
       },
     )
 
-    const response = await this.applicationApi.applicationsPost(
-      mappedApplication,
-    )
-    return response
+    return this.applicationApi.applicationsPost(mappedApplication)
   }
 
   async updateApplicationStatus(externalId: string, status: ApplicationStatus) {

@@ -7,6 +7,8 @@ export class BanMarking {
   @Field(() => Boolean)
   banMarked?: boolean
 
-  @Field(() => String)
+  // Note: Made a backwards incompatible change to this field to be nullable.
+  // It is currently never queried, and we don't have this data in V3 broker.
+  @Field(() => String, { nullable: true })
   startDate?: string
 }

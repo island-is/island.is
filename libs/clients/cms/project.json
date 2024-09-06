@@ -1,0 +1,39 @@
+{
+  "name": "clients-cms",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/cms/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/clients/cms/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/cms"],
+      "options": {
+        "jestConfig": "libs/clients/cms/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/clients/cms/codegen.yaml"
+      },
+      "inputs": ["{projectRoot}/codegen.yaml"],
+      "outputs": ["{projectRoot}/gen", "{projectRoot}/**/*.generated.ts"]
+    },
+    "fetch-schema": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/clients/cms/fetch-schema.yaml"
+      }
+    }
+  },
+  "implicitDependencies": [],
+  "tags": ["lib:client", "scope:client"]
+}

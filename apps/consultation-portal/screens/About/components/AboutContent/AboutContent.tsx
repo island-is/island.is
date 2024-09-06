@@ -8,7 +8,7 @@ const AboutContent = () => {
   const loc = localization['aboutContent']
   return (
     <Box>
-      <Text variant="h1" color="blue400" dataTestId="about-title">
+      <Text as="h1" variant="h1" color="blue400" dataTestId="about-title">
         {loc.text}
       </Text>
       <Box className={styles.spanStyle} marginBottom={6} marginTop={4}>

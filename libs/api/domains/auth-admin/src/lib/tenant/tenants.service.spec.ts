@@ -9,6 +9,8 @@ import {
   AuthAdminApiClientModule,
   TenantDto,
 } from '@island.is/clients/auth/admin-api'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigType } from '@island.is/nest/config'
 import { Environment } from '@island.is/shared/types'
 import {
   createCurrentUser,
@@ -16,10 +18,9 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 
+import { createMockApiResponse } from '../../../test/utils'
 import { TenantsPayload } from './dto/tenants.payload'
 import { TenantsService } from './tenants.service'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { ConfigType } from '@island.is/nest/config'
 import { TenantResolver } from './tenant.resolver'
 import { TenantEnvironmentResolver } from './tenant-environment.resolver'
 
@@ -55,12 +56,14 @@ const mockTenants = {
 
 const createMockAdminApi = (tenants: Omit<TenantDto, 'contactEmail'>[]) => ({
   withMiddleware: jest.fn().mockReturnThis(),
-  meTenantsControllerFindAll: jest.fn().mockResolvedValue(tenants),
-  meTenantsControllerFindById: jest.fn().mockImplementation(({ tenantId }) => {
-    return new Promise((resolve) => {
-      resolve(tenants.find((t) => t.name === tenantId))
-    })
-  }),
+  meTenantsControllerFindAllRaw: jest
+    .fn()
+    .mockResolvedValue(createMockApiResponse(tenants)),
+  meTenantsControllerFindByIdRaw: jest
+    .fn()
+    .mockImplementation(({ tenantId }) => {
+      return createMockApiResponse(tenants.find((t) => t.name === tenantId))
+    }),
 })
 const mockAdminDevApi = createMockAdminApi([
   mockTenants.tenant1,
@@ -91,12 +94,12 @@ describe('TenantsService', () => {
   })
 
   beforeEach(() => {
-    mockAdminDevApi.meTenantsControllerFindAll.mockClear()
-    mockAdminStagingApi.meTenantsControllerFindAll.mockClear()
-    mockAdminProdApi.meTenantsControllerFindAll.mockClear()
-    mockAdminDevApi.meTenantsControllerFindById.mockClear()
-    mockAdminStagingApi.meTenantsControllerFindById.mockClear()
-    mockAdminProdApi.meTenantsControllerFindById.mockClear()
+    mockAdminDevApi.meTenantsControllerFindAllRaw.mockClear()
+    mockAdminStagingApi.meTenantsControllerFindAllRaw.mockClear()
+    mockAdminProdApi.meTenantsControllerFindAllRaw.mockClear()
+    mockAdminDevApi.meTenantsControllerFindByIdRaw.mockClear()
+    mockAdminStagingApi.meTenantsControllerFindByIdRaw.mockClear()
+    mockAdminProdApi.meTenantsControllerFindByIdRaw.mockClear()
   })
 
   describe('with multiple environments', () => {
@@ -132,9 +135,11 @@ describe('TenantsService', () => {
         currentUser,
       )
 
-      expect(mockAdminDevApi.meTenantsControllerFindById).toBeCalledTimes(1)
-      expect(mockAdminStagingApi.meTenantsControllerFindById).toBeCalledTimes(1)
-      expect(mockAdminProdApi.meTenantsControllerFindById).toBeCalledTimes(1)
+      expect(mockAdminDevApi.meTenantsControllerFindByIdRaw).toBeCalledTimes(1)
+      expect(
+        mockAdminStagingApi.meTenantsControllerFindByIdRaw,
+      ).toBeCalledTimes(1)
+      expect(mockAdminProdApi.meTenantsControllerFindByIdRaw).toBeCalledTimes(1)
       expect(tenants).toEqual({
         id: mockTenants.tenant1.name,
         environments: [
@@ -161,9 +166,11 @@ describe('TenantsService', () => {
         currentUser,
       )
 
-      expect(mockAdminDevApi.meTenantsControllerFindById).toBeCalledTimes(1)
-      expect(mockAdminStagingApi.meTenantsControllerFindById).toBeCalledTimes(1)
-      expect(mockAdminProdApi.meTenantsControllerFindById).toBeCalledTimes(1)
+      expect(mockAdminDevApi.meTenantsControllerFindByIdRaw).toBeCalledTimes(1)
+      expect(
+        mockAdminStagingApi.meTenantsControllerFindByIdRaw,
+      ).toBeCalledTimes(1)
+      expect(mockAdminProdApi.meTenantsControllerFindByIdRaw).toBeCalledTimes(1)
       expect(tenants).toEqual({
         id: mockTenants.tenant3.name,
         environments: [
@@ -180,9 +187,11 @@ describe('TenantsService', () => {
       const tenants = await tenantsService.getTenants(currentUser)
 
       // Assert
-      expect(mockAdminDevApi.meTenantsControllerFindAll).toBeCalledTimes(1)
-      expect(mockAdminStagingApi.meTenantsControllerFindAll).toBeCalledTimes(1)
-      expect(mockAdminProdApi.meTenantsControllerFindAll).toBeCalledTimes(1)
+      expect(mockAdminDevApi.meTenantsControllerFindAllRaw).toBeCalledTimes(1)
+      expect(mockAdminStagingApi.meTenantsControllerFindAllRaw).toBeCalledTimes(
+        1,
+      )
+      expect(mockAdminProdApi.meTenantsControllerFindAllRaw).toBeCalledTimes(1)
       expect(tenants).toEqual({
         totalCount: 3,
         data: [
@@ -258,7 +267,7 @@ describe('TenantsService', () => {
       const tenants = await tenantsService.getTenants(currentUser)
 
       // Assert
-      expect(mockAdminDevApi.meTenantsControllerFindAll).toBeCalledTimes(1)
+      expect(mockAdminDevApi.meTenantsControllerFindAllRaw).toBeCalledTimes(1)
       expect(tenants).toEqual({
         totalCount: 3,
         data: [

@@ -6,10 +6,10 @@ registerEnumType(NotificationType, { name: 'NotificationType' })
 
 @ObjectType()
 export class Recipient {
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   address?: string
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   success?: boolean
 }
 
@@ -18,10 +18,10 @@ export class Notification {
   @Field(() => ID)
   readonly id!: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly created?: string
 
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   readonly caseId?: string
 
   @Field(() => NotificationType, { nullable: true })

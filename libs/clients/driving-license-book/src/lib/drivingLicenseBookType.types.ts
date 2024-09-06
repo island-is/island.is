@@ -68,6 +68,7 @@ export interface DrivingLicenseBookStudentForTeacher {
 
 export interface DrivingLicenseBookStudentInput {
   nationalId: string
+  licenseCategory?: 'B' | 'BE'
 }
 
 export interface DrivingLicenseBook {
@@ -165,4 +166,10 @@ export interface CreateDrivingSchoolTestResultInput {
 export interface AllowedPractieDrivingInput {
   teacherNationalId: string
   studentNationalId: string
+}
+
+export interface TeacherRights {
+  active: boolean
+  hasRegisteredDrivingLessons: boolean
+  rights: string[]
 }

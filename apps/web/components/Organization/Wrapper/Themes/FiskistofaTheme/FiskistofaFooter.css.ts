@@ -1,5 +1,6 @@
 import { style } from '@vanilla-extract/css'
-import { themeUtils } from '@island.is/island-ui/theme'
+
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const container = style({
   background: 'linear-gradient(180deg, #E6F2FB 21.56%, #90D9E3 239.74%)',
@@ -41,4 +42,8 @@ export const bsiLogo = style({
 
 export const bsiLogoMobile = style({
   height: '40px',
+})
+
+export const marginLeft = style({
+  marginLeft: theme.spacing[2],
 })

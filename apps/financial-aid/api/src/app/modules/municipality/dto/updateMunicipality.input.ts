@@ -1,7 +1,7 @@
 import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
-import type { Aid } from '@island.is/financial-aid/shared/lib'
+import type { Aid, ChildrenAid } from '@island.is/financial-aid/shared/lib'
 import { AidInput } from '../../aid'
 
 @InputType()
@@ -41,6 +41,14 @@ export class UpdateMunicipalityInput {
   @Allow()
   @Field({ nullable: true })
   readonly navPassword?: string
+
+  @Allow()
+  @Field(() => String, { nullable: true })
+  readonly childrenAid?: ChildrenAid
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly decemberCompensation?: number
 
   @Allow()
   @Field()

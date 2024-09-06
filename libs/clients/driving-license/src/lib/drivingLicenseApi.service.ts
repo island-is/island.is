@@ -14,15 +14,17 @@ import {
   RemarkCode,
   DrivingLicenseV4V5Dto,
   Jurisdiction,
+  Remark,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
-import { DriverLicenseWithoutImagesDto, PracticePermitDto } from '../v5'
+import { PracticePermitDto, DriverLicenseWithoutImagesDto } from '../v5'
 
 @Injectable()
 export class DrivingLicenseApi {
   constructor(
     private readonly v4: v4.ApiV4,
     private readonly v5: v5.ApiV5,
+    private readonly applicationV5: v5.ApplicationApiV5,
     private readonly v5CodeTable: v5.CodeTableV5,
   ) {}
 
@@ -103,10 +105,11 @@ export class DrivingLicenseApi {
 
     if (license?.comments) {
       const remarks = await this.getRemarksCodeTable()
-      const licenseRemarks: string[] = license.comments.map(
-        (remark) =>
+      const licenseRemarks: Remark[] = license.comments.map((remark) => ({
+        code: remark.nr ?? '',
+        description:
           remarks?.find((r) => r.index === remark?.nr?.toString())?.name ?? '',
-      )
+      }))
       return {
         ...DrivingLicenseApi.normalizeDrivingLicenseDTO(license),
         remarks: licenseRemarks,
@@ -135,17 +138,31 @@ export class DrivingLicenseApi {
           apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
           apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         })
-        const licenseRemarks: string[] = licenseRaw.comments
+        const licenseRemarks: Remark[] = licenseRaw.comments
           .filter((remark) => remark.id === licenseRaw.id && !!remark.nr)
-          .map((remark) => remark.nr || '')
-        const filteredRemarks: string[] = remarks
+          .map((remark) => ({
+            code: remark.comment ?? '',
+            description: remark.nr || '',
+          }))
+
+        const filteredRemarks: Remark[] = remarks
           .filter(
             (remark) =>
               !!remark.heiti &&
-              licenseRemarks.includes(remark.nr || ('' && !remark.athugasemd)),
+              licenseRemarks.some((lremark) =>
+                lremark.description.includes(
+                  remark.nr || ('' && !remark.athugasemd),
+                ),
+              ),
           )
-          .map((remark) => remark.heiti || '')
-        return { ...license, remarks: filteredRemarks }
+          .map((remark) => ({
+            code: remark.nr || '',
+            description: remark.heiti || '',
+          }))
+        return {
+          ...license,
+          remarks: filteredRemarks,
+        }
       }
 
       return license
@@ -491,6 +508,30 @@ export class DrivingLicenseApi {
         userId: v5.DRIVING_LICENSE_API_USER_ID,
       },
     })
+  }
+  
+  async postApplyForBELicense(params: {
+    nationalIdApplicant: string
+    token: string
+    jurisdictionId: number
+    instructorSSN: string
+    phoneNumber: string
+    email: string
+  }): Promise<boolean> {
+    const response = await this.applicationV5.apiApplicationsV5ApplyforBePost({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token.replace('Bearer ', ''),
+      postApplicationForBEModel: {
+        districtId: params.jurisdictionId,
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
+        instructorSSN: params.instructorSSN,
+        primaryPhoneNumber: params.phoneNumber,
+        studentEmail: params.email,
+      },
+    })
+
+    return response.result ?? false
   }
 
   async postCanApplyForPracticePermit(params: {

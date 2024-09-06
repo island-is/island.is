@@ -18,68 +18,46 @@ const formatDate = (date: string) => {
   }
 }
 
-const getBaseUrl = () => {
-  const baseUrl =
-    window.location.origin === 'http://localhost:4200'
-      ? 'http://localhost:4242'
-      : window.location.origin
-
-  return `${baseUrl}/umsoknir/undirskriftalisti`
-}
-
 export const GeneralPetitionLists: FC<
   React.PropsWithChildren<GeneralPetitionProps>
 > = ({ slice }) => {
   const router = useRouter()
-  const petitionLists = useGetPetitionLists()
+  const { data: petitionLists, loading } = useGetPetitionLists()
   const t = useLocalization(slice.json)
 
   return (
-    <>
-      <Box marginY={5}>
-        <ActionCard
-          heading={t('createList', 'Stofna undirskriftalista')}
-          backgroundColor="blue"
-          cta={{
-            label: t('logIn', 'Innskráning'),
-            variant: 'primary',
-            icon: 'open',
-            iconType: 'outline',
-            size: 'small',
-            onClick: () => window.open(getBaseUrl(), '_blank'),
-          }}
-        />
-      </Box>
-      {petitionLists?.data?.length > 0 && (
+    <Box>
+      {petitionLists?.length > 0 && (
         <Box marginTop={10} marginBottom={3}>
           <Text variant="h4">{t('title', 'Virkir listar')}</Text>
         </Box>
       )}
-      <Stack space={4}>
-        {petitionLists?.data?.map((petition: EndorsementList) => {
-          return (
-            <ActionCard
-              key={petition.title}
-              backgroundColor="white"
-              heading={petition.title}
-              text={
-                t('openTil', 'Virkur til:') +
-                ' ' +
-                formatDate(petition.closedDate)
-              }
-              cta={{
-                label: t('viewList', 'Skoða lista'),
-                variant: 'text',
-                icon: 'arrowForward',
-                onClick: () => {
-                  router.push('/undirskriftalistar/' + petition.id)
-                },
-              }}
-            />
-          )
-        })}
+      <Stack space={3}>
+        {!loading &&
+          petitionLists?.map((petition: EndorsementList) => {
+            return (
+              <ActionCard
+                key={petition.title}
+                backgroundColor="white"
+                heading={petition.title}
+                text={
+                  t('openTil', 'Virkur til:') +
+                  ' ' +
+                  formatDate(petition.closedDate)
+                }
+                cta={{
+                  label: t('viewList', 'Skoða lista'),
+                  variant: 'text',
+                  icon: 'arrowForward',
+                  onClick: () => {
+                    router.push('/undirskriftalistar/' + petition.id)
+                  },
+                }}
+              />
+            )
+          })}
       </Stack>
-    </>
+    </Box>
   )
 }
 

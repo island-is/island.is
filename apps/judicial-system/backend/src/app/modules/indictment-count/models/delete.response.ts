@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 export class DeleteIndictmentCountResponse {
-  @ApiProperty()
+  @ApiProperty({ type: Boolean })
   deleted!: boolean
 }

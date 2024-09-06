@@ -126,8 +126,7 @@ const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
                             >
                               {item.chapterTitle}
                             </LinkV2>
-
-                            <Text>{item.textualDescription}</Text>
+                            <Text>{nlToBr(item.textualDescription ?? '')}</Text>
                           </Stack>
                         ))}
                       </Stack>

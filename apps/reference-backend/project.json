@@ -4,6 +4,7 @@
   "sourceRoot": "apps/reference-backend/src",
   "projectType": "application",
   "prefix": "reference-backend",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -47,24 +48,22 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/reference-backend/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/reference-backend/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/reference-backend/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/reference-backend"]
     },
-    "docker-express": {},
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/reference-backend"
       }
     },
@@ -89,6 +88,5 @@
         "cwd": "apps/reference-backend"
       }
     }
-  },
-  "tags": ["scope:nest"]
+  }
 }

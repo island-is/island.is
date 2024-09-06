@@ -18,14 +18,15 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Check if codeowners file changed
         run: |
-          MERGE_BASE=$(git merge-base ${{github.event.pull_request.base.sha}} $GITHUB_SHA)
-          if ! git diff --exit-code --name-only $MERGE_BASE..$GITHUB_SHA .github/CODEOWNERS; then
-            echo "CHECK=true" >> $GITHUB_ENV
+          set -euo pipefail
+          MERGE_BASE="$(git merge-base "${{github.event.pull_request.base.sha}}" "$GITHUB_SHA")"
+          if ! git diff --exit-code --name-only "$MERGE_BASE".."$GITHUB_SHA" .github/CODEOWNERS; then
+            echo "CHECK=true" >> "$GITHUB_ENV"
             if [[ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
               echo "Changes to codeowners are not allowed on forks!"
               exit 1
@@ -34,7 +35,8 @@ jobs:
       - name: Check indentation
         if: env.CHECK == 'true'
         run: |
-          no_different_indentations=$(cat .github/CODEOWNERS | grep -v '^#' | awk NF | sed s/@.*//g | awk '{ print length }' | sort | uniq | wc -l)
+          set -euo pipefail
+          no_different_indentations="$(cat .github/CODEOWNERS | grep -v '^#' | awk NF | sed s/@.*//g | awk '{ print length }' | sort | uniq | wc -l)"
           if [[ "$no_different_indentations" != "1" ]]; then
             echo "CODEOWNERS has $no_different_indentations different indentations."
             echo "Make sure that all teams start in the same column."
@@ -44,7 +46,8 @@ jobs:
       - name: Codeowners validation
         if: env.CHECK == 'true'
         run: |
-          curl -sfL https://raw.githubusercontent.com/mszostok/codeowners-validator/main/install.sh | sh -s -- -b $HOME v0.7.4
+          set -euo pipefail
+          curl -sfL https://raw.githubusercontent.com/mszostok/codeowners-validator/main/install.sh | sh -s -- -b "$HOME" v0.7.4
           REPOSITORY_PATH="." \
           GITHUB_ACCESS_TOKEN="$GH_TOKEN" \
           EXPERIMENTAL_CHECKS="notowned" \

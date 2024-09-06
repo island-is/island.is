@@ -6,6 +6,7 @@ import {
   Header,
   Inject,
   Param,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -19,7 +20,7 @@ import {
   CurrentHttpUser,
   JwtInjectBearerAuthGuard,
 } from '@island.is/judicial-system/auth'
-import type { User } from '@island.is/judicial-system/types'
+import { SubpoenaType, type User } from '@island.is/judicial-system/types'
 
 import { FileService } from './file.service'
 
@@ -34,7 +35,7 @@ export class FileController {
 
   @Get('request')
   @Header('Content-Type', 'application/pdf')
-  async getRequestPdf(
+  getRequestPdf(
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
@@ -55,7 +56,7 @@ export class FileController {
 
   @Get('caseFilesRecord/:policeCaseNumber')
   @Header('Content-Type', 'application/pdf')
-  async getCaseFilesRecordPdf(
+  getCaseFilesRecordPdf(
     @Param('id') id: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
     @CurrentHttpUser() user: User,
@@ -77,7 +78,7 @@ export class FileController {
 
   @Get('courtRecord')
   @Header('Content-Type', 'application/pdf')
-  async getCourtRecordPdf(
+  getCourtRecordPdf(
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
@@ -100,7 +101,7 @@ export class FileController {
 
   @Get('ruling')
   @Header('Content-Type', 'application/pdf')
-  async getRulingPdf(
+  getRulingPdf(
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
@@ -121,7 +122,7 @@ export class FileController {
 
   @Get('custodyNotice')
   @Header('Content-Type', 'application/pdf')
-  async getCustodyNoticePdf(
+  getCustodyNoticePdf(
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
@@ -144,7 +145,7 @@ export class FileController {
 
   @Get('indictment')
   @Header('Content-Type', 'application/pdf')
-  async getIndictmentPdf(
+  getIndictmentPdf(
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
@@ -157,6 +158,33 @@ export class FileController {
       AuditedAction.GET_INDICTMENT_PDF,
       id,
       'indictment',
+      req,
+      res,
+      'pdf',
+    )
+  }
+
+  @Get('subpoena/:defendantId')
+  @Header('Content-Type', 'application/pdf')
+  getSubpoenaPdf(
+    @Param('id') id: string,
+    @Param('defendantId') defendantId: string,
+    @Query('arraignmentDate') arraignmentDate: string,
+    @Query('location') location: string,
+    @Query('subpoenaType') subpoenaType: SubpoenaType,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting the subpoena for defendant ${defendantId} of case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_SUBPOENA_PDF,
+      id,
+      `defendant/${defendantId}/subpoena?arraignmentDate=${arraignmentDate}&location=${location}&subpoenaType=${subpoenaType}`,
       req,
       res,
       'pdf',

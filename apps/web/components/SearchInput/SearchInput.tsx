@@ -1,43 +1,44 @@
 import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
   forwardRef,
   ReactElement,
+  useCallback,
+  useEffect,
   useReducer,
+  useRef,
+  useState,
 } from 'react'
-import Downshift from 'downshift'
 import { useMeasure } from 'react-use'
+import Downshift from 'downshift'
 import { useRouter } from 'next/router'
 import { useApolloClient } from '@apollo/client/react'
-import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
+
 import {
   AsyncSearchInput,
+  AsyncSearchInputProps,
   AsyncSearchSizes,
   Box,
-  Text,
-  Stack,
   Link,
-  AsyncSearchInputProps,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
-import {
-  GetSearchResultsQuery,
-  QuerySearchResultsArgs,
-  ContentLanguage,
-  Article,
-  SubArticle,
-  SearchableContentTypes,
-  AnchorPage,
-  News,
-  OrganizationSubpage,
-  LifeEventPage,
-} from '@island.is/web/graphql/schema'
-
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { trackSearchQuery } from '@island.is/plausible'
+import { Locale } from '@island.is/shared/types'
+import {
+  AnchorPage,
+  Article,
+  ContentLanguage,
+  GetSearchResultsQuery,
+  LifeEventPage,
+  News,
+  OrganizationSubpage,
+  QuerySearchResultsArgs,
+  SearchableContentTypes,
+  SearchableTags,
+  SubArticle,
+} from '@island.is/web/graphql/schema'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import { extractAnchorPageLinkType } from '@island.is/web/utils/anchorPage'
 
 import * as styles from './SearchInput.css'
@@ -90,6 +91,7 @@ const useSearch = (
   locale: Locale,
   term?: string,
   autocomplete?: boolean,
+  organization?: string,
 ): SearchState => {
   const [state, dispatch] = useReducer(searchReducer, initialSearchState)
   const client = useApolloClient()
@@ -134,6 +136,9 @@ const useSearch = (
                 ],
                 highlightResults: true,
                 useQuery: 'suggestions',
+                tags: organization
+                  ? [{ key: organization, type: SearchableTags.Organization }]
+                  : undefined,
               },
             },
           })
@@ -169,7 +174,11 @@ type SubmitType = {
   string: string
 }
 
-const useSubmit = (locale: Locale, onRouting?: () => void) => {
+const useSubmit = (
+  locale: Locale,
+  onRouting?: () => void,
+  organization?: string,
+) => {
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
 
@@ -181,6 +190,10 @@ const useSubmit = (locale: Locale, onRouting?: () => void) => {
 
       if (Router.query.referencedBy) {
         query.referencedBy = Router.query.referencedBy
+      }
+
+      if (organization) {
+        query.organization = organization
       }
 
       Router.push({
@@ -199,7 +212,7 @@ const useSubmit = (locale: Locale, onRouting?: () => void) => {
         onRouting()
       }
     },
-    [Router, linkResolver, onRouting],
+    [Router, linkResolver, onRouting, organization],
   )
 }
 
@@ -217,6 +230,7 @@ interface SearchInputProps {
   onRouting?: () => void
   skipContext?: boolean
   quickContentLabel?: string
+  organization?: string
 }
 
 export const SearchInput = forwardRef<
@@ -239,13 +253,14 @@ export const SearchInput = forwardRef<
       skipContext,
       quickContentLabel,
       dataTestId,
+      organization,
     },
     ref,
   ) => {
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
-    const search = useSearch(locale, searchTerm, autocomplete)
+    const search = useSearch(locale, searchTerm, autocomplete, organization)
 
-    const onSubmit = useSubmit(locale)
+    const onSubmit = useSubmit(locale, undefined, organization)
     const [hasFocus, setHasFocus] = useState(false)
     const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
     const onFocus = useCallback(() => {

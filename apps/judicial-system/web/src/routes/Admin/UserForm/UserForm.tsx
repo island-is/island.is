@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { FC, SetStateAction, useCallback, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 
 import {
@@ -40,8 +40,13 @@ interface Props {
   loading: boolean
 }
 
-export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const [user, setUser] = useState<User>(props.user)
+export const UserForm: FC<Props> = ({
+  user: existingUser,
+  institutions,
+  onSave,
+  loading,
+}) => {
+  const [user, setUser] = useState<User>(existingUser)
 
   const { personData, personError } = useNationalRegistry(user.nationalId)
 
@@ -77,7 +82,7 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
     }
   }, [personData, personError, setName])
 
-  const selectInstitutions = props.institutions.map((institution) => ({
+  const selectInstitutions = institutions.map((institution) => ({
     label: institution.name ?? '',
     value: institution.id,
     institution,
@@ -95,7 +100,7 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
     field: string,
     value: string,
     validations: Validation[],
-    setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
+    setErrorMessage: (value: SetStateAction<string | undefined>) => void,
   ) => {
     setUser({
       ...user,
@@ -110,13 +115,22 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const validateAndSetError = (
     value: string,
     validations: Validation[],
-    setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
+    setErrorMessage: (value: SetStateAction<string | undefined>) => void,
   ) => {
     const validation = validate([[value, validations]])
 
     if (!validation.isValid) {
       setErrorMessage(validation.errorMessage)
     }
+  }
+
+  const saveUser = () => {
+    onSave({
+      ...user,
+      // Make sure only prosecutors can confirm indictments
+      canConfirmIndictment:
+        user.role === UserRole.PROSECUTOR && user.canConfirmIndictment,
+    })
   }
 
   return (
@@ -228,6 +242,20 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 large
               />
             </Box>
+            {user.institution.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e' && (
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="rolePublicProsecutorStaff"
+                  label="Skrifstofa"
+                  checked={user.role === UserRole.PUBLIC_PROSECUTOR_STAFF}
+                  onChange={() =>
+                    setUser({ ...user, role: UserRole.PUBLIC_PROSECUTOR_STAFF })
+                  }
+                  large
+                />
+              </Box>
+            )}
           </Box>
         ) : user.institution?.type === InstitutionType.DISTRICT_COURT ? (
           <Box display="flex" marginBottom={2}>
@@ -330,6 +358,21 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
             </Box>
           </Box>
         ) : null}
+        {user.institution?.type === InstitutionType.PROSECUTORS_OFFICE &&
+          user.role === UserRole.PROSECUTOR && (
+            <Box marginBottom={2}>
+              <Checkbox
+                name="canConfirmIndictment"
+                label="Notandi getur staðfest kærur"
+                checked={Boolean(user.canConfirmIndictment)}
+                onChange={({ target }) =>
+                  setUser({ ...user, canConfirmIndictment: target.checked })
+                }
+                large
+                filled
+              />
+            </Box>
+          )}
         <Box marginBottom={2}>
           <Input
             name="title"
@@ -428,25 +471,13 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
             filled
           />
         </Box>
-        <Box marginBottom={2}>
-          <Checkbox
-            name="canConfirmIndictment"
-            label="Notandi getur staðfest kærur"
-            checked={Boolean(user.canConfirmIndictment)}
-            onChange={({ target }) =>
-              setUser({ ...user, canConfirmIndictment: target.checked })
-            }
-            large
-            filled
-          />
-        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          onNextButtonClick={() => props.onSave(user)}
+          onNextButtonClick={saveUser}
           nextIsDisabled={!isValid()}
-          nextIsLoading={props.loading}
+          nextIsLoading={loading}
           nextButtonText="Vista"
           previousUrl={constants.USERS_ROUTE}
         />

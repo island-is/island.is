@@ -6,4 +6,5 @@ buildOpenApi({
   path: 'apps/services/user-notification/src/openapi.yaml',
   appModule: AppModule,
   openApi,
+  enableVersioning: true,
 })

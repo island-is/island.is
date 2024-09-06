@@ -1,7 +1,5 @@
-import React, { useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import cn from 'classnames'
-import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -15,24 +13,16 @@ import {
   CourtCaseNumber,
   DefendantInfo,
   getDurationDate,
-  SortButton,
-  TableContainer,
-  TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
-import {
-  CaseDecision,
-  CaseListEntry,
-  CaseState,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCaseList,
-  useSortAppealCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { useContextMenu } from '../../ContextMenu/ContextMenu'
+import Table, { TableWrapper } from '../Table'
 import MobileAppealCase from './MobileAppealCase'
-import * as styles from '../Table.css'
 
 interface Props {
   cases: CaseListEntry[]
@@ -40,13 +30,12 @@ interface Props {
   showingCompletedCases?: boolean
 }
 
-const AppealCasesTable: React.FC<Props> = (props) => {
+const AppealCasesTable: FC<Props> = (props) => {
   const { cases, loading, showingCompletedCases } = props
   const { formatMessage } = useIntl()
-  const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
-    useCaseList()
-  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
-    useSortAppealCases('appealedDate', 'descending', cases)
+  const { isOpeningCaseId, handleOpenCase, showLoading } = useCaseList()
+  const { openCaseInNewTabMenuItem } = useContextMenu()
+
   const activeCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>
@@ -70,7 +59,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
               <Text fontWeight={'medium'} variant="small">
                 {isRestrictionCase(theCase.type)
                   ? `${formatDate(theCase.rulingDate ?? '', 'd.M.y')} -
-                      ${formatDate(theCase.validToDate ?? '', 'd.M.y')}`
+                  ${formatDate(theCase.validToDate ?? '', 'd.M.y')}`
                   : ''}
               </Text>
             )}
@@ -79,101 +68,85 @@ const AppealCasesTable: React.FC<Props> = (props) => {
       ))}
     </>
   ) : (
-    <TableContainer
-      loading={loading}
-      tableHeader={
-        <>
-          <TableHeaderText title={formatMessage(tables.caseNumber)} />
-          <th className={cn(styles.th, styles.largeColumn)}>
-            <SortButton
-              title={capitalize(formatMessage(core.defendant, { suffix: 'i' }))}
-              onClick={() => requestSort('defendant')}
-              sortAsc={getClassNamesFor('defendant') === 'ascending'}
-              sortDes={getClassNamesFor('defendant') === 'descending'}
-              isActive={isActiveColumn('defendant')}
-            />
-          </th>
-          <TableHeaderText title={formatMessage(tables.type)} />
-          <TableHeaderText title={formatMessage(tables.state)} />
-          {showingCompletedCases ? (
-            <TableHeaderText title={formatMessage(tables.duration)} />
-          ) : (
-            <th className={cn(styles.th, styles.largeColumn)}>
-              <SortButton
-                title={formatMessage(tables.appealDate)}
-                onClick={() => requestSort('appealedDate')}
-                sortAsc={getClassNamesFor('appealedDate') === 'ascending'}
-                sortDes={getClassNamesFor('appealedDate') === 'descending'}
-                isActive={isActiveColumn('appealedDate')}
-              />
-            </th>
-          )}
-          <th></th>
-        </>
-      }
-    >
-      {sortedData.map((column) => {
-        return (
-          <tr
-            className={styles.row}
-            onClick={() => handleOpenCase(column.id)}
-            key={column.id}
-          >
-            <td>
+    <TableWrapper loading={loading}>
+      <Table
+        thead={[
+          {
+            title: formatMessage(tables.caseNumber),
+          },
+          {
+            title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
+            sortable: { isSortable: true, key: 'defendants' },
+          },
+          {
+            title: formatMessage(tables.type),
+          },
+          { title: formatMessage(tables.state) },
+          {
+            title: showingCompletedCases
+              ? formatMessage(tables.duration)
+              : formatMessage(tables.appealDate),
+            sortable: showingCompletedCases
+              ? undefined
+              : { isSortable: true, key: 'appealedDate' },
+          },
+        ]}
+        data={activeCasesData}
+        generateContextMenuItems={(row) => {
+          return [openCaseInNewTabMenuItem(row.id)]
+        }}
+        columns={[
+          {
+            cell: (row) => (
               <CourtCaseNumber
-                courtCaseNumber={column.courtCaseNumber ?? ''}
-                policeCaseNumbers={column.policeCaseNumbers ?? []}
-                appealCaseNumber={column.appealCaseNumber ?? ''}
+                courtCaseNumber={row.courtCaseNumber ?? ''}
+                policeCaseNumbers={row.policeCaseNumbers ?? []}
+                appealCaseNumber={row.appealCaseNumber ?? ''}
               />
-            </td>
-            <td className={cn(styles.td, styles.largeColumn)}>
-              <DefendantInfo defendants={column.defendants as Defendant[]} />
-            </td>
-            <td>
+            ),
+          },
+          {
+            cell: (row) => <DefendantInfo defendants={row.defendants} />,
+          },
+          {
+            cell: (row) => (
               <ColumnCaseType
-                type={column.type}
-                decision={column.decision as CaseDecision}
-                parentCaseId={column.parentCaseId ?? ''}
+                type={row.type}
+                decision={row.decision}
+                parentCaseId={row.parentCaseId ?? ''}
               />
-            </td>
-            <td>
+            ),
+          },
+          {
+            cell: (row) => (
               <TagAppealState
-                appealState={column.appealState}
-                appealRulingDecision={column.appealRulingDecision}
-                appealCaseNumber={column.appealCaseNumber}
+                appealState={row.appealState}
+                appealRulingDecision={row.appealRulingDecision}
+                appealCaseNumber={row.appealCaseNumber}
               />
-            </td>
-            <td>
-              {showingCompletedCases ? (
-                <Text>
-                  {isRestrictionCase(column.type)
+            ),
+          },
+          {
+            cell: (row) => (
+              <Text>
+                {showingCompletedCases
+                  ? isRestrictionCase(row.type)
                     ? getDurationDate(
-                        column.state as CaseState,
-                        column.validToDate,
-                        column.initialRulingDate,
-                        column.rulingDate,
+                        row.state,
+                        row.validToDate,
+                        row.initialRulingDate,
+                        row.rulingDate,
                       )
-                    : ''}
-                </Text>
-              ) : (
-                <Text>
-                  {column.appealedDate
-                    ? formatDate(column.appealedDate, 'd.M.y')
-                    : '-'}
-                </Text>
-              )}
-            </td>
-            <td className={styles.loadingContainer}>
-              <AnimatePresence>
-                {isOpeningCaseId === column.id && showLoading && (
-                  <LoadingIndicator />
-                )}
-              </AnimatePresence>
-            </td>
-          </tr>
-        )
-      })}
-    </TableContainer>
+                    : ''
+                  : row.appealedDate
+                  ? formatDate(row.appealedDate, 'd.M.y')
+                  : '-'}
+              </Text>
+            ),
+          },
+        ]}
+      />
+    </TableWrapper>
   )
 }
 

@@ -10,7 +10,6 @@ import {
   UserProfileApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
-  JurisdictionApi,
   QualityPhotoApi,
   ExistingApplicationApi,
 } from '@island.is/application/types'
@@ -55,11 +54,12 @@ export const sectionExternalData = buildSubSection({
           subTitle: '',
         }),
         buildDataProviderItem({
-          provider: DrivingAssessmentApi,
+          provider: QualityPhotoApi,
           title: '',
+          subTitle: '',
         }),
         buildDataProviderItem({
-          provider: JurisdictionApi,
+          provider: DrivingAssessmentApi,
           title: '',
         }),
         buildDataProviderItem({

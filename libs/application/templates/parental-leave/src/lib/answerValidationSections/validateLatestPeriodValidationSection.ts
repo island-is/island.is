@@ -11,7 +11,7 @@ import {
   calculateDaysUsedByPeriods,
   filterValidPeriods,
   getAvailableRightsInDays,
-  getExpectedDateOfBirthOrAdoptionDate,
+  getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
 } from '../parentalLeaveUtils'
 import {
   ValidateField,
@@ -121,10 +121,10 @@ export const validateLatestPeriodValidationSection = (
 
   const latestPeriodIndex = periods.length - 1
   const latestPeriod = periods[latestPeriodIndex]
-  const expectedDateOfBirthOrAdoptionDate =
-    getExpectedDateOfBirthOrAdoptionDate(application)
+  const expectedDateOfBirthOrAdoptionDateOrBirthDate =
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
 
-  if (!expectedDateOfBirthOrAdoptionDate) {
+  if (!expectedDateOfBirthOrAdoptionDateOrBirthDate) {
     return {
       path: 'periods',
       message: errorMessages.dateOfBirth,
@@ -155,6 +155,11 @@ export const validateLatestPeriodValidationSection = (
       message,
       values,
     }
+  }
+
+  // Stop checking periods synced from VMST
+  if ('approved' in latestPeriod) {
+    return undefined
   }
 
   const validatedField = validatePeriod(

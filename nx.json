@@ -1,8 +1,4 @@
 {
-  "affected": {
-    "defaultBase": "main"
-  },
-  "npmScope": "island.is",
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx/tasks-runners/default",
@@ -110,9 +106,6 @@
     "test": {
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
     },
-    "external-test": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
-    },
     "codegen/backend-client": {
       "dependsOn": ["^codegen/backend-client", "^codegen/backend-schema"],
       "inputs": ["schema-files"]
@@ -133,18 +126,42 @@
         "{projectRoot}/**/fragmentTypes.json",
         "{projectRoot}/**/*.generated.ts"
       ]
+    },
+    "@nx/jest:jest": {
+      "cache": true,
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "@nx/eslint:lint": {
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
+      "cache": true
     }
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "nodeVersion": [
+      {
+        "runtime": "node --version"
+      }
+    ],
     "sharedGlobals": [
       "{workspaceRoot}/eslint-local-rules.js",
       "{workspaceRoot}/nx.json",
       "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/tsconfig.shared.json",
       "{workspaceRoot}/babel.config.json"
     ],
     "production": [
       "default",
+      "nodeVersion",
       "!{projectRoot}/.eslintrc.json",
       "!{projectRoot}/.storybook/**/*",
       "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
@@ -169,5 +186,7 @@
         "dependentTasksOutputFiles": "**/api.graphql"
       }
     ]
-  }
+  },
+  "useInferencePlugins": false,
+  "defaultBase": "main"
 }

@@ -919,6 +919,9 @@ describe('Parental Leave Application Template', () => {
             periods,
             tempPeriods: periods,
             previousState: States.APPROVED,
+            fileUpload: {
+              changeEmployerFile: [],
+            },
           },
           state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
         }),
@@ -964,6 +967,9 @@ describe('Parental Leave Application Template', () => {
             periods,
             tempPeriods: periods,
             previousState: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            fileUpload: {
+              changeEmployerFile: [],
+            },
           },
           state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
         }),
@@ -973,9 +979,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.ABORT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(
-        ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT,
-      )
+      expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS)
       expect(newApplication.answers.tempEmployers).toEqual(undefined)
       expect(newApplication.answers.tempPeriods).toEqual(undefined)
     })
@@ -1011,6 +1015,9 @@ describe('Parental Leave Application Template', () => {
             periods,
             tempPeriods: periods,
             previousState: States.VINNUMALASTOFNUN_APPROVAL,
+            fileUpload: {
+              changeEmployerFile: [],
+            },
           },
           state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
         }),
@@ -1020,9 +1027,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.ABORT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(
-        ApplicationStates.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE,
-      )
+      expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVAL)
       expect(newApplication.answers.tempEmployers).toEqual(undefined)
       expect(newApplication.answers.tempPeriods).toEqual(undefined)
     })
@@ -1037,6 +1042,9 @@ describe('Parental Leave Application Template', () => {
             },
             applicationType: {
               option: PARENTAL_LEAVE,
+            },
+            fileUpload: {
+              changeEmployerFile: [],
             },
           },
           state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,

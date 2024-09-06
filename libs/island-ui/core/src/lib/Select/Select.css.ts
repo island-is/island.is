@@ -22,6 +22,62 @@ export const valueContainer = style(
   'valueContainer',
 )
 
+export const multiValue = style(
+  {
+    backgroundColor: theme.color.blue200,
+    color: theme.color.blue600,
+    fontWeight: theme.typography.medium,
+    borderRadius: theme.border.radius.large,
+    overflow: 'hidden',
+  },
+  'multiValue',
+)
+
+export const multiValueLabel = style(
+  {
+    color: theme.color.blue600,
+    fontWeight: theme.typography.medium,
+    borderRadius: 0,
+  },
+  'multiValueLabel',
+)
+
+globalStyle(`${wrapper} .island-select__multi-value`, {
+  borderRadius: theme.border.radius.large,
+})
+
+globalStyle(
+  `${wrapper} .island-select__value-container--is-multi.island-select__value-container--has-value .island-select__input-container`,
+  {
+    width: 'auto',
+  },
+)
+
+globalStyle(`${wrapper} .island-select__multi-value__label`, {
+  borderRadius: 0,
+  paddingLeft: '0.5rem',
+  paddingBottom: '0.33rem',
+  paddingTop: '0.33rem',
+  paddingRight: 0,
+  lineHeight: 1,
+})
+
+globalStyle(`${wrapper} .island-select__multi-value__remove`, {
+  borderRadius: 0,
+  paddingLeft: '0.25rem',
+  paddingRight: '0.33rem',
+  paddingBottom: '0.33rem',
+  paddingTop: '0.33rem',
+  transition: 'background .2s, color .2s',
+  fontWeight: theme.typography.medium,
+  cursor: 'pointer',
+})
+
+globalStyle(`${wrapper} .island-select__multi-value__remove:hover`, {
+  backgroundColor: theme.color.blue600,
+  color: theme.color.white,
+})
+
 globalStyle(`${wrapper} ${valueContainer} .island-select__input-container`, {
   margin: 0,
 })
@@ -209,6 +265,7 @@ export const menu = style(
   {
     selectors: {
       [`${wrapper} &`]: {
+        zIndex: theme.zIndex.belowModal,
         marginTop: -3,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
@@ -258,13 +315,13 @@ export const optionDescriptionTruncated = style({
 export const optionSizes = styleVariants({
   xs: wrapMedia(inputMixins.inputSizes.xs, `${wrapper} &`),
   sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
-  md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
+  md: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
 })
 
 export const optionDescriptionSizes = styleVariants({
   xs: wrapMedia(inputMixins.optionDescriptionSizes.xs, `${wrapper} &`),
   sm: wrapMedia(inputMixins.optionDescriptionSizes.sm, `${wrapper} &`),
-  md: wrapMedia(inputMixins.optionDescriptionSizes.md, `${wrapper} &`),
+  md: wrapMedia(inputMixins.optionDescriptionSizes.sm, `${wrapper} &`),
 })
 
 export const dontRotateIconOnOpen = style({})
