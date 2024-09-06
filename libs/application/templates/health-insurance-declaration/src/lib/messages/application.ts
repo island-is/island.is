@@ -43,12 +43,12 @@ export const application = {
   studentOrTourist: defineMessages({
     sectionTitle: {
       id: 'hid.application:studentOrTourist.section.title',
-      defaultMessage: 'Námsmaður/ferðamaður',
+      defaultMessage: 'Nám/ferðir',
       description: 'Student or Tourist section title',
     },
     sectionDescription: {
       id: 'hid.application:studentOrTourist.section.description',
-      defaultMessage: 'Ertu ferðamaður eða námsmaður?',
+      defaultMessage: 'Er sótt um vegna ferða eða náms?',
       description: 'Student or Tourist section description',
     },
     touristRadioFieldText: {
@@ -79,8 +79,13 @@ export const application = {
     },
     sectionDescription: {
       id: 'hid.application:registerPersons.section.description',
-      defaultMessage: 'Ég er einnig að sækja um fyrir',
+      defaultMessage: 'Ég er að sækja um fyrir',
       description: 'Register persons section description',
+    },
+    applicantTitle: {
+      id: 'hid.application:registerPersons.section.applicantTitle',
+      defaultMessage: 'Umsækjandi',
+      description: 'Register persons title',
     },
     spousetitle: {
       id: 'hid.application:registerPersons.section.spouseTitle',
@@ -116,7 +121,7 @@ export const application = {
     },
     studentSectionPlaceholderText: {
       id: 'hid.application:residency.section.student.placeholderSelectText',
-      defaultMessage: 'Veldur land sem þú ferðast til',
+      defaultMessage: 'Veldu land sem ferðast á til',
       description: 'Student residency selection placeholder text',
     },
   }),
@@ -200,17 +205,17 @@ export const application = {
     },
     studentOrTouristTitle: {
       id: 'hid.application:overview.section.studentOrTouristTitle',
-      defaultMessage: 'Ertu ferðamaður eða námsmaður',
+      defaultMessage: 'Er sótt um vegna ferða eða náms',
       description: 'Overview section Student or Tourist title',
     },
     studentOrTouristTouristText: {
       id: 'hid.application:overview.section.studentOrTouristTouristText',
-      defaultMessage: 'Ferðamaður',
+      defaultMessage: 'Ferða',
       description: 'Overview section Student or Tourist: Tourist text',
     },
     studentOrTouristStudentText: {
       id: 'hid.application:overview.section.studentOrTouristStudentText',
-      defaultMessage: 'Námsmaður',
+      defaultMessage: 'Náms',
       description: 'Overview section Student or Tourist: Student text',
     },
     applicantInfoTitle: {
@@ -218,25 +223,30 @@ export const application = {
       defaultMessage: 'Persónu upplýsingar',
       description: 'Overview section applicant title',
     },
-    familyTableTitle: {
-      id: 'hid.application:overview.section.familyTableHeader',
-      defaultMessage: 'Maki og börn',
-      description: 'Overview section family table title',
+    applicantsTableTitle: {
+      id: 'hid.application:overview.section.applicantsTableHeader',
+      defaultMessage: 'Sótt er um fyrir',
+      description: 'Overview section applicant table title',
     },
     familyTableRelationHeader: {
       id: 'hid.application:overview.section.familyTableHeaderRelationText',
       defaultMessage: 'Tengsl',
-      description: 'Overview section family table title',
+      description: 'Overview section applicant table title',
+    },
+    familyTableRelationApplicantText: {
+      id: 'hid.application:overview.section.applicantTableApplicantRelationText',
+      defaultMessage: 'Umsækjandi',
+      description: 'Overview section applicant table applicant text',
     },
     familyTableRelationSpouseText: {
-      id: 'hid.application:overview.section.familyTableSpouseRelationText',
+      id: 'hid.application:overview.section.applicantTableSpouseRelationText',
       defaultMessage: 'Maki',
-      description: 'Overview section family table spouse relation text',
+      description: 'Overview section applicant table spouse relation text',
     },
     familyTableRelationChildText: {
-      id: 'hid.application:overview.section.familyTableChildRelationText',
+      id: 'hid.application:overview.section.applicantTableChildRelationText',
       defaultMessage: 'Barn',
-      description: 'Overview section family table child relation text',
+      description: 'Overview section applicant table child relation text',
     },
     dateTitle: {
       id: 'hid.application:overview.section.DateTitle',
