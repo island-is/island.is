@@ -141,17 +141,6 @@ export const m = defineMessages({
     defaultMessage: 'Læknisvottorð',
     description: 'Upload header',
   },
-  uploadDescription: {
-    id: 'dl.application:uploadDescription',
-    defaultMessage:
-      'Tekið er við skjölum með endingunum: .pdf, .doc, .docx, .rtf',
-    description: 'Upload description',
-  },
-  uploadButtonLabel: {
-    id: 'dl.application:uploadButtonLabel',
-    defaultMessage: 'Velja skjal til að hlaða upp',
-    description: 'Upload button label',
-  },
   healthDeclarationAge65MultiFieldSubTitle: {
     id: 'dl.application:healthDeclarationAge65MultiFieldSubTitle.subTitle',
     defaultMessage:
@@ -233,11 +222,6 @@ export const m = defineMessages({
     id: 'dl.application:overviewSection.title',
     defaultMessage: 'Staðfesting',
     description: 'Confirmation',
-  },
-  errorHealthDeclarationNotFilledOut: {
-    id: 'dl.application:errorHealthDeclarationNotFilledOut',
-    defaultMessage: 'Vinsamlegast fylltu út heilbrigðisyfirlýsingu',
-    description: '',
   },
   overviewMultiFieldTitle: {
     id: 'dl.application:overviewMultiField.title',
@@ -614,13 +598,6 @@ export const m = defineMessages({
       'Veldu það embætti sýslumanns þar sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini',
     description:
       'Choose district commissioner for returning a temporary license and recieve a new full license',
-  },
-  chooseDistrictCommisionerForFullLicenseRenewal65: {
-    id: 'dl.application:chooseDistrictCommisionerForFullLicenseRenewal65',
-    defaultMessage:
-      'Veldu sýslumannsembætti þar sem þú vilt fá afhent nýtt ökuskírteini.',
-    description:
-      'Choose district commissioner for recieving a new full license',
   },
   chooseDistrictCommisionerForTempLicense: {
     id: 'dl.application:chooseDistrictCommisionerForTempLicense',
