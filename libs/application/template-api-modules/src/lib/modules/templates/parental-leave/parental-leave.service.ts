@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
-import addDays from 'date-fns/addDays'
-import format from 'date-fns/format'
 
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -25,7 +23,6 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
   getAvailablePersonalRightsInDays,
-  getAvailablePersonalRightsInMonths,
   getAvailablePersonalRightsSingleParentInMonths,
   getAvailableRightsInDays,
   getMaxMultipleBirthsInMonths,
@@ -35,7 +32,7 @@ import {
   getTransferredDaysInMonths,
   getUnApprovedEmployers,
   isParentWithoutBirthParent,
-  Period as PeriodsExtended,
+  Period as AnswerPeriod,
   getPersonaldays,
   getPersonalDaysInMonths,
 } from '@island.is/application/templates/parental-leave'
@@ -43,7 +40,6 @@ import {
   Application,
   ApplicationConfigurations,
   ApplicationTypes,
-  YesOrNo,
 } from '@island.is/application/types'
 import type {
   ApplicationRights,
@@ -71,7 +67,6 @@ import {
   APPLICATION_ATTACHMENT_BUCKET,
   SIX_MONTHS_IN_SECONDS_EXPIRES,
   apiConstants,
-  df,
   rightsDescriptions,
 } from './constants'
 import {
@@ -85,7 +80,6 @@ import {
 import {
   getType,
   checkIfPhoneNumberIsGSM,
-  getRatio,
   getRightsCode,
   transformApplicationToParentalLeaveDTO,
 } from './parental-leave.utils'
@@ -95,6 +89,7 @@ import {
   generateEmployerRejectedApplicationSms,
   generateOtherParentRejectedApplicationSms,
 } from './smsGenerators'
+import parseISO from 'date-fns/parseISO'
 
 interface VMSTError {
   type: string
@@ -102,17 +97,6 @@ interface VMSTError {
   status: number
   traceId: string
   errors: Record<string, string[]>
-}
-
-interface AnswerPeriod {
-  startDate: string
-  endDate: string
-  ratio: string
-  firstPeriodStart?: string
-  useLength?: YesOrNo
-  daysToUse?: string
-  rawIndex?: number
-  rightCodePeriod?: string
 }
 
 @Injectable()
@@ -690,67 +674,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return attachments
   }
 
-  async getCalculatedPeriod(
-    nationalRegistryId: string,
-    startDate: Date,
-    startDateString: string | undefined,
-    periodLength: number,
-    period: AnswerPeriod,
-    rightsCodePeriod: string,
-  ): Promise<Period> {
-    const periodObj = {
-      from: startDateString ?? format(startDate, df),
-      approved: false,
-      paid: false,
-      rightsCodePeriod: rightsCodePeriod,
-    }
-    if (period.ratio === '100') {
-      const isUsingNumberOfDays = period.daysToUse !== undefined
-      const getPeriodEndDate =
-        await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate({
-          nationalRegistryId,
-          startDate: startDate,
-          length: String(periodLength),
-          percentage: period.ratio,
-        })
-
-      if (getPeriodEndDate.periodEndDate === undefined) {
-        throw new Error(
-          `Could not calculate end date of period starting ${period.startDate} and using ${periodLength} days of rights`,
-        )
-      }
-
-      return {
-        ...periodObj,
-        to: format(getPeriodEndDate.periodEndDate, df),
-        ratio: getRatio(
-          period.ratio,
-          periodLength.toString(),
-          isUsingNumberOfDays,
-        ),
-      }
-    } else {
-      const isUsingNumberOfDays = true
-
-      // Calculate endDate from periodLength, startDate and percentage ( period.ratio )
-      const actualDaysFromPercentage = Math.floor(
-        periodLength / (Number(period.ratio) / 100),
-      )
-
-      const endDate = addDays(startDate, actualDaysFromPercentage)
-
-      return {
-        ...periodObj,
-        to: format(endDate, df),
-        ratio: getRatio(
-          period.ratio,
-          periodLength.toString(),
-          isUsingNumberOfDays,
-        ),
-      }
-    }
-  }
-
   async createRightsDTO(
     application: Application,
   ): Promise<ApplicationRights[]> {
@@ -812,15 +735,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const transferredDays = getTransferredDays(application, selectedChild)
     const personalDays = getPersonaldays(application)
 
-    console.log({
-      maximumDaysToSpend,
-      maximumPersonalDaysToSpend,
-      maximumMultipleBirthsDaysToSpend,
-      maximumAdditionalSingleParentDaysToSpend,
-      usedDays,
-      personalDays,
-    })
-
     const mulitpleBirthsRights =
       applicationType === PARENTAL_LEAVE
         ? apiConstants.rights.multipleBirthsOrlofRightsId
@@ -836,7 +750,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         daysLeft: String(Math.max(0, personalDays - usedDays)),
       },
     ]
-    console.log({ rights })
 
     if (otherParent === SINGLE) {
       rights.push({
@@ -916,22 +829,36 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return rights
   }
 
-  createPeriodsDTO(periods: PeriodsExtended[], rights: string): Period[] {
-    console.log({ periods })
+  calculatePeriodDays(
+    startDate: string,
+    endDate: string,
+    ratio: string,
+    daysToUse?: string,
+  ) {
+    if (daysToUse) {
+      return daysToUse
+    }
+    const start = parseISO(startDate)
+    const end = parseISO(endDate)
+    const percentage = Number(ratio) / 100
+    const periodLength = calculatePeriodLength(start, end)
+    return Math.floor(periodLength * percentage)
+  }
 
-    const p = periods.map((period) => ({
+  createPeriodsDTO(periods: AnswerPeriod[], rights: string): Period[] {
+    return periods.map((period) => ({
       rightsCodePeriod: rights,
       from: period.startDate,
       to: period.endDate,
-      ratio: `D${calculatePeriodLength(
-        new Date(period.startDate),
-        new Date(period.endDate),
-        Number(period.ratio) / 100,
+      ratio: `D${this.calculatePeriodDays(
+        period.startDate,
+        period.endDate,
+        period.ratio,
+        period.daysToUse,
       )}`,
       approved: !!period.approved,
       paid: !!period.paid,
     }))
-    return p
   }
 
   async sendApplication({
@@ -966,7 +893,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         application,
         periodsDTO,
         attachments,
-        true,
+        false,
         getType(application),
         rightsDTO,
       )
@@ -976,7 +903,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           nationalRegistryId,
           parentalLeave: parentalLeaveDTO,
         })
-      console.log({ response })
 
       if (!response.id) {
         throw new Error(
