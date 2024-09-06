@@ -4,11 +4,7 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import {
-  CaseCompletedGuard,
-  CaseTypeGuard,
-  CaseWriteGuard,
-} from '../../../case'
+import { CaseTypeGuard, CaseWriteGuard } from '../../../case'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
 
 describe('LimitedAccessFileController - Create presigned post guards', () => {
