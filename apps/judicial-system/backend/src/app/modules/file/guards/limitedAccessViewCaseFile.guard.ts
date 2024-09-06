@@ -7,11 +7,10 @@ import {
 } from '@nestjs/common'
 
 import {
-  CaseFileCategory,
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
-  isPrisonSystemUser,
+  isPrisonAdminUser,
   isRequestCase,
   User,
 } from '@island.is/judicial-system/types'
@@ -21,6 +20,7 @@ import { CaseFile } from '../models/file.model'
 import {
   defenderCaseFileCategoriesForIndictmentCases,
   defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+  prisonAdminCaseFileCategories,
 } from './caseFileCategory'
 
 @Injectable()
@@ -65,14 +65,13 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
       }
     }
 
-    if (isPrisonSystemUser(user)) {
-      if (
-        isCompletedCase(theCase.state) &&
-        caseFile.category &&
-        caseFile.category === CaseFileCategory.APPEAL_RULING
-      ) {
-        return true
-      }
+    if (
+      caseFile.category &&
+      isCompletedCase(theCase.state) &&
+      isPrisonAdminUser(user) &&
+      prisonAdminCaseFileCategories.includes(caseFile.category)
+    ) {
+      return true
     }
 
     throw new ForbiddenException(`Forbidden for ${user.role}`)
