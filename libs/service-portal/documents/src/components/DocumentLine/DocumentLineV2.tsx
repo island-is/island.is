@@ -199,7 +199,11 @@ export const DocumentLine: FC<Props> = ({
 
   useEffect(() => {
     if (id === documentLine.id) {
-      getDocument()
+      if (isUrgent) {
+        getDocumentMetadata()
+      } else {
+        getDocument()
+      }
     }
   }, [id, documentLine, getDocument])
 

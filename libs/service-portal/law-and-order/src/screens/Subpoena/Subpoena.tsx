@@ -19,7 +19,7 @@ import {
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import InfoLines from '../../components/InfoLines/InfoLines'
 import DefenderChoices from '../../components/DefenderChoices/DefenderChoices'
 import { useEffect, useState } from 'react'
@@ -31,6 +31,7 @@ import { usePostSubpoenaAcknowledgedMutation } from '../CourtCaseDetail/CourtCas
 import { LawAndOrderPaths } from '../../lib/paths'
 import { DefenseChoices } from '../../lib/const'
 import { isDefined } from '@island.is/shared/utils'
+import { DocumentsPaths } from '@island.is/service-portal/documents'
 
 type UseParams = {
   id: string
@@ -66,18 +67,18 @@ const Subpoena = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const [postAction, { loading: postActionLoading }] =
-    usePostSubpoenaAcknowledgedMutation({
-      onError: () => {
-        toast.error(formatMessage(messages.registrationError))
-      },
-      onCompleted: () => {
-        //TODO: What to do if user closes or cancel the pop up?
-        subpoenaAcknowledged &&
-          toast.success(formatMessage(messages.registrationCompleted))
-        setSubpoenaModalVisible(false)
-      },
-    })
+  // const [postAction, { loading: postActionLoading }] =
+  //   usePostSubpoenaAcknowledgedMutation({
+  //     onError: () => {
+  //       toast.error(formatMessage(messages.registrationError))
+  //     },
+  //     onCompleted: () => {
+  //       //TODO: What to do if user closes or cancel the pop up?
+  //       subpoenaAcknowledged &&
+  //         toast.success(formatMessage(messages.registrationCompleted))
+  //       setSubpoenaModalVisible(false)
+  //     },
+  //   })
 
   const toggleModal = () => {
     setSubpoenaModalVisible(!subpoenaModalVisible)
@@ -86,42 +87,50 @@ const Subpoena = () => {
   const handleSubmit = () => {
     // TODO: Change to service
     setSubpoenaAcknowledged(true)
-    postAction({
-      variables: {
-        input: {
-          caseId: id,
-          acknowledged: true,
-        },
-      },
-    })
+    // postAction({
+    //   variables: {
+    //     input: {
+    //       caseId: id,
+    //       acknowledged: true,
+    //     },
+    //   },
+    // })
   }
 
   const handleCancel = () => {
     // TODO: Change to service
     setSubpoenaAcknowledged(false)
-    postAction({
-      variables: {
-        input: {
-          caseId: id,
-          acknowledged: false,
-        },
-      },
-    })
+    // postAction({
+    //   variables: {
+    //     input: {
+    //       caseId: id,
+    //       acknowledged: false,
+    //     },
+    //   },
+    // })
   }
 
   if (subpoena?.data && subpoenaAcknowledged === undefined) {
     setSubpoenaModalVisible(true)
+    // return (
+    //   <ConfirmationModal
+    //     onSubmit={handleSubmit}
+    //     onCancel={handleCancel}
+    //     onClose={toggleModal}
+    //     loading={false}
+    //     redirectPath={LawAndOrderPaths.SubpoenaDetail.replace(':id', id)}
+    //     modalTitle={formatMessage(m.acknowledgeTitle)}
+    //     modalText={formatMessage(m.acknowledgeText, {
+    //       arg: formatMessage(messages.modalFromPolice),
+    //     })}
+    //   />
+    // )
     return (
-      <ConfirmationModal
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-        onClose={toggleModal}
-        loading={postActionLoading}
-        redirectPath={LawAndOrderPaths.SubpoenaDetail.replace(':id', id)}
-        modalTitle={formatMessage(m.acknowledgeTitle)}
-        modalText={formatMessage(m.acknowledgeText, {
-          arg: formatMessage(messages.modalFromPolice),
-        })}
+      <Navigate
+        to={DocumentsPaths.ElectronicDocumentSingle.replace(
+          ':id',
+          '52b25547-321d-4584-ba3d-2a7901228b25',
+        )}
       />
     )
   }
@@ -139,13 +148,13 @@ const Subpoena = () => {
         serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
         serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
       />
-      {subpoenaAcknowledged && (
+      {!loading && subpoena?.texts?.confirmation && (
         <GridContainer>
           <GridRow>
             <GridColumn span="10/12">
               <AlertMessage
                 type="success"
-                message={subpoena?.texts?.confirmation}
+                message={subpoena.texts.confirmation}
               />
             </GridColumn>
           </GridRow>

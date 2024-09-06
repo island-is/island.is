@@ -48,7 +48,8 @@ const CourtCases = () => {
 
       {error && !loading && <Problem error={error} noBorder={false} />}
 
-      {cases &&
+      {!loading &&
+        cases &&
         cases.length > 0 &&
         cases?.map((x) => (
           <Box marginTop={2}>

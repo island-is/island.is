@@ -395,12 +395,13 @@
         "type": "object",
         "properties": {
           "caseNumber": { "type": "string" },
+          "acknowledged": { "type": "boolean" },
           "groups": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/Groups" }
           }
         },
-        "required": ["caseNumber", "groups"]
+        "required": ["caseNumber", "acknowledged", "groups"]
       },
       "CaseResponse": {
         "type": "object",
@@ -414,12 +415,13 @@
         "type": "object",
         "properties": {
           "title": { "type": "string" },
+          "acknowledged": { "type": "boolean" },
           "groups": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/Groups" }
           }
         },
-        "required": ["title", "groups"]
+        "required": ["title", "acknowledged", "groups"]
       },
       "DefenderInfo": {
         "type": "object",

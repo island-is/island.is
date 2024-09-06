@@ -36,7 +36,11 @@ const DocumentActions = () => {
             if (a.type === 'url' && a.data) {
               return (
                 <Box marginRight={1}>
-                  <a href={a.data}>
+                  <a
+                    href={
+                      '/minarsidur/log-og-reglur/domsmal/410c3e69-f272-47f0-9fec-119e9dfd238e/fyrirkall' // Temp hardcoded value  <a href={a.data}>
+                    }
+                  >
                     <Button
                       as="span"
                       unfocusable
