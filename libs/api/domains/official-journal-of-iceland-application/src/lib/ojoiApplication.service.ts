@@ -1,5 +1,5 @@
 import { OfficialJournalOfIcelandApplicationClientService } from '@island.is/clients/official-journal-of-iceland/application'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { PostCommentInput } from '../models/postComment.input'
 import { PostApplicationInput } from '../models/postApplication.input'
 import { GetCommentsInput } from '../models/getComments.input'
@@ -14,10 +14,16 @@ import {
 import { AddApplicationAttachmentResponse } from '../models/addApplicationAttachment.response'
 import { GetApplicationAttachmentInput } from '../models/getApplicationAttachment.input'
 import { DeleteApplicationAttachmentInput } from '../models/deleteApplicationAttachment.input'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+
+const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
 @Injectable()
 export class OfficialJournalOfIcelandApplicationService {
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
     private readonly ojoiApplicationService: OfficialJournalOfIcelandApplicationClientService,
   ) {}
 
@@ -98,6 +104,11 @@ export class OfficialJournalOfIcelandApplicationService {
         success: true,
       }
     } catch (error) {
+      this.logger.error('Failed to add application attachment', {
+        category: LOG_CATEGORY,
+        applicationId: input.applicationId,
+        error: error,
+      })
       return {
         success: false,
       }
@@ -120,6 +131,11 @@ export class OfficialJournalOfIcelandApplicationService {
 
       return { success: true }
     } catch (error) {
+      this.logger.error('Failed to delete application attachment', {
+        category: LOG_CATEGORY,
+        applicationId: input.applicationId,
+        error: error,
+      })
       return { success: false }
     }
   }

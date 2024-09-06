@@ -10,7 +10,6 @@ import {
   GetPdfUrlResponse,
   GetPdfUrlByApplicationIdRequest,
   GetPdfByApplicationIdRequest,
-  S3UploadFilesResponse,
   GetPresignedUrlRequest,
   PresignedUrlResponse,
   AddApplicationAttachmentRequest,
@@ -41,8 +40,9 @@ export class OfficialJournalOfIcelandApplicationClientService {
       await this.ojoiApplicationApi.postComment(params)
       return true
     } catch (error) {
-      this.logger.warn('Failed to post comment', {
+      this.logger.error('Failed to post comment', {
         error,
+        applicationId: params.id,
         category: LOG_CATEGORY,
       })
       return false
@@ -54,6 +54,11 @@ export class OfficialJournalOfIcelandApplicationClientService {
       await this.ojoiApplicationApi.postApplication(params)
       return Promise.resolve(true)
     } catch (error) {
+      this.logger.error('Failed to post application', {
+        error,
+        applicationId: params.id,
+        category: LOG_CATEGORY,
+      })
       return Promise.reject(false)
     }
   }
@@ -94,7 +99,8 @@ export class OfficialJournalOfIcelandApplicationClientService {
     try {
       return await this.ojoiApplicationApi.getPrice(params)
     } catch (error) {
-      this.logger.warn('Failed to get price', {
+      this.logger.error('Failed to get price', {
+        applicationId: params.id,
         error,
         category: LOG_CATEGORY,
       })
