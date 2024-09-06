@@ -32,7 +32,7 @@ export class HealthDirectorateResolver {
 
   /* Organ Donation */
   @Query(() => OrganDonation, {
-    name: 'HealthDirectorateOrganDonation',
+    name: 'healthDirectorateOrganDonation',
   })
   @Audit()
   async getDonorStatus(
@@ -55,7 +55,7 @@ export class HealthDirectorateResolver {
 
   @Mutation(() => Boolean, {
     nullable: true,
-    name: 'HealthDirectorateOrganDonationUpdateDonorStatus',
+    name: 'healthDirectorateOrganDonationUpdateDonorStatus',
   })
   @Audit()
   async updateDonorStatus(
@@ -67,7 +67,7 @@ export class HealthDirectorateResolver {
 
   /* Vaccinations */
   @Query(() => Vaccinations, {
-    name: 'HealthDirectorateVaccinations',
+    name: 'healthDirectorateVaccinations',
   })
   @Audit()
   getVaccinations(@CurrentUser() user: User): Promise<Vaccinations> {

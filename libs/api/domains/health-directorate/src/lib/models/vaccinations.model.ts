@@ -1,5 +1,5 @@
 import { DiseaseVaccinationDtoVaccinationStatusEnum } from '@island.is/clients/health-directorate'
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 registerEnumType(DiseaseVaccinationDtoVaccinationStatusEnum, {
   name: 'HealthDirectorateVaccinationsStatus',
@@ -7,16 +7,16 @@ registerEnumType(DiseaseVaccinationDtoVaccinationStatusEnum, {
 
 @ObjectType('HealthDirectorateVaccinationsAge')
 export class Age {
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   years?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   months?: number
 }
 
 @ObjectType('HealthDirectorateVaccinationsInfo')
 export class Info {
-  @Field(() => Number)
+  @Field(() => Int)
   id!: number
 
   @Field({ nullable: true })

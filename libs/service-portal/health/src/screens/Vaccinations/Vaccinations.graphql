@@ -1,5 +1,5 @@
 query getVaccinations {
-  HealthDirectorateVaccinations {
+  healthDirectorateVaccinations {
     vaccinations {
       id
       name

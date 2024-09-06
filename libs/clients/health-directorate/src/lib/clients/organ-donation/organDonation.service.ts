@@ -47,15 +47,11 @@ export class HealthDirectorateOrganDonationService {
     auth: Auth,
     input: UpdateOrganDonorDto,
   ): Promise<void> {
-    await this.organDonationApiWithAuth(auth)
-      .meDonorStatusControllerUpdateOrganDonorStatus({
-        updateOrganDonorDto: input,
-      })
-      .catch((error: Error) => {
-        throw new Error(
-          `health-directorate-organ-donation-client: update organ donation status failed ${error.message}`,
-        )
-      })
+    await this.organDonationApiWithAuth(
+      auth,
+    ).meDonorStatusControllerUpdateOrganDonorStatus({
+      updateOrganDonorDto: input,
+    })
   }
 
   public async getDonationExceptions(

@@ -18,7 +18,7 @@ export const VaccinationsWrapper = () => {
   const { formatMessage } = useLocale()
   const { data, loading, error } = useGetVaccinationsQuery()
 
-  const vaccinations = data?.HealthDirectorateVaccinations.vaccinations
+  const vaccinations = data?.healthDirectorateVaccinations.vaccinations
 
   const general = vaccinations?.filter((x) => x.isFeatured)
   const other = vaccinations?.filter((x) => !x.isFeatured)

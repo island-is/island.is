@@ -1,5 +1,5 @@
 query getDonorStatus($locale: String) {
-  HealthDirectorateOrganDonation(locale: $locale) {
+  healthDirectorateOrganDonation(locale: $locale) {
     donor {
       isDonor
       limitations {
@@ -15,7 +15,7 @@ query getDonorStatus($locale: String) {
 }
 
 query getOrgansList($locale: String) {
-  HealthDirectorateOrganDonation(locale: $locale) {
+  healthDirectorateOrganDonation(locale: $locale) {
     donor {
       isDonor
       limitations {
@@ -34,5 +34,5 @@ query getOrgansList($locale: String) {
 }
 
 mutation updateOrganDonationInfo($input: HealthDirectorateOrganDonorInput!) {
-  HealthDirectorateOrganDonationUpdateDonorStatus(input: $input)
+  healthDirectorateOrganDonationUpdateDonorStatus(input: $input)
 }

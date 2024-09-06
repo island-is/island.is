@@ -18,7 +18,7 @@ const OrganDonation = () => {
   const { data, loading, error } = useGetDonorStatusQuery({
     fetchPolicy: 'no-cache',
   })
-  const donorStatus = data?.HealthDirectorateOrganDonation.donor
+  const donorStatus = data?.healthDirectorateOrganDonation.donor
   const cardText: string = donorStatus?.isDonor
     ? donorStatus?.limitations?.hasLimitations
       ? [

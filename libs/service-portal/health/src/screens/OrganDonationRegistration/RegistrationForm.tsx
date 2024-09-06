@@ -39,12 +39,12 @@ export const Form2 = () => {
     variables: { locale: lang },
   })
 
-  const isDonor = data?.HealthDirectorateOrganDonation.donor?.isDonor
+  const isDonor = data?.healthDirectorateOrganDonation.donor?.isDonor
   const hasLimitations =
-    data?.HealthDirectorateOrganDonation.donor?.limitations?.hasLimitations
-  const allLimitations = data?.HealthDirectorateOrganDonation.organList
+    data?.healthDirectorateOrganDonation.donor?.limitations?.hasLimitations
+  const allLimitations = data?.healthDirectorateOrganDonation.organList
   const selectedLimitations =
-    data?.HealthDirectorateOrganDonation.donor?.limitations?.limitedOrgansList?.map(
+    data?.healthDirectorateOrganDonation.donor?.limitations?.limitedOrgansList?.map(
       (item) => item.id,
     )
   const donorStatus = isDonor
