@@ -2,7 +2,6 @@ import {
   buildMultiField,
   buildCustomField,
   buildSubSection,
-  buildFileUploadField,
   buildAlertMessageField,
   hasYes,
   buildDescriptionField,
@@ -155,13 +154,6 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration10,
           },
         ),
-        buildAlertMessageField({
-          id: 'healthDeclaration.error',
-          title: '',
-          message: m.errorHealthDeclarationNotFilledOut,
-          alertType: 'error',
-          condition: (answers) => !!(answers.healthDeclaration as any)?.error,
-        }),
         buildAlertMessageField({
           id: 'healthDeclaration.contactGlassesMismatch',
           title: '',
