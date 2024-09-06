@@ -100,7 +100,6 @@ export const EditEmailScreen: NavigationFunctionComponent<{
                   })
                   if (res.data) {
                     Navigation.dismissModal(componentId)
-                    console.log(res.data, 'Uppfærði tómt netfang')
                   } else {
                     throw new Error('Failed to delete email')
                   }

@@ -16,7 +16,7 @@ import {
   addNormalPlusJustifiedText,
   addNormalPlusText,
   addNormalText,
-  IndictmentConfirmation,
+  Confirmation,
   setTitle,
 } from './pdfHelpers'
 
@@ -52,7 +52,7 @@ const roman = (num: number) => {
 export const createIndictment = async (
   theCase: Case,
   formatMessage: FormatMessage,
-  confirmation?: IndictmentConfirmation,
+  confirmation?: Confirmation,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
