@@ -500,6 +500,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn þín um fullnaðarskírteini hefur verið móttekin.',
     description: 'Application received',
   },
+  applicationDoneAlertMessage65Renewal: {
+    id: 'dl.application:applicationDoneAlertMessage65Renewal',
+    defaultMessage: 'Umsókn þín um endurnýjun ökuskírteina fyrir 65 og eldra hefur verið móttekin.',
+    description: 'Application received',
+  },
   applicationDoneAlertMessageBE: {
     id: 'dl.application:applicationDoneAlertMessageBE',
     defaultMessage:
@@ -523,10 +528,16 @@ export const m = defineMessages({
       'Næst þarf umsækjandi að mæta til sýslumanns. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: '',
   },
-  nextStepsDescriptionBEFull: {
-    id: 'dl.application:nextStepsDescriptionBEFull#markdown',
+  nextStepsDescriptionBE: {
+    id: 'dl.application:nextStepsDescriptionBE#markdown',
     defaultMessage:
-      'Næst þarf umsækjandi að mæta til sýslumanns. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
+    description: '',
+  },
+  nextStepsDescription65Renewal: {
+    id: 'dl.application:nextStepsDescription65Renewal#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at euismod nisi. In lobortis nisi purus, sit amet porta sem auctor vitae. Nunc aliquet elit nec ex gravida, a placerat quam eleifend.',
     description: '',
   },
   nextStepsInfoLink: {
@@ -663,6 +674,11 @@ export const m = defineMessages({
     id: 'dl.application:drivingLicenseTypeRequested',
     defaultMessage: 'Réttindi sem sótt er um',
     description: 'Driving license type that is requested',
+  },
+  informationFullName: {
+    id: 'dl.application:informationFullName',
+    defaultMessage: 'Nafn',
+    description: 'Street address',
   },
   informationStreetAddress: {
     id: 'dl.application:informationStreetAddress',

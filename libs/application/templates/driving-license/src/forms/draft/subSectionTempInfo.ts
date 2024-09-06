@@ -16,7 +16,6 @@ import {
 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { B_TEMP, BE, B_FULL_RENEWAL_65 } from '../../lib/constants'
-import { NationalRegistryIndividual } from '@island.is/application/types'
 
 export const subSectionTempInfo = buildSubSection({
   id: 'infoStep',
@@ -31,14 +30,6 @@ export const subSectionTempInfo = buildSubSection({
       title: m.informationApplicant,
       space: 2,
       children: [
-        buildTextField({
-          id: 'applicant.name',
-          title: m.overviewName,
-          readOnly: true,
-          defaultValue: ({ externalData }: Application) =>
-            (externalData.nationalRegistry?.data as NationalRegistryIndividual)
-              .fullName,
-        }),
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
           value: m.applicationForTempLicenseTitle,
@@ -49,12 +40,17 @@ export const subSectionTempInfo = buildSubSection({
           value: m.applicationForBELicenseTitle,
           condition: (answers) => answers.applicationFor === BE,
         }),
+        buildKeyValueField({
+          label: m.drivingLicenseTypeRequested,
+          value: m.applicationForRenewalLicenseDescription,
+          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+        }),
         buildDividerField({
           title: '',
           color: 'dark400',
         }),
         buildKeyValueField({
-          label: m.informationApplicant,
+          label: m.informationFullName,
           value: ({ externalData: { nationalRegistry } }) =>
             (nationalRegistry.data as NationalRegistryUser).fullName,
           width: 'half',
@@ -92,10 +88,6 @@ export const subSectionTempInfo = buildSubSection({
             const data = externalData.userProfile.data as UserProfile
             return data.email
           },
-        }),
-        buildDividerField({
-          title: '',
-          color: 'dark400',
         }),
         buildDescriptionField({
           id: 'drivingInstructorTitle',
