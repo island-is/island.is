@@ -38,7 +38,7 @@ export const getVideoEmbedProperties = (
         youtubeId = id
       } else {
         const v = item.searchParams.get('v')
-        if (v && v.length == 11) {
+        if (v && v.length === 11) {
           youtubeId = v
         }
       }
