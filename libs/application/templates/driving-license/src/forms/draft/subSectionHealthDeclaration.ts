@@ -207,7 +207,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         )
       },
       children: [
-        /*buildFileUploadField({
+        buildFileUploadField({
           id: 'healthDeclarationAge65.attachment',
           title: '',
           maxSize: FILE_SIZE_LIMIT,
@@ -216,9 +216,10 @@ export const subSectionHealthDeclaration = buildSubSection({
           uploadHeader: m.uploadHeader,
           uploadDescription: m.uploadDescription,
           uploadButtonLabel: m.uploadButtonLabel,
+          condition: (answers) =>
             answers.applicationFor !== BE &&
             (answers.healthDeclaration as any)?.contactGlassesMismatch,
-        }),*/
+        }),
         //TODO: Remove when RLS/SGS supports health certificate in BE license
         buildDescriptionField({
           id: 'healthDeclarationValidForBELicense',
