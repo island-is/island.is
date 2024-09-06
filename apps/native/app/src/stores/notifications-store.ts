@@ -18,6 +18,7 @@ import {
 } from '../graphql/types/schema'
 import { ComponentRegistry } from '../utils/component-registry'
 import { getRightButtons } from '../utils/get-main-root'
+import { setBadgeCountAsync } from 'expo-notifications'
 
 export interface Notification {
   id: string
@@ -114,6 +115,7 @@ export const notificationsStore = create<NotificationsStore>(
       },
       updateNavigationUnseenCount(unseenCount: number) {
         set({ unseenCount })
+        setBadgeCountAsync(unseenCount)
 
         Navigation.mergeOptions(ComponentRegistry.HomeScreen, {
           topBar: {
