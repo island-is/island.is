@@ -74,9 +74,8 @@ const VehiclesModule = React.memo(
             b.requiresMileageRegistration
           ) {
             return 1
-          } else {
-            return 0
           }
+          return 0
         })
       : vehicles
 

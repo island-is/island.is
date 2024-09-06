@@ -191,15 +191,8 @@ export const authStore = create<AuthStore>((set, get) => ({
     await clearPasskey()
 
     // Reset home screen widgets
-    preferencesStore.setState({
-      homeScreenWidgetsInitialised: false,
-      homeScreenEnableAirDiscountWidget: true,
-      homeScreenEnableApplicationsWidget: true,
-      homeScreenEnableGraphicWidget: true,
-      homeScreenEnableInboxWidget: true,
-      homeScreenEnableLicensesWidget: true,
-      homeScreenEnableVehiclesWidget: true,
-    })
+    preferencesStore.getState().resetHomeScreenWidgets()
+
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const tokenToRevoke = get().authorizeResult!.accessToken!

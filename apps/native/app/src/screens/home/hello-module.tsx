@@ -20,10 +20,9 @@ const ImageWrapper = styled.View`
 
 export const HelloModule = React.memo(() => {
   const theme = useTheme()
-  const { dismissed } = usePreferencesStore()
+  const { dismissed, graphicWidgetEnabled } = usePreferencesStore()
   const { userInfo } = useAuthStore()
   const [imageSrc, setImageSrc] = React.useState<string | undefined>(undefined)
-  const { homeScreenEnableGraphicWidget } = usePreferencesStore()
 
   const { data: image, loading } = useGetFrontPageImageQuery({
     variables: { input: { pageIdentifier: 'frontpage' } },
@@ -99,7 +98,7 @@ export const HelloModule = React.memo(() => {
           {userInfo?.name}
         </Typography>
 
-        {homeScreenEnableGraphicWidget && imageSrc && (
+        {graphicWidgetEnabled && imageSrc && (
           <ImageWrapper>
             {loading ? (
               <Skeleton

@@ -132,32 +132,32 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
   const {
-    homeScreenEnableVehiclesWidget,
-    homeScreenEnableAirDiscountWidget,
-    homeScreenEnableApplicationsWidget,
-    homeScreenEnableInboxWidget,
-    homeScreenEnableLicensesWidget,
-    homeScreenWidgetsInitialised,
+    inboxWidgetEnabled,
+    licensesWidgetEnabled,
+    applicationsWidgetEnabled,
+    vehiclesWidgetEnabled,
+    airDiscountWidgetEnabled,
+    widgetsInitialised,
   } = usePreferencesStore()
 
   const applicationsRes = useListApplicationsQuery({
-    skip: !homeScreenEnableApplicationsWidget,
+    skip: !applicationsWidgetEnabled,
   })
 
   const inboxRes = useListDocumentsQuery({
     variables: {
       input: { page: 1, pageSize: 3 },
     },
-    skip: !homeScreenEnableInboxWidget,
+    skip: !inboxWidgetEnabled,
   })
 
   const licensesRes = useGetLicensesData({
-    skipFetching: !homeScreenEnableLicensesWidget,
+    skipFetching: !licensesWidgetEnabled,
   })
 
   const airDiscountRes = useGetAirDiscountQuery({
     fetchPolicy: 'network-only',
-    skip: !homeScreenEnableAirDiscountWidget,
+    skip: !airDiscountWidgetEnabled,
   })
 
   const vehiclesRes = useListVehiclesQuery({
@@ -169,12 +169,12 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         showHistory: false,
       },
     },
-    skip: !homeScreenEnableVehiclesWidget,
+    skip: !vehiclesWidgetEnabled,
   })
 
   useEffect(() => {
     // If widgets have not been initialized, validate data and set state accordingly
-    if (!homeScreenWidgetsInitialised) {
+    if (!widgetsInitialised) {
       const shouldShowInboxWidget = validateInboxInitialData({ ...inboxRes })
 
       const shouldShowLicensesWidget = validateLicensesInitialData({
@@ -194,11 +194,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
       })
 
       preferencesStore.setState({
-        homeScreenEnableInboxWidget: shouldShowInboxWidget,
-        homeScreenEnableLicensesWidget: shouldShowLicensesWidget,
-        homeScreenEnableApplicationsWidget: shouldShowApplicationsWidget,
-        homeScreenEnableVehiclesWidget: shouldShowVehiclesWidget,
-        homeScreenEnableAirDiscountWidget: shouldShowAirDiscountWidget,
+        inboxWidgetEnabled: shouldShowInboxWidget,
+        licensesWidgetEnabled: shouldShowLicensesWidget,
+        applicationsWidgetEnabled: shouldShowApplicationsWidget,
+        vehiclesWidgetEnabled: shouldShowVehiclesWidget,
+        airDiscountWidgetEnabled: shouldShowAirDiscountWidget,
       })
 
       // Don't set initialized state if any of the queries are still loading
@@ -212,7 +212,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         return
       }
 
-      preferencesStore.setState({ homeScreenWidgetsInitialised: true })
+      preferencesStore.setState({ widgetsInitialised: true })
     }
   }, [
     licensesRes.loading,
@@ -257,12 +257,16 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     setRefetching(true)
 
     try {
-      homeScreenEnableApplicationsWidget && (await applicationsRes.refetch())
-      homeScreenEnableInboxWidget && (await inboxRes.refetch())
-      homeScreenEnableLicensesWidget && (await licensesRes.refetch())
-      homeScreenEnableLicensesWidget && (await licensesRes.refetchPassport())
-      homeScreenEnableAirDiscountWidget && (await airDiscountRes.refetch())
-      homeScreenEnableVehiclesWidget && (await vehiclesRes.refetch())
+      const promises = [
+        applicationsWidgetEnabled && applicationsRes.refetch(),
+        inboxWidgetEnabled && inboxRes.refetch(),
+        licensesWidgetEnabled && licensesRes.refetch(),
+        licensesWidgetEnabled && licensesRes.refetchPassport(),
+        airDiscountWidgetEnabled && airDiscountRes.refetch(),
+        vehiclesWidgetEnabled && vehiclesRes.refetch(),
+      ].filter(Boolean)
+
+      await Promise.all(promises)
     } catch (err) {
       // noop
     }
@@ -274,11 +278,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     licensesRes,
     airDiscountRes,
     vehiclesRes,
-    homeScreenEnableVehiclesWidget,
-    homeScreenEnableAirDiscountWidget,
-    homeScreenEnableApplicationsWidget,
-    homeScreenEnableLicensesWidget,
-    homeScreenEnableInboxWidget,
+    vehiclesWidgetEnabled,
+    airDiscountWidgetEnabled,
+    applicationsWidgetEnabled,
+    licensesWidgetEnabled,
+    inboxWidgetEnabled,
   ])
 
   if (!ui.initializedApp) {
@@ -297,31 +301,29 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
     {
       id: 'inbox',
-      component: homeScreenEnableInboxWidget ? (
-        <InboxModule {...inboxRes} />
-      ) : null,
+      component: inboxWidgetEnabled ? <InboxModule {...inboxRes} /> : null,
     },
     {
       id: 'licenses',
-      component: homeScreenEnableLicensesWidget ? (
+      component: licensesWidgetEnabled ? (
         <LicensesModule {...licensesRes} />
       ) : null,
     },
     {
       id: 'applications',
-      component: homeScreenEnableApplicationsWidget ? (
+      component: applicationsWidgetEnabled ? (
         <ApplicationsModule {...applicationsRes} componentId={componentId} />
       ) : null,
     },
     {
       id: 'vehicles',
-      component: homeScreenEnableVehiclesWidget ? (
+      component: vehiclesWidgetEnabled ? (
         <VehiclesModule {...vehiclesRes} />
       ) : null,
     },
     {
       id: 'air-discount',
-      component: homeScreenEnableAirDiscountWidget ? (
+      component: airDiscountWidgetEnabled ? (
         <AirDiscountModule {...airDiscountRes} />
       ) : null,
     },

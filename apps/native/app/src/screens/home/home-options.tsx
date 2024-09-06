@@ -32,12 +32,12 @@ export const HomeOptionsScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const theme = useTheme()
   const {
-    homeScreenEnableVehiclesWidget,
-    homeScreenEnableAirDiscountWidget,
-    homeScreenEnableApplicationsWidget,
-    homeScreenEnableGraphicWidget,
-    homeScreenEnableInboxWidget,
-    homeScreenEnableLicensesWidget,
+    vehiclesWidgetEnabled,
+    airDiscountWidgetEnabled,
+    applicationsWidgetEnabled,
+    graphicWidgetEnabled,
+    inboxWidgetEnabled,
+    licensesWidgetEnabled,
   } = usePreferencesStore()
 
   return (
@@ -69,10 +69,10 @@ export const HomeOptionsScreen: NavigationFunctionComponent = ({
           <Switch
             onValueChange={(value) => {
               preferencesStore.setState({
-                homeScreenEnableGraphicWidget: value,
+                graphicWidgetEnabled: value,
               })
             }}
-            value={homeScreenEnableGraphicWidget}
+            value={graphicWidgetEnabled}
             thumbColor={Platform.select({ android: theme.color.dark100 })}
             trackColor={{
               false: theme.color.dark200,
@@ -89,10 +89,10 @@ export const HomeOptionsScreen: NavigationFunctionComponent = ({
           <Switch
             onValueChange={(value) => {
               preferencesStore.setState({
-                homeScreenEnableInboxWidget: value,
+                inboxWidgetEnabled: value,
               })
             }}
-            value={homeScreenEnableInboxWidget}
+            value={inboxWidgetEnabled}
             thumbColor={Platform.select({ android: theme.color.dark100 })}
             trackColor={{
               false: theme.color.dark200,
@@ -109,10 +109,10 @@ export const HomeOptionsScreen: NavigationFunctionComponent = ({
           <Switch
             onValueChange={(value) => {
               preferencesStore.setState({
-                homeScreenEnableLicensesWidget: value,
+                licensesWidgetEnabled: value,
               })
             }}
-            value={homeScreenEnableLicensesWidget}
+            value={licensesWidgetEnabled}
             thumbColor={Platform.select({ android: theme.color.dark100 })}
             trackColor={{
               false: theme.color.dark200,
@@ -129,10 +129,10 @@ export const HomeOptionsScreen: NavigationFunctionComponent = ({
           <Switch
             onValueChange={(value) => {
               preferencesStore.setState({
-                homeScreenEnableApplicationsWidget: value,
+                applicationsWidgetEnabled: value,
               })
             }}
-            value={homeScreenEnableApplicationsWidget}
+            value={applicationsWidgetEnabled}
             thumbColor={Platform.select({ android: theme.color.dark100 })}
             trackColor={{
               false: theme.color.dark200,
@@ -149,10 +149,10 @@ export const HomeOptionsScreen: NavigationFunctionComponent = ({
           <Switch
             onValueChange={(value) => {
               preferencesStore.setState({
-                homeScreenEnableVehiclesWidget: value,
+                vehiclesWidgetEnabled: value,
               })
             }}
-            value={homeScreenEnableVehiclesWidget}
+            value={vehiclesWidgetEnabled}
             thumbColor={Platform.select({ android: theme.color.dark100 })}
             trackColor={{
               false: theme.color.dark200,
@@ -169,10 +169,10 @@ export const HomeOptionsScreen: NavigationFunctionComponent = ({
           <Switch
             onValueChange={(value) => {
               preferencesStore.setState({
-                homeScreenEnableAirDiscountWidget: value,
+                airDiscountWidgetEnabled: value,
               })
             }}
-            value={homeScreenEnableAirDiscountWidget}
+            value={airDiscountWidgetEnabled}
             thumbColor={Platform.select({ android: theme.color.dark100 })}
             trackColor={{
               false: theme.color.dark200,
