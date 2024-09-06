@@ -30,7 +30,7 @@ export const useTypes = ({
       params: {
         department: departmentId ?? '',
         page: 1,
-        pageSize: 100,
+        pageSize: 1000,
       },
     },
     notifyOnNetworkStatusChange: true,

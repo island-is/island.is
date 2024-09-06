@@ -11,7 +11,6 @@ import { PostApplicationInput } from '../models/postApplication.input'
 import { UseGuards } from '@nestjs/common'
 import { CaseGetPriceResponse } from '../models/getPrice.response'
 import { GetPdfUrlResponse } from '../models/getPdfUrlResponse'
-import { GetPdfResponse } from '../models/getPdfResponse'
 import { GetPresignedUrlInput } from '../models/getPresignedUrl.input'
 import { GetPresignedUrlResponse } from '../models/getPresignedUrl.response'
 import { AddApplicationAttachmentResponse } from '../models/addApplicationAttachment.response'
@@ -64,9 +63,6 @@ export class OfficialJournalOfIcelandApplicationResolver {
     return this.ojoiApplicationService.getPdfUrl(id)
   }
 
-  @Query(() => GetPdfResponse, {
-    name: 'officialJournalOfIcelandApplicationGetPdf',
-  })
   getPdf(@Args('id') id: string) {
     return this.ojoiApplicationService.getPdf(id)
   }

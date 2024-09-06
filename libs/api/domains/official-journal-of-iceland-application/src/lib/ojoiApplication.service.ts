@@ -50,12 +50,6 @@ export class OfficialJournalOfIcelandApplicationService {
     })
   }
 
-  async getPdf(id: string) {
-    return this.ojoiApplicationService.getPdf({
-      id,
-    })
-  }
-
   async postApplication(input: PostApplicationInput): Promise<boolean> {
     return this.ojoiApplicationService.postApplication(input)
   }

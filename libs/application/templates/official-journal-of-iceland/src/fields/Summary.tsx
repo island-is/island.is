@@ -31,7 +31,7 @@ export const Summary = ({
   application,
   setSubmitButtonDisabled,
 }: OJOIFieldBaseProps) => {
-  const { formatMessage: f, formatDate } = useLocale()
+  const { formatMessage: f, formatDate, formatNumber } = useLocale()
   const { application: currentApplication } = useApplication({
     applicationId: application.id,
   })
@@ -199,7 +199,7 @@ export const Summary = ({
         <Property
           loading={loadingPrice}
           name={f(summary.properties.estimatedPrice)}
-          value={`${price}. kr`}
+          value={`${formatNumber(price)}. kr`}
         />
         <Property
           loading={loadingCategories}

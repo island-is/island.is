@@ -242,14 +242,6 @@ export const PDF_URL_QUERY = gql`
   }
 `
 
-export const PDF_QUERY = gql`
-  query PdfDocument($id: String!) {
-    officialJournalOfIcelandApplicationGetPdf(id: $id) {
-      pdf
-    }
-  }
-`
-
 export const GET_PRESIGNED_URL_MUTATION = gql`
   mutation GetPresignedUrl(
     $input: OfficialJournalOfIcelandApplicationGetPresignedUrlInput!
