@@ -6,6 +6,8 @@ import { Button } from '../Button/Button'
 import { Inline } from '../Inline/Inline'
 import { Stack } from '../Stack/Stack'
 import { Text } from '../Text/Text'
+import { usePreventBodyScroll } from './usePreventBodyScroll'
+
 import * as styles from './Filter.css'
 
 export interface FilterProps {
@@ -52,7 +54,7 @@ export interface FilterProps {
 /**
  * Datatype to use for Filter context.
  * Provides the Filter's childs access to shared values,
- * like the `isDialog` state with out bloating the childs props.
+ * like the `isDialog` state without bloating the childs props.
  */
 interface FilterContextValue {
   variant?: FilterProps['variant']
@@ -78,7 +80,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   children,
   popoverFlip = true,
 }) => {
-  const dialog = useDialogState()
+  const dialog = useDialogState({ modal: true })
   const popover = usePopoverState({
     placement: 'bottom-start',
     unstable_flip: popoverFlip,
@@ -86,6 +88,8 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   })
 
   const hasFilterInput = !!filterInput
+
+  usePreventBodyScroll(dialog.visible && variant === 'dialog')
 
   return (
     <FilterContext.Provider value={{ variant }}>
@@ -171,7 +175,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
               />
             </Box>
           </DialogDisclosure>
-          <Dialog {...dialog}>
+          <Dialog {...dialog} preventBodyScroll={false}>
             <Box
               background="white"
               position="fixed"
