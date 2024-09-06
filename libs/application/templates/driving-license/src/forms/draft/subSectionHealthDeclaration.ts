@@ -41,11 +41,6 @@ export const subSectionHealthDeclaration = buildSubSection({
         )
       },
       children: [
-        buildDescriptionField({
-          id: 'healthDeclaration.header',
-          title: 'Yfirlýsing',
-          titleVariant: 'h3',
-        }),
         buildCustomField({
           id: 'remarks',
           title: '',
@@ -163,6 +158,19 @@ export const subSectionHealthDeclaration = buildSubSection({
             answers.applicationFor !== BE &&
             (answers.healthDeclaration as any)?.contactGlassesMismatch,
         }),
+        //TODO: Remove when RLS/SGS supports health certificate in BE license
+        buildDescriptionField({
+          id: 'healthDeclarationValidForBELicense',
+          title: '',
+        }),
+        buildAlertMessageField({
+          id: 'healthDeclaration.BE',
+          title: '',
+          message: m.beLicenseHealthDeclarationRequiresHealthCertificate,
+          alertType: 'warning',
+          condition: (answers, externalData) =>
+            needsHealthCertificateCondition(YES)(answers, externalData),
+        }),
       ],
     }),
     /* Different set of the Health Declaration screen for people over the age of 65 */
@@ -185,18 +193,10 @@ export const subSectionHealthDeclaration = buildSubSection({
         )
       },
       children: [
-        //TODO: Remove when RLS/SGS supports health certificate in BE license
         buildDescriptionField({
-          id: 'healthDeclarationValidForBELicense',
+          id: 'healthDeclarationAge65Description',
           title: '',
-        }),
-        buildAlertMessageField({
-          id: 'healthDeclaration.BE',
-          title: '',
-          message: m.beLicenseHealthDeclarationRequiresHealthCertificate,
-          alertType: 'warning',
-          condition: (answers, externalData) =>
-            needsHealthCertificateCondition(YES)(answers, externalData),
+          description: "Þetta view er í vinnslu",
         }),
       ],
     }),
