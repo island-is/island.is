@@ -24,10 +24,12 @@ export class EndorsementList extends Model {
   })
   id!: string;
 
-  @ApiProperty({ type: Number, description: 'A linear index intended for cursor based pagination', nullable: true })
+  @ApiProperty({ type: Number, description: 'A linear index intended for cursor based pagination', 
+    //nullable: true ...............................................................
+  })
   @Column({
     type: DataType.INTEGER,
-    allowNull: true,
+    // allowNull: true,...............................................................
   })
   counter!: number;
 
@@ -38,11 +40,13 @@ export class EndorsementList extends Model {
   })
   title!: string;
 
-  @ApiProperty({ type: String, description: 'A description of the endorsement list', nullable: true })
+  @ApiProperty({ type: String, description: 'A description of the endorsement list'
+    // , nullable: true ...............................................................
+  })
   @Column({
     type: DataType.TEXT,
   })
-  description!: string | null;
+  description!: string; // | null;
 
   @ApiProperty({ type: Date, description: 'The date when the list was opened' })
   @Column({

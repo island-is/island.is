@@ -1,12 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { PageInfoDto } from '@island.is/nest/pagination'
-import { EndorsementList } from '../endorsementList.model'
+import { EndorsementListDto } from './endorsementList.dto'
 
 export class PaginatedEndorsementListDto {
   @ApiProperty()
   totalCount!: number
-  @ApiProperty({ type: [EndorsementList] })
-  data!: EndorsementList[]
+  @ApiProperty({ type: [EndorsementListDto] })
+  data!: EndorsementListDto[]
   @ApiProperty()
   pageInfo!: PageInfoDto
 }
+
+
+

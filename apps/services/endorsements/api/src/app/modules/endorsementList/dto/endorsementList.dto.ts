@@ -7,6 +7,7 @@ import {
   IsObject,
   IsBoolean,
   IsDate,
+  IsNumber,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
@@ -15,12 +16,15 @@ import { EndorsementMetadataDto } from './endorsementMetadata.dto'
 export class EndorsementListDto {
   @ApiProperty()
   @IsString()
+  id!: string
+
+  @ApiProperty()
+  @IsString()
   title!: string
 
-  @ApiProperty({ type: String, nullable: true, required: false })
-  @IsOptional()
+  @ApiProperty()
   @IsString()
-  description = ''
+  description!: string
 
   @ApiProperty({ type: [EndorsementMetadataDto], nullable: true })
   @IsOptional()
@@ -53,4 +57,22 @@ export class EndorsementListDto {
   @ApiProperty({ type: Boolean })
   @IsBoolean()
   adminLock!: boolean
+
+  // look at the model file and add the rest of the properties
+  @ApiProperty({ type: Number })
+  @IsNumber()
+  endorsementCount!: number
+
+  @ApiProperty({ type: String })
+  owner!: string
+
+  
+
+
+
+
+
+
+
+ 
 }
