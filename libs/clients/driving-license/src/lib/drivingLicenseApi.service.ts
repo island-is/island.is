@@ -509,7 +509,7 @@ export class DrivingLicenseApi {
       },
     })
   }
-  
+
   async postApplyForBELicense(params: {
     nationalIdApplicant: string
     token: string

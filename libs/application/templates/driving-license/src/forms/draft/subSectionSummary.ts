@@ -12,10 +12,7 @@ import { DefaultEvents, StaticText } from '@island.is/application/types'
 import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
-import {
-  NationalRegistryAddress,
-  StudentAssessment,
-} from '@island.is/api/schema'
+import { StudentAssessment } from '@island.is/api/schema'
 import { B_TEMP, BE, YES } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
@@ -151,7 +148,7 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.overviewPaymentCharge,
           value: ({ externalData, answers }) => {
-            const items = externalData.payment?.data as {
+            const items = externalData.payment.data as {
               priceAmount: number
               chargeItemCode: string
             }[]
@@ -162,7 +159,7 @@ export const subSectionSummary = buildSubSection({
                 ? 'AY115'
                 : 'AY110'
 
-            const item = items?.find(
+            const item = items.find(
               ({ chargeItemCode }) => chargeItemCode === targetCode,
             )
             return (item?.priceAmount?.toLocaleString('is-IS') +

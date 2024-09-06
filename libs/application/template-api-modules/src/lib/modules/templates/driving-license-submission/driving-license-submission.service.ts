@@ -54,11 +54,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'>(
-      answers,
-      'applicationFor',
-      'B-full',
-    )
+    const applicationFor = getValueViaPath<
+      'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'
+    >(answers, 'applicationFor', 'B-full')
 
     const chargeItemCode =
       applicationFor === 'B-full'
@@ -102,7 +100,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     let result
     try {
-      result = await this.createLicense(nationalId, application, auth)
+      result = await this.createLicense(nationalId, answers, auth)
     } catch (e) {
       this.log('error', 'Creating license failed', {
         e,
@@ -141,13 +139,14 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
   private async createLicense(
     nationalId: string,
-    application: ApplicationWithAttachments,
+    answers: FormValue,
     auth: User,
   ): Promise<NewDrivingLicenseResult> {
-    const { answers } = application
     const applicationFor =
-      getValueViaPath<'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'>(answers, 'applicationFor') ??
-      'B-full'
+      getValueViaPath<'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'>(
+        answers,
+        'applicationFor',
+      ) ?? 'B-full'
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const remarks = answers.hasHealthRemarks === 'yes'

@@ -106,13 +106,10 @@ function HealthDeclaration({
             if (field.id === 'healthDeclaration.usesContactGlasses') {
               checkForGlassesMismatch(value)
             }
-            if (field.id === 'healthDeclaration.answers.usesContactGlasses') {
-              checkForGlassesMismatch(value)
-            }
           }}
         />
-        </GridColumn>
-      </GridRow>
+      </GridColumn>
+    </GridRow>
   )
 }
 

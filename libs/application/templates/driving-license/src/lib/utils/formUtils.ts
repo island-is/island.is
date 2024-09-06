@@ -1,4 +1,4 @@
-import { getValueViaPath, YES, NO } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   FormValue,
   ApplicationContext,
@@ -10,7 +10,9 @@ import {
   B_FULL,
   B_TEMP,
   DrivingLicenseApplicationFor,
-} from '../../lib/constants'
+  NO,
+  YES,
+} from '../constants'
 
 export const allowFakeCondition =
   (result = YES) =>
@@ -53,16 +55,16 @@ export const chooseDistrictCommissionerDescription = ({
 }: {
   answers: FormValue
 }) => {
-  const applicationFor = getValueViaPath<DrivingLicenseApplicationFor>(
-    answers,
-    'applicationFor',
-  )
+  const applicationForTemp =
+    getValueViaPath<DrivingLicenseApplicationFor>(
+      answers,
+      'applicationFor',
+      B_FULL,
+    ) === B_TEMP
 
-  return applicationFor === B_TEMP
+  return applicationForTemp
     ? m.chooseDistrictCommisionerForTempLicense.defaultMessage
-    : applicationFor === B_FULL
-    ? m.chooseDistrictCommisionerForFullLicense.defaultMessage
-    : m.chooseDistrictCommisionerForFullLicenseRenewal65.defaultMessage
+    : m.chooseDistrictCommisionerForFullLicense.defaultMessage
 }
 
 export const hasCompletedPrerequisitesStep =

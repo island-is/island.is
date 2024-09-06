@@ -15,7 +15,7 @@ import {
   UserProfile,
 } from '../../types/schema'
 import { m } from '../../lib/messages'
-import { B_FULL_RENEWAL_65, B_TEMP } from '../../lib/constants'
+import { B_TEMP, BE, B_FULL_RENEWAL_65 } from '../../lib/constants'
 import { NationalRegistryIndividual } from '@island.is/application/types'
 
 export const subSectionTempInfo = buildSubSection({
@@ -23,8 +23,9 @@ export const subSectionTempInfo = buildSubSection({
   title: m.informationApplicant,
   condition: (answers) =>
     answers.applicationFor === B_TEMP ||
-    answers.applicationFor === B_FULL_RENEWAL_65 || answers.applicationFor === BE,
-    children: [
+    answers.applicationFor === BE ||
+    answers.applicationFor === B_FULL_RENEWAL_65,
+  children: [
     buildMultiField({
       id: 'info',
       title: m.informationApplicant,
@@ -58,26 +59,16 @@ export const subSectionTempInfo = buildSubSection({
             (nationalRegistry.data as NationalRegistryUser).fullName,
           width: 'half',
         }),
-        buildTextField({
-          id: 'applicant.address',
-          title: m.informationStreetAddress,
-          readOnly: true,
-          width: 'half',
-          defaultValue: ({ externalData }: Application) => {
-            const address =
-              (externalData.nationalRegistry.data as NationalRegistryUser)
-                .address ?? ''
-
-            if (!address) {
-              return ''
-            }
-
-            const { streetAddress, postalCode, city } = address
-
-            return `${streetAddress}${
-              city ? ', ' + postalCode + ' ' + city : ''
+        buildKeyValueField({
+          label: m.informationStreetAddress,
+          value: ({ externalData: { nationalRegistry } }) => {
+            const address = (nationalRegistry.data as NationalRegistryUser)
+              .address
+            return `${address?.streetAddress}${
+              address?.postalCode ? ', ' + address?.postalCode : ''
             }`
           },
+          width: 'half',
         }),
         buildPhoneField({
           id: 'phone',
@@ -102,7 +93,7 @@ export const subSectionTempInfo = buildSubSection({
         buildDescriptionField({
           id: 'drivingInstructorTitle',
           title: m.drivingInstructor,
-          titleVariant: 'h3',
+          titleVariant: 'h4',
           description: m.chooseDrivingInstructor,
           condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
         }),

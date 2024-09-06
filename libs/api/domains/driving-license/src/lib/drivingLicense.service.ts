@@ -519,7 +519,7 @@ export class DrivingLicenseService {
       errorMessage: response.errorCode ?? null,
     }
   }
-  
+
   async applyForBELicense(
     nationalId: User['nationalId'],
     auth: User['authorization'],

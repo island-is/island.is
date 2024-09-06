@@ -6,7 +6,7 @@ import {
   buildAlertMessageField,
   hasYes,
   buildDescriptionField,
-  YES
+  YES,
 } from '@island.is/application/core'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
 import { NationalRegistryUser } from '@island.is/api/schema'
@@ -56,7 +56,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         }),
         buildCustomField(
           {
-            id: 'healthDeclaration.answers.usesContactGlasses',
+            id: 'healthDeclaration.usesContactGlasses',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -66,7 +66,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.answers.hasReducedPeripheralVision',
+            id: 'healthDeclaration.hasReducedPeripheralVision',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -76,7 +76,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.answers.hasEpilepsy',
+            id: 'healthDeclaration.hasEpilepsy',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -86,7 +86,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.answers.hasHeartDisease',
+            id: 'healthDeclaration.hasHeartDisease',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -96,7 +96,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.answers.hasMentalIllness',
+            id: 'healthDeclaration.hasMentalIllness',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -106,7 +106,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.answers.usesMedicalDrugs',
+            id: 'healthDeclaration.usesMedicalDrugs',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -116,7 +116,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.answers.isAlcoholic',
+            id: 'healthDeclaration.isAlcoholic',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -126,7 +126,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.answers.hasDiabetes',
+            id: 'healthDeclaration.hasDiabetes',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -136,7 +136,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.answers.isDisabled',
+            id: 'healthDeclaration.isDisabled',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -146,7 +146,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.answers.hasOtherDiseases',
+            id: 'healthDeclaration.hasOtherDiseases',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -167,6 +167,7 @@ export const subSectionHealthDeclaration = buildSubSection({
           message: m.alertHealthDeclarationGlassesMismatch,
           alertType: 'warning',
           condition: (answers) =>
+            answers.applicationFor !== BE &&
             (answers.healthDeclaration as any)?.contactGlassesMismatch,
         }),
         buildFileUploadField({

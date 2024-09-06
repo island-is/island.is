@@ -18,30 +18,18 @@ export const dataSchema = z.object({
   type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
   approveExternalData: z.boolean().refine((v) => v),
   jurisdiction: z.string().min(1),
-  healthDeclaration: z
-    .object({
-      answers: z.object({
-        usesContactGlasses: z.enum([YES, NO]),
-        hasReducedPeripheralVision: z.enum([YES, NO]),
-        hasEpilepsy: z.enum([YES, NO]),
-        hasHeartDisease: z.enum([YES, NO]),
-        hasMentalIllness: z.enum([YES, NO]),
-        usesMedicalDrugs: z.enum([YES, NO]),
-        isAlcoholic: z.enum([YES, NO]),
-        hasDiabetes: z.enum([YES, NO]),
-        isDisabled: z.enum([YES, NO]),
-        hasOtherDiseases: z.enum([YES, NO]),
-      }),
-      attachment: z.array(FileSchema),
-    })
-    .refine(
-      ({ answers, attachment }) => {
-        return hasYes(answers) ? attachment.length > 0 : true
-      },
-      {
-        path: ['attachment'],
-      },
-    ),
+  healthDeclaration: z.object({
+    usesContactGlasses: z.enum([YES, NO]),
+    hasReducedPeripheralVision: z.enum([YES, NO]),
+    hasEpilepsy: z.enum([YES, NO]),
+    hasHeartDisease: z.enum([YES, NO]),
+    hasMentalIllness: z.enum([YES, NO]),
+    usesMedicalDrugs: z.enum([YES, NO]),
+    isAlcoholic: z.enum([YES, NO]),
+    hasDiabetes: z.enum([YES, NO]),
+    isDisabled: z.enum([YES, NO]),
+    hasOtherDiseases: z.enum([YES, NO]),
+  }),
   healthDeclarationAge65: z.object({
     attachment: z.array(FileSchema).nonempty(),
   }),
@@ -56,7 +44,7 @@ export const dataSchema = z.object({
   ]),
   requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum([YES, NO])).nonempty(),
-  applicationFor: z.enum([B_FULL, B_TEMP, B_FULL_RENEWAL_65, BE]),
+  applicationFor: z.enum([B_FULL, B_TEMP, BE, B_FULL_RENEWAL_65]),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   drivingInstructor: z.string().min(1),
