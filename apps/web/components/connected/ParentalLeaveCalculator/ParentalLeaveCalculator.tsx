@@ -900,7 +900,7 @@ const ResultsScreen = ({ slice, changeScreen }: ScreenProps) => {
         </Button>
       </Stack>
 
-      <Stack space={3}>
+      <Stack space={6}>
         {status === Status.PARENTAL_LEAVE && (
           <Stack space={3}>
             <MarkdownText replaceNewLinesWithBreaks={false}>
