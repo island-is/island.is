@@ -36,12 +36,17 @@ export const PostTemporaryLicenseWithHealthDeclarationMapper = (
   }
 
   const healthDeclarationMapper = (
-    answers: DrivingLicenseSchema['healthDeclaration']['answers'],
+    answers: DrivingLicenseSchema['healthDeclaration'],
   ): HealthDeclarationModel => {
     return Object.fromEntries(
       Object.entries(answers).map(([key, value]) => {
-        const valueIsYes = value === 'yes'
-        return [key, valueIsYes]
+        if (value === 'yes') {
+          return [key, true]
+        } else if (value === 'no') {
+          return [key, false]
+        } else {
+          return [key, false]
+        }
       }),
     )
   }
@@ -62,7 +67,7 @@ export const PostTemporaryLicenseWithHealthDeclarationMapper = (
       ] as DrivingLicenseSchema[keyof DrivingLicenseSchema]) = mappedValue
     } else if (key === 'healthDeclaration') {
       mappedAnswers.healthDeclaration = healthDeclarationMapper(
-        answers['healthDeclaration']['answers'],
+        answers['healthDeclaration'],
       )
     }
   }

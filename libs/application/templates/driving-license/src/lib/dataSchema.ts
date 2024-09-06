@@ -7,12 +7,6 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
-const FileSchema = z.object({
-  name: z.string(),
-  key: z.string(),
-  url: z.string().optional(),
-})
-
 export const dataSchema = z.object({
   type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
   approveExternalData: z.boolean().refine((v) => v),
@@ -28,9 +22,6 @@ export const dataSchema = z.object({
     hasDiabetes: z.enum([YES, NO]),
     isDisabled: z.enum([YES, NO]),
     hasOtherDiseases: z.enum([YES, NO]),
-  }),
-  healthDeclarationAge65: z.object({
-    attachment: z.array(FileSchema).nonempty(),
   }),
   //TODO: Remove when RLS/SGS supports health certificate in BE license
   healthDeclarationValidForBELicense: z

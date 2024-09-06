@@ -8,7 +8,6 @@ import {
   buildDescriptionField,
   YES,
 } from '@island.is/application/core'
-import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
 import { NationalRegistryUser } from '@island.is/api/schema'
 import { info } from 'kennitala'
 import { m } from '../../lib/messages'
@@ -172,19 +171,6 @@ export const subSectionHealthDeclaration = buildSubSection({
             answers.applicationFor !== BE &&
             (answers.healthDeclaration as any)?.contactGlassesMismatch,
         }),
-        buildFileUploadField({
-          id: 'healthDeclaration.attachment',
-          title: '',
-          maxSize: FILE_SIZE_LIMIT,
-          maxSizeErrorText: m.attachmentMaxSizeError,
-          uploadHeader: m.uploadHeader,
-          uploadDescription: m.uploadDescription,
-          uploadButtonLabel: m.uploadButtonLabel,
-          uploadAccept: UPLOAD_ACCEPT,
-          condition: (answers) =>
-            hasYes((answers.healthDeclaration as any)?.answers) ||
-            (answers.healthDeclaration as any)?.contactGlassesMismatch === true,
-        }),
       ],
     }),
     /* Different set of the Health Declaration screen for people over the age of 65 */
@@ -207,19 +193,6 @@ export const subSectionHealthDeclaration = buildSubSection({
         )
       },
       children: [
-        buildFileUploadField({
-          id: 'healthDeclarationAge65.attachment',
-          title: '',
-          maxSize: FILE_SIZE_LIMIT,
-          maxSizeErrorText: m.attachmentMaxSizeError,
-          uploadAccept: UPLOAD_ACCEPT,
-          uploadHeader: m.uploadHeader,
-          uploadDescription: m.uploadDescription,
-          uploadButtonLabel: m.uploadButtonLabel,
-          condition: (answers) =>
-            answers.applicationFor !== BE &&
-            (answers.healthDeclaration as any)?.contactGlassesMismatch,
-        }),
         //TODO: Remove when RLS/SGS supports health certificate in BE license
         buildDescriptionField({
           id: 'healthDeclarationValidForBELicense',
