@@ -196,7 +196,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         buildDescriptionField({
           id: 'healthDeclarationAge65Description',
           title: '',
-          description: "Þetta view er í vinnslu",
+          description: 'Þetta view er í vinnslu',
         }),
       ],
     }),
