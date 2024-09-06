@@ -2,9 +2,9 @@ import { InputType, Field } from '@nestjs/graphql'
 
 @InputType('OfficialJournalOfIcelandApplicationGetApplicationAttachmentInput')
 export class GetApplicationAttachmentInput {
-  @Field(() => String)
+  @Field()
   applicationId!: string
 
-  @Field(() => String)
+  @Field()
   attachmentType!: string
 }

@@ -10,22 +10,22 @@ export class GetApplicationAttachmentsResponse {
   'OfficialJournalOfIcelandApplicationGetApplicationAttachmentResponse',
 )
 export class GetApplicationAttachmentResponse {
-  @Field(() => String)
+  @Field()
   id!: string
 
-  @Field(() => String)
+  @Field()
   fileName!: string
 
-  @Field(() => String)
+  @Field()
   originalFileName!: string
 
-  @Field(() => String)
+  @Field()
   fileFormat!: string
 
-  @Field(() => String)
+  @Field()
   fileExtension!: string
 
-  @Field(() => String)
+  @Field()
   fileLocation!: string
 
   @Field(() => Int)

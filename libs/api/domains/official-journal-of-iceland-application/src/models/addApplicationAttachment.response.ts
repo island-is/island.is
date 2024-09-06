@@ -4,6 +4,6 @@ import { Field, ObjectType } from '@nestjs/graphql'
   'OfficialJournalOfIcelandApplicationAddApplicationAttachmentResponse',
 )
 export class AddApplicationAttachmentResponse {
-  @Field(() => Boolean)
+  @Field()
   success!: boolean
 }

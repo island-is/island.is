@@ -2,15 +2,15 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType('OfficialJournalOfIcelandApplicationGetPresignedUrlInput')
 export class GetPresignedUrlInput {
-  @Field(() => String)
+  @Field()
   applicationId!: string
 
-  @Field(() => String)
+  @Field()
   fileName!: string
 
-  @Field(() => String)
+  @Field()
   fileType!: string
 
-  @Field(() => String)
+  @Field()
   attachmentType!: string
 }

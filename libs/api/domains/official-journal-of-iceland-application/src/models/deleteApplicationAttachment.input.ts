@@ -4,9 +4,9 @@ import { Field, InputType } from '@nestjs/graphql'
   'OfficialJournalOfIcelandApplicationDeleteApplicationAttachmentInput',
 )
 export class DeleteApplicationAttachmentInput {
-  @Field(() => String)
+  @Field()
   applicationId!: string
 
-  @Field(() => String)
+  @Field()
   key!: string
 }
