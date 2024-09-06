@@ -30,6 +30,24 @@ export interface CreateListInput {
   owner: OwnerInput
   areas?: AreaInput[]
 }
+export interface CreateParliamentaryCandidacyInput extends CreateListInput {
+  agents: AgentInput[]
+}
+
+export enum MandateType {
+  Unknown,
+  Owner,
+  Guarantor, // is: Ábyrgðaraðili
+  Administrator, // is: Umsjónaraðili
+}
+
+export interface AgentInput {
+  nationalId: string
+  phoneNumber: string
+  email: string
+  mandateType: MandateType
+  areas: AreaInput[]
+}
 
 export interface BulkUploadUser {
   pageNumber: number

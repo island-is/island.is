@@ -84,6 +84,7 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                   disabled:
                     !currentLicense ||
                     age < 18 ||
+                    age >= 65 ||
                     categories?.some((c) => c.nr.toUpperCase() === 'BE') ||
                     // validToCode === 8 is temporary license and should not be applicable for BE
                     !categories?.some(

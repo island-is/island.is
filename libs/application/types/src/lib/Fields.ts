@@ -68,7 +68,7 @@ type TableRepeaterOptions =
   | RepeaterOption[]
   | ((
       application: Application,
-      activeField: Record<string, string>,
+      activeField?: Record<string, string>,
     ) => RepeaterOption[] | [])
 
 export type TableRepeaterItem = {
@@ -94,6 +94,19 @@ export type TableRepeaterItem = {
         application: Application,
         activeField?: Record<string, string>,
       ) => boolean)
+  updateValueObj?: {
+    valueModifier: (activeField?: Record<string, string>) => unknown
+    watchValues:
+      | string
+      | string[]
+      | ((
+          activeField?: Record<string, string>,
+        ) => string | string[] | undefined)
+  }
+  defaultValue?: (
+    application: Application,
+    activeField?: Record<string, string>,
+  ) => unknown
 } & (
   | {
       component: 'input'
@@ -335,6 +348,8 @@ export interface TextField extends BaseField {
   rightAlign?: boolean
   minLength?: number
   maxLength?: number
+  max?: number
+  min?: number
   placeholder?: FormText
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor
@@ -439,7 +454,7 @@ export interface MessageWithLinkButtonField extends BaseField {
 export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
-  introText?: StaticText
+  introText?: FormText
   description: FormText
   startExpanded?: boolean
 }
