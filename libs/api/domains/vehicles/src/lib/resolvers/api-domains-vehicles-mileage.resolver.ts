@@ -17,28 +17,29 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import { VehiclesService } from './api-domains-vehicles.service'
+import { VehiclesService } from '../services/vehicles.service'
 import {
   VehicleMileageDetail,
   VehicleMileageOverview,
   VehicleMileagePutModel,
-} from '../models/getVehicleMileage.model'
-import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
+} from '../../models/getVehicleMileage.model'
+import { GetVehicleMileageInput } from '../../dto/getVehicleMileageInput'
 import {
   PostVehicleMileageInput,
   PutVehicleMileageInput,
-} from '../dto/postVehicleMileageInput'
+} from '../../dto/postVehicleMileageInput'
 import {
   FeatureFlagGuard,
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
-import { mileageDetailConstructor } from '../utils/helpers'
-import { VehiclesBulkMileageReadingResponse } from '../models/bulkMileageReading.model'
-import { PostVehicleBulkMileageInput } from '../dto/postBulkVehicleMileage.input'
-import { VehiclesBulkMileageRegistrationRequestCollection } from '../models/bulkMileageRegistrationRequestsCollection.model'
-import { VehiclesBulkMileageRegistrationRequestVehicleCollection } from '../models/bulkMileageRegistrationRequestVehicleCollection.model'
-import { BulkVehicleMileageRequestVehicleCollectionInput } from '../dto/getBulkVehicleMileageRequestVehicle.input'
+import { mileageDetailConstructor } from '../../utils/helpers'
+import { VehiclesBulkMileageReadingResponse } from '../../models/bulkMileageReading.model'
+import { PostVehicleBulkMileageInput } from '../../dto/postBulkVehicleMileage.input'
+import { VehiclesBulkMileageRegistrationRequestCollection } from '../../models/bulkMileageRegistrationRequestsCollection.model'
+import { VehiclesBulkMileageRegistrationRequestVehicleCollection } from '../../models/bulkMileageRegistrationRequestVehicleCollection.model'
+import { BulkVehicleMileageRequestVehicleCollectionInput } from '../../dto/getBulkVehicleMileageRequestVehicle.input'
+import { BulkMileageService } from '../services/bulkMileage.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalVehicleMileagePageEnabled)
@@ -46,7 +47,10 @@ import { BulkVehicleMileageRequestVehicleCollectionInput } from '../dto/getBulkV
 @Audit({ namespace: '@island.is/api/vehicles' })
 @Scopes(ApiScope.vehicles)
 export class VehiclesMileageResolver {
-  constructor(private readonly vehiclesService: VehiclesService) {}
+  constructor(
+    private readonly vehiclesService: VehiclesService,
+    private readonly bulkService: BulkMileageService,
+  ) {}
 
   @Query(() => VehicleMileageOverview, {
     name: 'vehicleMileageDetails',
@@ -66,7 +70,7 @@ export class VehiclesMileageResolver {
   })
   @Audit()
   getVehicleMileageRegistrationRequests(@CurrentUser() user: User) {
-    return this.vehiclesService.getBulkMileageReadingRequests(user)
+    return this.bulkService.getBulkMileageReadingRequests(user)
   }
 
   @Query(() => VehiclesBulkMileageRegistrationRequestVehicleCollection, {
@@ -78,7 +82,7 @@ export class VehiclesMileageResolver {
     @CurrentUser() user: User,
     @Args('input') input: BulkVehicleMileageRequestVehicleCollectionInput,
   ) {
-    return this.vehiclesService.getBulkMileageReadingRequestById(
+    return this.bulkService.getBulkMileageReadingRequestById(
       user,
       input.vehicleId,
     )
@@ -131,7 +135,7 @@ export class VehiclesMileageResolver {
     @Args('input') input: PostVehicleBulkMileageInput,
     @CurrentUser() user: User,
   ) {
-    return this.vehiclesService.postBulkMileageReading(user, input)
+    return this.bulkService.postBulkMileageReading(user, input)
   }
 
   @ResolveField('canRegisterMileage', () => Boolean, {
