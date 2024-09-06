@@ -126,7 +126,7 @@ const ApplicationsModule = React.memo(
                     alignItems: 'center',
                   }}
                 >
-                  <Typography weight="400" color={blue400}>
+                  <Typography variant="heading5" color={blue400}>
                     {intl.formatMessage({ id: 'button.seeAll' })}
                   </Typography>
                   <ChevronRight />
