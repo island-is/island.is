@@ -54,7 +54,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'BE' | 'B-renewal'>(
+    const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'>(
       answers,
       'applicationFor',
       'B-full',
