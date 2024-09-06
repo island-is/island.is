@@ -493,8 +493,6 @@ export class DrivingLicenseApi {
   }
 
   async postRenewLicenseOver65(params: {
-    districtId: number
-    healthCertificate: string
     auth: string
   }) {
     return await this.v5.apiDrivinglicenseV5ApplicationsRenewal65Post({
@@ -502,8 +500,6 @@ export class DrivingLicenseApi {
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
       jwttoken: params.auth,
       postRenewal65AndOver: {
-        districtId: params.districtId,
-        healtCertificate: params.healthCertificate,
         renewalDate: new Date(),
         userId: v5.DRIVING_LICENSE_API_USER_ID,
       },

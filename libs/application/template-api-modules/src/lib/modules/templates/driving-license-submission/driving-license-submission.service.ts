@@ -176,19 +176,11 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         })
     }
 
-    /*if (applicationFor === 'B-full-renewal-65') {
-      const healthCertificate: string = await this.getBase64EncodedAttachment(
-        application,
-      )
+    if (applicationFor === 'B-full-renewal-65') {
       return this.drivingLicenseService.renewDrivingLicense65AndOver(
         auth.authorization.replace('Bearer ', ''),
-        {
-          districtId: jurisdictionId as number,
-          Base64EncodedHealthCertificate: healthCertificate,
-        },
       )
-    } else */
-    if (applicationFor === 'B-full') {
+    } else if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId as number,
         needsToPresentHealthCertificate: needsHealthCert || remarks,

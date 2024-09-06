@@ -13,7 +13,6 @@ import {
   NewTemporaryDrivingLicenseInput,
   ApplicationEligibilityRequirement,
   QualitySignatureResult,
-  Renewal65AndOver,
   NewBEDrivingLicenseInput,
   DrivinglicenseDuplicateValidityStatus,
 } from './drivingLicense.type'
@@ -506,12 +505,9 @@ export class DrivingLicenseService {
   }
 
   async renewDrivingLicense65AndOver(
-    auth: string,
-    input: Renewal65AndOver,
+    auth: User['authorization'],
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postRenewLicenseOver65({
-      districtId: input.districtId,
-      healthCertificate: input.Base64EncodedHealthCertificate,
       auth: auth,
     })
     return {
