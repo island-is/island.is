@@ -32,7 +32,7 @@ interface CheckboxProps {
 export const Checkbox = ({ label, checked, onPress }: CheckboxProps) => {
   return (
     <Host onPress={onPress} accessibilityRole="checkbox" accessible>
-      <Typography style={{ fontWeight: checked ? '600' : '400' }}>
+      <Typography style={{ fontWeight: checked ? '600' : '300' }}>
         {label}
       </Typography>
       <Image source={checked ? checkedIcon : uncheckedIcon} />
