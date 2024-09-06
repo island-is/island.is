@@ -3,6 +3,7 @@ name: External checks
 on:
   pull_request: {}
   workflow_dispatch: {}
+  merge_group: {}
 
 defaults:
   run:
