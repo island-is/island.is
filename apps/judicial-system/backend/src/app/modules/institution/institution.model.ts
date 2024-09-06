@@ -62,4 +62,8 @@ export class Institution extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   nationalId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  address?: string
 }
