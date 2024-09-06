@@ -31,15 +31,24 @@ export const HomeOptionsScreen: NavigationFunctionComponent = ({
 
   const intl = useIntl()
   const theme = useTheme()
-  const {
-    vehiclesWidgetEnabled,
-    airDiscountWidgetEnabled,
-    applicationsWidgetEnabled,
-    graphicWidgetEnabled,
-    inboxWidgetEnabled,
-    licensesWidgetEnabled,
-  } = usePreferencesStore()
-
+  const vehiclesWidgetEnabled = usePreferencesStore(
+    ({ vehiclesWidgetEnabled }) => vehiclesWidgetEnabled,
+  )
+  const inboxWidgetEnabled = usePreferencesStore(
+    ({ inboxWidgetEnabled }) => inboxWidgetEnabled,
+  )
+  const licensesWidgetEnabled = usePreferencesStore(
+    ({ licensesWidgetEnabled }) => licensesWidgetEnabled,
+  )
+  const applicationsWidgetEnabled = usePreferencesStore(
+    ({ applicationsWidgetEnabled }) => applicationsWidgetEnabled,
+  )
+  const airDiscountWidgetEnabled = usePreferencesStore(
+    ({ airDiscountWidgetEnabled }) => airDiscountWidgetEnabled,
+  )
+  const graphicWidgetEnabled = usePreferencesStore(
+    ({ graphicWidgetEnabled }) => graphicWidgetEnabled,
+  )
   return (
     <ScrollView>
       <SafeAreaView

@@ -131,14 +131,24 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
-  const {
-    inboxWidgetEnabled,
-    licensesWidgetEnabled,
-    applicationsWidgetEnabled,
-    vehiclesWidgetEnabled,
-    airDiscountWidgetEnabled,
-    widgetsInitialised,
-  } = usePreferencesStore()
+  const vehiclesWidgetEnabled = usePreferencesStore(
+    ({ vehiclesWidgetEnabled }) => vehiclesWidgetEnabled,
+  )
+  const inboxWidgetEnabled = usePreferencesStore(
+    ({ inboxWidgetEnabled }) => inboxWidgetEnabled,
+  )
+  const licensesWidgetEnabled = usePreferencesStore(
+    ({ licensesWidgetEnabled }) => licensesWidgetEnabled,
+  )
+  const applicationsWidgetEnabled = usePreferencesStore(
+    ({ applicationsWidgetEnabled }) => applicationsWidgetEnabled,
+  )
+  const airDiscountWidgetEnabled = usePreferencesStore(
+    ({ airDiscountWidgetEnabled }) => airDiscountWidgetEnabled,
+  )
+  const widgetsInitialised = usePreferencesStore(
+    ({ widgetsInitialised }) => widgetsInitialised,
+  )
 
   const applicationsRes = useListApplicationsQuery({
     skip: !applicationsWidgetEnabled,
