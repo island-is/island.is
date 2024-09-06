@@ -1,6 +1,4 @@
-import { z } from 'zod'
 import {
-  DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -11,7 +9,6 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   DefaultEvents,
-  NationalRegistryUserApi,
   UserProfileApi,
   ApplicationConfigurations,
   Application,
@@ -19,7 +16,8 @@ import {
 import { Features } from '@island.is/feature-flags'
 import { Roles, States, Events } from './constants'
 import { WorkAccidentNotificationAnswersSchema } from './dataSchema'
-import { getAoshInputOptionsApi } from '../dataProviders'
+import { getAoshInputOptionsApi, IdentityApi } from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -33,6 +31,14 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.WorkAccidentNotification.translation,
   ],
   dataSchema: WorkAccidentNotificationAnswersSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
@@ -60,11 +66,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [
-                NationalRegistryUserApi,
-                UserProfileApi,
-                getAoshInputOptionsApi,
-              ],
+              api: [IdentityApi, UserProfileApi, getAoshInputOptionsApi],
             },
           ],
         },

@@ -7,24 +7,24 @@ export const information = {
       defaultMessage: 'Upplýsingar',
       description: 'Title of information section',
     },
-    pageTitle: {
-      id: 'aosh.wan.application:information.general.pageTitle',
-      defaultMessage: 'Upplýsingar',
-      description: 'Title of information page',
-    },
     description: {
       id: 'aosh.wan.application:information.general.description',
       defaultMessage:
         'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
       description: 'Description of information page',
     },
+    pageTitle: {
+      id: 'aosh.wan.application:information.company.pageTitle',
+      defaultMessage: 'Fyrirtækið',
+      description: 'Title of company information section',
+    },
   }),
   labels: {
     company: defineMessages({
       sectionTitle: {
         id: 'aosh.wan.application:information.company.sectionTitle',
-        defaultMessage: 'Fyrirtækið',
-        description: 'Title of company information section',
+        defaultMessage: 'Grunnupplýsingar',
+        description: 'Title of base information section',
       },
       pageTitle: {
         id: 'aosh.wan.application:information.company.pageTitle',
@@ -36,6 +36,11 @@ export const information = {
         defaultMessage:
           'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
         description: 'Description of company information page',
+      },
+      descriptionField: {
+        id: 'aosh.wan.application:information.company.descriptionField',
+        defaultMessage: 'Grunnupplýsingar',
+        description: 'H5 of company information page',
       },
       title: {
         id: 'aosh.wan.application:information.company.title',
@@ -77,22 +82,22 @@ export const information = {
         defaultMessage: 'Vinnuverndarstarf',
         description: 'Occupational health and safety work',
       },
-      // alertMessage: {
-      //   id: 'aosh.wan.application:information.company.alertMessage#markdown',
-      //   defaultMessage:
-      //     'Ef netfang og símanúmer er ekki rétt hér að neðan þá verður að breyta þeim upplýsingum á {mínum síðum}. Þú þarft svo að koma aftur í þennan glugga og uppfæra upplýsingar hér neðst á síðunni.',
-      //   description: 'Company information alert message',
-      // },
-      // alertMessageLink: {
-      //   id: 'aosh.wan.application:information.company.alertMessageLink',
-      //   defaultMessage: '/minarsidur',
-      //   description: 'Link for mínar síður',
-      // },
-      // alertMessageLinkTitle: {
-      //   id: 'aosh.wan.application:information.company.alertMessageLinkTitle',
-      //   defaultMessage: 'Fara á mínar síður',
-      //   description: 'title for mínar síður link',
-      // },
+      alertMessage: {
+        id: 'aosh.wan.application:information.company.alertMessage',
+        defaultMessage:
+          'Skráðu nafn útibús og eða deildar. Ef útibú/deild er með annað heimilisfang en höfuðstöð þá þarf að skrá það hér fyrir neðan.',
+        description: 'Company information alert message',
+      },
+      nameOfbranch: {
+        id: 'aosh.wan.application:information.company.nameOfbranch',
+        defaultMessage: 'Nafn útibús/deildar',
+        description: 'Name of company branch',
+      },
+      addressOfbranch: {
+        id: 'aosh.wan.application:information.company.addressOfbranch',
+        defaultMessage: 'Heimilisfang útibús/deildar',
+        description: 'Address of company branch',
+      },
     }),
     laborProtection: {
       pageTitle: {
@@ -106,6 +111,42 @@ export const information = {
           'Öryggis- og heilbrigðisstarfsemi fyrirtækisins. Vinsamlega veldu allt sem við á.',
         description:
           'Text for the alerts field in the labor protection part of the company section',
+      },
+    },
+    workhealth: {
+      sectionTitle: {
+        id: 'aosh.wan.application:information.workhealth.sectionTitle',
+        defaultMessage: 'Vinnuvernd',
+        description: 'Title of workhealth information section',
+      },
+      descriptionField: {
+        id: 'aosh.wan.application:information.workhealth.descriptionField',
+        defaultMessage: 'Vinnuverndarstarf',
+        description: 'H5 of workhealth information page',
+      },
+    },
+    projectPurchase: {
+      sectionTitle: {
+        id: 'aosh.wan.application:information.projectPurchase.sectionTitle',
+        defaultMessage: 'Verkkaupi',
+        description: 'Title of project purchase information section',
+      },
+      descriptionField: {
+        id: 'aosh.wan.application:information.projectPurchase.descriptionField',
+        defaultMessage: 'Verkkaupi',
+        description: 'H5 of project purchase information page',
+      },
+      alertMessage: {
+        id: 'aosh.wan.application:information.projectPurchase.alertMessage',
+        defaultMessage:
+          'Hér fyrir neðan er hægt að skrá verkkaupa ef það á við. Verkkaupi er aðili sem unnið er fyrir í verktakavinnu.',
+        description:
+          'Text for the alerts field in the project purchase section',
+      },
+      name: {
+        id: 'aosh.wan.application:information.projectPurchase.name',
+        defaultMessage: 'Nafn',
+        description: 'Name, in project purchase section',
       },
     },
   },

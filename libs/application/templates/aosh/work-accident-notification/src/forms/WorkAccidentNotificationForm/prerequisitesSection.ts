@@ -8,7 +8,7 @@ import {
 import { externalData } from '../../lib/messages'
 import {
   UserProfileApi,
-  NationalRegistryUserApi,
+  IdentityApi,
   getAoshInputOptionsApi,
 } from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
@@ -37,7 +37,7 @@ export const prerequisitesSection = buildSection({
       }),
       dataProviders: [
         buildDataProviderItem({
-          provider: NationalRegistryUserApi,
+          provider: IdentityApi,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.subTitle,
         }),

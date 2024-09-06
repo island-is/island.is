@@ -26,5 +26,17 @@ export const causeAndConsequences = {
       description:
         'Message of the alert message field in the absence sub section',
     },
+    absenceDueToAccident: {
+      id: 'aosh.wan.application:causeAndConsequences.absence.absenceDueToAccident',
+      defaultMessage: 'Fjarvera vegna slyssins',
+      description: 'Label of select field, selecting absence due to accident',
+    },
+  }),
+  circumstances: defineMessages({
+    title: {
+      id: 'aosh.wan.application:causeAndConsequences.circumstances.title',
+      defaultMessage: 'Aðstæður slyss',
+      description: 'Title of the circumstance page',
+    },
   }),
 }

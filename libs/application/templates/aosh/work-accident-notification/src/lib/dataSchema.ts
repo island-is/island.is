@@ -1,14 +1,32 @@
 import { z } from 'zod'
+import * as kennitala from 'kennitala'
 
-const aboutAccidentSchema = z.object({
-  about: z.object({
-    amountInjured: z.number().min(1).max(30),
-  }),
+const companySchema = z.object({
+  nationalId: z
+    .string()
+    .refine(
+      (nationalId) =>
+        nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId),
+    ),
+})
+
+const projectPurchaseSchema = z.object({
+  nationalId: z
+    .string()
+    .optional()
+    .refine(
+      (nationalId) =>
+        !nationalId || (nationalId.length > 0 && kennitala.isValid(nationalId)),
+      {
+        message: 'Invalid nationalId',
+      },
+    ),
 })
 
 export const WorkAccidentNotificationAnswersSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  aboutAccidentSchema: aboutAccidentSchema,
+  approveExternalData: z.boolean().refine((v) => v), // TODO ?
+  companyInformation: companySchema,
+  projectPurchase: projectPurchaseSchema,
 })
 
 export type WorkAccidentNotification = z.TypeOf<

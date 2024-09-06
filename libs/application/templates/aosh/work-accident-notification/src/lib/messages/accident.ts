@@ -38,11 +38,6 @@ export const accident = {
       defaultMessage: 'Kom Lögreglan?',
       description: 'Label of did police arrive on scene input field',
     },
-    amountInjured: {
-      id: 'aosh.wan.application:accident.about.amountInjured',
-      defaultMessage: 'Fjöldi slasaðra',
-      description: 'Label of amount of people injured input field',
-    },
     municipality: {
       id: 'aosh.wan.application:accident.about.municipality',
       defaultMessage: 'Sveitarfélar slysstaðar',
@@ -82,8 +77,9 @@ export const accident = {
       description: 'Title of wasDoing text area',
     },
     wasDoingPlaceholder: {
-      id: 'aosh.wan.application:accident.about.wasDoingPlaceholder',
-      defaultMessage: 'Placeholder',
+      id: 'aosh.wan.application:accident.about.wasDoingPlaceholder#markdown',
+      defaultMessage:
+        'Tilgreinið hvaða verkfæri eða vélar voru notaðar.\nDæmi:\n  - Vann með handborvél\n  - Vann með handborvél',
       description: 'Placeholder of wasDoing text area',
     },
     wentWrongTitle: {
@@ -92,8 +88,9 @@ export const accident = {
       description: 'Title of wentWrong text area',
     },
     wenWrongPlaceholder: {
-      id: 'aosh.wan.application:accident.about.wenWrongPlaceholder',
-      defaultMessage: 'Placeholder',
+      id: 'aosh.wan.application:accident.about.wenWrongPlaceholder#markdown',
+      defaultMessage:
+        'Tilgreinið hvaða verkfæri eða vélar voru notaðar.\nDæmi:\n  - Vann með handborvél\n  - Vann með handborvél',
       description: 'Placeholder of wentWrong text area',
     },
     howTitle: {
@@ -102,8 +99,9 @@ export const accident = {
       description: 'Title of how text area',
     },
     howPlaceholder: {
-      id: 'aosh.wan.application:accident.about.howPlaceholder',
-      defaultMessage: 'Placeholder',
+      id: 'aosh.wan.application:accident.about.howPlaceholder#markdown',
+      defaultMessage:
+        'Tilgreinið hvaða verkfæri eða vélar voru notaðar.\nDæmi:\n  - Vann með handborvél\n  - Vann með handborvél',
       description: 'Placeholder of how text area',
     },
     locationOfAccidentHeading: {

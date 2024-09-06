@@ -1,6 +1,5 @@
 import {
   buildAlertMessageField,
-  buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
   buildSelectField,
@@ -18,25 +17,18 @@ type SizeOfEnterprise = {
   LabelEn: string
 }
 
-type WorkplaceHealthAndSafety = {
-  // TODO REMOVE ME WHEN WE GET GENERATED TYPES FROM API
-  Vinnuver: number
-  Heiti: string
-  Röð: number
-}
-
 export const companySection = buildSubSection({
   id: 'company',
   title: information.labels.company.sectionTitle,
   children: [
     buildMultiField({
       id: 'companyInformation',
-      title: information.labels.company.title,
-      description: information.labels.company.description,
+      title: information.general.pageTitle,
+      description: information.general.description,
       children: [
         buildDescriptionField({
           id: 'companyInformation.description',
-          title: 'Grunnupplysingar',
+          title: information.labels.company.descriptionField,
           titleVariant: 'h5',
         }),
         buildTextField({
@@ -45,8 +37,16 @@ export const companySection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           format: '######-####',
-          defaultValue: (application: Application) => '',
-          //application.externalData?.nationalRegistry?.data?.nationalId,
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            const nationalId = getValueViaPath(
+              application.externalData,
+              'identity.data.nationalId',
+              undefined,
+            ) as string | undefined
+
+            return nationalId
+          },
         }),
         buildTextField({
           id: 'companyInformation.name',
@@ -92,36 +92,31 @@ export const companySection = buildSubSection({
             }))
           },
         }),
-        buildDescriptionField({
-          id: 'companyInformation.ohasw',
-          title: information.labels.company.ohasw,
-          titleVariant: 'h5',
-          marginTop: 3,
-        }),
         buildAlertMessageField({
-          id: 'companyLaborProtection.alertField',
+          id: 'company.alertMessageField',
+          title: '',
+          message: information.labels.company.alertMessage,
           alertType: 'info',
-          title: '',
-          message: information.labels.laborProtection.alertMessageText,
         }),
-        buildCheckboxField({
-          // TODO Most likely needs to be a custom component to allow 'Engin' option to have special condition
-          id: 'companyLaborProtection.checkboxField',
-          title: '',
-          required: true,
-          options: (application) => {
-            const workplaceHealthAndSafeties = getValueViaPath(
-              application.externalData,
-              'aoshData.data.workplaceHealthAndSafety',
-            ) as WorkplaceHealthAndSafety[]
-
-            return [...workplaceHealthAndSafeties] // shallow copy
-              .sort((a, b) => a.Röð - b.Röð)
-              .map(({ Heiti, Vinnuver }) => ({
-                value: Vinnuver.toString(),
-                label: Heiti,
-              }))
-          },
+        buildTextField({
+          id: 'companyInformation.nameOfbranch',
+          title: information.labels.company.nameOfbranch,
+          backgroundColor: 'blue',
+          width: 'half',
+          defaultValue: (application: Application) => '',
+        }),
+        buildTextField({
+          id: 'companyInformation.addressOfBranch',
+          title: information.labels.company.addressOfbranch,
+          backgroundColor: 'blue',
+          width: 'half',
+          defaultValue: (application: Application) => '',
+        }),
+        buildSelectField({
+          id: 'companyInformation.postnumberOfBranch',
+          title: information.labels.company.postNumberAndTown,
+          width: 'half',
+          options: [],
         }),
       ],
     }),

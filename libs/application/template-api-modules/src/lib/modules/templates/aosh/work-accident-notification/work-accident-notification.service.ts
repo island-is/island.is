@@ -16,6 +16,18 @@ import {
   workingEnvironmentSubGroup,
   workplaceHealthAndSafety,
   workStations,
+  absenceDueToAccident,
+  specificPhysicalActivityGroups,
+  victimOccupationMinorGroups,
+  activities,
+  deviationGroups,
+  deviations,
+  contactModesOfInjury,
+  typeOfInjuryGroups,
+  typeOfInjuries,
+  partOfBodyInjuredGroups,
+  partOfBodyInjured,
+  victimsOccupationUnitGroups,
 } from './work-accident-notification.mockData'
 
 @Injectable()
@@ -36,6 +48,18 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
       workhourArrangements,
       victimsOccupationMajorGroup,
       victimsOccupationSubMajorGroup,
+      absenceDueToAccident,
+      specificPhysicalActivityGroups,
+      victimOccupationMinorGroups,
+      activities,
+      deviationGroups,
+      deviations,
+      contactModesOfInjury,
+      typeOfInjuryGroups,
+      typeOfInjuries,
+      partOfBodyInjuredGroups,
+      partOfBodyInjured,
+      victimsOccupationUnitGroups,
     }
 
     return result

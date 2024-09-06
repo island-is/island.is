@@ -1,4 +1,9 @@
-import { buildForm, buildSection } from '@island.is/application/core'
+import {
+  buildDescriptionField,
+  buildForm,
+  buildMultiField,
+  buildSection,
+} from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { informationSection } from './InformationSection'
 import { Logo } from '../../assets/Logo'
@@ -18,12 +23,39 @@ export const WorkAccidentNotificationForm: Form = buildForm({
   children: [
     buildSection({
       id: 'externalData',
-      title: externalData.dataProvider.sectionTitle,
-      children: [],
+      title: externalData.dataProvider.announcement,
+      children: [
+        // TODO Add this to its own file ?
+        buildMultiField({
+          title: externalData.dataProvider.announcement,
+          children: [
+            buildDescriptionField({
+              id: 'externalData.firstHeading',
+              title: externalData.dataProvider.announcementHeading,
+              titleVariant: 'h4',
+              marginBottom: 3,
+            }),
+            buildDescriptionField({
+              id: 'externalDataDescription',
+              title: '',
+              description: externalData.dataProvider.announcementDescription,
+              titleVariant: 'h4',
+              marginBottom: 3,
+            }),
+            buildDescriptionField({
+              id: 'externalData.secondHeading',
+              title: externalData.dataProvider.announcementHeadingSecond,
+              titleVariant: 'h4',
+              marginBottom: 3,
+            }),
+            // TODO ADD company national id input here!
+          ],
+        }),
+      ],
     }),
     informationSection,
     accidentSection,
-    causeAndConsequencesSection,
     employeeSection,
+    causeAndConsequencesSection,
   ],
 })

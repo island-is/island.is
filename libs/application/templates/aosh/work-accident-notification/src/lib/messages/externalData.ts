@@ -23,11 +23,28 @@ export const externalData = {
       description:
         'Agreement of having read the above statements regarding data fetching',
     },
-    // submitButton: {
-    //   id: 'aosh.wan.application:externalData.dataProvider.submitButton',
-    //   defaultMessage: 'Hefja umsókn',
-    //   description: 'Continue to application',
-    // },
+    announcement: {
+      id: 'aosh.wan.application:externalData.dataProvider.announcement',
+      defaultMessage: 'Tilkynning',
+      description: 'Announcement following prerequisites',
+    },
+    announcementHeading: {
+      id: 'aosh.wan.application:externalData.dataProvider.announcementHeading',
+      defaultMessage: 'Velja lögaðila sem slysið er skráð á',
+      description: 'First heading of announcement page',
+    },
+    announcementHeadingSecond: {
+      id: 'aosh.wan.application:externalData.dataProvider.announcemeannouncementHeadingSecondntHeading',
+      defaultMessage:
+        'Ef engin kennitala fyrirtækis er skráð í reitinn hér fyrir neðan þá verður slysið skráð á Notanda {TODO User´s name} (xxxxxx-xxxx)',
+      description: 'Second heading of announcement page',
+    },
+    announcementDescription: {
+      id: 'aosh.wan.application:externalData.dataProvider.announcementDescription',
+      defaultMessage:
+        'Vinsamlega athugaðu að þú ert innskráð/ur sem einstaklingur. Atvinnurekanda ber skylda til að sjá til þess að vinnuslys sé tilkynnt til Vinnueftirlitsins þegar slys verður vegna eða við vinnu á vinnustað hans og starfsmaður verður óvinnufær í einn eða fleiri daga, umfram þann dag sem slysið varð. Einstaklingar eiga ekki að tilkynna eigin slys inn til Vinnueftirlitsins eina undantekningin á þessari reglu eru einstaklingar sem reka eigin starfsemi á sinni eigin kennitölu. Ef þú ert að skrá þessa tilkynningu fyrir hönd fyrirtækis þá væri æskilegra að þú værir innskráður á vefinn með auðkenni viðkomandi fyrirtækis eða með umboð frá fyrirtækinu til að skrá vinnuslys fyrir hönd þess. Þú getur hins vegar skráð kennitölu fyrirtækisins hér fyrir neðan og sent þessa tilkynningu til Vinnueftirlitsins en athugaðu að þú munt ekki hafa aðgang að neinum upplýsingum um aðrar tilkynningar fyrirtækisins.',
+      description: 'Announcement description following prerequisites',
+    },
   }),
   nationalRegistry: defineMessages({
     title: {

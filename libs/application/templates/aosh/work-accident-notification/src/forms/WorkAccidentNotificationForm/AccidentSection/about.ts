@@ -55,13 +55,17 @@ export const aboutSection = buildSubSection({
           id: 'about.didPoliceCome',
           title: accident.about.didPoliceCome,
           width: 'half',
-          options: [],
-        }),
-        buildTextField({
-          id: 'about.amountInjured',
-          title: accident.about.amountInjured,
-          variant: 'number',
-          width: 'half',
+          required: true,
+          options: [
+            {
+              value: YES, // TODO What format does aosh use for yes/no options
+              label: shared.options.yes,
+            },
+            {
+              value: NO, // TODO What format does aosh use for yes/no options
+              label: shared.options.no,
+            },
+          ],
         }),
         buildSelectField({
           id: 'about.municipality',

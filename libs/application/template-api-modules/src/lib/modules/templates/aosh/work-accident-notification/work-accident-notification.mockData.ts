@@ -14,7 +14,7 @@ export type WorkingEnvironmentGroup = {
   Code: number
   LabelIs: string
   LabelEn: string
-  validToSelect: number
+  ValidToSelect: number
 }
 
 export type WorkingEnvironmentSubGroup = {
@@ -45,15 +45,15 @@ export type VictimsOccupationMajorGroup = {
   Code: number
   LabelIs: string
   LabelEn: string
-  validToSelect: number
+  ValidToSelect: number
 }
 
-export interface VictimsOccupationSubMajorGroup {
-  code: number
-  fkMajorGroupCode: number
-  labelIs: string
-  labelEn: string
-  validToSelect: boolean
+export type VictimsOccupationSubMajorGroup = {
+  Code: number
+  FK_MajorGroupCode: number
+  LabelIs: string
+  LabelEn: string
+  ValidToSelect: number
 }
 
 export type EmploymentStatusOfTheVictim = {
@@ -228,20 +228,20 @@ export const workingEnvironmentGroup: WorkingEnvironmentGroup[] = [
     Code: 10,
     LabelIs: 'Iðnaðarsvæði (Matvælaiðnaður, fiskiðnaður, þungaiðnaður og fl.)',
     LabelEn: 'Industrial site - Not specified',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 20,
     LabelIs: 'Byggingarsvæði, byggingarvinna, námuvinnsla',
     LabelEn:
       'Construction site, construction, opencast quarry, opencast mine - Not specified',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 30,
     LabelIs: 'Landbúnaður, undaneldi, fiskeldi, skógræktarsvæði',
     LabelEn: 'Farming, breeding, fish farming, forest zone - Not specified',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 40,
@@ -249,57 +249,57 @@ export const workingEnvironmentGroup: WorkingEnvironmentGroup[] = [
       'Verslanir, skólar, veitingahús, skrifstofur, afþreyingarsvæði, ofl.',
     LabelEn:
       'Tertiary activity area, office, amusement area, miscellaneous - Not specified',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 50,
     LabelIs: 'Heilbrigðisstofnanir',
     LabelEn: 'Health establishment - Not specified',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 60,
     LabelIs: 'Vegir, bílar, bilastæði, flugvellir og önnur samgöngumannvirki',
     LabelEn: 'Public area - Not specified',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 70,
     LabelIs: 'Á heimili',
     LabelEn: 'In the home - Not specified',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 80,
     LabelIs: 'Íþróttasvæði',
     LabelEn: 'Sports area - Not specified',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 90,
     LabelIs: 'Vinnusvæði í hæð, byggingavinna undanskilin',
     LabelEn:
       'In the air, elevated, excluding construction sites - Not specified',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 100,
     LabelIs: 'Vinnusvæði neðanjarðar, byggingarsvæði undanskilin',
     LabelEn: 'Underground, excluding construction sites - Not specified',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 110,
     LabelIs: 'Vinna á hafi og vötnum, byggingarsvæði undanskilin',
     LabelEn: 'On /over water, excluding construction sites - Not specified',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 120,
     LabelIs: 'Vinnusvæði undir háum þrýstingi, byggingarsvæði undanskilin',
     LabelEn:
       'In high pressure environments, excluding construction sites - Not specified',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
 ]
 
@@ -759,82 +759,345 @@ export const victimsOccupationMajorGroup: VictimsOccupationMajorGroup[] = [
     Code: 1,
     LabelIs: 'Stjórnendur',
     LabelEn: 'Managers',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 2,
     LabelIs: 'Sérfræðistörf',
     LabelEn: 'Professional',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 3,
     LabelIs: 'Tæknimenntað starfsfólk og aðstoðarfólk sérfræðinga',
     LabelEn: 'Technicians and associate professionals',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 4,
     LabelIs: 'Skrifstofustörf o.fl.',
     LabelEn: 'Clerical support workers',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 5,
     LabelIs:
       'Þjónustu- og sölustörf, t.d. starfsfólk á leikskólum, við umönnun og lögregla',
     LabelEn: 'Service and sales workers',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 6,
     LabelIs: 'Starfsfólk menntað í landbúnaði og fiskiðnaði',
     LabelEn: 'Skilled agricultural, forestry and fishery workers',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 7,
     LabelIs: 'Störf iðnaðarmanna og sérhæfðs iðnverkafólks',
     LabelEn: 'Craft and related trades workers',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 8,
     LabelIs:
       'Verkafólk í verksmiðjum sem vinnur við vélar og stjórnendur vinnuvéla og ökutækja',
     LabelEn: 'Plant and machine operators, and assemblers',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
   {
     Code: 9,
     LabelIs: 'Almenn störf - Verkafólk',
     LabelEn: 'Elementary occupations',
-    validToSelect: 0,
+    ValidToSelect: 0,
   },
 ]
 
 export const victimsOccupationSubMajorGroup: VictimsOccupationSubMajorGroup[] =
   [
     {
-      code: 11,
-      fkMajorGroupCode: 1,
-      labelIs: 'Störf æðstu embættismanna og kjörinna fulltrúa',
-      labelEn: 'Chief executives, senior officials and legislators',
-      validToSelect: false,
+      Code: 11,
+      FK_MajorGroupCode: 1,
+      LabelIs: 'Störf æðstu embættismanna og kjörinna fulltrúa',
+      LabelEn: 'Chief executives, senior officials and legislators',
+      ValidToSelect: 0,
     },
     {
-      code: 12,
-      fkMajorGroupCode: 1,
-      labelIs: 'Forstjórar og stjórnendur stærri fyrirtækja og stofnana',
-      labelEn: 'Administrative and commercial managers',
-      validToSelect: false,
+      Code: 12,
+      FK_MajorGroupCode: 1,
+      LabelIs: 'Forstjórar og stjórnendur stærri fyrirtækja og stofnana',
+      LabelEn: 'Administrative and commercial managers',
+      ValidToSelect: 0,
     },
     {
-      code: 13,
-      fkMajorGroupCode: 1,
-      labelIs: 'Framleiðslustjórar og stjórnendur í sérhæfðri þjónustu',
-      labelEn: 'Production and specialized services managers',
-      validToSelect: false,
+      Code: 13,
+      FK_MajorGroupCode: 1,
+      LabelIs: 'Framleiðslustjórar og stjórnendur í sérhæfðri þjónustu',
+      LabelEn: 'Production and specialized services managers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 14,
+      FK_MajorGroupCode: 1,
+      LabelIs:
+        'Stjórnendur í hótel- og veitingahúsarekstri, smásölu og annarri þjónustu',
+      LabelEn: 'Hospitality, retail and other services managers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 21,
+      FK_MajorGroupCode: 2,
+      LabelIs: 'Sérfræðingar í vísindum og verkfræði',
+      LabelEn: 'Science and engineering professionals',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 22,
+      FK_MajorGroupCode: 2,
+      LabelIs: 'Sérfræðingar í heilbrigðisþjónustu',
+      LabelEn: 'Health professionals',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 23,
+      FK_MajorGroupCode: 2,
+      LabelIs: 'Kennarar',
+      LabelEn: 'Teaching professionals',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 24,
+      FK_MajorGroupCode: 2,
+      LabelIs: 'Viðskipta- og stjórnsýslufræðingar',
+      LabelEn: 'Business and administration professionals',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 25,
+      FK_MajorGroupCode: 2,
+      LabelIs: 'Sérfræðingar í upplýsinga-og fjarskiptatækni',
+      LabelEn: 'Information and communications technology professionals',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 26,
+      FK_MajorGroupCode: 2,
+      LabelIs: 'Sérfræðingar í lögfræði, félagsfræði, menningu og listum',
+      LabelEn: 'Legal, social and cultural professionals',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 31,
+      FK_MajorGroupCode: 3,
+      LabelIs: 'Aðstoðarfólk í vísindum og raungreinum',
+      LabelEn: 'Science and engineering associate professionals',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 32,
+      FK_MajorGroupCode: 3,
+      LabelIs: 'Heilbrigðisstarfsfólk',
+      LabelEn: 'Health associate professionals',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 33,
+      FK_MajorGroupCode: 3,
+      LabelIs: 'Sérfræðingar á sviði viðskipta og stjórnsýslu',
+      LabelEn: 'Business and administration associate professionals',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 34,
+      FK_MajorGroupCode: 3,
+      LabelIs:
+        'Sérfræðingar á sviði lögfræði, félagsmála, menningar og íþrótta',
+      LabelEn: 'Legal, social, cultural and related associate professionals',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 35,
+      FK_MajorGroupCode: 3,
+      LabelIs: 'Tæknimenn í upplýsinga- og fjarskiptatækni',
+      LabelEn: 'Information and communications technicians',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 41,
+      FK_MajorGroupCode: 4,
+      LabelIs: 'Skrifstofufólk við almenn skrifstofustörf',
+      LabelEn: 'General and keyboard clerks',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 42,
+      FK_MajorGroupCode: 4,
+      LabelIs: 'Skrifstofustörf, þjónusta við viðskiptavini',
+      LabelEn: 'Customer services clerks',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 43,
+      FK_MajorGroupCode: 4,
+      LabelIs: 'Skrifstofufólk við skráningu og vörumiðlun',
+      LabelEn: 'Numerical and material recording clerks',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 44,
+      FK_MajorGroupCode: 4,
+      LabelIs: 'Bréfberar og póstflokkun',
+      LabelEn: 'Other clerical support workers',
+      ValidToSelect: 1,
+    },
+    {
+      Code: 51,
+      FK_MajorGroupCode: 5,
+      LabelIs: 'Ýmis persónuleg þjónustustörf',
+      LabelEn: 'Personal service workers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 52,
+      FK_MajorGroupCode: 5,
+      LabelIs: 'Sölumenn',
+      LabelEn: 'Sales workers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 53,
+      FK_MajorGroupCode: 5,
+      LabelIs: 'Starfsfólk við umönnun og kennslu',
+      LabelEn: 'Personal care workers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 54,
+      FK_MajorGroupCode: 5,
+      LabelIs: 'Lögregla, slökkvilið, björgun og gæsla fólks',
+      LabelEn: 'Protective services workers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 61,
+      FK_MajorGroupCode: 6,
+      LabelIs: 'Menntað starfsfólk í landbúnaði',
+      LabelEn: 'Market-oriented skilled agricultural workers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 62,
+      FK_MajorGroupCode: 6,
+      LabelIs: 'Menntað starfsfólk við skógrækt, fiskiðnað og veiðar',
+      LabelEn: 'Market-oriented skilled forestry, fishery and hunting workers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 63,
+      FK_MajorGroupCode: 6,
+      LabelIs: 'Bændur (bóndi)',
+      LabelEn: 'Subsistence farmers, fishers, hunters and gatherers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 71,
+      FK_MajorGroupCode: 7,
+      LabelIs:
+        'Starfsfólk í byggingavinnu og skyldum atvinnugreinum, að undanskildum rafvirkjum',
+      LabelEn: 'Building and related trades workers, excluding electricians',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 72,
+      FK_MajorGroupCode: 7,
+      LabelIs: 'Málm- og vélvirkjar og skyld störf',
+      LabelEn: 'Metal, machinery and related trades workers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 73,
+      FK_MajorGroupCode: 7,
+      LabelIs: 'Handverksfólk og prentarar',
+      LabelEn: 'Handicraft and printing workers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 74,
+      FK_MajorGroupCode: 7,
+      LabelIs: 'Störf við rafvirkjun og rafeindavirkjun',
+      LabelEn: 'Electrical and electronic trades workers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 75,
+      FK_MajorGroupCode: 7,
+      LabelIs: 'Störf í matvæla-, tré-, fata- textíliðnaði og skyld störf',
+      LabelEn:
+        'Food processing, wood working, garment and other craft and related trades workers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 81,
+      FK_MajorGroupCode: 8,
+      LabelIs: 'Verkafólk í verksmiðjum sem vinnur við vélar',
+      LabelEn: 'Stationary plant and machine operators',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 82,
+      FK_MajorGroupCode: 8,
+      LabelIs: 'Verkafólk sem vinnur við samsetningu',
+      LabelEn: 'Assemblers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 83,
+      FK_MajorGroupCode: 8,
+      LabelIs: 'Bifreiða- og vinnuvélastjórar',
+      LabelEn: 'Drivers and mobile plant operators',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 91,
+      FK_MajorGroupCode: 9,
+      LabelIs: 'Ræstitæknar og þrifafólk',
+      LabelEn: 'Cleaners and helpers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 92,
+      FK_MajorGroupCode: 9,
+      LabelIs: 'Verkafólk í landbúnaði og fiskvinnslu',
+      LabelEn: 'Agricultural, forestry and fishery labourers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 93,
+      FK_MajorGroupCode: 9,
+      LabelIs: 'Verkafólk í byggingarvinnu, pökkun, námuvinnslu og samgöngum',
+      LabelEn: 'Labourers in mining, construction, manufacturing and transport',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 94,
+      FK_MajorGroupCode: 9,
+      LabelIs: 'Aðstoðarfólk við matreiðslu',
+      LabelEn: 'Food preparation assistants',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 95,
+      FK_MajorGroupCode: 9,
+      LabelIs: 'Götusalar og skyld sölu- og þjónustustörf',
+      LabelEn: 'Street and related sales and service workers',
+      ValidToSelect: 0,
+    },
+    {
+      Code: 96,
+      FK_MajorGroupCode: 9,
+      LabelIs: 'Sorphreinsunarmenn og skyld störf',
+      LabelEn: 'Refuse workers and other elementary workers',
+      ValidToSelect: 0,
     },
   ]
 
@@ -914,7 +1177,7 @@ export const absenceDueToAccident: AbsenceDueToAccident[] = [
   },
 ]
 
-export const specificPhysicalActivityGroups = [
+export const specificPhysicalActivityGroups: SpecificPhysicalActivityGroup[] = [
   {
     Code: 10,
     LabelIs: 'Unnið við vél  (vélar fastar á sama stað)',
