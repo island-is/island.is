@@ -9,7 +9,7 @@ import { Op } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
-import { EndorsementListDto } from './dto/endorsementList.dto'
+import { CreateEndorsementListDto, EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
 import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
 import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
@@ -216,31 +216,28 @@ export class EndorsementListService {
     return await endorsementList.update({ ...endorsementList, ...newData })
   }
 
-  async create(list: CreateInput) {
-    if (!list.openedDate || !list.closedDate) {
-      this.logger.warn('Body missing openedDate or closedDate value.')
-      throw new BadRequestException([
-        'Body missing openedDate or closedDate value.',
-      ])
-    }
-    if (list.openedDate >= list.closedDate) {
+  async create(createEndorsementListDto: CreateEndorsementListDto, user: User) {
+    // should be validated by DTO ........................................................................
+    // if (!createEndorsementListDto.openedDate || !createEndorsementListDto.closedDate) {
+    //   this.logger.warn('Body missing openedDate or closedDate value.')
+    //   throw new BadRequestException([
+    //     'Body missing openedDate or closedDate value.',
+    //   ])
+    // }
+    if (createEndorsementListDto.openedDate >= createEndorsementListDto.closedDate) {
       this.logger.warn('openedDate can not be bigger than closedDate.')
       throw new BadRequestException([
         'openedDate can not be bigger than closedDate.',
       ])
     }
-    if (new Date() >= list.closedDate) {
-      this.logger.warn(
-        'closedDate can not have already passed on creation of Endorsement List',
-      )
-      throw new BadRequestException([
-        'closedDate can not have already passed on creation of Endorsement List',
-      ])
+    if (new Date() >= createEndorsementListDto.closedDate) {
+      const message = 'closedDate can not have already passed on creation of Endorsement List'
+      this.logger.warn(message)
+      throw new BadRequestException([message])
     }
-    this.logger.info(`Creating endorsement list: ${list.title}`)
-    const endorsementList = await this.endorsementListModel.create({ ...list })
+    this.logger.info(`Creating endorsement list: ${createEndorsementListDto.title}`)
+    const endorsementList = await this.endorsementListModel.create({ ...createEndorsementListDto, owner: user.nationalId })
 
-    console.log('process.env.NODE_ENV', process.env.NODE_ENV)
     if (process.env.NODE_ENV === 'production') {
       await this.emailCreated(endorsementList)
     }
