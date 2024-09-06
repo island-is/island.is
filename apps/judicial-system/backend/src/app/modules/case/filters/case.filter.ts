@@ -8,12 +8,12 @@ import {
   CaseType,
   getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
-  InstitutionType,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
-  isPrisonSystemUser,
+  isPrisonAdminUser,
+  isPrisonStaffUser,
   isProsecutionUser,
   isPublicProsecutorUser,
   isRequestCase,
@@ -173,48 +173,17 @@ const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
   return true
 }
 
-const canPrisonSystemUserAccessCase = (
+const canPrisonStaffUserAccessCase = (
   theCase: Case,
-  user: User,
   forUpdate = true,
 ): boolean => {
-  // Prison system users cannot update cases
+  // Prison staff users cannot update cases
   if (forUpdate) {
     return false
   }
 
   // Check case type access
-  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
-    if (isIndictmentCase(theCase.type)) {
-      const verdictInfo = theCase.defendants?.map<[boolean, Date | undefined]>(
-        (defendant) => [
-          theCase.indictmentRulingDecision ===
-            CaseIndictmentRulingDecision.RULING &&
-            defendant.serviceRequirement !== ServiceRequirement.NOT_REQUIRED,
-          defendant.verdictViewDate,
-        ],
-      )
-
-      const [_, indictmentVerdictAppealDeadlineExpired] =
-        getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
-
-      if (
-        theCase.state === CaseState.COMPLETED &&
-        theCase.indictmentReviewDecision ===
-          IndictmentCaseReviewDecision.ACCEPT &&
-        indictmentVerdictAppealDeadlineExpired
-      ) {
-        return true
-      }
-    }
-
-    if (
-      !isRestrictionCase(theCase.type) &&
-      theCase.type !== CaseType.PAROLE_REVOCATION
-    ) {
-      return false
-    }
-  } else if (
+  if (
     ![
       CaseType.CUSTODY,
       CaseType.ADMISSION_TO_FACILITY,
@@ -229,8 +198,44 @@ const canPrisonSystemUserAccessCase = (
     return false
   }
 
-  // Check prison access to alternative travel ban
-  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
+  // Check decision access
+  if (
+    !theCase.decision ||
+    ![CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
+      theCase.decision,
+    )
+  ) {
+    return false
+  }
+
+  return true
+}
+
+const canPrisonAdminUserAccessCase = (
+  theCase: Case,
+  forUpdate = true,
+): boolean => {
+  // Prison admin users cannot update cases
+  if (forUpdate) {
+    return false
+  }
+
+  // Check case type access
+  if (
+    !isRestrictionCase(theCase.type) &&
+    theCase.type !== CaseType.PAROLE_REVOCATION &&
+    !isIndictmentCase(theCase.type)
+  ) {
+    return false
+  }
+
+  if (isRequestCase(theCase.type)) {
+    // Check case state access
+    if (theCase.state !== CaseState.ACCEPTED) {
+      return false
+    }
+
+    // Check decision access
     if (
       !theCase.decision ||
       ![
@@ -241,13 +246,40 @@ const canPrisonSystemUserAccessCase = (
     ) {
       return false
     }
-  } else {
+  }
+
+  if (isIndictmentCase(theCase.type)) {
+    // Check case state access
+    if (theCase.state !== CaseState.COMPLETED) {
+      return false
+    }
+
+    // Check case indictment ruling decision access
     if (
-      !theCase.decision ||
-      ![CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
-        theCase.decision,
-      )
+      theCase.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING
     ) {
+      return false
+    }
+
+    // Check indictment case review decision access
+    if (
+      theCase.indictmentReviewDecision !== IndictmentCaseReviewDecision.ACCEPT
+    ) {
+      return false
+    }
+
+    // Check defendant verdict appeal deadline access
+    const verdictInfo = theCase.defendants?.map<[boolean, Date | undefined]>(
+      (defendant) => [
+        defendant.serviceRequirement !== ServiceRequirement.NOT_REQUIRED,
+        defendant.verdictViewDate,
+      ],
+    )
+
+    const [_, indictmentVerdictAppealDeadlineExpired] =
+      getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
+
+    if (!indictmentVerdictAppealDeadlineExpired) {
       return false
     }
   }
@@ -339,8 +371,12 @@ export const canUserAccessCase = (
     return canAppealsCourtUserAccessCase(theCase)
   }
 
-  if (isPrisonSystemUser(user)) {
-    return canPrisonSystemUserAccessCase(theCase, user, forUpdate)
+  if (isPrisonStaffUser(user)) {
+    return canPrisonStaffUserAccessCase(theCase, forUpdate)
+  }
+
+  if (isPrisonAdminUser(user)) {
+    return canPrisonAdminUserAccessCase(theCase, forUpdate)
   }
 
   if (isDefenceUser(user)) {
