@@ -190,9 +190,6 @@ export const authStore = create<AuthStore>((set, get) => ({
     // Clear passkey if exists
     await clearPasskey()
 
-    // Reset home screen widgets
-    preferencesStore.getState().resetHomeScreenWidgets()
-
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const tokenToRevoke = get().authorizeResult!.accessToken!
@@ -217,6 +214,8 @@ export const authStore = create<AuthStore>((set, get) => ({
       }),
       true,
     )
+    // Reset home screen widgets
+    preferencesStore.getState().resetHomeScreenWidgets()
     return true
   },
 }))
