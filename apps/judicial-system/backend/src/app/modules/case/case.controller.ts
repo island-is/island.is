@@ -99,8 +99,8 @@ import {
   prosecutorUpdateRule,
   publicProsecutorStaffUpdateRule,
 } from './guards/rolesRules'
-import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
+import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
@@ -150,7 +150,7 @@ export class CaseController {
 
     const createdCase = await this.caseService.create(caseToCreate, user)
 
-    this.eventService.postEvent(CaseEvent.CREATE, createdCase as Case)
+    this.eventService.postEvent('CREATE', createdCase)
 
     return createdCase
   }
@@ -419,10 +419,7 @@ export class CaseController {
     )
 
     // No need to wait
-    this.eventService.postEvent(
-      transition.transition as unknown as CaseEvent,
-      updatedCase ?? theCase,
-    )
+    this.eventService.postEvent(transition.transition, updatedCase ?? theCase)
 
     return updatedCase ?? theCase
   }
@@ -468,7 +465,7 @@ export class CaseController {
   )
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
-  @UseInterceptors(CaseInterceptor)
+  @UseInterceptors(CompletedAppealAccessedInterceptor)
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
     this.logger.debug(`Getting case ${caseId} by id`)
 
@@ -891,7 +888,7 @@ export class CaseController {
 
     const extendedCase = await this.caseService.extend(theCase, user)
 
-    this.eventService.postEvent(CaseEvent.EXTEND, extendedCase as Case)
+    this.eventService.postEvent('EXTEND', extendedCase as Case)
 
     return extendedCase
   }

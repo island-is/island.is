@@ -1,26 +1,20 @@
+const MILLISECONDS_TO_EXPIRY = 28 * 24 * 60 * 60 * 1000
+
 export const getIndictmentVerdictAppealDeadline = (
-  verdictViewDates?: (string | undefined)[],
+  verdictViewDates?: (Date | undefined)[],
 ): Date | undefined => {
   if (
-    !verdictViewDates?.length ||
-    !verdictViewDates.every((date) => date != null)
+    !verdictViewDates ||
+    verdictViewDates.length === 0 ||
+    verdictViewDates.some((date) => !date)
   ) {
     return undefined
   }
 
-  const viewDates = verdictViewDates.map((date) => new Date(date as string))
-
-  if (viewDates.length === 0) {
-    return undefined
-  }
-
-  const newestViewDate = viewDates.reduce(
-    (newest, current) => (current > newest ? current : newest),
+  const newestViewDate = verdictViewDates.reduce(
+    (newest: Date, current) => (current && current > newest ? current : newest),
     new Date(0),
   )
 
-  const expiryDate = new Date(newestViewDate.getTime())
-  expiryDate.setDate(newestViewDate.getDate() + 28)
-
-  return expiryDate
+  return new Date(newestViewDate.getTime() + MILLISECONDS_TO_EXPIRY)
 }

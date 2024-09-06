@@ -54,7 +54,7 @@ export class InternalCaseController {
 
     const createdCase = await this.internalCaseService.create(caseToCreate)
 
-    this.eventService.postEvent(CaseEvent.CREATE_XRD, createdCase as Case)
+    this.eventService.postEvent('CREATE_XRD', createdCase as Case)
 
     return createdCase
   }
