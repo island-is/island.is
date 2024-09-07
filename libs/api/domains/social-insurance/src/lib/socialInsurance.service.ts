@@ -142,14 +142,15 @@ export class SocialInsuranceService {
     let hasIncompleteLines = false
     const incomeCategories = data.incomeTypeLines
       .map((i) => {
-        if (!i.incomeCategoryName || !i.totalSum || !i.currency) {
+        if (!i.incomeTypeName || !i.incomeCategoryName || !i.totalSum) {
           hasIncompleteLines = true
           return undefined
         }
         return {
-          name: i.incomeTypeName,
+          name: i.incomeCategoryName,
+          typeName: i.incomeTypeName,
           annualSum: i.totalSum,
-          currency: i.currency,
+          currency: i.currency ?? undefined,
         }
       })
       .filter(isDefined)
