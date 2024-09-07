@@ -23,7 +23,7 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { DeliverDto } from './dto/deliver.dto'
 import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
 import { InternalCasesDto } from './dto/internalCases.dto'

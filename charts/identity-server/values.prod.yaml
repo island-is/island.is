@@ -305,6 +305,7 @@ services-auth-delegation-api:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'service-portal'
+    - 'user-notification-worker'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
