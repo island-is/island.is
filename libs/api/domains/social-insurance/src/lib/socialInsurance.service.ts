@@ -147,7 +147,7 @@ export class SocialInsuranceService {
           return undefined
         }
         return {
-          name: i.incomeCategoryName,
+          name: i.incomeTypeName,
           annualSum: i.totalSum,
           currency: i.currency,
         }
