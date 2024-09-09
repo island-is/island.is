@@ -14,6 +14,7 @@ import {
   isDistrictCourtUser,
   isPrisonSystemUser,
   isProsecutionUser,
+  isPublicProsecutorUser,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -41,6 +42,10 @@ export class ViewCaseFileGuard implements CanActivate {
     // to get accurate case file permissions
 
     if (isProsecutionUser(user)) {
+      return true
+    }
+
+    if (isPublicProsecutorUser(user) && isCompletedCase(theCase.state)) {
       return true
     }
 

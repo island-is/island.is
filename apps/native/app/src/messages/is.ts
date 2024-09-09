@@ -490,8 +490,8 @@ export const is = {
   'edit.phone.inputlabel': 'Símanúmer',
   'edit.phone.button': 'Vista',
   'edit.phone.button.empty': 'Vista tómt',
-  'edit.phone.button.error': 'Villa',
-  'edit.phone.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
+  'edit.phone.error': 'Villa',
+  'edit.phone.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit email
   'edit.email.screenTitle': 'Breyta Netfangi',
@@ -499,8 +499,8 @@ export const is = {
   'edit.email.inputlabel': 'Netfang',
   'edit.email.button': 'Vista',
   'edit.email.button.empty': 'Vista tómt',
-  'edit.email.button.error': 'Villa',
-  'edit.email.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
+  'edit.email.error': 'Villa',
+  'edit.email.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Breyta banka upplýsingum',
@@ -510,6 +510,8 @@ export const is = {
   'edit.bankinfo.inputlabel.book': 'Hb.',
   'edit.bankinfo.inputlabel.number': 'Reikningsnúmer',
   'edit.bankinfo.button': 'Vista',
+  'edit.bankinfo.error': 'Villa',
+  'edit.bankinfo.errorMessage': 'Gat ekki vistað reikningsupplýsingar',
 
   // edit confirm
   'edit.confirm.screenTitle': 'Staðfesta aðgerð',
@@ -523,6 +525,8 @@ export const is = {
   'edit.confirm.inputlabel': 'Öryggisnúmer',
   'edit.cancel.button': 'Hætta við',
   'edit.confirm.button': 'Staðfesta',
+  'edit.confirm.error': 'Villa',
+  'edit.confirm.errorMessage': 'Gat ekki uppfært upplýsingar',
 
   // air discount
   'airDiscount.screenTitle': 'Loftbrú',
