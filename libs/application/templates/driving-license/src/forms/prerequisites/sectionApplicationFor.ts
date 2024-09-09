@@ -14,7 +14,10 @@ import {
   DrivingLicenseFakeData,
 } from '../../lib/constants'
 
-export const sectionApplicationFor = (allowBELicense = false) =>
+export const sectionApplicationFor = (
+  allowBELicense = false,
+  allow65Renewal = false,
+) =>
   buildSubSection({
     id: 'applicationFor',
     title: m.applicationDrivingLicenseTitle,
@@ -80,14 +83,19 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                   value: B_FULL,
                   disabled: !currentLicense,
                 },
-                {
+              ]
+
+              if (allow65Renewal) {
+                options = options.concat({
                   label: m.applicationForRenewalLicenseTitle,
                   subLabel:
                     m.applicationForRenewalLicenseDescription.defaultMessage,
                   value: B_FULL_RENEWAL_65,
-                  disabled: !currentLicense || ((fakeData && fakeData.age) ? fakeData.age < 65 : age < 65),
-                },
-              ]
+                  disabled:
+                    !currentLicense ||
+                    (fakeData && fakeData.age ? fakeData.age < 65 : age < 65),
+                })
+              }
 
               if (allowBELicense) {
                 options = options.concat({
