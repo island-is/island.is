@@ -4,6 +4,7 @@ import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
+  Scopes,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
@@ -21,7 +22,7 @@ import { DefenseChoice } from '../models/defenseChoice.model'
 import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedInput.model'
 import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
 import { GetCourtCasesInput } from '../dto/getCourtCasesInput.model'
-
+import { ApiScope } from '@island.is/auth/scopes'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/law-and-order' })
@@ -34,7 +35,7 @@ export class LawAndOrderResolver {
     >,
   ) {}
 
-  //@Scopes(ApiScope.lawAndOrder)
+  @Scopes(ApiScope.lawAndOrder)
   @Query(() => CourtCases, {
     name: 'lawAndOrderCourtCasesList',
     nullable: true,
@@ -47,7 +48,7 @@ export class LawAndOrderResolver {
     return this.lawAndOrderService.getCourtCases(user, input.locale)
   }
 
-  //@Scopes(ApiScope.lawAndOrder)
+  @Scopes(ApiScope.lawAndOrder)
   @Query(() => CourtCase, {
     name: 'lawAndOrderCourtCaseDetail',
     nullable: true,
@@ -60,7 +61,7 @@ export class LawAndOrderResolver {
     return this.lawAndOrderService.getCourtCase(user, input.id, input.locale)
   }
 
-  //@Scopes(ApiScope.lawAndOrder)
+  @Scopes(ApiScope.lawAndOrder)
   @Query(() => Subpoena, { name: 'lawAndOrderSubpoena', nullable: true })
   @Audit()
   async getSubpoena(
@@ -70,13 +71,14 @@ export class LawAndOrderResolver {
     return this.lawAndOrderService.getSubpoena(user, input.id, input.locale)
   }
 
-  //@Scopes(ApiScope.lawAndOrder)
+  @Scopes(ApiScope.lawAndOrder)
   @Query(() => Lawyers, { name: 'lawAndOrderLawyers', nullable: true })
   @Audit()
   async getLawyers(@CurrentUser() user: User) {
     return this.lawAndOrderService.getLawyers(user)
   }
 
+  @Scopes(ApiScope.lawAndOrder)
   @Mutation(() => DefenseChoice, {
     name: 'lawAndOrderDefenseChoicePost',
     nullable: true,
@@ -91,6 +93,7 @@ export class LawAndOrderResolver {
     })
   }
 
+  @Scopes(ApiScope.lawAndOrder)
   @Mutation(() => SubpoenaAcknowledged, {
     name: 'lawAndOrderSubpoenaAcknowledged',
     nullable: true,
