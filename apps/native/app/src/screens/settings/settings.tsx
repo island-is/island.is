@@ -14,7 +14,6 @@ import {
   Image,
   Linking,
   Platform,
-  Pressable,
   ScrollView,
   Switch,
   TouchableOpacity,
@@ -151,6 +150,8 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     }).then(({ selectedItem }: any) => {
       if (selectedItem) {
         setLocale(selectedItem.id)
+        const locale = selectedItem.id === 'is-IS' ? 'is' : 'en'
+        updateLocale(locale)
       }
     })
   }
@@ -166,7 +167,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     }, 330)
   }, [])
 
-  function updateDocumentNotifications(value: boolean) {
+  const updateDocumentNotifications = (value: boolean) => {
     client
       .mutate<UpdateProfileMutation, UpdateProfileMutationVariables>({
         mutation: UpdateProfileDocument,
@@ -198,7 +199,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
       })
   }
 
-  function updateEmailNotifications(value: boolean) {
+  const updateEmailNotifications = (value: boolean) => {
     client
       .mutate<UpdateProfileMutation, UpdateProfileMutationVariables>({
         mutation: UpdateProfileDocument,
@@ -227,6 +228,30 @@ export const SettingsScreen: NavigationFunctionComponent = ({
             id: 'settings.communication.newNotificationsErrorDescription',
           }),
         )
+      })
+  }
+
+  const updateLocale = (value: string) => {
+    client
+      .mutate<UpdateProfileMutation, UpdateProfileMutationVariables>({
+        mutation: UpdateProfileDocument,
+        update(cache, { data }) {
+          cache.modify({
+            fields: {
+              getUserProfile: (existing) => {
+                return { ...existing, ...data?.updateProfile }
+              },
+            },
+          })
+        },
+        variables: {
+          input: {
+            locale: value,
+          },
+        },
+      })
+      .catch(() => {
+        // noop
       })
   }
 
