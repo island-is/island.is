@@ -192,10 +192,6 @@ export class SignatureCollectionClientService {
         })),
       },
     })
-    if (filteredAreas.length !== candidacy.umbodList?.length) {
-      // TODO: create ApplicationTemplateError
-      throw new Error('Not all lists created')
-    }
     return { slug: 'frambodWowee' }
   }
 
