@@ -235,6 +235,7 @@ export class AwsS3Service {
     const content = await this.getObject(caseType, key)
 
     const confirmedContent = await confirmContent(content)
+
     if (!confirmedContent) {
       return content
     }
