@@ -70,7 +70,7 @@ export class VehicleService {
     if (findVehicle) {
       findVehicle.mileage = mileage ?? 0
       findVehicle.plateCount = plateCount ?? 0
-      findVehicle.plateLost = plateLost ? true : false
+      findVehicle.plateLost = plateLost
 
       await findVehicle.save()
       return true
