@@ -110,6 +110,7 @@ export const en: TranslatedMessages = {
   'settings.security.appLockTimeoutLabel': 'App lock timeout',
   'settings.security.appLockTimeoutDescription':
     'Time until app lock will appear',
+  'settings.security.appLockTimeoutSeconds': 'sec.',
   'settings.about.groupTitle': 'About',
   'settings.about.versionLabel': 'Version',
   'settings.about.logoutLabel': 'Logout',
@@ -168,7 +169,6 @@ export const en: TranslatedMessages = {
   'home.screenTitle': 'Overview',
   'home.applicationsStatus': 'Applications',
   'home.allApplications': 'Digital applications',
-  'home.inbox': 'Latest in inbox',
   'home.welcomeText': 'Hi',
   'home.goodDay': 'Good day,',
   'home.onboardingModule.card1':
@@ -184,6 +184,18 @@ export const en: TranslatedMessages = {
   'home.vehicleModule.button': 'My vehicles',
   'button.seeAll': 'See all',
 
+  // home options
+  'homeOptions.screenTitle': 'Home screen',
+  'homeOptions.heading.title': 'Configure home screen',
+  'homeOptions.heading.subtitle':
+    'Here you can configure what is displayed on the home screen.',
+  'homeOptions.graphic': 'Display graphic',
+  'homeOptions.inbox': 'Latest in inbox',
+  'homeOptions.licenses': 'Licenses',
+  'homeOptions.applications': 'Applications',
+  'homeOptions.vehicles': 'Vehicles',
+  'homeOptions.airDiscount': 'Air discount scheme',
+
   // inbox
   'inbox.screenTitle': 'Inbox',
   'inbox.bottomTabText': 'Inbox',
@@ -195,10 +207,7 @@ export const en: TranslatedMessages = {
   'inbox.emptyListTitle': 'There are currently no documents',
   'inbox.emptyListDescription':
     'When you receive electronic documents from the government, they will appear here.',
-  'inbox.filterButtonTitle': 'Filter',
-  'inbox.filterOpenedTagTitle': 'Unread',
-  'inbox.filterArchivedTagTitle': 'Archived',
-  'inbox.filterStarredTagTitle': 'Starred',
+
   'inbox.markAllAsReadPromptTitle': 'Do you want to mark all as read?',
   'inbox.markAllAsReadPromptDescription': 'This action cannot be undone',
   'inbox.markAllAsReadPromptCancel': 'Cancel',
@@ -211,6 +220,20 @@ export const en: TranslatedMessages = {
   'inboxFilters.unreadOnly': 'Show only unread',
   'inboxFilters.starred': 'Starred',
   'inboxFilters.archived': 'Archived',
+  'inbox.filterButtonTitle': 'Filter',
+  'inbox.filterOpenedTagTitle': 'Unread',
+  'inbox.filterArchivedTagTitle': 'Archived',
+  'inbox.filterStarredTagTitle': 'Starred',
+  'inbox.filterOrganizationTitle': 'Organization',
+  'inbox.filterCategoryTitle': 'Category',
+  'inbox.filterDatesTitle': 'Dates',
+  'inbox.filterClearButton': 'Clear',
+  'inbox.filterApplyButton': 'Apply filters',
+  'inbox.filterDateFromLabel': 'Date from',
+  'inbox.filterDateToLabel': 'Date to',
+  'inbox.filterDatePlaceholder': 'Choose a date',
+  'inbox.filterDateConfirm': 'Confirm',
+  'inbox.filterDateCancel': 'Cancel',
 
   // document detail
   'documentDetail.screenTitle': 'Document',
@@ -479,8 +502,8 @@ export const en: TranslatedMessages = {
   'edit.phone.inputlabel': 'Phone number',
   'edit.phone.button': 'Save',
   'edit.phone.button.empty': 'Save empty',
-  'edit.phone.button.error': 'Error',
-  'edit.phone.button.errorMessage': 'Could not send verification code',
+  'edit.phone.error': 'Error',
+  'edit.phone.errorMessage': 'Could not send verification code',
 
   // edit email
   'edit.email.screenTitle': 'Edit Email',
@@ -488,8 +511,8 @@ export const en: TranslatedMessages = {
   'edit.email.inputlabel': 'Email',
   'edit.email.button': 'Save',
   'edit.email.button.empty': 'Save empty',
-  'edit.email.button.error': 'Error',
-  'edit.email.button.errorMessage': 'Could not send verification code',
+  'edit.email.error': 'Error',
+  'edit.email.errorMessage': 'Could not send verification code',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Edit Bank Info',
@@ -499,6 +522,8 @@ export const en: TranslatedMessages = {
   'edit.bankinfo.inputlabel.book': 'Hb.',
   'edit.bankinfo.inputlabel.number': 'Account number',
   'edit.bankinfo.button': 'Save',
+  'edit.bankinfo.error': 'Error',
+  'edit.bankinfo.errorMessage': 'Could not save bank info',
 
   // edit confirm
   'edit.confirm.screenTitle': 'Confirm edit',
@@ -512,6 +537,8 @@ export const en: TranslatedMessages = {
   'edit.confirm.inputlabel': 'Security number',
   'edit.cancel.button': 'Cancel',
   'edit.confirm.button': 'Confirm',
+  'edit.confirm.error': 'Error',
+  'edit.confirm.errorMessage': 'Could not update information',
 
   // air discount
   'airDiscount.screenTitle': 'Air discount scheme',

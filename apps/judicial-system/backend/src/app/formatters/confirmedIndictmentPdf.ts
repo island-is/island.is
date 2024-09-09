@@ -4,14 +4,14 @@ import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 
 import {
   calculatePt,
+  Confirmation,
   drawTextWithEllipsisPDFKit,
-  IndictmentConfirmation,
   smallFontSize,
 } from './pdfHelpers'
 import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 
 export const createConfirmedIndictment = async (
-  confirmation: IndictmentConfirmation,
+  confirmation: Confirmation,
   indictmentPDF: Buffer,
 ): Promise<Buffer> => {
   const pdfDoc = await PDFDocument.load(indictmentPDF)

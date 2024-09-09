@@ -1,4 +1,4 @@
-import { SSM } from '@aws-sdk/client-ssm'
+import AWS from 'aws-sdk'
 import yargs from 'yargs'
 import { OpsEnv } from './dsl/types/input-types'
 import { Envs } from './environments'
@@ -11,6 +11,8 @@ import {
 } from './uber-charts/all-charts'
 import { renderHelmServices } from './dsl/exports/helm'
 import { logger } from './common'
+
+const { hideBin } = require('yargs/helpers')
 
 interface GetArguments {
   key: string
@@ -28,14 +30,13 @@ const config = {
   region: 'eu-west-1',
 }
 
-const ssm = new SSM(config)
-yargs(process.argv.slice(2))
+const ssm = new AWS.SSM(config)
+yargs(hideBin(process.argv))
   .command(
     'get-all-required-secrets',
     'get all required secrets from all charts',
     { env: { type: 'string', demand: true, choices: OpsEnvNames } },
     async (p) => {
-      logger.info(`Listing all secrets for env:${p.env}`)
       const services = (
         await Promise.all(
           Object.entries(Charts)
@@ -44,7 +45,6 @@ yargs(process.argv.slice(2))
               chartName: chartName as ChartName,
             }))
             .flatMap(async ({ services, chartName }) => {
-              logger.info(`Getting secrets for ${chartName} in ${p.env}`)
               return Object.values(
                 (
                   await renderHelmServices(
@@ -62,23 +62,20 @@ yargs(process.argv.slice(2))
       const secrets = services.flatMap((s) => {
         return Object.values(s.secrets)
       })
-      // Actually log to stdout
-      console.log([...new Set(secrets)].join('\n'))
+      logger.debug([...new Set(secrets)].join('\n'))
     },
   )
   .command(
     'get <key>',
     'get secret',
-    {
-      key: { type: 'string', demand: true },
-    },
+    () => {},
     async ({ key }: GetArguments) => {
       const parameterInput = {
         Name: key,
         WithDecryption: true,
       }
 
-      const { Parameter } = await ssm.getParameter(parameterInput)
+      const { Parameter } = await ssm.getParameter(parameterInput).promise()
       if (Parameter) {
         if (Parameter.Value && Parameter.Value.length > 0) {
           console.log(Parameter.Value)
@@ -93,16 +90,15 @@ yargs(process.argv.slice(2))
   .command(
     'store <key> <secret>',
     'store secret',
-    {
-      key: { type: 'string', demand: true },
-      secret: { type: 'string', demand: true },
-    },
+    () => {},
     async ({ key, secret }: StoreArguments) => {
-      await ssm.putParameter({
-        Name: key,
-        Value: secret,
-        Type: 'SecureString',
-      })
+      await ssm
+        .putParameter({
+          Name: key,
+          Value: secret,
+          Type: 'SecureString',
+        })
+        .promise()
       logger.debug('Done!')
     },
   )
@@ -110,15 +106,15 @@ yargs(process.argv.slice(2))
   .command(
     'delete <prefix>',
     'delete secrets by prefix',
-    {
-      prefix: { type: 'string', demand: true },
-    },
+    () => {},
     async ({ prefix }: DeleteArguments) => {
-      const { Parameters } = await ssm.describeParameters({
-        ParameterFilters: [
-          { Key: 'Name', Option: 'BeginsWith', Values: [prefix] },
-        ],
-      })
+      const { Parameters } = await ssm
+        .describeParameters({
+          ParameterFilters: [
+            { Key: 'Name', Option: 'BeginsWith', Values: [prefix] },
+          ],
+        })
+        .promise()
       if (Parameters && Parameters.length > 0) {
         logger.debug(
           `Parameters to destroy: ${Parameters.map(({ Name }) => Name)}`,
@@ -126,7 +122,7 @@ yargs(process.argv.slice(2))
         await Promise.all(
           Parameters.map(({ Name }) =>
             Name
-              ? ssm.deleteParameter({ Name })
+              ? ssm.deleteParameter({ Name }).promise()
               : new Promise((resolve) => resolve(true)),
           ),
         )

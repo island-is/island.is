@@ -7,17 +7,13 @@ import {
   formatDOB,
   lowercase,
 } from '@island.is/judicial-system/formatters'
-import {
-  DateType,
-  DistrictCourtLocation,
-  DistrictCourts,
-  SubpoenaType,
-} from '@island.is/judicial-system/types'
+import { DateType, SubpoenaType } from '@island.is/judicial-system/types'
 
 import { subpoena as strings } from '../messages'
 import { Case } from '../modules/case'
 import { Defendant } from '../modules/defendant'
 import {
+  addConfirmation,
   addEmptyLines,
   addFooter,
   addHugeHeading,
@@ -54,6 +50,11 @@ export const createSubpoena = (
   doc.on('data', (chunk) => sinc.push(chunk))
 
   setTitle(doc, formatMessage(strings.title))
+
+  if (dateLog) {
+    addEmptyLines(doc, 5)
+  }
+
   addNormalText(doc, `${theCase.court?.name}`, 'Times-Bold', true)
 
   addNormalRightAlignedText(
@@ -69,7 +70,7 @@ export const createSubpoena = (
   if (theCase.court?.name) {
     addNormalText(
       doc,
-      DistrictCourtLocation[theCase.court.name as DistrictCourts],
+      theCase.court.address || 'Ekki skráð', // the latter shouldn't happen, if it does we have an problem with the court data
       'Times-Roman',
     )
   }
@@ -152,6 +153,15 @@ export const createSubpoena = (
   addNormalText(doc, formatMessage(strings.deadline), 'Times-Roman')
 
   addFooter(doc)
+
+  if (dateLog) {
+    addConfirmation(doc, {
+      actor: theCase.judge?.name || '',
+      title: theCase.judge?.title,
+      institution: theCase.judge?.institution?.name || '',
+      date: dateLog.created,
+    })
+  }
 
   doc.end()
 

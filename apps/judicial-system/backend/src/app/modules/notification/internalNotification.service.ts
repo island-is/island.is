@@ -73,10 +73,9 @@ import {
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { type Case, DateLog } from '../case'
-import { ExplanatoryComment } from '../case/models/explanatoryComment.model'
 import { CourtService } from '../court'
 import { type Defendant, DefendantService } from '../defendant'
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { DeliverResponse } from './models/deliver.response'
 import { Notification, Recipient } from './models/notification.model'
 import { BaseNotificationService } from './baseNotification.service'
@@ -416,7 +415,7 @@ export class InternalNotificationService extends BaseNotificationService {
     } else if (theCase.state === CaseState.RECEIVED) {
       promises.push(this.sendResubmittedToCourtSmsNotificationToCourt(theCase))
 
-      this.eventService.postEvent(CaseEvent.RESUBMIT, theCase)
+      this.eventService.postEvent('RESUBMIT', theCase)
     }
 
     if (
@@ -716,14 +715,6 @@ export class InternalNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient>[] {
-    if (
-      ExplanatoryComment.postponedIndefinitelyExplanation(
-        theCase.explanatoryComments,
-      )
-    ) {
-      return []
-    }
-
     const courtDate = DateLog.courtDate(theCase.dateLogs)
 
     if (!courtDate) {
@@ -776,7 +767,7 @@ export class InternalNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
   ): Promise<DeliverResponse> {
-    this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
+    this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase)
 
     const promises: Promise<Recipient>[] = []
 

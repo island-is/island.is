@@ -103,6 +103,10 @@ const ChartNumberBox = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.ChartNumberBox),
 )
 
+const LatestGenericListItems = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LatestGenericListItems),
+)
+
 interface SliceMachineProps {
   slice: Slice
   namespace?: Record<string, string>
@@ -212,6 +216,9 @@ const renderSlice = (
       )
     case 'ChartNumberBox':
       return <ChartNumberBox slice={slice} />
+    case 'LatestGenericListItems': {
+      return <LatestGenericListItems slice={slice} />
+    }
     default:
       return <RichText body={[slice]} />
   }

@@ -4,7 +4,7 @@
 
 This application template allows applicants to apply for pension supplement.
 
-![](./assets/pension-supplement-flow-chart.png)
+![](../core/assets/tr-applications-flow-chart.png)
 
 ### States
 

@@ -19,6 +19,28 @@ export const comments = {
       description: 'Title of comments section',
     },
   }),
+  warnings: defineMessages({
+    noCommentsTitle: {
+      id: 'ojoi.application:comments.warnings.noComments',
+      defaultMessage: 'Engar athugasemdir',
+      description: 'No comments',
+    },
+    noCommentsMessage: {
+      id: 'ojoi.application:comments.warnings.noCommentsMessage',
+      defaultMessage: 'Engar athugasemdir eru skráðar á þessa innsendingu.',
+      description: 'No comments message',
+    },
+    postCommentFailedTitle: {
+      id: 'ojoi.application:comments.warnings.postCommentFailedTitle',
+      defaultMessage: 'Ekki tókst að vista athugasemd',
+      description: 'Post comment failed title',
+    },
+    postCommentFailedMessage: {
+      id: 'ojoi.application:comments.warnings.postCommentFailedMessage',
+      defaultMessage: 'Ekki tókst að vista athugasemd, reyndu aftur síðar.',
+      description: 'Post comment failed message',
+    },
+  }),
   dates: defineMessages({
     today: {
       id: 'ojoi.application:comments.dates.today',

@@ -153,7 +153,7 @@ export class CmsContentfulService {
 
     const params = {
       ['content_type']: 'organization',
-      include: 10,
+      include: 4,
       limit: 1000,
       ...organizationTitles,
       ...organizationReferenceIdentifiers,

@@ -504,6 +504,18 @@ export class DrivingLicenseService {
     }
   }
 
+  async renewDrivingLicense65AndOver(
+    auth: User['authorization'],
+  ): Promise<NewDrivingLicenseResult> {
+    const response = await this.drivingLicenseApi.postRenewLicenseOver65({
+      auth: auth,
+    })
+    return {
+      success: response.isOk ?? false,
+      errorMessage: response.errorCode ?? null,
+    }
+  }
+
   async applyForBELicense(
     nationalId: User['nationalId'],
     auth: User['authorization'],

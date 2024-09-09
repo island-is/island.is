@@ -76,6 +76,18 @@ export const formatNationalId = (nationalId?: string | null): string => {
   }
 }
 
+export const getInitials = (name?: string | null): string | undefined => {
+  if (!name?.trim()) return undefined
+
+  const names = name.trim().split(' ')
+  const initials =
+    names.length > 1
+      ? `${names[0][0]}${names[names.length - 1][0]}`
+      : names[0][0]
+
+  return initials.toUpperCase()
+}
+
 export const formatPhoneNumber = (phoneNumber?: string | null) => {
   if (!phoneNumber) {
     return

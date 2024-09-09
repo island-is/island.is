@@ -158,6 +158,8 @@ describe('Limited Access View Case File Guard', () => {
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
           CaseFileCategory.CASE_FILE,
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
         ]
 
         describe.each(allowedCaseFileCategories)(
@@ -227,27 +229,19 @@ describe('Limited Access View Case File Guard', () => {
         describe.each(allowedCaseFileCategories)(
           'prison system users can view %s',
           (category) => {
-            let thenPrison: Then
             let thenPrisonAdmin: Then
 
             beforeEach(() => {
-              mockRequest.mockImplementationOnce(() => ({
-                user: prisonUser,
-                case: { type, state },
-                caseFile: { category },
-              }))
               mockRequest.mockImplementationOnce(() => ({
                 user: prisonAdminUser,
                 case: { type, state },
                 caseFile: { category },
               }))
 
-              thenPrison = givenWhenThen()
               thenPrisonAdmin = givenWhenThen()
             })
 
             it('should activate', () => {
-              expect(thenPrison.result).toBe(true)
               expect(thenPrisonAdmin.result).toBe(true)
             })
           },

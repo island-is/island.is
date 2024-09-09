@@ -1,30 +1,17 @@
-import { logger } from '@island.is/logging'
 import Channel from './channel'
 
-const asyncMockFn = <T>(returnObject: T) =>
-  jest.fn(async (inputArguments: unknown): Promise<T> => {
-    logger.debug('Mock-replying', { inputArguments, returnObject })
-    return returnObject
-  })
+const mockReturn = (fn: jest.Func) => jest.fn().mockReturnValue({ promise: fn })
 
-const mockSend = <T>(sendMapping: { [key: string]: T }) =>
-  jest.fn(async (args): Promise<T> => {
-    const name = args.constructor.name
-    const returnObject = sendMapping[name]
-    logger.debug('Mock-sending', { args, name, returnObject })
-    // Call if returnObject is a function
-    if (typeof returnObject === 'function') {
-      return returnObject(args)
-    }
-    return returnObject
-  })
+const mockReturnPromise = (obj: object) =>
+  mockReturn(() => Promise.resolve(obj))
 
 describe('Channel', () => {
   describe('#declareExchange', () => {
     it('should call aws sdk and return topic arn', async () => {
       const topicArn = 'arn:123123123:exchange'
+      const mock = mockReturnPromise({ TopicArn: topicArn })
       const channel = new Channel(false)
-      channel.sns.send = asyncMockFn({ TopicArn: topicArn })
+      channel.sns.createTopic = mock
 
       const result = await channel.declareExchange({
         name: 'test-application-updates',
@@ -37,37 +24,33 @@ describe('Channel', () => {
   describe('#declareQueue', () => {
     it('should check if queue exists', async () => {
       const queueUrl = 'http://queue-url'
+      const getQueueUrlMock = mockReturnPromise({ QueueUrl: queueUrl })
+      const createQueueMock = jest.fn()
       const channel = new Channel(false)
-      const mockedSend = mockSend({
-        // Throw to be sure we're not creating the queue
-        CreateQueueCommand: jest.fn(async () => {
-          throw new Error('queue not found')
-        }),
-        GetQueueUrlCommand: { QueueUrl: queueUrl },
-      })
-      channel.sqs.send = mockedSend
+      channel.sqs.getQueueUrl = getQueueUrlMock
+      channel.sqs.createQueue = createQueueMock
 
-      const result = await channel.declareQueue({ name: 'my-queue' })
+      const result = await channel.declareQueue({ name: 'queue-name' })
 
-      expect(channel.sqs.send).toHaveBeenCalledTimes(1)
+      expect(channel.sqs.getQueueUrl).toHaveBeenCalled()
+      expect(channel.sqs.createQueue).not.toHaveBeenCalled()
       expect(result).toBe(queueUrl)
     })
 
     it('should create queue if it does not exists', async () => {
       const queueUrl = 'http://queue-url'
-      const channel = new Channel(false)
-      const mockedSend = mockSend({
-        CreateQueueCommand: { QueueUrl: queueUrl },
-        // Throw to be sure we're not fetching the newly created queue
-        GetQueueUrlCommand: jest.fn(async () => {
-          throw new Error('queue not found')
-        }),
+      const getQueueUrlMock = mockReturn(() => {
+        throw new Error('queue not found')
       })
-      channel.sqs.send = mockedSend
+      const createQueueMock = mockReturnPromise({ QueueUrl: queueUrl })
+      const channel = new Channel(false)
+      channel.sqs.getQueueUrl = getQueueUrlMock
+      channel.sqs.createQueue = createQueueMock
 
-      const result = await channel.declareQueue({ name: 'my-queue' })
+      const result = await channel.declareQueue({ name: 'queue-name' })
 
-      expect(channel.sqs.send).toHaveBeenCalled()
+      expect(channel.sqs.getQueueUrl).toHaveBeenCalled()
+      expect(channel.sqs.createQueue).toHaveBeenCalled()
       expect(result).toBe(queueUrl)
     })
   })

@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
@@ -12,7 +12,7 @@ import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   rows?: number
 }
 
