@@ -541,27 +541,33 @@ export const SettingsScreen: NavigationFunctionComponent = ({
                 items: [
                   {
                     id: '5000',
-                    label: intl.formatNumber(5, {
+                    label: `${intl.formatNumber(5, {
                       style: 'decimal',
                       unitDisplay: 'long',
                       unit: 'second',
-                    }),
+                    })} ${intl.formatMessage({
+                      id: 'settings.security.appLockTimeoutSeconds',
+                    })}`,
                   },
                   {
                     id: '10000',
-                    label: intl.formatNumber(10, {
+                    label: `${intl.formatNumber(10, {
                       style: 'decimal',
                       unitDisplay: 'long',
                       unit: 'second',
-                    }),
+                    })} ${intl.formatMessage({
+                      id: 'settings.security.appLockTimeoutSeconds',
+                    })}`,
                   },
                   {
                     id: '15000',
-                    label: intl.formatNumber(15, {
+                    label: `${intl.formatNumber(15, {
                       style: 'decimal',
                       unitDisplay: 'long',
                       unit: 'second',
-                    }),
+                    })} ${intl.formatMessage({
+                      id: 'settings.security.appLockTimeoutSeconds',
+                    })}`,
                   },
                 ],
                 cancel: true,
@@ -582,11 +588,13 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               })}
               accessory={
                 <TableViewAccessory>
-                  {intl.formatNumber(Math.floor(appLockTimeout / 1000), {
+                  {`${intl.formatNumber(Math.floor(appLockTimeout / 1000), {
                     style: 'decimal',
                     unitDisplay: 'short',
                     unit: 'second',
-                  })}
+                  })} ${intl.formatMessage({
+                    id: 'settings.security.appLockTimeoutSeconds',
+                  })}`}
                 </TableViewAccessory>
               }
             />

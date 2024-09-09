@@ -197,11 +197,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         ListHeaderComponent={
           <View style={{ flex: 1 }}>
             <ApplicationsModule
-              applications={
-                (applicationsRes.data?.applicationApplications ??
-                  []) as Application[]
-              }
-              loading={applicationsRes.loading}
+              {...applicationsRes}
               componentId={componentId}
               hideAction={true}
               hideSeeAllButton={true}

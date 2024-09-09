@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { MessageModule } from '@island.is/judicial-system/message'
 
 import { CaseModule } from '../case/case.module'
+import { ExplanatoryComment } from '../case/models/explanatoryComment.model'
 import { CourtModule } from '../court/court.module'
 import { PoliceModule } from '../police/police.module'
 import { Defendant } from './models/defendant.model'
