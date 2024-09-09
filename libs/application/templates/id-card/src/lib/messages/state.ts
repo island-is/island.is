@@ -13,7 +13,7 @@ export const state = {
       description: 'Review state page title',
     },
     description: {
-      id: 'id.application:state.general.description',
+      id: 'id.application:state.general.description#markdown',
       defaultMessage: `{guardianName} hefur sótt um nafnkskírteini 
       sem er ferðaskilríki fyrir: {childName}.  Samþykki beggja forsjáraðila 
       þarf til að útgáfa þess sé heimil. Í þessu ferli getur þú afgreitt 
@@ -35,9 +35,9 @@ export const state = {
       description: 'Action card title',
     },
     actionCardDescription: {
-      id: 'id.application:state.labels.actionCardDescription',
+      id: 'id.application:state.labels.actionCardDescription#markdown',
       defaultMessage:
-        'Beðið er eftir að samþykki fyrir umsókn um nafnskírteini fyrir: ',
+        'Beðið er eftir að samþykki fyrir umsókn um nafnskírteini fyrir: {name}',
       description: 'Action card description',
     },
     actionCardTag: {
