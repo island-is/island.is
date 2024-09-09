@@ -50,6 +50,12 @@ export const idInformation = {
       defaultMessage: 'Nafnskírteini sem ferðaskilríki',
       description: 'Type of id radio answer id card travel rights',
     },
+    warningText: {
+      id: 'id.application:idInformation.labels.warningText',
+      defaultMessage:
+        'Þú uppfyllir ekki skilyrði fyrir báðum útgáfum af nafnskírteini',
+      description: 'Warning alert for type of ID',
+    },
     infoAlert: {
       id: 'id.application:idInformation.labels.infoAlert',
       defaultMessage:
@@ -57,7 +63,7 @@ export const idInformation = {
       description: 'Information alert for type of ID',
     },
     chosenApplicantsDescription: {
-      id: 'id.application:idInformation.labels.chosenApplicantsDescription',
+      id: 'id.application:idInformation.labels.chosenApplicantsDescription#markdown',
       defaultMessage:
         'Þú getur sótt um nafnskírteini / ferðaskilríki fyrir þig og eftirfarandi einstaklinga í þinni umsjón. Veldu þann einstakling sem þú vilt hefja umsókn fyrir og haltu síðan áfram í næsta skref.',
       description: 'description of chosen applicants page',
