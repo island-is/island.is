@@ -53,7 +53,9 @@ describe('skilavottordApiTest', () => {
           },
           {
             provide: TransportService,
-            useClass: jest.fn(() => ({})),
+            useClass: jest.fn(() => ({
+              getRegistrationURL: () => ({}),
+            })),
           },
         ],
       }).compile()
