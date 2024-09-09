@@ -268,13 +268,16 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
             />
           </View>
         ) : null}
-        {sortedApplications.incomplete.length > 4 ? (
-          <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
+        {sortedApplications.incomplete.length > 0 ? (
+          <TouchableOpacity
+            disabled={sortedApplications.incomplete.length <= 4}
+            onPress={() => navigateTo(`/applications-incomplete`)}
+          >
             <Heading
               button={
-                sortedApplications.finished.length >= 0 ? (
+                sortedApplications.incomplete.length > 4 ? (
                   <TouchableOpacity
-                    onPress={() => navigateTo('/applications')}
+                    onPress={() => navigateTo('/applications-incomplete')}
                     style={{
                       flexDirection: 'row',
                       alignItems: 'center',
@@ -293,13 +296,16 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
           </TouchableOpacity>
         ) : null}
         {incompleteApplications}
-        {sortedApplications.inProgress.length > 4 ? (
-          <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
+        {sortedApplications.inProgress.length > 0 ? (
+          <TouchableOpacity
+            disabled={sortedApplications.inProgress.length <= 4}
+            onPress={() => navigateTo(`/applications-in-progress`)}
+          >
             <Heading
               button={
-                sortedApplications.finished.length >= 0 ? (
+                sortedApplications.inProgress.length > 0 ? (
                   <TouchableOpacity
-                    onPress={() => navigateTo('/applications')}
+                    onPress={() => navigateTo('/applications-in-progress')}
                     style={{
                       flexDirection: 'row',
                       alignItems: 'center',
@@ -319,12 +325,15 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         ) : null}
         {inProgressApplications}
         {sortedApplications.finished.length > 1 ? (
-          <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
+          <TouchableOpacity
+            disabled={sortedApplications.finished.length === 1}
+            onPress={() => navigateTo(`/applications-completed`)}
+          >
             <Heading
               button={
-                sortedApplications.finished.length >= 1 ? (
+                sortedApplications.finished.length > 1 ? (
                   <TouchableOpacity
-                    onPress={() => navigateTo('/applications')}
+                    onPress={() => navigateTo('/applications-completed')}
                     style={{
                       flexDirection: 'row',
                       alignItems: 'center',

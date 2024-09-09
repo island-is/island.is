@@ -9,7 +9,6 @@ import { Typography } from '../typography/typography'
 import { useOrganizationsStore } from '../../../stores/organizations-store'
 
 const Host = styled.View`
-  width: 100%;
   min-height: 160px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;

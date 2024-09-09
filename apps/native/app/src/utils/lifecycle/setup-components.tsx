@@ -4,6 +4,9 @@ import { isTestingApp } from '../../config'
 import { AirDiscountScreen } from '../../screens/air-discount/air-discount'
 import { AppLockScreen } from '../../screens/app-lock/app-lock'
 import { ApplicationsScreen } from '../../screens/applications/applications'
+import { ApplicationsCompletedScreen } from '../../screens/applications/applications-completed'
+import { ApplictionsInProgressScreen } from '../../screens/applications/applications-in-progress'
+import { ApplicationsIncompleteScreen } from '../../screens/applications/applications-incomplete'
 import { AssetsDetailScreen } from '../../screens/assets/assets-detail'
 import { AssetsOverviewScreen } from '../../screens/assets/assets-overview'
 import { CognitoAuthScreen } from '../../screens/cognito-auth/cognito-auth'
@@ -101,6 +104,12 @@ export function registerAllComponents() {
   registerComponent(CR.AirDiscountScreen, AirDiscountScreen)
   registerComponent(CR.PasskeyScreen, PasskeyScreen)
   registerComponent(CR.HomeOptionsScreen, HomeOptionsScreen)
+  registerComponent(CR.ApplicationsCompletedScreen, ApplicationsCompletedScreen)
+  registerComponent(CR.ApplictionsInProgressScreen, ApplictionsInProgressScreen)
+  registerComponent(
+    CR.ApplicationsIncompleteScreen,
+    ApplicationsIncompleteScreen,
+  )
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)
