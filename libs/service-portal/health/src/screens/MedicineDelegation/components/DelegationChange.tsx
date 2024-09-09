@@ -1,37 +1,81 @@
 import React, { useState } from 'react'
-import { Box, Text, toast } from '@island.is/island-ui/core'
+import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 import { DelegationInput } from '../utils/mockdata'
-import { Modal } from '@island.is/service-portal/core'
+import { m, Modal } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../../lib/messages'
 
 interface Props {
   // Define the props for your component here
-  input: DelegationInput
+  input?: DelegationInput
   edit?: boolean
+  modalVisible: boolean
+  setModalVisible: (value: boolean) => void
 }
 
-const DelegationChange: React.FC<Props> = ({ input, edit }) => {
+const DelegationChange: React.FC<Props> = ({
+  input,
+  edit,
+  modalVisible,
+  setModalVisible,
+}) => {
   const { formatMessage } = useLocale()
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
   return (
     <Modal
       id={'medicine-delegation-crud-modal'}
       initialVisibility={false}
       toggleClose={!modalVisible}
-      // title={
-      //   edit
-      //     ? formatMessage(messages.editDelegation)
-      //     : formatMessage(messages.grantMedicineDelegation)
-      // }
+      title={
+        edit
+          ? formatMessage(messages.editDelegation)
+          : formatMessage(messages.grantMedicineDelegation)
+      }
+      buttons={[
+        {
+          id: 'DelegationModalDecline',
+          type: 'ghost' as const,
+          text: formatMessage(m.buttonCancel),
+          onClick: () => {
+            setModalVisible(false)
+          },
+        },
+        {
+          id: 'DelegationModalDelete',
+          type: 'ghost' as const,
+          text: formatMessage(messages.deleteDelegation),
+          colorScheme: 'destructive',
+          icon: 'trash',
+          onClick: () => {
+            setModalVisible(false)
+          },
+        },
+
+        {
+          id: 'DelegationModalAccept',
+          type: 'primary' as const,
+          text: formatMessage(m.submit),
+          onClick: () => {
+            setModalVisible(false)
+            // service
+          },
+          align: 'right' as const,
+        },
+      ]}
+      disclosure={
+        <Button
+          size="small"
+          variant="text"
+          icon="pencil"
+          onClick={() => {
+            setModalVisible(true)
+            // ??
+          }}
+        >
+          {formatMessage(messages.healthRegistrationSave)}
+        </Button>
+      }
     >
-      <Box>
-        <Text>
-          {edit
-            ? formatMessage(messages.editDelegation)
-            : formatMessage(messages.grantMedicineDelegation)}
-        </Text>
-      </Box>
+      <Box></Box>
     </Modal>
   )
 }

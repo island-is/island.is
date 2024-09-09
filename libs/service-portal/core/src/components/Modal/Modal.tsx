@@ -26,6 +26,9 @@ interface Props {
     onClick?: () => void
     text?: string
     loading?: boolean
+    colorScheme?: 'destructive' | 'negative' | 'default'
+    align?: 'left' | 'right'
+    icon?: ButtonProps['icon']
   }>
   iconSrc?: string
   iconAlt?: string
@@ -111,7 +114,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                 size="large"
               />
             </Box>
-            <Box>
+            <Box width="full">
               <Box marginBottom={6}>
                 {title && (
                   <Text variant="h3" marginBottom={'auto'}>
@@ -123,15 +126,20 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
               {buttons && (
                 <Inline space={2}>
                   {buttons.map((b) => (
-                    <Button
-                      key={b.id}
-                      variant={b.type ?? 'primary'}
-                      size="small"
-                      onClick={b.onClick}
-                      loading={b.loading}
-                    >
-                      {b.text}
-                    </Button>
+                    <Box marginLeft={b.align === 'right' ? 'auto' : undefined}>
+                      <Button
+                        key={b.id}
+                        variant={b.type ?? 'primary'}
+                        size="small"
+                        onClick={b.onClick}
+                        loading={b.loading}
+                        colorScheme={b.colorScheme ?? 'default'}
+                        icon={b.icon}
+                        iconType={b.icon ? 'outline' : undefined}
+                      >
+                        {b.text}
+                      </Button>
+                    </Box>
                   ))}
                 </Inline>
               )}

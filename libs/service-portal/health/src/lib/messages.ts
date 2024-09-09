@@ -1202,6 +1202,10 @@ export const messages = defineMessages({
     id: 'sp.health:edit-delegation',
     defaultMessage: 'Breyta umboði',
   },
+  deleteDelegation: {
+    id: 'sp.health:delete-delegation',
+    defaultMessage: 'Eyða umboði',
+  },
   grantMedicineDelegation: {
     id: 'sp.health:grant-medicine-delegation',
     defaultMessage: 'Veita lyfjaumboð',

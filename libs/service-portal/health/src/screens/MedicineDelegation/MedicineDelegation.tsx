@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import {
   HEALTH_DIRECTORATE_SLUG,
@@ -10,9 +10,11 @@ import { messages } from '../../lib/messages'
 import { m } from '@island.is/service-portal/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { delegationData } from './utils/mockdata'
+import DelegationChange from './components/DelegationChange'
 
 const MedicineDelegation = () => {
   const { formatMessage } = useLocale()
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   return (
     <>
@@ -48,7 +50,7 @@ const MedicineDelegation = () => {
                 variant="text"
                 unfocusable
                 icon={'pencil'}
-                onClick={() => alert('open change modal')}
+                onClick={() => setModalVisible(true)}
               >
                 {formatMessage(m.buttonEdit)}
               </Button>
@@ -60,11 +62,15 @@ const MedicineDelegation = () => {
             size="medium"
             icon="add"
             type="button"
-            onClick={() => alert('open add modal')}
+            onClick={() => setModalVisible(true)}
           >
             {formatMessage(messages.addDelegation)}
           </Button>
         </Box>
+        <DelegationChange
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+        />
       </Box>
     </>
   )
