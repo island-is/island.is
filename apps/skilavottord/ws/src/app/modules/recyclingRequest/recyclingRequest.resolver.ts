@@ -76,9 +76,8 @@ export class RecyclingRequestResolver {
     @Args('recyclingPartner') station: string,
     @Args('mileage', { type: () => Int, nullable: true }) mileage: number,
   ): Promise<boolean> {
-    throw new Error('Not used anymore')
-
     //this.recyclingRequestService.deRegisterVehicle(permno, station, 0)
+    throw new Error('Not used anymore')
   }
 
   @Authorize({
