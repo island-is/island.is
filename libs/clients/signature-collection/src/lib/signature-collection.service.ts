@@ -146,16 +146,21 @@ export class SignatureCollectionClientService {
     } = await this.currentCollection()
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id.toString() || !isActive) {
+      // TODO: create ApplicationTemplateError
       throw new Error('Collection is not open')
     }
+
     // check if user is sending in their own nationalId
-    if (owner.nationalId !== auth.nationalId) {
+    if (owner.nationalId.replace(/\D/g, '') !== auth.nationalId) {
+      // TODO: create ApplicationTemplateError
       throw new Error('NationalId does not match')
     }
     // check if user is already owner of lists
 
-    const { canCreate, isOwner, name } = await this.getSignee(auth)
+    const { canCreate, isOwner, name, partyBallotLetterInfo } =
+      await this.getSignee(auth)
     if (!canCreate || isOwner) {
+      // TODO: create ApplicationTemplateError
       throw new Error('User is already owner of lists')
     }
 
@@ -178,16 +183,17 @@ export class SignatureCollectionClientService {
           svaediIDList: agent.areas.map((area) => parseInt(area.areaId)),
         })),
         sofnunID: parseInt(id),
-        kennitala: owner.nationalId,
+        kennitala: owner.nationalId.replace(/\D/g, ''),
         simi: owner.phone,
         netfang: owner.email,
         medmaelalistar: filteredAreas.map((area) => ({
           svaediID: parseInt(area.id),
-          listiNafn: `${name} - ${area.name}`,
+          listiNafn: `${partyBallotLetterInfo?.name}`,
         })),
       },
     })
     if (filteredAreas.length !== candidacy.umbodList?.length) {
+      // TODO: create ApplicationTemplateError
       throw new Error('Not all lists created')
     }
     return { slug: 'frambodWowee' }
