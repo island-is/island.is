@@ -32,7 +32,7 @@ export const summary = {
     },
     title: {
       id: 'ojoi.application:summary.properties.title',
-      defaultMessage: 'Heiti auglýsingar',
+      defaultMessage: 'Heiti innsendingar',
       description: 'Title of the advertisement',
     },
     department: {

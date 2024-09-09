@@ -890,3 +890,24 @@ export const Frigg = new XroadConf({
     },
   },
 })
+
+export const HealthDirectorateOrganDonation = new XroadConf({
+  env: {
+    XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: {
+      dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1',
+      staging:
+        'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1',
+      prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1',
+    },
+  },
+})
+
+export const HealthDirectorateVaccination = new XroadConf({
+  env: {
+    XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH: {
+      dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1',
+      staging: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1',
+      prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/vaccination-v1',
+    },
+  },
+})
