@@ -412,7 +412,8 @@ export class FileService {
       isIndictmentCase(theCase.type) &&
       hasIndictmentCaseBeenSubmittedToCourt(theCase.state) &&
       (file.category === CaseFileCategory.INDICTMENT ||
-        file.category === CaseFileCategory.RULING)
+        file.category === CaseFileCategory.RULING ||
+        file.category === CaseFileCategory.COURT_RECORD)
     ) {
       return this.awsS3Service.getConfirmedIndictmentCaseSignedUrl(
         theCase.type,
