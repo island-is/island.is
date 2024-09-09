@@ -8,12 +8,11 @@ import { logger } from '@island.is/logging'
 export class TransportService {
   constructor(private httpService: HttpService) {}
 
-  async authenticate() {
+  async authenticate(url: string, apiVersion = '1.0'): Promise<string> {
     try {
-      const { restAuthUrl, restUsername, restPassword } =
-        environment.samgongustofa
+      const { restUsername, restPassword } = environment.samgongustofa
 
-      if (!restAuthUrl || !restUsername || !restPassword) {
+      if (!restUsername || !restPassword) {
         throw new Error('Missing environment variables for Samgöngustofa')
       }
 
@@ -25,11 +24,11 @@ export class TransportService {
 
       const headerAuthRequest = {
         'Content-Type': 'application/json',
-        'Api-version': '3.0',
+        'Api-version': apiVersion,
       }
 
       const authRes = await lastValueFrom(
-        this.httpService.post(restAuthUrl, jsonAuthBody, {
+        this.httpService.post(url + 'authenticate', jsonAuthBody, {
           headers: headerAuthRequest,
         }),
       )
@@ -53,17 +52,17 @@ export class TransportService {
 
   async doGet(
     restURL: string,
+    fullUrl: string,
     queryParams: { [key: string]: string } | undefined,
+    apiVersion: string,
   ) {
-    const jwtToken = await this.authenticate()
-
-    let fullUrl = restURL
+    const jwtToken = await this.authenticate(restURL, apiVersion)
 
     if (queryParams) {
       const searchParams = new URLSearchParams(queryParams)
 
       // Concatenate the URL with the query string
-      fullUrl = `${restURL}?${searchParams.toString()}`
+      fullUrl = `${fullUrl}?${searchParams.toString()}`
     }
 
     const headers = {
@@ -86,11 +85,31 @@ export class TransportService {
     }
   }
 
-  // Hack to re-use the url from the secret
+  /**
+   * Get the Samgöngustofa's registration REST url
+   * @returns
+   */
   getRegistrationURL(): string {
     const { restDeRegUrl } = environment.samgongustofa
 
     const positionOfChar = restDeRegUrl.lastIndexOf('/')
     return restDeRegUrl.substring(0, positionOfChar) + '/'
+  }
+
+  /**
+   * Get the Samgöngustofa's information REST url
+   * @returns
+   */
+  getInformationURL(): string {
+    const { restDeRegUrl } = environment.samgongustofa
+
+    //
+    // Small hack to get the information url
+    const restInformationURL = restDeRegUrl.replace(
+      '/registrations/',
+      '/information/',
+    )
+    const positionOfChar = restInformationURL.lastIndexOf('/')
+    return restInformationURL.substring(0, positionOfChar) + '/'
   }
 }

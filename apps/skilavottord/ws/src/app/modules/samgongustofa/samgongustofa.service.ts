@@ -9,6 +9,7 @@ import { Traffic, VehicleInformation } from './samgongustofa.model'
 
 import { logger } from '@island.is/logging'
 import { TransportService } from './transport/transport.service'
+import { ApiVersion } from '../../const'
 
 @Injectable()
 export class SamgongustofaService {
@@ -344,8 +345,10 @@ export class SamgongustofaService {
       const url = this.transportService.getRegistrationURL()
 
       const result = await this.transportService.doGet(
+        url,
         url + 'traffic/' + permno,
         undefined,
+        ApiVersion.REGISTRATIONS,
       )
 
       if (result.status === 200) {
@@ -363,6 +366,26 @@ export class SamgongustofaService {
     } catch (err) {
       throw new Error(
         `car-recycling: #2 Failed on getTraffic ${permno.slice(
+          -3,
+        )} because: ${err}`,
+      )
+    }
+  }
+
+  // Get the Vehicle information from Icelandic Transport Authority (Samgöngustofa)
+  async getVehicleInformation(permno: string) {
+    try {
+      const url = this.transportService.getInformationURL()
+
+      return this.transportService.doGet(
+        url,
+        url + 'vehicleinformationmini/' + permno,
+        undefined,
+        ApiVersion.INFORMATION,
+      )
+    } catch (err) {
+      throw new Error(
+        `car-recycling: Failed on getVehicleInformation vehicle ${permno.slice(
           -3,
         )} because: ${err}`,
       )

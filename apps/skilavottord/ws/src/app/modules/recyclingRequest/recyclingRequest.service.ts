@@ -21,6 +21,7 @@ import {
 } from './recyclingRequest.model'
 import { VehicleService, VehicleModel } from '../vehicle'
 import { IcelandicTransportAuthorityServices } from '../../services/icelandicTransportAuthority.services'
+import { ApiVersion } from '../../const'
 
 @Injectable()
 export class RecyclingRequestService {
@@ -41,9 +42,6 @@ export class RecyclingRequestService {
     disposalStation: string,
     vehicle: VehicleModel,
   ) {
-    const apiVersion = '3.0'
-    const apiVersionParam = '?api-version=' + apiVersion
-
     try {
       const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
         environment.samgongustofa
@@ -54,12 +52,12 @@ export class RecyclingRequestService {
       const jsonAuthBody = JSON.stringify(jsonObj)
       const headerAuthRequest = {
         'Content-Type': 'application/json',
-        'Api-version': apiVersion,
+        'Api-version': ApiVersion.REGISTRATIONS,
       }
 
       // TODO: saved jToken and use it in next 7 days ( until it expires )
       const authRes = await lastValueFrom(
-        this.httpService.post(restAuthUrl + apiVersionParam, jsonAuthBody, {
+        this.httpService.post(restAuthUrl, jsonAuthBody, {
           headers: headerAuthRequest,
         }),
       )
@@ -84,11 +82,11 @@ export class RecyclingRequestService {
       const headerDeRegRequest = {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + jToken,
-        'Api-version': apiVersion,
+        'Api-version': ApiVersion.REGISTRATIONS,
       }
 
       const deRegRes = await lastValueFrom(
-        this.httpService.post(restDeRegUrl + apiVersionParam, jsonDeRegBody, {
+        this.httpService.post(restDeRegUrl, jsonDeRegBody, {
           headers: headerDeRegRequest,
         }),
       )
