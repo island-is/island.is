@@ -279,39 +279,4 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     })
     return hasGlasses
   }
-
-  private async getBase64EncodedAttachment(
-    application: ApplicationWithAttachments,
-  ): Promise<string> {
-    const attachments = getValueViaPath(
-      application.answers,
-      'healthDeclarationAge65.attachment',
-    ) as Array<{ key: string; name: string }>
-
-    const hasAttachments = attachments && attachments?.length > 0
-
-    if (!hasAttachments) {
-      return Promise.reject({})
-    }
-
-    const attachmentKey = attachments[0].key
-    const fileName = (
-      application.attachments as {
-        [key: string]: string
-      }
-    )[attachmentKey]
-
-    const { bucket, key } = AmazonS3URI(fileName)
-
-    const uploadBucket = bucket
-    const file = await this.s3
-      .getObject({
-        Bucket: uploadBucket,
-        Key: key,
-      })
-      .promise()
-    const fileContent = file.Body as Buffer
-
-    return fileContent?.toString('base64') || ''
-  }
 }
