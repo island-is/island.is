@@ -9,9 +9,7 @@ import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
-  Application,
   ApplicationTypes,
-  ApplicationWithAttachments,
   FormValue,
   InstitutionNationalIds,
 } from '@island.is/application/types'
@@ -30,8 +28,6 @@ import {
   PostTemporaryLicenseWithHealthDeclarationMapper,
   DrivingLicenseSchema,
 } from './utils/healthDeclarationMapper'
-import AmazonS3URI from 'amazon-s3-uri'
-import { S3 } from 'aws-sdk'
 import { formatPhoneNumber } from './utils'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
@@ -40,14 +36,12 @@ const calculateNeedsHealthCert = (healthDeclaration = {}) => {
 
 @Injectable()
 export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.DRIVING_LICENSE)
-    this.s3 = new S3()
   }
 
   async createCharge({
