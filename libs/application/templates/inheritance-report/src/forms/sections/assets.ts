@@ -99,7 +99,7 @@ export const assets = buildSection({
                   },
                 ],
                 assetKey: 'assets',
-                calcWithShareValue: true,
+                calcWithShareValue: false,
                 repeaterButtonText: m.addRealEstate,
                 sumField: 'propertyValuation',
               },
@@ -690,6 +690,11 @@ export const assets = buildSection({
               id: 'overviewAssets',
               doesNotRequireAnswer: true,
               component: 'OverviewAssets',
+            }),
+            buildCustomField({
+              title: '',
+              id: 'assets.assetsTotal',
+              component: 'SetTotalAssets',
             }),
             buildDescriptionField({
               id: 'space',

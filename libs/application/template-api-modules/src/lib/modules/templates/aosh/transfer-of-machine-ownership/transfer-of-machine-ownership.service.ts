@@ -128,7 +128,16 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch((e) => {
             this.logger.error(
-              `Error sending email about submit application to ${recipientList[i].email}`,
+              `Error sending email about submit application in application: ID: ${
+                application.id
+              }, 
+            role: ${
+              recipientList[i].ssn === application.applicant
+                ? 'Applicant'
+                : `Assignee index ${application.assignees.findIndex(
+                    (assignee) => assignee === recipientList[i].ssn,
+                  )}`
+            }`,
               e,
             )
           })
@@ -143,7 +152,15 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch((e) => {
             this.logger.error(
-              `Error sending sms about submit application to ${recipientList[i].phone}`,
+              `Error sending sms about submit application to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${
+                recipientList[i].ssn === application.applicant
+                  ? 'Applicant'
+                  : `Assignee index ${application.assignees.findIndex(
+                      (assignee) => assignee === recipientList[i].ssn,
+                    )}`
+              }`,
               e,
             )
           })
@@ -200,7 +217,16 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch((e) => {
             this.logger.error(
-              `Error sending email about initReview to ${recipientList[i].email}`,
+              `Error sending email about initReview in application: ID: ${
+                application.id
+              }, 
+            role: ${
+              recipientList[i].ssn === application.applicant
+                ? 'Applicant'
+                : `Assignee index ${application.assignees.findIndex(
+                    (assignee) => assignee === recipientList[i].ssn,
+                  )}`
+            }`,
               e,
             )
           })
@@ -215,7 +241,15 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch((e) => {
             this.logger.error(
-              `Error sending sms about initReview to ${recipientList[i].phone}`,
+              `Error sending sms about initReview to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${
+                recipientList[i].ssn === application.applicant
+                  ? 'Applicant'
+                  : `Assignee index ${application.assignees.findIndex(
+                      (assignee) => assignee === recipientList[i].ssn,
+                    )}`
+              }`,
               e,
             )
           })
@@ -297,9 +331,19 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
               ),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending email about rejectApplication to ${recipientList[i].email}`,
+              `Error sending email about rejectApplication in application: ID: ${
+                application.id
+              }, 
+            role: ${
+              recipientList[i].ssn === application.applicant
+                ? 'Applicant'
+                : `Assignee index ${application.assignees.findIndex(
+                    (assignee) => assignee === recipientList[i].ssn,
+                  )}`
+            }`,
+              e,
             )
           })
       }
@@ -315,9 +359,18 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
               ),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about rejectApplication to ${recipientList[i].phone}`,
+              `Error sending sms about rejectApplication to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${
+                recipientList[i].ssn === application.applicant
+                  ? 'Applicant'
+                  : `Assignee index ${application.assignees.findIndex(
+                      (assignee) => assignee === recipientList[i].ssn,
+                    )}`
+              }`,
+              e,
             )
           })
       }

@@ -159,6 +159,9 @@ const cache = new InMemoryCache({
         userNotifications: {
           merge: true,
         },
+        getUserProfile: {
+          merge: true,
+        },
       },
     },
     DocumentV2: {
