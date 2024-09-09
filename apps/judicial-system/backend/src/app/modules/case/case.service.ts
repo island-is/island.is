@@ -404,7 +404,6 @@ export class CaseService {
     private readonly explanatoryCommentModel: typeof ExplanatoryComment,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
-
     private readonly defendantService: DefendantService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
