@@ -141,7 +141,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
       ? OutInUsage.OUT
       : OutInUsage.IN
 
-  const useStatus = vehicleTrafficData?.useStatus
+  const useStatus = vehicleTrafficData?.useStatus || '01'
 
   const [
     setRecyclingRequest,

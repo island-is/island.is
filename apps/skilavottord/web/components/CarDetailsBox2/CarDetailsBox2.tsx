@@ -110,29 +110,34 @@ export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({
             </GridColumn>
           </GridRow>
         )}
-        <GridRow>
-          <GridColumn span="12/12">
-            <SelectController
-              label={t.numberplate.count}
-              id="plateCount"
-              name="plateCount"
-              options={[
-                { label: '0', value: 0 },
-                { label: '1', value: 1 },
-                { label: '2', value: 2 },
-              ]}
-              onSelect={(option) => {
-                if (option?.value === 2) {
-                  setMissingPlates(false)
-                  setLostPlate(false)
-                } else {
-                  setMissingPlates(true)
-                }
-              }}
-              defaultValue={2}
-            />
-          </GridColumn>
-        </GridRow>
+
+        {(outInStatus === OutInUsage.IN ||
+          (outInStatus === OutInUsage.OUT &&
+            useStatus === UseStatus.OUT_TICKET)) && (
+          <GridRow>
+            <GridColumn span="12/12">
+              <SelectController
+                label={t.numberplate.count}
+                id="plateCount"
+                name="plateCount"
+                options={[
+                  { label: '0', value: 0 },
+                  { label: '1', value: 1 },
+                  { label: '2', value: 2 },
+                ]}
+                onSelect={(option) => {
+                  if (option?.value === 2) {
+                    setMissingPlates(false)
+                    setLostPlate(false)
+                  } else {
+                    setMissingPlates(true)
+                  }
+                }}
+                defaultValue={2}
+              />
+            </GridColumn>
+          </GridRow>
+        )}
         {missingPlates && (
           <GridRow>
             <GridColumn span="12/12">
@@ -161,6 +166,7 @@ export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({
             </GridColumn>
           </GridRow>
         )}
+
         {lostPlate && (
           <GridRow>
             <GridColumn span="12/12">
