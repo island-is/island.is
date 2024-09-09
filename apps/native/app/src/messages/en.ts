@@ -490,8 +490,8 @@ export const en: TranslatedMessages = {
   'edit.phone.inputlabel': 'Phone number',
   'edit.phone.button': 'Save',
   'edit.phone.button.empty': 'Save empty',
-  'edit.phone.button.error': 'Error',
-  'edit.phone.button.errorMessage': 'Could not send verification code',
+  'edit.phone.error': 'Error',
+  'edit.phone.errorMessage': 'Could not send verification code',
 
   // edit email
   'edit.email.screenTitle': 'Edit Email',
@@ -499,8 +499,8 @@ export const en: TranslatedMessages = {
   'edit.email.inputlabel': 'Email',
   'edit.email.button': 'Save',
   'edit.email.button.empty': 'Save empty',
-  'edit.email.button.error': 'Error',
-  'edit.email.button.errorMessage': 'Could not send verification code',
+  'edit.email.error': 'Error',
+  'edit.email.errorMessage': 'Could not send verification code',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Edit Bank Info',
@@ -510,6 +510,8 @@ export const en: TranslatedMessages = {
   'edit.bankinfo.inputlabel.book': 'Hb.',
   'edit.bankinfo.inputlabel.number': 'Account number',
   'edit.bankinfo.button': 'Save',
+  'edit.bankinfo.error': 'Error',
+  'edit.bankinfo.errorMessage': 'Could not save bank info',
 
   // edit confirm
   'edit.confirm.screenTitle': 'Confirm edit',
@@ -523,6 +525,8 @@ export const en: TranslatedMessages = {
   'edit.confirm.inputlabel': 'Security number',
   'edit.cancel.button': 'Cancel',
   'edit.confirm.button': 'Confirm',
+  'edit.confirm.error': 'Error',
+  'edit.confirm.errorMessage': 'Could not update information',
 
   // air discount
   'airDiscount.screenTitle': 'Air discount scheme',
