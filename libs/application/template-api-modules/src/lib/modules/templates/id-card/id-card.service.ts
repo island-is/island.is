@@ -4,16 +4,16 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
-import {
-  DistrictCommissionerAgencies,
-  IdentityDocumentChild,
-} from './constants'
+import { DistrictCommissionerAgencies } from './constants'
 import {
   ChargeFjsV2ClientService,
   getPaymentIdFromExternalData,
 } from '@island.is/clients/charge-fjs-v2'
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
-import { PassportsService } from '@island.is/clients/passports'
+import {
+  IdentityDocumentChild,
+  PassportsService,
+} from '@island.is/clients/passports'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
@@ -27,7 +27,7 @@ import {
 } from '@island.is/application/templates/id-card'
 import { generateApplicationRejectEmail } from './emailGenerators/rejectApplicationEmail'
 import { generateApplicationSubmittedEmail } from './emailGenerators/applicationSubmittedEmail'
-
+import { info } from 'kennitala'
 @Injectable()
 export class IdCardService extends BaseTemplateApiService {
   constructor(
@@ -57,33 +57,44 @@ export class IdCardService extends BaseTemplateApiService {
       )
     }
 
-    const expDate = identityDocument.userPassport?.expirationDate?.toString()
     // if applicant has valid id that is not withinExpirationDate, then not available for application,
     // otherwise available, either with no id or id within expiration limit
     // applicant can have a valid ID and apply for II
-    const applicantIdentityWithinLimits = expDate
-      ? isAvailableForApplication(
-          expDate,
-          'ID',
-          `${identityDocument.userPassport?.type}${identityDocument.userPassport?.subType}`,
-        )
-      : true
+    const applicantAge = info(auth.nationalId).age
+    const applicantInformation = {
+      age: applicantAge,
+      nationalId: auth.nationalId,
+      passport: identityDocument.userPassport,
+      children: identityDocument.childPassports,
+    }
+    const applicantIDWithinLimits = isAvailableForApplication(
+      'ID',
+      applicantInformation,
+    )
+    const applicantIIWithinLimits = isAvailableForApplication(
+      'II',
+      applicantInformation,
+    )
 
     let childIdentityWithinLimits = false
     identityDocument.childPassports?.map((child) => {
       if (child.passports && child.passports.length > 0) {
         child.passports.map((id) => {
-          const withinLimits = id.expirationDate
-            ? isAvailableForApplication(
-                id.expirationDate.toString(),
-                'ID',
-                `${id.type}${id.subType}`,
-              )
-            : true
+          if (child.childNationalId) {
+            const childInformation = {
+              age: info(child.childNationalId).age,
+              nationalId: child.childNationalId,
+              passport: child.passports?.[0],
+            }
+            const withinLimits = isAvailableForApplication(
+              'ID',
+              childInformation,
+            )
 
-          if (withinLimits) {
-            // if there is any id for any child that is within limits then user should be let through dataProvider
-            childIdentityWithinLimits = true
+            if (withinLimits) {
+              // if there is any id for any child that is within limits then user should be let through dataProvider
+              childIdentityWithinLimits = true
+            }
           }
         })
       } else {
@@ -91,7 +102,11 @@ export class IdCardService extends BaseTemplateApiService {
       }
     })
 
-    if (!applicantIdentityWithinLimits && !childIdentityWithinLimits) {
+    if (
+      !applicantIDWithinLimits &&
+      !applicantIIWithinLimits &&
+      !childIdentityWithinLimits
+    ) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.idCardApplicationRequirementsNotMet,
@@ -278,7 +293,6 @@ export class IdCardService extends BaseTemplateApiService {
         guid: application.id,
         appliedForPersonId: auth.nationalId,
         priority: answers.priceList.priceChoice === Services.EXPRESS ? 1 : 0,
-        deliveryName: answers.priceList.location,
         contactInfo: {
           phoneAtHome: applicantInformation.phoneNumber,
           phoneAtWork: applicantInformation.phoneNumber,
@@ -298,7 +312,6 @@ export class IdCardService extends BaseTemplateApiService {
         guid: application.id,
         appliedForPersonId: applicantInformation.nationalId,
         priority: answers.priceList.priceChoice === Services.EXPRESS ? 1 : 0,
-        deliveryName: answers.priceList.location,
         approvalA: {
           personId:
             firstGuardianInformation?.nationalId?.replace('-', '') || '',
