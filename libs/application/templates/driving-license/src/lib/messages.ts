@@ -136,11 +136,6 @@ export const m = defineMessages({
       'Ef einhverri spurningu er svarað játandi í heilbrigðisyfirlýsingu þarf læknisvottorð frá heimilislækni eða viðeigandi sérfræðilækni.',
     description: '',
   },
-  uploadHeader: {
-    id: 'dl.application:uploadHeader',
-    defaultMessage: 'Læknisvottorð',
-    description: 'Upload header',
-  },
   healthDeclarationAge65MultiFieldSubTitle: {
     id: 'dl.application:healthDeclarationAge65MultiFieldSubTitle.subTitle',
     defaultMessage:
