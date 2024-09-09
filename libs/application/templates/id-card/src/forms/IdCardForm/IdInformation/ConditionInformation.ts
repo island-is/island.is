@@ -1,28 +1,19 @@
 import {
   buildSubSection,
-  getValueViaPath,
-  buildMultiField,
   buildDescriptionField,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import { idInformation } from '../../../lib/messages/idInformation'
+import { getChosenApplicant, hasReviewer } from '../../../utils'
 
 export const ConditionInformationSection = buildSubSection({
   id: Routes.CONDITIONINFORMATION,
   title: idInformation.general.conditionSectionTitle,
-  condition: (formvalue, externalData) => {
-    const chosenApplicantNationalId = getValueViaPath(
-      formvalue,
-      Routes.CHOSENAPPLICANTS,
-      '',
-    ) as string
+  condition: (formValue, externalData) => {
+    const chosenApplicant = getChosenApplicant(formValue, externalData)
+    const applicantHasReviewer = hasReviewer(formValue, externalData)
 
-    const applicantNationalId = getValueViaPath(
-      externalData,
-      'nationalRegistry.data.nationalId',
-      '',
-    ) as string
-    return chosenApplicantNationalId !== applicantNationalId
+    return !chosenApplicant.isApplicant && applicantHasReviewer
   },
   children: [
     buildDescriptionField({
