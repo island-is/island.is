@@ -101,7 +101,7 @@ const IncomePlanDetail = () => {
                 data.socialInsuranceIncomePlan.incomeCategories.map(
                   (category, index) => (
                     <T.Row key={index}>
-                      <T.Data>{category.name}</T.Data>
+                      <T.Data>{category.typeName}</T.Data>
                       <T.Data>{amountFormat(category.annualSum)}</T.Data>
                       <T.Data>{category.currency}</T.Data>
                     </T.Row>

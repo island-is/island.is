@@ -5,6 +5,6 @@ export class PostCommentInput {
   @Field(() => String, { description: 'Application ID' })
   id!: string
 
-  @Field(() => String)
+  @Field()
   comment!: string
 }
