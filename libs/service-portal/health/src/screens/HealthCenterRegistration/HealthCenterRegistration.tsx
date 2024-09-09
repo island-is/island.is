@@ -16,6 +16,7 @@ import {
   EmptyState,
   ErrorScreen,
   ExcludesFalse,
+  Modal,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import * as styles from './HealthRegistration.css'
@@ -26,7 +27,6 @@ import { RightsPortalHealthCenter } from '@island.is/api/schema'
 import { useNavigate } from 'react-router-dom'
 import { HealthPaths } from '../../lib/paths'
 import { formatHealthCenterName } from '../../utils/format'
-import { RegisterModal } from '../../components/RegisterModal'
 import {
   useGetHealthCenterDoctorsLazyQuery,
   useGetHealthCenterQuery,
@@ -237,22 +237,6 @@ const HealthCenterRegistration = () => {
         </Box>
       )}
 
-      <RegisterModal
-        id="healthCenterDialog"
-        title={formatMessage(messages.healthCenterRegistrationModalTitle, {
-          healthCenter: selectedHealthCenter?.name,
-        })}
-        description={formatMessage(messages.healthCenterRegistrationModalInfo)}
-        onClose={() => {
-          setSelectedHealthCenter(null)
-          setHealthCenterDoctors([])
-        }}
-        onAccept={handleHealthCenterTransfer}
-        isVisible={!!selectedHealthCenter}
-        buttonLoading={loadingTransfer}
-        healthCenterDoctors={healthCenterDoctors}
-      />
-
       <Box className={styles.filterWrapperStyle} marginBottom={3}>
         <FilterInput
           onChange={(val) => setFilter(val)}
@@ -306,21 +290,61 @@ const HealthCenterRegistration = () => {
                                   visible: healthCenter.id === hoverId,
                                 })}
                               >
-                                <Button
-                                  size="small"
-                                  variant="text"
-                                  icon="pencil"
-                                  onClick={() => {
-                                    setSelectedHealthCenter({
-                                      id: healthCenter.id,
-                                      name: healthCenter.name,
-                                    })
+                                <Modal
+                                  id={'healthCenterRegisterModal'}
+                                  initialVisibility={false}
+                                  iconSrc="./assets/images/coffee.svg"
+                                  iconAlt="coffee"
+                                  toggleClose={!selectedHealthCenter}
+                                  onCloseModal={() => {
+                                    setSelectedHealthCenter(null)
+                                    setHealthCenterDoctors([])
                                   }}
-                                >
-                                  {formatMessage(
-                                    messages.healthRegistrationSave,
+                                  title={formatMessage(
+                                    messages.healthCenterRegistrationModalTitle,
+                                    {
+                                      healthCenter: selectedHealthCenter?.name,
+                                    },
                                   )}
-                                </Button>
+                                  buttons={[
+                                    {
+                                      id: 'RegisterHealthCenterModalAccept',
+                                      type: 'primary' as const,
+                                      text: formatMessage(
+                                        messages.healthRegisterModalAccept,
+                                      ),
+                                      onClick: handleHealthCenterTransfer,
+                                    },
+                                    {
+                                      id: 'RegisterHealthCenterModalDecline',
+                                      type: 'ghost' as const,
+                                      text: formatMessage(
+                                        messages.healthRegisterModalDecline,
+                                      ),
+                                      onClick: () => {
+                                        setSelectedHealthCenter(null)
+                                        setHealthCenterDoctors([])
+                                      },
+                                    },
+                                  ]}
+                                  disclosure={
+                                    <Button
+                                      size="small"
+                                      variant="text"
+                                      icon="pencil"
+                                      onClick={() => {
+                                        setSelectedHealthCenter({
+                                          id: healthCenter.id,
+                                          name: healthCenter.name,
+                                        })
+                                      }}
+                                    >
+                                      {formatMessage(
+                                        messages.healthRegistrationSave,
+                                      )}
+                                    </Button>
+                                  }
+                                />
                               </Box>
                             </T.Data>
                           </tr>
