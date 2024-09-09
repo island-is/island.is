@@ -998,9 +998,25 @@ export const messages = defineMessages({
     id: 'sp.health:i-am-organ-donor',
     defaultMessage: 'Ég er líffæragjafi.',
   },
+  iAmOrganDonorText: {
+    id: 'sp.health:i-am-organ-donor-text',
+    defaultMessage: 'Öll líffærin mín má nota til ígræðslu.',
+  },
+  iAmOrganDonorWithExceptions: {
+    id: 'sp.health:i-am-organ-donor-w-exceptions',
+    defaultMessage: 'Ég heimila líffæragjöf, með takmörkunum.',
+  },
+  iAmOrganDonorWithExceptionsText: {
+    id: 'sp.health:i-am-organ-donor-w-exceptions-text',
+    defaultMessage: 'Öll líffæri má nota til ígræðslu fyrir utan:',
+  },
   iAmNotOrganDonor: {
     id: 'sp.health:i-am-not-organ-donor',
     defaultMessage: 'Ég banna líffæragjöf.',
+  },
+  iAmNotOrganDonorText: {
+    id: 'sp.health:i-am-not-organ-donor-text',
+    defaultMessage: 'Engin líffæri má nota til ígræðslu',
   },
   organDonationRegistrationOptIn: {
     id: 'sp.health:organ-donation-registration-opt-in',
@@ -1129,10 +1145,6 @@ export const messages = defineMessages({
     defaultMessage:
       'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstakt umboð fyrir þig. Hér getur þú skráð þá aðila sem þú veitir umboð til að sækja lyf í apótek fyrir þig.',
   },
-  medicinePaymentParticipation: {
-    id: 'sp.health:medicine-payment-participation',
-    defaultMessage: 'Greiðsluþáttaka',
-  },
   medicinePrescriptionIntroText: {
     id: 'sp.health:medicine-prescription-intro-text',
     defaultMessage:
@@ -1193,5 +1205,9 @@ export const messages = defineMessages({
   grantMedicineDelegation: {
     id: 'sp.health:grant-medicine-delegation',
     defaultMessage: 'Veita lyfjaumboð',
+  },
+  medicinePaymentParticipation: {
+    id: 'sp.health:medicine-payment-participation',
+    defaultMessage: 'Greiðsluþátttaka',
   },
 })
