@@ -18,5 +18,5 @@ export const delegationScopes = [
 
 export const DelegationAdminScopes = {
   read: '@admin.island.is/delegation-system',
-  amdin: '@admin.island.is/delegation-system:admin',
+  admin: '@admin.island.is/delegation-system:admin',
 }

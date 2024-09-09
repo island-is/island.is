@@ -11,18 +11,22 @@ import { NotFoundException, UseGuards } from '@nestjs/common'
 import { DelegationAdminService } from './delegation-admin.service'
 import { DelegationAdminCustomModel } from './models/delegation.model'
 
-import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import {
+  type User,
+  CurrentUser,
+  IdsUserGuard,
+} from '@island.is/auth-nest-tools'
 import {
   Identity,
-  IdentityDataLoader,
+  type IdentityDataLoader,
   IdentityLoader,
 } from '@island.is/api/domains/identity'
 import { Loader } from '@island.is/nest/dataloader'
 import { DelegationDTO } from '@island.is/auth-api-lib'
 import {
+  type DomainDataLoader,
   CustomDelegation,
   Domain,
-  DomainDataLoader,
   DomainLoader,
   ISLAND_DOMAIN,
 } from '@island.is/api/domains/auth'
