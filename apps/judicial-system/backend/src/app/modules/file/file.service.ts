@@ -398,8 +398,8 @@ export class FileService {
   ): Promise<string> {
     if (
       isIndictmentCase(theCase.type) &&
-      hasIndictmentCaseBeenSubmittedToCourt(theCase.state) &&
-      (file.category === CaseFileCategory.INDICTMENT ||
+      ((file.category === CaseFileCategory.INDICTMENT &&
+        hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) ||
         file.category === CaseFileCategory.RULING)
     ) {
       return this.awsS3Service.getConfirmedIndictmentCaseSignedUrl(
