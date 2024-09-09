@@ -56,7 +56,7 @@ import {
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { Defendant, DefendantService } from '../defendant'
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount } from '../indictment-count'

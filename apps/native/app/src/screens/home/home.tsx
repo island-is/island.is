@@ -34,6 +34,7 @@ import { ApplicationsModule } from './applications-module'
 import { HelloModule } from './hello-module'
 import { InboxModule } from './inbox-module'
 import { OnboardingModule } from './onboarding-module'
+import { usePreferencesStore } from '../../stores/preferences-store'
 
 interface ListItem {
   id: string
@@ -99,6 +100,9 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   useAndroidNotificationPermission()
   const syncToken = useNotificationsStore(({ syncToken }) => syncToken)
   const checkUnseen = useNotificationsStore(({ checkUnseen }) => checkUnseen)
+  const getAndSetLocale = usePreferencesStore(
+    ({ getAndSetLocale }) => getAndSetLocale,
+  )
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
@@ -126,6 +130,8 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     // Sync push tokens and unseen notifications
     syncToken()
     checkUnseen()
+    // Get user locale from server
+    getAndSetLocale()
 
     // Handle initial notification
     handleInitialNotification()

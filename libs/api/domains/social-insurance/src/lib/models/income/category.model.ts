@@ -5,6 +5,9 @@ export class IncomeCategory {
   @Field()
   name!: string
 
+  @Field()
+  typeName!: string
+
   @Field(() => Int)
   annualSum!: number
 
