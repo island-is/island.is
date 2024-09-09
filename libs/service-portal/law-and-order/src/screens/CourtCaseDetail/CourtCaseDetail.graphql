@@ -21,8 +21,8 @@ query GetCourtCase($input: LawAndOrderCourtCaseInput!) {
           value
           link
           action {
-            label
-            url
+            title
+            data
             type
           }
         }

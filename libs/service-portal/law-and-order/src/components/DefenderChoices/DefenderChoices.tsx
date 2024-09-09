@@ -27,6 +27,7 @@ interface Props {
     setPopUp: Dispatch<SetStateAction<boolean>>
   }
   refetch?: () => void
+  choice?: string | undefined | null
 }
 
 interface FormData {
@@ -39,6 +40,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
   popUp,
   id,
   refetch,
+  choice,
 }) => {
   useNamespaces('sp.law-and-order')
   const { formatMessage, lang } = useLocale()
@@ -48,6 +50,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
 
   const methods = useForm<FormData>()
 
+  console.log(choice)
   const [postAction, { loading: postActionLoading }] =
     usePostDefenseChoiceMutation({
       onError: () => {
@@ -105,7 +108,12 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
             <Controller
               name="choice"
               control={methods.control}
-              render={({ field: { value, onChange } }) => (
+              render={({
+                field: {
+                  value = choice ?? DefenseChoices.DELAY.code,
+                  onChange,
+                },
+              }) => (
                 <Stack space={3}>
                   <RadioButton
                     name="choice"

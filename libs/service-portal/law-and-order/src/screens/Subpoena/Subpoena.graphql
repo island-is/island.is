@@ -22,8 +22,8 @@ query GetSubpoena($input: LawAndOrderSubpoenaInput!) {
           value
           link
           action {
-            label
-            url
+            title
+            data
             type
           }
         }

@@ -1,6 +1,7 @@
 /* eslint-disable local-rules/disallow-kennitalas */
 
-import { Groups, Items as SubpoenaItems } from '../../models/subpoena.model'
+import { Group } from '../../models/group.model'
+import { Item } from '../../models/item.model'
 
 export type Process = {
   state: State
@@ -68,7 +69,7 @@ export type Subpoena = {
     id: string
     acknowledged?: boolean
     chosenDefender?: string // ef null = birta lista ef ekki, birta breyta
-    groups: Array<Groups>
+    groups: Array<Group>
   }
 }
 
@@ -525,7 +526,7 @@ export const getSubpoena = (id: string) => {
                 label: 'Dómsathöfn',
                 value: 'Þingfesting',
               },
-            ] as Array<SubpoenaItems>,
+            ] as Array<Item>,
           },
         ],
       },

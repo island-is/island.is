@@ -19,7 +19,6 @@ import {
   usePostSubpoenaAcknowledgedMutation,
 } from './CourtCaseDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
-import { DocumentsPaths } from '@island.is/service-portal/documents'
 
 type UseParams = {
   id: string
@@ -143,36 +142,36 @@ const CourtCaseDetail = () => {
                 </Button>
               </LinkResolver>
             ) : (
-              // <Button
-              //   as="span"
-              //   unfocusable
-              //   colorScheme="default"
-              //   icon="receipt"
-              //   iconType="outline"
-              //   size="default"
-              //   variant="utility"
-              //   onClick={() => toggleModal()}
-              // >
-              //   {formatMessage(messages.seeSubpoena)}
-              // </Button>
-              <LinkResolver
-                href={DocumentsPaths.ElectronicDocumentSingle.replace(
-                  ':id',
-                  '52b25547-321d-4584-ba3d-2a7901228b25',
-                )}
+              <Button
+                as="span"
+                unfocusable
+                colorScheme="default"
+                icon="receipt"
+                iconType="outline"
+                size="default"
+                variant="utility"
+                onClick={() => toggleModal()}
               >
-                <Button
-                  as="span"
-                  unfocusable
-                  colorScheme="default"
-                  icon="receipt"
-                  iconType="outline"
-                  size="default"
-                  variant="utility"
-                >
-                  {formatMessage(messages.seeSubpoena)}
-                </Button>
-              </LinkResolver>
+                {formatMessage(messages.seeSubpoena)}
+              </Button>
+              // <LinkResolver
+              //   href={DocumentsPaths.ElectronicDocumentSingle.replace(
+              //     ':id',
+              //     '52b25547-321d-4584-ba3d-2a7901228b25',
+              //   )}
+              // >
+              //   <Button
+              //     as="span"
+              //     unfocusable
+              //     colorScheme="default"
+              //     icon="receipt"
+              //     iconType="outline"
+              //     size="default"
+              //     variant="utility"
+              //   >
+              //     {formatMessage(messages.seeSubpoena)}
+              //   </Button>
+              // </LinkResolver>
             )}
           </Box>
         )}
@@ -208,7 +207,7 @@ const CourtCaseDetail = () => {
           {courtCase?.data?.groups && (
             <InfoLines groups={courtCase?.data?.groups} loading={loading} />
           )}
-          {/* {courtCase?.data && subpoenaModalVisible && !subpoenaAcknowledged && (
+          {courtCase?.data && subpoenaModalVisible && !subpoenaAcknowledged && (
             <ConfirmationModal
               onSubmit={handleSubmit}
               onCancel={handleCancel}
@@ -220,7 +219,7 @@ const CourtCaseDetail = () => {
                 arg: formatMessage(messages.modalFromPolice),
               })}
             />
-          )} */}
+          )}
         </>
       )}
       {!loading &&

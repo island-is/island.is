@@ -5,6 +5,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  SkeletonLoader,
   Text,
   toast,
 } from '@island.is/island-ui/core'
@@ -112,27 +113,27 @@ const Subpoena = () => {
 
   if (subpoena?.data && subpoenaAcknowledged === undefined) {
     setSubpoenaModalVisible(true)
-    // return (
-    //   <ConfirmationModal
-    //     onSubmit={handleSubmit}
-    //     onCancel={handleCancel}
-    //     onClose={toggleModal}
-    //     loading={false}
-    //     redirectPath={LawAndOrderPaths.SubpoenaDetail.replace(':id', id)}
-    //     modalTitle={formatMessage(m.acknowledgeTitle)}
-    //     modalText={formatMessage(m.acknowledgeText, {
-    //       arg: formatMessage(messages.modalFromPolice),
-    //     })}
-    //   />
-    // )
     return (
-      <Navigate
-        to={DocumentsPaths.ElectronicDocumentSingle.replace(
-          ':id',
-          '52b25547-321d-4584-ba3d-2a7901228b25',
-        )}
+      <ConfirmationModal
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        onClose={toggleModal}
+        loading={false}
+        redirectPath={LawAndOrderPaths.SubpoenaDetail.replace(':id', id)}
+        modalTitle={formatMessage(m.acknowledgeTitle)}
+        modalText={formatMessage(m.acknowledgeText, {
+          arg: formatMessage(messages.modalFromPolice),
+        })}
       />
     )
+    // return (
+    //   <Navigate
+    //     to={DocumentsPaths.ElectronicDocumentSingle.replace(
+    //       ':id',
+    //       '52b25547-321d-4584-ba3d-2a7901228b25',
+    //     )}
+    //   />
+    // )
   }
 
   if (subpoenaAcknowledged === false) {
@@ -161,11 +162,7 @@ const Subpoena = () => {
         </GridContainer>
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
-      {loading && !error && (
-        <Box width="full">
-          <CardLoader />
-        </Box>
-      )}
+
       {subpoena?.data?.groups && subpoena.data.groups.length > 0 && (
         <>
           <InfoLines groups={subpoena.data.groups} loading={loading} />
@@ -219,6 +216,7 @@ const Subpoena = () => {
                 popUp={{ setPopUp: setDefenderPopUp }}
                 id={id}
                 refetch={refetch}
+                choice={subpoena.data.defenderChoice}
               />
             </Modal>
           )}
