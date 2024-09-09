@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common'
 
-import {
-  DelegationAdminCustomService,
-  DelegationsModule as AuthDelegationsModule,
-} from '@island.is/auth-api-lib'
+import { DelegationsModule as AuthDelegationsModule } from '@island.is/auth-api-lib'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { DelegationAdminController } from './delegation-admin.controller'
 
@@ -12,4 +9,4 @@ import { DelegationAdminController } from './delegation-admin.controller'
   controllers: [DelegationAdminController],
   providers: [],
 })
-export class DelegationsAdminModule {}
+export class DelegationAdminModule {}

@@ -25,7 +25,6 @@ import { DelegationsModule } from './delegations/delegations.module'
 import { DomainsModule } from './domains/domains.module'
 import { LoginRestrictionsModule } from './login-restrictions/login-restrictions.module'
 import { ScopesModule } from './scopes/scopes.module'
-import { DelegationsAdminModule } from './delegation-admin/delegation-admin.module'
 
 @Module({
   imports: [
@@ -40,7 +39,6 @@ import { DelegationsAdminModule } from './delegation-admin/delegation-admin.modu
     ScopesModule,
     ProblemModule,
     LoginRestrictionsModule,
-    DelegationsAdminModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

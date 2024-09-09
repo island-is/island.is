@@ -7,7 +7,6 @@ import {
   ScopesApi,
   DelegationIndexApi,
   DelegationsApi,
-  DelegationAdminApi,
 } from '../../gen/fetch'
 import { ApiConfiguration } from './api-configuration'
 
@@ -19,7 +18,6 @@ export const exportedApis = [
   ScopesApi,
   DelegationIndexApi,
   DelegationsApi,
-  DelegationAdminApi,
 ].map((Api) => ({
   provide: Api,
   useFactory: (configuration: Configuration) => new Api(configuration),
