@@ -88,14 +88,12 @@ const UpdateSkilavottordVehicleInfoMutation = gql`
     $mileage: Float!
     $plateCount: Float!
     $plateLost: Boolean!
-    $deregistered: Boolean!
   ) {
     updateSkilavottordVehicleInfo(
       permno: $permno
       mileage: $mileage
       plateCount: $plateCount
       plateLost: $plateLost
-      deregistered: $deregistered
     )
   }
 `
@@ -137,18 +135,13 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
   )
 
   const vehicleTrafficData = traffic?.skilavottordTraffic
-  console.log(
-    'vehicle TRAFFIC',
-    vehicleTrafficData?.outInStatus.toLocaleUpperCase(),
-  )
+
   const outInStatus =
     vehicleTrafficData?.outInStatus.toLocaleUpperCase() === 'OUT'
       ? OutInUsage.OUT
       : OutInUsage.IN
 
   const useStatus = vehicleTrafficData?.useStatus
-
-  console.log('fsadfadsfa ', { outInStatus })
 
   const [
     setRecyclingRequest,
@@ -195,22 +188,13 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
       newMileage = +mileageValue.trim().replace(/\./g, '')
     }
 
-    console.log('plateLost', { plateLost })
-    console.log('handleConfirm', {
-      plateCountValue,
-      plateLostValue: plateLost?.length ? true : false,
-      outInStatus,
-      mileageValue,
-    })
-
     // Update vehicle table with latests information
     setVehicleRequest({
       variables: {
         permno: vehicle?.vehicleId,
-        mileage: newMileage,
-        plateCount: plateCountValue,
+        mileage: newMileage || vehicle?.mileage,
+        plateCount: plateCountValue === 0 ? 0 : plateCountValue,
         plateLost: plateLost?.length ? true : false,
-        deregistered: false, //isDeregistered, ?? Finna út úr hvort afksráð í stað úr umferð
       },
     })
 
@@ -287,7 +271,6 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
                   vehicle.recyclingRequests[0].nameOfRequestor
                 }
                 mileage={vehicle.mileage || 0}
-                isDeregistered
                 outInStatus={outInStatus}
                 useStatus={useStatus || ''}
               />

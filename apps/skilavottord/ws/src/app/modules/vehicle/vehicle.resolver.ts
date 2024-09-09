@@ -110,14 +110,12 @@ export class VehicleResolver {
     @Args('mileage') mileage: number,
     @Args('plateCount') plateCount: number,
     @Args('plateLost') plateLost: boolean,
-    @Args('deregistered') deregistered: boolean,
   ) {
     return await this.vehicleService.updateVehicleInfo(
       permno,
       mileage,
       plateCount,
       plateLost,
-      deregistered,
     )
   }
 }

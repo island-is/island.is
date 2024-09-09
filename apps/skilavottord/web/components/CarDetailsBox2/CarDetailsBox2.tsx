@@ -30,7 +30,7 @@ interface BoxProps {
   modelYear: string
   vehicleOwner?: string | null
   mileage?: number
-  isDeregistered?: boolean
+
   outInStatus: number
   useStatus: string
 }
@@ -41,7 +41,6 @@ export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({
   modelYear,
   vehicleOwner,
   mileage,
-  isDeregistered,
   outInStatus,
   useStatus,
 }) => {
@@ -113,27 +112,25 @@ export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({
         )}
         <GridRow>
           <GridColumn span="12/12">
-            {isDeregistered && (
-              <SelectController
-                label={t.numberplate.count}
-                id="plateCount"
-                name="plateCount"
-                options={[
-                  { label: '0', value: 0 },
-                  { label: '1', value: 1 },
-                  { label: '2', value: 2 },
-                ]}
-                onSelect={(option) => {
-                  if (option?.value === 2) {
-                    setMissingPlates(false)
-                    setLostPlate(false)
-                  } else {
-                    setMissingPlates(true)
-                  }
-                }}
-                defaultValue={2}
-              />
-            )}
+            <SelectController
+              label={t.numberplate.count}
+              id="plateCount"
+              name="plateCount"
+              options={[
+                { label: '0', value: 0 },
+                { label: '1', value: 1 },
+                { label: '2', value: 2 },
+              ]}
+              onSelect={(option) => {
+                if (option?.value === 2) {
+                  setMissingPlates(false)
+                  setLostPlate(false)
+                } else {
+                  setMissingPlates(true)
+                }
+              }}
+              defaultValue={2}
+            />
           </GridColumn>
         </GridRow>
         {missingPlates && (

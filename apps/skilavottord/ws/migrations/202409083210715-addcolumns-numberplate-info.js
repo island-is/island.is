@@ -7,7 +7,6 @@ module.exports = {
       BEGIN;
         ALTER TABLE vehicle ADD COLUMN plate_count INT;
         ALTER TABLE vehicle ADD COLUMN plate_lost BOOLEAN;
-        ALTER TABLE vehicle ADD COLUMN deregistered BOOLEAN;
       COMMIT;
     `)
   },
@@ -16,7 +15,6 @@ module.exports = {
     return queryInterface.sequelize.query(`
       ALTER TABLE vehicle DROP COLUMN plate_count;
       ALTER TABLE vehicle DROP COLUMN plate_lost;
-      ALTER TABLE vehicle DROP COLUMN deregistered;
     `)
   },
 }

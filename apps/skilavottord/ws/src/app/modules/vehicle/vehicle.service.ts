@@ -65,14 +65,13 @@ export class VehicleService {
     mileage: number,
     plateCount: number,
     plateLost: boolean,
-    deregistered: boolean,
   ): Promise<boolean> {
     const findVehicle = await this.findByVehicleId(permno)
     if (findVehicle) {
       findVehicle.mileage = mileage ?? 0
       findVehicle.plateCount = plateCount ?? 0
       findVehicle.plateLost = plateLost ? true : false
-      findVehicle.deregistered = deregistered ?? false
+
       await findVehicle.save()
       return true
     } else {
@@ -81,7 +80,7 @@ export class VehicleService {
         `car-recycling: Failed to update vehicleInfo for vehicle: ${permno.slice(
           -3,
         )}`,
-        { mileage, plateCount, plateLost, deregistered },
+        { mileage, plateCount, plateLost },
       )
       throw new Error(errorMsg)
     }

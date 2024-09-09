@@ -92,12 +92,6 @@ export class VehicleModel extends Model<VehicleModel> {
     type: DataType.INTEGER,
   })
   plateCount?: number
-
-  @Field({ nullable: true })
-  @Column({
-    type: DataType.BOOLEAN,
-  })
-  deregistered?: boolean
 }
 
 @ObjectType()
