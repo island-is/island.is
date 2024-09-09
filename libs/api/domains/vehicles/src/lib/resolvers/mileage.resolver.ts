@@ -65,7 +65,7 @@ export class VehiclesMileageResolver {
   }
 
   @Query(() => VehiclesBulkMileageRegistrationRequestCollection, {
-    name: 'vehicleBulkMileageRegistrationRequestCollcetion',
+    name: 'vehicleBulkMileageRegistrationRequestCollection',
     nullable: true,
   })
   @Audit()
@@ -74,7 +74,7 @@ export class VehiclesMileageResolver {
   }
 
   @Query(() => VehiclesBulkMileageRegistrationRequestVehicleCollection, {
-    name: 'vehicleBulkMileageRegistrationRequestVehicleCollcetion',
+    name: 'vehicleBulkMileageRegistrationRequestVehicleCollection',
     nullable: true,
   })
   @Audit()

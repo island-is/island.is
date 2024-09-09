@@ -9,11 +9,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { vehicleMessage } from '../../lib/messages'
-import { m } from '@island.is/service-portal/core'
-import VehicleBulkMileageFileUploader, {
-  MileageRecord,
-} from './VehicleBulkMileageFileUploader'
+import { LinkButton, m } from '@island.is/service-portal/core'
+import VehicleBulkMileageFileUploader from './VehicleBulkMileageFileUploader'
 import VehicleBulkMileageFileDownloader from './VehicleBulkMileageFileDownloader'
+import { AssetsPaths } from '../../lib/paths'
+import { MileageRecord } from '../../utils/parseCsvToMileage'
 
 interface Props {
   onPageSizeClick: (pageSize: number) => void
@@ -34,6 +34,11 @@ export const VehicleBulkMileageOptionsBar = ({
         <VehicleBulkMileageFileDownloader />
         <VehicleBulkMileageFileUploader
           onUploadFileParseComplete={onFileUploadComplete}
+        />
+        <LinkButton
+          to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
+          text={'Magnskrá kílómetrastöðu'}
+          variant="utility"
         />
         <Filter
           labelClear={formatMessage(m.clearFilter)}

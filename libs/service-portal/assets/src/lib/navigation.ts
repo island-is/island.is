@@ -51,6 +51,13 @@ export const assetsNavigation: PortalNavigationItem = {
         {
           name: m.vehiclesBulkMileage,
           path: AssetsPaths.AssetsVehiclesBulkMileage,
+          children: [
+            {
+              name: m.vehiclesBulkMileageUpload,
+              path: AssetsPaths.AssetsVehiclesBulkMileageUpload,
+              navHide: true,
+            },
+          ],
         },
         {
           name: m.vehiclesHistory,
