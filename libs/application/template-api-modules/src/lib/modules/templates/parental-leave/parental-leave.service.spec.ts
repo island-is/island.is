@@ -233,7 +233,7 @@ describe('ParentalLeaveService', () => {
         },
         {
           provide: S3Service,
-          useValue: {}
+          useValue: {},
         },
         {
           provide: BaseTemplateApiApplicationService,

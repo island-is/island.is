@@ -242,10 +242,83 @@ export const PDF_URL_QUERY = gql`
   }
 `
 
-export const PDF_QUERY = gql`
-  query PdfDocument($id: String!) {
-    officialJournalOfIcelandApplicationGetPdf(id: $id) {
-      pdf
+export const GET_PRESIGNED_URL_MUTATION = gql`
+  mutation GetPresignedUrl(
+    $input: OfficialJournalOfIcelandApplicationGetPresignedUrlInput!
+  ) {
+    officialJournalOfIcelandApplicationGetPresignedUrl(input: $input) {
+      url
+    }
+  }
+`
+
+export const ADD_APPLICATION_ATTACHMENT_MUTATION = gql`
+  mutation AddApplicationAttachment(
+    $input: OfficialJournalOfIcelandApplicationAddApplicationAttachmentInput!
+  ) {
+    officialJournalOfIcelandApplicationAddAttachment(input: $input) {
+      success
+    }
+  }
+`
+
+export const GET_APPLICATION_ATTACHMENTS_QUERY = gql`
+  query OfficialJournalOfIcelandApplicationGetAttachments(
+    $input: OfficialJournalOfIcelandApplicationGetApplicationAttachmentInput!
+  ) {
+    officialJournalOfIcelandApplicationGetAttachments(input: $input) {
+      attachments {
+        id
+        originalFileName
+        fileName
+        fileFormat
+        fileExtension
+        fileLocation
+        fileSize
+      }
+    }
+  }
+`
+
+export const DELETE_APPLICATION_ATTACHMENT_MUTATION = gql`
+  mutation DeleteApplicationAttachment(
+    $input: OfficialJournalOfIcelandApplicationDeleteApplicationAttachmentInput!
+  ) {
+    officialJournalOfIcelandApplicationDeleteAttachment(input: $input) {
+      success
+    }
+  }
+`
+
+export const GET_COMMENTS_QUERY = gql`
+  query GetComments(
+    $input: OfficialJournalOfIcelandApplicationGetCommentsInput!
+  ) {
+    officialJournalOfIcelandApplicationGetComments(input: $input) {
+      comments {
+        id
+        createdAt
+        internal
+        type
+        caseStatus
+        state
+        task {
+          from
+          to
+          title
+          comment
+        }
+      }
+    }
+  }
+`
+
+export const POST_COMMENT_MUTATION = gql`
+  mutation AddComment(
+    $input: OfficialJournalOfIcelandApplicationPostCommentInput!
+  ) {
+    officialJournalOfIcelandApplicationPostComment(input: $input) {
+      success
     }
   }
 `
