@@ -41,4 +41,60 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:nationalIdNotFound',
     defaultMessage: 'Kennitala fannst ekki',
   },
+  delegationAdminCreateNewDelegation: {
+    id: 'admin.delegationAdmin:delegationAdminCreateNewDelegation',
+    defaultMessage: 'Stofna nýtt umboð',
+  },
+  delegationAdminCreateNewDelegationDescription: {
+    id: 'admin.delegationAdmin:delegationAdminCreateNewDelegation',
+    defaultMessage: 'Hér getur þú veitt umboð fyrir valinn notanda.',
+  },
+  delegationAdminCreateNewDelegationAction: {
+    id: 'admin.delegationAdmin:delegationAdminCreateNewDelegation',
+    defaultMessage: 'Stofna nýtt umboð',
+  },
+  nationalIdFrom: {
+    id: 'admin.delegationAdmin:delegationFromNationalId',
+    defaultMessage: 'Kennitala umboðsveitanda',
+  },
+  nationalIdTo: {
+    id: 'admin.delegationAdmin:delegationToNationalId',
+    defaultMessage: 'Kennitala umboðshafa',
+  },
+  errorNationalIdFrom: {
+    id: 'admin.delegationAdmin:errorNationalIdFrom',
+    defaultMessage: 'Kennitala umboðsveitanda er nauðsynleg',
+  },
+  errorNationalIdTo: {
+    id: 'admin.delegationAdmin:errorNationalIdTo',
+    defaultMessage: 'Kennitala umboðshafa er nauðsynleg',
+  },
+  cancel: {
+    id: 'admin.delegationAdmin:cancel',
+    defaultMessage: 'Hætta við',
+  },
+  create: {
+    id: 'admin.delegationAdmin:create',
+    defaultMessage: 'Skrá umboð',
+  },
+  validInfinite: {
+    id: 'admin.delegationAdmin:validInfinite',
+    defaultMessage: 'Gildis tími óendanlegur',
+  },
+  validTo: {
+    id: 'admin.delegationAdmin:validTo',
+    defaultMessage: 'Gildistími',
+  },
+  accessType: {
+    id: 'admin.delegationAdmin:accessType',
+    defaultMessage: 'Aðgangstegund',
+  },
+  referenceId: {
+    id: 'admin.delegationAdmin:referenceId',
+    defaultMessage: 'Númer mála í Zendesk',
+  },
+  errorDefault: {
+    id: 'admin.delegationAdmin:errorDefault',
+    defaultMessage: 'Oops, an unknown error has occurred.',
+  },
 })
