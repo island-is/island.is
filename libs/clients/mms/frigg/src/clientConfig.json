@@ -518,10 +518,12 @@
           },
           "primaryOrgId": { "type": "object" },
           "memberships": {
+            "nullable": true,
             "type": "array",
             "items": { "$ref": "#/components/schemas/MembershipModel" }
           },
           "agents": {
+            "nullable": true,
             "type": "array",
             "items": { "$ref": "#/components/schemas/AgentModel" }
           }
