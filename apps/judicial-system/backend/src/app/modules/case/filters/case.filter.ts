@@ -5,7 +5,6 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
-  DateType,
   getIndictmentVerdictAppealDeadline,
   IndictmentCaseReviewDecision,
   InstitutionType,

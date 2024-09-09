@@ -55,7 +55,7 @@
 	<string>Used for license scanning capabilities</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>IBMPlexSans-Regular.ttf</string>
+		<string>IBMPlexSans.ttf</string>
 		<string>IBMPlexSans-Italic.ttf</string>
 		<string>IBMPlexSans-Bold.ttf</string>
 		<string>IBMPlexSans-BoldItalic.ttf</string>
