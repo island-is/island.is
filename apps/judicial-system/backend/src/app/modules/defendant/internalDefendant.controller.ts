@@ -143,7 +143,7 @@ export class InternalDefendantController {
         defendant.subpoenaType,
       )
       .then(async (pdf) => {
-        return  this.defendantService.deliverSubpoenaToPolice(
+        return this.defendantService.deliverSubpoenaToPolice(
           theCase,
           defendant,
           Base64.btoa(pdf.toString('binary')),
@@ -155,6 +155,6 @@ export class InternalDefendantController {
         throw error
       })
 
-      return { delivered }
+    return delivered
   }
 }
