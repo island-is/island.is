@@ -1,4 +1,9 @@
-import { json, ref, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import {
+  json,
+  ref,
+  service,
+  ServiceBuilder,
+} from '../../../../../infra/src/dsl/dsl'
 
 const REDIS_NODE_CONFIG = {
   dev: json([
