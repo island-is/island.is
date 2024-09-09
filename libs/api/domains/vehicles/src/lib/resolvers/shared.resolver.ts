@@ -5,8 +5,8 @@ import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { VehiclesService } from '../services/vehicles.service'
-import { VehicleMileageDetail } from '../../models/getVehicleMileage.model'
-import { VehiclesDetail } from '../../models/getVehicleDetail.model'
+import { VehicleMileageDetail } from '../models/getVehicleMileage.model'
+import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   FeatureFlagGuard,

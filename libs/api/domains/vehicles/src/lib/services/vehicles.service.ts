@@ -28,19 +28,19 @@ import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { basicVehicleInformationMapper } from '../../utils/basicVehicleInformationMapper'
-import {
-  VehiclesDetail,
-  VehiclesExcel,
-} from '../../models/getVehicleDetail.model'
+import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
+import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import {
   GetVehiclesForUserInput,
   GetVehiclesListV2Input,
-} from '../../dto/getVehiclesForUserInput'
-import { VehicleMileageOverview } from '../../models/getVehicleMileage.model'
+} from '../dto/getVehiclesForUserInput'
+import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
-import { mileageDetailConstructor } from '../../utils/helpers'
+import { mileageDetailConstructor } from '../utils/helpers'
 import { handle404 } from '@island.is/clients/middlewares'
+import { VehiclesListInputV3 } from '../dto/vehiclesListInputV3'
+import { VehiclesCurrentListResponse } from '../models/v3/currentVehicleListResponse.model'
+import { isDefined } from '@island.is/shared/utils'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -94,6 +94,60 @@ export class VehiclesService {
           : `${input.permno}`
         : undefined,
     })
+  }
+
+  async getVehiclesListV3(
+    auth: User,
+    input: VehiclesListInputV3,
+  ): Promise<VehiclesCurrentListResponse | null> {
+    const res = await this.getVehiclesWithAuth(
+      auth,
+    ).currentvehicleswithmileageandinspGet({
+      showCoowned: true,
+      showOperated: true,
+      showOwned: true,
+      page: input.page,
+      pageSize: input.pageSize,
+    })
+
+    if (
+      !res.pageNumber ||
+      !res.pageSize ||
+      !res.totalPages ||
+      !res.totalRecords
+    ) {
+      return null
+    }
+
+    return {
+      pageNumber: res.pageNumber,
+      pageSize: res.pageSize,
+      totalPages: res.totalPages,
+      totalRecords: res.totalRecords,
+      data: res.data
+        ?.map((d) => {
+          if (
+            !d.permno ||
+            !d.regno ||
+            !d.canRegisterMilage ||
+            !d.requiresMileageRegistration
+          ) {
+            return null
+          }
+          return {
+            vehicleId: d.permno,
+            registrationNumber: d.regno,
+            userRole: d.role ?? undefined,
+            type: d.make ?? undefined,
+            color: d.colorName ?? undefined,
+            mileageDetails: {
+              canRegisterMileage: d.canRegisterMilage,
+              requiresMileageRegistration: d.requiresMileageRegistration,
+            },
+          }
+        })
+        .filter(isDefined),
+    }
   }
 
   async getVehiclesForUser(

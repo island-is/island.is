@@ -6,15 +6,14 @@ import {
 } from '@island.is/clients/vehicles-mileage'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
-import { MileageReadingDto } from '../../dto/mileageReading.dto'
-import { PostVehicleBulkMileageInput } from '../../dto/postBulkVehicleMileage.input'
+import { PostVehicleBulkMileageInput } from '../dto/postBulkVehicleMileage.input'
 import { isDefined } from '@island.is/shared/utils'
-import { VehiclesBulkMileageRegistrationRequestCollection } from '../../models/bulkMileageRegistrationRequestsCollection.model'
-import { LOG_CATEGORY } from '../../constants'
+import { VehiclesBulkMileageRegistrationRequestCollection } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestsCollection.model'
+import { LOG_CATEGORY } from '../constants'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { VehiclesBulkMileageReadingResponse } from '../../models/bulkMileageReading.model'
 import { FetchError } from '@island.is/clients/middlewares'
-import { VehiclesBulkMileageRegistrationRequestVehicleCollection } from '../../models/bulkMileageRegistrationRequestVehicleCollection.model'
+import { VehiclesBulkMileageRegistrationRequestVehicleCollection } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestVehicleCollection.model'
+import { VehiclesBulkMileageReadingResponse } from '../models/v3/bulkMileage/bulkMileageReadingResponse.model'
 
 @Injectable()
 export class BulkMileageService {

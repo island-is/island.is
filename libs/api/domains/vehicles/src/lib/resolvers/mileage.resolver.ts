@@ -22,24 +22,24 @@ import {
   VehicleMileageDetail,
   VehicleMileageOverview,
   VehicleMileagePutModel,
-} from '../../models/getVehicleMileage.model'
-import { GetVehicleMileageInput } from '../../dto/getVehicleMileageInput'
+} from '../models/getVehicleMileage.model'
+import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
 import {
   PostVehicleMileageInput,
   PutVehicleMileageInput,
-} from '../../dto/postVehicleMileageInput'
+} from '../dto/postVehicleMileageInput'
 import {
   FeatureFlagGuard,
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
-import { mileageDetailConstructor } from '../../utils/helpers'
-import { VehiclesBulkMileageReadingResponse } from '../../models/bulkMileageReading.model'
-import { PostVehicleBulkMileageInput } from '../../dto/postBulkVehicleMileage.input'
-import { VehiclesBulkMileageRegistrationRequestCollection } from '../../models/bulkMileageRegistrationRequestsCollection.model'
-import { VehiclesBulkMileageRegistrationRequestVehicleCollection } from '../../models/bulkMileageRegistrationRequestVehicleCollection.model'
-import { BulkVehicleMileageRequestVehicleCollectionInput } from '../../dto/getBulkVehicleMileageRequestVehicle.input'
+import { mileageDetailConstructor } from '../utils/helpers'
+import { PostVehicleBulkMileageInput } from '../dto/postBulkVehicleMileage.input'
+import { VehiclesBulkMileageRegistrationRequestCollection } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestsCollection.model'
+import { VehiclesBulkMileageRegistrationRequestVehicleCollection } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestVehicleCollection.model'
+import { BulkVehicleMileageRequestVehicleCollectionInput } from '../dto/getBulkVehicleMileageRequestVehicle.input'
 import { BulkMileageService } from '../services/bulkMileage.service'
+import { VehiclesBulkMileageReadingResponse } from '../models/v3/bulkMileage/bulkMileageReadingResponse.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalVehicleMileagePageEnabled)

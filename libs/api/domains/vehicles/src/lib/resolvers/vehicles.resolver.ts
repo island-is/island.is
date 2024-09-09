@@ -14,21 +14,19 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
-import { VehiclesList, VehiclesListV2 } from '../../models/usersVehicles.model'
+import { VehiclesList, VehiclesListV2 } from '../models/usersVehicles.model'
 import { VehiclesService } from '../services/vehicles.service'
-import { GetVehicleDetailInput } from '../../dto/getVehicleDetailInput'
-import {
-  VehiclesDetail,
-  VehiclesExcel,
-} from '../../models/getVehicleDetail.model'
-import { VehiclesVehicleSearch } from '../../models/getVehicleSearch.model'
-import { GetPublicVehicleSearchInput } from '../../dto/getPublicVehicleSearchInput'
-import { VehiclesPublicVehicleSearch } from '../../models/getPublicVehicleSearch.model'
+import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
+import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
+import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
+import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
+import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
 import {
   GetVehiclesForUserInput,
   GetVehiclesListV2Input,
-} from '../../dto/getVehiclesForUserInput'
-import { GetVehicleSearchInput } from '../../dto/getVehicleSearchInput'
+} from '../dto/getVehiclesForUserInput'
+import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
+import { VehiclesCurrentListResponse } from '../models/v3/currentVehicleListResponse.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -94,6 +92,19 @@ export class VehiclesResolver {
         totalRecords: res.totalRecords,
       },
     }
+  }
+
+  @Scopes(ApiScope.vehicles)
+  @Query(() => VehiclesCurrentListResponse, {
+    name: 'vehiclesListV3',
+    nullable: true,
+  })
+  @Audit()
+  async getVehicleListV3(
+    @CurrentUser() user: User,
+    @Args('input', { nullable: true }) input: GetVehiclesListV2Input,
+  ) {
+    return null
   }
 
   @Scopes(ApiScope.vehicles)

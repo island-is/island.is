@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { VehiclesBulkMileageRegistrationRequestVehicle } from './bulkMileageRegistrationRequestVehicle.model'
 
 @ObjectType()
