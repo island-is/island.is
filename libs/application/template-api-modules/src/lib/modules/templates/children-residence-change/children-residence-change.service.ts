@@ -42,7 +42,6 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly smsService: SmsService,
     private nationalRegistryApi: NationalRegistryClientService,
-    @Inject(S3Service)
     private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE)
@@ -60,9 +59,8 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     if (!file) {
       throw new Error('File content was undefined')
     }
-    // Body interface here states that a stream can only be converted once, make sure the first call here isnt destructive
-    const fileContentBase64 = await file?.Body?.transformToString('base64')
-    const fileContentBinary = await file?.Body?.transformToString('binary')
+    
+    const fileContent = await file?.Body?.transformToString()
 
     const selectedChildren = getSelectedChildrenFromExternalData(
       externalData.childrenCustodyInformation.data,
@@ -78,9 +76,11 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     )
     const currentAddress = childResidenceInfo?.current?.address
 
-    if (!fileContentBase64 || !fileContentBinary) {
+    if (!fileContent) {
       throw new Error('File content was undefined')
     }
+    const fileContentBase64 = Buffer.from(fileContent).toString('base64')
+    const fileContentBinary = Buffer.from(fileContent).toString('binary')
 
     const attachments: Attachment[] = [
       {

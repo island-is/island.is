@@ -1,6 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
-  ApplicationWithAttachments as Application,
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import { logger } from '@island.is/logging'
@@ -30,7 +29,7 @@ export class AttachmentS3Service {
   ) {}
 
   public async getFiles(
-    application: Application,
+    application: ApplicationWithAttachments,
     attachmentAnswerKeys: string[],
   ): Promise<AttachmentData[]> {
     const attachments: AttachmentData[] = []
@@ -53,7 +52,7 @@ export class AttachmentS3Service {
       name: string
     }>,
     answerKey: string,
-    application: Application,
+    application: ApplicationWithAttachments,
   ): Promise<AttachmentData[]> {
     return await Promise.all(
       answers.map(async ({ key, name }) => {

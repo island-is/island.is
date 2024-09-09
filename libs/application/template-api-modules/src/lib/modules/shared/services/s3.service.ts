@@ -1,18 +1,12 @@
 import {
-  CompleteMultipartUploadCommandOutput,
   GetObjectCommand,
   GetObjectCommandOutput,
-  PutObjectCommandInput,
   S3Client,
 } from '@aws-sdk/client-s3'
 import AmazonS3URI from 'amazon-s3-uri'
-import { logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationWithAttachments } from '@island.is/application/types'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import stream from 'stream'
-import { Response } from 'node-fetch'
-import { Upload } from '@aws-sdk/lib-storage'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @Injectable()

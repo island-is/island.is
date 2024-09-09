@@ -46,7 +46,6 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     private readonly criminalRecordService: CriminalRecordService,
     private readonly financeService: FinanceClientService,
     private readonly judicialAdministrationService: JudicialAdministrationService,
-    @Inject(S3Service)
     private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.OPERATING_LICENSE)

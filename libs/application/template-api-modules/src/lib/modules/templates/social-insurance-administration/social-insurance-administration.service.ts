@@ -48,7 +48,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     private siaClientService: SocialInsuranceAdministrationClientService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
-    @Inject(S3Service)
     private readonly s3Service: S3Service,
   ) {
     super('SocialInsuranceAdministration')

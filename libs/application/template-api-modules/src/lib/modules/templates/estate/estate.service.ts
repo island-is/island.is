@@ -43,7 +43,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
-    @Inject(S3Service)
     private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.ESTATE)

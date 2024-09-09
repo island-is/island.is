@@ -64,7 +64,6 @@ export class PSignSubmissionService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    @Inject(S3Service)
     private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.P_SIGN)

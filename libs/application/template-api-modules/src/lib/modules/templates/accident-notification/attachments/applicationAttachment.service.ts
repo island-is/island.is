@@ -14,7 +14,7 @@ export interface AttachmentData {
 
 @Injectable()
 export class ApplicationAttachmentService {
-  constructor(@Inject(S3Service) private readonly s3Service: S3Service) {}
+  constructor(private readonly s3Service: S3Service) {}
 
   public async getFiles(
     application: Application,
