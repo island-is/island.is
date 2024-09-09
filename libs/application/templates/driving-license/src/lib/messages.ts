@@ -674,7 +674,7 @@ export const m = defineMessages({
   informationFullName: {
     id: 'dl.application:informationFullName',
     defaultMessage: 'Nafn',
-    description: 'Street address',
+    description: 'Full Name',
   },
   informationStreetAddress: {
     id: 'dl.application:informationStreetAddress',
