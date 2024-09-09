@@ -197,7 +197,8 @@ export class FileService {
         }
 
         if (
-          file.category === CaseFileCategory.RULING &&
+          (file.category === CaseFileCategory.RULING ||
+            file.category === CaseFileCategory.COURT_RECORD) &&
           isCompletedCase(theCase.state) &&
           theCase.rulingDate
         ) {
@@ -209,7 +210,9 @@ export class FileService {
               date: theCase.rulingDate,
             },
             pdf,
-            CaseFileCategory.RULING,
+            file.category === CaseFileCategory.RULING
+              ? CaseFileCategory.RULING
+              : CaseFileCategory.COURT_RECORD,
           )
         }
       })
@@ -251,17 +254,26 @@ export class FileService {
         )
       }
 
-      if (
-        file.category === CaseFileCategory.RULING &&
-        isCompletedCase(theCase.state)
-      ) {
-        return this.awsS3Service.getConfirmedIndictmentCaseObject(
-          theCase.type,
-          file.key,
-          !file.hash,
-          (content: Buffer) =>
-            this.confirmIndictmentCaseFile(theCase, file, content),
-        )
+      if (isCompletedCase(theCase.state)) {
+        if (file.category === CaseFileCategory.RULING) {
+          return this.awsS3Service.getConfirmedIndictmentCaseObject(
+            theCase.type,
+            file.key,
+            !file.hash,
+            (content: Buffer) =>
+              this.confirmIndictmentCaseFile(theCase, file, content),
+          )
+        }
+
+        if (file.category === CaseFileCategory.COURT_RECORD) {
+          return this.awsS3Service.getConfirmedIndictmentCaseObject(
+            theCase.type,
+            file.key,
+            !file.hash,
+            (content: Buffer) =>
+              this.confirmIndictmentCaseFile(theCase, file, content),
+          )
+        }
       }
     }
 
