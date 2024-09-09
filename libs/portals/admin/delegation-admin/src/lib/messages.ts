@@ -53,11 +53,11 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:delegationAdminCreateNewDelegation',
     defaultMessage: 'Stofna nýtt umboð',
   },
-  nationalIdFrom: {
+  fromNationalId: {
     id: 'admin.delegationAdmin:delegationFromNationalId',
     defaultMessage: 'Kennitala umboðsveitanda',
   },
-  nationalIdTo: {
+  toNationalId: {
     id: 'admin.delegationAdmin:delegationToNationalId',
     defaultMessage: 'Kennitala umboðshafa',
   },
@@ -85,7 +85,7 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:validTo',
     defaultMessage: 'Gildistími',
   },
-  accessType: {
+  type: {
     id: 'admin.delegationAdmin:accessType',
     defaultMessage: 'Aðgangstegund',
   },

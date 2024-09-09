@@ -26,6 +26,7 @@ import {
   DomainLoader,
   ISLAND_DOMAIN,
 } from '@island.is/api/domains/auth'
+import { CreateDelegationInput } from './dto/createDelegation.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(CustomDelegation)
@@ -60,6 +61,14 @@ export class DelegationAdminResolver {
     @CurrentUser() user: User,
   ) {
     return this.delegationAdminService.deleteDelegationAdmin(user, id)
+  }
+
+  @Mutation(() => CustomDelegation, { name: 'authCreateDelegation' })
+  async createDelegationSystem(
+    @Args('input') input: CreateDelegationInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.delegationAdminService.createDelegationAdmin(user, input)
   }
 
   @ResolveField('from', () => Identity)

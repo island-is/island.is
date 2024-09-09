@@ -4,7 +4,6 @@ import { m } from '../lib/messages'
 import { Form, Outlet, useActionData, useNavigate } from 'react-router-dom'
 import {
   AsyncSearchInput,
-  Box,
   Button,
   GridColumn,
   GridRow,

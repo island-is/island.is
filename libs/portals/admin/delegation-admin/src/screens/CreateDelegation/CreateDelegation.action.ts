@@ -8,14 +8,20 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
+import {
+  CreateDelegationDocument,
+  CreateDelegationMutation,
+  CreateDelegationMutationVariables,
+} from './CreateDelegation.generated'
+import { DelegationAdminPaths } from '../../lib/paths'
 
 const schema = z.object({
-  nationalIdFrom: z.string().min(1, 'errorNationalIdFrom'),
-  nationalIdTo: z.string().min(1, 'errorNationalIdTo'),
-  accessType: z.string(),
-  validToDate: z.string().optional(),
+  fromNationalId: z.string().min(1, 'errorNationalIdFrom'),
+  toNationalId: z.string().min(1, 'errorNationalIdTo'),
+  type: z.string(),
+  validTo: z.string().optional(),
   validInfinite: z.string(),
-  referenceId: z.string(),
+  referenceId: z.string().min(1, 'errorReferenceId'),
 })
 
 export type CreateDelegationResult = ValidateFormDataResult<typeof schema> & {
@@ -27,12 +33,10 @@ export type CreateDelegationResult = ValidateFormDataResult<typeof schema> & {
 
 export const createDelegationAction: WrappedActionFn =
   ({ client }) =>
-  async ({ request }): Promise<any | Response> => {
-    // TODO type
+  async ({ request }): Promise<CreateDelegationResult | Response> => {
+  console.log('In action')
     const formData = await request.formData()
     const result = await validateFormData({ formData, schema })
-
-    console.log(result)
 
     if (result.errors || !result.data) {
       return result
@@ -40,38 +44,31 @@ export const createDelegationAction: WrappedActionFn =
 
     const { data } = result
 
-    // temp
-    return {
-      errors: null,
-      data: null,
-      globalError: true,
+    console.log('Data', data)
+
+    const { validInfinite, validTo, ...rest } = data
+
+    try {
+     await client.mutate<
+        CreateDelegationMutation,
+        CreateDelegationMutationVariables
+      >({
+        mutation: CreateDelegationDocument,
+        variables: {
+          input: {
+            ...rest,
+            validTo: validInfinite === "true" ? null : validTo
+          },
+        },
+      })
+
+      return redirect(DelegationAdminPaths.Root)
+
+    } catch (e) {
+      return {
+        errors: null,
+        data: null,
+        globalError: true,
+      }
     }
-
-    // try {
-    //   await client.mutate<
-    //     CreateAuthAdminScopeMutation,
-    //     CreateAuthAdminScopeMutationVariables
-    //   >({
-    //     mutation: CreateAuthAdminScopeDocument,
-    //     variables: {
-    //       input: data,
-    //     },
-    //   })
-
-    //   return redirect(
-    //     replaceParams({
-    //       href: IDSAdminPaths.IDSAdminPermission,
-    //       params: {
-    //         tenant: data?.tenantId,
-    //         permission: data?.name,
-    //       },
-    //     }),
-    //   )
-    // } catch (e) {
-    //   return {
-    //     errors: null,
-    //     data: null,
-    //     globalError: true,
-    //   }
-    // }
   }

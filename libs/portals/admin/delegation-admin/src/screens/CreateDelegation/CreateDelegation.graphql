@@ -1,0 +1,5 @@
+mutation CreateDelegation($input: CreateDelegationInput!) {
+  authCreateDelegation(input: $input) {
+    id
+  }
+}

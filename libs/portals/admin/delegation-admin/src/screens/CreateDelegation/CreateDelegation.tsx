@@ -21,15 +21,16 @@ import React from 'react'
 import { DelegationAdminPaths } from '../../lib/paths'
 
 import { Form, useActionData, useNavigate } from 'react-router-dom'
+import { CreateDelegationResult } from './CreateDelegation.action'
 
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const actionData = useActionData()
+  const actionData = useActionData() as CreateDelegationResult
   const { isLoading, isSubmitting } = useSubmitting()
   const [validInfinite, setValidInfinite] = React.useState(true)
-  const [nationalIdFrom, setNationalIdFrom] = React.useState('')
-  const [nationalIdTo, setNationalIdTo] = React.useState('')
+  const [fromNationalId, setNationalIdFrom] = React.useState('')
+  const [toNationalId, setNationalIdTo] = React.useState('')
 
   return (
     <Stack space="containerGutter">
@@ -46,20 +47,21 @@ const CreateDelegationScreen = () => {
                 // eslint-disable-next-line local-rules/disallow-kennitalas
                 mask="999999-9999"
                 maskPlaceholder={null}
-                value={nationalIdFrom || ''}
+                value={fromNationalId || ''}
                 onChange={(e) => {
                   setNationalIdFrom(e.target.value)
                 }}
               >
                 <Input
-                  name="nationalIdFrom"
-                  label={formatMessage(m.nationalIdFrom)}
+                  name="fromNationalId"
+                  label={formatMessage(m.fromNationalId)}
                   backgroundColor="blue"
                   type="tel"
                   errorMessage={formatMessage(
-                    m[actionData?.errors?.nationalIdFrom as string],
+                    m[actionData?.errors?.fromNationalId as keyof typeof m],
                   )}
                   max={10}
+                  required
                 />
               </InputMask>
             </GridColumn>
@@ -68,28 +70,30 @@ const CreateDelegationScreen = () => {
                 // eslint-disable-next-line local-rules/disallow-kennitalas
                 mask="999999-9999"
                 maskPlaceholder={null}
-                value={nationalIdTo || ''}
+                value={toNationalId || ''}
                 onChange={(e) => {
                   setNationalIdTo(e.target.value)
                 }}
               >
                 <Input
-                  name="nationalIdTo"
-                  label={formatMessage(m.nationalIdTo)}
+                  name="toNationalId"
+                  label={formatMessage(m.toNationalId)}
                   backgroundColor="blue"
                   type="tel"
                   errorMessage={formatMessage(
-                    m[actionData?.errors?.nationalIdFrom as string],
+                    m[actionData?.errors?.fromNationalId as keyof typeof m],
                   )}
                   max={10}
+                  required
                 />
               </InputMask>
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '7/12']}>
               <Select
                 backgroundColor="white"
-                label={formatMessage(m.accessType)}
-                name="accessType"
+                label={formatMessage(m.type)}
+                name="type"
+                required
                 noOptionsMessage="No options"
                 defaultValue={{
                   label: 'Allsherjarumboð',
@@ -105,7 +109,7 @@ const CreateDelegationScreen = () => {
                     value: '1',
                   },
                 ]}
-                placeholder={formatMessage(m.accessType)}
+                placeholder={formatMessage(m.type)}
                 size="md"
               />
             </GridColumn>
@@ -119,27 +123,29 @@ const CreateDelegationScreen = () => {
                   setValidInfinite(e.target.checked)
                 }}
                 value={validInfinite.toString()}
+
               />
             </GridColumn>
-            {!validInfinite && (
+              {!validInfinite  && (
               <GridColumn span={['12/12', '12/12', '7/12']}>
                 <DatePicker
                   name="validTo"
-                  label={formatMessage(m.accessType)}
+                  label={formatMessage(m.type)}
                   locale="is"
                   placeholderText={formatMessage(m.validTo)}
                   required
                 />
               </GridColumn>
-            )}
+              )}
             <GridColumn span={['12/12', '12/12', '7/12']}>
               <Input
                 name="referenceId"
                 label={formatMessage(m.referenceId)}
                 backgroundColor="blue"
-                // errorMessage={formatMessage(
-                //   m[actionData?.errors?.nationalIdFrom],
-                // )}
+                required
+                errorMessage={formatMessage(
+                  m[actionData?.errors?.referenceId as keyof typeof m],
+                )}
               />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '7/12']}>
@@ -159,6 +165,7 @@ const CreateDelegationScreen = () => {
             {actionData?.globalError && (
               <GridColumn span={['12/12']}>
                 <AlertMessage
+                  title=""
                   message={formatMessage(m.errorDefault)}
                   type="error"
                 />
