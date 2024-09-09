@@ -5,7 +5,7 @@ import {
   buildMessageWithLinkButtonField,
   buildDescriptionField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const Done: Form = buildForm({
@@ -32,7 +32,12 @@ export const Done: Form = buildForm({
         buildMultiField({
           id: 'doneScreen',
           title: m.listSigned,
-          description: m.listSignedDescription,
+          description: (application: Application) => ({
+            ...m.listSignedDescription,
+            values: {
+              name: (application.answers.list as any).name,
+            },
+          }),
           children: [
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
