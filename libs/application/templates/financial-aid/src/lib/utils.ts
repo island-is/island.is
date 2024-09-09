@@ -25,7 +25,7 @@ import {
 import { UploadFile } from '@island.is/island-ui/core'
 import { ApplicationStates } from './constants'
 import sortBy from 'lodash/sortBy'
-import { Application } from '@island.is/api/schema'
+// import { Application } from '@island.is/api/schema'
 import * as m from '../lib/messages'
 import { AnswersSchema } from './dataSchema'
 

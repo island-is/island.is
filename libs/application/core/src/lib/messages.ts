@@ -305,6 +305,7 @@ export const coreDefaultFieldMessages = defineMessages({
     id: 'application.system:core.default.bankAccount.accountNumber',
     defaultMessage: 'Reikningsnúmer',
     description: 'Bank account account number',
+  },
   defaultDownloadButtonTitle: {
     id: 'application.system:core.default.pdfLinkButtonField.downloadButtonTitle',
     defaultMessage: 'Hlaða niður skjali',
