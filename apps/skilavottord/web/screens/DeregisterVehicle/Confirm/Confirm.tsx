@@ -196,14 +196,14 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
         plateCount: plateCountValue === 0 ? 0 : plateCountValue,
         plateLost: plateLost?.length ? true : false,
       },
-    })
-
-    // Send recycling request
-    setRecyclingRequest({
-      variables: {
-        permno: id,
-        requestType: RecyclingRequestTypes.deregistered,
-      },
+    }).then(() => {
+      // Send recycling request
+      setRecyclingRequest({
+        variables: {
+          permno: id,
+          requestType: RecyclingRequestTypes.deregistered,
+        },
+      })
     })
   }
   const handleBack = () => {

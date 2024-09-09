@@ -68,6 +68,7 @@ export class RecyclingRequestService {
         this.logger.error(errorMessage)
         throw new Error(errorMessage)
       }
+
       // DeRegisterd vehicle
       const jToken = authRes.data['jwtToken']
       const jsonDeRegBody = JSON.stringify({
@@ -85,8 +86,6 @@ export class RecyclingRequestService {
         Authorization: 'Bearer ' + jToken,
         'Api-version': apiVersion,
       }
-
-      console.log('Sending TO Samgögnustafa', jsonDeRegBody)
 
       const deRegRes = await lastValueFrom(
         this.httpService.post(restDeRegUrl + apiVersionParam, jsonDeRegBody, {

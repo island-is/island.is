@@ -111,8 +111,6 @@ export class IcelandicTransportAuthorityServices {
     try {
       const { restDeRegUrl } = environment.samgongustofa
 
-      console.log('getVehicleInformation', permno)
-
       return this.doGet(
         this.getInformationURL(restDeRegUrl) +
           'vehicleinformationmini/' +
