@@ -104,7 +104,7 @@ const VehicleBulkMileageUpload = () => {
           <Modal
             id={'mileage-status-modal'}
             initialVisibility={false}
-            title={'bingin'}
+            title={'Staða á kílómetrastöðudjobbi'}
             disclosure={
               <Button
                 colorScheme="default"
