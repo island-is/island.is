@@ -146,7 +146,7 @@ const ApplicationsModule = React.memo(
             {count === 0 && (
               <EmptyCard
                 text={intl.formatMessage({
-                  id: 'applicationStatusCard.noActiveApplications',
+                  id: 'applications.emptyDescription',
                 })}
                 image={
                   <Image

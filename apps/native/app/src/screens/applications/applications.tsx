@@ -1,36 +1,38 @@
-import { EmptyList, Heading, ListButton, TopLine } from '@ui'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import {
+  Badge,
+  ChevronRight,
+  EmptyList,
+  Heading,
+  StatusCard,
+  Typography,
+  ViewPager,
+} from '@ui'
+import { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
-  Animated,
-  FlatList,
   Image,
-  RefreshControl,
   SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native'
+import { useTheme } from 'styled-components'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
-import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import illustrationSrc from '../../assets/illustrations/le-jobs-s3.png'
 import {
   Application,
-  SearchArticleFragmentFragment,
-  SearchableContentTypes,
+  ApplicationResponseDtoStatusEnum,
   useListApplicationsQuery,
-  useListSearchQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useBrowser } from '../../lib/use-browser'
-import { getApplicationOverviewUrl } from '../../utils/applications-utils'
+import { getApplicationUrl } from '../../utils/applications-utils'
 import { testIDs } from '../../utils/test-ids'
-import { ApplicationsModule } from '../home/applications-module'
 import { isIos } from '../../utils/devices'
-
-type ListItem =
-  | { id: string; __typename: 'Skeleton' }
-  | SearchArticleFragmentFragment
+import { navigateTo } from '../../lib/deep-linking'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -71,84 +73,77 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
+interface SortedApplication {
+  incomplete: Application[]
+  inProgress: Application[]
+  finished: Application[]
+}
+
+export const sortApplicationsStatus = (
+  applications: Application[],
+): SortedApplication => {
+  const incomplete: Application[] = []
+  const inProgress: Application[] = []
+  const finished: Application[] = []
+
+  applications.forEach((application) => {
+    if (
+      application.state === ApplicationResponseDtoStatusEnum.Draft ||
+      application.state === 'prerequisites'
+    ) {
+      incomplete.push(application)
+    } else if (
+      application.status === ApplicationResponseDtoStatusEnum.Inprogress
+    ) {
+      inProgress.push(application)
+    } else {
+      finished.push(application)
+    }
+  })
+
+  return {
+    incomplete,
+    inProgress,
+    finished,
+  }
+}
+
 export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
   const { openBrowser } = useBrowser()
-  const flatListRef = useRef<FlatList>(null)
+  const theme = useTheme()
   const [refetching, setRefetching] = useState(false)
   const intl = useIntl()
-  const scrollY = useRef(new Animated.Value(0)).current
   const [hiddenContent, setHiddenContent] = useState(isIos)
 
-  const res = useListSearchQuery({
-    variables: {
-      input: {
-        queryString: '*',
-        types: [SearchableContentTypes.WebArticle],
-        contentfulTags: ['umsokn'],
-        size: 100,
-        page: 1,
-      },
-    },
-  })
-
   const applicationsRes = useListApplicationsQuery()
+  const applications = useMemo(
+    () => applicationsRes.data?.applicationApplications ?? [],
+    [applicationsRes],
+  )
 
   useConnectivityIndicator({
     componentId,
     refetching,
-    queryResult: [applicationsRes, res],
+    queryResult: [applicationsRes],
   })
+
+  const sortedApplications = useMemo(
+    () => sortApplicationsStatus(applications),
+    [applications],
+  )
 
   useNavigationComponentDidAppear(() => {
     setHiddenContent(false)
   }, componentId)
 
-  const data = useMemo<ListItem[]>(() => {
-    if (!res.data && res.loading) {
-      return Array.from({ length: 8 }).map((_, id) => ({
-        __typename: 'Skeleton',
-        id: id.toString(),
-      }))
-    }
-
-    const articles = [
-      ...(res?.data?.searchResults?.items ?? []),
-    ] as SearchArticleFragmentFragment[]
-
-    return articles.sort((a, b) => a.title.localeCompare(b.title))
-  }, [res.data, res.loading])
-
-  const renderItem = useCallback(
-    ({ item }: { item: ListItem; index: number }) => {
-      if (item.__typename === 'Skeleton') {
-        return <ListButton title="skeleton" isLoading />
-      }
-      if (item.__typename === 'Article') {
-        return (
-          <ListButton
-            key={item.id}
-            title={item.title}
-            onPress={() =>
-              openBrowser(getApplicationOverviewUrl(item), componentId)
-            }
-          />
-        )
-      }
-      return null
-    },
-    [],
-  )
-
-  const keyExtractor = useCallback((item: ListItem) => item.id, [])
-
   const onRefresh = useCallback(async () => {
     setRefetching(true)
 
     try {
-      await res.refetch()
+      await applicationsRes.refetch()
     } catch (e) {
       // noop
     } finally {
@@ -161,61 +156,198 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     return null
   }
 
-  return (
-    <>
-      <Animated.FlatList
-        ref={flatListRef}
-        testID={testIDs.SCREEN_APPLICATIONS}
-        scrollEventThrottle={16}
-        scrollToOverflowEnabled={true}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+  const getApplicationBadgeColors = (
+    typeOfApplication: 'incomplete' | 'inProgress' | 'finished',
+  ): { titleColor: string; type: 'green' | 'blue' | 'purple' } => {
+    switch (typeOfApplication) {
+      case 'finished':
+        return { titleColor: theme.color.mint800, type: 'green' }
+      case 'inProgress':
+        return { titleColor: theme.color.blueberry400, type: 'purple' }
+      case 'incomplete':
+        return { titleColor: theme.color.blue400, type: 'blue' }
+    }
+  }
+
+  const getApplications = (
+    applications: Application[],
+    numberOfItems: number,
+    type: 'incomplete' | 'inProgress' | 'finished',
+    style?: ViewStyle,
+  ) => {
+    return applications.slice(0, numberOfItems).map((application) => (
+      <StatusCard
+        key={application.id}
+        title={application.name ?? ''}
+        date={new Date(application.created)}
+        badge={
+          <Badge
+            title={intl.formatMessage(
+              { id: 'applicationStatusCard.status' },
+              { state: application.status || 'unknown' },
+            )}
+            {...getApplicationBadgeColors(type)}
+          />
+        }
+        progress={
+          type !== 'incomplete' ? undefined : (application.progress ?? 0) * 100
+        }
+        description={
+          type !== 'incomplete'
+            ? intl.formatMessage(
+                { id: 'applicationStatusCard.description' },
+                { state: application.status || 'unknown' },
+              )
+            : undefined
+        }
+        actions={[
           {
-            useNativeDriver: true,
+            text: intl.formatMessage({
+              id: 'applicationStatusCard.openButtonLabel',
+            }),
+            onPress() {
+              openBrowser(getApplicationUrl(application), componentId)
+            },
           },
-        )}
-        keyExtractor={keyExtractor}
-        keyboardDismissMode="on-drag"
-        data={data}
-        ListEmptyComponent={
-          <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
+        ]}
+        institution={application.institution ?? ''}
+        style={style}
+      />
+    ))
+  }
+
+  const incompleteApplications = getApplications(
+    sortedApplications.incomplete,
+    4,
+    'incomplete',
+  )
+
+  const inProgressApplications = getApplications(
+    sortedApplications.inProgress,
+    4,
+    'inProgress',
+  )
+  console.log(sortedApplications.inProgress[0])
+
+  const styleForFinishedApplications =
+    sortedApplications.finished.length > 1
+      ? {
+          width: 283,
+          marginLeft: 16,
+        }
+      : {}
+
+  const finishedApplications = getApplications(
+    sortedApplications.finished,
+    3,
+    'finished',
+    styleForFinishedApplications,
+  )
+
+  return (
+    <SafeAreaView
+      style={{
+        marginHorizontal: theme.spacing[2],
+        marginBottom: theme.spacing[2],
+      }}
+    >
+      <ScrollView>
+        {!applications.length ? (
+          <View style={{ flex: 1 }}>
             <EmptyList
-              title={intl.formatMessage({ id: 'applications.emptyListTitle' })}
+              title={intl.formatMessage({ id: 'applications.emptyTitle' })}
               description={intl.formatMessage({
-                id: 'applications.emptyListDescription',
+                id: 'applications.emptyDescription',
               })}
               image={
                 <Image
                   source={illustrationSrc}
-                  style={{ height: 176, width: 134 }}
+                  style={{ height: 210, width: 167 }}
                 />
               }
             />
           </View>
-        }
-        renderItem={renderItem}
-        ListHeaderComponent={
-          <View style={{ flex: 1 }}>
-            <ApplicationsModule
-              {...applicationsRes}
-              componentId={componentId}
-              hideAction={true}
-              hideSeeAllButton={true}
-            />
-            <SafeAreaView style={{ marginHorizontal: 16 }}>
-              <Heading>
-                {intl.formatMessage({ id: 'home.allApplications' })}
-              </Heading>
-            </SafeAreaView>
-          </View>
-        }
-        refreshControl={
-          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
-        }
-      />
-      <BottomTabsIndicator index={3} total={5} />
-      <TopLine scrollY={scrollY} />
-    </>
+        ) : null}
+        {sortedApplications.incomplete.length > 4 ? (
+          <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
+            <Heading
+              button={
+                sortedApplications.finished.length >= 0 ? (
+                  <TouchableOpacity
+                    onPress={() => navigateTo('/applications')}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Typography variant="heading5" color={theme.color.blue400}>
+                      {intl.formatMessage({ id: 'button.seeAll' })}
+                    </Typography>
+                    <ChevronRight />
+                  </TouchableOpacity>
+                ) : null
+              }
+            >
+              {intl.formatMessage({ id: 'applications.unfinished' })}
+            </Heading>
+          </TouchableOpacity>
+        ) : null}
+        {incompleteApplications}
+        {sortedApplications.inProgress.length > 4 ? (
+          <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
+            <Heading
+              button={
+                sortedApplications.finished.length >= 0 ? (
+                  <TouchableOpacity
+                    onPress={() => navigateTo('/applications')}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Typography variant="heading5" color={theme.color.blue400}>
+                      {intl.formatMessage({ id: 'button.seeAll' })}
+                    </Typography>
+                    <ChevronRight />
+                  </TouchableOpacity>
+                ) : null
+              }
+            >
+              {intl.formatMessage({ id: 'applications.inProgress' })}
+            </Heading>
+          </TouchableOpacity>
+        ) : null}
+        {inProgressApplications}
+        {sortedApplications.finished.length > 1 ? (
+          <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
+            <Heading
+              button={
+                sortedApplications.finished.length >= 1 ? (
+                  <TouchableOpacity
+                    onPress={() => navigateTo('/applications')}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Typography variant="heading5" color={theme.color.blue400}>
+                      {intl.formatMessage({ id: 'button.seeAll' })}
+                    </Typography>
+                    <ChevronRight />
+                  </TouchableOpacity>
+                ) : null
+              }
+            >
+              {intl.formatMessage({ id: 'applications.finished' })}
+            </Heading>
+          </TouchableOpacity>
+        ) : null}
+        {sortedApplications.finished.length === 1 && finishedApplications}
+        {sortedApplications.finished.length >= 2 && (
+          <ViewPager>{finishedApplications}</ViewPager>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   )
 }
 

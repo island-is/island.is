@@ -5,6 +5,8 @@ import styled from 'styled-components/native'
 import timeOutlineIcon from '../../assets/card/time-outline.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
+import { Typography } from '../typography/typography'
+import { useOrganizationsStore } from '../../../stores/organizations-store'
 
 const Host = styled.View`
   width: 100%;
@@ -53,21 +55,10 @@ const ActionText = styled.Text`
   text-align: center;
 `
 
-const Title = styled.Text`
+const Title = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
-
-  ${font({
-    fontWeight: '600',
-    fontSize: 13,
-    lineHeight: 17,
-  })}
-`
-
-const Description = styled.Text`
-  ${font({
-    fontWeight: '300',
-    lineHeight: 24,
-  })}
+  flex-direction: row;
+  align-items: center;
 `
 
 const Content = styled.View`
@@ -79,14 +70,6 @@ const Content = styled.View`
 const Date = styled.View`
   flex-direction: row;
   align-items: center;
-`
-
-const DateText = styled.Text`
-  ${font({
-    fontWeight: '300',
-    fontSize: 13,
-    lineHeight: 17,
-  })}
 `
 
 const Row = styled.View`
@@ -122,6 +105,7 @@ interface StatusCardProps {
   date: Date
   badge?: React.ReactNode
   progress?: number
+  institution?: string
   actions: Array<{ text: string; onPress(): void }>
   style?: ViewStyle
 }
@@ -134,7 +118,10 @@ export function StatusCard({
   progress,
   actions = [],
   style,
+  institution,
 }: StatusCardProps) {
+  const { getOrganizationLogoUrl } = useOrganizationsStore()
+  const icon = getOrganizationLogoUrl(institution ?? '')
   return (
     <Host style={style}>
       <Row>
@@ -143,19 +130,27 @@ export function StatusCard({
             source={timeOutlineIcon as ImageSourcePropType}
             style={{ width: 16, height: 16, marginRight: 4 }}
           />
-          <DateText>
+          <Typography variant="body3">
             <FormattedDate value={date} />
-          </DateText>
+          </Typography>
         </Date>
         {badge}
       </Row>
       <Content>
-        <Title>{title}</Title>
-        {!!description && <Description>{description}</Description>}
-        <View style={{ flex: 1 }} />
-        <Bar>
-          <Progress width={progress} />
-        </Bar>
+        <Title>
+          <Image
+            source={icon}
+            style={{ width: 24, height: 24, marginRight: 8 }}
+          />
+          <Typography variant="heading5">{title}</Typography>
+        </Title>
+        {!!description && <Typography>{description}</Typography>}
+        {!!progress && <View style={{ flex: 1 }} />}
+        {!!progress && (
+          <Bar>
+            <Progress width={progress} />
+          </Bar>
+        )}
       </Content>
       {actions.length ? (
         <ActionsContainer>

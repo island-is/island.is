@@ -1,37 +1,32 @@
 import React from 'react'
 import styled from 'styled-components/native'
-import { dynamicColor } from '../../utils'
-import { font } from '../../utils/font'
+import { Typography } from '../typography/typography'
+import { ColorValue } from 'react-native'
 
-const Host = styled.View`
+const Host = styled.View<{ type: string }>`
   overflow: hidden;
   border-radius: ${({ theme }) => theme.border.radius.standard};
-  background-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.roseTinted100,
-    dark: theme.shades.dark.shade300,
-  }))};
-  padding: 5px 7px;
-`
-
-const Text = styled.Text`
-  ${font({
-    fontSize: 13,
-    fontWeight: '600',
-    color: ({ theme }) => ({
-      light: theme.color.roseTinted400,
-      dark: theme.color.roseTinted200,
-    }),
-  })}
+  background-color: ${(props) =>
+    props.type === 'green'
+      ? props.theme.color.mint200
+      : props.type === 'blue'
+      ? props.theme.color.blue100
+      : props.theme.color.blueberry100};
+  padding: ${({ theme }) => theme.spacing[1]}px;
 `
 
 interface BadgeProps {
   title: string
+  type: 'green' | 'blue' | 'purple'
+  titleColor: ColorValue
 }
 
-export function Badge({ title }: BadgeProps) {
+export function Badge({ title, type, titleColor }: BadgeProps) {
   return (
-    <Host>
-      <Text>{title}</Text>
+    <Host type={type}>
+      <Typography variant="eyebrow" color={titleColor}>
+        {title}
+      </Typography>
     </Host>
   )
 }
