@@ -187,7 +187,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           unset(application.answers, 'languages')
           unset(application.answers, 'startDate')
           unset(application.answers, 'photography')
-          unset(application.answers, 'allergiesAndIntolerances')
         } else {
           // Clear movingAbroad if "Moving abroad" is not selected as reason for application
           unset(application.answers, 'reasonForApplication.movingAbroad')
@@ -231,27 +230,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         if (otherLanguagesSpokenDaily === NO) {
           unset(application.answers, 'languages.otherLanguages')
           unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
-        }
-        return context
-      }),
-      /**
-       * If the user changes his answers,
-       * clear selected food allergies and intolerances.
-       */
-      clearAllergiesAndIntolerances: assign((context) => {
-        const { application } = context
-        const { hasFoodAllergies, hasFoodIntolerances } = getApplicationAnswers(
-          application.answers,
-        )
-
-        if (hasFoodAllergies?.length === 0) {
-          unset(application.answers, 'allergiesAndIntolerances.foodAllergies')
-        }
-        if (hasFoodIntolerances?.length === 0) {
-          unset(
-            application.answers,
-            'allergiesAndIntolerances.foodIntolerances',
-          )
         }
         return context
       }),
