@@ -5,6 +5,11 @@ import { info } from 'kennitala'
 export const checkForDiscount = (application: Application) => {
   const { answers } = application
 
+  //so applicant is applying for a child
+  if (application.applicant !== answers.chosenApplicants) {
+    return true
+  }
+
   const hasDisability = getValueViaPath<boolean>(
     answers,
     'applicantInformation.hasDisabilityLicense',

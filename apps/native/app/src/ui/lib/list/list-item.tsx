@@ -117,7 +117,6 @@ export function ListItem({
                 variant="body3"
                 numberOfLines={1}
                 ellipsizeMode="tail"
-                style={{ fontWeight: '300' }}
               >
                 {title}
               </Typography>
