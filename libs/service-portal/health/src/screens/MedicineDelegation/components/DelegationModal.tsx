@@ -13,7 +13,7 @@ interface Props {
   setModalVisible: (value: boolean) => void
 }
 
-const DelegationChange: React.FC<Props> = ({
+const DelegationModal: React.FC<Props> = ({
   input,
   edit,
   modalVisible,
@@ -61,23 +61,10 @@ const DelegationChange: React.FC<Props> = ({
           align: 'right' as const,
         },
       ]}
-      disclosure={
-        <Button
-          size="small"
-          variant="text"
-          icon="pencil"
-          onClick={() => {
-            setModalVisible(true)
-            // ??
-          }}
-        >
-          {formatMessage(messages.healthRegistrationSave)}
-        </Button>
-      }
     >
       <Box></Box>
     </Modal>
   )
 }
 
-export default DelegationChange
+export default DelegationModal

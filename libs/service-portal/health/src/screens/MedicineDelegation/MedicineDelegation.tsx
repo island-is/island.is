@@ -4,18 +4,20 @@ import {
   HEALTH_DIRECTORATE_SLUG,
   IntroHeader,
   LinkButton,
+  Modal,
   SortableTable,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { m } from '@island.is/service-portal/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { delegationData } from './utils/mockdata'
-import DelegationChange from './components/DelegationChange'
+import DelegationModal from './components/DelegationModal'
+import { Form } from 'react-router-dom'
 
 const MedicineDelegation = () => {
   const { formatMessage } = useLocale()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-
+  const [edit, setEdit] = useState<boolean>(false)
   return (
     <>
       <IntroHeader
@@ -67,10 +69,49 @@ const MedicineDelegation = () => {
             {formatMessage(messages.addDelegation)}
           </Button>
         </Box>
-        <DelegationChange
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-        />
+        <Modal
+          id={'medicine-delegation-crud-modal'}
+          initialVisibility={false}
+          toggleClose={!modalVisible}
+          isVisible={modalVisible}
+          title={
+            edit
+              ? formatMessage(messages.editDelegation)
+              : formatMessage(messages.grantMedicineDelegation)
+          }
+          buttons={[
+            {
+              id: 'DelegationModalDecline',
+              type: 'ghost' as const,
+              text: formatMessage(m.buttonCancel),
+              onClick: () => {
+                setModalVisible(false)
+              },
+            },
+            {
+              id: 'DelegationModalDelete',
+              type: 'ghost' as const,
+              text: formatMessage(messages.deleteDelegation),
+              colorScheme: 'destructive',
+              icon: 'trash',
+              onClick: () => {
+                setModalVisible(false)
+              },
+            },
+
+            {
+              id: 'DelegationModalAccept',
+              type: 'primary' as const,
+              text: formatMessage(m.submit),
+              onClick: () => {
+                setModalVisible(false)
+                // service
+              },
+              align: 'right' as const,
+            },
+          ]}
+          text=""
+        ></Modal>
       </Box>
     </>
   )

@@ -124,9 +124,12 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                 {text && <Text>{text}</Text>}
               </Box>
               {buttons && (
-                <Inline space={2}>
-                  {buttons.map((b) => (
-                    <Box marginLeft={b.align === 'right' ? 'auto' : undefined}>
+                <Box display="flex" flexDirection="row">
+                  {buttons.map((b, i) => (
+                    <Box
+                      marginLeft={b.align === 'right' ? 'auto' : undefined}
+                      paddingLeft={i !== 0 ? 2 : 0}
+                    >
                       <Button
                         key={b.id}
                         variant={b.type ?? 'primary'}
@@ -141,7 +144,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                       </Button>
                     </Box>
                   ))}
-                </Inline>
+                </Box>
               )}
             </Box>
             {children}
