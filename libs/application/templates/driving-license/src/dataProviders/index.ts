@@ -9,7 +9,6 @@ export {
   UserProfileApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
-  JurisdictionApi,
   QualityPhotoApi,
   ExistingApplicationApi,
 } from '@island.is/application/types'
