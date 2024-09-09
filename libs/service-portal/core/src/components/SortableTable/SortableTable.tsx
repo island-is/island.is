@@ -150,7 +150,9 @@ export const SortableTable = (props: SortableTableProps) => {
             <T.Row>
               {headerSorted?.map((headItem, i) => (
                 <T.HeadData key={`head-${headItem}`}>
-                  {headerButton(headItem, i)}
+                  <Text variant="medium" fontWeight="semiBold" as={'p'}>
+                    {headerButton(headItem, i)}
+                  </Text>
                 </T.HeadData>
               ))}
             </T.Row>
@@ -184,7 +186,11 @@ export const SortableTable = (props: SortableTableProps) => {
               </ExpandRow>
             ) : (
               <T.Row key={id}>
-                <T.Data>{name}</T.Data>
+                <T.Data>
+                  <Text variant={'medium'} as="span">
+                    {name}
+                  </Text>
+                </T.Data>
                 {valueItems.map((valueItem, i) => {
                   const lastItem = valueItems.length - 1 === i
                   return (
@@ -196,7 +202,9 @@ export const SortableTable = (props: SortableTableProps) => {
                       ) : lastItem && lastNode ? (
                         lastNode
                       ) : (
-                        valueItem
+                        <Text variant={'medium'} as="span">
+                          {valueItem}
+                        </Text>
                       )}
                     </T.Data>
                   )

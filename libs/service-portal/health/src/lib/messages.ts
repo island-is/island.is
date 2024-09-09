@@ -1174,4 +1174,24 @@ export const messages = defineMessages({
     id: 'sp.health:version',
     defaultMessage: 'Útgáfa',
   },
+  myDelegations: {
+    id: 'sp.health:my-delegations',
+    defaultMessage: 'Mínir umboðsaðilar',
+  },
+  delegationType: {
+    id: 'sp.health:delegation-type',
+    defaultMessage: 'Tegund umboðs',
+  },
+  addDelegation: {
+    id: 'sp.health:add-delegation',
+    defaultMessage: 'Bæta við umboði',
+  },
+  editDelegation: {
+    id: 'sp.health:edit-delegation',
+    defaultMessage: 'Breyta umboði',
+  },
+  grantMedicineDelegation: {
+    id: 'sp.health:grant-medicine-delegation',
+    defaultMessage: 'Veita lyfjaumboð',
+  },
 })
