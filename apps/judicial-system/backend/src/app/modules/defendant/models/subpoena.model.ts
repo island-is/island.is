@@ -50,8 +50,5 @@ export class Subpoena extends Model {
 
   @ApiPropertyOptional({ type: String })
   @Column({ type: DataType.STRING, allowNull: true })
-  subpoenaFileId?: string
-
-  //   @BelongsTo(() => Defendant)
-  //   defendant?: Defendant
+  subpoenaId?: string
 }

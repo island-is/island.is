@@ -547,9 +547,9 @@ export class PoliceService {
     } as RequestInit)
       .then(async (res) => {
         if (res.ok) {
-          const subpoenaFileId = await res.json()
+          const subpoenaId = await res.json()
 
-          return { subpoenaFileId }
+          return { subpoenaId }
         }
 
         const response = await res.json()

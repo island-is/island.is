@@ -6,5 +6,5 @@ export class CreateSubpoenaDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  readonly subpoenaFileId?: string
+  readonly subpoenaId?: string
 }

@@ -362,42 +362,45 @@ export class DefendantService {
     subpoenaFile: string,
     user: User,
   ): Promise<DeliverResponse> {
-    const subpoena = await this.subpoenaModel.create({
-      defendantId: defendant.id,
-      caseId: theCase?.id || null,
-    })
+    try {
+      const subpoena = await this.subpoenaModel.create({
+        defendantId: defendant.id,
+        caseId: theCase?.id || null,
+      })
 
-    const createdSubpoena = await this.policeService.createSubpoena(
-      theCase,
-      defendant,
-      subpoenaFile,
-      user,
-    )
+      const createdSubpoena = await this.policeService.createSubpoena(
+        theCase,
+        defendant,
+        subpoenaFile,
+        user,
+      )
 
-    if (!createdSubpoena) {
-      this.logger.error('Failed to create subpoena file for police')
-      return Promise.resolve({ delivered: false })
+      if (!createdSubpoena) {
+        this.logger.error('Failed to create subpoena file for police')
+        return Promise.resolve({ delivered: false })
+      }
+
+      await this.subpoenaModel.update(
+        { subpoenaId: createdSubpoena.subpoenaId },
+        { where: { id: subpoena.id } },
+      )
+
+      return Promise.resolve({ delivered: true })
+    } catch (error) {
+      this.logger.error('Error delivering subpoena to police', error)
+      return { delivered: false }
     }
-
-    await this.subpoenaModel.update(
-      { subpoenaFileId: createdSubpoena.subpoenaFileId },
-      { where: { id: subpoena.id } },
-    )
-
-    console.log('subpoena id', subpoena.id)
-
-    return Promise.resolve({ delivered: true })
   }
 
   async updateSubpoena(
     defendant: Defendant,
-    subpoenaFileId: string,
+    subpoenaId: string,
     update: UpdateSubpoenaDto,
   ): Promise<Subpoena> {
     const [numberOfAffectedRows, subpoenas] = await this.subpoenaModel.update(
       update,
       {
-        where: { defendantId: defendant.id, subpoenaFileId },
+        where: { defendantId: defendant.id, subpoenaId },
         returning: true,
       },
     )

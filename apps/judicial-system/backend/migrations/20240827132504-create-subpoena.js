@@ -38,11 +38,19 @@ module.exports = {
             },
             allowNull: true,
           },
+          subpoena_id: {
+            type: Sequelize.STRING,
+            allowNull: true,
+          },
           acknowledged: {
             type: Sequelize.BOOLEAN,
             allowNull: true,
           },
-          subpoena_file_id: {
+          acknowledged_date: {
+            type: 'TIMESTAMP WITH TIME ZONE',
+            allowNull: true,
+          },
+          comment: {
             type: Sequelize.STRING,
             allowNull: true,
           },
