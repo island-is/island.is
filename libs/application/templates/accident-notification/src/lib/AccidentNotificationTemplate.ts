@@ -274,7 +274,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
       // State when assignee has approved or reject the appliction
       [States.IN_FINAL_REVIEW]: {
         meta: {
-          status: 'inprogress',
+          status: 'completed',
           name: States.IN_FINAL_REVIEW,
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
