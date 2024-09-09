@@ -23,6 +23,12 @@ export interface IdentityDocumentChild {
   secondParentName?: string | null
   childName?: string | null
   passports?: IdentityDocument[]
+  citizenship?: Citizenship | null
+}
+
+export interface Citizenship {
+  kodi?: string | null
+  land?: string | null
 }
 
 export interface ContactInfo {
