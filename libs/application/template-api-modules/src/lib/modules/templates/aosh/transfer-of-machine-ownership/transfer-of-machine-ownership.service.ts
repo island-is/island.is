@@ -128,7 +128,16 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch((e) => {
             this.logger.error(
-              `Error sending email about submit application to ${recipientList[i].email}`,
+              `Error sending email about submit application in application: ID: ${
+                application.id
+              }, 
+            role: ${
+              recipientList[i].ssn === application.applicant
+                ? 'Applicant'
+                : `Assignee index ${application.assignees.findIndex(
+                    (assignee) => assignee === recipientList[i].ssn,
+                  )}`
+            }`,
               e,
             )
           })
@@ -208,7 +217,16 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch((e) => {
             this.logger.error(
-              `Error sending email about initReview to ${recipientList[i].email}`,
+              `Error sending email about initReview in application: ID: ${
+                application.id
+              }, 
+            role: ${
+              recipientList[i].ssn === application.applicant
+                ? 'Applicant'
+                : `Assignee index ${application.assignees.findIndex(
+                    (assignee) => assignee === recipientList[i].ssn,
+                  )}`
+            }`,
               e,
             )
           })
@@ -315,7 +333,16 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch((e) => {
             this.logger.error(
-              `Error sending email about rejectApplication to ${recipientList[i].email}`,
+              `Error sending email about rejectApplication in application: ID: ${
+                application.id
+              }, 
+            role: ${
+              recipientList[i].ssn === application.applicant
+                ? 'Applicant'
+                : `Assignee index ${application.assignees.findIndex(
+                    (assignee) => assignee === recipientList[i].ssn,
+                  )}`
+            }`,
               e,
             )
           })

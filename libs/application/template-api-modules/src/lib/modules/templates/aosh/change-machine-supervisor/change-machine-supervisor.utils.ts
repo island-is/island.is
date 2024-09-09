@@ -74,7 +74,16 @@ export const sendNotificationsToRecipients = async (
         )
         .catch((e) => {
           errors.push(
-            `Error sending email about submit application to ${recipientList[i].email}`,
+            `Error sending email about submit application in application: ID: ${
+              application.id
+            }, 
+            role: ${
+              recipientList[i].ssn === application.applicant
+                ? 'Applicant'
+                : `Assignee index ${application.assignees.findIndex(
+                    (assignee) => assignee === recipientList[i].ssn,
+                  )}`
+            }`,
             e,
           )
         })

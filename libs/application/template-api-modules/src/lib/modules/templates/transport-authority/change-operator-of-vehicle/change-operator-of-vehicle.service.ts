@@ -253,7 +253,16 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           )
           .catch((e) => {
             this.logger.error(
-              `Error sending email about initReview to ${recipientList[i].email}`,
+              `Error sending email about initReview in application: ID: ${
+                application.id
+              }, 
+            role: ${
+              recipientList[i].ssn === application.applicant
+                ? 'Applicant'
+                : `Assignee index ${application.assignees.findIndex(
+                    (assignee) => assignee === recipientList[i].ssn,
+                  )}`
+            }`,
               e,
             )
           })
@@ -318,7 +327,16 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           )
           .catch((e) => {
             this.logger.error(
-              `Error sending email about rejectApplication to ${recipientList[i].email}`,
+              `Error sending email about rejectApplication in application: ID: ${
+                application.id
+              }, 
+            role: ${
+              recipientList[i].ssn === application.applicant
+                ? 'Applicant'
+                : `Assignee index ${application.assignees.findIndex(
+                    (assignee) => assignee === recipientList[i].ssn,
+                  )}`
+            }`,
               e,
             )
           })
@@ -443,7 +461,16 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           )
           .catch((e) => {
             this.logger.error(
-              `Error sending email about submitApplication to ${recipientList[i].email}`,
+              `Error sending email about submitApplication in application: ID: ${
+                application.id
+              }, 
+            role: ${
+              recipientList[i].ssn === application.applicant
+                ? 'Applicant'
+                : `Assignee index ${application.assignees.findIndex(
+                    (assignee) => assignee === recipientList[i].ssn,
+                  )}`
+            }`,
               e,
             )
           })
