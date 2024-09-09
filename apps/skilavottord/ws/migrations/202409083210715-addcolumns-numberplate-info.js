@@ -1,5 +1,3 @@
-'use strict'
-
 //add number plate & deregistered info change
 module.exports = {
   up: (queryInterface) => {
