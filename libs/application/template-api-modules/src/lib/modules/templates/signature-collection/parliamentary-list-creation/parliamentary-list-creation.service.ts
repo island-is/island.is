@@ -49,14 +49,6 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
       )
     }
 
-    const candidateInCollection = currentCollection.candidates.some(
-      (candidate) => candidate.nationalId === auth.nationalId,
-    )
-
-    if (!candidateInCollection) {
-      throw new TemplateApiError(errorMessages.partyBallotLetter, 405)
-    }
-
     return currentCollection
   }
 
