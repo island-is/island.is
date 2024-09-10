@@ -110,6 +110,7 @@ export const en: TranslatedMessages = {
   'settings.security.appLockTimeoutLabel': 'App lock timeout',
   'settings.security.appLockTimeoutDescription':
     'Time until app lock will appear',
+  'settings.security.appLockTimeoutSeconds': 'sec.',
   'settings.about.groupTitle': 'About',
   'settings.about.versionLabel': 'Version',
   'settings.about.logoutLabel': 'Logout',
@@ -168,7 +169,6 @@ export const en: TranslatedMessages = {
   'home.screenTitle': 'Overview',
   'home.applicationsStatus': 'Applications',
   'home.allApplications': 'Digital applications',
-  'home.inbox': 'Latest in inbox',
   'home.welcomeText': 'Hi',
   'home.goodDay': 'Good day,',
   'home.onboardingModule.card1':
@@ -183,6 +183,18 @@ export const en: TranslatedMessages = {
     'Enter mileage of electric and plug-in hybrid vehicles',
   'home.vehicleModule.button': 'My vehicles',
   'button.seeAll': 'See all',
+
+  // home options
+  'homeOptions.screenTitle': 'Home screen',
+  'homeOptions.heading.title': 'Configure home screen',
+  'homeOptions.heading.subtitle':
+    'Here you can configure what is displayed on the home screen.',
+  'homeOptions.graphic': 'Display graphic',
+  'homeOptions.inbox': 'Latest in inbox',
+  'homeOptions.licenses': 'Licenses',
+  'homeOptions.applications': 'Applications',
+  'homeOptions.vehicles': 'Vehicles',
+  'homeOptions.airDiscount': 'Air discount scheme',
 
   // inbox
   'inbox.screenTitle': 'Inbox',

@@ -4,6 +4,6 @@ import { Field, InputType } from '@nestjs/graphql'
   description: 'Submit application input',
 })
 export class PostApplicationInput {
-  @Field(() => String)
+  @Field()
   id!: string
 }
