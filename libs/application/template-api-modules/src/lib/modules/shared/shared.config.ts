@@ -26,6 +26,9 @@ export const sharedModuleConfig = defineConfig({
       address: env.required('EMAIL_FROM', 'development@island.is'),
     },
     baseApiUrl: env.required('GRAPHQL_API_URL', 'http://localhost:4444'),
-    attachmentBucket: env.required('APPLICATION_ATTACHMENT_BUCKET'),
+    attachmentBucket: env.required(
+      'APPLICATION_ATTACHMENT_BUCKET',
+      'island-is-dev-storage-application-system',
+    ),
   }),
 })
