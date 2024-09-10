@@ -65,26 +65,26 @@ export class AppController {
     }
   }
 
-  @Get('case/:caseId/subpoena/:nationalId')
+  @Get('case/:caseId/subpoena/:subpoenaId')
   @ApiResponse({ status: 500, description: 'Failed to retrieve subpoena' })
   async getSubpoena(
     @Param('caseId', new ParseUUIDPipe()) caseId: string,
-    @Param('nationalId') nationalId: string,
+    @Param('subpoenaId') subpoenaId: string,
   ): Promise<SubpoenaResponse> {
     this.logger.debug(`Getting subpoena by case id ${caseId}`)
 
-    return this.appService.getSubpoena(caseId, nationalId)
+    return this.appService.getSubpoena(caseId, subpoenaId)
   }
 
-  @Patch('case/:caseId/subpoena/:nationalId')
+  @Patch('case/:caseId/subpoena/:subpoenaId')
   @ApiResponse({ status: 500, description: 'Failed to update subpoena' })
   async updateSubpoena(
     @Param('caseId', new ParseUUIDPipe()) caseId: string,
-    @Param('nationalId') nationalId: string,
+    @Param('subpoenaId') subpoenaId: string,
     @Body() updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
     this.logger.debug(`Updating subpoena for ${caseId}`)
 
-    return this.appService.updateSubpoena(caseId, nationalId, updateSubpoena)
+    return this.appService.updateSubpoena(caseId, subpoenaId, updateSubpoena)
   }
 }

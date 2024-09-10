@@ -29,13 +29,13 @@ import {
   PdfService,
 } from '../case'
 import { DeliverDto } from '../case/dto/deliver.dto'
+import { Subpoena } from '../subpoena/models/subpoena.model'
 import { DeliverDefendantToCourtDto } from './dto/deliverDefendantToCourt.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { Defendant } from './models/defendant.model'
 import { DeliverResponse } from './models/deliver.response'
-import { Subpoena } from './models/subpoena.model'
 import { DefendantService } from './defendant.service'
 
 @Controller('api/internal/case/:caseId')
@@ -94,67 +94,5 @@ export class InternalDefendantController {
     )
 
     return updatedDefendant
-  }
-
-  async getSubpoenas(
-    @Param('caseId') caseId: string,
-    @Param('defendantId') defendantId: string,
-    @CurrentCase() theCase: Case,
-    @CurrentDefendant() defendant: Defendant,
-  ): Promise<Subpoena[]> {
-    this.logger.debug(
-      `Getting the subpoena info for defendant ${defendantId} of case ${caseId}`,
-    )
-
-    return this.defendantService.getSubpoenas(defendant, theCase)
-  }
-
-  @UseGuards(
-    CaseExistsGuard,
-    new CaseTypeGuard(indictmentCases),
-    DefendantExistsGuard,
-  )
-  @Post(
-    `${messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA]}/:defendantId`,
-  )
-  @ApiOkResponse({
-    type: DeliverResponse,
-    description: 'Delivers a subpoena to police',
-  })
-  async deliverSubpoenaToPolice(
-    @Param('caseId') caseId: string,
-    @Param('defendantId') defendantId: string,
-    @CurrentCase() theCase: Case,
-    @CurrentDefendant() defendant: Defendant,
-    @Body() deliverDto: DeliverDto,
-  ): Promise<DeliverResponse> {
-    this.logger.debug(
-      `Delivering subpoena ${caseId} to police for defendant ${defendant}`,
-    )
-    this.logger.debug('caseId', caseId)
-    this.logger.debug('defendantId', defendantId)
-
-    const delivered = await this.pdfService
-      .getSubpoenaPdf(
-        theCase,
-        defendant,
-        new Date(),
-        'Reykjavík',
-        defendant.subpoenaType,
-      )
-      .then(async (pdf) => {
-        return this.defendantService.deliverSubpoenaToPolice(
-          theCase,
-          defendant,
-          Base64.btoa(pdf.toString('binary')),
-          deliverDto.user,
-        )
-      })
-      .catch((error) => {
-        this.logger.error('Error generating subpoena pdf', error)
-        throw error
-      })
-
-    return delivered
   }
 }

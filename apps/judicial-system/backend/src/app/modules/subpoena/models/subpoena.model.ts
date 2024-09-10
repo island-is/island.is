@@ -11,7 +11,7 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Case } from '../../case/models/case.model'
-import { Defendant } from './defendant.model'
+import { Defendant } from '../../defendant/models/defendant.model'
 
 @Table({
   tableName: 'subpoena',

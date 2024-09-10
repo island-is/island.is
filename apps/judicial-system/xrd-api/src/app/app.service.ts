@@ -86,30 +86,27 @@ export class AppService {
     return this.auditTrailService.audit(
       'xrd-api',
       AuditedAction.GET_SUBPOENA,
-      this.getSubpoenaInfo(caseId, subpoenaId),
+      this.getSubpoenaInfo(subpoenaId),
       subpoenaId,
     )
   }
 
   async updateSubpoena(
-    nationalId: string,
     caseId: string,
+    subpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
     return await this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.UPDATE_SUBPOENA,
-      this.updateSubpoenaInfo(nationalId, caseId, updateSubpoena),
-      nationalId,
+      this.updateSubpoenaInfo(caseId, subpoenaId, updateSubpoena),
+      subpoenaId,
     )
   }
 
-  private async getSubpoenaInfo(
-    caseId: string,
-    subpoenaId: string,
-  ): Promise<SubpoenaResponse> {
+  private async getSubpoenaInfo(subpoenaId: string): Promise<SubpoenaResponse> {
     return fetch(
-      `${this.config.backend.url}/api/internal/cases/indictment/${caseId}`,
+      `${this.config.backend.url}/api/internal/cases/indictment/${subpoenaId}`,
       {
         method: 'POST',
         headers: {

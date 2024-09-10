@@ -22,39 +22,27 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
-  CommentType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
-import { PdfService } from '../case/pdf.service'
 import { CourtService } from '../court'
 import { PoliceService } from '../police'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
-import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { Defendant } from './models/defendant.model'
 import { DeliverResponse } from './models/deliver.response'
-import { Subpoena } from './models/subpoena.model'
-
-type ExplanatoryCommentKeys = keyof Pick<UpdateDefendantDto, 'subpoenaComment'>
-
-const explanatoryCommentTypes: Record<ExplanatoryCommentKeys, CommentType> = {
-  subpoenaComment: CommentType.SUBPOENA_COMMENT,
-}
 
 @Injectable()
 export class DefendantService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
-    @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
+
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
-    @InjectModel(ExplanatoryComment)
-    private readonly explanatoryCommentModel: typeof ExplanatoryComment,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -237,68 +225,28 @@ export class DefendantService {
       )
     }
 
-    return this.sequelize
-      .transaction(async (transaction) => {
-        await this.handleCommentUpdates(
+    const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
+      update,
+      {
+        where: {
           caseId,
-          defendant.id,
-          update,
-          transaction,
-        )
+          [Op.or]: [
+            { national_id: formattedNationalId },
+            { national_id: defendantNationalId },
+          ],
+        },
+        returning: true,
+      },
+    )
 
-        const updateCopy = { ...update }
-        delete updateCopy.subpoenaComment
+    const updatedDefendant = this.getUpdatedDefendant(
+      numberOfAffectedRows,
+      defendants,
+      defendants[0].id,
+      caseId,
+    )
 
-        if (Object.keys(updateCopy).length === 0) {
-          return { numberOfAffectedRows: 1, defendants: [defendant] }
-        }
-
-        const [numberOfAffectedRows, defendants] =
-          await this.defendantModel.update(updateCopy, {
-            where: {
-              id: defendant.id,
-            },
-            returning: true,
-          })
-
-        return { numberOfAffectedRows, defendants }
-      })
-      .then(({ numberOfAffectedRows, defendants }) => {
-        const updatedDefendant = this.getUpdatedDefendant(
-          numberOfAffectedRows,
-          defendants,
-          defendants[0].id,
-          caseId,
-        )
-
-        return updatedDefendant
-      })
-  }
-
-  private async handleCommentUpdates(
-    caseId: string,
-    defendantId: string,
-    update: UpdateDefendantDto,
-    transaction: Transaction,
-  ) {
-    for (const key in explanatoryCommentTypes) {
-      const commentKey = key as ExplanatoryCommentKeys
-      const updateComment = update[commentKey]
-
-      if (updateComment !== undefined) {
-        const commentType = explanatoryCommentTypes[commentKey]
-
-        await this.explanatoryCommentModel.create(
-          {
-            defendantId: defendantId,
-            caseId: caseId,
-            commentType,
-            comment: updateComment,
-          },
-          { transaction },
-        )
-      }
-    }
+    return updatedDefendant
   }
 
   async delete(
@@ -420,73 +368,5 @@ export class DefendantService {
 
         return { delivered: false }
       })
-  }
-
-  async deliverSubpoenaToPolice(
-    theCase: Case,
-    defendant: Defendant,
-    subpoenaFile: string,
-    user: User,
-  ): Promise<DeliverResponse> {
-    try {
-      const subpoena = await this.subpoenaModel.create({
-        defendantId: defendant.id,
-        caseId: theCase?.id || null,
-      })
-
-      const createdSubpoena = await this.policeService.createSubpoena(
-        theCase,
-        defendant,
-        subpoenaFile,
-        user,
-      )
-
-      if (!createdSubpoena) {
-        this.logger.error('Failed to create subpoena file for police')
-        return Promise.resolve({ delivered: false })
-      }
-
-      await this.subpoenaModel.update(
-        { subpoenaId: createdSubpoena.subpoenaId },
-        { where: { id: subpoena.id } },
-      )
-
-      return Promise.resolve({ delivered: true })
-    } catch (error) {
-      this.logger.error('Error delivering subpoena to police', error)
-      return { delivered: false }
-    }
-  }
-
-  async updateSubpoena(
-    defendant: Defendant,
-    subpoenaId: string,
-    update: UpdateSubpoenaDto,
-  ): Promise<Subpoena> {
-    const [numberOfAffectedRows, subpoenas] = await this.subpoenaModel.update(
-      update,
-      {
-        where: { defendantId: defendant.id, subpoenaId },
-        returning: true,
-      },
-    )
-
-    if (numberOfAffectedRows > 1) {
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena for defendant ${defendant.id} `,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update subpoena for defendant ${defendant.id}`,
-      )
-    }
-
-    return subpoenas[0]
-  }
-
-  async getSubpoenas(defendant: Defendant, theCase: Case): Promise<Subpoena[]> {
-    return this.subpoenaModel.findAll({
-      where: { defendantId: defendant.id, caseId: theCase.id },
-    })
   }
 }

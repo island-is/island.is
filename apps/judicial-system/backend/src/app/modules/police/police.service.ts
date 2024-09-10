@@ -533,7 +533,7 @@ export class PoliceService {
       agent: this.agent,
       body: JSON.stringify({
         documentName: documentName,
-        documentBase64: Base64.btoa('Test content'),
+        documentBase64: subpoena,
         courtRegistrationDate: arraignmentInfo?.date,
         prosecutorSsn: workingCase.prosecutor?.nationalId,
         prosecutedSsn: defendantNationalId,
