@@ -7,6 +7,9 @@ import {
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import { infer as zinfer } from 'zod'
+import { dataSchema } from '../lib/dataSchema'
+type Answers = zinfer<typeof dataSchema>
 
 export const Done: Form = buildForm({
   id: 'done',
@@ -35,7 +38,7 @@ export const Done: Form = buildForm({
           description: (application: Application) => ({
             ...m.listSignedDescription,
             values: {
-              name: (application.answers.list as any).name,
+              name: (application.answers as Answers).list.name,
             },
           }),
           children: [
