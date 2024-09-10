@@ -11,8 +11,6 @@ We fetch information on educations from Health Directorate and users graduated p
 - [Dev](https://beta.dev01.devland.is/umsoknir/starfsleyfis-umsokn)
 - [Production](https://island.is/umsoknir/starfsleyfis-umsokn/)
 
-### Glossary
-
 ### Clients and template-api-modules
 
 - [Client]('https://github.com/island-is/island.is/tree/main/libs/clients/health-directorate/src/lib/clients/occupational-license')
@@ -43,10 +41,6 @@ All localisation can be found on Contentful.
 
 - [Healthcare work permits translation]('https://app.contentful.com/spaces/8k0h54kbe6bj/entries/hwp.application')
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
-
-### Running unit tests
-
-Run `nx test application-templates-healthcare-work-permit` to execute the unit tests via [Jest](https://jestjs.io).
 
 ### Test users
 
