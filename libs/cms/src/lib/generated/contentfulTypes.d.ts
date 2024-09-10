@@ -4408,13 +4408,7 @@ export interface ITeamMemberFields {
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
 
-  /** Accordion email */
-  email?: string | undefined
-
-  /** Accordion phone */
-  phone?: string | undefined
-
-  /** Accordion free text */
+  /** Intro */
   intro?: Document | undefined
 }
 
