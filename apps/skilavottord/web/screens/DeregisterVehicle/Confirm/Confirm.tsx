@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { useRouter } from 'next/router'
-import React, { FC, useContext, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect } from 'react'
 
 import {
   Box,
@@ -33,9 +33,9 @@ import {
   Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { OutInUsage } from '@island.is/skilavottord-web/utils/consts'
 import { getYear } from '@island.is/skilavottord-web/utils/dateUtils'
 import { FormProvider, useForm } from 'react-hook-form'
-import { OutInUsage } from '@island.is/skilavottord-web/utils/consts'
 
 const SkilavottordVehicleReadyToDeregisteredQuery = gql`
   query skilavottordVehicleReadyToDeregisteredQuery($permno: String!) {
@@ -43,9 +43,7 @@ const SkilavottordVehicleReadyToDeregisteredQuery = gql`
       vehicleId
       vehicleType
       newregDate
-      recyclingRequests {
-        nameOfRequestor
-      }
+      vinNumber
       mileage
     }
   }
@@ -196,7 +194,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
         permno: vehicle?.vehicleId,
         mileage: newMileage,
         plateCount: plateCountValue === 0 ? 0 : plateCountValue,
-        plateLost: plateLost?.length ? true : false,
+        plateLost: !!plateLost?.length,
       },
     }).then(() => {
       // Send recycling request
@@ -268,10 +266,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
                 vehicleId={vehicle.vehicleId}
                 vehicleType={vehicle.vehicleType}
                 modelYear={getYear(vehicle.newregDate)}
-                vehicleOwner={
-                  vehicle.recyclingRequests &&
-                  vehicle.recyclingRequests[0].nameOfRequestor
-                }
+                vinNumber={vehicle.vinNumber}
                 mileage={vehicle.mileage || 0}
                 outInStatus={outInStatus}
                 useStatus={useStatus || ''}

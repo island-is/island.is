@@ -28,9 +28,8 @@ interface BoxProps {
   vehicleId: string
   vehicleType: string
   modelYear: string
-  vehicleOwner?: string | null
   mileage?: number
-
+  vinNumber?: string
   outInStatus: number
   useStatus: string
 }
@@ -39,7 +38,7 @@ export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({
   vehicleId,
   vehicleType,
   modelYear,
-  vehicleOwner,
+  vinNumber,
   mileage,
   outInStatus,
   useStatus,
@@ -67,8 +66,8 @@ export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({
                 <Text variant="h3">{vehicleId}</Text>
                 <Text variant="h5">{mileage} km</Text>
                 <Text>{`${vehicleType}, ${modelYear}`}</Text>
+                <Text variant="small">vin: {vinNumber}</Text>
               </Stack>
-              <Text variant="h5">{vehicleOwner}</Text>
             </Box>
           </GridColumn>
           <GridColumn
