@@ -21,7 +21,8 @@ import {
 } from './recyclingRequest.model'
 import { VehicleService, VehicleModel } from '../vehicle'
 import { IcelandicTransportAuthorityServices } from '../../services/icelandicTransportAuthority.services'
-import { ApiVersion } from '../../const'
+import { ApiVersion } from '../../utils/const'
+import { getShortPermno } from '../../utils/skilavottordUtils'
 
 @Injectable()
 export class RecyclingRequestService {
@@ -103,7 +104,9 @@ export class RecyclingRequestService {
         error.config.data = undefined
       }
       this.logger.error(`Failed to deregister vehicle`, { error })
-      throw new Error(`Failed to deregister vehicle ${vehiclePermno.slice(-3)}`)
+      throw new Error(
+        `Failed to deregister vehicle ${getShortPermno(vehiclePermno)}`,
+      )
     }
   }
 
@@ -142,7 +145,7 @@ export class RecyclingRequestService {
     permno: string,
   ): Promise<VehicleModel> {
     // We are only logging the last 3 chars in the vehicle number
-    const loggedPermno = permno.slice(-3)
+    const loggedPermno = getShortPermno(permno)
 
     try {
       // Check 'pendingRecycle' status
@@ -188,7 +191,7 @@ export class RecyclingRequestService {
     const errors = new RequestErrors()
 
     // We are only logging the last 3 chars in the vehicle number
-    const loggedPermno = permno.slice(-3)
+    const loggedPermno = getShortPermno(permno)
 
     this.logger.info(`car-recycling: Recycling request ${loggedPermno}`, {
       requestType: requestType,

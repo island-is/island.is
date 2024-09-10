@@ -50,24 +50,20 @@ export class TransportService {
     }
   }
 
-  async doGet(
-    restURL: string,
-    fullUrl: string,
-    queryParams: { [key: string]: string } | undefined,
-    apiVersion: string,
-  ) {
+  /**
+   *
+   * @param restURL - the base Samgöngustofa API url
+   * @param fullUrl - the full url to the Samgöngustofa API endpoint
+   * @param apiVersion - Samgöngustofa API version
+   * @returns
+   */
+  async doGet(restURL: string, fullUrl: string, apiVersion: string) {
     const jwtToken = await this.authenticate(restURL, apiVersion)
-
-    if (queryParams) {
-      const searchParams = new URLSearchParams(queryParams)
-
-      // Concatenate the URL with the query string
-      fullUrl = `${fullUrl}?${searchParams.toString()}`
-    }
 
     const headers = {
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + jwtToken,
+      'Api-version': apiVersion,
     }
 
     const result = await lastValueFrom(

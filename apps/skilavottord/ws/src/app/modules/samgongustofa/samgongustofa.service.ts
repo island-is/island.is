@@ -9,7 +9,8 @@ import { Traffic, VehicleInformation } from './samgongustofa.model'
 
 import { logger } from '@island.is/logging'
 import { TransportService } from './transport/transport.service'
-import { ApiVersion } from '../../const'
+import { ApiVersion } from '../../utils/const'
+import { getShortPermno } from '../../utils/skilavottordUtils'
 
 @Injectable()
 export class SamgongustofaService {
@@ -317,12 +318,7 @@ export class SamgongustofaService {
   }
 
   /**
-   *
-   * @param nationalId
-   * @param permno
-   * @param requireRecyclable
    * @deprecated
-   * @returns
    */
   async getUserVehicle(
     nationalId: string,
@@ -347,26 +343,36 @@ export class SamgongustofaService {
       const result = await this.transportService.doGet(
         url,
         url + 'traffic/' + permno,
-        undefined,
         ApiVersion.REGISTRATIONS,
       )
 
       if (result.status === 200) {
         // Get the latest registered traffic data
-        return Object.values(result.data).reduce(
+        const traffic = Object.values(result.data).reduce(
           (prev: Traffic, current: Traffic) =>
             new Date(prev.useDate) > new Date(current.useDate) ? prev : current,
           {} as Traffic,
         ) as Traffic
+
+        logger.info(
+          `car-recycling: Got traffic data for ${getShortPermno(permno)}`,
+          {
+            outInStatus: traffic.outInStatus,
+            useStatus: traffic.useStatus,
+            useStatusName: traffic.useStatusName,
+          },
+        )
+
+        return traffic
       }
 
       throw new Error(
-        `car-recycling: #1 Failed on getTraffic ${permno.slice(-3)}`,
+        `car-recycling: #1 Failed on getTraffic ${getShortPermno(permno)}`,
       )
     } catch (err) {
       throw new Error(
-        `car-recycling: #2 Failed on getTraffic ${permno.slice(
-          -3,
+        `car-recycling: #2 Failed on getTraffic ${getShortPermno(
+          permno,
         )} because: ${err}`,
       )
     }
@@ -380,7 +386,6 @@ export class SamgongustofaService {
       return this.transportService.doGet(
         url,
         url + 'vehicleinformationmini/' + permno,
-        undefined,
         ApiVersion.INFORMATION,
       )
     } catch (err) {
