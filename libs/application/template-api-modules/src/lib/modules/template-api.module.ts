@@ -9,8 +9,6 @@ import { BaseTemplateAPIModuleConfig } from '../types'
 import { TemplateAPIService } from './template-api.service'
 import { TEMPLATE_API_SERVICES } from './template-api.constants'
 import { LoggingModule } from '@island.is/logging'
-import { templateAPIConfig } from './template-api.config'
-import { ConfigModule } from '@nestjs/config'
 
 export class TemplateAPIModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
