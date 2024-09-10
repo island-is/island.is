@@ -802,6 +802,9 @@
         "libs/clients/vehicles-mileage/src/index.ts"
       ],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
+      "@island.is/clients/work-accident-ver": [
+        "libs/clients/work-accident-ver/src/index.ts"
+      ],
       "@island.is/clients/work-machines": [
         "libs/clients/work-machines/src/index.ts"
       ],
