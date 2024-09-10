@@ -3,6 +3,7 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
+  List,
   ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
@@ -21,7 +22,7 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
   async signList({ auth, application }: TemplateApiModuleActionProps) {
     const listId = application.answers.listId
       ? (application.answers.listId as string)
-      : (application.externalData.getList.data as any)[0].id
+      : (application.externalData.getList.data as List[])[0].id
 
     const signature = await this.signatureCollectionClientService.signList(
       listId,
