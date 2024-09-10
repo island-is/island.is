@@ -82,7 +82,6 @@ const CreateDelegationScreen = () => {
                 onChange={(e) => {
                   setNationalIdTo(e.target.value)
                 }}
-
               >
                 <Input
                   name="toNationalId"
@@ -122,7 +121,7 @@ const CreateDelegationScreen = () => {
                 value={validInfinite.toString()}
               />
             </GridColumn>
-              {!validInfinite  && (
+            {!validInfinite && (
               <GridColumn span={['12/12', '12/12', '7/12']}>
                 <DatePicker
                   name="validToPicker"
@@ -135,9 +134,13 @@ const CreateDelegationScreen = () => {
                     m[actionData?.errors?.validTo as keyof typeof m],
                   )}
                 />
-                <input type="hidden" name="validTo" value={validTo?.toISOString()} />
+                <input
+                  type="hidden"
+                  name="validTo"
+                  value={validTo?.toISOString()}
+                />
               </GridColumn>
-              )}
+            )}
             <GridColumn span={['12/12', '12/12', '7/12']}>
               <Input
                 name="referenceId"

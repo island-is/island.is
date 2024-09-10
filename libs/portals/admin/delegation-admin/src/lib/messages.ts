@@ -95,8 +95,7 @@ export const m = defineMessages({
   },
   errorValidTo: {
     id: 'admin.delegationAdmin:errorValidTo',
-    defaultMessage:
-      'Dagsetningin verður að vera í framtíðinni',
+    defaultMessage: 'Dagsetningin verður að vera í framtíðinni',
   },
   errorNationalIdFromRequired: {
     id: 'admin.delegationAdmin:errorNationalIdFromRequired',
@@ -116,6 +115,6 @@ export const m = defineMessages({
   },
   errorReferenceIdRequired: {
     id: 'admin.delegationAdmin:errorReferenceIdRequired',
-    defaultMessage: 'Númer máls í Zendesk er nauðsynlegt'
-  }
+    defaultMessage: 'Númer máls í Zendesk er nauðsynlegt',
+  },
 })
