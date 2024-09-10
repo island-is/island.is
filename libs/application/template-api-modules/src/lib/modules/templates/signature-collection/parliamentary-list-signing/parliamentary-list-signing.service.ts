@@ -7,7 +7,7 @@ import {
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { errorMessages } from '@island.is/application/templates/signature-collection/presidential-list-signing'
+import { errorMessages } from '@island.is/application/templates/signature-collection/parliamentary-list-signing'
 import { ProviderErrorReason } from '@island.is/shared/problem'
 
 @Injectable()
@@ -37,7 +37,6 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
   async canSign({ auth }: TemplateApiModuleActionProps) {
     const signee = await this.signatureCollectionClientService.getSignee(auth)
     const { canSign, canSignInfo } = signee
-
     if (canSign) {
       return signee
     }
