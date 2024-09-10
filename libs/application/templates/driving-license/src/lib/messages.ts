@@ -105,6 +105,11 @@ export const m = defineMessages({
     defaultMessage: 'Sýslumannsembætti',
     description: 'Information',
   },
+  pickupLocationTitle: {
+    id: 'dl.application:pickuplocation',
+    defaultMessage: 'Afhendingarstaður',
+    description: 'location for pickup',
+  },
   informationApplicant: {
     id: 'dl.application:information.applicant',
     defaultMessage: 'Umsækjandi',
@@ -580,6 +585,11 @@ export const m = defineMessages({
     id: 'dl.application:districtCommisionerTitle',
     defaultMessage: 'Sýslumannsembætti',
     description: 'Title for district commissioner',
+  },
+  districtCommisionerPickup: {
+    id: 'dl.application:districtCommisionerPickup',
+    defaultMessage: 'Afhending',
+    description: 'Pickup for district commissioner',
   },
   chooseDistrictCommisionerForFullLicense: {
     id: 'dl.application:chooseDistrictCommisionerForFullLicense',
