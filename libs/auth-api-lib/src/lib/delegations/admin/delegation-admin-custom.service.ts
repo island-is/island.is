@@ -13,6 +13,9 @@ import { DelegationsIndexService } from '../delegations-index.service'
 import { DelegationScopeService } from '../delegation-scope.service'
 import { NoContentException } from '@island.is/nest/problem'
 import { Sequelize } from 'sequelize-typescript'
+import { CreatePaperDelegationDto } from '../dto/create-paper-delegation.dto'
+import { DelegationDTO } from '../dto/delegation.dto'
+import { NamesService } from '../names.service'
 
 @Injectable()
 export class DelegationAdminCustomService {
@@ -22,6 +25,7 @@ export class DelegationAdminCustomService {
     private delegationResourceService: DelegationResourcesService,
     private delegationIndexService: DelegationsIndexService,
     private delegationScopeService: DelegationScopeService,
+    private namesService: NamesService,
     private sequelize: Sequelize,
   ) {}
 
@@ -94,6 +98,43 @@ export class DelegationAdminCustomService {
       incoming: incomingDelegations.map((delegation) => delegation.toDTO()),
       outgoing: outgoingDelegations.map((delegation) => delegation.toDTO()),
     }
+  }
+
+  async createDelegation(
+    user: User,
+    delegation: CreatePaperDelegationDto,
+  ): Promise<DelegationDTO> {
+    if (delegation.fromNationalId === delegation.toNationalId) {
+      throw new Error('Cannot create a delegation between the same nationalId.')
+    }
+
+    const [fromDisplayName, toName] = await Promise.all([
+      this.namesService.getPersonName(delegation.fromNationalId),
+      this.namesService.getPersonName(delegation.toNationalId),
+    ])
+
+    return this.sequelize.transaction(async (transaction) => {
+      const newDelegation = await this.delegationModel.create(
+        {
+          toNationalId: delegation.toNationalId,
+          fromNationalId: delegation.fromNationalId,
+          createdByNationalId: user.actor?.nationalId ?? user.nationalId,
+          referenceId: delegation.referenceId,
+          toName,
+          fromDisplayName,
+        },
+        {
+          transaction,
+        },
+      )
+
+      // Index custom delegations for the toNationalId
+      void this.delegationIndexService.indexCustomDelegations(
+        delegation.toNationalId,
+      )
+
+      return newDelegation.toDTO()
+    })
   }
 
   async deleteDelegation(user: User, delegationId: string): Promise<void> {
