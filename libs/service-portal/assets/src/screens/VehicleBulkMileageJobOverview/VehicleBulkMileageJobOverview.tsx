@@ -1,29 +1,15 @@
-import {
-  Box,
-  AlertMessage,
-  Stack,
-  Table as T,
-  Text,
-  Icon,
-} from '@island.is/island-ui/core'
+import { Box, Table as T } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
-  ExpandHeader,
   SAMGONGUSTOFA_SLUG,
   m,
-  InfoLineStack,
-  InfoLine,
   formatDate,
   LinkButton,
 } from '@island.is/service-portal/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetRequestsStatusQuery } from './VehicleBulkMileageJobOverview.generated'
-import {
-  VehiclesBulkMileageRegistrationJob,
-  VehiclesBulkMileageRegistrationJobHistory,
-  VehiclesBulkMileageRegistrationRequestStatus,
-} from '@island.is/api/schema'
+import { VehiclesBulkMileageRegistrationJob } from '@island.is/api/schema'
 import { AssetsPaths } from '../../lib/paths'
 
 const VehicleBulkMileageUploadJobOverview = () => {
@@ -39,7 +25,7 @@ const VehicleBulkMileageUploadJobOverview = () => {
     <Box>
       <IntroHeader
         title={m.vehiclesBulkMileageJobOverview}
-        intro={'Hér geturu skoðað stöðu runuskráninga frá þér'}
+        intro={'Hér geturu skoðað allar innsendar magnkílómetraskráningar'}
         serviceProviderSlug={SAMGONGUSTOFA_SLUG}
         serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       />

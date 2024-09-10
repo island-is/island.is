@@ -131,7 +131,7 @@ const VehicleBulkMileageUpload = () => {
           showFileSize
           header={'Senda inn runuverksskrá'}
           disabled={!!data?.vehicleBulkMileagePost?.errorMessage}
-          buttonLabel="Hlaða upp skrá"
+          buttonLabel="Hlaða upp .csv skrá"
           accept={'.csv'}
           multiple={false}
           onRemove={handleOnInputFileUploadRemove}

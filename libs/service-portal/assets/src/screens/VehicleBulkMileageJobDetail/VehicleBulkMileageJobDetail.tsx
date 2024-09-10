@@ -1,4 +1,4 @@
-import { Box, Table as T } from '@island.is/island-ui/core'
+import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
@@ -58,7 +58,17 @@ const VehicleBulkMileageUploadJobDetail = () => {
     <Box>
       <IntroHeader
         title={m.vehiclesBulkMileageJobDetail}
-        intro={'Hér má skoða stöðu runuverks'}
+        introComponent={
+          <>
+            <Text>
+              Hér má skoða stöðu allra verka í einu magnskráningarrunuverki
+            </Text>
+            <br />
+            <Text fontWeight="medium">
+              Eitt verk er skráning kílómetrastöðu fyrir eitt ökutæki
+            </Text>
+          </>
+        }
         serviceProviderSlug={SAMGONGUSTOFA_SLUG}
         serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       />
@@ -67,8 +77,7 @@ const VehicleBulkMileageUploadJobDetail = () => {
         <Problem
           type="no_data"
           noBorder={false}
-          title={'Engin runuverk fundust'}
-          message={'Ekkert verk hefur verið hafið'}
+          title={'Ekkert kílómetarskráningarrunuverk fannst'}
           imgSrc="./assets/images/sofa.svg"
         />
       )}
@@ -76,7 +85,7 @@ const VehicleBulkMileageUploadJobDetail = () => {
         <>
           <InfoLineStack label={'Runuverkyfirlit'}>
             <InfoLine
-              label={'Fjöldi kláraðra verka'}
+              label={'Fjöldi kláraðra kílómetraskráninga'}
               content={
                 jobsStatus?.jobsFinished
                   ? jobsStatus.jobsFinished.toString()
@@ -85,7 +94,7 @@ const VehicleBulkMileageUploadJobDetail = () => {
               loading={loading}
             />
             <InfoLine
-              label={'Fjöldi verka eftir'}
+              label={'Fjöldi kílómetraskráninga eftir'}
               content={
                 jobsStatus?.jobsRemaining
                   ? jobsStatus.jobsRemaining.toString()
@@ -94,7 +103,7 @@ const VehicleBulkMileageUploadJobDetail = () => {
               loading={loading}
             />
             <InfoLine
-              label={'Fjöldi innsendra verka'}
+              label={'Fjöldi innsendra kílómetraskráninga'}
               content={
                 jobsStatus?.jobsSubmitted
                   ? jobsStatus.jobsSubmitted.toString()
@@ -122,6 +131,10 @@ const VehicleBulkMileageUploadJobDetail = () => {
             />
           </InfoLineStack>
           {registrationError && <Problem error={registrationError} />}
+
+          <Text paddingBottom={2} variant="eyebrow" color="purple400">
+            Innsendar kílómetrastöðuskráningar
+          </Text>
           <T.Table>
             <T.Head>
               <T.Row>

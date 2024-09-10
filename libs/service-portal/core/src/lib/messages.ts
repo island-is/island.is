@@ -319,7 +319,7 @@ export const m = defineMessages({
   },
   vehiclesBulkMileageJobDetail: {
     id: 'service.portal:vehicles-bulk-mileage-job-detail',
-    defaultMessage: 'Staða kílómetraskráningarverks',
+    defaultMessage: 'Staða kílómetraskráningarrunuverks',
   },
   vehiclesBulkMileageJobRegistration: {
     id: 'service.portal:vehicles-bulk-mileage-job-registration',
