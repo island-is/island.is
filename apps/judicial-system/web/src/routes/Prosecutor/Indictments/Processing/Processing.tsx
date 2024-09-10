@@ -1,11 +1,11 @@
-import { FC, useCallback, useContext } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
+import { Box, Checkbox, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { isTrafficViolationCase } from '@island.is/judicial-system/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
@@ -35,6 +35,7 @@ import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web
 import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
+import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
 
 const Processing: FC = () => {
   const { user } = useContext(UserContext)
@@ -51,6 +52,9 @@ const Processing: FC = () => {
   const { updateDefendant, updateDefendantState } = useDefendants()
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
+  const [isCivilClaim, setIsCivilClaim] = useState<boolean | 'NO_CHOICE'>(
+    'NO_CHOICE',
+  )
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
@@ -190,12 +194,69 @@ const Processing: FC = () => {
             ))}
           </Box>
         )}
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <CommentsInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
           />
         </Box>
+        <Box component="section" marginBottom={isCivilClaim === true ? 5 : 10}>
+          <BlueBox>
+            <SectionHeading
+              title={formatMessage(strings.isCivilClaim)}
+              marginBottom={2}
+              heading="h4"
+              required
+            />
+            <Box display="flex">
+              <Box width="half" marginRight={1}>
+                <RadioButton
+                  name="isCivilClaim"
+                  id="civil_caim_yes"
+                  label={formatMessage(strings.yes)}
+                  large
+                  backgroundColor="white"
+                  onChange={() => setIsCivilClaim(true)}
+                  checked={isCivilClaim === true}
+                />
+              </Box>
+              <Box width="half" marginLeft={1}>
+                <RadioButton
+                  name="isCivilClaim"
+                  id="civil_caim_no"
+                  label={formatMessage(strings.no)}
+                  large
+                  backgroundColor="white"
+                  onChange={() => setIsCivilClaim(false)}
+                  checked={isCivilClaim === false}
+                />
+              </Box>
+            </Box>
+          </BlueBox>
+        </Box>
+        {isCivilClaim === true && (
+          <Box component="section" marginBottom={10}>
+            <SectionHeading title={formatMessage(strings.civilClaimant)} />
+            <BlueBox>
+              <Box marginBottom={2}>
+                <Checkbox
+                  name="isCivilClaimantForeign"
+                  label={formatMessage(strings.isCivilClaimantForeign)}
+                  checked={false}
+                  backgroundColor="white"
+                  large
+                  filled
+                />
+              </Box>
+              <InputNationalId
+                isDateOfBirth={false}
+                value="12"
+                onChange={(val) => console.log('change', val)}
+                onBlur={(val) => console.log('blur', val)}
+              />
+            </BlueBox>
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

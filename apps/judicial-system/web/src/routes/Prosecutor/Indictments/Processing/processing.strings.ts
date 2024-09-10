@@ -37,4 +37,34 @@ export const strings = {
     description:
       'Notaður sem texti í "Tekur ekki afstöðu" valmöguleikanum á Málsmeðferðarskjánum.',
   }),
+  yes: defineMessage({
+    id: 'judicial.system.indictments:processing.yes',
+    defaultMessage: 'Já',
+    description:
+      'Notaður sem texti í "Já" valmöguleikanum við einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
+  no: defineMessage({
+    id: 'judicial.system.indictments:processing.no',
+    defaultMessage: 'Nei',
+    description:
+      'Notaður sem texti í "Nei" valmöguleikanum við einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
+  isCivilClaim: defineMessage({
+    id: 'judicial.system.indictments:processing.is_civil_claim',
+    defaultMessage: 'Er bótakrafa?',
+    description:
+      'Notaður sem titill fyrir "Er bótakrafa?" valmöguleikana við einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
+  civilClaimant: defineMessage({
+    id: 'judicial.system.indictments:processing.civil_claimant',
+    defaultMessage: 'Kröfuhafi',
+    description:
+      'Notaður sem titill fyrir kröfuhafi í einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
+  isCivilClaimantForeign: defineMessage({
+    id: 'judicial.system.indictments:processing.is_civil_claimant_foreign',
+    defaultMessage: 'Kröfuhafi er ekki með íslenska kennitölu',
+    description:
+      'Notaður sem texti fyrir kröfuhafi í "Kröfuhafi er ekki með íslenska kennitölu" í einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
 }
