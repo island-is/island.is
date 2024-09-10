@@ -82,6 +82,7 @@ const DocumentsFilter = ({
 
   const sendersAvailable = mapToFilterItem(senders)
   const categoriesAvailable = mapToFilterItem(categories)
+
   return (
     <>
       <Filter
@@ -168,6 +169,7 @@ const DocumentsFilter = ({
             {
               id: 'senders',
               label: formatMessage(messages.institutionLabel),
+              labelAs: 'h2',
               selected: [...filterValue.activeSenders],
               filters: sendersAvailable,
               inline: false,
@@ -176,6 +178,7 @@ const DocumentsFilter = ({
             {
               id: 'categories',
               label: formatMessage(messages.groupLabel),
+              labelAs: 'h2',
               selected: [...filterValue.activeCategories],
               filters: categoriesAvailable,
               inline: false,

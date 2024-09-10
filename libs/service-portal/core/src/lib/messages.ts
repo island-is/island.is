@@ -194,7 +194,7 @@ export const m = defineMessages({
   },
   getDocument: {
     id: 'service.portal:get-document',
-    defaultMessage: 'Sækja skjal',
+    defaultMessage: 'Hlaða niður skjali',
   },
   getAsExcel: {
     id: 'service.portal:get-as-excel',
