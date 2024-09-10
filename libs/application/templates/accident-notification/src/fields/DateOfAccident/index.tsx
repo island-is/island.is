@@ -18,7 +18,7 @@ export const DateOfAccident: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { id } = field
   const answers = application.answers as AccidentNotification
   const { register, setValue } = useFormContext()
-  const { lang } = useLocale()
+  const { lang, formatMessage } = useLocale()
 
   const isHealthInsured = answers?.accidentDetails?.isHealthInsured
 
@@ -66,8 +66,8 @@ export const DateOfAccident: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   return (
     <Box paddingTop={2}>
       <DatePickerController
-        label={accidentDetails.labels.date.defaultMessage}
-        placeholder={accidentDetails.placeholder.date.defaultMessage}
+        label={formatMessage(accidentDetails.labels.date)}
+        placeholder={formatMessage(accidentDetails.placeholder.date)}
         id={id}
         locale={lang}
         defaultValue={dateOfAccident}
