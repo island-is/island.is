@@ -21,7 +21,7 @@ export class SharedTemplateAPIModule {
       module: SharedTemplateAPIModule,
       imports: [
         ConfigModule.forRoot({
-          load: [configuration, sharedModuleConfig],
+          load: [configuration],
         }),
         EmailModule,
         SmsModule,

@@ -17,9 +17,6 @@ export class TemplateAPIModule {
     return {
       module: TemplateAPIModule,
       imports: [
-        ConfigModule.forRoot({
-          load: [templateAPIConfig],
-        }),
         ...Object.values([...modules, ...sharedModules]).map((Module) =>
           Module.register(config),
         ),
