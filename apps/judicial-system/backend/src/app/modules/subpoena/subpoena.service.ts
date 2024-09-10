@@ -1,11 +1,6 @@
-import { Sequelize } from 'sequelize'
+import { Includeable, Sequelize } from 'sequelize'
 
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common'
+import { forwardRef, Inject, Injectable } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
@@ -20,11 +15,16 @@ import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { Subpoena } from './models/subpoena.model'
 
+export const include: Includeable[] = [
+  { model: Case, as: 'case' },
+  { model: Defendant, as: 'defendant' },
+]
 @Injectable()
 export class SubpoenaService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
+    @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -37,10 +37,12 @@ export class SubpoenaService {
     })
   }
 
-  async updateSubpoena(
+  async update(
     subpoenaId: string,
     update: UpdateSubpoenaDto,
   ): Promise<Subpoena> {
+    const { defenderChoice, defenderNationalId } = update
+
     const [numberOfAffectedRows, subpoenas] = await this.subpoenaModel.update(
       update,
       {
@@ -54,17 +56,37 @@ export class SubpoenaService {
         `Unexpected number of rows ${numberOfAffectedRows} affected when updating subpoena`,
       )
     }
-    return subpoenas[0]
+
+    if (defenderChoice || defenderNationalId) {
+      const defendantUpdate: Partial<Defendant> = {}
+      if (defenderChoice) {
+        defendantUpdate.defenderChoice = defenderChoice
+      }
+      if (defenderNationalId) {
+        defendantUpdate.defenderNationalId = defenderNationalId
+      }
+
+      await this.defendantModel.update(defendantUpdate, {
+        where: { id: subpoenas[0].defendantId },
+      })
+    }
+
+    const updatedSubpoena = await this.findById(subpoenaId)
+
+    return updatedSubpoena
   }
 
-  async getSubpoena(subpoenaId: string): Promise<Subpoena | null> {
-    return await this.subpoenaModel.findOne({ where: { subpoenaId } })
-  }
-
-  async getSubpoenas(defendant: Defendant): Promise<Subpoena[]> {
-    return await this.subpoenaModel.findAll({
-      where: { defendantId: defendant.id },
+  async findById(subpoenaId: string): Promise<Subpoena> {
+    const subpoena = await this.subpoenaModel.findOne({
+      include,
+      where: { subpoenaId },
     })
+
+    if (!subpoena) {
+      throw new Error(`Subpoena with id ${subpoenaId} not found`)
+    }
+
+    return subpoena
   }
 
   async deliverSubpoenaToPolice(

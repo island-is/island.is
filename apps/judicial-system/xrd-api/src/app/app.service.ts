@@ -15,10 +15,10 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
+import { LawyersService } from '@island.is/judicial-system/lawyers'
+import { DefenderChoice } from '@island.is/judicial-system/types'
 
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
-import { InternalCaseResponse } from './models/internal/internalCase.response'
-import { InternalDefendantResponse } from './models/internal/internalDefendant.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import appModuleConfig from './app.config'
 import { CreateCaseDto } from './app.dto'
@@ -30,6 +30,7 @@ export class AppService {
     @Inject(appModuleConfig.KEY)
     private readonly config: ConfigType<typeof appModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
+    private readonly lawyersService: LawyersService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
   async create(caseToCreate: CreateCaseDto): Promise<Case> {
@@ -95,6 +96,28 @@ export class AppService {
     subpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
+    let update = { ...updateSubpoena }
+
+    if (update.defenderChoice === DefenderChoice.CHOOSE) {
+      if (!update.defenderNationalId) {
+        throw new BadRequestException(
+          'Defender national id is required for choice',
+        )
+      }
+      const chosenLawyer = await this.lawyersService.getLawyer(
+        update.defenderNationalId,
+      )
+
+      update = {
+        ...update,
+        ...{
+          defenderName: chosenLawyer.Name,
+          defenderEmail: chosenLawyer.Email,
+          defenderPhoneNumber: chosenLawyer.Phone,
+        },
+      }
+    }
+
     return fetch(
       `${this.config.backend.url}/api/internal/subpoena/${subpoenaId}`,
       {
@@ -103,19 +126,19 @@ export class AppService {
           'Content-Type': 'application/json',
           authorization: `Bearer ${this.config.backend.accessToken}`,
         },
-        body: JSON.stringify(updateSubpoena),
+        body: JSON.stringify(update),
       },
     )
       .then(async (res) => {
         const response = await res.json()
 
         if (res.ok) {
+          console.log(response)
           return {
-            caseId: response.id,
-            subpoenaComment: response.subpoenaComment,
+            subpoenaComment: response.comment,
             defenderInfo: {
-              defenderChoice: response.defenderChoice,
-              defenderName: response.defenderName,
+              defenderChoice: response.defendant.defenderChoice,
+              defenderName: response.defendant.defenderName,
             },
           } as SubpoenaResponse
         }

@@ -1,4 +1,5 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -15,7 +16,7 @@ import { Defendant } from '../../defendant/models/defendant.model'
 
 @Table({
   tableName: 'subpoena',
-  timestamps: false,
+  timestamps: true,
 })
 export class Subpoena extends Model {
   @Column({
@@ -35,20 +36,32 @@ export class Subpoena extends Model {
   @ApiProperty({ type: Date })
   modified!: Date
 
+  @ApiPropertyOptional({ type: String })
+  @Column({ type: DataType.STRING, allowNull: true })
+  subpoenaId?: string
+
   @ForeignKey(() => Defendant)
   @Column({ type: DataType.UUID, allowNull: false })
   defendantId!: string
+
+  @BelongsTo(() => Defendant, 'defendantId')
+  @ApiProperty({ type: Defendant })
+  defendant?: Defendant
 
   @ForeignKey(() => Case)
   @Column({ type: DataType.UUID, allowNull: true })
   @ApiProperty({ type: String })
   caseId?: string
 
+  @BelongsTo(() => Case, 'caseId')
+  @ApiPropertyOptional({ type: Case })
+  case?: Case
+
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   acknowledged?: string
 
-  @ApiPropertyOptional({ type: String })
   @Column({ type: DataType.STRING, allowNull: true })
-  subpoenaId?: string
+  @ApiPropertyOptional({ type: String })
+  comment?: string
 }

@@ -50,20 +50,7 @@ export class InternalSubpoenaController {
   ): Promise<Subpoena | null> {
     this.logger.debug(`Getting subpoena by subpoena id ${subpoenaId}`)
 
-    return this.subpoenaService.getSubpoena(subpoenaId)
-  }
-
-  @Post('subpoena/:caseId/:defendantId')
-  @UseGuards(CaseExistsGuard, DefendantExistsGuard)
-  async createSubpoena(
-    @Param('caseId') caseId: string,
-    @Param('defendantId') defendantId: string,
-    @CurrentCase() theCase: Case,
-    @CurrentDefendant() defendant: Defendant,
-  ): Promise<Subpoena> {
-    this.logger.debug(`Creating subpoena for defendant ${defendantId}`)
-
-    return this.subpoenaService.createSubpoena(defendant)
+    return this.subpoenaService.findById(subpoenaId)
   }
 
   @Patch('subpoena/:subpoenaId')
@@ -73,7 +60,7 @@ export class InternalSubpoenaController {
   ): Promise<Subpoena> {
     this.logger.debug(`Updating subpoena by subpoena id ${subpoenaId}`)
 
-    return this.subpoenaService.updateSubpoena(subpoenaId, update)
+    return this.subpoenaService.update(subpoenaId, update)
   }
 
   @UseGuards(

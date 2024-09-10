@@ -6,6 +6,16 @@ import { DefenderChoice } from '@island.is/judicial-system/types'
 
 export class UpdateSubpoenaDto {
   @IsOptional()
+  @IsBoolean()
+  @ApiProperty({ type: Boolean, required: false })
+  acknowledged?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String, required: false })
+  comment?: string
+
+  @IsOptional()
   @IsEnum(DefenderChoice)
   @ApiProperty({ enum: DefenderChoice })
   defenderChoice?: DefenderChoice
@@ -14,14 +24,4 @@ export class UpdateSubpoenaDto {
   @IsString()
   @ApiProperty({ type: String, required: false })
   defenderNationalId?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty({ type: String, required: false })
-  subpoenaComment?: string
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiProperty({ type: Boolean, required: false })
-  acknowledged?: boolean
 }
