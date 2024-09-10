@@ -8,12 +8,13 @@ import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { PostVehicleBulkMileageInput } from '../dto/postBulkVehicleMileage.input'
 import { isDefined } from '@island.is/shared/utils'
-import { VehiclesBulkMileageRegistrationRequestCollection } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestsCollection.model'
 import { LOG_CATEGORY } from '../constants'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { FetchError } from '@island.is/clients/middlewares'
-import { VehiclesBulkMileageRegistrationRequestVehicleCollection } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestVehicleCollection.model'
 import { VehiclesBulkMileageReadingResponse } from '../models/v3/bulkMileage/bulkMileageReadingResponse.model'
+import { VehiclesBulkMileageRegistrationJobHistory } from '../models/v3/bulkMileage/bulkMileageRegistrationJobHistory.model'
+import { VehiclesBulkMileageRegistrationRequestStatus } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestStatus.model'
+import { VehiclesBulkMileageRegistrationRequestOverview } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestOverview.model'
 
 @Injectable()
 export class BulkMileageService {
@@ -38,7 +39,6 @@ export class BulkMileageService {
       await this.getMileageWithAuth(auth)
         .requestbulkmileagereadingPostRaw({
           postBulkMileageReadingModel: {
-            reportingPersidno: auth.nationalId,
             originCode: input.originCode,
             mileageData: input.mileageData.map((m) => ({
               permno: m.vehicleId,
@@ -78,20 +78,20 @@ export class BulkMileageService {
     }
 
     return {
-      vehicleId: res.guid,
+      requestId: res.guid,
       errorMessage: res.errorMessage ?? undefined,
     }
   }
 
-  async getBulkMileageReadingRequests(
+  async getBulkMileageRegistrationJobHistory(
     auth: User,
-  ): Promise<VehiclesBulkMileageRegistrationRequestCollection | null> {
+  ): Promise<VehiclesBulkMileageRegistrationJobHistory> {
     const res = await this.getMileageWithAuth(
       auth,
-    ).getbulkmileagereadingrequestsPersidnoGet({ persidno: auth.nationalId })
+    ).getbulkmileagereadingrequestsGet({})
 
     return {
-      requests: res
+      history: res
         .map((r) => {
           if (!r.guid) {
             return null
@@ -112,31 +112,51 @@ export class BulkMileageService {
     }
   }
 
-  async getBulkMileageReadingRequestById(
+  async getBulkMileageRegistrationRequestStatus(
     auth: User,
     input: GetbulkmileagereadingrequeststatusGuidGetRequest['guid'],
-  ): Promise<VehiclesBulkMileageRegistrationRequestVehicleCollection> {
+  ): Promise<VehiclesBulkMileageRegistrationRequestStatus | null> {
     const data = await this.getMileageWithAuth(
       auth,
     ).getbulkmileagereadingrequeststatusGuidGet({ guid: input })
 
+    if (!data.guid) {
+      return null
+    }
+
     return {
-      vehicles: data
+      requestId: data.guid,
+      jobsSubmitted: data.totalVehicles ?? undefined,
+      jobsFinished: data.done ?? undefined,
+      jobsRemaining: data.remaining ?? undefined,
+      jobsValid: data.processOk ?? undefined,
+      jobsErrored: data.processWithErrors ?? undefined,
+    }
+  }
+
+  async getBulkMileageRegistrationRequestOverview(
+    auth: User,
+    input: GetbulkmileagereadingrequeststatusGuidGetRequest['guid'],
+  ): Promise<VehiclesBulkMileageRegistrationRequestOverview> {
+    const data = await this.getMileageWithAuth(
+      auth,
+    ).getbulkmileagereadingrequestdetailsGuidGet({ guid: input })
+
+    return {
+      requests: data
         .map((d) => {
           if (!d.guid || !d.permno) {
             return null
           }
           return {
             guid: d.guid,
-            permNo: d.permno,
+            vehicleId: d.permno,
             mileage: d.mileage ?? undefined,
             returnCode: d.returnCode ?? undefined,
-            errors: d.errors
-              ? d.errors?.map((e) => ({
-                  code: e.errorCode ?? undefined,
-                  message: e.errorText ?? undefined,
-                }))
-              : undefined,
+            errors: d.errors?.map((e) => ({
+              code: e.errorCode ?? undefined,
+              message: e.errorText ?? undefined,
+            })),
           }
         })
         .filter(isDefined),

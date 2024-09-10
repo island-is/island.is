@@ -6,23 +6,24 @@ import {
   AlertMessage,
   Stack,
   Button,
+  Inline,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  useGetRequestsLazyQuery,
-  useGetRequestsQuery,
-  useVehicleBulkMileagePostMutation,
-} from './VehicleBulkMileageUpload.generated'
 import { useEffect, useState } from 'react'
 import { FileError, FileRejection } from 'react-dropzone'
 import {
+  InfoLine,
+  InfoLineStack,
   IntroHeader,
+  LinkButton,
   Modal,
   SAMGONGUSTOFA_SLUG,
   m,
 } from '@island.is/service-portal/core'
 import { parseCsvToMileageRecord } from '../../utils/parseCsvToMileage'
 import { Problem } from '@island.is/react-spa/shared'
+import { AssetsPaths } from '../../lib/paths'
+import { useVehicleBulkMileagePostMutation } from './VehicleBulkMileageUpload.generated'
 
 const VehicleBulkMileageUpload = () => {
   useNamespaces('sp.vehicles')
@@ -31,11 +32,6 @@ const VehicleBulkMileageUpload = () => {
   const [vehicleBulkMileagePostMutation, { data, loading, error }] =
     useVehicleBulkMileagePostMutation()
 
-  const [
-    getRequestsQuery,
-    { data: requestsData, loading: requestsLoading, error: requestsError },
-  ] = useGetRequestsLazyQuery()
-
   const [uploadedFile, setUploadedFile] = useState<File | null>()
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(
     null,
@@ -43,14 +39,12 @@ const VehicleBulkMileageUpload = () => {
 
   const [requestGuid, setRequestGuid] = useState<string | null>()
 
-  console.log(requestsData)
-
   useEffect(() => {
-    const id = data?.vehicleBulkMileagePost?.vehicleId
+    const id = data?.vehicleBulkMileagePost?.requestId
     if (id && id !== requestGuid) {
       setRequestGuid(id)
     }
-  }, [data?.vehicleBulkMileagePost?.vehicleId])
+  }, [data?.vehicleBulkMileagePost?.requestId])
 
   useEffect(() => {
     if (uploadedFile) {
@@ -84,14 +78,6 @@ const VehicleBulkMileageUpload = () => {
       setUploadedFile(file.originalFileObj)
     }
   }
-
-  const handleOnModalClick = () => {
-    console.log(requestGuid)
-    if (requestGuid) {
-      getRequestsQuery()
-    }
-  }
-
   return (
     <Box>
       <IntroHeader
@@ -101,24 +87,23 @@ const VehicleBulkMileageUpload = () => {
         serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       >
         <Box marginTop={2}>
-          <Modal
-            id={'mileage-status-modal'}
-            initialVisibility={false}
-            title={'Staða á kílómetrastöðudjobbi'}
-            disclosure={
-              <Button
-                colorScheme="default"
-                icon="download"
-                iconType="outline"
-                onClick={() => handleOnModalClick()}
-                disabled={!requestGuid}
-                size="default"
-                variant="utility"
-              >
-                <p>skoða stöðu á jobbi</p>
-              </Button>
-            }
-          />
+          <Inline space={2}>
+            <LinkButton
+              to={AssetsPaths.AssetsVehiclesBulkMileageJobOverview}
+              text={'Skoða runuverkayfirlit'}
+              variant="utility"
+            />
+            <LinkButton
+              disabled={!requestGuid}
+              to={AssetsPaths.AssetsVehiclesBulkMileageJobDetail.replace(
+                ':id',
+                //this is known since the button is disabled if there's no id
+                requestGuid as string,
+              )}
+              text={'Skoða stöðu runuverks'}
+              variant="utility"
+            />
+          </Inline>
         </Box>
       </IntroHeader>
 
@@ -131,7 +116,7 @@ const VehicleBulkMileageUpload = () => {
             message={data.vehicleBulkMileagePost.errorMessage}
           />
         )}
-        {data?.vehicleBulkMileagePost?.vehicleId &&
+        {data?.vehicleBulkMileagePost?.requestId &&
           !data?.vehicleBulkMileagePost?.errorMessage &&
           !loading &&
           !error && (
@@ -144,10 +129,9 @@ const VehicleBulkMileageUpload = () => {
         <InputFileUpload
           fileList={uploadedFile ? [uploadedFile] : []}
           showFileSize
-          header={'bing bong'}
+          header={'Senda inn runuverksskrá'}
           disabled={!!data?.vehicleBulkMileagePost?.errorMessage}
-          description="bngong"
-          buttonLabel="gjeriaogj"
+          buttonLabel="Hlaða upp skrá"
           accept={'.csv'}
           multiple={false}
           onRemove={handleOnInputFileUploadRemove}

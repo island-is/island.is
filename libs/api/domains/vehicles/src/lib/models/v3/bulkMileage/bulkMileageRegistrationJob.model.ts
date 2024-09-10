@@ -1,7 +1,7 @@
 import { Field, ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql'
 
 @ObjectType()
-export class VehiclesBulkMileageRegistrationRequest {
+export class VehiclesBulkMileageRegistrationJob {
   @Field(() => ID)
   guid!: string
 

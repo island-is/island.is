@@ -6,7 +6,7 @@ export class VehiclesBulkMileageReadingResponse {
     description:
       'The GUID of the mileage registration post request. Used to fetch job status',
   })
-  vehicleId!: string
+  requestId!: string
 
   @Field({ nullable: true })
   errorMessage?: string

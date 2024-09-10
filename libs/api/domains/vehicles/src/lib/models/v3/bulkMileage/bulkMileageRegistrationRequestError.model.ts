@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class VehiclesBulkMileageReadingRequestVehicleError {
+export class VehiclesBulkMileageRegistrationRequestError {
   @Field({ nullable: true })
   code?: string
 

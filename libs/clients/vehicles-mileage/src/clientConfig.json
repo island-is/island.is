@@ -2,14 +2,13 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Mileage reading API developed in .Net8.0 - Release-18 : 20240904.1",
+    "description": "Mileage reading API developed in .Net8.0 - Release-6 : 20231122.2",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
     },
     "version": "1.0"
   },
-  "servers": [{ "url": "/vehicle/mileagereading" }],
   "paths": {
     "/authenticate": {
       "post": {
@@ -556,12 +555,71 @@
         }
       }
     },
-    "/getbulkmileagereadingrequests/{persidno}": {
+    "/getbulkmileagereadingrequests": {
+      "get": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          { "name": "persidno", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BulkMileageReadingRequestDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getbulkmileagereadingrequestdetails/{guid}": {
       "get": {
         "tags": ["MileageReading"],
         "parameters": [
           {
-            "name": "persidno",
+            "name": "guid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -587,7 +645,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/BulkMileageReadingRequestDto"
+                    "$ref": "#/components/schemas/BulkMileageReadingRequestDetailDto"
                   }
                 }
               }
@@ -649,10 +707,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/BulkMileageReadingRequestDetailDto"
-                  }
+                  "$ref": "#/components/schemas/BulkMileageReadingStatusDto"
                 }
               }
             }
@@ -808,6 +863,48 @@
         "additionalProperties": false,
         "description": "Dto for bulk mileage reading request"
       },
+      "BulkMileageReadingStatusDto": {
+        "type": "object",
+        "properties": {
+          "guid": {
+            "type": "string",
+            "description": "Guid of request",
+            "nullable": true
+          },
+          "totalVehicles": {
+            "type": "integer",
+            "description": "Total vehicles in the request",
+            "format": "int32",
+            "nullable": true
+          },
+          "done": {
+            "type": "integer",
+            "description": "Total done",
+            "format": "int32",
+            "nullable": true
+          },
+          "remaining": {
+            "type": "integer",
+            "description": "Remaining vehicles",
+            "format": "int32",
+            "nullable": true
+          },
+          "processOk": {
+            "type": "integer",
+            "description": "How many readings were ok",
+            "format": "int32",
+            "nullable": true
+          },
+          "processWithErrors": {
+            "type": "integer",
+            "description": "How many readings with errors/warnings/locks",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Dto for status of bulk mileage reading request"
+      },
       "MileageReadingDto": {
         "type": "object",
         "properties": {
@@ -877,11 +974,6 @@
       "PostBulkMileageReadingModel": {
         "type": "object",
         "properties": {
-          "reportingPersidno": {
-            "type": "string",
-            "description": "Reporting persidno",
-            "nullable": true
-          },
           "originCode": {
             "type": "string",
             "description": "Origin code of reading",

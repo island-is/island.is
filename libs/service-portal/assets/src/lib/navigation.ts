@@ -57,6 +57,18 @@ export const assetsNavigation: PortalNavigationItem = {
               path: AssetsPaths.AssetsVehiclesBulkMileageUpload,
               navHide: true,
             },
+            {
+              name: m.vehiclesBulkMileageJobOverview,
+              path: AssetsPaths.AssetsVehiclesBulkMileageJobOverview,
+              navHide: true,
+              children: [
+                {
+                  name: m.vehiclesBulkMileageJobDetail,
+                  path: AssetsPaths.AssetsVehiclesBulkMileageJobDetail,
+                  navHide: true,
+                },
+              ],
+            },
           ],
         },
         {

@@ -1,7 +1,7 @@
 import { Field, ID, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class BulkVehicleMileageRequestVehicleCollectionInput {
+export class BulkVehicleMileageRequestStatusInput {
   @Field(() => ID)
-  vehicleId!: string
+  requestId!: string
 }

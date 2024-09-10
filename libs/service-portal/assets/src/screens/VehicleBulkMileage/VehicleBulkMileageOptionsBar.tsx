@@ -40,6 +40,11 @@ export const VehicleBulkMileageOptionsBar = ({
           text={'Magnskrá kílómetrastöðu'}
           variant="utility"
         />
+        <LinkButton
+          to={AssetsPaths.AssetsVehiclesBulkMileageJobOverview}
+          text={'Yfirlit magnskráningarunuverka'}
+          variant="utility"
+        />
         <Filter
           labelClear={formatMessage(m.clearFilter)}
           labelClearAll={formatMessage(m.clearAllFilters)}

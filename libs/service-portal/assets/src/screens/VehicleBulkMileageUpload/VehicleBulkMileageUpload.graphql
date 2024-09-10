@@ -1,21 +1,6 @@
 mutation vehicleBulkMileagePost($input: PostVehicleBulkMileageInput!) {
   vehicleBulkMileagePost(input: $input) {
-    vehicleId
+    requestId
     errorMessage
-  }
-}
-
-query getRequests {
-  vehicleBulkMileageRegistrationRequestCollection {
-    requests {
-      dateFinished
-      dateStarted
-      dateRequested
-      guid
-      originCode
-      originName
-      reportingPersonName
-      reportingPersonNationalId
-    }
   }
 }
