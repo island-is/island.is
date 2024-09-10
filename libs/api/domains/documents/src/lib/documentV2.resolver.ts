@@ -58,6 +58,7 @@ export class DocumentResolverV2 {
           namespace: '@island.is/api/document-v2',
           action: 'getDocument',
           resources: input.id,
+          meta: { includeDocument: input.includeDocument },
         },
         this.documentServiceV2.findDocumentById(user.nationalId, input.id),
       )

@@ -6,7 +6,10 @@ import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../utils/messages'
 
-const DocumentActions = () => {
+interface Props {
+  success: boolean
+}
+const DocumentActions = ({ success = false }: Props) => {
   const { activeDocument } = useDocumentContext()
   const userInfo = useUserInfo()
   const DEFAULT_ICON: IconMapIcon = 'document'
@@ -17,14 +20,14 @@ const DocumentActions = () => {
 
   return (
     <Box>
-      {
+      {success && (
         <Box marginBottom={2}>
           <AlertMessage
             type="success"
             message={formatMessage(messages.confirmation)}
           />
         </Box>
-      }
+      )}
       {actions && (
         <Box
           marginBottom={2}

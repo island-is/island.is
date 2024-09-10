@@ -86,6 +86,7 @@ export const DocumentLine: FC<Props> = ({
   const toggleModal = () => {
     setModalVisible(!isModalVisible)
   }
+
   const wrapperRef = useRef(null)
   const avatarRef = useRef(null)
 
@@ -178,6 +179,7 @@ export const DocumentLine: FC<Props> = ({
         const actions = data?.documentV2?.actions ?? []
 
         const dataIndex = actions?.findIndex((x) => x.type === 'confirmation')
+        setDocumentDisplayError(undefined)
         if (dataIndex && dataIndex > 0) {
           setModalData({
             title: actions[dataIndex].title ?? '',
@@ -199,7 +201,8 @@ export const DocumentLine: FC<Props> = ({
 
   useEffect(() => {
     if (id === documentLine.id) {
-      if (isUrgent) {
+      // If the document is marked as urgent, the user needs to acknowledge the document before opening it.
+      if (isUrgent && !asFrame) {
         getDocumentMetadata()
       } else {
         getDocument()
@@ -226,7 +229,7 @@ export const DocumentLine: FC<Props> = ({
     if (match?.params?.id && match?.params?.id !== documentLine?.id) {
       navigate(DocumentsPaths.ElectronicDocumentsRoot, { replace: true })
     }
-    if (isUrgent) {
+    if (isUrgent && !asFrame) {
       getDocumentMetadata()
     } else {
       getDocument()
@@ -258,12 +261,12 @@ export const DocumentLine: FC<Props> = ({
             img={img}
             onClick={(e) => {
               e.stopPropagation()
-              if (documentLine.id && setSelectLine) {
+              if (documentLine.id && setSelectLine && !isUrgent) {
                 setSelectLine(documentLine.id)
               }
             }}
             avatar={
-              (hasAvatarFocus || selected) && !asFrame ? (
+              (hasAvatarFocus || selected) && !asFrame && !isUrgent ? (
                 <Box
                   display="flex"
                   alignItems="center"
@@ -277,7 +280,7 @@ export const DocumentLine: FC<Props> = ({
               ) : undefined
             }
             background={
-              hasAvatarFocus
+              hasAvatarFocus && !isUrgent
                 ? asFrame
                   ? 'white'
                   : 'blue200'

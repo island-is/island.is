@@ -1,14 +1,16 @@
 import { useEffect, useRef } from 'react'
-import { Box, Text } from '@island.is/island-ui/core'
-import AvatarImage from '../DocumentLine/AvatarImage'
 import { DocumentV2Actions, DocumentsV2Category } from '@island.is/api/schema'
-import * as styles from './DocumentHeader.css'
+import { Box, Text } from '@island.is/island-ui/core'
+import { helperStyles } from '@island.is/island-ui/theme'
+import { isDefined } from '@island.is/shared/utils'
+import AvatarImage from '../DocumentLine/AvatarImage'
 import {
   DocumentActionBar,
   DocumentActionBarProps,
 } from '../DocumentActionBar/DocumentActionBarV2'
-import { helperStyles } from '@island.is/island-ui/theme'
 import DocumentActions from '../DocumentActions/DocumentActions'
+import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import * as styles from './DocumentHeader.css'
 
 type DocumentHeaderProps = {
   avatar?: string
@@ -30,7 +32,8 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
   subject,
 }) => {
   const wrapper = useRef<HTMLDivElement>(null)
-  console.log(actions)
+  const { documentDisplayError } = useDocumentContext()
+
   useEffect(() => {
     if (wrapper.current) {
       wrapper.current.focus()
@@ -78,7 +81,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
       </Box>
       {actions && (
         <Box>
-          <DocumentActions />
+          <DocumentActions success={!isDefined(documentDisplayError)} />
         </Box>
       )}
     </>

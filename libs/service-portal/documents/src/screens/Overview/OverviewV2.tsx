@@ -168,9 +168,9 @@ export const ServicePortalDocumentsV2 = () => {
                     checked={selectedLines.length > 0}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        const allDocumentIds = filteredDocuments.map(
-                          (item) => item.id,
-                        )
+                        const allDocumentIds = filteredDocuments
+                          .filter((x) => !x.isUrgent)
+                          .map((item) => item.id)
                         setSelectedLines([...allDocumentIds])
                       } else {
                         setSelectedLines([])
@@ -237,7 +237,11 @@ export const ServicePortalDocumentsV2 = () => {
                         )
                         setSelectedLines([...filtered])
                       } else {
-                        setSelectedLines([...selectedLines, docId])
+                        // Urgent documents can't be selected and marked "read"
+                        // Can be put in storage when being opened otherwise not
+                        if (!doc.isUrgent) {
+                          setSelectedLines([...selectedLines, docId])
+                        }
                       }
                     }}
                   />
