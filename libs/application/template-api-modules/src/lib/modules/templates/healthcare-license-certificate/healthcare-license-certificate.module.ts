@@ -13,7 +13,7 @@ export class HealthcareLicenseCertificateModule {
     return {
       module: HealthcareLicenseCertificateModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         HealthDirectorateClientModule,
         ConfigModule.forRoot({
           isGlobal: true,

@@ -8,10 +8,7 @@ export class PassportModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: PassportModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        PassportsClientModule,
-      ],
+      imports: [SharedTemplateAPIModule, PassportsClientModule],
       providers: [PassportService],
       exports: [PassportService],
     }

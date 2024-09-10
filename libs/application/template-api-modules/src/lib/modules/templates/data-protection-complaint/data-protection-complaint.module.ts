@@ -20,7 +20,7 @@ export class DataProtectionComplaintModule {
     return {
       module: DataProtectionComplaintModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         FileStorageModule,
         ClientsDataProtectionComplaintModule,
       ],

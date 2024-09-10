@@ -13,6 +13,8 @@ import { S3Service } from './attachments/s3.service'
 import { SmsService } from '@island.is/nova-sms'
 import { PaymentService } from '@island.is/application/api/payment'
 import { sharedModuleConfig } from '../../shared/shared.config'
+import { ApplicationService } from '@island.is/application/api/core'
+import { AwsService } from '@island.is/nest/aws'
 import { AccidentreportsApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { createApplication } from '@island.is/application/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -150,6 +152,14 @@ describe('AccidentNotificationService', () => {
             applicationSenderName: '',
             applicationSenderEmail: '',
           },
+        },
+        {
+          provide: ApplicationService,
+          useValue: {},
+        },
+        {
+          provide: AwsService,
+          useValue: {},
         },
         AccidentNotificationAttachmentProvider,
         SharedTemplateApiService,

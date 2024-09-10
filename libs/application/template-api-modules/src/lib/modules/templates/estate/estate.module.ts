@@ -11,10 +11,7 @@ export class EstateTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: EstateTemplateModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        SyslumennClientModule,
-      ],
+      imports: [SharedTemplateAPIModule, SyslumennClientModule],
       providers: [EstateTemplateService],
       exports: [EstateTemplateService],
     }

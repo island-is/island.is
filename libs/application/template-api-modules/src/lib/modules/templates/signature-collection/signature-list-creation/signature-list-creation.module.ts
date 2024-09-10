@@ -15,10 +15,7 @@ export class SignatureListCreationModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: SignatureListCreationModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        SignatureCollectionClientModule,
-      ],
+      imports: [SharedTemplateAPIModule, SignatureCollectionClientModule],
       providers: [SignatureListCreationService],
       exports: [SignatureListCreationService],
     }

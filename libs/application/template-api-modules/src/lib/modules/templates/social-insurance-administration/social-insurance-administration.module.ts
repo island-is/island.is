@@ -16,7 +16,7 @@ export class SocialInsuranceAdministrationModule {
       module: SocialInsuranceAdministrationModule,
       imports: [
         SocialInsuranceAdministrationClientModule,
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         ApplicationApiCoreModule,
         NationalRegistryClientModule,
       ],

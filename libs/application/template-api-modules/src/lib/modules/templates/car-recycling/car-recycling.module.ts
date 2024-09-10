@@ -13,7 +13,7 @@ export class CarRecyclingModule {
       module: CarRecyclingModule,
       imports: [
         CarRecyclingClientModule,
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         ApplicationApiCoreModule,
         VehiclesClientModule,
       ],

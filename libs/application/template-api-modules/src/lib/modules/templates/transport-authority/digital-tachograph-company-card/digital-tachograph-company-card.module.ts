@@ -7,7 +7,7 @@ export class DigitalTachographCompanyCardModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: DigitalTachographCompanyCardModule,
-      imports: [SharedTemplateAPIModule.register(baseConfig)],
+      imports: [SharedTemplateAPIModule],
       providers: [DigitalTachographCompanyCardService],
       exports: [DigitalTachographCompanyCardService],
     }

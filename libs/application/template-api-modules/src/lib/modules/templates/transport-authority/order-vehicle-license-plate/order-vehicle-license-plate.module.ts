@@ -21,7 +21,7 @@ export class OrderVehicleLicensePlateModule {
     return {
       module: OrderVehicleLicensePlateModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         VehiclePlateOrderingClientModule,
         VehicleCodetablesClientModule,
         VehiclesClientModule,

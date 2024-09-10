@@ -33,7 +33,7 @@ export class TransferOfVehicleOwnershipModule {
     return {
       module: TransferOfVehicleOwnershipModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         ChargeFjsV2ClientModule,
         VehicleOwnerChangeClientModule,
         VehicleCodetablesClientModule,

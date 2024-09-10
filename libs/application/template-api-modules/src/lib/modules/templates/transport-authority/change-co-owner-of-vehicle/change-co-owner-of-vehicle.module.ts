@@ -37,7 +37,7 @@ export class ChangeCoOwnerOfVehicleModule {
     return {
       module: ChangeCoOwnerOfVehicleModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         VehicleOwnerChangeClientModule,
         VehicleOperatorsClientModule,
         VehicleCodetablesClientModule,

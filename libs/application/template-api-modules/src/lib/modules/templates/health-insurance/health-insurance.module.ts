@@ -16,10 +16,7 @@ export class HealthInsuranceModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: HealthInsuranceModule,
-      imports: [
-        HealthInsuranceV2ClientModule,
-        SharedTemplateAPIModule.register(config),
-      ],
+      imports: [HealthInsuranceV2ClientModule, SharedTemplateAPIModule],
       providers: [HealthInsuranceService, BucketService],
       exports: [HealthInsuranceService],
     }

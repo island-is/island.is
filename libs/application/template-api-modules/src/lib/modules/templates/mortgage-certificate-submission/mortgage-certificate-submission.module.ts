@@ -10,7 +10,7 @@ export class MortgageCertificateSubmissionModule {
     return {
       module: MortgageCertificateSubmissionModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         MortgageCertificateModule,
         SyslumennClientModule,
       ],

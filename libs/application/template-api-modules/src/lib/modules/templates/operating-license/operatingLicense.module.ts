@@ -13,7 +13,7 @@ export class OperatingLicenseModule {
       module: OperatingLicenseModule,
       imports: [
         SyslumennClientModule,
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         CriminalRecordModule,
         FinanceClientModule,
         JudicialAdministrationClientModule,

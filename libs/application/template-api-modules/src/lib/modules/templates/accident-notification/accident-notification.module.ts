@@ -24,10 +24,7 @@ export class AccidentNotificationModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: AccidentNotificationModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        RightsPortalClientModule,
-      ],
+      imports: [SharedTemplateAPIModule, RightsPortalClientModule],
       providers: [
         {
           provide: ACCIDENT_NOTIFICATION_CONFIG,

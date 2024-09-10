@@ -20,7 +20,7 @@ export class InstitutionCollaborationModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: InstitutionCollaborationModule,
-      imports: [SharedTemplateAPIModule.register(config), FileStorageModule],
+      imports: [SharedTemplateAPIModule, FileStorageModule],
       providers: [
         {
           provide: INSTITUTION_COLLABORATION_CONFIG,

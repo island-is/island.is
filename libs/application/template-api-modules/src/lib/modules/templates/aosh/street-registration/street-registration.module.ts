@@ -17,7 +17,7 @@ export class StreetRegistrationTemplateModule {
     return {
       module: StreetRegistrationTemplateModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         WorkMachinesClientModule,
         ChargeFjsV2ClientModule,
         ConfigModule.forRoot({

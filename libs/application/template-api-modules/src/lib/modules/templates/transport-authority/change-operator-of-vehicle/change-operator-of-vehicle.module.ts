@@ -37,7 +37,7 @@ export class ChangeOperatorOfVehicleModule {
     return {
       module: ChangeOperatorOfVehicleModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         ChargeFjsV2ClientModule,
         VehicleOperatorsClientModule,
         VehicleOwnerChangeClientModule,

@@ -15,10 +15,7 @@ export class DrivingLearnersPermitModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: DrivingLearnersPermitModule,
-      imports: [
-        DrivingLicenseApiModule,
-        SharedTemplateAPIModule.register(config),
-      ],
+      imports: [DrivingLicenseApiModule, SharedTemplateAPIModule],
       providers: [DrivingLearnersPermitService],
       exports: [DrivingLearnersPermitService],
     }

@@ -14,7 +14,7 @@ export class RegisterNewMachineTemplateModule {
     return {
       module: RegisterNewMachineTemplateModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         WorkMachinesClientModule,
         ConfigModule.forRoot({
           isGlobal: true,

@@ -11,7 +11,7 @@ export class NoDebtCertificateModule {
     return {
       module: NoDebtCertificateModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         FinanceClientModule,
         ConfigModule.forRoot({
           isGlobal: true,

@@ -10,7 +10,7 @@ export class NewPrimarySchoolModule {
     return {
       module: NewPrimarySchoolModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         NationalRegistryXRoadModule,
         FriggClientModule,
       ],

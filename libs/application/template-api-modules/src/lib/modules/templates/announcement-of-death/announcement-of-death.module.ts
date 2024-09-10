@@ -16,7 +16,7 @@ export class AnnouncementOfDeathModule {
       imports: [
         NationalRegistryClientModule,
         SyslumennClientModule,
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [XRoadConfig, NationalRegistryClientConfig],

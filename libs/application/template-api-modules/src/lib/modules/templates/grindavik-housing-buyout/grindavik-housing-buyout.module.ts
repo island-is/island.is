@@ -16,7 +16,7 @@ export class GrindavikHousingBuyoutModule {
         SyslumennClientModule,
         NationalRegistryClientModule,
         AssetsClientModule,
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
       ],
       providers: [GrindavikHousingBuyoutService],
       exports: [GrindavikHousingBuyoutService],

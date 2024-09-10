@@ -10,7 +10,7 @@ export class OfficialJournalOfIcelandTemplateModule {
     return {
       module: OfficialJournalOfIcelandTemplateModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         OfficialJournalOfIcelandModule,
         OfficialJournalOfIcelandApplicationModule,
       ],

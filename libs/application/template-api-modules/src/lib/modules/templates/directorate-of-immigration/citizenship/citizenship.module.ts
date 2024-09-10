@@ -14,7 +14,7 @@ export class CitizenshipModule {
     return {
       module: CitizenshipModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         DirectorateOfImmigrationClientModule,
         NationalRegistryClientModule,
         ConfigModule.forRoot({

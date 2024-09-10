@@ -24,7 +24,7 @@ export class ComplaintsToAlthingiOmbudsmanTemplateModule {
     return {
       module: ComplaintsToAlthingiOmbudsmanTemplateModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         FileStorageModule,
         ClientsAlthingiOmbudsmanModule,
       ],

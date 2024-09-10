@@ -14,7 +14,7 @@ export class ExamplePaymentActionsModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: ExamplePaymentActionsModule,
-      imports: [SharedTemplateAPIModule.register(baseConfig)],
+      imports: [SharedTemplateAPIModule],
       providers: [ExamplePaymentActionsService],
       exports: [ExamplePaymentActionsService],
     }

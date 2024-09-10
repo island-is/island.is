@@ -8,10 +8,7 @@ export class PSignSubmissionModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: PSignSubmissionModule,
-      imports: [
-        SyslumennClientModule,
-        SharedTemplateAPIModule.register(config),
-      ],
+      imports: [SyslumennClientModule, SharedTemplateAPIModule],
       providers: [PSignSubmissionService],
       exports: [PSignSubmissionService],
     }

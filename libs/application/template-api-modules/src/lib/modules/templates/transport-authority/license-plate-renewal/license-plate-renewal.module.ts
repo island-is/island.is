@@ -13,7 +13,7 @@ export class LicensePlateRenewalModule {
     return {
       module: LicensePlateRenewalModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         VehiclePlateRenewalClientModule,
         ConfigModule.forRoot({
           isGlobal: true,

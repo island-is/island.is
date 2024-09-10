@@ -12,7 +12,7 @@ export class FinancialAidModule {
       module: FinancialAidModule,
       imports: [
         MunicipalitiesFinancialAidClientModule,
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
       ],
       providers: [FinancialAidService],
       exports: [FinancialAidService],

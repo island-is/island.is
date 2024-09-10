@@ -13,7 +13,7 @@ export class OrderVehicleRegistrationCertificateModule {
     return {
       module: OrderVehicleRegistrationCertificateModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         VehiclePrintingClientModule,
         ConfigModule.forRoot({
           isGlobal: true,

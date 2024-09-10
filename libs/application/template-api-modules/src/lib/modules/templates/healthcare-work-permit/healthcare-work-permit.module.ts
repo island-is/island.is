@@ -10,7 +10,7 @@ export class HealthcareWorkPermitModule {
     return {
       module: HealthcareWorkPermitModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         HealthDirectorateClientModule,
         UniversityCareersClientModule,
       ],

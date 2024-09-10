@@ -14,7 +14,7 @@ export class RequestInspectionTemplateModule {
     return {
       module: RequestInspectionTemplateModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         WorkMachinesClientModule,
         ConfigModule.forRoot({
           isGlobal: true,

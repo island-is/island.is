@@ -13,7 +13,7 @@ export class CriminalRecordSubmissionModule {
     return {
       module: CriminalRecordSubmissionModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         CriminalRecordModule,
         SyslumennClientModule,
       ],

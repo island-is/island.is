@@ -14,7 +14,7 @@ export class ChangeMachineSupervisorTemplateModule {
     return {
       module: ChangeMachineSupervisorTemplateModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         WorkMachinesClientModule,
         ConfigModule.forRoot({
           isGlobal: true,

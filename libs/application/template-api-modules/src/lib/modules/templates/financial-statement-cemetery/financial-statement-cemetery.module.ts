@@ -13,7 +13,7 @@ export class FinancialStatementCemeteryTemplateModule {
     return {
       module: FinancialStatementCemeteryTemplateModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         ConfigModule.forRoot({
           load: [FinancialStatementsInaoClientConfig],
         }),

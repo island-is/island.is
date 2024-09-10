@@ -14,7 +14,7 @@ export class IdCardModule {
     return {
       module: IdCardModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         ChargeFjsV2ClientModule,
         PassportsClientModule,
         ConfigModule.forRoot({

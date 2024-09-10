@@ -17,7 +17,7 @@ export class TransferOfMachineOwnershipTemplateModule {
     return {
       module: TransferOfMachineOwnershipTemplateModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         WorkMachinesClientModule,
         ChargeFjsV2ClientModule,
         ConfigModule.forRoot({

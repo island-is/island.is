@@ -19,7 +19,7 @@ export class LoginServiceModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: LoginServiceModule,
-      imports: [SharedTemplateAPIModule.register(config)],
+      imports: [SharedTemplateAPIModule],
       providers: [
         {
           provide: LOGIN_SERVICE_CONFIG,

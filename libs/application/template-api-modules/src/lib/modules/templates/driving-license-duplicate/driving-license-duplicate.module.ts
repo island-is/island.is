@@ -15,10 +15,7 @@ export class DrivingLicenseDuplicateModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: DrivingLicenseDuplicateModule,
-      imports: [
-        SharedTemplateAPIModule.register(baseConfig),
-        DrivingLicenseModule,
-      ],
+      imports: [SharedTemplateAPIModule, DrivingLicenseModule],
       providers: [DrivingLicenseDuplicateService],
       exports: [DrivingLicenseDuplicateService],
     }

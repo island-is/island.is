@@ -11,7 +11,7 @@ export class MarriageConditionsSubmissionModule {
       module: MarriageConditionsSubmissionModule,
       imports: [
         SyslumennClientModule,
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         NationalRegistryXRoadModule,
       ],
       providers: [MarriageConditionsSubmissionService],

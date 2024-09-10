@@ -8,7 +8,7 @@ export class EuropeanHealthInsuranceCardModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: EuropeanHealthInsuranceCardModule,
-      imports: [EhicClientModule, SharedTemplateAPIModule.register(config)],
+      imports: [EhicClientModule, SharedTemplateAPIModule],
       providers: [EuropeanHealthInsuranceCardService],
       exports: [EuropeanHealthInsuranceCardService],
     }

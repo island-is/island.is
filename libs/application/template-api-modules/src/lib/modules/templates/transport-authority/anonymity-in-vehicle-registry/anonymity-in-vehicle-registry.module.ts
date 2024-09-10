@@ -13,7 +13,7 @@ export class AnonymityInVehicleRegistryModule {
     return {
       module: AnonymityInVehicleRegistryModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         VehicleInfolocksClientModule,
         ConfigModule.forRoot({
           isGlobal: true,

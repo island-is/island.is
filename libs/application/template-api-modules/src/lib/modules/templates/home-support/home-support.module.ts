@@ -10,10 +10,7 @@ export class HomeSupportModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: HomeSupportModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        ArborgWorkpointModule,
-      ],
+      imports: [SharedTemplateAPIModule, ArborgWorkpointModule],
       providers: [HomeSupportService],
       exports: [HomeSupportService],
     }

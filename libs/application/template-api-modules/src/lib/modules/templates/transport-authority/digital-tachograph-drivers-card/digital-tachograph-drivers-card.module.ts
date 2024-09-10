@@ -14,7 +14,7 @@ export class DigitalTachographDriversCardModule {
     return {
       module: DigitalTachographDriversCardModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         DigitalTachographDriversCardClientModule,
         DrivingLicenseApiModule,
         ConfigModule.forRoot({

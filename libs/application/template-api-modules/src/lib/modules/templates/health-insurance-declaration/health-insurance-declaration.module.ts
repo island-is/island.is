@@ -13,7 +13,7 @@ export class HealthInsuranceDeclarationModule {
       imports: [
         RightsPortalClientModule,
         FileStorageModule,
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
       ],
       providers: [
         HealthInsuranceDeclarationService,

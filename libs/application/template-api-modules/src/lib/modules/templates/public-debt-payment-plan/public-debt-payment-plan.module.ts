@@ -17,10 +17,7 @@ export class PublicDebtPaymentPlanTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: PublicDebtPaymentPlanTemplateModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        PaymentScheduleClientModule,
-      ],
+      imports: [SharedTemplateAPIModule, PaymentScheduleClientModule],
       providers: [PublicDebtPaymentPlanTemplateService, PrerequisitesService],
       exports: [PublicDebtPaymentPlanTemplateService],
     }

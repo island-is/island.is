@@ -8,10 +8,7 @@ export class GeneralFishingLicenseModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: GeneralFishingLicenseModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        FishingLicenseClientModule,
-      ],
+      imports: [SharedTemplateAPIModule, FishingLicenseClientModule],
       providers: [GeneralFishingLicenseService],
       exports: [GeneralFishingLicenseService],
     }

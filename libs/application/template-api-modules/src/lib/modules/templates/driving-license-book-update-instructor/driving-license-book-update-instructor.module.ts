@@ -8,10 +8,7 @@ export class DrivingLicenseBookUpdateInstructorModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: DrivingLicenseBookUpdateInstructorModule,
-      imports: [
-        SharedTemplateAPIModule.register(baseConfig),
-        DrivingLicenseBookClientModule,
-      ],
+      imports: [SharedTemplateAPIModule, DrivingLicenseBookClientModule],
       providers: [DrivingLicenseBookUpdateInstructorService],
       exports: [DrivingLicenseBookUpdateInstructorService],
     }

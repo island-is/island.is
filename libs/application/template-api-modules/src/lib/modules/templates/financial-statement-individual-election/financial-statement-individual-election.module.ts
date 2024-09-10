@@ -13,7 +13,7 @@ export class FinancialStatementIndividualElectionModule {
     return {
       module: FinancialStatementIndividualElectionModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         ConfigModule.forRoot({
           load: [FinancialStatementsInaoClientConfig],
         }),

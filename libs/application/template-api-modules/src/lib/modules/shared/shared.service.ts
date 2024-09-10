@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
+import { ConfigService, ConfigType } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 import {
   Application,
@@ -23,6 +23,11 @@ import { PaymentService } from '@island.is/application/api/payment'
 import { User } from '@island.is/auth-nest-tools'
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
 import { sharedModuleConfig } from './shared.config'
+import { ApplicationService } from '@island.is/application/api/core'
+import jwt from 'jsonwebtoken'
+import { uuid } from 'uuidv4'
+import { TemplateAPIConfig } from '../..'
+import { AwsService } from '@island.is/nest/aws'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -36,15 +41,17 @@ export class SharedTemplateApiService {
     private readonly smsService: SmsService,
     @Inject(sharedModuleConfig.KEY)
     private config: ConfigType<typeof sharedModuleConfig>,
-    @Inject(BaseTemplateApiApplicationService)
-    private readonly applicationService: BaseTemplateApiApplicationService,
+    @Inject(ConfigService)
+    private readonly configService: ConfigService<TemplateAPIConfig>,
+    private readonly applicationService: ApplicationService,
     private readonly paymentService: PaymentService,
+    private readonly awsService: AwsService,
   ) {
     this.s3 = new S3()
   }
 
   async createAssignToken(application: Application, expiresIn: number) {
-    const token = await this.applicationService.createAssignToken(
+    const token = await this.createToken(
       application,
       this.config.jwtSecret,
       expiresIn,
@@ -204,7 +211,7 @@ export class SharedTemplateApiService {
       ContentEncoding?: string
     },
   ): Promise<string> {
-    return this.applicationService.saveAttachmentToApplicaton(
+    return this.saveAttachmentToApplicaton(
       application,
       fileName,
       buffer,
@@ -264,5 +271,70 @@ export class SharedTemplateApiService {
       Key: key,
       Expires: expiration,
     })
+  }
+
+  async saveAttachmentToApplicaton(
+    application: ApplicationWithAttachments,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string> {
+    const uploadBucket = this.configService.get('attachmentBucket') as string
+    if (!uploadBucket) throw new Error('No attachment bucket configured')
+
+    const fileId = uuid()
+    const attachmentKey = `${fileId}-${fileName}`
+    const s3key = `${application.id}/${attachmentKey}`
+    const url = await this.awsService.uploadFile(
+      buffer,
+      uploadBucket,
+      s3key,
+      uploadParameters,
+    )
+
+    await this.applicationService.update(application.id, {
+      attachments: {
+        ...application.attachments,
+        [attachmentKey]: url,
+      },
+    })
+
+    return attachmentKey
+  }
+
+  async storeNonceForApplication(application: Application): Promise<string> {
+    const nonce = uuid()
+
+    const applicationToUpdate = await this.applicationService.findOneById(
+      application.id,
+    )
+
+    if (!applicationToUpdate) throw new Error('Application not found')
+
+    await this.applicationService.addNonce(applicationToUpdate, nonce)
+
+    return nonce
+  }
+
+  async createToken(
+    application: Application,
+    secret: string,
+    expiresIn: number,
+  ): Promise<string> {
+    const nonce = await this.storeNonceForApplication(application)
+    const token = jwt.sign(
+      {
+        applicationId: application.id,
+        state: application.state,
+        nonce,
+      },
+      secret,
+      { expiresIn },
+    )
+    return token
   }
 }

@@ -13,7 +13,7 @@ export class InheritanceReportModule {
     return {
       module: InheritanceReportModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         SyslumennClientModule,
         NationalRegistryXRoadModule,
       ],

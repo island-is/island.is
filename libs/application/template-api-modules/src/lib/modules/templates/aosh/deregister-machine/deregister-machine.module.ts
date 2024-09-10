@@ -14,7 +14,7 @@ export class DeregisterMachineTemplateModule {
     return {
       module: DeregisterMachineTemplateModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         WorkMachinesClientModule,
         ConfigModule.forRoot({
           isGlobal: true,

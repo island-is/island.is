@@ -12,7 +12,7 @@ export class DocumentProviderOnboardingModule {
     return {
       module: DocumentProviderOnboardingModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         ClientsDocumentProviderModule.register({
           basePath: SERVICE_DOCUMENTS_BASEPATH,
         }),

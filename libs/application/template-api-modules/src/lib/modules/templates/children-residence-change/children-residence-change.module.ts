@@ -15,7 +15,7 @@ export class ChildrenResidenceChangeModule {
       module: ChildrenResidenceChangeModule,
       imports: [
         SyslumennClientModule,
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         SmsModule,
         NationalRegistryClientModule,
       ],

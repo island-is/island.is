@@ -35,7 +35,7 @@ export class ReferenceTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: ReferenceTemplateModule,
-      imports: [SharedTemplateAPIModule.register(config)],
+      imports: [SharedTemplateAPIModule],
       providers: [ReferenceTemplateService],
       exports: [ReferenceTemplateService],
     }

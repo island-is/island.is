@@ -14,7 +14,7 @@ export class FinancialStatementsInaoTemplateModule {
     return {
       module: FinancialStatementsInaoTemplateModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
+        SharedTemplateAPIModule,
         ConfigModule.forRoot({
           load: [FinancialStatementsInaoClientConfig],
         }),

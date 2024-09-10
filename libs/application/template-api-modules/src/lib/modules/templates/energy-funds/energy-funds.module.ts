@@ -17,7 +17,7 @@ export class EnergyFundsModule {
     return {
       module: EnergyFundsModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         EnergyFundsClientModule,
         VehiclesClientModule,
         ConfigModule.forRoot({

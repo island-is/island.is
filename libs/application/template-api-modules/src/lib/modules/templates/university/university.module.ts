@@ -15,7 +15,7 @@ export class UniversityModule {
     return {
       module: UniversityModule,
       imports: [
-        SharedTemplateAPIModule.register(baseConfig),
+        SharedTemplateAPIModule,
         NationalRegistryClientModule,
         InnaClientModule,
         UniversityGatewayApiClientModule,
