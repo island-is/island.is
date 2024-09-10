@@ -186,13 +186,15 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
 
     if (mileageValue !== undefined) {
       newMileage = +mileageValue.trim().replace(/\./g, '')
+    } else {
+      newMileage = vehicle?.mileage
     }
 
     // Update vehicle table with latests information
     setVehicleRequest({
       variables: {
         permno: vehicle?.vehicleId,
-        mileage: newMileage || vehicle?.mileage,
+        mileage: newMileage,
         plateCount: plateCountValue === 0 ? 0 : plateCountValue,
         plateLost: plateLost?.length ? true : false,
       },
