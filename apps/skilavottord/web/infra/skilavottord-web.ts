@@ -11,7 +11,7 @@ export const serviceSetup = (services: {
       default: 2,
       max: 10,
       min: 2,
-      scalingMagicNumber: 8
+      scalingMagicNumber: 8,
     })
     .resources({
       limits: {

@@ -9,7 +9,7 @@ export const serviceSetup = (): ServiceBuilder<'portals-admin'> =>
       default: 2,
       max: 30,
       min: 2,
-      scalingMagicNumber: 8
+      scalingMagicNumber: 8,
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
