@@ -62,15 +62,13 @@ const VehicleBulkMileageUpload = lazy(() =>
   import('./screens/VehicleBulkMileageUpload/VehicleBulkMileageUpload'),
 )
 
-const VehicleBulkMileageJobOverview = lazy(
-  () =>
-    import(
-      './screens/VehicleBulkMileageJobOverview/VehicleBulkMileageJobOverview'
-    ),
+const VehicleBulkMileageJobOverview = lazy(() =>
+  import(
+    './screens/VehicleBulkMileageJobOverview/VehicleBulkMileageJobOverview'
+  ),
 )
-const VehicleBulkMileageJobDetail = lazy(
-  () =>
-    import('./screens/VehicleBulkMileageJobDetail/VehicleBulkMileageJobDetail'),
+const VehicleBulkMileageJobDetail = lazy(() =>
+  import('./screens/VehicleBulkMileageJobDetail/VehicleBulkMileageJobDetail'),
 )
 
 export const assetsModule: PortalModule = {
