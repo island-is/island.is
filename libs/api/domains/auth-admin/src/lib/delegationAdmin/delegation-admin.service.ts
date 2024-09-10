@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import {
   DelegationAdminApi,
   DelegationAdminCustomDto,
-} from '@island.is/clients/auth/delegation-api'
+} from '@island.is/clients/auth/admin-api'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { CreateDelegationInput } from './dto/createDelegation.input'
 

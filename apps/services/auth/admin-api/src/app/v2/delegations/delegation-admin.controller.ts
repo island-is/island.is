@@ -66,7 +66,7 @@ export class DelegationAdminController {
   }
 
   @Delete(':delegationId')
-  @Scopes(DelegationAdminScopes.amdin)
+  @Scopes(DelegationAdminScopes.admin)
   @Documentation({
     response: { status: 204 },
     request: {
