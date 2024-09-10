@@ -273,21 +273,7 @@ export class DelegationsIncomingService {
       DelegationDTOMapper.recordToMergedDelegationDTO(d),
     )
 
-    const updateName = async (
-      mergedDelegation: MergedDelegationDTO,
-    ): Promise<void> => {
-      try {
-        const fromIndividual: IndividualDto | null =
-          await this.nationalRegistryClient.getIndividual(
-            mergedDelegation.fromNationalId,
-          )
-        mergedDelegation.fromName = fromIndividual?.name ?? UNKNOWN_NAME
-      } catch (error) {
-        mergedDelegation.fromName = UNKNOWN_NAME
-      }
-    }
-
-    await Promise.all(merged.map((d) => updateName(d)))
+    await Promise.all(merged.map((d) => this.updateName(d)))
 
     return merged
   }
@@ -327,5 +313,19 @@ export class DelegationsIncomingService {
       },
       attributes: ['name', 'isAccessControlled'],
     })
+  }
+
+  private async updateName(
+    mergedDelegation: MergedDelegationDTO,
+  ): Promise<void> {
+    try {
+      const fromIndividual: IndividualDto | null =
+        await this.nationalRegistryClient.getIndividual(
+          mergedDelegation.fromNationalId,
+        )
+      mergedDelegation.fromName = fromIndividual?.name ?? UNKNOWN_NAME
+    } catch (error) {
+      mergedDelegation.fromName = UNKNOWN_NAME
+    }
   }
 }
