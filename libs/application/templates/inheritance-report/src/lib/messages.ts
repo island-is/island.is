@@ -832,6 +832,24 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
     description: '',
   },
+  assetsOverviewConfirmation: {
+    id: 'ir.application:assetsOverviewConfirmation',
+    defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um eignir eftir minni bestu vitund.',
+    description: '',
+  },
+  debtsOverviewConfirmation: {
+    id: 'ir.application:debtsOverviewConfirmation',
+    defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um skuldir eftir minni bestu vitund.',
+    description: '',
+  },
+  heirsOverviewConfirmation: {
+    id: 'ir.application:heirsOverviewConfirmation',
+    defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um eign til skipta og erfingja eftir minni bestu vitund.',
+    description: '',
+  },
   realEstateEstimation: {
     id: 'ir.application:realEstateEstimation',
     defaultMessage: 'Fasteignamat samtals á dánardegi',

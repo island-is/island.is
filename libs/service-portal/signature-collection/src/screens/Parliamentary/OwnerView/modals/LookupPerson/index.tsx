@@ -1,31 +1,18 @@
 import { useEffect, useState } from 'react'
-import {
-  Box,
-  Stack,
-  Button,
-  Text,
-  Input,
-  Checkbox,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Button, Text, Input } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { useIdentityQuery } from '@island.is/service-portal/graphql'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { m } from '../../../../../lib/messages'
-import { constituencies } from '../../../../../lib/constants'
 
 interface LookupPersonProps {
   collectionId: string
   title: string
-  withConstituencies?: boolean
 }
 
-const LookupPerson = ({
-  collectionId,
-  title,
-  withConstituencies,
-}: LookupPersonProps) => {
+const LookupPerson = ({ collectionId, title }: LookupPersonProps) => {
   const { formatMessage } = useLocale()
   const { control } = useForm()
 
@@ -105,14 +92,6 @@ const LookupPerson = ({
             value={name}
             readOnly
           />
-          {withConstituencies &&
-            constituencies.map((constituency) => (
-              <Checkbox
-                key={constituency}
-                label={constituency}
-                value={constituency}
-              />
-            ))}
         </Stack>
         <Box display="flex" justifyContent="center" marginY={5}>
           <Button>{formatMessage(m.add)}</Button>

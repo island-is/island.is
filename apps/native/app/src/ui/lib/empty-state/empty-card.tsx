@@ -9,7 +9,7 @@ const Host = styled.View`
   flex-direction: row;
   padding-horizontal: ${({ theme }) => theme.spacing[3]}px;
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
-
+  min-height: 130px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: 1px;
   border-color: ${dynamicColor(
@@ -21,10 +21,6 @@ const Host = styled.View`
   )};
   column-gap: ${({ theme }) => theme.spacing[4]}px;
   align-items: center;
-`
-
-const Message = styled(Typography)`
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const TextWrapper = styled.View`
@@ -41,7 +37,7 @@ export function EmptyCard({ text, image, link }: EmptyCardProps) {
   return (
     <Host>
       <TextWrapper>
-        <Message variant="body3">{text}</Message>
+        <Typography variant="body3">{text}</Typography>
         {link && <View style={{ flexWrap: 'wrap' }}>{link}</View>}
       </TextWrapper>
       <View>{image}</View>

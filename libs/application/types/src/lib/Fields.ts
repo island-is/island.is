@@ -68,7 +68,7 @@ type TableRepeaterOptions =
   | RepeaterOption[]
   | ((
       application: Application,
-      activeField: Record<string, string>,
+      activeField?: Record<string, string>,
     ) => RepeaterOption[] | [])
 
 export type TableRepeaterItem = {
@@ -94,6 +94,19 @@ export type TableRepeaterItem = {
         application: Application,
         activeField?: Record<string, string>,
       ) => boolean)
+  updateValueObj?: {
+    valueModifier: (activeField?: Record<string, string>) => unknown
+    watchValues:
+      | string
+      | string[]
+      | ((
+          activeField?: Record<string, string>,
+        ) => string | string[] | undefined)
+  }
+  defaultValue?: (
+    application: Application,
+    activeField?: Record<string, string>,
+  ) => unknown
 } & (
   | {
       component: 'input'
@@ -521,14 +534,30 @@ export interface NationalIdWithNameField extends BaseField {
   minAgePerson?: number
 }
 
+type Modify<T, R> = Omit<T, keyof R> & R
+
 export type ActionCardListField = BaseField & {
   readonly type: FieldTypes.ACTION_CARD_LIST
   component: FieldComponents.ACTION_CARD_LIST
-  items: (application: Application) => ActionCardProps[]
+  items: (application: Application) => ApplicationActionCardProps[]
   space?: BoxProps['paddingTop']
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }
+
+export type ApplicationActionCardProps = Modify<
+  ActionCardProps,
+  {
+    heading?: FormText
+    text?: FormText
+    tag?: Modify<ActionCardProps['tag'], { label: FormText }>
+    cta?: Modify<ActionCardProps['cta'], { label: FormText }>
+    unavailable?: Modify<
+      ActionCardProps['unavailable'],
+      { label?: FormText; message?: FormText }
+    >
+  }
+>
 
 export type TableRepeaterField = BaseField & {
   readonly type: FieldTypes.TABLE_REPEATER

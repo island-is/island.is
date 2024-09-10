@@ -57,6 +57,17 @@ export const userWithNoDelegations: MockUserProfileDto = {
   isRestricted: false,
 }
 
+export const userWithNoEmail: MockUserProfileDto = {
+  name: 'userWithNoEmail',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  emailVerified: false,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+}
+
 export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
   name: 'userWithEmailNotificationsDisabled',
   nationalId: createNationalId('person'),
@@ -105,6 +116,18 @@ export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
     isRestricted: false,
   }
 
+export const companyUser: MockUserProfileDto = {
+  name: 'companyUser',
+  nationalId: createNationalId('company'),
+  mobilePhoneNumber: '1234567',
+  email: 'email@company.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+}
+
 export const mockTemplateId = 'HNIPP.DEMO.ID'
 
 export const getMockHnippTemplate = ({
@@ -131,6 +154,8 @@ export const userProfiles = [
   userWithDocumentNotificationsDisabled,
   userWithFeatureFlagDisabled,
   userWithSendToDelegationsFeatureFlagDisabled,
+  userWithNoEmail,
+  companyUser,
 ]
 
 const delegations: Record<string, DelegationRecordDTO[]> = {

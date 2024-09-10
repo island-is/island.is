@@ -2,6 +2,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import {
   SocialInsuranceAdministrationClientService,
+  TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
   IncomePlanStatus as IncomeStatus,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -26,6 +27,7 @@ import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
 import { IncomePlan } from './models/income/incomePlan.model'
 import { IncomePlanStatus, LOG_CATEGORY } from './socialInsurance.type'
 import { IncomePlanEligbility } from './models/income/incomePlanEligibility.model'
+import { TemporaryCalculationInput } from './dtos/temporaryCalculation.input'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -140,14 +142,15 @@ export class SocialInsuranceService {
     let hasIncompleteLines = false
     const incomeCategories = data.incomeTypeLines
       .map((i) => {
-        if (!i.incomeCategoryName || !i.totalSum || !i.currency) {
+        if (!i.incomeTypeName || !i.incomeCategoryName || !i.totalSum) {
           hasIncompleteLines = true
           return undefined
         }
         return {
           name: i.incomeCategoryName,
+          typeName: i.incomeTypeName,
           annualSum: i.totalSum,
-          currency: i.currency,
+          currency: i.currency ?? undefined,
         }
       })
       .filter(isDefined)
@@ -202,6 +205,13 @@ export class SocialInsuranceService {
       highlightedItems,
       groups,
     }
+  }
+
+  async getTemporaryCalculations(
+    user: User,
+    input: TemporaryCalculationInput,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
+    return await this.socialInsuranceApi.getTemporaryCalculations(user, input)
   }
 
   parseIncomePlanStatus = (status: IncomeStatus): IncomePlanStatus => {
