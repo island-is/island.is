@@ -21,6 +21,9 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { Locale } from '@island.is/shared/types'
+import type { ApiResponse } from '@elastic/elasticsearch'
+import type { SearchResponse } from '@island.is/shared/types'
+import type { MappedData } from '@island.is/content-search-indexer/types'
 
 type SyncCollection = ContentfulSyncCollection & {
   nextPageToken?: string
@@ -396,8 +399,8 @@ export class ContentfulService {
       newNextSyncToken,
       deletedEntryIds,
       nextPageToken,
+      nestedItems,
     } = populatedSyncEntriesResult
-    let { nestedItems } = populatedSyncEntriesResult
 
     const isDeltaUpdate = syncType !== 'full'
 
@@ -417,93 +420,56 @@ export class ContentfulService {
     if (isDeltaUpdate && shouldResolveNestedEntries) {
       logger.info('Finding root entries from nestedEntries')
 
-      const visitedEntryIds = new Set<string>()
+      const ids = nestedItems.map(({ id }) => id).concat(deletedEntryIds)
 
-      for (let i = 0; i < this.defaultIncludeDepth; i += 1) {
-        if (nestedItems.length <= 0) break
+      let idsChunk = ids.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
 
-        const nextLevelOfNestedEntryIds = new Set<string>()
+      while (idsChunk.length > 0) {
+        // TODO: paginate the response?
+        const response: ApiResponse<SearchResponse<MappedData>> =
+          await this.elasticService.findByQuery(elasticIndex, {
+            query: {
+              bool: {
+                should: idsChunk.map((id) => ({
+                  nested: {
+                    path: 'tags',
+                    query: {
+                      bool: {
+                        must: [
+                          {
+                            term: {
+                              'tags.key': id,
+                            },
+                          },
+                          {
+                            term: {
+                              'tags.type': 'hasChildEntryWithId',
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  },
+                })),
+                minimum_should_match: 1,
+              },
+            },
+            size: 1000, // TODO: what should this value be?
+          })
 
-        const promises: Promise<{
-          entries: Entry<unknown>[]
-          linkedToEntryId: string
-        }>[] = []
-        let counter = 0
+        const rootEntryIds = response.body.hits.hits
+          .map((hit) => hit._id)
+          .filter((id) => indexableEntries.some((entry) => entry.sys.id === id)) // Remove duplicates
 
-        const handleRequests = async () => {
-          const responses = await Promise.all(promises)
+        const rootEntries = await this.getContentfulData(chunkSize, {
+          include: this.defaultIncludeDepth,
+          'sys.id[in]': rootEntryIds.join(','),
+          locale: this.contentfulLocaleMap[locale],
+        })
 
-          for (const { entries: linkedEntries, linkedToEntryId } of responses) {
-            for (const linkedEntry of linkedEntries) {
-              counter += 1
+        indexableEntries.push(...rootEntries)
 
-              const isIndexable = environment.indexableTypes.includes(
-                linkedEntry.sys.contentType.sys.id,
-              )
-
-              if (isIndexable) {
-                const entryAlreadyListed =
-                  indexableEntries.findIndex(
-                    (entry) => entry.sys.id === linkedEntry.sys.id,
-                  ) >= 0
-                if (!entryAlreadyListed) {
-                  indexableEntries.push(linkedEntry)
-                }
-              }
-
-              const isNested = environment.nestedContentTypes.includes(
-                linkedEntry.sys.contentType.sys.id,
-              )
-
-              if (!isNested) {
-                continue
-              }
-
-              const entryBelowHasBeenIndexed =
-                indexableEntries.findIndex(
-                  (entry) => entry.sys.id === linkedToEntryId,
-                ) >= 0
-              if (
-                !entryBelowHasBeenIndexed // No need to traverse further up the tree if what's below has already been indexed
-              ) {
-                nextLevelOfNestedEntryIds.add(linkedEntry.sys.id)
-              }
-            }
-          }
-        }
-
-        for (const item of nestedItems) {
-          if (visitedEntryIds.has(item.id)) {
-            continue
-          }
-          visitedEntryIds.add(item.id)
-
-          promises.push(
-            (async () => ({
-              entries: await this.getContentfulData(chunkSize, {
-                include: this.defaultIncludeDepth,
-                [item.isEntry ? 'links_to_entry' : 'links_to_asset']: item.id,
-                locale: this.contentfulLocaleMap[locale],
-              }),
-              linkedToEntryId: item.id,
-            }))(),
-          )
-
-          if (promises.length > MAX_REQUEST_COUNT) {
-            await handleRequests()
-          }
-        }
-
-        if (promises.length > 0) {
-          await handleRequests()
-        }
-
-        // Next round of the loop will only find linked entries to nested entries
-        nestedItems = Array.from(nextLevelOfNestedEntryIds).map((id) => ({
-          id,
-          isEntry: true,
-        }))
-        logger.info(`Found ${counter} nested entries at depth ${i + 1}`)
+        idsChunk = ids.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
       }
     }
 
