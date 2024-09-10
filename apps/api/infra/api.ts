@@ -47,6 +47,8 @@ import {
   OfficialJournalOfIceland,
   OfficialJournalOfIcelandApplication,
   Frigg,
+  HealthDirectorateOrganDonation,
+  HealthDirectorateVaccination,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -427,6 +429,8 @@ export const serviceSetup = (services: {
       OfficialJournalOfIceland,
       OfficialJournalOfIcelandApplication,
       Frigg,
+      HealthDirectorateOrganDonation,
+      HealthDirectorateVaccination,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
