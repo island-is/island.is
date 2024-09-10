@@ -93,9 +93,4 @@ export class UpdateDefendantDto {
   @IsEnum(SubpoenaType)
   @ApiPropertyOptional({ enum: SubpoenaType })
   readonly subpoenaType?: SubpoenaType
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly subpoenaComment?: string
 }

@@ -19,17 +19,8 @@ import {
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
-import { indictmentCases } from '@island.is/judicial-system/types'
 
-import {
-  Case,
-  CaseExistsGuard,
-  CaseTypeGuard,
-  CurrentCase,
-  PdfService,
-} from '../case'
-import { DeliverDto } from '../case/dto/deliver.dto'
-import { Subpoena } from '../subpoena/models/subpoena.model'
+import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { DeliverDefendantToCourtDto } from './dto/deliverDefendantToCourt.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
@@ -44,7 +35,6 @@ import { DefendantService } from './defendant.service'
 export class InternalDefendantController {
   constructor(
     private readonly defendantService: DefendantService,
-    private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 

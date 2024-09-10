@@ -4,7 +4,6 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
-  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -21,7 +20,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
-import { ExplanatoryComment } from '../../case/models/explanatoryComment.model'
 
 @Table({
   tableName: 'defendant',
@@ -133,8 +131,4 @@ export class Defendant extends Model {
   })
   @ApiPropertyOptional({ enum: SubpoenaType })
   subpoenaType?: SubpoenaType
-
-  @HasMany(() => ExplanatoryComment, 'defendantId')
-  @ApiPropertyOptional({ type: ExplanatoryComment, isArray: true })
-  comments?: ExplanatoryComment[]
 }

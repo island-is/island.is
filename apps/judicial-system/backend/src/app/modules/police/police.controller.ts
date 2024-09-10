@@ -21,11 +21,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import {
-  districtCourtJudgeRule,
-  prosecutorRepresentativeRule,
-  prosecutorRule,
-} from '../../guards'
+import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import {
   Case,
   CaseExistsGuard,
@@ -34,20 +30,18 @@ import {
   CaseReadGuard,
   CurrentCase,
 } from '../case'
-import { Defendant } from '../defendant'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
-import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { PoliceService } from './police.service'
 
 @UseGuards(
-  //   JwtAuthGuard,
-  //   RolesGuard,
+  JwtAuthGuard,
+  RolesGuard,
   CaseExistsGuard,
-  //   CaseReadGuard,
-  //CaseNotCompletedGuard,
+  CaseReadGuard,
+  CaseNotCompletedGuard,
 )
 @Controller('api/case/:caseId')
 @ApiTags('police files')
@@ -116,30 +110,4 @@ export class PoliceController {
       user,
     )
   }
-
-  // @RolesRules(
-  //   prosecutorRule,
-  //   prosecutorRepresentativeRule,
-  //   districtCourtJudgeRule,
-  // )
-  // @Post('subpoena/:defendantId')
-  // @ApiOkResponse({
-  //   type: CreateSubpoenaResponse,
-  //   description: 'Creates a subpoena for a case',
-  // })
-  // createSubpoena(
-  //   @Param('caseId') caseId: string,
-  //   @Param('defendantId') defendantId: string,
-  //   @CurrentHttpUser() user: User,
-  //   @CurrentCase() theCase: Case,
-  // ): Promise<CreateSubpoenaResponse> {
-  //   this.logger.debug(`Creating a subpoena for case ${caseId}`)
-
-  //   return this.policeService.createSubpoena(
-  //     theCase,
-  //     { id: defendantId } as Defendant,
-  //     '',
-  //     user,
-  //   )
-  // }
 }

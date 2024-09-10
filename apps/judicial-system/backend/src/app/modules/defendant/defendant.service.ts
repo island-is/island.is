@@ -1,13 +1,12 @@
-import { literal, Op, Sequelize } from 'sequelize'
+import { literal, Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
-  forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -27,7 +26,6 @@ import {
 
 import { Case } from '../case/models/case.model'
 import { CourtService } from '../court'
-import { PoliceService } from '../police'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { Defendant } from './models/defendant.model'
@@ -36,11 +34,7 @@ import { DeliverResponse } from './models/deliver.response'
 @Injectable()
 export class DefendantService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
-
-    @Inject(forwardRef(() => PoliceService))
-    private readonly policeService: PoliceService,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,

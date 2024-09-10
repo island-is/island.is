@@ -1,6 +1,6 @@
 import { uuid } from 'uuidv4'
 
-import { DefenderChoice, User } from '@island.is/judicial-system/types'
+import { DefenderChoice } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 

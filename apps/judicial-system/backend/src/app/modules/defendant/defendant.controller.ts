@@ -49,7 +49,6 @@ import {
   CurrentCase,
   PdfService,
 } from '../case'
-import { Subpoena } from '../subpoena/models/subpoena.model'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
