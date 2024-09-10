@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common'
 import type { ITeamList } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapTeamMember } from '../../models/teamMember.model'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
@@ -19,6 +20,8 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
     }
 
     const teamMembers: MappedData[] = []
+
+    const dateUpdated = new Date().getTime().toString()
 
     for (const teamListEntry of entries) {
       for (const teamMemberEntry of teamListEntry.fields.teamMembers ?? []) {
@@ -39,7 +42,7 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
             }),
             tags: [{ key: teamListEntry.sys.id, type: 'referencedBy' }],
             dateCreated: teamMemberEntry.sys.createdAt,
-            dateUpdated: new Date().getTime().toString(),
+            dateUpdated: dateUpdated,
           })
         } catch (error) {
           logger.warn('Failed to import Team Member', {
@@ -50,6 +53,22 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
       }
     }
 
-    return teamMembers
+    return teamMembers.concat(
+      entries.map((teamListEntry) => {
+        // Tag the document with the ids of its children so we can later look up what document a child belongs to
+        const childEntryIds = extractChildEntryIds(teamListEntry)
+        return {
+          _id: teamListEntry.sys.id,
+          title: teamListEntry.fields.title ?? '',
+          type: 'webTeamList',
+          dateCreated: teamListEntry.sys.createdAt,
+          dateUpdated: dateUpdated,
+          tags: childEntryIds.map((id) => ({
+            key: id,
+            type: 'hasChildEntryWithId',
+          })),
+        }
+      }),
+    )
   }
 }
