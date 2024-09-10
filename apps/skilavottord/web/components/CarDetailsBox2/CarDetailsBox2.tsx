@@ -149,7 +149,6 @@ export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({
                       large
                       name={name}
                       label={t.numberplate.lost}
-                      backgroundColor="blue"
                       onChange={() => {
                         if (!lostPlate) {
                           onChange(PlateInfo.PLATE_LOST)
