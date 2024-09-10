@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, RadioButton, Text, Tooltip } from '@island.is/island-ui/core'
@@ -24,11 +24,10 @@ import { defenderInfo } from './DefenderInfo.strings'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
 }
 
-const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { workingCase, setWorkingCase } = props
+const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer } = useCase()
   const { user } = useContext(UserContext)
@@ -80,6 +79,7 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
       return null
     }
   }
+
   return (
     <>
       <SectionHeading

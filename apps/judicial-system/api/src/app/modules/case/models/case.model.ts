@@ -18,6 +18,7 @@ import {
   CaseState,
   CaseType,
   CourtDocument,
+  CourtSessionType,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
@@ -53,6 +54,7 @@ registerEnumType(IndictmentCaseReviewDecision, {
   name: 'IndictmentCaseReviewDecision',
 })
 registerEnumType(IndictmentDecision, { name: 'IndictmentDecision' })
+registerEnumType(CourtSessionType, { name: 'CourtSessionType' })
 
 @ObjectType()
 class DateLog {
@@ -434,9 +436,21 @@ export class Case {
   @Field(() => Boolean, { nullable: true })
   readonly indictmentVerdictViewedByAll?: boolean
 
-  @Field(() => String, { nullable: true })
-  readonly indictmentVerdictAppealDeadline?: string
+  @Field(() => Boolean, { nullable: true })
+  readonly indictmentVerdictAppealDeadlineExpired?: boolean
 
   @Field(() => IndictmentDecision, { nullable: true })
   readonly indictmentDecision?: IndictmentDecision
+
+  @Field(() => CourtSessionType, { nullable: true })
+  readonly courtSessionType?: CourtSessionType
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentCompletedDate?: string
+
+  @Field(() => Case, { nullable: true })
+  readonly mergeCase?: Case
+
+  @Field(() => [Case], { nullable: true })
+  readonly mergedCases?: Case[]
 }

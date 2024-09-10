@@ -248,7 +248,17 @@ export const defaultRenderNodeObject: RenderNode = {
           href = `/${href}`
         }
 
-        return href ? <Hyperlink href={href}>{children}</Hyperlink> : null
+        return href ? (
+          <Hyperlink
+            href={`${
+              !entry?.sys?.locale || entry.sys.locale === 'is-IS'
+                ? ''
+                : `/${entry.sys.locale}`
+            }${href}`}
+          >
+            {children}
+          </Hyperlink>
+        ) : null
       }
       case 'organizationPage': {
         const prefix = getOrganizationPageUrlPrefix(entry?.sys?.locale)

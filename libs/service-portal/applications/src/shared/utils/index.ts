@@ -52,9 +52,11 @@ export const sortApplicationsOrganizations = (
   }
   apps.forEach((elem) => {
     const inst = institutionMapper[elem.typeId].slug ?? 'INSTITUTION_MISSING'
+    const contentfulId =
+      institutionMapper[elem.typeId].contentfulId ?? 'INSTITUTION_MISSING'
     institutions.push({
       value: inst,
-      label: organizations.find((x) => x.slug === inst)?.title ?? inst,
+      label: organizations.find((x) => x.id === contentfulId)?.title ?? inst,
     })
   })
   // Remove duplicates

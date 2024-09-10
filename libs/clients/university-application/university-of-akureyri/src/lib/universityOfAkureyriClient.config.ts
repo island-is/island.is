@@ -4,7 +4,6 @@ import * as z from 'zod'
 const schema = z.object({
   xroadPath: z.string(),
   scope: z.array(z.string()),
-  fetchTimeout: z.number().int(),
 })
 
 export const UniversityOfAkureyriApplicationClientConfig = defineConfig<
@@ -19,10 +18,6 @@ export const UniversityOfAkureyriApplicationClientConfig = defineConfig<
         'IS-DEV/EDU/10054/UNAK-Protected/umsoknir-v1',
       ),
       scope: [],
-      fetchTimeout:
-        env.optionalJSON(
-          'XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_AKUREYRI_TIMEOUT',
-        ) ?? 10000,
     }
   },
 })

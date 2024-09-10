@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -14,12 +14,12 @@ import { strings } from './DenyIndictmentCaseModal.strings'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   onClose: () => void
   onComplete: () => void
 }
 
-const DenyIndictmentCaseModal: React.FC<React.PropsWithChildren<Props>> = ({
+const DenyIndictmentCaseModal: FC<Props> = ({
   workingCase,
   setWorkingCase,
   onClose,

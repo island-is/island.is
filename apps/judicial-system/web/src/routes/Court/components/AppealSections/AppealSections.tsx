@@ -1,10 +1,13 @@
-import React, { useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import {
+  BlueBox,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
   SessionArrangements,
@@ -21,11 +24,10 @@ import * as styles from './AppealSections.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
 }
 
-const AppealSections: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { workingCase, setWorkingCase } = props
+const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, updateCase } = useCase()
   const [checkedAccusedRadio, setCheckedAccusedRadio] =
@@ -48,14 +50,12 @@ const AppealSections: React.FC<React.PropsWithChildren<Props>> = (props) => {
       {workingCase.defendants && workingCase.defendants.length > 0 && (
         <Box marginBottom={3}>
           <BlueBox>
-            <Box marginBottom={2}>
-              <Text as="h4" variant="h4">
-                {`${formatMessage(m.defendantTitleV2)} `}
-                <Text as="span" color="red600" fontWeight="semiBold">
-                  *
-                </Text>
-              </Text>
-            </Box>
+            <SectionHeading
+              title={formatMessage(m.defendantTitleV2)}
+              heading="h4"
+              marginBottom={2}
+              required
+            />
             <div className={styles.gridRowEqual}>
               <RadioButton
                 name="accused-appeal-decision"
@@ -232,14 +232,12 @@ const AppealSections: React.FC<React.PropsWithChildren<Props>> = (props) => {
       )}
       <Box marginBottom={5}>
         <BlueBox>
-          <Box marginBottom={2}>
-            <Text as="h4" variant="h4">
-              {formatMessage(m.prosecutorTitleV2)}{' '}
-              <Text as="span" color="red400" fontWeight="semiBold">
-                *
-              </Text>
-            </Text>
-          </Box>
+          <SectionHeading
+            title={formatMessage(m.prosecutorTitleV2)}
+            heading="h4"
+            marginBottom={2}
+            required
+          />
           <div className={styles.gridRowEqual}>
             <RadioButton
               name="prosecutor-appeal-decision"

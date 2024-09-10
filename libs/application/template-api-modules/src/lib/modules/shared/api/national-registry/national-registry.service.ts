@@ -51,6 +51,25 @@ export class NationalRegistryService extends BaseTemplateApiService {
       await this.validateChildren(params, children)
     }
 
+    //allow parents whose children are icelandic citizenships in, but if no children, then check citizenship
+    if (params?.allowIfChildHasCitizenship) {
+      const children = await this.nationalRegistryApi.getCustodyChildren(auth)
+      if (children.length > 0) {
+        let foundChildWithIcelandicCitizenship = false
+        for (const child of children) {
+          const individual = await this.getIndividual(child)
+          if (individual?.citizenship?.code === 'IS') {
+            foundChildWithIcelandicCitizenship = true
+            break
+          }
+        }
+        //if child validates with icelandic citizenship, then do not check parents citizenship
+        if (foundChildWithIcelandicCitizenship) {
+          params = { ...params, icelandicCitizenship: false }
+        }
+      }
+    }
+
     // Validate individual
     this.validateIndividual(individual, false, params)
 

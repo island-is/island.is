@@ -3,26 +3,20 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/education-career/src",
   "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/service-portal/education-career/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/education-career/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/education-career/jest.config.ts"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/service-portal/education-career"
       ]
     }
-  },
-  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
+  }
 }

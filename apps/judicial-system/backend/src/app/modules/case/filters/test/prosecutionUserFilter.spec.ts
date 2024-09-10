@@ -126,7 +126,6 @@ const continueFromType = (user: User, type: CaseType) => {
     CaseState.SUBMITTED,
     CaseState.WAITING_FOR_CANCELLATION,
     CaseState.RECEIVED,
-    CaseState.MAIN_HEARING,
     CaseState.ACCEPTED,
     CaseState.REJECTED,
     CaseState.DISMISSED,

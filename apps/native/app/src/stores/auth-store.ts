@@ -17,13 +17,22 @@ import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
 import { clearAllStorages } from '../stores/mmkv'
 import { notificationsStore } from './notifications-store'
+import { featureFlagClient } from '../contexts/feature-flag-provider'
+import {
+  DeletePasskeyDocument,
+  DeletePasskeyMutation,
+  DeletePasskeyMutationVariables,
+} from '../graphql/types/schema'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
 const UNAUTHORIZED_USER_INFO = 'Got 401 when fetching user info'
 
 // Optional scopes (not required for all users so we do not want to force a logout)
-const OPTIONAL_SCOPES = ['@island.is/licenses:barcode']
+const OPTIONAL_SCOPES = [
+  '@island.is/licenses:barcode',
+  '@island.is/auth/passkeys',
+]
 
 interface UserInfo {
   sub: string
@@ -34,7 +43,7 @@ interface UserInfo {
 interface AuthStore extends State {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
-  lockScreenActivatedAt?: number | null
+  lockScreenActivatedAt?: number
   lockScreenComponentId: string | undefined
   noLockScreenUntilNextAppStateActive: boolean
   isCogitoAuth: boolean
@@ -56,6 +65,24 @@ const getAppAuthConfig = () => {
     clientId: config.idsClientId,
     redirectUrl: `${config.bundleId}${android}://oauth`,
     scopes: config.idsScopes,
+  }
+}
+
+const clearPasskey = async () => {
+  // Clear passkey if exists
+  preferencesStore.setState({
+    hasCreatedPasskey: false,
+    hasOnboardedPasskeys: false,
+    lastUsedPasskey: 0,
+  })
+
+  const client = await getApolloClientAsync()
+  try {
+    await client.mutate<DeletePasskeyMutation, DeletePasskeyMutationVariables>({
+      mutation: DeletePasskeyDocument,
+    })
+  } catch (e) {
+    console.error('Failed to delete passkey', e)
   }
 }
 
@@ -160,6 +187,9 @@ export const authStore = create<AuthStore>((set, get) => ({
     }
     notificationsStore.getState().reset()
 
+    // Clear passkey if exists
+    await clearPasskey()
+
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const tokenToRevoke = get().authorizeResult!.accessToken!
@@ -184,6 +214,8 @@ export const authStore = create<AuthStore>((set, get) => ({
       }),
       true,
     )
+    // Reset home screen widgets
+    preferencesStore.getState().resetHomeScreenWidgets()
     return true
   },
 }))

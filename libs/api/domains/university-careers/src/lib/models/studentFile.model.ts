@@ -2,15 +2,15 @@ import { ObjectType, Field } from '@nestjs/graphql'
 
 @ObjectType('UniversityCareersStudentFile')
 export class StudentFile {
-  @Field(() => String)
+  @Field()
   type!: string
 
-  @Field(() => String)
+  @Field()
   locale!: string
 
-  @Field(() => String)
+  @Field()
   displayName!: string
 
-  @Field(() => String)
+  @Field()
   fileName!: string
 }

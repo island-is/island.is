@@ -3,21 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nest/feature-flags/src",
   "projectType": "library",
+  "tags": ["lib:nest", "scope:nest"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/nest/feature-flags/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/nest/feature-flags"],
       "options": {
-        "jestConfig": "libs/nest/feature-flags/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/nest/feature-flags/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:nest", "scope:nest"]
+  }
 }

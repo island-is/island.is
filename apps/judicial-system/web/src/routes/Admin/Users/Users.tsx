@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
@@ -29,7 +29,7 @@ import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { useUsersQuery } from './users.generated'
 import * as styles from './Users.css'
 
-export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Users = () => {
   const router = useRouter()
   const [selectedInstitution, setSelectedInstitution] = useState<string>()
   const { formatMessage } = useIntl()
@@ -74,6 +74,8 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
         return 'Aðstoðarmaður dómara'
       case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'
+      case UserRole.PUBLIC_PROSECUTOR_STAFF:
+        return 'Skrifstofa'
       default:
         return 'Óþekkt'
     }

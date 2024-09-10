@@ -1,6 +1,6 @@
 services:
   localstack:
-    image: docker.io/localstack/localstack
+    image: public.ecr.aws/localstack/localstack:3
     networks:
       - local
     ports:

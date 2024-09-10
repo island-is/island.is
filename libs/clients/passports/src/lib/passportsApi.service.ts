@@ -18,6 +18,7 @@ import {
   DeliveryAddress,
   PreregisterResponse,
   PreregistrationInput,
+  IdentityDocumentTypes,
 } from './passportsApi.types'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
@@ -113,12 +114,14 @@ export class PassportsService {
 
   async getIdentityDocument(
     auth: User,
+    type?: IdentityDocumentTypes,
   ): Promise<IdentityDocument[] | undefined> {
     try {
       const passportResponse = await this.getPassportsWithAuth(
         auth,
       ).identityDocumentGetIdentityDocument({
         xRoadClient: this.xroadConfig.xRoadClient,
+        type,
       })
       const identityDocumentResponse = this.resolvePassports(passportResponse)
 
@@ -130,12 +133,14 @@ export class PassportsService {
 
   async getIdentityDocumentChildren(
     auth: User,
+    type?: IdentityDocumentTypes,
   ): Promise<IdentityDocumentChild[] | undefined> {
     try {
       const passportResponse = await this.getPassportsWithAuth(
         auth,
       ).identityDocumentGetChildrenIdentityDocument({
         xRoadClient: this.xroadConfig.xRoadClient,
+        type,
       })
 
       const childrenArray = passportResponse.map((child) => {
@@ -147,6 +152,7 @@ export class PassportsService {
           passports: child.identityDocumentResponses
             ? this.resolvePassports(child.identityDocumentResponses)
             : undefined,
+          citizenship: child.rikisfang,
         }
       })
 
@@ -220,9 +226,12 @@ export class PassportsService {
     }
   }
 
-  async getCurrentPassport(user: User): Promise<Passport> {
-    const userPassports = await this.getIdentityDocument(user)
-    const childPassports = await this.getIdentityDocumentChildren(user)
+  async getCurrentPassport(
+    user: User,
+    type?: IdentityDocumentTypes,
+  ): Promise<Passport> {
+    const userPassports = await this.getIdentityDocument(user, type)
+    const childPassports = await this.getIdentityDocumentChildren(user, type)
 
     const userPassport = userPassports
       ? userPassports.sort((a, b) =>

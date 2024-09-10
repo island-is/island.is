@@ -13,6 +13,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   DefaultEvents,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { m } from './messages'
 import { inheritanceReportSchema } from './dataSchema'
@@ -26,6 +27,9 @@ import {
 } from './constants'
 import { Features } from '@island.is/feature-flags'
 import { EstateOnEntryApi, MaritalStatusApi } from '../dataProviders'
+
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT]
 
 const InheritanceReportTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -45,6 +49,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
       : m.prerequisitesTitle.defaultMessage,
   institution: m.institution,
   dataSchema: inheritanceReportSchema,
+  translationNamespaces: [configuration.translation],
   featureFlag: Features.inheritanceReport,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {

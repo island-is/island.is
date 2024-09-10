@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Tag, TagVariant } from '@island.is/island-ui/core'
@@ -18,7 +18,7 @@ interface Props {
   appealCaseNumber?: string | null
 }
 
-const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
+const TagAppealState: FC<Props> = ({
   appealRulingDecision,
   appealState,
   appealCaseNumber,

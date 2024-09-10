@@ -1,4 +1,7 @@
+import { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
+
 import {
   AlertMessage,
   Box,
@@ -13,9 +16,9 @@ import {
   GetDrivingInstructorsQuery,
   GetDrivingInstructorsQueryVariables,
 } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
 import { GET_DRIVING_INSTRUCTORS_QUERY } from '@island.is/web/screens/queries/DrivingInstructors'
-import { useState } from 'react'
+
+import { translation as translationStrings } from './translation.strings'
 
 const DEFAULT_ITEMS_PER_PAGE = 10
 
@@ -79,7 +82,7 @@ interface DrivingInstructorListProps {
 
 const DrivingInstructorList = ({ slice }: DrivingInstructorListProps) => {
   const [selectedPage, setSelectedPage] = useState(1)
-  const n = useNamespace(slice?.json ?? {})
+  const { formatMessage } = useIntl()
   const [searchValue, setSearchValue] = useState('')
 
   const { data, error, loading, called } = useQuery<
@@ -104,7 +107,7 @@ const DrivingInstructorList = ({ slice }: DrivingInstructorListProps) => {
       <Box marginBottom={4}>
         <Input
           name="driving-license-input"
-          placeholder={n('searchPlaceholder', 'Leita')}
+          placeholder={formatMessage(translationStrings.searchPlaceholder)}
           backgroundColor={['blue', 'blue', 'white']}
           size="sm"
           icon={{
@@ -122,15 +125,15 @@ const DrivingInstructorList = ({ slice }: DrivingInstructorListProps) => {
       {called && !loading && error && (
         <AlertMessage
           type="error"
-          title={n('errorOccurredTitle', 'Villa kom upp')}
-          message={n('errorOccurredMessage', 'Ekki tókst að sækja ökukennara')}
+          title={formatMessage(translationStrings.errorOccurredTitle)}
+          message={formatMessage(translationStrings.errorOccurredMessage)}
         />
       )}
 
       {called && !loading && !error && !filteredInstructors?.length && (
         <Box display="flex" justifyContent="center">
           <Text fontWeight="semiBold">
-            {n('noResultsFound', 'Engir ökukennarar fundust')}
+            {formatMessage(translationStrings.noResultsFound)}
           </Text>
         </Box>
       )}
@@ -146,16 +149,18 @@ const DrivingInstructorList = ({ slice }: DrivingInstructorListProps) => {
           <T.Table>
             <T.Head>
               <T.HeadData>
-                <Text fontWeight="semiBold">{n('name', 'Nafn')}</Text>
-              </T.HeadData>
-              <T.HeadData>
                 <Text fontWeight="semiBold">
-                  {n('nationalId', 'Kennitala')}
+                  {formatMessage(translationStrings.name)}
                 </Text>
               </T.HeadData>
               <T.HeadData>
                 <Text fontWeight="semiBold">
-                  {n('driverLicenseId', 'Ökuréttindisnúmer')}
+                  {formatMessage(translationStrings.nationalId)}
+                </Text>
+              </T.HeadData>
+              <T.HeadData>
+                <Text fontWeight="semiBold">
+                  {formatMessage(translationStrings.driverLicenseId)}
                 </Text>
               </T.HeadData>
             </T.Head>

@@ -6,18 +6,13 @@
   "tags": ["lib:portals-admin", "scope:portals-admin"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/portals/admin/core/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/portals/admin/core"],
       "options": {
-        "jestConfig": "libs/portals/admin/core/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/portals/admin/core/jest.config.ts"
       }
     },
     "extract-strings": {

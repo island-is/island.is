@@ -13,6 +13,7 @@ import { FamilyOverviewScreen } from '../../screens/family/family-overview'
 import { FinanceScreen } from '../../screens/finance/finance'
 import { FinanceStatusDetailScreen } from '../../screens/finance/finance-status-detail'
 import { HomeScreen } from '../../screens/home/home'
+import { HomeOptionsScreen } from '../../screens/home/home-options'
 import { InboxScreen } from '../../screens/inbox/inbox'
 import { InboxFilterScreen } from '../../screens/inbox/inbox-filter'
 import { LicenseScanDetailScreen } from '../../screens/license-scanner/license-scan-detail'
@@ -20,6 +21,7 @@ import { LicenseScannerScreen } from '../../screens/license-scanner/license-scan
 import { LoginScreen } from '../../screens/login/login'
 import { TestingLoginScreen } from '../../screens/login/testing-login'
 import { MoreScreen } from '../../screens/more/more'
+import { PasskeyScreen } from '../../screens/passkey/passkey'
 import { PersonalInfoScreen } from '../../screens/more/personal-info'
 import { NotificationsScreen } from '../../screens/notifications/notifications'
 import { OnboardingBiometricsScreen } from '../../screens/onboarding/onboarding-biometrics'
@@ -97,6 +99,8 @@ export function registerAllComponents() {
   registerComponent(CR.FinanceStatusDetailScreen, FinanceStatusDetailScreen)
   registerComponent(CR.InboxFilterScreen, InboxFilterScreen)
   registerComponent(CR.AirDiscountScreen, AirDiscountScreen)
+  registerComponent(CR.PasskeyScreen, PasskeyScreen)
+  registerComponent(CR.HomeOptionsScreen, HomeOptionsScreen)
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { IntlShape, useIntl } from 'react-intl'
 
@@ -43,7 +43,7 @@ import { indictmentCountSubstanceEnum as substanceStrings } from './IndictmentCo
 interface Props {
   indictmentCount: TIndictmentCount
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   onChange: (
     indictmentCountId: string,
     updatedIndictmentCount: UpdateIndictmentCount,
@@ -52,7 +52,7 @@ interface Props {
   updateIndictmentCountState: (
     indictmentCountId: string,
     update: UpdateIndictmentCount,
-    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
   ) => void
 }
 
@@ -316,17 +316,14 @@ export const getIncidentDescription = (
   return incidentDescription
 }
 
-export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
-  const {
-    indictmentCount,
-    workingCase,
-    onChange,
-    onDelete,
-    updateIndictmentCountState,
-    setWorkingCase,
-  } = props
+export const IndictmentCount: FC<Props> = ({
+  indictmentCount,
+  workingCase,
+  onChange,
+  onDelete,
+  updateIndictmentCountState,
+  setWorkingCase,
+}) => {
   const { formatMessage } = useIntl()
   const { lawTag } = useIndictmentCounts()
 

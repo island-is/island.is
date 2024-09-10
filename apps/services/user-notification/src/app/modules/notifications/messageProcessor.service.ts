@@ -18,7 +18,7 @@ export class MessageProcessorService {
       message.templateId,
       locale,
     )
-    const notification = this.notificationsService.formatArguments(
+    const notification = await this.notificationsService.formatArguments(
       message.args,
       // We need to pass the template as a new object to avoid tempering with
       // the template object from the memory cache.
@@ -26,14 +26,14 @@ export class MessageProcessorService {
       {
         ...template,
       },
+      message.senderId,
+      locale,
     )
-
     return {
-      title: notification.notificationTitle,
-      body: notification.notificationBody,
-      dataCopy: notification.notificationDataCopy,
-      category: notification.category,
-      appURI: notification.clickAction,
+      title: notification.title,
+      externalBody: notification.externalBody,
+      internalBody: notification.internalBody,
+      clickActionUrl: notification.clickActionUrl,
     }
   }
 }

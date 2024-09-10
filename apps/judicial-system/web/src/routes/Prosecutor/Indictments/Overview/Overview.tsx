@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import {
   AlertMessage,
   Box,
+  Button,
   RadioButton,
   Text,
   toast,
@@ -18,9 +19,9 @@ import {
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
+  IndictmentCaseScheduledCard,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
-  InfoCardCaseScheduledIndictment,
   Modal,
   PageHeader,
   PageLayout,
@@ -32,6 +33,7 @@ import {
 import {
   CaseState,
   CaseTransition,
+  IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -39,7 +41,7 @@ import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCas
 import { overview as strings } from './Overview.strings'
 import * as styles from './Overview.css'
 
-const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Overview: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
@@ -60,20 +62,24 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
   const isIndictmentNew = workingCase.state === CaseState.DRAFT
+  const isIndictmentWaitingForConfirmation =
+    workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
   const isIndictmentSubmitted = workingCase.state === CaseState.SUBMITTED
   const isIndictmentWaitingForCancellation =
     workingCase.state === CaseState.WAITING_FOR_CANCELLATION
-  const isIndictmentReceived =
-    workingCase.state === CaseState.RECEIVED ||
-    workingCase.state === CaseState.MAIN_HEARING
+  const isIndictmentReceived = workingCase.state === CaseState.RECEIVED
 
   const userCanSendIndictmentToCourt =
-    Boolean(user?.canConfirmIndictment) &&
-    workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
+    Boolean(user?.canConfirmIndictment) && isIndictmentWaitingForConfirmation
   const userCanCancelIndictment =
-    (workingCase.state === CaseState.SUBMITTED ||
-      workingCase.state === CaseState.RECEIVED) &&
+    (isIndictmentSubmitted || isIndictmentReceived) &&
     !workingCase.indictmentDecision
+  const userCanAddDocuments =
+    isIndictmentSubmitted ||
+    (isIndictmentReceived &&
+      workingCase.indictmentDecision !==
+        IndictmentDecision.POSTPONING_UNTIL_VERDICT &&
+      workingCase.indictmentDecision !== IndictmentDecision.COMPLETING)
 
   const handleTransition = async (transitionType: CaseTransition) => {
     const caseTransitioned = await transitionCase(
@@ -178,17 +184,21 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
-        {workingCase.state === CaseState.RECEIVED &&
-          workingCase.court &&
-          latestDate?.date && (
+        {workingCase.court &&
+          latestDate?.date &&
+          workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
+          workingCase.indictmentDecision !==
+            IndictmentDecision.REDISTRIBUTING && (
             <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduledIndictment
+              <IndictmentCaseScheduledCard
                 court={workingCase.court}
+                indictmentDecision={workingCase.indictmentDecision}
                 courtDate={latestDate.date}
                 courtRoom={latestDate.location}
                 postponedIndefinitelyExplanation={
                   workingCase.postponedIndefinitelyExplanation
                 }
+                courtSessionType={workingCase.courtSessionType}
               />
             </Box>
           )}
@@ -200,9 +210,36 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
         )}
-        <Box marginBottom={userCanSendIndictmentToCourt ? 5 : 10}>
+        <Box
+          marginBottom={
+            workingCase.indictmentDecision !==
+              IndictmentDecision.POSTPONING_UNTIL_VERDICT ||
+            userCanSendIndictmentToCourt
+              ? 5
+              : 10
+          }
+        >
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
+        {userCanAddDocuments && (
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            marginBottom={userCanSendIndictmentToCourt ? 5 : 10}
+          >
+            <Button
+              size="small"
+              icon="add"
+              onClick={() =>
+                router.push(
+                  `${constants.INDICTMENTS_ADD_FILES_ROUTE}/${workingCase.id}`,
+                )
+              }
+            >
+              {formatMessage(strings.addDocumentsButtonText)}
+            </Button>
+          </Box>
+        )}
         {userCanSendIndictmentToCourt && (
           <Box marginBottom={10}>
             <SectionHeading

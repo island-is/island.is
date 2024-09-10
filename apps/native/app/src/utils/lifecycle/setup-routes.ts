@@ -68,6 +68,18 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/home-options', async (passProps) => {
+    Navigation.dismissAllModals()
+    selectTab(2)
+    await Navigation.popToRoot(StackRegistry.HomeStack)
+    await Navigation.push(StackRegistry.HomeStack, {
+      component: {
+        name: ComponentRegistry.HomeOptionsScreen,
+        passProps,
+      },
+    })
+  })
+
   addRoute('/assets', async (passProps) => {
     await Navigation.dismissAllModals()
     await Navigation.popToRoot(StackRegistry.MoreStack)
@@ -92,6 +104,7 @@ export function setupRoutes() {
 
   addRoute('/air-discount', async (passProps) => {
     await Navigation.dismissAllModals()
+    selectTab(4)
     await Navigation.popToRoot(StackRegistry.MoreStack)
     await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
@@ -108,6 +121,21 @@ export function setupRoutes() {
           {
             component: {
               name: ComponentRegistry.PersonalInfoScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/passkey', async (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.PasskeyScreen,
               passProps,
             },
           },
@@ -191,7 +219,10 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/vehicle/:id', (passProps: any) => {
+  addRoute('/vehicle/:id', async (passProps: any) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.popToRoot(StackRegistry.MoreStack)
     Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.VehicleDetailScreen,

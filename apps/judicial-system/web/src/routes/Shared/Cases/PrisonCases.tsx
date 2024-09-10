@@ -1,8 +1,8 @@
-import React, { useContext, useMemo } from 'react'
+import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Tag, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -31,6 +31,7 @@ import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
   CaseListEntry,
   CaseState,
+  CaseType,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -38,12 +39,12 @@ import { usePrisonCasesQuery } from './prisonCases.generated'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
-export const PrisonCases: React.FC = () => {
+export const PrisonCases: FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { openCaseInNewTabMenuItem } = useContextMenu()
 
-  const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
+  const isPrisonAdmin = user?.institution?.type === InstitutionType.PRISON_ADMIN
 
   const { data, error, loading } = usePrisonCasesQuery({
     fetchPolicy: 'no-cache',
@@ -52,12 +53,21 @@ export const PrisonCases: React.FC = () => {
 
   const resCases = data?.cases
 
-  const [activeCases, pastCases] = useMemo(() => {
+  const [activeCases, pastCases, indictmentCases] = useMemo(() => {
     if (!resCases) {
-      return [[], []]
+      return [[], [], []]
     }
 
-    return partition(resCases, (c) => !c.isValidToDateInThePast)
+    const [indictmentCases, otherCases] = partition(
+      resCases,
+      (c) => c.type === CaseType.INDICTMENT,
+    )
+    const [activeCases, pastCases] = partition(
+      otherCases,
+      (c) => !c.isValidToDateInThePast,
+    )
+
+    return [activeCases, pastCases, indictmentCases]
   }, [resCases])
 
   const renderTable = useMemo(
@@ -70,14 +80,14 @@ export const PrisonCases: React.FC = () => {
             },
             {
               title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-              sortable: { isSortable: true, key: 'defendant' },
+              sortable: { isSortable: true, key: 'defendants' },
             },
             {
               title: formatMessage(tables.type),
             },
             {
               title: capitalize(formatMessage(tables.created)),
-              sortable: { isSortable: true, key: 'createdAt' },
+              sortable: { isSortable: true, key: 'created' },
             },
             { title: formatMessage(tables.state) },
             {
@@ -143,6 +153,79 @@ export const PrisonCases: React.FC = () => {
     [formatMessage, openCaseInNewTabMenuItem],
   )
 
+  const renderIndictmentTable = useMemo(
+    () => (cases: CaseListEntry[]) => {
+      return (
+        <Table
+          thead={[
+            {
+              title: formatMessage(tables.caseNumber),
+            },
+            {
+              title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
+              sortable: { isSortable: true, key: 'defendants' },
+            },
+            {
+              title: formatMessage(tables.court),
+            },
+            {
+              title: capitalize(formatMessage(tables.sentencingDate)),
+            },
+            { title: formatMessage(tables.state) },
+          ]}
+          data={cases}
+          columns={[
+            {
+              cell: (row) => (
+                <CourtCaseNumber
+                  courtCaseNumber={row.courtCaseNumber ?? ''}
+                  policeCaseNumbers={row.policeCaseNumbers ?? []}
+                  appealCaseNumber={row.appealCaseNumber ?? ''}
+                />
+              ),
+            },
+            {
+              cell: (row) => <DefendantInfo defendants={row.defendants} />,
+            },
+            {
+              cell: (row) => <ColumnCaseType type={row.type} />,
+            },
+            {
+              cell: (row) => (
+                <CreatedDate created={row.indictmentCompletedDate} />
+              ),
+            },
+            {
+              cell: () => (
+                <Tag variant="purple" outlined disabled truncate>
+                  {'Nýtt'}
+                </Tag>
+              ),
+            },
+          ]}
+          generateContextMenuItems={(row) => [openCaseInNewTabMenuItem(row.id)]}
+        />
+      )
+    },
+    [formatMessage, openCaseInNewTabMenuItem],
+  )
+
+  const renderAlertMessage = () => {
+    return (
+      <div className={styles.infoContainer}>
+        <AlertMessage
+          type="info"
+          title={formatMessage(
+            m.activeRequests.prisonStaffUsers.infoContainerTitle,
+          )}
+          message={formatMessage(
+            m.activeRequests.prisonStaffUsers.infoContainerText,
+          )}
+        />
+      </div>
+    )
+  }
+
   return (
     <SharedPageLayout>
       <PageHeader title={formatMessage(titles.shared.cases)} />
@@ -163,54 +246,46 @@ export const PrisonCases: React.FC = () => {
         </div>
       ) : (
         <>
+          {isPrisonAdmin && (
+            <>
+              <SectionHeading
+                title={formatMessage(
+                  m.activeRequests.prisonStaffUsers
+                    .prisonAdminIndictmentCaseTitle,
+                )}
+              />
+              <Box marginBottom={[5, 5, 12]}>
+                {loading || !user || indictmentCases.length > 0
+                  ? renderIndictmentTable(indictmentCases)
+                  : renderAlertMessage()}
+              </Box>
+            </>
+          )}
+
           <SectionHeading
             title={formatMessage(
-              isPrisonUser
-                ? m.activeRequests.prisonStaffUsers.title
-                : m.activeRequests.prisonStaffUsers.prisonAdminTitle,
+              isPrisonAdmin
+                ? m.activeRequests.prisonStaffUsers.prisonAdminTitle
+                : m.activeRequests.prisonStaffUsers.title,
             )}
           />
           <Box marginBottom={[5, 5, 12]}>
-            {loading || !user || activeCases.length > 0 ? (
-              renderTable(activeCases)
-            ) : (
-              <div className={styles.infoContainer}>
-                <AlertMessage
-                  type="info"
-                  title={formatMessage(
-                    m.activeRequests.prisonStaffUsers.infoContainerTitle,
-                  )}
-                  message={formatMessage(
-                    m.activeRequests.prisonStaffUsers.infoContainerText,
-                  )}
-                />
-              </div>
-            )}
+            {loading || !user || activeCases.length > 0
+              ? renderTable(activeCases)
+              : renderAlertMessage()}
           </Box>
-        </>
-      )}
 
-      <SectionHeading
-        title={formatMessage(
-          isPrisonUser
-            ? m.pastRequests.prisonStaffUsers.title
-            : m.pastRequests.prisonStaffUsers.prisonAdminTitle,
-        )}
-      />
-      {loading || pastCases.length > 0 ? (
-        renderTable(pastCases)
-      ) : (
-        <div className={styles.infoContainer}>
-          <AlertMessage
-            type="info"
+          <SectionHeading
             title={formatMessage(
-              m.activeRequests.prisonStaffUsers.infoContainerTitle,
-            )}
-            message={formatMessage(
-              m.activeRequests.prisonStaffUsers.infoContainerText,
+              isPrisonAdmin
+                ? m.pastRequests.prisonStaffUsers.prisonAdminTitle
+                : m.pastRequests.prisonStaffUsers.title,
             )}
           />
-        </div>
+          {loading || pastCases.length > 0
+            ? renderTable(pastCases)
+            : renderAlertMessage()}
+        </>
       )}
     </SharedPageLayout>
   )

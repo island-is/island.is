@@ -12,8 +12,8 @@ import {
   isCompletedCase,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
-  isPrisonSystemUser,
   isProsecutionUser,
+  isPublicProsecutorUser,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -36,21 +36,17 @@ export class ViewCaseFileGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case')
     }
 
-    // TODO: Limit access based on a combination of
-    // case type, case state, appeal case state and case file category
-    // to get accurate case file permissions
-
     if (isProsecutionUser(user)) {
+      return true
+    }
+
+    if (isPublicProsecutorUser(user) && isCompletedCase(theCase.state)) {
       return true
     }
 
     if (
       isDistrictCourtUser(user) &&
-      ([
-        CaseState.SUBMITTED,
-        CaseState.RECEIVED,
-        CaseState.MAIN_HEARING,
-      ].includes(theCase.state) ||
+      ([CaseState.SUBMITTED, CaseState.RECEIVED].includes(theCase.state) ||
         isCompletedCase(theCase.state))
     ) {
       return true
@@ -65,14 +61,6 @@ export class ViewCaseFileGuard implements CanActivate {
         CaseAppealState.COMPLETED,
         CaseAppealState.WITHDRAWN,
       ].includes(theCase.appealState)
-    ) {
-      return true
-    }
-
-    if (
-      isPrisonSystemUser(user) &&
-      theCase.appealState &&
-      [CaseAppealState.COMPLETED].includes(theCase.appealState)
     ) {
       return true
     }

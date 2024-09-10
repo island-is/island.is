@@ -4,19 +4,16 @@
     "/api/v1/applications/{id}/price": {
       "get": {
         "operationId": "getPrice",
-        "summary": "Get price of application by ID.",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "Id of the application to get price.",
-            "allowEmptyValue": false,
             "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -27,27 +24,9 @@
         }
       }
     },
-    "/api/v1/applications/{id}/post": {
-      "post": {
-        "operationId": "postApplication",
-        "summary": "Post application.",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "Id of the application to post.",
-            "allowEmptyValue": false,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": { "204": { "description": "" } }
-      }
-    },
-    "/api/v1/applications/{id}/comments": {
+    "/api/v1/applications/{id}": {
       "get": {
-        "operationId": "getComments",
-        "summary": "Get comments by application ID.",
+        "operationId": "getApplication",
         "parameters": [
           {
             "name": "id",
@@ -57,7 +36,46 @@
           }
         ],
         "responses": {
-          "200": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/applications/{id}/post": {
+      "post": {
+        "operationId": "postApplication",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "201": { "description": "" } }
+      }
+    },
+    "/api/v1/applications/{id}/comments": {
+      "get": {
+        "operationId": "getComments",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -71,7 +89,6 @@
       },
       "post": {
         "operationId": "postComment",
-        "summary": "Add comment to application.",
         "parameters": [
           {
             "name": "id",
@@ -90,13 +107,46 @@
             }
           }
         },
+        "responses": { "201": { "description": "" } }
+      }
+    },
+    "/api/v1/applications/{id}/upload": {
+      "post": {
+        "operationId": "uploadApplicationAttachment",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Handles uploading attachments for an application.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "description": "The attachments",
+                    "type": "array",
+                    "items": { "type": "string", "format": "binary" }
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
-          "201": {
-            "description": "",
+          "200": {
+            "description": "The attachments were uploaded successfully.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostCaseCommentResponse"
+                  "$ref": "#/components/schemas/S3UploadFilesResponse"
                 }
               }
             }
@@ -104,11 +154,221 @@
         }
       }
     },
+    "/api/v1/applications/{id}/presigned-url/{type}": {
+      "post": {
+        "operationId": "getPresignedUrl",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "required": true,
+            "in": "path",
+            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GetPresignedUrlBody" }
+            }
+          }
+        },
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresignedUrlResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/applications/{id}/attachments/{type}": {
+      "post": {
+        "operationId": "addApplicationAttachment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "required": true,
+            "in": "path",
+            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostApplicationAttachmentBody"
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "" } }
+      },
+      "get": {
+        "operationId": "getApplicationAttachments",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "required": true,
+            "in": "path",
+            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationAttachmentsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/applications/{id}/attachments": {
+      "delete": {
+        "operationId": "deleteApplicationAttachment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "key",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "204": { "description": "" } }
+      }
+    },
     "/api/v1/health": {
       "get": {
-        "operationId": "HealthController_health",
+        "operationId": "HealthController_",
         "parameters": [],
         "responses": { "200": { "description": "Health check endpoint." } }
+      }
+    },
+    "/api/v1/pdf/case/{id}": {
+      "get": {
+        "operationId": "getPdfByCaseId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StreamableFile" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/application/{id}": {
+      "get": {
+        "operationId": "getPdfByApplicationId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StreamableFile" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/case/{id}/url": {
+      "get": {
+        "operationId": "getPdfUrlByCaseId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetPdfUrlResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/application/{id}/url": {
+      "get": {
+        "operationId": "getPdfUrlByApplicationId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetPdfUrlResponse" }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -129,6 +389,446 @@
         },
         "required": ["price"]
       },
+      "ApplicationRequirements": {
+        "type": "object",
+        "properties": {
+          "approveExternalData": {
+            "type": "string",
+            "enum": ["yes", "no"],
+            "example": "yes",
+            "description": "Has the applicant approved the requirements"
+          }
+        },
+        "required": ["approveExternalData"]
+      },
+      "ApplicationAdvert": {
+        "type": "object",
+        "properties": {
+          "department": {
+            "type": "string",
+            "example": "b783c4d5-6e78-9f01-2g34-h56i7j8k9l0m",
+            "description": "Id of the selected department for the application advert"
+          },
+          "type": {
+            "type": "string",
+            "example": "a71ka2b3-4c56-7d89-0e12-3f45g6h7i8j9",
+            "description": "Id of the selected type for the application advert"
+          },
+          "title": {
+            "type": "string",
+            "example": "GJALDSKRÁ fyrir hundahald í Reykjavík",
+            "description": "Title of the application advert"
+          },
+          "document": {
+            "type": "string",
+            "description": "HTML string of the application advert"
+          },
+          "template": {
+            "type": "string",
+            "description": "Selected template for the application advert"
+          },
+          "subType": {
+            "type": "string",
+            "example": "b781ks2-3c45-6d78-9e01-2f34g5h6i7j8",
+            "description": "Id of the selected subType for the application advert, only when type is \"Reglugerð\""
+          }
+        },
+        "required": [
+          "department",
+          "type",
+          "title",
+          "document",
+          "template",
+          "subType"
+        ]
+      },
+      "ApplicationPreview": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "type": "string",
+            "example": "<html><p>GJALDSKRÁ</p></html>",
+            "description": "HTML string of the advert with signature"
+          }
+        },
+        "required": ["document"]
+      },
+      "ApplicationSignatureMember": {
+        "type": "object",
+        "properties": {
+          "above": {
+            "type": "string",
+            "example": "F.h.r",
+            "description": "Text above the name of the signature"
+          },
+          "name": {
+            "type": "string",
+            "example": "Jón Jónsson",
+            "description": "Name of the signature"
+          },
+          "after": {
+            "type": "string",
+            "example": "ráðherra",
+            "description": "Text after the name of the signature"
+          },
+          "below": {
+            "type": "string",
+            "example": "Text below the name of the signature",
+            "description": "borgarstjóri"
+          }
+        },
+        "required": ["above", "name", "after", "below"]
+      },
+      "ApplicationRegularSignature": {
+        "type": "object",
+        "properties": {
+          "institution": {
+            "type": "string",
+            "example": "Dómsmálaráðuneytið",
+            "description": "Institution/place of the signature"
+          },
+          "date": {
+            "type": "string",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Date of the signature"
+          },
+          "members": {
+            "description": "Member of the signature",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationSignatureMember"
+            }
+          }
+        },
+        "required": ["institution", "date", "members"]
+      },
+      "ApplicationCommitteeSignature": {
+        "type": "object",
+        "properties": {
+          "institution": {
+            "type": "string",
+            "example": "Dómsmálaráðuneytið",
+            "description": "Institution/place of the signature"
+          },
+          "date": {
+            "type": "string",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Date of the signature"
+          },
+          "members": {
+            "description": "Member of the signature",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationSignatureMember"
+            }
+          }
+        },
+        "required": ["institution", "date", "members"]
+      },
+      "ApplicationSignature": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "committee",
+            "description": "Signature type of the application"
+          },
+          "signature": {
+            "type": "string",
+            "example": "<p>Jón Jónsson</p>",
+            "description": "HTML string of the signature"
+          },
+          "additional": {
+            "type": "string",
+            "example": "Dagur B. Eggertsson",
+            "description": "Additional name of the signature"
+          },
+          "regular": {
+            "description": "Regular signature of the application",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationRegularSignature"
+            }
+          },
+          "committee": {
+            "description": "Committee signature of the application",
+            "allOf": [
+              { "$ref": "#/components/schemas/ApplicationCommitteeSignature" }
+            ]
+          }
+        },
+        "required": ["type", "signature", "additional", "regular", "committee"]
+      },
+      "ApplicationAttachmentsFileSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "filename.doc",
+            "description": "Name of the attachment"
+          },
+          "key": {
+            "type": "string",
+            "example": "key",
+            "description": "Key of the attachment"
+          }
+        },
+        "required": ["name", "key"]
+      },
+      "ApplicationAttachments": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "description": "List of attachments",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationAttachmentsFileSchema"
+            }
+          },
+          "fileNames": {
+            "type": "string",
+            "example": "document",
+            "description": "Selected department for the application attachment, should be \"document\" or \"additions\""
+          }
+        },
+        "required": ["files", "fileNames"]
+      },
+      "ApplicationContentCategories": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "Gæludýr",
+            "description": "Label of the category"
+          },
+          "value": {
+            "type": "string",
+            "example": "b619j2k3-4l56-7m89-0n12-3o45p6q7r8s9",
+            "description": "Id of the selected category"
+          }
+        },
+        "required": ["label", "value"]
+      },
+      "ApplicationCommunicationChannels": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "email",
+            "description": "Selected communication channel"
+          },
+          "phone": {
+            "type": "string",
+            "example": "5555555",
+            "description": "Phone number of the communication channel"
+          }
+        },
+        "required": ["email", "phone"]
+      },
+      "ApplicationPublishing": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Requested publishing date"
+          },
+          "fastTrack": {
+            "type": "string",
+            "enum": ["yes", "no"],
+            "example": "yes",
+            "description": "Request fast track for the advert"
+          },
+          "contentCategories": {
+            "description": "List of selected categories",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationContentCategories"
+            }
+          },
+          "communicationChannels": {
+            "description": "Selected communication channels",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationCommunicationChannels"
+            }
+          },
+          "message": {
+            "type": "string",
+            "example": "Some message..",
+            "description": "Message for the publisher"
+          }
+        },
+        "required": [
+          "date",
+          "fastTrack",
+          "contentCategories",
+          "communicationChannels",
+          "message"
+        ]
+      },
+      "ApplicationOriginalFiles": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "description": "List of original files",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationAttachmentsFileSchema"
+            }
+          }
+        },
+        "required": ["files"]
+      },
+      "ApplicationAnswers": {
+        "type": "object",
+        "properties": {
+          "requirements": {
+            "example": "true",
+            "description": "Has the applicant approved the external data",
+            "allOf": [
+              { "$ref": "#/components/schemas/ApplicationRequirements" }
+            ]
+          },
+          "advert": {
+            "description": "Application advert",
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationAdvert" }]
+          },
+          "preview": {
+            "description": "Contents of the full document",
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationPreview" }]
+          },
+          "signature": {
+            "description": "Application signature",
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationSignature" }]
+          },
+          "additionsAndDocuments": {
+            "description": "Application attachments",
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationAttachments" }]
+          },
+          "publishing": {
+            "description": "Application publishing",
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationPublishing" }]
+          },
+          "original": {
+            "description": "Application original files",
+            "allOf": [
+              { "$ref": "#/components/schemas/ApplicationOriginalFiles" }
+            ]
+          }
+        },
+        "required": [
+          "requirements",
+          "advert",
+          "preview",
+          "signature",
+          "additionsAndDocuments",
+          "publishing",
+          "original"
+        ]
+      },
+      "Application": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
+            "description": "Guid of the application"
+          },
+          "applicant": {
+            "type": "string",
+            "example": "0101015050",
+            "description": "National id of the applicant"
+          },
+          "assignees": {
+            "example": ["0101015050"],
+            "description": "List of assignees",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "attachments": { "type": "object", "description": "Attachments" },
+          "state": {
+            "type": "string",
+            "example": "draft",
+            "description": "State of the application"
+          },
+          "status": {
+            "type": "string",
+            "example": "inprogress",
+            "description": "Status of the application"
+          },
+          "typeId": {
+            "type": "string",
+            "example": "OfficialJournalOfIceland",
+            "description": "Type of the application"
+          },
+          "created": {
+            "type": "string",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Application creation date"
+          },
+          "modified": {
+            "type": "string",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Application last modified date"
+          },
+          "name": {
+            "type": "string",
+            "example": "Stjórnartíðindi",
+            "description": "Name of the application"
+          },
+          "applicantActors": {
+            "description": "List of applicant actors",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "answers": {
+            "description": "Application answers",
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationAnswers" }]
+          },
+          "externalData": { "type": "object" },
+          "listed": {
+            "type": "boolean",
+            "example": true,
+            "description": "Is the application listed"
+          },
+          "prunedAt": {
+            "type": "string",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Prune date of the application"
+          },
+          "pruned": {
+            "type": "boolean",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Date of the application"
+          }
+        },
+        "required": [
+          "id",
+          "applicant",
+          "assignees",
+          "attachments",
+          "state",
+          "status",
+          "typeId",
+          "created",
+          "modified",
+          "name",
+          "applicantActors",
+          "answers",
+          "externalData",
+          "listed",
+          "prunedAt",
+          "pruned"
+        ]
+      },
+      "GetApplicationResponse": {
+        "type": "object",
+        "properties": {
+          "application": { "$ref": "#/components/schemas/Application" }
+        },
+        "required": ["application"]
+      },
       "CaseCommentTask": {
         "type": "object",
         "properties": {
@@ -148,8 +848,8 @@
             "type": "string",
             "enum": [
               "Innsent af:",
-              "merkir sér málið.",
               "færir mál á",
+              "merkir sér málið.",
               "færir mál í stöðuna:",
               "gerir athugasemd.",
               "skráir skilaboð"
@@ -257,15 +957,142 @@
         },
         "required": ["comment"]
       },
-      "PostCaseCommentResponse": {
+      "S3UploadFileResponse": {
         "type": "object",
         "properties": {
-          "comment": {
-            "description": "The created case comment",
-            "allOf": [{ "$ref": "#/components/schemas/CaseComment" }]
+          "url": {
+            "type": "string",
+            "description": "The URL of the uploaded file."
+          },
+          "filename": {
+            "type": "string",
+            "description": "Filename of the uploaded file."
+          },
+          "size": {
+            "type": "number",
+            "description": "The size of the uploaded file."
           }
         },
-        "required": ["comment"]
+        "required": ["url", "filename", "size"]
+      },
+      "S3UploadFilesResponse": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "description": "The uploaded files.",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/S3UploadFileResponse" }
+          }
+        },
+        "required": ["files"]
+      },
+      "GetPresignedUrlBody": {
+        "type": "object",
+        "properties": {
+          "fileName": { "type": "string" },
+          "fileType": { "type": "string" }
+        },
+        "required": ["fileName", "fileType"]
+      },
+      "PresignedUrlResponse": {
+        "type": "object",
+        "properties": { "url": { "type": "string" } },
+        "required": ["url"]
+      },
+      "PostApplicationAttachmentBody": {
+        "type": "object",
+        "properties": {
+          "fileName": { "type": "string" },
+          "originalFileName": { "type": "string" },
+          "fileFormat": { "type": "string" },
+          "fileExtension": { "type": "string" },
+          "fileLocation": { "type": "string" },
+          "fileSize": { "type": "number" }
+        },
+        "required": [
+          "fileName",
+          "originalFileName",
+          "fileFormat",
+          "fileExtension",
+          "fileLocation",
+          "fileSize"
+        ]
+      },
+      "ApplicationAttachmentType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of the attachment type"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the attachment type"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the attachment type"
+          }
+        },
+        "required": ["id", "title", "slug"]
+      },
+      "ApplicationAttachment": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Id of the attachment" },
+          "applicationId": {
+            "type": "string",
+            "description": "Id of the application"
+          },
+          "originalFileName": {
+            "type": "string",
+            "description": "Original file name"
+          },
+          "fileName": { "type": "string", "description": "File name" },
+          "fileFormat": { "type": "string", "description": "File format" },
+          "fileExtension": {
+            "type": "string",
+            "description": "File extension"
+          },
+          "fileSize": { "type": "number", "description": "File size" },
+          "fileLocation": { "type": "string", "description": "File location" },
+          "type": {
+            "description": "Attachment type",
+            "allOf": [
+              { "$ref": "#/components/schemas/ApplicationAttachmentType" }
+            ]
+          },
+          "deleted": { "type": "boolean", "description": "Deleted" }
+        },
+        "required": [
+          "id",
+          "applicationId",
+          "originalFileName",
+          "fileName",
+          "fileFormat",
+          "fileExtension",
+          "fileSize",
+          "fileLocation",
+          "type",
+          "deleted"
+        ]
+      },
+      "GetApplicationAttachmentsResponse": {
+        "type": "object",
+        "properties": {
+          "attachments": {
+            "description": "Array of attachments tied to the application",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApplicationAttachment" }
+          }
+        },
+        "required": ["attachments"]
+      },
+      "StreamableFile": { "type": "object", "properties": {} },
+      "GetPdfUrlResponse": {
+        "type": "object",
+        "properties": { "url": { "type": "string" } },
+        "required": ["url"]
       }
     }
   }

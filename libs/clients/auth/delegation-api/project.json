@@ -2,20 +2,17 @@
   "name": "clients-auth-delegation-api",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/auth/delegation-api/src",
+  "tags": ["lib:client", "scope:client"],
+  "implicitDependencies": ["services-auth-delegation-api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/clients/auth/delegation-api/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/auth/delegation-api"],
       "options": {
-        "jestConfig": "libs/clients/auth/delegation-api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/auth/delegation-api/jest.config.ts"
       }
     },
     "codegen/backend-client": {
@@ -25,7 +22,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "implicitDependencies": ["services-auth-delegation-api"],
-  "tags": ["lib:client", "scope:client"]
+  }
 }

@@ -15,6 +15,7 @@ export const ComponentRegistry = {
   OnboardingBiometricsScreen: `${prefix}.screens.OnboardingBiometrics`,
   OnboardingNotificationsScreen: `${prefix}.screens.OnboardingNotifications`,
   HomeScreen: `${prefix}.screens.Home`,
+  HomeOptionsScreen: `${prefix}.screens.HomeOptions`,
   InboxScreen: `${prefix}.screens.Inbox`,
   ApplicationsScreen: `${prefix}.screens.ApplicationsScreen`,
   WalletScreen: `${prefix}.screens.Wallet`,
@@ -49,6 +50,7 @@ export const ComponentRegistry = {
 
   // overlays
   OfflineBanner: `${prefix}.overlay.OfflineBanner`,
+  PasskeyScreen: `${prefix}.screens.PasskeyScreen`,
 }
 
 export const ButtonRegistry = {
@@ -63,6 +65,8 @@ export const ButtonRegistry = {
   ScanLicenseDoneButton: `${prefix}.button.ScanLicenseDoneButton`,
   DocumentStarButton: `${prefix}.button.DocumentStarButton`,
   DocumentArchiveButton: `${prefix}.button.DocumentArchiveButton`,
+  InboxFilterClearButton: `${prefix}.button.InboxFilterClearButton`,
+  HomeScreenOptionsButton: `${prefix}.button.HomeScreenOptionsButton`,
 }
 
 export const StackRegistry = {

@@ -53,6 +53,17 @@ export const userWithNoDelegations: MockUserProfileDto = {
   isRestricted: false,
 }
 
+export const userWithNoEmail: MockUserProfileDto = {
+  name: 'userWithNoEmail',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  emailVerified: false,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+}
+
 export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
   name: 'userWithEmailNotificationsDisabled',
   nationalId: createNationalId('person'),
@@ -101,23 +112,33 @@ export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
     isRestricted: false,
   }
 
+export const companyUser: MockUserProfileDto = {
+  name: 'companyUser',
+  nationalId: createNationalId('company'),
+  mobilePhoneNumber: '1234567',
+  email: 'email@company.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+}
+
 export const mockTemplateId = 'HNIPP.DEMO.ID'
 
 export const getMockHnippTemplate = ({
   templateId = mockTemplateId,
-  notificationTitle = 'Demo title ',
-  notificationBody = 'Demo body {{arg1}}',
-  notificationDataCopy = 'Demo data copy',
+  title = 'Demo title ',
+  externalBody = 'Demo body {{arg1}}',
+  internalBody = 'Demo data copy',
   clickActionUrl = 'https://island.is/minarsidur/postholf',
-  category = 'Demo category',
   args = ['arg1', 'arg2'],
 }: Partial<HnippTemplate>): HnippTemplate => ({
   templateId,
-  notificationTitle,
-  notificationBody,
-  notificationDataCopy,
+  title,
+  externalBody,
+  internalBody,
   clickActionUrl,
-  category,
   args,
 })
 
@@ -129,6 +150,8 @@ export const userProfiles = [
   userWithDocumentNotificationsDisabled,
   userWithFeatureFlagDisabled,
   userWithSendToDelegationsFeatureFlagDisabled,
+  userWithNoEmail,
+  companyUser,
 ]
 
 const delegations: Record<string, DelegationRecordDTO[]> = {

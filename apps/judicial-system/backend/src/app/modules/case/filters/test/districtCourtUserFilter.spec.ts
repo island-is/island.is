@@ -41,7 +41,6 @@ const continueFromIndictmentType = (user: User, type: string) => {
     CaseState.SUBMITTED,
     CaseState.WAITING_FOR_CANCELLATION,
     CaseState.RECEIVED,
-    CaseState.MAIN_HEARING,
     CaseState.COMPLETED,
   ]
 

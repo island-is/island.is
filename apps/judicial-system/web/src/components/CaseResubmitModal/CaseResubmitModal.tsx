@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { FC, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -28,7 +28,7 @@ export const getCaseResubmittedText = (
   })
 }
 
-const CaseResubmitModal: React.FC<React.PropsWithChildren<Props>> = ({
+const CaseResubmitModal: FC<Props> = ({
   workingCase,
   isLoading,
   onClose,

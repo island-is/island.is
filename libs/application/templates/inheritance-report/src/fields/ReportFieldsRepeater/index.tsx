@@ -420,10 +420,11 @@ export const ReportFieldsRepeater: FC<
                         placeholder={field.placeholder}
                         options={debtTypes.map((type) => ({
                           label: formatMessage(type.label),
-                          value: type.value,
+                          value: type.label,
                         }))}
                         backgroundColor="blue"
                         disabled={!repeaterField.enabled}
+                        error={err}
                       />
                     ) : (
                       <InputController

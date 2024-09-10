@@ -13,12 +13,10 @@ query CurrentUser {
     canConfirmIndictment
     institution {
       id
-      created
-      modified
-      name
       type
+      name
+      defaultCourtId
       policeCaseNumberPrefix
-      active
     }
   }
 }

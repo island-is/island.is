@@ -958,8 +958,13 @@ export const m = defineMessages({
     description: '',
   },
   notFilledOut: {
-    id: 'es.application:notFilledOut',
+    id: 'es.application:notFilledOut#markdown',
     defaultMessage: 'Ekki fyllt út',
+    description: '',
+  },
+  notFilledOutItalic: {
+    id: 'es.application:notFilledOut#markdown',
+    defaultMessage: '*Ekki fyllt út*',
     description: '',
   },
 

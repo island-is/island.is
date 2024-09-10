@@ -9,7 +9,7 @@ import { CreateDraftRegulationDto, UpdateDraftRegulationDto } from './dto'
 import { DraftRegulationModel } from './draft_regulation.model'
 import { DraftRegulationChangeModel } from '../draft_regulation_change'
 import { DraftRegulationCancelModel } from '../draft_regulation_cancel'
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 import { DraftRegulationCancelService } from '../draft_regulation_cancel/draft_regulation_cancel.service'
 import { DraftRegulationChangeService } from '../draft_regulation_change/draft_regulation_change.service'
 import { DraftAuthorService } from '../draft_author/draft_author.service'
@@ -77,8 +77,12 @@ export class DraftRegulationService {
         offset: (page - 1) * count,
         order: [
           ['drafting_status', 'ASC'],
-          ['fast_track', 'DESC'],
+          [
+            Sequelize.literal('CASE WHEN fast_track IS TRUE THEN 1 ELSE 0 END'),
+            'DESC',
+          ],
           ['ideal_publish_date', 'ASC'],
+          ['modified', 'DESC'],
           ['created', 'DESC'],
         ],
       })

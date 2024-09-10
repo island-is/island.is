@@ -3,21 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/pii/src",
   "projectType": "library",
+  "tags": ["lib:js", "scope:js"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/shared/pii/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/shared/pii"],
       "options": {
-        "jestConfig": "libs/shared/pii/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/shared/pii/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:js", "scope:js"]
+  }
 }

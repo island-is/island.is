@@ -3,24 +3,18 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/air-discount-scheme/types/src",
   "projectType": "library",
+  "tags": ["lib:js", "scope:js"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/air-discount-scheme/types/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/air-discount-scheme/types/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/air-discount-scheme/types/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/air-discount-scheme/types"]
     }
-  },
-  "tags": ["lib:js", "scope:js"]
+  }
 }

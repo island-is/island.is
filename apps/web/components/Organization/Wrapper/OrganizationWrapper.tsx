@@ -1,4 +1,11 @@
-import React, { ReactNode, useEffect, useMemo, useState } from 'react'
+import React, {
+  PropsWithChildren,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { IntlConfig, IntlProvider } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -129,6 +136,7 @@ interface WrapperProps {
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  isSubpage?: boolean
 }
 
 const darkThemes = ['hms']
@@ -194,7 +202,7 @@ export const getThemeConfig = (
 
 export const OrganizationHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
-> = ({ organizationPage }) => {
+> = ({ organizationPage, isSubpage }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage?.organization?.namespace?.fields || '{}'),
@@ -244,6 +252,7 @@ export const OrganizationHeader: React.FC<
     titleSectionPaddingLeft: organizationPage.themeProperties
       .titleSectionPaddingLeft as ResponsiveSpace,
     mobileBackground: organizationPage.themeProperties.mobileBackgroundColor,
+    isSubpage: isSubpage && n('smallerSubpageHeader', false),
   }
 
   switch (organizationPage.theme) {
@@ -269,7 +278,12 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'digital_iceland':
-      return (
+      return n('useDefaultDigitalIcelandHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          titleClassName={styles.digitalIcelandHeaderTitle}
+        />
+      ) : (
         <DigitalIcelandHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -831,25 +845,54 @@ const getActiveNavigationItemTitle = (
     }
   }
 }
+
+interface TranslationNamespaceProviderProps {
+  messages: IntlConfig['messages']
+}
+
+const TranslationNamespaceProvider = ({
+  messages,
+  children,
+}: PropsWithChildren<TranslationNamespaceProviderProps>) => {
+  const { activeLocale } = useI18n()
+
+  return (
+    <IntlProvider locale={activeLocale} messages={messages}>
+      {children}
+    </IntlProvider>
+  )
+}
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 const renderConnectedComponent = (slice) => {
   if (!slice?.componentType) return null
 
+  let connectedComponent = null
+
   switch (slice.componentType) {
     case 'LatestNewsCard':
-      return (
+      connectedComponent = (
         <LatestNewsCardConnectedComponent key={slice?.id} {...slice?.json} />
       )
+      break
     case 'Fiskistofa/ShipSearchSidebarInput':
-      return (
-        <SidebarShipSearchInput key={slice?.id} namespace={slice?.json ?? {}} />
-      )
+      connectedComponent = <SidebarShipSearchInput key={slice?.id} />
+      break
     case 'OrganizationSearchBox':
-      return <SearchBox key={slice?.id} {...slice?.json} />
+      connectedComponent = <SearchBox key={slice?.id} {...slice?.json} />
+      break
     default:
       return null
   }
+
+  return (
+    <TranslationNamespaceProvider
+      messages={slice.translationStrings ?? slice.json ?? {}}
+    >
+      {connectedComponent}
+    </TranslationNamespaceProvider>
+  )
 }
 
 export const OrganizationWrapper: React.FC<
@@ -913,7 +956,10 @@ export const OrganizationWrapper: React.FC<
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
-      <OrganizationHeader organizationPage={organizationPage} />
+      <OrganizationHeader
+        organizationPage={organizationPage}
+        isSubpage={isSubpage}
+      />
       {!minimal && (
         <SidebarLayout
           paddingTop={[2, 2, 9]}

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -23,11 +23,13 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
 
 interface Props {
   workingCase: Case
+  displayHeading?: boolean
 }
 
 interface RenderFilesProps {
@@ -35,11 +37,11 @@ interface RenderFilesProps {
   onOpenFile: (fileId: string) => void
 }
 
-export const RenderFiles: React.FC<
-  React.PropsWithChildren<Props & RenderFilesProps>
-> = (props) => {
-  const { caseFiles, onOpenFile, workingCase } = props
-
+export const RenderFiles: FC<Props & RenderFilesProps> = ({
+  caseFiles,
+  onOpenFile,
+  workingCase,
+}) => {
   return (
     <>
       {caseFiles.map((file) => (
@@ -57,10 +59,10 @@ export const RenderFiles: React.FC<
   )
 }
 
-const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
-  const { workingCase } = props
+const IndictmentCaseFilesList: FC<Props> = ({
+  workingCase,
+  displayHeading = true,
+}) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
@@ -81,8 +83,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
     (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
   )
   const others = cf?.filter(
-    (file) =>
-      file.category === CaseFileCategory.CASE_FILE && !file.policeCaseNumber,
+    (file) => file.category === CaseFileCategory.CASE_FILE,
   )
   const rulings = cf?.filter(
     (file) => file.category === CaseFileCategory.RULING,
@@ -93,10 +94,17 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
   const criminalRecordUpdate = cf?.filter(
     (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
   )
+  const uploadedCaseFiles = cf?.filter(
+    (file) =>
+      file.category === CaseFileCategory.PROSECUTOR_CASE_FILE ||
+      file.category === CaseFileCategory.DEFENDANT_CASE_FILE,
+  )
 
   return (
     <>
-      <SectionHeading title={formatMessage(strings.title)} />
+      {displayHeading && (
+        <SectionHeading title={formatMessage(strings.title)} />
+      )}
       {indictments && indictments.length > 0 && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
@@ -118,7 +126,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
             <PdfButton
               caseId={workingCase.id}
               title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
-              pdfType={'indictment'}
+              pdfType="indictment"
               renderAs="row"
             />
           </Box>
@@ -176,7 +184,6 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
           />
         </Box>
       )}
-
       <Box marginBottom={5}>
         <Text variant="h4" as="h4" marginBottom={1}>
           {formatMessage(strings.caseFileTitle)}
@@ -188,15 +195,14 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
               title={formatMessage(strings.caseFileButtonText, {
                 policeCaseNumber,
               })}
-              pdfType={'caseFilesRecord'}
+              pdfType="caseFilesRecord"
               elementId={policeCaseNumber}
               renderAs="row"
             />
           </Box>
         ))}
       </Box>
-      {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
-      (courtRecords?.length || rulings?.length) ? (
+      {courtRecords?.length || rulings?.length ? (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(strings.rulingAndCourtRecordsTitle)}
@@ -208,16 +214,25 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
               workingCase={workingCase}
             />
           )}
-          {rulings && rulings.length > 0 && (
-            <RenderFiles
-              caseFiles={rulings}
-              onOpenFile={onOpen}
-              workingCase={workingCase}
-            />
-          )}
+          {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
+            rulings &&
+            rulings.length > 0 && (
+              <RenderFiles
+                caseFiles={rulings}
+                onOpenFile={onOpen}
+                workingCase={workingCase}
+              />
+            )}
         </Box>
       ) : null}
-
+      {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={3}>
+            {formatMessage(strings.uploadedCaseFiles)}
+          </Text>
+          <CaseFileTable caseFiles={uploadedCaseFiles} onOpenFile={onOpen} />
+        </Box>
+      )}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>

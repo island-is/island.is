@@ -10,13 +10,17 @@ import {
   AuditTrailModule,
   auditTrailModuleConfig,
 } from '@island.is/judicial-system/audit-trail'
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import {
+  SharedAuthModule,
+  sharedAuthModuleConfig,
+} from '@island.is/judicial-system/auth'
 
-import { environment } from '../environments'
-import { BackendApi } from './data-sources/backend'
 import {
   AuthModule,
   authModuleConfig,
+  BackendModule,
+  backendModuleConfig,
+  BackendService,
   CaseListModule,
   CaseModule,
   DefendantModule,
@@ -33,28 +37,30 @@ import {
   UserModule,
 } from './modules'
 
-const debug = !environment.production
+const production = process.env.NODE_ENV === 'production'
+const debug = !production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
-const autoSchemaFile = environment.production
+const autoSchemaFile = production
   ? true
   : 'apps/judicial-system/api/src/api.graphql'
 
 @Module({
   imports: [
-    GraphQLModule.forRoot({
+    GraphQLModule.forRootAsync({
       driver: ApolloDriver,
-      debug,
-      playground,
-      autoSchemaFile,
-      cache: 'bounded',
-      path: '/api/graphql',
-      context: ({ req }: never) => ({ req }),
-      dataSources: () => ({ backendApi: new BackendApi() }),
+      imports: [BackendModule],
+      useFactory: (backendService: BackendService) => ({
+        debug,
+        playground,
+        autoSchemaFile,
+        cache: 'bounded',
+        path: '/api/graphql',
+        context: ({ req }: never) => ({ req }),
+        dataSources: () => ({ backendService }),
+      }),
+      inject: [BackendService],
     }),
-    SharedAuthModule.register({
-      jwtSecret: environment.auth.jwtSecret,
-      secretToken: environment.auth.secretToken,
-    }),
+    SharedAuthModule,
     AuditTrailModule,
     AuthModule,
     UserModule,
@@ -73,11 +79,13 @@ const autoSchemaFile = environment.production
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
+        sharedAuthModuleConfig,
         fileModuleConfig,
         auditTrailModuleConfig,
         featureModuleConfig,
         authModuleConfig,
         defenderModuleConfig,
+        backendModuleConfig,
       ],
     }),
   ],

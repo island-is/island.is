@@ -11,7 +11,6 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   defineTemplateApi,
-  JurisdictionApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
   NationalRegistryUserApi,
@@ -21,6 +20,7 @@ import {
   ExistingApplicationApi,
   InstitutionNationalIds,
   Application,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
@@ -62,6 +62,9 @@ const getCodes = (application: Application) => {
   return [chargeItemCode]
 }
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.DRIVING_LICENSE]
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -82,6 +85,7 @@ const template: ApplicationTemplate<
       : m.applicationForDrivingLicense.defaultMessage,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -112,6 +116,8 @@ const template: ApplicationTemplate<
                     ],
                   allowBELicense:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
+                  allow65Renewal:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
                 })
               },
               write: 'all',
@@ -128,7 +134,6 @@ const template: ApplicationTemplate<
                   },
                 }),
                 DrivingAssessmentApi,
-                JurisdictionApi,
                 QualityPhotoApi,
                 ExistingApplicationApi.configure({
                   params: {

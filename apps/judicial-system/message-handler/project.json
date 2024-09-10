@@ -4,6 +4,7 @@
   "sourceRoot": "apps/judicial-system/message-handler/src",
   "projectType": "application",
   "prefix": "judicial-system-message-handler",
+  "tags": ["scope:judicial-system-api"],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -35,12 +36,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/judicial-system/message-handler/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -48,18 +44,18 @@
         "{workspaceRoot}/coverage/apps/judicial-system/message-handler"
       ],
       "options": {
-        "jestConfig": "apps/judicial-system/message-handler/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/judicial-system/message-handler/jest.config.ts"
       }
     },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/judicial-system/message-handler"
       }
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:judicial-system-api"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

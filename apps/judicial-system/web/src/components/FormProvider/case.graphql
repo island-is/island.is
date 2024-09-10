@@ -171,6 +171,7 @@ query Case($input: CaseQueryInput!) {
       userGeneratedFilename
       displayDate
       policeFileId
+      submittedBy
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
@@ -263,8 +264,49 @@ query Case($input: CaseQueryInput!) {
     }
     indictmentAppealDeadline
     indictmentVerdictViewedByAll
-    indictmentVerdictAppealDeadline
+    indictmentVerdictAppealDeadlineExpired
     indictmentDecision
     indictmentReviewDecision
+    indictmentCompletedDate
+    courtSessionType
+    mergeCase {
+      id
+      courtCaseNumber
+    }
+    mergedCases {
+      id
+      courtCaseNumber
+      type
+      court {
+        id
+        name
+      }
+      judge {
+        id
+        name
+        title
+        email
+      }
+      prosecutor {
+        id
+        name
+        email
+      }
+      prosecutorsOffice {
+        id
+        name
+      }
+      caseFiles {
+        id
+        created
+        name
+        state
+        key
+        size
+        category
+      }
+      policeCaseNumbers
+      indictmentSubtypes
+    }
   }
 }

@@ -1,8 +1,8 @@
-import React, { PropsWithChildren, ReactNode, useContext, useMemo } from 'react'
+import { FC, PropsWithChildren, ReactNode, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -23,13 +23,15 @@ import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
 
+interface Sortable {
+  isSortable: boolean
+  key: sortableTableColumn
+}
+
 interface TableProps {
   thead: {
     title: string
-    sortable?: {
-      isSortable: boolean
-      key: sortableTableColumn
-    }
+    sortable?: Sortable
   }[]
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
@@ -41,7 +43,7 @@ interface TableWrapperProps {
   loading: boolean
 }
 
-export const TableWrapper: React.FC<PropsWithChildren<TableWrapperProps>> = ({
+export const TableWrapper: FC<PropsWithChildren<TableWrapperProps>> = ({
   loading,
   children,
 }) => (
@@ -80,7 +82,7 @@ export const useTable = () => {
   return { requestSort, getClassNamesFor, sortConfig, setSortConfig }
 }
 
-const Table: React.FC<TableProps> = (props) => {
+const Table: FC<TableProps> = (props) => {
   const { thead, data, columns, generateContextMenuItems, onClick } = props
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
@@ -95,17 +97,17 @@ const Table: React.FC<TableProps> = (props) => {
       data.sort((a: CaseListEntry, b: CaseListEntry) => {
         const getColumnValue = (entry: CaseListEntry) => {
           if (
-            sortConfig.column === 'defendant' &&
+            sortConfig.column === 'defendants' &&
             entry.defendants &&
-            entry.defendants.length > 0
+            entry.defendants.length > 0 &&
+            entry.defendants[0].name
           ) {
-            return entry.defendants[0].name ?? ''
+            return entry.defendants[0].name
           }
-          if (sortConfig.column === 'courtDate') {
-            return entry.courtDate ?? ''
-          }
-          return entry.created
+
+          return entry[sortConfig.column]?.toString()
         }
+
         const compareResult = compareLocaleIS(
           getColumnValue(a),
           getColumnValue(b),
@@ -118,7 +120,7 @@ const Table: React.FC<TableProps> = (props) => {
     }
   }, [data, sortConfig])
 
-  return width < theme.breakpoints.md ? (
+  return width < theme.breakpoints.lg ? (
     <>
       {data.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
@@ -169,7 +171,7 @@ const Table: React.FC<TableProps> = (props) => {
                   sortAsc={getClassNamesFor(th.sortable.key) === 'ascending'}
                   sortDes={getClassNamesFor(th.sortable.key) === 'descending'}
                   isActive={sortConfig?.column === th.sortable.key}
-                  dataTestid="accusedNameSortButton"
+                  dataTestid={`${th.sortable.key}SortButton`}
                 />
               ) : (
                 <Text as="span" fontWeight="regular">
@@ -194,32 +196,49 @@ const Table: React.FC<TableProps> = (props) => {
                 handleOpenCase(row.id)
               }
             }}
+            data-testid="tableRow"
           >
             {columns.map((td) => (
-              <td key={`${td}-${columns.indexOf(td)}`} className={styles.td}>
-                {td.cell(row)}
-              </td>
+              <td key={`${td}-${columns.indexOf(td)}`}>{td.cell(row)}</td>
             ))}
             {generateContextMenuItems && (
-              <td className={styles.td}>
+              <td width="4%">
                 {generateContextMenuItems(row).length > 0 && (
-                  <AnimatePresence exitBeforeEnter initial={false}>
+                  <AnimatePresence initial={false} mode="popLayout">
                     {isOpeningCaseId === row.id && showLoading ? (
-                      <Box padding={1}>
+                      <motion.div
+                        className={styles.smallContainer}
+                        key={row.id}
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 1 }}
+                        exit={{
+                          opacity: 0,
+                          y: 5,
+                        }}
+                        transition={{ type: 'spring' }}
+                      >
                         <LoadingIndicator />
-                      </Box>
+                      </motion.div>
                     ) : (
                       <ContextMenu
                         menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
                         items={generateContextMenuItems(row)}
                         disclosure={
-                          <IconButton
-                            icon="ellipsisVertical"
-                            colorScheme="transparent"
+                          <motion.div
+                            className={styles.smallContainer}
+                            key={row.id}
+                            initial={{ opacity: 1 }}
+                            animate={{ opacity: 1, y: 1 }}
+                            exit={{ opacity: 0, y: 5 }}
                             onClick={(evt) => {
                               evt.stopPropagation()
                             }}
-                          />
+                          >
+                            <IconButton
+                              icon="ellipsisVertical"
+                              colorScheme="transparent"
+                            />
+                          </motion.div>
                         }
                       />
                     )}

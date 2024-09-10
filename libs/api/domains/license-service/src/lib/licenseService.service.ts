@@ -1,19 +1,11 @@
 import { User } from '@island.is/auth-nest-tools'
-import isAfter from 'date-fns/isAfter'
 import {
-  LicenseClient,
   LicenseClientService,
   LicenseType,
   LicenseVerifyExtraDataResult,
 } from '@island.is/clients/license-client'
-import { CmsContentfulService } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  BarcodeService,
-  TOKEN_EXPIRED_ERROR,
-} from '@island.is/services/license'
-
 import { Locale } from '@island.is/shared/types'
 import {
   BadRequestException,
@@ -21,20 +13,15 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { isJSON, isJWT } from 'class-validator'
-import { Cache } from 'cache-manager'
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
-import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
 import {
   VerifyLicenseBarcodeError,
   VerifyLicenseBarcodeResult,
   VerifyLicenseBarcodeType,
 } from './dto/VerifyLicenseBarcodeResult.dto'
 import {
-  GenericLicenseFetchResult,
-  GenericLicenseLabels,
   GenericLicenseMapper,
   GenericLicenseType,
   GenericLicenseTypeType,
@@ -42,6 +29,7 @@ import {
   GenericUserLicenseFetchStatus,
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
+  LicenseTypeFetchResponse,
   PkPassVerification,
 } from './licenceService.type'
 import {
@@ -51,6 +39,14 @@ import {
 } from './licenseService.constants'
 import { CreateBarcodeResult } from './dto/CreateBarcodeResult.dto'
 import { isDefined } from '@island.is/shared/utils'
+import { GenericLicenseError as LicenseError } from './dto/GenericLicenseError.dto'
+import { LicenseCollection } from './dto/GenericLicenseCollection.dto'
+import isAfter from 'date-fns/isAfter'
+import { isJSON, isJWT } from 'class-validator'
+import {
+  BarcodeService,
+  TOKEN_EXPIRED_ERROR,
+} from '@island.is/services/license'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -68,19 +64,12 @@ const COMMON_VERIFY_ERROR = {
   error: VerifyLicenseBarcodeError.ERROR,
 }
 
-type Namespace = {
-  namespace: string
-  fields?: string
-}
-
 @Injectable()
-export class LicenseServiceService {
+export class LicenseService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly barcodeService: BarcodeService,
     private readonly licenseClient: LicenseClientService,
-    private readonly cmsContentfulService: CmsContentfulService,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     @Inject(LICENSE_MAPPER_FACTORY)
     private readonly licenseMapperFactory: (
       type: GenericLicenseType,
@@ -103,66 +92,11 @@ export class LicenseServiceService {
       ? GenericLicenseType.DriversLicense
       : (type as unknown as GenericLicenseType)
 
-  private getLicenseLabels = async (
-    locale: Locale,
-  ): Promise<GenericLicenseLabels> => {
-    const cacheKey = `namespace-licenses-${locale}`
-    const namespace = await this.cacheManager.get<Namespace | null>(cacheKey)
-
-    let licenseNamespace: Namespace | null
-    if (!namespace) {
-      const result = await this.cmsContentfulService.getNamespace(
-        'Licenses',
-        locale,
-      )
-      await this.cacheManager.set(cacheKey, result)
-      licenseNamespace = result
-    } else {
-      licenseNamespace = namespace
-    }
-
-    return {
-      labels: licenseNamespace?.fields
-        ? JSON.parse(licenseNamespace.fields)
-        : undefined,
-    }
-  }
-
-  private async fetchLicenses(
-    user: User,
-    licenseClient: LicenseClient<LicenseType>,
-  ): Promise<GenericLicenseFetchResult> {
-    if (!licenseClient) {
-      throw new InternalServerErrorException('License service failed')
-    }
-
-    const licenseRes = await licenseClient.getLicenses(user)
-
-    if (!licenseRes.ok) {
-      return {
-        data: [],
-        fetch: {
-          status: GenericUserLicenseFetchStatus.Error,
-          updated: new Date(),
-        },
-      }
-    }
-
-    return {
-      data: licenseRes.data,
-      fetch: {
-        status: GenericUserLicenseFetchStatus.Fetched,
-        updated: new Date(),
-      },
-    }
-  }
-
-  async getUserLicenses(
+  async getLicenseCollection(
     user: User,
     locale: Locale,
     { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
-  ): Promise<UserLicensesResponse> {
-    const labels = await this.getLicenseLabels(locale)
+  ): Promise<LicenseCollection> {
     const fetchPromises = AVAILABLE_LICENSES.map(async (license) => {
       if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
         return null
@@ -173,156 +107,138 @@ export class LicenseServiceService {
       }
 
       if (!onlyList) {
-        return this.getLicensesOfType(user, locale, license.type, labels)
+        return this.getLicensesOfType(user, locale, license.type)
       }
 
       return null
     }).filter(isDefined)
 
     const licenses: Array<GenericUserLicense> = []
+    const errors: Array<LicenseError> = []
+
     for (const licenseArrayResult of await Promise.allSettled(fetchPromises)) {
       if (
         licenseArrayResult.status === 'fulfilled' &&
         licenseArrayResult.value
       ) {
-        licenses.push(...licenseArrayResult.value)
+        const licenseResult = licenseArrayResult.value
+        if (licenseResult.fetchResponseType === 'error') {
+          errors.push(licenseResult.data)
+        } else {
+          licenses.push(...licenseResult.data)
+        }
       }
     }
 
     return {
-      nationalId: user.nationalId,
-      licenses: licenses ?? [],
+      licenses,
+      errors,
     }
-  }
-  async getAllLicenses(
-    user: User,
-    locale: Locale,
-    { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
-  ): Promise<GenericUserLicense[]> {
-    const licenseLabels = await this.getLicenseLabels(locale)
-
-    const fetchPromises = AVAILABLE_LICENSES.map(async (license) => {
-      if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
-        return null
-      }
-
-      if (includedTypes && includedTypes.indexOf(license.type) < 0) {
-        return null
-      }
-
-      if (!onlyList) {
-        return this.getLicensesOfType(user, locale, license.type, licenseLabels)
-      }
-
-      return null
-    }).filter(isDefined)
-
-    const licenses: Array<GenericUserLicense> = []
-    for (const licenseArrayResult of await Promise.allSettled(fetchPromises)) {
-      if (
-        licenseArrayResult.status === 'fulfilled' &&
-        licenseArrayResult.value
-      ) {
-        licenses.push(...licenseArrayResult.value)
-      }
-    }
-
-    return licenses
   }
 
   async getLicensesOfType(
     user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
-    labels?: GenericLicenseLabels,
-  ): Promise<Array<GenericUserLicense> | null> {
+  ): Promise<LicenseTypeFetchResponse | null> {
     const licenseTypeDefinition = AVAILABLE_LICENSES.find(
       (i) => i.type === licenseType,
     )
 
-    const mappedLicenseType = this.mapLicenseType(licenseType)
-    const licenseService = await this.licenseClient.getClientByLicenseType<
-      typeof mappedLicenseType
-    >(mappedLicenseType)
-
-    if (!licenseTypeDefinition || !licenseService) {
-      this.logger.error(`Invalid license type. type: ${licenseType}`, {
+    if (!licenseTypeDefinition) {
+      this.logger.warn('Invalid license type supplied', {
+        licenseType,
         category: LOG_CATEGORY,
       })
       return null
     }
 
-    const licenseRes = await this.fetchLicenses(user, licenseService)
+    const mappedLicenseType = this.mapLicenseType(licenseTypeDefinition.type)
+    const client = await this.getClient(mappedLicenseType)
 
-    const mapper = await this.licenseMapperFactory(licenseType)
+    const licensesFetchResponse = await client.getLicenses(user)
+
+    if (!licensesFetchResponse.ok) {
+      return {
+        fetchResponseType: 'error',
+        data: {
+          type: licenseType,
+          fetch: {
+            status: GenericUserLicenseFetchStatus.Error,
+            updated: new Date().getTime().toString(),
+          },
+          code: licensesFetchResponse.error.code,
+          message: licensesFetchResponse.error.message,
+          extraData: licensesFetchResponse.error.data,
+        },
+      }
+    }
+
+    const mapper = await this.licenseMapperFactory(licenseTypeDefinition.type)
 
     if (!mapper) {
       this.logger.warn('Service failure. No mapper created', {
+        licenseType,
         category: LOG_CATEGORY,
       })
       return null
     }
 
-    const licensesPayload =
-      licenseRes.fetch.status !== GenericUserLicenseFetchStatus.Error
-        ? mapper.parsePayload(licenseRes.data, locale, labels)
-        : []
+    const licensesPayload = await mapper.parsePayload(
+      licensesFetchResponse.data,
+      locale,
+    )
 
-    const mappedLicenses = licensesPayload.map((lp) => {
-      const licenseUserData: GenericLicenseUserdata = {
-        status: GenericUserLicenseStatus.Unknown,
-        pkpassStatus: GenericUserLicensePkPassStatus.Unknown,
-      }
+    const mappedLicenses: Array<GenericUserLicense> = await Promise.all(
+      licensesPayload.map(async (lp) => {
+        const licenseUserData: GenericLicenseUserdata = {
+          status: GenericUserLicenseStatus.Unknown,
+          pkpassStatus: GenericUserLicensePkPassStatus.Unknown,
+        }
 
-      if (lp) {
-        licenseUserData.pkpassStatus = licenseService.clientSupportsPkPass
-          ? (licenseService.licenseIsValidForPkPass?.(
-              lp.rawData,
-              user,
-            ) as unknown as GenericUserLicensePkPassStatus) ??
-            GenericUserLicensePkPassStatus.Unknown
-          : GenericUserLicensePkPassStatus.NotAvailable
-        licenseUserData.status = GenericUserLicenseStatus.HasLicense
-      } else {
-        licenseUserData.status = GenericUserLicenseStatus.NotAvailable
-      }
+        if (lp) {
+          licenseUserData.pkpassStatus = client.clientSupportsPkPass
+            ? ((await client.licenseIsValidForPkPass?.(
+                lp.payload.rawData,
+                user,
+              )) as unknown as GenericUserLicensePkPassStatus) ??
+              GenericUserLicensePkPassStatus.Unknown
+            : GenericUserLicensePkPassStatus.NotAvailable
+          licenseUserData.status = GenericUserLicenseStatus.HasLicense
+        } else {
+          licenseUserData.status = GenericUserLicenseStatus.NotAvailable
+        }
 
-      return {
-        nationalId: user.nationalId,
-        license: {
-          ...licenseTypeDefinition,
-          status: licenseUserData.status,
-          pkpassStatus: licenseUserData.pkpassStatus,
-        },
-        fetch: {
-          ...licenseRes.fetch,
-          updated: licenseRes.fetch.updated.getTime().toString(),
-        },
-        payload:
-          {
-            ...lp,
-            rawData: lp.rawData ?? undefined,
-          } ?? undefined,
-      }
-    })
-
-    return (
-      mappedLicenses ?? [
-        {
+        return {
           nationalId: user.nationalId,
+          isOwnerChildOfUser: lp.type === 'child',
           license: {
             ...licenseTypeDefinition,
-            status: GenericUserLicenseStatus.Unknown,
-            pkpassStatus: GenericUserLicenseStatus.Unknown,
+            status: licenseUserData.status,
+            pkpassStatus: licenseUserData.pkpassStatus,
+            name: lp.licenseName,
           },
           fetch: {
-            ...licenseRes.fetch,
-            updated: licenseRes.fetch.updated.getTime().toString(),
+            status: GenericUserLicenseFetchStatus.Fetched,
+            updated: new Date().getTime().toString(),
           },
-          payload: undefined,
-        },
-      ]
+          payload: {
+            ...lp.payload,
+            metadata: {
+              ...lp.payload.metadata,
+              expired: lp.payload.metadata?.expired ?? undefined,
+              expireDate: lp.payload.metadata?.expireDate ?? undefined,
+            },
+            rawData: lp.payload.rawData ?? undefined,
+          },
+        }
+      }),
     )
+
+    return {
+      fetchResponseType: 'licenses',
+      data: mappedLicenses,
+    }
   }
 
   async getLicense(
@@ -330,21 +246,31 @@ export class LicenseServiceService {
     locale: Locale,
     licenseType: GenericLicenseType,
     licenseId?: string,
-  ): Promise<GenericUserLicense | null> {
-    const labels = await this.getLicenseLabels(locale)
+  ): Promise<GenericUserLicense | LicenseError | null> {
+    const licensesOfType = await this.getLicensesOfType(
+      user,
+      locale,
+      licenseType,
+    )
 
-    const licensesOfType =
-      (await this.getLicensesOfType(user, locale, licenseType, labels)) ?? []
-
-    if (!licenseId || licenseId === DEFAULT_LICENSE_ID) {
-      return licensesOfType[0] ?? null
+    if (!licensesOfType) {
+      return null
     }
 
-    return (
-      licensesOfType.find(
+    if (licensesOfType.fetchResponseType === 'error') {
+      return licensesOfType.data
+    }
+
+    if (!licenseId || licenseId === DEFAULT_LICENSE_ID) {
+      return licensesOfType.data[0] ?? null
+    }
+
+    const license =
+      licensesOfType.data.find(
         (l) => l.payload?.metadata?.licenseId === licenseId,
       ) ?? null
-    )
+
+    return license ?? null
   }
 
   async getClient<Type extends LicenseType>(type: LicenseType) {

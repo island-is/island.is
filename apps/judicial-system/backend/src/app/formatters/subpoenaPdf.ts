@@ -2,18 +2,18 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import {
-  DateType,
-  DistrictCourtLocation,
-  DistrictCourts,
-  SubpoenaType,
-} from '@island.is/judicial-system/types'
+  formatDate,
+  formatDOB,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
+import { DateType, SubpoenaType } from '@island.is/judicial-system/types'
 
 import { subpoena as strings } from '../messages'
 import { Case } from '../modules/case'
 import { Defendant } from '../modules/defendant'
 import {
+  addConfirmation,
   addEmptyLines,
   addFooter,
   addHugeHeading,
@@ -50,24 +50,27 @@ export const createSubpoena = (
   doc.on('data', (chunk) => sinc.push(chunk))
 
   setTitle(doc, formatMessage(strings.title))
-  addNormalText(doc, `${theCase.court?.name}`, 'Times-Bold', true)
 
   if (dateLog) {
-    addNormalRightAlignedText(
-      doc,
-      `${formatDate(new Date(dateLog.created), 'PPP')}`,
-      'Times-Roman',
-    )
+    addEmptyLines(doc, 5)
   }
 
-  arraignmentDate = arraignmentDate || dateLog?.date
-  location = location || dateLog?.location
-  subpoenaType = subpoenaType || defendant.subpoenaType
+  addNormalText(doc, `${theCase.court?.name}`, 'Times-Bold', true)
+
+  addNormalRightAlignedText(
+    doc,
+    `${formatDate(new Date(dateLog?.modified ?? new Date()), 'PPP')}`,
+    'Times-Roman',
+  )
+
+  arraignmentDate = arraignmentDate ?? dateLog?.date
+  location = location ?? dateLog?.location
+  subpoenaType = subpoenaType ?? defendant.subpoenaType
 
   if (theCase.court?.name) {
     addNormalText(
       doc,
-      DistrictCourtLocation[theCase.court.name as DistrictCourts],
+      theCase.court.address || 'Ekki skráð', // the latter shouldn't happen, if it does we have an problem with the court data
       'Times-Roman',
     )
   }
@@ -99,7 +102,9 @@ export const createSubpoena = (
   addNormalText(
     doc,
     theCase.prosecutor
-      ? `                     (${theCase.prosecutor.name} ${theCase.prosecutor.title})`
+      ? `                     (${theCase.prosecutor.name} ${lowercase(
+          theCase.prosecutor.title,
+        )})`
       : 'Ekki skráður',
     'Times-Roman',
   )
@@ -112,7 +117,7 @@ export const createSubpoena = (
     addNormalText(
       doc,
       formatMessage(strings.arraignmentDate, {
-        arraignmentDate: formatDate(new Date(arraignmentDate), 'PPP'),
+        arraignmentDate: formatDate(new Date(arraignmentDate), 'PPPp'),
       }),
       'Times-Bold',
     )
@@ -148,6 +153,15 @@ export const createSubpoena = (
   addNormalText(doc, formatMessage(strings.deadline), 'Times-Roman')
 
   addFooter(doc)
+
+  if (dateLog) {
+    addConfirmation(doc, {
+      actor: theCase.judge?.name || '',
+      title: theCase.judge?.title,
+      institution: theCase.judge?.institution?.name || '',
+      date: dateLog.created,
+    })
+  }
 
   doc.end()
 

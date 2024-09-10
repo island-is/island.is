@@ -16,7 +16,6 @@ import { FamilyMemberCard } from './family-member-card'
 import { LicenseCard } from './license-card'
 import { NotificationCard } from './notification-card'
 import { StatusCard } from './status-card'
-import { UserCard } from './user-card'
 import { VehicleCard } from './vehicle-card'
 import { WelcomeCard } from './welcome-card'
 
@@ -113,20 +112,6 @@ storiesOf('Cards', module)
   .add('Family Member Card', () => {
     return (
       <FamilyMemberCard name="Jón Gunnar Jónsson" nationalId="2501873219" />
-    )
-  })
-  .add('User Card', () => {
-    const userName = text('User name', 'Jón Jónsson')
-    const ssn = text('Ssn number', '010125-4529')
-    const actionTitle = text('Action Title', 'Skoða upplýsingar')
-    return (
-      <UserCard
-        name={userName}
-        ssn={ssn}
-        actions={[
-          { text: actionTitle, onPress: () => console.log('Action press') },
-        ]}
-      />
     )
   })
   .add('Notification Card With Actions', () => {

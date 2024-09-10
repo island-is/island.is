@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { motion } from 'framer-motion'
 
 import { AlertMessage } from '@island.is/island-ui/core'
@@ -9,7 +10,7 @@ interface TableInfoContainerProps {
   message: string
 }
 
-const TableInfoContainer: React.FC<TableInfoContainerProps> = (props) => {
+const TableInfoContainer: FC<TableInfoContainerProps> = (props) => {
   const { title, message } = props
   return (
     <motion.div

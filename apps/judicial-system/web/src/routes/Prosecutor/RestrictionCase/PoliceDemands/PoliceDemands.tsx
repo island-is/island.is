@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -91,7 +91,7 @@ export const getDemandsAutofill = (
   })
 }
 
-export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const PoliceDemands = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -138,7 +138,7 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   useOnceOn(isCaseUpToDate, initialize)
 
-  const onDemandsChange = React.useCallback(
+  const onDemandsChange = useCallback(
     (
       entry: UpdateCase,
       caseType?: CaseType | null,

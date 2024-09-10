@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 
 import { Text } from '@island.is/island-ui/core'
 
@@ -8,7 +8,7 @@ interface Props {
   title: string
 }
 
-const TableHeaderText: React.FC<Props> = (props) => {
+const TableHeaderText: FC<Props> = (props) => {
   const { title } = props
 
   return (

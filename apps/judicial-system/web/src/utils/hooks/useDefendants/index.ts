@@ -1,4 +1,4 @@
-import React, { SetStateAction, useCallback } from 'react'
+import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
@@ -86,7 +86,7 @@ const useDefendants = () => {
   const updateDefendantState = useCallback(
     (
       update: UpdateDefendantInput,
-      setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<Case>>,
     ) => {
       setWorkingCase((prevWorkingCase: Case) => {
         if (!prevWorkingCase.defendants) {
@@ -112,7 +112,7 @@ const useDefendants = () => {
   const setAndSendDefendantToServer = useCallback(
     (
       update: UpdateDefendantInput,
-      setWorkingCase: React.Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<Case>>,
     ) => {
       updateDefendantState(update, setWorkingCase)
       updateDefendant(update)

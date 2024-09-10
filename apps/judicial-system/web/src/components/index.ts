@@ -10,6 +10,7 @@ export {
   default as CheckboxList,
   type CheckboxInfo,
 } from './CheckboxList/CheckboxList'
+export { default as ConnectedCaseFilesAccordionItem } from './AccordionItems/ConnectedCaseFilesAccordionItem/ConnectedCaseFilesAccordionItem'
 export { default as CommentsAccordionItem } from './AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
 export { default as ContextMenu } from './ContextMenu/ContextMenu'
@@ -36,11 +37,12 @@ export { default as HideableText } from './HideableText/HideableText'
 export { default as IndictmentInfo } from './IndictmentInfo/IndictmentInfo'
 export { default as IndictmentsCaseFilesAccordionItem } from './AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
 export { default as InfoBox } from './InfoBox/InfoBox'
+export { default as BlueBoxWithIcon } from './BlueBoxWithIcon/BlueBoxWithIcon'
 export { default as InfoCard } from './InfoCard/InfoCard'
 export { default as InfoCardActiveIndictment } from './InfoCard/InfoCardActiveIndictment'
 export { default as InfoCardClosedIndictment } from './InfoCard/InfoCardClosedIndictment/InfoCardClosedIndictment'
-export { default as InfoCardCaseScheduled } from './InfoCard/InfoCardCaseScheduled'
-export { default as InfoCardCaseScheduledIndictment } from './InfoCard/InfoCardCaseScheduledIndictment'
+export { default as CaseScheduledCard } from './BlueBoxWithIcon/CaseScheduledCard'
+export { default as IndictmentCaseScheduledCard } from './BlueBoxWithIcon/IndictmentCaseScheduledCard'
 export { default as Loading } from './Loading/Loading'
 export { default as Logo } from './Logo/Logo'
 export { default as MarkdownWrapper } from './MarkdownWrapper/MarkdownWrapper'
@@ -63,7 +65,11 @@ export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as OverviewHeader } from './OverviewHeader/OverviewHeader'
 export { default as TagAppealState } from './TagAppealState/TagAppealState'
 export { default as TagCaseState } from './TagCaseState/TagCaseState'
-
+export { default as CaseTag } from './Tags/CaseTag'
+export {
+  getIndictmentRulingDecisionTag,
+  getIndictmentCaseStateTag,
+} from './Tags/utils'
 export {
   SigningModal,
   useRequestRulingSignature,

@@ -15,7 +15,7 @@ import * as uuid from 'uuidv4'
 
 import { getRequestMethod, TestEndpointOptions } from '@island.is/testing/nest'
 import { createNationalId } from '@island.is/testing/fixtures'
-import { AuthDelegationType } from 'delegation'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 let app: INestApplication
 

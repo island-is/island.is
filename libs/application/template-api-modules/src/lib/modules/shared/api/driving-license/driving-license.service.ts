@@ -147,7 +147,13 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
         currentLicense: fakeData.currentLicense === 'temp' ? 'B' : null,
         remarks:
           fakeData.remarks === YES
-            ? ['Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.']
+            ? [
+                {
+                  code: '',
+                  description:
+                    'Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.',
+                },
+              ]
             : undefined,
       }
     }

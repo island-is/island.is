@@ -1,9 +1,10 @@
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   completedIndictmentCaseStates,
@@ -11,6 +12,7 @@ import {
   courtOfAppealsRoles,
   DateType,
   districtCourtRoles,
+  IndictmentCaseReviewDecision,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -40,7 +42,14 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
-        { isArchived: false },
+        { is_archived: false },
+        {
+          type: [
+            ...restrictionCases,
+            ...investigationCases,
+            ...indictmentCases,
+          ],
+        },
         {
           state: [
             CaseState.NEW,
@@ -49,7 +58,6 @@ describe('getCasesQueryFilter', () => {
             CaseState.SUBMITTED,
             CaseState.WAITING_FOR_CANCELLATION,
             CaseState.RECEIVED,
-            CaseState.MAIN_HEARING,
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
@@ -70,13 +78,6 @@ describe('getCasesQueryFilter', () => {
             { is_heightened_security_level: false },
             { creating_prosecutor_id: 'Prosecutor Id' },
             { prosecutor_id: 'Prosecutor Id' },
-          ],
-        },
-        {
-          type: [
-            ...restrictionCases,
-            ...investigationCases,
-            ...indictmentCases,
           ],
         },
       ],
@@ -100,7 +101,8 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
-        { isArchived: false },
+        { is_archived: false },
+        { type: indictmentCases },
         {
           state: [
             CaseState.NEW,
@@ -109,7 +111,6 @@ describe('getCasesQueryFilter', () => {
             CaseState.SUBMITTED,
             CaseState.WAITING_FOR_CANCELLATION,
             CaseState.RECEIVED,
-            CaseState.MAIN_HEARING,
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
@@ -131,7 +132,6 @@ describe('getCasesQueryFilter', () => {
             { prosecutor_id: user.id },
           ],
         },
-        { type: indictmentCases },
       ],
     })
   })
@@ -153,7 +153,7 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
-          { isArchived: false },
+          { is_archived: false },
           {
             [Op.or]: [
               { court_id: { [Op.is]: null } },
@@ -185,7 +185,6 @@ describe('getCasesQueryFilter', () => {
                       CaseState.SUBMITTED,
                       CaseState.WAITING_FOR_CANCELLATION,
                       CaseState.RECEIVED,
-                      CaseState.MAIN_HEARING,
                       CaseState.COMPLETED,
                     ],
                   },
@@ -220,7 +219,7 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
-          { isArchived: false },
+          { is_archived: false },
           {
             [Op.or]: [
               { court_id: { [Op.is]: null } },
@@ -233,7 +232,6 @@ describe('getCasesQueryFilter', () => {
               CaseState.SUBMITTED,
               CaseState.WAITING_FOR_CANCELLATION,
               CaseState.RECEIVED,
-              CaseState.MAIN_HEARING,
               CaseState.COMPLETED,
             ],
           },
@@ -259,7 +257,7 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
-          { isArchived: false },
+          { is_archived: false },
           { type: [...restrictionCases, ...investigationCases] },
           {
             state: [
@@ -307,7 +305,7 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
-          { isArchived: false },
+          { is_archived: false },
           {
             state: [CaseState.COMPLETED],
           },
@@ -336,7 +334,7 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
-        { isArchived: false },
+        { is_archived: false },
         { state: CaseState.ACCEPTED },
         {
           type: [
@@ -368,16 +366,31 @@ describe('getCasesQueryFilter', () => {
 
     // Assert
     expect(res).toStrictEqual({
-      [Op.and]: [
-        { isArchived: false },
-        { state: CaseState.ACCEPTED },
+      is_archived: false,
+
+      [Op.or]: [
         {
+          state: CaseState.ACCEPTED,
           type: [
             CaseType.CUSTODY,
             CaseType.ADMISSION_TO_FACILITY,
             CaseType.PAROLE_REVOCATION,
             CaseType.TRAVEL_BAN,
           ],
+        },
+        {
+          type: CaseType.INDICTMENT,
+          state: CaseState.COMPLETED,
+          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+          indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
+          id: {
+            [Op.notIn]: Sequelize.literal(`
+            (SELECT case_id
+              FROM defendant
+              WHERE service_requirement <> 'NOT_REQUIRED'
+              AND (verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '28 days'))
+          `),
+          },
         },
       ],
     })
@@ -397,7 +410,7 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
-        { isArchived: false },
+        { is_archived: false },
         {
           [Op.or]: [
             {
@@ -424,9 +437,7 @@ describe('getCasesQueryFilter', () => {
                   ],
                 },
                 {
-                  defender_national_id: {
-                    [Op.or]: [user.nationalId, user.nationalId],
-                  },
+                  defender_national_id: [user.nationalId, user.nationalId],
                 },
               ],
             },
@@ -437,14 +448,14 @@ describe('getCasesQueryFilter', () => {
                   state: [
                     CaseState.WAITING_FOR_CANCELLATION,
                     CaseState.RECEIVED,
-                    CaseState.MAIN_HEARING,
                     ...completedIndictmentCaseStates,
                   ],
                 },
                 {
-                  '$defendants.defender_national_id$': {
-                    [Op.or]: [user.nationalId, user.nationalId],
-                  },
+                  '$defendants.defender_national_id$': [
+                    user.nationalId,
+                    user.nationalId,
+                  ],
                 },
               ],
             },

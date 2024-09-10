@@ -24,14 +24,6 @@ export enum Roles {
   APPLICANT = 'applicant',
 }
 
-export enum RelationOptions {
-  GRANDPARENT = 'grandparent',
-  SIBLING = 'sibling',
-  STEPPARENT = 'stepparent',
-  RELATIVE = 'relative',
-  FRIEND_OR_OTHER = 'friendOrOther',
-}
-
 export enum ReasonForApplicationOptions {
   TRANSFER_OF_LEGAL_DOMICILE = 'transferOfLegalDomicile',
   STUDY_STAY_FOR_PARENTS = 'studyStayForParents',
@@ -51,10 +43,11 @@ export enum SiblingRelationOptions {
   STEP_SIBLING = 'stepSibling',
 }
 
+// Mapping Þjóðskrá gender to Júní data
 export enum Gender {
-  FEMALE = 'FEMALE',
-  MALE = 'MALE',
-  OTHER = 'OTHER',
+  FEMALE = 'kvk',
+  MALE = 'kk',
+  OTHER = 'other',
 }
 
 export enum OptionsType {

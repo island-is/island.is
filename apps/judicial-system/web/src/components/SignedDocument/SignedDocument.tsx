@@ -1,4 +1,3 @@
-import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Icon, Text } from '@island.is/island-ui/core'
@@ -21,7 +20,7 @@ const SignedDocument = (props: Props) => {
       <div className={styles.textContainer}>
         <Text>
           {formatMessage(signedDocument, {
-            date: formatDate(signingDate, 'dd.MM.yyyy'),
+            date: formatDate(signingDate),
             time: formatDate(signingDate, 'HH:mm'),
           })}
         </Text>

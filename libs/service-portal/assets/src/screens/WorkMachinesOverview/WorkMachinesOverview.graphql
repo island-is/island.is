@@ -5,6 +5,7 @@ query GetWorkMachines($input: WorkMachinesCollectionInput) {
       registrationNumber
       type
       status
+      dateLastInspection
     }
     links {
       rel

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
 
@@ -294,6 +294,7 @@ const ProjectPage: Screen<PageProps> = ({
         sidebarNavigationTitle={navigationTitle}
         withSidebar={projectPage?.sidebar}
         backLink={backLink}
+        isSubpage={(subpage && p('smallerSubpageHeader', false)) ?? false}
       >
         {customContent ? customContent : mainContent}
       </ProjectWrapper>
