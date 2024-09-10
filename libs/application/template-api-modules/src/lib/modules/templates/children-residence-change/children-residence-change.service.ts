@@ -59,7 +59,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     if (!file) {
       throw new Error('File content was undefined')
     }
-    
+
     const fileContent = await file?.Body?.transformToString()
 
     const selectedChildren = getSelectedChildrenFromExternalData(
