@@ -5,10 +5,11 @@ import { User } from '@island.is/auth-nest-tools'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { DelegationAdminScopes } from '@island.is/auth/scopes'
-import { SequelizeConfigService } from '@island.is/auth-api-lib'
+import { Delegation, SequelizeConfigService } from '@island.is/auth-api-lib'
 
 import { AppModule } from '../../../app.module'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { getModelToken } from '@nestjs/sequelize'
 
 const currentUser = createCurrentUser({
   scope: [DelegationAdminScopes.read, DelegationAdminScopes.admin],
@@ -18,7 +19,7 @@ describe('DelegationAdmin - With authentication', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     app = await setupApp({
       AppModule,
       SequelizeConfigService,
@@ -27,6 +28,10 @@ describe('DelegationAdmin - With authentication', () => {
     })
 
     server = request(app.getHttpServer())
+  })
+
+  afterEach(async () => {
+    await app.cleanUp()
   })
 
   async function createDelegationAdmin(app: TestApp, user?: User) {
@@ -46,16 +51,6 @@ describe('DelegationAdmin - With authentication', () => {
     })
   }
 
-  async function formatUrl(app: TestApp, endpoint: string, user?: User) {
-    if (!endpoint.includes(':delegation')) {
-      return endpoint
-    }
-
-    const delegation = await createDelegationAdmin(app, user)
-
-    return endpoint.replace(':delegation', encodeURIComponent(delegation.id))
-  }
-
   it('GET /delegation-admin should return delegations for nationalId', async () => {
     // Arrange
     const delegation = await createDelegationAdmin(app, currentUser)
@@ -68,5 +63,25 @@ describe('DelegationAdmin - With authentication', () => {
     // Assert
     expect(res.status).toEqual(200)
     expect(res.body['outgoing'][0].id).toEqual(delegation.id)
+  })
+
+  it('DELETE /delegation-admin/:delegation should delete delegation', async () => {
+    // Arrange
+    const delegation = await createDelegationAdmin(app, currentUser)
+
+    // Act
+    const res = await getRequestMethod(
+      server,
+      'DELETE',
+    )(`/delegation-admin/${delegation.id}`)
+
+    // Assert
+    expect(res.status).toEqual(204)
+
+    // Assert db
+    const delegationModel = await app.get(getModelToken(Delegation))
+    const deletedDelegation = await delegationModel.findByPk(delegation.id)
+
+    expect(deletedDelegation).toBeNull()
   })
 })
