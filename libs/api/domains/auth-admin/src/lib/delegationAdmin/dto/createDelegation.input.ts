@@ -11,13 +11,9 @@ export class CreateDelegationInput {
   @IsString()
   toNationalId!: string
 
-  @Field(() => String, {
-    nullable: true,
-    description: 'Date format: YYYY-MM-DD',
-  })
-  @IsString()
+  @Field(() => Date, { nullable: true })
   @IsOptional()
-  validTo?: string
+  validTo?: Date
 
   @Field(() => String)
   @IsString()

@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   Box,
   Stack,
@@ -17,7 +18,6 @@ import InputMask from 'react-input-mask'
 
 import { IntroHeader } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
-import React from 'react'
 import { DelegationAdminPaths } from '../../lib/paths'
 
 import { Form, useActionData, useNavigate } from 'react-router-dom'
@@ -31,6 +31,14 @@ const CreateDelegationScreen = () => {
   const [validInfinite, setValidInfinite] = React.useState(true)
   const [fromNationalId, setNationalIdFrom] = React.useState('')
   const [toNationalId, setNationalIdTo] = React.useState('')
+  const [validTo, setValidTo] = React.useState<Date | null>(null)
+
+  const accessTypeOptions = [
+    {
+      label: formatMessage(m.typeGeneral),
+      value: 'general', // Todo: change to correct enum value, yet to be created
+    },
+  ]
 
   return (
     <Stack space="containerGutter">
@@ -74,6 +82,7 @@ const CreateDelegationScreen = () => {
                 onChange={(e) => {
                   setNationalIdTo(e.target.value)
                 }}
+
               >
                 <Input
                   name="toNationalId"
@@ -95,20 +104,8 @@ const CreateDelegationScreen = () => {
                 name="type"
                 required
                 noOptionsMessage="No options"
-                defaultValue={{
-                  label: 'Allsherjarumboð',
-                  value: '0',
-                }}
-                options={[
-                  {
-                    label: 'Allsherjarumboð',
-                    value: '0',
-                  },
-                  {
-                    label: 'Mitt Island umboð',
-                    value: '1',
-                  },
-                ]}
+                defaultValue={accessTypeOptions[0]}
+                options={accessTypeOptions}
                 placeholder={formatMessage(m.type)}
                 size="md"
               />
@@ -123,18 +120,22 @@ const CreateDelegationScreen = () => {
                   setValidInfinite(e.target.checked)
                 }}
                 value={validInfinite.toString()}
-
               />
             </GridColumn>
               {!validInfinite  && (
               <GridColumn span={['12/12', '12/12', '7/12']}>
                 <DatePicker
-                  name="validTo"
+                  name="validToPicker"
                   label={formatMessage(m.type)}
                   locale="is"
                   placeholderText={formatMessage(m.validTo)}
                   required
+                  handleChange={(d) => setValidTo(d)}
+                  errorMessage={formatMessage(
+                    m[actionData?.errors?.validTo as keyof typeof m],
+                  )}
                 />
+                <input type="hidden" name="validTo" value={validTo?.toISOString()} />
               </GridColumn>
               )}
             <GridColumn span={['12/12', '12/12', '7/12']}>

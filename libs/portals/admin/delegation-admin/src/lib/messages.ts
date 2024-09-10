@@ -61,14 +61,6 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:delegationToNationalId',
     defaultMessage: 'Kennitala umboðshafa',
   },
-  errorNationalIdFrom: {
-    id: 'admin.delegationAdmin:errorNationalIdFrom',
-    defaultMessage: 'Kennitala umboðsveitanda er nauðsynleg',
-  },
-  errorNationalIdTo: {
-    id: 'admin.delegationAdmin:errorNationalIdTo',
-    defaultMessage: 'Kennitala umboðshafa er nauðsynleg',
-  },
   cancel: {
     id: 'admin.delegationAdmin:cancel',
     defaultMessage: 'Hætta við',
@@ -86,8 +78,12 @@ export const m = defineMessages({
     defaultMessage: 'Gildistími',
   },
   type: {
-    id: 'admin.delegationAdmin:accessType',
+    id: 'admin.delegationAdmin:type',
     defaultMessage: 'Aðgangstegund',
+  },
+  typeGeneral: {
+    id: 'admin.delegationAdmin:typeGeneral',
+    defaultMessage: 'Allsherjarumboð',
   },
   referenceId: {
     id: 'admin.delegationAdmin:referenceId',
@@ -97,4 +93,29 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:errorDefault',
     defaultMessage: 'Oops, an unknown error has occurred.',
   },
+  errorValidTo: {
+    id: 'admin.delegationAdmin:errorValidTo',
+    defaultMessage:
+      'Dagsetningin verður að vera í framtíðinni',
+  },
+  errorNationalIdFromRequired: {
+    id: 'admin.delegationAdmin:errorNationalIdFromRequired',
+    defaultMessage: 'Kennitala umboðsveitanda er nauðsynleg',
+  },
+  errorNationalIdToRequired: {
+    id: 'admin.delegationAdmin:errorNationalIdToRequired',
+    defaultMessage: 'Kennitala umboðshafa er nauðsynleg',
+  },
+  errorNationalIdFromInvalid: {
+    id: 'admin.delegationAdmin:errorNationalIdFromInvalid',
+    defaultMessage: 'Kennitala umboðsveitanda er ekki gild',
+  },
+  errorNationalIdToInvalid: {
+    id: 'admin.delegationAdmin:errorNationalIdToInvalid',
+    defaultMessage: 'Kennitala umboðshafa er ekki gild',
+  },
+  errorReferenceIdRequired: {
+    id: 'admin.delegationAdmin:errorReferenceIdRequired',
+    defaultMessage: 'Númer máls í Zendesk er nauðsynlegt'
+  }
 })

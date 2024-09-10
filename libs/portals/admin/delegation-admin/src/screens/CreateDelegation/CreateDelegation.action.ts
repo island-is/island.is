@@ -1,10 +1,9 @@
 import { z } from 'zod'
-import { zfd } from 'zod-form-data'
+import kennitala from 'kennitala'
+import isFuture  from 'date-fns/isFuture'
 import { redirect } from 'react-router-dom'
-
 import { WrappedActionFn } from '@island.is/portals/core'
 import {
-  replaceParams,
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
@@ -16,12 +15,29 @@ import {
 import { DelegationAdminPaths } from '../../lib/paths'
 
 const schema = z.object({
-  fromNationalId: z.string().min(1, 'errorNationalIdFrom'),
-  toNationalId: z.string().min(1, 'errorNationalIdTo'),
+  fromNationalId: z
+    .string()
+    .min(1, 'errorNationalIdFromRequired')
+    .transform((fromNationalId) => kennitala.sanitize(fromNationalId))
+    .refine((fromNationalId) => kennitala.isValid(fromNationalId), 'errorNationalIdFromInvalid'),
+  toNationalId: z
+    .string()
+    .min(1, 'errorNationalIdToRequired')
+    .transform((toNationalId) => kennitala.sanitize(toNationalId))
+    .refine((toNationalId) => kennitala.isValid(toNationalId), 'errorNationalIdToInvalid'),
   type: z.string(),
-  validTo: z.string().optional(),
-  validInfinite: z.string(),
-  referenceId: z.string().min(1, 'errorReferenceId'),
+  validTo: z
+    .string()
+    .optional(),
+  referenceId: z.string().min(1, 'errorReferenceIdRequired')
+}).superRefine(({ validTo }, ctx) => {
+  if (validTo && !isFuture(new Date(validTo))) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'errorValidTo',
+      path: ['validTo'],
+    })
+  }
 })
 
 export type CreateDelegationResult = ValidateFormDataResult<typeof schema> & {
@@ -34,7 +50,6 @@ export type CreateDelegationResult = ValidateFormDataResult<typeof schema> & {
 export const createDelegationAction: WrappedActionFn =
   ({ client }) =>
   async ({ request }): Promise<CreateDelegationResult | Response> => {
-  console.log('In action')
     const formData = await request.formData()
     const result = await validateFormData({ formData, schema })
 
@@ -42,11 +57,13 @@ export const createDelegationAction: WrappedActionFn =
       return result
     }
 
-    const { data } = result
+    const { validTo, ...rest } = result.data
 
-    console.log('Data', data)
+    const input: CreateDelegationMutationVariables["input"] = { ...rest }
 
-    const { validInfinite, validTo, ...rest } = data
+    if (validTo) {
+      input.validTo = new Date(validTo)
+    }
 
     try {
      await client.mutate<
@@ -55,10 +72,7 @@ export const createDelegationAction: WrappedActionFn =
       >({
         mutation: CreateDelegationDocument,
         variables: {
-          input: {
-            ...rest,
-            validTo: validInfinite === "true" ? null : validTo
-          },
+          input,
         },
       })
 
