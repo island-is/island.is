@@ -20,7 +20,7 @@ const ImageWrapper = styled.View`
 
 export const HelloModule = React.memo(() => {
   const theme = useTheme()
-  const { dismissed } = usePreferencesStore()
+  const { dismissed, graphicWidgetEnabled } = usePreferencesStore()
   const { userInfo } = useAuthStore()
   const [imageSrc, setImageSrc] = React.useState<string | undefined>(undefined)
 
@@ -98,7 +98,7 @@ export const HelloModule = React.memo(() => {
           {userInfo?.name}
         </Typography>
 
-        {imageSrc && (
+        {graphicWidgetEnabled && imageSrc && (
           <ImageWrapper>
             {loading ? (
               <Skeleton

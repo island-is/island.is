@@ -109,6 +109,7 @@ export const is = {
   'settings.security.appLockTimeoutLabel': 'Biðtími skjálæsingar',
   'settings.security.appLockTimeoutDescription':
     'Tíminn þar til skjálæsing fer í gang',
+  'settings.security.appLockTimeoutSeconds': 'sek.',
   'settings.about.groupTitle': 'Um appið',
   'settings.about.versionLabel': 'Útgáfa',
   'settings.about.logoutLabel': 'Útskrá',
@@ -169,7 +170,6 @@ export const is = {
   'home.applicationsStatus': 'Staða umsókna',
   'home.allApplications': 'Stafrænar umsóknir',
   'home.welcomeText': 'Hæ',
-  'home.inbox': 'Nýjast í pósthólfinu',
   'home.goodDay': 'Góðan dag,',
   'home.onboardingModule.card1':
     'Nú sérð þú upplýsingar um ökutæki, fasteignir og fjölskyldu þína í appinu til viðbótar við skjöl og skírteini.',
@@ -183,6 +183,18 @@ export const is = {
     'Skrá kílómetrastöðu rafmagns- og tengiltvinnbíla',
   'home.vehicleModule.button': 'Mín ökutæki',
   'button.seeAll': 'Sjá allt',
+
+  // home options
+  'homeOptions.screenTitle': 'Heimaskjár',
+  'homeOptions.heading.title': 'Stilla heimaskjá',
+  'homeOptions.heading.subtitle':
+    'Hér er hægt að stilla hvað birtist á heimaskjá.',
+  'homeOptions.graphic': 'Birta myndskreytingu',
+  'homeOptions.inbox': 'Nýjast í pósthólfinu',
+  'homeOptions.licenses': 'Skírteini',
+  'homeOptions.applications': 'Umsóknir',
+  'homeOptions.vehicles': 'Ökutæki',
+  'homeOptions.airDiscount': 'Loftbrú',
 
   // inbox
   'inbox.screenTitle': 'Pósthólf',
