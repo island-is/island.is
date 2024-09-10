@@ -175,13 +175,6 @@ export class SignatureCollectionClientService {
       auth,
     ).frambodPost({
       frambodRequestDTO: {
-        umbodsadilar: agents.map((agent) => ({
-          kennitala: agent.nationalId,
-          tegundUmbodsID: agent.mandateType,
-          netfang: agent.email,
-          simi: agent.phoneNumber,
-          svaediIDList: agent.areas.map((area) => parseInt(area.areaId)),
-        })),
         sofnunID: parseInt(id),
         kennitala: owner.nationalId.replace(/\D/g, ''),
         simi: owner.phone,
