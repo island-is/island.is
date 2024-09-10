@@ -296,8 +296,13 @@ const IncomePlanTemplate: ApplicationTemplate<
         const { withholdingTax, latestIncomePlan } = getApplicationExternalData(
           application.externalData,
         )
+        const currentYear = new Date().getFullYear()
 
-        if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {
+        if (
+          latestIncomePlan &&
+          latestIncomePlan.status === 'Accepted' &&
+          latestIncomePlan.year === currentYear
+        ) {
           latestIncomePlan.incomeTypeLines.forEach((income, i) => {
             set(
               answers,

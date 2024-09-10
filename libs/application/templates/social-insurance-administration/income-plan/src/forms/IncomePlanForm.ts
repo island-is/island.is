@@ -67,8 +67,11 @@ export const IncomePlanForm: Form = buildForm({
               description: (application: Application) => {
                 const { incomePlanConditions, latestIncomePlan } =
                   getApplicationExternalData(application.externalData)
-                const hasLatestIncomePlan = !isEmpty(latestIncomePlan)
-                const baseMessage = hasLatestIncomePlan
+                const currentYear = new Date().getFullYear()
+                const hasIncomePlanForCurrentYear =
+                  !isEmpty(latestIncomePlan) &&
+                  latestIncomePlan.year === currentYear
+                const baseMessage = hasIncomePlanForCurrentYear
                   ? incomePlanFormMessage.incomePlan
                       .currentIncomePlanDescription
                   : incomePlanFormMessage.incomePlan.description
@@ -76,7 +79,7 @@ export const IncomePlanForm: Form = buildForm({
                 return {
                   ...baseMessage,
                   values: {
-                    incomePlanYear: incomePlanConditions.incomePlanYear,
+                    incomePlanYear: currentYear,
                   },
                 }
               },
