@@ -1,11 +1,6 @@
 import request from 'supertest'
 
-import {
-  getRequestMethod,
-  TestApp,
-  setupApp,
-  setupAppWithoutAuth,
-} from '@island.is/testing/nest'
+import { getRequestMethod, setupApp, TestApp } from '@island.is/testing/nest'
 import { User } from '@island.is/auth-nest-tools'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -13,6 +8,7 @@ import { DelegationAdminScopes } from '@island.is/auth/scopes'
 import { SequelizeConfigService } from '@island.is/auth-api-lib'
 
 import { AppModule } from '../../../app.module'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const currentUser = createCurrentUser({
   scope: [DelegationAdminScopes.read, DelegationAdminScopes.admin],
@@ -38,7 +34,9 @@ describe('DelegationAdmin - With authentication', () => {
 
     const domain = await factory.createDomain({
       name: 'd1',
-      apiScopes: [{ name: 's1' }],
+      apiScopes: [
+        { name: 's1', supportedDelegationTypes: [AuthDelegationType.Custom] },
+      ],
     })
 
     return await factory.createCustomDelegation({
@@ -61,7 +59,6 @@ describe('DelegationAdmin - With authentication', () => {
   it('GET /delegation-admin should return delegations for nationalId', async () => {
     // Arrange
     const delegation = await createDelegationAdmin(app, currentUser)
-
     // Act
     const res = await getRequestMethod(
       server,
@@ -70,5 +67,6 @@ describe('DelegationAdmin - With authentication', () => {
 
     // Assert
     expect(res.status).toEqual(200)
+    expect(res.body['outgoing'][0].id).toEqual(delegation.id)
   })
 })
