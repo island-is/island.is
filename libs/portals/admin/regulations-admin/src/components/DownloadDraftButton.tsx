@@ -7,7 +7,7 @@ import { Button, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { editorMsgs, reviewMessages } from '../lib/messages'
 import type { RegulationDraftId } from '@island.is/regulations/admin'
-import { useAuth } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 type Props = {
   draftId: RegulationDraftId
@@ -46,7 +46,7 @@ function formSubmit(url: string, token: string) {
 }
 
 export function DownloadDraftButton({ draftId, reviewButton }: Props) {
-  const userInfo = useAuth().userInfo
+  const userInfo = useUserInfo()
   const t = useLocale().formatMessage
   const [downloadRegulation, { called, loading, error, data }] =
     useLazyQuery<Query>(DownloadRegulationDraftQuery, {

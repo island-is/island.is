@@ -2,7 +2,7 @@ import { useEffectOnce } from '@island.is/react-spa/shared'
 import { ReactNode, useCallback, useReducer } from 'react'
 
 import { LoadingScreen } from '@island.is/react/components'
-import { createBffUrlGenerator } from './bff.utils'
+import { createBffUrlGenerator, createQueryStr } from './bff.utils'
 import { BffContext } from './BffContext'
 import { ErrorScreen } from './ErrorScreen'
 import { reducer, initialState, ActionType } from './bff.state'
@@ -33,7 +33,11 @@ export const BffProvider = ({
       })
 
       if (!res.ok) {
-        window.location.href = bffUrlGenerator('/login')
+        const qs = createQueryStr({
+          target_link_uri: window.location.href,
+        })
+
+        window.location.href = bffUrlGenerator(`/login?${qs}`)
 
         return
       }
@@ -66,9 +70,33 @@ export const BffProvider = ({
     )
   }, [bffUrlGenerator, state.userInfo])
 
-  const switchUser = useCallback((_nationalId?: string) => {
-    // TODO
-  }, [])
+  const switchUser = useCallback(
+    (nationalId?: string) => {
+      dispatch({
+        type: ActionType.SWITCH_USER,
+      })
+
+      const qs = createQueryStr(
+        nationalId !== undefined
+          ? {
+              login_hint: nationalId,
+              /**
+               * TODO: remove this.
+               * It is currently required to switch delegations, but we'd like
+               * the IDS to handle login_required and other potential road
+               * blocks. Now OidcSignIn is handling login_required.
+               */
+              prompt: 'none',
+            }
+          : {
+              prompt: 'select_account',
+            },
+      )
+
+      window.location.href = bffUrlGenerator(`/login?${qs}`)
+    },
+    [bffUrlGenerator],
+  )
 
   useEffectOnce(() => {
     checkLogin()
@@ -92,6 +120,8 @@ export const BffProvider = ({
         switchUser,
       }}
     >
+      <button onClick={() => switchUser('470301-3920')}>Swicth user</button>
+      <br />
       {isLoggedIn && <button onClick={signOut}>Logout</button>}
       {showErrorScreen ? (
         <ErrorScreen onRetry={onRetry} />

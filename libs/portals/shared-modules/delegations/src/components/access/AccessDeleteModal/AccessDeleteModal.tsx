@@ -1,4 +1,4 @@
-import { useAuth } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Box, toast, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
@@ -29,7 +29,7 @@ export const AccessDeleteModal = ({
   ...rest
 }: AccessDeleteModalProps) => {
   const { formatMessage, lang } = useLocale()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const { md } = useBreakpoint()
   const [error, setError] = useState(false)
   const [deleteAuthDelegation, { loading }] = useDeleteAuthDelegationMutation()

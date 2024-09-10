@@ -5,6 +5,7 @@ import { ConfigType } from '@nestjs/config'
 
 import { BffConfig } from '../../bff.config'
 import { ParResponse, TokenResponse } from './ids.types'
+import { CryptoService } from '../../services/crypto.service'
 
 @Injectable()
 export class IdsService {
@@ -16,6 +17,8 @@ export class IdsService {
 
     @Inject(BffConfig.KEY)
     private readonly config: ConfigType<typeof BffConfig>,
+
+    private readonly cryptoService: CryptoService,
   ) {
     this.baseUrl = this.config.auth.issuer
   }
@@ -58,10 +61,12 @@ export class IdsService {
     sid,
     codeChallenge,
     loginHint,
+    prompt,
   }: {
     sid: string
     codeChallenge: string
     loginHint?: string
+    prompt?: string
   }) {
     return this.postRequest<ParResponse>('/connect/par', {
       client_id: this.config.auth.clientId,
@@ -80,6 +85,7 @@ export class IdsService {
       code_challenge: codeChallenge,
       code_challenge_method: 'S256',
       ...(loginHint && { login_hint: loginHint }),
+      ...(prompt && { prompt }),
     })
   }
 
@@ -101,11 +107,15 @@ export class IdsService {
     })
   }
 
-  // Uses the refresh token to get a new access token
+  /**
+   * Use the refresh token to get a new tokens
+   */
   public async refreshToken(refreshToken: string) {
+    const decryptedRefreshToken = this.cryptoService.decrypt(refreshToken)
+
     return this.postRequest<TokenResponse>('/connect/token', {
       grant_type: 'refresh_token',
-      refresh_token: refreshToken,
+      refresh_token: decryptedRefreshToken,
       client_secret: this.config.auth.secret,
       client_id: this.config.auth.clientId,
     })

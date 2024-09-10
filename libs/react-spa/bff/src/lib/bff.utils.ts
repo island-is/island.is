@@ -21,3 +21,7 @@ export const createBffUrlGenerator = (basePath: string) => {
  * Trim any leading and trailing slashes
  */
 const sanitizePath = (path: string) => path.replace(/^\/+|\/+$/g, '')
+
+export const createQueryStr = (params: Record<string, string>) => {
+  return new URLSearchParams(params).toString()
+}

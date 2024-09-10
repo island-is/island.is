@@ -1,36 +1,38 @@
 import cn from 'classnames'
 import * as kennitala from 'kennitala'
-import get from 'lodash/get'
 import React, { useEffect, useState } from 'react'
-import { defineMessage } from 'react-intl'
 import { Control, FormProvider, useForm } from 'react-hook-form'
+import { defineMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
-import { useUserInfo } from '@island.is/auth/react'
 import {
   Box,
-  Input,
   Icon,
-  toast,
-  Text,
+  Input,
   SkeletonLoader,
+  Text,
+  toast,
   useBreakpoint,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroHeader } from '@island.is/portals/core'
-import { formatNationalId, m as coreMessages } from '@island.is/portals/core'
+import {
+  IntroHeader,
+  m as coreMessages,
+  formatNationalId,
+} from '@island.is/portals/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
 
-import { DelegationsFormFooter } from '../../components/delegations/DelegationsFormFooter'
 import { IdentityCard } from '../../components/IdentityCard/IdentityCard'
-import { DomainOption, useDomains } from '../../hooks/useDomains/useDomains'
+import { DelegationsFormFooter } from '../../components/delegations/DelegationsFormFooter'
 import { ALL_DOMAINS } from '../../constants/domain'
-import { DelegationPaths } from '../../lib/paths'
+import { DomainOption, useDomains } from '../../hooks/useDomains/useDomains'
 import { m } from '../../lib/messages'
+import { DelegationPaths } from '../../lib/paths'
 import {
   useCreateAuthDelegationMutation,
   useIdentityLazyQuery,

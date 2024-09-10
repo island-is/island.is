@@ -5,15 +5,14 @@ import { ConfigType } from '@nestjs/config'
 import { Request, Response } from 'express'
 import fetch from 'node-fetch'
 import { BffConfig } from '../../bff.config'
+import { CryptoService } from '../../services/crypto.service'
 import { isExpired } from '../../utils/isExpired'
 import { AuthService } from '../auth/auth.service'
 import { CachedTokenResponse } from '../auth/auth.types'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
 
-const defaultHeaders = {
-  'Content-Type': 'application/json',
-}
+const whiteListedHeaders = ['access-control-allow-origin']
 
 @Injectable()
 export class ProxyService {
@@ -27,7 +26,41 @@ export class ProxyService {
     private readonly cacheService: CacheService,
     private readonly idsService: IdsService,
     private readonly authService: AuthService,
+    private readonly cryptoService: CryptoService,
   ) {}
+
+  /**
+   * Prepares necessary data for proxying a request to the target GraphQL API.
+   * - Gets the cached token response from the cache service
+   * - Refreshes the token if it is expired
+   * - Decrypts the access token
+   */
+  private async prepareProxyRequest(sid: string, req: Request) {
+    let cachedTokenResponse = await this.cacheService.get<CachedTokenResponse>(
+      this.cacheService.createSessionKeyType('current', sid),
+    )
+
+    if (isExpired(cachedTokenResponse.accessTokenExp)) {
+      const tokenResponse = await this.idsService.refreshToken(
+        cachedTokenResponse.refresh_token,
+      )
+      cachedTokenResponse = await this.authService.updateTokenCache(
+        tokenResponse,
+      )
+    }
+
+    const targetUrl = `${this.config.graphqlApiEndpont}?${
+      req.url.split('?')[1]
+    }`
+    const decryptedAccessToken = this.cryptoService.decrypt(
+      cachedTokenResponse.access_token,
+    )
+
+    return {
+      targetUrl,
+      decryptedAccessToken,
+    }
+  }
 
   /**
    * Proxies an incoming HTTP request to a target GraphQL API, handling authentication, token refresh,
@@ -51,29 +84,14 @@ export class ProxyService {
     }
 
     try {
-      let cachedTokenResponse =
-        await this.cacheService.get<CachedTokenResponse>(
-          this.cacheService.createSessionKeyType('current', sid),
-        )
-
-      if (isExpired(cachedTokenResponse.accessTokenExp)) {
-        const tokenResponse = await this.idsService.refreshToken(
-          cachedTokenResponse.refresh_token,
-        )
-        cachedTokenResponse = await this.authService.updateTokenCache(
-          tokenResponse,
-        )
-      }
-
-      const targetUrl = `${this.config.graphqlApiEndpont}?${
-        req.url.split('?')[1]
-      }`
+      const { targetUrl, decryptedAccessToken } =
+        await this.prepareProxyRequest(sid, req)
 
       const response = await fetch(targetUrl, {
         method: 'POST',
         headers: {
-          ...defaultHeaders,
-          Authorization: `Bearer ${cachedTokenResponse.access_token}`,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${decryptedAccessToken}`,
         },
         body: JSON.stringify(req.body),
       })
@@ -82,11 +100,14 @@ export class ProxyService {
         throw new Error(`HTTP error! Status: ${response.status}`)
       }
 
-      // Set headers from the target response to the client response
+      // Set the status code of the response
       res.status(response.status)
 
-      Object.entries(defaultHeaders).forEach(([key, value]) => {
-        res.setHeader(key, value)
+      response.headers.forEach((value, key) => {
+        // Only set headers that are not in the whiteListedHeaders array
+        if (!whiteListedHeaders.includes(key.toLowerCase())) {
+          res.setHeader(key, value)
+        }
       })
 
       // Pipe the response body directly to the client
@@ -95,13 +116,19 @@ export class ProxyService {
       response.body.on('error', (err) => {
         this.logger.error('Proxy stream error:', err)
 
-        res.status(err.status || 500).send('Failed to proxy request')
+        // This check ensures that `res.end()` is only called if the response has not already been ended.
+        if (!res.writableEnded) {
+          // Ensure the response is properly ended if an error occurs
+          res.end('An error occurred while streaming data.')
+        }
       })
 
-      // Make sure to end the response when the stream ends
-      // so that the client knows the request is complete
+      // Make sure to end the response when the stream ends,
+      // so that the client knows the request is complete.
       response.body.on('end', () => {
-        res.end()
+        if (!res.writableEnded) {
+          res.end()
+        }
       })
     } catch (error) {
       this.logger.error('Error during proxy request processing: ', error)

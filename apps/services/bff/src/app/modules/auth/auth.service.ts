@@ -18,6 +18,8 @@ import { CallbackLoginQuery } from './queries/callback-login.query'
 import { CallbackLogoutQuery } from './queries/callback-logout.query'
 import { LoginQuery } from './queries/login.query'
 import { LogoutQuery } from './queries/logout.query'
+import { CryptoService } from '../../services/crypto.service'
+import omit from 'lodash/omit'
 
 @Injectable()
 export class AuthService {
@@ -33,6 +35,7 @@ export class AuthService {
     private readonly pkceService: PKCEService,
     private readonly cacheService: CacheService,
     private readonly idsService: IdsService,
+    private readonly cryptoService: CryptoService,
   ) {
     this.baseUrl = this.config.auth.issuer
   }
@@ -65,17 +68,18 @@ export class AuthService {
     tokenResponse: TokenResponse,
   ): Promise<CachedTokenResponse> {
     const userProfile: IdTokenClaims = jwtDecode(tokenResponse.id_token)
-    const decodedAccessToken = jwtDecode(tokenResponse.access_token)
 
     const value: CachedTokenResponse = {
-      ...tokenResponse,
+      ...omit(tokenResponse, ['access_token', 'refresh_token']),
+      // Encrypt the access and refresh tokens before saving them to the cache
+      // to prevent unauthorized access to the tokens if cached service is compromised.
+      access_token: this.cryptoService.encrypt(tokenResponse.access_token),
+      refresh_token: this.cryptoService.encrypt(tokenResponse.refresh_token),
       scopes: tokenResponse.scope.split(' '),
       userProfile,
-      accessTokenExp:
-        // Prefer the exact expiration time from the access token
-        decodedAccessToken.exp ||
-        // Fallback to token response expiration time in seconds
-        new Date(Date.now() + tokenResponse.expires_in * 1000).getTime(),
+      accessTokenExp: new Date(
+        Date.now() + tokenResponse.expires_in * 1000,
+      ).getTime(),
     }
 
     // Save the tokenResponse to the cache
@@ -107,7 +111,7 @@ export class AuthService {
   async login({
     req,
     res,
-    query: { target_link_uri: targetLinkUri, login_hint: loginHint },
+    query: { target_link_uri: targetLinkUri, login_hint: loginHint, prompt },
   }: {
     req: Request
     res: Response
@@ -143,10 +147,11 @@ export class AuthService {
       value: {
         // Fallback if targetLinkUri is not provided
         originUrl,
-        targetLinkUri: targetLinkUri,
-        ...(loginHint && { loginHint }),
         // Code verifier to be used in the callback
         codeVerifier,
+        targetLinkUri: targetLinkUri,
+        ...(loginHint && { loginHint }),
+        ...(prompt && { prompt }),
       },
       ttl: 60 * 60 * 24 * 7 * 1000, // 1 week
     })
@@ -155,6 +160,7 @@ export class AuthService {
       sid,
       codeChallenge,
       loginHint,
+      prompt,
     })
 
     const searchParams = new URLSearchParams({

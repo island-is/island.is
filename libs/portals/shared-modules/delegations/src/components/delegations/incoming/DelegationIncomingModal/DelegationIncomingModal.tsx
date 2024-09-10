@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useAuth } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Box } from '@island.is/island-ui/core'
 
 import { useLocale } from '@island.is/localization'
@@ -21,7 +21,7 @@ export const DelegationIncomingModal = ({
   ...rest
 }: DelegationIncomingModalProps) => {
   const { formatMessage, lang } = useLocale()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const [getAuthScopeTree, { data: scopeTreeData, loading: scopeTreeLoading }] =
     useAuthScopeTreeLazyQuery()
 

@@ -11,6 +11,7 @@ const BffConfigSchema = z.object({
   }),
   graphqlApiEndpont: z.string(),
   auth: authSchema,
+  tokenSecretBase64: z.string(),
 })
 
 export const BffConfig = defineConfig({
@@ -31,6 +32,7 @@ export const BffConfig = defineConfig({
         ssl: isProduction,
       },
       auth: environment.auth,
+      tokenSecretBase64: env.required('BFF_TOKEN_SECRET_BASE64'),
     }
   },
 })

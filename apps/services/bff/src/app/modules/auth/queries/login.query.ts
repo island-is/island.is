@@ -8,4 +8,8 @@ export class LoginQuery {
   @IsOptional()
   @IsString()
   login_hint?: string
+
+  @IsOptional()
+  @IsString()
+  prompt?: string
 }
