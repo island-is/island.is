@@ -17,8 +17,7 @@ export const serviceSetup = (services: {
       AUTH_IDS_REDIRECT_URI: {
         dev: ref(
           (ctx) =>
-            `https://${
-              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            `https://${ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
             }judicial-system.dev01.devland.is/api/auth/callback/identity-server`,
         ),
         staging:
@@ -83,6 +82,12 @@ export const serviceSetup = (services: {
           },
         },
       },
+    })
+    .replicaCount({
+      default: 2,
+      max: 10,
+      min: 2,
+      scalingMagicNumber: 8
     })
     .resources({
       limits: {
