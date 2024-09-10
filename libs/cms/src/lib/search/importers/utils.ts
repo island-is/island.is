@@ -217,3 +217,34 @@ export const pruneNonSearchableSliceUnionFields = (
   }
   return slice
 }
+
+export const extractChildIds = <T>(rootNode: T) => {
+  const childIds: string[] = []
+
+  const extractChildIdsRecursive = (
+    node: T,
+    visited = new Set(),
+    keyAbove = '',
+  ) => {
+    if (visited.has(node) || !node) return
+
+    visited.add(node)
+
+    for (const key in node) {
+      const value = node[key]
+      if (typeof value === 'string' && keyAbove === 'sys' && key === 'id') {
+        childIds.push(value)
+      } else if (
+        typeof value === 'object' &&
+        value !== null &&
+        key !== 'contentType' //contentType.sys.id is the name of the content type so we skip it
+      ) {
+        extractChildIdsRecursive(value as T, visited, key)
+      }
+    }
+  }
+
+  extractChildIdsRecursive(rootNode)
+
+  return childIds
+}
