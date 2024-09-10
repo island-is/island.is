@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { Delegation } from '../models/delegation.model'
@@ -11,6 +11,8 @@ import { User } from '@island.is/auth-nest-tools'
 import { DelegationResourcesService } from '../../resources/delegation-resources.service'
 import { DelegationsIndexService } from '../delegations-index.service'
 import { DelegationScopeService } from '../delegation-scope.service'
+import { NoContentException } from '@island.is/nest/problem'
+import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 export class DelegationAdminCustomService {
@@ -20,13 +22,13 @@ export class DelegationAdminCustomService {
     private delegationResourceService: DelegationResourcesService,
     private delegationIndexService: DelegationsIndexService,
     private delegationScopeService: DelegationScopeService,
+    private sequelize: Sequelize,
   ) {}
 
   async getAllDelegationsByNationalId(
     nationalId: string,
   ): Promise<DelegationAdminCustomDto> {
     const incomingDelegations = await this.delegationModel.findAll({
-      useMaster: true,
       where: {
         toNationalId: nationalId,
       },
@@ -58,7 +60,6 @@ export class DelegationAdminCustomService {
     })
 
     const outgoingDelegations = await this.delegationModel.findAll({
-      useMaster: true,
       where: {
         fromNationalId: nationalId,
       },
@@ -100,7 +101,7 @@ export class DelegationAdminCustomService {
     const delegation = await this.delegationModel.findByPk(delegationId)
 
     if (!delegation) {
-      throw new NotFoundException('Delegation not found')
+      throw new NoContentException()
     }
 
     const userScopes = await this.delegationResourceService.findScopes(
@@ -108,26 +109,30 @@ export class DelegationAdminCustomService {
       delegation.domainName,
     )
 
-    await this.delegationScopeService.delete(
-      delegationId,
-      userScopes.map((scope) => scope.name),
-    )
+    await this.sequelize.transaction(async (transaction) => {
+      await this.delegationScopeService.delete(
+        delegationId,
+        userScopes.map((scope) => scope.name),
+        transaction,
+      )
 
-    // If no scopes are left delete the delegation.
-    const remainingScopes = await this.delegationScopeService.findAll(
-      delegationId,
-    )
-    if (remainingScopes.length === 0) {
-      await this.delegationModel.destroy({
-        where: {
-          id: delegationId,
-        },
-      })
-    }
+      // If no scopes are left delete the delegation.
+      const remainingScopes = await this.delegationScopeService.findAll(
+        delegationId,
+      )
+      if (remainingScopes.length === 0) {
+        await this.delegationModel.destroy({
+          transaction,
+          where: {
+            id: delegationId,
+          },
+        })
+      }
 
-    // Index custom delegations for the toNationalId
-    void this.delegationIndexService.indexCustomDelegations(
-      delegation.toNationalId,
-    )
+      // Index custom delegations for the toNationalId
+      void this.delegationIndexService.indexCustomDelegations(
+        delegation.toNationalId,
+      )
+    })
   }
 }
