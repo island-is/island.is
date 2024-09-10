@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -19,4 +19,9 @@ export class UpdateSubpoenaDto {
   @IsString()
   @ApiProperty({ type: String, required: false })
   subpoenaComment?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty({ type: Boolean, required: false })
+  acknowledged?: boolean
 }

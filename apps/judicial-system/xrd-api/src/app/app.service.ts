@@ -79,85 +79,24 @@ export class AppService {
       })
   }
 
-  async getSubpoena(
-    caseId: string,
-    subpoenaId: string,
-  ): Promise<SubpoenaResponse> {
-    return this.auditTrailService.audit(
-      'xrd-api',
-      AuditedAction.GET_SUBPOENA,
-      this.getSubpoenaInfo(subpoenaId),
-      subpoenaId,
-    )
-  }
-
   async updateSubpoena(
-    caseId: string,
     subpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
     return await this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.UPDATE_SUBPOENA,
-      this.updateSubpoenaInfo(caseId, subpoenaId, updateSubpoena),
+      this.updateSubpoenaInfo(subpoenaId, updateSubpoena),
       subpoenaId,
     )
   }
 
-  private async getSubpoenaInfo(subpoenaId: string): Promise<SubpoenaResponse> {
-    return fetch(
-      `${this.config.backend.url}/api/internal/cases/indictment/${subpoenaId}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${this.config.backend.accessToken}`,
-        },
-        body: JSON.stringify({ nationalId: subpoenaId }),
-      },
-    )
-      .then(async (res) => {
-        const response = (await res.json()) as InternalCaseResponse
-
-        if (res.ok) {
-          const defendantInfo = response?.defendants?.find(
-            (defendant) => defendant.nationalId === subpoenaId, // TODO: Use subpoenaId instead of nationalId
-          )
-
-          return {
-            caseId: response?.id,
-            defenderInfo: {
-              defenderChoice: defendantInfo?.defenderChoice,
-              defenderName: defendantInfo?.defenderName,
-            },
-          } as SubpoenaResponse
-        }
-
-        if (res.status < 500) {
-          throw new BadRequestException()
-        }
-
-        throw response
-      })
-      .catch((reason) => {
-        if (reason instanceof BadRequestException) {
-          throw reason
-        }
-
-        throw new BadGatewayException({
-          ...reason,
-          message: 'Failed to retrieve subpoena',
-        })
-      })
-  }
-
   private async updateSubpoenaInfo(
-    caseId: string,
-    nationalId: string,
+    subpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
     return fetch(
-      `${this.config.backend.url}/api/internal/case/${caseId}/defense/${nationalId}`,
+      `${this.config.backend.url}/api/internal/subpoena/${subpoenaId}`,
       {
         method: 'PATCH',
         headers: {
@@ -168,7 +107,7 @@ export class AppService {
       },
     )
       .then(async (res) => {
-        const response = (await res.json()) as InternalDefendantResponse
+        const response = await res.json()
 
         if (res.ok) {
           return {

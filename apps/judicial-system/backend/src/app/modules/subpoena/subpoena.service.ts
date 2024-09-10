@@ -16,6 +16,7 @@ import type { User } from '@island.is/judicial-system/types'
 import { Case } from '../case/models/case.model'
 import { Defendant } from '../defendant/models/defendant.model'
 import { PoliceService } from '../police'
+import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { Subpoena } from './models/subpoena.model'
 
@@ -36,8 +37,24 @@ export class SubpoenaService {
     })
   }
 
-  async updateSubpoena(subpoena: Subpoena): Promise<Subpoena> {
-    return await subpoena.save()
+  async updateSubpoena(
+    subpoenaId: string,
+    update: UpdateSubpoenaDto,
+  ): Promise<Subpoena> {
+    const [numberOfAffectedRows, subpoenas] = await this.subpoenaModel.update(
+      update,
+      {
+        where: { subpoenaId },
+        returning: true,
+      },
+    )
+
+    if (numberOfAffectedRows < 1) {
+      this.logger.error(
+        `Unexpected number of rows ${numberOfAffectedRows} affected when updating subpoena`,
+      )
+    }
+    return subpoenas[0]
   }
 
   async getSubpoena(subpoenaId: string): Promise<Subpoena | null> {

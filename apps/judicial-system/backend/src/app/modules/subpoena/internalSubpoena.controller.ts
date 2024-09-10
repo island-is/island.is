@@ -29,6 +29,7 @@ import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { Defendant } from '../defendant/models/defendant.model'
 import { DeliverDto } from './dto/deliver.dto'
+import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { Subpoena } from './models/subpoena.model'
 import { SubpoenaService } from './subpoena.service'
@@ -68,11 +69,11 @@ export class InternalSubpoenaController {
   @Patch('subpoena/:subpoenaId')
   async updateSubpoena(
     @Param('subpoenaId') subpoenaId: string,
-    @Body() subpoena: Subpoena,
+    @Body() update: UpdateSubpoenaDto,
   ): Promise<Subpoena> {
     this.logger.debug(`Updating subpoena by subpoena id ${subpoenaId}`)
 
-    return this.subpoenaService.updateSubpoena(subpoena)
+    return this.subpoenaService.updateSubpoena(subpoenaId, update)
   }
 
   @UseGuards(
