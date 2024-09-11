@@ -14,7 +14,7 @@ const { useNavigationOptions, getNavigationOptions } =
     (theme, intl) => ({
       topBar: {
         title: {
-          text: intl.formatMessage({ id: 'applications.incompleted' }),
+          text: intl.formatMessage({ id: 'applications.incomplete' }),
         },
         noBorder: true,
       },

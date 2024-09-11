@@ -18,6 +18,7 @@ import { ApolloError } from '@apollo/client'
 
 import leJobss3 from '../../assets/illustrations/le-jobs-s3.png'
 import {
+  ApplicationResponseDtoStatusEnum,
   ListApplicationsQuery,
   useListApplicationsQuery,
 } from '../../graphql/types/schema'
@@ -84,9 +85,31 @@ const ApplicationsModule = React.memo(
               { id: 'applicationStatusCard.status' },
               { state: application.status || 'unknown' },
             )}
+            variant={
+              application.status === ApplicationResponseDtoStatusEnum.Draft
+                ? 'blue'
+                : application.status ===
+                  ApplicationResponseDtoStatusEnum.Completed
+                ? 'mint'
+                : 'blueberry'
+            }
           />
         }
-        progress={(application.progress ?? 0) * 100}
+        progress={
+          application.status !== ApplicationResponseDtoStatusEnum.Draft
+            ? undefined
+            : application.actionCard?.draftFinishedSteps ?? 0
+        }
+        progressTotalSteps={application.actionCard?.draftTotalSteps ?? 0}
+        progressMessage={intl.formatMessage(
+          {
+            id: 'applicationStatusCard.draftProgress',
+          },
+          {
+            draftFinishedSteps: application.actionCard?.draftFinishedSteps,
+            draftTotalSteps: application.actionCard?.draftTotalSteps,
+          },
+        )}
         actions={[
           {
             text: intl.formatMessage({
@@ -101,7 +124,7 @@ const ApplicationsModule = React.memo(
           count > 1
             ? {
                 width: viewPagerItemWidth,
-                marginLeft: 16,
+                marginLeft: theme.spacing[2],
               }
             : {}
         }

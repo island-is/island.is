@@ -47,7 +47,6 @@ const ActionButton = styled.TouchableOpacity<{ border: boolean }>`
 
 const Title = styled.View`
   flex-direction: row;
-  padding-horizontal: ${({ theme }) => theme.spacing.smallGutter}px;
   padding-bottom: ${({ theme }) => theme.spacing[1]}px;
   align-items: center;
   flex-wrap: wrap;
