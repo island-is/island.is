@@ -9,7 +9,6 @@ export const updateAnswers = (
   setValue: (name: string, value: unknown, config?: Object) => void,
 ): Object => {
   const chosenApplicants = getChosenApplicant(
-    application.answers,
     application.externalData,
     nationalId,
   )
