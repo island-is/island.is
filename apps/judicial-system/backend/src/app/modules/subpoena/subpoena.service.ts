@@ -38,7 +38,7 @@ export class SubpoenaService {
   }
 
   async update(
-    subpoenaId: string,
+    subpoena: Subpoena,
     update: UpdateSubpoenaDto,
   ): Promise<Subpoena> {
     const { defenderChoice, defenderNationalId } = update
@@ -46,7 +46,7 @@ export class SubpoenaService {
     const [numberOfAffectedRows, subpoenas] = await this.subpoenaModel.update(
       update,
       {
-        where: { subpoenaId },
+        where: { subpoena },
         returning: true,
       },
     )
@@ -71,12 +71,16 @@ export class SubpoenaService {
       })
     }
 
-    const updatedSubpoena = await this.findById(subpoenaId)
+    const updatedSubpoena = await this.findBySubpoenaId(subpoena.subpoenaId)
 
     return updatedSubpoena
   }
 
-  async findById(subpoenaId: string): Promise<Subpoena> {
+  async findBySubpoenaId(subpoenaId?: string): Promise<Subpoena> {
+    if (!subpoenaId) {
+      throw new Error('Missing subpoena id')
+    }
+
     const subpoena = await this.subpoenaModel.findOne({
       include,
       where: { subpoenaId },

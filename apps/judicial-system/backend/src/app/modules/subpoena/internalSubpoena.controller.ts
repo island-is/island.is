@@ -30,13 +30,15 @@ import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { Defendant } from '../defendant/models/defendant.model'
 import { DeliverDto } from './dto/deliver.dto'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
+import { CurrentSubpoena } from './guards/subpoena.decorator'
+import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
 import { DeliverResponse } from './models/deliver.response'
 import { Subpoena } from './models/subpoena.model'
 import { SubpoenaService } from './subpoena.service'
 
 @Controller('api/internal/')
 @ApiTags('internal subpoenas')
-//@UseGuards(TokenGuard)
+@UseGuards(TokenGuard)
 export class InternalSubpoenaController {
   constructor(
     private readonly subpoenaService: SubpoenaService,
@@ -44,23 +46,27 @@ export class InternalSubpoenaController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @UseGuards(SubpoenaExistsGuard)
   @Get('subpoena/:subpoenaId')
   async getSubpoena(
     @Param('subpoenaId') subpoenaId: string,
+    @CurrentSubpoena() subpoena: Subpoena,
   ): Promise<Subpoena | null> {
     this.logger.debug(`Getting subpoena by subpoena id ${subpoenaId}`)
 
-    return this.subpoenaService.findById(subpoenaId)
+    return subpoena
   }
 
+  @UseGuards(SubpoenaExistsGuard)
   @Patch('subpoena/:subpoenaId')
   async updateSubpoena(
     @Param('subpoenaId') subpoenaId: string,
+    @CurrentSubpoena() subpoena: Subpoena,
     @Body() update: UpdateSubpoenaDto,
   ): Promise<Subpoena> {
-    this.logger.debug(`Updating subpoena by subpoena id ${subpoenaId}`)
+    this.logger.debug(`Updating subpoena by subpoena id ${subpoena.id}`)
 
-    return this.subpoenaService.update(subpoenaId, update)
+    return this.subpoenaService.update(subpoena, update)
   }
 
   @UseGuards(
