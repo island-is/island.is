@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -37,6 +37,9 @@ import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web
 import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
+import useSWR from 'swr'
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 const Processing: FC = () => {
   const { user } = useContext(UserContext)
@@ -56,6 +59,7 @@ const Processing: FC = () => {
   const [isCivilClaim, setIsCivilClaim] = useState<boolean | 'NO_CHOICE'>(
     'NO_CHOICE',
   )
+  const [nID, setNID] = useState<string>()
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
@@ -100,6 +104,19 @@ const Processing: FC = () => {
     },
     [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
   )
+
+  const { data, error, mutate } = useSWR(
+    `/api/nationalRegistry/getPersonByNationalId?nationalId=${nID}`,
+    fetcher,
+  )
+
+  useEffect(() => {
+    if (nID?.length === 11) {
+      mutate()
+    }
+  }, [nID])
+
+  console.log(data)
 
   return (
     <PageLayout
@@ -254,7 +271,7 @@ const Processing: FC = () => {
                   isDateOfBirth={false}
                   value="12"
                   onChange={(val) => console.log('change', val)}
-                  onBlur={(val) => console.log('blur', val)}
+                  onBlur={(val) => setNID(val)}
                 />
               </Box>
               <InputName
