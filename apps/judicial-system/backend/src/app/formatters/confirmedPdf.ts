@@ -206,28 +206,28 @@ const createRulingConfirmation = async (
   const doc = pages[0]
 
   const { height } = doc.getSize()
-  const shaddowHeight = calculatePt(70)
+  const shadowHeight = calculatePt(70)
   const institutionWidth = calculatePt(160)
   const confirmedByWidth = institutionWidth + calculatePt(48)
-  const shaddowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
+  const shadowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
   const titleHeight = calculatePt(24)
   const titleWidth = institutionWidth + confirmedByWidth
 
   // Draw the shadow
   doc.drawRectangle({
     x: pageMargin,
-    y: height - shaddowHeight - pageMargin,
-    width: shaddowWidth,
-    height: shaddowHeight,
+    y: height - shadowHeight - pageMargin,
+    width: shadowWidth,
+    height: shadowHeight,
     color: lightGray,
   })
 
   // Draw the box around the coat of arms
   doc.drawRectangle({
     x: coatOfArmsX,
-    y: height - shaddowHeight - pageMargin + calculatePt(8),
+    y: height - shadowHeight - pageMargin + calculatePt(8),
     width: coatOfArmsWidth,
-    height: shaddowHeight,
+    height: shadowHeight,
     color: rgb(1, 1, 1),
     borderColor: darkGray,
     borderWidth: 1,
@@ -264,7 +264,7 @@ const createRulingConfirmation = async (
   })
 
   doc.drawText(formatDate(confirmation.date) || '', {
-    x: shaddowWidth - calculatePt(24),
+    x: shadowWidth - calculatePt(24),
     y: height - pageMargin - titleHeight + calculatePt(16),
     size: calculatePt(smallFontSize),
     font: timesRomanFont,
@@ -275,7 +275,7 @@ const createRulingConfirmation = async (
     x: coatOfArmsX + coatOfArmsWidth,
     y: height - pageMargin - titleHeight - confirmedByHeight + calculatePt(12),
     width: institutionWidth,
-    height: shaddowHeight - titleHeight,
+    height: shadowHeight - titleHeight,
     color: white,
     borderColor: darkGray,
     borderWidth: 1,
@@ -302,7 +302,7 @@ const createRulingConfirmation = async (
     x: coatOfArmsX + coatOfArmsWidth + institutionWidth,
     y: height - pageMargin - titleHeight - confirmedByHeight + calculatePt(12),
     width: confirmedByWidth,
-    height: shaddowHeight - titleHeight,
+    height: shadowHeight - titleHeight,
     color: white,
     borderColor: darkGray,
     borderWidth: 1,
@@ -343,28 +343,28 @@ const createCourtRecordConfirmation = async (
   const doc = pages[0]
 
   const { height } = doc.getSize()
-  const shaddowHeight = calculatePt(70)
+  const shadowHeight = calculatePt(70)
   const institutionWidth = calculatePt(160)
   const confirmedByWidth = institutionWidth + calculatePt(48)
-  const shaddowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
+  const shadowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
   const titleHeight = calculatePt(24)
   const titleWidth = institutionWidth + confirmedByWidth
 
   // Draw the shadow
   doc.drawRectangle({
     x: pageMargin,
-    y: height - shaddowHeight - pageMargin,
-    width: shaddowWidth,
-    height: shaddowHeight,
+    y: height - shadowHeight - pageMargin,
+    width: shadowWidth,
+    height: shadowHeight,
     color: lightGray,
   })
 
   // Draw the box around the coat of arms
   doc.drawRectangle({
     x: coatOfArmsX,
-    y: height - shaddowHeight - pageMargin + calculatePt(8),
+    y: height - shadowHeight - pageMargin + calculatePt(8),
     width: coatOfArmsWidth,
-    height: shaddowHeight,
+    height: shadowHeight,
     color: rgb(1, 1, 1),
     borderColor: darkGray,
     borderWidth: 1,
@@ -401,7 +401,7 @@ const createCourtRecordConfirmation = async (
   })
 
   doc.drawText(formatDate(confirmation.date) || '', {
-    x: shaddowWidth - calculatePt(24),
+    x: shadowWidth - calculatePt(24),
     y: height - pageMargin - titleHeight + calculatePt(16),
     size: calculatePt(smallFontSize),
     font: timesRomanFont,
@@ -412,7 +412,7 @@ const createCourtRecordConfirmation = async (
     x: coatOfArmsX + coatOfArmsWidth,
     y: height - pageMargin - titleHeight - confirmedByHeight + calculatePt(12),
     width: institutionWidth + confirmedByWidth,
-    height: shaddowHeight - titleHeight,
+    height: shadowHeight - titleHeight,
     color: white,
     borderColor: darkGray,
     borderWidth: 1,
