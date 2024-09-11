@@ -13,7 +13,7 @@ const wordbreaks = '[;,]'
 export const parseCsvToMileageRecord = async (file: File) => {
   const reader = file.stream().getReader()
 
-  let parsedLines: Array<Array<string>> = [[]]
+  const parsedLines: Array<Array<string>> = [[]]
   const parseChunk = async (res: ReadableStreamReadResult<Uint8Array>) => {
     if (res.done) {
       return
