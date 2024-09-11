@@ -25,7 +25,7 @@ import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { S3Service } from '../../shared/services/s3.service'
+import { AwsService } from '@island.is/nest/aws'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -42,7 +42,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly smsService: SmsService,
     private nationalRegistryApi: NationalRegistryClientService,
-    private readonly s3Service: S3Service,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE)
   }
@@ -52,10 +52,10 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const { nationalRegistry } = externalData
     const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
-    const file = await this.s3Service.getFileFromBucket(
-      this.presignedBucket,
-      s3FileName,
-    )
+    const file = await this.awsService.getFile({
+      bucket: this.presignedBucket,
+      key: s3FileName
+    })
     if (!file) {
       throw new Error('File content was undefined')
     }

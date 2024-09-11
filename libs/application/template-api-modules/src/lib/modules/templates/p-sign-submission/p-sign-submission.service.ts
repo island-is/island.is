@@ -15,14 +15,12 @@ import {
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 
-import AmazonS3URI from 'amazon-s3-uri'
-import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { S3Service } from '../../shared/services/s3.service'
+import { AwsService } from '@island.is/nest/aws'
 
 export const QUALITY_PHOTO = `
 query HasQualityPhoto {
@@ -64,7 +62,7 @@ export class PSignSubmissionService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly s3Service: S3Service,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.P_SIGN)
   }
@@ -204,12 +202,9 @@ export class PSignSubmissionService extends BaseTemplateApiService {
       }
     )[attachmentKey]
 
-    const { bucket, key } = AmazonS3URI(fileName)
-
-    const uploadBucket = bucket
-    const fileContent = await this.s3Service.getFileContentAsBase64FromBucket(
-      uploadBucket,
-      key,
+    const fileContent = await this.awsService.getFileContent(
+      fileName,
+      'base64'
     )
     return fileContent || ''
   }

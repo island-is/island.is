@@ -6,8 +6,6 @@ import { AccidentNotificationService } from './accident-notification.service'
 import { HealthInsuranceV2ClientModule } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
-import { S3 } from 'aws-sdk'
-import { S3Service } from '../../shared/services/s3.service'
 
 const applicationRecipientName =
   process.env.ACCIDENT_NOTIFICATION_APPLICATION_RECIPIENT_NAME ?? ''

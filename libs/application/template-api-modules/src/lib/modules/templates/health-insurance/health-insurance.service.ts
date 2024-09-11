@@ -16,14 +16,14 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core/messages'
-import { S3Service } from '../../shared/services/s3.service'
+import { AwsService } from '@island.is/nest/aws'
 
 @Injectable()
 export class HealthInsuranceService extends BaseTemplateApiService {
   constructor(
     private documentApi: DocumentApi,
     private personApi: PersonApi,
-    private s3Service: S3Service,
+    private awsService: AwsService,
   ) {
     super(ApplicationTypes.HEALTH_INSURANCE)
   }
@@ -64,7 +64,7 @@ export class HealthInsuranceService extends BaseTemplateApiService {
     const xml = await insuranceToXML(
       inputs.vistaskjal,
       inputs.attachmentNames,
-      this.s3Service,
+      this.awsService,
     )
 
     try {

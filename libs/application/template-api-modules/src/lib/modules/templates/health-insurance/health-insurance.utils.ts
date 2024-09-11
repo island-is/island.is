@@ -13,7 +13,7 @@ import {
   GetVistaSkjalBody,
   VistaSkjalInput,
 } from './types/health-insurance-types'
-import { S3Service } from '../../shared/services/s3.service'
+import { AwsService } from '@island.is/nest/aws'
 
 const formatDate = (date: Date) => {
   return format(new Date(date), 'yyyy-MM-dd', {
@@ -34,7 +34,7 @@ const formatDate = (date: Date) => {
 export const insuranceToXML = async (
   inputObj: VistaSkjalInput,
   attachmentNames: string[],
-  s3Service: S3Service,
+  awsService: AwsService,
 ) => {
   logger.debug(`--- Starting to convert application to XML ---`)
   const vistaSkjalBody: GetVistaSkjalBody = {
@@ -93,7 +93,7 @@ export const insuranceToXML = async (
     }
     for (let i = 0; i < arrAttachments.length; i++) {
       const filename = arrAttachments[i]
-      const content = await s3Service.getFileContentAsBase64(attachmentNames[i])
+      const content = await awsService.getFileContent(attachmentNames[i], 'base64')
       if (!content) {
         throw new Error('error getting file:' + filename)
       }

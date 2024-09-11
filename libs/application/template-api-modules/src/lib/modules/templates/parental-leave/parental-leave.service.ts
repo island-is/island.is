@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { S3 } from 'aws-sdk'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 import cloneDeep from 'lodash/cloneDeep'
@@ -83,7 +82,7 @@ import {
   generateEmployerRejectedApplicationSms,
   generateOtherParentRejectedApplicationSms,
 } from './smsGenerators'
-import { S3Service } from '../../shared/services/s3.service'
+import { AwsService } from '@island.is/nest/aws'
 
 interface VMSTError {
   type: string
@@ -116,7 +115,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
     private readonly childrenService: ChildrenService,
     private readonly nationalRegistryApi: NationalRegistryClientService,
-    private readonly s3Service: S3Service,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
   }
@@ -387,9 +386,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       )
 
       const Key = `${application.id}/${filename}`
-      const fileContent = await this.s3Service.getFileContentAsBase64FromBucket(
-        this.attachmentBucket,
-        Key,
+      const fileContent = await this.awsService.getFileContent({
+        bucket: this.attachmentBucket,
+        key: Key
+      }, 'base64'
       )
 
       if (!fileContent) {

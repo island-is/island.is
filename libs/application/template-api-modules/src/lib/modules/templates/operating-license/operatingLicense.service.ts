@@ -1,10 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
-
-import AmazonS3URI from 'amazon-s3-uri'
-import { S3 } from 'aws-sdk'
 import {
   SyslumennService,
   Person,
@@ -22,7 +19,6 @@ import {
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
-  InstitutionNationalIds,
   YES,
 } from '@island.is/application/types'
 import { Info, BankruptcyHistoryResult } from './types/application'
@@ -37,7 +33,7 @@ import { BANNED_BANKRUPTCY_STATUSES } from './constants'
 import { error } from '@island.is/application/templates/operating-license'
 import { isPerson } from 'kennitala'
 import { User } from '@island.is/auth-nest-tools'
-import { S3Service } from '../../shared/services/s3.service'
+import { AwsService } from '@island.is/nest/aws'
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
   constructor(
@@ -46,7 +42,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     private readonly criminalRecordService: CriminalRecordService,
     private readonly financeService: FinanceClientService,
     private readonly judicialAdministrationService: JudicialAdministrationService,
-    private readonly s3Service: S3Service,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.OPERATING_LICENSE)
   }
@@ -325,7 +321,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
           attachmentAnswer?.key
         ]
         const content =
-          (await this.s3Service.getFileContentAsBase64(fileName)) || ''
+          (await this.awsService.getFileContent(fileName, 'base64')) || ''
         attachments.push({ name, content } as Attachment)
       }
     }

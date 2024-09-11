@@ -8,7 +8,7 @@ import {
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { ApplicationTypes } from '@island.is/application/types'
-import { S3Service } from '../../shared/services/s3.service'
+import { AwsService } from '@island.is/nest/aws'
 
 describe('SocialInsuranceAdministrationService', () => {
   let socialInsuranceAdministrationService: SocialInsuranceAdministrationService
@@ -35,7 +35,7 @@ describe('SocialInsuranceAdministrationService', () => {
           useValue: 'attachmentBucket',
         },
         {
-          provide: S3Service,
+          provide: AwsService,
           useValue: {},
         },
       ],
