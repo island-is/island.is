@@ -3207,10 +3207,10 @@ web:
     min: 2
   resources:
     limits:
-      cpu: '400m'
+      cpu: '1000m'
       memory: '768Mi'
     requests:
-      cpu: '200m'
+      cpu: '300m'
       memory: '384Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
