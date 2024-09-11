@@ -1,4 +1,11 @@
-import { Badge, EmptyList, StatusCard, StatusCardSkeleton, TopLine } from '@ui'
+import {
+  Badge,
+  EmptyList,
+  Problem,
+  StatusCard,
+  StatusCardSkeleton,
+  TopLine,
+} from '@ui'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -52,6 +59,8 @@ export const ApplicationsList = ({
     () => applicationsRes.data?.applicationApplications ?? [],
     [applicationsRes],
   )
+
+  const showError = applicationsRes.error && !applicationsRes.data
 
   const onRefresh = useCallback(async () => {
     setRefetching(true)
@@ -179,30 +188,36 @@ export const ApplicationsList = ({
   ]) as FlatListItem[]
 
   return (
-    <>
-      <Animated.FlatList
-        ref={flatListRef}
-        contentContainerStyle={{
-          paddingBottom: theme.spacing[2],
-          paddingTop: theme.spacing[2],
-        }}
-        refreshControl={
-          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
-        }
-        scrollEventThrottle={16}
-        scrollToOverflowEnabled={true}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          {
-            useNativeDriver: true,
-          },
-        )}
-        data={data}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-      />
-      <TopLine scrollY={scrollY} />
-      <BottomTabsIndicator index={1} total={5} />
-    </>
+    <View>
+      {showError ? (
+        <Problem withContainer />
+      ) : (
+        <>
+          <Animated.FlatList
+            ref={flatListRef}
+            contentContainerStyle={{
+              paddingBottom: theme.spacing[2],
+              paddingTop: theme.spacing[2],
+            }}
+            refreshControl={
+              <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+            }
+            scrollEventThrottle={16}
+            scrollToOverflowEnabled={true}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              {
+                useNativeDriver: true,
+              },
+            )}
+            data={data}
+            keyExtractor={keyExtractor}
+            renderItem={renderItem}
+          />
+          <TopLine scrollY={scrollY} />
+          <BottomTabsIndicator index={1} total={5} />
+        </>
+      )}
+    </View>
   )
 }
