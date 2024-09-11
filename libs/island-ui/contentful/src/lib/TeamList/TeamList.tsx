@@ -192,7 +192,7 @@ const TeamMemberAccordionList = ({
                     </Inline>
                   )}
                   {member.tagGroups?.map((tagGroup) => (
-                    <Inline space={1} alignY="center">
+                    <Inline key={tagGroup.groupLabel} space={1} alignY="center">
                       <Text fontWeight="semiBold">{tagGroup.groupLabel}</Text>
                       <Inline space={1}>
                         <Text>{tagGroup.tagLabels.join(', ')}</Text>
