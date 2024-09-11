@@ -45,6 +45,9 @@ const SkilavottordVehicleReadyToDeregisteredQuery = gql`
       newregDate
       vinNumber
       mileage
+      recyclingRequests {
+        nameOfRequestor
+      }
     }
   }
 `
@@ -266,6 +269,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
                 vehicleId={vehicle.vehicleId}
                 vehicleType={vehicle.vehicleType}
                 modelYear={getYear(vehicle.newregDate)}
+                vehicleOwner={vehicle.recyclingRequests?.[0]?.nameOfRequestor}
                 vinNumber={vehicle.vinNumber}
                 mileage={vehicle.mileage || 0}
                 outInStatus={outInStatus}
