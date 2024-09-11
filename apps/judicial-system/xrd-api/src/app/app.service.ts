@@ -133,7 +133,6 @@ export class AppService {
         const response = await res.json()
 
         if (res.ok) {
-          console.log(response)
           return {
             subpoenaComment: response.comment,
             defenderInfo: {
