@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import kennitala from 'kennitala'
-import isFuture  from 'date-fns/isFuture'
+import isFuture from 'date-fns/isFuture'
 import { redirect } from 'react-router-dom'
 import { WrappedActionFn } from '@island.is/portals/core'
 import {
@@ -14,31 +14,37 @@ import {
 } from './CreateDelegation.generated'
 import { DelegationAdminPaths } from '../../lib/paths'
 
-const schema = z.object({
-  fromNationalId: z
-    .string()
-    .min(1, 'errorNationalIdFromRequired')
-    .transform((fromNationalId) => kennitala.sanitize(fromNationalId))
-    .refine((fromNationalId) => kennitala.isValid(fromNationalId), 'errorNationalIdFromInvalid'),
-  toNationalId: z
-    .string()
-    .min(1, 'errorNationalIdToRequired')
-    .transform((toNationalId) => kennitala.sanitize(toNationalId))
-    .refine((toNationalId) => kennitala.isValid(toNationalId), 'errorNationalIdToInvalid'),
-  type: z.string(),
-  validTo: z
-    .string()
-    .optional(),
-  referenceId: z.string().min(1, 'errorReferenceIdRequired')
-}).superRefine(({ validTo }, ctx) => {
-  if (validTo && !isFuture(new Date(validTo))) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'errorValidTo',
-      path: ['validTo'],
-    })
-  }
-})
+const schema = z
+  .object({
+    fromNationalId: z
+      .string()
+      .min(1, 'errorNationalIdFromRequired')
+      .transform((fromNationalId) => kennitala.sanitize(fromNationalId))
+      .refine(
+        (fromNationalId) => kennitala.isValid(fromNationalId),
+        'errorNationalIdFromInvalid',
+      ),
+    toNationalId: z
+      .string()
+      .min(1, 'errorNationalIdToRequired')
+      .transform((toNationalId) => kennitala.sanitize(toNationalId))
+      .refine(
+        (toNationalId) => kennitala.isValid(toNationalId),
+        'errorNationalIdToInvalid',
+      ),
+    type: z.string(),
+    validTo: z.string().optional(),
+    referenceId: z.string().min(1, 'errorReferenceIdRequired'),
+  })
+  .superRefine(({ validTo }, ctx) => {
+    if (validTo && !isFuture(new Date(validTo))) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'errorValidTo',
+        path: ['validTo'],
+      })
+    }
+  })
 
 export type CreateDelegationResult = ValidateFormDataResult<typeof schema> & {
   /**
@@ -59,14 +65,14 @@ export const createDelegationAction: WrappedActionFn =
 
     const { validTo, ...rest } = result.data
 
-    const input: CreateDelegationMutationVariables["input"] = { ...rest }
+    const input: CreateDelegationMutationVariables['input'] = { ...rest }
 
     if (validTo) {
       input.validTo = new Date(validTo)
     }
 
     try {
-     await client.mutate<
+      await client.mutate<
         CreateDelegationMutation,
         CreateDelegationMutationVariables
       >({
@@ -77,7 +83,6 @@ export const createDelegationAction: WrappedActionFn =
       })
 
       return redirect(DelegationAdminPaths.Root)
-
     } catch (e) {
       return {
         errors: null,

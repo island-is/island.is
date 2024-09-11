@@ -48,17 +48,17 @@ export class DelegationAdminService {
       from: {
         name: 'foo',
         nationalId: '221290-22169',
-        type: 'company'
+        type: 'company',
       },
       to: {
-        name: "bar",
+        name: 'bar',
         nationalId: '221290-22169',
-        type: 'company'
+        type: 'company',
       },
       scopes: [],
       validTo: null,
-      type: "Custom",
-      provider: "delegationdb"
+      type: 'Custom',
+      provider: 'delegationdb',
     })
   }
 }
