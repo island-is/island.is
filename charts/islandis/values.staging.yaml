@@ -880,7 +880,7 @@ application-system-api-worker:
       cpu: '400m'
       memory: '768Mi'
     requests:
-      cpu: '100m'
+      cpu: '150m'
       memory: '384Mi'
   schedule: '*/30 * * * *'
   secrets:
@@ -1480,7 +1480,7 @@ license-api:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '15m'
+      cpu: '50m'
       memory: '256Mi'
   secrets:
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
