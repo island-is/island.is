@@ -118,45 +118,45 @@ export class AppService {
       }
     }
 
-    return fetch(
-      `${this.config.backend.url}/api/internal/subpoena/${subpoenaId}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${this.config.backend.accessToken}`,
+    try {
+      const res = await fetch(
+        `${this.config.backend.url}/api/internal/subpoena/${subpoenaId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backend.accessToken}`,
+          },
+          body: JSON.stringify(update),
         },
-        body: JSON.stringify(update),
-      },
-    )
-      .then(async (res) => {
-        const response = await res.json()
+      )
 
-        if (res.ok) {
-          return {
-            subpoenaComment: response.comment,
-            defenderInfo: {
-              defenderChoice: response.defendant.defenderChoice,
-              defenderName: response.defendant.defenderName,
-            },
-          } as SubpoenaResponse
-        }
+      const response = await res.json()
 
-        if (res.status < 500) {
-          throw new BadRequestException(response)
-        }
+      if (res.ok) {
+        return {
+          subpoenaComment: response.comment,
+          defenderInfo: {
+            defenderChoice: response.defendant.defenderChoice,
+            defenderName: response.defendant.defenderName,
+          },
+        } as SubpoenaResponse
+      }
 
-        throw response
+      if (res.status < 500) {
+        throw new BadRequestException(response)
+      }
+
+      throw response
+    } catch (reason) {
+      if (reason instanceof BadRequestException) {
+        throw reason
+      }
+
+      throw new BadGatewayException({
+        ...reason,
+        message: 'Failed to update subpoena',
       })
-      .catch((reason) => {
-        if (reason instanceof BadRequestException) {
-          throw reason
-        }
-
-        throw new BadGatewayException({
-          ...reason,
-          message: 'Failed to update subpoena',
-        })
-      })
+    }
   }
 }
