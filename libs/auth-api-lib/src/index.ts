@@ -56,6 +56,7 @@ export * from './lib/delegations/models/delegation-provider.model'
 export * from './lib/delegations/DelegationConfig'
 export * from './lib/delegations/utils/scopes'
 export * from './lib/delegations/admin/delegation-admin-custom.service'
+export * from './lib/delegations/constants/names'
 
 // Resources module
 export * from './lib/resources/resources.module'

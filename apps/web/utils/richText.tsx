@@ -35,6 +35,7 @@ import {
   MultipleStatistics,
   OneColumnTextSlice,
   OverviewLinksSlice,
+  ParentalLeaveCalculator,
   PlateAvailableSearch,
   PowerBiSlice,
   PublicShipSearch,
@@ -186,6 +187,9 @@ export const webRenderConnectedComponent = (
       break
     case 'Ums/CostOfLivingCalculator':
       connectedComponent = <UmsCostOfLivingCalculator />
+      break
+    case 'VMST/ParentalLeaveCalculator':
+      connectedComponent = <ParentalLeaveCalculator slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)

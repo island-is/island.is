@@ -109,6 +109,7 @@ export const is = {
   'settings.security.appLockTimeoutLabel': 'Biðtími skjálæsingar',
   'settings.security.appLockTimeoutDescription':
     'Tíminn þar til skjálæsing fer í gang',
+  'settings.security.appLockTimeoutSeconds': 'sek.',
   'settings.about.groupTitle': 'Um appið',
   'settings.about.versionLabel': 'Útgáfa',
   'settings.about.logoutLabel': 'Útskrá',
@@ -169,7 +170,6 @@ export const is = {
   'home.applicationsStatus': 'Staða umsókna',
   'home.allApplications': 'Stafrænar umsóknir',
   'home.welcomeText': 'Hæ',
-  'home.inbox': 'Nýjast í pósthólfinu',
   'home.goodDay': 'Góðan dag,',
   'home.onboardingModule.card1':
     'Nú sérð þú upplýsingar um ökutæki, fasteignir og fjölskyldu þína í appinu til viðbótar við skjöl og skírteini.',
@@ -183,6 +183,18 @@ export const is = {
     'Skrá kílómetrastöðu rafmagns- og tengiltvinnbíla',
   'home.vehicleModule.button': 'Mín ökutæki',
   'button.seeAll': 'Sjá allt',
+
+  // home options
+  'homeOptions.screenTitle': 'Heimaskjár',
+  'homeOptions.heading.title': 'Stilla heimaskjá',
+  'homeOptions.heading.subtitle':
+    'Hér er hægt að stilla hvað birtist á heimaskjá.',
+  'homeOptions.graphic': 'Birta myndskreytingu',
+  'homeOptions.inbox': 'Nýjast í pósthólfinu',
+  'homeOptions.licenses': 'Skírteini',
+  'homeOptions.applications': 'Umsóknir',
+  'homeOptions.vehicles': 'Ökutæki',
+  'homeOptions.airDiscount': 'Loftbrú',
 
   // inbox
   'inbox.screenTitle': 'Pósthólf',
@@ -490,8 +502,8 @@ export const is = {
   'edit.phone.inputlabel': 'Símanúmer',
   'edit.phone.button': 'Vista',
   'edit.phone.button.empty': 'Vista tómt',
-  'edit.phone.button.error': 'Villa',
-  'edit.phone.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
+  'edit.phone.error': 'Villa',
+  'edit.phone.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit email
   'edit.email.screenTitle': 'Breyta Netfangi',
@@ -499,8 +511,8 @@ export const is = {
   'edit.email.inputlabel': 'Netfang',
   'edit.email.button': 'Vista',
   'edit.email.button.empty': 'Vista tómt',
-  'edit.email.button.error': 'Villa',
-  'edit.email.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
+  'edit.email.error': 'Villa',
+  'edit.email.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Breyta banka upplýsingum',
@@ -510,6 +522,8 @@ export const is = {
   'edit.bankinfo.inputlabel.book': 'Hb.',
   'edit.bankinfo.inputlabel.number': 'Reikningsnúmer',
   'edit.bankinfo.button': 'Vista',
+  'edit.bankinfo.error': 'Villa',
+  'edit.bankinfo.errorMessage': 'Gat ekki vistað reikningsupplýsingar',
 
   // edit confirm
   'edit.confirm.screenTitle': 'Staðfesta aðgerð',
@@ -523,6 +537,8 @@ export const is = {
   'edit.confirm.inputlabel': 'Öryggisnúmer',
   'edit.cancel.button': 'Hætta við',
   'edit.confirm.button': 'Staðfesta',
+  'edit.confirm.error': 'Villa',
+  'edit.confirm.errorMessage': 'Gat ekki uppfært upplýsingar',
 
   // air discount
   'airDiscount.screenTitle': 'Loftbrú',

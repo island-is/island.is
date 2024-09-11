@@ -25,6 +25,9 @@ class SubpoenaData {
   @ApiProperty({ type: () => String })
   title!: string
 
+  @ApiProperty({ type: Boolean })
+  acknowledged?: boolean
+
   @ApiProperty({ type: () => [Groups] })
   groups!: Groups[]
 }
@@ -60,12 +63,13 @@ export class SubpoenaResponse {
       (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
     )
     const arraignmentDate = subpoenaDateLog?.date ?? ''
-    const subpoenaCreatedDate = subpoenaDateLog?.created ?? ''
+    const subpoenaCreatedDate = subpoenaDateLog?.created ?? '' //TODO: Change to subpoena created in RLS
 
     return {
       caseId: internalCase.id,
       data: {
         title: t.subpoena,
+        acknowledged: false, // TODO: Connect to real data
         groups: [
           {
             label: `${t.caseNumber} ${internalCase.courtCaseNumber}`,
