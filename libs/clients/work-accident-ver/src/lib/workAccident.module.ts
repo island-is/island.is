@@ -1,8 +1,9 @@
-// import { Module } from '@nestjs/common'
-// import { WorkAccidentClientService } from './workAccident.service'
+import { Module } from '@nestjs/common'
+import { WorkAccidentClientService } from './workAccident.service'
+import { exportedApis } from './providers'
 
-// @Module({
-//   providers: [WorkAccidentClientService, PROVIDER],
-//   exports: [WorkAccidentClientService],
-// })
-// export class WorkMachinesClientModule {}
+@Module({
+  providers: [WorkAccidentClientService, ...exportedApis],
+  exports: [WorkAccidentClientService],
+})
+export class WorkAccidentClientModule {}

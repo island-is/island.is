@@ -10,9 +10,15 @@
     "version": "v1",
     "x-pricing": "free",
     "x-category": "official",
-    "x-links": { "responsibleParty ": "https://www.vinnueftirlit.is" }
+    "x-links": {
+      "responsibleParty ": "https://www.vinnueftirlit.is"
+    }
   },
-  "servers": [{ "url": "/slysaskraning" }],
+  "servers": [
+    {
+      "url": "/slysaskraning"
+    }
+  ],
   "paths": {
     "/api/Accidents": {
       "post": {
@@ -45,7 +51,9 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -53,7 +61,9 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -61,11 +71,15 @@
             "description": "Unprocessable Content",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
-          "500": { "description": "Internal Server Error" }
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       },
       "get": {
@@ -78,39 +92,60 @@
             "name": "searchQuery",
             "in": "query",
             "description": "A search string",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "PageNumber",
             "in": "query",
             "description": "The page number",
-            "schema": { "type": "integer", "format": "int32" }
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           },
           {
             "name": "PageSize",
             "in": "query",
             "description": "The size of the page",
-            "schema": { "type": "integer", "format": "int32" }
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           },
           {
             "name": "OrderBy",
             "in": "query",
             "description": "A comma separated string of columns to sort by",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "locale",
             "in": "query",
             "description": "`String?` Default value \"is\"",
-            "schema": { "type": "string", "default": "is" }
+            "schema": {
+              "type": "string",
+              "default": "is"
+            }
           }
         ],
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       },
       "options": {
         "tags": ["Accidents"],
         "operationId": "GetAccidentOptions",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/Accidents/{Id}": {
@@ -125,12 +160,18 @@
             "in": "path",
             "description": "AccidentId",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" }
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           },
           {
             "name": "locale",
             "in": "query",
-            "schema": { "type": "string", "default": "is" }
+            "schema": {
+              "type": "string",
+              "default": "is"
+            }
           }
         ],
         "responses": {
@@ -138,7 +179,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/AccidentDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/AccidentDto"
+                }
               }
             }
           }
@@ -153,7 +196,9 @@
           {
             "name": "companyssn",
             "in": "query",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -161,7 +206,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/CompanySettingsDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/CompanySettingsDto"
+                }
               }
             }
           },
@@ -169,11 +216,15 @@
             "description": "Unprocessable Content",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
-          "500": { "description": "Internal Server Error" }
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       },
       "post": {
@@ -193,7 +244,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/CompanySettingsDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/CompanySettingsDto"
+                }
               }
             }
           },
@@ -201,7 +254,9 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -209,7 +264,9 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -217,17 +274,25 @@
             "description": "Unprocessable Content",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
-          "500": { "description": "Internal Server Error" }
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       },
       "options": {
         "tags": ["CompanySettings"],
         "operationId": "GetCompanySettingsOptions",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/Data": {
@@ -239,17 +304,25 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/DataDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/DataDto"
+                }
               }
             }
           },
-          "500": { "description": "Internal Server Error" }
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       },
       "options": {
         "tags": ["Data"],
         "operationId": "GetDataOptions",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     }
   },
@@ -258,8 +331,14 @@
       "AbsenceDueToAccidentDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -323,38 +402,83 @@
       "AccidentForCreationDto": {
         "type": "object",
         "properties": {
-          "companySSN": { "type": "string", "nullable": true },
-          "sizeOfEnterprise": { "type": "integer", "format": "int32" },
-          "nameOfBranchOrDepartment": { "type": "string", "nullable": true },
-          "address": { "type": "string", "nullable": true },
-          "postcode": { "type": "string", "nullable": true },
-          "workplaceHealthAndSafety": {
-            "type": "array",
-            "items": { "type": "integer", "format": "int32" },
+          "companySSN": {
+            "type": "string",
             "nullable": true
           },
-          "buyersSSN": { "type": "string", "nullable": true },
-          "dateAndTimeOfAccident": { "type": "string", "format": "date-time" },
-          "aoshCame": { "type": "boolean" },
-          "policeCame": { "type": "boolean" },
-          "numberOfVictims": { "type": "integer", "format": "int32" },
+          "sizeOfEnterprise": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nameOfBranchOrDepartment": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "postcode": {
+            "type": "string",
+            "nullable": true
+          },
+          "workplaceHealthAndSafety": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "buyersSSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateAndTimeOfAccident": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "aoshCame": {
+            "type": "boolean"
+          },
+          "policeCame": {
+            "type": "boolean"
+          },
+          "numberOfVictims": {
+            "type": "integer",
+            "format": "int32"
+          },
           "municipalityWhereAccidentOccured": {
             "type": "string",
             "nullable": true
           },
-          "specificLocationOfAccident": { "type": "string", "nullable": true },
+          "specificLocationOfAccident": {
+            "type": "string",
+            "nullable": true
+          },
           "detailedDescriptionOfAccident": {
             "type": "string",
             "nullable": true
           },
-          "workingEnvironment": { "type": "string", "nullable": true },
-          "victims": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/VictimForCreationDto" },
+          "workingEnvironment": {
+            "type": "string",
             "nullable": true
           },
-          "userPhoneNumber": { "type": "string", "nullable": true },
-          "userEmail": { "type": "string", "nullable": true }
+          "victims": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VictimForCreationDto"
+            },
+            "nullable": true
+          },
+          "userPhoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "userEmail": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -373,17 +497,30 @@
       "CompanySettingsDto": {
         "type": "object",
         "properties": {
-          "companySSN": { "type": "string", "nullable": true },
-          "blockRegistration": { "type": "boolean" }
+          "companySSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "blockRegistration": {
+            "type": "boolean"
+          }
         },
         "additionalProperties": false
       },
       "ContactModeOfInjuryDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true },
-          "validToSelect": { "type": "boolean" }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
         },
         "additionalProperties": false
       },
@@ -392,12 +529,16 @@
         "properties": {
           "absenceDueToAccident": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/AbsenceDueToAccidentDto" },
+            "items": {
+              "$ref": "#/components/schemas/AbsenceDueToAccidentDto"
+            },
             "nullable": true
           },
           "contactModeOfInjury": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/ContactModeOfInjuryDto" },
+            "items": {
+              "$ref": "#/components/schemas/ContactModeOfInjuryDto"
+            },
             "nullable": true
           },
           "employmentStatusOfVictim": {
@@ -409,27 +550,37 @@
           },
           "lengthOfEmployment": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/LengthOfEmploymentDto" },
+            "items": {
+              "$ref": "#/components/schemas/LengthOfEmploymentDto"
+            },
             "nullable": true
           },
           "municipality": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/MunicipalityDto" },
+            "items": {
+              "$ref": "#/components/schemas/MunicipalityDto"
+            },
             "nullable": true
           },
           "partOfBodyInjured": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/PartOfBodyInjuredDto" },
+            "items": {
+              "$ref": "#/components/schemas/PartOfBodyInjuredDto"
+            },
             "nullable": true
           },
           "postCode": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/PostCodeDto" },
+            "items": {
+              "$ref": "#/components/schemas/PostCodeDto"
+            },
             "nullable": true
           },
           "sizeOfTheEnterprise": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/SizeOfTheEnterpriseDto" },
+            "items": {
+              "$ref": "#/components/schemas/SizeOfTheEnterpriseDto"
+            },
             "nullable": true
           },
           "specificPhysicalActivity": {
@@ -441,27 +592,37 @@
           },
           "typeOfInjury": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/TypeOfInjuryDto" },
+            "items": {
+              "$ref": "#/components/schemas/TypeOfInjuryDto"
+            },
             "nullable": true
           },
           "victimsOccupation": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/VictimsOccupationDto" },
+            "items": {
+              "$ref": "#/components/schemas/VictimsOccupationDto"
+            },
             "nullable": true
           },
           "workDeviation": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/WorkDeviationDto" },
+            "items": {
+              "$ref": "#/components/schemas/WorkDeviationDto"
+            },
             "nullable": true
           },
           "workhourArrangement": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/WorkhourArrangementDto" },
+            "items": {
+              "$ref": "#/components/schemas/WorkhourArrangementDto"
+            },
             "nullable": true
           },
           "workingEnvironment": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/WorkingEnvironmentDto" },
+            "items": {
+              "$ref": "#/components/schemas/WorkingEnvironmentDto"
+            },
             "nullable": true
           },
           "workplaceHealthAndSafety": {
@@ -473,7 +634,9 @@
           },
           "workstation": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/WorkstationDto" },
+            "items": {
+              "$ref": "#/components/schemas/WorkstationDto"
+            },
             "nullable": true
           }
         },
@@ -482,109 +645,216 @@
       "EmploymentStatusOfVictimDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "LengthOfEmploymentDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "MunicipalityDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "PartOfBodyInjuredDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true },
-          "validToSelect": { "type": "boolean" }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
         },
         "additionalProperties": false
       },
       "PostCodeDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "nullable": true },
-          "title": { "type": "string", "nullable": true },
-          "status": { "type": "integer", "format": "int32", "nullable": true },
-          "detail": { "type": "string", "nullable": true },
-          "instance": { "type": "string", "nullable": true }
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       },
       "SizeOfTheEnterpriseDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "SpecificPhysicalActivityDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true },
-          "validToSelect": { "type": "boolean" }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
         },
         "additionalProperties": false
       },
       "TypeOfInjuryDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true },
-          "validToSelect": { "type": "boolean" }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
         },
         "additionalProperties": false
       },
       "UpdateCompanySettingsRequestDto": {
         "type": "object",
         "properties": {
-          "companySSN": { "type": "string", "nullable": true },
-          "blockRegistration": { "type": "boolean" }
+          "companySSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "blockRegistration": {
+            "type": "boolean"
+          }
         },
         "additionalProperties": false
       },
       "VictimForCreationDto": {
         "type": "object",
         "properties": {
-          "victimsSSN": { "type": "string", "nullable": true },
-          "employmentStatusOfVictim": { "type": "integer", "format": "int32" },
-          "employmentAgencySSN": { "type": "string", "nullable": true },
+          "victimsSSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "employmentStatusOfVictim": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "employmentAgencySSN": {
+            "type": "string",
+            "nullable": true
+          },
           "startedEmploymentForCompany": {
             "type": "string",
             "format": "date-time"
           },
-          "lengthOfEmployment": { "type": "integer", "format": "int32" },
-          "percentageOfFullWorkTime": { "type": "integer", "format": "int32" },
-          "workhourArrangement": { "type": "integer", "format": "int32" },
-          "startOfWorkingDay": { "type": "string", "format": "date-time" },
-          "workStation": { "type": "integer", "format": "int32" },
-          "victimsOccupation": { "type": "string", "nullable": true },
-          "absenceDueToAccident": { "type": "integer", "format": "int32" },
+          "lengthOfEmployment": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percentageOfFullWorkTime": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "workhourArrangement": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startOfWorkingDay": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "workStation": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "victimsOccupation": {
+            "type": "string",
+            "nullable": true
+          },
+          "absenceDueToAccident": {
+            "type": "integer",
+            "format": "int32"
+          },
           "specificPhysicalActivities": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "nullable": true
           },
           "specificPhysicalActivityMostSevere": {
@@ -593,13 +863,20 @@
           },
           "workDeviations": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "nullable": true
           },
-          "workDeviationMostSevere": { "type": "string", "nullable": true },
+          "workDeviationMostSevere": {
+            "type": "string",
+            "nullable": true
+          },
           "contactModeOfInjuries": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "nullable": true
           },
           "contactModeOfInjuryMostSevere": {
@@ -608,68 +885,123 @@
           },
           "partsOfBodyInjured": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "nullable": true
           },
-          "partOfBodyInjuredMostSevere": { "type": "string", "nullable": true },
+          "partOfBodyInjuredMostSevere": {
+            "type": "string",
+            "nullable": true
+          },
           "typesOfInjury": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "nullable": true
           },
-          "typeOfInjuryMostSevere": { "type": "string", "nullable": true }
+          "typeOfInjuryMostSevere": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "VictimsOccupationDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true },
-          "validToSelect": { "type": "boolean" }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
         },
         "additionalProperties": false
       },
       "WorkDeviationDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true },
-          "validToSelect": { "type": "boolean" }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
         },
         "additionalProperties": false
       },
       "WorkhourArrangementDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "WorkingEnvironmentDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true },
-          "validToSelect": { "type": "boolean" }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
         },
         "additionalProperties": false
       },
       "WorkplaceHealthAndSafetyDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "WorkstationDto": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true }
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
         },
+        "additionalProperties": false
+      },
+      "ValidationProblemDetails": {
         "additionalProperties": false
       }
     },
@@ -682,5 +1014,9 @@
       }
     }
   },
-  "security": [{ "Bearer": [] }]
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }

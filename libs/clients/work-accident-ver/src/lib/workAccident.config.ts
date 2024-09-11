@@ -8,7 +8,7 @@ const schema = z.object({
   }),
 })
 
-export const workAccidentClientConfig = defineConfig<z.infer<typeof schema>>({
+export const WorkAccidentClientConfig = defineConfig<z.infer<typeof schema>>({
   name: 'WorkAccidentClientConfig',
   schema,
   load: (env) => ({
@@ -17,7 +17,7 @@ export const workAccidentClientConfig = defineConfig<z.infer<typeof schema>>({
       'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/slysaskraning-token',
     ),
     fetch: {
-      scope: ['@ver.is/umsysla-slysaskraninga'],
+      scope: ['@ver.is/umsyslaslysaskraning'],
     },
   }),
 })

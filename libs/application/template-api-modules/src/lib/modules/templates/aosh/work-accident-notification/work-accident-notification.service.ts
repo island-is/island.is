@@ -29,14 +29,21 @@ import {
   partOfBodyInjured,
   victimsOccupationUnitGroups,
 } from './work-accident-notification.mockData'
+import { WorkAccidentClientService } from '@island.is/clients/work-accident-ver'
 
 @Injectable()
 export class WorkAccidentNotificationTemplateService extends BaseTemplateApiService {
-  constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {
+  constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    private readonly workAccidentClientService: WorkAccidentClientService,
+  ) {
     super(ApplicationTypes.WORK_ACCIDENT_NOTIFICATION)
   }
 
   async getInputOptions({ auth }: TemplateApiModuleActionProps): Promise<any> {
+    const data = this.workAccidentClientService.getOptionsData(auth)
+    console.log('DATA FROM VER: ', data)
+
     const result = {
       sizeOfEnterprises,
       workplaceHealthAndSafety,
