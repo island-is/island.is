@@ -3,7 +3,7 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import type { ITeamList } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
-import { mapTeamMember } from '../../models/teamMember.model'
+import { mapTeamList } from '../../models/teamList.model'
 
 @Injectable()
 export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
@@ -21,30 +21,28 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
     const teamMembers: MappedData[] = []
 
     for (const teamListEntry of entries) {
-      for (const teamMemberEntry of teamListEntry.fields.teamMembers ?? []) {
+      const teamList = mapTeamList(teamListEntry)
+      for (const member of teamList.teamMembers ?? []) {
         try {
-          const content = teamMemberEntry.fields.name
-            ? teamMemberEntry.fields.name
-            : undefined
-
+          const content = member.name ? member.name : undefined
           teamMembers.push({
-            _id: teamMemberEntry.sys.id,
-            title: teamMemberEntry.fields.name,
+            _id: member.id,
+            title: member.name,
             content,
             contentWordCount: content?.split(/\s+/).length,
             type: 'webTeamMember',
             response: JSON.stringify({
-              ...mapTeamMember(teamMemberEntry),
+              ...member,
               typename: 'webTeamMember',
             }),
             tags: [{ key: teamListEntry.sys.id, type: 'referencedBy' }],
-            dateCreated: teamMemberEntry.sys.createdAt,
+            dateCreated: member.createdAt ?? '',
             dateUpdated: new Date().getTime().toString(),
           })
         } catch (error) {
           logger.warn('Failed to import Team Member', {
             error: error.message,
-            id: teamMemberEntry?.sys?.id,
+            id: member?.id,
           })
         }
       }
