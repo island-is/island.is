@@ -3,6 +3,7 @@ export enum AuthDelegationType {
   LegalGuardian = 'LegalGuardian',
   Custom = 'Custom',
   PersonalRepresentative = 'PersonalRepresentative',
+  LegalRepresentative = 'LegalRepresentative',
 }
 
 export enum AuthDelegationProvider {
@@ -10,4 +11,5 @@ export enum AuthDelegationProvider {
   CompanyRegistry = 'fyrirtaekjaskra',
   PersonalRepresentativeRegistry = 'talsmannagrunnur',
   Custom = 'delegationdb',
+  DistrictCommissionersRegistry = 'syslumenn',
 }
