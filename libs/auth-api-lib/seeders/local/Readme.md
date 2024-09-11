@@ -17,5 +17,3 @@ npx sequelize db:migrate
 ```
 yarn nx run services-auth-ids-api:seed
 ```
-
-§
