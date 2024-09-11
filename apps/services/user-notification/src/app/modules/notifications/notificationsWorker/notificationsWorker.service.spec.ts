@@ -227,17 +227,22 @@ describe('NotificationsWorkerService', () => {
 
     expect(emailService.sendEmail).toHaveBeenCalledTimes(2)
 
+    // should write the messages to db
+    const messages = await notificationModel.findAll()
+    const recipientMessage = messages.find(
+      (message) => message.recipient === userWithDelegations.nationalId,
+    )
+    expect(messages).toHaveLength(2)
+    expect(recipientMessage).toBeDefined()
+
     // should only send push notification for primary recipient
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         nationalId: userWithDelegations.nationalId,
+        notificationId: recipientMessage.id,
       }),
     )
-
-    // should write the messages to db
-    const messages = await notificationModel.findAll()
-    expect(messages).toHaveLength(2)
 
     // should have gotten user profile for primary recipient
     expect(
