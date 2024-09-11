@@ -13,12 +13,6 @@ export class TeamMember {
   @Field()
   title!: string
 
-  @Field({ nullable: true })
-  email?: string
-
-  @Field({ nullable: true })
-  phone?: string
-
   @CacheField(() => Image)
   image!: Image
 
@@ -39,6 +33,4 @@ export const mapTeamMember = ({ fields, sys }: ITeamMember): TeamMember => ({
   imageOnSelect: fields.imageOnSelect ? mapImage(fields.imageOnSelect) : null,
   filterTags: fields.filterTags ? fields.filterTags.map(mapGenericTag) : [],
   intro: fields.intro ? mapDocument(fields.intro, `${sys.id}:intro`) : [],
-  email: fields.email,
-  phone: fields.phone,
 })

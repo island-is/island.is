@@ -6,7 +6,6 @@ import {
   BoxProps,
   GridColumn,
   GridRow,
-  Inline,
   ProfileCard,
   Stack,
   Text,
@@ -18,22 +17,15 @@ import * as styles from './TeamList.css'
 const imagePostfix = '?w=400'
 
 export interface TeamListProps {
-  variant?: 'card' | 'accordion'
-  prefixes?: {
-    email?: string
-    phone?: string
-  }
   teamMembers: {
     title: string
     name: string
     image?: { url: string }
     imageOnSelect?: { url: string } | null
-
-    /** Fields below are only visible if variant is set to "accordion" */
+    /** Field is only visible if variant is set to "accordion" */
     intro?: SliceType[] | null
-    email?: string
-    phone?: string
   }[]
+  variant?: 'card' | 'accordion'
 }
 
 const loadedImageUrls = new Map<string, boolean>()
@@ -136,12 +128,10 @@ export const TeamMemberCardList = ({
 
 const TeamMemberAccordionList = ({
   teamMembers,
-  prefixes,
-}: Pick<TeamListProps, 'teamMembers' | 'prefixes'>) => {
+}: Pick<TeamListProps, 'teamMembers'>) => {
   return (
-    <Accordion singleExpand={false}>
+    <Accordion>
       {teamMembers.map((member) => {
-        const hasEmailOrPhone = Boolean(member.email) || Boolean(member.phone)
         const id = `${member.name}-${member.title}`
         return (
           <AccordionItem
@@ -169,31 +159,7 @@ const TeamMemberAccordionList = ({
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/1', '1/1', '1/1', '9/12']}>
-                <Stack space={1}>
-                  {hasEmailOrPhone && (
-                    <Stack space={2}>
-                      {member.email && (
-                        <Inline space={1} alignY="center">
-                          <Text fontWeight="semiBold">
-                            {prefixes?.email ?? 'Netfang: '}
-                          </Text>
-                          <Text>
-                            <span className={styles.email}>{member.email}</span>
-                          </Text>
-                        </Inline>
-                      )}
-                      {member.phone && (
-                        <Inline space={1} alignY="center">
-                          <Text fontWeight="semiBold">
-                            {prefixes?.phone ?? 'Sími: '}
-                          </Text>
-                          <Text>{member.phone}</Text>
-                        </Inline>
-                      )}
-                    </Stack>
-                  )}
-                  <Text as="div">{richText(member.intro ?? [])}</Text>
-                </Stack>
+                <Text as="div">{richText(member.intro ?? [])}</Text>
               </GridColumn>
             </GridRow>
           </AccordionItem>
