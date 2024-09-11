@@ -8,13 +8,17 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { format as formatNationalId } from 'kennitala'
-import {
-  DistrictCommissionerAgencies,
-  Routes,
-  Services,
-} from '../../../lib/constants'
+import { DistrictCommissionerAgencies, Routes } from '../../../lib/constants'
 import { review, idInformation, priceList } from '../../../lib/messages'
-import { isChild, formatPhoneNumber, hasSecondGuardian } from '../../../utils'
+import {
+  isChild,
+  formatPhoneNumber,
+  hasSecondGuardian,
+  checkForDiscount,
+  getPriceList,
+  formatIsk,
+} from '../../../utils'
+import { Services } from '../../../shared/types'
 
 export const OverviewSection = buildSection({
   id: 'reviewOverview',
@@ -48,8 +52,7 @@ export const OverviewSection = buildSection({
           colSpan: '6/12',
           paddingBottom: 3,
           value: ({ answers }) =>
-            (getValueViaPath(answers, 'typeOfId', '') as string) ===
-            'WithTravel'
+            (getValueViaPath(answers, 'typeOfId', '') as string) === 'II'
               ? idInformation.labels.typeOfIdRadioAnswerOne
               : idInformation.labels.typeOfIdRadioAnswerTwo,
         }),
@@ -225,44 +228,61 @@ export const OverviewSection = buildSection({
         buildKeyValueField({
           label: review.labels.deliveryOption,
           colSpan: '6/12',
-          value: ({ answers }) => {
+          value: (application) => {
+            const { answers } = application
             const priceChoice = getValueViaPath(
               answers,
               `${Routes.PRICELIST}.priceChoice`,
             ) as string
-            // TODO: Add priceAmount when we have all chargeItemCodes!
-            // And change the priceList messages
-            return priceChoice === Services.EXPRESS
-              ? [priceList.labels.fastPriceTitle, '**4.600 kr.**']
-              : priceChoice === Services.EXPRESS_DISCOUNT
-              ? [priceList.labels.discountFastPriceTitle, '**4.600 kr.**']
-              : priceChoice === Services.REGULAR
-              ? [priceList.labels.regularPriceTitle, '**4.600 kr.**']
-              : priceChoice === Services.REGULAR_DISCOUNT
-              ? [priceList.labels.discountRegularPriceTitle, '**4.600 kr.**']
+            const hasDiscount = checkForDiscount(application)
+            const applicationPrices = getPriceList(application)
+            return priceChoice === Services.EXPRESS && !hasDiscount
+              ? {
+                  id: priceList.labels.fastPriceTitle.id,
+                  values: {
+                    price:
+                      applicationPrices.fastPrice?.priceAmount &&
+                      formatIsk(applicationPrices.fastPrice?.priceAmount),
+                  },
+                }
+              : priceChoice === Services.EXPRESS && hasDiscount
+              ? [
+                  {
+                    id: priceList.labels.discountFastPriceTitle,
+                    values: {
+                      price:
+                        applicationPrices.fastDiscountPrice?.priceAmount &&
+                        formatIsk(
+                          applicationPrices.fastDiscountPrice?.priceAmount,
+                        ),
+                    },
+                  },
+                ]
+              : priceChoice === Services.REGULAR && !hasDiscount
+              ? [
+                  {
+                    id: priceList.labels.regularPriceTitle.id,
+                    values: {
+                      price:
+                        applicationPrices.regularPrice?.priceAmount &&
+                        formatIsk(applicationPrices.regularPrice?.priceAmount),
+                    },
+                  },
+                ]
+              : priceChoice === Services.REGULAR && hasDiscount
+              ? [
+                  {
+                    id: priceList.labels.discountRegularPriceTitle.id,
+                    values: {
+                      price:
+                        applicationPrices.regularDiscountPrice?.priceAmount &&
+                        formatIsk(
+                          applicationPrices.regularDiscountPrice?.priceAmount,
+                        ),
+                    },
+                  },
+                ]
               : ''
-          },
-        }),
-        buildKeyValueField({
-          label: review.labels.deliveryLocation,
-          colSpan: '6/12',
-          value: ({
-            answers,
-            externalData: {
-              deliveryAddress: { data },
-            },
-          }) => {
-            const deliveryAddress = (
-              data as DistrictCommissionerAgencies[]
-            )?.find(
-              ({ key }) =>
-                key ===
-                (getValueViaPath(
-                  answers,
-                  `${Routes.PRICELIST}.location`,
-                ) as string),
-            )
-            return `${deliveryAddress?.name} - ${deliveryAddress?.street}, ${deliveryAddress?.zip} ${deliveryAddress?.city}`
           },
         }),
 

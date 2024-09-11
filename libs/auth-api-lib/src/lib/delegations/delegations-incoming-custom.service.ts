@@ -21,6 +21,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
 import { ApiScope } from '../resources/models/api-scope.model'
+import { UNKNOWN_NAME } from './constants/names'
 import { ApiScopeInfo } from './delegations-incoming.service'
 import { DelegationDTO } from './dto/delegation.dto'
 import { MergedDelegationDTO } from './dto/merged-delegation.dto'
@@ -29,8 +30,6 @@ import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { getScopeValidityWhereClause } from './utils/scopes'
-
-export const UNKNOWN_NAME = 'Óþekkt nafn'
 
 type FindAllValidIncomingOptions = {
   nationalId: string
