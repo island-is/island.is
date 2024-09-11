@@ -145,7 +145,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         }
       >
         {!applications.length ? (
-          <View style={{ flex: 1 }}>
+          <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
             <EmptyList
               title={intl.formatMessage({ id: 'applications.emptyTitle' })}
               description={intl.formatMessage({
