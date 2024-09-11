@@ -54,7 +54,6 @@ export interface SignedList extends List {
 }
 
 export const getSlug = (id: number | string, type: string): string => {
-  console.log(type)
   switch (type.toLowerCase()) {
     case ListType.Parliamentary:
       return `/umsoknir/maela-med-althingisframbodi?candidate=${id}`
