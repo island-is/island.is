@@ -33,6 +33,10 @@ export interface TeamListProps {
     intro?: SliceType[] | null
     email?: string
     phone?: string
+    tagGroups?: {
+      groupLabel: string
+      tagLabels: string[]
+    }[]
   }[]
 }
 
@@ -141,7 +145,6 @@ const TeamMemberAccordionList = ({
   return (
     <Accordion singleExpand={false}>
       {teamMembers.map((member) => {
-        const hasEmailOrPhone = Boolean(member.email) || Boolean(member.phone)
         const id = `${member.name}-${member.title}`
         return (
           <AccordionItem
@@ -170,28 +173,33 @@ const TeamMemberAccordionList = ({
               </GridColumn>
               <GridColumn span={['1/1', '1/1', '1/1', '1/1', '9/12']}>
                 <Stack space={1}>
-                  {hasEmailOrPhone && (
-                    <Stack space={2}>
-                      {member.email && (
-                        <Inline space={1} alignY="center">
-                          <Text fontWeight="semiBold">
-                            {prefixes?.email ?? 'Netfang: '}
-                          </Text>
-                          <Text>
-                            <span className={styles.email}>{member.email}</span>
-                          </Text>
-                        </Inline>
-                      )}
-                      {member.phone && (
-                        <Inline space={1} alignY="center">
-                          <Text fontWeight="semiBold">
-                            {prefixes?.phone ?? 'Sími: '}
-                          </Text>
-                          <Text>{member.phone}</Text>
-                        </Inline>
-                      )}
-                    </Stack>
+                  {member.email && (
+                    <Inline space={1} alignY="center">
+                      <Text fontWeight="semiBold">
+                        {prefixes?.email ?? 'Netfang:'}
+                      </Text>
+                      <Text>
+                        <span className={styles.email}>{member.email}</span>
+                      </Text>
+                    </Inline>
                   )}
+                  {member.phone && (
+                    <Inline space={1} alignY="center">
+                      <Text fontWeight="semiBold">
+                        {prefixes?.phone ?? 'Sími:'}
+                      </Text>
+                      <Text>{member.phone}</Text>
+                    </Inline>
+                  )}
+                  {member.tagGroups?.map((tagGroup) => (
+                    <Inline space={1} alignY="center">
+                      <Text fontWeight="semiBold">{tagGroup.groupLabel}</Text>
+                      <Inline space={1}>
+                        <Text>{tagGroup.tagLabels.join(', ')}</Text>
+                      </Inline>
+                    </Inline>
+                  ))}
+
                   <Text as="div">{richText(member.intro ?? [])}</Text>
                 </Stack>
               </GridColumn>
