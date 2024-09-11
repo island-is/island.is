@@ -3,9 +3,12 @@ import {
   buildCustomField,
   buildSubSection,
   buildAlertMessageField,
+  hasYes,
   buildDescriptionField,
   YES,
 } from '@island.is/application/core'
+import { NationalRegistryUser } from '@island.is/api/schema'
+import { info } from 'kennitala'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
 import {
@@ -22,7 +25,21 @@ export const subSectionHealthDeclaration = buildSubSection({
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
+      description: m.healthDeclarationSubTitle,
       space: 2,
+      condition: (answers, externalData) => {
+        if ((answers.fakeData as any).age) {
+          return (answers.fakeData as any).age < 65
+        }
+
+        return (
+          !hasYes(answers?.drivingLicenseInOtherCountry) &&
+          info(
+            (externalData.nationalRegistry.data as NationalRegistryUser)
+              .nationalId,
+          ).age < 65
+        )
+      },
       children: [
         buildCustomField({
           id: 'remarks',
@@ -153,6 +170,33 @@ export const subSectionHealthDeclaration = buildSubSection({
           alertType: 'warning',
           condition: (answers, externalData) =>
             needsHealthCertificateCondition(YES)(answers, externalData),
+        }),
+      ],
+    }),
+    /* Different set of the Health Declaration screen for people over the age of 65 */
+    buildMultiField({
+      id: 'healthDeclarationAge65',
+      title: m.healthDeclarationMultiFieldTitle,
+      description: m.healthDeclarationAge65MultiFieldSubTitle,
+      space: 1,
+      condition: (answers, externalData) => {
+        if ((answers.fakeData as any).age) {
+          return (answers.fakeData as any).age >= 65
+        }
+
+        return (
+          !hasYes(answers?.drivingLicenseInOtherCountry) &&
+          info(
+            (externalData.nationalRegistry.data as NationalRegistryUser)
+              .nationalId,
+          ).age >= 65
+        )
+      },
+      children: [
+        buildDescriptionField({
+          id: 'healthDeclarationAge65Description',
+          title: '',
+          description: 'Þetta view er í vinnslu',
         }),
       ],
     }),

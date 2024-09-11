@@ -45,7 +45,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   useEffect(() => {
     import('react-pdf')
       .then((pdf) => {
-        pdf.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdf.pdfjs.version}/pdf.worker.min.js`
+        pdf.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdf.pdfjs.version}/pdf.worker.min.mjs`
         setPdfLib(pdf)
       })
       .catch((e) => {

@@ -19,6 +19,7 @@ import { IncomingDelegationsCompanyService } from './delegations-incoming-compan
 import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
 import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
+import { ApiScopeInfo } from './delegations-incoming.service'
 import {
   DelegationRecordDTO,
   DelegationRecordInputDTO,
@@ -300,6 +301,36 @@ export class DelegationsIndexService {
         type: delegation.type,
       },
     })
+  }
+
+  async getAvailableDistrictCommissionersRegistryRecords(
+    user: User,
+    types: AuthDelegationType[],
+    clientAllowedApiScopes: ApiScopeInfo[],
+    requireApiScopes?: boolean,
+  ): Promise<DelegationRecordDTO[]> {
+    if (requireApiScopes) {
+      const noSupportedScope = !clientAllowedApiScopes.some(
+        (s) =>
+          s.supportedDelegationTypes?.some(
+            (dt) => dt.delegationType == AuthDelegationType.LegalRepresentative,
+          ) && !s.isAccessControlled,
+      )
+      if (noSupportedScope) {
+        return []
+      }
+    }
+
+    return await this.delegationIndexModel
+      .findAll({
+        where: {
+          toNationalId: user.nationalId,
+          provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+          type: types,
+          validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
+        },
+      })
+      .then((d) => d.map((d) => d.toDTO()))
   }
 
   /*

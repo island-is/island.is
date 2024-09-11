@@ -106,6 +106,9 @@ export enum Features {
   // Single sign on passkeys
   isPasskeyRegistrationEnabled = 'isPasskeyRegistrationEnabled',
   isPasskeyAuthEnabled = 'isPasskeyAuthEnabled',
+
+  // Legal represantative delegation type
+  isLegalRepresentativeDelegationEnabled = 'isLegalRepresentativeDelegationEnabled',
 }
 
 export enum ServerSideFeature {
