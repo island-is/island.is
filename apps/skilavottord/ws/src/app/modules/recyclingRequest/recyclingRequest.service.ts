@@ -350,8 +350,10 @@ export class RecyclingRequestService {
           this.logger.info(
             `car-recycling: Degregistering vehicle ${loggedPermno} from Samgongustofa`,
             {
-              mileage: vehicle.mileage ?? 0,
               partnerId,
+              mileage: vehicle.mileage ?? 0,
+              plateCount: vehicle.plateCount,
+              lost: vehicle.plateLost ? 1 : 0,
             },
           )
 
