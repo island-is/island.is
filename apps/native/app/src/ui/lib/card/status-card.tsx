@@ -133,7 +133,7 @@ export function StatusCard({
           />
         )}
       </Content>
-      <View style={{ flex: 1 }}></View>
+      <View style={{ flex: 1 }} />
       {actions.length ? (
         <ActionsContainer>
           {actions.map(({ text, onPress }, i) => (
