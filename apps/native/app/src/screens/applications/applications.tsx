@@ -16,6 +16,7 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { testIDs } from '../../utils/test-ids'
 import { isIos } from '../../utils/devices'
 import { ApplicationsPreview } from './components/applications-preview'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -139,50 +140,53 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   }
 
   return (
-    <SafeAreaView
-      style={{
-        marginBottom: theme.spacing[2],
-      }}
-    >
-      <ScrollView>
-        {!applications.length ? (
-          <View style={{ flex: 1 }}>
-            <EmptyList
-              title={intl.formatMessage({ id: 'applications.emptyTitle' })}
-              description={intl.formatMessage({
-                id: 'applications.emptyDescription',
-              })}
-              image={
-                <Image
-                  source={illustrationSrc}
-                  style={{ height: 210, width: 167 }}
-                />
-              }
-            />
-          </View>
-        ) : null}
-        <ApplicationsPreview
-          componentId={componentId}
-          headingTitleId="applications.incomplete"
-          headingTitleNavigationLink="/applications-incomplete"
-          applications={sortedApplications.incomplete}
-        />
-        <ApplicationsPreview
-          componentId={componentId}
-          headingTitleId="applications.inProgress"
-          headingTitleNavigationLink="/applications-in-progress"
-          applications={sortedApplications.inProgress}
-        />
-        <ApplicationsPreview
-          componentId={componentId}
-          headingTitleId="applications.completed"
-          headingTitleNavigationLink="/applications-completed"
-          applications={sortedApplications.completed}
-          numberOfItems={3}
-          slider={true}
-        />
-      </ScrollView>
-    </SafeAreaView>
+    <>
+      <SafeAreaView
+        style={{
+          marginBottom: theme.spacing[2],
+        }}
+      >
+        <ScrollView>
+          {!applications.length ? (
+            <View style={{ flex: 1 }}>
+              <EmptyList
+                title={intl.formatMessage({ id: 'applications.emptyTitle' })}
+                description={intl.formatMessage({
+                  id: 'applications.emptyDescription',
+                })}
+                image={
+                  <Image
+                    source={illustrationSrc}
+                    style={{ height: 210, width: 167 }}
+                  />
+                }
+              />
+            </View>
+          ) : null}
+          <ApplicationsPreview
+            componentId={componentId}
+            headingTitleId="applications.incomplete"
+            headingTitleNavigationLink="/applications-incomplete"
+            applications={sortedApplications.incomplete}
+          />
+          <ApplicationsPreview
+            componentId={componentId}
+            headingTitleId="applications.inProgress"
+            headingTitleNavigationLink="/applications-in-progress"
+            applications={sortedApplications.inProgress}
+          />
+          <ApplicationsPreview
+            componentId={componentId}
+            headingTitleId="applications.completed"
+            headingTitleNavigationLink="/applications-completed"
+            applications={sortedApplications.completed}
+            numberOfItems={3}
+            slider={true}
+          />
+        </ScrollView>
+      </SafeAreaView>
+      <BottomTabsIndicator index={3} total={5} />
+    </>
   )
 }
 
