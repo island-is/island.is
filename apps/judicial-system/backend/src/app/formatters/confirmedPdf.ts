@@ -458,7 +458,6 @@ export const createConfirmedPdf = async (
       throw new Error('CaseFileCategory not supported')
     }
   }
-
   const pdfBytes = await pdfDoc.save()
   return Buffer.from(pdfBytes)
 }
