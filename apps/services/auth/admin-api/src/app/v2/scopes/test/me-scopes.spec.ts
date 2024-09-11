@@ -10,7 +10,8 @@ import {
   SequelizeConfigService,
   TranslatedValueDto,
   ApiScopeDelegationType,
-  AdminPatchScopeDto, ApiScope,
+  AdminPatchScopeDto,
+  ApiScope,
 } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import {
@@ -895,9 +896,7 @@ describe('MeScopesController', () => {
       const sutScope = await fixtureFactory.createApiScope({
         domainName: TENANT_ID,
         allowExplicitDelegationGrant: true,
-        supportedDelegationTypes: [
-          AuthDelegationType.Custom,
-        ],
+        supportedDelegationTypes: [AuthDelegationType.Custom],
       })
 
       // Act - Update partially delegation setting
@@ -908,23 +907,25 @@ describe('MeScopesController', () => {
           )}`,
         )
         .send({
-          addedDelegationTypes: [
-            AuthDelegationType.ProcurationHolder,
-          ],
+          addedDelegationTypes: [AuthDelegationType.ProcurationHolder],
         })
 
       // Assert that we only updated requested delegation setting fields
       expect(response.status).toEqual(200)
       expect(response.body).toMatchObject({
         ...sutScope.toDTO(),
-        displayName: [{
-          locale: 'is',
-          value: sutScope.displayName,
-        }],
-        description: [{
-          locale: 'is',
-          value: sutScope.description,
-        }],
+        displayName: [
+          {
+            locale: 'is',
+            value: sutScope.displayName,
+          },
+        ],
+        description: [
+          {
+            locale: 'is',
+            value: sutScope.description,
+          },
+        ],
         grantToProcuringHolders: true,
         supportedDelegationTypes: expect.arrayContaining([
           AuthDelegationType.Custom,

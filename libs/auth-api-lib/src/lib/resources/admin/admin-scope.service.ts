@@ -480,10 +480,14 @@ export class AdminScopeService {
     ) {
       await this.apiScope.update(
         {
-          ...(grantToLegalGuardians ? {grantToLegalGuardians} : {}),
-          ...(grantToPersonalRepresentatives ? {grantToPersonalRepresentatives} : {}),
-          ...(grantToProcuringHolders ? {grantToProcuringHolders} : {}),
-          ...(allowExplicitDelegationGrant ? {allowExplicitDelegationGrant} : {}),
+          ...(grantToLegalGuardians ? { grantToLegalGuardians } : {}),
+          ...(grantToPersonalRepresentatives
+            ? { grantToPersonalRepresentatives }
+            : {}),
+          ...(grantToProcuringHolders ? { grantToProcuringHolders } : {}),
+          ...(allowExplicitDelegationGrant
+            ? { allowExplicitDelegationGrant }
+            : {}),
         },
         {
           transaction,
