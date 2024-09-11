@@ -7,47 +7,47 @@ import {
 import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
 import startOfDay from 'date-fns/startOfDay'
+import * as kennitala from 'kennitala'
 import uniqBy from 'lodash/uniqBy'
 import { Op } from 'sequelize'
 import { isUuid } from 'uuidv4'
-import * as kennitala from 'kennitala'
 
-import { AuditService } from '@island.is/nest/audit'
-import type { User } from '@island.is/auth-nest-tools'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import {
   IndividualDto,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
-import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
+import { AuditService } from '@island.is/nest/audit'
 import { NoContentException } from '@island.is/nest/problem'
-import { isDefined } from '@island.is/shared/utils'
-
-import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
-import { Client } from '../clients/models/client.model'
-import type { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
-import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
-import { ApiScope } from '../resources/models/api-scope.model'
-import { ResourcesService } from '../resources/resources.service'
-import { DEFAULT_DOMAIN } from '../types'
-import { DelegationConfig } from './DelegationConfig'
-import { DelegationScopeService } from './delegation-scope.service'
-import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
-import { DelegationDTO } from './dto/delegation.dto'
-import { DelegationScope } from './models/delegation-scope.model'
-import { Delegation } from './models/delegation.model'
-import { DelegationValidity } from './types/delegationValidity'
-import { DelegationDirection } from './types/delegationDirection'
-import { partitionWithIndex } from './utils/partitionWithIndex'
-import { getScopeValidityWhereClause } from './utils/scopes'
-import { DelegationResourcesService } from '../resources/delegation-resources.service'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
 
-export const UNKNOWN_NAME = 'Óþekkt nafn'
+import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
+import { Client } from '../clients/models/client.model'
+import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
+import { DelegationResourcesService } from '../resources/delegation-resources.service'
+import { ApiScope } from '../resources/models/api-scope.model'
+import { ResourcesService } from '../resources/resources.service'
+import { DEFAULT_DOMAIN } from '../types'
+import { UNKNOWN_NAME } from './constants/names'
+import { DelegationScopeService } from './delegation-scope.service'
+import { DelegationConfig } from './DelegationConfig'
+import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
+import { DelegationDTO } from './dto/delegation.dto'
+import { DelegationScope } from './models/delegation-scope.model'
+import { Delegation } from './models/delegation.model'
+import { DelegationDirection } from './types/delegationDirection'
+import { DelegationValidity } from './types/delegationValidity'
+import { partitionWithIndex } from './utils/partitionWithIndex'
+import { getScopeValidityWhereClause } from './utils/scopes'
+
+import type { User } from '@island.is/auth-nest-tools'
+import type { Logger } from '@island.is/logging'
+import type { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
 
 type ClientDelegationInfo = Pick<
   Client,

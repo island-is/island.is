@@ -17,6 +17,7 @@ import {
 
 import { m } from '../lib/messages'
 import Logo from '../../assets/Logo'
+import { CanSignApi, GetListApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
@@ -75,6 +76,16 @@ export const Prerequisites: Form = buildForm({
               provider: NationalRegistryUserApi,
               title: m.nationalRegistryProviderTitle,
               subTitle: m.nationalRegistryProviderSubtitle,
+            }),
+            buildDataProviderItem({
+              provider: CanSignApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: GetListApi,
+              title: '',
+              subTitle: '',
             }),
             buildDataProviderItem({
               //provider: TODO: Add providers needed for signing collection,
