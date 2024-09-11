@@ -168,7 +168,7 @@ export const getThemeConfig = (
   organization?: Organization | null,
 ): { themeConfig: Partial<LayoutProps> } => {
   const organizationNamespace = JSON.parse(
-    organization?.namespace?.fields ?? '{}',
+    organization?.namespace?.fields || '{}',
   )
 
   const usingDefaultHeader: boolean =
