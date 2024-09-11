@@ -3,6 +3,11 @@ import { z } from 'zod'
 export const dataSchema = z.object({
   /* Gagnaöflun */
   approveExternalData: z.boolean().refine((v) => v),
+  listId: z.string().min(1),
+  list: z.object({
+    name: z.string(),
+    letter: z.string(),
+  }),
 
   /* Upplýsingar */
   signee: z.object({

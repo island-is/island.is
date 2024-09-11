@@ -85,10 +85,6 @@ class MockUserProfile {
   meUserProfileControllerFindUserProfile = jest.fn().mockResolvedValue({})
 }
 
-class MockDelegationsIndexService {
-  indexDelegations = jest.fn().mockImplementation(() => Promise.resolve())
-}
-
 interface SetupOptions {
   user: User
   scopes?: Scopes
@@ -133,9 +129,7 @@ export const setupWithAuth = async ({
         .useValue({
           getValue: (feature: Features) =>
             !features || features.includes(feature),
-        })
-        .overrideProvider(DelegationsIndexService)
-        .useClass(MockDelegationsIndexService),
+        }),
     hooks: [
       useAuth({ auth: user }),
       useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
@@ -148,6 +142,12 @@ export const setupWithAuth = async ({
   // Create scopes
   const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
   await apiScopeModel.bulkCreate(Object.values(scopes).map(createApiScope))
+
+  // Mock delegation indexing
+  const delegationIndexService = app.get(DelegationsIndexService)
+  delegationIndexService.indexDelegations = jest
+    .fn()
+    .mockImplementation(() => Promise.resolve())
 
   return app
 }

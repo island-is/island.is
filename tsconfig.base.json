@@ -1111,7 +1111,8 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
-      ]
+      ],
+      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
     }
   }
 }

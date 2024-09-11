@@ -25,6 +25,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
 import {
+  CaseIndictmentRulingDecision,
   Defendant,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -137,16 +138,24 @@ export const Overview = () => {
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment
-            defendantInfoActionButton={{
-              text: fm(strings.displayVerdict),
-              onClick: (defendant) => {
-                setSelectedDefendant(defendant)
-                setModalVisible('DEFENDANT_VIEWS_VERDICT')
-              },
-              icon: 'mailOpen',
-              isDisabled: isDefendantInfoActionButtonDisabled,
-            }}
-            displayAppealExpirationInfo={true}
+            defendantInfoActionButton={
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.RULING
+                ? {
+                    text: fm(strings.displayVerdict),
+                    onClick: (defendant) => {
+                      setSelectedDefendant(defendant)
+                      setModalVisible('DEFENDANT_VIEWS_VERDICT')
+                    },
+                    icon: 'mailOpen',
+                    isDisabled: isDefendantInfoActionButtonDisabled,
+                  }
+                : undefined
+            }
+            displayAppealExpirationInfo={
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.RULING
+            }
           />
         </Box>
         {lawsBroken.size > 0 && (
