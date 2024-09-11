@@ -1,16 +1,31 @@
-import * as React from 'react'
+import React from 'react'
 import { View } from 'react-native'
 import { screenWidth } from '../../../utils/dimensions'
 import styled, { useTheme } from 'styled-components/native'
 import { Typography } from '../typography/typography'
 
-export type DraftProgressMeterVariant = 'blue' | 'red' | 'rose' | 'mint'
+const Host = styled.View`
+  border-radius: ${({ theme: { border } }) => border.radius.extraLarge};
+  height: 16px;
+  padding: ${({ theme }) => theme.spacing.smallGutter}px;
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
+`
 
-type DraftProgressMeterProps = {
-  variant?: DraftProgressMeterVariant
-  className?: string
+const InnerHost = styled.View`
+  flex: 1;
+  flex-direction: row;
+  column-gap: ${({ theme }) => theme.spacing.smallGutter}px;
+  border-radius: ${({ theme: { border } }) => border.radius.large};
+  height: 100%;
+`
+
+export type ProgressMeterVariant = 'blue' | 'red' | 'rose' | 'mint'
+
+interface ProgressMeterProps {
   draftTotalSteps: number
   draftFinishedSteps: number
+  containerWidth?: number
+  variant?: ProgressMeterVariant
   progressMessage?: string
 }
 
@@ -37,39 +52,28 @@ const colorSchemes = {
   },
 } as const
 
-const Host = styled.View`
-  border-radius: ${({ theme: { border } }) => border.radius.extraLarge};
-  height: 16px;
-  padding: ${({ theme }) => theme.spacing.smallGutter}px;
-  margin-top: ${({ theme }) => theme.spacing[1]}px;
-`
-
-const InnerHost = styled.View`
-  flex: 1;
-  flex-direction: row;
-  column-gap: ${({ theme }) => theme.spacing.smallGutter}px;
-  border-radius: ${({ theme: { border } }) => border.radius.large};
-  height: 100%;
-`
-
-export const DraftProgressMeter: React.FC<
-  React.PropsWithChildren<DraftProgressMeterProps>
-> = ({
+export const ProgressMeter = ({
   draftFinishedSteps,
   draftTotalSteps,
   progressMessage,
+  containerWidth,
   variant = 'blue',
-}) => {
+}: ProgressMeterProps) => {
   const theme = useTheme()
   const steps = Array.from(Array(draftTotalSteps ?? 1).keys())
+  const allowedWidth = containerWidth ?? screenWidth - theme.spacing[2] * 4
 
-  // TODO what happens if draftTotalSteps is 0?
+  if (!draftTotalSteps) {
+    return
+  }
+
+  // Take into account padding in each end and between each step
   const stepWidth =
-    (screenWidth -
-      theme.spacing[2] * 4 -
+    (allowedWidth -
       theme.spacing.smallGutter * 2 -
       draftTotalSteps * theme.spacing.smallGutter) /
     draftTotalSteps
+
   return (
     <>
       <Host

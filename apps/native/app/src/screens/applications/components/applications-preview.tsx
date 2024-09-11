@@ -95,6 +95,9 @@ export const ApplicationsPreview = ({
               draftTotalSteps: application.actionCard?.draftTotalSteps,
             },
           )}
+          progressContainerWidth={
+            slider ? screenWidth - theme.spacing[2] * 6 : undefined
+          }
           description={
             type !== 'incomplete'
               ? intl.formatMessage(

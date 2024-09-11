@@ -6,7 +6,7 @@ import timeOutlineIcon from '../../assets/card/time-outline.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
 import { useOrganizationsStore } from '../../../stores/organizations-store'
-import { DraftProgressMeter } from '../progress-step-bar/progress-step-bar'
+import { ProgressMeter } from '../progress-meter/progress-meter'
 
 const Host = styled.View`
   min-height: 180px;
@@ -76,6 +76,7 @@ interface StatusCardProps {
   progress?: number
   progressTotalSteps?: number
   progressMessage?: string
+  progressContainerWidth?: number
   institution?: string
   actions: Array<{ text: string; onPress(): void }>
   style?: ViewStyle
@@ -92,10 +93,12 @@ export function StatusCard({
   institution,
   progressTotalSteps,
   progressMessage,
+  progressContainerWidth,
 }: StatusCardProps) {
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   const icon = getOrganizationLogoUrl(institution ?? '')
   const theme = useTheme()
+
   return (
     <Host style={style}>
       <Row>
@@ -122,10 +125,11 @@ export function StatusCard({
         </Title>
         {!!description && <Typography>{description}</Typography>}
         {!!progress && (
-          <DraftProgressMeter
+          <ProgressMeter
             draftFinishedSteps={progress}
             draftTotalSteps={progressTotalSteps ?? 0}
             progressMessage={progressMessage}
+            containerWidth={progressContainerWidth}
           />
         )}
       </Content>
