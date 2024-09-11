@@ -477,8 +477,8 @@ export const en: TranslatedMessages = {
   'applications.emptyTitle': 'No applications',
   'applications.emptyDescription':
     'When you apply for services from the government, they will appear here.',
-  'applications.unfinished': 'Unfinished applications',
-  'applications.finished': 'Finished applications',
+  'applications.incomplete': 'Unfinished applications',
+  'applications.completed': 'Finished applications',
   'applications.inProgress': 'Applications in progress',
 
   // cards

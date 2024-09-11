@@ -476,8 +476,8 @@ export const is = {
   'applications.emptyTitle': 'Engar umsóknir',
   'applications.emptyDescription':
     'Þegar þú stofnar stafræna umsókn á Ísland.is birtist staða hennar hér.',
-  'applications.unfinished': 'Ókláraðar umsóknir',
-  'applications.finished': 'Afgreiddar umsóknir',
+  'applications.incomplete': 'Ókláraðar umsóknir',
+  'applications.completed': 'Afgreiddar umsóknir',
   'applications.inProgress': 'Umsóknir í vinnslu',
 
   // cards
