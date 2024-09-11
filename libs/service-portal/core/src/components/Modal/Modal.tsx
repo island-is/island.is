@@ -123,8 +123,9 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                 )}
                 {text && <Text>{text}</Text>}
               </Box>
+              {children}
               {buttons && (
-                <Box display="flex" flexDirection="row">
+                <Box display="flex" flexDirection="row" marginTop={2}>
                   {buttons.map((b, i) => (
                     <Box
                       marginLeft={b.align === 'right' ? 'auto' : undefined}
@@ -147,7 +148,6 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                 </Box>
               )}
             </Box>
-            {children}
             {iconSrc && (
               <Box marginLeft={6} className={styles.image}>
                 <img src={iconSrc} alt={iconAlt} />
