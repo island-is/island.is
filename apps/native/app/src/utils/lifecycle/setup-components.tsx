@@ -5,7 +5,7 @@ import { AirDiscountScreen } from '../../screens/air-discount/air-discount'
 import { AppLockScreen } from '../../screens/app-lock/app-lock'
 import { ApplicationsScreen } from '../../screens/applications/applications'
 import { ApplicationsCompletedScreen } from '../../screens/applications/applications-completed'
-import { ApplictionsInProgressScreen } from '../../screens/applications/applications-in-progress'
+import { ApplicationsInProgressScreen } from '../../screens/applications/applications-in-progress'
 import { ApplicationsIncompleteScreen } from '../../screens/applications/applications-incomplete'
 import { AssetsDetailScreen } from '../../screens/assets/assets-detail'
 import { AssetsOverviewScreen } from '../../screens/assets/assets-overview'
@@ -105,7 +105,10 @@ export function registerAllComponents() {
   registerComponent(CR.PasskeyScreen, PasskeyScreen)
   registerComponent(CR.HomeOptionsScreen, HomeOptionsScreen)
   registerComponent(CR.ApplicationsCompletedScreen, ApplicationsCompletedScreen)
-  registerComponent(CR.ApplictionsInProgressScreen, ApplictionsInProgressScreen)
+  registerComponent(
+    CR.ApplicationsInProgressScreen,
+    ApplicationsInProgressScreen,
+  )
   registerComponent(
     CR.ApplicationsIncompleteScreen,
     ApplicationsIncompleteScreen,

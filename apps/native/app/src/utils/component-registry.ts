@@ -19,7 +19,7 @@ export const ComponentRegistry = {
   InboxScreen: `${prefix}.screens.Inbox`,
   ApplicationsScreen: `${prefix}.screens.ApplicationsScreen`,
   ApplicationsCompletedScreen: `${prefix}.screens.ApplicationsCompletedScreen`,
-  ApplictionsInProgressScreen: `${prefix}.screens.ApplictionsInProgressScreen`,
+  ApplicationsInProgressScreen: `${prefix}.screens.ApplicationsInProgressScreen`,
   ApplicationsIncompleteScreen: `${prefix}.screens.ApplicationsIncompleteScreen`,
   WalletScreen: `${prefix}.screens.Wallet`,
   WalletPassScreen: `${prefix}.screens.WalletPass`,

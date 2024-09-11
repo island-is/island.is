@@ -74,7 +74,7 @@ export function setupRoutes() {
     await Navigation.popToRoot(StackRegistry.ApplicationsStack)
     await Navigation.push(ComponentRegistry.ApplicationsScreen, {
       component: {
-        name: ComponentRegistry.ApplictionsInProgressScreen,
+        name: ComponentRegistry.ApplicationsInProgressScreen,
         passProps,
       },
     })

@@ -500,6 +500,8 @@ export const en: TranslatedMessages = {
     draft {Application in progress}
     other {Unknown status}
   }`,
+  'applicationStatusCard.draftProgress':
+    'You have completed {draftFinishedSteps} of {draftTotalSteps} steps',
 
   // edit phone
   'edit.phone.screenTitle': 'Edit Phone',

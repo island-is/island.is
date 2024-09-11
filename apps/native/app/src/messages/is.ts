@@ -499,6 +499,8 @@ export const is = {
     draft {Í vinnslu hjá þér}
     other {Staða óþekkt}
   }`,
+  'applicationStatusCard.draftProgress':
+    'Þú hefur klárað {draftFinishedSteps} af {draftTotalSteps} skrefum',
 
   // edit phone
   'edit.phone.screenTitle': 'Breyta símanúmeri',
