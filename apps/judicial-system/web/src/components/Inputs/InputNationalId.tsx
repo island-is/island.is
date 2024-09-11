@@ -1,9 +1,10 @@
-import { Input } from '@island.is/island-ui/core'
-import { core } from '@island.is/judicial-system-web/messages'
 import { ChangeEvent, FC, FocusEvent, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
-import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
+
+import { Input } from '@island.is/island-ui/core'
+import { core } from '@island.is/judicial-system-web/messages'
+
 import { validate } from '../../utils/validate'
 
 interface Props {
