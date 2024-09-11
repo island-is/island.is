@@ -6,6 +6,7 @@ export interface BffContextType extends BffReducerState {
   signIn(): void
   signOut(): void
   switchUser(nationalId?: string): void
+  bffUrlGenerator(relativePath?: string): string
 }
 
 export const BffContext = createContext<BffContextType | undefined>(undefined)

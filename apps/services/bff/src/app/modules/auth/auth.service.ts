@@ -6,9 +6,12 @@ import { Request, Response } from 'express'
 import { jwtDecode } from 'jwt-decode'
 
 import { IdTokenClaims } from '@island.is/shared/types'
+import omit from 'lodash/omit'
 import { uuid } from 'uuidv4'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
+import { CryptoService } from '../../services/crypto.service'
+import { validateUri } from '../../utils/validate-uri'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
 import { TokenResponse } from '../ids/ids.types'
@@ -18,8 +21,6 @@ import { CallbackLoginQuery } from './queries/callback-login.query'
 import { CallbackLogoutQuery } from './queries/callback-logout.query'
 import { LoginQuery } from './queries/login.query'
 import { LogoutQuery } from './queries/logout.query'
-import { CryptoService } from '../../services/crypto.service'
-import omit from 'lodash/omit'
 
 @Injectable()
 export class AuthService {
@@ -38,27 +39,6 @@ export class AuthService {
     private readonly cryptoService: CryptoService,
   ) {
     this.baseUrl = this.config.auth.issuer
-  }
-
-  /**
-   * Validates the redirect URI to ensure blocking of external URLs.
-   */
-  private async validateRedirectUri(uri: string, allowedUris: string[]) {
-    // Convert wildcard patterns to regular expressions
-    const regexPatterns = allowedUris.map((pattern) => {
-      // Escape special regex characters and replace '*' with a regex pattern to match any characters
-      const regexPattern = pattern
-        // Escape special characters for regex
-        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        // Convert '*' to '.*' to match any characters
-        .replace(/\\\*/g, '.*')
-
-      // Create a regex from the pattern and ensure it matches the entire URL
-      return new RegExp(`^${regexPattern}$`)
-    })
-
-    // Check if the URL matches any of the allowed patterns
-    return regexPatterns.some((regex) => regex.test(uri))
   }
 
   /**
@@ -120,10 +100,7 @@ export class AuthService {
     // Validate targetLinkUri if it is provided
     if (
       targetLinkUri &&
-      !this.validateRedirectUri(
-        targetLinkUri,
-        this.config.auth.allowedRedirectUris,
-      )
+      !validateUri(targetLinkUri, this.config.auth.allowedRedirectUris)
     ) {
       this.logger.error('Invalid target_link_uri provided:', targetLinkUri)
 
@@ -156,19 +133,34 @@ export class AuthService {
       ttl: 60 * 60 * 24 * 7 * 1000, // 1 week
     })
 
-    const parResponse = await this.idsService.getPar({
-      sid,
-      codeChallenge,
-      loginHint,
-      prompt,
-    })
+    let searchParams: URLSearchParams
 
-    const searchParams = new URLSearchParams({
-      request_uri: parResponse.request_uri,
-      client_id: this.config.auth.clientId,
-    }).toString()
+    if (this.config.parSupportEnabled) {
+      const parResponse = await this.idsService.getPar({
+        sid,
+        codeChallenge,
+        loginHint,
+        prompt,
+      })
 
-    return res.redirect(`${this.baseUrl}/connect/authorize?${searchParams}`)
+      searchParams = new URLSearchParams({
+        request_uri: parResponse.request_uri,
+        client_id: this.config.auth.clientId,
+      })
+    } else {
+      searchParams = new URLSearchParams(
+        this.idsService.getLoginSearchParams({
+          sid,
+          codeChallenge,
+          loginHint,
+          prompt,
+        }),
+      )
+    }
+
+    return res.redirect(
+      `${this.baseUrl}/connect/authorize?${searchParams.toString()}`,
+    )
   }
 
   /**

@@ -208,11 +208,15 @@ const devConfig = () => ({
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
-  enableCors: {
-    origin: 'http://localhost:3333',
-    methods: ['POST'],
-    credentials: true,
-  },
+  enableCors:
+    process.env.BFF_CORS === 'true'
+      ? {
+          // Bff port number
+          origin: ['http://localhost:3010'],
+          methods: ['POST'],
+          credentials: true,
+        }
+      : undefined,
 })
 
 export const getConfig =

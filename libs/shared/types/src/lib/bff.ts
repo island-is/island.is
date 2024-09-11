@@ -4,7 +4,7 @@ export interface IdTokenClaims {
   // Session ID
   sid: string
   // Birthdate in the format YYYY-MM-DD
-  birthdate: string
+  birthdate?: string
   nationalId: string
   name: string
   // Identity provider
@@ -15,6 +15,7 @@ export interface IdTokenClaims {
   }
   subjectType: 'person' | 'legalEntity'
   delegationType?: AuthDelegationType[]
+  locale?: string
 }
 
 export type BffUser = {
@@ -22,6 +23,6 @@ export type BffUser = {
   scope: string
   scopes: string[]
   profile: IdTokenClaims & {
-    dateOfBirth: Date
+    dateOfBirth?: Date
   }
 }

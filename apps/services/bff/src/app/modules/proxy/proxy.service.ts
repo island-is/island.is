@@ -1,16 +1,23 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { Request, Response } from 'express'
 import fetch from 'node-fetch'
 import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
-import { isExpired } from '../../utils/isExpired'
+import { isExpired } from '../../utils/is-expired'
+import { validateUri } from '../../utils/validate-uri'
 import { AuthService } from '../auth/auth.service'
 import { CachedTokenResponse } from '../auth/auth.types'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
+import { ApiQuery } from './queries/api-proxy.query'
 
 const whiteListedHeaders = ['access-control-allow-origin']
 
@@ -30,12 +37,17 @@ export class ProxyService {
   ) {}
 
   /**
-   * Prepares necessary data for proxying a request to the target GraphQL API.
-   * - Gets the cached token response from the cache service
-   * - Refreshes the token if it is expired
-   * - Decrypts the access token
+   * This method gets access token from the cache by session ID(sid).
+   * - If the token is expired, it will attempt to update tokens with the refresh token from cache.
+   * - Then access token is decrypted and returned.
    */
-  private async prepareProxyRequest(sid: string, req: Request) {
+  private async getAccessToken(req: Request) {
+    const sid = req.cookies['sid']
+
+    if (!sid) {
+      throw new UnauthorizedException()
+    }
+
     let cachedTokenResponse = await this.cacheService.get<CachedTokenResponse>(
       this.cacheService.createSessionKeyType('current', sid),
     )
@@ -49,51 +61,34 @@ export class ProxyService {
       )
     }
 
-    const targetUrl = `${this.config.graphqlApiEndpont}?${
-      req.url.split('?')[1]
-    }`
-    const decryptedAccessToken = this.cryptoService.decrypt(
-      cachedTokenResponse.access_token,
-    )
-
-    return {
-      targetUrl,
-      decryptedAccessToken,
-    }
+    return this.cryptoService.decrypt(cachedTokenResponse.access_token)
   }
 
   /**
-   * Proxies an incoming HTTP request to a target GraphQL API, handling authentication, token refresh,
-   * and response streaming. This method checks for a valid session ID (sid) from cookies, retrieves
-   * the cached authentication token, and refreshes it if expired. It then forwards the request
-   * to the target GraphQL API using the appropriate headers, including the refreshed token.
-   * The response from the target API is streamed back to the client, preserving headers
-   * and managing any errors that occur during the streaming process.
+   * This method proxies the request to the target URL and streams the response back to the client.
    */
-  public async proxyRequest({
+  async executeStreamRequest({
+    targetUrl,
+    accessToken,
     req,
     res,
+    body,
   }: {
+    targetUrl: string
+    accessToken: string
     req: Request
     res: Response
-  }): Promise<void> {
-    const sid = req.cookies['sid']
-
-    if (!sid) {
-      throw new UnauthorizedException()
-    }
-
+    body?: Record<string, unknown>
+  }) {
     try {
-      const { targetUrl, decryptedAccessToken } =
-        await this.prepareProxyRequest(sid, req)
-
+      const reqHeaderContentType = req.headers['content-type']
       const response = await fetch(targetUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${decryptedAccessToken}`,
+          'Content-Type': reqHeaderContentType || 'application/json',
+          Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(req.body),
+        body: JSON.stringify(body ?? req.body),
       })
 
       if (!response.ok) {
@@ -135,5 +130,67 @@ export class ProxyService {
 
       res.status(error.status || 500).send('Failed to proxy request')
     }
+  }
+
+  /**
+   * Proxies an incoming HTTP POST request to a target GraphQL API, handling authentication, token refresh,
+   * and response streaming.
+   */
+  public async proxyRequest({
+    req,
+    res,
+  }: {
+    req: Request
+    res: Response
+  }): Promise<void> {
+    const accessToken = await this.getAccessToken(req)
+    const targetUrl = `${this.config.graphqlApiEndpont}?${
+      req.url.split('?')[1]
+    }`
+
+    this.executeStreamRequest({
+      accessToken,
+      targetUrl,
+      req,
+      res,
+    })
+  }
+
+  /**
+   * Forwards an incoming HTTP POST request to the specified URL (provided in the query parameter),
+   * managing authentication, refreshing tokens if needed, and streaming the response back to the client.
+   */
+  async proxyApiUrlRequest({
+    req,
+    res,
+    query,
+  }: {
+    req: Request
+    res: Response
+    query: ApiQuery
+  }) {
+    const { url } = query
+
+    if (!validateUri(url, this.config.allowedExternalApiUrls)) {
+      this.logger.error('Invalid external api url provided:', url)
+
+      throw new BadRequestException('Proxing url failed!')
+    }
+
+    const accessToken = await this.getAccessToken(req)
+    const isDownloadService = url.includes('/download/v1/regulation')
+
+    this.executeStreamRequest({
+      accessToken,
+      targetUrl: url,
+      req,
+      res,
+      ...(isDownloadService && {
+        body: {
+          // The download service expects the accessToken to be passed in the body as "__accessToken".
+          __accessToken: accessToken,
+        },
+      }),
+    })
   }
 }

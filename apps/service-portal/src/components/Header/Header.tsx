@@ -130,7 +130,7 @@ export const Header = ({ position }: Props) => {
                         />
                       )}
 
-                      {user && <UserLanguageSwitcher user={user} />}
+                      {user && <UserLanguageSwitcher />}
 
                       <Box className={styles.overview} marginRight={[1, 1, 2]}>
                         <Button

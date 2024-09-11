@@ -2,7 +2,7 @@ import { requiredString, requiredStringArray } from '../utils/env'
 import type { BffEnvironmentSchema } from './environment.schema'
 
 export const isProduction = process.env.NODE_ENV === 'production'
-const port = parseInt(process.env.PORT as string, 10) || 3333
+const port = parseInt(process.env.PORT as string, 10) || 3010
 
 const callbacksBaseRedirectPath = requiredString('BFF_CALLBACKS_BASE_PATH')
   // Remove trailing slash if present

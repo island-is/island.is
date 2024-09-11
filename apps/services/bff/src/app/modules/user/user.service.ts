@@ -4,7 +4,7 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { Request } from 'express'
 
 import { BffUser } from '@island.is/shared/types'
-import { isExpired } from '../../utils/isExpired'
+import { isExpired } from '../../utils/is-expired'
 import { AuthService } from '../auth/auth.service'
 import { CachedTokenResponse } from '../auth/auth.types'
 import { CacheService } from '../cache/cache.service'
@@ -27,7 +27,9 @@ export class UserService {
       scopes: value.scopes,
       profile: {
         ...value.userProfile,
-        dateOfBirth: new Date(value.userProfile.birthdate),
+        ...(value.userProfile.birthdate && {
+          dateOfBirth: new Date(value.userProfile.birthdate),
+        }),
       },
     }
   }

@@ -9,7 +9,7 @@ export const createBffUrlGenerator = (basePath: string) => {
   const sanitizedBasePath = sanitizePath(basePath)
   const origin =
     process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3333' // When developing against the BFF locally, use localhost
+      ? 'http://localhost:3010' // When developing against the BFF locally, use localhost
       : sanitizePath(window.location.origin) // Use current window origin for production
 
   const baseUrl = `${origin}/${sanitizedBasePath}/bff`

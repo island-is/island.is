@@ -54,10 +54,7 @@ export class IdsService {
     }
   }
 
-  /**
-   * Fetches the PAR (Pushed Authorization Requests) from the Ids
-   */
-  public async getPar({
+  public getLoginSearchParams({
     sid,
     codeChallenge,
     loginHint,
@@ -67,10 +64,20 @@ export class IdsService {
     codeChallenge: string
     loginHint?: string
     prompt?: string
-  }) {
-    return this.postRequest<ParResponse>('/connect/par', {
+  }): {
+    client_id: string
+    redirect_uri: string
+    response_type: string
+    response_mode: string
+    scope: string
+    state: string
+    code_challenge: string
+    code_challenge_method: string
+    login_hint?: string
+    prompt?: string
+  } {
+    return {
       client_id: this.config.auth.clientId,
-      client_secret: this.config.auth.secret,
       redirect_uri: this.config.auth.callbacksRedirectUris.login,
       response_type: 'code',
       response_mode: 'query',
@@ -86,6 +93,21 @@ export class IdsService {
       code_challenge_method: 'S256',
       ...(loginHint && { login_hint: loginHint }),
       ...(prompt && { prompt }),
+    }
+  }
+
+  /**
+   * Fetches the PAR (Pushed Authorization Requests) from the Ids
+   */
+  public async getPar(args: {
+    sid: string
+    codeChallenge: string
+    loginHint?: string
+    prompt?: string
+  }) {
+    return this.postRequest<ParResponse>('/connect/par', {
+      client_secret: this.config.auth.secret,
+      ...this.getLoginSearchParams(args),
     })
   }
 

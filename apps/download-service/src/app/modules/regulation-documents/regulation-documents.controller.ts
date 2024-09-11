@@ -91,7 +91,7 @@ export class RegulationDocumentsController {
       res.header('Content-Type', documentResponse.data.mimeType)
       res.header('Content-length', buffer.length.toString())
       res.header('Content-Disposition', `inline; filename=${filename}`)
-      res.header('Cache-Control: no-cache')
+      res.header('Cache-Control', 'no-cache')
 
       return res.status(200).end(buffer)
     }

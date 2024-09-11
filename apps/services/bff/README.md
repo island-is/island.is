@@ -13,7 +13,7 @@ To set up and run the BFF service, use the following commands:
 ### Start Development Server
 
 `yarn start services-bff`
-Starts the service on `localhost:3333`.
+Starts the service on `localhost:3010`.
 
 ### Build for Production
 

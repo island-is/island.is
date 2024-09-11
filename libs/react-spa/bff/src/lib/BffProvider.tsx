@@ -70,33 +70,30 @@ export const BffProvider = ({
     )
   }, [bffUrlGenerator, state.userInfo])
 
-  const switchUser = useCallback(
-    (nationalId?: string) => {
-      dispatch({
-        type: ActionType.SWITCH_USER,
-      })
+  const switchUser = (nationalId?: string) => {
+    dispatch({
+      type: ActionType.SWITCH_USER,
+    })
 
-      const qs = createQueryStr(
-        nationalId !== undefined
-          ? {
-              login_hint: nationalId,
-              /**
-               * TODO: remove this.
-               * It is currently required to switch delegations, but we'd like
-               * the IDS to handle login_required and other potential road
-               * blocks. Now OidcSignIn is handling login_required.
-               */
-              prompt: 'none',
-            }
-          : {
-              prompt: 'select_account',
-            },
-      )
+    const qs = createQueryStr(
+      nationalId !== undefined
+        ? {
+            login_hint: nationalId,
+            /**
+             * TODO: remove this.
+             * It is currently required to switch delegations, but we'd like
+             * the IDS to handle login_required and other potential road
+             * blocks. Now OidcSignIn is handling login_required.
+             */
+            prompt: 'none',
+          }
+        : {
+            prompt: 'select_account',
+          },
+    )
 
-      window.location.href = bffUrlGenerator(`/login?${qs}`)
-    },
-    [bffUrlGenerator],
-  )
+    window.location.href = bffUrlGenerator(`/login?${qs}`)
+  }
 
   useEffectOnce(() => {
     checkLogin()
@@ -118,11 +115,9 @@ export const BffProvider = ({
         signIn,
         signOut,
         switchUser,
+        bffUrlGenerator,
       }}
     >
-      <button onClick={() => switchUser('470301-3920')}>Swicth user</button>
-      <br />
-      {isLoggedIn && <button onClick={signOut}>Logout</button>}
       {showErrorScreen ? (
         <ErrorScreen onRetry={onRetry} />
       ) : showLoadingScreen ? (

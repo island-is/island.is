@@ -1,4 +1,4 @@
-import { User } from '@island.is/shared/types'
+import { BffUser } from '@island.is/shared/types'
 
 export type BffState =
   | 'logged-out'
@@ -21,7 +21,7 @@ export enum ActionType {
 }
 
 export interface BffReducerState {
-  userInfo: User | null
+  userInfo: BffUser | null
   authState: BffState
   isAuthenticated: boolean
   baseUrl?: string
@@ -43,7 +43,10 @@ export type Action =
         | ActionType.LOGGED_OUT
         | ActionType.SWITCH_USER
     }
-  | { type: ActionType.SIGNIN_SUCCESS | ActionType.USER_LOADED; payload: User }
+  | {
+      type: ActionType.SIGNIN_SUCCESS | ActionType.USER_LOADED
+      payload: BffUser
+    }
   | { type: ActionType.ERROR; payload: Error }
 
 export const reducer = (

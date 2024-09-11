@@ -1,4 +1,9 @@
-import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  json,
+  service,
+  ServiceBuilder,
+  ref,
+} from '../../../../infra/src/dsl/dsl'
 
 const generateWebBaseUrls = (path = '') => {
   if (!path.startsWith('/')) {
@@ -12,7 +17,10 @@ const generateWebBaseUrls = (path = '') => {
   }
 }
 
-export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
+export const serviceSetup = (services: {
+  servicesBffAdminPortal: ServiceBuilder<'services-bff-admin-portal'>
+  regulationsAdminBackend: ServiceBuilder<'regulations-admin-backend'>
+}): ServiceBuilder<'services-bff-admin-portal'> =>
   service('services-bff-admin-portal')
     .namespace('services-bff')
     .image('services-bff')
@@ -29,7 +37,6 @@ export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
         '@admin.island.is/delegation-system',
         '@admin.island.is/delegation-system:admin',
         '@admin.island.is/ads',
-        '@admin.island.is/bff',
         '@admin.island.is/ads:explicit',
         '@admin.island.is/delegations',
         '@admin.island.is/regulations',
@@ -54,6 +61,9 @@ export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
       BFF_PROXY_API_ENDPOINT: generateWebBaseUrls('/api/graphql'),
       BFF_API_URL_PREFIX: 'stjornbord/bff',
       BFF_TOKEN_SECRET: '/k8s/services-bff/BFF_TOKEN_SECRET',
+      BFF_ALLOWED_EXTERNAL_API_URLS: json([
+        ref((h) => `http://${h.svc(services.regulationsAdminBackend)}`),
+      ]),
     })
     .secrets({
       BFF_IDENTITY_SERVER_SECRET:
