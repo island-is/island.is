@@ -7,8 +7,8 @@ import {
   Pass,
   PassDataInput,
   Result,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
+  SmartSolutionsService,
+} from '@island.is/clients/smart-solutions-v2'
 import compareAsc from 'date-fns/compareAsc'
 import {
   LicenseClient,
@@ -30,7 +30,7 @@ export class FirearmLicenseClient
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private firearmApi: FirearmApi,
-    private smartApi: SmartSolutionsApi,
+    private smartApi: SmartSolutionsService,
   ) {}
 
   clientSupportsPkPass = true
@@ -185,7 +185,7 @@ export class FirearmLicenseClient
     return payload
   }
 
-  async getPkPass(user: User): Promise<Result<Pass>> {
+  async getPkPass(user: User): Promise<Result<Partial<Pass>>> {
     const license = await this.fetchLicenseData(user)
 
     if (!license.ok || !license.data) {

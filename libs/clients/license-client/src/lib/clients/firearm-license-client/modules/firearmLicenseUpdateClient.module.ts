@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common'
 import { FirearmLicenseUpdateClientModule } from '@island.is/clients/firearm-license'
 import { FirearmLicenseUpdateClient } from '../services/firearmLicenseUpdateClient.service'
-import { SmartSolutionsFirearmModule } from './smartSolutionsFirearm.module'
+import { smartSolutionsModuleFactory } from '../../../factories/smartSolutionsModuleFactory'
+import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.config'
 
 @Module({
-  imports: [FirearmLicenseUpdateClientModule, SmartSolutionsFirearmModule],
+  imports: [
+    FirearmLicenseUpdateClientModule,
+    smartSolutionsModuleFactory(FirearmDigitalLicenseClientConfig),
+  ],
   providers: [FirearmLicenseUpdateClient],
   exports: [FirearmLicenseUpdateClient],
 })

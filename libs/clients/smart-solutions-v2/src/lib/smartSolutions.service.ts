@@ -262,7 +262,6 @@ export class SmartSolutionsService {
     }
 
     this.logger.info('Pass templates listing successful', {
-      requestId,
       category: LOG_CATEGORY,
     })
 

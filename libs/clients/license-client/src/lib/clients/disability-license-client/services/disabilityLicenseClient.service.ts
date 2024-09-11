@@ -7,11 +7,6 @@ import {
   DisabilityLicenseService,
   OrorkuSkirteini,
 } from '@island.is/clients/disability-license'
-import {
-  Pass,
-  PassDataInput,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
 import { FetchError } from '@island.is/clients/middlewares'
 import compareAsc from 'date-fns/compareAsc'
 import {
@@ -22,6 +17,11 @@ import {
   Result,
   VerifyPkPassResult,
 } from '../../../licenseClient.type'
+import {
+  Pass,
+  PassDataInput,
+  SmartSolutionsService,
+} from '@island.is/clients/smart-solutions-v2'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'disability-license-service'
@@ -33,7 +33,7 @@ export class DisabilityLicenseClient
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private disabilityLicenseApi: DisabilityLicenseService,
-    private smartApi: SmartSolutionsApi,
+    private smartApi: SmartSolutionsService,
   ) {}
 
   clientSupportsPkPass = true
@@ -157,7 +157,7 @@ export class DisabilityLicenseClient
     }
   }
 
-  async getPkPass(user: User): Promise<Result<Pass>> {
+  async getPkPass(user: User): Promise<Result<Partial<Pass>>> {
     const license = await this.fetchLicense(user)
 
     if (!license.ok || !license.data) {

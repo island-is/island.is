@@ -25,12 +25,12 @@ import {
   DrivingLicenseClient,
 } from './clients/driving-license-client'
 import { PCardClient, PCardModule } from './clients/p-card-client'
-import { EhicClient, EhicModule } from './clients/ehic-card-client'
 import {
   HuntingClientModule,
   HuntingLicenseClient,
 } from './clients/hunting-license-client'
 import { PassportsClient, PassportsModule } from './clients/passport-client'
+import { EhicClient, EhicModule } from './clients/ehic-card-client'
 
 @Module({
   imports: [

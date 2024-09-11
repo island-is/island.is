@@ -6,8 +6,8 @@ import { createPkPassDataInput } from './huntingLicenseClientMapper'
 import {
   Pass,
   PassDataInput,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
+  SmartSolutionsService,
+} from '@island.is/clients/smart-solutions-v2'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
   LicenseClient,
@@ -32,7 +32,7 @@ export class HuntingLicenseClient
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private huntingService: HuntingLicenseClientService,
-    private smartApi: SmartSolutionsApi,
+    private smartApi: SmartSolutionsService,
   ) {}
 
   clientSupportsPkPass = true
@@ -151,7 +151,7 @@ export class HuntingLicenseClient
     }
   }
 
-  private async getPkPass(user: User): Promise<Result<Pass>> {
+  private async getPkPass(user: User): Promise<Result<Partial<Pass>>> {
     const license = await this.fetchLicense(user)
 
     if (!license.ok || !license.data) {

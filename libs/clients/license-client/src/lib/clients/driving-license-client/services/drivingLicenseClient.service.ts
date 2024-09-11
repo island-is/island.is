@@ -8,8 +8,8 @@ import { FetchError } from '@island.is/clients/middlewares'
 import {
   Pass,
   PassDataInput,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
+  SmartSolutionsService,
+} from '@island.is/clients/smart-solutions-v2'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
@@ -36,7 +36,7 @@ export class DrivingLicenseClient
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private drivingApi: DrivingLicenseApi,
-    private smartApi: SmartSolutionsApi,
+    private smartApi: SmartSolutionsService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -171,7 +171,7 @@ export class DrivingLicenseClient
     }
   }
 
-  async getPkPass(user: User): Promise<Result<Pass>> {
+  async getPkPass(user: User): Promise<Result<Partial<Pass>>> {
     const license = await Promise.all([
       this.fetchLicense(user),
       this.fetchCategories(),
@@ -339,7 +339,7 @@ export class DrivingLicenseClient
     }
 
     const nationalIdFromPkPass = result.data.pass?.inputFieldValues
-      .find((i) => i.passInputField.identifier === 'kennitala')
+      ?.find((i) => i.passInputField.identifier === 'kennitala')
       ?.value?.replace('-', '')
 
     if (!nationalIdFromPkPass) {
