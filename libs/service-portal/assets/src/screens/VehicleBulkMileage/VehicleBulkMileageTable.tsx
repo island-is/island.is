@@ -1,6 +1,7 @@
 import { Table as T, Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  EmptyTable,
   ExpandHeader,
   NestedFullTable,
   formatDate,
@@ -137,19 +138,22 @@ const VehicleBulkMileageTable = ({
     <>
       <Box>
         <form>
-          <T.Table>
-            <ExpandHeader
-              data={[
-                { value: '', printHidden: true },
-                { value: formatMessage(vehicleMessage.type) },
-                { value: formatMessage(vehicleMessage.permno) },
-                { value: formatMessage(vehicleMessage.lastRegistration) },
-                { value: formatMessage(vehicleMessage.odometer) },
-                { value: '', printHidden: true },
-              ]}
-            />
-            <T.Body>{rows}</T.Body>
-          </T.Table>
+          {rows && (
+            <T.Table>
+              <ExpandHeader
+                data={[
+                  { value: '', printHidden: true },
+                  { value: formatMessage(vehicleMessage.type) },
+                  { value: formatMessage(vehicleMessage.permno) },
+                  { value: formatMessage(vehicleMessage.lastRegistration) },
+                  { value: formatMessage(vehicleMessage.odometer) },
+                  { value: '', printHidden: true },
+                ]}
+              />
+              <T.Body>{rows}</T.Body>
+            </T.Table>
+          )}
+          {!rows.length && <EmptyTable message="Engin ökutæki fundust" />}
         </form>
       </Box>
       {/*<Box marginTop={2} display="flex">

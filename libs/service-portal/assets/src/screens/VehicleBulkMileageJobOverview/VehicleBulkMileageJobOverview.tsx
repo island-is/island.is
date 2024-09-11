@@ -6,6 +6,7 @@ import {
   m,
   formatDate,
   LinkButton,
+  EmptyTable,
 } from '@island.is/service-portal/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetRequestsStatusQuery } from './VehicleBulkMileageJobOverview.generated'
@@ -29,17 +30,8 @@ const VehicleBulkMileageUploadJobOverview = () => {
         serviceProviderSlug={SAMGONGUSTOFA_SLUG}
         serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       />
-      {error && <Problem error={error} />}
-      {!error && !jobs && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          title={'Engin runuverk fundust'}
-          message={'Ekkert verk hefur verið hafið'}
-          imgSrc="./assets/images/sofa.svg"
-        />
-      )}
-      {!error && jobs && (
+      {error && <Problem error={error} noBorder={false} />}
+      {!error && (
         <T.Table>
           <T.Head>
             <T.Row>
@@ -77,6 +69,9 @@ const VehicleBulkMileageUploadJobOverview = () => {
             ))}
           </T.Body>
         </T.Table>
+      )}
+      {!error && (loading || !jobs.length) && (
+        <EmptyTable loading={loading} message={'Engin verk fundust'} />
       )}
     </Box>
   )
