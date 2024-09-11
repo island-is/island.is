@@ -152,8 +152,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/SubmittedForms/ApplicantSubmitted').then(
-                  (module) => Promise.resolve(module.ApplicantSubmitted),
+                import('../forms/ApplicantSubmittedForm').then((module) =>
+                  Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
               delete: true,
@@ -191,8 +191,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/SubmittedForms/ApplicantSubmitted').then(
-                  (module) => Promise.resolve(module.ApplicantSubmitted),
+                import('../forms/ApplicantSubmittedForm').then((module) =>
+                  Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
               delete: true,
@@ -216,8 +216,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/SubmittedForms/ApplicantSubmitted').then(
-                  (module) => Promise.resolve(module.ApplicantSubmitted),
+                import('../forms/ApplicantSubmittedForm').then((module) =>
+                  Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
               write: 'all',
@@ -225,8 +225,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/SubmittedForms/SpouseSubmitted').then(
-                  (module) => Promise.resolve(module.SpouseSubmitted),
+                import('../forms/SpouseSubmittedForm/index.ts').then((module) =>
+                  Promise.resolve(module.SpouseSubmitted),
                 ),
               read: 'all',
               write: 'all',

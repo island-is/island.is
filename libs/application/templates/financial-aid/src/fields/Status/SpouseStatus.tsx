@@ -3,7 +3,6 @@ import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { FAFieldBaseProps } from '../../lib/types'
 import useApplication from '../../lib/hooks/useApplication'
-import * as styles from './Status.css'
 import Header from '../../components/Status/Header/Header'
 import SpouseApproved from '../../components/Status/SpouseApproved/SpouseApproved'
 import MissingFilesCard from '../../components/Status/MissingFilesCard/MissingFilesCard'
@@ -22,7 +21,7 @@ const SpouseStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   }
 
   return (
-    <Box paddingBottom={5} className={styles.container}>
+    <Box paddingBottom={5}>
       <Header state={state} />
 
       {state === ApplicationState.APPROVED && <SpouseApproved />}

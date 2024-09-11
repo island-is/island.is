@@ -111,6 +111,8 @@ export type UploadFileType =
   | 'taxReturnFiles'
   | 'spouseIncomeFiles'
   | 'spouseTaxReturnFiles'
+  | 'missingFiles'
+  | 'missingFilesSpouse'
 
 export enum SummaryComment {
   FORMCOMMENT = 'formComment',

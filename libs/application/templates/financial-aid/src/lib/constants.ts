@@ -42,6 +42,7 @@ export enum Routes {
   SPOUSESUMMARY = 'spouseSummary',
   SPOUSECONFIRMATION = 'spouseConfirmation',
   MISSINGFILES = 'missingFiles',
+  MISSINGFILESSPOUSE = 'missingFilesSpouse',
   APPLICANTSTATUS = 'applicantStatus',
   MISSINGFILESCONFIRMATION = 'missingFilesConfirmation',
   SPOUSESTATUS = 'spouseStatus',

@@ -156,8 +156,12 @@ export function parseMessage(message?: string) {
 function isFunctionalComponent(
   component: FormComponent | undefined,
 ): component is React.FC<React.PropsWithChildren<unknown>> {
-  if (!component || !component.prototype) return false
-  return typeof component === 'function' && !('length' in component.prototype)
+  if (!component) return false
+  return (
+    typeof component === 'function' &&
+    !(component.prototype && component.prototype.isReactComponent) &&
+    component.length === 0
+  )
 }
 
 function isFunctionReturningComponent(
@@ -166,7 +170,7 @@ function isFunctionReturningComponent(
   application: Application,
 ) => React.FC<React.PropsWithChildren<unknown>> | null | undefined {
   if (!component) return false
-  return typeof component === 'function' && 'length' in component
+  return typeof component === 'function' && component.length === 1
 }
 
 export function getFormComponent(
