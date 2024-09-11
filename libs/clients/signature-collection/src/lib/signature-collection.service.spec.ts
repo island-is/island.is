@@ -270,7 +270,7 @@ describe('MyService', () => {
 
     // Assert
     expect(result).toEqual({
-      slug: '/umsoknir/maela-med-frambodi/?candidate=123',
+      slug: '/umsoknir/maela-med-frambodi?candidate=123',
     })
   })
 
