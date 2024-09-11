@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import flatten from 'lodash/flatten'
 import { useLazyQuery } from '@apollo/client'
 
 import { TeamList, type TeamListProps } from '@island.is/island-ui/contentful'
+import { sortAlpha } from '@island.is/shared/utils'
 import { GenericList } from '@island.is/web/components'
 import {
   type GenericTag,
@@ -65,7 +66,44 @@ export const TeamMemberListWrapper = ({
   )
 
   const totalItems = itemsResponse?.total ?? 0
-  const items = itemsResponse?.items ?? []
+
+  const items = useMemo(
+    () =>
+      (itemsResponse?.items ?? []).map((item) => {
+        const tagGroups: { groupLabel: string; tagLabels: string[] }[] = []
+        for (const tag of item.filterTags ?? []) {
+          if (!tag.genericTagGroup?.title || !tag.title) {
+            continue
+          }
+          const index = tagGroups.findIndex(
+            (group) => group.groupLabel === tag.genericTagGroup?.title,
+          )
+          if (index >= 0) {
+            tagGroups[index].tagLabels.push(tag.title)
+          } else {
+            tagGroups.push({
+              groupLabel: tag.genericTagGroup.title,
+              tagLabels: [tag.title],
+            })
+          }
+
+          // Add a colon to the end of group labels if it doesn't have one
+          for (const group of tagGroups) {
+            if (!group.groupLabel.endsWith(':')) {
+              group.groupLabel += ':'
+            }
+          }
+        }
+
+        tagGroups.sort(sortAlpha('groupLabel'))
+
+        return {
+          ...(item as TeamListProps['teamMembers'][number]),
+          tagGroups,
+        }
+      }),
+    [itemsResponse],
+  )
 
   return (
     <GenericList
@@ -94,8 +132,12 @@ export const TeamMemberListWrapper = ({
       tagQueryId={tagQueryId}
     >
       <TeamList
-        teamMembers={items as TeamListProps['teamMembers']}
+        teamMembers={items}
         variant="accordion"
+        prefixes={{
+          email: activeLocale === 'is' ? 'Netfang:' : 'Email:',
+          phone: activeLocale === 'is' ? 'Sími:' : 'Phone:',
+        }}
       />
     </GenericList>
   )
