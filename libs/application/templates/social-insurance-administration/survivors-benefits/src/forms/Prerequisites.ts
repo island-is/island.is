@@ -11,7 +11,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistrySpouseApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
@@ -66,10 +65,6 @@ export const PrerequisitesForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.pre.skraInformationTitle,
               subTitle:
                 survivorsBenefitsFormMessage.pre.registryIcelandDescription,
-            }),
-            buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: UserProfileApi,

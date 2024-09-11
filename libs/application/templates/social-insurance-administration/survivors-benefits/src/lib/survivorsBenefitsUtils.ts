@@ -19,7 +19,6 @@ import {
   BankInfo,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import addYears from 'date-fns/addYears'
 
 enum AttachmentTypes {
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
@@ -170,21 +169,6 @@ export const getApplicationExternalData = (
 
   const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
 
-  const hasSpouse = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data',
-  ) as object
-
-  const maritalStatus = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.maritalStatus',
-  ) as string
-
-  const lastModified = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.lastModified',
-  ) as string
-
   const bankInfo = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationApplicant.data.bankAccount',
@@ -204,6 +188,11 @@ export const getApplicationExternalData = (
     externalData,
     'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
   ) as boolean
+
+  const deceasedSpouse = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationSpousalInfo.data.name',
+  ) as object
 
   const deceasedSpouseName = getValueViaPath(
     externalData,
@@ -231,13 +220,11 @@ export const getApplicationExternalData = (
     userProfileEmail,
     applicantAddress,
     applicantMunicipality,
-    hasSpouse,
     bankInfo,
     currencies,
     children,
-    maritalStatus,
-    lastModified,
     isEligible,
+    deceasedSpouse,
     deceasedSpouseName,
     deceasedSpouseNationalId,
     deceasedSpouseDateOfDeath,

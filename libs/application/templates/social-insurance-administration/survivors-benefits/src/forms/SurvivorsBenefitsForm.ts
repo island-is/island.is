@@ -1,6 +1,5 @@
 import {
   buildAlertMessageField,
-  buildCheckboxField,
   buildCustomField,
   buildDateField,
   buildFileUploadField,
@@ -406,7 +405,7 @@ export const SurvivorsBenefitsForm: Form = buildForm({
             survivorsBenefitsFormMessage.info
               .deceasedSpouseAttachmentSubSection,
           condition: (_, externalData) =>
-            !getApplicationExternalData(externalData).maritalStatus,
+            !getApplicationExternalData(externalData).deceasedSpouse,
           children: [
             buildMultiField({
               id: 'deceasedSpouseAttachment',
@@ -466,14 +465,12 @@ export const SurvivorsBenefitsForm: Form = buildForm({
           id: 'expectingChildSection',
           title: survivorsBenefitsFormMessage.info.expectingChildTitle,
           condition: (_, externalData) => {
-            const { hasSpouse } = getApplicationExternalData(externalData)
-            const spouseLessThanAYear =
+            const spouseAtLeast1Year =
               getApplicationExternalData(
                 externalData,
               ).deceasedSpouseCohabitationLessThan1Year
-
-            //if no spouse info is found or cohabitation has lasted less than a year, then show question
-            if (hasSpouse === null || spouseLessThanAYear) return true
+            //if cohabitation has lasted less than a year, then show question
+            if (spouseAtLeast1Year === false) return true
             return false
           },
           children: [
@@ -494,7 +491,6 @@ export const SurvivorsBenefitsForm: Form = buildForm({
         buildSubSection({
           condition: (answers) => {
             const { isExpectingChild } = getApplicationAnswers(answers)
-            console.log('isExpectingChild: ', isExpectingChild)
             return isExpectingChild === YES
           },
           id: 'expectingChild.fileUpload.section',
