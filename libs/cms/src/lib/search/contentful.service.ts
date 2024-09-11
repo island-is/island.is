@@ -304,6 +304,7 @@ export class ContentfulService {
       nextPageToken,
       deletedEntries,
       assets,
+      deletedAssets,
     } = await this.getSyncData(typeOfSync)
 
     // In case someone in the CMS triggers a sync by setting the translation of an entry to an inactive state we'd like to remove that entry
@@ -334,6 +335,9 @@ export class ContentfulService {
       )
       .map((entry) => ({ id: entry.sys.id, isEntry: true }))
       .concat(assets.map((asset) => ({ id: asset.sys.id, isEntry: false })))
+      .concat(
+        deletedAssets.map((asset) => ({ id: asset.sys.id, isEntry: false })),
+      )
 
     logger.info('Sync found entries', {
       entries: entries.length,
