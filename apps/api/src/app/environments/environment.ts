@@ -209,7 +209,7 @@ const devConfig = () => ({
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
   enableCors:
-    process.env.BFF_CORS === 'true'
+    process.env.BFF_LOCAL_DEVELOPMENT_CORS === 'true'
       ? {
           // Bff port number
           origin: ['http://localhost:3010'],
