@@ -321,6 +321,8 @@ export class FixtureFactory {
         return AuthDelegationProvider.CompanyRegistry
       case AuthDelegationType.PersonalRepresentative:
         return AuthDelegationProvider.PersonalRepresentativeRegistry
+      case AuthDelegationType.LegalRepresentative:
+        return AuthDelegationProvider.DistrictCommissionersRegistry
       default:
         return ''
     }
