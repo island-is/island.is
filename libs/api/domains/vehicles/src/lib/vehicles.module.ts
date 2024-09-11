@@ -9,12 +9,14 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 import { VehiclesSharedResolver } from './resolvers/shared.resolver'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { BulkMileageService } from './services/bulkMileage.service'
+import { VehiclesV3Resolver } from './resolvers/vehicleV3.resolver'
 
 @Module({
   providers: [
     VehiclesResolver,
     VehiclesSharedResolver,
     VehiclesMileageResolver,
+    VehiclesV3Resolver,
     VehiclesService,
     BulkMileageService,
   ],

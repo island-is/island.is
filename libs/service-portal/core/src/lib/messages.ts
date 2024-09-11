@@ -311,7 +311,7 @@ export const m = defineMessages({
   },
   vehiclesBulkMileageUpload: {
     id: 'service.portal:vehicles-bulk-mileage-upload',
-    defaultMessage: 'Magnskrá með kílómetrastöðuskjali',
+    defaultMessage: 'Magnskrá með skjali',
   },
   vehiclesBulkMileageJobOverview: {
     id: 'service.portal:vehicles-bulk-mileage-job-overview',

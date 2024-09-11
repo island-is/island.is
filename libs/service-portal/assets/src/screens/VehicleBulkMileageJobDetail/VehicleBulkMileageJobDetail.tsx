@@ -16,6 +16,7 @@ import {
   useGetJobsStatusQuery,
 } from './VehicleBulkMileageJobDetail.generated'
 import { VehiclesBulkMileageRegistrationRequestOverview } from '@island.is/service-portal/graphql'
+import { displayWithUnit } from '../../utils/displayWithUnit'
 
 type UseParams = {
   id: string
@@ -149,9 +150,9 @@ const VehicleBulkMileageUploadJobDetail = () => {
                 registrations?.requests.map((j) => (
                   <T.Row>
                     <T.Data>{j.vehicleId}</T.Data>
-                    <T.Data>{j.mileage}</T.Data>
+                    <T.Data>{displayWithUnit(j.mileage, 'km', true)}</T.Data>
                     <T.Data>
-                      {j.errors?.map((j) => j.message).join(', ')}
+                      {(j.errors ?? []).map((j) => j.message).join(', ')}
                     </T.Data>
                   </T.Row>
                 ))}

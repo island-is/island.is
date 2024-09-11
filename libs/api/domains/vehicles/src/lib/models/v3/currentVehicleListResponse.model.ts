@@ -15,6 +15,6 @@ export class VehiclesCurrentListResponse {
   @Field(() => Int)
   totalRecords!: number
 
-  @Field(() => VehicleCurrentWithMileage, { nullable: true })
+  @Field(() => [VehicleCurrentWithMileage], { nullable: true })
   data?: Array<VehicleCurrentWithMileage>
 }

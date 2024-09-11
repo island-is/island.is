@@ -14,6 +14,9 @@ import { SubmissionState, VehicleType } from './types'
 import { VehicleBulkMileageOptionsBar } from './VehicleBulkMileageOptionsBar'
 import { FormProvider, useForm } from 'react-hook-form'
 import { MileageRecord } from '../../utils/parseCsvToMileage'
+import { useVehiclesListQuery } from './VehicleBulkMileage.generated'
+import { VehicleCurrentWithMileage } from '@island.is/api/schema'
+import { isDefined } from '@island.is/shared/utils'
 
 interface FormData {
   [key: string]: number
@@ -27,15 +30,46 @@ const VehicleBulkMileage = () => {
   const [totalPages, setTotalPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
 
+  const { data, loading, error, fetchMore } = useVehiclesListQuery({
+    variables: {
+      input: {
+        page,
+        pageSize,
+      },
+    },
+  })
+
   const methods = useForm<FormData>()
 
   useEffect(() => {
-    const newVehicles = dummy.filter(
-      (du) => !vehicles.find((v) => v.vehicleId === du.vehicleId),
-    )
-    if (newVehicles.length) {
-      setVehicles([...vehicles, ...newVehicles])
+    console.log('in vehicle update')
+    if (data?.vehiclesListV3?.data) {
+      const vehicles: Array<VehicleType> = data.vehiclesListV3?.data
+        .map((v) => {
+          if (!v.type) {
+            return null
+          }
+          return {
+            vehicleId: v.vehicleId,
+            vehicleType: v.type,
+            submissionStatus: 'idle' as const,
+            lastRegistrationDate: new Date(),
+          }
+        })
+        .filter(isDefined)
+      setVehicles(vehicles)
     }
+  }, [data?.vehiclesListV3])
+
+  useEffect(() => {
+    fetchMore({
+      variables: {
+        input: {
+          pageSize,
+          page,
+        },
+      },
+    })
   }, [pageSize, page])
 
   const onFileUploadComplete = (records: Array<MileageRecord>) => {

@@ -1,0 +1,24 @@
+query vehiclesList($input: VehiclesListInputV3!) {
+  vehiclesListV3(input: $input) {
+    pageNumber
+    pageSize
+    totalPages
+    totalRecords
+    data {
+      vehicleId
+      registrationNumber
+      userRole
+      type
+      color
+      mileageDetails {
+        canRegisterMileage
+        requiresMileageRegistration
+      }
+    }
+  }
+}
+
+fragment mileageRegistration on VehiclesMileageRegistration {
+  originCode
+  mileage
+}

@@ -30,21 +30,26 @@ export const VehicleBulkMileageOptionsBar = ({
 
   return (
     <Box display="flex" justifyContent="spaceBetween">
+      {/*
       <Inline space={2}>
         <VehicleBulkMileageFileDownloader />
         <VehicleBulkMileageFileUploader
           onUploadFileParseComplete={onFileUploadComplete}
         />
-        <LinkButton
-          to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
-          text={'Magnskrá kílómetrastöðu'}
-          variant="utility"
-        />
+        */}
+      <LinkButton
+        to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
+        text={'Magnskrá kílómetrastöðu'}
+        variant="utility"
+      />
+      {/*
         <LinkButton
           to={AssetsPaths.AssetsVehiclesBulkMileageJobOverview}
           text={'Yfirlit magnskráningarunuverka'}
           variant="utility"
         />
+        */
+      /*
         <Filter
           labelClear={formatMessage(m.clearFilter)}
           labelClearAll={formatMessage(m.clearAllFilters)}
@@ -83,7 +88,6 @@ export const VehicleBulkMileageOptionsBar = ({
           </Box>
         </Filter>
       </Inline>
-
       <Box display="flex" alignItems="center">
         <Box marginLeft="auto" marginRight="p1">
           <Text fontWeight="semiBold" textAlign="center" variant="small">
@@ -105,6 +109,7 @@ export const VehicleBulkMileageOptionsBar = ({
           }
         />
       </Box>
+      */}
     </Box>
   )
 }
