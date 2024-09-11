@@ -29,7 +29,10 @@ import {
   partOfBodyInjured,
   victimsOccupationUnitGroups,
 } from './work-accident-notification.mockData'
-import { WorkAccidentClientService } from '@island.is/clients/work-accident-ver'
+import {
+  DataDto,
+  WorkAccidentClientService,
+} from '@island.is/clients/work-accident-ver'
 
 @Injectable()
 export class WorkAccidentNotificationTemplateService extends BaseTemplateApiService {
@@ -40,35 +43,36 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
     super(ApplicationTypes.WORK_ACCIDENT_NOTIFICATION)
   }
 
-  async getInputOptions({ auth }: TemplateApiModuleActionProps): Promise<any> {
-    const data = this.workAccidentClientService.getOptionsData(auth)
-    console.log('DATA FROM VER: ', data)
+  async getInputOptions({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<DataDto> {
+    const data = await this.workAccidentClientService.getOptionsData(auth)
 
-    const result = {
-      sizeOfEnterprises,
-      workplaceHealthAndSafety,
-      workingEnvironmentGroup,
-      workingEnvironmentSubGroup,
-      workStations,
-      employmentStatusOfTheVictim,
-      lengthOfEmployments,
-      workhourArrangements,
-      victimsOccupationMajorGroup,
-      victimsOccupationSubMajorGroup,
-      absenceDueToAccident,
-      specificPhysicalActivityGroups,
-      victimOccupationMinorGroups,
-      activities,
-      deviationGroups,
-      deviations,
-      contactModesOfInjury,
-      typeOfInjuryGroups,
-      typeOfInjuries,
-      partOfBodyInjuredGroups,
-      partOfBodyInjured,
-      victimsOccupationUnitGroups,
-    }
+    // const result = {
+    //   sizeOfEnterprises,
+    //   workplaceHealthAndSafety,
+    //   workingEnvironmentGroup,
+    //   workingEnvironmentSubGroup,
+    //   workStations,
+    //   employmentStatusOfTheVictim,
+    //   lengthOfEmployments,
+    //   workhourArrangements,
+    //   victimsOccupationMajorGroup,
+    //   victimsOccupationSubMajorGroup,
+    //   absenceDueToAccident,
+    //   specificPhysicalActivityGroups,
+    //   victimOccupationMinorGroups,
+    //   activities,
+    //   deviationGroups,
+    //   deviations,
+    //   contactModesOfInjury,
+    //   typeOfInjuryGroups,
+    //   typeOfInjuries,
+    //   partOfBodyInjuredGroups,
+    //   partOfBodyInjured,
+    //   victimsOccupationUnitGroups,
+    // }
 
-    return result
+    return data
   }
 }
