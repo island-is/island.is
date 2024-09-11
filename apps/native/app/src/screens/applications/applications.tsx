@@ -1,8 +1,7 @@
 import { EmptyList } from '@ui'
 import { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Image, SafeAreaView, ScrollView, View } from 'react-native'
-import { useTheme } from 'styled-components'
+import { Image, RefreshControl, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import illustrationSrc from '../../assets/illustrations/le-jobs-s3.png'
@@ -96,9 +95,8 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  const theme = useTheme()
-  const [refetching, setRefetching] = useState(false)
   const intl = useIntl()
+  const [refetching, setRefetching] = useState(false)
   const [hiddenContent, setHiddenContent] = useState(isIos)
 
   const applicationsRes = useListApplicationsQuery()
@@ -141,50 +139,48 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   return (
     <>
-      <SafeAreaView
-        style={{
-          marginBottom: theme.spacing[2],
-        }}
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+        }
       >
-        <ScrollView>
-          {!applications.length ? (
-            <View style={{ flex: 1 }}>
-              <EmptyList
-                title={intl.formatMessage({ id: 'applications.emptyTitle' })}
-                description={intl.formatMessage({
-                  id: 'applications.emptyDescription',
-                })}
-                image={
-                  <Image
-                    source={illustrationSrc}
-                    style={{ height: 210, width: 167 }}
-                  />
-                }
-              />
-            </View>
-          ) : null}
-          <ApplicationsPreview
-            componentId={componentId}
-            headingTitleId="applications.incomplete"
-            headingTitleNavigationLink="/applications-incomplete"
-            applications={sortedApplications.incomplete}
-          />
-          <ApplicationsPreview
-            componentId={componentId}
-            headingTitleId="applications.inProgress"
-            headingTitleNavigationLink="/applications-in-progress"
-            applications={sortedApplications.inProgress}
-          />
-          <ApplicationsPreview
-            componentId={componentId}
-            headingTitleId="applications.completed"
-            headingTitleNavigationLink="/applications-completed"
-            applications={sortedApplications.completed}
-            numberOfItems={3}
-            slider={true}
-          />
-        </ScrollView>
-      </SafeAreaView>
+        {!applications.length ? (
+          <View style={{ flex: 1 }}>
+            <EmptyList
+              title={intl.formatMessage({ id: 'applications.emptyTitle' })}
+              description={intl.formatMessage({
+                id: 'applications.emptyDescription',
+              })}
+              image={
+                <Image
+                  source={illustrationSrc}
+                  style={{ height: 210, width: 167 }}
+                />
+              }
+            />
+          </View>
+        ) : null}
+        <ApplicationsPreview
+          componentId={componentId}
+          headingTitleId="applications.incomplete"
+          headingTitleNavigationLink="/applications-incomplete"
+          applications={sortedApplications.incomplete}
+        />
+        <ApplicationsPreview
+          componentId={componentId}
+          headingTitleId="applications.inProgress"
+          headingTitleNavigationLink="/applications-in-progress"
+          applications={sortedApplications.inProgress}
+        />
+        <ApplicationsPreview
+          componentId={componentId}
+          headingTitleId="applications.completed"
+          headingTitleNavigationLink="/applications-completed"
+          applications={sortedApplications.completed}
+          numberOfItems={3}
+          slider={true}
+        />
+      </ScrollView>
       <BottomTabsIndicator index={3} total={5} />
     </>
   )
