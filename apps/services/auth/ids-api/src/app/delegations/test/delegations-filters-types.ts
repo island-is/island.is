@@ -29,6 +29,8 @@ const customScope2 = 'cu2'
 const customScopeOtherDomain = 'cu-od1'
 const representativeScope1 = 'pr1'
 const representativeScope2 = 'pr2'
+const legalRepresentativeScope1 = 'lr1'
+const legalRepresentativeScope2 = 'lr2'
 
 export const legalGuardianScopes = [legalGuardianScope1, legalGuardianScope2]
 export const procurationHolderScopes = [
@@ -37,12 +39,17 @@ export const procurationHolderScopes = [
 ]
 export const customScopes = [customScope1, customScope2, customScopeOtherDomain]
 export const representativeScopes = [representativeScope1, representativeScope2]
+export const legalRepresentativeScopes = [
+  legalRepresentativeScope1,
+  legalRepresentativeScope2,
+]
 
 export interface ITestCaseOptions {
   fromChildren?: string[]
   fromCompanies?: string[]
   fromCustom?: string[]
   fromRepresentative?: string[]
+  fromLegalRepresentative?: string[]
   scopes?: string[]
   protectedScopes?: string[]
   scopeAccess?: [string, string][]
@@ -59,6 +66,7 @@ export class TestCase {
   fromCompanies: string[]
   fromCustom: string[]
   fromRepresentative: string[]
+  fromLegalRepresentative: string[]
   scopes: string[]
   protectedScopes: string[]
   scopeAccess: [string, string][]
@@ -71,11 +79,13 @@ export class TestCase {
     this.fromCompanies = options.fromCompanies ?? []
     this.fromCustom = options.fromCustom ?? []
     this.fromRepresentative = options.fromRepresentative ?? []
+    this.fromLegalRepresentative = options.fromLegalRepresentative ?? []
     this.scopes = options.scopes ?? [
       ...legalGuardianScopes,
       ...procurationHolderScopes,
       ...customScopes,
       ...representativeScopes,
+      ...legalRepresentativeScopes,
     ]
     this.protectedScopes = options.protectedScopes ?? []
     this.scopeAccess = options.scopeAccess ?? []
@@ -159,6 +169,9 @@ export class TestCase {
     }
     if (representativeScopes.includes(scopeName)) {
       result.push(AuthDelegationType.PersonalRepresentative)
+    }
+    if (legalRepresentativeScopes.includes(scopeName)) {
+      result.push(AuthDelegationType.LegalRepresentative)
     }
     return result
   }
