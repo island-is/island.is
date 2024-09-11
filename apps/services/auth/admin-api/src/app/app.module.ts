@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import {
+  DelegationApiUserSystemNotificationConfig,
   DelegationConfig,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
@@ -24,6 +25,12 @@ import { ClientSecretsModule } from './v2/secrets/client-secrets.module'
 import { TenantsModule } from './v2/tenants/tenants.module'
 import { ScopesModule } from './v2/scopes/scopes.module'
 import { ProvidersModule } from './v2/providers/providers.module'
+import { DelegationAdminModule } from './v2/delegations/delegation-admin.module'
+import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
+import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 
 @Module({
   imports: [
@@ -46,9 +53,18 @@ import { ProvidersModule } from './v2/providers/providers.module'
     ProblemModule,
     ProvidersModule,
     ScopesModule,
+    DelegationAdminModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [DelegationConfig],
+      load: [
+        DelegationConfig,
+        RskRelationshipsClientConfig,
+        NationalRegistryClientConfig,
+        CompanyRegistryConfig,
+        FeatureFlagConfig,
+        XRoadConfig,
+        IdsClientConfig,
+      ],
       envFilePath: ['.env', '.env.secret'],
     }),
   ],
