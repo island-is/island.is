@@ -11,19 +11,19 @@ import { useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SubmissionState, VehicleType } from './types'
 import { VehicleBulkMileageRow } from './VehicleBulkMileageRow'
+import { useVehicleMileageRegistrationHistoryLazyQuery } from './VehicleBulkMileage.generated'
+import { displayWithUnit } from '../../utils/displayWithUnit'
 
 interface Props {
   vehicles: Array<VehicleType>
-  updateVehicles: (newVehicles: Array<VehicleType>) => void
   updateVehicleStatus: (status: SubmissionState, vehicleId: string) => void
 }
 
-const VehicleBulkMileageTable = ({
-  vehicles,
-  updateVehicles,
-  updateVehicleStatus,
-}: Props) => {
+const VehicleBulkMileageTable = ({ vehicles, updateVehicleStatus }: Props) => {
   const { formatMessage } = useLocale()
+
+  const [executeRegistrationsQuery, { data, loading, error }] =
+    useVehicleMileageRegistrationHistoryLazyQuery()
 
   const { getValues, trigger } = useFormContext()
 
@@ -53,66 +53,21 @@ const VehicleBulkMileageTable = ({
     }
   }
 
-  /*
-  const onRowBulkPost = async (vehicleId: string) => {
-    const formValue = await getValueFromForm(vehicleId, true)
-    if (!formValue) {
-      //no value, nothing to do
-      updateVehicleStatus('waiting-idle', vehicleId)
-    } else if (formValue && formValue > 0) {
-      //post
-      updateVehicleStatus('waiting-success', vehicleId)
-    } else {
-      //post
-      updateVehicleStatus('waiting-failure', vehicleId)
-    }
-    }
-
-
-  const onRowBulkPostComplete = async (vehicleId: string) => {
-    const formKeys = Object.keys(getValues())
-    const vehicleFormKeyIndex = formKeys.indexOf(vehicleId)
-
-    if (vehicleFormKeyIndex < 0) {
-      console.error('vehicle not found. Should not happen')
-      return
-    }
-    if (vehicleFormKeyIndex === formKeys.length - 1) {
-      const newVehicles = vehicles.map((v) => {
-        if (v.submissionStatus !== 'idle') {
-          return {
-            ...v,
-            submissionStatus: 'idle' as const,
-          }
-        }
-        return v
-      })
-      updateVehicles(newVehicles)
-    }
-
-
-    const nextVehicleFormKeyIndex = vehicleFormKeyIndex + 1
-    updateVehicleStatus('submit-all', formKeys[nextVehicleFormKeyIndex])
-  }
-
-  const onBulkPostClick = async () => {
-    const firstVehicleId = Object.keys(getValues())[0]
-    updateVehicleStatus('submit-all', firstVehicleId)
-  }
-*/
-  const onRowSave = async (vehicleId: string) => {
-    onRowPost(vehicleId)
-  }
-
   const rows = useMemo(() => {
     return vehicles.map((item) => (
       <VehicleBulkMileageRow
         key={`vehicle-row-${item.vehicleId}`}
         vehicle={item}
-        onSave={onRowSave}
-        onPost={onRowPost}
-        //onBulkPost={onRowBulkPost}
-        //onBulkPostComplete={onRowBulkPostComplete}
+        onSave={onRowPost}
+        onExpandRow={() =>
+          executeRegistrationsQuery({
+            variables: {
+              input: {
+                permno: item.vehicleId,
+              },
+            },
+          })
+        }
       >
         <NestedFullTable
           headerArray={[
@@ -121,13 +76,17 @@ const VehicleBulkMileageTable = ({
             formatMessage(vehicleMessage.annualUsage),
             formatMessage(vehicleMessage.odometer),
           ]}
+          loading={loading}
+          emptyMessage="Engar fyrri skráningar fundust"
           data={
-            item.registrationHistory?.map((r) => [
-              formatDate(r.date),
-              r.origin,
-              '-',
-              r.mileage.toString(),
-            ]) ?? []
+            data?.vehiclesMileageRegistrationHistory?.mileageRegistrationHistory?.map(
+              (r) => [
+                formatDate(r.date),
+                r.originCode,
+                '-',
+                displayWithUnit(r.mileage, 'km', true),
+              ],
+            ) ?? []
           }
         />
       </VehicleBulkMileageRow>

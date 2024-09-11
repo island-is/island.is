@@ -3,9 +3,12 @@ import { MileageRegistration } from './mileageRegistration.model'
 
 @ObjectType('VehiclesMileageRegistrationHistory')
 export class MileageRegistrationHistory {
-  @Field(() => MileageRegistration)
-  lastMileageRegistration!: MileageRegistration
+  @Field()
+  vehicleId!: string
 
-  @Field(() => [MileageRegistration])
-  mileageRegistrationHistory!: Array<MileageRegistration>
+  @Field(() => MileageRegistration, { nullable: true })
+  lastMileageRegistration?: MileageRegistration
+
+  @Field(() => [MileageRegistration], { nullable: true })
+  mileageRegistrationHistory?: Array<MileageRegistration>
 }

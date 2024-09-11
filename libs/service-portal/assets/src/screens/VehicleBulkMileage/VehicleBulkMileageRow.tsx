@@ -12,10 +12,8 @@ import { isReadDateToday } from '../../utils/readDate'
 
 interface Props {
   vehicle: VehicleType
-  onPost: (vehicleId: string) => void
-  //onBulkPost: (vehicleId: string) => void
   onSave: (vehicleId: string) => void
-  //onBulkPostComplete: (vehicleId: string) => void
+  onExpandRow: (vehicleId: string) => void
   children?: ReactNode
 }
 
@@ -23,53 +21,23 @@ export const VehicleBulkMileageRow = ({
   vehicle,
   children,
   onSave,
-  onPost,
-}: //onBulkPost,
-//onBulkPostComplete,
-Props) => {
+  onExpandRow,
+}: Props) => {
   const { formatMessage } = useLocale()
 
   const {
     control,
-    setValue,
     formState: { errors },
   } = useFormContext()
-
-  /*
-  useEffect(() => {
-    if (vehicle.mileageUploadedFromFile) {
-      setValue(vehicle.vehicleId, vehicle.mileageUploadedFromFile)
-    }
-  }, [vehicle.mileageUploadedFromFile])
-  */
 
   const onSaveButtonClick = () => {
     onSave(vehicle.vehicleId)
   }
 
-  /*
-  useEffect(() => {
-    switch (vehicle?.submissionStatus) {
-      case 'submit-all':
-        onBulkPost(vehicle.vehicleId)
-        return
-      case 'submit':
-        onPost(vehicle.vehicleId)
-        return
-      case 'waiting-success':
-      case 'waiting-idle':
-      case 'waiting-failure':
-        onBulkPostComplete(vehicle.vehicleId)
-        return
-      default:
-        return
-    }
-  }, [vehicle?.submissionStatus, vehicle.vehicleId])
-  */
-
   return (
     <ExpandRow
       key={`bulk-mileage-vehicle-row-${vehicle.vehicleId}`}
+      onExpandCallback={() => onExpandRow(vehicle.vehicleId)}
       data={[
         {
           value: vehicle.vehicleType,

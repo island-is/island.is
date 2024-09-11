@@ -41,6 +41,8 @@ import { handle404 } from '@island.is/clients/middlewares'
 import { VehiclesListInputV3 } from '../dto/vehiclesListInputV3'
 import { VehiclesCurrentListResponse } from '../models/v3/currentVehicleListResponse.model'
 import { isDefined } from '@island.is/shared/utils'
+import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
+import { MileageRegistrationHistory } from '../models/v3/mileageRegistrationHistory.model'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -340,6 +342,52 @@ export class VehiclesService {
       data: returnData,
       permno: input.permno,
       editing: isEditing,
+    }
+  }
+
+  async getVehicleMileageHistory(
+    auth: User,
+    input: GetVehicleMileageInput,
+  ): Promise<MileageRegistrationHistory | null> {
+    const res = await this.getMileageWithAuth(auth).getMileageReading({
+      permno: input.permno,
+    })
+
+    const [lastRegistration, ...history] = res
+
+    if (!lastRegistration.permno) {
+      return null
+    }
+
+    return {
+      vehicleId: lastRegistration.permno,
+      lastMileageRegistration:
+        lastRegistration.originCode &&
+        lastRegistration.readDate &&
+        lastRegistration.mileage
+          ? {
+              originCode: lastRegistration.originCode,
+              mileage: lastRegistration.mileage,
+              date: lastRegistration.readDate,
+            }
+          : undefined,
+      mileageRegistrationHistory: history?.length
+        ? history
+            .map((h) => {
+              if (h.permno !== lastRegistration.permno) {
+                return null
+              }
+              if (!h.originCode || !h.mileage || !h.readDate) {
+                return null
+              }
+              return {
+                originCode: h.originCode,
+                mileage: h.mileage,
+                date: h.readDate,
+              }
+            })
+            .filter(isDefined)
+        : undefined,
     }
   }
 

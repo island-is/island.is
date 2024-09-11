@@ -1,9 +1,10 @@
-import { Stack, Pagination, Text } from '@island.is/island-ui/core'
+import { Stack, Pagination, Text, Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m,
   SAMGONGUSTOFA_SLUG,
   IntroHeader,
+  LinkButton,
 } from '@island.is/service-portal/core'
 import { dummy } from './mocks/propsDummy'
 import { vehicleMessage as messages } from '../../lib/messages'
@@ -11,12 +12,11 @@ import * as styles from './VehicleBulkMileage.css'
 import { useEffect, useState } from 'react'
 import VehicleBulkMileageTable from './VehicleBulkMileageTable'
 import { SubmissionState, VehicleType } from './types'
-import { VehicleBulkMileageOptionsBar } from './VehicleBulkMileageOptionsBar'
 import { FormProvider, useForm } from 'react-hook-form'
 import { MileageRecord } from '../../utils/parseCsvToMileage'
 import { useVehiclesListQuery } from './VehicleBulkMileage.generated'
-import { VehicleCurrentWithMileage } from '@island.is/api/schema'
 import { isDefined } from '@island.is/shared/utils'
+import { AssetsPaths } from '../../lib/paths'
 
 interface FormData {
   [key: string]: number
@@ -129,14 +129,15 @@ const VehicleBulkMileage = () => {
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
         />
         <Stack space={4}>
-          <VehicleBulkMileageOptionsBar
-            onPageSizeClick={(size) => setPageSize(size)}
-            currentPageSize={pageSize}
-            onFileUploadComplete={onFileUploadComplete}
-          />
+          <Box display="flex" justifyContent="spaceBetween">
+            <LinkButton
+              to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
+              text={'Magnskrá kílómetrastöðu'}
+              variant="utility"
+            />
+          </Box>
           <VehicleBulkMileageTable
             updateVehicleStatus={updateVehicleStatus}
-            updateVehicles={setVehicles}
             vehicles={vehicles}
           />
 

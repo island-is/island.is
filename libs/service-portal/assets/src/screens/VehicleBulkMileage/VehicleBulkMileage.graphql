@@ -21,4 +21,17 @@ query vehiclesList($input: VehiclesListInputV3!) {
 fragment mileageRegistration on VehiclesMileageRegistration {
   originCode
   mileage
+  date
+}
+
+query vehicleMileageRegistrationHistory($input: GetVehicleMileageInput) {
+  vehiclesMileageRegistrationHistory(input: $input) {
+    vehicleId
+    lastMileageRegistration {
+      ...mileageRegistration
+    }
+    mileageRegistrationHistory {
+      ...mileageRegistration
+    }
+  }
 }

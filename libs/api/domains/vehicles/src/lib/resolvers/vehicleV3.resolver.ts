@@ -10,9 +10,10 @@ import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { VehiclesService } from '../services/vehicles.service'
-import { GetVehiclesListV2Input } from '../dto/getVehiclesForUserInput'
 import { VehiclesCurrentListResponse } from '../models/v3/currentVehicleListResponse.model'
 import { VehiclesListInputV3 } from '../dto/vehiclesListInputV3'
+import { MileageRegistrationHistory } from '../models/v3/mileageRegistrationHistory.model'
+import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehiclesCurrentListResponse)
@@ -31,6 +32,18 @@ export class VehiclesV3Resolver {
     @Args('input', { nullable: true }) input: VehiclesListInputV3,
   ) {
     return this.vehiclesService.getVehiclesListV3(user, input)
+  }
+  @Scopes(ApiScope.vehicles)
+  @Query(() => MileageRegistrationHistory, {
+    name: 'vehiclesMileageRegistrationHistory',
+    nullable: true,
+  })
+  @Audit()
+  async vehicleMileageRegistrations(
+    @CurrentUser() user: User,
+    @Args('input', { nullable: true }) input: GetVehicleMileageInput,
+  ) {
+    return this.vehiclesService.getVehicleMileageHistory(user, input)
   }
 
   //field resolve mileage registrations?
