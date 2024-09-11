@@ -31,6 +31,7 @@ import {
   BE,
   B_TEMP,
   B_FULL,
+  B_FULL_RENEWAL_65,
   ApiActions,
 } from './constants'
 import { dataSchema } from './dataSchema'
@@ -83,6 +84,10 @@ const template: ApplicationTemplate<
       ? m.applicationForDrivingLicense.defaultMessage +
         ' - ' +
         m.applicationForFullLicenseTitle.defaultMessage
+      : application.answers.applicationFor === B_FULL_RENEWAL_65
+      ? m.applicationForDrivingLicense.defaultMessage +
+        ' - ' +
+        m.applicationForRenewalLicenseTitle.defaultMessage
       : m.applicationForDrivingLicense.defaultMessage,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
