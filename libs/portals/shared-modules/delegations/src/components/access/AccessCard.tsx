@@ -204,7 +204,6 @@ export const AccessCard = ({
           </Box>
           <VisuallyHidden>{formatMessage(m.accessHolder)}</VisuallyHidden>
           <Text variant="h3" as="h2" color={isExpired ? 'dark300' : 'dark400'}>
-            {/** fix this, was  "isOutgoing' instead of 'direaction === 'outgoing'' **/}
             {direction === 'outgoing'
               ? (delegation as AuthCustomDelegationOutgoing)?.to?.name
               : (delegation as AuthCustomDelegationIncoming)?.from?.name}

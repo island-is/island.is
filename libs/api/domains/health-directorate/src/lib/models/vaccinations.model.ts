@@ -1,69 +1,78 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { DiseaseVaccinationDtoVaccinationStatusEnum } from '@island.is/clients/health-directorate'
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
+
+registerEnumType(DiseaseVaccinationDtoVaccinationStatusEnum, {
+  name: 'HealthDirectorateVaccinationsStatus',
+})
 
 @ObjectType('HealthDirectorateVaccinationsAge')
-export class VaccinationsAge {
-  @Field(() => Number, { nullable: true })
+export class Age {
+  @Field(() => Int, { nullable: true })
   years?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   months?: number
 }
 
-@ObjectType('HealthDirectorateVaccinationsDetail')
-export class VaccinationsDetail {
-  @Field(() => Number)
+@ObjectType('HealthDirectorateVaccinationsInfo')
+export class Info {
+  @Field(() => Int)
   id!: number
 
   @Field({ nullable: true })
-  nationalId?: string
-
-  @Field({ nullable: true })
-  code?: string
+  name?: string
 
   @Field(() => Date, { nullable: true })
-  vaccinationDate?: Date
+  date?: Date | null
 
-  @Field(() => VaccinationsAge, { nullable: true })
-  vaccinationsAge?: VaccinationsAge
+  @Field(() => Age, { nullable: true })
+  age?: Age
 
   @Field({ nullable: true })
-  generalComment?: string
+  url?: string
+
+  @Field({ nullable: true })
+  comment?: string
 
   @Field(() => Boolean, { nullable: true })
   rejected?: boolean
 }
 
-@ObjectType('HealthDirectorateVaccinations')
-export class Vaccinations {
+@ObjectType('HealthDirectorateVaccination')
+export class Vaccination {
   @Field()
-  diseaseId!: string
+  id!: string
 
   @Field({ nullable: true })
-  diseaseName?: string
+  name?: string
 
   @Field({ nullable: true })
-  diseaseDescription?: string
+  description?: string
 
-  @Field()
-  vaccinationStatus!:
-    | 'valid'
-    | 'expired'
-    | 'complete'
-    | 'incomplete'
-    | 'undocumented'
-    | 'unvaccinated'
-    | 'rejected'
-    | 'undetermined'
+  @Field(() => Boolean, { nullable: true })
+  isFeatured?: boolean
 
   @Field({ nullable: true })
-  vaccinationsStatusName?: string
+  status?: string
+
+  @Field({ nullable: true })
+  statusName?: string
+
+  @Field({ nullable: true })
+  statusColor?: string
 
   @Field(() => Date, { nullable: true })
-  lastVaccinationDate?: Date
+  lastVaccinationDate?: Date | null
 
-  @Field(() => [VaccinationsDetail], { nullable: true })
-  vaccinations?: VaccinationsDetail[]
+  @Field(() => [Info], { nullable: true })
+  vaccinationsInfo?: Info[]
 
   @Field(() => [String], { nullable: true })
   comments?: string[]
+}
+
+@ObjectType('HealthDirectorateVaccinations')
+export class Vaccinations {
+  @Field(() => [Vaccination])
+  vaccinations!: Vaccination[]
 }

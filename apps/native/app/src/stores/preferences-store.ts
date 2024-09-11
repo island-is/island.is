@@ -5,6 +5,12 @@ import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
 import { getDefaultOptions } from '../utils/get-default-options'
 import { getThemeWithPreferences } from '../utils/get-theme-with-preferences'
+import { getApolloClientAsync } from '../graphql/client'
+import {
+  GetProfileDocument,
+  GetProfileQuery,
+  GetProfileQueryVariables,
+} from '../graphql/types/schema'
 
 export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US'
 export type ThemeMode = 'dark' | 'light' | 'efficient'
@@ -19,6 +25,13 @@ export interface PreferencesStore extends State {
   hasAcceptedBiometrics: boolean
   hasOnboardedPasskeys: boolean
   hasCreatedPasskey: boolean
+  graphicWidgetEnabled: boolean
+  inboxWidgetEnabled: boolean
+  applicationsWidgetEnabled: boolean
+  licensesWidgetEnabled: boolean
+  vehiclesWidgetEnabled: boolean
+  airDiscountWidgetEnabled: boolean
+  widgetsInitialised: boolean
   lastUsedPasskey: number
   notificationsNewDocuments: boolean
   notificationsAppUpdates: boolean
@@ -29,9 +42,11 @@ export interface PreferencesStore extends State {
   appearanceMode: AppearanceMode
   appLockTimeout: number
   setLocale(locale: Locale): void
+  getAndSetLocale(): void
   setAppearanceMode(appearanceMode: AppearanceMode): void
   setUseBiometrics(useBiometrics: boolean): void
   dismiss(key: string, value?: boolean): void
+  resetHomeScreenWidgets(): void
   reset(): void
 }
 
@@ -49,6 +64,13 @@ const defaultPreferences = {
   hasAcceptedBiometrics: false,
   hasOnboardedPasskeys: false,
   hasCreatedPasskey: false,
+  graphicWidgetEnabled: true,
+  inboxWidgetEnabled: true,
+  applicationsWidgetEnabled: true,
+  licensesWidgetEnabled: true,
+  vehiclesWidgetEnabled: true,
+  airDiscountWidgetEnabled: true,
+  widgetsInitialised: false,
   lastUsedPasskey: 0,
   notificationsNewDocuments: true,
   notificationsAppUpdates: true,
@@ -61,6 +83,24 @@ export const preferencesStore = create<PreferencesStore>(
   persist(
     (set, get) => ({
       ...(defaultPreferences as PreferencesStore),
+      async getAndSetLocale() {
+        const client = await getApolloClientAsync()
+
+        try {
+          const res = await client.query<
+            GetProfileQuery,
+            GetProfileQueryVariables
+          >({
+            query: GetProfileDocument,
+          })
+
+          const locale = res.data?.getUserProfile?.locale
+          const appLocale = locale === 'en' ? 'en-US' : 'is-IS'
+          set({ locale: appLocale })
+        } catch (err) {
+          // noop
+        }
+      },
       setLocale(locale: Locale) {
         if (!availableLocales.includes(locale)) {
           throw new Error('Not supported locale')
@@ -80,6 +120,17 @@ export const preferencesStore = create<PreferencesStore>(
         } else {
           set({ dismissed: [...now.filter((k) => k !== key)] })
         }
+      },
+      resetHomeScreenWidgets() {
+        set({
+          graphicWidgetEnabled: true,
+          inboxWidgetEnabled: true,
+          applicationsWidgetEnabled: true,
+          licensesWidgetEnabled: true,
+          vehiclesWidgetEnabled: true,
+          airDiscountWidgetEnabled: true,
+          widgetsInitialised: false,
+        })
       },
       reset() {
         set(defaultPreferences as PreferencesStore)

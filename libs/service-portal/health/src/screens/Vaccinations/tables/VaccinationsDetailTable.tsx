@@ -49,7 +49,11 @@ export const VaccinationsDetailTable = ({
           </T.Body>
         )}
       </T.Table>
-      {rowData === undefined && <EmptyTable message={m.noVaccinesRegistered} />}
+      {(rowData === undefined || rowData.length === 0) && (
+        <Box width="full" background="white">
+          <EmptyTable message={m.noVaccinesRegistered} />
+        </Box>
+      )}
       <Box marginTop={2} paddingLeft={2}>
         <ul color="black">
           {footerText.map((item, i) => (

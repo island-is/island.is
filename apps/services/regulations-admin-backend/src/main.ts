@@ -7,4 +7,5 @@ bootstrap({
   appModule: AppModule,
   name: 'regulations-admin-backend',
   openApi,
+  jsonBodyLimit: '300kb',
 })
