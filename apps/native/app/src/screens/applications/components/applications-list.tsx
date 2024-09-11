@@ -70,7 +70,11 @@ export const ApplicationsList = ({
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<FlatListItem>) => {
       if (item.__typename === 'Skeleton') {
-        return <StatusCardSkeleton />
+        return (
+          <View style={{ marginHorizontal: theme.spacing[2] }}>
+            <StatusCardSkeleton />
+          </View>
+        )
       }
 
       if (item.__typename === 'Empty') {
