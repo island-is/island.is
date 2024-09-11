@@ -147,7 +147,7 @@ export const Cases: FC = () => {
     const casesAwaitingAssignment = filterCases(
       (c) =>
         isIndictmentCase(c.type) &&
-        c.state !== CaseState.WAITING_FOR_CANCELLATION &&
+        (c.state === CaseState.SUBMITTED || c.state === CaseState.RECEIVED) &&
         !c.judge,
     )
 

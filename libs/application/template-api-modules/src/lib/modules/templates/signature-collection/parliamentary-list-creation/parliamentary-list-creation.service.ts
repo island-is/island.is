@@ -4,6 +4,7 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
+  Collection,
   CreateParliamentaryCandidacyInput,
   MandateType,
   ReasonKey,
@@ -49,64 +50,67 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
       )
     }
 
-    const candidateInCollection = currentCollection.candidates.some(
-      (candidate) => candidate.nationalId === auth.nationalId,
-    )
-
-    if (!candidateInCollection) {
-      throw new TemplateApiError(errorMessages.partyBallotLetter, 405)
-    }
-
     return currentCollection
   }
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
     const answers = application.answers as CreateListSchema
+    const parliamentaryCollection = application.externalData
+      .parliamentaryCollection.data as Collection
 
     const input: CreateParliamentaryCandidacyInput = {
       owner: answers.applicant,
-      agents: answers.managers
+      agents: (answers.managers ?? [])
         .map((manager) => ({
           nationalId: manager.manager.nationalId,
           phoneNumber: '',
           mandateType: MandateType.Guarantor,
           email: '',
           areas: answers.constituency.map((constituency) => {
-            const [id, name] = constituency.split('|')
+            const [id, _name] = constituency.split('|')
             return {
               areaId: id,
             }
           }),
         }))
         .concat(
-          answers.supervisors.map((supervisor) => ({
+          (answers.supervisors ?? []).map((supervisor) => ({
             nationalId: supervisor.supervisor.nationalId,
             phoneNumber: '',
             mandateType: MandateType.Administrator,
             email: '',
             areas: supervisor.constituency.map((constituency) => {
-              const [id, name] = constituency.split('|')
+              const [id, _name] = constituency.split('|')
               return {
                 areaId: id,
               }
             }),
           })),
         ),
-      // TODO: determine collectionID
-      collectionId: '',
+      collectionId: parliamentaryCollection.id,
+      areas: answers.constituency.map((constituency) => {
+        const [id, _name] = constituency.split('|')
+        return {
+          areaId: id,
+        }
+      }),
     }
 
     const result = await this.signatureCollectionClientService
       .createParliamentaryCandidacy(input, auth)
-      .catch((e: FetchError) => {
-        return {
-          success: false,
-          message: e.message,
-        }
+      .catch((error) => {
+        throw new TemplateApiError(
+          {
+            summary: error.message,
+            title: errorMessages.partyBallotLetter.title,
+          },
+          500,
+        )
       })
 
     return {
       success: true,
+      slug: result.slug,
     }
   }
 }

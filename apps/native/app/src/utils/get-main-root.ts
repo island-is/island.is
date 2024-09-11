@@ -10,7 +10,7 @@ import {
 import { getThemeWithPreferences } from './get-theme-with-preferences'
 import { testIDs } from './test-ids'
 
-type Icons = 'notifications' | 'settings' | 'licenseScan'
+type Icons = 'notifications' | 'settings' | 'licenseScan' | 'options'
 
 type RightButtonProps = {
   unseenCount?: number
@@ -62,6 +62,14 @@ export const getRightButtons = ({
         id: ButtonRegistry.ScanLicenseButton,
         testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
         icon: require('../assets/icons/navbar-scan.png'),
+        color: theme.color.blue400,
+        iconBackground,
+      })
+    } else if (icon === 'options') {
+      rightButtons.push({
+        id: ButtonRegistry.HomeScreenOptionsButton,
+        testID: testIDs.TOPBAR_HOME_OPTIONS_BUTTON,
+        icon: require('../assets/icons/options.png'),
         color: theme.color.blue400,
         iconBackground,
       })
