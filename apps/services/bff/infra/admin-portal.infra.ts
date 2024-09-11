@@ -54,20 +54,19 @@ export const serviceSetup = (services: {
         '@admin.island.is/form-system',
         '@admin.island.is/form-system:admin',
       ]),
-
       // BFF
       BFF_CALLBACKS_BASE_PATH: generateWebBaseUrls('/stjornbord/bff/callbacks'),
       BFF_LOGOUT_REDIRECT_PATH: generateWebBaseUrls(),
       BFF_PROXY_API_ENDPOINT: generateWebBaseUrls('/api/graphql'),
       BFF_API_URL_PREFIX: 'stjornbord/bff',
-      BFF_TOKEN_SECRET: '/k8s/services-bff/BFF_TOKEN_SECRET',
       BFF_ALLOWED_EXTERNAL_API_URLS: json([
         ref((h) => `http://${h.svc(services.regulationsAdminBackend)}`),
       ]),
     })
     .secrets({
-      BFF_IDENTITY_SERVER_SECRET:
-        '/k8s/services-bff/BFF_IDENTITY_SERVER_SECRET',
+      // The secret should be a valid 32-byte base64 key.
+      // Generate key example: `openssl rand -base64 32`
+      BFF_TOKEN_SECRET_BASE64: '/k8s/services-bff/BFF_TOKEN_SECRET_BASE64',
     })
     .readiness('/health/check')
     .liveness('/liveness')

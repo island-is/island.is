@@ -211,7 +211,6 @@ const devConfig = () => ({
   enableCors:
     process.env.BFF_LOCAL_DEVELOPMENT_CORS === 'true'
       ? {
-          // Bff port number
           origin: ['http://localhost:3010'],
           methods: ['POST'],
           credentials: true,
