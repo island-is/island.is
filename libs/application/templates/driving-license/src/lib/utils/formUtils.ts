@@ -10,12 +10,9 @@ import {
   B_FULL,
   B_TEMP,
   DrivingLicenseApplicationFor,
-  DrivingLicenseFakeData,
   NO,
   YES,
 } from '../constants'
-import { NationalRegistryUser } from '@island.is/api/schema'
-import { info } from 'kennitala'
 
 export const allowFakeCondition =
   (result = YES) =>
@@ -52,18 +49,6 @@ export const isApplicationForCondition =
 export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>
   getValueViaPath(answers, 'otherCountry.drivingLicenseInOtherCountry') ===
     NO || true
-
-export const isYoungerThan65 = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => {
-  const fakeData = getValueViaPath<DrivingLicenseFakeData>(answers, 'fakeData')
-  const age = info(
-    (externalData.nationalRegistry.data as NationalRegistryUser).nationalId,
-  )?.age
-
-  return fakeData && fakeData.age ? fakeData.age < 65 : age < 65
-}
 
 export const chooseDistrictCommissionerDescription = ({
   answers,
