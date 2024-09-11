@@ -117,6 +117,8 @@ const template: ApplicationTemplate<
                     ],
                   allowBELicense:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
+                  allow65Renewal:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
                 })
               },
               write: 'all',
@@ -127,13 +129,13 @@ const template: ApplicationTemplate<
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
                 GlassesCheckApi,
+                JurisdictionApi,
                 CurrentLicenseApi.configure({
                   params: {
                     useLegacyVersion: true,
                   },
                 }),
                 DrivingAssessmentApi,
-                JurisdictionApi,
                 QualityPhotoApi,
                 ExistingApplicationApi.configure({
                   params: {
