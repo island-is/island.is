@@ -143,6 +143,12 @@ export const setupWithAuth = async ({
   const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
   await apiScopeModel.bulkCreate(Object.values(scopes).map(createApiScope))
 
+  // Mock delegation indexing
+  const delegationIndexService = app.get(DelegationsIndexService)
+  delegationIndexService.indexDelegations = jest
+    .fn()
+    .mockImplementation(() => Promise.resolve())
+
   return app
 }
 
