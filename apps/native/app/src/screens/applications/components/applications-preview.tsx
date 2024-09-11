@@ -9,6 +9,7 @@ import {
 import { useIntl } from 'react-intl'
 import { TouchableOpacity, View } from 'react-native'
 import { useTheme } from 'styled-components'
+
 import {
   Application,
   ApplicationResponseDtoStatusEnum,

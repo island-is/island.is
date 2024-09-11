@@ -1,6 +1,6 @@
 import { useState } from 'react'
-
 import { NavigationFunctionComponent } from 'react-native-navigation'
+
 import {
   ApplicationResponseDtoStatusEnum,
   useListApplicationsQuery,
