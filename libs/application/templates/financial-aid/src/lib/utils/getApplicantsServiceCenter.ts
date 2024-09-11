@@ -4,7 +4,7 @@ import {
 } from '@island.is/application/types'
 import { serviceCenters } from '@island.is/financial-aid/shared/data'
 
-export const getAplicantsServiceCenter = (application: Application) => {
+export const getApplicantsServiceCenter = (application: Application) => {
   const { externalData } = application
 
   const applicantsCenter = serviceCenters.find(

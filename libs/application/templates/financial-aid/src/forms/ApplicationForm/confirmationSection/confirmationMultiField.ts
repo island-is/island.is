@@ -22,7 +22,7 @@ export const confirmationMultiField = buildMultiField({
   title: m.confirmation.general.pageTitle, // condition has spouse
   children: [
     buildAlertMessageField({
-      id: 'confirmationAlert',
+      id: 'confirmationAlert-1',
       title: m.confirmation.alertMessagesInRelationship.success,
       alertType: 'success',
       condition: (formValue) => {
@@ -30,7 +30,7 @@ export const confirmationMultiField = buildMultiField({
       },
     }),
     buildAlertMessageField({
-      id: 'confirmationAlert',
+      id: 'confirmationAlert-2',
       title: m.confirmation.alertMessages.dataNeeded,
       message: m.confirmation.alertMessages.dataNeededText,
       alertType: 'warning',
@@ -39,7 +39,7 @@ export const confirmationMultiField = buildMultiField({
       },
     }),
     buildAlertMessageField({
-      id: 'confirmationAlert',
+      id: 'confirmationAlert-3',
       title: m.confirmation.alertMessagesInRelationship.dataNeeded,
       message: (application) => {
         const spouse = getValueViaPath(

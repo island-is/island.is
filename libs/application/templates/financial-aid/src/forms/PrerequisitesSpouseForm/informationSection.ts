@@ -31,8 +31,6 @@ export const informationSection = buildSection({
               externalData,
               'nationalRegistry.data.fullName',
             )
-            console.log(application)
-
             return {
               ...m.aboutSpouseForm.general.description,
               values: {

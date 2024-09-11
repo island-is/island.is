@@ -28,5 +28,5 @@ export const Logo = ({ application }: Props) => {
     getLogo()
   }, [])
 
-  return <img src={logo} alt="" />
+  return <img src={logo} alt="Municipality logo" />
 }

@@ -1,13 +1,13 @@
 import { buildForm } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import { personalInterestSection } from './personalInterstSection'
 import { financesSection } from './financesSection'
 import { contactInfoSection } from './contactInfoSection'
 import { summarySection } from './summarySection'
 import { confirmationSection } from './confirmationSection'
 import { Logo } from '../../components/Logo/Logo'
 import { createElement } from 'react'
+import { personalInterestSection } from './personalInterestSection'
 
 export const ApplicationForm: Form = buildForm({
   id: 'FinancialAidApplication',

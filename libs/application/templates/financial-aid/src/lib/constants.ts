@@ -4,7 +4,7 @@ export enum ApplicationStates {
   SUBMITTED = 'submitted',
   SPOUSE = 'spouse',
   PREREQUISITESSPOUSE = 'prerequisitesSpouse',
-  MUNCIPALITYNOTREGISTERED = 'muncipalityNotRegistered',
+  MUNICIPALITYNOTREGISTERED = 'municipalityNotRegistered',
 }
 
 export enum Roles {

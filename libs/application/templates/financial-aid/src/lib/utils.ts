@@ -59,7 +59,7 @@ export const hasSpouse = (
   )
 }
 
-export function isMuncipalityNotRegistered(context: ApplicationContext) {
+export function isMunicipalityNotRegistered(context: ApplicationContext) {
   const { externalData } = context.application
 
   const municipality = getValueViaPath(

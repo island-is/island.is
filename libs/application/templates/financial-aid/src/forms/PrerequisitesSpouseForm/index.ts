@@ -6,7 +6,7 @@ import { informationSection } from './informationSection'
 import { createElement } from 'react'
 import { Logo } from '../../components/Logo/Logo'
 
-export const PrerequisitesSposeForm: Form = buildForm({
+export const PrerequisitesSpouseForm: Form = buildForm({
   id: 'FinancialAidApplication',
   title: m.application.name,
   renderLastScreenButton: true,

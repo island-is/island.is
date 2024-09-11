@@ -9,9 +9,9 @@ import { Routes } from '../../lib/constants'
 import * as m from '../../lib/messages'
 import { createElement } from 'react'
 import { Logo } from '../../components/Logo/Logo'
-import { getAplicantsServiceCenter } from '../../lib/utils/getAplicantsServiceCenter'
+import { getApplicantsServiceCenter } from '../../lib/utils/getApplicantsServiceCenter'
 
-export const MuncipalityNotRegistered: Form = buildForm({
+export const MunicipalityNotRegistered: Form = buildForm({
   id: 'FinancialAidApplication',
   title: '',
   logo: (application: Application) => {
@@ -23,7 +23,7 @@ export const MuncipalityNotRegistered: Form = buildForm({
       id: Routes.SERVICECENTER,
       title: m.serviceCenter.general.pageTitle,
       description: (application) => {
-        const applicantsServiceCenter = getAplicantsServiceCenter(application)
+        const applicantsServiceCenter = getApplicantsServiceCenter(application)
         return {
           ...m.serviceCenter.general.description,
           values: { applicantsServiceCenter: applicantsServiceCenter?.name },
@@ -39,7 +39,7 @@ export const MuncipalityNotRegistered: Form = buildForm({
           id: `${Routes.SERVICECENTER}-link`,
           title: (application) => {
             const applicantsServiceCenter =
-              getAplicantsServiceCenter(application)
+              getApplicantsServiceCenter(application)
             return {
               ...m.serviceCenter.general.linkToServiceCenter,
               values: {
@@ -50,7 +50,7 @@ export const MuncipalityNotRegistered: Form = buildForm({
           iconProps: { icon: 'open' },
           link: (application) => {
             const applicantsServiceCenter =
-              getAplicantsServiceCenter(application)
+              getApplicantsServiceCenter(application)
 
             return applicantsServiceCenter?.link
           },

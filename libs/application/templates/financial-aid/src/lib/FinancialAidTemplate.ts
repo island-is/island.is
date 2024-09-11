@@ -15,7 +15,7 @@ import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 import { application, stateDescriptions } from './messages'
 import { dataSchema } from './dataSchema'
 import {
-  isMuncipalityNotRegistered,
+  isMunicipalityNotRegistered,
   hasActiveCurrentApplication,
   hasSpouseCheck,
 } from './utils'
@@ -84,8 +84,8 @@ const FinancialAidTemplate: ApplicationTemplate<
         on: {
           SUBMIT: [
             {
-              target: ApplicationStates.MUNCIPALITYNOTREGISTERED,
-              cond: isMuncipalityNotRegistered,
+              target: ApplicationStates.MUNICIPALITYNOTREGISTERED,
+              cond: isMunicipalityNotRegistered,
             },
             {
               target: ApplicationStates.SUBMITTED,
@@ -143,7 +143,7 @@ const FinancialAidTemplate: ApplicationTemplate<
               id: Roles.SPOUSE,
               formLoader: () =>
                 import('../forms/PrerequisitesSpouseForm').then((module) =>
-                  Promise.resolve(module.PrerequisitesSposeForm),
+                  Promise.resolve(module.PrerequisitesSpouseForm),
                 ),
               read: 'all',
               write: 'all',
@@ -237,7 +237,7 @@ const FinancialAidTemplate: ApplicationTemplate<
           EDIT: { target: ApplicationStates.SUBMITTED },
         },
       },
-      [ApplicationStates.MUNCIPALITYNOTREGISTERED]: {
+      [ApplicationStates.MUNICIPALITYNOTREGISTERED]: {
         meta: {
           name: application.name.defaultMessage,
           status: 'rejected',
@@ -251,9 +251,9 @@ const FinancialAidTemplate: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import(
-                  '../forms/MunicipalityNotRegisteredForm/MuncipalityNotRegistered'
+                  '../forms/MunicipalityNotRegisteredForm/MunicipalityNotRegistered'
                 ).then((module) =>
-                  Promise.resolve(module.MuncipalityNotRegistered),
+                  Promise.resolve(module.MunicipalityNotRegistered),
                 ),
               read: 'all',
             },
