@@ -33,15 +33,15 @@ const getTypeAndBadgeVariant = (
   badgeVariant: 'blue' | 'mint' | 'blueberry'
   type: 'incomplete' | 'completed' | 'inProgress'
 } => {
-  switch (application.status) {
-    case ApplicationResponseDtoStatusEnum.Draft:
-      return { badgeVariant: 'blue', type: 'incomplete' }
-    case ApplicationResponseDtoStatusEnum.Completed:
-      return { badgeVariant: 'mint', type: 'completed' }
-    case ApplicationResponseDtoStatusEnum.Inprogress:
-      return { badgeVariant: 'blueberry', type: 'inProgress' }
-    default:
-      return { badgeVariant: 'blue', type: 'incomplete' }
+  if (
+    application.state === ApplicationResponseDtoStatusEnum.Draft ||
+    application.state === 'prerequisites'
+  )
+    return { badgeVariant: 'blue', type: 'incomplete' }
+  if (application.status === ApplicationResponseDtoStatusEnum.Inprogress) {
+    return { badgeVariant: 'blueberry', type: 'inProgress' }
+  } else {
+    return { badgeVariant: 'mint', type: 'completed' }
   }
 }
 
