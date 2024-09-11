@@ -29,7 +29,6 @@ interface TabInterface {
   contentBackground?: Colors
   size?: 'xs' | 'sm' | 'md'
   onChange?(id: string): void
-  //DEPRECATED
   onlyRenderSelectedTab?: boolean
 }
 
@@ -112,7 +111,7 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
     <Box position="relative">
       <Box background={contentBackground} className={styles.bg} />
       <Box position="relative" paddingY="none">
-        <Box hidden={!isMobile && tabs.length <= 6}>
+        <Box className={styles.select}>
           <Select
             size={size}
             name={label}
@@ -136,9 +135,7 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
           {...tab}
           wrap={wrap}
           aria-label={label}
-          className={cn(styles.tabList, {
-            [styles.hidden]: isMobile || tabs.length > 6,
-          })}
+          className={styles.tabList}
         >
           {tabs.map(({ label, disabled, id }, index) => {
             const isTabSelected = id
