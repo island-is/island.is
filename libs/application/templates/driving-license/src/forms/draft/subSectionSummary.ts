@@ -13,7 +13,7 @@ import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
-import { B_TEMP, BE, YES } from '../../lib/constants'
+import { B_TEMP, BE, Pickup, YES } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
@@ -143,6 +143,16 @@ export const subSectionSummary = buildSubSection({
             },
           ],
           condition: needsHealthCertificateCondition(YES),
+        }),
+        buildDividerField({}),
+        buildKeyValueField({
+          label: m.pickupLocationTitle,
+          value: ({ answers }) => {
+            return answers.pickup === Pickup.POST
+              ? m.overviewPickupPost
+              : m.overviewPickupDistrict
+          },
+          width: 'full',
         }),
         buildDividerField({}),
         buildKeyValueField({

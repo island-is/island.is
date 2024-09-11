@@ -106,9 +106,14 @@ export const m = defineMessages({
     description: 'Information',
   },
   pickupLocationTitle: {
-    id: 'dl.application:pickuplocation',
+    id: 'dl.application:pickupLocationTitle',
     defaultMessage: 'Afhendingarstaður',
     description: 'location for pickup',
+  },
+  pickupLocationHeader: {
+    id: 'dl.application:pickupLocationHeader',
+    defaultMessage: 'Hvar viltu sækja/fá ökuskírteinið?',
+    description: 'Where do you want to pick up your driving license?',
   },
   informationApplicant: {
     id: 'dl.application:information.applicant',
@@ -345,6 +350,16 @@ export const m = defineMessages({
     id: 'dl.application:overview.bringCertificateData',
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',
     description: `I'll bring a certificate from a doctor`,
+  },
+  overviewPickupPost: {
+    id: 'dl.application:overview.pickupPost',
+    defaultMessage: 'Sent heim í pósti',
+    description: 'By mail',
+  },
+  overviewPickupDistrict: {
+    id: 'dl.application:overview.pickupDistrict',
+    defaultMessage: 'Sækja á afhendingarstað',
+    description: 'Pickup location',
   },
   applicationDone: {
     id: 'dl.application:overview.done',
@@ -604,7 +619,7 @@ export const m = defineMessages({
     defaultMessage: 'Sýslumannsembætti',
     description: 'Title for district commissioner',
   },
-  districtCommisionerPickup: {
+  districtCommissionerPickup: {
     id: 'dl.application:districtCommisionerPickup',
     defaultMessage: 'Afhending',
     description: 'Pickup for district commissioner',
