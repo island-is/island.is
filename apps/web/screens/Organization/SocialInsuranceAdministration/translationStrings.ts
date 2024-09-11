@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const translationStrings = defineMessages({
+  isTurnedOff: {
+    id: 'web.pensionCalculator:isTurnedOff',
+    defaultMessage: 'Reiknivélin er ekki virk að svo stöddu',
+    description: 'Upplýsingar efst á fyrstu síðu ef slökkt er á reiknivél',
+  },
   introduction: {
     id: 'web.pensionCalculator:introduction#markdown',
     defaultMessage:
