@@ -159,9 +159,9 @@ export const ApplicationsList = ({
 
   const data = useMemo(() => {
     if (applicationsRes.loading && !applicationsRes.data) {
-      return Array.from({ length: 7 }).map((_, id) => ({
+      return Array.from({ length: 5 }).map((_, id) => ({
         id: String(id),
-        __typename: 'skeleton',
+        __typename: 'Skeleton',
       }))
     }
     if (applications.length === 0) {
