@@ -12,8 +12,10 @@ import {
   CaseAppealState,
   CaseFileCategory,
   isDefenceUser,
+  isIndictmentCase,
   isPrisonStaffUser,
   isPrisonSystemUser,
+  isRestrictionCase,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -33,15 +35,18 @@ export class CaseFileInterceptor implements NestInterceptor {
 
         if (
           isPrisonStaffUser(user) ||
-          data.appealState !== CaseAppealState.COMPLETED
+          (isRestrictionCase(data.type) &&
+            data.appealState !== CaseAppealState.COMPLETED)
         ) {
           data.caseFiles?.splice(0, data.caseFiles.length)
         } else if (isPrisonSystemUser(user)) {
           data.caseFiles?.splice(
             0,
             data.caseFiles.length,
-            ...data.caseFiles.filter(
-              (cf) => cf.category === CaseFileCategory.APPEAL_RULING,
+            ...data.caseFiles.filter((cf) =>
+              isIndictmentCase(data.type)
+                ? cf.category === CaseFileCategory.RULING
+                : cf.category === CaseFileCategory.APPEAL_RULING,
             ),
           )
         }
