@@ -483,7 +483,6 @@ export const en: TranslatedMessages = {
 
   // cards
   'applicationStatusCard.openButtonLabel': 'Open application',
-  'applicationStatusCard.seeMoreApplications': 'View applications',
   'applicationStatusCard.description': `{
     state,
     select,

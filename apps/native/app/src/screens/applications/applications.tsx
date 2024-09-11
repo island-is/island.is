@@ -162,18 +162,21 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
           </View>
         ) : null}
         <ApplicationsPreview
-          type={'incomplete'}
           componentId={componentId}
+          headingTitleId="applications.incomplete"
+          headingTitleNavigationLink="/applications-incomplete"
           applications={sortedApplications.incomplete}
         />
         <ApplicationsPreview
-          type={'inProgress'}
           componentId={componentId}
+          headingTitleId="applications.inProgress"
+          headingTitleNavigationLink="/applications-in-progress"
           applications={sortedApplications.inProgress}
         />
         <ApplicationsPreview
-          type={'completed'}
           componentId={componentId}
+          headingTitleId="applications.completed"
+          headingTitleNavigationLink="/applications-completed"
           applications={sortedApplications.completed}
           numberOfItems={3}
           slider={true}

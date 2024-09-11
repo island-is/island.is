@@ -482,7 +482,6 @@ export const is = {
 
   // cards
   'applicationStatusCard.openButtonLabel': 'Opna umsókn',
-  'applicationStatusCard.seeMoreApplications': 'Skoða umsóknir',
   'applicationStatusCard.description': `{
     state,
     select,

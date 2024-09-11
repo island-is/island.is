@@ -49,7 +49,6 @@ const Title = styled.View`
   flex-direction: row;
   padding-bottom: ${({ theme }) => theme.spacing[1]}px;
   align-items: center;
-  flex-wrap: wrap;
 `
 
 const Content = styled.View`
@@ -117,13 +116,7 @@ export function StatusCard({
             source={icon}
             style={{ width: 24, height: 24, marginRight: 8 }}
           />
-          <Typography
-            variant="heading5"
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-            }}
-          >
+          <Typography variant="heading5" style={{ flexShrink: 1 }}>
             {title}
           </Typography>
         </Title>
