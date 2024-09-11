@@ -26,7 +26,10 @@ import {
   VerifyPassResponseData,
 } from './types/responses.type'
 import { GQLFetcher } from './gqlFetch'
-import { LOG_CATEGORY, SmartSolutionsModuleOptions } from './types/config.type'
+import {
+  LOG_CATEGORY,
+  type SmartSolutionsModuleOptions,
+} from './types/config.type'
 import { Result } from './types/result.type'
 
 export class SmartSolutionsService {
