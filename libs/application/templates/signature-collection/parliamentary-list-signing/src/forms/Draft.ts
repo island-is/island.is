@@ -1,13 +1,15 @@
 import {
   buildDescriptionField,
   buildForm,
+  buildHiddenInput,
   buildMultiField,
   buildSection,
   buildSubmitField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { Application } from '@island.is/api/schema'
+import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 import Logo from '../../assets/Logo'
 
@@ -45,19 +47,66 @@ export const Draft: Form = buildForm({
               title: m.listHeader,
               titleVariant: 'h3',
             }),
+            buildHiddenInput({
+              id: 'listId',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists = getValueViaPath(
+                  externalData,
+                  'getList.data',
+                  [],
+                ) as SignatureCollectionList[]
+
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((x) => x.candidate.id === initialQuery)?.id
+              },
+            }),
             buildTextField({
               id: 'list.name',
               title: m.listName,
               width: 'half',
               readOnly: true,
-              defaultValue: 'Flokkur 1',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists = getValueViaPath(
+                  externalData,
+                  'getList.data',
+                  [],
+                ) as SignatureCollectionList[]
+
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((x) => x.candidate.id === initialQuery)?.title
+              },
             }),
             buildTextField({
               id: 'list.letter',
               title: m.listLetter,
               width: 'half',
               readOnly: true,
-              defaultValue: 'F',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists = getValueViaPath(
+                  externalData,
+                  'getList.data',
+                  [],
+                ) as SignatureCollectionList[]
+
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((x) => x.candidate.id === initialQuery)
+                  ?.candidate?.partyBallotLetter
+              },
             }),
             buildDescriptionField({
               id: 'signeeHeader',
