@@ -18,6 +18,8 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import InputName from '@island.is/judicial-system-web/src/components/Inputs/InputName'
+import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
 import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 import {
   CaseState,
@@ -35,7 +37,6 @@ import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web
 import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
-import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
 
 const Processing: FC = () => {
   const { user } = useContext(UserContext)
@@ -248,8 +249,15 @@ const Processing: FC = () => {
                   filled
                 />
               </Box>
-              <InputNationalId
-                isDateOfBirth={false}
+              <Box marginBottom={2}>
+                <InputNationalId
+                  isDateOfBirth={false}
+                  value="12"
+                  onChange={(val) => console.log('change', val)}
+                  onBlur={(val) => console.log('blur', val)}
+                />
+              </Box>
+              <InputName
                 value="12"
                 onChange={(val) => console.log('change', val)}
                 onBlur={(val) => console.log('blur', val)}

@@ -67,8 +67,6 @@ const DefendantInfo: FC<Props> = (props) => {
     { label: formatMessage(core.otherGender), value: Gender.OTHER },
   ]
 
-  const [nationalIdErrorMessage, setNationalIdErrorMessage] =
-    useState<string>('')
   const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const [accusedNameErrorMessage, setAccusedNameErrorMessage] =
@@ -99,7 +97,6 @@ const DefendantInfo: FC<Props> = (props) => {
     if (personData && personData.items && personData.items.length > 0) {
       setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
-      setNationalIdErrorMessage('')
       setIsGenderAndCitizenshipDisabled(false)
 
       onChange({
@@ -123,7 +120,6 @@ const DefendantInfo: FC<Props> = (props) => {
     if (businessData && businessData.items && businessData.items.length > 0) {
       setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
-      setNationalIdErrorMessage('')
       setIsGenderAndCitizenshipDisabled(true)
 
       onChange({
@@ -166,7 +162,6 @@ const DefendantInfo: FC<Props> = (props) => {
           checked={Boolean(defendant.noNationalId)}
           onChange={() => {
             setNationalIdNotFound(false)
-            setNationalIdErrorMessage('')
 
             updateDefendantState(
               {

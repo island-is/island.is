@@ -6,19 +6,10 @@ import { Input } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { validate } from '../../utils/validate'
+import { InputProps } from './types'
 
-interface Props {
+interface Props extends InputProps {
   isDateOfBirth: boolean
-  onChange: (value: string) => void
-  onBlur: (value: string) => void
-  disabled?: boolean
-  value?: string
-
-  // Use `label` to overwrite the default label
-  label?: string
-
-  // Use `placeholder` to overwrite the default placeholder text
-  placeholder?: string
 }
 
 const InputNationalId: FC<Props> = (props) => {
@@ -67,7 +58,7 @@ const InputNationalId: FC<Props> = (props) => {
       disabled={disabled}
     >
       <Input
-        data-testid="nationalId"
+        data-testid="inputNationalId"
         name="inputNationalId"
         autoComplete="off"
         label={
