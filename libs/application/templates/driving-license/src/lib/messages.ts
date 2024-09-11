@@ -630,6 +630,11 @@ export const m = defineMessages({
     defaultMessage: 'Afhending',
     description: 'Pickup for district commissioner',
   },
+  districtCommissionerPickupPlaceholder: {
+    id: 'dl.application:districtCommisionerPickupPlaceholder',
+    defaultMessage: 'Veldu sýslumannsembætti',
+    description: 'Choose district commissioner',
+  },
   chooseDistrictCommisionerForFullLicense: {
     id: 'dl.application:chooseDistrictCommisionerForFullLicense',
     defaultMessage:

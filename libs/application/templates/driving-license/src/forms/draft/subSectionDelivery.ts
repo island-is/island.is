@@ -25,51 +25,15 @@ export const subSectionDelivery = buildSubSection({
       title: m.pickupLocationTitle,
       children: [
         buildDescriptionField({
-          id: 'pickupHeader',
-          title: '',
-          description: m.pickupLocationHeader,
-          titleVariant: 'h4',
-          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
-        }),
-        buildRadioField({
-          id: 'pickup',
-          title: '',
-          defaultValue: Pickup.POST,
-          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
-          options: [
-            { value: Pickup.POST, label: m.overviewPickupPost },
-            { value: Pickup.DISTRICT, label: m.overviewPickupDistrict },
-          ],
-        }),
-        buildDescriptionField({
-          id: 'PickupSpace',
-          title: '',
-          space: 'gutter',
-          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
-        }),
-        buildHiddenInputWithWatchedValue({
-          id: 'pickupWatched',
-          watchValue: 'pickup',
-          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
-        }),
-        buildDescriptionField({
           id: 'jurisdictionHeader',
           title: '',
           description: chooseDistrictCommissionerDescription,
-          condition: (answers) =>
-            answers.applicationFor === B_FULL_RENEWAL_65
-              ? answers.pickupWatched === Pickup.DISTRICT
-              : true,
         }),
         buildSelectField({
           id: 'jurisdiction',
           title: m.districtCommissionerPickup,
-          condition: (answers) =>
-            answers.applicationFor === B_FULL_RENEWAL_65
-              ? answers.pickupWatched === Pickup.DISTRICT
-              : true,
-          // Kópavogur is the default jurisdiction
-          defaultValue: '37',
+          required: true,
+          placeholder: m.districtCommissionerPickupPlaceholder,
           options: ({
             externalData: {
               jurisdictions: { data },
@@ -81,6 +45,24 @@ export const subSectionDelivery = buildSubSection({
               tooltip: `Póstnúmer ${zip}`,
             }))
           },
+        }),
+        buildDescriptionField({
+          id: 'pickupHeader',
+          title: '',
+          description: m.pickupLocationHeader,
+          titleVariant: 'h4',
+          space: 'containerGutter',
+          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+        }),
+        buildRadioField({
+          id: 'pickup',
+          title: '',
+          defaultValue: Pickup.POST,
+          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+          options: [
+            { value: Pickup.POST, label: m.overviewPickupPost },
+            { value: Pickup.DISTRICT, label: m.overviewPickupDistrict },
+          ],
         }),
       ],
     }),
