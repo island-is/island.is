@@ -144,7 +144,7 @@ export class AppService {
       }
 
       if (res.status < 500) {
-        throw new BadRequestException(response)
+        throw new BadRequestException(response?.detail)
       }
 
       throw response

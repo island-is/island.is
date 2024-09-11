@@ -22,8 +22,12 @@ import {
 } from '@island.is/judicial-system/message'
 import { DateType, indictmentCases } from '@island.is/judicial-system/types'
 
-import { CaseTypeGuard, CurrentCase, PdfService } from '../case'
-import { CaseExistsGuard } from '../case/guards/caseExists.guard'
+import {
+  CaseExistsGuard,
+  CaseTypeGuard,
+  CurrentCase,
+  PdfService,
+} from '../case'
 import { Case } from '../case/models/case.model'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
