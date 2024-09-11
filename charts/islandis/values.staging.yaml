@@ -880,7 +880,7 @@ application-system-api-worker:
       cpu: '400m'
       memory: '768Mi'
     requests:
-      cpu: '100m'
+      cpu: '150m'
       memory: '384Mi'
   schedule: '*/30 * * * *'
   secrets:
