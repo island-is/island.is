@@ -91,7 +91,7 @@ query Cases {
     indictmentReviewDecision
     indictmentAppealDeadline
     indictmentVerdictViewedByAll
-    indictmentVerdictAppealDeadline
+    indictmentVerdictAppealDeadlineExpired
     indictmentRulingDecision
     indictmentDecision
     indictmentCompletedDate

@@ -164,6 +164,8 @@ export function setupEventHandlers() {
           return navigateTo('/license-scanner')
         case ButtonRegistry.OfflineButton:
           return handleOfflineButtonClick()
+        case ButtonRegistry.HomeScreenOptionsButton:
+          return navigateTo('/home-options')
       }
     },
   )

@@ -37,7 +37,7 @@ import {
 // Location Subsection
 export const locationSubSection = buildSubSection({
   id: 'location.subSection',
-  title: 'Staðsetning',
+  title: accidentLocation.general.listTitle,
   children: [
     buildMultiField({
       id: 'sportsClubInfo.employee.field',

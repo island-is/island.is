@@ -1,14 +1,18 @@
 import faker from 'faker'
 
+import {
+  AuthDelegationType,
+  DelegationRecordDTO,
+} from '@island.is/clients/auth/delegation-api'
 import { UserProfileDto } from '@island.is/clients/user-profile'
-import { createNationalId } from '@island.is/testing/fixtures'
-import { DelegationRecordDTO } from '@island.is/clients/auth/delegation-api'
 import { Features } from '@island.is/feature-flags'
-import type { User } from '@island.is/auth-nest-tools'
-import type { ConfigType } from '@island.is/nest/config'
+import { createNationalId } from '@island.is/testing/fixtures'
 
 import { UserNotificationsConfig } from '../../../../config'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
+
+import type { User } from '@island.is/auth-nest-tools'
+import type { ConfigType } from '@island.is/nest/config'
 
 export const mockFullName = 'mockFullName'
 export const delegationSubjectId = 'delegation-subject-id'
@@ -160,6 +164,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
       fromNationalId: userWithDelegations.nationalId,
       toNationalId: userWithNoDelegations.nationalId,
       subjectId: null, // test that 3rd party login is not used if subjectId is null
+      type: AuthDelegationType.ProcurationHolder,
     },
   ],
   [userWithDelegations2.nationalId]: [
@@ -167,6 +172,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
       fromNationalId: userWithDelegations2.nationalId,
       toNationalId: userWithDelegations.nationalId,
       subjectId: delegationSubjectId,
+      type: AuthDelegationType.ProcurationHolder,
     },
   ],
   [userWithSendToDelegationsFeatureFlagDisabled.nationalId]: [
@@ -174,6 +180,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
       fromNationalId: userWithSendToDelegationsFeatureFlagDisabled.nationalId,
       toNationalId: userWithNoDelegations.nationalId,
       subjectId: faker.datatype.uuid(),
+      type: AuthDelegationType.ProcurationHolder,
     },
   ],
 }
