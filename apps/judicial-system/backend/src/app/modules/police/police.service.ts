@@ -515,69 +515,66 @@ export class PoliceService {
     subpoena: string,
     user: User,
   ): Promise<CreateSubpoenaResponse> {
-    const documentName = `Fyrirkall í máli ${workingCase.courtCaseNumber}`
+    const { courtCaseNumber, dateLogs, prosecutor, policeCaseNumbers, court } =
+      workingCase
+    const { nationalId: defendantNationalId } = defendant
+    const { name: actor } = user
 
-    const defendantNationalId = defendant.nationalId
-    const arraignmentInfo = workingCase.dateLogs?.find(
+    const documentName = `Fyrirkall í máli ${workingCase.courtCaseNumber}`
+    const arraignmentInfo = dateLogs?.find(
       (dateLog) => dateLog.dateType === 'ARRAIGNMENT_DATE',
     )
 
-    return this.fetchPoliceCaseApi(`${this.xRoadPath}/CreateSubpoena`, {
-      method: 'POST',
-      headers: {
-        accept: '*/*',
-        'Content-Type': 'application/json',
-        'X-Road-Client': this.config.clientId,
-        'X-API-KEY': this.config.policeApiKey,
-      },
-      agent: this.agent,
-      body: JSON.stringify({
-        documentName: documentName,
-        documentBase64: subpoena,
-        courtRegistrationDate: arraignmentInfo?.date,
-        prosecutorSsn: workingCase.prosecutor?.nationalId,
-        prosecutedSsn: defendantNationalId,
-        courtAddress: workingCase.court?.address,
-        courtRoomNumber: arraignmentInfo?.location || '',
-        courtCeremony: 'Þingfesting',
-        lokeCaseNumber: workingCase.policeCaseNumbers?.[0],
-        courtCaseNumber: workingCase.courtCaseNumber,
-        fileTypeCode: 'BRTNG',
-      }),
-    } as RequestInit)
-      .then(async (res) => {
-        if (res.ok) {
-          const subpoenaId = await res.json()
-
-          return { subpoenaId }
-        }
-
-        const response = await res.json()
-        throw response
-      })
-      .catch((reason) => {
-        if (reason instanceof ServiceUnavailableException) {
-          throw reason
-        } else {
-          this.logger.error(
-            `Failed create subpoena for case ${workingCase.id}`,
-            {
-              reason,
-            },
-          )
-        }
-
-        this.eventService.postErrorEvent(
-          'Failed to create subpoena',
-          {
-            caseId: workingCase.id,
-            defendantId: defendant?.nationalId,
-            actor: user?.name,
+    try {
+      const res = await this.fetchPoliceCaseApi(
+        `${this.xRoadPath}/CreateSubpoena`,
+        {
+          method: 'POST',
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'application/json',
+            'X-Road-Client': this.config.clientId,
+            'X-API-KEY': this.config.policeApiKey,
           },
-          reason,
-        )
+          agent: this.agent,
+          body: JSON.stringify({
+            documentName: documentName,
+            documentBase64: subpoena,
+            courtRegistrationDate: arraignmentInfo?.date,
+            prosecutorSsn: prosecutor?.nationalId,
+            prosecutedSsn: defendantNationalId,
+            courtAddress: court?.address,
+            courtRoomNumber: arraignmentInfo?.location || '',
+            courtCeremony: 'Þingfesting',
+            lokeCaseNumber: policeCaseNumbers?.[0],
+            courtCaseNumber: courtCaseNumber,
+            fileTypeCode: 'BRTNG',
+          }),
+        } as RequestInit,
+      )
 
-        throw reason
+      if (!res.ok) {
+        throw await res.json()
+      }
+
+      const subpoenaId = await res.json()
+      return { subpoenaId }
+    } catch (error) {
+      this.logger.error(`Failed create subpoena for case ${workingCase.id}`, {
+        error,
       })
+
+      this.eventService.postErrorEvent(
+        'Failed to create subpoena',
+        {
+          caseId: workingCase.id,
+          defendantId: defendant?.nationalId,
+          actor,
+        },
+        error,
+      )
+
+      throw error
+    }
   }
 }

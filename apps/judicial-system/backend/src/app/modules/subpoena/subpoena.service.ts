@@ -41,12 +41,18 @@ export class SubpoenaService {
     subpoena: Subpoena,
     update: UpdateSubpoenaDto,
   ): Promise<Subpoena> {
-    const { defenderChoice, defenderNationalId } = update
+    const {
+      defenderChoice,
+      defenderNationalId,
+      defenderEmail,
+      defenderPhoneNumber,
+      defenderName,
+    } = update
 
     const [numberOfAffectedRows, subpoenas] = await this.subpoenaModel.update(
       update,
       {
-        where: { subpoena },
+        where: { subpoenaId: subpoena.subpoenaId },
         returning: true,
       },
     )
@@ -58,12 +64,12 @@ export class SubpoenaService {
     }
 
     if (defenderChoice || defenderNationalId) {
-      const defendantUpdate: Partial<Defendant> = {}
-      if (defenderChoice) {
-        defendantUpdate.defenderChoice = defenderChoice
-      }
-      if (defenderNationalId) {
-        defendantUpdate.defenderNationalId = defenderNationalId
+      const defendantUpdate: Partial<Defendant> = {
+        defenderChoice,
+        defenderNationalId,
+        defenderName,
+        defenderEmail,
+        defenderPhoneNumber,
       }
 
       await this.defendantModel.update(defendantUpdate, {

@@ -64,7 +64,7 @@ export class InternalSubpoenaController {
     @CurrentSubpoena() subpoena: Subpoena,
     @Body() update: UpdateSubpoenaDto,
   ): Promise<Subpoena> {
-    this.logger.debug(`Updating subpoena by subpoena id ${subpoena.id}`)
+    this.logger.debug(`Updating subpoena by subpoena id ${subpoenaId}`)
 
     return this.subpoenaService.update(subpoena, update)
   }
@@ -97,28 +97,24 @@ export class InternalSubpoenaController {
     const courtDate = theCase.dateLogs?.find(
       (dateLog) => dateLog.dateType === DateType.COURT_DATE,
     )
-
-    const delivered = await this.pdfService
-      .getSubpoenaPdf(
+    try {
+      const pdf = await this.pdfService.getSubpoenaPdf(
         theCase,
         defendant,
         courtDate?.date,
         courtDate?.location,
         defendant.subpoenaType,
       )
-      .then(async (pdf) => {
-        return this.subpoenaService.deliverSubpoenaToPolice(
-          theCase,
-          defendant,
-          Base64.btoa(pdf.toString('binary')),
-          deliverDto.user,
-        )
-      })
-      .catch((error) => {
-        this.logger.error('Error generating subpoena pdf', error)
-        throw error
-      })
 
-    return delivered
+      return await this.subpoenaService.deliverSubpoenaToPolice(
+        theCase,
+        defendant,
+        Base64.btoa(pdf.toString('binary')),
+        deliverDto.user,
+      )
+    } catch (error) {
+      this.logger.error('Error generating subpoena pdf', error)
+      throw error
+    }
   }
 }
