@@ -202,10 +202,7 @@ export class PSignSubmissionService extends BaseTemplateApiService {
       }
     )[attachmentKey]
 
-    const fileContent = await this.awsService.getFileContent(
-      fileName,
-      'base64'
-    )
+    const fileContent = await this.awsService.getFileContent(fileName, 'base64')
     return fileContent || ''
   }
 }

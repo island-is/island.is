@@ -54,7 +54,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const s3FileName = `children-residence-change/${application.id}.pdf`
     const file = await this.awsService.getFile({
       bucket: this.presignedBucket,
-      key: s3FileName
+      key: s3FileName,
     })
     if (!file) {
       throw new Error('File content was undefined')

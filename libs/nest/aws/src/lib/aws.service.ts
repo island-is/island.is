@@ -9,10 +9,10 @@ import AmazonS3URI from 'amazon-s3-uri'
 import { Inject, Injectable } from '@nestjs/common'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { Upload } from "@aws-sdk/lib-storage";
+import { Upload } from '@aws-sdk/lib-storage'
 
 export interface BucketKeyPair {
-  bucket: string,
+  bucket: string
   key: string
 }
 
@@ -24,15 +24,15 @@ export class AwsService {
   ) {}
 
   public async getFile(
-    BucketKeyPairOrFilename: BucketKeyPair | string
+    BucketKeyPairOrFilename: BucketKeyPair | string,
   ): Promise<GetObjectCommandOutput | undefined> {
-      const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
-      return await this.getFileResponse(bucket, key)
+    const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
+    return await this.getFileResponse(bucket, key)
   }
 
   public async getFileContent(
     BucketKeyPairOrFilename: BucketKeyPair | string,
-    encoding?: string | undefined
+    encoding?: string | undefined,
   ): Promise<string | undefined> {
     const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
     const result = await this.getFileResponse(bucket, key)
@@ -60,15 +60,14 @@ export class AwsService {
       const parallelUploads3 = new Upload({
         client: this.s3Client,
         params: uploadParams,
-      });
-    
-      const { Location: url } = await parallelUploads3.done();
+      })
 
-      if(!url)
+      const { Location: url } = await parallelUploads3.done()
+
+      if (!url)
         throw new Error('No location url found after uploading file to S3')
 
       return url
-
     } catch (error) {
       this.logger.error('Error occurred while uploading file to S3')
       this.logger.error(error)
@@ -78,7 +77,7 @@ export class AwsService {
 
   public async getPresignedUrl(
     BucketKeyPairOrFilename: BucketKeyPair | string,
-    expirationOverride?: number
+    expirationOverride?: number,
   ): Promise<string> {
     const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
 
@@ -88,32 +87,32 @@ export class AwsService {
 
     const command = new GetObjectCommand({ Bucket: bucket, Key: key })
     const url = await getSignedUrl(this.s3Client, command, {
-      expiresIn: expiration 
+      expiresIn: expiration,
     })
 
     return url
   }
 
   public async fileExists(
-    BucketKeyPairOrFilename: BucketKeyPair | string
+    BucketKeyPairOrFilename: BucketKeyPair | string,
   ): Promise<boolean> {
     try {
       const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
       const command = new HeadObjectCommand({
-          Bucket: bucket,
-          Key: key,
-      });
-      const results = await this.s3Client.send(command);
-  
-      const exists = results.$metadata.httpStatusCode === 200;
-      return exists;
+        Bucket: bucket,
+        Key: key,
+      })
+      const results = await this.s3Client.send(command)
+
+      const exists = results.$metadata.httpStatusCode === 200
+      return exists
     } catch (error) {
       if (error.$metadata?.httpStatusCode === 404) {
         // doesn't exist and permission policy includes s3:ListBucket
-        return false;
+        return false
       } else if (error.$metadata?.httpStatusCode === 403) {
         // doesn't exist, permission policy WITHOUT s3:ListBucket
-        return false;
+        return false
       } else {
         // some other error
         this.logger.error('Error occurred while checking if file exists in S3')
@@ -123,20 +122,22 @@ export class AwsService {
     }
   }
 
-  public async deleteObject(
-    BucketKeyPairOrFilename: BucketKeyPair | string
-  ) {
+  public async deleteObject(BucketKeyPairOrFilename: BucketKeyPair | string) {
     try {
       const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
-      const result = await this.s3Client.send(new DeleteObjectCommand({
-        Bucket: bucket,
-        Key: key
-      }))
+      const result = await this.s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: bucket,
+          Key: key,
+        }),
+      )
 
-      if (result.$metadata.httpStatusCode !== 204 && result.$metadata.httpStatusCode !== 200) {
+      if (
+        result.$metadata.httpStatusCode !== 204 &&
+        result.$metadata.httpStatusCode !== 200
+      ) {
         throw new Error('Unexpected http response when deleting object from S3')
       }
-
     } catch (error) {
       this.logger.error('Error occurred while deleteing file from S3')
       this.logger.error(error)
@@ -144,15 +145,15 @@ export class AwsService {
   }
 
   private async getFileResponse(
-    bucket: string, 
-    key: string
+    bucket: string,
+    key: string,
   ): Promise<GetObjectCommandOutput | undefined> {
     try {
       return await this.s3Client.send(
         new GetObjectCommand({
           Bucket: bucket,
           Key: key,
-        })
+        }),
       )
     } catch (error) {
       this.logger.error('Error occurred while fetching file from S3')
@@ -161,11 +162,12 @@ export class AwsService {
     }
   }
 
-  private getBucketKey(
-    BucketKeyPairOrFilename: BucketKeyPair | string
-  ) : { bucket: string, key: string } {
-    return typeof BucketKeyPairOrFilename === 'object' 
-    ? BucketKeyPairOrFilename 
-    : AmazonS3URI(BucketKeyPairOrFilename)
+  private getBucketKey(BucketKeyPairOrFilename: BucketKeyPair | string): {
+    bucket: string
+    key: string
+  } {
+    return typeof BucketKeyPairOrFilename === 'object'
+      ? BucketKeyPairOrFilename
+      : AmazonS3URI(BucketKeyPairOrFilename)
   }
 }
