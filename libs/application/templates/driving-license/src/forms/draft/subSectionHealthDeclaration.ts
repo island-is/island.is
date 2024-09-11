@@ -17,7 +17,7 @@ import { BE, B_FULL_RENEWAL_65 } from '../../lib/constants'
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
   title: m.healthDeclarationSectionTitle,
-  condition: (answers) => hasNoDrivingLicenseInOtherCountry(answers),
+  condition: hasNoDrivingLicenseInOtherCountry,
   children: [
     buildMultiField({
       id: 'overview',
@@ -164,7 +164,7 @@ export const subSectionHealthDeclaration = buildSubSection({
       ],
     }),
     buildMultiField({
-      id: 'healthDeclaration',
+      id: 'healthDeclarationAge65',
       title: m.healthDeclarationMultiFieldTitle,
       condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
       children: [
