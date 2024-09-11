@@ -68,7 +68,7 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -99,8 +99,8 @@ import {
   prosecutorUpdateRule,
   publicProsecutorStaffUpdateRule,
 } from './guards/rolesRules'
-import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
+import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
@@ -465,7 +465,7 @@ export class CaseController {
   )
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
-  @UseInterceptors(CaseInterceptor)
+  @UseInterceptors(CompletedAppealAccessedInterceptor)
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
     this.logger.debug(`Getting case ${caseId} by id`)
 
@@ -545,6 +545,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
@@ -700,6 +701,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
