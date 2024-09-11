@@ -10,6 +10,6 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/financial-statement-individual-election',
+    '<rootDir>/coverage/libs/application/templates/inao/financial-statement-individual-election',
   displayName: 'application-templates-financial-statment-individual-election',
 }

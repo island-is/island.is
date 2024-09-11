@@ -1,11 +1,11 @@
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
-import { ValueLine } from '../CemeteryOverview/ValueLine'
+import { ValueLine } from './ValueLine'
 import {
   sectionColumn,
   starterColumnStyle,
-} from '../CemeteryOverview/overviewStyles.css'
+} from './overviewStyles.css'
 import { useLocale } from '@island.is/localization'
 import { FinancialStatementCemetery } from '../../lib/dataSchema'
 import { formatCurrency } from '../../utils/helpers'
