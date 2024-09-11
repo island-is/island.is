@@ -3,6 +3,7 @@ import flatten from 'lodash/flatten'
 import { useLazyQuery } from '@apollo/client'
 
 import { TeamList, type TeamListProps } from '@island.is/island-ui/contentful'
+import { sortAlpha } from '@island.is/shared/utils'
 import { GenericList } from '@island.is/web/components'
 import {
   type GenericTag,
@@ -11,7 +12,6 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_TEAM_MEMBERS_QUERY } from '@island.is/web/screens/queries/TeamList'
-import { sortAlpha } from '@island.is/shared/utils'
 
 const ITEMS_PER_PAGE = 10
 
