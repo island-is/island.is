@@ -17,7 +17,7 @@ export const sectionDigitalLicenseInfo = buildSection({
         buildAlertMessageField({
           id: 'digitalLicenseInfo',
           title: m.digitalLicenseInfoAlertTitle,
-          message: () => m.digitalLicenseInfoAlertMessage,
+          message: m.digitalLicenseInfoAlertMessage,
           alertType: 'info',
         }),
       ],
