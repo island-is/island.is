@@ -1,1 +1,1 @@
-# Applications for Icelandic National Audit Office, Ríkisendurskoðun
+# Applications for the Icelandic National Audit Office, Ríkisendurskoðun
