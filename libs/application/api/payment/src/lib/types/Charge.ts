@@ -2,13 +2,13 @@ import { User } from '@island.is/auth-nest-tools'
 import { Charge, ExtraData } from '@island.is/clients/charge-fjs-v2'
 import { Payment } from '../payment.model'
 
-export function formatCharge(
+export const formatCharge = (
   payment: Payment,
   callbackBaseUrl: string,
   callbackAdditionUrl: string,
   extraData: ExtraData[] | undefined,
   user: User,
-): Charge {
+): Charge => {
   // TODO: island.is x-road service path for callback.. ??
   // this can actually be a fixed url
   const callbackUrl =
