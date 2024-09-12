@@ -64,9 +64,9 @@ import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
+import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
 import { DeliverResponse } from './models/deliver.response'
-import { ExplanatoryComment } from './models/explanatoryComment.model'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'
 
@@ -119,9 +119,7 @@ const indictmentCountEncryptionProperties: (keyof IndictmentCount)[] = [
   'legalArguments',
 ]
 
-const explanatoryCommentEncryptionProperties: (keyof ExplanatoryComment)[] = [
-  'comment',
-]
+const caseStringEncryptionProperties: (keyof CaseString)[] = ['value']
 
 const collectEncryptionProperties = (
   properties: string[],
@@ -148,8 +146,8 @@ export class InternalCaseService {
 
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(ExplanatoryComment)
-    private readonly explanatoryCommentModel: typeof ExplanatoryComment,
+    @InjectModel(CaseString)
+    private readonly caseStringModel: typeof CaseString,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(CaseArchive)
     private readonly caseArchiveModel: typeof CaseArchive,
@@ -393,17 +391,13 @@ export class InternalCaseService {
         { model: Defendant, as: 'defendants' },
         { model: IndictmentCount, as: 'indictmentCounts' },
         { model: CaseFile, as: 'caseFiles' },
-        { model: ExplanatoryComment, as: 'explanatoryComments' },
+        { model: CaseString, as: 'caseStrings' },
       ],
       order: [
         [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
         [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
         [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
-        [
-          { model: ExplanatoryComment, as: 'explanatoryComments' },
-          'created',
-          'ASC',
-        ],
+        [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
       ],
       where: archiveFilter,
     })
@@ -463,19 +457,19 @@ export class InternalCaseService {
         )
       }
 
-      const explanatoryCommentsArchive = []
-      for (const comment of theCase.explanatoryComments ?? []) {
-        const [clearedExplanatoryCommentProperties, explanatoryCommentArchive] =
+      const caseStringsArchive = []
+      for (const caseString of theCase.caseStrings ?? []) {
+        const [clearedCaseStringProperties, caseStringArchive] =
           collectEncryptionProperties(
-            explanatoryCommentEncryptionProperties,
-            comment,
+            caseStringEncryptionProperties,
+            caseString,
           )
-        explanatoryCommentsArchive.push(explanatoryCommentArchive)
+        caseStringsArchive.push(caseStringArchive)
 
-        await this.explanatoryCommentModel.update(
-          clearedExplanatoryCommentProperties,
-          { where: { id: comment.id, caseId: theCase.id }, transaction },
-        )
+        await this.caseStringModel.update(clearedCaseStringProperties, {
+          where: { id: caseString.id, caseId: theCase.id },
+          transaction,
+        })
       }
 
       await this.caseArchiveModel.create(
@@ -487,7 +481,7 @@ export class InternalCaseService {
               defendants: defendantsArchive,
               caseFiles: caseFilesArchive,
               indictmentCounts: indictmentCountsArchive,
-              explanatoryComments: explanatoryCommentsArchive,
+              caseStrings: caseStringsArchive,
             }),
             this.config.archiveEncryptionKey,
             { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
