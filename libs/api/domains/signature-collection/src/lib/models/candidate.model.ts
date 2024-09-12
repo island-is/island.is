@@ -19,4 +19,7 @@ export class SignatureCollectionCandidate {
 
   @Field({ nullable: true })
   collectionId?: string
+
+  @Field({ nullable: true })
+  partyBallotLetter?: string
 }
