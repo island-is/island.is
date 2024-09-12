@@ -225,7 +225,9 @@ export class AuthService {
       state: encodeURIComponent(JSON.stringify({ sid })),
     })
 
-    return res.redirect(`${this.baseUrl}/connect/endsession?${searchParams}`)
+    return res.redirect(
+      `${this.baseUrl}/connect/endsession?${searchParams.toString()}`,
+    )
   }
 
   /**
@@ -235,12 +237,6 @@ export class AuthService {
    * Finally, we redirect the user back to the original URL.
    */
   async callbackLogout(res: Response, { state }: CallbackLogoutQuery) {
-    if (!state) {
-      this.logger.error('Logout failed: No state param provided')
-
-      throw new BadRequestException('Logout failed')
-    }
-
     const { sid } = JSON.parse(decodeURIComponent(state))
 
     if (!sid) {

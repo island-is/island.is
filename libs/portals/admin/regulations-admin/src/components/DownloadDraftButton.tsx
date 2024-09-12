@@ -72,12 +72,13 @@ export const DownloadDraftButton = ({ draftId, reviewButton }: Props) => {
         })
         .catch((error) => {
           console.error('Error occurred:', error)
+
           toast.error(t(editorMsgs.signedDocumentDownloadFreshError))
         })
         .finally(() => {
           setIsFetchingFile(false)
         })
-    } else {
+    } else if (data && !url) {
       toast.error(t(editorMsgs.signedDocumentDownloadFreshError))
     }
   }, [data])

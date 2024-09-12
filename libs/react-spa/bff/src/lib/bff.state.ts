@@ -24,7 +24,6 @@ export interface BffReducerState {
   userInfo: BffUser | null
   authState: BffState
   isAuthenticated: boolean
-  baseUrl?: string
   error?: Error
 }
 

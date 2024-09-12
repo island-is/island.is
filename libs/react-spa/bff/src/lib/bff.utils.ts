@@ -2,15 +2,16 @@
  * Creates a function that can generate a BFF URLs based on the environment.
  * @usage
  * const bffBaseUrl = createBffUrlGenerator('/stjornbord)
- * const userUrl = bffBaseUrl('/user')
+ * const userUrl = bffBaseUrl('/user') // http://localhost:3010/stjornbord/bff/user
  */
 export const createBffUrlGenerator = (basePath: string) => {
-  // Trim any leading and trailing slashes from the basePath to avoid extra slashes
   const sanitizedBasePath = sanitizePath(basePath)
   const origin =
     process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3010' // When developing against the BFF locally, use localhost
-      : sanitizePath(window.location.origin) // Use current window origin for production
+      ? // When developing against the BFF locally, use localhost
+        'http://localhost:3010'
+      : // Use current window origin for production
+        sanitizePath(window.location.origin)
 
   const baseUrl = `${origin}/${sanitizedBasePath}/bff`
 
@@ -22,6 +23,9 @@ export const createBffUrlGenerator = (basePath: string) => {
  */
 const sanitizePath = (path: string) => path.replace(/^\/+|\/+$/g, '')
 
+/**
+ * Creates a query string from an object
+ */
 export const createQueryStr = (params: Record<string, string>) => {
   return new URLSearchParams(params).toString()
 }

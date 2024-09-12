@@ -33,11 +33,7 @@ export const BffProvider = ({
       })
 
       if (!res.ok) {
-        const qs = createQueryStr({
-          target_link_uri: window.location.href,
-        })
-
-        window.location.href = bffUrlGenerator(`/login?${qs}`)
+        signIn()
 
         return
       }
@@ -57,13 +53,21 @@ export const BffProvider = ({
   }
 
   const signIn = useCallback(() => {
-    window.location.href = bffUrlGenerator('/login')
+    const qs = createQueryStr({
+      target_link_uri: window.location.href,
+    })
+
+    window.location.href = bffUrlGenerator(`/login?${qs}`)
   }, [bffUrlGenerator])
 
   const signOut = useCallback(() => {
     if (!state.userInfo) {
       return
     }
+
+    dispatch({
+      type: ActionType.LOGGING_OUT,
+    })
 
     window.location.href = bffUrlGenerator(
       `/logout?sid=${state.userInfo.profile.sid}`,
@@ -105,7 +109,10 @@ export const BffProvider = ({
 
   const { authState } = state
   const showErrorScreen = authState === 'error'
-  const showLoadingScreen = authState === 'loading' || authState === 'switching'
+  const showLoadingScreen =
+    authState === 'loading' ||
+    authState === 'switching' ||
+    authState === 'logging-out'
   const isLoggedIn = authState === 'logged-in'
 
   return (

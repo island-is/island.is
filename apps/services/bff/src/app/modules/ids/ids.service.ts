@@ -43,7 +43,7 @@ export class IdsService {
         throw new BadRequestException(`HTTP error! Status: ${response.status}`)
       }
 
-      return await response.json()
+      return response.json()
     } catch (error) {
       this.logger.error(
         `Error making request to ${endpoint}:`,
