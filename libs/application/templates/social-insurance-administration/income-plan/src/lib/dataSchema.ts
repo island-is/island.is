@@ -115,111 +115,30 @@ export const dataSchema = z.object({
             incomePlanTable?.incomeCategory === INCOME &&
             incomePlanTable.unevenIncomePerYear?.[0] === YES
           ) {
-            if (
-              incomePlanTable.january &&
-              !(Number(incomePlanTable.january) > 0)
-            ) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['january'],
-                params: coreErrorMessages.defaultError,
-              })
+            const months = {
+              january: incomePlanTable.january,
+              february: incomePlanTable.february,
+              march: incomePlanTable.march,
+              april: incomePlanTable.april,
+              may: incomePlanTable.may,
+              june: incomePlanTable.june,
+              july: incomePlanTable.july,
+              august: incomePlanTable.august,
+              september: incomePlanTable.september,
+              october: incomePlanTable.october,
+              november: incomePlanTable.november,
+              december: incomePlanTable.december,
             }
-            if (
-              incomePlanTable.february &&
-              !(Number(incomePlanTable.february) > 0)
-            ) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['february'],
-                params: coreErrorMessages.defaultError,
-              })
-            }
-            if (incomePlanTable.march && !(Number(incomePlanTable.march) > 0)) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['march'],
-                params: coreErrorMessages.defaultError,
-              })
-            }
-            if (incomePlanTable.april && !(Number(incomePlanTable.april) > 0)) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['april'],
-                params: coreErrorMessages.defaultError,
-              })
-            }
-            if (incomePlanTable.may && !(Number(incomePlanTable.may) > 0)) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['may'],
-                params: coreErrorMessages.defaultError,
-              })
-            }
-            if (incomePlanTable.june && !(Number(incomePlanTable.june) > 0)) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['june'],
-                params: coreErrorMessages.defaultError,
-              })
-            }
-            if (incomePlanTable.july && !(Number(incomePlanTable.july) > 0)) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['july'],
-                params: coreErrorMessages.defaultError,
-              })
-            }
-            if (
-              incomePlanTable.august &&
-              !(Number(incomePlanTable.august) > 0)
-            ) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['august'],
-                params: coreErrorMessages.defaultError,
-              })
-            }
-            if (
-              incomePlanTable.september &&
-              !(Number(incomePlanTable.september) > 0)
-            ) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['september'],
-                params: coreErrorMessages.defaultError,
-              })
-            }
-            if (
-              incomePlanTable.october &&
-              !(Number(incomePlanTable.october) > 0)
-            ) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['october'],
-                params: coreErrorMessages.defaultError,
-              })
-            }
-            if (
-              incomePlanTable.november &&
-              !(Number(incomePlanTable.november) > 0)
-            ) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['november'],
-                params: coreErrorMessages.defaultError,
-              })
-            }
-            if (
-              incomePlanTable.december &&
-              !(Number(incomePlanTable.december) > 0)
-            ) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: ['december'],
-                params: coreErrorMessages.defaultError,
-              })
-            }
+
+            Object.entries(months).forEach(([key, value]) => {
+              if (value && !(Number(value) > 0)) {
+                ctx.addIssue({
+                  code: z.ZodIssueCode.custom,
+                  path: [key],
+                  params: coreErrorMessages.defaultError,
+                })
+              }
+            })
           }
         }),
     )
