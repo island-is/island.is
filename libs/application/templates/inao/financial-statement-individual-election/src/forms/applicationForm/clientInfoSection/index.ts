@@ -4,7 +4,6 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../../lib/utils/messages'
-import { ABOUTIDS } from '../../../lib/utils/constants'
 import { Application, UserProfile } from '@island.is/application/types'
 import { Identity } from '@island.is/api/schema'
 
