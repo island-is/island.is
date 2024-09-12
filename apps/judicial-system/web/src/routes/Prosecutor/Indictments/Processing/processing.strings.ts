@@ -73,4 +73,22 @@ export const strings = {
     description:
       'Notaður sem texti í takka til að bæta við lögmanni kröfuhafa í einkaréttarkröfu á Málsmeðferðarskjánum.',
   }),
+  removeDefender: defineMessage({
+    id: 'judicial.system.indictments:processing.remove_defender',
+    defaultMessage: 'Eyða',
+    description:
+      'Notaður sem texti í takka til að eyða lögmanni kröfuhafa í einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
+  lawyer: defineMessage({
+    id: 'judicial.system.indictments:processing.lawyer',
+    defaultMessage: 'Lögmaður',
+    description:
+      'Notaður sem texti í "Lögmaður" valmöguleikanum við einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
+  legalRightsProtector: defineMessage({
+    id: 'judicial.system.indictments:processing.legal_rights_protector',
+    defaultMessage: 'Réttargæslumaður',
+    description:
+      'Notaður sem texti í "Réttargæslumaður" valmöguleikanum við einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
 }

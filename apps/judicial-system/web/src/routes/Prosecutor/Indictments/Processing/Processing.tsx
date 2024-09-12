@@ -1,5 +1,6 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion, stagger, useAnimate } from 'framer-motion'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
 
@@ -12,10 +13,11 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { isTrafficViolationCase } from '@island.is/judicial-system/types'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
+  DefenderInput,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -67,6 +69,8 @@ const Processing: FC = () => {
     true, // 'NO_CHOICE',
   )
   const [nID, setNID] = useState<string>()
+  const [claimantHasDefender, setClaimantHasDefender] = useState<boolean>(false)
+  const [defenderType, setDefenderType] = useState<'L' | 'R'>('L')
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
@@ -124,8 +128,6 @@ const Processing: FC = () => {
       mutate()
     }
   }, [mutate, nID])
-
-  console.log(data)
 
   return (
     <PageLayout
@@ -289,10 +291,53 @@ const Processing: FC = () => {
                 onBlur={(val) => console.log('blur', val)}
               />
               <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-                <Button variant="text">
-                  {formatMessage(strings.addDefender)}
+                <Button
+                  variant="text"
+                  colorScheme={claimantHasDefender ? 'destructive' : 'default'}
+                  onClick={() => setClaimantHasDefender(!claimantHasDefender)}
+                >
+                  {formatMessage(
+                    claimantHasDefender
+                      ? strings.removeDefender
+                      : strings.addDefender,
+                  )}
                 </Button>
               </Box>
+              {claimantHasDefender && (
+                <>
+                  <Box display="flex" marginY={2}>
+                    <Box width="half" marginRight={1}>
+                      <RadioButton
+                        name="defenderType"
+                        id="defender_type_L"
+                        label={formatMessage(strings.lawyer)}
+                        large
+                        backgroundColor="white"
+                        onChange={() => setDefenderType('L')}
+                        checked={defenderType === 'L'}
+                      />
+                    </Box>
+                    <Box width="half" marginLeft={1}>
+                      <RadioButton
+                        name="defenderType"
+                        id="defender_type_R"
+                        label={formatMessage(strings.legalRightsProtector)}
+                        large
+                        backgroundColor="white"
+                        onChange={() => setDefenderType('R')}
+                        checked={defenderType === 'R'}
+                      />
+                    </Box>
+                  </Box>
+                  <DefenderInput
+                    onDefenderNotFound={function (
+                      defenderNotFound: boolean,
+                    ): void {
+                      throw new Error('Function not implemented.')
+                    }}
+                  />
+                </>
+              )}
             </BlueBox>
           </Box>
         )}
