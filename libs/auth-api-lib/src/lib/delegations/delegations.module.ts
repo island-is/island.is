@@ -34,6 +34,11 @@ import { DelegationProviderModel } from './models/delegation-provider.model'
 import { DelegationProviderService } from './delegation-provider.service'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 import { DelegationAdminCustomService } from './admin/delegation-admin-custom.service'
+import {
+  ZendeskModule,
+  ZendeskServiceOptions,
+} from '@island.is/clients/zendesk'
+import { environment } from '../environments'
 
 @Module({
   imports: [
@@ -44,6 +49,7 @@ import { DelegationAdminCustomService } from './admin/delegation-admin-custom.se
     CompanyRegistryClientModule,
     UserIdentitiesModule,
     FeatureFlagModule,
+    ZendeskModule.register(environment.zendeskOptions as ZendeskServiceOptions),
     SequelizeModule.forFeature([
       ApiScope,
       ApiScopeDelegationType,

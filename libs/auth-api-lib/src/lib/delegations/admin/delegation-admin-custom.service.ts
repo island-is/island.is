@@ -16,12 +16,14 @@ import { Sequelize } from 'sequelize-typescript'
 import { CreatePaperDelegationDto } from '../dto/create-paper-delegation.dto'
 import { DelegationDTO } from '../dto/delegation.dto'
 import { NamesService } from '../names.service'
+import { TicketStatus, ZendeskService } from '@island.is/clients/zendesk'
 
 @Injectable()
 export class DelegationAdminCustomService {
   constructor(
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
+    private readonly zendeskService: ZendeskService,
     private delegationResourceService: DelegationResourcesService,
     private delegationIndexService: DelegationsIndexService,
     private delegationScopeService: DelegationScopeService,
@@ -29,70 +31,82 @@ export class DelegationAdminCustomService {
     private sequelize: Sequelize,
   ) {}
 
+  private async getZendeskStatus(id: string): Promise<TicketStatus | string> {
+    try {
+      const zenDeskCase = await this.zendeskService.getTicket(id)
+
+      console.log('zenDeskCase', zenDeskCase.status)
+      return zenDeskCase.status
+    } catch (error) {
+      throw new Error('Error checking zendesk status')
+    }
+  }
+
   async getAllDelegationsByNationalId(
     nationalId: string,
   ): Promise<DelegationAdminCustomDto> {
-    const incomingDelegations = await this.delegationModel.findAll({
-      where: {
-        toNationalId: nationalId,
-      },
-      include: [
-        {
-          model: DelegationScope,
-          required: true,
-          include: [
-            {
-              model: ApiScope,
-              as: 'apiScope',
-              required: true,
-              where: {
-                enabled: true,
-              },
-              include: [
-                {
-                  model: ApiScopeDelegationType,
-                  required: true,
-                  where: {
-                    delegationType: AuthDelegationType.Custom,
-                  },
-                },
-              ],
-            },
-          ],
+    const [incomingDelegations, outgoingDelegations] = await Promise.all([
+      this.delegationModel.findAll({
+        where: {
+          toNationalId: nationalId,
         },
-      ],
-    })
-
-    const outgoingDelegations = await this.delegationModel.findAll({
-      where: {
-        fromNationalId: nationalId,
-      },
-      include: [
-        {
-          model: DelegationScope,
-          required: true,
-          include: [
-            {
-              model: ApiScope,
-              required: true,
-              as: 'apiScope',
-              where: {
-                enabled: true,
-              },
-              include: [
-                {
-                  model: ApiScopeDelegationType,
-                  required: true,
-                  where: {
-                    delegationType: AuthDelegationType.Custom,
-                  },
+        include: [
+          {
+            model: DelegationScope,
+            required: true,
+            include: [
+              {
+                model: ApiScope,
+                as: 'apiScope',
+                required: true,
+                where: {
+                  enabled: true,
                 },
-              ],
-            },
-          ],
+                include: [
+                  {
+                    model: ApiScopeDelegationType,
+                    required: true,
+                    where: {
+                      delegationType: AuthDelegationType.Custom,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }),
+      this.delegationModel.findAll({
+        where: {
+          fromNationalId: nationalId,
         },
-      ],
-    })
+        include: [
+          {
+            model: DelegationScope,
+            required: true,
+            include: [
+              {
+                model: ApiScope,
+                required: true,
+                as: 'apiScope',
+                where: {
+                  enabled: true,
+                },
+                include: [
+                  {
+                    model: ApiScopeDelegationType,
+                    required: true,
+                    where: {
+                      delegationType: AuthDelegationType.Custom,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }),
+    ])
 
     return {
       incoming: incomingDelegations.map((delegation) => delegation.toDTO()),
@@ -104,8 +118,13 @@ export class DelegationAdminCustomService {
     user: User,
     delegation: CreatePaperDelegationDto,
   ): Promise<DelegationDTO> {
-    if (delegation.fromNationalId === delegation.toNationalId) {
+    if (delegation.fromNationalId === delegation.toNationalId)
       throw new Error('Cannot create a delegation between the same nationalId.')
+
+    const zendeskStatus = await this.getZendeskStatus(delegation.referenceId)
+
+    if (zendeskStatus !== TicketStatus.Solved) {
+      throw new Error('Zendesk case is not solved')
     }
 
     const [fromDisplayName, toName] = await Promise.all([
