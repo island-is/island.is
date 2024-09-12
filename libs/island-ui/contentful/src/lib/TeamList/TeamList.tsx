@@ -144,8 +144,8 @@ const TeamMemberAccordionList = ({
 }: Pick<TeamListProps, 'teamMembers' | 'prefixes'>) => {
   return (
     <Accordion singleExpand={false}>
-      {teamMembers.map((member) => {
-        const id = `${member.name}-${member.title}`
+      {teamMembers.map((member, index) => {
+        const id = `${member.name}-${member.title}-${index}`
         return (
           <AccordionItem
             key={id}

@@ -4369,6 +4369,9 @@ export interface ITeamListFields {
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
 
+  /** Filter groups */
+  filterGroups?: IGenericTagGroup[] | undefined
+
   /** Variant */
   variant?: 'card' | 'accordion' | undefined
 }
