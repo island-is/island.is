@@ -222,7 +222,6 @@ export function setupRoutes() {
   addRoute('/vehicle/:id', async (passProps: any) => {
     await Navigation.dismissAllModals()
     selectTab(4)
-    await Navigation.popToRoot(StackRegistry.MoreStack)
     Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.VehicleDetailScreen,
