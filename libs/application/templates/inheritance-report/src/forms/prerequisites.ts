@@ -39,7 +39,7 @@ export const getForm = ({
                     label: m.preDataCollectionApplicationForDefault,
                     disabled: !allowEstateApplication,
                     //TODO: remove tooltip when this application is ready to go live
-                    tooltip: 'Þessi tengund af umsókn er í vinnslu',
+                    tooltip: m.preDataCollectionApplicationForDefaultTooltip,
                   },
                   {
                     value: PREPAID_INHERITANCE,
