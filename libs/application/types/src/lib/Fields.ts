@@ -68,7 +68,7 @@ type TableRepeaterOptions =
   | RepeaterOption[]
   | ((
       application: Application,
-      activeField: Record<string, string>,
+      activeField?: Record<string, string>,
     ) => RepeaterOption[] | [])
 
 export type TableRepeaterItem = {
@@ -94,6 +94,19 @@ export type TableRepeaterItem = {
         application: Application,
         activeField?: Record<string, string>,
       ) => boolean)
+  updateValueObj?: {
+    valueModifier: (activeField?: Record<string, string>) => unknown
+    watchValues:
+      | string
+      | string[]
+      | ((
+          activeField?: Record<string, string>,
+        ) => string | string[] | undefined)
+  }
+  defaultValue?: (
+    application: Application,
+    activeField?: Record<string, string>,
+  ) => unknown
 } & (
   | {
       component: 'input'
@@ -292,6 +305,8 @@ export interface RadioField extends BaseField {
   largeButtons?: boolean
   required?: boolean
   space?: BoxProps['paddingTop']
+  hasIllustration?: boolean
+  widthWithIllustration?: '1/1' | '1/2' | '1/3'
   onSelect?(s: string): void
 }
 
@@ -337,6 +352,8 @@ export interface TextField extends BaseField {
   rightAlign?: boolean
   minLength?: number
   maxLength?: number
+  max?: number
+  min?: number
   placeholder?: FormText
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor
@@ -441,7 +458,7 @@ export interface MessageWithLinkButtonField extends BaseField {
 export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
-  introText?: StaticText
+  introText?: FormText
   description: FormText
   startExpanded?: boolean
 }
@@ -474,16 +491,19 @@ export interface PaymentChargeOverviewField extends BaseField {
   ) => { chargeItemCode: string; extraLabel?: StaticText }[]
 }
 
+type ImageWidthProps = 'full' | 'auto' | '50%'
+type ImagePositionProps = 'left' | 'right' | 'center'
+
 export interface ImageField extends BaseField {
   readonly type: FieldTypes.IMAGE
   component: FieldComponents.IMAGE
   image: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | string
   alt?: string
-  imageWidth?: 'full' | 'auto'
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
-  imagePosition?: 'left' | 'right' | 'center'
+  imageWidth?: ImageWidthProps | Array<ImageWidthProps>
+  imagePosition?: ImagePositionProps | Array<ImagePositionProps>
 }
 
 export type AccordionItem = {
@@ -542,14 +562,30 @@ export interface NationalIdWithNameField extends BaseField {
   minAgePerson?: number
 }
 
+type Modify<T, R> = Omit<T, keyof R> & R
+
 export type ActionCardListField = BaseField & {
   readonly type: FieldTypes.ACTION_CARD_LIST
   component: FieldComponents.ACTION_CARD_LIST
-  items: (application: Application) => ActionCardProps[]
+  items: (application: Application) => ApplicationActionCardProps[]
   space?: BoxProps['paddingTop']
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }
+
+export type ApplicationActionCardProps = Modify<
+  ActionCardProps,
+  {
+    heading?: FormText
+    text?: FormText
+    tag?: Modify<ActionCardProps['tag'], { label: FormText }>
+    cta?: Modify<ActionCardProps['cta'], { label: FormText }>
+    unavailable?: Modify<
+      ActionCardProps['unavailable'],
+      { label?: FormText; message?: FormText }
+    >
+  }
+>
 
 export type TableRepeaterField = BaseField & {
   readonly type: FieldTypes.TABLE_REPEATER

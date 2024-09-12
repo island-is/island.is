@@ -84,9 +84,9 @@ const extractCommonFields = (
   }
 }
 
-export function buildCheckboxField(
+export const buildCheckboxField = (
   data: Omit<CheckboxField, 'type' | 'component' | 'children'>,
-): CheckboxField {
+): CheckboxField => {
   const {
     options,
     strong = false,
@@ -109,9 +109,9 @@ export function buildCheckboxField(
   }
 }
 
-export function buildDateField(
+export const buildDateField = (
   data: Omit<DateField, 'type' | 'component' | 'children'>,
-): DateField {
+): DateField => {
   const {
     maxDate,
     minDate,
@@ -136,9 +136,9 @@ export function buildDateField(
   }
 }
 
-export function buildDescriptionField(
+export const buildDescriptionField = (
   data: Omit<DescriptionField, 'type' | 'component' | 'children'>,
-): DescriptionField {
+): DescriptionField => {
   const {
     titleVariant = 'h2',
     description,
@@ -147,10 +147,11 @@ export function buildDescriptionField(
     space,
     marginBottom,
     marginTop,
+    doesNotRequireAnswer = true,
   } = data
   return {
     ...extractCommonFields(data),
-    doesNotRequireAnswer: true,
+    doesNotRequireAnswer,
     children: undefined,
     description,
     titleVariant,
@@ -164,15 +165,17 @@ export function buildDescriptionField(
   }
 }
 
-export function buildRadioField(
+export const buildRadioField = (
   data: Omit<RadioField, 'type' | 'component' | 'children'>,
-): RadioField {
+): RadioField => {
   const {
     options,
     largeButtons = true,
     backgroundColor,
     space,
     required,
+    widthWithIllustration,
+    hasIllustration,
   } = data
 
   return {
@@ -183,14 +186,16 @@ export function buildRadioField(
     backgroundColor,
     space,
     required,
+    widthWithIllustration,
+    hasIllustration,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
 }
 
-export function buildSelectField(
+export const buildSelectField = (
   data: Omit<SelectField, 'type' | 'component' | 'children'>,
-): SelectField {
+): SelectField => {
   const {
     options,
     placeholder,
@@ -213,9 +218,9 @@ export function buildSelectField(
   }
 }
 
-export function buildAsyncSelectField(
+export const buildAsyncSelectField = (
   data: Omit<AsyncSelectField, 'type' | 'component' | 'children'>,
-): AsyncSelectField {
+): AsyncSelectField => {
   const {
     loadOptions,
     loadingError,
@@ -241,9 +246,9 @@ export function buildAsyncSelectField(
   }
 }
 
-export function buildCompanySearchField(
+export const buildCompanySearchField = (
   data: Omit<CompanySearchField, 'type' | 'component' | 'children'>,
-): CompanySearchField {
+): CompanySearchField => {
   const {
     placeholder,
     shouldIncludeIsatNumber,
@@ -263,9 +268,9 @@ export function buildCompanySearchField(
   }
 }
 
-export function buildTextField(
+export const buildTextField = (
   data: Omit<TextField, 'type' | 'component' | 'children'>,
-): TextField {
+): TextField => {
   const {
     backgroundColor = 'blue',
     placeholder,
@@ -275,6 +280,8 @@ export function buildTextField(
     rows,
     required,
     maxLength,
+    max,
+    min,
     readOnly,
     rightAlign,
     onChange,
@@ -292,15 +299,17 @@ export function buildTextField(
     maxLength,
     readOnly,
     rightAlign,
+    max,
+    min,
     onChange,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }
 }
 
-export function buildPhoneField(
+export const buildPhoneField = (
   data: Omit<PhoneField, 'type' | 'component' | 'children'>,
-): PhoneField {
+): PhoneField => {
   const {
     backgroundColor = 'blue',
     placeholder,
@@ -325,10 +334,10 @@ export function buildPhoneField(
   }
 }
 
-export function buildCustomField(
+export const buildCustomField = (
   data: Omit<CustomField, 'props' | 'type' | 'children'>,
   props?: RecordObject,
-): CustomField {
+): CustomField => {
   const { component, childInputIds } = data
   return {
     ...extractCommonFields(data),
@@ -340,9 +349,9 @@ export function buildCustomField(
   }
 }
 
-export function buildFileUploadField(
+export const buildFileUploadField = (
   data: Omit<FileUploadField, 'type' | 'component' | 'children'>,
-): FileUploadField {
+): FileUploadField => {
   const {
     introduction,
     uploadHeader,
@@ -378,11 +387,11 @@ export function buildFileUploadField(
   }
 }
 
-export function buildDividerField(data: {
+export const buildDividerField = (data: {
   condition?: Condition
   title?: FormText
   color?: Colors
-}): DividerField {
+}): DividerField => {
   const { title, color, condition } = data
   return {
     id: '',
@@ -396,7 +405,7 @@ export function buildDividerField(data: {
   }
 }
 
-export function buildKeyValueField(data: {
+export const buildKeyValueField = (data: {
   label: FormText
   value: FormText | FormTextArray
   width?: FieldWidth
@@ -407,7 +416,7 @@ export function buildKeyValueField(data: {
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
   paddingBottom?: BoxProps['padding']
-}): KeyValueField {
+}): KeyValueField => {
   const {
     label,
     value,
@@ -484,13 +493,13 @@ export function buildBankAccountField(
   }
 }
 
-export function buildSubmitField(data: {
+export const buildSubmitField = (data: {
   id: string
   title: FormText
   placement?: 'footer' | 'screen'
   refetchApplicationAfterSubmit?: boolean
   actions: CallToAction[]
-}): SubmitField {
+}): SubmitField => {
   const {
     id,
     placement = 'footer',
@@ -514,11 +523,11 @@ export function buildSubmitField(data: {
   }
 }
 
-export function buildFieldOptions(
+export const buildFieldOptions = (
   maybeOptions: MaybeWithApplicationAndField<Option[]>,
   application: Application,
   field: Field,
-): Option[] {
+): Option[] => {
   if (typeof maybeOptions === 'function') {
     return maybeOptions(application, field)
   }
@@ -526,10 +535,10 @@ export function buildFieldOptions(
   return maybeOptions
 }
 
-export function buildRedirectToServicePortalField(data: {
+export const buildRedirectToServicePortalField = (data: {
   id: string
   title: FormText
-}): RedirectToServicePortalField {
+}): RedirectToServicePortalField => {
   const { id, title } = data
   return {
     children: undefined,
@@ -540,10 +549,10 @@ export function buildRedirectToServicePortalField(data: {
   }
 }
 
-export function buildPaymentPendingField(data: {
+export const buildPaymentPendingField = (data: {
   id: string
   title: FormText
-}): PaymentPendingField {
+}): PaymentPendingField => {
   const { id, title } = data
   return {
     children: undefined,
@@ -554,9 +563,9 @@ export function buildPaymentPendingField(data: {
   }
 }
 
-export function buildMessageWithLinkButtonField(
+export const buildMessageWithLinkButtonField = (
   data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
-): MessageWithLinkButtonField {
+): MessageWithLinkButtonField => {
   const { id, title, url, message, buttonTitle, marginBottom, marginTop } = data
   return {
     children: undefined,
@@ -572,9 +581,9 @@ export function buildMessageWithLinkButtonField(
   }
 }
 
-export function buildExpandableDescriptionField(
+export const buildExpandableDescriptionField = (
   data: Omit<ExpandableDescriptionField, 'type' | 'component' | 'children'>,
-): ExpandableDescriptionField {
+): ExpandableDescriptionField => {
   const { id, title, description, introText, startExpanded } = data
   return {
     children: undefined,
@@ -587,9 +596,9 @@ export function buildExpandableDescriptionField(
     component: FieldComponents.EXPANDABLE_DESCRIPTION,
   }
 }
-export function buildAlertMessageField(
+export const buildAlertMessageField = (
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
-): AlertMessageField {
+): AlertMessageField => {
   const { message, alertType, marginTop, marginBottom, links } = data
   return {
     ...extractCommonFields(data),
@@ -604,9 +613,9 @@ export function buildAlertMessageField(
   }
 }
 
-export function buildLinkField(
+export const buildLinkField = (
   data: Omit<LinkField, 'type' | 'component' | 'children'>,
-): LinkField {
+): LinkField => {
   const { s3key, link, iconProps } = data
   return {
     ...extractCommonFields(data),
@@ -619,9 +628,9 @@ export function buildLinkField(
   }
 }
 
-export function buildPaymentChargeOverviewField(
+export const buildPaymentChargeOverviewField = (
   data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
-): PaymentChargeOverviewField {
+): PaymentChargeOverviewField => {
   const { id, title, forPaymentLabel, totalLabel, getSelectedChargeItems } =
     data
   return {
@@ -636,9 +645,9 @@ export function buildPaymentChargeOverviewField(
   }
 }
 
-export function buildImageField(
+export const buildImageField = (
   data: Omit<ImageField, 'type' | 'component' | 'children'>,
-): ImageField {
+): ImageField => {
   const {
     id,
     title,
@@ -647,8 +656,9 @@ export function buildImageField(
     marginTop,
     marginBottom,
     condition,
-    imageWidth = 'full',
     titleVariant = 'h4',
+    // imageWidth and imagePosition can be arrays [sm,  md, lg, xl] for different screen sizes
+    imageWidth = 'full',
     imagePosition = 'left',
   } = data
   return {
@@ -668,9 +678,9 @@ export function buildImageField(
   }
 }
 
-export function buildPdfLinkButtonField(
+export const buildPdfLinkButtonField = (
   data: Omit<PdfLinkButtonField, 'type' | 'component' | 'children'>,
-): PdfLinkButtonField {
+): PdfLinkButtonField => {
   const {
     verificationDescription,
     verificationLinkTitle,
@@ -749,9 +759,9 @@ export const buildHiddenInput = (
   }
 }
 
-export function buildNationalIdWithNameField(
+export const buildNationalIdWithNameField = (
   data: Omit<NationalIdWithNameField, 'type' | 'component' | 'children'>,
-): NationalIdWithNameField {
+): NationalIdWithNameField => {
   const {
     disabled,
     required,
@@ -782,9 +792,9 @@ export function buildNationalIdWithNameField(
   }
 }
 
-export function buildActionCardListField(
+export const buildActionCardListField = (
   data: Omit<ActionCardListField, 'type' | 'component' | 'children'>,
-): ActionCardListField {
+): ActionCardListField => {
   const { items, space, marginTop, marginBottom } = data
 
   return {
@@ -799,9 +809,9 @@ export function buildActionCardListField(
   }
 }
 
-export function buildTableRepeaterField(
+export const buildTableRepeaterField = (
   data: Omit<TableRepeaterField, 'type' | 'component' | 'children'>,
-): TableRepeaterField {
+): TableRepeaterField => {
   const {
     fields,
     table,
@@ -839,7 +849,7 @@ export function buildTableRepeaterField(
   }
 }
 
-export function buildStaticTableField(
+export const buildStaticTableField = (
   data: Omit<
     StaticTableField,
     | 'type'
@@ -852,7 +862,7 @@ export function buildStaticTableField(
     | 'disabled'
     | 'width'
   >,
-): StaticTableField {
+): StaticTableField => {
   const {
     header,
     condition,

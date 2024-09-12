@@ -213,6 +213,8 @@ namespaces:
 services-auth-admin-api:
   enabled: true
   env:
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
@@ -222,6 +224,11 @@ services-auth-admin-api:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
+    XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+    XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
+    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
@@ -275,6 +282,8 @@ services-auth-admin-api:
     CLIENT_SECRET_ENCRYPTION_KEY: '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+    NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -308,6 +317,7 @@ services-auth-delegation-api:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'service-portal'
+    - 'user-notification-worker'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -379,6 +389,7 @@ services-auth-ids-api:
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
+    PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
     PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
     PASSKEY_CORE_MAX_AGE_DAYS: '365'
     PASSKEY_CORE_RP_ID: 'island.is'
@@ -480,7 +491,6 @@ services-auth-ids-api:
     NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
     NOVA_URL: '/k8s/services-auth/NOVA_URL'
     NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
-    PASSKEY_CORE_ALLOWED_ORIGINS: '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -711,6 +721,7 @@ services-auth-public-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+    PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
     PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
     PASSKEY_CORE_RP_ID: 'island.is'
     PASSKEY_CORE_RP_NAME: 'Island.is'
@@ -787,7 +798,6 @@ services-auth-public-api:
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-    PASSKEY_CORE_ALLOWED_ORIGINS: '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

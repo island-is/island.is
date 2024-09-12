@@ -46,7 +46,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose -f docker-compose.yml up -d --build",
+        "command": "docker compose -f docker-compose.yml up -d --build",
         "cwd": "apps/services/search-indexer/dev-services"
       }
     },

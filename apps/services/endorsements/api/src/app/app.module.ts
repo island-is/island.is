@@ -20,6 +20,7 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
+import { emailModuleConfig } from '@island.is/email-service'
 
 @Module({
   imports: [
@@ -33,7 +34,12 @@ import {
     LoggingModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [NationalRegistryV3ClientConfig, IdsClientConfig, XRoadConfig],
+      load: [
+        NationalRegistryV3ClientConfig,
+        IdsClientConfig,
+        XRoadConfig,
+        emailModuleConfig,
+      ],
     }),
   ],
   providers: [

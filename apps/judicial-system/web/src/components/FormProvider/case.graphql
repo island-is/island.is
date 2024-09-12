@@ -171,6 +171,7 @@ query Case($input: CaseQueryInput!) {
       userGeneratedFilename
       displayDate
       policeFileId
+      submittedBy
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
@@ -263,7 +264,7 @@ query Case($input: CaseQueryInput!) {
     }
     indictmentAppealDeadline
     indictmentVerdictViewedByAll
-    indictmentVerdictAppealDeadline
+    indictmentVerdictAppealDeadlineExpired
     indictmentDecision
     indictmentReviewDecision
     indictmentCompletedDate

@@ -728,13 +728,13 @@ export const withMainLayout = <T,>(
     ])
     const layoutComponentProps = componentProps as LayoutComponentProps
 
-    const themeConfig = layoutComponentProps.themeConfig ?? {}
+    const themeConfig = layoutComponentProps?.themeConfig ?? {}
     const organizationAlertBannerContent =
-      layoutComponentProps.organizationPage?.alertBanner
-    const articleAlertBannerContent = layoutComponentProps.article?.alertBanner
-    const customAlertBannerContent = layoutComponentProps.customAlertBanner
+      layoutComponentProps?.organizationPage?.alertBanner
+    const articleAlertBannerContent = layoutComponentProps?.article?.alertBanner
+    const customAlertBannerContent = layoutComponentProps?.customAlertBanner
     const languageToggleQueryParams =
-      layoutComponentProps.languageToggleQueryParams
+      layoutComponentProps?.languageToggleQueryParams
 
     return {
       layoutProps: {

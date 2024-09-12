@@ -73,26 +73,27 @@ export const formatListItemDiff = (item: Element) => {
       const isLiDeleted = newLiText === '' || newLiText === null
       const isLiAddition = oldLiText === '' || oldLiText === null
 
-      const liLidur = isStaflidur ? 'stafliður' : 'töluliður'
-      const liLidurShortened = isStaflidur ? 'stafl.' : 'tölul.'
+      const liLidur = isStaflidur ? '-liður' : 'töluliður'
+      const liLidurPassive = isStaflidur ? '-lið' : '. tölulið'
+      const liLidurShortened = isStaflidur ? '-liður' : '. tölul.'
 
       const lidurLabel = liItemHtml === '' ? liLidur.toLowerCase() : liLidur
 
       if (isLiDeleted) {
         liItemHtml = (liItemHtml +
-          `${getLiPoint(
-            lidur,
-            isStaflidur,
-          )}. ${lidurLabel} fellur brott og breytist númer annarra liða til samræmis.`) as HTMLText
+          `${getLiPoint(lidur, isStaflidur)}${
+            isStaflidur ? lidurLabel : '. ' + lidurLabel
+          } fellur brott og breytist númer annarra liða til samræmis.`) as HTMLText
 
         // Finish up:
         returningArray.push(liItemHtml)
         liItemHtml = '' as HTMLText
       } else if (isLiAddition) {
         liItemHtml = (liItemHtml +
-          `Á eftir ${getLiPoint(lidur - 1, isStaflidur)}. ${
-            isStaflidur ? 'staflið' : 'tölulið'
-          } kemur nýr liður svohljóðandi, og breytist númer annarra lið til samræmis: ${newLiText}`) as HTMLText
+          `Á eftir ${getLiPoint(
+            lidur - 1,
+            isStaflidur,
+          )}${liLidurPassive} kemur nýr liður svohljóðandi, og breytist númer annarra lið til samræmis: ${newLiText}`) as HTMLText
 
         // Finish up:
         returningArray.push(liItemHtml)
@@ -102,7 +103,7 @@ export const formatListItemDiff = (item: Element) => {
           `${getLiPoint(
             lidur,
             isStaflidur,
-          )}. ${liLidurShortened} orðast svo: ${newLiText}`) as HTMLText
+          )}${liLidurShortened} orðast svo: ${newLiText}`) as HTMLText
 
         // Finish up:
         returningArray.push(liItemHtml)
@@ -155,7 +156,7 @@ export const getDeletionOrAddition = (
 
       // Remove gr number if there is some more text within the title
       const modContent = modifiedTextContent ?? ''
-      const match = modContent.match(/^\d+\.\s*gr\.$/)
+      const match = modContent.match(/^\d+\.\s*gr\.\s*(<br\s*\/?>)?$/)
       if (match) {
         // If the string matches the pattern for "{num}. gr.", return it as is
         newText = modContent

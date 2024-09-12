@@ -84,7 +84,7 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
   }, [options])
 
   const namespace = useMemo(
-    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    () => JSON.parse(organization?.namespace?.fields || '{}'),
     [],
   )
 

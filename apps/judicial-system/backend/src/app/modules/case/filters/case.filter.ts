@@ -3,27 +3,28 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
-  DateType,
-  getIndictmentVerdictAppealDeadline,
+  getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
-  InstitutionType,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
-  isPrisonSystemUser,
+  isPrisonAdminUser,
+  isPrisonStaffUser,
   isProsecutionUser,
   isPublicProsecutorUser,
   isRequestCase,
   isRestrictionCase,
   RequestSharedWithDefender,
+  ServiceRequirement,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory } from '../../../factories'
 import { Case } from '../models/case.model'
+import { DateLog } from '../models/dateLog.model'
 
 const canProsecutionUserAccessCase = (
   theCase: Case,
@@ -172,47 +173,17 @@ const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
   return true
 }
 
-const canPrisonSystemUserAccessCase = (
+const canPrisonStaffUserAccessCase = (
   theCase: Case,
-  user: User,
   forUpdate = true,
 ): boolean => {
-  // Prison system users cannot update cases
+  // Prison staff users cannot update cases
   if (forUpdate) {
     return false
   }
 
   // Check case type access
-  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
-    if (isIndictmentCase(theCase.type)) {
-      const verdictViewDates = theCase.defendants?.map((defendant) =>
-        defendant.verdictViewDate?.toISOString(),
-      )
-
-      const indictmentVerdictAppealDeadline =
-        getIndictmentVerdictAppealDeadline(verdictViewDates)
-
-      if (!indictmentVerdictAppealDeadline) {
-        return false
-      }
-
-      if (
-        theCase.state === CaseState.COMPLETED &&
-        theCase.indictmentReviewDecision ===
-          IndictmentCaseReviewDecision.ACCEPT &&
-        indictmentVerdictAppealDeadline < nowFactory()
-      ) {
-        return true
-      }
-    }
-
-    if (
-      !isRestrictionCase(theCase.type) &&
-      theCase.type !== CaseType.PAROLE_REVOCATION
-    ) {
-      return false
-    }
-  } else if (
+  if (
     ![
       CaseType.CUSTODY,
       CaseType.ADMISSION_TO_FACILITY,
@@ -227,8 +198,44 @@ const canPrisonSystemUserAccessCase = (
     return false
   }
 
-  // Check prison access to alternative travel ban
-  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
+  // Check decision access
+  if (
+    !theCase.decision ||
+    ![CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
+      theCase.decision,
+    )
+  ) {
+    return false
+  }
+
+  return true
+}
+
+const canPrisonAdminUserAccessCase = (
+  theCase: Case,
+  forUpdate = true,
+): boolean => {
+  // Prison admin users cannot update cases
+  if (forUpdate) {
+    return false
+  }
+
+  // Check case type access
+  if (
+    !isRestrictionCase(theCase.type) &&
+    theCase.type !== CaseType.PAROLE_REVOCATION &&
+    !isIndictmentCase(theCase.type)
+  ) {
+    return false
+  }
+
+  if (isRequestCase(theCase.type)) {
+    // Check case state access
+    if (theCase.state !== CaseState.ACCEPTED) {
+      return false
+    }
+
+    // Check decision access
     if (
       !theCase.decision ||
       ![
@@ -239,13 +246,40 @@ const canPrisonSystemUserAccessCase = (
     ) {
       return false
     }
-  } else {
+  }
+
+  if (isIndictmentCase(theCase.type)) {
+    // Check case state access
+    if (theCase.state !== CaseState.COMPLETED) {
+      return false
+    }
+
+    // Check case indictment ruling decision access
     if (
-      !theCase.decision ||
-      ![CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
-        theCase.decision,
-      )
+      theCase.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING
     ) {
+      return false
+    }
+
+    // Check indictment case review decision access
+    if (
+      theCase.indictmentReviewDecision !== IndictmentCaseReviewDecision.ACCEPT
+    ) {
+      return false
+    }
+
+    // Check defendant verdict appeal deadline access
+    const verdictInfo = theCase.defendants?.map<[boolean, Date | undefined]>(
+      (defendant) => [
+        defendant.serviceRequirement !== ServiceRequirement.NOT_REQUIRED,
+        defendant.verdictViewDate,
+      ],
+    )
+
+    const [_, indictmentVerdictAppealDeadlineExpired] =
+      getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
+
+    if (!indictmentVerdictAppealDeadlineExpired) {
       return false
     }
   }
@@ -269,9 +303,7 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
     return false
   }
 
-  const arraignmentDate = theCase.dateLogs?.find(
-    (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-  )?.date
+  const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
 
   // Check submitted case access
   const canDefenderAccessSubmittedCase =
@@ -339,8 +371,12 @@ export const canUserAccessCase = (
     return canAppealsCourtUserAccessCase(theCase)
   }
 
-  if (isPrisonSystemUser(user)) {
-    return canPrisonSystemUserAccessCase(theCase, user, forUpdate)
+  if (isPrisonStaffUser(user)) {
+    return canPrisonStaffUserAccessCase(theCase, forUpdate)
+  }
+
+  if (isPrisonAdminUser(user)) {
+    return canPrisonAdminUserAccessCase(theCase, forUpdate)
   }
 
   if (isDefenceUser(user)) {

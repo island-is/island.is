@@ -11,6 +11,7 @@ import {
   TranslatedValueDto,
   ApiScopeDelegationType,
   AdminPatchScopeDto,
+  ApiScope,
 } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import {
@@ -763,6 +764,7 @@ describe('MeScopesController', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
     let apiScopeDelegationTypeModel: typeof ApiScopeDelegationType
+    let fixtureFactory: FixtureFactory
 
     beforeAll(async () => {
       app = await setupApp({
@@ -772,6 +774,7 @@ describe('MeScopesController', () => {
         dbType: 'postgres',
       })
       server = request(app.getHttpServer())
+      fixtureFactory = new FixtureFactory(app)
 
       apiScopeDelegationTypeModel = await app.get(
         getModelToken(ApiScopeDelegationType),
@@ -886,6 +889,59 @@ describe('MeScopesController', () => {
         },
       })
     })
+
+    it('should only update requested delegation setting fields', async () => {
+      // Arrange
+      // Create new subject under testing test data to control initial state of delegation settings.
+      const sutScope = await fixtureFactory.createApiScope({
+        domainName: TENANT_ID,
+        allowExplicitDelegationGrant: true,
+        supportedDelegationTypes: [AuthDelegationType.Custom],
+      })
+
+      // Act - Update partially delegation setting
+      const response = await server
+        .patch(
+          `/v2/me/tenants/${TENANT_ID}/scopes/${encodeURIComponent(
+            sutScope.name,
+          )}`,
+        )
+        .send({
+          addedDelegationTypes: [AuthDelegationType.ProcurationHolder],
+        })
+
+      // Assert that we only updated requested delegation setting fields
+      expect(response.status).toEqual(200)
+      expect(response.body).toMatchObject({
+        ...sutScope.toDTO(),
+        displayName: [
+          {
+            locale: 'is',
+            value: sutScope.displayName,
+          },
+        ],
+        description: [
+          {
+            locale: 'is',
+            value: sutScope.description,
+          },
+        ],
+        grantToProcuringHolders: true,
+        supportedDelegationTypes: expect.arrayContaining([
+          AuthDelegationType.Custom,
+          AuthDelegationType.ProcurationHolder,
+        ]),
+      } as AdminScopeDTO)
+      const apiScopeDelegationTypes = await apiScopeDelegationTypeModel.findAll(
+        {
+          where: {
+            apiScopeName: sutScope.name,
+          },
+        },
+      )
+
+      expect(apiScopeDelegationTypes).toHaveLength(2)
+    })
   })
 
   describe('POST: /v2/me/tenants/:tenantId/scopes', () => {
@@ -966,6 +1022,89 @@ describe('MeScopesController', () => {
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.ProcurationHolder,
             AuthDelegationType.PersonalRepresentative,
+          ],
+        },
+      })
+    })
+  })
+
+  describe('POST: /v2/me/tenants/:tenantId/scopes', () => {
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+    let apiScopeDelegationTypeModel: typeof ApiScopeDelegationType
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: currentUser,
+        dbType: 'postgres',
+      })
+      server = request(app.getHttpServer())
+
+      apiScopeDelegationTypeModel = await app.get(
+        getModelToken(ApiScopeDelegationType),
+      )
+
+      await createTestData({
+        app,
+        tenantId: TENANT_ID,
+        tenantOwnerNationalId: currentUser.nationalId,
+      })
+    })
+
+    const createAndAssert = async ({
+      input,
+      expected,
+    }: {
+      input: AdminCreateScopeDto
+      expected: Partial<AdminScopeDTO>
+    }) => {
+      const response = await server
+        .post(`/v2/me/tenants/${TENANT_ID}/scopes`)
+        .send(input)
+
+      expect(response.status).toEqual(200)
+      expect(response.body).toMatchObject({
+        ...expected,
+        supportedDelegationTypes: expect.arrayContaining(
+          expected?.supportedDelegationTypes || [],
+        ),
+      })
+
+      const apiScopeDelegationTypes = await apiScopeDelegationTypeModel.findAll(
+        {
+          where: {
+            apiScopeName: response.body.name,
+          },
+        },
+      )
+
+      expect(apiScopeDelegationTypes).toHaveLength(
+        expected.supportedDelegationTypes?.length || 0,
+      )
+    }
+
+    it('should be able to create api scope using supportedDelegationTypes property without personal representative since user is not super admin', async () => {
+      await createAndAssert({
+        input: {
+          ...createInput,
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.PersonalRepresentative,
+          ],
+        },
+        expected: {
+          grantToPersonalRepresentatives: false,
+          grantToLegalGuardians: true,
+          grantToProcuringHolders: true,
+          allowExplicitDelegationGrant: true,
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.ProcurationHolder,
           ],
         },
       })

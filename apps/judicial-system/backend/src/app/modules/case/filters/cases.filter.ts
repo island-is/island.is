@@ -7,17 +7,18 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   DateType,
   IndictmentCaseReviewDecision,
   indictmentCases,
-  InstitutionType,
   investigationCases,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
-  isPrisonSystemUser,
+  isPrisonAdminUser,
+  isPrisonStaffUser,
   isProsecutionUser,
   isPublicProsecutorUser,
   RequestSharedWithDefender,
@@ -26,8 +27,14 @@ import {
 } from '@island.is/judicial-system/types'
 
 const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
+  const type =
+    user.role === UserRole.PROSECUTOR
+      ? [...restrictionCases, ...investigationCases, ...indictmentCases]
+      : indictmentCases
+
   const options: WhereOptions = [
-    { isArchived: false },
+    { is_archived: false },
+    { type },
     {
       state: [
         CaseState.NEW,
@@ -59,34 +66,24 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
     },
   ]
 
-  if (user.role === UserRole.PROSECUTOR) {
-    options.push({
-      type: [...restrictionCases, ...investigationCases, ...indictmentCases],
-    })
-  } else {
-    options.push({ type: indictmentCases })
-  }
-
   return {
     [Op.and]: options,
   }
 }
 
 const getPublicProsecutionUserCasesQueryFilter = (): WhereOptions => {
-  const options: WhereOptions = [
-    { isArchived: false },
-    { state: [CaseState.COMPLETED] },
-    { type: indictmentCases },
-  ]
-
   return {
-    [Op.and]: options,
+    [Op.and]: [
+      { is_archived: false },
+      { state: [CaseState.COMPLETED] },
+      { type: indictmentCases },
+    ],
   }
 }
 
 const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
   const options: WhereOptions = [
-    { isArchived: false },
+    { is_archived: false },
     {
       [Op.or]: [
         { court_id: { [Op.is]: null } },
@@ -150,7 +147,7 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
 const getAppealsCourtUserCasesQueryFilter = (): WhereOptions => {
   return {
     [Op.and]: [
-      { isArchived: false },
+      { is_archived: false },
       { type: [...restrictionCases, ...investigationCases] },
       { state: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED] },
       {
@@ -170,46 +167,10 @@ const getAppealsCourtUserCasesQueryFilter = (): WhereOptions => {
   }
 }
 
-const getPrisonSystemStaffUserCasesQueryFilter = (user: User): WhereOptions => {
-  const options: WhereOptions = [{ isArchived: false }]
-
-  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
-    options.push({
-      [Op.or]: [
-        {
-          [Op.and]: [
-            { state: CaseState.ACCEPTED },
-            {
-              type: [
-                CaseType.CUSTODY,
-                CaseType.ADMISSION_TO_FACILITY,
-                CaseType.PAROLE_REVOCATION,
-                CaseType.TRAVEL_BAN,
-              ],
-            },
-          ],
-        },
-        {
-          [Op.and]: [
-            {
-              type: CaseType.INDICTMENT,
-              state: CaseState.COMPLETED,
-              indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
-              id: {
-                [Op.notIn]: Sequelize.literal(`
-                        (SELECT "case_id"
-                          FROM "defendant"
-                          WHERE "defendant"."verdict_view_date" IS NULL
-                          OR "defendant"."verdict_view_date" > NOW() - INTERVAL '28 days')
-                        `),
-              },
-            },
-          ],
-        },
-      ],
-    })
-  } else {
-    options.push(
+const getPrisonStaffUserCasesQueryFilter = (): WhereOptions => {
+  return {
+    [Op.and]: [
+      { is_archived: false },
       { state: CaseState.ACCEPTED },
       {
         type: [
@@ -218,19 +179,46 @@ const getPrisonSystemStaffUserCasesQueryFilter = (user: User): WhereOptions => {
           CaseType.PAROLE_REVOCATION,
         ],
       },
-      {
-        decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
-      },
-    )
+      { decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY] },
+    ],
   }
+}
 
-  return { [Op.and]: options }
+const getPrisonAdminUserCasesQueryFilter = (): WhereOptions => {
+  return {
+    is_archived: false,
+    [Op.or]: [
+      {
+        state: CaseState.ACCEPTED,
+        type: [
+          CaseType.CUSTODY,
+          CaseType.ADMISSION_TO_FACILITY,
+          CaseType.PAROLE_REVOCATION,
+          CaseType.TRAVEL_BAN,
+        ],
+      },
+      {
+        type: CaseType.INDICTMENT,
+        state: CaseState.COMPLETED,
+        indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+        indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
+        id: {
+          [Op.notIn]: Sequelize.literal(`
+            (SELECT case_id
+              FROM defendant
+              WHERE service_requirement <> 'NOT_REQUIRED'
+              AND (verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '28 days'))
+          `),
+        },
+      },
+    ],
+  }
 }
 
 const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
   const formattedNationalId = formatNationalId(user.nationalId)
   const options: WhereOptions = [
-    { isArchived: false },
+    { is_archived: false },
     {
       [Op.or]: [
         {
@@ -263,9 +251,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
               ],
             },
             {
-              defender_national_id: {
-                [Op.or]: [user.nationalId, formattedNationalId],
-              },
+              defender_national_id: [user.nationalId, formattedNationalId],
             },
           ],
         },
@@ -280,9 +266,10 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
               ],
             },
             {
-              '$defendants.defender_national_id$': {
-                [Op.or]: [user.nationalId, formattedNationalId],
-              },
+              '$defendants.defender_national_id$': [
+                user.nationalId,
+                formattedNationalId,
+              ],
             },
           ],
         },
@@ -308,8 +295,12 @@ export const getCasesQueryFilter = (user: User): WhereOptions => {
     return getAppealsCourtUserCasesQueryFilter()
   }
 
-  if (isPrisonSystemUser(user)) {
-    return getPrisonSystemStaffUserCasesQueryFilter(user)
+  if (isPrisonStaffUser(user)) {
+    return getPrisonStaffUserCasesQueryFilter()
+  }
+
+  if (isPrisonAdminUser(user)) {
+    return getPrisonAdminUserCasesQueryFilter()
   }
 
   if (isDefenceUser(user)) {

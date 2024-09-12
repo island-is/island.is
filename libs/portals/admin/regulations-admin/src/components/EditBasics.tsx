@@ -7,6 +7,7 @@ import {
   Text,
   Button,
   AlertMessage,
+  AlertBanner,
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg, errorMsgs } from '../lib/messages'
@@ -161,6 +162,13 @@ export const EditBasics = () => {
             label={t(msg.text)}
             startExpanded={startTextExpanded}
           >
+            <Box marginBottom={3}>
+              <AlertBanner
+                description={t(msg.diffPrecisionWarning)}
+                variant="info"
+                dismissable
+              />
+            </Box>
             <Box marginBottom={3}>
               <EditorInput
                 key={editorKey} // Force re-render of TinyMCE

@@ -14,11 +14,11 @@ import {
 import { coreErrorMessages } from '../lib/messages'
 import { AnswerValidationError } from './AnswerValidator'
 
-function populateError(
+const populateError = (
   error: ZodIssue[],
   pathToError: string | undefined,
   formatMessage: FormatMessage,
-) {
+) => {
   let errorObject = {}
   error.forEach((element) => {
     const defaultZodError = element.message === 'Invalid input'
@@ -39,7 +39,7 @@ function populateError(
   return errorObject
 }
 
-export function validateAnswers({
+export const validateAnswers = ({
   dataSchema,
   answers,
   formatMessage,
@@ -48,7 +48,7 @@ export function validateAnswers({
   answers: FormValue
   isFullSchemaValidation?: boolean
   formatMessage: FormatMessage
-}): ValidationRecord | undefined {
+}): ValidationRecord | undefined => {
   try {
     if (dataSchema instanceof ZodEffects) {
       // cases where zod schema has a refinement on the schema object, needs to be defined partial

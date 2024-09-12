@@ -91,4 +91,7 @@ export interface CustomStyleConfig {
     outerRadius?: number
     fontSize?: number
   }
+  tooltip?: {
+    appendFractionToIntegers?: boolean
+  }
 }

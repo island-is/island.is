@@ -1,4 +1,4 @@
-import React, { FC, SetStateAction, useEffect, useState } from 'react'
+import { FC, SetStateAction, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 

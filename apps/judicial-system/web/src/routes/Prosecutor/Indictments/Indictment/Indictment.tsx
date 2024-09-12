@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase } from 'beygla/strict'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -17,6 +17,7 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -311,6 +312,7 @@ const Indictment = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <SectionHeading
             title={formatMessage(strings.indictmentIntroductionTitle)}

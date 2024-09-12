@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -12,9 +12,9 @@ import {
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
+  IndictmentCaseScheduledCard,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
-  InfoCardCaseScheduledIndictment,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -84,7 +84,7 @@ const IndictmentOverview = () => {
           workingCase.indictmentDecision !==
             IndictmentDecision.REDISTRIBUTING && (
             <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduledIndictment
+              <IndictmentCaseScheduledCard
                 court={workingCase.court}
                 indictmentDecision={workingCase.indictmentDecision}
                 courtDate={latestDate.date}

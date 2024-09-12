@@ -23,7 +23,7 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { DeliverDto } from './dto/deliver.dto'
 import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
 import { InternalCasesDto } from './dto/internalCases.dto'
@@ -54,7 +54,7 @@ export class InternalCaseController {
 
     const createdCase = await this.internalCaseService.create(caseToCreate)
 
-    this.eventService.postEvent(CaseEvent.CREATE_XRD, createdCase as Case)
+    this.eventService.postEvent('CREATE_XRD', createdCase as Case)
 
     return createdCase
   }

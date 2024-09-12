@@ -13,6 +13,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { CreateListInput } from './signature-collection.types'
 import { User } from '@island.is/auth-nest-tools'
 import { LoggingModule } from '@island.is/logging'
+import { CollectionType } from './types/collection.dto'
 
 const user: User = {
   nationalId: '0101302399',
@@ -25,18 +26,27 @@ const sofnun: MedmaelasofnunExtendedDTO[] = [
     id: 123,
     sofnunStart: new Date('01.01.1900'),
     sofnunEnd: new Date('01.01.2199'),
-    svaedi: [{ id: 123 }],
-    frambodList: [{ id: 123, kennitala: '0101010119' }],
-    kosning: { id: 123, erMedmaelakosning: true },
+    svaedi: [{ id: 123, nafn: 'Svæði', svaediTegundLysing: 'Lýsing' }],
+    frambodList: [{ id: 123, kennitala: '0101010119', nafn: 'Jónsframboð' }],
+    kosning: {
+      id: 123,
+      erMedmaelakosning: true,
+      kosningTegund: 'Forsetakosning',
+      kosningTegundNr: CollectionType.Presidential,
+      nafn: 'Gervikosning',
+    },
     kosningTegund: 'Forsetakosning',
+    kosningNafn: 'Gervikosning',
   },
 ]
 const sofnunUser: EinstaklingurKosningInfoDTO = {
-  svaedi: { id: 123 },
+  svaedi: { id: 123, nafn: 'Svæði', svaediTegundLysing: 'Lýsing' },
   kennitala: '0101302399',
   maFrambod: true,
-  maFrambodInfo: { aldur: true, rikisfang: true },
-  frambod: { id: 123, kennitala: '0101302399' },
+  maFrambodInfo: { aldur: true, rikisfang: true, kennitala: '0101302399' },
+  frambod: { id: 123, kennitala: '0101302399', nafn: 'Jónsframboð' },
+  nafn: 'Jón Jónsson',
+  kosningNafn: 'Gervikosning',
 }
 
 describe('MyService', () => {
@@ -79,14 +89,14 @@ describe('MyService', () => {
       activeSignature: undefined,
       signatures: [],
       requirementsMet: true,
-      canSignInfo: { aldur: true, rikisfang: true },
+      canSignInfo: { aldur: true, rikisfang: true, kennitala: '0101302399' },
     })
     const alreadySigned = await service.canSign({
-      activeSignature: { id: 123 },
+      activeSignature: { id: 123, kennitala: '0101302399' },
     })
     const canNotSign = await service.canSign({
       activeSignature: undefined,
-      canSignInfo: { aldur: false, rikisfang: false },
+      canSignInfo: { aldur: false, rikisfang: false, kennitala: '0101302399' },
     })
     const invalidSignature = await service.canSign({
       activeSignature: undefined,
@@ -102,7 +112,7 @@ describe('MyService', () => {
         },
       ],
       requirementsMet: true,
-      canSignInfo: { aldur: true, rikisfang: true },
+      canSignInfo: { aldur: true, rikisfang: true, kennitala: '0101302399' },
     })
     // Assert
     expect(success).toEqual({ success: true, reasons: [] })
@@ -129,19 +139,30 @@ describe('MyService', () => {
           id: 123,
           sofnunEnd: new Date('01.01.2199'),
           sofnunStart: new Date('01.01.1900'),
+          kosningNafn: 'Gervikosning',
+          kosningTegund: 'Forsetakosning',
         },
-        frambod: { id: 123, kennitala: '0101016789' },
-        svaedi: { id: 123 },
+        frambod: { id: 123, kennitala: '0101016789', nafn: 'Jónsframboð' },
+        svaedi: { id: 123, nafn: 'Svæði', svaediTegundLysing: 'Lýsing' },
         dagsetningLokar: new Date('01.01.2199'),
         listaLokad: false,
+        frambodNafn: 'Jónsframboð',
+        listiNafn: 'Jónslisti',
       },
       {
         id: 321,
-        medmaelasofnun: { id: 321, sofnunEnd: new Date() },
-        frambod: { id: 321, kennitala: '0202026789' },
-        svaedi: { id: 321 },
+        medmaelasofnun: {
+          id: 321,
+          sofnunEnd: new Date(),
+          kosningNafn: 'Gervikosning',
+          kosningTegund: 'Forsetakosning',
+        },
+        frambod: { id: 321, kennitala: '0202026789', nafn: 'Jónsframboð' },
+        svaedi: { id: 321, nafn: 'Svæði', svaediTegundLysing: 'Lýsing' },
         dagsetningLokar: new Date('01.01.1900'),
         listaLokad: true,
+        frambodNafn: 'Jónsframboð',
+        listiNafn: 'Jónslisti',
       },
     ]
 
@@ -216,13 +237,17 @@ describe('MyService', () => {
         id: 123,
         medmaelasofnun: {
           id: 123,
+          kosningNafn: 'Gervikosning',
+          kosningTegund: 'Forsetakosning',
           sofnunStart: new Date('01.01.1900'),
           sofnunEnd: new Date('01.01.2199'),
         },
-        frambod: { id: 123, kennitala: '0101016789' },
-        svaedi: { id: 123 },
+        frambod: { id: 123, kennitala: '0101016789', nafn: 'Jónsframboð' },
+        svaedi: { id: 123, nafn: 'Svæði', svaediTegundLysing: 'Lýsing' },
         dagsetningLokar: new Date('01.01.2199'),
         listaLokad: false,
+        frambodNafn: 'Jónsframboð',
+        listiNafn: 'Jónslisti',
       },
     ]
 
@@ -245,7 +270,7 @@ describe('MyService', () => {
 
     // Assert
     expect(result).toEqual({
-      slug: '/umsoknir/maela-med-frambodi/?candidate=123',
+      slug: '/umsoknir/maela-med-frambodi?candidate=123',
     })
   })
 
@@ -264,7 +289,12 @@ describe('MyService', () => {
       )
     jest
       .spyOn(frambodApi, 'frambodIDRemoveFrambodUserPost')
-      .mockReturnValueOnce(Promise.resolve({}))
+      .mockReturnValueOnce(
+        Promise.resolve({
+          kennitala: '0101302399',
+          nafn: 'Jón Jónsson',
+        }),
+      )
     // Act
     const notOwner = await service.removeLists(
       { collectionId: '', listIds: [''] },
@@ -300,7 +330,7 @@ describe('MyService', () => {
       .mockReturnValueOnce(
         Promise.resolve({
           ...sofnunUser,
-          medmaeli: [{ id: 111, medmaeliTegundNr: 1 }],
+          medmaeli: [{ id: 111, medmaeliTegundNr: 1, kennitala: '0101302399' }],
         }),
       )
       .mockReturnValue(Promise.resolve(sofnunUser))
@@ -349,12 +379,21 @@ describe('MyService', () => {
       .mockReturnValue(
         Promise.resolve({
           ...sofnunUser,
-          medmaeli: [{ id: 111, medmaeliTegundNr: 1, medmaelalistiID: 999 }],
+          medmaeli: [
+            {
+              id: 111,
+              medmaeliTegundNr: 1,
+              medmaelalistiID: 999,
+              kennitala: '0101302399',
+            },
+          ],
         }),
       )
-    jest
-      .spyOn(medmaeliApi, 'medmaeliIDRemoveMedmaeliUserPost')
-      .mockReturnValue(Promise.resolve({}))
+    jest.spyOn(medmaeliApi, 'medmaeliIDRemoveMedmaeliUserPost').mockReturnValue(
+      Promise.resolve({
+        kennitala: '0101302399',
+      }),
+    )
     // Act
     const noSignature = await service.unsignList('', user)
     const success = await service.unsignList('999', user)
