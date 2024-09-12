@@ -4,10 +4,12 @@ import {
   buildSubSection,
   buildPhoneField,
   buildRadioField,
+  buildSelectField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { FormValue, NO, YES } from '@island.is/application/types'
 import { hasOperator } from '../../../utils/hasOperator'
+import { postalCodes } from '@island.is/shared/utils'
 
 export const OperatorInformationSubSection = buildSubSection({
   id: 'operatorInformation',
@@ -56,12 +58,16 @@ export const OperatorInformationSubSection = buildSubSection({
           required: true,
           condition: (answer: FormValue) => hasOperator(answer),
         }),
-        buildTextField({
+        buildSelectField({
           id: 'operatorInformation.operator.postCode',
-          title: information.labels.operator.postCode,
+          title: information.labels.importer.postCode,
           width: 'half',
           required: true,
-          variant: 'number',
+          options: () => {
+            return postalCodes.map((code) => {
+              return { value: `${code}`, label: `${code}` }
+            })
+          },
           condition: (answer: FormValue) => hasOperator(answer),
         }),
         buildPhoneField({

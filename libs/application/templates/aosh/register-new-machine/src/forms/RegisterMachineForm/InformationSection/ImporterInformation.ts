@@ -3,14 +3,12 @@ import {
   buildTextField,
   buildSubSection,
   buildPhoneField,
-  buildRadioField,
-  buildDescriptionField,
   getValueViaPath,
+  buildSelectField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
-import { FormValue, NO, YES } from '@island.is/application/types'
-import { isOwnerOtherThanImporter } from '../../../utils/isOwnerOtherThanImporter'
+import { postalCodes } from '@island.is/shared/utils'
 
 export const ImporterInformationSubSection = buildSubSection({
   id: 'importerInformation',
@@ -60,12 +58,16 @@ export const ImporterInformationSubSection = buildSubSection({
               '',
             ) as string,
         }),
-        buildTextField({
+        buildSelectField({
           id: 'importerInformation.importer.postCode',
           title: information.labels.importer.postCode,
           width: 'half',
           required: true,
-          variant: 'number',
+          options: () => {
+            return postalCodes.map((code) => {
+              return { value: `${code}`, label: `${code}` }
+            })
+          },
           defaultValue: (application: Application) =>
             getValueViaPath(
               application.externalData,
@@ -97,72 +99,6 @@ export const ImporterInformationSubSection = buildSubSection({
               'userProfile.data.email',
               '',
             ) as string,
-        }),
-        buildDescriptionField({
-          id: 'importerInformation.description',
-          title: information.labels.importer.isOwnerOtherThenImporter,
-          marginTop: 4,
-          titleVariant: 'h5',
-        }),
-        buildRadioField({
-          id: 'importerInformation.isOwnerOtherThanImporter',
-          title: '',
-          width: 'half',
-          defaultValue: NO,
-          options: [
-            {
-              value: NO,
-              label: information.labels.radioButtons.radioOptionNo,
-            },
-            {
-              value: YES,
-              label: information.labels.radioButtons.radioOptionYes,
-            },
-          ],
-        }),
-        buildTextField({
-          id: 'importerInformation.owner.name',
-          title: information.labels.owner.name,
-          width: 'half',
-          required: true,
-          condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
-        }),
-        buildTextField({
-          id: 'importerInformation.owner.nationalId',
-          title: information.labels.owner.nationalId,
-          width: 'half',
-          required: true,
-          condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
-        }),
-        buildTextField({
-          id: 'importerInformation.owner.address',
-          title: information.labels.owner.address,
-          width: 'half',
-          required: true,
-          condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
-        }),
-        buildTextField({
-          id: 'importerInformation.owner.postCode',
-          title: information.labels.owner.postCode,
-          variant: 'number',
-          width: 'half',
-          required: true,
-          condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
-        }),
-        buildPhoneField({
-          id: 'importerInformation.owner.phone',
-          title: information.labels.owner.phone,
-          width: 'half',
-          required: true,
-          condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
-        }),
-        buildTextField({
-          id: 'importerInformation.owner.email',
-          title: information.labels.owner.email,
-          width: 'half',
-          variant: 'email',
-          required: true,
-          condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
         }),
       ],
     }),

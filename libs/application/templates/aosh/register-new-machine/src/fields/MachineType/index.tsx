@@ -116,10 +116,15 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
   setBeforeSubmitCallback?.(async () => {
     // Call updateApplication for basicInformation.type and basicInformation.model
     // Get information for basicInformation here and updateApplication
-    const response =
-      type && model && type !== 'unknown' && model !== 'unknown'
-        ? await getMachineCategoryCallback(type, model)
-        : undefined
+    let response = undefined
+    try {
+      response =
+        type && model && type !== 'unknown' && model !== 'unknown'
+          ? await getMachineCategoryCallback(type, model)
+          : undefined
+    } catch (e) {
+      console.error('Could not get machine category', e)
+    }
 
     const category =
       response?.getMachineParentCategoryByTypeAndModel?.name ?? ''
