@@ -33,6 +33,7 @@ import { DelegationTypeModel } from './models/delegation-type.model'
 import { DelegationProviderModel } from './models/delegation-provider.model'
 import { DelegationProviderService } from './delegation-provider.service'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
+import { DelegationAdminCustomService } from './admin/delegation-admin-custom.service'
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation
     DelegationsIncomingRepresentativeService,
     DelegationsIndexService,
     DelegationProviderService,
+    DelegationAdminCustomService,
   ],
   exports: [
     DelegationsService,
@@ -79,6 +81,7 @@ import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation
     DelegationScopeService,
     DelegationsIndexService,
     DelegationProviderService,
+    DelegationAdminCustomService,
   ],
 })
 export class DelegationsModule {}

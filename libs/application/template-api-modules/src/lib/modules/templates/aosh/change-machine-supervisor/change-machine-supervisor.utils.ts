@@ -72,9 +72,19 @@ export const sendNotificationsToRecipients = async (
             ),
           application,
         )
-        .catch(() => {
+        .catch((e) => {
           errors.push(
-            `Error sending email about submit application to ${recipientList[i].email}`,
+            `Error sending email about submit application in application: ID: ${
+              application.id
+            }, 
+            role: ${
+              recipientList[i].ssn === application.applicant
+                ? 'Applicant'
+                : `Assignee index ${application.assignees.findIndex(
+                    (assignee) => assignee === recipientList[i].ssn,
+                  )}`
+            }`,
+            e,
           )
         })
     }
@@ -90,9 +100,18 @@ export const sendNotificationsToRecipients = async (
             ),
           application,
         )
-        .catch(() => {
+        .catch((e) => {
           errors.push(
-            `Error sending sms about submit application to ${recipientList[i].phone}`,
+            `Error sending sms about submit application to 
+            a phonenumber in application: ID: ${application.id}, 
+            role: ${
+              recipientList[i].ssn === application.applicant
+                ? 'Applicant'
+                : `Assignee index ${application.assignees.findIndex(
+                    (assignee) => assignee === recipientList[i].ssn,
+                  )}`
+            }`,
+            e,
           )
         })
     }

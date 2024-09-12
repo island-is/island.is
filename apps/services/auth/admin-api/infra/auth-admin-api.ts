@@ -1,4 +1,21 @@
-import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import {
+  json,
+  ref,
+  service,
+  ServiceBuilder,
+} from '../../../../../infra/src/dsl/dsl'
+
+const REDIS_NODE_CONFIG = {
+  dev: json([
+    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+  ]),
+  staging: json([
+    'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+  ]),
+  prod: json([
+    'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+  ]),
+}
 
 export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
   return service('services-auth-admin-api')
@@ -25,10 +42,29 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         ]),
         prod: json(['https://innskra.island.is']),
       },
+      XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true',
+      XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true',
+      XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
+        dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
+        staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+        prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+      },
+      XROAD_NATIONAL_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
+      XROAD_RSK_PROCURING_REDIS_NODES: REDIS_NODE_CONFIG,
+      COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+        dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
+        staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+        prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+      },
+      COMPANY_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
     })
     .secrets({
       CLIENT_SECRET_ENCRYPTION_KEY:
         '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY',
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
+      NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
+        '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
     })
     .ingress({
       primary: {
