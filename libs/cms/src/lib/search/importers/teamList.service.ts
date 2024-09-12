@@ -35,7 +35,13 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
               ...member,
               typename: 'webTeamMember',
             }),
-            tags: [{ key: teamListEntry.sys.id, type: 'referencedBy' }],
+            tags: [
+              { key: teamListEntry.sys.id, type: 'referencedBy' },
+              ...(member.filterTags ?? []).map((tag) => ({
+                key: tag.slug,
+                type: 'genericTag',
+              })),
+            ],
             dateCreated: member.createdAt ?? '',
             dateUpdated: new Date().getTime().toString(),
           })
