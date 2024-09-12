@@ -301,7 +301,7 @@ export class EndorsementListController {
     )
   }
 
-  @ApiOperation({ summary: 'Create an endorsements list' })
+   @ApiOperation({ summary: 'Create an endorsements list' })
   @ApiOkResponse({
     description: 'Create an endorsements list',
     type: EndorsementList,
