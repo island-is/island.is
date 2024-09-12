@@ -326,7 +326,6 @@ export class EndorsementListController {
     })
   }
 
-
   @ApiOperation({ summary: 'Fetches owner info from national registry' })
   @ApiOkResponse({
     description: 'Create an endorsements list',

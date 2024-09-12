@@ -59,34 +59,34 @@ export class EndorsementService {
   ) {}
 
   async onModuleInit() {
-    await this.updateCountsForAllLists();
+    await this.updateCountsForAllLists()
   }
 
   async updateCountsForAllLists(): Promise<void> {
-    this.logger.info('Updating endorsement counts for all lists on startup...');
+    this.logger.info('Updating endorsement counts for all lists on startup...')
 
-    const allLists = await this.endorsementListModel.findAll();
+    const allLists = await this.endorsementListModel.findAll()
 
     for (const list of allLists) {
-      await this.updateEndorsementCountOnList(list.id);
+      await this.updateEndorsementCountOnList(list.id)
     }
 
-    this.logger.info('All endorsement counts have been updated.');
+    this.logger.info('All endorsement counts have been updated.')
   }
 
   async updateEndorsementCountOnList(listId: string): Promise<void> {
     const count = await this.endorsementModel.count({
       where: { endorsementListId: listId },
-    });
+    })
 
     await this.endorsementListModel.update(
       { endorsementCount: count },
-      { where: { id: listId } }
-    );
+      { where: { id: listId } },
+    )
 
     this.logger.info(
-      `Updated endorsement count for list "${listId}" to ${count}`
-    );
+      `Updated endorsement count for list "${listId}" to ${count}`,
+    )
   }
 
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
@@ -167,18 +167,18 @@ export class EndorsementService {
     }
 
     try {
-      const createdEndorsement = await this.endorsementModel.create(endorsement);
-      await this.updateEndorsementCountOnList(endorsementList.id);
-      return createdEndorsement;
+      const createdEndorsement = await this.endorsementModel.create(endorsement)
+      await this.updateEndorsementCountOnList(endorsementList.id)
+      return createdEndorsement
     } catch (error) {
       // map meaningful sequelize errors to custom errors, else return error
       if (error instanceof UniqueConstraintError) {
-        this.logger.warn('Endorsement already exists in list');
+        this.logger.warn('Endorsement already exists in list')
         throw new MethodNotAllowedException([
           'Endorsement already exists in list',
-        ]);
+        ])
       } else {
-        throw error;
+        throw error
       }
     }
   }
@@ -214,6 +214,6 @@ export class EndorsementService {
       throw new NotFoundException(["This endorsement doesn't exist"])
     }
     // Update the count after deleting the endorsement
-    await this.updateEndorsementCountOnList(endorsementList.id);
+    await this.updateEndorsementCountOnList(endorsementList.id)
   }
 }

@@ -82,10 +82,8 @@ export class EndorsementListService {
       after: query.after,
       before: query.before,
       primaryKeyField: 'counter',
-      orderOption: [
-        ['endorsementCount', 'DESC'],
-      ],
-      where: where
+      orderOption: [['endorsementCount', 'DESC']],
+      where: where,
     })
   }
 
@@ -202,7 +200,6 @@ export class EndorsementListService {
     }
     return await endorsementList.update({ adminLock: true })
   }
-  
 
   async unlock(endorsementList: EndorsementList): Promise<EndorsementList> {
     this.logger.info(`Unlocking endorsement list: ${endorsementList.id}`)
@@ -248,7 +245,6 @@ export class EndorsementListService {
 
     return endorsementList
   }
-
 
   // generic get open lists
   async findOpenListsTaggedGeneralPetition(query: any) {
