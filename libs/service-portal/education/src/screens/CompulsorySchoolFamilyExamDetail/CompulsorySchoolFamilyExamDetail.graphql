@@ -1,0 +1,14 @@
+query familySchoolCareerQuery {
+  userFamilyExamResults {
+    userCareer {
+      nationalId
+      name
+      examDateSpan
+    }
+    familyMemberCareers {
+      nationalId
+      name
+      examDateSpan
+    }
+  }
+}
