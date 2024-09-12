@@ -13,6 +13,13 @@
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/inao/financial-statement-individual-election/src/lib/messages.ts"
       }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/application/templates/inao/financial-statement-individual-election/jest.config.ts"
+      }
     }
   }
 }
