@@ -21,7 +21,6 @@ interface PropTypes extends FieldBaseProps {
 export const Success = ({ application }: PropTypes) => {
   const { answers, externalData } = application
   const applicationAnswers = application.answers as FinancialStatementCemetery
-  const userType = getCurrentUserType(answers, externalData)
   const { formatMessage } = useLocale()
 
   const getDescriptionText = () => {
