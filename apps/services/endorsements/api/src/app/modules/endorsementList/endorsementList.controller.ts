@@ -25,7 +25,7 @@ import {
 import { Audit } from '@island.is/nest/audit'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
-import { CreateEndorsementListDto, EndorsementListDto } from './dto/endorsementList.dto'
+import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
 import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
 import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
@@ -304,12 +304,12 @@ export class EndorsementListController {
   @ApiOperation({ summary: 'Create an endorsements list' })
   @ApiOkResponse({
     description: 'Create an endorsements list',
-    type: EndorsementListDto,
+    type: EndorsementList,
   })
-  @ApiBody({ type: CreateEndorsementListDto })
+  @ApiBody({ type: EndorsementListDto })
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Post()
-  //@UseInterceptors(EndorsementListInterceptor)
+  @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
     meta: (endorsementList) => ({
@@ -317,11 +317,15 @@ export class EndorsementListController {
     }),
   })
   async create(
-    @Body() createEndorsementListDto: CreateEndorsementListDto,
+    @Body() endorsementList: EndorsementListDto,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
-    return await this.endorsementListService.create(createEndorsementListDto, user)
+    return await this.endorsementListService.create({
+      ...endorsementList,
+      owner: user.nationalId,
+    })
   }
+
 
   @ApiOperation({ summary: 'Fetches owner info from national registry' })
   @ApiOkResponse({

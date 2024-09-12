@@ -7,87 +7,50 @@ import {
   IsObject,
   IsBoolean,
   IsDate,
-  IsNumber,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-import { ApiProperty, PartialType, OmitType } from '@nestjs/swagger';
-import { EndorsementTag } from '../constants';
-import { EndorsementMetadataDto } from './endorsementMetadata.dto';
-
-// Main DTO with all fields (for returning data)
+} from 'class-validator'
+import { Type } from 'class-transformer'
+import { ApiProperty } from '@nestjs/swagger'
+import { EndorsementTag } from '../constants'
+import { EndorsementMetadataDto } from './endorsementMetadata.dto'
 export class EndorsementListDto {
   @ApiProperty()
   @IsString()
-  id!: string;
+  title!: string
 
-  @ApiProperty()
+  @ApiProperty({ type: String, nullable: true, required: false })
+  @IsOptional()
   @IsString()
-  title!: string;
-
-  @ApiProperty()
-  @IsString()
-  description!: string;
+  description = ''
 
   @ApiProperty({ type: [EndorsementMetadataDto], nullable: true })
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => EndorsementMetadataDto)
   @IsArray()
-  endorsementMetadata = [] as EndorsementMetadataDto[];
+  endorsementMetadata = [] as EndorsementMetadataDto[]
 
   @ApiProperty({ enum: EndorsementTag, isArray: true, nullable: true })
   @IsOptional()
   @IsArray()
   @IsEnum(EndorsementTag, { each: true })
-  tags = [] as EndorsementTag[];
+  tags = [] as EndorsementTag[]
 
   @ApiProperty({ nullable: true })
   @IsOptional()
   @IsObject()
-  meta = {};
-  
-  @ApiProperty({ type: Date, example: new Date().toISOString() })
-  @Type(() => Date)
-  @IsDate()
-  openedDate!: Date;
+  meta = {}
 
-  @ApiProperty({ type: Date, example: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString() })
+  @ApiProperty({ type: Date })
   @Type(() => Date)
   @IsDate()
-  closedDate!: Date;
-  
+  closedDate!: Date
+
+  @ApiProperty({ type: Date })
+  @Type(() => Date)
+  @IsDate()
+  openedDate!: Date
+
   @ApiProperty({ type: Boolean })
   @IsBoolean()
-  adminLock!: boolean;
-
-  @ApiProperty({ type: Number })
-  @IsNumber()
-  endorsementCount!: number;
-
-  @ApiProperty({ type: String })
-  owner!: string;
-
-  @ApiProperty({ type: Date })
-  @Type(() => Date)
-  @IsDate()
-  created!: Date;
-
-  @ApiProperty({ type: Date })
-  @Type(() => Date)
-  @IsDate()
-  modified!: Date;
+  adminLock!: boolean
 }
-
-// Create DTO that omits id, created, updated, owner, adminLock, and endorsementCount
-export class CreateEndorsementListDto extends OmitType(EndorsementListDto, [
-  'id',
-  'created',
-  'modified',
-  'owner',
-  'adminLock',
-  'endorsementCount',
-] as const) {}
-
-// Update DTO that is a partial type of the Create DTO
-export class UpdateEndorsementListDto extends PartialType(CreateEndorsementListDto) {}
-// adminlock.....

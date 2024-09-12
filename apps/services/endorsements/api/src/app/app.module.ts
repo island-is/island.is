@@ -12,7 +12,7 @@ import { environment } from '../environments'
 import { EndorsementModule } from './modules/endorsement/endorsement.module'
 import { EndorsementListModule } from './modules/endorsementList/endorsementList.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-// import { AccessGuard } from './guards/accessGuard/access.guard'
+import { AccessGuard } from './guards/accessGuard/access.guard'
 import { LoggingModule } from '@island.is/logging'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import {
@@ -52,10 +52,10 @@ import { emailModuleConfig } from '@island.is/email-service'
       provide: APP_GUARD,
       useClass: ScopesGuard,
     },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AccessGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: AccessGuard,
+    },
   ],
 })
 export class AppModule {}

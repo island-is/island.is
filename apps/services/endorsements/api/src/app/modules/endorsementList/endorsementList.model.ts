@@ -15,6 +15,9 @@ import { EndorsementMetadataDto } from './dto/endorsementMetadata.dto';
 @Table({
   tableName: 'endorsement_list',
 })
+
+// ADD INDEX HERE MAYBE ..........................................
+
 export class EndorsementList extends Model {
   @ApiProperty({ type: String, description: 'The unique identifier of the endorsement list' })
   @Column({
