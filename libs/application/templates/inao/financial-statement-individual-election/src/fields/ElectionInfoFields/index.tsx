@@ -16,11 +16,7 @@ import { ElectionSelect } from './ElectionSelect'
 import { IncomeLimitFields } from './IncomeLimitFields'
 import { m } from '../../lib/utils/messages'
 
-export const ElectionsInfoFields = ({
-  application,
-}: {
-  application: Application
-}) => {
+export const ElectionsInfoFields = () => {
   const [state, dispatch] = useReducer(electionReducer, electionInitialState)
   const { getValues, setValue } = useFormContext()
   const values = getValues()
