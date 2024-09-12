@@ -67,4 +67,10 @@ export const strings = {
     description:
       'Notaður sem texti fyrir kröfuhafi í "Kröfuhafi er ekki með íslenska kennitölu" í einkaréttarkröfu á Málsmeðferðarskjánum.',
   }),
+  addDefender: defineMessage({
+    id: 'judicial.system.indictments:processing.add_defender',
+    defaultMessage: 'Bæta við lögmanni kröfuhafa',
+    description:
+      'Notaður sem texti í takka til að bæta við lögmanni kröfuhafa í einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
 }

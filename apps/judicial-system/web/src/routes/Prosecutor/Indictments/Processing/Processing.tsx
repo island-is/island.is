@@ -1,8 +1,15 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import useSWR from 'swr'
 
-import { Box, Checkbox, RadioButton, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Checkbox,
+  RadioButton,
+  Text,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { isTrafficViolationCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -37,7 +44,6 @@ import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web
 import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
-import useSWR from 'swr'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -57,7 +63,8 @@ const Processing: FC = () => {
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
   const [isCivilClaim, setIsCivilClaim] = useState<boolean | 'NO_CHOICE'>(
-    'NO_CHOICE',
+    // TODO: REMOVE DEBUG CODE
+    true, // 'NO_CHOICE',
   )
   const [nID, setNID] = useState<string>()
 
@@ -106,7 +113,9 @@ const Processing: FC = () => {
   )
 
   const { data, error, mutate } = useSWR(
-    `/api/nationalRegistry/getPersonByNationalId?nationalId=${nID}`,
+    nID
+      ? `/api/nationalRegistry/getPersonByNationalId?nationalId=${nID}`
+      : null,
     fetcher,
   )
 
@@ -114,7 +123,7 @@ const Processing: FC = () => {
     if (nID?.length === 11) {
       mutate()
     }
-  }, [nID])
+  }, [mutate, nID])
 
   console.log(data)
 
@@ -279,6 +288,11 @@ const Processing: FC = () => {
                 onChange={(val) => console.log('change', val)}
                 onBlur={(val) => console.log('blur', val)}
               />
+              <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+                <Button variant="text">
+                  {formatMessage(strings.addDefender)}
+                </Button>
+              </Box>
             </BlueBox>
           </Box>
         )}
