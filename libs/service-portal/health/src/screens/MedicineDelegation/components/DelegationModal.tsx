@@ -5,11 +5,15 @@ import {
   DatePicker,
   Input,
   toast,
+  Text,
+  Button,
+  ModalBase,
 } from '@island.is/island-ui/core'
-import { Delegation, DelegationInput } from '../utils/mockdata'
+import { Delegation } from '../utils/mockdata'
 import { m, Modal } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../../lib/messages'
+import * as styles from './DelegationModal.css'
 
 interface Props {
   // Define the props for your component here
@@ -28,113 +32,136 @@ const DelegationModal: React.FC<Props> = ({
     nationalId?: string
     date?: Date
     lookup?: boolean
-  } | null>(null)
+  } | null>(
+    {
+      nationalId: activeDelegation?.nationalId,
+      date: activeDelegation?.date,
+      lookup: activeDelegation?.delegationType.includes('/'),
+    } ?? null,
+  )
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible)
+  const closeModal = () => {
+    setModalVisible(false)
   }
 
-  const submitForm = () => {
+  const submitForm = async (e?: React.FormEvent<HTMLFormElement>) => {
     // TODO: Implement form submission when service is ready
-    console.log(formData)
+    e && e.preventDefault()
+    const formData2 = e && new FormData(e.currentTarget)
+    const data = formData2 && Object.fromEntries(formData2.entries())
+    console.log(data)
     setFormData(null)
+    setModalVisible(false)
   }
-  return (
-    <Modal
-      id={id}
-      initialVisibility={false}
-      toggleClose={!modalVisible}
-      onCloseModal={toggleModal}
-      disclosure={disclosure}
-      title={
-        activeDelegation
-          ? formatMessage(messages.editDelegation)
-          : formatMessage(messages.grantMedicineDelegation)
-      }
-      buttons={[
-        {
-          id: 'DelegationModalDecline',
-          type: 'ghost' as const,
-          text: formatMessage(m.buttonCancel),
-          onClick: () => {
-            toggleModal()
-          },
-        },
-        {
-          id: 'DelegationModalDelete',
-          type: 'ghost' as const,
-          text: formatMessage(messages.deleteDelegation),
-          colorScheme: 'destructive',
-          icon: 'trash',
-          onClick: () => {
-            toggleModal()
-          },
-        },
 
-        {
-          id: 'DelegationModalAccept',
-          type: 'primary' as const,
-          text: formatMessage(m.submit),
-          onClick: () => {
-            submitForm()
-            toggleModal()
-          },
-          align: 'right' as const,
-        },
-      ]}
-      text=""
+  return (
+    <ModalBase
+      baseId={id}
+      isVisible={modalVisible}
+      initialVisibility={false}
+      onVisibilityChange={(visibility) => {
+        setModalVisible(visibility)
+      }}
+      removeOnClose
+      disclosure={disclosure}
+      className={styles.modal}
     >
-      <Box>
-        <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-          <Box width="full" marginRight={1}>
-            <Input
-              type="number"
-              name="delegationMedicineNationalId"
-              value={activeDelegation?.nationalId ?? formData?.nationalId}
-              label={formatMessage(m.natreg)}
-              size="xs"
-              required
-              maxLength={9}
-              onChange={(e) => {
-                setFormData({ ...formData, nationalId: e.target.value })
-              }}
-            />
-          </Box>
-          <Box width="full" marginLeft={1}>
-            <DatePicker
-              label={formatMessage(m.validTo)}
-              name="delegationMedicineDate"
-              required
-              placeholderText={formatMessage(m.chooseDate)}
-              handleChange={(date) => {
-                setFormData({ ...formData, date: date })
-              }}
-              selected={
-                activeDelegation?.date
-                  ? new Date(activeDelegation.date)
-                  : formData?.date
-              }
-              size="xs"
-            />
-          </Box>
-        </Box>
-        <Box marginTop={2} marginBottom={6}>
-          <Checkbox
-            label={formatMessage(messages.medicineDelegationLookup)}
-            name="delegationMedicineLookup"
-            checked={
-              activeDelegation?.delegationType.includes('/')
-                ? true
-                : formData?.lookup
-            }
-            onChange={() => {
-              setFormData({ ...formData, lookup: !formData?.lookup })
-            }}
-          />
-        </Box>
+      <Box className={styles.closeButton}>
+        <Button
+          circle
+          colorScheme="negative"
+          icon="close"
+          onClick={() => {
+            closeModal()
+          }}
+          size="large"
+        />
       </Box>
-    </Modal>
+      <Box paddingY={8} paddingX={12}>
+        <Text variant="h3" marginBottom={5}>
+          {activeDelegation
+            ? formatMessage(messages.editDelegation)
+            : formatMessage(messages.grantMedicineDelegation)}
+        </Text>
+        <form onSubmit={submitForm}>
+          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
+            <Box width="full" marginRight={1}>
+              <Input
+                type="number"
+                name="delegationMedicineModalNationalId"
+                value={formData?.nationalId}
+                label={formatMessage(m.natreg)}
+                size="xs"
+                required
+                maxLength={9}
+              />
+              <Text variant="small" color="dark300">
+                {activeDelegation?.name ?? 'Nonni Nonnason'}
+              </Text>
+            </Box>
+            <Box width="full" marginLeft={1}>
+              <DatePicker
+                label={formatMessage(m.validTo)}
+                name="delegationMedicineModalDateTo"
+                required
+                placeholderText={formatMessage(m.chooseDate)}
+                selected={formData?.date}
+                size="xs"
+              />
+            </Box>
+          </Box>
+          <Box marginTop={2} marginBottom={6}>
+            <Checkbox
+              label={formatMessage(messages.medicineDelegationLookup)}
+              name="delegationMedicineModalLookup"
+              checked={formData?.lookup}
+            />
+          </Box>
+          <Box display="flex" flexDirection="row" marginTop={2}>
+            <Box>
+              <Button
+                id="delegationModalDecline"
+                type="button"
+                variant="ghost"
+                size="small"
+                onClick={() => {
+                  closeModal()
+                }}
+              >
+                {formatMessage(m.buttonCancel)}
+              </Button>
+            </Box>
+            {activeDelegation && (
+              <Box paddingLeft={2}>
+                <Button
+                  id="delegationModalDelete"
+                  type="button"
+                  variant="ghost"
+                  colorScheme="destructive"
+                  size="small"
+                  onClick={() => {
+                    closeModal()
+                  }}
+                >
+                  {formatMessage(messages.deleteDelegation)}
+                </Button>
+              </Box>
+            )}
+            <Box marginLeft="auto" paddingLeft={2}>
+              <Button
+                id="delegationModalDelete"
+                type="submit"
+                variant="primary"
+                size="small"
+              >
+                {formatMessage(m.submit)}
+              </Button>
+            </Box>
+          </Box>
+        </form>
+      </Box>
+    </ModalBase>
   )
 }
 
