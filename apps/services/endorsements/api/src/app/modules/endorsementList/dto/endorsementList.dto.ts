@@ -46,12 +46,12 @@ export class EndorsementListDto {
   @IsObject()
   meta = {};
   
-  @ApiProperty({ type: Date })
+  @ApiProperty({ type: Date, example: new Date().toISOString() })
   @Type(() => Date)
   @IsDate()
   openedDate!: Date;
 
-  @ApiProperty({ type: Date })
+  @ApiProperty({ type: Date, example: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString() })
   @Type(() => Date)
   @IsDate()
   closedDate!: Date;
@@ -75,14 +75,14 @@ export class EndorsementListDto {
   @ApiProperty({ type: Date })
   @Type(() => Date)
   @IsDate()
-  updated!: Date;
+  modified!: Date;
 }
 
 // Create DTO that omits id, created, updated, owner, adminLock, and endorsementCount
 export class CreateEndorsementListDto extends OmitType(EndorsementListDto, [
   'id',
   'created',
-  'updated',
+  'modified',
   'owner',
   'adminLock',
   'endorsementCount',

@@ -110,11 +110,9 @@ export class EndorsementList extends Model {
   })
   endorsementCount!: number;
   @ApiProperty({ type: Number, description: 'A linear index intended for cursor based pagination', 
-  //nullable: true ...............................................................
   })
   @Column({
     type: DataType.INTEGER,
-    // allowNull: true,...............................................................
   })
   counter!: number;
 }

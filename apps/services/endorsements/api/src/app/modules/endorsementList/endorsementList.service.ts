@@ -83,7 +83,7 @@ export class EndorsementListService {
       before: query.before,
       primaryKeyField: 'counter',
       orderOption: [
-        ['counter', 'DESC'],
+        ['endorsementCount', 'DESC'],
       ],
       where: where
     })
@@ -202,6 +202,7 @@ export class EndorsementListService {
     }
     return await endorsementList.update({ adminLock: true })
   }
+  
 
   async unlock(endorsementList: EndorsementList): Promise<EndorsementList> {
     this.logger.info(`Unlocking endorsement list: ${endorsementList.id}`)
