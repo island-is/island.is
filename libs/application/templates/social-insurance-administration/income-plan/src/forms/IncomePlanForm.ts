@@ -171,15 +171,26 @@ export const IncomePlanForm: Form = buildForm({
                   type: 'number',
                   displayInTable: false,
                   currency: true,
-                  defaultValue: (_, activeField) => {
-                    if (activeField?.incomePerYear) {
-                      return Math.round(
-                        Number(activeField?.incomePerYear) / 12,
-                      ).toString()
-                    }
-                    return ''
+                  updateValueObj: {
+                    valueModifier: (activeField) => {
+                      const unevenAndEmploymentIncome =
+                        activeField?.unevenIncomePerYear?.[0] !== YES ||
+                        (activeField?.incomeCategory !== INCOME &&
+                          activeField?.unevenIncomePerYear?.[0] === YES)
+
+                      if (
+                        activeField?.income === RatioType.MONTHLY &&
+                        activeField?.currency !== ISK &&
+                        unevenAndEmploymentIncome
+                      ) {
+                        return Math.round(
+                          Number(activeField?.incomePerYear) / 12,
+                        ).toString()
+                      }
+                      return undefined
+                    },
+                    watchValues: 'income',
                   },
-                  // TODO: Bæta við 'updateValueObj' eins og í 'equalIncomePerMonth'
                   suffix: '',
                   condition: (_, activeField) => {
                     const unevenAndEmploymentIncome =
@@ -201,20 +212,17 @@ export const IncomePlanForm: Form = buildForm({
                   type: 'number',
                   displayInTable: false,
                   currency: true,
-                  defaultValue: (_, activeField) => {
-                    // TODO: Skoða hvort þetta þurfi ennþá?
-                    if (activeField?.incomePerYear) {
-                      return Math.round(
-                        Number(activeField?.incomePerYear) / 12,
-                      ).toString()
-                    }
-                    return ''
-                  },
                   updateValueObj: {
                     valueModifier: (activeField) => {
+                      const unevenAndEmploymentIncome =
+                        activeField?.unevenIncomePerYear?.[0] !== YES ||
+                        (activeField?.incomeCategory !== INCOME &&
+                          activeField?.unevenIncomePerYear?.[0] === YES)
+
                       if (
                         activeField?.income === RatioType.MONTHLY &&
-                        activeField?.incomePerYear
+                        activeField?.currency === ISK &&
+                        unevenAndEmploymentIncome
                       ) {
                         return Math.round(
                           Number(activeField?.incomePerYear) / 12,
