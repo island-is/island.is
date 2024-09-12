@@ -11,20 +11,11 @@ import {
 } from './pdfHelpers'
 import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> eb6bd7841e1a03200a0f4256464469fd5723c002
 type ConfirmableCaseFileCategories =
   | CaseFileCategory.INDICTMENT
   | CaseFileCategory.RULING
   | CaseFileCategory.COURT_RECORD
 
-<<<<<<< HEAD
-=======
->>>>>>> 8eb83b68cad578f2497365dcad95832979301e9e
-=======
->>>>>>> eb6bd7841e1a03200a0f4256464469fd5723c002
 // Colors
 const lightGray = rgb(0.9804, 0.9804, 0.9804)
 const darkGray = rgb(0.7961, 0.7961, 0.7961)
@@ -215,28 +206,28 @@ const createRulingConfirmation = async (
   const doc = pages[0]
 
   const { height } = doc.getSize()
-  const shadowHeight = calculatePt(70)
+  const shaddowHeight = calculatePt(70)
   const institutionWidth = calculatePt(160)
   const confirmedByWidth = institutionWidth + calculatePt(48)
-  const shadowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
+  const shaddowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
   const titleHeight = calculatePt(24)
   const titleWidth = institutionWidth + confirmedByWidth
 
   // Draw the shadow
   doc.drawRectangle({
     x: pageMargin,
-    y: height - shadowHeight - pageMargin,
-    width: shadowWidth,
-    height: shadowHeight,
+    y: height - shaddowHeight - pageMargin,
+    width: shaddowWidth,
+    height: shaddowHeight,
     color: lightGray,
   })
 
   // Draw the box around the coat of arms
   doc.drawRectangle({
     x: coatOfArmsX,
-    y: height - shadowHeight - pageMargin + calculatePt(8),
+    y: height - shaddowHeight - pageMargin + calculatePt(8),
     width: coatOfArmsWidth,
-    height: shadowHeight,
+    height: shaddowHeight,
     color: rgb(1, 1, 1),
     borderColor: darkGray,
     borderWidth: 1,
@@ -273,7 +264,7 @@ const createRulingConfirmation = async (
   })
 
   doc.drawText(formatDate(confirmation.date) || '', {
-    x: shadowWidth - calculatePt(24),
+    x: shaddowWidth - calculatePt(24),
     y: height - pageMargin - titleHeight + calculatePt(16),
     size: calculatePt(smallFontSize),
     font: timesRomanFont,
@@ -284,7 +275,7 @@ const createRulingConfirmation = async (
     x: coatOfArmsX + coatOfArmsWidth,
     y: height - pageMargin - titleHeight - confirmedByHeight + calculatePt(12),
     width: institutionWidth,
-    height: shadowHeight - titleHeight,
+    height: shaddowHeight - titleHeight,
     color: white,
     borderColor: darkGray,
     borderWidth: 1,
@@ -311,7 +302,7 @@ const createRulingConfirmation = async (
     x: coatOfArmsX + coatOfArmsWidth + institutionWidth,
     y: height - pageMargin - titleHeight - confirmedByHeight + calculatePt(12),
     width: confirmedByWidth,
-    height: shadowHeight - titleHeight,
+    height: shaddowHeight - titleHeight,
     color: white,
     borderColor: darkGray,
     borderWidth: 1,
@@ -344,10 +335,6 @@ const createRulingConfirmation = async (
   }
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> eb6bd7841e1a03200a0f4256464469fd5723c002
 const createCourtRecordConfirmation = async (
   confirmation: Confirmation,
   pdfDoc: PDFDocument,
@@ -356,28 +343,28 @@ const createCourtRecordConfirmation = async (
   const doc = pages[0]
 
   const { height } = doc.getSize()
-  const shadowHeight = calculatePt(70)
+  const shaddowHeight = calculatePt(70)
   const institutionWidth = calculatePt(160)
   const confirmedByWidth = institutionWidth + calculatePt(48)
-  const shadowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
+  const shaddowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
   const titleHeight = calculatePt(24)
   const titleWidth = institutionWidth + confirmedByWidth
 
   // Draw the shadow
   doc.drawRectangle({
     x: pageMargin,
-    y: height - shadowHeight - pageMargin,
-    width: shadowWidth,
-    height: shadowHeight,
+    y: height - shaddowHeight - pageMargin,
+    width: shaddowWidth,
+    height: shaddowHeight,
     color: lightGray,
   })
 
   // Draw the box around the coat of arms
   doc.drawRectangle({
     x: coatOfArmsX,
-    y: height - shadowHeight - pageMargin + calculatePt(8),
+    y: height - shaddowHeight - pageMargin + calculatePt(8),
     width: coatOfArmsWidth,
-    height: shadowHeight,
+    height: shaddowHeight,
     color: rgb(1, 1, 1),
     borderColor: darkGray,
     borderWidth: 1,
@@ -414,7 +401,7 @@ const createCourtRecordConfirmation = async (
   })
 
   doc.drawText(formatDate(confirmation.date) || '', {
-    x: shadowWidth - calculatePt(24),
+    x: shaddowWidth - calculatePt(24),
     y: height - pageMargin - titleHeight + calculatePt(16),
     size: calculatePt(smallFontSize),
     font: timesRomanFont,
@@ -425,7 +412,7 @@ const createCourtRecordConfirmation = async (
     x: coatOfArmsX + coatOfArmsWidth,
     y: height - pageMargin - titleHeight - confirmedByHeight + calculatePt(12),
     width: institutionWidth + confirmedByWidth,
-    height: shadowHeight - titleHeight,
+    height: shaddowHeight - titleHeight,
     color: white,
     borderColor: darkGray,
     borderWidth: 1,
@@ -470,27 +457,8 @@ export const createConfirmedPdf = async (
     default: {
       throw new Error('CaseFileCategory not supported')
     }
-<<<<<<< HEAD
-=======
-export const createConfirmedPdf = async (
-  confirmation: Confirmation,
-  pdf: Buffer,
-  fileType: CaseFileCategory.INDICTMENT | CaseFileCategory.RULING,
-) => {
-  const pdfDoc = await PDFDocument.load(pdf)
-
-  if (fileType === CaseFileCategory.INDICTMENT) {
-    await createIndictmentConfirmation(confirmation, pdfDoc)
   }
 
-  if (fileType === CaseFileCategory.RULING) {
-    await createRulingConfirmation(confirmation, pdfDoc)
->>>>>>> 8eb83b68cad578f2497365dcad95832979301e9e
-  }
-
-=======
-  }
->>>>>>> eb6bd7841e1a03200a0f4256464469fd5723c002
   const pdfBytes = await pdfDoc.save()
   return Buffer.from(pdfBytes)
 }
