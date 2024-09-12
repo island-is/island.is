@@ -123,6 +123,7 @@ export const LicensesOverviewV2 = () => {
         <Box>
           <Tabs
             label={formatMessage(m.seeLicenses)}
+            size="xs"
             contentBackground="white"
             tabs={[
               {
@@ -131,7 +132,7 @@ export const LicensesOverviewV2 = () => {
                   licenses.filter((license) => !license.isOwnerChildOfUser),
                 ),
               },
-              {
+              /*{
                 label: formatMessage(m.licenseTabSecondary),
                 content: generateLicenseStack(
                   licenses.filter((license) => license.isOwnerChildOfUser),
@@ -154,7 +155,7 @@ export const LicensesOverviewV2 = () => {
                 content: generateLicenseStack(
                   licenses.filter((license) => license.isOwnerChildOfUser),
                 ),
-              },
+              },*/
               {
                 label: 'AÐ',
                 content: generateLicenseStack(

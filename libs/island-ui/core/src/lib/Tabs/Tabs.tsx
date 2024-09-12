@@ -66,11 +66,13 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    if (width < theme.breakpoints.lg) {
+    const breakpoint =
+      tabs.length < 4 ? theme.breakpoints.md : theme.breakpoints.lg
+    if (width < breakpoint) {
       return setIsMobile(true)
     }
     setIsMobile(false)
-  }, [width])
+  }, [width, tabs.length])
 
   useEffect(() => {
     if (onChangeHandler && tab.currentId && prevCurrentId !== tab.currentId) {
@@ -90,7 +92,7 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
       return -1
     }
 
-    //Assuming that the id is a string of some king
+    //Assuming that the id is a string of some kind
     const tabsIndex = tabs.findIndex((t) => t.id === id)
     if (tabsIndex >= 0) {
       //id found, returning index
@@ -100,7 +102,7 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
     const index = Number.parseInt(id)
 
     if (Number.isNaN(index)) {
-      //Somehting is wrong
+      //Sometting is wrong
       return -1
     }
 
