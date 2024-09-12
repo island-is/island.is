@@ -450,9 +450,9 @@ export const buildKeyValueField = (data: {
   }
 }
 
-export function buildAccordionField(
+export const buildAccordionField = (
   data: Omit<AccordionField, 'type' | 'component' | 'children'>,
-): AccordionField {
+): AccordionField => {
   const {
     accordionItems,
     title,
@@ -476,9 +476,9 @@ export function buildAccordionField(
   }
 }
 
-export function buildBankAccountField(
+export const buildBankAccountField = (
   data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
-): BankAccountField {
+): BankAccountField => {
   const { title, id, marginBottom, marginTop, titleVariant } = data
 
   return {

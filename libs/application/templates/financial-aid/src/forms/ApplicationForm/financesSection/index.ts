@@ -13,7 +13,7 @@ export const financesSection = buildSection({
   children: [
     incomeSubSection,
     incomeFilesSubSection,
-    taxReturnFilesSubSection, //
+    taxReturnFilesSubSection,
     personalTaxCreditSubSection,
     bankInfoSubSection,
   ],

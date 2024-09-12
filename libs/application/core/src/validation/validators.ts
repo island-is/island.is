@@ -55,7 +55,6 @@ export const validateAnswers = ({
       dataSchema.parse(answers)
     } else {
       // all schemas set as partials as we dont validate until a value is entered
-      console.log(answers)
       dataSchema.partial().parse(answers)
     }
   } catch (e) {

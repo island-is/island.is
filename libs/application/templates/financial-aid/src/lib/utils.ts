@@ -25,7 +25,6 @@ import {
 import { UploadFile } from '@island.is/island-ui/core'
 import { ApplicationStates } from './constants'
 import sortBy from 'lodash/sortBy'
-// import { Application } from '@island.is/api/schema'
 import * as m from '../lib/messages'
 import { AnswersSchema } from './dataSchema'
 
@@ -98,8 +97,7 @@ export function hasActiveCurrentApplication(context: ApplicationContext) {
     'currentApplication.data',
   ) as CurrentApplication
 
-  return false // TODO revert before commit
-  // return currentApplication?.currentApplicationId != null
+  return currentApplication?.currentApplicationId != null
 }
 
 export const hasFiles = (fileType: UploadFileType, answers: AnswersSchema) => {

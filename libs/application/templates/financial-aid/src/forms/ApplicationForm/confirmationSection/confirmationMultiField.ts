@@ -90,10 +90,6 @@ export const confirmationMultiField = buildMultiField({
           application.externalData,
           'municipality.data.homepage',
         )
-        console.log(application.externalData)
-
-        console.log(url)
-
         return {
           ...m.confirmation.links.content,
           values: { statusPage: window.location.href, homePage: url ?? '' },

@@ -19,7 +19,6 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
   const childrenExternalData = externalData.childrenCustodyInformation.data
   const childrenInfo = sortChildrenUnderAgeByAge(childrenExternalData)
   const summaryCommentType = SummaryCommentType.CHILDRENCOMMENT
-  console.log(childrenExternalData)
 
   return (
     <>
