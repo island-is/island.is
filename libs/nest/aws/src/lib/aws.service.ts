@@ -16,6 +16,8 @@ export interface BucketKeyPair {
   key: string
 }
 
+export type EncodingString = 'base64' | 'binary'
+
 @Injectable()
 export class AwsService {
   constructor(
@@ -32,7 +34,7 @@ export class AwsService {
 
   public async getFileContent(
     BucketKeyPairOrFilename: BucketKeyPair | string,
-    encoding?: string | undefined,
+    encoding?: EncodingString | undefined,
   ): Promise<string | undefined> {
     const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
     const result = await this.getFileResponse(bucket, key)
@@ -141,6 +143,15 @@ export class AwsService {
     }
   }
 
+  public getBucketKey(BucketKeyPairOrFilename: BucketKeyPair | string): {
+    bucket: string
+    key: string
+  } {
+    return typeof BucketKeyPairOrFilename === 'object'
+      ? BucketKeyPairOrFilename
+      : AmazonS3URI(BucketKeyPairOrFilename)
+  }
+
   private async getFileResponse(
     bucket: string,
     key: string,
@@ -156,14 +167,5 @@ export class AwsService {
       this.logger.error('Error occurred while fetching file from S3', error)
       return undefined
     }
-  }
-
-  private getBucketKey(BucketKeyPairOrFilename: BucketKeyPair | string): {
-    bucket: string
-    key: string
-  } {
-    return typeof BucketKeyPairOrFilename === 'object'
-      ? BucketKeyPairOrFilename
-      : AmazonS3URI(BucketKeyPairOrFilename)
   }
 }

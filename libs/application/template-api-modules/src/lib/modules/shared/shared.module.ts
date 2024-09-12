@@ -35,9 +35,8 @@ export class SharedTemplateAPIModule {
           useClass: config.applicationService,
         },
         AttachmentS3Service,
-        AwsService,
       ],
-      exports: [SharedTemplateApiService, AttachmentS3Service, AwsService],
+      exports: [SharedTemplateApiService, AttachmentS3Service],
     }
   }
 }

@@ -9,6 +9,7 @@ import {
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { SocialInsuranceAdministrationClientModule } from '@island.is/clients/social-insurance-administration'
+import { AwsModule } from '@island.is/nest/aws'
 
 export class SocialInsuranceAdministrationModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -19,6 +20,7 @@ export class SocialInsuranceAdministrationModule {
         SharedTemplateAPIModule.register(config),
         ApplicationApiCoreModule,
         NationalRegistryClientModule,
+        AwsModule,
       ],
       providers: [
         SocialInsuranceAdministrationService,

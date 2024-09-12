@@ -10,6 +10,7 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 // Here you import your module service
 import { HealthInsuranceService } from './health-insurance.service'
 import { HealthInsuranceV2ClientModule } from '@island.is/clients/icelandic-health-insurance/health-insurance'
+import { AwsModule } from '@island.is/nest/aws'
 
 export class HealthInsuranceModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -17,6 +18,7 @@ export class HealthInsuranceModule {
       module: HealthInsuranceModule,
       imports: [
         HealthInsuranceV2ClientModule,
+        AwsModule,
         SharedTemplateAPIModule.register(config),
       ],
       providers: [HealthInsuranceService],

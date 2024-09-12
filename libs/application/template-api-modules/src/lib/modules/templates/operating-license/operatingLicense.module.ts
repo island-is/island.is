@@ -6,6 +6,7 @@ import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { FinanceClientModule } from '@island.is/clients/finance'
 import { JudicialAdministrationClientModule } from '@island.is/clients/judicial-administration'
+import { AwsModule } from '@island.is/nest/aws'
 
 export class OperatingLicenseModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -14,6 +15,7 @@ export class OperatingLicenseModule {
       imports: [
         SyslumennClientModule,
         SharedTemplateAPIModule.register(config),
+        AwsModule,
         CriminalRecordModule,
         FinanceClientModule,
         JudicialAdministrationClientModule,

@@ -6,6 +6,7 @@ import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 
 import { EstateTemplateService } from './estate.service'
+import { AwsModule } from '@island.is/nest/aws'
 
 export class EstateTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -13,6 +14,7 @@ export class EstateTemplateModule {
       module: EstateTemplateModule,
       imports: [
         SharedTemplateAPIModule.register(config),
+        AwsModule,
         SyslumennClientModule,
       ],
       providers: [EstateTemplateService],
