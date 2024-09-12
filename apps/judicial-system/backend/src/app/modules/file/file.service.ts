@@ -246,21 +246,22 @@ export class FileService {
     // Only indictments that have been submitted to court can be confirmed
     if (
       file.category === CaseFileCategory.INDICTMENT &&
-      !hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
+      hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
     ) {
-      return false
+      return true
     }
 
     // Rulings and court records are only confirmed when a case is completed
     if (
       (file.category === CaseFileCategory.RULING ||
         file.category === CaseFileCategory.COURT_RECORD) &&
-      !isCompletedCase(theCase.state)
+      isCompletedCase(theCase.state)
     ) {
-      return false
+      return true
     }
 
-    return true
+    // Don't get confirmed document for any other file categories
+    return false
   }
 
   async getCaseFileFromS3(theCase: Case, file: CaseFile): Promise<Buffer> {
