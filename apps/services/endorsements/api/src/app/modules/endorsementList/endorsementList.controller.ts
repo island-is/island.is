@@ -107,7 +107,7 @@ export class EndorsementListController {
   @ApiOkResponse({ type: EndorsementList })
   @ApiParam({ name: 'listId', type: 'string' })
   @Get('general-petition-list/:listId')
-  //@UseInterceptors(EndorsementListInterceptor)
+@UseInterceptors(EndorsementListInterceptor)
   @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   async getGeneralPetitionList(
     @Param('listId') listId: string,
@@ -165,7 +165,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Get(':listId')
-  //@UseInterceptors(EndorsementListInterceptor)
+@UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
@@ -188,7 +188,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Put(':listId/close')
-  //@UseInterceptors(EndorsementListInterceptor)
+@UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -213,7 +213,7 @@ export class EndorsementListController {
   @ApiBody({ type: ChangeEndorsmentListClosedDateDto })
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Put(':listId/open')
-  //@UseInterceptors(EndorsementListInterceptor)
+@UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -237,7 +237,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(AdminPortalScope.petitionsAdmin)
   @Put(':listId/lock')
-  //@UseInterceptors(EndorsementListInterceptor)
+@UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
@@ -259,7 +259,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(AdminPortalScope.petitionsAdmin)
   @Put(':listId/unlock')
-  //@UseInterceptors(EndorsementListInterceptor)
+@UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
