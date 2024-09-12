@@ -162,11 +162,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                             type="button"
                             onClick={() => handleRemoveItem(index)}
                           >
-                            <Icon
-                              icon="trash"
-                              type="outline"
-                              color="blue400"
-                            />
+                            <Icon icon="trash" type="outline" color="blue400" />
                           </button>
                         </Tooltip>
                         &nbsp;&nbsp;
