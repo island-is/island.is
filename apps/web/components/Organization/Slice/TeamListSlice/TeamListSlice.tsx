@@ -65,6 +65,7 @@ export const TeamMemberListWrapper = ({
   )
 
   const totalItems = itemsResponse?.total ?? 0
+
   const items = itemsResponse?.items ?? []
 
   return (
@@ -96,6 +97,10 @@ export const TeamMemberListWrapper = ({
       <TeamList
         teamMembers={items as TeamListProps['teamMembers']}
         variant="accordion"
+        prefixes={{
+          email: activeLocale === 'is' ? 'Netfang:' : 'Email:',
+          phone: activeLocale === 'is' ? 'Sími:' : 'Phone:',
+        }}
       />
     </GenericList>
   )

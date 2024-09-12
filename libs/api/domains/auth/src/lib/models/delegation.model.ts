@@ -6,11 +6,11 @@ import {
   registerEnumType,
 } from '@nestjs/graphql'
 
+import { Identity } from '@island.is/api/domains/identity'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/clients/auth/delegation-api'
-import { Identity } from '@island.is/api/domains/identity'
 
 import { DelegationScope } from './delegationScope.model'
 
@@ -32,6 +32,8 @@ const exhaustiveCheck = (param: never) => {
         return PersonalRepresentativeDelegation
       case AuthDelegationType.Custom:
         return CustomDelegation
+      case AuthDelegationType.LegalRepresentative:
+        return LegalRepresentativeDelegation
       default:
         exhaustiveCheck(delegation.type)
     }
@@ -82,6 +84,11 @@ export class CustomDelegation extends Delegation {
   // Internal attributes, used in field resolvers.
   domainName?: string
 }
+
+@ObjectType('AuthLegalRepresentativeDelegation', {
+  implements: Delegation,
+})
+export class LegalRepresentativeDelegation extends Delegation {}
 
 @ObjectType('AuthMergedDelegation')
 export class MergedDelegation {

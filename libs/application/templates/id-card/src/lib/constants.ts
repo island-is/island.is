@@ -1,4 +1,5 @@
 import { DefaultEvents } from '@island.is/application/types'
+import { Services } from '../shared/types'
 
 export type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -31,13 +32,6 @@ export enum Roles {
   ASSIGNEE = 'assignee', //second guardian
 }
 
-export enum Services {
-  REGULAR = 'regular',
-  EXPRESS = 'express',
-  REGULAR_DISCOUNT = 'regularDiscount',
-  EXPRESS_DISCOUNT = 'expressDiscount',
-}
-
 export enum ApiActions {
   assignParentB = 'assignParentB',
   submitApplication = 'submitApplication',
@@ -48,6 +42,12 @@ export enum ApiActions {
 }
 
 export const EXPIRATION_LIMIT_MONTHS = 9
+
+export type PaymentItem = {
+  chargeType: string
+  priceAmount: number
+  chargeItemCode: string
+}
 
 export type Service = {
   type: Services
@@ -97,32 +97,53 @@ export type ChildsPersonalInfo = {
   guardian2: Guardian
 }
 
+export type Gender = 'F' | 'M' | 'X'
+
+export type ExpiryStatus = 'EXPIRED' | 'LOST'
+
 export type IdentityDocument = {
-  number: string
-  type: string
-  verboseType: string
-  subType: string
-  status: string
-  issuingDate: string
-  expirationDate: string
-  displayFirstName: string
-  displayLastName: string
-  mrzFirstName: string
-  mrzLastName: string
-  sex: string
+  number?: string | null
+  type?: string | null
+  verboseType?: string | null
+  subType?: string | null
+  status?: string | null
+  issuingDate?: Date | null
+  expirationDate?: Date | null
+  displayFirstName?: string | null
+  displayLastName?: string | null
+  mrzFirstName?: string | null
+  mrzLastName?: string | null
+  sex?: Gender | null
+  numberWithType?: string
+  expiryStatus?: ExpiryStatus
+  expiresWithinNoticeTime?: boolean
 }
 
 export interface IdentityDocumentChild {
-  childNationalId: string
-  secondParent: string
-  secondParentName: string
-  childName: string
+  childNationalId?: string | null
+  secondParent?: string | null
+  secondParentName?: string | null
+  childName?: string | null
   passports?: IdentityDocument[]
+  citizenship?: Citizenship | null
 }
 
 export interface IdentityDocumentData {
   userPassport: IdentityDocument
   childPassports: IdentityDocumentChild[]
+}
+
+export interface Citizenship {
+  kodi?: string | null
+  land?: string | null
+}
+
+export interface CombinedApplicantInformation {
+  name?: string
+  age?: number
+  nationalId?: string
+  passport?: IdentityDocument
+  children?: Array<IdentityDocumentChild>
 }
 
 export const twoDays = 24 * 3600 * 1000 * 2
