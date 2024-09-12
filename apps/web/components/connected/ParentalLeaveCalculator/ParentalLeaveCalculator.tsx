@@ -121,7 +121,7 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
 
   const yearOptions = useMemo<Option<number>[]>(() => {
     const keys = Object.keys(slice.configJson?.yearConfig || {}).map(Number)
-    keys.sort()
+    keys.sort().reverse()
     return keys.map((key) => ({
       label: String(key),
       value: key,

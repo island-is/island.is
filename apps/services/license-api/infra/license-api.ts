@@ -13,7 +13,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     .namespace('license-api')
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '15m', memory: '256Mi' },
+      requests: { cpu: '50m', memory: '256Mi' },
     })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
