@@ -59,19 +59,21 @@ const IntellectualPropertiesOverview = () => {
         </Box>
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
-      {!loading && (data?.intellectualProperties?.totalCount ?? 0) < 1 && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          title={formatMessage(m.noDataFoundVariable, {
-            arg: formatMessage(m.intellectualProperties).toLowerCase(),
-          })}
-          message={formatMessage(m.noDataFoundVariableDetailVariation, {
-            arg: formatMessage(m.intellectualProperties).toLowerCase(),
-          })}
-          imgSrc="./assets/images/sofa.svg"
-        />
-      )}
+      {!loading &&
+        !error &&
+        (data?.intellectualProperties?.totalCount ?? 0) < 1 && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noDataFoundVariable, {
+              arg: formatMessage(m.intellectualProperties).toLowerCase(),
+            })}
+            message={formatMessage(m.noDataFoundVariableDetailVariation, {
+              arg: formatMessage(m.intellectualProperties).toLowerCase(),
+            })}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        )}
       {!loading &&
         !error &&
         data?.intellectualProperties?.items
