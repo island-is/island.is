@@ -1,3 +1,4 @@
+import { coreErrorMessages } from '@island.is/application/core'
 import { z } from 'zod'
 import { INCOME, ISK, RatioType, YES } from './constants'
 import { errorMessages } from './messages'
@@ -31,7 +32,9 @@ export const dataSchema = z.object({
         })
         .refine(
           ({ income, incomePerYear }) =>
-            income === RatioType.YEARLY ? !!incomePerYear : true,
+            income === RatioType.YEARLY
+              ? !!incomePerYear && Number(incomePerYear) > 0
+              : true,
           {
             path: ['incomePerYear'],
           },
@@ -51,7 +54,7 @@ export const dataSchema = z.object({
             return income === RatioType.MONTHLY &&
               currency === ISK &&
               unevenAndEmploymentIncome
-              ? !!equalIncomePerMonth
+              ? !!equalIncomePerMonth && Number(equalIncomePerMonth) > 0
               : true
           },
           {
@@ -73,7 +76,8 @@ export const dataSchema = z.object({
             return income === RatioType.MONTHLY &&
               currency !== ISK &&
               unevenAndEmploymentIncome
-              ? !!equalForeignIncomePerMonth
+              ? !!equalForeignIncomePerMonth &&
+                  Number(equalForeignIncomePerMonth) > 0
               : true
           },
           {
@@ -104,7 +108,120 @@ export const dataSchema = z.object({
             path: ['incomePerYear'],
             params: errorMessages.monthsRequired,
           },
-        ),
+        )
+        .superRefine((incomePlanTable, ctx) => {
+          if (
+            incomePlanTable.income === RatioType.MONTHLY &&
+            incomePlanTable?.incomeCategory === INCOME &&
+            incomePlanTable.unevenIncomePerYear?.[0] === YES
+          ) {
+            if (
+              incomePlanTable.january &&
+              !(Number(incomePlanTable.january) > 0)
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['january'],
+                params: coreErrorMessages.defaultError,
+              })
+            }
+            if (
+              incomePlanTable.february &&
+              !(Number(incomePlanTable.february) > 0)
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['february'],
+                params: coreErrorMessages.defaultError,
+              })
+            }
+            if (incomePlanTable.march && !(Number(incomePlanTable.march) > 0)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['march'],
+                params: coreErrorMessages.defaultError,
+              })
+            }
+            if (incomePlanTable.april && !(Number(incomePlanTable.april) > 0)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['april'],
+                params: coreErrorMessages.defaultError,
+              })
+            }
+            if (incomePlanTable.may && !(Number(incomePlanTable.may) > 0)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['may'],
+                params: coreErrorMessages.defaultError,
+              })
+            }
+            if (incomePlanTable.june && !(Number(incomePlanTable.june) > 0)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['june'],
+                params: coreErrorMessages.defaultError,
+              })
+            }
+            if (incomePlanTable.july && !(Number(incomePlanTable.july) > 0)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['july'],
+                params: coreErrorMessages.defaultError,
+              })
+            }
+            if (
+              incomePlanTable.august &&
+              !(Number(incomePlanTable.august) > 0)
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['august'],
+                params: coreErrorMessages.defaultError,
+              })
+            }
+            if (
+              incomePlanTable.september &&
+              !(Number(incomePlanTable.september) > 0)
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['september'],
+                params: coreErrorMessages.defaultError,
+              })
+            }
+            if (
+              incomePlanTable.october &&
+              !(Number(incomePlanTable.october) > 0)
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['october'],
+                params: coreErrorMessages.defaultError,
+              })
+            }
+            if (
+              incomePlanTable.november &&
+              !(Number(incomePlanTable.november) > 0)
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['november'],
+                params: coreErrorMessages.defaultError,
+              })
+            }
+            if (
+              incomePlanTable.december &&
+              !(Number(incomePlanTable.december) > 0)
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['december'],
+                params: coreErrorMessages.defaultError,
+              })
+            }
+          }
+        }),
     )
     .refine((i) => i === undefined || i.length > 0, {
       params: errorMessages.incomePlanRequired,
