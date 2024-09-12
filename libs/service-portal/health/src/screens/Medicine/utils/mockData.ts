@@ -1,7 +1,17 @@
 import { IconProps } from '@island.is/island-ui/core'
 import { HealthPaths } from '../../../lib/paths'
-
-export const MedicinePrescriptionsData = [
+export interface Prescription {
+  id: string
+  medicineName: string
+  usedFor: string
+  process: string
+  validTo: string
+  status: {
+    type: 'renew' | 'tooltip'
+    data: string
+  }
+}
+export const MedicinePrescriptionsData: Prescription[] = [
   {
     id: '1',
     medicineName: 'Esomeprazol Actavis 40mg',
@@ -77,7 +87,7 @@ export const MedicineDispenseData: MedicineDispense[] = [
   },
 ]
 
-interface MedicinePrescriptionDetail {
+export interface MedicinePrescriptionDetail {
   title: string
   value?: string | number | React.ReactElement
   type?: 'text' | 'link'
@@ -104,7 +114,7 @@ export const MedicinePrescriptionDetailData: MedicinePrescriptionDetail[] = [
     value: '100 ml',
   },
   {
-    title: 'Notkunarleiðbeiningar',
+    title: 'Notkun',
     value: '2 ml 1 sinni á dag',
   },
 ]
@@ -121,5 +131,24 @@ export const MedicinePrescriptionDetailData2: MedicinePrescriptionDetail[] = [
   {
     title: 'Gildir til',
     value: '05.06.2025',
+  },
+]
+
+export interface HealthCenter {
+  id: string
+  name: string
+}
+export const HealthCenterData = [
+  {
+    id: '1',
+    name: 'Heilsugæsla Kópavogs',
+  },
+  {
+    id: '2',
+    name: 'Heilsugæsla Hafnarfjarðar',
+  },
+  {
+    id: '3',
+    name: 'Heilsugæsla Reykjavíkur',
   },
 ]

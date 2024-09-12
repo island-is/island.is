@@ -1174,6 +1174,19 @@ export const messages = defineMessages({
     id: 'sp.health:renew',
     defaultMessage: 'Endurnýja',
   },
+  renewalMedicineRequest: {
+    id: 'sp.health:renewal-medicine-request',
+    defaultMessage: 'Beiðni um endurnýjun á lyfi',
+  },
+  renewalMedicineRequestText: {
+    id: 'sp.health:renewal-medicine-request-text',
+    defaultMessage:
+      'Lyfjaendurnýjun verður unnin eins fljótt og auðið er. Ekki er víst að hún verði afgreidd samdægurs. Ef um neyðartilfelli er að ræða hafið samband við 112.',
+  },
+  medicineInformation: {
+    id: 'sp.health:medicine-information',
+    defaultMessage: 'Upplýsingar um lyf',
+  },
   moreDetailedInfo: {
     id: 'sp.health:more-detailed-info',
     defaultMessage: 'Nánari upplýsingar',

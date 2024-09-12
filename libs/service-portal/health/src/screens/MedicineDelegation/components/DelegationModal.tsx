@@ -4,19 +4,17 @@ import {
   Checkbox,
   DatePicker,
   Input,
-  toast,
   Text,
   Button,
   ModalBase,
 } from '@island.is/island-ui/core'
 import { Delegation } from '../utils/mockdata'
-import { m, Modal } from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../../lib/messages'
 import * as styles from './DelegationModal.css'
 
 interface Props {
-  // Define the props for your component here
   id: string
   activeDelegation?: Delegation
   disclosure?: ReactElement

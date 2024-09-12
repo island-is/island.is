@@ -10,9 +10,10 @@ interface Props {
     type?: 'text' | 'link'
     href?: string
   }[]
+  width?: 'full' | 'half'
 }
 
-const NestedInfoLines: React.FC<Props> = ({ label, data }) => {
+const NestedInfoLines: React.FC<Props> = ({ label, data, width = 'full' }) => {
   return (
     <>
       {label && (
@@ -22,7 +23,7 @@ const NestedInfoLines: React.FC<Props> = ({ label, data }) => {
           </Text>
         </Box>
       )}
-      <NestedLines data={data} />
+      <NestedLines data={data} width={width} />
     </>
   )
 }
