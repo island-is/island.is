@@ -53,14 +53,13 @@ const loadTemplateLib = async (
   }
 }
 
-// eslint-disable-next-line func-style
-export async function getApplicationTemplateByTypeId<
+export const getApplicationTemplateByTypeId = async <
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
   TEvents extends EventObject,
 >(
   templateId: ApplicationTypes,
-): Promise<ApplicationTemplate<TContext, TStateSchema, TEvents>> {
+): Promise<ApplicationTemplate<TContext, TStateSchema, TEvents>> => {
   const templateLib = await loadTemplateLib(templateId)
   return templateLib.default as ApplicationTemplate<
     TContext,
