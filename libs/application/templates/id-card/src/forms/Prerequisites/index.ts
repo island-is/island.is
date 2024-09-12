@@ -106,7 +106,8 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: IdentityDocumentApi,
-              title: '',
+              title: externalData.identityDocument.title,
+              subTitle: externalData.identityDocument.subTitle,
             }),
             buildDataProviderItem({
               provider: SyslumadurPaymentCatalogApi,

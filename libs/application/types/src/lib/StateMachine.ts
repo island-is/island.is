@@ -148,7 +148,7 @@ export type ApplicationStateMachine<
 > = StateMachine<TContext, TStateSchema, TEvents>
 
 // manually overwrites the initial state for the template as well so the interpreter starts in the current application state
-export function createApplicationMachine<
+export const createApplicationMachine = <
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvent>,
   TEvent extends EventObject = AnyEventObject,
@@ -157,7 +157,7 @@ export function createApplicationMachine<
   config: StateNodeConfig<TContext, TStateSchema, TEvent>,
   options?: Partial<MachineOptions<TContext, TEvent>>,
   initialContext?: TContext,
-): ApplicationStateMachine<TContext, TStateSchema, TEvent> {
+): ApplicationStateMachine<TContext, TStateSchema, TEvent> => {
   const context = initialContext
     ? { ...initialContext, application }
     : { application }

@@ -13,6 +13,7 @@ export const getForm = ({
   allowFakeData = false,
   allowPickLicense = false,
   allowBELicense = false,
+  allow65Renewal = false,
 }): Form =>
   buildForm({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
@@ -29,7 +30,9 @@ export const getForm = ({
           ...(allowFakeData ? [sectionFakeData] : []),
           sectionExternalData,
           sectionExistingApplication,
-          ...(allowPickLicense ? [sectionApplicationFor(allowBELicense)] : []),
+          ...(allowPickLicense
+            ? [sectionApplicationFor(allowBELicense, allow65Renewal)]
+            : []),
           sectionDigitalLicenseInfo,
           sectionRequirements,
         ],

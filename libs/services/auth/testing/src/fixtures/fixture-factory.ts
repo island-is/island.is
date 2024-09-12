@@ -321,6 +321,8 @@ export class FixtureFactory {
         return AuthDelegationProvider.CompanyRegistry
       case AuthDelegationType.PersonalRepresentative:
         return AuthDelegationProvider.PersonalRepresentativeRegistry
+      case AuthDelegationType.LegalRepresentative:
+        return AuthDelegationProvider.DistrictCommissionersRegistry
       default:
         return ''
     }
@@ -413,7 +415,7 @@ export class FixtureFactory {
   }): Promise<DelegationScope> {
     const scope = await this.get(DelegationScope).create({
       id: faker.datatype.uuid(),
-      delegationId: delegationId,
+      delegationId,
       scopeName,
       validFrom: validFrom ?? startOfDay(new Date()),
       validTo: validTo ?? addYears(new Date(), 1),
