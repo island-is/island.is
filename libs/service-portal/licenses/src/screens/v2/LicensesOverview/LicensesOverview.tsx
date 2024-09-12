@@ -161,12 +161,12 @@ export const LicensesOverviewV2 = () => {
                   licenses.filter((license) => license.isOwnerChildOfUser),
                 ),
               },
-              {
+              /*{
                 label: 'LOKA',
                 content: generateLicenseStack(
                   licenses.filter((license) => license.isOwnerChildOfUser),
                 ),
-              },
+              },*/
             ]}
           />
         </Box>

@@ -29,13 +29,6 @@ export const bg = style({
   }),
 })
 
-export const select = style({
-  display: 'initial',
-  ...themeUtils.responsiveStyle({
-    lg: { display: 'none' },
-  }),
-})
-
 export const tabList = style({
   display: 'grid',
   height: 0,
@@ -47,9 +40,11 @@ export const tabList = style({
   borderColor: theme.border.color.blue100,
   borderWidth: theme.border.width.large,
   background: theme.color.blue100,
-  ...themeUtils.responsiveStyle({
-    lg: { height: `${theme.spacing[8]}px`, overflow: 'initial' },
-  }),
+})
+
+export const tabListVisible = style({
+  height: `${theme.spacing[8]}px`,
+  overflow: 'initial',
 })
 
 export const tab = style({

@@ -107,11 +107,14 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
     return index
   }
 
+  const tabsUiSwitch = !isMobile && tabs.length < 7
+  const tabListVisible = tabs.length > 1 && tabsUiSwitch
+
   return (
     <Box position="relative">
       <Box background={contentBackground} className={styles.bg} />
       <Box position="relative" paddingY="none">
-        <Box className={styles.select}>
+        <Box hidden={tabsUiSwitch}>
           <Select
             size={size}
             name={label}
@@ -135,7 +138,9 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
           {...tab}
           wrap={wrap}
           aria-label={label}
-          className={styles.tabList}
+          className={cn(styles.tabList, {
+            [styles.tabListVisible]: tabListVisible,
+          })}
         >
           {tabs.map(({ label, disabled, id }, index) => {
             const isTabSelected = id
