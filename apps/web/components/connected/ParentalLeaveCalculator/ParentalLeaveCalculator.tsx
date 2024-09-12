@@ -31,6 +31,7 @@ import { formatCurrency as formatCurrencyUtil } from '@island.is/web/utils/curre
 
 import { MarkdownText } from '../../Organization'
 import { translations as t } from './translations.strings'
+import { Status, Union, WorkPercentage } from './utils'
 import * as styles from './ParentalLeaveCalculator.css'
 
 interface FieldProps {
@@ -62,17 +63,6 @@ const Field = ({
       {children}
     </Stack>
   )
-}
-
-enum Status {
-  PARENTAL_LEAVE = 'parentalLeave',
-  STUDENT = 'student',
-  OUTSIDE_WORKFORCE = 'outsideWorkForce',
-}
-
-enum WorkPercentage {
-  OPTION_1 = 'option1',
-  OPTION_2 = 'option2',
 }
 
 enum ParentalLeavePeriod {
@@ -146,8 +136,7 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
   }, [formatMessage, slice.configJson?.additionalPensionFundingOptions])
 
   const unionOptions = useMemo<Option<string | null>[]>(() => {
-    const options: { label: string; percentage: number }[] = slice.configJson
-      ?.unionOptions
+    const options: Union[] = slice.configJson?.unionOptions
       ? [...slice.configJson.unionOptions]
       : []
 
