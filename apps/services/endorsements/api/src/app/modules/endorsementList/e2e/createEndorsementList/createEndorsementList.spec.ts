@@ -23,7 +23,6 @@ describe('createEndorsementList', () => {
       meta: { email: 'asdf@asdf.is', phone: '5559999' },
       closedDate: '2029-06-12T15:31:00.254Z',
       openedDate: '2023-06-12T15:31:00.254Z',
-      // endorsementCount: 0,
       adminLock: false,
     }
 

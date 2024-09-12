@@ -46,7 +46,7 @@ import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
 import { EndorsementListInterceptor } from './interceptors/endorsementList.interceptor'
-// import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
+import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
 import { EmailDto } from './dto/email.dto'
 import { SendPdfEmailResponse } from './dto/sendPdfEmail.response'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
@@ -75,7 +75,7 @@ export class EndorsementListController {
   })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get()
-  // //@UseInterceptors(EndorsementListsInterceptor)
+@UseInterceptors(EndorsementListsInterceptor)
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Audit()
   async findByTags(
@@ -93,7 +93,7 @@ export class EndorsementListController {
   @ApiOperation({ summary: 'Gets General Petition Lists' })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get('general-petition-lists')
-  // //@UseInterceptors(EndorsementListsInterceptor)
+@UseInterceptors(EndorsementListsInterceptor)
   @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   async getGeneralPetitionLists(
     @Query() query: PaginationDto,
@@ -141,7 +141,7 @@ export class EndorsementListController {
   })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get('/endorsementLists')
-  // //@UseInterceptors(EndorsementListsInterceptor)
+@UseInterceptors(EndorsementListsInterceptor)
   @Audit<PaginatedEndorsementListDto>({
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),
