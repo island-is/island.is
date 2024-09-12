@@ -26,8 +26,8 @@ export class AwsService {
   public async getFile(
     BucketKeyPairOrFilename: BucketKeyPair | string,
   ): Promise<GetObjectCommandOutput | undefined> {
-      const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
-      return this.getFileResponse(bucket, key)
+    const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
+    return this.getFileResponse(bucket, key)
   }
 
   public async getFileContent(
@@ -114,7 +114,10 @@ export class AwsService {
         return false
       } else {
         // some other error
-        this.logger.error('Error occurred while checking if file exists in S3', error)
+        this.logger.error(
+          'Error occurred while checking if file exists in S3',
+          error,
+        )
         return false
       }
     }
