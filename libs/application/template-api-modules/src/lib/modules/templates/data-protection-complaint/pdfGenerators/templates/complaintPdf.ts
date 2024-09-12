@@ -25,18 +25,18 @@ import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
 
-export async function generateComplaintPdf(
+export const generateComplaintPdf = async (
   application: Application,
   attachedFiles: DocumentInfo[],
-): Promise<Buffer> {
+): Promise<Buffer> => {
   const dto = applicationToComplaintPDF(application, attachedFiles)
   return await generatePdf<ComplaintPDF>(dto, dpcApplicationPdf)
 }
 
-function dpcApplicationPdf(
+const dpcApplicationPdf = (
   complaint: ComplaintPDF,
   doc: PDFKit.PDFDocument,
-): void {
+): void => {
   const timestamp = format(
     parseISO(complaint.submitDate.toISOString()),
     'd. MMMM y',
@@ -135,10 +135,10 @@ function dpcApplicationPdf(
   doc.end()
 }
 
-function renderExternalDataMessages(
+const renderExternalDataMessages = (
   externalData: ExternalDataMessages,
   doc: PDFKit.PDFDocument,
-): void {
+): void => {
   addHeader(externalData.title, doc)
   addValue(externalData.subtitle, doc, PdfConstants.BOLD_FONT)
   addValue(externalData.description, doc)
@@ -155,10 +155,10 @@ function renderExternalDataMessages(
   doc.moveDown()
 }
 
-function renderInformationMessages(
+const renderInformationMessages = (
   information: Information,
   doc: PDFKit.PDFDocument,
-): void {
+): void => {
   addHeader(information.title, doc)
 
   const bulletsList = [
@@ -199,10 +199,10 @@ function renderInformationMessages(
   })
 }
 
-function renderContactsAndComplainees(
+const renderContactsAndComplainees = (
   complaint: ComplaintPDF,
   doc: PDFKit.PDFDocument,
-): void {
+): void => {
   const contactHeading =
     complaint.onBehalf === OnBehalf.MYSELF ||
     complaint.onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION ||
@@ -291,10 +291,10 @@ function renderContactsAndComplainees(
   }
 }
 
-function renderAgencyComplainees(
+const renderAgencyComplainees = (
   complaint: ComplaintPDF,
   doc: PDFKit.PDFDocument,
-): void {
+): void => {
   if (
     complaint.agency?.persons?.length &&
     complaint.onBehalf !== OnBehalf.ORGANIZATION_OR_INSTITUTION &&
