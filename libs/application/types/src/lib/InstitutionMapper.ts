@@ -374,6 +374,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
   },
+  [ApplicationTypes.INCOME_PLAN]: {
+    nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
+    slug: InstitutionTypes.TRYGGINGASTOFNUN,
+    contentfulId: InstitutionContentfulIds.TRYGGINGASTOFNUN,
+  },
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     nationalId: InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
     slug: InstitutionTypes.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,

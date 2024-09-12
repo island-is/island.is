@@ -1,4 +1,3 @@
-import React from 'react'
 import App, { AppContext, AppProps } from 'next/app'
 import getConfig from 'next/config'
 import Head from 'next/head'

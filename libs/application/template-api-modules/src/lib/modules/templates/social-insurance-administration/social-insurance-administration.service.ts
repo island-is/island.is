@@ -1,40 +1,42 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
-  Application,
-  ApplicationTypes,
-  YES,
-} from '@island.is/application/types'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { TemplateApiModuleActionProps } from '../../../types'
-import { BaseTemplateApiService } from '../../base-template-api.service'
+  HouseholdSupplementHousing,
+  getApplicationAnswers as getHSApplicationAnswers,
+} from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   ApplicationType,
   Employment,
   getApplicationAnswers as getOAPApplicationAnswers,
   isEarlyRetirement,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
-import {
-  HouseholdSupplementHousing,
-  getApplicationAnswers as getHSApplicationAnswers,
-} from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
-import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
+  Application,
+  ApplicationTypes,
+  YES,
+} from '@island.is/application/types'
+import {
+  ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { Inject, Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
+import { TemplateApiModuleActionProps } from '../../../types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   getApplicationType,
+  transformApplicationToAdditionalSupportForTheElderlyDTO,
   transformApplicationToHouseholdSupplementDTO,
+  transformApplicationToIncomePlanDTO,
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
-  transformApplicationToAdditionalSupportForTheElderlyDTO,
 } from './social-insurance-administration-utils'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -454,6 +456,18 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       )
       return response
     }
+
+    if (application.typeId === ApplicationTypes.INCOME_PLAN) {
+      const incomePlanDTO = transformApplicationToIncomePlanDTO(application)
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        incomePlanDTO,
+        application.typeId.toLowerCase(),
+      )
+
+      return response
+    }
   }
 
   async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
@@ -508,5 +522,24 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getCurrencies({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getCurrencies(auth)
+  }
+
+  async getCategorizedIncomeTypes({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getCategorizedIncomeTypes(auth)
+  }
+
+  async getWithholdingTax(
+    { auth }: TemplateApiModuleActionProps,
+    year: ApiProtectedV1IncomePlanWithholdingTaxGetRequest = {},
+  ) {
+    return await this.siaClientService.getWithholdingTax(auth, year)
+  }
+
+  async getLatestIncomePlan({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getLatestIncomePlan(auth)
+  }
+
+  async getIncomePlanConditions({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getIncomePlanConditions(auth)
   }
 }

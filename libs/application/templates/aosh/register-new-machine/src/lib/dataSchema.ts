@@ -14,6 +14,15 @@ const PersonInformationSchema = z.object({
   email: z.string().min(1),
 })
 
+const RemovablePersonInformationSchema = z.object({
+  name: z.string().optional(),
+  nationalId: z.string().optional(),
+  address: z.string().optional(),
+  postCode: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().optional(),
+})
+
 const BasicInformationSchema = z.object({
   productionCountry: z.string().min(1),
   productionYear: z.string().min(1),
@@ -42,15 +51,135 @@ const TechInfoSchema = z.object({
 
 export const NewMachineAnswersSchema = z.object({
   approveExternalData: z.boolean(),
-  importerInformation: z.object({
-    importer: PersonInformationSchema,
-    isOwnerOtherThanImporter: z.enum([YES, NO]),
-    owner: PersonInformationSchema.optional(),
-  }),
-  operatorInformation: z.object({
-    operator: PersonInformationSchema.optional(),
-    hasOperator: z.enum([YES, NO]),
-  }),
+  importerInformation: z
+    .object({
+      importer: PersonInformationSchema,
+      isOwnerOtherThanImporter: z.enum([YES, NO]),
+      owner: RemovablePersonInformationSchema.optional(),
+    })
+    .refine(
+      ({ isOwnerOtherThanImporter, owner }) => {
+        if (isOwnerOtherThanImporter === NO) return true
+        return owner && owner.name && owner.name.length > 0
+      },
+      {
+        path: ['owner', 'name'],
+      },
+    )
+    .refine(
+      ({ isOwnerOtherThanImporter, owner }) => {
+        if (isOwnerOtherThanImporter === NO) return true
+        return (
+          owner &&
+          owner.nationalId &&
+          owner.nationalId.length > 0 &&
+          kennitala.isValid(owner.nationalId)
+        )
+      },
+      {
+        path: ['owner', 'nationalId'],
+      },
+    )
+    .refine(
+      ({ isOwnerOtherThanImporter, owner }) => {
+        if (isOwnerOtherThanImporter === NO) return true
+        return owner && owner.address && owner.address.length > 0
+      },
+      {
+        path: ['owner', 'address'],
+      },
+    )
+    .refine(
+      ({ isOwnerOtherThanImporter, owner }) => {
+        if (isOwnerOtherThanImporter === NO) return true
+        return owner && owner.postCode && owner.postCode.length > 0
+      },
+      {
+        path: ['owner', 'postCode'],
+      },
+    )
+    .refine(
+      ({ isOwnerOtherThanImporter, owner }) => {
+        if (isOwnerOtherThanImporter === NO) return true
+        return owner && owner.phone && owner.phone.length > 0
+      },
+      {
+        path: ['owner', 'phone'],
+      },
+    )
+    .refine(
+      ({ isOwnerOtherThanImporter, owner }) => {
+        if (isOwnerOtherThanImporter === NO) return true
+        return owner && owner.email && owner.email.length > 0
+      },
+      {
+        path: ['owner', 'email'],
+      },
+    ),
+  operatorInformation: z
+    .object({
+      operator: RemovablePersonInformationSchema.optional(),
+      hasOperator: z.enum([YES, NO]),
+    })
+    .refine(
+      ({ hasOperator, operator }) => {
+        if (hasOperator === NO) return true
+        return operator && operator.name && operator.name.length > 0
+      },
+      {
+        path: ['operator', 'name'],
+      },
+    )
+    .refine(
+      ({ hasOperator, operator }) => {
+        if (hasOperator === NO) return true
+        return (
+          operator &&
+          operator.nationalId &&
+          operator.nationalId.length > 0 &&
+          kennitala.isValid(operator.nationalId)
+        )
+      },
+      {
+        path: ['operator', 'nationalId'],
+      },
+    )
+    .refine(
+      ({ hasOperator, operator }) => {
+        if (hasOperator === NO) return true
+        return operator && operator.address && operator.address.length > 0
+      },
+      {
+        path: ['operator', 'address'],
+      },
+    )
+    .refine(
+      ({ hasOperator, operator }) => {
+        if (hasOperator === NO) return true
+        return operator && operator.postCode && operator.postCode.length > 0
+      },
+      {
+        path: ['operator', 'postCode'],
+      },
+    )
+    .refine(
+      ({ hasOperator, operator }) => {
+        if (hasOperator === NO) return true
+        return operator && operator.phone && operator.phone.length > 0
+      },
+      {
+        path: ['operator', 'phone'],
+      },
+    )
+    .refine(
+      ({ hasOperator, operator }) => {
+        if (hasOperator === NO) return true
+        return operator && operator.email && operator.email.length > 0
+      },
+      {
+        path: ['operator', 'email'],
+      },
+    ),
   machine: z.object({
     machineType: z
       .object({

@@ -604,7 +604,13 @@ const Search: Screen<CategoryProps> = ({
                             active={!query?.type?.length}
                             onClick={() => {
                               dispatch({
-                                type: ActionType.RESET_SEARCH,
+                                type: ActionType.SET_PARAMS,
+                                payload: {
+                                  query: {
+                                    type: [],
+                                    processentry: false,
+                                  },
+                                },
                               })
                             }}
                           >
@@ -628,8 +634,6 @@ const Search: Screen<CategoryProps> = ({
                                     query: {
                                       processentry: false,
                                       ...getSearchParams(key),
-                                      category: [],
-                                      organization: [],
                                     },
                                     searchLocked: false,
                                   },
@@ -676,7 +680,6 @@ const Search: Screen<CategoryProps> = ({
                         type: ActionType.SET_PARAMS,
                         payload: {
                           query: {
-                            ...getSearchParams('webArticle'),
                             ...payload,
                           },
                         },

@@ -1,0 +1,46 @@
+{
+  "name": "application-templates-social-insurance-administration-income-plan",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/social-insurance-administration/income-plan/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/social-insurance-administration/income-plan/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/social-insurance-administration/income-plan"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/social-insurance-administration/income-plan/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/social-insurance-administration/income-plan/src/lib/messages.ts'"
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/application/templates/social-insurance-administration/income-plan/codegen.yml"
+      }
+    }
+  },
+  "tags": ["scope:application-system", "lib:application-system"]
+}

@@ -12,6 +12,7 @@ import {
   ReasonKey,
   CanCreateInput,
   CanSignInput,
+  CreateParliamentaryCandidacyInput,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
 import { List, SignedList, mapList, mapListBase } from './types/list.dto'
@@ -132,6 +133,59 @@ export class SignatureCollectionClientService {
     }
     const { slug } = mapList(lists[0])
     return { slug }
+  }
+
+  async createParliamentaryCandidacy(
+    { collectionId, owner, areas, agents }: CreateParliamentaryCandidacyInput,
+    auth: User,
+  ): Promise<Slug> {
+    const {
+      id,
+      isActive,
+      areas: collectionAreas,
+    } = await this.currentCollection()
+    // check if collectionId is current collection and current collection is open
+    if (collectionId !== id.toString() || !isActive) {
+      // TODO: create ApplicationTemplateError
+      throw new Error('Collection is not open')
+    }
+
+    // check if user is sending in their own nationalId
+    if (owner.nationalId.replace(/\D/g, '') !== auth.nationalId) {
+      // TODO: create ApplicationTemplateError
+      throw new Error('NationalId does not match')
+    }
+    // check if user is already owner of lists
+
+    const { canCreate, isOwner, name, partyBallotLetterInfo } =
+      await this.getSignee(auth)
+    if (!canCreate || isOwner) {
+      // TODO: create ApplicationTemplateError
+      throw new Error('User is already owner of lists')
+    }
+
+    const filteredAreas = areas
+      ? collectionAreas.filter((area) =>
+          areas.flatMap((a) => a.areaId).includes(area.id),
+        )
+      : collectionAreas
+
+    const candidacy = await this.getApiWithAuth(
+      this.candidateApi,
+      auth,
+    ).frambodPost({
+      frambodRequestDTO: {
+        sofnunID: parseInt(id),
+        kennitala: owner.nationalId.replace(/\D/g, ''),
+        simi: owner.phone,
+        netfang: owner.email,
+        medmaelalistar: filteredAreas.map((area) => ({
+          svaediID: parseInt(area.id),
+          listiNafn: `${partyBallotLetterInfo?.name}`,
+        })),
+      },
+    })
+    return { slug: 'frambodWowee' }
   }
 
   async signList(listId: string, auth: User): Promise<Signature> {
@@ -321,6 +375,11 @@ export class SignatureCollectionClientService {
       ownedLists,
       isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
       candidate,
+      hasPartyBallotLetter: !!user.maFrambodInfo?.medListabokstaf,
+      partyBallotLetterInfo: {
+        letter: user.listabokstafur?.stafur ?? '',
+        name: user.listabokstafur?.frambodNafn ?? '',
+      },
     }
   }
 
