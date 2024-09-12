@@ -31,7 +31,7 @@ import { formatCurrency as formatCurrencyUtil } from '@island.is/web/utils/curre
 
 import { MarkdownText } from '../../Organization'
 import { translations as t } from './translations.strings'
-import { Status, Union, WorkPercentage } from './utils'
+import { Calculator, Status, Union, WorkPercentage } from './utils'
 import * as styles from './ParentalLeaveCalculator.css'
 
 interface FieldProps {
@@ -521,6 +521,10 @@ const calculateResults = (
   },
   slice: ParentalLeaveCalculatorProps['slice'],
 ) => {
+  if (typeof input.birthyear !== 'number') {
+    return null
+  }
+
   const yearConfig = slice.configJson?.yearConfig?.[String(input.birthyear)]
   const parseResult = yearConfigSchema.safeParse(yearConfig)
   if (!parseResult.success) {
@@ -550,6 +554,57 @@ const calculateResults = (
   let usedPersonalDiscount = 0
   let additionalPensionFunding = 0
   let pensionFunding = 0
+
+  const unionOptions: Union[] = slice.configJson?.unionOptions ?? []
+
+  const calculator = new Calculator(
+    {
+      percentOfEarningsPaid: constants.parentalLeaveRatio,
+      tax1: constants.taxRate1,
+      tax2: constants.taxRate2,
+      tax3: constants.taxRate3,
+      tax1Amount: constants.taxBracket1,
+      tax2Amount: constants.taxBracket2,
+      taxDiscount: constants.personalDiscount,
+      pGrantStudents: constants.parentalLeaveStudent,
+      pGrant: constants.parentalLeaveGeneral,
+      pGrantHigher: constants.parentalLeaveHigh,
+      pGrantLower: constants.parentalLeaveLow,
+      maxEarnings: constants.maxIncome,
+      mandatoryPensionPercentage: constants.pensionFundingRequiredPercentage,
+    },
+    {
+      status: input.status ?? Status.PARENTAL_LEAVE,
+      childYearBorn: input.birthyear,
+      workPercentage: input.workPercentage ?? WorkPercentage.OPTION_1,
+      averageEarningsPerMonth: input.income ?? 0,
+      monthsInPL:
+        input.parentalLeavePeriod === ParentalLeavePeriod.TWO_WEEKS
+          ? 1 / 2
+          : input.parentalLeavePeriod === ParentalLeavePeriod.THREE_WEEKS
+          ? 3 / 4
+          : 1,
+      union: unionOptions.find((option) => option.label === input.union),
+      taxDiscountRate: input.personalDiscount ?? 100,
+      extraPension: input.additionalPensionFundingPercentage ?? 0,
+      plRate: input.parentalLeaveRatio ?? 100,
+    },
+  )
+
+  const results = calculator.calculateResults()
+
+  return {
+    constants,
+    results: {
+      mainResultBeforeDeduction: results.plBruttoPerMonth,
+      mainResultAfterDeduction: results.plNettoPerMonth,
+      unionFee: results.unionFees,
+      pensionFunding: results.pensionPerMonth,
+      totalTax: results.tax,
+      usedPersonalDiscount: results.taxDiscount,
+      additionalPensionFunding: results.extraPensionPerMonth,
+    },
+  }
 
   if (input.status === Status.STUDENT) {
     mainResultBeforeDeduction = constants.parentalLeaveStudent
@@ -687,8 +742,7 @@ const calculateResults = (
       mainResultBeforeDeduction *
       (constants.pensionFundingRequiredPercentage / 100)
 
-    const unionOptions: { label: string; percentage: number }[] =
-      slice.configJson?.unionOptions ?? []
+    const unionOptions: Union[] = slice.configJson?.unionOptions ?? []
 
     unionFee =
       mainResultBeforeDeduction *

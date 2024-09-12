@@ -19,10 +19,8 @@ type Constants = {
   /* Hlutfall fæðingarorlofs (fasti) */
   percentOfEarningsPaid: number
 
-  /* Stéttarfélagsgjöld */
-  unionFee: number
-
-  taxDiscount: number // Persónuafsláttur
+  /* Persónuafsláttur */
+  taxDiscount: number
 
   /* Skattprósentur */
   tax1: number
@@ -68,7 +66,7 @@ type Input = {
   monthsInPL: number
 
   /* Stéttarfélag */
-  union: Union
+  union: Union | undefined
 
   /* Persónuafsláttur */
   taxDiscountRate: number
@@ -171,7 +169,9 @@ export class Calculator {
     const tax = this.calculateTax(
       plBruttoPerMonth - pensionPerMonth - extraPensionPerMonth,
     )
-    let taxDiscount = (tax * this.input.taxDiscountRate) / 100
+
+    let taxDiscount =
+      this.constants.taxDiscount * (this.input.taxDiscountRate / 100)
 
     if (tax <= taxDiscount) {
       taxDiscount = tax
