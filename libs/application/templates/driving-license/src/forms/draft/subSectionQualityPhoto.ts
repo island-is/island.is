@@ -5,7 +5,6 @@ import {
   buildRadioField,
   buildSubSection,
   getValueViaPath,
-  hasYes,
   buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
