@@ -93,7 +93,10 @@ export const insuranceToXML = async (
     }
     for (let i = 0; i < arrAttachments.length; i++) {
       const filename = arrAttachments[i]
-      const content = await awsService.getFileContent(attachmentNames[i], 'base64')
+      const content = await awsService.getFileContent(
+        attachmentNames[i],
+        'base64',
+      )
       if (!content) {
         throw new Error('error getting file:' + filename)
       }

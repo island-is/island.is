@@ -386,10 +386,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       )
 
       const Key = `${application.id}/${filename}`
-      const fileContent = await this.awsService.getFileContent({
-        bucket: this.attachmentBucket,
-        key: Key
-      }, 'base64'
+      const fileContent = await this.awsService.getFileContent(
+        {
+          bucket: this.attachmentBucket,
+          key: Key,
+        },
+        'base64',
       )
 
       if (!fileContent) {

@@ -61,7 +61,6 @@ export class AttachmentS3Service {
           return { key: '', fileContent: '', answerKey, fileName: '' }
         }
         const fileContent = (await this.awsService.getFileContent(attachmentName, 'base64')) ?? ''
-
         return { key, fileContent, answerKey, fileName: name }
       }),
     )
@@ -71,8 +70,10 @@ export class AttachmentS3Service {
     application: ApplicationWithAttachments,
     attachmentKey: string,
   ): Promise<string> {
-    const { bucket, key } = AmazonS3URI(this.getFilenameFromApplication(application, attachmentKey))
-    const fileContent = await this.awsService.getFile({bucket, key})
+    const { bucket, key } = AmazonS3URI(
+      this.getFilenameFromApplication(application, attachmentKey),
+    )
+    const fileContent = await this.awsService.getFile({ bucket, key })
     return fileContent?.Body?.transformToString('base64') || ''
   }
 
@@ -80,10 +81,14 @@ export class AttachmentS3Service {
     application: ApplicationWithAttachments,
     attachmentKey: string,
   ): Promise<Blob> {
-    const { bucket, key } = AmazonS3URI(this.getFilenameFromApplication(application, attachmentKey))
-    const file = await this.awsService.getFile({bucket, key})
+    const { bucket, key } = AmazonS3URI(
+      this.getFilenameFromApplication(application, attachmentKey),
+    )
+    const file = await this.awsService.getFile({ bucket, key })
     const fileArrayBuffer = await file?.Body?.transformToByteArray()
-    return new Blob([fileArrayBuffer as ArrayBuffer], { type: file?.ContentType })
+    return new Blob([fileArrayBuffer as ArrayBuffer], {
+      type: file?.ContentType,
+    })
   }
 
   public async getAttachmentUrl(
@@ -102,7 +107,7 @@ export class AttachmentS3Service {
       return Promise.reject('could not find s3 bucket')
     }
 
-    return this.awsService.getPresignedUrl({bucket, key}, expiration)
+    return this.awsService.getPresignedUrl({ bucket, key }, expiration)
   }
 
   public async addAttachment(
@@ -125,7 +130,7 @@ export class AttachmentS3Service {
 
   private getFilenameFromApplication(
     application: ApplicationWithAttachments,
-    attachmentKey: string
+    attachmentKey: string,
   ): string {
     const fileName = (
       application.attachments as {

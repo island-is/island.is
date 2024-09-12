@@ -376,9 +376,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getPdf(key: string) {
-    const fileContent = await this.awsService.getFileContent({
-      bucket: this.attachmentBucket,
-      key}, 'base64'
+    const fileContent = await this.awsService.getFileContent(
+      {
+        bucket: this.attachmentBucket,
+        key,
+      },
+      'base64',
     )
 
     if (!fileContent) {

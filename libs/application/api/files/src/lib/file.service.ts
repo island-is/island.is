@@ -54,16 +54,20 @@ export class FileService {
     const key = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
     const bucket = this.getBucketName()
 
-    if ((await this.awsService.fileExists({bucket, key})) === false) {
+    if ((await this.awsService.fileExists({ bucket, key })) === false) {
       const content = await this.createFile(application, pdfType)
-      await this.awsService.uploadFile(content, {bucket, key}, {
-        ContentEncoding: 'base64',
-        ContentDisposition: 'inline',
-        ContentType: 'application/pdf',
-      })
+      await this.awsService.uploadFile(
+        content,
+        { bucket, key },
+        {
+          ContentEncoding: 'base64',
+          ContentDisposition: 'inline',
+          ContentType: 'application/pdf',
+        },
+      )
     }
 
-    return await this.awsService.getPresignedUrl({bucket, key})
+    return await this.awsService.getPresignedUrl({ bucket, key })
   }
 
   async uploadSignedFile(
@@ -79,10 +83,10 @@ export class FileService {
       .waitForSignature(DokobitFileName[pdfType], documentToken)
       .then(async (file) => {
         const s3FileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
-        await this.awsService.uploadFile(
-          Buffer.from(file, 'binary'),
-          {bucket, key: s3FileName},
-        )
+        await this.awsService.uploadFile(Buffer.from(file, 'binary'), {
+          bucket,
+          key: s3FileName,
+        })
       })
       .catch((error) => {
         if (error.code === DokobitErrorCodes.NoMobileSignature) {
@@ -129,7 +133,7 @@ export class FileService {
 
     const key = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
 
-    return await this.awsService.getPresignedUrl({bucket, key})
+    return await this.awsService.getPresignedUrl({ bucket, key })
   }
 
   private async createFile(application: Application, pdfType: PdfTypes) {
@@ -147,7 +151,10 @@ export class FileService {
   ) {
     const bucket = this.getBucketName()
     const key = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
-    const fileContent = await this.awsService.getFileContent({bucket, key}, 'binary')
+    const fileContent = await this.awsService.getFileContent(
+      { bucket, key },
+      'binary',
+    )
 
     const { phoneNumber, name, title } = this.getSigningOptionsFromApplication(
       application,
@@ -247,7 +254,7 @@ export class FileService {
 
         try {
           this.logger.info(`Deleting attachment ${s3key} from bucket ${bucket}`)
-          await this.awsService.deleteObject({bucket, key: s3key})
+          await this.awsService.deleteObject({ bucket, key: s3key })
           result = {
             ...result,
             deleted: result.deleted++,
