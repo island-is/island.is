@@ -15,19 +15,7 @@ import DelegationModal from './components/DelegationModal'
 
 const MedicineDelegation = () => {
   const { formatMessage } = useLocale()
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [activeDelegation, setActiveDelegation] = useState<
-    Delegation | undefined
-  >(undefined)
-
-  const toggleModal = (arg: string) => {
-    console.log('toggleModal', arg)
-    setModalVisible(!modalVisible)
-  }
-
-  useEffect(() => {
-    console.log('modalVisible', modalVisible)
-  }, [modalVisible])
+  const [newDelegationModelOpen, setNewDelegationModelOpen] = useState(false)
 
   return (
     <>
@@ -61,9 +49,8 @@ const MedicineDelegation = () => {
               date: item.date.toDateString(),
               change: (
                 <DelegationModal
-                  modalVisible={modalVisible}
-                  toggleModal={toggleModal}
-                  activeDelegation={activeDelegation}
+                  id={`delegationRegistrationModal-${item.id}`}
+                  activeDelegation={item}
                   disclosure={
                     <Button
                       as="span"
@@ -73,8 +60,6 @@ const MedicineDelegation = () => {
                       icon="pencil"
                       onClick={() => {
                         console.log('clicking edit button')
-                        setActiveDelegation(item)
-                        toggleModal('editButton')
                       }}
                     >
                       {formatMessage(m.buttonEdit)}
@@ -85,20 +70,25 @@ const MedicineDelegation = () => {
             }))}
           />
         )}
-        <Box display="flex" flexDirection="rowReverse" marginTop={4}>
-          <Button
-            size="medium"
-            icon="add"
-            type="button"
-            onClick={() => {
-              console.log('clicking blue button')
-              setActiveDelegation(undefined)
-              toggleModal('blueButton')
-            }}
-          >
-            {formatMessage(messages.addDelegation)}
-          </Button>
-        </Box>
+
+        <DelegationModal
+          id="newDelegationRegistrationModal"
+          activeDelegation={undefined}
+          disclosure={
+            <Box display="flex" flexDirection="rowReverse" marginTop={4}>
+              <Button
+                size="medium"
+                icon="add"
+                type="button"
+                onClick={() => {
+                  setNewDelegationModelOpen(true)
+                }}
+              >
+                {formatMessage(messages.addDelegation)}
+              </Button>
+            </Box>
+          }
+        />
       </Box>
     </>
   )

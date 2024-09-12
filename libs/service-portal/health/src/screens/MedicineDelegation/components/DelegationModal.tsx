@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import {
   Box,
   Checkbox,
@@ -13,15 +13,13 @@ import { messages } from '../../../lib/messages'
 
 interface Props {
   // Define the props for your component here
-  modalVisible: boolean
-  toggleModal: (arg: string) => void
+  id: string
   activeDelegation?: Delegation
   disclosure?: ReactElement
 }
 
 const DelegationModal: React.FC<Props> = ({
-  modalVisible,
-  toggleModal,
+  id,
   activeDelegation,
   disclosure,
 }) => {
@@ -31,17 +29,23 @@ const DelegationModal: React.FC<Props> = ({
     date?: Date
     lookup?: boolean
   } | null>(null)
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
+
+  const toggleModal = () => {
+    setModalVisible(!modalVisible)
+  }
 
   const submitForm = () => {
+    // TODO: Implement form submission when service is ready
     console.log(formData)
     setFormData(null)
   }
   return (
     <Modal
-      id="medicine-delegation-crud-modal"
+      id={id}
       initialVisibility={false}
       toggleClose={!modalVisible}
-      onCloseModal={() => toggleModal('onCloseModal')}
+      onCloseModal={toggleModal}
       disclosure={disclosure}
       title={
         activeDelegation
@@ -54,7 +58,7 @@ const DelegationModal: React.FC<Props> = ({
           type: 'ghost' as const,
           text: formatMessage(m.buttonCancel),
           onClick: () => {
-            toggleModal('buttonCancel')
+            toggleModal()
           },
         },
         {
@@ -64,7 +68,7 @@ const DelegationModal: React.FC<Props> = ({
           colorScheme: 'destructive',
           icon: 'trash',
           onClick: () => {
-            toggleModal('buttonDelete')
+            toggleModal()
           },
         },
 
@@ -74,7 +78,7 @@ const DelegationModal: React.FC<Props> = ({
           text: formatMessage(m.submit),
           onClick: () => {
             submitForm()
-            toggleModal('buttonAccept')
+            toggleModal()
           },
           align: 'right' as const,
         },
