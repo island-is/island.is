@@ -25,6 +25,7 @@ export const ImporterInformationSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
+          maxLength: 100,
           defaultValue: (application: Application) =>
             getValueViaPath(
               application.externalData,
@@ -51,6 +52,7 @@ export const ImporterInformationSubSection = buildSubSection({
           title: information.labels.importer.address,
           width: 'half',
           required: true,
+          maxLength: 50,
           defaultValue: (application: Application) =>
             getValueViaPath(
               application.externalData,
@@ -92,6 +94,7 @@ export const ImporterInformationSubSection = buildSubSection({
           title: information.labels.importer.email,
           width: 'half',
           variant: 'email',
+          maxLength: 250,
           required: true,
           defaultValue: (application: Application) =>
             getValueViaPath(

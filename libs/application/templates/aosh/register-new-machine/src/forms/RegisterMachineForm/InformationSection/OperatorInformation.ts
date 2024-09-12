@@ -41,6 +41,7 @@ export const OperatorInformationSubSection = buildSubSection({
           title: information.labels.operator.name,
           width: 'half',
           required: true,
+          maxLength: 100,
           condition: (answer: FormValue) => hasOperator(answer),
         }),
         buildTextField({
@@ -56,6 +57,7 @@ export const OperatorInformationSubSection = buildSubSection({
           title: information.labels.operator.address,
           width: 'half',
           required: true,
+          maxLength: 50,
           condition: (answer: FormValue) => hasOperator(answer),
         }),
         buildSelectField({
@@ -83,6 +85,7 @@ export const OperatorInformationSubSection = buildSubSection({
           width: 'half',
           required: true,
           variant: 'email',
+          maxLength: 250,
           condition: (answer: FormValue) => hasOperator(answer),
         }),
       ],

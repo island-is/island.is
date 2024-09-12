@@ -61,6 +61,7 @@ export const MachineBasicInformation = buildSubSection({
           id: 'machine.basicInformation.productionNumber',
           title: machine.labels.basicMachineInformation.productionNumber,
           width: 'half',
+          maxLength: 50,
           required: true,
         }),
         buildSelectField({
@@ -122,11 +123,13 @@ export const MachineBasicInformation = buildSubSection({
           id: 'machine.basicInformation.location',
           title: machine.labels.basicMachineInformation.location,
           width: 'half',
+          maxLength: 255,
         }),
         buildTextField({
           id: 'machine.basicInformation.cargoFileNumber',
           title: machine.labels.basicMachineInformation.cargoFileNumber,
           width: 'half',
+          maxLength: 50,
         }),
       ],
     }),

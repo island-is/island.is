@@ -130,6 +130,7 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
             backgroundColor="blue"
             required
             disabled={fromService}
+            maxLength={50}
             onChange={(e) => setType(e.target.value)}
             error={
               displayError && type.length === 0
@@ -145,6 +146,7 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
             backgroundColor="blue"
             required
             disabled={fromService}
+            maxLength={50}
             onChange={(e) => setModel(e.target.value)}
             error={
               displayError && model.length === 0
