@@ -11,11 +11,14 @@ import {
 } from './pdfHelpers'
 import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 
+<<<<<<< HEAD
 type ConfirmableCaseFileCategories =
   | CaseFileCategory.INDICTMENT
   | CaseFileCategory.RULING
   | CaseFileCategory.COURT_RECORD
 
+=======
+>>>>>>> 8eb83b68cad578f2497365dcad95832979301e9e
 // Colors
 const lightGray = rgb(0.9804, 0.9804, 0.9804)
 const darkGray = rgb(0.7961, 0.7961, 0.7961)
@@ -335,6 +338,7 @@ const createRulingConfirmation = async (
   }
 }
 
+<<<<<<< HEAD
 const createCourtRecordConfirmation = async (
   confirmation: Confirmation,
   pdfDoc: PDFDocument,
@@ -457,6 +461,21 @@ export const createConfirmedPdf = async (
     default: {
       throw new Error('CaseFileCategory not supported')
     }
+=======
+export const createConfirmedPdf = async (
+  confirmation: Confirmation,
+  pdf: Buffer,
+  fileType: CaseFileCategory.INDICTMENT | CaseFileCategory.RULING,
+) => {
+  const pdfDoc = await PDFDocument.load(pdf)
+
+  if (fileType === CaseFileCategory.INDICTMENT) {
+    await createIndictmentConfirmation(confirmation, pdfDoc)
+  }
+
+  if (fileType === CaseFileCategory.RULING) {
+    await createRulingConfirmation(confirmation, pdfDoc)
+>>>>>>> 8eb83b68cad578f2497365dcad95832979301e9e
   }
 
   const pdfBytes = await pdfDoc.save()

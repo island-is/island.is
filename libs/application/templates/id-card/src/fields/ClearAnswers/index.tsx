@@ -18,13 +18,13 @@ export const ClearAnswers: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
       const chosenApplicants = getValues(Routes.CHOSENAPPLICANTS)
-
+      const newAnswers = updateAnswers(application, chosenApplicants, setValue)
       try {
         await updateApplication({
           variables: {
             input: {
               id: application.id,
-              answers: updateAnswers(application, chosenApplicants, setValue),
+              answers: newAnswers,
             },
             locale,
           },

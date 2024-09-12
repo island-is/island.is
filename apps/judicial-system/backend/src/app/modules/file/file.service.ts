@@ -210,9 +210,7 @@ export class FileService {
               date: theCase.rulingDate,
             },
             pdf,
-            file.category === CaseFileCategory.RULING
-              ? CaseFileCategory.RULING
-              : CaseFileCategory.COURT_RECORD,
+            file.category,
           )
         }
       })
