@@ -27,7 +27,7 @@ export class AwsService {
     BucketKeyPairOrFilename: BucketKeyPair | string
   ): Promise<GetObjectCommandOutput | undefined> {
       const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
-      return await this.getFileResponse(bucket, key)
+      return this.getFileResponse(bucket, key)
   }
 
   public async getFileContent(
@@ -70,8 +70,7 @@ export class AwsService {
       return url
 
     } catch (error) {
-      this.logger.error('Error occurred while uploading file to S3')
-      this.logger.error(error)
+      this.logger.error('Error occurred while uploading file to S3', error)
       throw error
     }
   }
@@ -116,8 +115,7 @@ export class AwsService {
         return false;
       } else {
         // some other error
-        this.logger.error('Error occurred while checking if file exists in S3')
-        this.logger.error(error)
+        this.logger.error('Error occurred while checking if file exists in S3', error)
         return false
       }
     }
@@ -138,8 +136,7 @@ export class AwsService {
       }
 
     } catch (error) {
-      this.logger.error('Error occurred while deleteing file from S3')
-      this.logger.error(error)
+      this.logger.error('Error occurred while deleteing file from S3', error)
     }
   }
 
@@ -155,8 +152,7 @@ export class AwsService {
         })
       )
     } catch (error) {
-      this.logger.error('Error occurred while fetching file from S3')
-      this.logger.error(error)
+      this.logger.error('Error occurred while fetching file from S3', error)
       return undefined
     }
   }

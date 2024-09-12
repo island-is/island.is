@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 
 import { TemplateApiModuleActionProps } from '../../../types'

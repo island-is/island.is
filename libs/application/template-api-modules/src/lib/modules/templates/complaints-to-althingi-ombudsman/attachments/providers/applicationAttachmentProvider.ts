@@ -2,7 +2,7 @@ import { ApplicationWithAttachments as Application } from '@island.is/applicatio
 import { DocumentInfo } from '@island.is/clients/althingi-ombudsman'
 import { AttachmentType } from '../../models/attachments'
 import { AttachmentS3Service } from '../../../../shared/services'
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
 export interface DocumentBuildInfo {
   key: string

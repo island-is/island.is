@@ -1,7 +1,7 @@
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
 import { AttachmentType } from '../../models/attachments'
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { AttachmentS3Service } from '../../../../shared/services'
 
 export interface DocumentBuildInfo {

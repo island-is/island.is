@@ -55,12 +55,12 @@ export class AttachmentS3Service {
   ): Promise<AttachmentData[]> {
     return await Promise.all(
       answers.map(async ({ key, name }) => {
-        const url = this.getFilenameFromApplication(application, key)
-        if (!url) {
+        const attachmentName = this.getFilenameFromApplication(application, key)
+        if (!attachmentName) {
           logger.info('Failed to get url from application state')
           return { key: '', fileContent: '', answerKey, fileName: '' }
         }
-        const fileContent = (await this.awsService.getFileContent(url, 'base64')) ?? ''
+        const fileContent = (await this.awsService.getFileContent(attachmentName, 'base64')) ?? ''
 
         return { key, fileContent, answerKey, fileName: name }
       }),
