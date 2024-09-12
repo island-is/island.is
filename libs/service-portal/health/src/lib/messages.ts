@@ -1214,4 +1214,9 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-payment-participation',
     defaultMessage: 'Greiðsluþátttaka',
   },
+  medicineDelegationLookup: {
+    id: 'sp.health:medicine-delegation-lookup',
+    defaultMessage:
+      'Ofangreindur aðili má einnig fletta upp mínum lyfjaávísunum í apóteki.',
+  },
 })

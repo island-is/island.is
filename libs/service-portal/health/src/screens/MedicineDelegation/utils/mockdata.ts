@@ -1,11 +1,11 @@
 import React from 'react'
 
-interface Delegation {
+export interface Delegation {
   id: string
   name: string
-  kennitala: string
+  nationalId: string
   delegationType: string
-  date: string
+  date: Date
   change?: React.ReactNode
 }
 
@@ -13,16 +13,16 @@ export const delegationData: Delegation[] = [
   {
     id: '1',
     name: 'Sigríður Guðmundsdóttir',
-    kennitala: '2112827199',
+    nationalId: '2112827199',
     delegationType: 'Sækja lyf / Uppfletting',
-    date: '20.12.2024',
+    date: new Date('2023-12-01'),
   },
   {
     id: '2',
     name: 'Jónas Ingi Karlsson',
-    kennitala: '2102034399',
+    nationalId: '2102034399',
     delegationType: 'Sækja lyf',
-    date: '01.01.2024',
+    date: new Date('2024-03-30'),
   },
 ]
 
