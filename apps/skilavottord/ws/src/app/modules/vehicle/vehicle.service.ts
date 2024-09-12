@@ -60,18 +60,27 @@ export class VehicleService {
     }
   }
 
-  async updateMileage(permno: string, mileage: number): Promise<boolean> {
+  async updateVehicleInfo(
+    permno: string,
+    mileage: number,
+    plateCount: number,
+    plateLost: boolean,
+  ): Promise<boolean> {
     const findVehicle = await this.findByVehicleId(permno)
     if (findVehicle) {
       findVehicle.mileage = mileage ?? 0
+      findVehicle.plateCount = plateCount ?? 0
+      findVehicle.plateLost = plateLost
+
       await findVehicle.save()
       return true
     } else {
-      const errorMsg = `failed to update mileage: ${mileage} on vehicle: ${permno}`
+      const errorMsg = `Failed to update vehicleInfo for vehicle: ${permno}`
       this.logger.error(
-        `car-recycling: Failed to update mileage: ${mileage} on vehicle: ${permno.slice(
+        `car-recycling: Failed to update vehicleInfo for vehicle: ${permno.slice(
           -3,
         )}`,
+        { mileage, plateCount, plateLost },
       )
       throw new Error(errorMsg)
     }
