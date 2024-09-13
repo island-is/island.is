@@ -27,6 +27,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { CivilClaimant } from '../../defendant/models/civilClaimant.model'
 import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
@@ -453,4 +454,7 @@ export class Case {
 
   @Field(() => [Case], { nullable: true })
   readonly mergedCases?: Case[]
+
+  @Field(() => [CivilClaimant], { nullable: true })
+  readonly civilClaimants?: CivilClaimant[]
 }

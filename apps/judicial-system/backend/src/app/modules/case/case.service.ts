@@ -56,6 +56,7 @@ import {
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { Defendant, DefendantService } from '../defendant'
+import { CivilClaimant } from '../defendant/models/civilClaimant.model'
 import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
@@ -270,6 +271,7 @@ export const include: Includeable[] = [
   },
   { model: Case, as: 'childCase' },
   { model: Defendant, as: 'defendants' },
+  { model: CivilClaimant, as: 'civilClaimants' },
   { model: IndictmentCount, as: 'indictmentCounts' },
   {
     model: CaseFile,

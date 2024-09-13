@@ -189,7 +189,8 @@ export class BackendService extends DataSource<{ req: Request }> {
   }
 
   getCase(id: string): Promise<Case> {
-    return this.get<Case>(`case/${id}`, this.caseTransformer)
+    const returncase = this.get<Case>(`case/${id}`, this.caseTransformer)
+    return returncase
   }
 
   getConnectedCases(id: string): Promise<Case[]> {
