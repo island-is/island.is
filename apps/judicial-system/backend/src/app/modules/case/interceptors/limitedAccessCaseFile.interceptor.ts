@@ -12,7 +12,7 @@ import { CaseFileCategory, User } from '@island.is/judicial-system/types'
 import { canLimitedAcccessUserViewCaseFile } from '../../file'
 
 @Injectable()
-export class CaseFileInterceptor implements NestInterceptor {
+export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
     const user: User = request.user

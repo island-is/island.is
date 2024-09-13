@@ -54,8 +54,8 @@ import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.g
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
-import { CaseFileInterceptor } from './interceptors/caseFile.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
+import { LimitedAccessCaseFileInterceptor } from './interceptors/limitedAccessCaseFile.interceptor'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
 import {
@@ -84,7 +84,7 @@ export class LimitedAccessCaseController {
   @RolesRules(prisonSystemStaffRule, defenderRule)
   @UseInterceptors(
     CompletedAppealAccessedInterceptor,
-    CaseFileInterceptor,
+    LimitedAccessCaseFileInterceptor,
     CaseInterceptor,
   )
   @Get('case/:caseId/limitedAccess')
