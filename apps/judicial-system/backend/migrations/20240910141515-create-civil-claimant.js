@@ -25,6 +25,14 @@ module.exports = {
             },
             allowNull: false,
           },
+          defendant_id: {
+            type: Sequelize.UUID,
+            references: {
+              model: 'defendant',
+              key: 'id',
+            },
+            allowNull: false,
+          },
           name: {
             type: Sequelize.STRING,
             allowNull: false,

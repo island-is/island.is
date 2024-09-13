@@ -1,0 +1,104 @@
+import {
+  BelongsTo,
+  Column,
+  CreatedAt,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+} from 'sequelize-typescript'
+
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
+import { Case } from '../../case'
+import { Defendant } from './defendant.model'
+
+@Table({
+  tableName: 'civil_claimant',
+  timestamps: false,
+})
+export class CivilClaimant extends Model {
+  @Column({
+    type: DataType.UUID,
+    primaryKey: true,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  @ApiProperty({ type: String })
+  id!: string
+
+  @CreatedAt
+  @Column({
+    type: DataType.DATE,
+    defaultValue: DataType.NOW,
+    allowNull: false,
+  })
+  @ApiProperty({ type: Date })
+  created!: Date
+
+  @ForeignKey(() => Case)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ApiProperty({ type: String })
+  caseId!: string
+
+  @BelongsTo(() => Case, 'caseId')
+  @ApiProperty({ type: Case })
+  case?: Case
+
+  @ForeignKey(() => Defendant)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ApiProperty({ type: String })
+  defendantId!: string
+
+  @BelongsTo(() => Defendant, 'defendantId')
+  @ApiProperty({ type: Defendant })
+  defendant?: Defendant
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty({ type: String })
+  name!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: String })
+  nationalId?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: String })
+  defenderName?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: String })
+  defenderEmail?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: String })
+  defenderPhoneNumber?: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: Boolean })
+  caseFilesSharedWithDefender?: boolean
+}
