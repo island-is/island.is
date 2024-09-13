@@ -47,7 +47,7 @@ type QueryResult<T> =
 
 export const CreatePresignedPostMutation = gql`
   mutation CreatePresignedPostMutation($input: CreatePresignedPostInput!) {
-    createPresignedPost(input: $input)
+    regulationCreatePresignedPost(input: $input)
   }
 `
 export type UploadingState =

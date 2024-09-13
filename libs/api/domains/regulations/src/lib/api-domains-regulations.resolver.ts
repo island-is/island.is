@@ -1,12 +1,13 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
-
+import { UseGuards } from '@nestjs/common'
 import { RegulationsService } from '@island.is/clients/regulations'
+import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   RegulationSearchResults,
   RegulationYears,
-  RegulationListItem,
 } from '@island.is/regulations/web'
+import { Audit } from '@island.is/nest/audit'
 import {
   Regulation,
   RegulationDiff,
@@ -24,12 +25,14 @@ import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
 import { PresignedPostResults } from '@island.is/regulations/admin'
 
 const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
-
+@Audit({ namespace: '@island.is/api/regulations' })
 @Resolver()
 export class RegulationsResolver {
   constructor(private regulationsService: RegulationsService) {}
 
-  @Mutation(() => graphqlTypeJson)
+  @Audit()
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Mutation(() => graphqlTypeJson, { name: 'regulationCreatePresignedPost' })
   createPresignedPost(
     @Args('input') input: CreatePresignedPostInput,
   ): Promise<PresignedPostResults | null> {
