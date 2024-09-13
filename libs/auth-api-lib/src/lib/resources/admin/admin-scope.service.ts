@@ -459,17 +459,33 @@ export class AdminScopeService {
     )
 
     // create delegation type rows
-    await Promise.all(
-      delegationTypes.map((delegationType) =>
-        this.apiScopeDelegationType.upsert(
-          {
-            apiScopeName,
-            delegationType,
-          },
-          { transaction },
-        ),
-      ),
-    )
+    delegationTypes.map((delegationType) => {
+      const addedApiScopeDelegationTypes = this.apiScopeDelegationType.upsert(
+        {
+          apiScopeName,
+          delegationType,
+        },
+        { transaction },
+      )
+
+      // If the delegationType is 'Custom', also create one for 'GeneralMandate'
+      if (delegationType === AuthDelegationType.Custom) {
+        const additionalApiScopeDelegationTypes =
+          this.apiScopeDelegationType.upsert(
+            {
+              apiScopeName,
+              delegationType: AuthDelegationType.GeneralMandate,
+            },
+            { transaction },
+          )
+        return Promise.all([
+          addedApiScopeDelegationTypes,
+          additionalApiScopeDelegationTypes,
+        ])
+      }
+
+      return addedApiScopeDelegationTypes
+    })
 
     // update boolean fields
     if (
@@ -532,6 +548,33 @@ export class AdminScopeService {
       : undefined
 
     // remove delegation type rows
+    delegationTypes.map((delegationType) => {
+      const removedApiScopeDelegationTypes =
+        this.apiScopeDelegationType.destroy({
+          transaction,
+          where: {
+            apiScopeName,
+            delegationType,
+          },
+        })
+
+      // If the delegationType is 'Custom', also create one for 'GeneralMandate'
+      if (delegationType === AuthDelegationType.Custom) {
+        const additionalApiScopeDelegationTypes =
+          this.apiScopeDelegationType.destroy({
+            transaction,
+            where: {
+              apiScopeName,
+              delegationType: AuthDelegationType.GeneralMandate,
+            },
+          })
+        return Promise.all([
+          removedApiScopeDelegationTypes,
+          additionalApiScopeDelegationTypes,
+        ])
+      }
+    })
+
     await Promise.all(
       delegationTypes.map((delegationType) =>
         this.apiScopeDelegationType.destroy({

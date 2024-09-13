@@ -55,9 +55,7 @@ export class ClientsService {
     private readonly clientDelegationType: typeof ClientDelegationType,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
-
     private readonly clientsTranslationService: ClientsTranslationService,
-
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -620,17 +618,32 @@ export class ClientsService {
       )
     }
 
-    return Promise.all(
-      delegationTypes.map((delegationType) =>
-        this.clientDelegationType.upsert(
+    const upsertPromises = delegationTypes.map((delegationType) => {
+      // Upsert the delegation type
+      const upsertPromise = this.clientDelegationType.upsert(
+        {
+          clientId,
+          delegationType,
+        },
+        options,
+      )
+
+      // If the delegationType is 'Custom', also create one for 'GeneralMandate'
+      if (delegationType === AuthDelegationType.Custom) {
+        const additionalInstancePromise = this.clientDelegationType.upsert(
           {
             clientId,
-            delegationType,
+            delegationType: AuthDelegationType.GeneralMandate,
           },
           options,
-        ),
-      ),
-    )
+        )
+        return Promise.all([upsertPromise, additionalInstancePromise])
+      }
+
+      return upsertPromise
+    })
+
+    return Promise.all(upsertPromises)
   }
 
   /* Remove supported delegation types from client */
@@ -687,16 +700,31 @@ export class ClientsService {
       )
     }
 
-    return Promise.all(
-      delegationTypes.map((delegationType) =>
-        this.clientDelegationType.destroy({
+    const destroyPromises = delegationTypes.map((delegationType) => {
+      // Define the destroy promise for the delegationType
+      const destroyPromise = this.clientDelegationType.destroy({
+        ...options,
+        where: {
+          clientId,
+          delegationType,
+        },
+      })
+
+      // If the delegationType is 'Custom', also delete an additional instance
+      if (delegationType === AuthDelegationType.Custom) {
+        const destroyedPowerOfAttorney = this.clientDelegationType.destroy({
           ...options,
           where: {
             clientId,
-            delegationType,
+            delegationType: AuthDelegationType.GeneralMandate,
           },
-        }),
-      ),
-    )
+        })
+        return Promise.all([destroyPromise, destroyedPowerOfAttorney])
+      }
+
+      return destroyPromise
+    })
+
+    return Promise.all(destroyPromises)
   }
 }
