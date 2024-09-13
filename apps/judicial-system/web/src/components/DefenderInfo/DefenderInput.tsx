@@ -209,9 +209,9 @@ const DefenderInput: FC<Props> = ({
         propertyValidation.errorMessageHandler.setErrorMessage,
       )
 
-      updateDefendant({ ...update, caseId: workingCase.id, defendantId })
+      updateDefendant({ ...update, caseId, defendantId })
     },
-    [formatUpdate, propertyValidations, updateDefendant, workingCase.id],
+    [formatUpdate, propertyValidations, updateDefendant],
   )
 
   return (
