@@ -335,6 +335,7 @@ const Processing: FC = () => {
                     ): void {
                       throw new Error('Function not implemented.')
                     }}
+                    defendantId={'1212'}
                   />
                 </>
               )}

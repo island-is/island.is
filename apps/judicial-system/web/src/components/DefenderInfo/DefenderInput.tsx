@@ -32,12 +32,14 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 
+import useCivilClaimants from '../../utils/hooks/useCivilClaimants'
 import { defenderInput as m } from './DefenderInput.strings'
 
 interface Props {
   onDefenderNotFound: (defenderNotFound: boolean) => void
   disabled?: boolean | null
   defendantId?: string | null
+  isCivilClaim?: boolean
 }
 
 interface PropertyValidation {
@@ -54,6 +56,7 @@ const DefenderInput: FC<Props> = ({
   onDefenderNotFound,
   disabled,
   defendantId,
+  isCivilClaim = false,
 }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -61,6 +64,11 @@ const DefenderInput: FC<Props> = ({
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { updateDefendant, updateDefendantState, setAndSendDefendantToServer } =
     useDefendants()
+  const {
+    setAndSendCivilClaimantToServer,
+    updateCivilClaimantState,
+    updateCivilClaimant,
+  } = useCivilClaimants()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
     useState<string>('')
@@ -80,7 +88,7 @@ const DefenderInput: FC<Props> = ({
   )
 
   const handleLawyerChange = useCallback(
-    (selectedOption: SingleValue<ReactSelectOption>) => {
+    (selectedOption: SingleValue<ReactSelectOption>, isCivilClaim: boolean) => {
       let updatedLawyer = {
         defenderName: '',
         defenderNationalId: '',
@@ -105,7 +113,12 @@ const DefenderInput: FC<Props> = ({
         }
       }
 
-      if (defendantId) {
+      if (isCivilClaim) {
+        setAndSendCivilClaimantToServer(
+          { ...updatedLawyer, caseId: workingCase.id, defendantId },
+          setWorkingCase,
+        )
+      } else if (defendantId) {
         setAndSendDefendantToServer(
           { ...updatedLawyer, caseId: workingCase.id, defendantId },
           setWorkingCase,
@@ -122,9 +135,10 @@ const DefenderInput: FC<Props> = ({
       defendantId,
       onDefenderNotFound,
       lawyers,
-      setAndSendDefendantToServer,
+      setAndSendCivilClaimantToServer,
       workingCase,
       setWorkingCase,
+      setAndSendDefendantToServer,
       setAndSendCaseToServer,
     ],
   )
@@ -168,6 +182,7 @@ const DefenderInput: FC<Props> = ({
       defendantId: string,
       property: InputType,
       value: string,
+      isCivilClaim: boolean,
       setWorkingCase: Dispatch<SetStateAction<Case>>,
     ) => {
       let newValue = value
@@ -185,12 +200,25 @@ const DefenderInput: FC<Props> = ({
         propertyValidation.errorMessageHandler.setErrorMessage,
       )
 
-      updateDefendantState(
-        { ...update, caseId: workingCase.id, defendantId },
-        setWorkingCase,
-      )
+      if (isCivilClaim) {
+        updateCivilClaimantState(
+          { ...update, caseId: workingCase.id, defendantId },
+          setWorkingCase,
+        )
+      } else {
+        updateDefendantState(
+          { ...update, caseId: workingCase.id, defendantId },
+          setWorkingCase,
+        )
+      }
     },
-    [formatUpdate, propertyValidations, updateDefendantState, workingCase.id],
+    [
+      formatUpdate,
+      propertyValidations,
+      updateCivilClaimantState,
+      updateDefendantState,
+      workingCase.id,
+    ],
   )
 
   const handleLawyerPropertyBlur = useCallback(
@@ -199,6 +227,7 @@ const DefenderInput: FC<Props> = ({
       defendantId: string,
       property: InputType,
       value: string,
+      isCivilClaim: boolean,
     ) => {
       const propertyValidation = propertyValidations(property)
       const update = formatUpdate(property, value)
@@ -209,7 +238,11 @@ const DefenderInput: FC<Props> = ({
         propertyValidation.errorMessageHandler.setErrorMessage,
       )
 
-      updateDefendant({ ...update, caseId, defendantId })
+      if (isCivilClaim) {
+        updateDefendant({ ...update, caseId, defendantId })
+      } else {
+        updateDefendant({ ...update, caseId, defendantId })
+      }
     },
     [formatUpdate, propertyValidations, updateDefendant],
   )
@@ -241,7 +274,9 @@ const DefenderInput: FC<Props> = ({
                 }
               : null
           }
-          onChange={handleLawyerChange}
+          onChange={(selectedOption) =>
+            handleLawyerChange(selectedOption, isCivilClaim)
+          }
           filterConfig={{ matchFrom: 'start' }}
           isCreatable
           isDisabled={Boolean(disabled)}
@@ -270,6 +305,7 @@ const DefenderInput: FC<Props> = ({
                 defendantId,
                 'defenderEmail',
                 event.target.value,
+                isCivilClaim,
                 setWorkingCase,
               )
             } else {
@@ -290,6 +326,7 @@ const DefenderInput: FC<Props> = ({
                 defendantId,
                 'defenderEmail',
                 event.target.value,
+                isCivilClaim,
               )
             } else {
               validateAndSendToServer(
@@ -319,6 +356,7 @@ const DefenderInput: FC<Props> = ({
               defendantId,
               'defenderPhoneNumber',
               event.target.value,
+              isCivilClaim,
               setWorkingCase,
             )
           } else {
@@ -339,6 +377,7 @@ const DefenderInput: FC<Props> = ({
               defendantId,
               'defenderPhoneNumber',
               event.target.value,
+              isCivilClaim,
             )
           } else {
             validateAndSendToServer(
