@@ -58,7 +58,7 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
   }
 
   async parliamentaryIdentity({ auth }: TemplateApiModuleActionProps) {
-    let contactNationalId = isCompany(auth.nationalId)
+    const contactNationalId = isCompany(auth.nationalId)
       ? auth.actor?.nationalId ?? auth.nationalId
       : auth.nationalId
 
