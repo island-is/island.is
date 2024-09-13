@@ -343,7 +343,6 @@ export class DraftRegulationService {
             nationalId,
           )
 
-          console.log('person', person)
           if (person?.nafn) {
             author = {
               name: person.nafn,
