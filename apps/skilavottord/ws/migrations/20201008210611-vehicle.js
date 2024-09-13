@@ -1,4 +1,3 @@
-'use strict'
 //           newreg_date TIMESTAMP WITH TIME ZONE DEFAULT now(),
 //           vin_number VARCHAR,
 module.exports.up = (queryInterface, DataTypes) => {
