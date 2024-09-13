@@ -279,6 +279,7 @@ api:
     AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.dev01.devland.is'
     APOLLO_CACHE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    AUTH_ADMIN_API_PATH: 'https://identity-server.dev01.devland.is/backend'
     AUTH_ADMIN_API_PATHS: '{"development":"https://identity-server.dev01.devland.is/backend"}'
     AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
     AUTH_IDS_API_URL: 'https://identity-server.dev01.devland.is'
@@ -882,7 +883,7 @@ application-system-api-worker:
       cpu: '400m'
       memory: '768Mi'
     requests:
-      cpu: '100m'
+      cpu: '150m'
       memory: '384Mi'
   schedule: '*/30 * * * *'
   secrets:
@@ -1735,7 +1736,7 @@ license-api:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '15m'
+      cpu: '50m'
       memory: '256Mi'
   secrets:
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -1814,7 +1815,7 @@ portals-admin:
     scaling:
       metric:
         cpuAverageUtilization: 90
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 8
       replicas:
         max: 30
         min: 2
@@ -1844,7 +1845,7 @@ portals-admin:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '25m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2252,7 +2253,7 @@ service-portal-api:
       cpu: '800m'
       memory: '1024Mi'
     requests:
-      cpu: '400m'
+      cpu: '100m'
       memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2814,10 +2815,10 @@ skilavottord-web:
     scaling:
       metric:
         cpuAverageUtilization: 90
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 8
       replicas:
-        max: 3
-        min: 1
+        max: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
   ingress:
@@ -2836,9 +2837,9 @@ skilavottord-web:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 1
-    max: 3
-    min: 1
+    default: 2
+    max: 10
+    min: 2
   resources:
     limits:
       cpu: '200m'
@@ -3327,10 +3328,10 @@ web:
     min: 2
   resources:
     limits:
-      cpu: '400m'
+      cpu: '1000m'
       memory: '768Mi'
     requests:
-      cpu: '200m'
+      cpu: '300m'
       memory: '384Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'

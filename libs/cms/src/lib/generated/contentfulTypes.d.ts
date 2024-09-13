@@ -4369,6 +4369,9 @@ export interface ITeamListFields {
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
 
+  /** Filter groups */
+  filterGroups?: IGenericTagGroup[] | undefined
+
   /** Variant */
   variant?: 'card' | 'accordion' | undefined
 }
@@ -4408,7 +4411,13 @@ export interface ITeamMemberFields {
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
 
-  /** Intro */
+  /** Accordion email */
+  email?: string | undefined
+
+  /** Accordion phone */
+  phone?: string | undefined
+
+  /** Accordion free text */
   intro?: Document | undefined
 }
 

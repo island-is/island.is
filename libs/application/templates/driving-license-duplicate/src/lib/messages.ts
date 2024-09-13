@@ -257,6 +257,28 @@ export const m = defineMessages({
     description: 'Placeholder for office selection',
   },
 
+  /* Digital License Section */
+  digitalLicenseInfoTitle: {
+    id: 'dld.application:digitalLicenseInfoTitle',
+    defaultMessage: 'Stafrænt ökuskírteini',
+    description: 'Digital driving license',
+  },
+  digitalLicenseInfoDescription: {
+    id: 'dld.application:digitalLicenseInfoDescription',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    description: 'Digital driving license',
+  },
+  digitalLicenseInfoAlertTitle: {
+    id: 'dld.application:digitalLicenseInfoAlertTitle',
+    defaultMessage: 'Athugið',
+    description: 'Digital driving license',
+  },
+  digitalLicenseInfoAlertMessage: {
+    id: 'dld.application:digitalLicenseInfoAlertMessage#markdown',
+    defaultMessage: 'Þú ert að sækja um samrit ökuskírteinis.',
+    description: 'Digital driving license',
+  },
+
   /* Overview Section */
   overviewTitle: {
     id: 'dld.application:overview.title',
