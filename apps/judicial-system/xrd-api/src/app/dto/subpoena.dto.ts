@@ -17,7 +17,7 @@ export class UpdateSubpoenaDto {
 
   @IsOptional()
   @IsEnum(DefenderChoice)
-  @ApiProperty({ enum: DefenderChoice })
+  @ApiProperty({ enum: DefenderChoice, required: false })
   defenderChoice?: DefenderChoice
 
   @IsOptional()
