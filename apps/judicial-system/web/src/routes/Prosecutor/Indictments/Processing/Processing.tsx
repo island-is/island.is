@@ -138,11 +138,6 @@ const Processing: FC = () => {
       caseId: workingCase.id,
       name: '',
       nationalId: '',
-      /*
-        TODO: We need to be able to create a civil claim against any one of
-        the defendants in the case.
-      */
-      defendantId: workingCase.defendants ? workingCase.defendants[0].id : '',
     })
 
     createEmptyCivilClaimant(civilClaimantId)
@@ -156,7 +151,7 @@ const Processing: FC = () => {
       civilClaimants: prevWorkingCase.civilClaimants && [
         ...prevWorkingCase.civilClaimants,
         {
-          id: civilClaimantId || uuid(),
+          id: civilClaimantId,
           name: '',
           nationalId: '',
         } as CivilClaimant,
