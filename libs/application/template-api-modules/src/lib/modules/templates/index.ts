@@ -145,22 +145,26 @@ import { ParliamentaryListCreationService } from './signature-collection/parliam
 import { ParliamentaryListSigningModule } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.module'
 import { ParliamentaryListSigningService } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.service'
 
+export const dynamicModules = [
+  ParentalLeaveModule,
+  ChildrenResidenceChangeModule,
+  GeneralPetitionModule,
+  SocialInsuranceAdministrationModule,
+]
+
 export const modules = [
   ReferenceTemplateModule,
   GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
   PublicDebtPaymentPlanTemplateModule,
-  ParentalLeaveModule,
   DocumentProviderOnboardingModule,
   InstitutionCollaborationModule,
   HealthInsuranceModule,
-  ChildrenResidenceChangeModule,
   ChildrenResidenceChangeModuleV2,
   LoginServiceModule,
   FundingGovernmentProjectsModule,
   DrivingLicenseSubmissionModule,
   AccidentNotificationModule,
-  GeneralPetitionModule,
   CriminalRecordSubmissionModule,
   PSignSubmissionModule,
   AnnouncementOfDeathModule,
@@ -193,7 +197,6 @@ export const modules = [
   DrivingLicenseBookUpdateInstructorModule,
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
-  SocialInsuranceAdministrationModule,
   CarRecyclingModule,
   CitizenshipModule,
   EnergyFundsModule,
