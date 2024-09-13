@@ -1,5 +1,5 @@
-query GetSubpoena($input: LawAndOrderSubpoenaInput!) {
-  lawAndOrderSubpoena(input: $input) {
+query GetSubpoena($input: LawAndOrderSubpoenaInput!, $locale: String!) {
+  lawAndOrderSubpoena(input: $input, locale: $locale) {
     texts {
       intro
       confirmation

@@ -39,8 +39,8 @@ const Subpoena = () => {
     variables: {
       input: {
         id,
-        locale: lang,
       },
+      locale: lang,
     },
   })
 

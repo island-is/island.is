@@ -6,7 +6,4 @@ export class GetSubpoenaInput {
   @Field()
   @IsString()
   id!: string
-
-  @Field()
-  locale!: 'is' | 'en'
 }

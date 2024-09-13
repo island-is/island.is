@@ -6,7 +6,4 @@ export class GetCourtCaseInput {
   @Field()
   @IsString()
   id!: string
-
-  @Field()
-  locale!: 'is' | 'en'
 }

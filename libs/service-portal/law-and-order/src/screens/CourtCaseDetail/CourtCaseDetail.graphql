@@ -1,5 +1,5 @@
-query GetCourtCase($input: LawAndOrderCourtCaseInput!) {
-  lawAndOrderCourtCaseDetail(input: $input) {
+query GetCourtCase($input: LawAndOrderCourtCaseInput!, $locale: String!) {
+  lawAndOrderCourtCaseDetail(input: $input, locale: $locale) {
     texts {
       intro
       footnote
@@ -28,14 +28,5 @@ query GetCourtCase($input: LawAndOrderCourtCaseInput!) {
         }
       }
     }
-  }
-}
-
-mutation PostSubpoenaAcknowledged(
-  $input: LawAndOrderSubpoenaAcknowledgedInput!
-) {
-  lawAndOrderSubpoenaAcknowledged(input: $input) {
-    caseId
-    acknowledged
   }
 }

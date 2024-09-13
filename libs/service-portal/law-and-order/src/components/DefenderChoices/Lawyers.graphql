@@ -8,8 +8,11 @@ query GetLawyers {
   }
 }
 
-mutation PostDefenseChoice($input: LawAndOrderDefenseChoiceInput!) {
-  lawAndOrderDefenseChoicePost(input: $input) {
+mutation PostDefenseChoice(
+  $input: LawAndOrderDefenseChoiceInput!
+  $locale: String!
+) {
+  lawAndOrderDefenseChoicePost(input: $input, locale: $locale) {
     caseId
   }
 }

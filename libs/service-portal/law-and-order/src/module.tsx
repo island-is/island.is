@@ -3,15 +3,16 @@ import { LawAndOrderPaths } from './lib/paths'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Navigate } from 'react-router-dom'
 import { m } from '@island.is/service-portal/core'
-import { Components } from './lib/const'
 import { lazy } from 'react'
 import { Features } from '@island.is/feature-flags'
 
-const IndexComponent = lazy(() => import('./screens/index'))
-
+const Overview = lazy(() => import('./screens/Overview/LawAndOrderOverview'))
+const CourtCases = lazy(() => import('./screens/CourtCases/CourtCases'))
+const CourtCaseDetail = lazy(() =>
+  import('./screens/CourtCaseDetail/CourtCaseDetail'),
+)
+const Subpoena = lazy(() => import('./screens/Subpoena/Subpoena'))
 export const lawAndOrderModule: PortalModule = {
-  //TODO: Replace with correct scope! .lawAndOrder
-
   name: m.lawAndOrder,
   featureFlag: Features.servicePortalLawAndOrderModuleEnabled,
   routes: ({ userInfo }) => [
@@ -25,25 +26,25 @@ export const lawAndOrderModule: PortalModule = {
       name: m.overview,
       path: LawAndOrderPaths.Overview,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
-      element: <IndexComponent component={Components.OVERVIEW} />,
+      element: <Overview />,
     },
     {
       name: m.courtCases,
       path: LawAndOrderPaths.CourtCases,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
-      element: <IndexComponent component={Components.COURT_CASES} />,
+      element: <CourtCases />,
     },
     {
       name: m.courtCases,
       path: LawAndOrderPaths.CourtCaseDetail,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
-      element: <IndexComponent component={Components.COURT_CASE_DETAIL} />,
+      element: <CourtCaseDetail />,
     },
     {
       name: m.subpoena,
       path: LawAndOrderPaths.SubpoenaDetail,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
-      element: <IndexComponent component={Components.SUBPOENA} />,
+      element: <Subpoena />,
     },
   ],
 }

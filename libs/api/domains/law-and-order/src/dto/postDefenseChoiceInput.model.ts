@@ -14,7 +14,4 @@ export class PostDefenseChoiceInput {
   @Field({ nullable: true })
   @IsOptional()
   lawyersNationalId?: string
-
-  @Field(() => String)
-  locale!: 'is' | 'en'
 }

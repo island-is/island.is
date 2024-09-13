@@ -1,12 +1,5 @@
 import { LawAndOrderDefenseChoiceEnum } from '@island.is/api/schema'
 
-export enum Components {
-  OVERVIEW = 'overview',
-  COURT_CASES = 'courtCases',
-  COURT_CASE_DETAIL = 'courtCaseDetail',
-  SUBPOENA = 'subpoena',
-}
-
 interface Choice {
   code: LawAndOrderDefenseChoiceEnum
   message: {

@@ -1,5 +1,5 @@
-query GetCourtCases($input: LawAndOrderCourtCasesInput!) {
-  lawAndOrderCourtCasesList(input: $input) {
+query GetCourtCases($locale: String!) {
+  lawAndOrderCourtCasesList(locale: $locale) {
     items {
       id
       caseNumber

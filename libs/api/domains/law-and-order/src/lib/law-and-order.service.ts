@@ -3,18 +3,11 @@ import type { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 import {
   CasesResponse,
-  Defender,
   JudicialSystemSPClientService,
   SubpoenaResponse,
 } from '@island.is/clients/judicial-system-sp'
 import { CourtCases } from '../models/courtCases.model'
-import { getSubpoena } from './helpers/mockData'
-import { CourtCase } from '../models/courtCase.model'
-import { Subpoena } from '../models/subpoena.model'
-import { Lawyers } from '../models/lawyers.model'
 import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
-import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedInput.model'
-import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
 import { mapDefenseChoice } from './helpers/mappers'
 import { Item } from '../models/item.model'
 
@@ -48,15 +41,15 @@ export class LawAndOrderService {
 
   async getCourtCase(user: User, id: string, locale: Locale) {
     const singleCase = await this.api.getCase(id, user, locale)
-    if (singleCase === null) return null
+    const isSubpoenaAcknowledged = singleCase?.data.acknowledged
 
-    let data: CourtCase = {}
-
-    const isSubpoenaAcknowledged = singleCase.data.acknowledged
     const subpoenaString = locale === 'is' ? 'Fyrirkall' : 'Subpoena'
-    const subpoenaSentIndex = singleCase.data.groups[0].items.findIndex(
+    const subpoenaSentIndex = singleCase?.data.groups[0].items.findIndex(
       (item) => item.label.includes(subpoenaString),
     )
+
+    // If the subpoena has not been acknowledged
+    // add an action to the line including "fyrirkall" to redirect to the digital mailbox
     const subpoenaSentItem: Item | undefined = {
       action: !isSubpoenaAcknowledged
         ? {
@@ -74,7 +67,7 @@ export class LawAndOrderService {
         : undefined,
     }
 
-    data = {
+    return {
       data: {
         id: singleCase?.caseId ?? id,
         acknowledged: isSubpoenaAcknowledged,
@@ -96,20 +89,13 @@ export class LawAndOrderService {
 
       texts: undefined,
     }
-
-    return data
   }
 
   async getSubpoena(user: User, id: string, locale: Locale) {
     const subpoena: SubpoenaResponse | undefined | null =
       await this.api.getSubpoena(id, user, locale)
 
-    if (subpoena === null) return null
-
-    const mockAnswer = getSubpoena(id).data
-    let data: Subpoena = {}
-
-    data = {
+    return {
       data: {
         id: subpoena?.caseId ?? id,
         acknowledged: subpoena?.data.acknowledged,
@@ -118,65 +104,30 @@ export class LawAndOrderService {
         groups: subpoena?.data.groups,
       },
       actions: undefined,
-      texts: mockAnswer?.texts,
     }
-
-    return data
   }
 
   async getLawyers(user: User) {
-    const answer: Array<Defender> | undefined | null =
-      await this.api.getLawyers(user)
-    const list: Lawyers = { items: [] }
-
-    answer?.map((x) => {
-      list.items?.push({
-        name: x.name,
-        nationalId: x.nationalId,
-        practice: x.practice,
-      })
-    })
-
-    return list
+    return await this.api.getLawyers(user)
   }
 
-  async postDefenseChoice(user: User, input: PostDefenseChoiceInput) {
+  async postDefenseChoice(
+    user: User,
+    input: PostDefenseChoiceInput,
+    locale: Locale,
+  ) {
     if (!input || !input.choice) return null
 
-    const res = await this.api.patchSubpoena(
+    return await this.api.patchSubpoena(
       {
         caseId: input.caseId,
         updateSubpoenaDto: {
           defenderChoice: mapDefenseChoice(input.choice),
           defenderNationalId: input.lawyersNationalId,
         },
-        locale: input.locale,
+        locale: locale,
       },
       user,
     )
-    return res
-  }
-
-  // TODO: Wait for pósthólfs api to be ready
-  async isSubpoenaAcknowledged(user: User, id?: string) {
-    if (!id) return undefined
-    const randomBoolean = Math.random() < 0.75
-
-    return randomBoolean
-  }
-
-  // TODO: Wait for pósthólfs api to be ready
-  async postSubpoenaAcknowledged(
-    user: User,
-    input: PostSubpoenaAcknowledgedInput,
-  ) {
-    if (!input) return null
-
-    const res: SubpoenaAcknowledged = {
-      caseId: input.caseId,
-      acknowledged: input.acknowledged,
-    }
-
-    return res
   }
 }

@@ -1,11 +1,10 @@
-import { Box, Button, toast } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import {
   DOMSMALARADUNEYTID_SLUG,
   IntroHeader,
   LinkResolver,
   m,
   NotFound,
-  ConfirmationModal,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -13,11 +12,7 @@ import { useParams } from 'react-router-dom'
 import { LawAndOrderPaths } from '../../lib/paths'
 import InfoLines from '../../components/InfoLines/InfoLines'
 import { useEffect } from 'react'
-import { useLawAndOrderContext } from '../../helpers/LawAndOrderContext'
-import {
-  useGetCourtCaseQuery,
-  usePostSubpoenaAcknowledgedMutation,
-} from './CourtCaseDetail.generated'
+import { useGetCourtCaseQuery } from './CourtCaseDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
@@ -34,75 +29,17 @@ const CourtCaseDetail = () => {
     variables: {
       input: {
         id,
-        locale: lang,
       },
+      locale: lang,
     },
   })
 
   const courtCase = data?.lawAndOrderCourtCaseDetail
 
-  const {
-    subpoenaAcknowledged,
-    setSubpoenaAcknowledged,
-    subpoenaModalVisible,
-    setSubpoenaModalVisible,
-  } = useLawAndOrderContext()
-
   useEffect(() => {
     refetch()
   }, [lang])
 
-  useEffect(() => {
-    if (courtCase && subpoenaAcknowledged === undefined) {
-      setSubpoenaAcknowledged(courtCase?.data?.acknowledged ?? undefined)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const toggleModal = () => {
-    setSubpoenaModalVisible(!subpoenaModalVisible)
-  }
-
-  const [postAction, { loading: postActionLoading, data: updateData }] =
-    usePostSubpoenaAcknowledgedMutation({
-      onError: () => {
-        toast.error(formatMessage(messages.registrationError))
-      },
-      onCompleted: () => {
-        //TODO: What to do if user closes or cancel the pop up?
-
-        subpoenaAcknowledged &&
-          toast.success(formatMessage(messages.registrationCompleted))
-        setSubpoenaModalVisible(false)
-      },
-    })
-
-  const handleSubmit = () => {
-    // TODO: What to do if error ?
-    setSubpoenaAcknowledged(true)
-    postAction({
-      variables: {
-        input: {
-          caseId: id,
-          acknowledged: true,
-        },
-      },
-    })
-  }
-  const handleCancel = () => {
-    // TODO: What to do if error ?
-    setSubpoenaAcknowledged(false)
-    postAction({
-      variables: {
-        input: {
-          caseId: id,
-          acknowledged: false,
-        },
-      },
-    })
-  }
-
-  //TODO: Samræma við þjónustu
   if (data?.lawAndOrderCourtCaseDetail == null && !loading) {
     return <NotFound title={formatMessage(messages.courtCaseNotFound)} />
   }
@@ -122,7 +59,7 @@ const CourtCaseDetail = () => {
       <Box marginBottom={3} display="flex" flexWrap="wrap">
         {data?.lawAndOrderCourtCaseDetail && !loading && (
           <Box paddingRight={2} marginBottom={[1]}>
-            {subpoenaAcknowledged && (
+            {courtCase?.data?.acknowledged && (
               <LinkResolver
                 href={LawAndOrderPaths.SubpoenaDetail.replace(
                   ':id',
@@ -145,52 +82,11 @@ const CourtCaseDetail = () => {
           </Box>
         )}
         {error && !loading && <Problem error={error} noBorder={false} />}
-        {/* No actions are being returned in the moment - might revisit later */}
-        {/* {!error &&
-          !loading &&
-          courtCase?.actions &&
-          courtCase.actions.length > 0 && (
-            <Box paddingRight={2} marginBottom={[1]}>
-              {courtCase?.actions?.map((x, y) => {
-                return (
-                  <Button
-                    as="span"
-                    unfocusable
-                    colorScheme="default"
-                    icon="download"
-                    iconType="outline"
-                    size="default"
-                    variant="utility"
-                    key={`'courtcase-button-'${y}`}
-                    onClick={() => alert('hleður niður PDF')} // TODO: Implement download
-                  >
-                    {x.title}
-                  </Button>
-                )
-              })}
-            </Box>
-          )} */}
       </Box>
-      {!error && courtCase && (
-        <>
-          {courtCase?.data?.groups && (
-            <InfoLines groups={courtCase?.data?.groups} loading={loading} />
-          )}
-          {courtCase?.data && subpoenaModalVisible && !subpoenaAcknowledged && (
-            <ConfirmationModal
-              onSubmit={handleSubmit}
-              onCancel={handleCancel}
-              onClose={toggleModal}
-              loading={postActionLoading}
-              redirectPath={LawAndOrderPaths.SubpoenaDetail.replace(':id', id)}
-              modalTitle={formatMessage(m.acknowledgeTitle)}
-              modalText={formatMessage(m.acknowledgeText, {
-                arg: formatMessage(messages.modalFromPolice),
-              })}
-            />
-          )}
-        </>
+      {!error && courtCase && courtCase?.data?.groups && (
+        <InfoLines groups={courtCase?.data?.groups} loading={loading} />
       )}
+
       {!loading &&
         !error &&
         courtCase?.data &&

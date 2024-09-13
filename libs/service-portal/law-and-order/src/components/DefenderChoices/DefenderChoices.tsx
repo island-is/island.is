@@ -71,8 +71,8 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
             caseId: id,
             choice: data.choice,
             lawyersNationalId: data.lawyersNationalId,
-            locale: lang,
           },
+          locale: lang,
         },
       })
     }

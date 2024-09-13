@@ -19,10 +19,9 @@ import { Subpoena } from '../models/subpoena.model'
 import { Lawyers } from '../models/lawyers.model'
 import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
 import { DefenseChoice } from '../models/defenseChoice.model'
-import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedInput.model'
-import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
-import { GetCourtCasesInput } from '../dto/getCourtCasesInput.model'
 import { ApiScope } from '@island.is/auth/scopes'
+import type { Locale } from '@island.is/shared/types'
+
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/law-and-order' })
@@ -43,9 +42,10 @@ export class LawAndOrderResolver {
   @Audit()
   getCourtCasesList(
     @CurrentUser() user: User,
-    @Args('input') input: GetCourtCasesInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
   ) {
-    return this.lawAndOrderService.getCourtCases(user, input.locale)
+    return this.lawAndOrderService.getCourtCases(user, locale)
   }
 
   @Scopes(ApiScope.lawAndOrder)
@@ -57,8 +57,10 @@ export class LawAndOrderResolver {
   getCourtCaseDetail(
     @CurrentUser() user: User,
     @Args('input') input: GetCourtCaseInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
   ) {
-    return this.lawAndOrderService.getCourtCase(user, input.id, input.locale)
+    return this.lawAndOrderService.getCourtCase(user, input.id, locale)
   }
 
   @Scopes(ApiScope.lawAndOrder)
@@ -67,8 +69,10 @@ export class LawAndOrderResolver {
   getSubpoena(
     @CurrentUser() user: User,
     @Args('input') input: GetSubpoenaInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
   ) {
-    return this.lawAndOrderService.getSubpoena(user, input.id, input.locale)
+    return this.lawAndOrderService.getSubpoena(user, input.id, locale)
   }
 
   @Scopes(ApiScope.lawAndOrder)
@@ -86,25 +90,10 @@ export class LawAndOrderResolver {
   @Audit()
   postDefenseChoice(
     @Args('input') input: PostDefenseChoiceInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @CurrentUser() user: User,
   ) {
-    return this.lawAndOrderService.postDefenseChoice(user, {
-      ...input,
-    })
-  }
-
-  @Scopes(ApiScope.lawAndOrder)
-  @Mutation(() => SubpoenaAcknowledged, {
-    name: 'lawAndOrderSubpoenaAcknowledged',
-    nullable: true,
-  })
-  @Audit()
-  postSubpoenaAcknowledged(
-    @Args('input') input: PostSubpoenaAcknowledgedInput,
-    @CurrentUser() user: User,
-  ) {
-    return this.lawAndOrderService.postSubpoenaAcknowledged(user, {
-      ...input,
-    })
+    return this.lawAndOrderService.postDefenseChoice(user, input, locale)
   }
 }

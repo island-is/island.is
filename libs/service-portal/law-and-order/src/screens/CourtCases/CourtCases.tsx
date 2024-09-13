@@ -20,9 +20,7 @@ const CourtCases = () => {
 
   const { data, loading, error, refetch } = useGetCourtCasesQuery({
     variables: {
-      input: {
-        locale: lang,
-      },
+      locale: lang,
     },
   })
 
