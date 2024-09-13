@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, motion, stagger, useAnimate } from 'framer-motion'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
+import { uuid } from 'uuidv4'
 
 import {
   Box,
@@ -128,6 +129,36 @@ const Processing: FC = () => {
       mutate()
     }
   }, [mutate, nID])
+
+  const handleCreateCivilClaimantClick = async () => {
+    if (workingCase.id) {
+      const civilClaimantId = await createCivilClaimant({
+        caseId: workingCase.id,
+        name: '',
+        nationalId: '',
+      })
+
+      createEmptyCivilClaimant(civilClaimantId)
+    } else {
+      createEmptyCivilClaimant()
+    }
+
+    window.scrollTo(0, document.body.scrollHeight)
+  }
+
+  const createEmptyCivilClaimant = (civilClaimantId?: string) => {
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      civilClaimants: prevWorkingCase.civilClaimants && [
+        ...prevWorkingCase.civilClaimants,
+        {
+          id: civilClaimantId || uuid(),
+          name: '',
+          nationalId: '',
+        } as TCivilClaimant,
+      ],
+    }))
+  }
 
   return (
     <PageLayout
@@ -340,6 +371,15 @@ const Processing: FC = () => {
                 </>
               )}
             </BlueBox>
+            <Box display="flex" justifyContent="flexEnd">
+              <Button
+                variant="ghost"
+                icon="add"
+                onClick={handleCreateCivilClaimantClick}
+              >
+                {formatMessage(strings.addCivilClaimant)}
+              </Button>
+            </Box>
           </Box>
         )}
       </FormContentContainer>
