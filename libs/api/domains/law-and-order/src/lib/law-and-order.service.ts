@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
-import { Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 import {
   CasesResponse,
+  Defender,
   JudicialSystemSPClientService,
   SubpoenaResponse,
 } from '@island.is/clients/judicial-system-sp'
-import { CourtCases } from '../models/courtCases.model'
 import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
 import { mapDefenseChoice } from './helpers/mappers'
 import { Item } from '../models/item.model'
+import { Lawyers } from '../models/lawyers.model'
 
 @Injectable()
 export class LawAndOrderService {
@@ -22,21 +23,18 @@ export class LawAndOrderService {
     )
     if (cases === null) return null
 
-    const list: CourtCases = { items: [] }
-    const randomBoolean = Math.random() < 0.75
-
-    cases?.map((x: CasesResponse) => {
-      list.items?.push({
-        id: x.id,
-        acknowledged: randomBoolean,
-        caseNumber: x.caseNumber,
-        caseNumberTitle: x.caseNumber,
-        state: x.state,
-        type: x.type,
-      })
-    })
-
-    return list
+    return {
+      items:
+        cases?.map((x: CasesResponse) => {
+          return {
+            id: x.id,
+            caseNumber: x.caseNumber,
+            caseNumberTitle: x.caseNumber,
+            state: x.state,
+            type: x.type,
+          }
+        }) ?? [],
+    }
   }
 
   async getCourtCase(user: User, id: string, locale: Locale) {
@@ -108,7 +106,17 @@ export class LawAndOrderService {
   }
 
   async getLawyers(user: User) {
-    return await this.api.getLawyers(user)
+    const answer: Array<Defender> | undefined | null =
+      await this.api.getLawyers(user)
+    const list: Lawyers = { items: [] }
+    answer?.map((x) => {
+      list.items?.push({
+        name: x.name,
+        nationalId: x.nationalId,
+        practice: x.practice,
+      })
+    })
+    return list
   }
 
   async postDefenseChoice(

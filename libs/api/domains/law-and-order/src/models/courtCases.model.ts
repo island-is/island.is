@@ -28,9 +28,6 @@ export class Item {
 
   @Field(() => State, { nullable: true })
   state?: State
-
-  @Field({ nullable: true })
-  acknowledged?: boolean
 }
 
 @ObjectType('LawAndOrderCourtCases')

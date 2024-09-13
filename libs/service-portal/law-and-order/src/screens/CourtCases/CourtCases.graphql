@@ -8,7 +8,6 @@ query GetCourtCases($locale: String!) {
       state {
         title
       }
-      acknowledged
     }
   }
 }
