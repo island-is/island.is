@@ -122,7 +122,7 @@ const CourtCaseDetail = () => {
       <Box marginBottom={3} display="flex" flexWrap="wrap">
         {data?.lawAndOrderCourtCaseDetail && !loading && (
           <Box paddingRight={2} marginBottom={[1]}>
-            {subpoenaAcknowledged ? (
+            {subpoenaAcknowledged && (
               <LinkResolver
                 href={LawAndOrderPaths.SubpoenaDetail.replace(
                   ':id',
@@ -141,37 +141,6 @@ const CourtCaseDetail = () => {
                   {formatMessage(messages.seeSubpoena)}
                 </Button>
               </LinkResolver>
-            ) : (
-              <Button
-                as="span"
-                unfocusable
-                colorScheme="default"
-                icon="receipt"
-                iconType="outline"
-                size="default"
-                variant="utility"
-                onClick={() => toggleModal()}
-              >
-                {formatMessage(messages.seeSubpoena)}
-              </Button>
-              // <LinkResolver
-              //   href={DocumentsPaths.ElectronicDocumentSingle.replace(
-              //     ':id',
-              //     '52b25547-321d-4584-ba3d-2a7901228b25',
-              //   )}
-              // >
-              //   <Button
-              //     as="span"
-              //     unfocusable
-              //     colorScheme="default"
-              //     icon="receipt"
-              //     iconType="outline"
-              //     size="default"
-              //     variant="utility"
-              //   >
-              //     {formatMessage(messages.seeSubpoena)}
-              //   </Button>
-              // </LinkResolver>
             )}
           </Box>
         )}
