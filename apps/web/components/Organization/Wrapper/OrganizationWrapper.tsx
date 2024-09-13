@@ -59,7 +59,10 @@ import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
-import { FiskistofaHeader } from './Themes/FiskistofaTheme'
+import {
+  FiskistofaDefaultHeader,
+  FiskistofaHeader,
+} from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
 import {
   FjarsyslaRikisinsFooter,
@@ -328,7 +331,13 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'fiskistofa':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <FiskistofaDefaultHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+        />
+      ) : (
         <FiskistofaHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
