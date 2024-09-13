@@ -23,7 +23,7 @@ export class LatestGenericListItems {
   @CacheField(() => GenericList, { nullable: true })
   genericList?: GenericList | null
 
-  @CacheField(() => PageUnion)
+  @CacheField(() => PageUnion, { nullable: true })
   seeMorePage?: typeof PageUnion | null
 
   @Field()
