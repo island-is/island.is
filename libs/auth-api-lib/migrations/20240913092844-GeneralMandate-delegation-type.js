@@ -19,9 +19,9 @@ module.exports = {
     await queryInterface.sequelize.query(`
       BEGIN;
 
-      DELETE FROM client_delegation_types where delegation_type = 'GeneralMandate'
+      DELETE FROM client_delegation_types where delegation_type = 'GeneralMandate';
 
-      DELETE FROM api_scope_delegation_types where delegation_type = 'GeneralMandate'
+      DELETE FROM api_scope_delegation_types where delegation_type = 'GeneralMandate';
 
       DELETE FROM delegation_type WHERE id = 'GeneralMandate';
 
