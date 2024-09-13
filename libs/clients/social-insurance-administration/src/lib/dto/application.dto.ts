@@ -6,6 +6,7 @@ import {
   TaxInfo,
   ApplicantInfo,
   Employer,
+  SpouseTaxCardUsage,
 } from '../socialInsuranceAdministrationClient.type'
 
 export interface ApplicationDTO {
@@ -27,4 +28,5 @@ export interface ApplicationDTO {
   employers?: Array<Employer>
   deceasedNationalId?: string
   childrenNationalIds?: string[]
+  spouseTaxCardUsage?: SpouseTaxCardUsage
 }

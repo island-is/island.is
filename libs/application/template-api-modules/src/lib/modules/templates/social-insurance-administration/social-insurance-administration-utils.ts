@@ -365,6 +365,10 @@ export const transformApplicationToSurvivorsBenefitsDTO = (
     comment,
     deceasedNationalId: deceasedSpouseNationalId,
     childrenNationalIds: getChildrenNationalIds(children),
+    spouseTaxCardUsage: {
+      useCard: spouseAllowance === YES,
+      ratio: Number(spouseAllowanceUsage),
+    },
   }
 
   return survivorsBenefitsDTO

@@ -70,6 +70,11 @@ export interface Employer {
   ratioMonthly?: Months
 }
 
+export interface SpouseTaxCardUsage {
+  useCard: boolean
+  ratio: number
+}
+
 export interface Months {
   january?: number
   february?: number
