@@ -9,7 +9,7 @@ export class CreatePaperDelegationDto {
   @IsString()
   @ApiProperty()
   toNationalId!: string
-  
+
   @ApiProperty()
   @IsString()
   referenceId!: string
