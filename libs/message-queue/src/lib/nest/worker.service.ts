@@ -77,7 +77,7 @@ export class WorkerService implements OnModuleDestroy {
       `Processing ${messages.length} message${messages.length > 1 ? 's' : ''}`,
       {
         messageIds: messages.map((msg) => msg.MessageId),
-        institutions: messages.map((msg) => msg.Attributes?.institution),
+        institutions: messages.map((msg) => msg.MessageAttributes?.institution),
       },
     )
 
