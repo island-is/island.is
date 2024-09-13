@@ -134,7 +134,8 @@ export const IncomePlanForm: Form = buildForm({
                         activeField?.incomeType === FOREIGN_BASIC_PENSION ||
                         activeField?.incomeType === FOREIGN_PENSION ||
                         activeField?.incomeType === FOREIGN_INCOME ||
-                        activeField?.incomeType === INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
+                        activeField?.incomeType ===
+                          INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
                         activeField?.incomeType === DIVIDENDS_IN_FOREIGN_BANKS
                           ? ''
                           : ISK
@@ -152,7 +153,8 @@ export const IncomePlanForm: Form = buildForm({
                       activeField?.incomeType === FOREIGN_BASIC_PENSION ||
                       activeField?.incomeType === FOREIGN_PENSION ||
                       activeField?.incomeType === FOREIGN_INCOME ||
-                      activeField?.incomeType === INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
+                      activeField?.incomeType ===
+                        INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
                       activeField?.incomeType === DIVIDENDS_IN_FOREIGN_BANKS
                         ? ISK
                         : ''
