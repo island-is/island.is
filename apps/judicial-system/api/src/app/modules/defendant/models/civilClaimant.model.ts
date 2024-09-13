@@ -6,32 +6,32 @@ export class CivilClaimant {
   readonly id!: string
 
   @Field(() => String, { nullable: true })
-  readonly created?: string
+  readonly created!: string
 
   @Field(() => String, { nullable: true })
   readonly modified?: string
 
-  @Field(() => ID, { nullable: true })
-  readonly caseId?: string
+  @Field(() => ID)
+  readonly caseId!: string
 
-  @Field(() => ID, { nullable: true })
-  readonly defendantId?: string
-
-  @Field(() => String, { nullable: true })
-  readonly name?: string
+  @Field(() => String)
+  readonly name!: string
 
   @Field(() => String, { nullable: true })
   readonly nationalId?: string
 
   @Field(() => String, { nullable: true })
-  readonly defenderName?: string
+  readonly spokespersonName?: string
 
   @Field(() => String, { nullable: true })
-  readonly defenderEmail?: string
+  readonly spokespersonEmail?: string
 
   @Field(() => String, { nullable: true })
-  readonly defenderPhoneNumber?: string
+  readonly spokespersonPhoneNumber?: string
 
   @Field(() => Boolean, { nullable: true })
-  readonly caseFilesSharedWithDefender?: boolean
+  readonly caseFilesSharedWithSpokesperson?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isLawyer?: boolean
 }

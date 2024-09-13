@@ -25,14 +25,6 @@ module.exports = {
             },
             allowNull: false,
           },
-          defendant_id: {
-            type: Sequelize.UUID,
-            references: {
-              model: 'defendant',
-              key: 'id',
-            },
-            allowNull: false,
-          },
           name: {
             type: Sequelize.STRING,
             allowNull: false,
@@ -41,19 +33,23 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: true,
           },
-          defender_name: {
+          spokesperson_name: {
             type: Sequelize.STRING,
             allowNull: true,
           },
-          defender_email: {
+          spokesperson_email: {
             type: Sequelize.STRING,
             allowNull: true,
           },
-          defender_phone_number: {
+          spokesperson_phone_number: {
             type: Sequelize.STRING,
             allowNull: true,
           },
-          case_files_shared_with_defender: {
+          case_files_shared_with_spokesperson: {
+            type: Sequelize.BOOLEAN,
+            allowNull: true,
+          },
+          is_lawyer: {
             type: Sequelize.BOOLEAN,
             allowNull: true,
           },

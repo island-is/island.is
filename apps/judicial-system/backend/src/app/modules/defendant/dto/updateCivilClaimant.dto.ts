@@ -1,10 +1,4 @@
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator'
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -22,20 +16,25 @@ export class UpdateCivilClaimantDto {
   @IsOptional()
   @IsString()
   @ApiProperty({ type: String })
-  readonly defenderName?: string
+  readonly spokespersonName?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty({ type: String })
-  readonly defenderEmail?: string
+  readonly spokespersonEmail?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty({ type: String })
-  readonly defenderPhoneNumber?: string
+  readonly spokespersonPhoneNumber?: string
 
   @IsOptional()
   @IsBoolean()
   @ApiProperty({ type: Boolean })
-  readonly caseFilesSharedWithDefender?: boolean
+  readonly caseFilesSharedWithSpokesperson?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty({ type: Boolean })
+  readonly isLawyer?: boolean
 }

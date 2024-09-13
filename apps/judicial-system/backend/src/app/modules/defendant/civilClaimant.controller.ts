@@ -18,14 +18,11 @@ import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { CreateCivilClaimantDto } from './dto/createCivilClaimant.dto'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
-import { CurrentDefendant } from './guards/defendant.decorator'
-import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { CivilClaimant } from './models/civilClaimant.model'
-import { Defendant } from './models/defendant.model'
 import { CivilClaimantService } from './civildClaimant.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('api/case/:caseId/defendant/:defendantId/civilClaimant')
+@Controller('api/case/:caseId/civilClaimant')
 @ApiTags('civilClaimants')
 export class CivilClaimantController {
   constructor(
@@ -33,7 +30,7 @@ export class CivilClaimantController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard, DefendantExistsGuard)
+  @UseGuards(CaseExistsGuard)
   @Post()
   @ApiCreatedResponse({
     type: CivilClaimant,
@@ -41,20 +38,13 @@ export class CivilClaimantController {
   })
   async create(
     @Param('caseId') caseId: string,
-    @Param('defendantId') defendantId: string,
     @CurrentCase() theCase: Case,
-    @CurrentDefendant() defendant: Defendant,
+
     @Body() createCivilClaimantDto: CreateCivilClaimantDto,
   ): Promise<CivilClaimant> {
-    this.logger.debug(
-      `Creating a new civil claimant for defendant ${defendantId} in case ${caseId}`,
-    )
+    this.logger.debug(`Creating a new civil claimant for case ${caseId}`)
 
-    return this.civilClaimantService.create(
-      theCase,
-      defendant,
-      createCivilClaimantDto,
-    )
+    return this.civilClaimantService.create(theCase, createCivilClaimantDto)
   }
 
   @UseGuards(CaseExistsGuard)
@@ -65,12 +55,11 @@ export class CivilClaimantController {
   })
   async update(
     @Param('caseId') caseId: string,
-    @Param('defendantId') defendantId: string,
     @Param('civilClaimantId') civilClaimantId: string,
     @Body() updateCivilClaimantDto: UpdateCivilClaimantDto,
   ): Promise<CivilClaimant> {
     this.logger.debug(
-      `Updating civil claimant ${civilClaimantId} for defendant ${defendantId} in case ${caseId}`,
+      `Updating civil claimant ${civilClaimantId} in case ${caseId}`,
     )
     return this.civilClaimantService.update(
       civilClaimantId,

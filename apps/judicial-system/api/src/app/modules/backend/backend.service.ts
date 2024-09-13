@@ -343,35 +343,27 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   createCivilClaimant(
     caseId: string,
-    defendantId: string,
     createCivilClaimant: unknown,
   ): Promise<CivilClaimant> {
-    return this.post(
-      `case/${caseId}/defendant/${defendantId}/civilClaimant`,
-      createCivilClaimant,
-    )
+    return this.post(`case/${caseId}/civilClaimant`, createCivilClaimant)
   }
 
   updateCivilClaimant(
     caseId: string,
-    defendantId: string,
     civilClaimantId: string,
     updateCivilClaimant: unknown,
   ): Promise<CivilClaimant> {
     return this.patch(
-      `case/${caseId}/defendant/${defendantId}/civilClaimant/${civilClaimantId}`,
+      `case/${caseId}/civilClaimant/${civilClaimantId}`,
       updateCivilClaimant,
     )
   }
 
   deleteCivilClaimant(
     caseId: string,
-    defendantId: string,
     civilClaimantId: string,
   ): Promise<DeleteDefendantResponse> {
-    return this.delete(
-      `case/${caseId}/defendant/${defendantId}/civilClaimant/${civilClaimantId}`,
-    )
+    return this.delete(`case/${caseId}/civilClaimant/${civilClaimantId}`)
   }
 
   createIndictmentCount(

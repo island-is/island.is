@@ -8,7 +8,6 @@ import { Case } from '../case'
 import { CreateCivilClaimantDto } from './dto/createCivilClaimant.dto'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CivilClaimant } from './models/civilClaimant.model'
-import { Defendant } from './models/defendant.model'
 
 @Injectable()
 export class CivilClaimantService {
@@ -20,13 +19,11 @@ export class CivilClaimantService {
 
   async create(
     theCase: Case,
-    defendant: Defendant,
     claimantToCreate: CreateCivilClaimantDto,
   ): Promise<CivilClaimant> {
     return this.civilClaimantModel.create({
       ...claimantToCreate,
       caseId: theCase.id,
-      defendantId: defendant.id,
     })
   }
 

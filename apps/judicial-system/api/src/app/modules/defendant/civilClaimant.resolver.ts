@@ -34,16 +34,12 @@ export class CivilClaimantResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<CivilClaimant> {
-    const { caseId, defendantId, ...createCivilClaimant } = input
+    const { caseId, ...createCivilClaimant } = input
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_CIVIL_CLAIMANT,
-      backendService.createCivilClaimant(
-        caseId,
-        defendantId,
-        createCivilClaimant,
-      ),
+      backendService.createCivilClaimant(caseId, createCivilClaimant),
       (civilClaimant) => civilClaimant.id,
     )
   }

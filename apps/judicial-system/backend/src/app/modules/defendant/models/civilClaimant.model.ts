@@ -11,8 +11,6 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Case } from '../../case'
-import { Defendant } from './defendant.model'
-
 @Table({
   tableName: 'civil_claimant',
   timestamps: false,
@@ -48,18 +46,6 @@ export class CivilClaimant extends Model {
   @ApiProperty({ type: Case })
   case?: Case
 
-  @ForeignKey(() => Defendant)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ApiProperty({ type: String })
-  defendantId!: string
-
-  @BelongsTo(() => Defendant, 'defendantId')
-  @ApiProperty({ type: Defendant })
-  defendant?: Defendant
-
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -79,26 +65,33 @@ export class CivilClaimant extends Model {
     allowNull: true,
   })
   @ApiPropertyOptional({ type: String })
-  defenderName?: string
+  spokespersonName?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiPropertyOptional({ type: String })
-  defenderEmail?: string
+  spokespersonEmail?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiPropertyOptional({ type: String })
-  defenderPhoneNumber?: string
+  spokespersonPhoneNumber?: string
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
   @ApiPropertyOptional({ type: Boolean })
-  caseFilesSharedWithDefender?: boolean
+  caseFilesSharedWithSpokesperson?: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: Boolean })
+  isLawyer?: boolean
 }

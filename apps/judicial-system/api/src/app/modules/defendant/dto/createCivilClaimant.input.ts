@@ -9,10 +9,6 @@ export class CreateCivilClaimantInput {
   readonly caseId!: string
 
   @Allow()
-  @Field(() => ID)
-  readonly defendantId!: string
-
-  @Allow()
   @Field(() => String)
   readonly name!: string
 
@@ -24,20 +20,25 @@ export class CreateCivilClaimantInput {
   @Allow()
   @IsOptional()
   @Field(() => String, { nullable: true })
-  readonly defenderName?: string
+  readonly spokespersonName?: string
 
   @Allow()
   @IsOptional()
   @Field(() => String, { nullable: true })
-  readonly defenderEmail?: string
+  readonly spokespersonEmail?: string
 
   @Allow()
   @IsOptional()
   @Field(() => String, { nullable: true })
-  readonly defenderPhoneNumber?: string
+  readonly spokespersonPhoneNumber?: string
 
   @Allow()
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
-  readonly caseFilesSharedWithDefender?: boolean
+  readonly caseFilesSharedWithSpokesperson?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isLawyer?: boolean
 }
