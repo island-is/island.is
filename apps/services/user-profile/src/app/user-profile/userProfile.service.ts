@@ -63,20 +63,18 @@ export class UserProfileService {
 
   async addDeviceToken(body: DeviceTokenDto, user: User) {
     try {
-      const [token] = await this.userDeviceTokensModel.upsert(
-        {
-          deviceToken: body.deviceToken,
-          nationalId: user.nationalId,
-        },
-        {
-          fields: ['deviceToken'],
-          conflictWhere: {
-            deviceToken: body.deviceToken,
-            nationalId: user.nationalId,
-          },
-        },
-      )
-      return token
+      const token = await this.userDeviceTokensModel.findOne({
+        where: { nationalId: user.nationalId, deviceToken: body.deviceToken },
+      })
+
+      if (token) {
+        return token
+      }
+
+      return await this.userDeviceTokensModel.create({
+        ...body,
+        nationalId: user.nationalId,
+      })
     } catch (e) {
       throw new BadRequestException(e.errors)
     }
