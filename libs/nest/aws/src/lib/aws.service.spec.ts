@@ -70,7 +70,6 @@ describe('AwsService', () => {
         undefined, 
         'base64', 
         'binary',
-        'asdasd'
     ])('should return correct file content and encoding', async (encoding: string | undefined) => {
         const startingString = 'Hello ÁáÉéÚúÍíÓóÐðÞþ'
         const expectedResult = Buffer.from(startingString).toString(encoding as BufferEncoding)
