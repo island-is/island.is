@@ -146,7 +146,9 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
           className={cn(
             variant === 'default' ? styles.tabList : styles.tabListAlternative,
             {
-              [styles.tabListVisible]: tabListVisible,
+              [styles.tabListVisible]: tabListVisible && variant === 'default',
+              [styles.tabListAlternativeVisible]:
+                tabListVisible && variant === 'alternative',
             },
           )}
         >
@@ -224,12 +226,13 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
           let panelContent
           if (Array.isArray(content)) {
             panelContent = (
-              <Box marginTop={3}>
+              <Box marginTop={tabListVisible ? 3 : 2}>
                 <Tabs
                   label=""
                   variant="alternative"
                   contentBackground="white"
                   tabs={content}
+                  size={size ?? 'xs'}
                 />
               </Box>
             )

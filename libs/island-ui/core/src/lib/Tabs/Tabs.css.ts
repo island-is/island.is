@@ -44,7 +44,8 @@ export const tabList = style({
 
 export const tabListAlternative = style({
   display: 'flex',
-  maxHeight: `${theme.spacing[5]}px`,
+  height: 0,
+  overflow: 'hidden',
   width: 'fit-content',
   background: theme.color.blue100,
   borderRadius: theme.border.radius.standard,
@@ -55,6 +56,11 @@ export const tabListAlternative = style({
 export const tabListVisible = style({
   height: `${theme.spacing[8]}px`,
   overflow: 'initial',
+})
+
+export const tabListAlternativeVisible = style({
+  overflow: 'initial',
+  height: `${theme.spacing[5]}px`,
 })
 
 export const tab = style({
