@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 import {
@@ -8,50 +7,29 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import {
-  CaseAppealState,
-  CaseFileCategory,
-  isDefenceUser,
-  isIndictmentCase,
-  isPrisonStaffUser,
-  isPrisonSystemUser,
-  isRestrictionCase,
-  User,
-} from '@island.is/judicial-system/types'
+import { CaseFileCategory, User } from '@island.is/judicial-system/types'
 
-import { Case } from '../models/case.model'
+import { canLimitedAcccessUserViewCaseFile } from '../../file'
 
 @Injectable()
 export class CaseFileInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<Case> {
+  intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
     const user: User = request.user
 
     return next.handle().pipe(
-      map((data: Case) => {
-        if (isDefenceUser(user)) {
-          return data
-        }
-
-        if (
-          isPrisonStaffUser(user) ||
-          (isRestrictionCase(data.type) &&
-            data.appealState !== CaseAppealState.COMPLETED)
-        ) {
-          data.caseFiles?.splice(0, data.caseFiles.length)
-        } else if (isPrisonSystemUser(user)) {
-          data.caseFiles?.splice(
-            0,
-            data.caseFiles.length,
-            ...data.caseFiles.filter((cf) =>
-              isIndictmentCase(data.type)
-                ? cf.category === CaseFileCategory.RULING
-                : cf.category === CaseFileCategory.APPEAL_RULING,
+      map((theCase) => {
+        const caseFiles = theCase.caseFiles?.filter(
+          ({ category }: { category: CaseFileCategory }) =>
+            canLimitedAcccessUserViewCaseFile(
+              user,
+              theCase.type,
+              theCase.state,
+              category,
             ),
-          )
-        }
+        )
 
-        return data
+        return { ...theCase, caseFiles }
       }),
     )
   }

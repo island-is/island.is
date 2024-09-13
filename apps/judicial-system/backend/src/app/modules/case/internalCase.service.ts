@@ -1228,10 +1228,7 @@ export class InternalCaseService {
     })
   }
 
-  async getIndictmentCase(
-    caseId: string,
-    nationalId: string,
-  ): Promise<Case | null> {
+  async getIndictmentCase(caseId: string, nationalId: string): Promise<Case> {
     // The national id could be without a hyphen or with a hyphen so we need to
     // search for both
     const formattedNationalId = formatNationalId(nationalId)

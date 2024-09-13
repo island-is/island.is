@@ -121,13 +121,11 @@ export class EventService {
             }\n>Dómritari ${
               theCase.registrar?.name ?? 'er ekki skráður'
             }\n>Fyrirtaka ${
-              CaseString.postponedIndefinitelyExplanation(theCase.caseStrings)
-                ? 'ekki ákveðin'
-                : formatDate(
-                    DateLog.courtDate(theCase.dateLogs)?.date ??
-                      DateLog.arraignmentDate(theCase.dateLogs)?.date,
-                    'Pp',
-                  ) ?? 'er ekki skráð'
+              formatDate(
+                DateLog.courtDate(theCase.dateLogs)?.date ??
+                  DateLog.arraignmentDate(theCase.dateLogs)?.date,
+                'Pp',
+              ) ?? 'er ekki skráð'
             }`
           : ''
 

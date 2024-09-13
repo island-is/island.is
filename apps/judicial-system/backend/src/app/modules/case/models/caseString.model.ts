@@ -23,13 +23,13 @@ export class CaseString extends Model {
     return caseStrings?.find(
       (caseString) =>
         caseString.stringType === StringType.POSTPONED_INDEFINITELY_EXPLANATION,
-    )
+    )?.value
   }
 
   static civilDemands(caseStrings?: CaseString[]) {
     return caseStrings?.find(
       (caseString) => caseString.stringType === StringType.CIVIL_DEMANDS,
-    )
+    )?.value
   }
 
   @Column({

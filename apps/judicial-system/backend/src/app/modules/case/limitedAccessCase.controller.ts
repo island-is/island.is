@@ -53,6 +53,7 @@ import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseFileInterceptor } from './interceptors/caseFile.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { Case } from './models/case.model'
@@ -81,12 +82,16 @@ export class LimitedAccessCaseController {
     CaseReadGuard,
   )
   @RolesRules(prisonSystemStaffRule, defenderRule)
+  @UseInterceptors(
+    CompletedAppealAccessedInterceptor,
+    CaseFileInterceptor,
+    CaseInterceptor,
+  )
   @Get('case/:caseId/limitedAccess')
   @ApiOkResponse({
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
   })
-  @UseInterceptors(CompletedAppealAccessedInterceptor, CaseFileInterceptor)
   async getById(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
@@ -115,6 +120,7 @@ export class LimitedAccessCaseController {
     CaseCompletedGuard,
   )
   @RolesRules(defenderUpdateRule)
+  @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/limitedAccess')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   update(
@@ -143,6 +149,7 @@ export class LimitedAccessCaseController {
     CaseCompletedGuard,
   )
   @RolesRules(defenderTransitionRule)
+  @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/limitedAccess/state')
   @ApiOkResponse({
     type: Case,
