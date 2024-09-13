@@ -221,6 +221,7 @@ export class AdminScopeService {
       include: [
         { model: ApiScopeDelegationType, as: 'supportedDelegationTypes' },
       ],
+      useMaster: true,
     })
 
     if (!apiScope) {
@@ -479,10 +480,14 @@ export class AdminScopeService {
     ) {
       await this.apiScope.update(
         {
-          grantToLegalGuardians,
-          grantToPersonalRepresentatives,
-          grantToProcuringHolders,
-          allowExplicitDelegationGrant,
+          ...(grantToLegalGuardians ? { grantToLegalGuardians } : {}),
+          ...(grantToPersonalRepresentatives
+            ? { grantToPersonalRepresentatives }
+            : {}),
+          ...(grantToProcuringHolders ? { grantToProcuringHolders } : {}),
+          ...(allowExplicitDelegationGrant
+            ? { allowExplicitDelegationGrant }
+            : {}),
         },
         {
           transaction,

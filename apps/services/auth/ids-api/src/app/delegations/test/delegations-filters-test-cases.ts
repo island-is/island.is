@@ -287,4 +287,17 @@ export const testCases: Record<string, TestCase> = {
       ],
     },
   ),
+  // Returns available delegations for legal representatives
+  legalRepresentative1: new TestCase(
+    createClient({
+      clientId: clientId,
+      supportedDelegationTypes: [AuthDelegationType.LegalRepresentative],
+    }),
+    {
+      fromLegalRepresentative: [person1, person2],
+      protectedScopes: [],
+      expectedFrom: [person1, person2],
+      expectedTypes: [AuthDelegationType.LegalRepresentative],
+    },
+  ),
 }

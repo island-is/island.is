@@ -53,7 +53,7 @@ import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { courtSubtypes } from '../court/court.service'
 import { Defendant, DefendantService } from '../defendant'
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Institution } from '../institution'
@@ -511,7 +511,7 @@ export class InternalCaseService {
       )
     })
 
-    this.eventService.postEvent(CaseEvent.ARCHIVE, theCase)
+    this.eventService.postEvent('ARCHIVE', theCase)
 
     return { caseArchived: true }
   }

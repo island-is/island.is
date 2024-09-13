@@ -31,19 +31,7 @@ export enum ChargeItemCode {
   HEALTHCARE_LICENSE_CERTIFICATE = 'L6102',
   ID_CARD_REGULAR = 'AY155', //Nafnskírteini almennt gjald
   ID_CARD_EXPRESS = 'AY156', //Nafnskírteini skyndiútgáfa
-  ID_CARD_TRAVEL_REGULAR = 'AY157', //Nafnskírteini ferðaskilríki
-  ID_CARD_TRAVEL_EXPRESS = 'AY158', //Nafnskírteini ferðaskilríki skyndiútgáfa
-  ID_CARD_DISABILITY_REGULAR = 'AY159', //Nafnskírteini örykjar
-  ID_CARD_DISABILITY_EXPRESS = 'AY160', //Nafnskírteini örykjar skyndiútgáfa
-  ID_CARD_DISABILITY_TRAVEL_REGULAR = 'AY161', //Nafnskírteini öyrkjar ferðaskilríki
-  ID_CARD_DISABILITY_TRAVEL_EXPRESS = 'AY162', //Nafnskírteini örykjar ferðask. skyndiútgáfa
-  ID_CARD_CHILDREN_REGULAR = 'AY163', //Nafnskírteini börn
-  ID_CARD_CHILDREN_EXPRESS = 'AY164', //Nafnskírteini börn skyndiútgáfa
-  ID_CARD_CHILDREN_TRAVEL_REGULAR = 'AY165', //Nafnskírteini börn ferðaskilríki
-  ID_CARD_CHILDREN_TRAVEL_EXPRESS = 'AY166', //Nafnskírteini börn ferðaskilríki skyndiútg.
-  ID_CARD_OLDER_REGULAR = 'AY167', //Nafnskírteini 67 ára og eldri
-  ID_CARD_OLDER_EXPRESS = 'AY168', //Nafnskírteini 67 ára og eldri skyndiútgáfa
-  ID_CARD_OLDER_TRAVEL_REGULAR = 'AY169', //Nafnskírteini 67 ára og eldri ferðaskilríki
-  ID_CARD_OLDER_TRAVEL_EXPRESS = 'AY170', //Nafnskírteini 67 ára og eldri ferðask skyndiútgáfa
+  ID_CARD_OTHERS_REGULAR = 'AY157', //Nafnskírteini aðrir gjald
+  ID_CARD_OTHERS_EXPRESS = 'AY158', //Nafnskírteini aðrir skyndiútgáfa
   HEALTHCARE_WORK_PERMIT = 'L6101',
 }

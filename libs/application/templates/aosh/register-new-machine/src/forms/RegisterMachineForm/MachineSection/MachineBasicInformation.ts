@@ -48,6 +48,8 @@ export const MachineBasicInformation = buildSubSection({
           width: 'half',
           required: true,
           variant: 'number',
+          min: 1900,
+          max: new Date().getFullYear(),
         }),
         buildTextField({
           id: 'machine.basicInformation.productionNumber',
@@ -95,11 +97,11 @@ export const MachineBasicInformation = buildSubSection({
           options: [
             {
               value: NEW,
-              label: 'Ný',
+              label: machine.labels.basicMachineInformation.new,
             },
             {
               value: USED,
-              label: 'Notuð',
+              label: machine.labels.basicMachineInformation.used,
             },
           ],
         }),

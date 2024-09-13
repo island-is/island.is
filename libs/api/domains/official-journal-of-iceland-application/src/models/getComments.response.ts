@@ -8,7 +8,7 @@ export class CaseCommentTask {
   @Field(() => String, { nullable: true })
   to!: string | null
 
-  @Field(() => String)
+  @Field()
   title!: string
   @Field(() => String, { nullable: true })
   comment!: string | null
@@ -16,22 +16,22 @@ export class CaseCommentTask {
 
 @ObjectType('OfficialJournalOfIcelandApplicationComment')
 export class CaseComment {
-  @Field(() => String)
+  @Field()
   id!: string
 
-  @Field(() => String)
+  @Field()
   createdAt!: string
 
-  @Field(() => Boolean)
+  @Field()
   internal!: boolean
 
-  @Field(() => String)
+  @Field()
   type!: string
 
-  @Field(() => String)
+  @Field()
   caseStatus!: string
 
-  @Field(() => String)
+  @Field()
   state!: string
 
   @Field(() => CaseCommentTask)

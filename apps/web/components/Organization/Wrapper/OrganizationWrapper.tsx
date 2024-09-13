@@ -1,4 +1,11 @@
-import React, { ReactNode, useEffect, useMemo, useState } from 'react'
+import React, {
+  PropsWithChildren,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { IntlConfig, IntlProvider } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -52,7 +59,10 @@ import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
-import { FiskistofaHeader } from './Themes/FiskistofaTheme'
+import {
+  FiskistofaDefaultHeader,
+  FiskistofaHeader,
+} from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
 import {
   FjarsyslaRikisinsFooter,
@@ -90,7 +100,11 @@ import {
   SjukratryggingarFooter,
   SjukratryggingarHeader,
 } from './Themes/SjukratryggingarTheme'
-import { SyslumennFooter, SyslumennHeader } from './Themes/SyslumennTheme'
+import {
+  SyslumennDefaultHeader,
+  SyslumennFooter,
+  SyslumennHeader,
+} from './Themes/SyslumennTheme'
 import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
@@ -156,6 +170,13 @@ export const getThemeConfig = (
   theme?: string,
   organization?: Organization | null,
 ): { themeConfig: Partial<LayoutProps> } => {
+  const organizationNamespace = JSON.parse(
+    organization?.namespace?.fields || '{}',
+  )
+
+  const usingDefaultHeader: boolean =
+    organizationNamespace['usingDefaultHeader'] ?? false
+
   const footerVersion: LayoutProps['footerVersion'] =
     theme === 'landing-page' || (organization?.footerItems ?? [])?.length > 0
       ? 'organization'
@@ -180,7 +201,7 @@ export const getThemeConfig = (
     }
   }
 
-  if (lightThemes.includes(theme ?? '')) {
+  if (lightThemes.includes(theme ?? '') || usingDefaultHeader) {
     return { themeConfig: { footerVersion } }
   }
 
@@ -250,7 +271,13 @@ export const OrganizationHeader: React.FC<
 
   switch (organizationPage.theme) {
     case 'syslumenn':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <SyslumennDefaultHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+        />
+      ) : (
         <SyslumennHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -304,7 +331,13 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'fiskistofa':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <FiskistofaDefaultHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+        />
+      ) : (
         <FiskistofaHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -838,25 +871,54 @@ const getActiveNavigationItemTitle = (
     }
   }
 }
+
+interface TranslationNamespaceProviderProps {
+  messages: IntlConfig['messages']
+}
+
+const TranslationNamespaceProvider = ({
+  messages,
+  children,
+}: PropsWithChildren<TranslationNamespaceProviderProps>) => {
+  const { activeLocale } = useI18n()
+
+  return (
+    <IntlProvider locale={activeLocale} messages={messages}>
+      {children}
+    </IntlProvider>
+  )
+}
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 const renderConnectedComponent = (slice) => {
   if (!slice?.componentType) return null
 
+  let connectedComponent = null
+
   switch (slice.componentType) {
     case 'LatestNewsCard':
-      return (
+      connectedComponent = (
         <LatestNewsCardConnectedComponent key={slice?.id} {...slice?.json} />
       )
+      break
     case 'Fiskistofa/ShipSearchSidebarInput':
-      return (
-        <SidebarShipSearchInput key={slice?.id} namespace={slice?.json ?? {}} />
-      )
+      connectedComponent = <SidebarShipSearchInput key={slice?.id} />
+      break
     case 'OrganizationSearchBox':
-      return <SearchBox key={slice?.id} {...slice?.json} />
+      connectedComponent = <SearchBox key={slice?.id} {...slice?.json} />
+      break
     default:
       return null
   }
+
+  return (
+    <TranslationNamespaceProvider
+      messages={slice.translationStrings ?? slice.json ?? {}}
+    >
+      {connectedComponent}
+    </TranslationNamespaceProvider>
+  )
 }
 
 export const OrganizationWrapper: React.FC<

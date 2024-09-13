@@ -4,7 +4,7 @@
 
 This application template allows applicants to apply for additional support for the elderly.
 
-![](./assets/additional-support-for-the-elderly-flow-chart.png)
+![](../core/assets/tr-applications-flow-chart.png)
 
 ### States
 
