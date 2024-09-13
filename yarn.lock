@@ -38609,7 +38609,7 @@ __metadata:
     "@aws-sdk/client-ses": 3.145.0
     "@aws-sdk/client-sqs": 3.145.0
     "@aws-sdk/client-ssm": 3.145.0
-    "@aws-sdk/credential-provider-node": 3.145.0
+    "@aws-sdk/credential-provider-node": 3.637.0
     "@aws-sdk/lib-storage": 3.637.0
     "@aws-sdk/s3-request-presigner": 3.637.0
     "@azure/msal-node": 1.14.4
