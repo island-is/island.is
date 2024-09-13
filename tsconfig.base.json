@@ -1111,6 +1111,9 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
+      ],
+      "@island.is/application/templates/rental-agreement": [
+        "libs/application/templates/rental-agreement/src/index.ts"
       ]
     }
   }
