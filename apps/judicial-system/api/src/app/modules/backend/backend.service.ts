@@ -21,6 +21,7 @@ import {
 } from '../case'
 import { CaseListEntry } from '../case-list'
 import { Defendant, DeleteDefendantResponse } from '../defendant'
+import { CivilClaimant } from '../defendant/models/civilClaimant.model'
 import { CreateEventLogInput } from '../event-log'
 import {
   CaseFile,
@@ -338,6 +339,39 @@ export class BackendService extends DataSource<{ req: Request }> {
     defendantId: string,
   ): Promise<DeleteDefendantResponse> {
     return this.delete(`case/${caseId}/defendant/${defendantId}`)
+  }
+
+  createCivilClaimant(
+    caseId: string,
+    defendantId: string,
+    createCivilClaimant: unknown,
+  ): Promise<CivilClaimant> {
+    return this.post(
+      `case/${caseId}/defendant/${defendantId}/civilClaimant`,
+      createCivilClaimant,
+    )
+  }
+
+  updateCivilClaimant(
+    caseId: string,
+    defendantId: string,
+    civilClaimantId: string,
+    updateCivilClaimant: unknown,
+  ): Promise<CivilClaimant> {
+    return this.patch(
+      `case/${caseId}/defendant/${defendantId}/civilClaimant/${civilClaimantId}`,
+      updateCivilClaimant,
+    )
+  }
+
+  deleteCivilClaimant(
+    caseId: string,
+    defendantId: string,
+    civilClaimantId: string,
+  ): Promise<DeleteDefendantResponse> {
+    return this.delete(
+      `case/${caseId}/defendant/${defendantId}/civilClaimant/${civilClaimantId}`,
+    )
   }
 
   createIndictmentCount(
