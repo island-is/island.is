@@ -1,5 +1,9 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import { Base, Client, NationalRegistry } from '../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  NationalRegistryB2C,
+} from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
   service('regulations-admin-backend')
@@ -30,7 +34,7 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '100m', memory: '256Mi' },
     })
-    .xroad(Base, Client, NationalRegistry)
+    .xroad(Base, Client, NationalRegistryB2C)
     .readiness('/liveness')
     .liveness('/liveness')
     .grantNamespaces('islandis', 'download-service')
