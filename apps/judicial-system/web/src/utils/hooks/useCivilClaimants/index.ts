@@ -6,17 +6,19 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import {
   CivilClaimant,
   CreateCivilClaimantInput,
-  UpdateCivilClaimantInput,
+  // UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+
+import { useCreateCivilClaimantMutation } from './createCivilClaimant.generated'
 
 const useCivilClaimants = () => {
   const { formatMessage } = useIntl()
 
   const [createCivilClaimantMutation, { loading: isCreatingCivilClaimant }] =
     useCreateCivilClaimantMutation()
-  const [deleteCivilClaimantMutation] = useDeleteCivilClaimantMutation()
-  const [updateCivilClaimantMutation] = useUpdateCivilClaimantMutation()
+  // const [deleteCivilClaimantMutation] = useDeleteCivilClaimantMutation()
+  // const [updateCivilClaimantMutation] = useUpdateCivilClaimantMutation()
 
   const createCivilClaimant = useCallback(
     async (civilClaimant: CreateCivilClaimantInput) => {
@@ -39,39 +41,39 @@ const useCivilClaimants = () => {
     [createCivilClaimantMutation, formatMessage, isCreatingCivilClaimant],
   )
 
-  const deleteCivilClaimant = useCallback(
-    async (caseId: string, civilClaimantId: string) => {
-      try {
-        const { data } = await deleteCivilClaimantMutation({
-          variables: { input: { caseId, civilClaimantId } },
-        })
+  // const deleteCivilClaimant = useCallback(
+  //   async (caseId: string, civilClaimantId: string) => {
+  //     try {
+  //       const { data } = await deleteCivilClaimantMutation({
+  //         variables: { input: { caseId, civilClaimantId } },
+  //       })
 
-        return Boolean(data?.deleteDefendant?.deleted)
-      } catch (error) {
-        toast.error(formatMessage(errors.deleteDefendant))
-        return false
-      }
-    },
-    [deleteCivilClaimantMutation, formatMessage],
-  )
+  //       return Boolean(data?.deleteDefendant?.deleted)
+  //     } catch (error) {
+  //       toast.error(formatMessage(errors.deleteDefendant))
+  //       return false
+  //     }
+  //   },
+  //   [deleteCivilClaimantMutation, formatMessage],
+  // )
 
-  const updateCivilClaimant = useCallback(
-    async (updateCivilClaimant: UpdateCivilClaimantInput) => {
-      try {
-        const { data } = await updateCivilClaimantMutation({
-          variables: {
-            input: updateCivilClaimant,
-          },
-        })
+  // const updateCivilClaimant = useCallback(
+  //   async (updateCivilClaimant: UpdateCivilClaimantInput) => {
+  //     try {
+  //       const { data } = await updateCivilClaimantMutation({
+  //         variables: {
+  //           input: updateCivilClaimant,
+  //         },
+  //       })
 
-        return Boolean(data)
-      } catch (error) {
-        toast.error(formatMessage(errors.updateDefendant))
-        return false
-      }
-    },
-    [formatMessage, updateCivilClaimantMutation],
-  )
+  //       return Boolean(data)
+  //     } catch (error) {
+  //       toast.error(formatMessage(errors.updateDefendant))
+  //       return false
+  //     }
+  //   },
+  //   [formatMessage, updateCivilClaimantMutation],
+  // )
 
   const updateCivilClaimantState = useCallback(
     (
@@ -100,23 +102,23 @@ const useCivilClaimants = () => {
     [],
   )
 
-  const setAndSendCivilClaimantToServer = useCallback(
-    (
-      update: UpdateCivilClaimantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
-    ) => {
-      updateCivilClaimantState(update, setWorkingCase)
-      updateCivilClaimant(update)
-    },
-    [updateCivilClaimant, updateCivilClaimantState],
-  )
+  // const setAndSendCivilClaimantToServer = useCallback(
+  //   (
+  //     update: UpdateCivilClaimantInput,
+  //     setWorkingCase: Dispatch<SetStateAction<Case>>,
+  //   ) => {
+  //     updateCivilClaimantState(update, setWorkingCase)
+  //     updateCivilClaimant(update)
+  //   },
+  //   [updateCivilClaimant, updateCivilClaimantState],
+  // )
 
   return {
     createCivilClaimant,
-    deleteCivilClaimant,
-    updateCivilClaimant,
+    // deleteCivilClaimant,
+    //updateCivilClaimant,
     updateCivilClaimantState,
-    setAndSendCivilClaimantToServer,
+    //setAndSendCivilClaimantToServer,
   }
 }
 

@@ -34,6 +34,7 @@ import RequiredStar from '@island.is/judicial-system-web/src/components/Required
 import {
   CaseState,
   CaseTransition,
+  CivilClaimant,
   DefendantPlea,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -42,6 +43,7 @@ import {
   useDefendants,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import useCivilClaimants from '@island.is/judicial-system-web/src/utils/hooks/useCivilClaimants'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { ProsecutorSection, SelectCourt } from '../../components'
@@ -63,6 +65,7 @@ const Processing: FC = () => {
   const { updateCase, transitionCase } = useCase()
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
+  const { createCivilClaimant } = useCivilClaimants()
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
   const [isCivilClaim, setIsCivilClaim] = useState<boolean | 'NO_CHOICE'>(
@@ -131,17 +134,18 @@ const Processing: FC = () => {
   }, [mutate, nID])
 
   const handleCreateCivilClaimantClick = async () => {
-    if (workingCase.id) {
-      const civilClaimantId = await createCivilClaimant({
-        caseId: workingCase.id,
-        name: '',
-        nationalId: '',
-      })
+    const civilClaimantId = await createCivilClaimant({
+      caseId: workingCase.id,
+      name: '',
+      nationalId: '',
+      /*
+        TODO: We need to be able to create a civil claim against any one of
+        the defendants in the case.
+      */
+      defendantId: workingCase.defendants ? workingCase.defendants[0].id : '',
+    })
 
-      createEmptyCivilClaimant(civilClaimantId)
-    } else {
-      createEmptyCivilClaimant()
-    }
+    createEmptyCivilClaimant(civilClaimantId)
 
     window.scrollTo(0, document.body.scrollHeight)
   }
@@ -155,7 +159,7 @@ const Processing: FC = () => {
           id: civilClaimantId || uuid(),
           name: '',
           nationalId: '',
-        } as TCivilClaimant,
+        } as CivilClaimant,
       ],
     }))
   }
@@ -360,14 +364,14 @@ const Processing: FC = () => {
                       />
                     </Box>
                   </Box>
-                  <DefenderInput
+                  {/* <DefenderInput
                     onDefenderNotFound={function (
                       defenderNotFound: boolean,
                     ): void {
                       throw new Error('Function not implemented.')
                     }}
                     defendantId={'1212'}
-                  />
+                  /> */}
                 </>
               )}
             </BlueBox>
