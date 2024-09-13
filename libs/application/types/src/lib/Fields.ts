@@ -94,6 +94,12 @@ export type TableRepeaterItem = {
         application: Application,
         activeField?: Record<string, string>,
       ) => boolean)
+  disabled?:
+    | boolean
+    | ((
+        application: Application,
+        activeField?: Record<string, string>,
+      ) => boolean)
   updateValueObj?: {
     valueModifier: (activeField?: Record<string, string>) => unknown
     watchValues:

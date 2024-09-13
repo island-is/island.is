@@ -54,6 +54,7 @@ export const Item = ({
     width = 'full',
     condition,
     readonly = false,
+    disabled = false,
     updateValueObj,
     defaultValue,
     ...props
@@ -148,6 +149,13 @@ export const Item = ({
     Readonly = readonly
   }
 
+  let Disabled: boolean | undefined
+  if (typeof disabled === 'function') {
+    Disabled = disabled(application, activeValues)
+  } else {
+    Disabled = disabled
+  }
+
   let DefaultValue: any
   if (component === 'input') {
     DefaultValue = getDefaultValue(item, application, activeValues)
@@ -194,6 +202,7 @@ export const Item = ({
         error={getFieldError(itemId)}
         control={control}
         readOnly={Readonly}
+        disabled={Disabled}
         backgroundColor={backgroundColor}
         onChange={() => {
           if (error) {

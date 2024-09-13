@@ -266,7 +266,7 @@ export const IncomePlanForm: Form = buildForm({
                   width: 'half',
                   type: 'number',
                   currency: true,
-                  readonly: (_, activeField) => {
+                  disabled: (_, activeField) => {
                     return activeField?.income === RatioType.MONTHLY
                   },
                   updateValueObj: {
