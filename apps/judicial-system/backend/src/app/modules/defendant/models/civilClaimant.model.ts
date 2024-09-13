@@ -48,10 +48,10 @@ export class CivilClaimant extends Model {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
-  @ApiProperty({ type: String })
-  name!: string
+  @ApiPropertyOptional({ type: String })
+  name?: string
 
   @Column({
     type: DataType.STRING,

@@ -9,8 +9,9 @@ export class CreateCivilClaimantInput {
   readonly caseId!: string
 
   @Allow()
-  @Field(() => String)
-  readonly name!: string
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly name?: string
 
   @Allow()
   @IsOptional()

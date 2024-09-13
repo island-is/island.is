@@ -312,6 +312,11 @@ query Case($input: CaseQueryInput!) {
       id
       caseId
       name
+      spokespersonName
+      spokespersonEmail
+      spokespersonPhoneNumber
+      caseFilesSharedWithSpokesperson
+      isLawyer
     }
   }
 }
