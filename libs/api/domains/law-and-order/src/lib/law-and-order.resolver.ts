@@ -41,7 +41,7 @@ export class LawAndOrderResolver {
     nullable: true,
   })
   @Audit()
-  async getCourtCasesList(
+  getCourtCasesList(
     @CurrentUser() user: User,
     @Args('input') input: GetCourtCasesInput,
   ) {
@@ -54,7 +54,7 @@ export class LawAndOrderResolver {
     nullable: true,
   })
   @Audit()
-  async getCourtCaseDetail(
+  getCourtCaseDetail(
     @CurrentUser() user: User,
     @Args('input') input: GetCourtCaseInput,
   ) {
@@ -64,7 +64,7 @@ export class LawAndOrderResolver {
   @Scopes(ApiScope.lawAndOrder)
   @Query(() => Subpoena, { name: 'lawAndOrderSubpoena', nullable: true })
   @Audit()
-  async getSubpoena(
+  getSubpoena(
     @CurrentUser() user: User,
     @Args('input') input: GetSubpoenaInput,
   ) {
@@ -74,7 +74,7 @@ export class LawAndOrderResolver {
   @Scopes(ApiScope.lawAndOrder)
   @Query(() => Lawyers, { name: 'lawAndOrderLawyers', nullable: true })
   @Audit()
-  async getLawyers(@CurrentUser() user: User) {
+  getLawyers(@CurrentUser() user: User) {
     return this.lawAndOrderService.getLawyers(user)
   }
 
@@ -84,7 +84,7 @@ export class LawAndOrderResolver {
     nullable: true,
   })
   @Audit()
-  async postDefenseChoice(
+  postDefenseChoice(
     @Args('input') input: PostDefenseChoiceInput,
     @CurrentUser() user: User,
   ) {
@@ -99,7 +99,7 @@ export class LawAndOrderResolver {
     nullable: true,
   })
   @Audit()
-  async postSubpoenaAcknowledged(
+  postSubpoenaAcknowledged(
     @Args('input') input: PostSubpoenaAcknowledgedInput,
     @CurrentUser() user: User,
   ) {

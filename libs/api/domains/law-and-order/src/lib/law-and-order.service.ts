@@ -16,6 +16,7 @@ import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
 import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedInput.model'
 import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
 import { mapDefenseChoice } from './helpers/mappers'
+import { Item } from '../models/item.model'
 
 @Injectable()
 export class LawAndOrderService {
@@ -51,15 +52,48 @@ export class LawAndOrderService {
 
     let data: CourtCase = {}
 
+    const isSubpoenaAcknowledged = singleCase.data.acknowledged
+    const subpoenaString = locale === 'is' ? 'Fyrirkall' : 'Subpoena'
+    const subpoenaSentIndex = singleCase.data.groups[0].items.findIndex(
+      (item) => item.label.includes(subpoenaString),
+    )
+    const subpoenaSentItem: Item | undefined = {
+      action: !isSubpoenaAcknowledged
+        ? {
+            data: '/postholf',
+            title:
+              locale === 'is'
+                ? isSubpoenaAcknowledged
+                  ? 'Sjá fyrirkall'
+                  : 'Sjá fyrirkall í pósthólfi'
+                : isSubpoenaAcknowledged
+                ? 'See subpoena'
+                : 'See subpoena in mailbox',
+            type: 'inbox',
+          }
+        : undefined,
+    }
+
     data = {
       data: {
         id: singleCase?.caseId ?? id,
-        acknowledged: singleCase.data.acknowledged,
+        acknowledged: isSubpoenaAcknowledged,
         caseNumber: singleCase?.data.caseNumber,
         caseNumberTitle: singleCase?.data.caseNumber,
-        groups: singleCase?.data.groups,
+        groups: singleCase?.data.groups.map((group, groupIndex) => {
+          return {
+            items: group.items.map((item, itemIndex) => {
+              // Adding action to the line including "fyrirkall"
+              if (groupIndex === 0 && itemIndex === subpoenaSentIndex) {
+                return { ...item, action: subpoenaSentItem.action }
+              }
+              return item
+            }),
+            label: group.label,
+          }
+        }),
       },
-      actions: undefined,
+
       texts: undefined,
     }
 
@@ -113,7 +147,7 @@ export class LawAndOrderService {
       {
         caseId: input.caseId,
         updateSubpoenaDto: {
-          defenderChoice: mapDefenseChoice(input.choice), // eslint-disable-next-line local-rules/disallow-kennitalas
+          defenderChoice: mapDefenseChoice(input.choice),
           defenderNationalId: input.lawyersNationalId,
         },
         locale: input.locale,
