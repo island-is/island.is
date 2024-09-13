@@ -99,6 +99,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
       file.category === CaseFileCategory.PROSECUTOR_CASE_FILE ||
       file.category === CaseFileCategory.DEFENDANT_CASE_FILE,
   )
+  const civilClaims = cf?.filter(
+    (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
+  )
 
   return (
     <>
@@ -225,6 +228,18 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
         </Box>
       ) : null}
+      {civilClaims && civilClaims.length > 0 && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={1}>
+            {formatMessage(caseFiles.civilClaimSection)}
+          </Text>
+          <RenderFiles
+            caseFiles={civilClaims}
+            onOpenFile={onOpen}
+            workingCase={workingCase}
+          />
+        </Box>
+      )}
       {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={3}>
