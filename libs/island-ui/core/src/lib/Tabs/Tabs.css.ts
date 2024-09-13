@@ -36,7 +36,7 @@ export const tabList = style({
   gridAutoColumns: 'minmax(0, 1fr)',
   gridAutoFlow: 'column',
   width: '100%',
-  borderRadius: theme.border.radius.standard,
+  borderRadius: `${theme.border.radius.large} ${theme.border.radius.large} 0 0`,
   borderColor: theme.border.color.blue100,
   borderWidth: theme.border.width.large,
   background: theme.color.blue100,
