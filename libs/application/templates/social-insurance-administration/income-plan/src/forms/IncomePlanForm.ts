@@ -113,7 +113,18 @@ export const IncomePlanForm: Form = buildForm({
                   width: 'half',
                   isSearchable: true,
                   updateValueObj: {
-                    valueModifier: (_) => '',
+                    valueModifier: (application, activeField) => {
+                      const options = getTypesOptions(
+                        application.externalData,
+                        activeField?.incomeCategory,
+                      )
+
+                      return (
+                        options.find(
+                          (option) => option.value === activeField?.incomeType,
+                        )?.value ?? ''
+                      )
+                    },
                     watchValues: 'incomeCategory',
                   },
                   options: (application, activeField) => {
@@ -129,7 +140,7 @@ export const IncomePlanForm: Form = buildForm({
                   placeholder: incomePlanFormMessage.incomePlan.selectCurrency,
                   isSearchable: true,
                   updateValueObj: {
-                    valueModifier: (activeField) => {
+                    valueModifier: (_, activeField) => {
                       const defaultCurrency =
                         activeField?.incomeType === FOREIGN_BASIC_PENSION ||
                         activeField?.incomeType === FOREIGN_PENSION ||
@@ -186,7 +197,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   updateValueObj: {
-                    valueModifier: (activeField) => {
+                    valueModifier: (_, activeField) => {
                       const unevenAndEmploymentIncome =
                         activeField?.unevenIncomePerYear?.[0] !== YES ||
                         (activeField?.incomeCategory !== INCOME &&
@@ -227,7 +238,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   updateValueObj: {
-                    valueModifier: (activeField) => {
+                    valueModifier: (_, activeField) => {
                       const unevenAndEmploymentIncome =
                         activeField?.unevenIncomePerYear?.[0] !== YES ||
                         (activeField?.incomeCategory !== INCOME &&
@@ -266,11 +277,11 @@ export const IncomePlanForm: Form = buildForm({
                   width: 'half',
                   type: 'number',
                   currency: true,
-                  readonly: (_, activeField) => {
+                  disabled: (_, activeField) => {
                     return activeField?.income === RatioType.MONTHLY
                   },
                   updateValueObj: {
-                    valueModifier: (activeField) => {
+                    valueModifier: (_, activeField) => {
                       if (
                         activeField?.income === RatioType.MONTHLY &&
                         activeField?.incomeCategory === INCOME &&
