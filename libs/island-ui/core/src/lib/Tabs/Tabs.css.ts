@@ -42,6 +42,16 @@ export const tabList = style({
   background: theme.color.blue100,
 })
 
+export const tabListAlternative = style({
+  display: 'flex',
+  maxHeight: `${theme.spacing[5]}px`,
+  width: 'fit-content',
+  background: theme.color.blue100,
+  borderRadius: theme.border.radius.standard,
+  borderColor: theme.border.color.blue100,
+  borderWidth: theme.border.width.large,
+})
+
 export const tabListVisible = style({
   height: `${theme.spacing[8]}px`,
   overflow: 'initial',
@@ -58,6 +68,21 @@ export const tab = style({
   borderBottom: `1px solid ${theme.color.white}`,
   ':focus': {
     zIndex: 5,
+  },
+})
+
+export const tabAlternative = style({
+  border: `${theme.border.radius.standard} solid ${theme.color.transparent}`,
+  borderRadius: `${theme.border.radius.large}`,
+  padding: `${theme.spacing[1]}px ${theme.spacing[3]}px`,
+  margin: '-1px 0',
+  selectors: {
+    '&:first-child': {
+      marginLeft: '-3px',
+    },
+    '&:last-child': {
+      marginRight: '-3px',
+    },
   },
 })
 
@@ -83,10 +108,40 @@ export const tabSelected = style({
   },
 })
 
+export const tabSelectedAlternative = style({
+  border: `1px solid ${theme.color.blue200}`,
+  borderRadius: theme.border.radius.standard,
+  backgroundColor: theme.color.white,
+})
+
 export const tabNotSelected = style({
+  color: theme.color.dark400,
   borderBottomColor: theme.color.blue200,
   ':hover': {
     borderBottomColor: theme.color.blue400,
+  },
+})
+
+export const tabNotSelectedAlternative = style({
+  ':hover': {
+    backgroundColor: 'white',
+    borderColor: theme.color.blue100,
+  },
+})
+
+export const tabNotSelectedAlternativeWithDivider = style({
+  selectors: {
+    '&:not(:last-child):after': {
+      content: '""',
+      position: 'absolute',
+      width: 1,
+      margin: `${theme.spacing[1]}px 0`,
+      backgroundColor: theme.color.blue200,
+      top: 0,
+      bottom: 0,
+      right: `-${theme.spacing.smallGutter}px`,
+      zIndex: theme.zIndex.above,
+    },
   },
 })
 
@@ -140,7 +195,7 @@ const unselectedTabUnderline = {
   height: '1px',
   width: '90%',
   bottom: -1,
-  background: theme.color.blue400,
+  background: theme.color.blue600,
   zIndex: 5,
 } as const
 
@@ -270,7 +325,7 @@ const divider = {
   content: '',
   position: 'absolute',
   width: 1,
-  margin: `${theme.spacing[1]}px 0`,
+  margin: `12px 0`,
   backgroundColor: theme.color.blue200,
   top: 0,
   bottom: 0,

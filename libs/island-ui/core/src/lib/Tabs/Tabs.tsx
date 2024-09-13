@@ -8,6 +8,7 @@ import { Colors, theme } from '@island.is/island-ui/theme'
 import { Box } from '../Box/Box'
 import { Select } from '../Select/Select'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
+import { Text } from '../Text/Text'
 import { isDefined } from '@island.is/shared/utils'
 
 import * as styles from './Tabs.css'
@@ -18,7 +19,7 @@ export type TabType = {
    */
   id?: string
   label: string
-  content: ReactNode
+  content: ReactNode | Array<TabType>
   disabled?: boolean
 }
 
@@ -30,6 +31,7 @@ interface TabInterface {
   size?: 'xs' | 'sm' | 'md'
   onChange?(id: string): void
   onlyRenderSelectedTab?: boolean
+  variant?: 'default' | 'alternative'
 }
 
 export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
@@ -40,6 +42,7 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
   size = 'md',
   onChange: onChangeHandler,
   onlyRenderSelectedTab,
+  variant = 'default',
 }) => {
   // When onlyRenderSelectedTab is true, then we need to make sure that every tab has an id prop defined
   if (onlyRenderSelectedTab && !tabs.every(({ id }) => isDefined(id))) {
@@ -140,9 +143,12 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
           {...tab}
           wrap={wrap}
           aria-label={label}
-          className={cn(styles.tabList, {
-            [styles.tabListVisible]: tabListVisible,
-          })}
+          className={cn(
+            variant === 'default' ? styles.tabList : styles.tabListAlternative,
+            {
+              [styles.tabListVisible]: tabListVisible,
+            },
+          )}
         >
           {tabs.map(({ label, disabled, id }, index) => {
             const isTabSelected = id
@@ -153,6 +159,37 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
 
             const isPreviousToSelectedTab = index + 1 === selectedTabIndex
             const isNextToSelectedTab = index - 1 === selectedTabIndex
+
+            if (variant === 'alternative') {
+              return (
+                <FocusableBox
+                  {...tab}
+                  component={Tab}
+                  type="button"
+                  display="flex"
+                  key={`alternative-${index}`}
+                  disabled={disabled}
+                  id={id ?? `${index}`}
+                  justifyContent="center"
+                  alignItems="center"
+                  aria-label={label}
+                  className={cn(styles.tabAlternative, {
+                    [styles.tabSelectedAlternative]: isTabSelected,
+                    [styles.tabNotSelectedAlternative]: !isTabSelected,
+                    [styles.tabNotSelectedAlternativeWithDivider]:
+                      !isTabSelected && !isPreviousToSelectedTab,
+                  })}
+                >
+                  <Text
+                    fontWeight={isTabSelected ? 'semiBold' : 'light'}
+                    variant="medium"
+                    color={isTabSelected ? 'blue400' : 'black'}
+                  >
+                    {label}
+                  </Text>
+                </FocusableBox>
+              )
+            }
 
             return (
               <FocusableBox
@@ -183,15 +220,30 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
             )
           })}
         </TabList>
-        {tabs.map(({ content, id }, index) => (
-          <TabPanel {...tab} key={index} className={styles.tabPanel}>
-            {onlyRenderSelectedTab && id ? (
-              tab.selectedId === id && <Box>{content}</Box>
-            ) : (
-              <Box>{content}</Box>
-            )}
-          </TabPanel>
-        ))}
+        {tabs.map(({ content, id }, index) => {
+          let panelContent
+          if (Array.isArray(content)) {
+            panelContent = (
+              <Box marginTop={3}>
+                <Tabs
+                  label=""
+                  variant="alternative"
+                  contentBackground="white"
+                  tabs={content}
+                />
+              </Box>
+            )
+          } else {
+            panelContent = <Box>{content}</Box>
+          }
+          return (
+            <TabPanel {...tab} key={index} className={styles.tabPanel}>
+              {onlyRenderSelectedTab && id
+                ? tab.selectedId === id && <Box>{panelContent}</Box>
+                : panelContent}
+            </TabPanel>
+          )
+        })}
       </Box>
     </Box>
   )
