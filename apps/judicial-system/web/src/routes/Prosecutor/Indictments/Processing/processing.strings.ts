@@ -79,6 +79,12 @@ export const strings = {
     description:
       'Notaður sem texti í takka til að eyða lögmanni kröfuhafa í einkaréttarkröfu á Málsmeðferðarskjánum.',
   }),
+  addCivilClaimant: defineMessage({
+    id: 'judicial.system.indictments:processing.add_civil_claimant',
+    defaultMessage: 'Bæta við kröfuhafa',
+    description:
+      'Notaður sem texti í "Bæta við kröfuhafa" takka við einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
   lawyer: defineMessage({
     id: 'judicial.system.indictments:processing.lawyer',
     defaultMessage: 'Lögmaður',
