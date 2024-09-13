@@ -59,7 +59,10 @@ import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
-import { FiskistofaHeader } from './Themes/FiskistofaTheme'
+import {
+  FiskistofaDefaultHeader,
+  FiskistofaHeader,
+} from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
 import {
   FjarsyslaRikisinsFooter,
@@ -97,7 +100,11 @@ import {
   SjukratryggingarFooter,
   SjukratryggingarHeader,
 } from './Themes/SjukratryggingarTheme'
-import { SyslumennFooter, SyslumennHeader } from './Themes/SyslumennTheme'
+import {
+  SyslumennDefaultHeader,
+  SyslumennFooter,
+  SyslumennHeader,
+} from './Themes/SyslumennTheme'
 import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
@@ -163,6 +170,13 @@ export const getThemeConfig = (
   theme?: string,
   organization?: Organization | null,
 ): { themeConfig: Partial<LayoutProps> } => {
+  const organizationNamespace = JSON.parse(
+    organization?.namespace?.fields || '{}',
+  )
+
+  const usingDefaultHeader: boolean =
+    organizationNamespace['usingDefaultHeader'] ?? false
+
   const footerVersion: LayoutProps['footerVersion'] =
     theme === 'landing-page' || (organization?.footerItems ?? [])?.length > 0
       ? 'organization'
@@ -187,7 +201,7 @@ export const getThemeConfig = (
     }
   }
 
-  if (lightThemes.includes(theme ?? '')) {
+  if (lightThemes.includes(theme ?? '') || usingDefaultHeader) {
     return { themeConfig: { footerVersion } }
   }
 
@@ -257,7 +271,13 @@ export const OrganizationHeader: React.FC<
 
   switch (organizationPage.theme) {
     case 'syslumenn':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <SyslumennDefaultHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+        />
+      ) : (
         <SyslumennHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -311,7 +331,13 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'fiskistofa':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <FiskistofaDefaultHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+        />
+      ) : (
         <FiskistofaHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}

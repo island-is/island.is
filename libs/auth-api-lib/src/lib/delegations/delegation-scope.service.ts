@@ -3,7 +3,7 @@ import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import { AuthDelegationProvider } from '@island.is/shared/types'
@@ -16,7 +16,6 @@ import { IdentityResource } from '../resources/models/identity-resource.model'
 import { DelegationProviderService } from './delegation-provider.service'
 import { DelegationConfig } from './DelegationConfig'
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
-import { DelegationProviderModel } from './models/delegation-provider.model'
 import { DelegationScope } from './models/delegation-scope.model'
 import { DelegationTypeModel } from './models/delegation-type.model'
 import { Delegation } from './models/delegation.model'
@@ -81,15 +80,18 @@ export class DelegationScopeService {
   async delete(
     delegationId: string,
     scopeNames?: string[] | null,
+    transaction?: Transaction,
   ): Promise<number> {
     if (scopeNames) {
       return this.delegationScopeModel.destroy({
         where: { delegationId, scopeName: scopeNames },
+        transaction,
       })
     }
 
     return this.delegationScopeModel.destroy({
       where: { delegationId },
+      transaction,
     })
   }
 
@@ -101,6 +103,7 @@ export class DelegationScopeService {
 
   async findAll(delegationId: string): Promise<DelegationScope[]> {
     return this.delegationScopeModel.findAll({
+      useMaster: true,
       where: { delegationId },
       include: [
         {
