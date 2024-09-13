@@ -32,6 +32,21 @@ export const QualityPhotoApi = defineTemplateApi({
   namespace,
 })
 
+export const ThjodskraImagesApi = defineTemplateApi({
+  action: 'thjodskraImages',
+  namespace,
+})
+
+export const ThjodskraImageApi = defineTemplateApi({
+  action: 'thjodskraImage',
+  namespace,
+})
+
+export const ThjodskraSignatureApi = defineTemplateApi({
+  action: 'thjodskraSignature',
+  namespace,
+})
+
 export const QualitySignatureApi = defineTemplateApi({
   action: 'qualitySignature',
   namespace,

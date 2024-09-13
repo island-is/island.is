@@ -10,11 +10,11 @@ import {
   YES,
   DrivingLicense,
   HasQualitySignature,
+  ThjodskraImage,
 } from './types'
 import {
   DrivingLicenseBookService,
   Organization as DrivingLicenseBookSchool,
-  TeacherRights,
 } from '@island.is/api/domains/driving-license-book'
 import {
   DrivingLicenseApi,
@@ -262,6 +262,47 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     return {
       hasQualitySignature,
     }
+  }
+
+  async thjodskraImages({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<ThjodskraImage[]> {
+    const response = await this.drivingLicenseService.getImagesFromThjodskra({
+      nationalId: auth.nationalId,
+      token: auth.authorization,
+    })
+
+    return response.images ? response.images : []
+  }
+
+  async thjodskraImage({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<string | null> {
+    const str = await this.drivingLicenseService.getImageFromThjodskra({
+      nationalId: auth.nationalId,
+      token: auth.authorization,
+    })
+
+    const datauri = str?.length
+      ? `data:image/jpeg;base64,${str.substring(1, str.length - 2)}`
+      : null
+
+    return datauri
+  }
+
+  async thjodskraSignature({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<string | null> {
+    const str = await this.drivingLicenseService.getSignatureFromThjodskra({
+      nationalId: auth.nationalId,
+      token: auth.authorization,
+    })
+
+    const datauri = str?.length
+      ? `data:image/jpeg;base64,${str.substring(1, str.length - 2)}`
+      : null
+
+    return datauri
   }
 
   async jurisdictions(): Promise<Jurisdiction[]> {

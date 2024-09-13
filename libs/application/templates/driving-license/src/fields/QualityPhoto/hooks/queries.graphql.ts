@@ -7,3 +7,11 @@ export const QUALITY_PHOTO = gql`
     }
   }
 `
+
+export const QUALITY_SIGNATURE = gql`
+  query HasQualitySignature {
+    drivingLicenseQualitySignature {
+      dataUri
+    }
+  }
+`

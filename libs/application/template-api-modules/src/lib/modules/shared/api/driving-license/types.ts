@@ -1,6 +1,15 @@
 export type HasQualityPhoto = {
   hasQualityPhoto: boolean
 }
+
+export interface ThjodskraImage {
+  content?: string | null
+  contentLength?: number
+  contentDocumentType?: string | null
+  created?: Date
+  biometricId?: string | null
+}
+
 export type HasQualitySignature = {
   hasQualitySignature: boolean
 }

@@ -6,6 +6,7 @@ import {
   getValueViaPath,
   buildDescriptionField,
   buildRadioField,
+  buildKeyValueField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../lib/types'
@@ -39,14 +40,9 @@ export const subSectionQualityPhoto = buildSubSection({
           component: 'QualityPhoto',
           id: 'qphoto',
         }),
-        buildRadioField({
+        buildDescriptionField({
           id: 'willBringQualityPhoto',
           title: '',
-          disabled: false,
-          options: [
-            { value: NO, label: m.qualityPhotoNoAcknowledgement },
-            { value: YES, label: m.qualityPhotoAcknowledgement },
-          ],
         }),
         buildDescriptionField({
           id: 'photodesc',

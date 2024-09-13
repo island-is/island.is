@@ -11,6 +11,7 @@ export {
   DrivingAssessmentApi,
   JurisdictionApi,
   QualityPhotoApi,
+  ThjodskraImagesApi,
   ExistingApplicationApi,
 } from '@island.is/application/types'
 
