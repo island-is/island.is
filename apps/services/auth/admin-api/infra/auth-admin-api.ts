@@ -4,7 +4,7 @@ import {
   service,
   ServiceBuilder,
 } from '../../../../../infra/src/dsl/dsl'
-import { RskProcuring } from '../../../../../infra/src/dsl/xroad'
+import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
 const REDIS_NODE_CONFIG = {
   dev: json([
@@ -67,7 +67,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
     })
-    .xroad(RskProcuring)
+    .xroad(Base, Client, RskProcuring)
     .ingress({
       primary: {
         host: {
