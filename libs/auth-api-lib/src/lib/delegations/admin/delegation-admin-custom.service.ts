@@ -35,7 +35,6 @@ export class DelegationAdminCustomService {
     try {
       const zenDeskCase = await this.zendeskService.getTicket(id)
 
-      console.log('zenDeskCase', zenDeskCase.status)
       return zenDeskCase.status
     } catch (error) {
       throw new Error('Error checking zendesk status')
