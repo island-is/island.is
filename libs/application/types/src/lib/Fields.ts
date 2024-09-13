@@ -101,7 +101,10 @@ export type TableRepeaterItem = {
         activeField?: Record<string, string>,
       ) => boolean)
   updateValueObj?: {
-    valueModifier: (activeField?: Record<string, string>) => unknown
+    valueModifier: (
+      application: Application,
+      activeField?: Record<string, string>,
+    ) => unknown
     watchValues:
       | string
       | string[]

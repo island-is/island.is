@@ -99,7 +99,10 @@ export const Item = ({
           ? !watchedValues.every((value) => value === undefined)
           : true)
       ) {
-        const finalValue = updateValueObj.valueModifier(activeValues)
+        const finalValue = updateValueObj.valueModifier(
+          application,
+          activeValues,
+        )
         setValue(id, finalValue)
       }
     }
