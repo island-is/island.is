@@ -24,7 +24,6 @@ import {
   getApplicationExternalData,
   getAvailablePersonalRightsInDays,
   getAvailablePersonalRightsSingleParentInMonths,
-  getAvailableRightsInDays,
   getMaxMultipleBirthsInMonths,
   getMultipleBirthsDays,
   getSelectedChild,
@@ -35,6 +34,7 @@ import {
   Period as AnswerPeriod,
   getPersonaldays,
   getPersonalDaysInMonths,
+  StartDateOptions,
 } from '@island.is/application/templates/parental-leave'
 import {
   Application,
@@ -82,6 +82,7 @@ import {
   checkIfPhoneNumberIsGSM,
   getRightsCode,
   transformApplicationToParentalLeaveDTO,
+  getFromDate,
 } from './parental-leave.utils'
 import {
   generateAssignEmployerApplicationSms,
@@ -717,7 +718,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       }
     }
 
-    const maximumDaysToSpend = getAvailableRightsInDays(application)
     const maximumPersonalDaysToSpend =
       getAvailablePersonalRightsInDays(application)
     const maximumMultipleBirthsDaysToSpend = getMultipleBirthsDays(application)
@@ -842,23 +842,35 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const end = parseISO(endDate)
     const percentage = Number(ratio) / 100
     const periodLength = calculatePeriodLength(start, end)
-    return Math.floor(periodLength * percentage)
+    return Math.round(periodLength * percentage)
   }
 
-  createPeriodsDTO(periods: AnswerPeriod[], rights: string): Period[] {
-    return periods.map((period) => ({
-      rightsCodePeriod: rights,
-      from: period.startDate,
-      to: period.endDate,
-      ratio: `D${this.calculatePeriodDays(
-        period.startDate,
-        period.endDate,
-        period.ratio,
-        period.daysToUse,
-      )}`,
-      approved: !!period.approved,
-      paid: !!period.paid,
-    }))
+  createPeriodsDTO(
+    periods: AnswerPeriod[],
+    isActualDateOfBirth: boolean,
+    rights: string,
+  ): Period[] {
+    return periods.map((period, index) => {
+      const isFirstPeriod = index === 0
+      return {
+        rightsCodePeriod: rights,
+        from: getFromDate(
+          isFirstPeriod,
+          isActualDateOfBirth,
+          period.useLength || '',
+          period,
+        ),
+        to: period.endDate,
+        ratio: `D${this.calculatePeriodDays(
+          period.startDate,
+          period.endDate,
+          period.ratio,
+          period.daysToUse,
+        )}`,
+        approved: !!period.approved,
+        paid: !!period.paid,
+      }
+    })
   }
 
   async sendApplication({
@@ -872,6 +884,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       employerLastSixMonths,
       employers,
       periods,
+      firstPeriodStart,
     } = getApplicationAnswers(application.answers)
     // if (
     //   previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
@@ -886,7 +899,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     const rightsDTO = await this.createRightsDTO(application)
     const rights = rightsDTO.map(({ rightsUnit }) => rightsUnit).join(',')
-    const periodsDTO = this.createPeriodsDTO(periods, rights)
+    const isActualDateOfBirth =
+      firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
+    const periodsDTO = this.createPeriodsDTO(
+      periods,
+      isActualDateOfBirth,
+      rights,
+    )
 
     try {
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
@@ -969,7 +988,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
   async validateApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryId = application.applicant
-    const { previousState, periods } = getApplicationAnswers(
+    const { previousState, periods, firstPeriodStart } = getApplicationAnswers(
       application.answers,
     )
     /* This is to avoid calling the api every time the user leaves the residenceGrantApplicationNoBirthDate state or residenceGrantApplication state */
@@ -981,7 +1000,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     const rightsDTO = await this.createRightsDTO(application)
     const rights = rightsDTO.map(({ rightsUnit }) => rightsUnit).join(',')
-    const periodsDTO = this.createPeriodsDTO(periods, rights)
+    const isActualDateOfBirth =
+      firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
+    const periodsDTO = this.createPeriodsDTO(
+      periods,
+      isActualDateOfBirth,
+      rights,
+    )
 
     try {
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
