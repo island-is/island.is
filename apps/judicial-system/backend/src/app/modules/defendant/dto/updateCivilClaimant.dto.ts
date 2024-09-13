@@ -1,7 +1,41 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types'
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator'
 
-import { CreateCivilClaimantDto } from './createCivilClaimant.dto'
+import { ApiProperty } from '@nestjs/swagger'
 
-export class UpdateCivilClaimantDto extends PartialType(
-  OmitType(CreateCivilClaimantDto, ['caseId'] as const),
-) {}
+export class UpdateCivilClaimantDto {
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({ type: String })
+  readonly name!: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String })
+  readonly nationalId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String })
+  readonly defenderName?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String })
+  readonly defenderEmail?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String })
+  readonly defenderPhoneNumber?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty({ type: Boolean })
+  readonly caseFilesSharedWithDefender?: boolean
+}

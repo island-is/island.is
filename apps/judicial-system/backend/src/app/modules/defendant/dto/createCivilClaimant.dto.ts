@@ -1,24 +1,8 @@
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator'
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateCivilClaimantDto {
-  @IsNotEmpty()
-  @IsUUID()
-  @ApiProperty({ type: String })
-  readonly caseId!: string
-
-  @IsNotEmpty()
-  @IsUUID()
-  @ApiProperty({ type: String })
-  readonly defendantId!: string
-
   @IsNotEmpty()
   @IsString()
   @ApiProperty({ type: String })

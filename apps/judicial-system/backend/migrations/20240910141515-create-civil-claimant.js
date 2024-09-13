@@ -37,23 +37,23 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: false,
           },
-          nationalId: {
+          national_id: {
             type: Sequelize.STRING,
             allowNull: true,
           },
-          defenderName: {
+          defender_name: {
             type: Sequelize.STRING,
             allowNull: true,
           },
-          defenderEmail: {
+          defender_email: {
             type: Sequelize.STRING,
             allowNull: true,
           },
-          defenderPhoneNumber: {
+          defender_phone_number: {
             type: Sequelize.STRING,
             allowNull: true,
           },
-          caseFilesSharedWithDefender: {
+          case_files_shared_with_defender: {
             type: Sequelize.BOOLEAN,
             allowNull: true,
           },

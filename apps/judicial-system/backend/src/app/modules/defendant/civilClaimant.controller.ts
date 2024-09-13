@@ -19,6 +19,7 @@ import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { CreateCivilClaimantDto } from './dto/createCivilClaimant.dto'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
+import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { CivilClaimant } from './models/civilClaimant.model'
 import { Defendant } from './models/defendant.model'
 import { CivilClaimantService } from './civildClaimant.service'
@@ -32,7 +33,7 @@ export class CivilClaimantController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard)
+  @UseGuards(CaseExistsGuard, DefendantExistsGuard)
   @Post()
   @ApiCreatedResponse({
     type: CivilClaimant,
