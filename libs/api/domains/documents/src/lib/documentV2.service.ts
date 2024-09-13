@@ -37,10 +37,13 @@ export class DocumentServiceV2 {
     nationalId: string,
     documentId: string,
     locale?: string,
+    includeDocument?: boolean,
   ): Promise<Document | null> {
     const document = await this.documentService.getCustomersDocument(
       nationalId,
       documentId,
+      locale,
+      includeDocument,
     )
 
     if (!document) {
@@ -72,10 +75,12 @@ export class DocumentServiceV2 {
         id: document.senderNationalId,
         name: document.senderName,
       },
-      content: {
-        type,
-        value: document.content,
-      },
+      content: document.content
+        ? {
+            type,
+            value: document.content,
+          }
+        : undefined,
       isUrgent: document.urgent,
       actions: this.actionMapper(documentId, document.actions),
     }

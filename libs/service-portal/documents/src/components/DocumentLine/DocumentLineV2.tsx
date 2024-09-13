@@ -187,7 +187,7 @@ export const DocumentLine: FC<Props> = ({
           })
           setModalVisible(true)
         } else {
-          getDocument()
+          //getDocument()
         }
       },
       onError: () => {

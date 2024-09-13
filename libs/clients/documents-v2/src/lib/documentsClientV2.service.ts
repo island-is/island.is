@@ -79,15 +79,17 @@ export class DocumentsClientV2Service {
     customerId: string,
     documentId: string,
     locale?: string,
+    includeDocument?: boolean,
   ): Promise<DocumentDto | null> {
     const document = await this.api.customersDocument({
       kennitala: customerId,
       messageId: documentId,
       authenticationType: 'HIGH',
       locale: locale,
+      includeDocument: includeDocument,
     })
 
-    const mappedDocument = mapToDocument(document)
+    const mappedDocument = mapToDocument(document, includeDocument)
 
     if (!mappedDocument) {
       this.logger.warn('No document content available for findDocumentById', {

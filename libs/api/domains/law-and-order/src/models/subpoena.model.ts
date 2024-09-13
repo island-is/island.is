@@ -3,7 +3,7 @@ import { Action } from './actions.model'
 import { Group } from './group.model'
 
 @ObjectType('LawAndOrderSubpoenaTexts')
-export class Texts {
+export class Text {
   @Field({ nullable: true })
   intro?: string
 
@@ -38,7 +38,7 @@ export class Data {
 @ObjectType('LawAndOrderSubpoena')
 export class Subpoena {
   @Field({ nullable: true })
-  texts?: Texts
+  texts?: Text
 
   @Field(() => [Action], { nullable: true })
   actions?: Array<Action>

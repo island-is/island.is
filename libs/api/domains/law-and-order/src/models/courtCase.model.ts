@@ -2,8 +2,8 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { Action } from './actions.model'
 import { Group } from './group.model'
 
-@ObjectType('LawAndOrderCourtCaseTexts')
-export class Texts {
+@ObjectType('LawAndOrderCourtCaseText')
+export class Text {
   @Field({ nullable: true })
   intro?: string
 
@@ -31,8 +31,8 @@ export class Data {
 
 @ObjectType('LawAndOrderCourtCase')
 export class CourtCase {
-  @Field(() => Texts, { nullable: true })
-  texts?: Texts
+  @Field(() => Text, { nullable: true })
+  texts?: Text
 
   @Field(() => [Action], { nullable: true })
   actions?: Array<Action>

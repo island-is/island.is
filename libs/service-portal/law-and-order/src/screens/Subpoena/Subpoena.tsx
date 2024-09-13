@@ -5,34 +5,26 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  SkeletonLoader,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import {
-  CardLoader,
-  ConfirmationModal,
   DOMSMALARADUNEYTID_SLUG,
   IntroHeader,
   m,
   Modal,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { isDefined } from '@island.is/shared/utils'
+import { Problem } from '@island.is/react-spa/shared'
 import { Navigate, useParams } from 'react-router-dom'
+import { useState } from 'react'
 import InfoLines from '../../components/InfoLines/InfoLines'
 import DefenderChoices from '../../components/DefenderChoices/DefenderChoices'
-import { useEffect, useState } from 'react'
-import { useLawAndOrderContext } from '../../helpers/LawAndOrderContext'
-import CourtCaseDetail from '../CourtCaseDetail/CourtCaseDetail'
 import { useGetSubpoenaQuery } from './Subpoena.generated'
-import { Problem } from '@island.is/react-spa/shared'
-import { usePostSubpoenaAcknowledgedMutation } from '../CourtCaseDetail/CourtCaseDetail.generated'
 import { LawAndOrderPaths } from '../../lib/paths'
 import { DefenseChoices } from '../../lib/const'
-import { isDefined } from '@island.is/shared/utils'
-import { DocumentsPaths } from '@island.is/service-portal/documents'
+import { messages } from '../../lib/messages'
 
 type UseParams = {
   id: string
@@ -54,90 +46,13 @@ const Subpoena = () => {
 
   const subpoena = data?.lawAndOrderSubpoena
   const [defenderPopUp, setDefenderPopUp] = useState<boolean>(false)
-  const {
-    subpoenaAcknowledged,
-    setSubpoenaAcknowledged,
-    subpoenaModalVisible,
-    setSubpoenaModalVisible,
-  } = useLawAndOrderContext()
 
-  useEffect(() => {
-    if (subpoena && !subpoenaAcknowledged) {
-      setSubpoenaAcknowledged(subpoena.data?.acknowledged ?? undefined)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // const [postAction, { loading: postActionLoading }] =
-  //   usePostSubpoenaAcknowledgedMutation({
-  //     onError: () => {
-  //       toast.error(formatMessage(messages.registrationError))
-  //     },
-  //     onCompleted: () => {
-  //       //TODO: What to do if user closes or cancel the pop up?
-  //       subpoenaAcknowledged &&
-  //         toast.success(formatMessage(messages.registrationCompleted))
-  //       setSubpoenaModalVisible(false)
-  //     },
-  //   })
-
-  const toggleModal = () => {
-    setSubpoenaModalVisible(!subpoenaModalVisible)
-  }
-
-  const handleSubmit = () => {
-    // TODO: Change to service
-    setSubpoenaAcknowledged(true)
-    // postAction({
-    //   variables: {
-    //     input: {
-    //       caseId: id,
-    //       acknowledged: true,
-    //     },
-    //   },
-    // })
-  }
-
-  const handleCancel = () => {
-    // TODO: Change to service
-    setSubpoenaAcknowledged(false)
-    // postAction({
-    //   variables: {
-    //     input: {
-    //       caseId: id,
-    //       acknowledged: false,
-    //     },
-    //   },
-    // })
-  }
-
-  if (subpoena?.data && subpoenaAcknowledged === undefined) {
-    setSubpoenaModalVisible(true)
-    return (
-      <ConfirmationModal
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-        onClose={toggleModal}
-        loading={false}
-        redirectPath={LawAndOrderPaths.SubpoenaDetail.replace(':id', id)}
-        modalTitle={formatMessage(m.acknowledgeTitle)}
-        modalText={formatMessage(m.acknowledgeText, {
-          arg: formatMessage(messages.modalFromPolice),
-        })}
-      />
-    )
-    // return (
-    //   <Navigate
-    //     to={DocumentsPaths.ElectronicDocumentSingle.replace(
-    //       ':id',
-    //       '52b25547-321d-4584-ba3d-2a7901228b25',
-    //     )}
-    //   />
-    // )
-  }
-
-  if (subpoenaAcknowledged === false) {
-    return <CourtCaseDetail />
+  if (
+    subpoena?.data &&
+    (!isDefined(subpoena.data.acknowledged) ||
+      subpoena.data.acknowledged === false)
+  ) {
+    return <Navigate to={LawAndOrderPaths.CourtCaseDetail.replace(':id', id)} />
   }
 
   return (

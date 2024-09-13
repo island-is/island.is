@@ -50,7 +50,6 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
 
   const methods = useForm<FormData>()
 
-  console.log(choice)
   const [postAction, { loading: postActionLoading }] =
     usePostDefenseChoiceMutation({
       onError: () => {
@@ -90,9 +89,12 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
   return (
     <Box marginTop={popUp ? 0 : 5}>
       {popUp ? (
-        <Text variant="h3" marginBottom={5}>
-          {formatMessage(messages.chooseDefenderTitle)}
-        </Text>
+        <>
+          <Text variant="h3" marginBottom={1}>
+            {formatMessage(messages.chooseDefenderTitle)}
+          </Text>
+          <Text marginBottom={5}>{formatMessage(messages.defenderLimits)}</Text>
+        </>
       ) : (
         <Text variant="eyebrow" color="purple400" marginBottom={3}>
           {formatMessage(messages.chooseDefenderTitle)}

@@ -60,7 +60,12 @@ export class DocumentResolverV2 {
           resources: input.id,
           meta: { includeDocument: input.includeDocument },
         },
-        this.documentServiceV2.findDocumentById(user.nationalId, input.id),
+        this.documentServiceV2.findDocumentById(
+          user.nationalId,
+          input.id,
+          locale,
+          input.includeDocument,
+        ),
       )
     } catch (e) {
       this.logger.info('failed to get single document', {

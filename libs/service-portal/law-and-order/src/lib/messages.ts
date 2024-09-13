@@ -141,6 +141,11 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:choose-defender',
     defaultMessage: 'Veldu verjanda',
   },
+  defenderLimits: {
+    id: 'sp.law-and-order:defender-limits',
+    defaultMessage:
+      'Það er hægt að breyta vali á verjanda all að þrisvar sinnum.',
+  },
   office: {
     id: 'sp.law-and-order:office',
     defaultMessage: 'Embætti',
