@@ -331,8 +331,6 @@ export class DraftRegulationService {
     const authors: Author[] = []
     for await (const nationalId of nationalIds) {
       if (kennitala.isCompany(nationalId)) {
-        // identity = await this.companyRegistryService.getCompany(nationalId)
-        // return identity?.name ?? ''
         continue
       }
       let author = await this.draftAuthorService.get(nationalId)
