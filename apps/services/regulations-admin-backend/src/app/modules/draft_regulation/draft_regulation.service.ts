@@ -339,6 +339,7 @@ export class DraftRegulationService {
         try {
           const person = await this.nationalRegistryApi.getAllDataIndividual(
             nationalId,
+            false,
           )
 
           if (person?.nafn) {

@@ -29,6 +29,8 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
       REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
