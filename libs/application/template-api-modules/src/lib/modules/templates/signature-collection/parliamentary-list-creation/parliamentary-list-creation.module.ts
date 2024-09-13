@@ -10,6 +10,10 @@ import { BaseTemplateAPIModuleConfig } from '../../../../types'
 // Here you import your module service
 import { ParliamentaryListCreationService } from './parliamentary-list-creation.service'
 import { SignatureCollectionClientModule } from '@island.is/clients/signature-collection'
+import {
+  NationalRegistryClientModule,
+  NationalRegistryClientService,
+} from '@island.is/clients/national-registry-v2'
 
 export class ParliamentaryListCreationModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -18,8 +22,12 @@ export class ParliamentaryListCreationModule {
       imports: [
         SharedTemplateAPIModule.register(config),
         SignatureCollectionClientModule,
+        NationalRegistryClientModule,
       ],
-      providers: [ParliamentaryListCreationService],
+      providers: [
+        ParliamentaryListCreationService,
+        NationalRegistryClientService,
+      ],
       exports: [ParliamentaryListCreationService],
     }
   }

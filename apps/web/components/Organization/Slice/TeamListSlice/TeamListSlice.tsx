@@ -34,7 +34,7 @@ export const TeamMemberListWrapper = ({
   )
   const [errorOccurred, setErrorOccurred] = useState(false)
 
-  const [fetchListItems, { loading }] = useLazyQuery<Query>(
+  const [fetchListItems, { loading, called }] = useLazyQuery<Query>(
     GET_TEAM_MEMBERS_QUERY,
     {
       onCompleted(data) {
@@ -89,7 +89,7 @@ export const TeamMemberListWrapper = ({
         })
       }}
       totalItems={totalItems}
-      loading={loading}
+      loading={loading || !called}
       pageQueryId={pageQueryId}
       searchQueryId={searchQueryId}
       tagQueryId={tagQueryId}
