@@ -116,6 +116,9 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
   setBeforeSubmitCallback?.(async () => {
     // Call updateApplication for basicInformation.type and basicInformation.model
     // Get information for basicInformation here and updateApplication
+    if (modelFromAnswers === model && typeFromAnswers === type) {
+      return [true, null]
+    }
     let response = undefined
     try {
       response =

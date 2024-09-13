@@ -5,6 +5,7 @@ import {
   buildPhoneField,
   getValueViaPath,
   buildSelectField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
@@ -103,6 +104,30 @@ export const ImporterInformationSubSection = buildSubSection({
               '',
             ) as string,
         }),
+        buildCustomField(
+          {
+            id: 'importerInformation.custom',
+            title: '',
+            component: 'ChangeAnswers',
+          },
+          {
+            sectionName: 'ownerInformation',
+            questionName: 'isOwnerOtherThanImporter',
+            person: 'owner',
+          },
+        ),
+        buildCustomField(
+          {
+            id: 'importerInformation.custom2',
+            title: '',
+            component: 'ChangeAnswers',
+          },
+          {
+            sectionName: 'operatorInformation',
+            questionName: 'hasOperator',
+            person: 'operator',
+          },
+        ),
       ],
     }),
   ],

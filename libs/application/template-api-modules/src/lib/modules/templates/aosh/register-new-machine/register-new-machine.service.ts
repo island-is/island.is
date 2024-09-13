@@ -71,6 +71,7 @@ export class RegisterNewMachineTemplateService extends BaseTemplateApiService {
     })
 
     await this.workMachineClientService.addNewMachine(auth, {
+      xCorrelationID: application.id,
       machineRegistrationCreateDto: {
         importer: {
           nationalId: answers.importerInformation.importer.nationalId,

@@ -5,6 +5,7 @@ import {
   buildPhoneField,
   buildRadioField,
   buildSelectField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { FormValue, NO, YES } from '@island.is/application/types'
@@ -88,6 +89,18 @@ export const OwnerInformationSubSection = buildSubSection({
           maxLength: 250,
           condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
         }),
+        buildCustomField(
+          {
+            id: 'ownerInformation.custom',
+            title: '',
+            component: 'ChangeAnswers',
+          },
+          {
+            sectionName: 'operatorInformation',
+            questionName: 'hasOperator',
+            person: 'operator',
+          },
+        ),
       ],
     }),
   ],
