@@ -34,6 +34,8 @@ const exhaustiveCheck = (param: never) => {
         return CustomDelegation
       case AuthDelegationType.LegalRepresentative:
         return LegalRepresentativeDelegation
+      case AuthDelegationType.GeneralMandate:
+        return CustomDelegation
       default:
         exhaustiveCheck(delegation.type)
     }
