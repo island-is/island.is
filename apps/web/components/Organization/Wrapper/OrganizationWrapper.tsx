@@ -97,6 +97,7 @@ import { RikissaksoknariHeader } from './Themes/RikissaksoknariTheme'
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
 import {
+  SjukratryggingarDefaultHeader,
   SjukratryggingarFooter,
   SjukratryggingarHeader,
 } from './Themes/SjukratryggingarTheme'
@@ -284,7 +285,13 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'sjukratryggingar':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <SjukratryggingarDefaultHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+        />
+      ) : (
         <SjukratryggingarHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
