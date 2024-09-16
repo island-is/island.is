@@ -1,6 +1,6 @@
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { IntroHeader, THJODSKRA_SLUG } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import OwnerView from './OwnerView'
 import SigneeView from './SigneeView'
@@ -20,6 +20,7 @@ const SignatureListsParliamentary = () => {
         title={formatMessage(m.pageTitle)}
         intro={formatMessage(m.pageDescriptionSignee)}
         serviceProviderTooltip={formatMessage(m.infoProviderTooltip)}
+        serviceProviderSlug={THJODSKRA_SLUG}
       />
       {!loadingIsOwner && !loadingCurrentCollection ? (
         <Box>

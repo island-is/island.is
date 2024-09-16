@@ -34,8 +34,6 @@ const OwnerView = ({
     currentCollection?.id || '',
   )
 
-  console.log(listsForOwner)
-
   return (
     <Stack space={8}>
       <Box marginTop={5}>
