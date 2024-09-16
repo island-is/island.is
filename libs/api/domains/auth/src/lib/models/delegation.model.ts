@@ -25,6 +25,7 @@ const exhaustiveCheck = (param: never) => {
   resolveType(delegation: Delegation) {
     switch (delegation.type) {
       case AuthDelegationType.LegalGuardian:
+      case AuthDelegationType.GeneralMandate:
         return LegalGuardianDelegation
       case AuthDelegationType.ProcurationHolder:
         return ProcuringHolderDelegation
@@ -34,8 +35,6 @@ const exhaustiveCheck = (param: never) => {
         return CustomDelegation
       case AuthDelegationType.LegalRepresentative:
         return LegalRepresentativeDelegation
-      case AuthDelegationType.GeneralMandate:
-        return CustomDelegation
       default:
         exhaustiveCheck(delegation.type)
     }

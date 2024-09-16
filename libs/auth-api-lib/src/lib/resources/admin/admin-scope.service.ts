@@ -458,34 +458,22 @@ export class AdminScopeService {
       AuthDelegationType.Custom,
     )
 
-    // create delegation type rows
-    delegationTypes.map((delegationType) => {
-      const addedApiScopeDelegationTypes = this.apiScopeDelegationType.upsert(
-        {
-          apiScopeName,
-          delegationType,
-        },
-        { transaction },
-      )
+    if (allowExplicitDelegationGrant) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
+    }
 
-      // If the delegationType is 'Custom', also create one for 'GeneralMandate'
-      if (delegationType === AuthDelegationType.Custom) {
-        const additionalApiScopeDelegationTypes =
-          this.apiScopeDelegationType.upsert(
-            {
-              apiScopeName,
-              delegationType: AuthDelegationType.GeneralMandate,
-            },
-            { transaction },
-          )
-        return Promise.all([
-          addedApiScopeDelegationTypes,
-          additionalApiScopeDelegationTypes,
-        ])
-      }
-
-      return addedApiScopeDelegationTypes
-    })
+    // add delegation type rows
+    await Promise.all(
+      delegationTypes.map((delegationType) =>
+        this.apiScopeDelegationType.upsert(
+          {
+            apiScopeName,
+            delegationType,
+          },
+          { transaction },
+        ),
+      ),
+    )
 
     // update boolean fields
     if (
@@ -547,34 +535,11 @@ export class AdminScopeService {
       ? false
       : undefined
 
+    if (delegationTypes.includes(AuthDelegationType.Custom)) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
+    }
+
     // remove delegation type rows
-    delegationTypes.map((delegationType) => {
-      const removedApiScopeDelegationTypes =
-        this.apiScopeDelegationType.destroy({
-          transaction,
-          where: {
-            apiScopeName,
-            delegationType,
-          },
-        })
-
-      // If the delegationType is 'Custom', also create one for 'GeneralMandate'
-      if (delegationType === AuthDelegationType.Custom) {
-        const additionalApiScopeDelegationTypes =
-          this.apiScopeDelegationType.destroy({
-            transaction,
-            where: {
-              apiScopeName,
-              delegationType: AuthDelegationType.GeneralMandate,
-            },
-          })
-        return Promise.all([
-          removedApiScopeDelegationTypes,
-          additionalApiScopeDelegationTypes,
-        ])
-      }
-    })
-
     await Promise.all(
       delegationTypes.map((delegationType) =>
         this.apiScopeDelegationType.destroy({
