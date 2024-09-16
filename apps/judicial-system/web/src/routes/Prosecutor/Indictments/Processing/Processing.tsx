@@ -47,6 +47,7 @@ import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web
 import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
+import { uuid } from 'uuidv4'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -172,6 +173,28 @@ const Processing: FC = () => {
     }))
   }
 
+  const handleHasCivilClaimsChange = async (hasCivilClaims: boolean) => {
+    setHasCivilClaimantChoice(hasCivilClaims)
+
+    setAndSendCaseToServer(
+      [{ hasCivilClaims, force: true }],
+      workingCase,
+      setWorkingCase,
+    )
+  }
+
+  useEffect(() => {
+    if (
+      workingCase.hasCivilClaims === true &&
+      workingCase.civilClaimants?.length === 0
+    ) {
+      const id = uuid()
+      createEmptyCivilClaimant(id)
+    } else if (workingCase.hasCivilClaims === false) {
+      // TODO: Remove all claimants
+    }
+  }, [workingCase.hasCivilClaims])
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -291,15 +314,7 @@ const Processing: FC = () => {
                   label={formatMessage(strings.yes)}
                   large
                   backgroundColor="white"
-                  onChange={() => {
-                    setHasCivilClaimantChoice(true)
-
-                    setAndSendCaseToServer(
-                      [{ hasCivilClaims: true, force: true }],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }}
+                  onChange={() => handleHasCivilClaimsChange(true)}
                   checked={
                     hasCivilClaimantChoice === true ||
                     (hasCivilClaimantChoice === undefined &&
@@ -314,15 +329,7 @@ const Processing: FC = () => {
                   label={formatMessage(strings.no)}
                   large
                   backgroundColor="white"
-                  onChange={() => {
-                    setHasCivilClaimantChoice(false)
-
-                    setAndSendCaseToServer(
-                      [{ hasCivilClaims: false, force: true }],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }}
+                  onChange={() => handleHasCivilClaimsChange(false)}
                   checked={
                     hasCivilClaimantChoice === false ||
                     (hasCivilClaimantChoice === undefined &&
@@ -335,7 +342,7 @@ const Processing: FC = () => {
         </Box>
         {workingCase.hasCivilClaims && (
           <>
-            {[{ id: '', name: '', nationalId: '' }].map((civilClaimant) => (
+            {workingCase.civilClaimants?.map((civilClaimant) => (
               <Box component="section" marginBottom={5}>
                 <SectionHeading title={formatMessage(strings.civilClaimant)} />
                 <BlueBox>
@@ -352,13 +359,13 @@ const Processing: FC = () => {
                   <Box marginBottom={2}>
                     <InputNationalId
                       isDateOfBirth={false}
-                      value={civilClaimant.nationalId}
+                      value={civilClaimant.nationalId ?? undefined}
                       onChange={(val) => console.log('change', val)}
                       onBlur={(val) => setNID(val)}
                     />
                   </Box>
                   <InputName
-                    value={civilClaimant.name}
+                    value={civilClaimant.name ?? undefined}
                     onChange={(val) => console.log('change', val)}
                     onBlur={(val) => console.log('blur', val)}
                   />
