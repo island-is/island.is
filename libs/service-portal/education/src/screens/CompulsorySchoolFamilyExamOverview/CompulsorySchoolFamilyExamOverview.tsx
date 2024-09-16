@@ -1,4 +1,9 @@
-import { ActionCard, IntroHeader, m } from '@island.is/service-portal/core'
+import {
+  ActionCard,
+  CardLoader,
+  IntroHeader,
+  m,
+} from '@island.is/service-portal/core'
 import { useFamilySchoolCareerQueryQuery } from './CompulsorySchoolFamilyExamOverview.generated'
 import { EducationCompulsorySchoolStudentCareer } from '@island.is/api/schema'
 import { compulsorySchoolMessages } from '../../lib/messages'
@@ -26,6 +31,7 @@ export const CompulsorySchoolFamilyExamOverview = () => {
         serviceProviderTooltip={formatMessage(m.mmsTooltip)}
       />
       {error && !loading && <Problem error={error} noBorder={false} />}
+      {loading && !error && <CardLoader />}
       {!error && !loading && !userCareer && (
         <Problem
           type="no_data"
