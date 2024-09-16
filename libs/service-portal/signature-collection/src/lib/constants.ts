@@ -1,6 +1,6 @@
 export const CollectionType = {
   Presidential: 'Forsetakosningar',
-  Parliamentary: 'Alþingiskosning NÝTT TEST',
+  Parliamentary: 'Alþingiskosningar',
 }
 
 // will be fetched later on

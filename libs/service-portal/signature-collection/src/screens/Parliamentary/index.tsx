@@ -1,6 +1,10 @@
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { IntroHeader, THJODSKRA_SLUG } from '@island.is/service-portal/core'
+import {
+  EmptyState,
+  IntroHeader,
+  THJODSKRA_SLUG,
+} from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import OwnerView from './OwnerView'
 import SigneeView from './SigneeView'
@@ -24,10 +28,17 @@ const SignatureListsParliamentary = () => {
       />
       {!loadingIsOwner && !loadingCurrentCollection ? (
         <Box>
-          {isOwner.success ? (
-            <OwnerView currentCollection={currentCollection} />
+          {!currentCollection?.isPresidential ? (
+            isOwner.success ? (
+              <OwnerView currentCollection={currentCollection} />
+            ) : (
+              <SigneeView currentCollection={currentCollection} />
+            )
           ) : (
-            <SigneeView currentCollection={currentCollection} />
+            <EmptyState
+              title={m.noCollectionIsActive}
+              description={m.noCollectionIsActiveDescription}
+            />
           )}
         </Box>
       ) : (
