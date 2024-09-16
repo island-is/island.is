@@ -1,8 +1,13 @@
 import { ActionCard, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
+import { SignatureCollection } from '@island.is/api/schema'
 
-const SigneeView = () => {
+const SigneeView = ({
+  currentCollection,
+}: {
+  currentCollection: SignatureCollection
+}) => {
   const { formatMessage } = useLocale()
 
   return (
