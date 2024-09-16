@@ -20,7 +20,7 @@ import {
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
-import { DateType, indictmentCases } from '@island.is/judicial-system/types'
+import { indictmentCases } from '@island.is/judicial-system/types'
 
 import {
   CaseExistsGuard,

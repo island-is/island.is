@@ -16,6 +16,11 @@ export class UpdateSubpoenaDto {
   comment?: string
 
   @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String, required: false })
+  registeredBy?: string
+
+  @IsOptional()
   @IsEnum(DefenderChoice)
   @ApiProperty({ enum: DefenderChoice, required: false })
   defenderChoice?: DefenderChoice

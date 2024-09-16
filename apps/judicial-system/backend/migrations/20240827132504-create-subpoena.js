@@ -50,6 +50,10 @@ module.exports = {
             type: 'TIMESTAMP WITH TIME ZONE',
             allowNull: true,
           },
+          registered_by: {
+            type: Sequelize.STRING,
+            allowNull: true,
+          },
           comment: {
             type: Sequelize.TEXT,
             allowNull: true,

@@ -13,6 +13,11 @@ export class UpdateSubpoenaDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
+  readonly registeredBy?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
   readonly comment?: string
 
   @IsOptional()
