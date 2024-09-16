@@ -25,6 +25,7 @@ import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
+import { DelegationDelegationType } from './delegation-delegation-type.model'
 
 @Table({
   tableName: 'delegation',
@@ -40,7 +41,7 @@ export class Delegation extends Model<
     primaryKey: true,
     allowNull: false,
   })
-  id!: CreationOptional<string>
+  id!: string
 
   @Column({
     type: DataType.STRING,
@@ -104,6 +105,9 @@ export class Delegation extends Model<
 
   @HasMany(() => DelegationScope, { onDelete: 'cascade' })
   delegationScopes?: NonAttribute<DelegationScope[]>
+
+  @HasMany(() => DelegationDelegationType, { onDelete: 'cascade' })
+  delegationDelegationTypes?: DelegationDelegationType[]
 
   toDTO(): DelegationDTO {
     return {
