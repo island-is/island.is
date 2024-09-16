@@ -62,22 +62,9 @@ export class EndorsementService {
     this.logger.info('Updating endorsement counts for all lists onModuleInit...');
     try { 
       await this.updateCountsForAllLists();
-      await this.countEndorsements();
-      await this.countEndorsementLists();
     } catch (error) {
       this.logger.error('Error updating endorsement counts for all lists', error);
     }
-  }
-
-  // count how many rows in endorsement table
-  async countEndorsements() {
-    const count = await this.endorsementModel.count();
-    console.log('countEndorsements', count)
-  }
-  // count how many rows in endorsementlist table
-  async countEndorsementLists() {
-    const count = await this.endorsementListModel.count();
-    console.log('countEndorsementLists', count)
   }
 
   async updateCountsForAllLists(): Promise<void> {
