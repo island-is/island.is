@@ -217,6 +217,7 @@ export const include: Includeable[] = [
     required: false,
     where: { commentType: { [Op.in]: commentTypes } },
   },
+  { model: Case, as: 'mergeCase', attributes },
 ]
 
 export const order: OrderItem[] = [
