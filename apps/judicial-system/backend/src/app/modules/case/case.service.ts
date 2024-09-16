@@ -597,7 +597,7 @@ export class CaseService {
     ]
   }
 
-  private addMessagesForSubmittedIndicitmentCaseToQueue(
+  private addMessagesForSubmittedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
@@ -1181,7 +1181,7 @@ export class CaseService {
           await this.addMessagesForCompletedCaseToQueue(updatedCase, user)
         }
       } else if (updatedCase.state === CaseState.SUBMITTED && isIndictment) {
-        await this.addMessagesForSubmittedIndicitmentCaseToQueue(
+        await this.addMessagesForSubmittedIndictmentCaseToQueue(
           updatedCase,
           user,
         )
