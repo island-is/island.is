@@ -98,23 +98,30 @@ export class AppService {
   ): Promise<SubpoenaResponse> {
     let update = { ...updateSubpoena }
 
-    if (update.defenderChoice === DefenderChoice.CHOOSE) {
-      if (!update.defenderNationalId) {
-        throw new BadRequestException(
-          'Defender national id is required for choice',
-        )
-      }
-      const chosenLawyer = await this.lawyersService.getLawyer(
-        update.defenderNationalId,
+    if (
+      update.defenderChoice === DefenderChoice.CHOOSE &&
+      !update.defenderNationalId
+    ) {
+      throw new BadRequestException(
+        'Defender national id is required for choice',
       )
+    }
 
-      update = {
-        ...update,
-        ...{
-          defenderName: chosenLawyer.Name,
-          defenderEmail: chosenLawyer.Email,
-          defenderPhoneNumber: chosenLawyer.Phone,
-        },
+    if (update.defenderNationalId) {
+      try {
+        const chosenLawyer = await this.lawyersService.getLawyer(
+          update.defenderNationalId,
+        )
+        update = {
+          ...update,
+          ...{
+            defenderName: chosenLawyer.Name,
+            defenderEmail: chosenLawyer.Email,
+            defenderPhoneNumber: chosenLawyer.Phone,
+          },
+        }
+      } catch (reason) {
+        throw new BadRequestException('Lawyer not found')
       }
     }
 

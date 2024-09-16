@@ -23,6 +23,7 @@ export const include: Includeable[] = [
 @Injectable()
 export class SubpoenaService {
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
     @Inject(forwardRef(() => PoliceService))
@@ -50,20 +51,12 @@ export class SubpoenaService {
       defenderName,
     } = update
 
-    const [numberOfAffectedRows, subpoenas] = await this.subpoenaModel.update(
-      update,
-      {
-        where: { subpoenaId: subpoena.subpoenaId },
-        returning: true,
-        transaction,
-      },
-    )
-
-    if (numberOfAffectedRows < 1) {
-      this.logger.error(
-        `Unexpected number of rows ${numberOfAffectedRows} affected when updating subpoena`,
-      )
-    }
+    const [numberOfAffectedRows] = await this.subpoenaModel.update(update, {
+      where: { subpoenaId: subpoena.subpoenaId },
+      returning: true,
+      transaction,
+    })
+    let defenderAffectedRows = 0
 
     if (defenderChoice || defenderNationalId) {
       const defendantUpdate: Partial<Defendant> = {
@@ -74,10 +67,21 @@ export class SubpoenaService {
         defenderPhoneNumber,
       }
 
-      await this.defendantModel.update(defendantUpdate, {
-        where: { id: subpoenas[0].defendantId },
-        transaction,
-      })
+      const [defenderUpdateAffectedRows] = await this.defendantModel.update(
+        defendantUpdate,
+        {
+          where: { id: subpoena.defendantId },
+          transaction,
+        },
+      )
+
+      defenderAffectedRows = defenderUpdateAffectedRows
+    }
+
+    if (numberOfAffectedRows < 1 && defenderAffectedRows < 1) {
+      this.logger.error(
+        `Unexpected number of rows ${numberOfAffectedRows} affected when updating subpoena`,
+      )
     }
 
     const updatedSubpoena = await this.findBySubpoenaId(subpoena.subpoenaId)
