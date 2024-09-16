@@ -32,6 +32,7 @@ import {
   CaseState,
   CaseTransition,
   CivilClaimant,
+  CreateCivilClaimantInput,
   DefendantPlea,
   UpdateCivilClaimantInput,
   UpdateDefendantInput,
@@ -48,6 +49,7 @@ import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 import { uuid } from 'uuidv4'
+import { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -64,8 +66,8 @@ const Processing: FC = () => {
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
-  const { updateCivilClaimant, updateCivilClaimantState } = useCivilClaimants()
-  const { createCivilClaimant } = useCivilClaimants()
+  const { updateCivilClaimant, updateCivilClaimantState, createCivilClaimant } =
+    useCivilClaimants()
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
   const [nID, setNID] = useState<string>()
@@ -110,10 +112,7 @@ const Processing: FC = () => {
   const handleUpdateDefendant = useCallback(
     (updatedDefendant: UpdateDefendantInput) => {
       updateDefendantState(updatedDefendant, setWorkingCase)
-
-      if (workingCase.id) {
-        updateDefendant(updatedDefendant)
-      }
+      updateDefendant(updatedDefendant)
     },
     [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
   )
@@ -121,10 +120,7 @@ const Processing: FC = () => {
   const handleUpdateCivilClaimant = useCallback(
     (updatedCivilClaimant: UpdateCivilClaimantInput) => {
       updateCivilClaimantState(updatedCivilClaimant, setWorkingCase)
-
-      if (workingCase.id) {
-        updateCivilClaimant(updatedCivilClaimant)
-      }
+      updateCivilClaimant(updatedCivilClaimant)
     },
     [
       updateCivilClaimant,
@@ -134,18 +130,12 @@ const Processing: FC = () => {
     ],
   )
 
-  const { data, error, mutate } = useSWR(
+  const { data, error, mutate } = useSWR<NationalRegistryResponsePerson>(
     nID
       ? `/api/nationalRegistry/getPersonByNationalId?nationalId=${nID}`
       : null,
     fetcher,
   )
-
-  useEffect(() => {
-    if (nID?.length === 11) {
-      mutate()
-    }
-  }, [mutate, nID])
 
   const handleCreateCivilClaimantClick = async () => {
     const civilClaimantId = await createCivilClaimant({
@@ -159,7 +149,7 @@ const Processing: FC = () => {
     window.scrollTo(0, document.body.scrollHeight)
   }
 
-  const createEmptyCivilClaimant = (civilClaimantId?: string | null) => {
+  const createEmptyCivilClaimant = async (civilClaimantId?: string | null) => {
     setWorkingCase((prevWorkingCase) => ({
       ...prevWorkingCase,
       civilClaimants: prevWorkingCase.civilClaimants && [
@@ -171,6 +161,10 @@ const Processing: FC = () => {
         } as CivilClaimant,
       ],
     }))
+
+    const a = await createCivilClaimant({
+      caseId: workingCase.id,
+    } as CreateCivilClaimantInput)
   }
 
   const handleHasCivilClaimsChange = async (hasCivilClaims: boolean) => {
@@ -183,11 +177,26 @@ const Processing: FC = () => {
     )
   }
 
+  const handleCivilClaimantNationalIdBlur = async (
+    nationalId: string,
+    civilClaimantId?: string | null,
+  ) => {
+    setNID(nationalId.replace('=', ''))
+    const newData = await mutate()
+
+    if (!newData || !newData.items || !civilClaimantId) {
+      return
+    }
+
+    handleUpdateCivilClaimant({
+      caseId: workingCase.id,
+      civilClaimantId,
+      name: newData.items[0].name,
+    })
+  }
+
   useEffect(() => {
-    if (
-      workingCase.hasCivilClaims === true &&
-      workingCase.civilClaimants?.length === 0
-    ) {
+    if (workingCase.hasCivilClaims === true) {
       const id = uuid()
       createEmptyCivilClaimant(id)
     } else if (workingCase.hasCivilClaims === false) {
@@ -361,7 +370,9 @@ const Processing: FC = () => {
                       isDateOfBirth={false}
                       value={civilClaimant.nationalId ?? undefined}
                       onChange={(val) => console.log('change', val)}
-                      onBlur={(val) => setNID(val)}
+                      onBlur={(val) =>
+                        handleCivilClaimantNationalIdBlur(val, civilClaimant.id)
+                      }
                     />
                   </Box>
                   <InputName

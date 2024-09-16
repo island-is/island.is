@@ -30,8 +30,8 @@ export class CivilClaimantResolver {
   ) {}
 
   @Mutation(() => CivilClaimant)
-  async createCivilClaimant(
-    @Args('createCivilClaimantDto')
+  createCivilClaimant(
+    @Args('input', { type: () => CreateCivilClaimantInput })
     input: CreateCivilClaimantInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources')
@@ -48,9 +48,9 @@ export class CivilClaimantResolver {
   }
 
   @Mutation(() => CivilClaimant)
-  async updateCivilClaimant(
-    @Args('id') id: string,
-    @Args('updateCivilClaimantDto') input: UpdateCivilClaimantInput,
+  updateCivilClaimant(
+    @Args('input', { type: () => UpdateCivilClaimantInput })
+    input: UpdateCivilClaimantInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
