@@ -86,6 +86,7 @@ export class Delegation extends Model<
   @Column({
     type: DataType.STRING,
     allowNull: true,
+    unique: true,
   })
   referenceId?: string
 
