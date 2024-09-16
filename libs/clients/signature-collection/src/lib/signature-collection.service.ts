@@ -150,15 +150,9 @@ export class SignatureCollectionClientService {
       throw new Error('Collection is not open')
     }
 
-    // check if user is sending in their own nationalId
-    if (owner.nationalId.replace(/\D/g, '') !== auth.nationalId) {
-      // TODO: create ApplicationTemplateError
-      throw new Error('NationalId does not match')
-    }
-    // check if user is already owner of lists
-
-    const { canCreate, isOwner, name, partyBallotLetterInfo } =
-      await this.getSignee(auth)
+    const { canCreate, isOwner, partyBallotLetterInfo } = await this.getSignee(
+      auth,
+    )
     if (!canCreate || isOwner) {
       // TODO: create ApplicationTemplateError
       throw new Error('User is already owner of lists')

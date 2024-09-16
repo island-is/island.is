@@ -453,4 +453,7 @@ export class Case {
 
   @Field(() => [Case], { nullable: true })
   readonly mergedCases?: Case[]
+
+  @Field(() => String, { nullable: true })
+  readonly civilDemands?: string
 }

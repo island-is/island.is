@@ -7,3 +7,7 @@ export const CandidateApi = defineTemplateApi({
 export const ParliamentaryCollectionApi = defineTemplateApi({
   action: 'parliamentaryCollection',
 })
+
+export const ParliamentaryIdentityApi = defineTemplateApi({
+  action: 'parliamentaryIdentity',
+})

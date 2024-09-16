@@ -97,7 +97,8 @@ const Indictment = () => {
     indictmentIntroductionErrorMessage,
     setIndictmentIntroductionErrorMessage,
   ] = useState<string>('')
-  const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
+  const [demandsErrorMessage, setDemandsErrorMessage] = useState('')
+  const [civilDemandsErrorMessage, setCivilDemandsErrorMessage] = useState('')
 
   const { data: policeCaseData } = usePoliceCaseInfoQuery({
     variables: {
@@ -426,7 +427,7 @@ const Indictment = () => {
               name="demands"
               label={formatMessage(strings.demandsLabel)}
               placeholder={formatMessage(strings.demandsPlaceholder)}
-              value={workingCase.demands || ''}
+              value={workingCase.demands ?? ''}
               errorMessage={demandsErrorMessage}
               hasError={demandsErrorMessage !== ''}
               onChange={(event) =>
@@ -447,6 +448,44 @@ const Indictment = () => {
                   workingCase,
                   updateCase,
                   setDemandsErrorMessage,
+                )
+              }
+              textarea
+              autoComplete="off"
+              required
+              rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
+            />
+          </BlueBox>
+        </Box>
+        <Box marginBottom={6}>
+          <SectionHeading title={formatMessage(strings.civilDemandsTitle)} />
+          <BlueBox>
+            <Input
+              name="civilDemands"
+              label={formatMessage(strings.civilDemandsLabel)}
+              placeholder={formatMessage(strings.civilDemandsPlaceholder)}
+              value={workingCase.civilDemands ?? ''}
+              errorMessage={civilDemandsErrorMessage}
+              hasError={civilDemandsErrorMessage !== ''}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'civilDemands',
+                  event.target.value,
+                  ['empty'],
+                  setWorkingCase,
+                  civilDemandsErrorMessage,
+                  setCivilDemandsErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'civilDemands',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setCivilDemandsErrorMessage,
                 )
               }
               textarea

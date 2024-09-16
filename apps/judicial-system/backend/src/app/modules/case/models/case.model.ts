@@ -44,8 +44,8 @@ import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { Notification } from '../../notification'
 import { User } from '../../user'
+import { CaseString } from './caseString.model'
 import { DateLog } from './dateLog.model'
-import { ExplanatoryComment } from './explanatoryComment.model'
 
 @Table({
   tableName: 'case',
@@ -901,11 +901,11 @@ export class Case extends Model {
   dateLogs?: DateLog[]
 
   /**********
-   * The case's explanatory comments
+   * The case's strings
    **********/
-  @HasMany(() => ExplanatoryComment, 'caseId')
-  @ApiPropertyOptional({ type: ExplanatoryComment, isArray: true })
-  explanatoryComments?: ExplanatoryComment[]
+  @HasMany(() => CaseString, 'caseId')
+  @ApiPropertyOptional({ type: CaseString, isArray: true })
+  caseStrings?: CaseString[]
 
   /**********
    * The appeal ruling expiration date and time - example: the end of custody in custody cases -
