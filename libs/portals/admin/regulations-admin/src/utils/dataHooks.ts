@@ -46,7 +46,9 @@ type QueryResult<T> =
 // ---------------------------------------------------------------------------
 
 export const CreatePresignedPostMutation = gql`
-  mutation CreatePresignedPostMutation($input: CreatePresignedPostInput!) {
+  mutation CreatePresignedPostMutation(
+    $input: CreateRegulationPresignedPostInput!
+  ) {
     regulationCreatePresignedPost(input: $input)
   }
 `
@@ -97,7 +99,7 @@ export const useS3Upload = () => {
           },
         },
       })
-      return post.data?.createPresignedPost.data
+      return post.data?.regulationCreatePresignedPost.data
     } catch (error) {
       setUploadStatus({
         uploading: false,
