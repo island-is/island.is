@@ -83,7 +83,7 @@ export class EndorsementService {
   async updateCountsForAllLists(): Promise<void> {
     const allLists = await this.endorsementListModel.findAll();
     for (const list of allLists) {
-      await this.updateEndorsementCountOnList(list.id);
+      await this.updateEndorsementCountOnList(list.id)
     }
     this.logger.info('All endorsement counts have been updated.');
   }
@@ -192,18 +192,18 @@ export class EndorsementService {
     }
 
     try {
-      const createdEndorsement = await this.endorsementModel.create(endorsement);
-      await this.updateEndorsementCountOnList(endorsementList.id);
-      return createdEndorsement;
+      const createdEndorsement = await this.endorsementModel.create(endorsement)
+      await this.updateEndorsementCountOnList(endorsementList.id)
+      return createdEndorsement
     } catch (error) {
       // map meaningful sequelize errors to custom errors, else return error
       if (error instanceof UniqueConstraintError) {
-        this.logger.warn('Endorsement already exists in list');
+        this.logger.warn('Endorsement already exists in list')
         throw new MethodNotAllowedException([
           'Endorsement already exists in list',
-        ]);
+        ])
       } else {
-        throw error;
+        throw error
       }
     }
   }
@@ -239,6 +239,6 @@ export class EndorsementService {
       throw new NotFoundException(["This endorsement doesn't exist"])
     }
     // Update the count after deleting the endorsement
-    await this.updateEndorsementCountOnList(endorsementList.id);
+    await this.updateEndorsementCountOnList(endorsementList.id)
   }
 }

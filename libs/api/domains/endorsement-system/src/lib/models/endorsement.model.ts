@@ -25,6 +25,4 @@ export class Endorsement {
 
   @Field()
   modified!: string
-
-  
 }

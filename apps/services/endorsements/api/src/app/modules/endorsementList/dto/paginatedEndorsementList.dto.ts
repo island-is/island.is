@@ -10,6 +10,3 @@ export class PaginatedEndorsementListDto {
   @ApiProperty()
   pageInfo!: PageInfoDto
 }
-
-
-
