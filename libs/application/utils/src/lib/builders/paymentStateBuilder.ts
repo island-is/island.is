@@ -90,12 +90,12 @@ type PaymentStateConfigOptions<
  * @param options The configuration options for the payment state.
  * @returns The constructed payment state.
  */
-export function buildPaymentState<
+export const buildPaymentState = <
   T extends EventObject = AnyEventObject,
   R = unknown,
 >(
   options: PaymentStateConfigOptions<T, R>,
-): StateNodeConfig<ApplicationContext, ApplicationStateSchema<T>, T> {
+): StateNodeConfig<ApplicationContext, ApplicationStateSchema<T>, T> => {
   const { onExit, onEntry } = options
   let submitTransitions: Array<{
     target: string
