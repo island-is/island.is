@@ -392,19 +392,13 @@ export class ContentfulService {
 
     logger.info(`Sync chunk size is: ${chunkSize}`)
 
-    const populatedSyncEntriesResult = await this.getPopulatedSyncEntries(
-      typeOfSync,
-      locale,
-      chunkSize,
-    )
-
     const {
       indexableEntries,
       newNextSyncToken,
       deletedEntryIds,
       nextPageToken,
       nestedItems,
-    } = populatedSyncEntriesResult
+    } = await this.getPopulatedSyncEntries(typeOfSync, locale, chunkSize)
 
     const isDeltaUpdate = syncType !== 'full'
 
