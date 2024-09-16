@@ -30,7 +30,6 @@ export const Approved: Form = buildForm({
           '',
         ) as string
         const chosenApplicant = getChosenApplicant(
-          application.answers,
           application.externalData,
           applicantNationalId,
         )
@@ -54,7 +53,6 @@ export const Approved: Form = buildForm({
           '',
         ) as string
         const chosenApplicant = getChosenApplicant(
-          formValue,
           externalData,
           applicantNationalId,
         )
@@ -79,7 +77,6 @@ export const Approved: Form = buildForm({
           '',
         ) as string
         const chosenApplicant = getChosenApplicant(
-          formValue,
           externalData,
           applicantNationalId,
         )

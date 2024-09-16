@@ -7,7 +7,7 @@ import { Form, FormModes } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import * as m from '../lib/messages'
 
-function rejectedForm(id: string): Form {
+const rejectedForm = (id: string): Form => {
   return buildForm({
     id: id,
     title: m.application.name,
