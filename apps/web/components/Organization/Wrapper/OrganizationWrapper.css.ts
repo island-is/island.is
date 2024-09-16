@@ -33,3 +33,15 @@ export const sakHeaderGridContainer = style({
     },
   }),
 })
+
+export const landlaeknirHeaderGridContainer = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: '315px',
+      gridTemplateColumns: '60fr 40fr',
+    },
+  }),
+})
