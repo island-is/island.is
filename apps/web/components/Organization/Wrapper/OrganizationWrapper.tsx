@@ -59,7 +59,10 @@ import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
-import { FiskistofaHeader } from './Themes/FiskistofaTheme'
+import {
+  FiskistofaDefaultHeader,
+  FiskistofaHeader,
+} from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
 import {
   FjarsyslaRikisinsFooter,
@@ -94,6 +97,7 @@ import { RikissaksoknariHeader } from './Themes/RikissaksoknariTheme'
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
 import {
+  SjukratryggingarDefaultHeader,
   SjukratryggingarFooter,
   SjukratryggingarHeader,
 } from './Themes/SjukratryggingarTheme'
@@ -281,7 +285,13 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'sjukratryggingar':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <SjukratryggingarDefaultHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+        />
+      ) : (
         <SjukratryggingarHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -328,7 +338,13 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'fiskistofa':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <FiskistofaDefaultHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+        />
+      ) : (
         <FiskistofaHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -358,7 +374,17 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'sak':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={styles.sakHeaderGridContainer}
+          image={n(
+            `sakHeaderBgImage`,
+            'https://images.ctfassets.net/8k0h54kbe6bj/4SjqwRBZRMWVWG0y73sXxq/cf8d0d16704cfea124362eca03afdb41/sak-header-trans_2x.png',
+          )}
+          titleSectionPaddingLeft={isSubpage ? 0 : 10}
+        />
+      ) : (
         <SAkHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
