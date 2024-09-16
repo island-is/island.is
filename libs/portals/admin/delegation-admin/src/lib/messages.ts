@@ -116,5 +116,5 @@ export const m = defineMessages({
   createDelegationConfirmModalTitle: {
     id: 'admin.delegationAdmin:createDelegationConfirmModalTitle',
     defaultMessage: 'Þú ert að skrá nýtt umboð',
-  }
+  },
 })

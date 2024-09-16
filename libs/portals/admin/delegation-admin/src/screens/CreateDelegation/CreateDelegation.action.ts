@@ -47,7 +47,6 @@ const schema = z
     }
   })
 
-
 export type CreateDelegationResult = ValidateFormDataResult<typeof schema> & {
   /**
    * Global error message if the mutation fails
@@ -57,7 +56,7 @@ export type CreateDelegationResult = ValidateFormDataResult<typeof schema> & {
 
 export const createDelegationAction: WrappedActionFn =
   ({ client }) =>
-  async ({ request  }): Promise<CreateDelegationResult | Response> => {
+  async ({ request }): Promise<CreateDelegationResult | Response> => {
     const formData = await request.formData()
     const result = await validateFormData({ formData, schema })
 

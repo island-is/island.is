@@ -1,4 +1,11 @@
-import { Box, Button, GridColumn, GridRow, Stack, Tabs } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Stack,
+  Tabs,
+} from '@island.is/island-ui/core'
 import { BackButton } from '@island.is/portals/admin/core'
 import { useLocale } from '@island.is/localization'
 import { useLoaderData, useNavigate } from 'react-router-dom'
@@ -38,9 +45,15 @@ const DelegationAdminScreen = () => {
             <Button
               icon="arrowForward"
               onClick={() => {
-                const query = new URLSearchParams({ fromNationalId: delegationAdmin.nationalId })
+                const query = new URLSearchParams({
+                  fromNationalId: delegationAdmin.nationalId,
+                })
 
-                navigate(`${DelegationAdminPaths.CreateDelegation}?${query.toString()}`)
+                navigate(
+                  `${
+                    DelegationAdminPaths.CreateDelegation
+                  }?${query.toString()}`,
+                )
               }}
               size="small"
             >

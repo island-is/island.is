@@ -6,28 +6,34 @@ import { m } from '../lib/messages'
 import {
   DelegationsFormFooter,
   IdentityCard,
-  useDynamicShadow
+  useDynamicShadow,
 } from '@island.is/portals/shared-modules/delegations'
 import { Identity } from '@island.is/api/schema'
 import { format } from 'date-fns'
 
-type CreateDelegationConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
+type CreateDelegationConfirmModalProps = Pick<
+  ModalProps,
+  'onClose' | 'isVisible'
+> & {
   fromIdentity: Identity | null
   toIdentity: Identity | null
-  data:{
-    fromNationalId: string,  type: string,   toNationalId: string,   referenceId: string,   validTo?: string | undefined
+  data: {
+    fromNationalId: string
+    type: string
+    toNationalId: string
+    referenceId: string
+    validTo?: string | undefined
   } | null
   onConfirm(): void
 }
 
-
 export const CreateDelegationConfirmModal = ({
-fromIdentity,
-toIdentity,
-data,
- onClose,
- onConfirm,
- ...rest
+  fromIdentity,
+  toIdentity,
+  data,
+  onClose,
+  onConfirm,
+  ...rest
 }: CreateDelegationConfirmModalProps) => {
   const { formatMessage } = useLocale()
   const { md } = useBreakpoint()
@@ -38,7 +44,7 @@ data,
   })
 
   const typeLabels: Record<string, string> = {
-    'general': formatMessage(m.typeGeneral), // Todo: use enum yet to be created
+    general: formatMessage(m.typeGeneral), // Todo: use enum yet to be created
   }
 
   return (
@@ -81,7 +87,7 @@ data,
           <IdentityCard
             label={formatMessage(m.type)}
             title={typeLabels[data.type]}
-            imgSrc='./assets/images/skjaldarmerki.svg'
+            imgSrc="./assets/images/skjaldarmerki.svg"
           />
         )}
 
@@ -94,7 +100,11 @@ data,
         >
           <IdentityCard
             label={formatMessage(m.validTo)}
-            title={data?.validTo ? format(new Date(data?.validTo), 'dd.MM.yyyy') : formatMessage(m.noEndDate)}
+            title={
+              data?.validTo
+                ? format(new Date(data?.validTo), 'dd.MM.yyyy')
+                : formatMessage(m.noEndDate)
+            }
           />
           {data?.referenceId && (
             <IdentityCard

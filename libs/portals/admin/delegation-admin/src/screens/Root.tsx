@@ -56,15 +56,15 @@ const Root = () => {
           />
         </GridColumn>
         {hasAdminAccess && (
-        <GridColumn span={['12/12', '4/12']}>
-          <Button
-            icon="arrowForward"
-            onClick={() => navigate(DelegationAdminPaths.CreateDelegation)}
-            size="small"
-          >
-            {formatMessage(m.createNewDelegation)}
-          </Button>
-        </GridColumn>
+          <GridColumn span={['12/12', '4/12']}>
+            <Button
+              icon="arrowForward"
+              onClick={() => navigate(DelegationAdminPaths.CreateDelegation)}
+              size="small"
+            >
+              {formatMessage(m.createNewDelegation)}
+            </Button>
+          </GridColumn>
         )}
         <GridColumn span={['12/12', '8/12']}>
           <Form method="post">
