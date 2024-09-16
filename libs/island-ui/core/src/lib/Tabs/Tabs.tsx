@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
+import React, { FC, ReactNode, useEffect, useState } from 'react'
 import cn from 'classnames'
 import isNumber from 'lodash/isNumber'
 import { useWindowSize } from 'react-use'
@@ -112,14 +112,15 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
     return index
   }
 
-  const tabsUiSwitch = !isMobile && tabs.length < 7
-  const tabListVisible = tabs.length > 1 && tabsUiSwitch
+  const showDesktopLayout =
+    tabs.length === 2 || (!isMobile && tabs.length > 2 && tabs.length < 7)
 
+  console.log(showDesktopLayout)
   return (
     <Box position="relative">
       <Box background={contentBackground} className={styles.bg} />
       <Box position="relative" paddingY="none">
-        <Box hidden={tabsUiSwitch}>
+        <Box hidden={showDesktopLayout}>
           <Select
             size={size}
             name={label}
@@ -146,9 +147,10 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
           className={cn(
             variant === 'default' ? styles.tabList : styles.tabListAlternative,
             {
-              [styles.tabListVisible]: tabListVisible && variant === 'default',
+              [styles.tabListVisible]:
+                showDesktopLayout && variant === 'default',
               [styles.tabListAlternativeVisible]:
-                tabListVisible && variant === 'alternative',
+                showDesktopLayout && variant === 'alternative',
             },
           )}
         >
@@ -227,8 +229,8 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
           if (Array.isArray(content)) {
             panelContent = (
               <Box
-                marginTop={tabListVisible ? 3 : 2}
-                marginBottom={tabListVisible ? 2 : 1}
+                marginTop={showDesktopLayout ? 3 : 2}
+                marginBottom={showDesktopLayout ? 2 : 1}
               >
                 <Tabs
                   label=""

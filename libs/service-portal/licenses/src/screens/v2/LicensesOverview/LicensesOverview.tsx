@@ -153,14 +153,6 @@ export const LicensesOverviewV2 = () => {
                       licenses.filter((license) => license.isOwnerChildOfUser),
                     ),
                   },
-                  {
-                    label: 'biengbeioerp',
-                    content: <p>hehehe</p>,
-                  },
-                  {
-                    label: 'niuhgrqiu',
-                    content: <p>Grillið er samt alveg að loka</p>,
-                  },
                 ],
               },
             ]}
