@@ -60,7 +60,7 @@ data,
           rowGap={[3, 3, 3, 0]}
           columnGap={[0, 0, 0, 3]}
         >
-          {fromIdentity && fromIdentity.name && fromIdentity.nationalId && (
+          {fromIdentity?.name && fromIdentity?.nationalId &&  (
             <IdentityCard
               label={formatMessage(m.fromNationalId)}
               title={fromIdentity.name}
@@ -68,7 +68,7 @@ data,
               color="blue"
             />
           )}
-          {toIdentity && toIdentity.name && toIdentity.nationalId && (
+          {toIdentity?.name && toIdentity?.nationalId && (
             <IdentityCard
               label={formatMessage(m.toNationalId)}
               title={toIdentity.name}

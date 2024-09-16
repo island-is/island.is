@@ -64,6 +64,8 @@ const CreateDelegationScreen = () => {
     if (actionData?.data && !actionData.errors) {
       setIsConfirmed(true)
       setShowConfirmModal(true)
+    } else {
+      setIsConfirmed(false)
     }
 
   }, [actionData])
@@ -375,6 +377,7 @@ const CreateDelegationScreen = () => {
         }}
         onConfirm={() => {
           submit(formRef.current)
+          setShowConfirmModal(false)
         }}
       />
     </Stack>

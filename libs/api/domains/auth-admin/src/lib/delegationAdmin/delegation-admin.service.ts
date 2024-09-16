@@ -45,16 +45,8 @@ export class DelegationAdminService {
     // Mock response
     return Promise.resolve({
       id: 'some-id',
-      from: {
-        name: 'foo',
-        nationalId: '221290-22169',
-        type: 'company',
-      },
-      to: {
-        name: 'bar',
-        nationalId: '221290-22169',
-        type: 'company',
-      },
+      fromNationalId: '0101302399',
+      toNationalId: '0101302399',
       scopes: [],
       validTo: null,
       type: 'Custom',
