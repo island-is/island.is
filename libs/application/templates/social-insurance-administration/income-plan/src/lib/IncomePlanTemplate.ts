@@ -61,6 +61,7 @@ const IncomePlanTemplate: ApplicationTemplate<
   featureFlag: Features.IncomePlanEnabled,
   translationNamespaces: ApplicationConfigurations.IncomePlan.translation,
   dataSchema,
+  allowMultipleApplicationsInDraft: false,
   newApplicationButtonLabel: historyMessages.newIncomePlanButtonLabel,
   applicationText: historyMessages.incomePlanPageTitle,
   stateMachineConfig: {
