@@ -2,6 +2,7 @@ import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
+import { uuid } from 'uuidv4'
 
 import {
   Box,
@@ -37,6 +38,7 @@ import {
   UpdateCivilClaimantInput,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDefendants,
@@ -48,8 +50,6 @@ import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web
 import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
-import { uuid } from 'uuidv4'
-import { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -114,7 +114,7 @@ const Processing: FC = () => {
       updateDefendantState(updatedDefendant, setWorkingCase)
       updateDefendant(updatedDefendant)
     },
-    [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
+    [updateDefendantState, setWorkingCase, updateDefendant],
   )
 
   const handleUpdateCivilClaimant = useCallback(
@@ -125,12 +125,11 @@ const Processing: FC = () => {
     [
       updateCivilClaimant,
       setWorkingCase,
-      workingCase.id,
       updateCivilClaimantState,
     ],
   )
 
-  const { data, error, mutate } = useSWR<NationalRegistryResponsePerson>(
+  const { mutate } = useSWR<NationalRegistryResponsePerson>(
     nID
       ? `/api/nationalRegistry/getPersonByNationalId?nationalId=${nID}`
       : null,
@@ -162,7 +161,7 @@ const Processing: FC = () => {
       ],
     }))
 
-    const a = await createCivilClaimant({
+    await createCivilClaimant({
       caseId: workingCase.id,
     } as CreateCivilClaimantInput)
   }
@@ -202,7 +201,7 @@ const Processing: FC = () => {
     } else if (workingCase.hasCivilClaims === false) {
       // TODO: Remove all claimants
     }
-  }, [workingCase.hasCivilClaims])
+  }, [workingCase.hasCivilClaims, createEmptyCivilClaimant])
 
   return (
     <PageLayout

@@ -20,8 +20,7 @@ import {
   PageTitle,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseState,
+import { 
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -41,7 +40,6 @@ const IndictmentOverview = () => {
   const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
-  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {

@@ -64,11 +64,8 @@ const DefenderInput: FC<Props> = ({
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { updateDefendant, updateDefendantState, setAndSendDefendantToServer } =
     useDefendants()
-  const {
-    setAndSendCivilClaimantToServer,
-    updateCivilClaimantState,
-    updateCivilClaimant,
-  } = useCivilClaimants()
+  const { setAndSendCivilClaimantToServer, updateCivilClaimantState } =
+    useCivilClaimants()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
     useState<string>('')
