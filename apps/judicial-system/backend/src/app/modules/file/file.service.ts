@@ -197,7 +197,8 @@ export class FileService {
         }
 
         if (
-          file.category === CaseFileCategory.RULING &&
+          (file.category === CaseFileCategory.RULING ||
+            file.category === CaseFileCategory.COURT_RECORD) &&
           isCompletedCase(theCase.state) &&
           theCase.rulingDate
         ) {
@@ -209,7 +210,7 @@ export class FileService {
               date: theCase.rulingDate,
             },
             pdf,
-            CaseFileCategory.RULING,
+            file.category,
           )
         }
       })
@@ -236,33 +237,42 @@ export class FileService {
       })
   }
 
-  async getCaseFileFromS3(theCase: Case, file: CaseFile): Promise<Buffer> {
-    if (isIndictmentCase(theCase.type)) {
-      if (
-        file.category === CaseFileCategory.INDICTMENT &&
-        hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
-      ) {
-        return this.awsS3Service.getConfirmedIndictmentCaseObject(
-          theCase.type,
-          file.key,
-          !file.hash,
-          (content: Buffer) =>
-            this.confirmIndictmentCaseFile(theCase, file, content),
-        )
-      }
+  private shouldGetConfirmedDocument = (file: CaseFile, theCase: Case) => {
+    // Only case files in indictment cases can be confirmed
+    if (!isIndictmentCase(theCase.type)) {
+      return false
+    }
 
-      if (
-        file.category === CaseFileCategory.RULING &&
-        isCompletedCase(theCase.state)
-      ) {
-        return this.awsS3Service.getConfirmedIndictmentCaseObject(
-          theCase.type,
-          file.key,
-          !file.hash,
-          (content: Buffer) =>
-            this.confirmIndictmentCaseFile(theCase, file, content),
-        )
-      }
+    // Only indictments that have been submitted to court can be confirmed
+    if (
+      file.category === CaseFileCategory.INDICTMENT &&
+      hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
+    ) {
+      return true
+    }
+
+    // Rulings and court records are only confirmed when a case is completed
+    if (
+      (file.category === CaseFileCategory.RULING ||
+        file.category === CaseFileCategory.COURT_RECORD) &&
+      isCompletedCase(theCase.state)
+    ) {
+      return true
+    }
+
+    // Don't get confirmed document for any other file categories
+    return false
+  }
+
+  async getCaseFileFromS3(theCase: Case, file: CaseFile): Promise<Buffer> {
+    if (this.shouldGetConfirmedDocument(file, theCase)) {
+      return this.awsS3Service.getConfirmedIndictmentCaseObject(
+        theCase.type,
+        file.key,
+        !file.hash,
+        (content: Buffer) =>
+          this.confirmIndictmentCaseFile(theCase, file, content),
+      )
     }
 
     return this.awsS3Service.getObject(theCase.type, file.key)
@@ -396,13 +406,7 @@ export class FileService {
     file: CaseFile,
     timeToLive?: number,
   ): Promise<string> {
-    if (
-      isIndictmentCase(theCase.type) &&
-      ((file.category === CaseFileCategory.INDICTMENT &&
-        hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) ||
-        (file.category === CaseFileCategory.RULING &&
-          isCompletedCase(theCase.state)))
-    ) {
+    if (this.shouldGetConfirmedDocument(file, theCase)) {
       return this.awsS3Service.getConfirmedIndictmentCaseSignedUrl(
         theCase.type,
         file.key,

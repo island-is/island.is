@@ -50,7 +50,7 @@ const FormRepeater: FC<
     [],
   ) as RepeaterItems
 
-  async function removeRepeaterItem(index: number) {
+  const removeRepeaterItem = async (index: number) => {
     if (index >= 0 && index < repeaterItems.length) {
       const newRepeaterItems = [
         ...repeaterItems.slice(0, index),
@@ -60,7 +60,7 @@ const FormRepeater: FC<
     }
   }
 
-  async function setRepeaterItems(items: RepeaterItems) {
+  const setRepeaterItems = async (items: RepeaterItems) => {
     return await onUpdateRepeater(items)
   }
 
