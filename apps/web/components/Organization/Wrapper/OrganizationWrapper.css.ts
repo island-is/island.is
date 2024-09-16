@@ -1,5 +1,7 @@
 import { style } from '@vanilla-extract/css'
 
+import { themeUtils } from '@island.is/island-ui/theme'
+
 export const menuStyle = style({
   position: 'relative',
   zIndex: 20,
@@ -18,4 +20,16 @@ export const digitalIcelandHeaderTitle = style({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ['-webkit-text-fill-color' as any]: 'transparent',
   textShadow: '0px 0px #00000000',
+})
+
+export const sakHeaderGridContainer = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: '315px',
+      gridTemplateColumns: '52fr 48fr',
+    },
+  }),
 })
