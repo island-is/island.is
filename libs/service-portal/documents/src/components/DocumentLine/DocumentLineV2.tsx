@@ -75,7 +75,7 @@ export const DocumentLine: FC<Props> = ({
   const avatarRef = useRef(null)
 
   const isFocused = useIsChildFocusedorHovered(wrapperRef)
-  const isAvatarFocused = useIsChildFocusedorHovered(avatarRef)
+  const isAvatarFocused = useIsChildFocusedorHovered(avatarRef, false)
 
   useEffect(() => {
     setHasFocusOrHover(isFocused)
