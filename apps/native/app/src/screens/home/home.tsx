@@ -20,12 +20,21 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useAndroidNotificationPermission } from '../../hooks/use-android-notification-permission'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useDeepLinkHandling } from '../../hooks/use-deep-link-handling'
 import { useNotificationsStore } from '../../stores/notifications-store'
+import {
+  preferencesStore,
+  usePreferencesStore,
+} from '../../stores/preferences-store'
 import { useUiStore } from '../../stores/ui-store'
 import { isAndroid } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
-import { handleInitialNotification } from '../../utils/lifecycle/setup-notifications'
 import { testIDs } from '../../utils/test-ids'
+import {
+  AirDiscountModule,
+  useGetAirDiscountQuery,
+  validateAirDiscountInitialData,
+} from './air-discount-module'
 import {
   ApplicationsModule,
   useListApplicationsQuery,
@@ -37,26 +46,17 @@ import {
   useListDocumentsQuery,
   validateInboxInitialData,
 } from './inbox-module'
-import { OnboardingModule } from './onboarding-module'
-import {
-  VehiclesModule,
-  useListVehiclesQuery,
-  validateVehiclesInitialData,
-} from './vehicles-module'
-import {
-  preferencesStore,
-  usePreferencesStore,
-} from '../../stores/preferences-store'
-import {
-  AirDiscountModule,
-  useGetAirDiscountQuery,
-  validateAirDiscountInitialData,
-} from './air-discount-module'
 import {
   LicensesModule,
-  validateLicensesInitialData,
   useGetLicensesData,
+  validateLicensesInitialData,
 } from './licenses-module'
+import { OnboardingModule } from './onboarding-module'
+import {
+  useListVehiclesQuery,
+  validateVehiclesInitialData,
+  VehiclesModule,
+} from './vehicles-module'
 
 interface ListItem {
   id: string
@@ -149,6 +149,8 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const widgetsInitialised = usePreferencesStore(
     ({ widgetsInitialised }) => widgetsInitialised,
   )
+
+  useDeepLinkHandling()
 
   const applicationsRes = useListApplicationsQuery({
     skip: !applicationsWidgetEnabled,
@@ -258,9 +260,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     checkUnseen()
     // Get user locale from server
     getAndSetLocale()
-
-    // Handle initial notification
-    handleInitialNotification()
   }, [])
 
   const refetch = useCallback(async () => {

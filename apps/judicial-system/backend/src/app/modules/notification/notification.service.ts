@@ -69,6 +69,15 @@ export class NotificationService {
           ]
         } else {
           messages = [this.getNotificationMessage(type, user, theCase)]
+          theCase.defendants?.forEach((defendant) => {
+            // TODO: move this elsewhere when we know exactly where the trigger should be
+            messages.push({
+              type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+              user,
+              caseId: theCase.id,
+              elementId: defendant.id,
+            })
+          })
         }
         break
       case NotificationType.HEADS_UP:
