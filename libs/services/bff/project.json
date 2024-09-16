@@ -3,18 +3,14 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/services/bff/src",
   "projectType": "library",
-  "tags": [
-    "lib:js"
-  ],
+  "tags": ["lib:js"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/services/bff/jest.config.ts"
       }
