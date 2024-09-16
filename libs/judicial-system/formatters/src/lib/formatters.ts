@@ -124,6 +124,8 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
       return 'Frávísun'
     case CaseIndictmentRulingDecision.CANCELLATION:
       return 'Niðurfelling máls'
+    case CaseIndictmentRulingDecision.MERGE:
+      return 'Sameinað'
     default:
       return 'Ekki skráð'
   }
