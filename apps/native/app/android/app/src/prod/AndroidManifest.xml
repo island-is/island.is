@@ -26,6 +26,18 @@
         <category android:name="android.intent.category.BROWSABLE" />
         <data android:scheme="is.island.app" />
       </intent-filter>
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="https" />
+        <data android:host="island.is" />
+        <data android:pathPrefix="/minarsidur/postholf" />
+        <data android:pathPrefix="/minarsidur/skirteini" />
+        <data android:pathPrefix="/minarsidur/eignir/fasteignir" />
+        <data android:pathPrefix="/minarsidur/eignir/okutaeki/min-okutaeki" />
+        <data android:pathPrefix="/minarsidur/loftbru" />
+      </intent-filter>
     </activity>
     <activity
       android:name="net.openid.appauth.RedirectUriReceiverActivity">
