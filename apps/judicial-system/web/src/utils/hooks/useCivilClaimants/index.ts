@@ -6,11 +6,13 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import {
   CivilClaimant,
   CreateCivilClaimantInput,
+  UpdateCivilClaimantInput,
   // UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useCreateCivilClaimantMutation } from './createCivilClaimant.generated'
+import { useUpdateCivilClaimantMutation } from './updateCivilClaimant.generated'
 
 const useCivilClaimants = () => {
   const { formatMessage } = useIntl()
@@ -18,7 +20,7 @@ const useCivilClaimants = () => {
   const [createCivilClaimantMutation, { loading: isCreatingCivilClaimant }] =
     useCreateCivilClaimantMutation()
   // const [deleteCivilClaimantMutation] = useDeleteCivilClaimantMutation()
-  //const [updateCivilClaimantMutation] = useUpdateCivilClaimantMutation()
+  const [updateCivilClaimantMutation] = useUpdateCivilClaimantMutation()
 
   const createCivilClaimant = useCallback(
     async (civilClaimant: CreateCivilClaimantInput) => {
@@ -57,68 +59,68 @@ const useCivilClaimants = () => {
   //   [deleteCivilClaimantMutation, formatMessage],
   // )
 
-  // const updateCivilClaimant = useCallback(
-  //   async (updateCivilClaimant: UpdateCivilClaimantInput) => {
-  //     try {
-  //       const { data } = await updateCivilClaimantMutation({
-  //         variables: {
-  //           input: updateCivilClaimant,
-  //         },
-  //       })
+  const updateCivilClaimant = useCallback(
+    async (updateCivilClaimant: UpdateCivilClaimantInput) => {
+      try {
+        const { data } = await updateCivilClaimantMutation({
+          variables: {
+            input: updateCivilClaimant,
+          },
+        })
 
-  //       return Boolean(data)
-  //     } catch (error) {
-  //       toast.error(formatMessage(errors.updateDefendant))
-  //       return false
-  //     }
-  //   },
-  //   [formatMessage, updateCivilClaimantMutation],
-  // )
+        return Boolean(data)
+      } catch (error) {
+        toast.error(formatMessage(errors.updateDefendant))
+        return false
+      }
+    },
+    [formatMessage, updateCivilClaimantMutation],
+  )
 
-  // const updateCivilClaimantState = useCallback(
-  //   (
-  //     update: UpdateCivilClaimantInput,
-  //     setWorkingCase: Dispatch<SetStateAction<Case>>,
-  //   ) => {
-  //     setWorkingCase((prevWorkingCase: Case) => {
-  //       if (!prevWorkingCase.civilClaimants) {
-  //         return prevWorkingCase
-  //       }
-  //       const indexOfCivilClaimantToUpdate =
-  //         prevWorkingCase.civilClaimants.findIndex(
-  //           (civilClaimant) => civilClaimant.id === update.civilClaimantId,
-  //         )
+  const updateCivilClaimantState = useCallback(
+    (
+      update: UpdateCivilClaimantInput,
+      setWorkingCase: Dispatch<SetStateAction<Case>>,
+    ) => {
+      setWorkingCase((prevWorkingCase: Case) => {
+        if (!prevWorkingCase.civilClaimants) {
+          return prevWorkingCase
+        }
+        const indexOfCivilClaimantToUpdate =
+          prevWorkingCase.civilClaimants.findIndex(
+            (civilClaimant) => civilClaimant.id === update.civilClaimantId,
+          )
 
-  //       const newDefendants = [...prevWorkingCase.civilClaimants]
+        const newCivilClaimants = [...prevWorkingCase.civilClaimants]
 
-  //       newDefendants[indexOfCivilClaimantToUpdate] = {
-  //         ...newDefendants[indexOfCivilClaimantToUpdate],
-  //         ...update,
-  //       } as CivilClaimant
+        newCivilClaimants[indexOfCivilClaimantToUpdate] = {
+          ...newCivilClaimants[indexOfCivilClaimantToUpdate],
+          ...update,
+        } as CivilClaimant
 
-  //       return { ...prevWorkingCase, defendants: newDefendants }
-  //     })
-  //   },
-  //   [],
-  // )
+        return { ...prevWorkingCase, civilClaimants: newCivilClaimants }
+      })
+    },
+    [],
+  )
 
-  // const setAndSendCivilClaimantToServer = useCallback(
-  //   (
-  //     update: UpdateCivilClaimantInput,
-  //     setWorkingCase: Dispatch<SetStateAction<Case>>,
-  //   ) => {
-  //     updateCivilClaimantState(update, setWorkingCase)
-  //     updateCivilClaimant(update)
-  //   },
-  //   [updateCivilClaimant, updateCivilClaimantState],
-  // )
+  const setAndSendCivilClaimantToServer = useCallback(
+    (
+      update: UpdateCivilClaimantInput,
+      setWorkingCase: Dispatch<SetStateAction<Case>>,
+    ) => {
+      updateCivilClaimantState(update, setWorkingCase)
+      updateCivilClaimant(update)
+    },
+    [updateCivilClaimant, updateCivilClaimantState],
+  )
 
   return {
     createCivilClaimant,
     // deleteCivilClaimant,
-    // updateCivilClaimant,
-    // updateCivilClaimantState,
-    //setAndSendCivilClaimantToServer,
+    updateCivilClaimant,
+    updateCivilClaimantState,
+    setAndSendCivilClaimantToServer,
   }
 }
 

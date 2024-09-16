@@ -33,6 +33,7 @@ import {
   CaseTransition,
   CivilClaimant,
   DefendantPlea,
+  UpdateCivilClaimantInput,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -59,19 +60,18 @@ const Processing: FC = () => {
     isCaseUpToDate,
     refreshCase,
   } = useContext(FormContext)
-  const { updateCase, transitionCase } = useCase()
+  const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
+  const { updateCivilClaimant, updateCivilClaimantState } = useCivilClaimants()
   const { createCivilClaimant } = useCivilClaimants()
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
-  const [isCivilClaim, setIsCivilClaim] = useState<boolean | 'NO_CHOICE'>(
-    // TODO: REMOVE DEBUG CODE
-    true, // 'NO_CHOICE',
-  )
   const [nID, setNID] = useState<string>()
   const [claimantHasDefender, setClaimantHasDefender] = useState<boolean>(false)
   const [defenderType, setDefenderType] = useState<'L' | 'R'>('L')
+  const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
+    useState<boolean>()
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
@@ -115,6 +115,22 @@ const Processing: FC = () => {
       }
     },
     [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
+  )
+
+  const handleUpdateCivilClaimant = useCallback(
+    (updatedCivilClaimant: UpdateCivilClaimantInput) => {
+      updateCivilClaimantState(updatedCivilClaimant, setWorkingCase)
+
+      if (workingCase.id) {
+        updateCivilClaimant(updatedCivilClaimant)
+      }
+    },
+    [
+      updateCivilClaimant,
+      setWorkingCase,
+      workingCase.id,
+      updateCivilClaimantState,
+    ],
   )
 
   const { data, error, mutate } = useSWR(
@@ -256,7 +272,10 @@ const Processing: FC = () => {
             setWorkingCase={setWorkingCase}
           />
         </Box>
-        <Box component="section" marginBottom={isCivilClaim === true ? 5 : 10}>
+        <Box
+          component="section"
+          marginBottom={workingCase.hasCivilClaims === true ? 5 : 10}
+        >
           <BlueBox>
             <SectionHeading
               title={formatMessage(strings.isCivilClaim)}
@@ -272,8 +291,20 @@ const Processing: FC = () => {
                   label={formatMessage(strings.yes)}
                   large
                   backgroundColor="white"
-                  onChange={() => setIsCivilClaim(true)}
-                  checked={isCivilClaim === true}
+                  onChange={() => {
+                    setHasCivilClaimantChoice(true)
+
+                    setAndSendCaseToServer(
+                      [{ hasCivilClaims: true, force: true }],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }}
+                  checked={
+                    hasCivilClaimantChoice === true ||
+                    (hasCivilClaimantChoice === undefined &&
+                      workingCase.hasCivilClaims === true)
+                  }
                 />
               </Box>
               <Box width="half" marginLeft={1}>
@@ -283,14 +314,26 @@ const Processing: FC = () => {
                   label={formatMessage(strings.no)}
                   large
                   backgroundColor="white"
-                  onChange={() => setIsCivilClaim(false)}
-                  checked={isCivilClaim === false}
+                  onChange={() => {
+                    setHasCivilClaimantChoice(false)
+
+                    setAndSendCaseToServer(
+                      [{ hasCivilClaims: false, force: true }],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }}
+                  checked={
+                    hasCivilClaimantChoice === false ||
+                    (hasCivilClaimantChoice === undefined &&
+                      workingCase.hasCivilClaims === false)
+                  }
                 />
               </Box>
             </Box>
           </BlueBox>
         </Box>
-        {isCivilClaim && (
+        {workingCase.hasCivilClaims && (
           <>
             {[{ id: '', name: '', nationalId: '' }].map((civilClaimant) => (
               <Box component="section" marginBottom={5}>
