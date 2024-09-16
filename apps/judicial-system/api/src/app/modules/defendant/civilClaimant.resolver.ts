@@ -15,8 +15,10 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CreateCivilClaimantInput } from './dto/createCivilClaimant.input'
+import { DeleteCivilClaimantInput } from './dto/deleteCivilClaimant.input'
 import { UpdateCivilClaimantInput } from './dto/updateCivilClaimant.input'
 import { CivilClaimant } from './models/civilClaimant.model'
+import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => CivilClaimant)
@@ -64,6 +66,24 @@ export class CivilClaimantResolver {
         updateCivilClaimant,
       ),
       (civilClaimant) => civilClaimant.id,
+    )
+  }
+
+  @Mutation(() => DeleteCivilClaimantResponse)
+  async deleteCivilClaimant(
+    @Args('input', { type: () => DeleteCivilClaimantInput })
+    input: DeleteCivilClaimantInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<DeleteCivilClaimantResponse> {
+    const { caseId, civilClaimantId } = input
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.DELETE_CIVIL_CLAIMANT,
+      backendService.deleteCivilClaimant(caseId, civilClaimantId),
+      civilClaimantId,
     )
   }
 }

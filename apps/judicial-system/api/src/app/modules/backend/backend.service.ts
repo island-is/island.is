@@ -22,6 +22,7 @@ import {
 import { CaseListEntry } from '../case-list'
 import { Defendant, DeleteDefendantResponse } from '../defendant'
 import { CivilClaimant } from '../defendant/models/civilClaimant.model'
+import { DeleteCivilClaimantResponse } from '../defendant/models/deleteCivilClaimant.response'
 import { CreateEventLogInput } from '../event-log'
 import {
   CaseFile,
@@ -363,7 +364,7 @@ export class BackendService extends DataSource<{ req: Request }> {
   deleteCivilClaimant(
     caseId: string,
     civilClaimantId: string,
-  ): Promise<DeleteDefendantResponse> {
+  ): Promise<DeleteCivilClaimantResponse> {
     return this.delete(`case/${caseId}/civilClaimant/${civilClaimantId}`)
   }
 

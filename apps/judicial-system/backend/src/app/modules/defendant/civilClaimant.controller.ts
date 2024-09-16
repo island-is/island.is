@@ -24,6 +24,7 @@ import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
 import { CreateCivilClaimantDto } from './dto/createCivilClaimant.dto'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CivilClaimant } from './models/civilClaimant.model'
+import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
 import { CivilClaimantService } from './civilClaimant.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -45,7 +46,6 @@ export class CivilClaimantController {
   async create(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
-
     @Body() createCivilClaimantDto: CreateCivilClaimantDto,
   ): Promise<CivilClaimant> {
     this.logger.debug(`Creating a new civil claimant for case ${caseId}`)
@@ -69,6 +69,7 @@ export class CivilClaimantController {
       `Updating civil claimant ${civilClaimantId} in case ${caseId}`,
     )
     return this.civilClaimantService.update(
+      caseId,
       civilClaimantId,
       updateCivilClaimantDto,
     )
@@ -78,14 +79,20 @@ export class CivilClaimantController {
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':civilClaimantId')
   @ApiOkResponse({
-    type: CivilClaimant,
+    type: DeleteCivilClaimantResponse,
     description: 'Civil claimant deleted',
   })
-  async remove(
+  async delete(
+    @Param('caseId') caseId: string,
     @Param('civilClaimantId') civilClaimantId: string,
-  ): Promise<void> {
+  ): Promise<DeleteCivilClaimantResponse> {
     this.logger.debug(`Deleting civil claimant ${civilClaimantId}`)
 
-    return this.civilClaimantService.remove(civilClaimantId)
+    const deleted = await this.civilClaimantService.delete(
+      caseId,
+      civilClaimantId,
+    )
+
+    return { deleted }
   }
 }
