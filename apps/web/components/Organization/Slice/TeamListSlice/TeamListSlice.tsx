@@ -1,9 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import flatten from 'lodash/flatten'
 import { useLazyQuery } from '@apollo/client'
 
 import { TeamList, type TeamListProps } from '@island.is/island-ui/contentful'
-import { sortAlpha } from '@island.is/shared/utils'
 import { GenericList } from '@island.is/web/components'
 import {
   type GenericTag,
@@ -35,7 +34,7 @@ export const TeamMemberListWrapper = ({
   )
   const [errorOccurred, setErrorOccurred] = useState(false)
 
-  const [fetchListItems, { loading }] = useLazyQuery<Query>(
+  const [fetchListItems, { loading, called }] = useLazyQuery<Query>(
     GET_TEAM_MEMBERS_QUERY,
     {
       onCompleted(data) {
@@ -67,43 +66,7 @@ export const TeamMemberListWrapper = ({
 
   const totalItems = itemsResponse?.total ?? 0
 
-  const items = useMemo(
-    () =>
-      (itemsResponse?.items ?? []).map((item) => {
-        const tagGroups: { groupLabel: string; tagLabels: string[] }[] = []
-        for (const tag of item.filterTags ?? []) {
-          if (!tag.genericTagGroup?.title || !tag.title) {
-            continue
-          }
-          const index = tagGroups.findIndex(
-            (group) => group.groupLabel === tag.genericTagGroup?.title,
-          )
-          if (index >= 0) {
-            tagGroups[index].tagLabels.push(tag.title)
-          } else {
-            tagGroups.push({
-              groupLabel: tag.genericTagGroup.title,
-              tagLabels: [tag.title],
-            })
-          }
-
-          // Add a colon to the end of group labels if it doesn't have one
-          for (const group of tagGroups) {
-            if (!group.groupLabel.endsWith(':')) {
-              group.groupLabel += ':'
-            }
-          }
-        }
-
-        tagGroups.sort(sortAlpha('groupLabel'))
-
-        return {
-          ...(item as TeamListProps['teamMembers'][number]),
-          tagGroups,
-        }
-      }),
-    [itemsResponse],
-  )
+  const items = itemsResponse?.items ?? []
 
   return (
     <GenericList
@@ -126,13 +89,13 @@ export const TeamMemberListWrapper = ({
         })
       }}
       totalItems={totalItems}
-      loading={loading}
+      loading={loading || !called}
       pageQueryId={pageQueryId}
       searchQueryId={searchQueryId}
       tagQueryId={tagQueryId}
     >
       <TeamList
-        teamMembers={items}
+        teamMembers={items as TeamListProps['teamMembers']}
         variant="accordion"
         prefixes={{
           email: activeLocale === 'is' ? 'Netfang:' : 'Email:',
