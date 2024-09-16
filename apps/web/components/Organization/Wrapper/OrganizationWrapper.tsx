@@ -331,7 +331,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'landlaeknir':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'landlaeknirHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg',
+          )}
+          className={styles.landlaeknirHeaderGridContainer}
+        />
+      ) : (
         <LandlaeknirHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
