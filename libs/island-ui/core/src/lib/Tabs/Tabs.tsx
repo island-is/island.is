@@ -226,7 +226,10 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
           let panelContent
           if (Array.isArray(content)) {
             panelContent = (
-              <Box marginTop={tabListVisible ? 3 : 2}>
+              <Box
+                marginTop={tabListVisible ? 3 : 2}
+                marginBottom={tabListVisible ? 2 : 1}
+              >
                 <Tabs
                   label=""
                   variant="alternative"
