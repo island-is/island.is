@@ -1,0 +1,25 @@
+{
+  "name": "fiancial-statement-individual-election",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/inao/fiancial-statement-individual-election/src",
+  "projectType": "library",
+  "tags": ["lib:js", "scope:application-system"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/inao/financial-statement-individual-election/src/lib/messages.ts"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/application/templates/inao/financial-statement-individual-election/jest.config.ts"
+      }
+    }
+  }
+}

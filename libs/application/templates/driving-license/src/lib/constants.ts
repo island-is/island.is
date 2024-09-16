@@ -10,6 +10,11 @@ export const B_TEMP = 'B-temp'
 export const B_FULL_RENEWAL_65 = 'B-full-renewal-65'
 export const BE = 'BE'
 
+export enum Pickup {
+  'POST' = 'post',
+  'DISTRICT' = 'district',
+}
+
 export const otherLicenseCategories = ['C', 'C1', 'CE', 'D', 'D1', 'DE']
 export const codesRequiringHealthCertificate = ['400', '01.06']
 
