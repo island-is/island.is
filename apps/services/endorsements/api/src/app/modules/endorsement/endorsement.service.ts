@@ -59,35 +59,60 @@ export class EndorsementService {
   ) {}
 
   async onModuleInit() {
-    await this.updateCountsForAllLists();
+    this.logger.info('Updating endorsement counts for all lists onModuleInit...');
+    try { 
+      await this.updateCountsForAllLists();
+      await this.countEndorsements();
+      await this.countEndorsementLists();
+    } catch (error) {
+      this.logger.error('Error updating endorsement counts for all lists', error);
+    }
+  }
+
+  // count how many rows in endorsement table
+  async countEndorsements() {
+    const count = await this.endorsementModel.count();
+    console.log('countEndorsements', count)
+  }
+  // count how many rows in endorsementlist table
+  async countEndorsementLists() {
+    const count = await this.endorsementListModel.count();
+    console.log('countEndorsementLists', count)
   }
 
   async updateCountsForAllLists(): Promise<void> {
-    this.logger.info('Updating endorsement counts for all lists on startup...');
-
     const allLists = await this.endorsementListModel.findAll();
-
     for (const list of allLists) {
       await this.updateEndorsementCountOnList(list.id);
     }
-
     this.logger.info('All endorsement counts have been updated.');
   }
+
 
   async updateEndorsementCountOnList(listId: string): Promise<void> {
     const count = await this.endorsementModel.count({
       where: { endorsementListId: listId },
     });
-
-    await this.endorsementListModel.update(
+    // Update the endorsement count and return the updated object
+    const [affectedRows, updatedList] = await this.endorsementListModel.update(
       { endorsementCount: count },
-      { where: { id: listId } }
+      {
+        where: { id: listId },
+        returning: true,
+      }
     );
-
-    this.logger.info(
-      `Updated endorsement count for list "${listId}" to ${count}`
-    );
+    // Confirm the update was successful by checking the returned object
+    if (affectedRows > 0 && updatedList[0].endorsementCount === count) {
+      this.logger.info(
+        `Successfully updated endorsement count for list "${listId}" to ${count}`
+      );
+    } else {
+      this.logger.warn(
+        `Failed to update endorsement count for list "${listId}". The count was not updated correctly.`
+      );
+    }
   }
+  
 
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
     this.logger.info(`Finding endorsements by list id "${listId}"`)

@@ -252,6 +252,10 @@ export class EndorsementListService {
 
   // generic get open lists
   async findOpenListsTaggedGeneralPetition(query: any) {
+    const counte = await this.endorsementModel.count();
+    console.log('countEndorsements', counte)
+    const countl = await this.endorsementListModel.count();
+    console.log('countEndorsementLists', countl)
     const dateOb = new Date()
     try {
       const where = {
