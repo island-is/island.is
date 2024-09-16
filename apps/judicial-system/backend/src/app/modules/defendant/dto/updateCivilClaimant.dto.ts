@@ -1,12 +1,12 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
 export class UpdateCivilClaimantDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty({ type: String })
-  readonly name!: string
+  readonly name?: string
 
   @IsOptional()
   @IsString()

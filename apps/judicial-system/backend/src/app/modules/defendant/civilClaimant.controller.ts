@@ -19,7 +19,7 @@ import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { CreateCivilClaimantDto } from './dto/createCivilClaimant.dto'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CivilClaimant } from './models/civilClaimant.model'
-import { CivilClaimantService } from './civildClaimant.service'
+import { CivilClaimantService } from './civilClaimant.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId/civilClaimant')

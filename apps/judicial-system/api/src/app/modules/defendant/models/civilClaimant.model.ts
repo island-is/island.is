@@ -15,7 +15,7 @@ export class CivilClaimant {
   readonly caseId!: string
 
   @Field(() => String, { nullable: true })
-  readonly name!: string
+  readonly name?: string
 
   @Field(() => String, { nullable: true })
   readonly nationalId?: string
