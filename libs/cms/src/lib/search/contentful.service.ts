@@ -423,9 +423,16 @@ export class ContentfulService {
       let idsChunk = ids.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
 
       while (idsChunk.length > 0) {
-        // TODO: paginate the response?
-        const response: ApiResponse<SearchResponse<MappedData>> =
-          await this.elasticService.findByQuery(elasticIndex, {
+        const size = 100
+        let page = 1
+
+        const items: string[] = []
+
+        let response: ApiResponse<SearchResponse<MappedData>> | null = null
+        let total = -1
+
+        while (response === null || items.length < total) {
+          response = await this.elasticService.findByQuery(elasticIndex, {
             query: {
               bool: {
                 should: idsChunk.map((id) => ({
@@ -452,14 +459,29 @@ export class ContentfulService {
                 minimum_should_match: 1,
               },
             },
-            size: 1000, // TODO: what should this value be?
+            size,
+            from: (page - 1) * size,
           })
 
-        const rootEntryIds = response.body.hits.hits
-          .map((hit) => hit._id)
-          .filter(
-            (id) => !indexableEntries.some((entry) => entry.sys.id === id),
-          ) // Remove duplicates
+          if (response.body.hits.hits.length === 0) {
+            total = response.body.hits.total.value
+            break
+          }
+
+          if (total === -1) {
+            total = response.body.hits.total.value
+          }
+
+          for (const hit of response.body.hits.hits) {
+            items.push(hit._id)
+          }
+
+          page += 1
+        }
+
+        const rootEntryIds = items.filter(
+          (id) => !indexableEntries.some((entry) => entry.sys.id === id),
+        ) // Remove duplicates
 
         const rootEntries = await this.getContentfulData(chunkSize, {
           include: this.defaultIncludeDepth,
