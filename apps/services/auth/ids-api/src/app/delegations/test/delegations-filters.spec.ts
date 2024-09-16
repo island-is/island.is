@@ -8,6 +8,10 @@ import { MergedDelegationDTO } from '@island.is/auth-api-lib'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { FixtureFactory } from '@island.is/services/auth/testing'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 import { createNationalRegistryUser } from '@island.is/testing/fixtures'
 import { TestApp, truncate } from '@island.is/testing/nest'
 
@@ -83,6 +87,17 @@ describe('DelegationsController', () => {
         await Promise.all(
           testCase.customDelegations.map((delegation) =>
             factory.createCustomDelegation(delegation),
+          ),
+        )
+
+        await Promise.all(
+          testCase.fromLegalRepresentative.map((nationalId) =>
+            factory.createDelegationIndexRecord({
+              fromNationalId: nationalId,
+              toNationalId: testCase.user.nationalId,
+              type: AuthDelegationType.LegalRepresentative,
+              provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+            }),
           ),
         )
 

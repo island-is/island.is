@@ -12,7 +12,7 @@ import { DelegationProviderService } from './delegation-provider.service'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => DelegationProvider)
-export class DelegationProviderResolverResolver {
+export class DelegationProviderResolver {
   constructor(private delegationProvider: DelegationProviderService) {}
 
   @Query(() => DelegationProviderPayload, {
