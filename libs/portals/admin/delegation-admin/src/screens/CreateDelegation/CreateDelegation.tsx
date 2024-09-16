@@ -9,7 +9,9 @@ import {
   GridRow,
   Input,
   Select,
-  DatePicker, toast, Icon,
+  DatePicker,
+  toast,
+  Icon,
 } from '@island.is/island-ui/core'
 import { BackButton } from '@island.is/portals/admin/core'
 import { useLocale } from '@island.is/localization'
@@ -19,17 +21,25 @@ import { m } from '../../lib/messages'
 import { DelegationAdminPaths } from '../../lib/paths'
 import NumberFormat from 'react-number-format'
 
-import { Form, useActionData, useNavigate, useSearchParams, useSubmit } from 'react-router-dom'
+import {
+  Form,
+  useActionData,
+  useNavigate,
+  useSearchParams,
+  useSubmit,
+} from 'react-router-dom'
 import { CreateDelegationResult } from './CreateDelegation.action'
 import * as styles from './CreateDelegation.css'
 import { useIdentityLazyQuery } from './CreateDelegation.generated'
-import debounce  from 'lodash/debounce'
+import debounce from 'lodash/debounce'
 import cn from 'classnames'
-import { DelegationsFormFooter, useDynamicShadow } from '@island.is/portals/shared-modules/delegations'
+import {
+  DelegationsFormFooter,
+  useDynamicShadow,
+} from '@island.is/portals/shared-modules/delegations'
 import { CreateDelegationConfirmModal } from '../../components/CreateDelegationConfirmModal'
 import { Identity } from '@island.is/api/schema'
 import kennitala from 'kennitala'
-
 
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
@@ -42,8 +52,9 @@ const CreateDelegationScreen = () => {
   const [toIdentity, setToIdentity] = React.useState<Identity | null>(null)
   const [validTo, setValidTo] = React.useState<Date | null>(null)
   const [isConfirmed, setIsConfirmed] = React.useState(false)
-  const [fromNationalId, setFromNationalId] = React.useState(() =>
-    searchParams.get('fromNationalId') || '')
+  const [fromNationalId, setFromNationalId] = React.useState(
+    () => searchParams.get('fromNationalId') || '',
+  )
   const [toNationalId, setToNationalId] = React.useState('')
 
   const fromInputRef = React.useRef<HTMLInputElement>(null)
@@ -67,7 +78,6 @@ const CreateDelegationScreen = () => {
     } else {
       setIsConfirmed(false)
     }
-
   }, [actionData])
 
   useEffect(() => {
@@ -76,45 +86,45 @@ const CreateDelegationScreen = () => {
         variables: { input: { nationalId: defaultFromNationalId } },
       })
     }
-
   }, [defaultFromNationalId])
 
   const noUserFoundToast = () => {
     toast.warning(formatMessage(m.grantIdentityError))
   }
 
+  const [
+    getFromIdentity,
+    { loading: fromIdentityQueryLoading, error: fromQueryError },
+  ] = useIdentityLazyQuery({
+    onError: (error) => {
+      console.error(error)
+    },
+    onCompleted: (data) => {
+      if (!data.identity) {
+        noUserFoundToast()
+      } else if (data.identity) {
+        setFromIdentity(data.identity)
+      }
+    },
+  })
 
-
-  const [getFromIdentity, {  loading: fromIdentityQueryLoading, error: fromQueryError }] =
-    useIdentityLazyQuery({
-      onError: (error) => {
-        console.error(error)
-      },
-      onCompleted: (data) => {
-        if (!data.identity) {
-          noUserFoundToast()
-        } else if (data.identity) {
-          setFromIdentity(data.identity)
-        }
-      },
-    })
-
-  const [getToIdentity, {  loading: toIdentityQueryLoading, error: toQueryError }] =
-    useIdentityLazyQuery({
-      onError: (error) => {
-        console.error(error)
-      },
-      onCompleted: (data) => {
-        if (!data.identity) {
-          noUserFoundToast()
-        } else if (data.identity) {
-          setToIdentity(data.identity)
-        }
-      },
-    })
+  const [
+    getToIdentity,
+    { loading: toIdentityQueryLoading, error: toQueryError },
+  ] = useIdentityLazyQuery({
+    onError: (error) => {
+      console.error(error)
+    },
+    onCompleted: (data) => {
+      if (!data.identity) {
+        noUserFoundToast()
+      } else if (data.identity) {
+        setToIdentity(data.identity)
+      }
+    },
+  })
 
   const validateNationalId = (nationalId: string) => {
-
     const value = nationalId.replace('-', '').trim()
     return value.length === 10 && kennitala.isValid(value)
   }
@@ -126,11 +136,10 @@ const CreateDelegationScreen = () => {
     if (!isValid) {
       return
     }
-      return getFromIdentity({
-        variables: { input: { nationalId: value } },
-      })
-    },
-   300)
+    return getFromIdentity({
+      variables: { input: { nationalId: value } },
+    })
+  }, 300)
 
   const handleNationalIdToChange = debounce(({ value }) => {
     setToNationalId(value)
@@ -138,23 +147,21 @@ const CreateDelegationScreen = () => {
     if (!isValid) {
       return
     }
-     return getToIdentity({
-        variables: { input: { nationalId: value } },
-      })
-    }
-    ,
-   300)
+    return getToIdentity({
+      variables: { input: { nationalId: value } },
+    })
+  }, 300)
 
   const Loading = () => (
-    <span
-      className={cn(styles.icon, styles.loadingIcon)}
-      aria-label="Loading"
-    >
+    <span className={cn(styles.icon, styles.loadingIcon)} aria-label="Loading">
       <Icon icon="reload" size="large" color="blue400" />
     </span>
   )
 
-  const ClearButton = ({ onClick, loading }: {
+  const ClearButton = ({
+    onClick,
+    loading,
+  }: {
     onClick: () => void
     loading: boolean
   }) => (
@@ -220,10 +227,13 @@ const CreateDelegationScreen = () => {
                       setFromNationalId('')
                       setFromIdentity(null)
                       if (defaultFromNationalId) {
-                        setSearchParams((params) => {
-                          params.delete('fromNationalId')
-                          return params
-                        }, { replace: true })
+                        setSearchParams(
+                          (params) => {
+                            params.delete('fromNationalId')
+                            return params
+                          },
+                          { replace: true },
+                        )
                       }
 
                       setTimeout(() => {
@@ -370,7 +380,6 @@ const CreateDelegationScreen = () => {
         toIdentity={toIdentity}
         data={actionData?.data}
         isVisible={showConfirmModal}
-
         onClose={() => {
           setIsConfirmed(false)
           setShowConfirmModal(false)
