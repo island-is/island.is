@@ -13,6 +13,7 @@ interface InboxCardProps {
   unread?: boolean
   senderName?: string | null
   bookmarked?: boolean | null
+  urgent?: boolean
   testID?: string
   onPress(id: string): void
 }
@@ -26,6 +27,7 @@ export function InboxCard({
   unread,
   bookmarked,
   senderName,
+  urgent = false,
 }: InboxCardProps) {
   const theme = useTheme()
   const [starred, setStarred] = useState<boolean>(false)
@@ -45,6 +47,7 @@ export function InboxCard({
           toggleAction(!bookmarked ? 'bookmark' : 'unbookmark', id)
           setStarred(!bookmarked)
         }}
+        urgent={urgent}
         icon={icon}
       />
     </PressableHighlight>

@@ -207,13 +207,13 @@ export const en: TranslatedMessages = {
   'inbox.emptyListTitle': 'There are currently no documents',
   'inbox.emptyListDescription':
     'When you receive electronic documents from the government, they will appear here.',
-
   'inbox.markAllAsReadPromptTitle': 'Do you want to mark all as read?',
   'inbox.markAllAsReadPromptDescription': 'This action cannot be undone',
   'inbox.markAllAsReadPromptCancel': 'Cancel',
   'inbox.markAllAsReadPromptConfirm': 'Mark all as read',
   'inbox.cardNoInboxDocuments':
     'When you receive mail in your mailbox, it will appear here.',
+  'inbox.urgent': 'Urgent',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',

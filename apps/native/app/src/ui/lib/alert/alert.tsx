@@ -14,8 +14,8 @@ import warning from '../../assets/alert/warning.png'
 import check from '../../assets/icons/check.png'
 import error from '../../assets/icons/error.png'
 import { dynamicColor } from '../../utils'
-import { font } from '../../utils/font'
 import { Colors } from '../../utils/theme'
+import { Typography } from '../typography/typography'
 
 export type AlertType = 'error' | 'info' | 'success' | 'warning'
 
@@ -34,6 +34,7 @@ interface AlertProps {
   sharedAnimatedValue?: any
   hasBorder?: boolean
   hasBottomBorder?: boolean
+  small?: boolean
 }
 
 interface HostProps {
@@ -41,6 +42,7 @@ interface HostProps {
   borderColor: Colors
   hasBorder?: boolean
   hasBottomBorder?: boolean
+  small?: boolean
 }
 
 type VariantStyle = {
@@ -66,7 +68,8 @@ const darkBackgroundColor = (color: string, colors: any) => {
 }
 
 const Host = styled.View<HostProps>`
-  padding: ${({ theme }) => theme.spacing[2]}px;
+  padding: ${({ theme, small }) =>
+    small ? theme.spacing[1] : theme.spacing[2]}px;
 
   border-style: solid;
   border-color: ${dynamicColor((props) => ({
@@ -100,25 +103,14 @@ const Icon = styled.View`
   align-self: flex-start;
 `
 
-const Content = styled.View`
-  padding-right: ${({ theme }) => theme.spacing[2]}px;
+const Content = styled.View<{ small: boolean }>`
+  padding-right: ${({ theme, small }) =>
+    small ? theme.spacing.smallGutter : theme.spacing[2]}px;
   flex: 1;
 `
 
-const Title = styled.Text`
-  ${font({
-    fontSize: 16,
-    lineHeight: 20,
-    fontWeight: '600',
-  })}
+const Title = styled(Typography)`
   margin-bottom: 4px;
-`
-
-const Message = styled.Text`
-  ${font({
-    fontSize: 13,
-    lineHeight: 16,
-  })}
 `
 
 const Close = styled(TouchableOpacity)`
@@ -167,6 +159,7 @@ export function Alert({
   sharedAnimatedValue,
   hasBorder,
   hasBottomBorder,
+  small = false,
   ...rest
 }: AlertProps) {
   const theme = useTheme()
@@ -196,6 +189,7 @@ export function Alert({
       borderColor={variant.borderColor}
       hasBorder={hasBorder}
       hasBottomBorder={hasBottomBorder}
+      small={small}
       {...rest}
     >
       <Container>
@@ -203,15 +197,21 @@ export function Alert({
           <Icon>
             <Image
               source={variant.icon}
-              style={{ width: 32, height: 32, marginRight: 16 }}
+              style={{
+                width: small ? 16 : 32,
+                height: small ? 16 : 32,
+                marginRight: small ? 4 : 16,
+              }}
             />
           </Icon>
         )}
 
         {message && (
-          <Content>
-            {title && <Title>{title}</Title>}
-            <Message>{message}</Message>
+          <Content small={small}>
+            {title && <Title variant="heading5">{title}</Title>}
+            <Typography variant="body3" weight={small ? 600 : 400}>
+              {message}
+            </Typography>
           </Content>
         )}
 

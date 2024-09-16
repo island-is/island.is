@@ -1,8 +1,8 @@
-import { Typography } from '@ui'
+import { Alert, Typography } from '@ui'
 import React, { isValidElement } from 'react'
-import { FormattedDate } from 'react-intl'
+import { FormattedDate, useIntl } from 'react-intl'
 import { Image, ImageSourcePropType, Pressable } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import StarFilled from '../../../assets/icons/star-filled.png'
 import Star from '../../../assets/icons/star.png'
@@ -86,6 +86,7 @@ interface ListItemProps {
   icon?: ImageSourcePropType | React.ReactNode
   onStarPress?(): void
   starred?: boolean
+  urgent?: boolean
 }
 
 export function ListItem({
@@ -96,7 +97,10 @@ export function ListItem({
   onStarPress,
   starred = false,
   unread = false,
+  urgent = false,
 }: ListItemProps) {
+  const intl = useIntl()
+  const theme = useTheme()
   return (
     <Cell>
       <Host unread={unread}>
@@ -135,6 +139,18 @@ export function ListItem({
             >
               {subtitle}
             </Typography>
+            {urgent && (
+              <Alert
+                type="error"
+                message={intl.formatMessage({ id: 'inbox.urgent' })}
+                hasBorder
+                small
+                style={{
+                  marginTop: -theme.spacing.smallGutter,
+                  minWidth: 90,
+                }}
+              />
+            )}
             <Pressable hitSlop={16} onPress={onStarPress}>
               <StarImage
                 source={starred ? StarFilled : Star}
