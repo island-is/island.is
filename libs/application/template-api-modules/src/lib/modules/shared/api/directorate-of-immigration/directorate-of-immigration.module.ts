@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { DirectorateOfImmigrationService } from './directorate-of-immigration.service'
 import { DirectorateOfImmigrationClientModule } from '@island.is/clients/directorate-of-immigration'
 
