@@ -94,14 +94,14 @@ const VehiclesModule = React.memo(
         key={vehicle.permno}
         item={vehicle}
         index={index}
-        minHeight={176}
+        minHeight={152}
         style={
           count > 1
             ? {
                 width: viewPagerItemWidth,
                 paddingHorizontal: 0,
                 paddingLeft: theme.spacing[2],
-                minHeight: 176,
+                minHeight: 152,
               }
             : {
                 width: '100%',
