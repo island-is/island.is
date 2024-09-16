@@ -51,6 +51,8 @@ import { EmailDto } from './dto/email.dto'
 import { SendPdfEmailResponse } from './dto/sendPdfEmail.response'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 
+import { Response } from 'express';
+
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
   PaginationDto,
@@ -96,11 +98,30 @@ export class EndorsementListController {
   @UseInterceptors(EndorsementListsInterceptor)
   @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   async getGeneralPetitionLists(
-    @Query() query: PaginationDto,
-  ): Promise<PaginatedEndorsementListDto> {
-    return await this.endorsementListService.findOpenListsTaggedGeneralPetition(
-      query,
-    )
+    // @Query() query: PaginationDto,
+    @Res() res: Response
+  ): Promise<any> {
+    const data = {
+      petition: {
+        title: 'Sample Petition Title',
+        description: 'Description of the petition',
+        closedDate: '2024-12-31',
+        ownerName: 'John Doe',
+        owner: '1234567890',
+      },
+      petitionSigners: {
+        totalCount: 100,
+        data: [
+          { id: 1, created: '2024-01-01', meta: { fullName: 'Jane Doe', locality: 'Reykjavik' } },
+          { id: 2, created: '2024-01-02', meta: { fullName: 'John Smith', locality: 'Akureyri' } },
+        ],
+      },
+    };
+
+    this.endorsementListService.asdf(res, data);
+    // return await this.endorsementListService.findOpenListsTaggedGeneralPetition(
+    //   query,
+    // )
   }
 
   @ApiOperation({ summary: 'Gets a General Petition List by Id' })
@@ -397,4 +418,36 @@ export class EndorsementListController {
       fileType,
     )
   }
+
+  // @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
+  // @Get('asdf')
+  // @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
+  // @HasAccessGroup(AccessGroup.Owner)
+  // // @ApiParam({ name: 'listId', type: String })
+  // // @ApiParam({ name: 'fileType', type: String, enum: ['pdf', 'csv'] })
+  // // @ApiOkResponse({
+  // //   description: 'Presigned URL for the exported file',
+  // //   type: EndorsementListExportUrlResponse,
+  // // })
+  // asdf(@Res() res: Response): any {
+  //   // return {blah:2}
+  //   const data = {
+  //     petition: {
+  //       title: 'Sample Petition Title',
+  //       description: 'Description of the petition',
+  //       closedDate: '2024-12-31',
+  //       ownerName: 'John Doe',
+  //       owner: '1234567890',
+  //     },
+  //     petitionSigners: {
+  //       totalCount: 100,
+  //       data: [
+  //         { id: 1, created: '2024-01-01', meta: { fullName: 'Jane Doe', locality: 'Reykjavik' } },
+  //         { id: 2, created: '2024-01-02', meta: { fullName: 'John Smith', locality: 'Akureyri' } },
+  //       ],
+  //     },
+  //   };
+
+  //   this.endorsementListService.asdf(res, data);
+  // }
 }

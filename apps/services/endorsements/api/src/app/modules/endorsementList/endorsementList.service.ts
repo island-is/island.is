@@ -4,6 +4,7 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  Res,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { col, Op, Sequelize } from 'sequelize'
@@ -29,6 +30,10 @@ import csvStringify from 'csv-stringify/lib/sync'
 
 import { AwsService } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
+
+
+import { Response } from 'express';
+
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -793,5 +798,80 @@ export class EndorsementListService {
       this.logger.error(`Failed to upload file to S3`, { error, filename })
       throw new Error('Error uploading file to S3')
     }
+  }
+
+  asdf(@Res() res: Response, data: any): void {
+    const doc = new PDFDocument({ margin: 60 });
+
+    // Set the headers for PDF download
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="petition_report.pdf"');
+
+    // Stream the PDF to a buffer first, then send it to the response
+    const streamToBuffer = (stream: any) => {
+      return new Promise<Buffer>((resolve, reject) => {
+        const buffers: Buffer[] = [];
+        stream.on('data', (chunk: Buffer) => buffers.push(chunk));
+        stream.on('end', () => resolve(Buffer.concat(buffers)));
+        stream.on('error', reject);
+      });
+    };
+
+    // Generate the PDF content
+    doc.registerFont('Regular', '/Users/rafnarnason/code/island.is/apps/web/public/fonts/ibm-plex-sans-v7-latin-regular.ttf');
+    doc.registerFont('Bold', '/Users/rafnarnason/code/island.is/apps/web/public/fonts/ibm-plex-sans-v7-latin-600.ttf');
+
+    const { petition, petitionSigners } = data;
+
+    doc.font('Bold').fontSize(24).text('Upplýsingar um undirskriftalista', { align: 'left' }).moveDown();
+    doc.fontSize(14).text('Heiti undirskriftalista', { align: 'left', underline: true });
+    doc.font('Regular').fontSize(10).text(petition?.title || '', { align: 'left' }).moveDown();
+
+    doc.font('Bold').fontSize(14).text('Um undirskriftalista', { align: 'left', underline: true });
+    doc.font('Regular').fontSize(10).text(petition?.description || '', { align: 'left' }).moveDown();
+
+    // Petition details in two columns
+    doc.font('Bold').fontSize(14).text('Opinn til: ', { continued: true });
+    // doc.font('Regular').text(formatDate(petition?.closedDate || ''), { align: 'left' });
+
+    doc.font('Bold').text('Fjöldi undirskrifta: ', { continued: true });
+    doc.font('Regular').text(petitionSigners?.totalCount || '', { align: 'left' }).moveDown();
+
+    doc.font('Bold').text('Ábyrgðarmaður: ', { continued: true });
+    doc.font('Regular').text(petition?.ownerName || '', { align: 'left' });
+
+    doc.font('Bold').text('Kennitala ábyrgðarmanns: ', { continued: true });
+    // doc.font('Regular').text(formatNationalId(petition?.owner || ''), { align: 'left' }).moveDown();
+
+    // Add table header
+    doc.moveDown().font('Bold').fontSize(12);
+    doc.text('Dags. skráð', 60, doc.y, { width: 100 });
+    doc.text('Nafn', 160, doc.y, { width: 200 });
+    doc.text('Sveitarfélag', 360, doc.y, { width: 200 });
+
+    // Add table content
+    petitionSigners?.data?.forEach((sign: any) => {
+      doc.moveDown();
+      doc.font('Regular').fontSize(10);
+      // doc.text(formatDate(sign.created), 60, doc.y, { width: 100 });
+      doc.text(sign.meta.fullName || '', 160, doc.y, { width: 200 });
+      doc.text(sign.meta.locality || '', 360, doc.y, { width: 200 });
+    });
+
+    // Add footer image
+    doc.image('/Users/rafnarnason/code/island.is/apps/service-portal/src/assets/images/island.png', 60, doc.page.height - 80, { width: 120 });
+
+    // End the PDF document
+    doc.end();
+
+    // Convert the document stream to buffer and send it to the client
+    streamToBuffer(doc)
+      .then((buffer) => {
+        res.send(buffer);  // Send the entire PDF buffer as the response
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send('Error generating PDF');
+      });
   }
 }
