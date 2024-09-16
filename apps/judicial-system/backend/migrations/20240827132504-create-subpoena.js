@@ -51,7 +51,7 @@ module.exports = {
             allowNull: true,
           },
           comment: {
-            type: Sequelize.STRING,
+            type: Sequelize.TEXT,
             allowNull: true,
           },
         },

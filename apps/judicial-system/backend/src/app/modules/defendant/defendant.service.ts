@@ -203,22 +203,6 @@ export class DefendantService {
   ): Promise<Defendant> {
     const formattedNationalId = formatNationalId(defendantNationalId)
 
-    const defendant = await this.defendantModel.findOne({
-      where: {
-        caseId,
-        [Op.or]: [
-          { nationalId: formattedNationalId },
-          { nationalId: defendantNationalId },
-        ],
-      },
-    })
-
-    if (!defendant) {
-      throw new InternalServerErrorException(
-        `Could not find defendant with national id ${defendantNationalId} for case ${caseId}`,
-      )
-    }
-
     const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
       update,
       {

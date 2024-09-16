@@ -98,18 +98,13 @@ export class InternalSubpoenaController {
       `Delivering subpoena ${caseId} to police for defendant ${defendantId}`,
     )
 
-    try {
-      const pdf = await this.pdfService.getSubpoenaPdf(theCase, defendant)
+    const pdf = await this.pdfService.getSubpoenaPdf(theCase, defendant)
 
-      return await this.subpoenaService.deliverSubpoenaToPolice(
-        theCase,
-        defendant,
-        Base64.btoa(pdf.toString('binary')),
-        deliverDto.user,
-      )
-    } catch (error) {
-      this.logger.error('Error generating subpoena pdf', error)
-      throw error
-    }
+    return await this.subpoenaService.deliverSubpoenaToPolice(
+      theCase,
+      defendant,
+      Base64.btoa(pdf.toString('binary')),
+      deliverDto.user,
+    )
   }
 }
