@@ -15,6 +15,7 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CreateCivilClaimantInput } from './dto/createCivilClaimant.input'
+import { UpdateCivilClaimantInput } from './dto/updateCivilClaimant.input'
 import { CivilClaimant } from './models/civilClaimant.model'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -40,6 +41,28 @@ export class CivilClaimantResolver {
       user.id,
       AuditedAction.CREATE_CIVIL_CLAIMANT,
       backendService.createCivilClaimant(caseId, createCivilClaimant),
+      (civilClaimant) => civilClaimant.id,
+    )
+  }
+
+  @Mutation(() => CivilClaimant)
+  async updateCivilClaimant(
+    @Args('id') id: string,
+    @Args('updateCivilClaimantDto') input: UpdateCivilClaimantInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<CivilClaimant> {
+    const { caseId, civilClaimantId, ...updateCivilClaimant } = input
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPDATE_CIVIL_CLAIMANT,
+      backendService.updateCivilClaimant(
+        caseId,
+        civilClaimantId,
+        updateCivilClaimant,
+      ),
       (civilClaimant) => civilClaimant.id,
     )
   }
