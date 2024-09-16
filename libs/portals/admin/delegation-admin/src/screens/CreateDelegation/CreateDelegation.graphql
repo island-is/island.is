@@ -3,3 +3,11 @@ mutation CreateDelegation($input: CreateDelegationInput!) {
     id
   }
 }
+
+query Identity($input: IdentityInput!) {
+  identity(input: $input) {
+    nationalId
+    type
+    name
+  }
+}

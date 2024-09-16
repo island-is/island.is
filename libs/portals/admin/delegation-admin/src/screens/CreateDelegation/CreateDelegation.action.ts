@@ -35,6 +35,7 @@ const schema = z
     type: z.string(),
     validTo: z.string().optional(),
     referenceId: z.string().min(1, 'errorReferenceIdRequired'),
+    confirmed: z.string().optional(),
   })
   .superRefine(({ validTo }, ctx) => {
     if (validTo && !isFuture(new Date(validTo))) {
@@ -46,6 +47,7 @@ const schema = z
     }
   })
 
+
 export type CreateDelegationResult = ValidateFormDataResult<typeof schema> & {
   /**
    * Global error message if the mutation fails
@@ -55,15 +57,15 @@ export type CreateDelegationResult = ValidateFormDataResult<typeof schema> & {
 
 export const createDelegationAction: WrappedActionFn =
   ({ client }) =>
-  async ({ request }): Promise<CreateDelegationResult | Response> => {
+  async ({ request  }): Promise<CreateDelegationResult | Response> => {
     const formData = await request.formData()
     const result = await validateFormData({ formData, schema })
 
-    if (result.errors || !result.data) {
+    if (result.errors || !result.data || result.data.confirmed !== 'true') {
       return result
     }
 
-    const { validTo, ...rest } = result.data
+    const { validTo, confirmed, ...rest } = result.data
 
     const input: CreateDelegationMutationVariables['input'] = { ...rest }
 

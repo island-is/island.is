@@ -12,6 +12,8 @@ import React, { useEffect, useState } from 'react'
 import { useSubmitting } from '@island.is/react-spa/shared'
 import { GetDelegationForNationalIdResult } from './Root.action'
 import { DelegationAdminPaths } from '../lib/paths'
+import { useAuth } from '@island.is/auth/react'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 const Root = () => {
   const [focused, setFocused] = useState(false)
@@ -21,6 +23,11 @@ const Root = () => {
   const { isSubmitting, isLoading } = useSubmitting()
   const [error, setError] = useState({ hasError: false, message: '' })
   const navigate = useNavigate()
+  const { userInfo } = useAuth()
+
+  const hasAdminAccess = userInfo?.scopes.includes(
+    AdminPortalScope.delegationSystemAdmin,
+  )
 
   useEffect(() => {
     if (actionData?.errors) {
@@ -38,6 +45,7 @@ const Root = () => {
 
   const onFocus = () => setFocused(true)
   const onBlur = () => setFocused(false)
+
   return (
     <>
       <GridRow rowGap={3}>
@@ -47,17 +55,17 @@ const Root = () => {
             intro={m.delegationAdminDescription}
           />
         </GridColumn>
-
+        {hasAdminAccess && (
         <GridColumn span={['12/12', '4/12']}>
           <Button
             icon="arrowForward"
             onClick={() => navigate(DelegationAdminPaths.CreateDelegation)}
             size="small"
           >
-            {formatMessage(m.delegationAdminCreateNewDelegationAction)}
+            {formatMessage(m.createNewDelegation)}
           </Button>
         </GridColumn>
-
+        )}
         <GridColumn span={['12/12', '8/12']}>
           <Form method="post">
             <AsyncSearchInput

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Stack,
@@ -9,92 +9,280 @@ import {
   GridRow,
   Input,
   Select,
-  DatePicker,
+  DatePicker, toast, Icon,
 } from '@island.is/island-ui/core'
 import { BackButton } from '@island.is/portals/admin/core'
 import { useLocale } from '@island.is/localization'
-import { useSubmitting } from '@island.is/react-spa/shared'
-import InputMask from 'react-input-mask'
 
-import { IntroHeader } from '@island.is/portals/core'
+import { IntroHeader, m as coreMessages } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import { DelegationAdminPaths } from '../../lib/paths'
+import NumberFormat from 'react-number-format'
 
-import { Form, useActionData, useNavigate } from 'react-router-dom'
+import { Form, useActionData, useNavigate, useSearchParams, useSubmit } from 'react-router-dom'
 import { CreateDelegationResult } from './CreateDelegation.action'
+import * as styles from './CreateDelegation.css'
+import { useIdentityLazyQuery } from './CreateDelegation.generated'
+import debounce  from 'lodash/debounce'
+import cn from 'classnames'
+import { DelegationsFormFooter, useDynamicShadow } from '@island.is/portals/shared-modules/delegations'
+import { CreateDelegationConfirmModal } from '../../components/CreateDelegationConfirmModal'
+import { Identity } from '@island.is/api/schema'
+import kennitala from 'kennitala'
+
 
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const submit = useSubmit()
   const actionData = useActionData() as CreateDelegationResult
-  const { isLoading, isSubmitting } = useSubmitting()
-  const [validInfinite, setValidInfinite] = React.useState(true)
-  const [fromNationalId, setNationalIdFrom] = React.useState('')
-  const [toNationalId, setNationalIdTo] = React.useState('')
+  const [noEndDate, setNoEndDate] = React.useState(true)
+  const [fromIdentity, setFromIdentity] = React.useState<Identity | null>(null)
+  const [toIdentity, setToIdentity] = React.useState<Identity | null>(null)
   const [validTo, setValidTo] = React.useState<Date | null>(null)
+  const [isConfirmed, setIsConfirmed] = React.useState(false)
+  const [fromNationalId, setFromNationalId] = React.useState(() =>
+    searchParams.get('fromNationalId') || '')
+  const [toNationalId, setToNationalId] = React.useState('')
 
-  const accessTypeOptions = [
+  const fromInputRef = React.useRef<HTMLInputElement>(null)
+  const toInputRef = React.useRef<HTMLInputElement>(null)
+  const formRef = React.useRef<HTMLFormElement>(null)
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-112px' })
+  const defaultFromNationalId = searchParams.get('fromNationalId')
+
+  const typeOptions = [
     {
       label: formatMessage(m.typeGeneral),
       value: 'general', // Todo: change to correct enum value, yet to be created
     },
   ]
 
+  useEffect(() => {
+    if (actionData?.data && !actionData.errors) {
+      setIsConfirmed(true)
+      setShowConfirmModal(true)
+    }
+
+  }, [actionData])
+
+  useEffect(() => {
+    if (defaultFromNationalId && validateNationalId(defaultFromNationalId)) {
+      getFromIdentity({
+        variables: { input: { nationalId: defaultFromNationalId } },
+      })
+    }
+
+  }, [defaultFromNationalId])
+
+  const noUserFoundToast = () => {
+    toast.warning(formatMessage(m.grantIdentityError))
+  }
+
+
+
+  const [getFromIdentity, {  loading: fromIdentityQueryLoading, error: fromQueryError }] =
+    useIdentityLazyQuery({
+      onError: (error) => {
+        console.error(error)
+      },
+      onCompleted: (data) => {
+        if (!data.identity) {
+          noUserFoundToast()
+        } else if (data.identity) {
+          setFromIdentity(data.identity)
+        }
+      },
+    })
+
+  const [getToIdentity, {  loading: toIdentityQueryLoading, error: toQueryError }] =
+    useIdentityLazyQuery({
+      onError: (error) => {
+        console.error(error)
+      },
+      onCompleted: (data) => {
+        if (!data.identity) {
+          noUserFoundToast()
+        } else if (data.identity) {
+          setToIdentity(data.identity)
+        }
+      },
+    })
+
+  const validateNationalId = (nationalId: string) => {
+
+    const value = nationalId.replace('-', '').trim()
+    return value.length === 10 && kennitala.isValid(value)
+  }
+
+  const handleNationalIdFromChange = debounce(async ({ value }) => {
+    setFromNationalId(value)
+
+    const isValid = validateNationalId(value)
+    if (!isValid) {
+      return
+    }
+      return getFromIdentity({
+        variables: { input: { nationalId: value } },
+      })
+    },
+   300)
+
+  const handleNationalIdToChange = debounce(({ value }) => {
+    setToNationalId(value)
+    const isValid = validateNationalId(value)
+    if (!isValid) {
+      return
+    }
+     return getToIdentity({
+        variables: { input: { nationalId: value } },
+      })
+    }
+    ,
+   300)
+
+  const Loading = () => (
+    <span
+      className={cn(styles.icon, styles.loadingIcon)}
+      aria-label="Loading"
+    >
+      <Icon icon="reload" size="large" color="blue400" />
+    </span>
+  )
+
+  const ClearButton = ({ onClick, loading }: {
+    onClick: () => void
+    loading: boolean
+  }) => (
+    <button
+      disabled={loading}
+      onClick={onClick}
+      className={styles.icon}
+      aria-label={formatMessage(coreMessages.clearSelected)}
+    >
+      <Icon icon="close" size="large" color="blue400" />
+    </button>
+  )
+
   return (
     <Stack space="containerGutter">
-      <BackButton onClick={() => navigate(DelegationAdminPaths.Root)} />
+      <BackButton onClick={() => navigate(-1)} />
       <div>
         <IntroHeader
-          title={m.delegationAdminCreateNewDelegation}
+          title={m.createNewDelegation}
           intro={m.delegationAdminCreateNewDelegationDescription}
         />
-        <Form method="post">
+        <Form method="post" ref={formRef}>
           <GridRow rowGap={3}>
             <GridColumn span={['12/12', '12/12', '7/12']}>
-              <InputMask
-                // eslint-disable-next-line local-rules/disallow-kennitalas
-                mask="999999-9999"
-                maskPlaceholder={null}
-                value={fromNationalId || ''}
-                onChange={(e) => {
-                  setNationalIdFrom(e.target.value)
-                }}
-              >
-                <Input
-                  name="fromNationalId"
-                  label={formatMessage(m.fromNationalId)}
-                  backgroundColor="blue"
-                  type="tel"
-                  errorMessage={formatMessage(
-                    m[actionData?.errors?.fromNationalId as keyof typeof m],
-                  )}
-                  max={10}
-                  required
-                />
-              </InputMask>
+              <div className={styles.inputWrapper}>
+                {fromIdentity?.name && (
+                  <Input
+                    name="fromName"
+                    defaultValue={fromIdentity.name}
+                    aria-live="assertive"
+                    label={formatMessage(m.fromNationalId)}
+                    backgroundColor="blue"
+                    required
+                  />
+                )}
+
+                <Box
+                  display={fromIdentity?.name ? 'none' : 'block'}
+                  aria-live="assertive"
+                >
+                  <NumberFormat
+                    type="tel"
+                    name="fromNationalId"
+                    label={formatMessage(m.fromNationalId)}
+                    backgroundColor="blue"
+                    customInput={Input}
+                    format="######-####"
+                    onValueChange={handleNationalIdFromChange}
+                    value={fromNationalId}
+                    required
+                    getInputRef={fromInputRef}
+                    errorMessage={formatMessage(
+                      m[actionData?.errors?.fromNationalId as keyof typeof m],
+                    )}
+                  />
+                </Box>
+                {fromIdentityQueryLoading ? (
+                  <Loading />
+                ) : fromIdentity?.name ? (
+                  <ClearButton
+                    loading={fromIdentityQueryLoading}
+                    onClick={() => {
+                      setFromNationalId('')
+                      setFromIdentity(null)
+                      if (defaultFromNationalId) {
+                        setSearchParams((params) => {
+                          params.delete('fromNationalId')
+                          return params
+                        }, { replace: true })
+                      }
+
+                      setTimeout(() => {
+                        if (fromInputRef.current) {
+                          fromInputRef.current.focus()
+                        }
+                      }, 0)
+                    }}
+                  />
+                ) : null}
+              </div>
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '7/12']}>
-              <InputMask
-                // eslint-disable-next-line local-rules/disallow-kennitalas
-                mask="999999-9999"
-                maskPlaceholder={null}
-                value={toNationalId || ''}
-                onChange={(e) => {
-                  setNationalIdTo(e.target.value)
-                }}
-              >
-                <Input
-                  name="toNationalId"
-                  label={formatMessage(m.toNationalId)}
-                  backgroundColor="blue"
-                  type="tel"
-                  errorMessage={formatMessage(
-                    m[actionData?.errors?.fromNationalId as keyof typeof m],
-                  )}
-                  max={10}
-                  required
-                />
-              </InputMask>
+              <div className={styles.inputWrapper}>
+                {toIdentity?.name && (
+                  <Input
+                    name="toName"
+                    defaultValue={toIdentity.name}
+                    aria-live="assertive"
+                    label={formatMessage(m.toNationalId)}
+                    backgroundColor="blue"
+                    required
+                  />
+                )}
+                <Box
+                  display={toIdentity?.name ? 'none' : 'block'}
+                  aria-live="assertive"
+                >
+                  <NumberFormat
+                    type="tel"
+                    name="toNationalId"
+                    label={formatMessage(m.toNationalId)}
+                    backgroundColor="blue"
+                    customInput={Input}
+                    format="######-####"
+                    onValueChange={handleNationalIdToChange}
+                    value={toNationalId}
+                    getInputRef={toInputRef}
+                    required
+                    errorMessage={formatMessage(
+                      m[actionData?.errors?.toNationalId as keyof typeof m],
+                    )}
+                  />
+                </Box>
+                {toIdentityQueryLoading ? (
+                  <Loading />
+                ) : toIdentity?.name ? (
+                  <ClearButton
+                    loading={toIdentityQueryLoading}
+                    onClick={() => {
+                      setToNationalId('')
+                      setToIdentity(null)
+                      setTimeout(() => {
+                        if (toInputRef.current) {
+                          toInputRef.current.focus()
+                        }
+                      }, 0)
+                    }}
+                  />
+                ) : null}
+              </div>
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '7/12']}>
               <Select
@@ -103,25 +291,25 @@ const CreateDelegationScreen = () => {
                 name="type"
                 required
                 noOptionsMessage="No options"
-                defaultValue={accessTypeOptions[0]}
-                options={accessTypeOptions}
+                defaultValue={typeOptions[0]}
+                options={typeOptions}
                 placeholder={formatMessage(m.type)}
                 size="md"
               />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '7/12']}>
               <Checkbox
-                label={formatMessage(m.validInfinite)}
-                name="validInfinite"
+                label={formatMessage(m.noEndDate)}
+                name="noEndDate"
                 filled
                 defaultChecked
                 onChange={(e) => {
-                  setValidInfinite(e.target.checked)
+                  setNoEndDate(e.target.checked)
                 }}
-                value={validInfinite.toString()}
+                value={noEndDate.toString()}
               />
             </GridColumn>
-            {!validInfinite && (
+            {!noEndDate && (
               <GridColumn span={['12/12', '12/12', '7/12']}>
                 <DatePicker
                   name="validToPicker"
@@ -152,19 +340,15 @@ const CreateDelegationScreen = () => {
                 )}
               />
             </GridColumn>
+            <input type="hidden" name="confirmed" value={String(isConfirmed)} />
             <GridColumn span={['12/12', '12/12', '7/12']}>
-              <Box display="flex" justifyContent="spaceBetween" marginTop={7}>
-                <Button
-                  onClick={() => navigate(DelegationAdminPaths.Root)}
-                  variant="ghost"
-                  type="button"
-                >
-                  {formatMessage(m.cancel)}
-                </Button>
-                <Button type="submit" loading={isLoading || isSubmitting}>
-                  {formatMessage(m.create)}
-                </Button>
-              </Box>
+              <DelegationsFormFooter
+                onCancel={() => navigate(DelegationAdminPaths.Root)}
+                divider={false}
+                confirmLabel={formatMessage(m.create)}
+                showShadow={showShadow}
+                confirmIcon="arrowForward"
+              />
             </GridColumn>
             {actionData?.globalError && (
               <GridColumn span={['12/12']}>
@@ -178,6 +362,21 @@ const CreateDelegationScreen = () => {
           </GridRow>
         </Form>
       </div>
+
+      <CreateDelegationConfirmModal
+        fromIdentity={fromIdentity}
+        toIdentity={toIdentity}
+        data={actionData?.data}
+        isVisible={showConfirmModal}
+
+        onClose={() => {
+          setIsConfirmed(false)
+          setShowConfirmModal(false)
+        }}
+        onConfirm={() => {
+          submit(formRef.current)
+        }}
+      />
     </Stack>
   )
 }

@@ -41,17 +41,9 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:nationalIdNotFound',
     defaultMessage: 'Kennitala fannst ekki',
   },
-  delegationAdminCreateNewDelegation: {
-    id: 'admin.delegationAdmin:delegationAdminCreateNewDelegation',
-    defaultMessage: 'Stofna nýtt umboð',
-  },
   delegationAdminCreateNewDelegationDescription: {
     id: 'admin.delegationAdmin:delegationAdminCreateNewDelegation',
     defaultMessage: 'Hér getur þú veitt umboð fyrir valinn notanda.',
-  },
-  delegationAdminCreateNewDelegationAction: {
-    id: 'admin.delegationAdmin:delegationAdminCreateNewDelegation',
-    defaultMessage: 'Stofna nýtt umboð',
   },
   fromNationalId: {
     id: 'admin.delegationAdmin:delegationFromNationalId',
@@ -69,8 +61,8 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:create',
     defaultMessage: 'Skrá umboð',
   },
-  validInfinite: {
-    id: 'admin.delegationAdmin:validInfinite',
+  noEndDate: {
+    id: 'admin.delegationAdmin:noEndDate',
     defaultMessage: 'Gildis tími óendanlegur',
   },
   validTo: {
@@ -117,4 +109,12 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:errorReferenceIdRequired',
     defaultMessage: 'Númer máls í Zendesk er nauðsynlegt',
   },
+  grantIdentityError: {
+    id: 'admin.delegationAdmin:grantIdentityError',
+    defaultMessage: 'Enginn notandi fannst með þessa kennitölu.',
+  },
+  createDelegationConfirmModalTitle: {
+    id: 'admin.delegationAdmin:createDelegationConfirmModalTitle',
+    defaultMessage: 'Þú ert að skrá nýtt umboð',
+  }
 })

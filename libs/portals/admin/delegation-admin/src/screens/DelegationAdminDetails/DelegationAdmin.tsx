@@ -1,4 +1,4 @@
-import { Box, Stack, Tabs } from '@island.is/island-ui/core'
+import { Box, Button, GridColumn, GridRow, Stack, Tabs } from '@island.is/island-ui/core'
 import { BackButton } from '@island.is/portals/admin/core'
 import { useLocale } from '@island.is/localization'
 import { useLoaderData, useNavigate } from 'react-router-dom'
@@ -10,21 +10,45 @@ import React from 'react'
 import DelegationList from '../../components/DelegationList'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { DelegationsEmptyState } from '@island.is/portals/shared-modules/delegations'
+import { useAuth } from '@island.is/auth/react'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 const DelegationAdminScreen = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const delegationAdmin = useLoaderData() as DelegationAdminResult
+  const { userInfo } = useAuth()
+
+  const hasAdminAccess = userInfo?.scopes.includes(
+    AdminPortalScope.delegationSystemAdmin,
+  )
 
   return (
     <Stack space="containerGutter">
       <BackButton onClick={() => navigate(DelegationAdminPaths.Root)} />
-      <Box width="full" display="flex" justifyContent="spaceBetween">
-        <IntroHeader
-          title={delegationAdmin.name}
-          intro={delegationAdmin.nationalId}
-        />
-      </Box>
+      <GridRow rowGap={3}>
+        <GridColumn span={['12/12', '8/12']}>
+          <IntroHeader
+            title={delegationAdmin.name}
+            intro={delegationAdmin.nationalId}
+          />
+        </GridColumn>
+        {hasAdminAccess && (
+          <GridColumn span={['12/12', '4/12']}>
+            <Button
+              icon="arrowForward"
+              onClick={() => {
+                const query = new URLSearchParams({ fromNationalId: delegationAdmin.nationalId })
+
+                navigate(`${DelegationAdminPaths.CreateDelegation}?${query.toString()}`)
+              }}
+              size="small"
+            >
+              {formatMessage(m.createNewDelegation)}
+            </Button>
+          </GridColumn>
+        )}
+      </GridRow>
       <Tabs
         contentBackground="white"
         label={'Delegation Admin'}

@@ -42,7 +42,7 @@ export const delegationAdminModule: PortalModule = {
         loader: delegationAdminLoader(props),
       },
       {
-        name: m.delegationAdminCreateNewDelegation,
+        name: m.createNewDelegation,
         path: DelegationAdminPaths.CreateDelegation,
         element: <CreateDelegationScreen />,
         action: createDelegationAction(props),
