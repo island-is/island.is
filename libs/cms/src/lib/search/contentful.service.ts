@@ -373,6 +373,88 @@ export class ContentfulService {
     }
   }
 
+  private async resolveNestedEntries(
+    ids: string[],
+    elasticIndex: string,
+    locale: ElasticsearchIndexLocale,
+    chunkSize: number,
+    indexableEntries: Entry<unknown>[],
+  ) {
+    let idsChunk = ids.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
+
+    while (idsChunk.length > 0) {
+      const size = 100
+      let page = 1
+
+      const items: string[] = []
+
+      let response: ApiResponse<SearchResponse<MappedData>> | null = null
+      let total = -1
+
+      while (response === null || items.length < total) {
+        response = await this.elasticService.findByQuery(elasticIndex, {
+          query: {
+            bool: {
+              should: idsChunk.map((id) => ({
+                nested: {
+                  path: 'tags',
+                  query: {
+                    bool: {
+                      must: [
+                        {
+                          term: {
+                            'tags.key': id,
+                          },
+                        },
+                        {
+                          term: {
+                            'tags.type': 'hasChildEntryWithId',
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              })),
+              minimum_should_match: 1,
+            },
+          },
+          size,
+          from: (page - 1) * size,
+        })
+
+        if (response.body.hits.hits.length === 0) {
+          total = response.body.hits.total.value
+          break
+        }
+
+        if (total === -1) {
+          total = response.body.hits.total.value
+        }
+
+        for (const hit of response.body.hits.hits) {
+          items.push(hit._id)
+        }
+
+        page += 1
+      }
+
+      const rootEntryIds = items.filter(
+        (id) => !indexableEntries.some((entry) => entry.sys.id === id),
+      ) // Remove duplicates
+
+      const rootEntries = await this.getContentfulData(chunkSize, {
+        include: this.defaultIncludeDepth,
+        'sys.id[in]': rootEntryIds.join(','),
+        locale: this.contentfulLocaleMap[locale],
+      })
+
+      indexableEntries.push(...rootEntries)
+
+      idsChunk = ids.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
+    }
+  }
+
   async getSyncEntries(options: SyncOptions): Promise<SyncerResult> {
     const {
       syncType,
@@ -417,82 +499,14 @@ export class ContentfulService {
     // In case of delta updates, we need to resolve embedded entries to their root model
     if (isDeltaUpdate && shouldResolveNestedEntries) {
       logger.info('Finding root entries from nestedEntries')
-
       const ids = nestedItems.map(({ id }) => id).concat(deletedEntryIds)
-
-      let idsChunk = ids.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
-
-      while (idsChunk.length > 0) {
-        const size = 100
-        let page = 1
-
-        const items: string[] = []
-
-        let response: ApiResponse<SearchResponse<MappedData>> | null = null
-        let total = -1
-
-        while (response === null || items.length < total) {
-          response = await this.elasticService.findByQuery(elasticIndex, {
-            query: {
-              bool: {
-                should: idsChunk.map((id) => ({
-                  nested: {
-                    path: 'tags',
-                    query: {
-                      bool: {
-                        must: [
-                          {
-                            term: {
-                              'tags.key': id,
-                            },
-                          },
-                          {
-                            term: {
-                              'tags.type': 'hasChildEntryWithId',
-                            },
-                          },
-                        ],
-                      },
-                    },
-                  },
-                })),
-                minimum_should_match: 1,
-              },
-            },
-            size,
-            from: (page - 1) * size,
-          })
-
-          if (response.body.hits.hits.length === 0) {
-            total = response.body.hits.total.value
-            break
-          }
-
-          if (total === -1) {
-            total = response.body.hits.total.value
-          }
-
-          for (const hit of response.body.hits.hits) {
-            items.push(hit._id)
-          }
-
-          page += 1
-        }
-
-        const rootEntryIds = items.filter(
-          (id) => !indexableEntries.some((entry) => entry.sys.id === id),
-        ) // Remove duplicates
-
-        const rootEntries = await this.getContentfulData(chunkSize, {
-          include: this.defaultIncludeDepth,
-          'sys.id[in]': rootEntryIds.join(','),
-          locale: this.contentfulLocaleMap[locale],
-        })
-
-        indexableEntries.push(...rootEntries)
-
-        idsChunk = ids.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
-      }
+      await this.resolveNestedEntries(
+        ids,
+        elasticIndex,
+        locale,
+        chunkSize,
+        indexableEntries, // This array is modified
+      )
     }
 
     return {
