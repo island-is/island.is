@@ -7,7 +7,14 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserProfile } from '@island.is/service-portal/graphql'
 import { Locale } from '@island.is/shared/types'
 import { useGenericLicenseCollectionQuery } from './LicensesOverview.generated'
-import { Box, Stack, Tabs, TagVariant } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Inline,
+  Stack,
+  Tabs,
+  TagVariant,
+} from '@island.is/island-ui/core'
 import {
   ActionCard,
   CardLoader,
@@ -17,12 +24,16 @@ import {
 import { m } from '../../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import { getPathFromType } from '../../../utils/mapPaths'
+import { useMemo, useState } from 'react'
+import { IS_ISO31661_ALPHA_3 } from 'class-validator'
 
 export const LicensesOverviewV2 = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
+
+  const [tabsNumber, setTabsNumber] = useState(3)
 
   const includedTypes = [
     GenericLicenseType.AdrLicense,
@@ -94,13 +105,131 @@ export const LicensesOverviewV2 = () => {
   const licenses: Array<GenericUserLicense> =
     data?.genericLicenseCollection?.licenses ?? []
 
+  const tabs = useMemo(
+    () => [
+      {
+        label: formatMessage(m.licenseTabPrimary),
+        content: generateLicenseStack(
+          licenses.filter((license) => !license.isOwnerChildOfUser),
+        ),
+      },
+      {
+        label: formatMessage(m.licenseTabSecondary),
+        content: generateLicenseStack(
+          licenses.filter((license) => license.isOwnerChildOfUser),
+        ),
+      },
+
+      {
+        label: formatMessage(m.licenseTabPrimary),
+        content: generateLicenseStack(
+          licenses.filter((license) => !license.isOwnerChildOfUser),
+        ),
+      },
+      {
+        label: formatMessage(m.licenseTabSecondary),
+        content: generateLicenseStack(
+          licenses.filter((license) => license.isOwnerChildOfUser),
+        ),
+      },
+      {
+        label: 'grillið',
+        content: [
+          {
+            label: 'Einn',
+            content: generateLicenseStack(
+              licenses.filter((license) => !license.isOwnerChildOfUser),
+            ),
+          },
+          {
+            label: 'Tveir',
+            content: generateLicenseStack(
+              licenses.filter((license) => license.isOwnerChildOfUser),
+            ),
+          },
+        ],
+      },
+      {
+        label: 'er',
+        content: generateLicenseStack(
+          licenses.filter((license) => license.isOwnerChildOfUser),
+        ),
+      },
+      {
+        label: 'alveg',
+        content: [
+          {
+            label: 'Tveir',
+            content: generateLicenseStack(
+              licenses.filter((license) => license.isOwnerChildOfUser),
+            ),
+          },
+        ],
+      },
+      {
+        label: 'að',
+        content: [
+          {
+            label: 'Einn',
+            content: generateLicenseStack(
+              licenses.filter((license) => !license.isOwnerChildOfUser),
+            ),
+          },
+          {
+            label: 'Tveir',
+            content: generateLicenseStack(
+              licenses.filter((license) => license.isOwnerChildOfUser),
+            ),
+          },
+        ],
+      },
+      {
+        label: 'loka',
+        content: generateLicenseStack(
+          licenses.filter((license) => !license.isOwnerChildOfUser),
+        ),
+      },
+    ],
+    [licenses],
+  )
+
+  const handleAddTab = () => {
+    if (tabsNumber < tabs.length) {
+      setTabsNumber(tabsNumber + 1)
+    }
+  }
+  const handleRemoveTab = () => {
+    if (tabsNumber > 0) {
+      setTabsNumber(tabsNumber - 1)
+    }
+  }
+
   return (
     <>
       <IntroHeader
         title={formatMessage(m.title)}
         intro={formatMessage(m.intro)}
         marginBottom={4}
-      />
+      >
+        <Box marginTop={4}>
+          <Inline space={2}>
+            <Button
+              disabled={tabsNumber >= tabs.length}
+              variant="utility"
+              onClick={handleAddTab}
+            >
+              Add tab
+            </Button>
+            <Button
+              disabled={tabsNumber <= 1}
+              variant="utility"
+              onClick={handleRemoveTab}
+            >
+              Remove tab
+            </Button>
+          </Inline>
+        </Box>
+      </IntroHeader>
       {error && !loading && <Problem error={error} noBorder={false} />}{' '}
       {!error && !loading && !errors?.length && !licenses?.length && (
         <Problem
@@ -125,37 +254,7 @@ export const LicensesOverviewV2 = () => {
             label={formatMessage(m.seeLicenses)}
             size="xs"
             contentBackground="white"
-            tabs={[
-              {
-                label: formatMessage(m.licenseTabPrimary),
-                content: generateLicenseStack(
-                  licenses.filter((license) => !license.isOwnerChildOfUser),
-                ),
-              },
-              {
-                label: formatMessage(m.licenseTabSecondary),
-                content: generateLicenseStack(
-                  licenses.filter((license) => license.isOwnerChildOfUser),
-                ),
-              },
-              {
-                label: 'grillið',
-                content: [
-                  {
-                    label: 'ebejriaoghn',
-                    content: generateLicenseStack(
-                      licenses.filter((license) => !license.isOwnerChildOfUser),
-                    ),
-                  },
-                  {
-                    label: 'hjraohjpa',
-                    content: generateLicenseStack(
-                      licenses.filter((license) => license.isOwnerChildOfUser),
-                    ),
-                  },
-                ],
-              },
-            ]}
+            tabs={tabs.slice(0, tabsNumber)}
           />
         </Box>
       ) : (

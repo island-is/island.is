@@ -115,12 +115,11 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
   const showDesktopLayout =
     tabs.length === 2 || (!isMobile && tabs.length > 2 && tabs.length < 7)
 
-  console.log(showDesktopLayout)
   return (
     <Box position="relative">
       <Box background={contentBackground} className={styles.bg} />
       <Box position="relative" paddingY="none">
-        <Box hidden={showDesktopLayout}>
+        <Box hidden={tabs.length < 2 || showDesktopLayout}>
           <Select
             size={size}
             name={label}
