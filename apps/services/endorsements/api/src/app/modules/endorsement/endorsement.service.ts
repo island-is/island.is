@@ -59,45 +59,48 @@ export class EndorsementService {
   ) {}
 
   async onModuleInit() {
-    this.logger.info('Updating endorsement counts for all lists onModuleInit...');
-    try { 
-      await this.updateCountsForAllLists();
+    this.logger.info(
+      'Updating endorsement counts for all lists onModuleInit...',
+    )
+    try {
+      await this.updateCountsForAllLists()
     } catch (error) {
-      this.logger.error('Error updating endorsement counts for all lists', error);
+      this.logger.error(
+        'Error updating endorsement counts for all lists',
+        error,
+      )
     }
   }
 
   async updateCountsForAllLists(): Promise<void> {
-    const allLists = await this.endorsementListModel.findAll();
+    const allLists = await this.endorsementListModel.findAll()
     for (const list of allLists) {
       await this.updateEndorsementCountOnList(list.id)
     }
-    this.logger.info('All endorsement counts have been updated.');
+    this.logger.info('All endorsement counts have been updated.')
   }
-
 
   async updateEndorsementCountOnList(listId: string): Promise<void> {
     const count = await this.endorsementModel.count({
       where: { endorsementListId: listId },
-    });
+    })
     const [affectedRows, updatedList] = await this.endorsementListModel.update(
       { endorsementCount: count },
       {
         where: { id: listId },
         returning: true,
-      }
-    );
+      },
+    )
     if (affectedRows > 0 && updatedList[0].endorsementCount === count) {
       this.logger.info(
-        `Successfully updated endorsement count for list "${listId}" to ${count}`
-      );
+        `Successfully updated endorsement count for list "${listId}" to ${count}`,
+      )
     } else {
       this.logger.warn(
-        `Failed to update endorsement count for list "${listId}". The count was not updated correctly.`
-      );
+        `Failed to update endorsement count for list "${listId}". The count was not updated correctly.`,
+      )
     }
   }
-  
 
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
     this.logger.info(`Finding endorsements by list id "${listId}"`)
