@@ -1,4 +1,5 @@
 import { GraphQLJSONObject } from 'graphql-type-json'
+import { boolean } from 'yargs'
 
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
@@ -457,4 +458,7 @@ export class Case {
 
   @Field(() => [CivilClaimant], { nullable: true })
   readonly civilClaimants?: CivilClaimant[]
+
+  @Field(() => boolean, { nullable: true })
+  readonly hasCivilClaims?: boolean
 }

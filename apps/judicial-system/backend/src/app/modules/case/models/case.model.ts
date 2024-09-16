@@ -183,7 +183,7 @@ export class Case extends Model {
   requestSharedWithDefender?: RequestSharedWithDefender
 
   /**********
-   * Indicates whether the secutity level of the case has been heightened -
+   * Indicates whether the security level of the case has been heightened -
    * optional
    **********/
   @Column({ type: DataType.BOOLEAN, allowNull: true })
@@ -1069,6 +1069,14 @@ export class Case extends Model {
   @HasMany(() => Case, 'mergeCaseId')
   @ApiPropertyOptional({ type: () => Case })
   mergedCases?: Case[]
+
+  /**********
+   * Indicates whether a case should include any civil claims -
+   * optional
+   **********/
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  hasCivilClaims?: boolean
 
   // /**********
   //  * The case's civil claimants
