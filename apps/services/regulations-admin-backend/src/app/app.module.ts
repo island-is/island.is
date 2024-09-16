@@ -9,7 +9,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 import { AuditModule } from '@island.is/nest/audit'
 
 import { environment } from '../environments'
-import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { DraftRegulationModule } from './modules/draft_regulation'
 import { DraftRegulationChangeModule } from './modules/draft_regulation_change'
@@ -31,7 +31,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
       load: [
         RegulationsClientConfig,
         XRoadConfig,
-        NationalRegistryClientConfig,
+        NationalRegistryV3ClientConfig,
         IdsClientConfig,
       ],
     }),
