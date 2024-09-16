@@ -331,7 +331,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'landlaeknir':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'landlaeknirHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg',
+          )}
+          className={styles.landlaeknirHeaderGridContainer}
+        />
+      ) : (
         <LandlaeknirHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -374,7 +383,17 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'sak':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={styles.sakHeaderGridContainer}
+          image={n(
+            `sakHeaderBgImage`,
+            'https://images.ctfassets.net/8k0h54kbe6bj/4SjqwRBZRMWVWG0y73sXxq/cf8d0d16704cfea124362eca03afdb41/sak-header-trans_2x.png',
+          )}
+          titleSectionPaddingLeft={isSubpage ? 0 : 10}
+        />
+      ) : (
         <SAkHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
