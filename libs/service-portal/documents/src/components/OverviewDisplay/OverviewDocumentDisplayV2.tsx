@@ -21,6 +21,8 @@ export interface Props {
 export const DocumentDisplay: FC<Props> = (props) => {
   const { width } = useWindowSize()
 
+  console.log(' doc display')
+
   const isDesktop = width > theme.breakpoints.lg
 
   if (props.error?.message) {
