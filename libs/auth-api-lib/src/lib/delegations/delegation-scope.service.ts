@@ -354,7 +354,7 @@ export class DelegationScopeService {
         ),
       )
 
-    if (delegationTypes.includes(AuthDelegationType.Custom))
+    if (delegationTypes?.includes(AuthDelegationType.Custom))
       scopePromises.push(
         this.findValidCustomScopesTo(user.nationalId, fromNationalId).then(
           (delegationScopes: DelegationScope[]) =>
@@ -362,7 +362,7 @@ export class DelegationScopeService {
         ),
       )
 
-    if (delegationTypes.includes(AuthDelegationType.GeneralMandate)) {
+    if (delegationTypes?.includes(AuthDelegationType.GeneralMandate)) {
       scopePromises.push(
         flatMap(
           this.findValidGeneralMandateTo(user.nationalId, fromNationalId).then(
