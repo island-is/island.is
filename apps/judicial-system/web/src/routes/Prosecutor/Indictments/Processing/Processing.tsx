@@ -1,9 +1,7 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion, stagger, useAnimate } from 'framer-motion'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
-import { uuid } from 'uuidv4'
 
 import {
   Box,
@@ -18,7 +16,6 @@ import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
-  DefenderInput,
   FormContentContainer,
   FormContext,
   FormFooter,
