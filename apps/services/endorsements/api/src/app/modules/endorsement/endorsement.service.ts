@@ -181,7 +181,6 @@ export class EndorsementService {
       await this.updateEndorsementCountOnList(endorsementList.id)
       return createdEndorsement
     } catch (error) {
-      // map meaningful sequelize errors to custom errors, else return error
       if (error instanceof UniqueConstraintError) {
         this.logger.warn('Endorsement already exists in list')
         throw new MethodNotAllowedException([
