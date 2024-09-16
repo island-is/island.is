@@ -207,6 +207,11 @@ export const serviceSetup = (services: {
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
       SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
+      AUTH_ADMIN_API_PATH: {
+        dev: 'https://identity-server.dev01.devland.is/backend',
+        staging: 'https://identity-server.staging01.devland.is/backend',
+        prod: 'https://innskra.island.is/backend',
+      },
       AUTH_ADMIN_API_PATHS: {
         dev: json({
           development: 'https://identity-server.dev01.devland.is/backend',
