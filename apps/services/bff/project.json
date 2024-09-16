@@ -4,7 +4,9 @@
   "sourceRoot": "apps/services/bff/src",
   "projectType": "application",
   "prefix": "services-bff",
-  "tags": ["scope:services-bff"],
+  "tags": [
+    "scope:services-bff"
+  ],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -21,7 +23,9 @@
           "inspect": false
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": [
+        "{options.outputPath}"
+      ]
     },
     "serve": {
       "executor": "@nx/js:node",
@@ -38,7 +42,9 @@
         "jestConfig": "apps/services/bff/jest.config.ts",
         "runInBand": true
       },
-      "outputs": ["{workspaceRoot}/coverage/apps/services/bff"]
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/services/bff"
+      ]
     },
     "dev-services": {
       "executor": "nx:run-commands",
@@ -50,7 +56,9 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start services-bff"],
+        "commands": [
+          "yarn start services-bff"
+        ],
         "parallel": true
       }
     }
