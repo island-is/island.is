@@ -26,7 +26,7 @@ import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { Case } from '../case'
+import { Case, DateLog } from '../case'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
@@ -521,9 +521,7 @@ export class PoliceService {
     const { name: actor } = user
 
     const documentName = `Fyrirkall í máli ${workingCase.courtCaseNumber}`
-    const arraignmentInfo = dateLogs?.find(
-      (dateLog) => dateLog.dateType === 'ARRAIGNMENT_DATE',
-    )
+    const arraignmentInfo = DateLog.arraignmentDate(dateLogs)
 
     try {
       const res = await this.fetchPoliceCaseApi(

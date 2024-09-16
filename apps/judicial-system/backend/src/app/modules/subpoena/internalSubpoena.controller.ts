@@ -98,17 +98,8 @@ export class InternalSubpoenaController {
       `Delivering subpoena ${caseId} to police for defendant ${defendantId}`,
     )
 
-    const courtDate = theCase.dateLogs?.find(
-      (dateLog) => dateLog.dateType === DateType.COURT_DATE,
-    )
     try {
-      const pdf = await this.pdfService.getSubpoenaPdf(
-        theCase,
-        defendant,
-        courtDate?.date,
-        courtDate?.location,
-        defendant.subpoenaType,
-      )
+      const pdf = await this.pdfService.getSubpoenaPdf(theCase, defendant)
 
       return await this.subpoenaService.deliverSubpoenaToPolice(
         theCase,

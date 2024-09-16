@@ -1,4 +1,5 @@
 import { Includeable, Sequelize } from 'sequelize'
+import { Transaction } from 'sequelize/types'
 
 import { forwardRef, Inject, Injectable } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
@@ -22,7 +23,6 @@ export const include: Includeable[] = [
 @Injectable()
 export class SubpoenaService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
     @Inject(forwardRef(() => PoliceService))
@@ -40,6 +40,7 @@ export class SubpoenaService {
   async update(
     subpoena: Subpoena,
     update: UpdateSubpoenaDto,
+    transaction?: Transaction,
   ): Promise<Subpoena> {
     const {
       defenderChoice,
@@ -54,6 +55,7 @@ export class SubpoenaService {
       {
         where: { subpoenaId: subpoena.subpoenaId },
         returning: true,
+        transaction,
       },
     )
 
@@ -74,11 +76,11 @@ export class SubpoenaService {
 
       await this.defendantModel.update(defendantUpdate, {
         where: { id: subpoenas[0].defendantId },
+        transaction,
       })
     }
 
     const updatedSubpoena = await this.findBySubpoenaId(subpoena.subpoenaId)
-
     return updatedSubpoena
   }
 
@@ -117,7 +119,7 @@ export class SubpoenaService {
 
       if (!createdSubpoena) {
         this.logger.error('Failed to create subpoena file for police')
-        return Promise.resolve({ delivered: false })
+        return { delivered: false }
       }
 
       await this.subpoenaModel.update(
@@ -125,7 +127,7 @@ export class SubpoenaService {
         { where: { id: subpoena.id } },
       )
 
-      return Promise.resolve({ delivered: true })
+      return { delivered: true }
     } catch (error) {
       this.logger.error('Error delivering subpoena to police', error)
       return { delivered: false }
