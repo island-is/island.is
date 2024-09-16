@@ -142,7 +142,7 @@ const Processing: FC = () => {
     window.scrollTo(0, document.body.scrollHeight)
   }
 
-  const createEmptyCivilClaimant = (civilClaimantId?: string) => {
+  const createEmptyCivilClaimant = (civilClaimantId?: string | null) => {
     setWorkingCase((prevWorkingCase) => ({
       ...prevWorkingCase,
       civilClaimants: prevWorkingCase.civilClaimants && [
@@ -290,84 +290,92 @@ const Processing: FC = () => {
             </Box>
           </BlueBox>
         </Box>
-        {isCivilClaim === true && (
-          <Box component="section" marginBottom={10}>
-            <SectionHeading title={formatMessage(strings.civilClaimant)} />
-            <BlueBox>
-              <Box marginBottom={2}>
-                <Checkbox
-                  name="isCivilClaimantForeign"
-                  label={formatMessage(strings.isCivilClaimantForeign)}
-                  checked={false}
-                  backgroundColor="white"
-                  large
-                  filled
-                />
-              </Box>
-              <Box marginBottom={2}>
-                <InputNationalId
-                  isDateOfBirth={false}
-                  value="12"
-                  onChange={(val) => console.log('change', val)}
-                  onBlur={(val) => setNID(val)}
-                />
-              </Box>
-              <InputName
-                value="12"
-                onChange={(val) => console.log('change', val)}
-                onBlur={(val) => console.log('blur', val)}
-              />
-              <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-                <Button
-                  variant="text"
-                  colorScheme={claimantHasDefender ? 'destructive' : 'default'}
-                  onClick={() => setClaimantHasDefender(!claimantHasDefender)}
-                >
-                  {formatMessage(
-                    claimantHasDefender
-                      ? strings.removeDefender
-                      : strings.addDefender,
-                  )}
-                </Button>
-              </Box>
-              {claimantHasDefender && (
-                <>
-                  <Box display="flex" marginY={2}>
-                    <Box width="half" marginRight={1}>
-                      <RadioButton
-                        name="defenderType"
-                        id="defender_type_L"
-                        label={formatMessage(strings.lawyer)}
-                        large
-                        backgroundColor="white"
-                        onChange={() => setDefenderType('L')}
-                        checked={defenderType === 'L'}
-                      />
-                    </Box>
-                    <Box width="half" marginLeft={1}>
-                      <RadioButton
-                        name="defenderType"
-                        id="defender_type_R"
-                        label={formatMessage(strings.legalRightsProtector)}
-                        large
-                        backgroundColor="white"
-                        onChange={() => setDefenderType('R')}
-                        checked={defenderType === 'R'}
-                      />
-                    </Box>
+        {isCivilClaim && (
+          <>
+            {[{ id: '', name: '', nationalId: '' }].map((civilClaimant) => (
+              <Box component="section" marginBottom={5}>
+                <SectionHeading title={formatMessage(strings.civilClaimant)} />
+                <BlueBox>
+                  <Box marginBottom={2}>
+                    <Checkbox
+                      name="isCivilClaimantForeign"
+                      label={formatMessage(strings.isCivilClaimantForeign)}
+                      checked={false}
+                      backgroundColor="white"
+                      large
+                      filled
+                    />
                   </Box>
-                  {/* <DefenderInput
+                  <Box marginBottom={2}>
+                    <InputNationalId
+                      isDateOfBirth={false}
+                      value={civilClaimant.nationalId}
+                      onChange={(val) => console.log('change', val)}
+                      onBlur={(val) => setNID(val)}
+                    />
+                  </Box>
+                  <InputName
+                    value={civilClaimant.name}
+                    onChange={(val) => console.log('change', val)}
+                    onBlur={(val) => console.log('blur', val)}
+                  />
+                  <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+                    <Button
+                      variant="text"
+                      colorScheme={
+                        claimantHasDefender ? 'destructive' : 'default'
+                      }
+                      onClick={() =>
+                        setClaimantHasDefender(!claimantHasDefender)
+                      }
+                    >
+                      {formatMessage(
+                        claimantHasDefender
+                          ? strings.removeDefender
+                          : strings.addDefender,
+                      )}
+                    </Button>
+                  </Box>
+                  {claimantHasDefender && (
+                    <>
+                      <Box display="flex" marginY={2}>
+                        <Box width="half" marginRight={1}>
+                          <RadioButton
+                            name="defenderType"
+                            id="defender_type_L"
+                            label={formatMessage(strings.lawyer)}
+                            large
+                            backgroundColor="white"
+                            onChange={() => setDefenderType('L')}
+                            checked={defenderType === 'L'}
+                          />
+                        </Box>
+                        <Box width="half" marginLeft={1}>
+                          <RadioButton
+                            name="defenderType"
+                            id="defender_type_R"
+                            label={formatMessage(strings.legalRightsProtector)}
+                            large
+                            backgroundColor="white"
+                            onChange={() => setDefenderType('R')}
+                            checked={defenderType === 'R'}
+                          />
+                        </Box>
+                      </Box>
+                      {/* <DefenderInput
                     onDefenderNotFound={function (
                       defenderNotFound: boolean,
-                    ): void {
-                      throw new Error('Function not implemented.')
-                    }}
-                    defendantId={'1212'}
-                  /> */}
-                </>
-              )}
-            </BlueBox>
-            <Box display="flex" justifyContent="flexEnd">
+                      ): void {
+                        throw new Error('Function not implemented.')
+                        }}
+                        defendantId={'1212'}
+                        /> */}
+                    </>
+                  )}
+                </BlueBox>
+              </Box>
+            ))}
+            <Box display="flex" justifyContent="flexEnd" marginBottom={10}>
               <Button
                 variant="ghost"
                 icon="add"
@@ -376,7 +384,7 @@ const Processing: FC = () => {
                 {formatMessage(strings.addCivilClaimant)}
               </Button>
             </Box>
-          </Box>
+          </>
         )}
       </FormContentContainer>
       <FormContentContainer isFooter>

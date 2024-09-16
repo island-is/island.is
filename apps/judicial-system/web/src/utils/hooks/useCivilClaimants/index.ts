@@ -18,7 +18,7 @@ const useCivilClaimants = () => {
   const [createCivilClaimantMutation, { loading: isCreatingCivilClaimant }] =
     useCreateCivilClaimantMutation()
   // const [deleteCivilClaimantMutation] = useDeleteCivilClaimantMutation()
-  // const [updateCivilClaimantMutation] = useUpdateCivilClaimantMutation()
+  //const [updateCivilClaimantMutation] = useUpdateCivilClaimantMutation()
 
   const createCivilClaimant = useCallback(
     async (civilClaimant: CreateCivilClaimantInput) => {
@@ -75,32 +75,32 @@ const useCivilClaimants = () => {
   //   [formatMessage, updateCivilClaimantMutation],
   // )
 
-  const updateCivilClaimantState = useCallback(
-    (
-      update: UpdateCivilClaimantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
-    ) => {
-      setWorkingCase((prevWorkingCase: Case) => {
-        if (!prevWorkingCase.civilClaimants) {
-          return prevWorkingCase
-        }
-        const indexOfCivilClaimantToUpdate =
-          prevWorkingCase.civilClaimants.findIndex(
-            (civilClaimant) => civilClaimant.id === update.civilClaimantId,
-          )
+  // const updateCivilClaimantState = useCallback(
+  //   (
+  //     update: UpdateCivilClaimantInput,
+  //     setWorkingCase: Dispatch<SetStateAction<Case>>,
+  //   ) => {
+  //     setWorkingCase((prevWorkingCase: Case) => {
+  //       if (!prevWorkingCase.civilClaimants) {
+  //         return prevWorkingCase
+  //       }
+  //       const indexOfCivilClaimantToUpdate =
+  //         prevWorkingCase.civilClaimants.findIndex(
+  //           (civilClaimant) => civilClaimant.id === update.civilClaimantId,
+  //         )
 
-        const newDefendants = [...prevWorkingCase.civilClaimants]
+  //       const newDefendants = [...prevWorkingCase.civilClaimants]
 
-        newDefendants[indexOfCivilClaimantToUpdate] = {
-          ...newDefendants[indexOfCivilClaimantToUpdate],
-          ...update,
-        } as CivilClaimant
+  //       newDefendants[indexOfCivilClaimantToUpdate] = {
+  //         ...newDefendants[indexOfCivilClaimantToUpdate],
+  //         ...update,
+  //       } as CivilClaimant
 
-        return { ...prevWorkingCase, defendants: newDefendants }
-      })
-    },
-    [],
-  )
+  //       return { ...prevWorkingCase, defendants: newDefendants }
+  //     })
+  //   },
+  //   [],
+  // )
 
   // const setAndSendCivilClaimantToServer = useCallback(
   //   (
@@ -116,8 +116,8 @@ const useCivilClaimants = () => {
   return {
     createCivilClaimant,
     // deleteCivilClaimant,
-    //updateCivilClaimant,
-    updateCivilClaimantState,
+    // updateCivilClaimant,
+    // updateCivilClaimantState,
     //setAndSendCivilClaimantToServer,
   }
 }

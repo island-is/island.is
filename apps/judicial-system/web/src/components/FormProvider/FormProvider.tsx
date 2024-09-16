@@ -15,6 +15,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  CivilClaimant,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { api } from '@island.is/judicial-system-web/src/services'
