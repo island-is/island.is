@@ -13,9 +13,14 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
+import {
+  JwtAuthGuard,
+  RolesGuard,
+  RolesRules,
+} from '@island.is/judicial-system/auth'
 
-import { Case, CaseExistsGuard, CurrentCase } from '../case'
+import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
+import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
 import { CreateCivilClaimantDto } from './dto/createCivilClaimant.dto'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CivilClaimant } from './models/civilClaimant.model'
@@ -30,7 +35,8 @@ export class CivilClaimantController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post()
   @ApiCreatedResponse({
     type: CivilClaimant,
@@ -47,7 +53,8 @@ export class CivilClaimantController {
     return this.civilClaimantService.create(theCase, createCivilClaimantDto)
   }
 
-  @UseGuards(CaseExistsGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Patch(':civilClaimantId')
   @ApiOkResponse({
     type: CivilClaimant,
@@ -67,7 +74,8 @@ export class CivilClaimantController {
     )
   }
 
-  @UseGuards(CaseExistsGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':civilClaimantId')
   @ApiOkResponse({
     type: CivilClaimant,
