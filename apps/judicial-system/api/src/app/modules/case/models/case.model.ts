@@ -459,6 +459,6 @@ export class Case {
   @Field(() => [CivilClaimant], { nullable: true })
   readonly civilClaimants?: CivilClaimant[]
 
-  @Field(() => boolean, { nullable: true })
+  @Field(() => Boolean, { nullable: true })
   readonly hasCivilClaims?: boolean
 }
