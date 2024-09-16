@@ -426,7 +426,13 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'nti':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image="https://images.ctfassets.net/8k0h54kbe6bj/eXqcbclteE88H5iQ6J3lo/bbc1d0c9d3abee93d34ec0aa718c833b/Group__1_.svg"
+          imageObjectPosition="left"
+        />
+      ) : (
         <IcelandicNaturalDisasterInsuranceHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
