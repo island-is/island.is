@@ -457,7 +457,9 @@ export class ContentfulService {
 
         const rootEntryIds = response.body.hits.hits
           .map((hit) => hit._id)
-          .filter((id) => indexableEntries.some((entry) => entry.sys.id === id)) // Remove duplicates
+          .filter(
+            (id) => !indexableEntries.some((entry) => entry.sys.id === id),
+          ) // Remove duplicates
 
         const rootEntries = await this.getContentfulData(chunkSize, {
           include: this.defaultIncludeDepth,
