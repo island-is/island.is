@@ -3,14 +3,26 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/services/bff/src",
   "projectType": "library",
+<<<<<<< HEAD
   "tags": ["lib:js"],
+=======
+  "tags": [
+    "lib:js"
+  ],
+>>>>>>> 045b0471e1 (Restructure dx for admin portal)
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
+<<<<<<< HEAD
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+=======
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+>>>>>>> 045b0471e1 (Restructure dx for admin portal)
       "options": {
         "jestConfig": "libs/services/bff/jest.config.ts"
       }

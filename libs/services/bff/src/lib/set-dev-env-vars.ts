@@ -13,6 +13,7 @@ export const setDevEnvVars = (key: BffClient) => {
     'https://identity-server.dev01.devland.is'
   process.env.IDENTITY_SERVER_AUDIENCE = '["@admin.island.is/bff"]'
   process.env.BFF_PAR_SUPPORT_ENABLED = 'false'
+<<<<<<< HEAD
   process.env.BFF_LOGOUT_REDIRECT_PATH = 'http://localhost:4200'
   process.env.BFF_PROXY_API_ENDPOINT = 'http://localhost:4444/api/graphql'
   process.env.BFF_TOKEN_SECRET_BASE64 =
@@ -20,6 +21,14 @@ export const setDevEnvVars = (key: BffClient) => {
     // You can generate a new one by running `openssl rand -base64 32`
     'Y0ROrC3mxDBnveN+EpAnLtSubttyjZZWcV43dyk7OQI='
   // This is only needed for local development when proxying requests with the GraphQL API.
+=======
+  process.env.BFF_LOGOUT_REDIRECT_PATH = 'https://beta.dev01.devland.is'
+  process.env.BFF_PROXY_API_ENDPOINT = 'http://localhost:4444/api/graphql'
+  process.env.BFF_TOKEN_SECRET_BASE64 =
+    // This is a valid 32-byte base64 encoded secret.
+    // You can generate a new one by running `openssl rand -base64 32`
+    'Y0ROrC3mxDBnveN+EpAnLtSubttyjZZWcV43dyk7OQI='
+>>>>>>> 045b0471e1 (Restructure dx for admin portal)
   process.env.BFF_LOCAL_DEVELOPMENT_CORS = 'true'
 
   process.env.BFF_API_URL_PREFIX = `/${keyPath}/bff`
