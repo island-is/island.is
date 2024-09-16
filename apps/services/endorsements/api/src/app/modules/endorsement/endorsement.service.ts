@@ -80,7 +80,6 @@ export class EndorsementService {
     const count = await this.endorsementModel.count({
       where: { endorsementListId: listId },
     });
-    // Update the endorsement count and return the updated object
     const [affectedRows, updatedList] = await this.endorsementListModel.update(
       { endorsementCount: count },
       {
@@ -88,7 +87,6 @@ export class EndorsementService {
         returning: true,
       }
     );
-    // Confirm the update was successful by checking the returned object
     if (affectedRows > 0 && updatedList[0].endorsementCount === count) {
       this.logger.info(
         `Successfully updated endorsement count for list "${listId}" to ${count}`
@@ -225,7 +223,6 @@ export class EndorsementService {
       )
       throw new NotFoundException(["This endorsement doesn't exist"])
     }
-    // Update the count after deleting the endorsement
     await this.updateEndorsementCountOnList(endorsementList.id)
   }
 }

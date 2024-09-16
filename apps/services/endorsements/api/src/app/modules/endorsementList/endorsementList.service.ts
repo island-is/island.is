@@ -73,7 +73,6 @@ export class EndorsementListService {
     }
   }
 
-  // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
     this.logger.info(`Finding endorsement lists`)
     return await paginate({
@@ -106,8 +105,6 @@ export class EndorsementListService {
   }
 
   async findSingleList(listId: string, user?: User, check?: boolean) {
-    // Check variable needed since finAll function in Endorsement controller uses this function twice
-    // on the second call it passes nationalID of user but does not go throught the get list pipe
     const isAdmin = user && check ? this.hasAdminScope(user) : false
     this.logger.info(`Finding single endorsement lists by id "${listId}"`)
     const result = await this.endorsementListModel.findOne({
@@ -246,12 +243,7 @@ export class EndorsementListService {
     return endorsementList
   }
 
-  // generic get open lists
   async findOpenListsTaggedGeneralPetition(query: any) {
-    const counte = await this.endorsementModel.count();
-    console.log('countEndorsements', counte)
-    const countl = await this.endorsementListModel.count();
-    console.log('countEndorsementLists', countl)
     const dateOb = new Date()
     try {
       const where = {
@@ -288,9 +280,6 @@ export class EndorsementListService {
   }
 
   async getOwnerInfo(listId: string, owner?: string) {
-    // Is used by both unauthenticated users, authenticated users and admin
-    // Admin needs to access locked lists and can not use the EndorsementListById pipe
-    // Since the endpoint is not authenticated
     this.logger.info(`Finding single endorsement lists by id "${listId}"`)
     if (!owner) {
       const endorsementList = await this.endorsementListModel.findOne({
