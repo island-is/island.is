@@ -66,7 +66,7 @@ export const CreateDelegationConfirmModal = ({
           rowGap={[3, 3, 3, 0]}
           columnGap={[0, 0, 0, 3]}
         >
-          {fromIdentity?.name && fromIdentity?.nationalId &&  (
+          {fromIdentity?.name && fromIdentity?.nationalId && (
             <IdentityCard
               label={formatMessage(m.fromNationalId)}
               title={fromIdentity.name}
