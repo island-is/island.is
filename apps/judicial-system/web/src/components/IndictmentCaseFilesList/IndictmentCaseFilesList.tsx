@@ -5,7 +5,9 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import {
   isCompletedCase,
+  isDefenceUser,
   isDistrictCourtUser,
+  isProsecutionUser,
   isPublicProsecutor,
   isPublicProsecutorUser,
   isTrafficViolationCase,
@@ -103,6 +105,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
     (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
   )
 
+  console.log(civilClaims)
   return (
     <>
       {displayHeading && (
@@ -228,18 +231,22 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
         </Box>
       ) : null}
-      {civilClaims && civilClaims.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(caseFiles.civilClaimSection)}
-          </Text>
-          <RenderFiles
-            caseFiles={civilClaims}
-            onOpenFile={onOpen}
-            workingCase={workingCase}
-          />
-        </Box>
-      )}
+      {civilClaims &&
+        civilClaims.length > 0 &&
+        (isDistrictCourtUser(user) ||
+          isProsecutionUser(user) ||
+          isDefenceUser(user)) && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={1}>
+              {formatMessage(caseFiles.civilClaimSection)}
+            </Text>
+            <RenderFiles
+              caseFiles={civilClaims}
+              onOpenFile={onOpen}
+              workingCase={workingCase}
+            />
+          </Box>
+        )}
       {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={3}>
