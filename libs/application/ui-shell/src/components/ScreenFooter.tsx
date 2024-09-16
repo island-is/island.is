@@ -85,7 +85,7 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
     return null
   }
 
-  function renderSubmitButtons() {
+  const renderSubmitButtons = () => {
     if (!submitField || submitField.placement === 'screen') {
       return (
         <Button
