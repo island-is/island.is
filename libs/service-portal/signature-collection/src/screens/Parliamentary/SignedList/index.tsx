@@ -36,7 +36,7 @@ const SignedList = () => {
       await unSign().then(({ data }) => {
         if (
           (
-            data as any as {
+            data as unknown as {
               signatureCollectionUnsign: SignatureCollectionSuccess
             }
           ).signatureCollectionUnsign.success

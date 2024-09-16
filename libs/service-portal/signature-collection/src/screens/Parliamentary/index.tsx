@@ -19,6 +19,7 @@ const SignatureListsParliamentary = () => {
       <IntroHeader
         title={formatMessage(m.pageTitle)}
         intro={formatMessage(m.pageDescriptionSignee)}
+        serviceProviderTooltip={formatMessage(m.infoProviderTooltip)}
       />
       {!loadingIsOwner && !loadingCurrentCollection ? (
         <Box>
