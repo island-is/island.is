@@ -428,6 +428,7 @@ export class ContentfulService {
           break
         }
 
+        // In case the total changes during the pagination fetches we only reference the initial total
         if (total === -1) {
           total = response.body.hits.total.value
         }
