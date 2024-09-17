@@ -10,7 +10,6 @@ export const LicenseCacheProvider: FactoryProvider = {
   provide: LICENSE_SERVICE_CACHE_MANAGER_PROVIDER,
   scope: LazyDuringDevScope,
   useFactory: (licenseServiceConfig: ConfigType<typeof LicenseConfig>) => {
-    console.log(process.env.NODE_ENV)
     if (process.env.NODE_ENV !== 'production') {
       return undefined
     }
