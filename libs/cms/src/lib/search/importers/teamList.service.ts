@@ -58,8 +58,8 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
     }
 
     return teamMembers.concat(
+      // Append the team list document tagged with the ids of its members so we can later look up what list a member belongs to
       entries.map((teamListEntry) => {
-        // Tag the document with the ids of its children so we can later look up what document a child belongs to
         const childEntryIds = extractChildEntryIds(teamListEntry)
         return {
           _id: teamListEntry.sys.id,
