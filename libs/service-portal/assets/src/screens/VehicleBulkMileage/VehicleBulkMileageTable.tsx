@@ -1,18 +1,11 @@
-import { Table as T, Box, Button } from '@island.is/island-ui/core'
+import { Table as T, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  EmptyTable,
-  ExpandHeader,
-  NestedFullTable,
-  formatDate,
-} from '@island.is/service-portal/core'
+import { EmptyTable, ExpandHeader } from '@island.is/service-portal/core'
 import { vehicleMessage } from '../../lib/messages'
 import { useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SubmissionState, VehicleType } from './types'
 import { VehicleBulkMileageRow } from './VehicleBulkMileageRow'
-import { useVehicleMileageRegistrationHistoryLazyQuery } from './VehicleBulkMileage.generated'
-import { displayWithUnit } from '../../utils/displayWithUnit'
 
 interface Props {
   vehicles: Array<VehicleType>
@@ -21,9 +14,6 @@ interface Props {
 
 const VehicleBulkMileageTable = ({ vehicles, updateVehicleStatus }: Props) => {
   const { formatMessage } = useLocale()
-
-  const [executeRegistrationsQuery, { data, loading, error }] =
-    useVehicleMileageRegistrationHistoryLazyQuery()
 
   const { getValues, trigger } = useFormContext()
 
@@ -59,37 +49,7 @@ const VehicleBulkMileageTable = ({ vehicles, updateVehicleStatus }: Props) => {
         key={`vehicle-row-${item.vehicleId}`}
         vehicle={item}
         onSave={onRowPost}
-        onExpandRow={() =>
-          executeRegistrationsQuery({
-            variables: {
-              input: {
-                permno: item.vehicleId,
-              },
-            },
-          })
-        }
-      >
-        <NestedFullTable
-          headerArray={[
-            formatMessage(vehicleMessage.date),
-            formatMessage(vehicleMessage.registration),
-            formatMessage(vehicleMessage.annualUsage),
-            formatMessage(vehicleMessage.odometer),
-          ]}
-          loading={loading}
-          emptyMessage="Engar fyrri skráningar fundust"
-          data={
-            data?.vehiclesMileageRegistrationHistory?.mileageRegistrationHistory?.map(
-              (r) => [
-                formatDate(r.date),
-                r.originCode,
-                '-',
-                displayWithUnit(r.mileage, 'km', true),
-              ],
-            ) ?? []
-          }
-        />
-      </VehicleBulkMileageRow>
+      />
     ))
   }, [formatMessage, vehicles])
 

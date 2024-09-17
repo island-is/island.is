@@ -1,29 +1,37 @@
-import { Box } from '@island.is/island-ui/core'
-import { ExpandRow, formatDate } from '@island.is/service-portal/core'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
+import {
+  ExpandRow,
+  NestedFullTable,
+  formatDate,
+} from '@island.is/service-portal/core'
 import { ReactNode, useEffect } from 'react'
 import * as styles from './VehicleBulkMileage.css'
 import { VehicleBulkMileageSaveButton } from './VehicleBulkMileageSaveButton'
 import { useLocale } from '@island.is/localization'
-import { vehicleMessage as messages } from '../../lib/messages'
+import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { VehicleType } from './types'
 import { isReadDateToday } from '../../utils/readDate'
+import { useVehicleMileageRegistrationHistoryLazyQuery } from './VehicleBulkMileage.generated'
+import { displayWithUnit } from '../../utils/displayWithUnit'
 
 interface Props {
   vehicle: VehicleType
   onSave: (vehicleId: string) => void
-  onExpandRow: (vehicleId: string) => void
-  children?: ReactNode
 }
 
-export const VehicleBulkMileageRow = ({
-  vehicle,
-  children,
-  onSave,
-  onExpandRow,
-}: Props) => {
+export const VehicleBulkMileageRow = ({ vehicle, onSave }: Props) => {
   const { formatMessage } = useLocale()
+
+  const [executeRegistrationsQuery, { data, loading, error }] =
+    useVehicleMileageRegistrationHistoryLazyQuery({
+      variables: {
+        input: {
+          permno: vehicle.vehicleId,
+        },
+      },
+    })
 
   const {
     control,
@@ -37,7 +45,7 @@ export const VehicleBulkMileageRow = ({
   return (
     <ExpandRow
       key={`bulk-mileage-vehicle-row-${vehicle.vehicleId}`}
-      onExpandCallback={() => onExpandRow(vehicle.vehicleId)}
+      onExpandCallback={executeRegistrationsQuery}
       data={[
         {
           value: vehicle.vehicleType,
@@ -113,7 +121,33 @@ export const VehicleBulkMileageRow = ({
         },
       ]}
     >
-      {children}
+      {error ? (
+        <AlertMessage
+          type="error"
+          message="Eitthvað fór úrskeiðis við að sækja gögn"
+        />
+      ) : (
+        <NestedFullTable
+          headerArray={[
+            formatMessage(vehicleMessage.date),
+            formatMessage(vehicleMessage.registration),
+            formatMessage(vehicleMessage.annualUsage),
+            formatMessage(vehicleMessage.odometer),
+          ]}
+          loading={loading}
+          emptyMessage="Engar fyrri skráningar fundust"
+          data={
+            data?.vehiclesMileageRegistrationHistory?.mileageRegistrationHistory?.map(
+              (r) => [
+                formatDate(r.date),
+                r.originCode,
+                '-',
+                displayWithUnit(r.mileage, 'km', true),
+              ],
+            ) ?? []
+          }
+        />
+      )}
     </ExpandRow>
   )
 }
