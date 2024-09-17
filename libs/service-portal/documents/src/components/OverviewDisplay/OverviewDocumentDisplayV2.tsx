@@ -16,6 +16,7 @@ export interface Props {
     code: 'list' | 'single'
   }
   category?: DocumentsV2Category
+  actionsEnabled?: boolean
 }
 
 export const DocumentDisplay: FC<Props> = (props) => {

@@ -15,19 +15,20 @@ interface Props {
   activeBookmark: boolean
   loading?: boolean
   category?: DocumentsV2Category
+  actionsEnabled?: boolean
 }
 
 export const DesktopOverview: FC<Props> = ({
   activeBookmark,
   category,
   loading,
+  actionsEnabled,
 }) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
   const { activeDocument } = useDocumentContext()
   const { activeArchive } = useDocumentList()
 
-  console.log(activeDocument)
   if (loading) {
     return (
       <Box
@@ -72,7 +73,7 @@ export const DesktopOverview: FC<Props> = ({
           archived: activeArchive,
           bookmarked: activeBookmark,
         }}
-        actions={activeDocument.actions}
+        actions={actionsEnabled ? activeDocument.actions : undefined}
       />
       <Box>{<DocumentRenderer doc={activeDocument} />}</Box>
       {activeDocument?.id && (

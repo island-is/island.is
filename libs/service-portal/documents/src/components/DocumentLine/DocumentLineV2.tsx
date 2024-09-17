@@ -38,6 +38,7 @@ interface Props {
   includeTopBorder?: boolean
   selected?: boolean
   bookmarked?: boolean
+  actionsEnabled?: boolean
 }
 
 export const DocumentLine: FC<Props> = ({
@@ -49,6 +50,7 @@ export const DocumentLine: FC<Props> = ({
   includeTopBorder,
   bookmarked,
   selected,
+  actionsEnabled = false,
 }) => {
   const [hasFocusOrHover, setHasFocusOrHover] = useState(false)
   const [hasAvatarFocus, setHasAvatarFocus] = useState(false)
@@ -66,7 +68,6 @@ export const DocumentLine: FC<Props> = ({
     id: string
   }>()
   const isUrgent = documentLine.isUrgent
-
   const {
     submitMailAction,
     loading: postLoading,
@@ -190,7 +191,7 @@ export const DocumentLine: FC<Props> = ({
           })
           setModalVisible(true)
         } else {
-          //getDocument()
+          getDocument()
         }
       },
       onError: () => {
@@ -205,7 +206,7 @@ export const DocumentLine: FC<Props> = ({
   useEffect(() => {
     if (id === documentLine.id) {
       // If the document is marked as urgent, the user needs to acknowledge the document before opening it.
-      if (isUrgent && !asFrame) {
+      if (actionsEnabled && isUrgent && !asFrame) {
         getDocumentMetadata()
       } else {
         getDocument()
@@ -232,7 +233,7 @@ export const DocumentLine: FC<Props> = ({
     if (match?.params?.id && match?.params?.id !== documentLine?.id) {
       navigate(DocumentsPaths.ElectronicDocumentsRoot, { replace: true })
     }
-    if (isUrgent && !asFrame) {
+    if (actionsEnabled && isUrgent && !asFrame) {
       getDocumentMetadata()
     } else {
       getDocument()
@@ -352,12 +353,12 @@ export const DocumentLine: FC<Props> = ({
                     }
                   />
                 )}
-              {isUrgent && <UrgentTag />}
+              {actionsEnabled && isUrgent && <UrgentTag />}
             </Box>
           </Box>
         </Box>
       </Box>
-      {isModalVisible && (
+      {actionsEnabled && isModalVisible && (
         <ConfirmationModal
           onSubmit={() => {
             setModalVisible(false)

@@ -38,7 +38,7 @@ const DocumentActions = ({ success = false }: Props) => {
           {actions.map((a) => {
             if (a.type === 'url' && a.data) {
               return (
-                <Box marginRight={1}>
+                <Box marginRight={[0, 1]} marginBottom={[1, 0]}>
                   <a
                     href={
                       '/minarsidur/log-og-reglur/domsmal/410c3e69-f272-47f0-9fec-119e9dfd238e/fyrirkall' // Temp hardcoded value  <a href={a.data}>
