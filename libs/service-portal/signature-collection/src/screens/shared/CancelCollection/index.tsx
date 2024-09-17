@@ -18,7 +18,7 @@ const CancelCollection = ({ listId }: { listId?: string }) => {
   const { currentCollection } = useGetCurrentCollection()
 
   const input = {} as SignatureCollectionCancelListsInput
-  if (listId && !currentCollection.isPresidential) {
+  if (listId && !currentCollection?.isPresidential) {
     input.listIds = [listId]
   }
   const [cancelCollection, { loading }] =

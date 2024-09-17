@@ -71,7 +71,7 @@ const ViewList = () => {
             <Button
               onClick={() => {
                 const copied = copyToClipboard(
-                  `${document.location.origin}/${listInfo.collectionId}`,
+                  `${document.location.origin}${listInfo.slug}`,
                 )
                 if (!copied) {
                   return toast.error(formatMessage(m.copyLinkError))
