@@ -29,6 +29,7 @@ export const useComments = ({ applicationId }: Props) => {
           id: applicationId,
         },
       },
+      fetchPolicy: 'no-cache',
     },
   )
 

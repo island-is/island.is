@@ -45,7 +45,7 @@ export const Comments = ({ application }: OJOIFieldBaseProps) => {
             message={f(errorMessages.fetchCommentsFailedMessage)}
           />
         )}
-        {!showCommentsList && (
+        {!showCommentsList && !error && (
           <AlertMessage
             type="info"
             title={f(commentMessages.warnings.noCommentsTitle)}
@@ -63,13 +63,15 @@ export const Comments = ({ application }: OJOIFieldBaseProps) => {
             background="blue100"
           >
             <CommentsList
-              comments={comments?.map((comment) => ({
-                task: comment.task.title,
-                comment: comment.task.comment as string,
-                from: comment.task.from ?? undefined,
-                date: comment.createdAt,
-                type: 'received', // TODO: Implement sent comments
-              }))}
+              comments={comments?.map((comment) => {
+                return {
+                  task: comment.task.title.title,
+                  comment: comment.task.comment,
+                  from: comment.task.from ?? undefined,
+                  date: comment.createdAt,
+                  type: 'received', // TODO: Implement sent comments
+                }
+              })}
             />
           </Box>
         )}
