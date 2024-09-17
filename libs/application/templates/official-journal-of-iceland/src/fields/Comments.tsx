@@ -18,7 +18,15 @@ import { AddComment } from '../components/comments/AddComment'
 
 export const Comments = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
-  const { comments, loading, error } = useComments({
+  const {
+    comments,
+    loading,
+    error,
+    addComment,
+    addCommentLoading,
+    addCommentSuccess,
+    addCommentError,
+  } = useComments({
     applicationId: application.id,
   })
 
@@ -75,7 +83,12 @@ export const Comments = ({ application }: OJOIFieldBaseProps) => {
             />
           </Box>
         )}
-        <AddComment applicationId={application.id} />
+        <AddComment
+          addComment={addComment}
+          addCommentError={addCommentError}
+          addCommentLoading={addCommentLoading}
+          addCommentSuccess={addCommentSuccess}
+        />
       </Stack>
     </FormGroup>
   )

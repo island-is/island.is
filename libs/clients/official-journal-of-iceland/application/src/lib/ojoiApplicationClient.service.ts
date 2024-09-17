@@ -51,7 +51,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
       await this.ojoiApplicationApi.postComment(params)
       return true
     } catch (error) {
-      this.logger.error('Failed to post comment', {
+      this.logger.error(`Failed to post comment: ${error.message}`, {
         error,
         applicationId: params.id,
         category: LOG_CATEGORY,
