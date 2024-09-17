@@ -269,12 +269,14 @@ export class DelegationsIncomingService {
       providers.includes(AuthDelegationProvider.DistrictCommissionersRegistry)
     ) {
       let delegationFound = false
+      let isError = false
       try {
         delegationFound = await this.syslumennService.checkIfDelegationExists(
           user.nationalId,
           fromNationalId,
         )
       } catch (error) {
+        isError = true
         logger.error(
           `Failed checking if delegation exists at provider '${AuthDelegationProvider.DistrictCommissionersRegistry}'`,
         )
@@ -282,7 +284,7 @@ export class DelegationsIncomingService {
 
       if (delegationFound) {
         return true
-      } else {
+      } else if (!isError) {
         Promise.all(
           delegationTypes.map((dt) =>
             this.delegationsIndexService.removeDelegationRecord({
