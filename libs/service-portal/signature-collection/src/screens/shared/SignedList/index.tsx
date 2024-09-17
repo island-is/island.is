@@ -8,11 +8,17 @@ import format from 'date-fns/format'
 import { useMutation } from '@apollo/client'
 import { unSignList } from '../../../hooks/graphql/mutations'
 import {
+  SignatureCollection,
   SignatureCollectionSignedList,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
 
-const SignedList = () => {
+const SignedList = ({
+    currentCollection,
+  }: {
+    currentCollection: SignatureCollection
+  }
+) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -37,7 +43,7 @@ const SignedList = () => {
       await unSign().then(({ data }) => {
         if (
           (
-            data as any as {
+            data as unknown as {
               signatureCollectionUnsign: SignatureCollectionSuccess
             }
           ).signatureCollectionUnsign.success
@@ -69,7 +75,7 @@ const SignedList = () => {
                       ? formatMessage(m.signedTime)
                       : formatMessage(m.uploadedTime)
                   } ${format(new Date(list.signedDate), 'dd.MM.yyyy')}`}
-                  text={formatMessage(m.collectionTitle)}
+                  text={currentCollection.isPresidential ? formatMessage(m.collectionTitle) : formatMessage(m.collectionTitleParliamentary)}
                   cta={
                     list.canUnsign
                       ? {
