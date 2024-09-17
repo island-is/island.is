@@ -8,7 +8,7 @@ import {
   PassDataInput,
   Result,
   RevokePassData,
-  SmartSolutionsApi,
+  SmartSolutionsService,
   VerifyPassData,
 } from '@island.is/clients/smart-solutions-v2'
 import type { Logger } from '@island.is/logging'
@@ -19,7 +19,6 @@ import {
   BarcodeService,
   LICENSE_SERVICE_CACHE_MANAGER_PROVIDER,
   LicenseConfig,
-  TOKEN_EXPIRED_ERROR,
 } from '@island.is/services/license'
 import {
   BadRequestException,
@@ -72,7 +71,7 @@ const getLicenseType = (id: LicenseId) => {
 export class MockUpdateClient extends BaseLicenseUpdateClient {
   constructor(
     @Inject(LOGGER_PROVIDER) protected logger: Logger,
-    protected smartApi: SmartSolutionsApi,
+    protected smartApi: SmartSolutionsService,
   ) {
     super(logger, smartApi)
   }
@@ -254,7 +253,7 @@ describe('LicenseService', () => {
           })),
         },
         {
-          provide: SmartSolutionsApi,
+          provide: SmartSolutionsService,
           useClass: jest.fn(() => ({})),
         },
         {
@@ -275,7 +274,7 @@ describe('LicenseService', () => {
               async (): Promise<BaseLicenseUpdateClient | null> =>
                 new MockUpdateClient(logger, smart),
           }),
-          inject: [LOGGER_PROVIDER, SmartSolutionsApi],
+          inject: [LOGGER_PROVIDER, SmartSolutionsService],
         },
         {
           provide: BarcodeService,
