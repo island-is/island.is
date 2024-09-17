@@ -34,7 +34,14 @@ export const getVideoEmbedProperties = (
     if (match) {
       let id = match[7]
       if (id.startsWith('/')) id = id.slice(1)
-      if (id.length === 11) youtubeId = id
+      if (id.length === 11) {
+        youtubeId = id
+      } else {
+        const v = item.searchParams.get('v')
+        if (v && v.length === 11) {
+          youtubeId = v
+        }
+      }
     }
 
     if (youtubeId) {

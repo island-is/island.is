@@ -770,4 +770,17 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Það þarf að velja a.m.k eitt fæðuóþol',
     description: 'At least one food intolerance must be selected',
   },
+  noChildrenFoundTitle: {
+    id: 'dess.nps.application:error.no.children.found.title',
+    defaultMessage: 'Því miður ert þú ekki með skráð barn á grunnskólaaldri',
+    description:
+      'Unfortunately, you do not have a child registered at primary school age',
+  },
+  noChildrenFoundMessage: {
+    id: 'dess.nps.application:error.no.children.found.message#markdown',
+    defaultMessage:
+      'Eingöngu sá sem er með lögheimilisforsjá hefur heimild til að sækja um fyrir barn. \n\nÞjóðskrá skráir hver eða hverjir teljast foreldrar barns og hver fari með forsjárskyldur þess. Upplýsingar um skráningu forsjár og lögheimilisforeldris má nálgast hér: [Foreldrar og forsjá | Þjóðskrá (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nUpplýsingum um tengsl á milli barna og foreldra auk forsjáraðila eru einnig aðgengilegar á [Mínum síðum á Ísland.is](https://island.is/minarsidur)',
+    description:
+      'Only the person who has legal custody has the authority to apply for a child.\n\nThe National Registry records who or which individuals are considered to be the parents of a child and who has custody responsibilities. Information on registering custody and legal guardianship can be found here: [Parents and Custody | National Registry (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nInformation about the relationship between children and parents, as well as custody authorities, is also available on [My Pages on Ísland.is](https://island.is/minarsidur)',
+  },
 })

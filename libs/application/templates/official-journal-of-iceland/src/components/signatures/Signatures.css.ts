@@ -7,9 +7,34 @@ export const tabWrapper = style({
   background: theme.color.white,
 })
 
+export const signatureContainer = style({
+  position: 'relative',
+  marginBottom: spacing * 2,
+  selectors: {
+    '&:last-child': {
+      marginBottom: 0,
+    },
+    '&::after': {
+      content: '',
+      position: 'absolute',
+      width: '100%',
+      bottom: -theme.spacing[3],
+      left: 0,
+      height: 1,
+      backgroundColor: theme.color.blue200,
+    },
+    '&:last-child::after': {
+      display: 'none',
+    },
+  },
+})
+
 export const signatureWrapper = style({
-  paddingBlockStart: spacing * 2,
+  paddingBlockStart: spacing,
   background: theme.color.white,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: spacing,
 })
 
 export const wrapper = style({
@@ -24,7 +49,6 @@ export const institutionWrapper = style({})
 export const institution = style({
   display: 'flex',
   gap: spacing,
-  marginBottom: spacing,
 
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
@@ -47,27 +71,46 @@ export const inputGroup = style({
 export const committeeInputGroupWrapper = style({
   display: 'flex',
   flexDirection: 'column',
-  gap: spacing,
 })
 
-export const committeeInputGroup = style({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: spacing,
-})
+export const committeeInputGroup = style(
+  {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  'committeeInputGroup',
+)
+
+export const committeInputWrapper = style(
+  {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: spacing,
+    marginBottom: theme.spacing[2],
+    paddingBottom: theme.spacing[2],
+    borderBottom: `1px solid ${theme.color.blue200}`,
+  },
+  'committeInputWrapper',
+)
+
+export const committeInputWrapperLast = style(
+  [
+    committeInputWrapper,
+    {
+      marginBottom: 0,
+      paddingBottom: 0,
+      borderBottom: 'none',
+    },
+  ],
+  'committeInputWrapperLast',
+)
 
 export const inputWrapper = style({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
   flex: 1,
-  gap: spacing,
-})
-
-export const committeInputWrapper = style({
-  display: 'flex',
-  flexWrap: 'wrap',
-  justifyContent: 'space-between',
   gap: spacing,
 })
 

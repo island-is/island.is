@@ -61,6 +61,11 @@ export const m = defineMessages({
     defaultMessage: 'Dánarbú',
     description: '',
   },
+  preDataCollectionApplicationForDefaultTooltip: {
+    id: 'ir.application:preDataCollectionApplicationForDefaultTooltip',
+    defaultMessage: 'Ekki er búið að opna fyrir umsóknir af þessari gerð.',
+    description: '',
+  },
   // Application begin
   applicationName: {
     id: 'ir.application:applicationName',
@@ -830,6 +835,24 @@ export const m = defineMessages({
     id: 'ir.application:assetOverviewDescription',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+    description: '',
+  },
+  assetsOverviewConfirmation: {
+    id: 'ir.application:assetsOverviewConfirmation',
+    defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um eignir eftir minni bestu vitund.',
+    description: '',
+  },
+  debtsOverviewConfirmation: {
+    id: 'ir.application:debtsOverviewConfirmation',
+    defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um skuldir eftir minni bestu vitund.',
+    description: '',
+  },
+  heirsOverviewConfirmation: {
+    id: 'ir.application:heirsOverviewConfirmation',
+    defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um eign til skipta og erfingja eftir minni bestu vitund.',
     description: '',
   },
   realEstateEstimation: {

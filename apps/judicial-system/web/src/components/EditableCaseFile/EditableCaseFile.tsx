@@ -3,6 +3,8 @@ import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import {
@@ -11,6 +13,7 @@ import {
   Input,
   LoadingDots,
   Text,
+  toast,
   UploadFile,
   UploadFileStatus,
 } from '@island.is/island-ui/core'
@@ -37,13 +40,24 @@ interface Props {
   enableDrag: boolean
   caseFile: TEditableCaseFile
   onOpen: (id: string) => void
-  onRename: (id: string, name?: string, displayDate?: string) => void
+  onRename: (id: string, name: string, displayDate: string) => void
   onDelete: (file: TUploadFile) => void
   onRetry?: (file: TUploadFile) => void
+  onStartEditing: () => void
+  onStopEditing: () => void
 }
 
 const EditableCaseFile: FC<Props> = (props) => {
-  const { caseFile, enableDrag, onOpen, onRename, onDelete, onRetry } = props
+  const {
+    caseFile,
+    enableDrag,
+    onOpen,
+    onRename,
+    onDelete,
+    onRetry,
+    onStartEditing,
+    onStopEditing,
+  } = props
   const { formatMessage } = useIntl()
   const [ref, { width }] = useMeasure<HTMLDivElement>()
   const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -54,22 +68,34 @@ const EditableCaseFile: FC<Props> = (props) => {
 
   const [editedDisplayDate, setEditedDisplayDate] = useState<
     string | undefined
-  >(formatDate(caseFile.displayDate) ?? undefined)
+  >(formatDate(caseFile.displayDate ?? caseFile.created) ?? undefined)
   const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
 
   const handleEditFileButtonClick = () => {
     const trimmedFilename = editedFilename?.trim()
     const trimmedDisplayDate = editedDisplayDate?.trim()
 
-    if (trimmedFilename || trimmedDisplayDate) {
-      onRename(caseFile.id, trimmedFilename, trimmedDisplayDate)
-      setIsEditing(false)
-      setEditedDisplayDate(formatDate(caseFile.displayDate) ?? '')
-
+    if (trimmedFilename === undefined || trimmedFilename.length === 0) {
+      toast.error(formatMessage(strings.invalidFilenameErrorMessage))
       return
-    } else {
-      setIsEditing(false)
     }
+
+    let newDate: Date | undefined
+
+    if (trimmedDisplayDate) {
+      const [day, month, year] = trimmedDisplayDate.split('.')
+      newDate = parseISO(`${year}-${month}-${day}`)
+    }
+
+    if (!newDate || !isValid(newDate)) {
+      toast.error(formatMessage(strings.invalidDateErrorMessage))
+      return
+    }
+
+    onRename(caseFile.id, trimmedFilename, newDate.toISOString())
+
+    setIsEditing(false)
+    onStopEditing()
   }
 
   const displayDate = useMemo(() => {
@@ -152,7 +178,10 @@ const EditableCaseFile: FC<Props> = (props) => {
                   </button>
                   <Box marginLeft={1}>
                     <button
-                      onClick={() => onDelete(caseFile as TUploadFile)}
+                      onClick={() => {
+                        onDelete(caseFile as TUploadFile)
+                        onStopEditing()
+                      }}
                       className={cn(styles.editCaseFileButton, {
                         [styles.background.primary]:
                           caseFile.status !== 'error',
@@ -238,7 +267,10 @@ const EditableCaseFile: FC<Props> = (props) => {
                   </button>
                 ) : (
                   <button
-                    onClick={() => setIsEditing(true)}
+                    onClick={() => {
+                      setIsEditing(true)
+                      onStartEditing()
+                    }}
                     className={cn(styles.editCaseFileButton, {
                       [styles.background.primary]:
                         caseFile.canEdit && caseFile.status !== 'error',

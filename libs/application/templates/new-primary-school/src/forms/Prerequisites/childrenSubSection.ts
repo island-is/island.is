@@ -7,10 +7,7 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
 import { newPrimarySchoolMessages } from '../../lib/messages'
-import {
-  canApply,
-  getApplicationExternalData,
-} from '../../lib/newPrimarySchoolUtils'
+import { getApplicationExternalData } from '../../lib/newPrimarySchoolUtils'
 
 export const childrenSubSection = buildSubSection({
   id: 'childrenSubSection',
@@ -29,15 +26,13 @@ export const childrenSubSection = buildSubSection({
               application.externalData,
             )
 
-            return children
-              .filter((child) => canApply(child))
-              .map((child) => {
-                return {
-                  value: child.nationalId,
-                  label: child.fullName,
-                  subLabel: formatKennitala(child.nationalId),
-                }
-              })
+            return children.map((child) => {
+              return {
+                value: child.nationalId,
+                label: child.fullName,
+                subLabel: formatKennitala(child.nationalId),
+              }
+            })
           },
           required: true,
         }),

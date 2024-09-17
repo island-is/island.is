@@ -61,7 +61,10 @@ const Overview: FC = () => {
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
-  const isIndictmentNew = workingCase.state === CaseState.DRAFT
+  const isIndictmentNew =
+    workingCase.state === CaseState.DRAFT || modal !== 'noModal'
+  const isIndictmentWaitingForConfirmation =
+    workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
   const isIndictmentSubmitted = workingCase.state === CaseState.SUBMITTED
   const isIndictmentWaitingForCancellation =
     workingCase.state === CaseState.WAITING_FOR_CANCELLATION
@@ -69,11 +72,17 @@ const Overview: FC = () => {
 
   const userCanSendIndictmentToCourt =
     Boolean(user?.canConfirmIndictment) &&
-    workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
+    isIndictmentWaitingForConfirmation &&
+    modal === 'noModal'
   const userCanCancelIndictment =
-    (workingCase.state === CaseState.SUBMITTED ||
-      workingCase.state === CaseState.RECEIVED) &&
+    (isIndictmentSubmitted || isIndictmentReceived) &&
     !workingCase.indictmentDecision
+  const userCanAddDocuments =
+    isIndictmentSubmitted ||
+    (isIndictmentReceived &&
+      workingCase.indictmentDecision !==
+        IndictmentDecision.POSTPONING_UNTIL_VERDICT &&
+      workingCase.indictmentDecision !== IndictmentDecision.COMPLETING)
 
   const handleTransition = async (transitionType: CaseTransition) => {
     const caseTransitioned = await transitionCase(
@@ -206,17 +215,12 @@ const Overview: FC = () => {
         )}
         <Box
           marginBottom={
-            workingCase.indictmentDecision !==
-              IndictmentDecision.POSTPONING_UNTIL_VERDICT ||
-            userCanSendIndictmentToCourt
-              ? 5
-              : 10
+            userCanAddDocuments || userCanSendIndictmentToCourt ? 5 : 10
           }
         >
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        {workingCase.indictmentDecision !==
-        IndictmentDecision.POSTPONING_UNTIL_VERDICT ? (
+        {userCanAddDocuments && (
           <Box
             display="flex"
             justifyContent="flexEnd"
@@ -234,7 +238,7 @@ const Overview: FC = () => {
               {formatMessage(strings.addDocumentsButtonText)}
             </Button>
           </Box>
-        ) : null}
+        )}
         {userCanSendIndictmentToCourt && (
           <Box marginBottom={10}>
             <SectionHeading

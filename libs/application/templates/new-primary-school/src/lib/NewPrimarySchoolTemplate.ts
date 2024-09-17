@@ -12,7 +12,6 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  ChildrenCustodyInformationApi,
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
@@ -22,6 +21,7 @@ import { Features } from '@island.is/feature-flags'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
 import {
+  ChildrenApi,
   GetKeyOptionsTypesApi,
   GetSchoolsApi,
   OptionsApi,
@@ -85,12 +85,12 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                ChildrenCustodyInformationApi,
                 NationalRegistryUserApi,
                 UserProfileApi,
                 GetKeyOptionsTypesApi,
                 OptionsApi,
                 GetSchoolsApi,
+                ChildrenApi,
               ],
             },
           ],

@@ -4,7 +4,7 @@ import { Box, Button, Icon, Stack, Text } from '@island.is/island-ui/core'
 export interface InlineErrorProps {
   title: string
   message: string
-  primaryButton: Button
+  primaryButton?: Button
   secondaryButton?: Button
 }
 
@@ -40,12 +40,14 @@ export const InlineError: FC<React.PropsWithChildren<InlineErrorProps>> = ({
             {secondaryButton.text}
           </Button>
         )}
-        <Button
-          variant={secondaryButton ? 'primary' : 'ghost'}
-          onClick={primaryButton.action}
-        >
-          {primaryButton.text}
-        </Button>
+        {primaryButton && (
+          <Button
+            variant={secondaryButton ? 'primary' : 'ghost'}
+            onClick={primaryButton.action}
+          >
+            {primaryButton.text}
+          </Button>
+        )}
       </Stack>
     </Box>
   )

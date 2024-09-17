@@ -18,12 +18,15 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/SuccessModel" }
+                "schema": {
+                  "$ref": "#/components/schemas/FormSubmitSuccessModel"
+                }
               }
             }
           }
         },
-        "tags": ["Frigg"]
+        "tags": ["Frigg"],
+        "security": [{ "bearer": [] }]
       }
     },
     "/forms/types": {
@@ -42,10 +45,39 @@
             }
           }
         },
-        "tags": ["Frigg"]
+        "tags": ["Frigg"],
+        "security": [{ "bearer": [] }]
       }
     },
-    "/keyOptions": {
+    "/forms/reviews/{reviewId}/{action}": {
+      "post": {
+        "operationId": "updateReview",
+        "summary": "Review form",
+        "description": "Review form.",
+        "parameters": [
+          {
+            "name": "reviewId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          { "name": "action", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessModel" }
+              }
+            }
+          }
+        },
+        "tags": ["Frigg"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/key-options": {
       "get": {
         "operationId": "getAllKeyOptions",
         "summary": "Get all key options.",
@@ -75,7 +107,7 @@
         "tags": ["Frigg"]
       }
     },
-    "/keyOptions/types": {
+    "/key-options/types": {
       "get": {
         "operationId": "getKeyOptionsTypes",
         "summary": "Get list of types of key options",
@@ -121,15 +153,14 @@
             }
           }
         },
-        "tags": ["Frigg"],
-        "security": [{ "bearer": [] }]
+        "tags": ["Frigg"]
       }
     },
-    "/student/{nationalId}": {
+    "/students/{nationalId}": {
       "get": {
         "operationId": "getUserBySourcedId",
         "summary": "Get user by nationalId",
-        "description": "Get user by Id. ",
+        "description": "Get user by Id.",
         "parameters": [
           {
             "name": "nationalId",
@@ -154,7 +185,7 @@
     }
   },
   "info": {
-    "title": "MMS Internal API",
+    "title": "MMS FORM SERVICE API",
     "description": "Frigg - student information system",
     "version": "1",
     "contact": {}
@@ -186,15 +217,10 @@
           "nationalId": { "type": "string" },
           "preferredName": { "type": "string" },
           "pronouns": { "type": "array", "items": { "type": "string" } },
-          "address": { "$ref": "#/components/schemas/AddressDto" }
+          "domicile": { "$ref": "#/components/schemas/AddressDto" },
+          "residence": { "$ref": "#/components/schemas/AddressDto" }
         },
-        "required": [
-          "name",
-          "nationalId",
-          "preferredName",
-          "pronouns",
-          "address"
-        ]
+        "required": ["name", "nationalId"]
       },
       "AgentDto": {
         "type": "object",
@@ -203,41 +229,43 @@
           "nationalId": { "type": "string" },
           "preferredName": { "type": "string" },
           "pronouns": { "type": "array", "items": { "type": "string" } },
-          "address": { "$ref": "#/components/schemas/AddressDto" },
-          "email": { "type": "string" },
+          "domicile": { "$ref": "#/components/schemas/AddressDto" },
+          "email": { "type": "string", "example": "name@frigg.is" },
           "phone": { "type": "string" },
-          "relation": { "type": "string" }
+          "role": {
+            "type": "string",
+            "description": "Agents connection to the student, strings can be found under key option type \"relation\""
+          }
         },
-        "required": [
-          "name",
-          "nationalId",
-          "preferredName",
-          "pronouns",
-          "address",
-          "email",
-          "phone",
-          "relation"
-        ]
+        "required": ["name", "nationalId", "role"]
       },
       "RegistrationDto": {
         "type": "object",
         "properties": {
-          "preRegisteredId": { "type": "string" },
-          "defaultOrg": { "type": "string" },
-          "selectedOrg": { "type": "string" },
+          "preRegisteredId": {
+            "type": "string",
+            "description": "If a user has an open ongoing registration, for exaple first year students submit the id here"
+          },
+          "defaultOrg": {
+            "type": "string",
+            "description": "The school a student should or does belong to, pre registered school or current school"
+          },
+          "selectedOrg": {
+            "type": "string",
+            "description": "The school selected for a student in the application process"
+          },
           "requestingMeeting": { "type": "boolean", "default": false },
           "expectedStartDate": { "format": "date-time", "type": "string" },
           "reason": { "type": "string" },
-          "movingAbroadCountry": { "type": "string" }
+          "movingAbroadCountry": { "type": "string" },
+          "newDomicile": { "$ref": "#/components/schemas/AddressDto" }
         },
         "required": [
-          "preRegisteredId",
           "defaultOrg",
           "selectedOrg",
           "requestingMeeting",
           "expectedStartDate",
-          "reason",
-          "movingAbroadCountry"
+          "reason"
         ]
       },
       "HealthDto": {
@@ -246,16 +274,14 @@
           "usesEpipen": { "type": "boolean", "default": false },
           "allergies": { "type": "array", "items": { "type": "string" } },
           "intolerances": { "type": "array", "items": { "type": "string" } }
-        },
-        "required": ["usesEpipen", "allergies", "intolerances"]
+        }
       },
       "SocialDto": {
         "type": "object",
         "properties": {
           "hasHadSupport": { "type": "boolean", "default": false },
           "hasDiagnoses": { "type": "boolean", "default": false }
-        },
-        "required": ["hasHadSupport", "hasDiagnoses"]
+        }
       },
       "LanguageDto": {
         "type": "object",
@@ -264,7 +290,7 @@
           "noIcelandic": { "type": "boolean" },
           "otherLanguages": { "type": "array", "items": { "type": "string" } }
         },
-        "required": ["nativeLanguage", "noIcelandic", "otherLanguages"]
+        "required": ["nativeLanguage", "noIcelandic"]
       },
       "FormDto": {
         "type": "object",
@@ -289,6 +315,15 @@
           "social",
           "language"
         ]
+      },
+      "FormSubmitSuccessModel": {
+        "type": "object",
+        "properties": {
+          "formId": { "type": "string", "description": "Id of form created" },
+          "reviewId": { "type": "string", "description": "Id of review" },
+          "status": { "type": "string", "description": "Status of form" }
+        },
+        "required": ["formId", "reviewId", "status"]
       },
       "SuccessModel": {
         "type": "object",
@@ -448,7 +483,7 @@
           "phone": { "type": "string" },
           "email": { "type": "string" },
           "role": { "type": "string" },
-          "address": {
+          "domicile": {
             "nullable": true,
             "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
           }
@@ -460,7 +495,7 @@
           "phone",
           "email",
           "role",
-          "address"
+          "domicile"
         ]
       },
       "UserModel": {
@@ -473,16 +508,22 @@
           "pronouns": { "type": "array", "items": { "type": "string" } },
           "gradeLevels": { "type": "array", "items": { "type": "string" } },
           "email": { "type": "object", "nullable": true },
-          "address": {
+          "domicile": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
+          },
+          "residence": {
             "nullable": true,
             "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
           },
           "primaryOrgId": { "type": "object" },
           "memberships": {
+            "nullable": true,
             "type": "array",
             "items": { "$ref": "#/components/schemas/MembershipModel" }
           },
           "agents": {
+            "nullable": true,
             "type": "array",
             "items": { "$ref": "#/components/schemas/AgentModel" }
           }
@@ -495,7 +536,8 @@
           "pronouns",
           "gradeLevels",
           "email",
-          "address",
+          "domicile",
+          "residence",
           "primaryOrgId",
           "memberships",
           "agents"

@@ -376,13 +376,13 @@
         "libs/application/templates/financial-aid/src/index.ts"
       ],
       "@island.is/application/templates/financial-statement-cemetery": [
-        "libs/application/templates/financial-statement-cemetery/src/index.ts"
+        "libs/application/templates/inao/financial-statement-cemetery/src/index.ts"
       ],
       "@island.is/application/templates/financial-statement-individual-election": [
-        "libs/application/templates/financial-statement-individual-election/src/index.ts"
+        "libs/application/templates/inao/financial-statement-individual-election/src/index.ts"
       ],
       "@island.is/application/templates/financial-statement-individual-election/types": [
-        "libs/application/templates/financial-statement-individual-election/src/types/types.ts"
+        "libs/application/templates/inao/financial-statement-individual-election/src/types/types.ts"
       ],
       "@island.is/application/templates/financial-statements-inao": [
         "libs/application/templates/financial-statements-inao/src/index.ts"
@@ -500,6 +500,9 @@
       ],
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
+      ],
+      "@island.is/application/templates/social-insurance-administration/income-plan": [
+        "libs/application/templates/social-insurance-administration/income-plan/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration/old-age-pension": [
         "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"
@@ -1108,7 +1111,8 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
-      ]
+      ],
+      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
     }
   }
 }
