@@ -203,7 +203,7 @@ export const ApplicationsList = ({
               <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
             }
             scrollEventThrottle={16}
-            scrollToOverflowEnabled={true}
+            scrollToOverflowEnabled
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
               {

@@ -105,7 +105,11 @@ export function StatusCard({
         <Date>
           <Image
             source={timeOutlineIcon as ImageSourcePropType}
-            style={{ width: 16, height: 16, marginRight: 4 }}
+            style={{
+              width: 16,
+              height: 16,
+              marginRight: theme.spacing.smallGutter,
+            }}
           />
           <Typography variant="body3">
             <FormattedDate value={date} />
@@ -117,7 +121,7 @@ export function StatusCard({
         <Title>
           <Image
             source={icon}
-            style={{ width: 24, height: 24, marginRight: 8 }}
+            style={{ width: 24, height: 24, marginRight: theme.spacing[1] }}
           />
           <Typography variant="heading5" style={{ flexShrink: 1 }}>
             {title}
@@ -126,8 +130,8 @@ export function StatusCard({
         {!!description && <Typography>{description}</Typography>}
         {!!progress && (
           <ProgressMeter
-            draftFinishedSteps={progress}
-            draftTotalSteps={progressTotalSteps ?? 0}
+            finishedSteps={progress}
+            totalSteps={progressTotalSteps ?? 0}
             progressMessage={progressMessage}
             containerWidth={progressContainerWidth}
           />

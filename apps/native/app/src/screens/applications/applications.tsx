@@ -105,7 +105,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   useConnectivityIndicator({
     componentId,
     refetching,
-    queryResult: [applicationsRes],
+    queryResult: applicationsRes,
   })
 
   const sortedApplications = useMemo(
@@ -175,7 +175,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
           headingTitleNavigationLink="/applications-completed"
           applications={sortedApplications.completed}
           numberOfItems={3}
-          slider={true}
+          slider
         />
       </ScrollView>
       <BottomTabsIndicator index={3} total={5} />

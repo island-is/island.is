@@ -44,7 +44,7 @@ export const ApplicationsCompletedScreen: NavigationFunctionComponent = ({
   useConnectivityIndicator({
     componentId,
     refetching,
-    queryResult: [applicationsRes],
+    queryResult: applicationsRes,
   })
 
   return (
@@ -52,9 +52,9 @@ export const ApplicationsCompletedScreen: NavigationFunctionComponent = ({
       applicationsRes={applicationsRes}
       badgeVariant="mint"
       displayProgress={false}
-      displayDescription={true}
+      displayDescription
       componentId={componentId}
-      onRefetch={(refetching) => setRefetching(refetching)}
+      onRefetch={setRefetching}
     />
   )
 }

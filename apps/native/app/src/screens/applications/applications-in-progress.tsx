@@ -32,7 +32,6 @@ export const ApplicationsInProgressScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
   const [refetching, setRefetching] = useState(false)
-  console.log({ refetching })
 
   const applicationsRes = useListApplicationsQuery({
     variables: {
@@ -45,7 +44,7 @@ export const ApplicationsInProgressScreen: NavigationFunctionComponent = ({
   useConnectivityIndicator({
     componentId,
     refetching,
-    queryResult: [applicationsRes],
+    queryResult: applicationsRes,
   })
 
   return (
@@ -53,9 +52,9 @@ export const ApplicationsInProgressScreen: NavigationFunctionComponent = ({
       applicationsRes={applicationsRes}
       badgeVariant="blueberry"
       displayProgress={false}
-      displayDescription={true}
+      displayDescription
       componentId={componentId}
-      onRefetch={(refetching) => setRefetching(refetching)}
+      onRefetch={setRefetching}
     />
   )
 }

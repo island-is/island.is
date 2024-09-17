@@ -74,7 +74,7 @@ const ApplicationsModule = React.memo(
                 headingTitleId="home.applicationsStatus"
                 headingTitleNavigationLink="/applications"
                 componentId={componentId}
-                slider={true}
+                slider
                 numberOfItems={3}
               />
             )}
