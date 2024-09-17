@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { Box, Button, Text, Checkbox } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../../../lib/messages'
-import { constituencies } from '../../../../../lib/constants'
+import { m } from '../../../../lib/messages'
+import { constituencies } from '../../../../lib/constants'
 import { SignatureCollectionList } from '@island.is/api/schema'
 
 const AddConstituencyModal = ({

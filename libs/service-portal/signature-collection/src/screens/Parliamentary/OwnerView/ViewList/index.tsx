@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
 import Signees from './Signees'
-import CancelCollection from '../modals/CancelCollection'
+import CancelCollection from '../../../shared/CancelCollection'
 import copyToClipboard from 'copy-to-clipboard'
 
 const ViewList = () => {
