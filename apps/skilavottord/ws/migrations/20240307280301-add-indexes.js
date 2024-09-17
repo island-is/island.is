@@ -1,5 +1,3 @@
-'use strict'
-
 //add mileage change
 module.exports = {
   up: (queryInterface) => {

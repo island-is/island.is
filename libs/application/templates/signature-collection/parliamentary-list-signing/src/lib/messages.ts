@@ -149,8 +149,8 @@ export const m = defineMessages({
     description: '',
   },
   listSignedDescription: {
-    id: 'pls.application:listSignedDescription',
-    defaultMessage: 'Stjórnmálasamtök sem þú mæltir með: TBD',
+    id: 'pls.application:listSignedDescription#markdown',
+    defaultMessage: 'Stjórnmálasamtök sem þú mæltir með: **{name}**',
     description: '',
   },
   nextSteps: {

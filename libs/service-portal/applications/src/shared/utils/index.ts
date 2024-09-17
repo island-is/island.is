@@ -23,8 +23,8 @@ export const sortApplicationsStatus = (
 
   applications.forEach((application) => {
     if (
-      application.state === 'draft' ||
-      application.state === 'prerequisites'
+      application.status === ApplicationStatus.DRAFT ||
+      application.status === ApplicationStatus.NOT_STARTED
     ) {
       incomplete.push(application)
     } else if (application.status === ApplicationStatus.IN_PROGRESS) {
