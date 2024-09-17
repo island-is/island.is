@@ -183,6 +183,10 @@ export const getThemeConfig = (
       ? 'organization'
       : 'default'
 
+  if (lightThemes.includes(theme ?? '') || usingDefaultHeader) {
+    return { themeConfig: { footerVersion } }
+  }
+
   if (blueberryThemes.includes(theme ?? ''))
     return {
       themeConfig: {
@@ -191,7 +195,6 @@ export const getThemeConfig = (
         footerVersion,
       },
     }
-
   if (darkThemes.includes(theme ?? '')) {
     return {
       themeConfig: {
@@ -200,10 +203,6 @@ export const getThemeConfig = (
         footerVersion,
       },
     }
-  }
-
-  if (lightThemes.includes(theme ?? '') || usingDefaultHeader) {
-    return { themeConfig: { footerVersion } }
   }
 
   return {
@@ -317,7 +316,15 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hsn':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'hsnHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg',
+          )}
+        />
+      ) : (
         <HeilbrigdisstofnunNordurlandsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -471,13 +478,20 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hms':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'hmsHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/5pAFV6h9PVzSTQgJY67rbT/3117436e3043bebf720b2f9a7e7619b8/hms-header-image.svg',
+          )}
+        />
+      ) : (
         <HmsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
         />
       )
-
     case 'rikissaksoknari':
       return (
         <RikissaksoknariHeader
