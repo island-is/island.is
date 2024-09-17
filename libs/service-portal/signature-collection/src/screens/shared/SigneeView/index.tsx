@@ -60,7 +60,6 @@ const SigneeView = ({
                       key={list.id}
                       backgroundColor="white"
                       heading={list.title}
-                      eyebrow={' '}
                       text={
                         currentCollection.isPresidential
                           ? formatMessage(m.collectionTitle)

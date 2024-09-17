@@ -14,11 +14,10 @@ import {
 } from '@island.is/api/schema'
 
 const SignedList = ({
-    currentCollection,
-  }: {
-    currentCollection: SignatureCollection
-  }
-) => {
+  currentCollection,
+}: {
+  currentCollection: SignatureCollection
+}) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -75,7 +74,11 @@ const SignedList = ({
                       ? formatMessage(m.signedTime)
                       : formatMessage(m.uploadedTime)
                   } ${format(new Date(list.signedDate), 'dd.MM.yyyy')}`}
-                  text={currentCollection.isPresidential ? formatMessage(m.collectionTitle) : formatMessage(m.collectionTitleParliamentary)}
+                  text={
+                    currentCollection.isPresidential
+                      ? formatMessage(m.collectionTitle)
+                      : formatMessage(m.collectionTitleParliamentary)
+                  }
                   cta={
                     list.canUnsign
                       ? {
@@ -118,27 +121,29 @@ const SignedList = ({
                   initialVisibility={false}
                   onCloseModal={() => setModalIsOpen(false)}
                 >
-                  <Text variant="h2" marginTop={[5, 0]}>
-                    {formatMessage(m.unSignList)}
-                  </Text>
-                  <Text variant="default" marginTop={2}>
-                    {formatMessage(m.unSignModalMessage)}
-                  </Text>
-                  <Box
-                    marginTop={[7, 10]}
-                    marginBottom={5}
-                    display="flex"
-                    justifyContent="center"
-                  >
-                    <Button
-                      loading={loading}
-                      colorScheme="destructive"
-                      onClick={() => {
-                        onUnSignList()
-                      }}
+                  <Box display="block" width="full">
+                    <Text variant="h2" marginTop={[5, 0]}>
+                      {formatMessage(m.unSignList)}
+                    </Text>
+                    <Text variant="default" marginTop={2}>
+                      {formatMessage(m.unSignModalMessage)}
+                    </Text>
+                    <Box
+                      marginTop={[7, 10]}
+                      marginBottom={5}
+                      display="flex"
+                      justifyContent="center"
                     >
-                      {formatMessage(m.unSignModalConfirmButton)}
-                    </Button>
+                      <Button
+                        loading={loading}
+                        colorScheme="destructive"
+                        onClick={() => {
+                          onUnSignList()
+                        }}
+                      >
+                        {formatMessage(m.unSignModalConfirmButton)}
+                      </Button>
+                    </Box>
                   </Box>
                 </Modal>
               </Box>

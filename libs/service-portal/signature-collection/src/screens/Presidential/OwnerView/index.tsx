@@ -85,7 +85,9 @@ const OwnerView = ({
             </Box>
 
             {/* Signed list */}
-            {!user?.profile.actor && <SignedList currentCollection={currentCollection}/>}
+            {!user?.profile.actor && (
+              <SignedList currentCollection={currentCollection} />
+            )}
 
             {/* Candidate created lists */}
             <Text marginTop={[5, 7]} marginBottom={2}>
