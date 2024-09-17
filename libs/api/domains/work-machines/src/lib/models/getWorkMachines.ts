@@ -33,6 +33,9 @@ export class WorkMachine {
   @Field(() => GraphQLISODateTime, { nullable: true })
   dateLastInspection?: Date
 
+  @Field({ nullable: true })
+  lastInspectionFallback?: string
+
   @Field(() => String, { nullable: true })
   registrationNumber?: string | null
 

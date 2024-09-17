@@ -131,7 +131,7 @@ const WorkMachinesOverview = () => {
       ? `${formatMessage(vehicleMessage.lastInspection)}: ${formatDate(
           wm.dateLastInspection,
         )}`
-      : undefined
+      : formatMessage(messages.noInspection)
 
     if (wm.dateLastInspection) {
       text = wm.registrationNumber
