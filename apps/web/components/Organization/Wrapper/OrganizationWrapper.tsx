@@ -317,7 +317,15 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hsn':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'hsnHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg',
+          )}
+        />
+      ) : (
         <HeilbrigdisstofnunNordurlandsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
