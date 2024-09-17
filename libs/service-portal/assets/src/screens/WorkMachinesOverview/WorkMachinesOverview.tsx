@@ -124,6 +124,7 @@ const WorkMachinesOverview = () => {
       },
     })
   }
+
   const generateCardText = (wm: WorkMachine): string | undefined => {
     let text = wm.registrationNumber ?? undefined
     const inspectionText = wm.dateLastInspection
