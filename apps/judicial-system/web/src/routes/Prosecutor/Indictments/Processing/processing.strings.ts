@@ -61,8 +61,8 @@ export const strings = {
     description:
       'Notaður sem titill fyrir kröfuhafi í einkaréttarkröfu á Málsmeðferðarskjánum.',
   }),
-  isCivilClaimantForeign: defineMessage({
-    id: 'judicial.system.indictments:processing.is_civil_claimant_foreign',
+  civilClaimantNoNationalId: defineMessage({
+    id: 'judicial.system.indictments:processing.civil_claimant_no_national_id',
     defaultMessage: 'Kröfuhafi er ekki með íslenska kennitölu',
     description:
       'Notaður sem texti fyrir kröfuhafi í "Kröfuhafi er ekki með íslenska kennitölu" í einkaréttarkröfu á Málsmeðferðarskjánum.',

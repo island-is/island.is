@@ -33,6 +33,10 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: true,
           },
+          no_national_id: {
+            type: Sequelize.BOOLEAN,
+            allowNull: true,
+          },
           spokesperson_name: {
             type: Sequelize.STRING,
             allowNull: true,

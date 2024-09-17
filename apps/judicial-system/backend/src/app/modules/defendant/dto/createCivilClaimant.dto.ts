@@ -1,40 +1,45 @@
 import { IsBoolean, IsOptional, IsString } from 'class-validator'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class CreateCivilClaimantDto {
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly noNationalId?: boolean
+
+  @IsOptional()
   @IsString()
-  @ApiProperty({ type: String })
+  @ApiPropertyOptional({ type: String })
   readonly name?: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty({ type: String })
+  @ApiPropertyOptional({ type: String })
   readonly nationalId?: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty({ type: String })
+  @ApiPropertyOptional({ type: String })
   readonly spokespersonName?: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty({ type: String })
+  @ApiPropertyOptional({ type: String })
   readonly spokespersonEmail?: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty({ type: String })
+  @ApiPropertyOptional({ type: String })
   readonly spokespersonPhoneNumber?: string
 
   @IsOptional()
   @IsBoolean()
-  @ApiProperty({ type: Boolean })
+  @ApiPropertyOptional({ type: Boolean })
   readonly caseFilesSharedWithSpokesperson?: boolean
 
   @IsOptional()
   @IsBoolean()
-  @ApiProperty({ type: Boolean })
+  @ApiPropertyOptional({ type: Boolean })
   readonly isLawyer?: boolean
 }

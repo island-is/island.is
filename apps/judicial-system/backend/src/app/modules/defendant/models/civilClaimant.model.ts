@@ -11,6 +11,7 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Case } from '../../case/models/case.model'
+
 @Table({
   tableName: 'civil_claimant',
   timestamps: false,
@@ -45,6 +46,10 @@ export class CivilClaimant extends Model {
   @BelongsTo(() => Case, 'caseId')
   @ApiProperty({ type: Case })
   case?: Case
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  noNationalId?: boolean
 
   @Column({
     type: DataType.STRING,

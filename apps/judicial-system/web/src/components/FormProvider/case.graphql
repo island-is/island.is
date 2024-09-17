@@ -318,6 +318,7 @@ query Case($input: CaseQueryInput!) {
       caseFilesSharedWithSpokesperson
       isLawyer
       nationalId
+      noNationalId
     }
     civilDemands
     hasCivilClaims

@@ -10,6 +10,11 @@ export class CreateCivilClaimantInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly noNationalId?: boolean
+
+  @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly name?: string
 

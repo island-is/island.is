@@ -1,7 +1,6 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import useSWR, { mutate } from 'swr'
 
 import {
   Box,
@@ -11,7 +10,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { isTrafficViolationCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -37,7 +35,6 @@ import {
   UpdateCivilClaimantInput,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDefendants,
@@ -50,8 +47,6 @@ import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web
 import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 const Processing: FC = () => {
   const { user } = useContext(UserContext)
@@ -176,17 +171,26 @@ const Processing: FC = () => {
 
   const handleCivilClaimantNationalIdBlur = async (
     nationalId: string,
+    noNationalId?: boolean | null,
     civilClaimantId?: string | null,
   ) => {
     if (!civilClaimantId) {
       return
     }
 
-    const cleanNationalId = nationalId.replace('-', '')
-    setCivilClaimantNationalIdUpdate({
-      nationalId: cleanNationalId,
-      civilClaimantId,
-    })
+    if (Boolean(noNationalId)) {
+      handleUpdateCivilClaimant({
+        caseId: workingCase.id,
+        civilClaimantId,
+        nationalId,
+      })
+    } else {
+      const cleanNationalId = nationalId.replace('-', '')
+      setCivilClaimantNationalIdUpdate({
+        nationalId: cleanNationalId,
+        civilClaimantId,
+      })
+    }
   }
 
   const handleCivilClaimantNameBlur = async (
@@ -403,9 +407,17 @@ const Processing: FC = () => {
                 <BlueBox>
                   <Box marginBottom={2}>
                     <Checkbox
-                      name="isCivilClaimantForeign"
-                      label={formatMessage(strings.isCivilClaimantForeign)}
-                      checked={false}
+                      name="civilClaimantNoNationalId"
+                      label={formatMessage(strings.civilClaimantNoNationalId)}
+                      checked={Boolean(civilClaimant.noNationalId)}
+                      onChange={() => {
+                        handleUpdateCivilClaimant({
+                          caseId: workingCase.id,
+                          civilClaimantId: civilClaimant.id,
+                          nationalId: null,
+                          noNationalId: !civilClaimant.noNationalId,
+                        })
+                      }}
                       backgroundColor="white"
                       large
                       filled
@@ -413,7 +425,7 @@ const Processing: FC = () => {
                   </Box>
                   <Box marginBottom={2}>
                     <InputNationalId
-                      isDateOfBirth={false}
+                      isDateOfBirth={Boolean(civilClaimant.noNationalId)}
                       value={civilClaimant.nationalId ?? undefined}
                       onChange={(val) => {
                         updateCivilClaimantState(
@@ -426,7 +438,11 @@ const Processing: FC = () => {
                         )
                       }}
                       onBlur={(val) =>
-                        handleCivilClaimantNationalIdBlur(val, civilClaimant.id)
+                        handleCivilClaimantNationalIdBlur(
+                          val,
+                          civilClaimant.noNationalId,
+                          civilClaimant.id,
+                        )
                       }
                     />
                   </Box>

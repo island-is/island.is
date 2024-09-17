@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class CivilClaimant {
-  @Field(() => ID, { nullable: true })
+  @Field(() => ID)
   readonly id!: string
 
   @Field(() => String, { nullable: true })
@@ -13,6 +13,9 @@ export class CivilClaimant {
 
   @Field(() => ID, { nullable: true })
   readonly caseId!: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly noNationalId?: boolean
 
   @Field(() => String, { nullable: true })
   readonly name?: string

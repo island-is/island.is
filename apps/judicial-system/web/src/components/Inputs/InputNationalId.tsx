@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, FocusEvent, useState } from 'react'
+import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
@@ -24,7 +24,7 @@ const InputNationalId: FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const [errorMessage, setErrorMessage] = useState<string>()
-  const [inputValue, setInputValue] = useState<string>(value || '')
+  const [inputValue, setInputValue] = useState<string>('')
 
   const handleBlur = (evt: FocusEvent<HTMLInputElement, Element>) => {
     const inputValidator = validate([
@@ -34,7 +34,7 @@ const InputNationalId: FC<Props> = (props) => {
       ],
     ])
 
-    if (inputValidator.isValid) {
+    if (inputValidator.isValid && inputValue) {
       setErrorMessage(undefined)
       onBlur(inputValue)
     } else {
@@ -44,16 +44,23 @@ const InputNationalId: FC<Props> = (props) => {
 
   const handleChange = (evt: ChangeEvent<HTMLInputElement>) => {
     setInputValue(evt.target.value)
-    onChange && onChange(inputValue)
+
+    onChange && inputValue && onChange(inputValue)
   }
 
-  console.log(inputValue, value)
+  useEffect(() => {
+    console.log('value updated', value)
+    if (value === undefined) {
+      setInputValue('')
+    }
+  }, [value])
+
   return (
     <InputMask
       // eslint-disable-next-line local-rules/disallow-kennitalas
       mask={isDateOfBirth ? '99.99.9999' : '999999-9999'}
       maskPlaceholder={null}
-      value={inputValue}
+      value={inputValue ?? value}
       onChange={handleChange}
       onBlur={handleBlur}
       disabled={disabled}
