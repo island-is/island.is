@@ -25,6 +25,7 @@ import {
 import { useBrowser } from '../../../lib/use-browser'
 import { getApplicationUrl } from '../../../utils/applications-utils'
 import { BottomTabsIndicator } from '../../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { createSkeletonArr } from '../../../utils/create-skeleton-arr'
 
 type FlatListItem =
   | Application
@@ -172,10 +173,7 @@ export const ApplicationsList = ({
 
   const data = useMemo(() => {
     if (applicationsRes.loading && !applicationsRes.data) {
-      return Array.from({ length: 5 }).map((_, id) => ({
-        id: String(id),
-        __typename: 'Skeleton',
-      }))
+      return createSkeletonArr(5)
     }
     if (applications.length === 0) {
       return [{ id: '0', __typename: 'Empty' }]
