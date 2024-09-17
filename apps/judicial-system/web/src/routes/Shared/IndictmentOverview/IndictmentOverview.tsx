@@ -26,6 +26,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseIndictmentRulingDecision,
   CaseState,
   IndictmentDecision,
   UserRole,
@@ -110,8 +111,10 @@ const IndictmentOverview: FC = () => {
           {caseIsClosed ? (
             <InfoCardClosedIndictment
               displayAppealExpirationInfo={
-                user?.role === UserRole.DEFENDER ||
-                workingCase.indictmentReviewer?.id === user?.id
+                workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING &&
+                (user?.role === UserRole.DEFENDER ||
+                  workingCase.indictmentReviewer?.id === user?.id)
               }
             />
           ) : (

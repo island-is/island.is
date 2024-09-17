@@ -53,6 +53,17 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
         405,
       )
     }
+    const contactNationalId = isCompany(auth.nationalId)
+      ? auth.actor?.nationalId ?? auth.nationalId
+      : auth.nationalId
+
+    if (
+      currentCollection.candidates.some(
+        (c) => c.nationalId.replace('-', '') === contactNationalId,
+      )
+    ) {
+      throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
+    }
 
     return currentCollection
   }
