@@ -8,7 +8,7 @@ import {
 } from './licenseClient.type'
 import type { PassTemplateIds, LicenseTypeType } from './licenseClient.type'
 import { BaseLicenseUpdateClient } from './clients/baseLicenseUpdateClient'
-import { LOG_CATEGORY } from '@island.is/clients/smartsolutions'
+import { LOG_CATEGORY } from './constants'
 
 @Injectable()
 export class LicenseUpdateClientService {

@@ -3,7 +3,7 @@ import {
   FirearmPropertyList,
   LicenseInfo,
 } from '@island.is/clients/firearm-license'
-import { PassInputFieldValueDataInput } from '@island.is/clients/smartsolutions'
+import { PassInputFieldValueDataInput } from '@island.is/clients/smart-solutions-v2'
 import format from 'date-fns/format'
 import { format as formatSsn } from 'kennitala'
 

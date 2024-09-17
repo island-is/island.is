@@ -10,7 +10,7 @@ import {
   RevokePassData,
   SmartSolutionsApi,
   VerifyPassData,
-} from '@island.is/clients/smartsolutions'
+} from '@island.is/clients/smart-solutions-v2'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule } from '@island.is/nest/config'

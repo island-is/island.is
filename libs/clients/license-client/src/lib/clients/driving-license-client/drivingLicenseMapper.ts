@@ -3,7 +3,7 @@ import {
   DriverLicenseDto as DriversLicense,
   RemarkCode,
 } from '@island.is/clients/driving-license'
-import { PassInputFieldValueDataInput } from '@island.is/clients/smartsolutions'
+import { PassInputFieldValueDataInput } from '@island.is/clients/smart-solutions-v2'
 import format from 'date-fns/format'
 import { info, format as formatSsn } from 'kennitala'
 
