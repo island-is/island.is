@@ -4,11 +4,11 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import {
-  ChildrenCustodyInformationApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import {
+  ChildrenApi,
   GetKeyOptionsTypesApi,
   GetSchoolsApi,
   OptionsApi,
@@ -32,7 +32,7 @@ export const externalDataSubSection = buildSubSection({
             newPrimarySchoolMessages.pre.nationalRegistryInformationSubTitle,
         }),
         buildDataProviderItem({
-          provider: ChildrenCustodyInformationApi,
+          provider: ChildrenApi,
           title: '',
           subTitle: '',
         }),
