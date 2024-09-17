@@ -128,8 +128,6 @@ export const EditBasics = () => {
     setHasUpdated(true)
   }
 
-  console.log('draft.ministry.error', draft.ministry.error)
-  console.log('draft.ministry.showError', draft.ministry.showError)
   return (
     <>
       <Box marginBottom={3}>
