@@ -42,7 +42,6 @@ const VehicleBulkMileage = () => {
   const methods = useForm<FormData>()
 
   useEffect(() => {
-    console.log('in vehicle update')
     if (data?.vehiclesListV3?.data) {
       const vehicles: Array<VehicleType> = data.vehiclesListV3?.data
         .map((v) => {
