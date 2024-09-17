@@ -10,23 +10,26 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CommentType } from '@island.is/judicial-system/types'
+import { StringType } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
 
 @Table({
-  tableName: 'explanatory_comment',
+  tableName: 'case_string',
   timestamps: true,
 })
-export class ExplanatoryComment extends Model {
-  static postponedIndefinitelyExplanation(
-    explanatoryComments?: ExplanatoryComment[],
-  ) {
-    return explanatoryComments?.find(
-      (explanatoryComment) =>
-        explanatoryComment.commentType ===
-        CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
-    )
+export class CaseString extends Model {
+  static postponedIndefinitelyExplanation(caseStrings?: CaseString[]) {
+    return caseStrings?.find(
+      (caseString) =>
+        caseString.stringType === StringType.POSTPONED_INDEFINITELY_EXPLANATION,
+    )?.value
+  }
+
+  static civilDemands(caseStrings?: CaseString[]) {
+    return caseStrings?.find(
+      (caseString) => caseString.stringType === StringType.CIVIL_DEMANDS,
+    )?.value
   }
 
   @Column({
@@ -49,17 +52,17 @@ export class ExplanatoryComment extends Model {
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: Object.values(CommentType),
+    values: Object.values(StringType),
   })
-  @ApiProperty({ enum: CommentType })
-  commentType!: CommentType
+  @ApiProperty({ enum: StringType })
+  stringType!: StringType
 
   @ForeignKey(() => Case)
   @Column({ type: DataType.UUID, allowNull: false })
   @ApiPropertyOptional({ type: String })
   caseId!: string
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({ type: DataType.TEXT, allowNull: false })
   @ApiPropertyOptional({ type: String })
-  comment!: string
+  value!: string
 }

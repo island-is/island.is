@@ -20,7 +20,7 @@ import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'
 import { Case } from '../../models/case.model'
 import { CaseArchive } from '../../models/caseArchive.model'
-import { ExplanatoryComment } from '../../models/explanatoryComment.model'
+import { CaseString } from '../../models/caseString.model'
 
 jest.mock('crypto-js')
 jest.mock('../../../../factories')
@@ -36,7 +36,7 @@ describe('InternalCaseController - Archive', () => {
   let mockFileService: FileService
   let mockDefendantService: DefendantService
   let mockIndictmentCountService: IndictmentCountService
-  let mockExplanatoryCommentModel: typeof ExplanatoryComment
+  let mockCaseStringModel: typeof CaseString
   let mockCaseModel: typeof Case
   let mockCaseArchiveModel: typeof CaseArchive
   let mockCaseConfig: ConfigType<typeof caseModuleConfig>
@@ -49,7 +49,7 @@ describe('InternalCaseController - Archive', () => {
       defendantService,
       indictmentCountService,
       sequelize,
-      explanatoryCommentModel,
+      caseStringModel,
       caseModel,
       caseArchiveModel,
       caseConfig,
@@ -59,7 +59,7 @@ describe('InternalCaseController - Archive', () => {
     mockFileService = fileService
     mockDefendantService = defendantService
     mockIndictmentCountService = indictmentCountService
-    mockExplanatoryCommentModel = explanatoryCommentModel
+    mockCaseStringModel = caseStringModel
     mockCaseModel = caseModel
     mockCaseArchiveModel = caseArchiveModel
     mockCaseConfig = caseConfig
@@ -90,8 +90,8 @@ describe('InternalCaseController - Archive', () => {
     const caseFileId2 = uuid()
     const indictmentCountId1 = uuid()
     const indictmentCountId2 = uuid()
-    const explanatoryCommentId1 = uuid()
-    const explanatoryCommentId2 = uuid()
+    const caseStringId1 = uuid()
+    const caseStringId2 = uuid()
     const theCase = {
       id: caseId,
       description: 'original_description',
@@ -168,9 +168,9 @@ describe('InternalCaseController - Archive', () => {
       indictmentDeniedExplanation: 'original_indictment_denied_explanation',
       indictmentReturnedExplanation: 'original_indictment_returned_explanation',
       isArchived: false,
-      explanatoryComments: [
-        { id: explanatoryCommentId1, comment: 'original_comment1' },
-        { id: explanatoryCommentId2, comment: 'original_comment2' },
+      caseStrings: [
+        { id: caseStringId1, value: 'original_comment1' },
+        { id: caseStringId2, value: 'original_comment2' },
       ],
     }
     const archive = JSON.stringify({
@@ -240,9 +240,9 @@ describe('InternalCaseController - Archive', () => {
           legalArguments: 'original_legal_arguments2',
         },
       ],
-      explanatoryComments: [
-        { comment: 'original_comment1' },
-        { comment: 'original_comment2' },
+      caseStrings: [
+        { value: 'original_comment1' },
+        { value: 'original_comment2' },
       ],
     })
     const iv = uuid()
@@ -251,9 +251,8 @@ describe('InternalCaseController - Archive', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdateExplanatoryComment =
-        mockExplanatoryCommentModel.update as jest.Mock
-      mockUpdateExplanatoryComment.mockResolvedValueOnce([1])
+      const mockUpdateCaseString = mockCaseStringModel.update as jest.Mock
+      mockUpdateCaseString.mockResolvedValueOnce([1])
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
       const mockUpdate = mockCaseModel.update as jest.Mock
@@ -274,7 +273,7 @@ describe('InternalCaseController - Archive', () => {
           { model: Defendant, as: 'defendants' },
           { model: IndictmentCount, as: 'indictmentCounts' },
           { model: CaseFile, as: 'caseFiles' },
-          { model: ExplanatoryComment, as: 'explanatoryComments' },
+          { model: CaseString, as: 'caseStrings' },
         ],
         order: [
           [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
@@ -284,11 +283,7 @@ describe('InternalCaseController - Archive', () => {
             'ASC',
           ],
           [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
-          [
-            { model: ExplanatoryComment, as: 'explanatoryComments' },
-            'created',
-            'ASC',
-          ],
+          [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
         ],
         where: archiveFilter,
       })
@@ -336,13 +331,13 @@ describe('InternalCaseController - Archive', () => {
         },
         transaction,
       )
-      expect(mockExplanatoryCommentModel.update).toHaveBeenCalledWith(
-        { comment: '' },
-        { where: { id: explanatoryCommentId1, caseId }, transaction },
+      expect(mockCaseStringModel.update).toHaveBeenCalledWith(
+        { value: '' },
+        { where: { id: caseStringId1, caseId }, transaction },
       )
-      expect(mockExplanatoryCommentModel.update).toHaveBeenCalledWith(
-        { comment: '' },
-        { where: { id: explanatoryCommentId2, caseId }, transaction },
+      expect(mockCaseStringModel.update).toHaveBeenCalledWith(
+        { value: '' },
+        { where: { id: caseStringId2, caseId }, transaction },
       )
       expect(CryptoJS.enc.Hex.parse).toHaveBeenCalledWith(iv)
       expect(CryptoJS.AES.encrypt).toHaveBeenCalledWith(

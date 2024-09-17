@@ -61,15 +61,17 @@ export class RegisterNewMachineTemplateService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     const answers = application.answers as unknown as NewMachineAnswers
-    const techInfo = {} as { [key: string]: string | undefined }
+    const techInfo = {} as { [key: string]: string | boolean | undefined }
 
     answers.techInfo.forEach(({ variableName, value }) => {
       if (variableName && value) {
-        techInfo[variableName] = value
+        techInfo[variableName] =
+          value === 'yes' ? true : value === 'no' ? false : value
       }
     })
 
     await this.workMachineClientService.addNewMachine(auth, {
+      xCorrelationID: application.id,
       machineRegistrationCreateDto: {
         importer: {
           nationalId: answers.importerInformation.importer.nationalId,
@@ -83,20 +85,20 @@ export class RegisterNewMachineTemplateService extends BaseTemplateApiService {
           email: answers.importerInformation.importer.email,
         },
         owner:
-          answers.importerInformation.isOwnerOtherThanImporter === 'yes'
+          answers.ownerInformation.isOwnerOtherThanImporter === 'yes'
             ? {
-                nationalId: answers.importerInformation.owner?.nationalId ?? '',
-                name: answers.importerInformation.owner?.name ?? '',
-                address: answers.importerInformation.owner?.address ?? '',
-                postalCode: answers.importerInformation.owner?.postCode
-                  ? parseInt(answers.importerInformation.owner?.postCode, 10)
+                nationalId: answers.ownerInformation.owner?.nationalId ?? '',
+                name: answers.ownerInformation.owner?.name ?? '',
+                address: answers.ownerInformation.owner?.address ?? '',
+                postalCode: answers.ownerInformation.owner?.postCode
+                  ? parseInt(answers.ownerInformation.owner?.postCode, 10)
                   : 0,
-                gsm: answers.importerInformation.owner?.phone ?? '',
-                email: answers.importerInformation.owner?.email ?? '',
+                gsm: answers.ownerInformation.owner?.phone ?? '',
+                email: answers.ownerInformation.owner?.email ?? '',
               }
             : undefined,
         supervisor:
-          answers.operatorInformation.hasOperator === 'yes'
+          answers.operatorInformation?.hasOperator === 'yes'
             ? {
                 nationalId:
                   answers.operatorInformation.operator?.nationalId ?? '',
