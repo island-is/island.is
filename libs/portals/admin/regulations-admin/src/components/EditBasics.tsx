@@ -8,9 +8,10 @@ import {
   Button,
   AlertMessage,
   AlertBanner,
+  Select,
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
-import { editorMsgs as msg, errorMsgs } from '../lib/messages'
+import { editorMsgs as msg, errorMsgs, m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
@@ -32,7 +33,7 @@ const updateText =
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
-  const { draft, actions } = useDraftingState()
+  const { draft, actions, ministries } = useDraftingState()
   const [editorKey, setEditorKey] = useState('initial')
   const [titleError, setTitleError] = useState<string | undefined>(undefined)
   const [hasUpdated, setHasUpdated] = useState<boolean>(false)
@@ -127,6 +128,8 @@ export const EditBasics = () => {
     setHasUpdated(true)
   }
 
+  console.log('draft.ministry.error', draft.ministry.error)
+  console.log('draft.ministry.showError', draft.ministry.showError)
   return (
     <>
       <Box marginBottom={3}>
@@ -162,13 +165,15 @@ export const EditBasics = () => {
             label={t(msg.text)}
             startExpanded={startTextExpanded}
           >
-            <Box marginBottom={3}>
-              <AlertBanner
-                description={t(msg.diffPrecisionWarning)}
-                variant="info"
-                dismissable
-              />
-            </Box>
+            {draft.type.value === RegulationDraftTypes.amending ? (
+              <Box marginBottom={3}>
+                <AlertBanner
+                  description={t(msg.diffPrecisionWarning)}
+                  variant="info"
+                  dismissable
+                />
+              </Box>
+            ) : undefined}
             <Box marginBottom={3}>
               <EditorInput
                 key={editorKey} // Force re-render of TinyMCE
@@ -224,7 +229,7 @@ export const EditBasics = () => {
               <Divider />
               {' '}
             </Box>
-            {draft.signedDocumentUrl.value && (
+            {draft.signedDocumentUrl.value ? (
               <Box marginBottom={[4, 4, 6]}>
                 <EditorInput
                   label={t(msg.signatureText)}
@@ -234,6 +239,35 @@ export const EditBasics = () => {
                   readOnly
                 />
               </Box>
+            ) : (
+              <Select
+                size="sm"
+                label={t(m.regulationAdminMinistries)}
+                name="setMinistry"
+                isSearchable
+                value={
+                  draft.ministry.value
+                    ? {
+                        value: draft.ministry.value,
+                        label: draft.ministry.value,
+                      }
+                    : undefined
+                }
+                placeholder={t(m.regulationAdminMinistries)}
+                options={ministries.map((ministry) => ({
+                  value: ministry.name,
+                  label: ministry.name,
+                }))}
+                required={false}
+                onChange={(option) => actions.setMinistry(option?.value)}
+                backgroundColor="white"
+                hasError={
+                  draft.ministry.showError &&
+                  !!draft.ministry.error &&
+                  t(draft.ministry.error) !== t(errorMsgs.fieldRequired)
+                }
+                errorMessage={draft.ministry.error && t(draft.ministry.error)}
+              />
             )}
           </AccordionItem>
         </Accordion>
