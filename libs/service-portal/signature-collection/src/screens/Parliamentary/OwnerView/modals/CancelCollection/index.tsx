@@ -3,7 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../../../../lib/messages'
 import { Modal } from '@island.is/service-portal/core'
 import { useState } from 'react'
-import { useGetCurrentCollection, useIsOwner } from '../../../../../hooks'
+import { useGetCurrentCollection } from '../../../../../hooks'
 import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../../../hooks/graphql/mutations'
 import { SignatureCollectionSuccess } from '@island.is/api/schema'
@@ -12,14 +12,13 @@ const CancelCollection = ({ listId }: { listId: string }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  const { refetchIsOwner } = useIsOwner()
   const { currentCollection } = useGetCurrentCollection()
   const [cancelCollection, { loading }] =
     useMutation<SignatureCollectionSuccess>(cancelCollectionMutation, {
       variables: {
         input: {
           collectionId: currentCollection?.id,
-          listIds: listId,
+          listIds: [listId],
         },
       },
     })
@@ -35,7 +34,6 @@ const CancelCollection = ({ listId }: { listId: string }) => {
       ) {
         toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
         setModalIsOpen(false)
-        refetchIsOwner()
       } else {
         toast.error(formatMessage(m.cancelCollectionModalToastError))
         setModalIsOpen(false)

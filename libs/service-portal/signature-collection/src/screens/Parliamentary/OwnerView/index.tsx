@@ -39,22 +39,25 @@ const OwnerView = ({
               color="blue400"
             />
           </Text>
-          <AddConstituency lists={listsForOwner} />
+          {/* If the number of lists is equal to 6, it means that
+          lists have been created in all of the constituencies */}
+          {listsForOwner.length < 6 && (
+            <AddConstituency lists={listsForOwner} />
+          )}
         </Box>
         {loadingOwnerLists ? (
           <Box marginTop={2}>
             <OwnerParliamentarySkeleton />
           </Box>
         ) : (
-          listsForOwner.map((list: SignatureCollectionList, index: number) => (
-            <Box key={index} marginTop={3}>
+          listsForOwner.map((list: SignatureCollectionList) => (
+            <Box key={list.id} marginTop={3}>
               <ActionCard
-                key={index}
                 backgroundColor="white"
                 heading={list.title}
                 progressMeter={{
                   currentProgress: list.numberOfSignatures || 0,
-                  maxProgress: list.area.min,
+                  maxProgress: list.area?.min || 0,
                   withLabel: true,
                 }}
                 cta={{

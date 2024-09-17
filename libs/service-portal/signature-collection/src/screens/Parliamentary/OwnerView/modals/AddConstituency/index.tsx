@@ -13,6 +13,9 @@ const AddConstituencyModal = ({
 }) => {
   const { formatMessage } = useLocale()
   const listTitles = lists.map((l) => l.title)
+  const filteredConstituencies = constituencies.filter(
+    (c) => !listTitles.some((title) => title.includes(c)),
+  )
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [selectedConstituencies, setSelectedConstituencies] = useState<
     string[]
@@ -46,16 +49,13 @@ const AddConstituencyModal = ({
           <Text marginBottom={5} variant="default">
             {formatMessage(m.addConstituencyDescription)}
           </Text>
-          {constituencies.map((constituency) => (
+          {filteredConstituencies.map((constituency) => (
             <Box key={constituency} marginBottom={3}>
               <Checkbox
                 large
                 backgroundColor="blue"
                 label={constituency}
                 value={constituency}
-                disabled={listTitles.some((title) =>
-                  title.includes(constituency),
-                )}
                 checked={selectedConstituencies.includes(constituency)}
                 onChange={(e) => {
                   if (e.target.checked) {
