@@ -20,7 +20,7 @@ export const startWithBff = async (
 
     const envVars: NodeJS.ProcessEnv = {
       NODE_ENV: 'development',
-      NODE_OPTIONS: '--max-old-space-size=4096',
+      NODE_OPTIONS: '--max-old-space-size=8192',
     }
     startProcess('yarn', processArgs, envVars)
   } catch (error) {
