@@ -34,7 +34,6 @@ interface AlertProps {
   sharedAnimatedValue?: any
   hasBorder?: boolean
   hasBottomBorder?: boolean
-  small?: boolean
 }
 
 interface HostProps {
@@ -42,7 +41,6 @@ interface HostProps {
   borderColor: Colors
   hasBorder?: boolean
   hasBottomBorder?: boolean
-  small?: boolean
 }
 
 type VariantStyle = {
@@ -68,8 +66,7 @@ const darkBackgroundColor = (color: string, colors: any) => {
 }
 
 const Host = styled.View<HostProps>`
-  padding: ${({ theme, small }) =>
-    small ? theme.spacing[1] : theme.spacing[2]}px;
+  padding: ${({ theme }) => theme.spacing[2]}px;
 
   border-style: solid;
   border-color: ${dynamicColor((props) => ({
@@ -103,9 +100,8 @@ const Icon = styled.View`
   align-self: flex-start;
 `
 
-const Content = styled.View<{ small: boolean }>`
-  padding-right: ${({ theme, small }) =>
-    small ? theme.spacing.smallGutter : theme.spacing[2]}px;
+const Content = styled.View`
+  padding-right: ${({ theme }) => theme.spacing[2]}px;
   flex: 1;
 `
 
@@ -159,7 +155,6 @@ export function Alert({
   sharedAnimatedValue,
   hasBorder,
   hasBottomBorder,
-  small = false,
   ...rest
 }: AlertProps) {
   const theme = useTheme()
@@ -189,7 +184,6 @@ export function Alert({
       borderColor={variant.borderColor}
       hasBorder={hasBorder}
       hasBottomBorder={hasBottomBorder}
-      small={small}
       {...rest}
     >
       <Container>
@@ -198,20 +192,18 @@ export function Alert({
             <Image
               source={variant.icon}
               style={{
-                width: small ? 16 : 32,
-                height: small ? 16 : 32,
-                marginRight: small ? 4 : 16,
+                width: 32,
+                height: 32,
+                marginRight: 16,
               }}
             />
           </Icon>
         )}
 
         {message && (
-          <Content small={small}>
+          <Content>
             {title && <Title variant="heading5">{title}</Title>}
-            <Typography variant="body3" weight={small ? 600 : 400}>
-              {message}
-            </Typography>
+            <Typography variant="body3">{message}</Typography>
           </Content>
         )}
 
