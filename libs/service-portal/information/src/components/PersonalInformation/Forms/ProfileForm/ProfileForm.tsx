@@ -64,7 +64,6 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const [telDirty, setTelDirty] = useState(true)
   const [emailDirty, setEmailDirty] = useState(true)
   const [internalLoading, setInternalLoading] = useState(false)
-  const [showPaperMail, setShowPaperMail] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
   const [v2UserProfileEnabled, setV2UserProfileEnabled] = useState(false)
   const { deleteIslykillValue, loading: deleteLoading } =
@@ -102,23 +101,6 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
       window.location.toString(),
     )}`
   }
-
-  const isFlagEnabled = async () => {
-    const ffEnabled = await featureFlagClient.getValue(
-      `isServicePortalPaperMailSettingsEnabled`,
-      false,
-    )
-
-    if (ffEnabled) {
-      setShowPaperMail(ffEnabled as boolean)
-    }
-  }
-
-  /* Should show the paper mail settings? */
-  useEffect(() => {
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   useEffect(() => {
     if (setFormLoading) {
@@ -312,7 +294,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
               )}
             </InputSection>
           )}
-          {showDetails && showPaperMail && (
+          {showDetails && (
             <InputSection
               title={formatMessage(m.requestPaperMailTitle)}
               loading={userLoading}
