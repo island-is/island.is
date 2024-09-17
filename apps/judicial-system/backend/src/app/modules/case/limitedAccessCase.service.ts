@@ -216,6 +216,7 @@ export const include: Includeable[] = [
     required: false,
     where: { stringType: { [Op.in]: stringTypes } },
   },
+  { model: Case, as: 'mergeCase', attributes },
 ]
 
 export const order: OrderItem[] = [
