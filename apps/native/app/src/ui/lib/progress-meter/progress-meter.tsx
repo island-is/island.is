@@ -22,8 +22,8 @@ const InnerHost = styled.View`
 export type ProgressMeterVariant = 'blue' | 'red' | 'rose' | 'mint'
 
 interface ProgressMeterProps {
-  draftTotalSteps: number
-  draftFinishedSteps: number
+  totalSteps: number
+  finishedSteps: number
   containerWidth?: number
   variant?: ProgressMeterVariant
   progressMessage?: string
@@ -53,26 +53,25 @@ const colorSchemes = {
 } as const
 
 export const ProgressMeter = ({
-  draftFinishedSteps,
-  draftTotalSteps,
+  finishedSteps,
+  totalSteps,
   progressMessage,
   containerWidth,
   variant = 'blue',
 }: ProgressMeterProps) => {
   const theme = useTheme()
-  const steps = Array.from(Array(draftTotalSteps ?? 1).keys())
+  const steps = Array.from(Array(totalSteps ?? 1).keys())
   const allowedWidth = containerWidth ?? screenWidth - theme.spacing[2] * 4
 
-  if (!draftTotalSteps) {
+  if (!totalSteps) {
     return
   }
-
   // Take into account padding in each end and between each step
   const stepWidth =
     (allowedWidth -
       theme.spacing.smallGutter * 2 -
-      draftTotalSteps * theme.spacing.smallGutter) /
-    draftTotalSteps
+      totalSteps * theme.spacing.smallGutter) /
+    totalSteps
 
   return (
     <>
@@ -84,7 +83,7 @@ export const ProgressMeter = ({
             <View
               style={{
                 backgroundColor:
-                  draftFinishedSteps > i
+                  finishedSteps > i
                     ? theme.color[colorSchemes[variant].inner]
                     : theme.color[colorSchemes[variant].unfinished],
                 borderRadius: 8,
