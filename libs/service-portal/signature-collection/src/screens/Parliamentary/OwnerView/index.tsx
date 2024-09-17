@@ -14,10 +14,25 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import AddConstituency from './modals/AddConstituency'
 import DeletePerson from './modals/DeletePerson'
+import {
+  useGetListsForOwner,
+  useGetListsForUser,
+  useIsOwner,
+} from '../../../hooks'
+import { useAuth } from '@island.is/auth/react'
+import { SignatureCollection } from '@island.is/api/schema'
 
-const OwnerView = () => {
+const OwnerView = ({
+  currentCollection,
+}: {
+  currentCollection: SignatureCollection
+}) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
+  const { userInfo: user } = useAuth()
+  const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
+    currentCollection?.id || '',
+  )
 
   return (
     <Stack space={8}>

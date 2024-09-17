@@ -457,4 +457,7 @@ export class Case {
 
   @Field(() => [CivilClaimant], { nullable: true })
   readonly civilClaimants?: CivilClaimant[]
+
+  @Field(() => String, { nullable: true })
+  readonly civilDemands?: string
 }

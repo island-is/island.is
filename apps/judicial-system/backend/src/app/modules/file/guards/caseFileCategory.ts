@@ -1,4 +1,14 @@
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CaseState,
+  CaseType,
+  isCompletedCase,
+  isDefenceUser,
+  isIndictmentCase,
+  isPrisonAdminUser,
+  isRequestCase,
+  User,
+} from '@island.is/judicial-system/types'
 
 export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
   CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
@@ -12,7 +22,7 @@ export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
   CaseFileCategory.APPEAL_COURT_RECORD,
 ]
 
-export const defenderCaseFileCategoriesForIndictmentCases = [
+const defenderCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
   CaseFileCategory.INDICTMENT,
@@ -23,7 +33,47 @@ export const defenderCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.DEFENDANT_CASE_FILE,
 ]
 
-export const prisonAdminCaseFileCategories = [
+const prisonAdminCaseFileCategories = [
   CaseFileCategory.APPEAL_RULING,
   CaseFileCategory.RULING,
 ]
+
+export const canLimitedAcccessUserViewCaseFile = (
+  user: User,
+  caseType: CaseType,
+  caseState: CaseState,
+  caseFileCategory?: CaseFileCategory,
+) => {
+  if (!caseFileCategory) {
+    return false
+  }
+
+  if (isDefenceUser(user)) {
+    if (
+      isRequestCase(caseType) &&
+      isCompletedCase(caseState) &&
+      defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
+        caseFileCategory,
+      )
+    ) {
+      return true
+    }
+
+    if (
+      isIndictmentCase(caseType) &&
+      defenderCaseFileCategoriesForIndictmentCases.includes(caseFileCategory)
+    ) {
+      return true
+    }
+  }
+
+  if (
+    isPrisonAdminUser(user) &&
+    isCompletedCase(caseState) &&
+    prisonAdminCaseFileCategories.includes(caseFileCategory)
+  ) {
+    return true
+  }
+
+  return false
+}
