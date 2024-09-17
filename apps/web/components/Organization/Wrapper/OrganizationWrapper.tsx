@@ -183,7 +183,11 @@ export const getThemeConfig = (
       ? 'organization'
       : 'default'
 
-  if (blueberryThemes.includes(theme ?? '') && !usingDefaultHeader)
+  if (lightThemes.includes(theme ?? '') || usingDefaultHeader) {
+    return { themeConfig: { footerVersion } }
+  }
+
+  if (blueberryThemes.includes(theme ?? ''))
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
@@ -191,7 +195,7 @@ export const getThemeConfig = (
         footerVersion,
       },
     }
-  if (darkThemes.includes(theme ?? '') && !usingDefaultHeader) {
+  if (darkThemes.includes(theme ?? '')) {
     return {
       themeConfig: {
         headerColorScheme: 'dark',
@@ -199,10 +203,6 @@ export const getThemeConfig = (
         footerVersion,
       },
     }
-  }
-
-  if (lightThemes.includes(theme ?? '') || usingDefaultHeader) {
-    return { themeConfig: { footerVersion } }
   }
 
   return {
