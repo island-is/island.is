@@ -105,7 +105,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
     (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
   )
 
-  console.log(civilClaims)
   return (
     <>
       {displayHeading && (
