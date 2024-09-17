@@ -838,12 +838,12 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Meðlag',
     description: 'Niðurstöðuskjár, Meðlag',
   },
-  'REIKNH.PERSAFSLMINNA	': {
+  'REIKNH.PERSAFSLMINNA': {
     id: 'web.pensionCalculator:REIKNH.PERSAFSLMINNA',
     defaultMessage: 'Persónuafsláttur',
     description: 'Niðurstöðuskjár, Persónuafsláttur minna',
   },
-  'REIKNH.SAMANBBOTAFLOKKUR	': {
+  'REIKNH.SAMANBBOTAFLOKKUR': {
     id: 'web.pensionCalculator:REIKNH.SAMANBBOTAFLOKKUR',
     defaultMessage: 'Samanburðarbótaflokkur við eldra kerfi',
     description: 'Niðurstöðuskjár, Samanburðarbótaflokkur við eldra kerfi ',
