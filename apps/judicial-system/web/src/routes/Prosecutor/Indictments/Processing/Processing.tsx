@@ -41,6 +41,7 @@ import { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/s
 import {
   useCase,
   useDefendants,
+  useNationalRegistry,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useCivilClaimants from '@island.is/judicial-system-web/src/utils/hooks/useCivilClaimants'
@@ -129,11 +130,8 @@ const Processing: FC = () => {
     [updateCivilClaimant, setWorkingCase, updateCivilClaimantState],
   )
 
-  const { data } = useSWR<NationalRegistryResponsePerson>(
-    civilClaimantNationalIdUpdate?.nationalId
-      ? `/api/nationalRegistry/getPersonByNationalId?nationalId=${civilClaimantNationalIdUpdate.nationalId}`
-      : null,
-    fetcher,
+  const { personData, personError } = useNationalRegistry(
+    civilClaimantNationalIdUpdate?.nationalId,
   )
 
   const handleCreateCivilClaimantClick = async () => {
@@ -189,16 +187,25 @@ const Processing: FC = () => {
       nationalId: cleanNationalId,
       civilClaimantId,
     })
+  }
 
-    const updatedData = await mutate<NationalRegistryResponsePerson>(
-      `/api/nationalRegistry/getPersonByNationalId?nationalId=${cleanNationalId}`,
-      undefined,
-      true,
-    )
-
-    if (!updatedData || !updatedData.items) {
+  const handleCivilClaimantNameBlur = async (
+    name: string,
+    civilClaimantId?: string | null,
+  ) => {
+    if (!civilClaimantId) {
       return
     }
+
+    const civilClaimantToUpdate = workingCase.civilClaimants?.find(
+      (c) => c.id === civilClaimantId,
+    )
+
+    if (civilClaimantToUpdate?.name === name) {
+      return
+    }
+
+    updateCivilClaimant({ name, civilClaimantId, caseId: workingCase.id })
   }
 
   const removeAllCivilClaimants = useCallback(async () => {
@@ -242,37 +249,19 @@ const Processing: FC = () => {
   }, [addCivilClaimant, workingCase.civilClaimants, workingCase.hasCivilClaims])
 
   useEffect(() => {
-    if (
-      !data ||
-      !data.items ||
-      data.items === undefined ||
-      data.items.length === 0
-    ) {
+    if (!personData || !personData.items) {
       return
     }
 
-    const civilClaimantToUpdate = workingCase.civilClaimants?.filter(
-      (c) =>
-        data.items && c.id === civilClaimantNationalIdUpdate?.civilClaimantId,
-    )
-
-    if (!civilClaimantToUpdate || !civilClaimantToUpdate[0].id) {
-      return
-    }
-
-    updateCivilClaimant({
+    const update = {
       caseId: workingCase.id,
-      civilClaimantId: civilClaimantToUpdate[0].id,
-      nationalId: data.items[0].kennitala,
-      name: data.items[0].name,
-    })
-  }, [
-    civilClaimantNationalIdUpdate?.civilClaimantId,
-    data,
-    updateCivilClaimant,
-    workingCase.civilClaimants,
-    workingCase.id,
-  ])
+      civilClaimantId: civilClaimantNationalIdUpdate?.civilClaimantId || '',
+      name: personData?.items[0].name,
+      nationalId: personData.items[0].kennitala,
+    }
+
+    handleUpdateCivilClaimant(update)
+  }, [personData])
 
   return (
     <PageLayout
@@ -422,7 +411,7 @@ const Processing: FC = () => {
         {workingCase.hasCivilClaims && (
           <>
             {workingCase.civilClaimants?.map((civilClaimant) => (
-              <Box component="section" marginBottom={5}>
+              <Box component="section" marginBottom={5} key={civilClaimant.id}>
                 <SectionHeading title={formatMessage(strings.civilClaimant)} />
                 <BlueBox>
                   <Box marginBottom={2}>
@@ -439,7 +428,16 @@ const Processing: FC = () => {
                     <InputNationalId
                       isDateOfBirth={false}
                       value={civilClaimant.nationalId ?? undefined}
-                      onChange={(val) => console.log('change', val)}
+                      onChange={(val) => {
+                        updateCivilClaimantState(
+                          {
+                            caseId: workingCase.id,
+                            civilClaimantId: civilClaimant.id ?? '',
+                            nationalId: val,
+                          },
+                          setWorkingCase,
+                        )
+                      }}
                       onBlur={(val) =>
                         handleCivilClaimantNationalIdBlur(val, civilClaimant.id)
                       }
@@ -447,8 +445,9 @@ const Processing: FC = () => {
                   </Box>
                   <InputName
                     value={civilClaimant.name ?? undefined}
-                    onChange={(val) => console.log('change', val)}
-                    onBlur={(val) => console.log('blur', val)}
+                    onBlur={(val) =>
+                      handleCivilClaimantNameBlur(val, civilClaimant.id)
+                    }
                   />
                   <Box display="flex" justifyContent="flexEnd" marginTop={2}>
                     <Button

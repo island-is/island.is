@@ -44,9 +44,10 @@ const InputNationalId: FC<Props> = (props) => {
 
   const handleChange = (evt: ChangeEvent<HTMLInputElement>) => {
     setInputValue(evt.target.value)
-    onChange(inputValue)
+    onChange && onChange(inputValue)
   }
 
+  console.log(inputValue, value)
   return (
     <InputMask
       // eslint-disable-next-line local-rules/disallow-kennitalas

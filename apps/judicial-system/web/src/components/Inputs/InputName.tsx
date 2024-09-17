@@ -32,7 +32,7 @@ const InputName: FC<InputProps> = (props) => {
     evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setInputValue(evt.target.value)
-    onChange(inputValue)
+    onChange && onChange(inputValue)
   }
 
   return (
@@ -46,7 +46,7 @@ const InputName: FC<InputProps> = (props) => {
       hasError={errorMessage !== undefined}
       onChange={handleChange}
       onBlur={handleBlur}
-      value={value}
+      value={inputValue}
     />
   )
 }

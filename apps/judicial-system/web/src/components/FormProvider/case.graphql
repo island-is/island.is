@@ -317,6 +317,7 @@ query Case($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
       isLawyer
+      nationalId
     }
     civilDemands
     hasCivilClaims

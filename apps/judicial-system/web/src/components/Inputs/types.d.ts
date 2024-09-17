@@ -1,6 +1,6 @@
 export interface InputProps {
-  onChange: (value: string) => void
   onBlur: (value: string) => void
+  onChange?: (value: string) => void
   disabled?: boolean
   value?: string
 
