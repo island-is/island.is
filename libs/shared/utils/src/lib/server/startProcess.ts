@@ -19,7 +19,7 @@ export const startProcess = (
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
-      env: env || process.env,
+      env: { ...process.env, ...env },
       // Use pipe for stdout and stderr to make sure that logs don't log inlined.
       stdio: ['inherit', 'pipe', 'pipe'],
       shell: true,
