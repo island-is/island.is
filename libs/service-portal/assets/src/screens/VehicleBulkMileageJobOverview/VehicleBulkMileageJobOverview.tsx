@@ -1,4 +1,4 @@
-import { Box, Table as T } from '@island.is/island-ui/core'
+import { Box, Table as T, Tag } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
@@ -12,6 +12,9 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useGetRequestsStatusQuery } from './VehicleBulkMileageJobOverview.generated'
 import { VehiclesBulkMileageRegistrationJob } from '@island.is/api/schema'
 import { AssetsPaths } from '../../lib/paths'
+import { vehicleMessage } from '@island.is/service-portal/assets/messages'
+
+const DATE_FORMAT = 'dd.MM.yyyy - HH:mm'
 
 const VehicleBulkMileageUploadJobOverview = () => {
   useNamespaces('sp.vehicles')
@@ -26,7 +29,7 @@ const VehicleBulkMileageUploadJobOverview = () => {
     <Box>
       <IntroHeader
         title={m.vehiclesBulkMileageJobOverview}
-        intro={'Hér geturu skoðað allar innsendar magnkílómetraskráningar'}
+        intro={m.vehiclesBulkMileageJobOverviewDescription}
         serviceProviderSlug={SAMGONGUSTOFA_SLUG}
         serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       />
@@ -35,9 +38,15 @@ const VehicleBulkMileageUploadJobOverview = () => {
         <T.Table>
           <T.Head>
             <T.Row>
-              <T.HeadData>{'Verkinnsending'}</T.HeadData>
-              <T.HeadData>{'Verkupphaf'}</T.HeadData>
-              <T.HeadData>{'Verklok'}</T.HeadData>
+              <T.HeadData>
+                {formatMessage(vehicleMessage.jobSubmitted)}
+              </T.HeadData>
+              <T.HeadData>
+                {formatMessage(vehicleMessage.jobStarted)}
+              </T.HeadData>
+              <T.HeadData>
+                {formatMessage(vehicleMessage.jobFinished)}
+              </T.HeadData>
               <T.HeadData></T.HeadData>
             </T.Row>
           </T.Head>
@@ -45,13 +54,31 @@ const VehicleBulkMileageUploadJobOverview = () => {
             {jobs.map((j) => (
               <T.Row>
                 <T.Data>
-                  {j.dateRequested ? formatDate(j.dateRequested) : '-'}
+                  {j.dateRequested
+                    ? formatDate(j.dateRequested, DATE_FORMAT)
+                    : '-'}
                 </T.Data>
                 <T.Data>
-                  {j.dateStarted ? formatDate(j.dateStarted) : '-'}
+                  {j.dateStarted ? (
+                    formatDate(j.dateStarted, DATE_FORMAT)
+                  ) : j.dateRequested ? (
+                    <Tag outlined whiteBackground variant="blue">
+                      {formatMessage(vehicleMessage.jobNotStarted)}
+                    </Tag>
+                  ) : (
+                    ''
+                  )}
                 </T.Data>
                 <T.Data>
-                  {j.dateFinished ? formatDate(j.dateFinished) : '-'}
+                  {j.dateFinished ? (
+                    formatDate(j.dateFinished, DATE_FORMAT)
+                  ) : j.dateStarted ? (
+                    <Tag outlined whiteBackground variant="blue">
+                      {formatMessage(vehicleMessage.jobInProgress)}
+                    </Tag>
+                  ) : (
+                    ''
+                  )}
                 </T.Data>
 
                 <T.Data>
@@ -61,7 +88,7 @@ const VehicleBulkMileageUploadJobOverview = () => {
                       ':id',
                       j.guid,
                     )}
-                    text={'Skoða verk'}
+                    text={formatMessage(vehicleMessage.goToJob)}
                     variant="text"
                   />
                 </T.Data>
@@ -71,7 +98,10 @@ const VehicleBulkMileageUploadJobOverview = () => {
         </T.Table>
       )}
       {!error && (loading || !jobs.length) && (
-        <EmptyTable loading={loading} message={'Engin verk fundust'} />
+        <EmptyTable
+          loading={loading}
+          message={formatMessage(vehicleMessage.noJobsFound)}
+        />
       )}
     </Box>
   )

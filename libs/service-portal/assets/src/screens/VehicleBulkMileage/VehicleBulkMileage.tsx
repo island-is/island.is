@@ -1,4 +1,4 @@
-import { Stack, Pagination, Text, Box } from '@island.is/island-ui/core'
+import { Stack, Pagination, Text, Box, Inline } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m,
@@ -7,7 +7,7 @@ import {
   LinkButton,
 } from '@island.is/service-portal/core'
 import { dummy } from './mocks/propsDummy'
-import { vehicleMessage as messages } from '../../lib/messages'
+import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'
 import { useEffect, useState } from 'react'
 import VehicleBulkMileageTable from './VehicleBulkMileageTable'
@@ -71,21 +71,6 @@ const VehicleBulkMileage = () => {
     })
   }, [pageSize, page])
 
-  const onFileUploadComplete = (records: Array<MileageRecord>) => {
-    const newVehicles = vehicles.map((v) => {
-      const matchedVehicle = records.find((m) => m.vehicleId === v.vehicleId)
-      if (matchedVehicle) {
-        return {
-          ...v,
-          mileageUploadedFromFile: matchedVehicle.mileage,
-        }
-      }
-
-      return v
-    })
-    setVehicles(newVehicles)
-  }
-
   const updateVehicleStatus = async (
     status: SubmissionState,
     vehicleId: string,
@@ -128,13 +113,20 @@ const VehicleBulkMileage = () => {
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
         />
         <Stack space={4}>
-          <Box display="flex" justifyContent="spaceBetween">
+          <Inline space={2}>
             <LinkButton
               to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
-              text={'Magnskrá kílómetrastöðu'}
+              text={formatMessage(vehicleMessage.bulkPostMileage)}
+              icon="arrowUp"
               variant="utility"
             />
-          </Box>
+            <LinkButton
+              to={AssetsPaths.AssetsVehiclesBulkMileageJobOverview}
+              text={formatMessage(vehicleMessage.jobOverview)}
+              icon="document"
+              variant="utility"
+            />
+          </Inline>
           <VehicleBulkMileageTable
             updateVehicleStatus={updateVehicleStatus}
             vehicles={vehicles}

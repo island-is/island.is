@@ -1,6 +1,7 @@
 import {
   InputFileUpload,
   Box,
+  Text,
   UploadFile,
   fileToObject,
   AlertMessage,
@@ -24,6 +25,8 @@ import { parseCsvToMileageRecord } from '../../utils/parseCsvToMileage'
 import { Problem } from '@island.is/react-spa/shared'
 import { AssetsPaths } from '../../lib/paths'
 import { useVehicleBulkMileagePostMutation } from './VehicleBulkMileageUpload.generated'
+import VehicleBulkMileageFileDownloader from '../VehicleBulkMileage/VehicleBulkMileageFileDownloader'
+import { vehicleMessage } from '@island.is/service-portal/assets/messages'
 
 const VehicleBulkMileageUpload = () => {
   useNamespaces('sp.vehicles')
@@ -82,28 +85,12 @@ const VehicleBulkMileageUpload = () => {
     <Box>
       <IntroHeader
         title={m.vehiclesBulkMileageUpload}
-        intro={'Hér geturu hlaðið upp skjaldi til að magnskrá kílómetrastöður'}
+        intro={m.vehiclesBulkMileageUploadDescription}
         serviceProviderSlug={SAMGONGUSTOFA_SLUG}
         serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       >
         <Box marginTop={2}>
-          <Inline space={2}>
-            <LinkButton
-              to={AssetsPaths.AssetsVehiclesBulkMileageJobOverview}
-              text={'Skoða runuverkayfirlit'}
-              variant="utility"
-            />
-            <LinkButton
-              disabled={!requestGuid}
-              to={AssetsPaths.AssetsVehiclesBulkMileageJobDetail.replace(
-                ':id',
-                //this is known since the button is disabled if there's no id
-                requestGuid as string,
-              )}
-              text={'Skoða stöðu runuverks'}
-              variant="utility"
-            />
-          </Inline>
+          <VehicleBulkMileageFileDownloader />
         </Box>
       </IntroHeader>
 
@@ -112,7 +99,7 @@ const VehicleBulkMileageUpload = () => {
         {data?.vehicleBulkMileagePost?.errorMessage && !loading && !error && (
           <AlertMessage
             type="warning"
-            title="Upphleðsla mistókst"
+            title={formatMessage(vehicleMessage.uploadFailed)}
             message={data.vehicleBulkMileagePost.errorMessage}
           />
         )}
@@ -122,17 +109,35 @@ const VehicleBulkMileageUpload = () => {
           !error && (
             <AlertMessage
               type="success"
-              title="Upphleðsla tókst"
-              message={'Skoða má stöðu upphleðslu á magnskráningarsíðu'}
+              title={formatMessage(vehicleMessage.uploadSuccess)}
+              message={
+                <Box>
+                  <Text variant="small">
+                    {formatMessage(vehicleMessage.bulkMileageUploadStatus)}
+                  </Text>
+                  <Box marginTop="smallGutter">
+                    <LinkButton
+                      to={AssetsPaths.AssetsVehiclesBulkMileageJobDetail.replace(
+                        ':id',
+                        data?.vehicleBulkMileagePost?.requestId ?? '',
+                      )}
+                      text={formatMessage(vehicleMessage.openJob)}
+                      variant="text"
+                      icon="arrowForward"
+                    />
+                  </Box>
+                </Box>
+              }
             />
           )}
         <InputFileUpload
           fileList={uploadedFile ? [uploadedFile] : []}
           showFileSize
-          header={'Senda inn runuverksskrá'}
+          header={formatMessage(vehicleMessage.dragFileToUpload)}
+          description={formatMessage(vehicleMessage.fileUploadAcceptedTypes)}
           disabled={!!data?.vehicleBulkMileagePost?.errorMessage}
-          buttonLabel="Hlaða upp .csv skrá"
-          accept={'.csv'}
+          buttonLabel={formatMessage(vehicleMessage.selectFileToUpload)}
+          accept={['.csv', '.xls']}
           multiple={false}
           onRemove={handleOnInputFileUploadRemove}
           onChange={handleOnInputFileUploadChange}

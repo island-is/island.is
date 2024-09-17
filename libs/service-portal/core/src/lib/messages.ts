@@ -313,13 +313,22 @@ export const m = defineMessages({
     id: 'service.portal:vehicles-bulk-mileage-upload',
     defaultMessage: 'Magnskrá með skjali',
   },
+  vehiclesBulkMileageUploadDescription: {
+    id: 'service.portal:vehicles-bulk-mileage-upload-description',
+    defaultMessage:
+      'Hér geturu hlaðið upp skjali til að magnskrá kílómetrastöður',
+  },
   vehiclesBulkMileageJobOverview: {
     id: 'service.portal:vehicles-bulk-mileage-job-overview',
-    defaultMessage: 'Yfirlit kílómetraskráningarunuverka',
+    defaultMessage: 'Yfirlit skráninga',
+  },
+  vehiclesBulkMileageJobOverviewDescription: {
+    id: 'service.portal:vehicles-bulk-mileage-job-overview',
+    defaultMessage: 'Yfirlit yfir skráða kílómetrastöðu',
   },
   vehiclesBulkMileageJobDetail: {
     id: 'service.portal:vehicles-bulk-mileage-job-detail',
-    defaultMessage: 'Staða kílómetraskráningarrunuverks',
+    defaultMessage: 'Magnskráning',
   },
   vehiclesBulkMileageJobRegistration: {
     id: 'service.portal:vehicles-bulk-mileage-job-registration',

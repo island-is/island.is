@@ -124,7 +124,7 @@ export const VehicleBulkMileageRow = ({ vehicle, onSave }: Props) => {
       {error ? (
         <AlertMessage
           type="error"
-          message="Eitthvað fór úrskeiðis við að sækja gögn"
+          message={formatMessage(messages.mileageHistoryFetchFailed)}
         />
       ) : (
         <NestedFullTable
@@ -135,7 +135,7 @@ export const VehicleBulkMileageRow = ({ vehicle, onSave }: Props) => {
             formatMessage(vehicleMessage.odometer),
           ]}
           loading={loading}
-          emptyMessage="Engar fyrri skráningar fundust"
+          emptyMessage={formatMessage(messages.mileageHistoryNotFound)}
           data={
             data?.vehiclesMileageRegistrationHistory?.mileageRegistrationHistory?.map(
               (r) => [

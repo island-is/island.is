@@ -54,35 +54,28 @@ const VehicleBulkMileageTable = ({ vehicles, updateVehicleStatus }: Props) => {
   }, [formatMessage, vehicles])
 
   return (
-    <>
-      <Box>
-        <form>
-          {rows && (
-            <T.Table>
-              <ExpandHeader
-                data={[
-                  { value: '', printHidden: true },
-                  { value: formatMessage(vehicleMessage.type) },
-                  { value: formatMessage(vehicleMessage.permno) },
-                  { value: formatMessage(vehicleMessage.lastRegistration) },
-                  { value: formatMessage(vehicleMessage.odometer) },
-                  { value: '', printHidden: true },
-                ]}
-              />
-              <T.Body>{rows}</T.Body>
-            </T.Table>
-          )}
-          {!rows.length && <EmptyTable message="Engin ökutæki fundust" />}
-        </form>
-      </Box>
-      {/*<Box marginTop={2} display="flex">
-        <Box marginLeft="auto">
-          <Button onClick={() => onBulkPostClick()}>
-            {formatMessage(vehicleMessage.saveAllVisible)}
-          </Button>
-        </Box>
-      </Box> */}
-    </>
+    <Box>
+      <form>
+        {rows && (
+          <T.Table>
+            <ExpandHeader
+              data={[
+                { value: '', printHidden: true },
+                { value: formatMessage(vehicleMessage.type) },
+                { value: formatMessage(vehicleMessage.permno) },
+                { value: formatMessage(vehicleMessage.lastRegistration) },
+                { value: formatMessage(vehicleMessage.odometer) },
+                { value: '', printHidden: true },
+              ]}
+            />
+            <T.Body>{rows}</T.Body>
+          </T.Table>
+        )}
+        {!rows.length && (
+          <EmptyTable message={formatMessage(vehicleMessage.noVehiclesFound)} />
+        )}
+      </form>
+    </Box>
   )
 }
 

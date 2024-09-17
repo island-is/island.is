@@ -892,13 +892,118 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:bulk-mileage-btn',
     defaultMessage: 'Senda inn gögn',
   },
-  downloadExcel: {
-    id: 'sp.vehicles:download-excel',
-    defaultMessage: 'Hlaða niður Excel',
+  bulkMileageUploadStatus: {
+    id: 'sp.vehicles:bulk-mileage-upload-status',
+    defaultMessage: 'Skoða má stöðu upphleðslu á magnskráningarsíðu',
   },
-  uploadExcel: {
-    id: 'sp.vehicles:upload-excel',
-    defaultMessage: 'Hlaða upp Excel',
+  bulkPostMileage: {
+    id: 'sp.vehicles:bulk-post-mileage',
+    defaultMessage: 'Magnskrá kílómetrastöðu',
+  },
+  jobOverview: {
+    id: 'sp.vehicles:job-overview',
+    defaultMessage: 'Yfirlit skráninga',
+  },
+  jobsSubmitted: {
+    id: 'sp.vehicles:jobs-submitted',
+    defaultMessage: 'Innsendar kílómetrastöðuskráningar',
+  },
+  jobSubmitted: {
+    id: 'sp.vehicles:job-submitted',
+    defaultMessage: 'Innsending',
+  },
+  jobStarted: {
+    id: 'sp.vehicles:job-started',
+    defaultMessage: 'Verk hófst',
+  },
+  jobFinished: {
+    id: 'sp.vehicles:job-finished',
+    defaultMessage: 'Verki lauk',
+  },
+  jobNotStarted: {
+    id: 'sp.vehicles:job-not-started',
+    defaultMessage: 'Ekki hafið',
+  },
+  openJob: {
+    id: 'sp.vehicles:open-job',
+    defaultMessage: 'Opna keyrslu',
+  },
+  jobStatus: {
+    id: 'sp.vehicles:job-status',
+    defaultMessage: 'Staða keyrslu',
+  },
+  jobInProgress: {
+    id: 'sp.vehicles:job-in-progress',
+    defaultMessage: 'Í vinnslu',
+  },
+  goToJob: {
+    id: 'sp.vehicles:go-to-job',
+    defaultMessage: 'Skoða verk',
+  },
+  noJobFound: {
+    id: 'sp.vehicles:no-job-found',
+    defaultMessage: 'Ekkert verk fannst',
+  },
+  noJobsFound: {
+    id: 'sp.vehicles:no-jobs-found',
+    defaultMessage: 'Engin verk fundust',
+  },
+  uploadFailed: {
+    id: 'sp.vehicles:upload-failed',
+    defaultMessage: 'Upphleðsla mistókst',
+  },
+  uploadSuccess: {
+    id: 'sp.vehicles:upload-success',
+    defaultMessage: 'Upphleðsla tókst',
+  },
+  dragFileToUpload: {
+    id: 'sp.vehicles:drag-file-to-upload',
+    defaultMessage: 'Dragðu skjal hingað til að hlaða upp',
+  },
+  errors: {
+    id: 'sp.vehicles:errors',
+    defaultMessage: 'Villur',
+  },
+  noRegistrationsFound: {
+    id: 'sp.vehicles:no-registrations-found',
+    defaultMessage: 'Engar skráningar fundust',
+  },
+  downloadErrors: {
+    id: 'sp.vehicles:download-errors',
+    defaultMessage: 'Hlaða niður villum (.csv)',
+  },
+  fileUploadAcceptedTypes: {
+    id: 'sp.vehicles:file-upload-accepted-types',
+    defaultMessage: 'Tekið er við skjölum með endingu; .csv, .xls',
+  },
+  dataAboutJob: {
+    id: 'sp.vehicles:data-about-job',
+    defaultMessage: 'Hér finnur þú upplýsingar um skráningu',
+  },
+  refreshDataAboutJob: {
+    id: 'sp.vehicles:refresh-data-about-job',
+    defaultMessage:
+      'Til að sækja nýjustu stöðu er hægt að smella á "Uppfæra stöðu"',
+  },
+  refreshJob: {
+    id: 'sp.vehicles:refresh-job',
+    defaultMessage: 'Uppfæra stöðu',
+  },
+  mileageHistoryFetchFailed: {
+    id: 'sp.vehicles:mileage-history-fetch-failed',
+    defaultMessage: 'Eitthvað fór úrskeiðis við að sækja fyrri skráningar',
+  },
+  mileageHistoryNotFound: {
+    id: 'sp.vehicles:mileage-history-not-found',
+    defaultMessage: 'Engar fyrri skráningar fundust',
+  },
+  selectFileToUpload: {
+    id: 'sp.vehicles:select-file-to-upload',
+    defaultMessage: 'Velja skjal til að hlaða upp',
+  },
+  downloadTemplate: {
+    id: 'sp.vehicles:download-template',
+    defaultMessage: 'Hlaða niður sniðmáti',
   },
   saveAllVisible: {
     id: 'sp.vehicles:save-all-visible',
