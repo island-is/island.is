@@ -17,7 +17,12 @@ export const startWithBff = async (
 
     // Start the client process
     console.log(chalk.blue(`Starting ${client} client...`))
-    startProcess('yarn', processArgs)
+
+    const envVars: NodeJS.ProcessEnv = {
+      NODE_ENV: 'development',
+      NODE_OPTIONS: '--max-old-space-size=4096',
+    }
+    startProcess('yarn', processArgs, envVars)
   } catch (error) {
     console.error('One of the processes failed:', error)
     process.exit(1)
