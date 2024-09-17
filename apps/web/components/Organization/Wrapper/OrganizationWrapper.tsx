@@ -183,7 +183,7 @@ export const getThemeConfig = (
       ? 'organization'
       : 'default'
 
-  if (blueberryThemes.includes(theme ?? ''))
+  if (blueberryThemes.includes(theme ?? '') && !usingDefaultHeader)
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
@@ -191,8 +191,7 @@ export const getThemeConfig = (
         footerVersion,
       },
     }
-
-  if (darkThemes.includes(theme ?? '')) {
+  if (darkThemes.includes(theme ?? '') && !usingDefaultHeader) {
     return {
       themeConfig: {
         headerColorScheme: 'dark',
@@ -471,13 +470,20 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hms':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'hmsHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/5pAFV6h9PVzSTQgJY67rbT/3117436e3043bebf720b2f9a7e7619b8/hms-header-image.svg',
+          )}
+        />
+      ) : (
         <HmsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
         />
       )
-
     case 'rikissaksoknari':
       return (
         <RikissaksoknariHeader
