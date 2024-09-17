@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, FocusEvent, useState } from 'react'
+import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
@@ -34,6 +34,14 @@ const InputName: FC<InputProps> = (props) => {
     setInputValue(evt.target.value)
     onChange && onChange(inputValue)
   }
+
+  useEffect(() => {
+    if (!value) {
+      return
+    }
+
+    setInputValue(value)
+  }, [value])
 
   return (
     <Input
