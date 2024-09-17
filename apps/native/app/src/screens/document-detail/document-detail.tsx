@@ -200,7 +200,8 @@ const PdfViewer = React.memo(
 
 export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
-}> = ({ componentId, docId }) => {
+  isUrgent: boolean
+}> = ({ componentId, docId, isUrgent }) => {
   useNavigationOptions(componentId)
 
   const client = useApolloClient()
@@ -225,6 +226,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     variables: {
       input: {
         id: docId,
+        includeDocument: !isUrgent,
       },
     },
     fetchPolicy: 'no-cache',
@@ -284,6 +286,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   useNavigationComponentDidAppear(() => {
     setVisible(true)
   })
+
+  useEffect(() => {
+    if (isUrgent) {
+      // open modal
+    }
+  }, [isUrgent])
 
   useEffect(() => {
     if (Document.opened) {

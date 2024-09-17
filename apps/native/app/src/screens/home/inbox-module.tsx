@@ -129,6 +129,7 @@ const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
               icon={
                 item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)
               }
+              isUrgent={item.isUrgent}
               onPress={() =>
                 navigateTo(`/inbox/${item.id}`, {
                   title: item.sender.name,
