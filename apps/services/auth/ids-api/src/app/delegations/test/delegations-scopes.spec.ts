@@ -22,12 +22,14 @@ const legalGuardianScopes = ['lg1', 'lg2']
 const procurationHolderScopes = ['ph1', 'ph2']
 const customScopes1 = ['cu1', 'cu2']
 const customScopes2 = ['cu3', 'cu4']
+const legalRepresantativeScopes = ['lr1', 'lr2']
 
 const apiScopes = [
   ...legalGuardianScopes,
   ...procurationHolderScopes,
   ...customScopes1,
   ...customScopes2,
+  ...legalRepresantativeScopes,
 ]
 
 const fromCustom = [
@@ -47,6 +49,9 @@ const supportedDelegationTypes = (scopeName: string): AuthDelegationType[] => {
   }
   if (customScopes1.includes(scopeName) || customScopes2.includes(scopeName)) {
     result.push(AuthDelegationType.Custom)
+  }
+  if (legalRepresantativeScopes.includes(scopeName)) {
+    result.push(AuthDelegationType.LegalRepresentative)
   }
   return result
 }
@@ -97,6 +102,11 @@ const testCases: Record<string, TestCase> = {
       AuthDelegationType.Custom,
     ],
     expected: [...legalGuardianScopes, ...identityResources],
+  },
+  '7': {
+    fromNationalId: createNationalId('person'),
+    delegationType: [AuthDelegationType.LegalRepresentative],
+    expected: [...legalRepresantativeScopes, ...identityResources],
   },
 }
 

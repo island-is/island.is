@@ -15,7 +15,10 @@ import {
 import { createNationalRegistryUser } from '@island.is/testing/fixtures'
 import { TestApp, truncate } from '@island.is/testing/nest'
 
-import { setupWithAuth } from '../../../../test/setup'
+import {
+  nonExistingLegalRepresentativeNationalId,
+  setupWithAuth,
+} from '../../../../test/setup'
 import { testCases } from './delegations-filters-test-cases'
 import { user } from './delegations-filters-types'
 
@@ -128,4 +131,59 @@ describe('DelegationsController', () => {
       })
     },
   )
+
+  describe('verify', () => {
+    const testCase = testCases['legalRepresentative1']
+    testCase.user = user
+    const path = '/v1/delegations/verify'
+
+    beforeAll(async () => {
+      await truncate(sequelize)
+
+      await Promise.all(
+        testCase.domains.map((domain) => factory.createDomain(domain)),
+      )
+
+      await factory.createClient(testCase.client)
+
+      await Promise.all(
+        testCase.clientAllowedScopes.map((scope) =>
+          factory.createClientAllowedScope(scope),
+        ),
+      )
+
+      await Promise.all(
+        testCase.apiScopes.map((scope) => factory.createApiScope(scope)),
+      )
+
+      await factory.createDelegationIndexRecord({
+        fromNationalId: nonExistingLegalRepresentativeNationalId,
+        toNationalId: testCase.user.nationalId,
+        type: AuthDelegationType.LegalRepresentative,
+        provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+      })
+    })
+
+    let res: request.Response
+    it(`GET ${path} returns verified response`, async () => {
+      res = await server
+        .get(path + `?delegationType=${AuthDelegationType.LegalRepresentative}`)
+        .set('X-Query-From-National-Id', testCase.fromLegalRepresentative[0])
+
+      expect(res.status).toEqual(200)
+      expect(res.body.verified).toEqual(true)
+    })
+
+    it(`GET ${path} returns non-verified response`, async () => {
+      res = await server
+        .get(path + `?delegationType=${AuthDelegationType.LegalRepresentative}`)
+        .set(
+          'X-Query-From-National-Id',
+          nonExistingLegalRepresentativeNationalId,
+        )
+
+      expect(res.status).toEqual(200)
+      expect(res.body.verified).toEqual(false)
+    })
+  })
 })

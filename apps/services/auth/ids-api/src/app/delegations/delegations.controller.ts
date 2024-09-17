@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Headers,
   Inject,
   ParseArrayPipe,
   Query,
@@ -26,6 +27,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AuthDelegationType } from '@island.is/shared/types'
+
+import { DelegationVerificationResult } from './delegation-verification-result.dto'
 
 import type { Logger } from '@island.is/logging'
 import type { User } from '@island.is/auth-nest-tools'
@@ -109,5 +112,27 @@ export class DelegationsController {
       fromNationalId,
       delegationType,
     )
+  }
+
+  @Scopes('@identityserver.api/authentication')
+  @Get('verify')
+  @ApiOkResponse({ type: DelegationVerificationResult })
+  async verify(
+    @CurrentUser() user: User,
+    @Headers('X-Query-From-National-Id')
+    fromNationalId: string,
+    @Query('delegationType')
+    delegationType: AuthDelegationType[],
+  ): Promise<DelegationVerificationResult> {
+    if (!Array.isArray(delegationType)) delegationType = [delegationType]
+
+    const verified =
+      await this.delegationsIncomingService.verifyDelegationAtProvider(
+        user,
+        fromNationalId,
+        delegationType,
+      )
+
+    return { verified }
   }
 }

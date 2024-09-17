@@ -12,6 +12,7 @@ import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
+import { SyslumennService } from '@island.is/clients/syslumenn'
 import { V2MeApi } from '@island.is/clients/user-profile'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
@@ -21,6 +22,7 @@ import {
 } from '@island.is/services/auth/testing'
 import {
   createCurrentUser,
+  createNationalId,
   createUniqueWords,
 } from '@island.is/testing/fixtures'
 import {
@@ -66,6 +68,8 @@ export const defaultScopes: Scopes = {
     domainName: defaultDomains[2].name,
   },
 }
+
+export const nonExistingLegalRepresentativeNationalId = createNationalId()
 
 class MockNationalRegistryClientService
   implements Partial<NationalRegistryClientService>
@@ -124,6 +128,13 @@ export const setupWithAuth = async ({
         .overrideProvider(RskRelationshipsClient)
         .useValue({
           getIndividualRelationships: jest.fn().mockResolvedValue(null),
+        })
+        .overrideProvider(SyslumennService)
+        .useValue({
+          checkIfDelegationExists: (
+            _toNationalId: string,
+            fromNationalId: string,
+          ) => fromNationalId !== nonExistingLegalRepresentativeNationalId,
         })
         .overrideProvider(FeatureFlagService)
         .useValue({
