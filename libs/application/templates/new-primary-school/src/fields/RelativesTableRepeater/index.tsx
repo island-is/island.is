@@ -1,8 +1,7 @@
 import {
   FieldBaseProps,
   FieldComponents,
-  FieldTypes,
-  YES,
+  FieldTypes
 } from '@island.is/application/types'
 import {
   formatPhoneNumber,
@@ -16,9 +15,11 @@ import { OptionsType } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getSelectedOptionLabel } from '../../lib/newPrimarySchoolUtils'
 
-const RelativesTableRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps>
-> = ({ error, field, application }) => {
+const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  error,
+  field,
+  application,
+}) => {
   const { id, title } = field
 
   const relationFriggOptions = useFriggOptions(OptionsType.RELATION)
@@ -77,20 +78,6 @@ const RelativesTableRepeater: FC<
             options: relationFriggOptions,
             dataTestId: 'relative-relation',
           },
-          canPickUpChild: {
-            component: 'checkbox',
-            width: 'full',
-            large: true,
-            options: [
-              {
-                label:
-                  newPrimarySchoolMessages.childrenNParents
-                    .relativesCanPickUpChild,
-                value: YES,
-              },
-            ],
-            dataTestId: 'relative-can-pick-up-child',
-          },
         },
         table: {
           format: {
@@ -99,18 +86,12 @@ const RelativesTableRepeater: FC<
             nationalId: (value) => formatKennitala(value),
             relation: (value) =>
               getSelectedOptionLabel(relationFriggOptions, value) ?? '',
-            canPickUpChild: (value) =>
-              value?.includes(YES)
-                ? newPrimarySchoolMessages.shared.yes
-                : newPrimarySchoolMessages.shared.no,
           },
           header: [
             newPrimarySchoolMessages.shared.fullName,
             newPrimarySchoolMessages.shared.phoneNumber,
             newPrimarySchoolMessages.shared.nationalId,
             newPrimarySchoolMessages.shared.relation,
-            newPrimarySchoolMessages.childrenNParents
-              .relativesCanPickUpChildTableHeader,
           ],
         },
       }}

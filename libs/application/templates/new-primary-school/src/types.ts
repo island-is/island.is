@@ -9,7 +9,6 @@ export interface RelativesRow {
   phoneNumber: string
   nationalId: string
   relation: string
-  canPickUpChild: string[]
 }
 
 export interface SiblingsRow {
@@ -35,7 +34,6 @@ export type ChildInformation = {
     postalCode: string
     city: string
   }
-  gender: string
   preferredName: string
   pronouns: string[]
   differentPlaceOfResidence: string

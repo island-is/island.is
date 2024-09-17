@@ -105,7 +105,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           'clearPlaceOfResidence',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
-          'clearPublication',
         ],
         meta: {
           name: States.DRAFT,
@@ -186,7 +185,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           unset(application.answers, 'siblings')
           unset(application.answers, 'languages')
           unset(application.answers, 'startDate')
-          unset(application.answers, 'photography')
           unset(application.answers, 'allergiesAndIntolerances')
         } else {
           // Clear movingAbroad if "Moving abroad" is not selected as reason for application
@@ -252,17 +250,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
             application.answers,
             'allergiesAndIntolerances.foodIntolerances',
           )
-        }
-        return context
-      }),
-      clearPublication: assign((context) => {
-        const { application } = context
-        const { photographyConsent } = getApplicationAnswers(
-          application.answers,
-        )
-        if (photographyConsent === NO) {
-          unset(application.answers, 'photography.photoSchoolPublication')
-          unset(application.answers, 'photography.photoMediaPublication')
         }
         return context
       }),

@@ -1,4 +1,4 @@
-import { FieldComponents, FieldTypes, YES } from '@island.is/application/types'
+import { FieldComponents, FieldTypes } from '@island.is/application/types'
 import {
   Label,
   ReviewGroup,
@@ -34,9 +34,6 @@ export const Relatives = ({
       formatPhoneNumber(removeCountryCode(r.phoneNumber ?? '')),
       formatKennitala(r.nationalId),
       getSelectedOptionLabel(relationFriggOptions, r.relation) ?? '',
-      r.canPickUpChild?.includes(YES)
-        ? newPrimarySchoolMessages.shared.yes
-        : newPrimarySchoolMessages.shared.no,
     ]
   })
 
@@ -68,8 +65,6 @@ export const Relatives = ({
                     newPrimarySchoolMessages.shared.phoneNumber,
                     newPrimarySchoolMessages.shared.nationalId,
                     newPrimarySchoolMessages.shared.relation,
-                    newPrimarySchoolMessages.childrenNParents
-                      .relativesCanPickUpChildTableHeader,
                   ],
                   rows,
                 }}
