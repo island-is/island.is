@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 import {
@@ -11,29 +10,29 @@ import {
 import {
   CaseAppealState,
   EventType,
-  InstitutionType,
+  isDefenceUser,
+  isPrisonStaffUser,
+  isProsecutionUser,
   User,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { EventLogService } from '../../event-log'
-import { Case } from '../models/case.model'
 
 @Injectable()
 export class CompletedAppealAccessedInterceptor implements NestInterceptor {
   constructor(private readonly eventLogService: EventLogService) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<Case> {
+  intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
     const user: User = request.user
 
     return next.handle().pipe(
-      map((data: Case) => {
+      map((data) => {
         if (
           data.appealState === CaseAppealState.COMPLETED &&
-          ([UserRole.PROSECUTOR, UserRole.DEFENDER].includes(user.role) ||
-            (user.role === UserRole.PRISON_SYSTEM_STAFF &&
-              user.institution?.type === InstitutionType.PRISON))
+          (isProsecutionUser(user) ||
+            isDefenceUser(user) ||
+            isPrisonStaffUser(user))
         ) {
           this.eventLogService.create({
             eventType: EventType.APPEAL_RESULT_ACCESSED,
