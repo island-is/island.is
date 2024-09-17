@@ -1,7 +1,7 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
+import useSWR, { mutate } from 'swr'
 
 import {
   Box,
@@ -11,6 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { isTrafficViolationCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -72,7 +73,8 @@ const Processing: FC = () => {
   } = useCivilClaimants()
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
-  const [nID, setNID] = useState<string>()
+  const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
+    useState<{ nationalId: string; civilClaimantId: string }>()
   const [claimantHasDefender, setClaimantHasDefender] = useState<boolean>(false)
   const [defenderType, setDefenderType] = useState<'L' | 'R'>('L')
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
@@ -127,9 +129,9 @@ const Processing: FC = () => {
     [updateCivilClaimant, setWorkingCase, updateCivilClaimantState],
   )
 
-  const { mutate } = useSWR<NationalRegistryResponsePerson>(
-    nID
-      ? `/api/nationalRegistry/getPersonByNationalId?nationalId=${nID}`
+  const { data } = useSWR<NationalRegistryResponsePerson>(
+    civilClaimantNationalIdUpdate?.nationalId
+      ? `/api/nationalRegistry/getPersonByNationalId?nationalId=${civilClaimantNationalIdUpdate.nationalId}`
       : null,
     fetcher,
   )
@@ -178,18 +180,25 @@ const Processing: FC = () => {
     nationalId: string,
     civilClaimantId?: string | null,
   ) => {
-    setNID(nationalId.replace('=', ''))
-    const newData = await mutate()
-    console.log(newData)
-    if (!newData || !newData.items || !civilClaimantId) {
+    if (!civilClaimantId) {
       return
     }
 
-    handleUpdateCivilClaimant({
-      caseId: workingCase.id,
+    const cleanNationalId = nationalId.replace('-', '')
+    setCivilClaimantNationalIdUpdate({
+      nationalId: cleanNationalId,
       civilClaimantId,
-      name: newData.items[0].name,
     })
+
+    const updatedData = await mutate<NationalRegistryResponsePerson>(
+      `/api/nationalRegistry/getPersonByNationalId?nationalId=${cleanNationalId}`,
+      undefined,
+      true,
+    )
+
+    if (!updatedData || !updatedData.items) {
+      return
+    }
   }
 
   const removeAllCivilClaimants = useCallback(async () => {
@@ -231,6 +240,39 @@ const Processing: FC = () => {
       addCivilClaimant()
     }
   }, [addCivilClaimant, workingCase.civilClaimants, workingCase.hasCivilClaims])
+
+  useEffect(() => {
+    if (
+      !data ||
+      !data.items ||
+      data.items === undefined ||
+      data.items.length === 0
+    ) {
+      return
+    }
+
+    const civilClaimantToUpdate = workingCase.civilClaimants?.filter(
+      (c) =>
+        data.items && c.id === civilClaimantNationalIdUpdate?.civilClaimantId,
+    )
+
+    if (!civilClaimantToUpdate || !civilClaimantToUpdate[0].id) {
+      return
+    }
+
+    updateCivilClaimant({
+      caseId: workingCase.id,
+      civilClaimantId: civilClaimantToUpdate[0].id,
+      nationalId: data.items[0].kennitala,
+      name: data.items[0].name,
+    })
+  }, [
+    civilClaimantNationalIdUpdate?.civilClaimantId,
+    data,
+    updateCivilClaimant,
+    workingCase.civilClaimants,
+    workingCase.id,
+  ])
 
   return (
     <PageLayout

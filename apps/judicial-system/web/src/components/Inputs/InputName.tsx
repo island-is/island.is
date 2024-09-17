@@ -46,6 +46,7 @@ const InputName: FC<InputProps> = (props) => {
       hasError={errorMessage !== undefined}
       onChange={handleChange}
       onBlur={handleBlur}
+      value={value}
     />
   )
 }
