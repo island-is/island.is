@@ -27,4 +27,5 @@ export enum CaseFileCategory {
   DEFENDANT_APPEAL_CASE_FILE = 'DEFENDANT_APPEAL_CASE_FILE', // Verjandi: Viðbótargögn við kæru til Landsréttar
   APPEAL_COURT_RECORD = 'APPEAL_COURT_RECORD',
   APPEAL_RULING = 'APPEAL_RULING',
+  CIVIL_CLAIM = 'CIVIL_CLAIM',
 }

@@ -19,8 +19,8 @@ import {
 } from '../index'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
+import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
-import { ExplanatoryComment } from './models/explanatoryComment.model'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 import { InternalCaseController } from './internalCase.controller'
@@ -43,12 +43,7 @@ import { PdfService } from './pdf.service'
     forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),
     forwardRef(() => EventLogModule),
-    SequelizeModule.forFeature([
-      Case,
-      CaseArchive,
-      DateLog,
-      ExplanatoryComment,
-    ]),
+    SequelizeModule.forFeature([Case, CaseArchive, DateLog, CaseString]),
   ],
   providers: [
     CaseService,

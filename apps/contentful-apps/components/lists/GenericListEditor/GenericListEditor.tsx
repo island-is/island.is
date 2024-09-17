@@ -84,6 +84,7 @@ export const GenericListEditor = () => {
             skip,
             'fields.internalTitle[match]': searchValue,
             'fields.genericList.sys.id': sdk.entry.getSys().id,
+            'sys.archivedAt[exists]': false,
           },
         })
         if (
