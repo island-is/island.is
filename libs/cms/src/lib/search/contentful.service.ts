@@ -383,7 +383,7 @@ export class ContentfulService {
     let idsChunk = ids.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
 
     while (idsChunk.length > 0) {
-      const size = 100
+      const size = 1000
       let page = 1
 
       const items: string[] = []
@@ -496,16 +496,33 @@ export class ContentfulService {
       )
     }
 
+    const nestedItemIds = nestedItems
+      .map(({ id }) => id)
+      .concat(deletedEntryIds)
+
     // In case of delta updates, we need to resolve embedded entries to their root model
-    if (isDeltaUpdate && shouldResolveNestedEntries) {
+    if (
+      isDeltaUpdate &&
+      shouldResolveNestedEntries &&
+      nestedItemIds.length > 0
+    ) {
       logger.info('Finding root entries from nestedEntries')
-      const ids = nestedItems.map(({ id }) => id).concat(deletedEntryIds)
+
+      const prevLength = indexableEntries.length
+
       await this.resolveNestedEntries(
-        ids,
+        nestedItemIds,
         elasticIndex,
         locale,
         chunkSize,
         indexableEntries, // This array is modified
+      )
+
+      const rootEntriesFoundFromNestedEntries =
+        indexableEntries.length - prevLength
+
+      logger.info(
+        `Found ${rootEntriesFoundFromNestedEntries} root entries from nested entries`,
       )
     }
 
