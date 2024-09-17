@@ -25,7 +25,6 @@ import { Delegation } from './models/delegation.model'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { DelegationDelegationType } from './models/delegation-delegation-type.model'
-import flatMap from 'lodash/flatMap'
 
 @Injectable()
 export class DelegationScopeService {
@@ -182,10 +181,9 @@ export class DelegationScopeService {
       include: [
         {
           model: DelegationDelegationType,
-          // where: {
-          //   validFrom: { [Op.lte]: today },
-          //   validTo: { [Op.or]: [{ [Op.is]: undefined }, { [Op.gte]: today }] },
-          // },
+          where: {
+            validTo: { [Op.or]: [{ [Op.is]: undefined }, { [Op.gte]: today }] },
+          },
           required: true,
           include: [
             {

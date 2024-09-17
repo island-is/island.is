@@ -284,7 +284,7 @@ describe('DelegationsController', () => {
         })
       })
 
-      it('should should get all general mandate scopes', async () => {
+      it('should get all general mandate scopes', async () => {
         const response = await server.get('/delegations/scopes').query({
           fromNationalId: representeeNationalId,
           delegationType: [AuthDelegationType.GeneralMandate],
@@ -292,6 +292,31 @@ describe('DelegationsController', () => {
 
         expect(response.status).toEqual(200)
         expect(response.body).toEqual([scopeNames[0], scopeNames[1]])
+      })
+
+      it('should only return valid general mandates', async () => {
+        const newNationalId = getFakeNationalId()
+        const newDelegation = await delegationModel.create({
+          id: uuid(),
+          fromDisplayName: 'Test',
+          fromNationalId: newNationalId,
+          toNationalId: userNationalId,
+          toName: 'Test',
+        })
+
+        await delegationDelegationTypeModelModel.create({
+          delegationId: newDelegation.id,
+          delegationTypeId: AuthDelegationType.GeneralMandate,
+          validTo: addDays(new Date(), -1),
+        })
+
+        const response = await server.get('/delegations/scopes').query({
+          fromNationalId: newNationalId,
+          delegationType: [AuthDelegationType.GeneralMandate],
+        })
+
+        expect(response.status).toEqual(200)
+        expect(response.body).toEqual([])
       })
 
       it('should return all general mandate scopes and other preset scopes', async () => {

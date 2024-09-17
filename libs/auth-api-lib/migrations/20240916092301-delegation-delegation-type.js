@@ -23,6 +23,10 @@ module.exports = {
         onDelete: 'CASCADE',
         primaryKey: true,
       },
+      valid_to: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
       created: {
         type: Sequelize.DATE,
         allowNull: false,

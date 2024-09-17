@@ -41,6 +41,12 @@ export class DelegationDelegationType extends Model<
   })
   delegationTypeId!: string
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  validTo?: Date
+
   @CreatedAt
   readonly created!: CreationOptional<Date>
 
