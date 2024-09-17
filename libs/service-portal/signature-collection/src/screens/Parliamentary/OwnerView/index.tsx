@@ -6,7 +6,6 @@ import {
   Table as T,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { constituencies } from '../../../lib/constants'
 import { useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
 import LookupPerson from './modals/LookupPerson'
@@ -16,11 +15,9 @@ import AddConstituency from './modals/AddConstituency'
 import DeletePerson from './modals/DeletePerson'
 import {
   useGetListsForOwner,
-  useGetListsForUser,
-  useIsOwner,
 } from '../../../hooks'
-import { useAuth } from '@island.is/auth/react'
-import { SignatureCollection } from '@island.is/api/schema'
+import { SignatureCollection, SignatureCollectionList } from '@island.is/api/schema'
+import { OwnerParliamentarySkeleton } from '../../../skeletons'
 
 const OwnerView = ({
   currentCollection,
@@ -29,7 +26,6 @@ const OwnerView = ({
 }) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
-  const { userInfo: user } = useAuth()
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
     currentCollection?.id || '',
   )
@@ -37,12 +33,7 @@ const OwnerView = ({
   return (
     <Stack space={8}>
       <Box marginTop={5}>
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="baseline"
-          marginBottom={3}
-        >
+        <Box display="flex" justifyContent="spaceBetween" alignItems="baseline">
           <Text variant="h4">
             {formatMessage(m.myListsDescription) + ' '}
             <Tooltip
@@ -51,35 +42,46 @@ const OwnerView = ({
               color="blue400"
             />
           </Text>
-          <AddConstituency />
+          <AddConstituency lists={listsForOwner} />
         </Box>
-        {constituencies.map((c: string, index: number) => (
-          <Box key={index} marginTop={3}>
-            <ActionCard
-              key={index}
-              backgroundColor="white"
-              heading={'Listi A - ' + c}
-              progressMeter={{
-                currentProgress: 10,
-                maxProgress: 350,
-                withLabel: true,
-              }}
-              cta={{
-                label: formatMessage(m.viewList),
-                variant: 'text',
-                icon: 'arrowForward',
-                onClick: () => {
-                  navigate(
-                    SignatureCollectionPaths.ViewParliamentaryList.replace(
-                      ':id',
-                      '1',
-                    ),
-                  )
-                },
-              }}
-            />
+        {loadingOwnerLists ? (
+          <Box marginTop={2}>
+            <OwnerParliamentarySkeleton />
           </Box>
-        ))}
+        ) : (
+          listsForOwner.map((list: SignatureCollectionList, index: number) => (
+            <Box key={index} marginTop={3}>
+              <ActionCard
+                key={index}
+                backgroundColor="white"
+                heading={list.title}
+                progressMeter={{
+                  currentProgress: list.numberOfSignatures || 0,
+                  maxProgress: list.area.min,
+                  withLabel: true,
+                }}
+                cta={{
+                  label: formatMessage(m.viewList),
+                  variant: 'text',
+                  icon: 'arrowForward',
+                  onClick: () => {
+                    navigate(
+                      SignatureCollectionPaths.ViewParliamentaryList.replace(
+                        ':id',
+                        list.id,
+                      ),
+                      {
+                        state: {
+                          collectionId: currentCollection?.id || '',
+                        },
+                      },
+                    )
+                  },
+                }}
+              />
+            </Box>
+          ))
+        )}
       </Box>
       <Box>
         <Box
