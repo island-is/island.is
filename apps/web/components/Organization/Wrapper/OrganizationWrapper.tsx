@@ -317,7 +317,15 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hsn':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'hsnHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg',
+          )}
+        />
+      ) : (
         <HeilbrigdisstofnunNordurlandsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -331,7 +339,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'landlaeknir':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'landlaeknirHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg',
+          )}
+          className={styles.landlaeknirHeaderGridContainer}
+        />
+      ) : (
         <LandlaeknirHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -426,7 +443,15 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'nti':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'icelandicNaturalDisasterInsuranceHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/eXqcbclteE88H5iQ6J3lo/bbc1d0c9d3abee93d34ec0aa718c833b/Group__1_.svg',
+          )}
+        />
+      ) : (
         <IcelandicNaturalDisasterInsuranceHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}

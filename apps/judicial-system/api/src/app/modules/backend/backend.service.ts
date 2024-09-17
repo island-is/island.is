@@ -6,12 +6,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
-import {
-  CommentType,
-  DateType,
-  type User,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { DateType, type User, UserRole } from '@island.is/judicial-system/types'
 
 import {
   Case,
@@ -144,7 +139,6 @@ export class BackendService extends DataSource<{ req: Request }> {
   private caseTransformer<Case>(data: unknown): Case {
     const theCase = data as Case & {
       dateLogs?: { dateType: DateType; date: string }[]
-      explanatoryComments?: { commentType: CommentType; comment: string }[]
     }
 
     return {
@@ -155,11 +149,6 @@ export class BackendService extends DataSource<{ req: Request }> {
       courtDate: theCase.dateLogs?.find(
         (dateLog) => dateLog.dateType === DateType.COURT_DATE,
       ),
-      postponedIndefinitelyExplanation: theCase.explanatoryComments?.find(
-        (comment) =>
-          comment.commentType ===
-          CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
-      )?.comment,
     }
   }
 
