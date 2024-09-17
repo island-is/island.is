@@ -236,19 +236,6 @@ const Processing: FC = () => {
   ])
 
   useEffect(() => {
-    /* 
-    If the user has selected "Yes" to hasCivilClaims but has not added a civil claimant,
-    this will add one for them when the page is loaded.
-    */
-    if (
-      workingCase.hasCivilClaims &&
-      workingCase.civilClaimants?.length === 0
-    ) {
-      addCivilClaimant()
-    }
-  }, [addCivilClaimant, workingCase.civilClaimants, workingCase.hasCivilClaims])
-
-  useEffect(() => {
     if (!personData || !personData.items) {
       return
     }
@@ -410,9 +397,9 @@ const Processing: FC = () => {
         </Box>
         {workingCase.hasCivilClaims && (
           <>
+            <SectionHeading title={formatMessage(strings.civilClaimant)} />
             {workingCase.civilClaimants?.map((civilClaimant) => (
               <Box component="section" marginBottom={5} key={civilClaimant.id}>
-                <SectionHeading title={formatMessage(strings.civilClaimant)} />
                 <BlueBox>
                   <Box marginBottom={2}>
                     <Checkbox
