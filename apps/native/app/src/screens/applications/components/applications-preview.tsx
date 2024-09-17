@@ -69,7 +69,9 @@ export const ApplicationsPreview = ({
         <StatusCard
           key={application.id}
           title={application.name ?? ''}
-          date={new Date(application.created ?? new Date())}
+          date={
+            application.created ? new Date(application.created) : new Date()
+          }
           badge={
             <Badge
               title={intl.formatMessage(
