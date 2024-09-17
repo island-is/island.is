@@ -1,8 +1,7 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
-import { uuid } from 'uuidv4'
 
 import {
   Box,
@@ -33,7 +32,6 @@ import {
   CaseState,
   CaseTransition,
   CivilClaimant,
-  CreateCivilClaimantInput,
   DefendantPlea,
   UpdateCivilClaimantInput,
   UpdateDefendantInput,
@@ -66,8 +64,12 @@ const Processing: FC = () => {
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
-  const { updateCivilClaimant, updateCivilClaimantState, createCivilClaimant } =
-    useCivilClaimants()
+  const {
+    updateCivilClaimant,
+    updateCivilClaimantState,
+    createCivilClaimant,
+    deleteCivilClaimant,
+  } = useCivilClaimants()
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
   const [nID, setNID] = useState<string>()
@@ -122,11 +124,7 @@ const Processing: FC = () => {
       updateCivilClaimantState(updatedCivilClaimant, setWorkingCase)
       updateCivilClaimant(updatedCivilClaimant)
     },
-    [
-      updateCivilClaimant,
-      setWorkingCase,
-      updateCivilClaimantState,
-    ],
+    [updateCivilClaimant, setWorkingCase, updateCivilClaimantState],
   )
 
   const { mutate } = useSWR<NationalRegistryResponsePerson>(
@@ -137,18 +135,16 @@ const Processing: FC = () => {
   )
 
   const handleCreateCivilClaimantClick = async () => {
-    const civilClaimantId = await createCivilClaimant({
-      caseId: workingCase.id,
-      name: '',
-      nationalId: '',
-    })
-
-    createEmptyCivilClaimant(civilClaimantId)
+    addCivilClaimant()
 
     window.scrollTo(0, document.body.scrollHeight)
   }
 
-  const createEmptyCivilClaimant = async (civilClaimantId?: string | null) => {
+  const addCivilClaimant = useCallback(async () => {
+    const civilClaimantId = await createCivilClaimant({
+      caseId: workingCase.id,
+    })
+
     setWorkingCase((prevWorkingCase) => ({
       ...prevWorkingCase,
       civilClaimants: prevWorkingCase.civilClaimants && [
@@ -160,11 +156,7 @@ const Processing: FC = () => {
         } as CivilClaimant,
       ],
     }))
-
-    await createCivilClaimant({
-      caseId: workingCase.id,
-    } as CreateCivilClaimantInput)
-  }
+  }, [createCivilClaimant, setWorkingCase, workingCase.id])
 
   const handleHasCivilClaimsChange = async (hasCivilClaims: boolean) => {
     setHasCivilClaimantChoice(hasCivilClaims)
@@ -174,6 +166,12 @@ const Processing: FC = () => {
       workingCase,
       setWorkingCase,
     )
+
+    if (hasCivilClaims) {
+      addCivilClaimant()
+    } else {
+      removeAllCivilClaimants()
+    }
   }
 
   const handleCivilClaimantNationalIdBlur = async (
@@ -194,14 +192,34 @@ const Processing: FC = () => {
     })
   }
 
-  useEffect(() => {
-    if (workingCase.hasCivilClaims === true) {
-      const id = uuid()
-      createEmptyCivilClaimant(id)
-    } else if (workingCase.hasCivilClaims === false) {
-      // TODO: Remove all claimants
+  const removeAllCivilClaimants = useCallback(async () => {
+    const promises: Promise<boolean>[] = []
+
+    if (!workingCase.civilClaimants) {
+      return
     }
-  }, [workingCase.hasCivilClaims, createEmptyCivilClaimant])
+
+    for (const civilClaimant of workingCase.civilClaimants) {
+      if (!civilClaimant.id) {
+        return
+      }
+
+      console.log('!!!!!!!!!!!!!!!!!!!', civilClaimant.id)
+
+      promises.push(deleteCivilClaimant(workingCase.id, civilClaimant.id))
+    }
+
+    const allCivilClaimantsDeleted = await Promise.all(promises)
+
+    if (allCivilClaimantsDeleted) {
+      setWorkingCase((prev) => ({ ...prev, civilClaimants: [] }))
+    }
+  }, [
+    deleteCivilClaimant,
+    setWorkingCase,
+    workingCase.civilClaimants,
+    workingCase.id,
+  ])
 
   return (
     <PageLayout

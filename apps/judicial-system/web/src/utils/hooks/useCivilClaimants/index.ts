@@ -12,6 +12,7 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useCreateCivilClaimantMutation } from './createCivilClaimant.generated'
+import { useDeleteCivilClaimantMutation } from './deleteCivilClaimant.generated'
 import { useUpdateCivilClaimantMutation } from './updateCivilClaimant.generated'
 
 const useCivilClaimants = () => {
@@ -19,7 +20,7 @@ const useCivilClaimants = () => {
 
   const [createCivilClaimantMutation, { loading: isCreatingCivilClaimant }] =
     useCreateCivilClaimantMutation()
-  // const [deleteCivilClaimantMutation] = useDeleteCivilClaimantMutation()
+  const [deleteCivilClaimantMutation] = useDeleteCivilClaimantMutation()
   const [updateCivilClaimantMutation] = useUpdateCivilClaimantMutation()
 
   const createCivilClaimant = useCallback(
@@ -43,21 +44,21 @@ const useCivilClaimants = () => {
     [createCivilClaimantMutation, formatMessage, isCreatingCivilClaimant],
   )
 
-  // const deleteCivilClaimant = useCallback(
-  //   async (caseId: string, civilClaimantId: string) => {
-  //     try {
-  //       const { data } = await deleteCivilClaimantMutation({
-  //         variables: { input: { caseId, civilClaimantId } },
-  //       })
+  const deleteCivilClaimant = useCallback(
+    async (caseId: string, civilClaimantId: string) => {
+      try {
+        const { data } = await deleteCivilClaimantMutation({
+          variables: { input: { caseId, civilClaimantId } },
+        })
 
-  //       return Boolean(data?.deleteDefendant?.deleted)
-  //     } catch (error) {
-  //       toast.error(formatMessage(errors.deleteDefendant))
-  //       return false
-  //     }
-  //   },
-  //   [deleteCivilClaimantMutation, formatMessage],
-  // )
+        return Boolean(data?.deleteCivilClaimant.deleted)
+      } catch (error) {
+        toast.error(formatMessage(errors.deleteDefendant))
+        return false
+      }
+    },
+    [deleteCivilClaimantMutation, formatMessage],
+  )
 
   const updateCivilClaimant = useCallback(
     async (updateCivilClaimant: UpdateCivilClaimantInput) => {
@@ -117,7 +118,7 @@ const useCivilClaimants = () => {
 
   return {
     createCivilClaimant,
-    // deleteCivilClaimant,
+    deleteCivilClaimant,
     updateCivilClaimant,
     updateCivilClaimantState,
     setAndSendCivilClaimantToServer,
