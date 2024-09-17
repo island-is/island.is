@@ -21,10 +21,10 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
-  CommentType,
   DateType,
   EventType,
   NotificationType,
+  StringType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -39,8 +39,8 @@ import {
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
+import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
-import { ExplanatoryComment } from './models/explanatoryComment.model'
 import { PdfService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
@@ -116,7 +116,7 @@ export interface LimitedAccessUpdateCase
 
 const eventTypes = Object.values(EventType)
 const dateTypes = Object.values(DateType)
-const commentTypes = Object.values(CommentType)
+const stringTypes = Object.values(StringType)
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -191,7 +191,6 @@ export const include: Includeable[] = [
         CaseFileCategory.CRIMINAL_RECORD,
         CaseFileCategory.COST_BREAKDOWN,
         CaseFileCategory.CASE_FILE,
-        CaseFileCategory.CASE_FILE_RECORD,
         CaseFileCategory.PROSECUTOR_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
       ],
@@ -212,10 +211,10 @@ export const include: Includeable[] = [
     where: { dateType: { [Op.in]: dateTypes } },
   },
   {
-    model: ExplanatoryComment,
-    as: 'explanatoryComments',
+    model: CaseString,
+    as: 'caseStrings',
     required: false,
-    where: { commentType: { [Op.in]: commentTypes } },
+    where: { stringType: { [Op.in]: stringTypes } },
   },
   { model: Case, as: 'mergeCase', attributes },
 ]
