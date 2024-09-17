@@ -124,7 +124,7 @@ export class DelegationScopeService {
     })
   }
 
-  private findValidCustomScopesTo(
+  private async findValidCustomScopesTo(
     toNationalId: string,
     fromNationalId: string,
   ): Promise<DelegationScope[]> {
@@ -345,7 +345,7 @@ export class DelegationScopeService {
 
     if (
       providers.includes(AuthDelegationProvider.PersonalRepresentativeRegistry)
-    )
+    ) {
       scopePromises.push(
         this.findPersonalRepresentativeRegistryScopes(
           user.nationalId,
@@ -353,27 +353,29 @@ export class DelegationScopeService {
           delegationTypes,
         ),
       )
+    }
 
-    if (delegationTypes?.includes(AuthDelegationType.Custom))
+    if (delegationTypes?.includes(AuthDelegationType.Custom)) {
       scopePromises.push(
         this.findValidCustomScopesTo(user.nationalId, fromNationalId).then(
           (delegationScopes: DelegationScope[]) =>
             delegationScopes.map((ds) => ds.scopeName),
         ),
       )
+    }
 
     if (delegationTypes?.includes(AuthDelegationType.GeneralMandate)) {
       scopePromises.push(
-        flatMap(
-          this.findValidGeneralMandateTo(user.nationalId, fromNationalId).then(
-            (delegations) =>
-              delegations.map((d) =>
+        this.findValidGeneralMandateTo(user.nationalId, fromNationalId).then(
+          (delegations) =>
+            delegations
+              .map((d) =>
                 d.delegationDelegationTypes?.map((dt) =>
                   dt.delegationType?.apiScopes.map((as) => as.name),
                 ),
-              ),
-          ),
-        ),
+              )
+              .flat(3),
+        ) as Promise<string[]>,
       )
     }
 
