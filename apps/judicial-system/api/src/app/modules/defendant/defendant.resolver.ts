@@ -20,7 +20,6 @@ import { DeleteDefendantInput } from './dto/deleteDefendant.input'
 import { UpdateDefendantInput } from './dto/updateDefendant.input'
 import { Defendant } from './models/defendant.model'
 
-
 import { DeleteDefendantResponse } from './models/delete.response'
 
 @UseGuards(JwtGraphQlAuthGuard)

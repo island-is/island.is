@@ -122,11 +122,7 @@ const Processing: FC = () => {
       updateCivilClaimantState(updatedCivilClaimant, setWorkingCase)
       updateCivilClaimant(updatedCivilClaimant)
     },
-    [
-      updateCivilClaimant,
-      setWorkingCase,
-      updateCivilClaimantState,
-    ],
+    [updateCivilClaimant, setWorkingCase, updateCivilClaimantState],
   )
 
   const { mutate } = useSWR<NationalRegistryResponsePerson>(

@@ -20,9 +20,7 @@ import {
   PageTitle,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
-import { 
-  IndictmentDecision,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { SubpoenaType } from '../../components'
