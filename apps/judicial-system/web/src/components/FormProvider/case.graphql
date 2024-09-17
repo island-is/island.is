@@ -308,5 +308,6 @@ query Case($input: CaseQueryInput!) {
       policeCaseNumbers
       indictmentSubtypes
     }
+    civilDemands
   }
 }
