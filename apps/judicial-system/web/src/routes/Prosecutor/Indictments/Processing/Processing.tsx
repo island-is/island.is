@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
@@ -180,7 +180,7 @@ const Processing: FC = () => {
   ) => {
     setNID(nationalId.replace('=', ''))
     const newData = await mutate()
-
+    console.log(newData)
     if (!newData || !newData.items || !civilClaimantId) {
       return
     }
@@ -204,8 +204,6 @@ const Processing: FC = () => {
         return
       }
 
-      console.log('!!!!!!!!!!!!!!!!!!!', civilClaimant.id)
-
       promises.push(deleteCivilClaimant(workingCase.id, civilClaimant.id))
     }
 
@@ -220,6 +218,19 @@ const Processing: FC = () => {
     workingCase.civilClaimants,
     workingCase.id,
   ])
+
+  useEffect(() => {
+    /* 
+    If the user has selected "Yes" to hasCivilClaims but has not added a civil claimant,
+    this will add one for them when the page is loaded.
+    */
+    if (
+      workingCase.hasCivilClaims &&
+      workingCase.civilClaimants?.length === 0
+    ) {
+      addCivilClaimant()
+    }
+  }, [addCivilClaimant, workingCase.civilClaimants, workingCase.hasCivilClaims])
 
   return (
     <PageLayout
