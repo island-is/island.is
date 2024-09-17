@@ -2,6 +2,7 @@ import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
+import { uuid } from 'uuidv4'
 
 import {
   Box,
@@ -32,9 +33,12 @@ import {
   CaseState,
   CaseTransition,
   CivilClaimant,
+  CreateCivilClaimantInput,
   DefendantPlea,
+  UpdateCivilClaimantInput,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDefendants,
@@ -59,19 +63,18 @@ const Processing: FC = () => {
     isCaseUpToDate,
     refreshCase,
   } = useContext(FormContext)
-  const { updateCase, transitionCase } = useCase()
+  const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
-  const { createCivilClaimant } = useCivilClaimants()
+  const { updateCivilClaimant, updateCivilClaimantState, createCivilClaimant } =
+    useCivilClaimants()
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
-  const [isCivilClaim, setIsCivilClaim] = useState<boolean | 'NO_CHOICE'>(
-    // TODO: REMOVE DEBUG CODE
-    true, // 'NO_CHOICE',
-  )
   const [nID, setNID] = useState<string>()
   const [claimantHasDefender, setClaimantHasDefender] = useState<boolean>(false)
   const [defenderType, setDefenderType] = useState<'L' | 'R'>('L')
+  const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
+    useState<boolean>()
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
@@ -109,26 +112,29 @@ const Processing: FC = () => {
   const handleUpdateDefendant = useCallback(
     (updatedDefendant: UpdateDefendantInput) => {
       updateDefendantState(updatedDefendant, setWorkingCase)
-
-      if (workingCase.id) {
-        updateDefendant(updatedDefendant)
-      }
+      updateDefendant(updatedDefendant)
     },
-    [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
+    [updateDefendantState, setWorkingCase, updateDefendant],
   )
 
-  const { data, error, mutate } = useSWR(
+  const handleUpdateCivilClaimant = useCallback(
+    (updatedCivilClaimant: UpdateCivilClaimantInput) => {
+      updateCivilClaimantState(updatedCivilClaimant, setWorkingCase)
+      updateCivilClaimant(updatedCivilClaimant)
+    },
+    [
+      updateCivilClaimant,
+      setWorkingCase,
+      updateCivilClaimantState,
+    ],
+  )
+
+  const { mutate } = useSWR<NationalRegistryResponsePerson>(
     nID
       ? `/api/nationalRegistry/getPersonByNationalId?nationalId=${nID}`
       : null,
     fetcher,
   )
-
-  useEffect(() => {
-    if (nID?.length === 11) {
-      mutate()
-    }
-  }, [mutate, nID])
 
   const handleCreateCivilClaimantClick = async () => {
     const civilClaimantId = await createCivilClaimant({
@@ -142,7 +148,7 @@ const Processing: FC = () => {
     window.scrollTo(0, document.body.scrollHeight)
   }
 
-  const createEmptyCivilClaimant = (civilClaimantId?: string | null) => {
+  const createEmptyCivilClaimant = async (civilClaimantId?: string | null) => {
     setWorkingCase((prevWorkingCase) => ({
       ...prevWorkingCase,
       civilClaimants: prevWorkingCase.civilClaimants && [
@@ -154,7 +160,48 @@ const Processing: FC = () => {
         } as CivilClaimant,
       ],
     }))
+
+    await createCivilClaimant({
+      caseId: workingCase.id,
+    } as CreateCivilClaimantInput)
   }
+
+  const handleHasCivilClaimsChange = async (hasCivilClaims: boolean) => {
+    setHasCivilClaimantChoice(hasCivilClaims)
+
+    setAndSendCaseToServer(
+      [{ hasCivilClaims, force: true }],
+      workingCase,
+      setWorkingCase,
+    )
+  }
+
+  const handleCivilClaimantNationalIdBlur = async (
+    nationalId: string,
+    civilClaimantId?: string | null,
+  ) => {
+    setNID(nationalId.replace('=', ''))
+    const newData = await mutate()
+
+    if (!newData || !newData.items || !civilClaimantId) {
+      return
+    }
+
+    handleUpdateCivilClaimant({
+      caseId: workingCase.id,
+      civilClaimantId,
+      name: newData.items[0].name,
+    })
+  }
+
+  useEffect(() => {
+    if (workingCase.hasCivilClaims === true) {
+      const id = uuid()
+      createEmptyCivilClaimant(id)
+    } else if (workingCase.hasCivilClaims === false) {
+      // TODO: Remove all claimants
+    }
+  }, [workingCase.hasCivilClaims, createEmptyCivilClaimant])
 
   return (
     <PageLayout
@@ -256,7 +303,10 @@ const Processing: FC = () => {
             setWorkingCase={setWorkingCase}
           />
         </Box>
-        <Box component="section" marginBottom={isCivilClaim === true ? 5 : 10}>
+        <Box
+          component="section"
+          marginBottom={workingCase.hasCivilClaims === true ? 5 : 10}
+        >
           <BlueBox>
             <SectionHeading
               title={formatMessage(strings.isCivilClaim)}
@@ -272,8 +322,12 @@ const Processing: FC = () => {
                   label={formatMessage(strings.yes)}
                   large
                   backgroundColor="white"
-                  onChange={() => setIsCivilClaim(true)}
-                  checked={isCivilClaim === true}
+                  onChange={() => handleHasCivilClaimsChange(true)}
+                  checked={
+                    hasCivilClaimantChoice === true ||
+                    (hasCivilClaimantChoice === undefined &&
+                      workingCase.hasCivilClaims === true)
+                  }
                 />
               </Box>
               <Box width="half" marginLeft={1}>
@@ -283,16 +337,20 @@ const Processing: FC = () => {
                   label={formatMessage(strings.no)}
                   large
                   backgroundColor="white"
-                  onChange={() => setIsCivilClaim(false)}
-                  checked={isCivilClaim === false}
+                  onChange={() => handleHasCivilClaimsChange(false)}
+                  checked={
+                    hasCivilClaimantChoice === false ||
+                    (hasCivilClaimantChoice === undefined &&
+                      workingCase.hasCivilClaims === false)
+                  }
                 />
               </Box>
             </Box>
           </BlueBox>
         </Box>
-        {isCivilClaim && (
+        {workingCase.hasCivilClaims && (
           <>
-            {[{ id: '', name: '', nationalId: '' }].map((civilClaimant) => (
+            {workingCase.civilClaimants?.map((civilClaimant) => (
               <Box component="section" marginBottom={5}>
                 <SectionHeading title={formatMessage(strings.civilClaimant)} />
                 <BlueBox>
@@ -309,13 +367,15 @@ const Processing: FC = () => {
                   <Box marginBottom={2}>
                     <InputNationalId
                       isDateOfBirth={false}
-                      value={civilClaimant.nationalId}
+                      value={civilClaimant.nationalId ?? undefined}
                       onChange={(val) => console.log('change', val)}
-                      onBlur={(val) => setNID(val)}
+                      onBlur={(val) =>
+                        handleCivilClaimantNationalIdBlur(val, civilClaimant.id)
+                      }
                     />
                   </Box>
                   <InputName
-                    value={civilClaimant.name}
+                    value={civilClaimant.name ?? undefined}
                     onChange={(val) => console.log('change', val)}
                     onBlur={(val) => console.log('blur', val)}
                   />

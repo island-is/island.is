@@ -13,12 +13,18 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
+import {
+  JwtAuthGuard,
+  RolesGuard,
+  RolesRules,
+} from '@island.is/judicial-system/auth'
 
-import { Case, CaseExistsGuard, CurrentCase } from '../case'
+import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
+import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
 import { CreateCivilClaimantDto } from './dto/createCivilClaimant.dto'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CivilClaimant } from './models/civilClaimant.model'
+import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
 import { CivilClaimantService } from './civilClaimant.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -30,7 +36,8 @@ export class CivilClaimantController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post()
   @ApiCreatedResponse({
     type: CivilClaimant,
@@ -39,7 +46,6 @@ export class CivilClaimantController {
   async create(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
-
     @Body() createCivilClaimantDto: CreateCivilClaimantDto,
   ): Promise<CivilClaimant> {
     this.logger.debug(`Creating a new civil claimant for case ${caseId}`)
@@ -47,7 +53,8 @@ export class CivilClaimantController {
     return this.civilClaimantService.create(theCase, createCivilClaimantDto)
   }
 
-  @UseGuards(CaseExistsGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Patch(':civilClaimantId')
   @ApiOkResponse({
     type: CivilClaimant,
@@ -62,22 +69,30 @@ export class CivilClaimantController {
       `Updating civil claimant ${civilClaimantId} in case ${caseId}`,
     )
     return this.civilClaimantService.update(
+      caseId,
       civilClaimantId,
       updateCivilClaimantDto,
     )
   }
 
-  @UseGuards(CaseExistsGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':civilClaimantId')
   @ApiOkResponse({
-    type: CivilClaimant,
+    type: DeleteCivilClaimantResponse,
     description: 'Civil claimant deleted',
   })
-  async remove(
+  async delete(
+    @Param('caseId') caseId: string,
     @Param('civilClaimantId') civilClaimantId: string,
-  ): Promise<void> {
+  ): Promise<DeleteCivilClaimantResponse> {
     this.logger.debug(`Deleting civil claimant ${civilClaimantId}`)
 
-    return this.civilClaimantService.remove(civilClaimantId)
+    const deleted = await this.civilClaimantService.delete(
+      caseId,
+      civilClaimantId,
+    )
+
+    return { deleted }
   }
 }

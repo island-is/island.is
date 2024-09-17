@@ -28,20 +28,22 @@ export class CivilClaimantService {
   }
 
   async update(
+    caseId: string,
     civilClaimantId: string,
     update: UpdateCivilClaimantDto,
   ): Promise<CivilClaimant> {
     const [numberOfAffectedRows, civilClaimants] =
       await this.civilClaimantModel.update(update, {
         where: {
-          civilClaimantId,
+          id: civilClaimantId,
+          caseId: caseId,
         },
         returning: true,
       })
 
     if (numberOfAffectedRows > 1) {
       this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating civil claimant ${civilClaimantId} `,
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating civil claimant ${civilClaimantId} of case ${caseId}`,
       )
     } else if (numberOfAffectedRows < 1) {
       throw new Error(`Could not update civil claimant ${civilClaimantId}`)
@@ -50,15 +52,24 @@ export class CivilClaimantService {
     return civilClaimants[0]
   }
 
-  async remove(civilClaimantId: string): Promise<void> {
+  async delete(caseId: string, civilClaimantId: string): Promise<boolean> {
     const numberOfAffectedRows = await this.civilClaimantModel.destroy({
       where: {
-        civilClaimantId,
+        id: civilClaimantId,
+        caseId: caseId,
       },
     })
 
-    if (numberOfAffectedRows < 1) {
-      throw new Error(`Could not delete civil claimant ${civilClaimantId}`)
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting civil claimant ${civilClaimantId} of case ${caseId}`,
+      )
+      if (numberOfAffectedRows < 1) {
+        throw new Error(`Could not delete civil claimant ${civilClaimantId}`)
+      }
     }
+
+    return true
   }
 }

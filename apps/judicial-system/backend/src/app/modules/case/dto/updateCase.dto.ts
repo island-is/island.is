@@ -518,4 +518,8 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly civilDemands?: string
+
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly hasCivilClaims?: boolean
 }

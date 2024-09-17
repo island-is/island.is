@@ -319,5 +319,6 @@ query Case($input: CaseQueryInput!) {
       isLawyer
     }
     civilDemands
+    hasCivilClaims
   }
 }
