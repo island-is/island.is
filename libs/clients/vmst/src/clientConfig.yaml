@@ -340,7 +340,6 @@ components:
         - otherParentId
         - status
         - periods
-        - applicationRights
         - employers
         - testData
         - type
