@@ -54,7 +54,7 @@ export class AccessGuard implements CanActivate {
               request.auth,
             )
 
-            if (endorsementList?.owner === request.auth.nationalId || isAdmin) {
+            if (endorsementList?.ownerNationalId === request.auth.nationalId || isAdmin) {
               return true
             }
           }

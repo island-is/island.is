@@ -97,6 +97,17 @@ export class EndorsementList extends Model {
     allowNull: false,
     defaultValue: '',
   })
+  owner!: string
+
+  @ApiProperty({
+    type: String,
+    nullable: false,
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
   ownerName!: string
 
   @ApiProperty()

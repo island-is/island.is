@@ -15,7 +15,7 @@ module.exports = {
     {
       ...getGenericEndorsementList(),
       id: listYouOwnListId,
-      owner: authNationalId,
+      ownerNationalId: authNationalId,
     },
     // {
     //   ...getGenericEndorsementList(),
@@ -26,7 +26,7 @@ module.exports = {
     {
       ...getGenericEndorsementList(),
       id: listYouDoNotOwnListId,
-      owner: '1305775399',
+      ownerNationalId: '1305775399',
       tags: ['generalPetition'],
     },
   ],

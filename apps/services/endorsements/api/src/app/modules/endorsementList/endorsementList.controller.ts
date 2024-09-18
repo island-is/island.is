@@ -69,6 +69,13 @@ export class EndorsementListController {
     private readonly endorsementListService: EndorsementListService,
   ) {}
 
+  async onModuleInit() {
+    // spit out some counts of tables - basic data overview
+
+    // Populate owner names for existing lists if they are missing
+    await this.endorsementListService.populateOwnerNamesForExistingLists()
+  }
+
   @ApiOperation({
     summary:
       'Finds all endorsement lists belonging to given tags, if user is not admin then no locked lists will appear',
@@ -322,7 +329,7 @@ export class EndorsementListController {
   ): Promise<EndorsementList> {
     return await this.endorsementListService.create({
       ...endorsementList,
-      owner: user.nationalId,
+      owner: user.nationalId,// ownerNationalIdownerNationalIdownerNationalIdownerNationalId
     })
   }
 

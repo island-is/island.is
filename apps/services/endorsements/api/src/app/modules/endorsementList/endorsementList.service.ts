@@ -31,7 +31,7 @@ import { AwsService } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 
 interface CreateInput extends EndorsementListDto {
-  owner: string
+  owner: string // ownerNationalIdownerNationalIdownerNationalId
 }
 
 @Injectable()
@@ -193,7 +193,7 @@ export class EndorsementListService {
       primaryKeyField: 'counter',
       orderOption: [['counter', 'ASC']],
       where: {
-        owner: nationalId,
+        ownerNationalId: nationalId,
         adminLock: false,
       },
     })
@@ -235,7 +235,7 @@ export class EndorsementListService {
     return await endorsementList.update({ ...endorsementList, ...newData })
   }
 
-  async create(list: CreateInput) {
+  async create(list: CreateInput) { // ownerNationalIdownerNationalIdownerNationalIdownerNationalIdownerNationalIdownerNationalId
     if (!list.openedDate || !list.closedDate) {
       this.logger.warn('Body missing openedDate or closedDate value.')
       throw new BadRequestException([
@@ -736,7 +736,7 @@ export class EndorsementListService {
     return this.endorsementListModel.findOne({
       where: {
         id: listId,
-        ...(isAdmin ? {} : { owner: user.nationalId }),
+        ...(isAdmin ? {} : { ownerNationalId: user.nationalId }),
       },
       include: [{ model: Endorsement }],
     })
