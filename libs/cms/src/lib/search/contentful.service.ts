@@ -440,17 +440,25 @@ export class ContentfulService {
         page += 1
       }
 
-      const rootEntryIds = items.filter(
-        (id) => !indexableEntries.some((entry) => entry.sys.id === id),
-      ) // Remove duplicates
+      // Fetch root entries from Contentful in chunks
+      {
+        const rootEntryIds = items.filter(
+          // Remove duplicates
+          (id) => !indexableEntries.some((entry) => entry.sys.id === id),
+        )
 
-      const rootEntries = await this.getContentfulData(chunkSize, {
-        include: this.defaultIncludeDepth,
-        'sys.id[in]': rootEntryIds.join(','),
-        locale: this.contentfulLocaleMap[locale],
-      })
+        let chunkIds = rootEntryIds.splice(-chunkSize, chunkSize)
 
-      indexableEntries.push(...rootEntries)
+        while (chunkIds.length > 0) {
+          const items = await this.getContentfulData(chunkSize, {
+            include: this.defaultIncludeDepth,
+            'sys.id[in]': chunkIds.join(','),
+            locale: this.contentfulLocaleMap[locale],
+          })
+          indexableEntries.push(...items)
+          chunkIds = rootEntryIds.splice(-chunkSize, chunkSize)
+        }
+      }
 
       idsChunk = ids.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
     }
