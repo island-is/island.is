@@ -26,7 +26,7 @@ const CancelCollection = ({ listId }: { listId?: string }) => {
       variables: {
         input: {
           ...input,
-          collectionId: currentCollection?.id,
+          collectionId: currentCollection?.id ?? '',
         },
       },
     })
