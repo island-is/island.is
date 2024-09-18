@@ -16,8 +16,6 @@ import {
 } from '../case'
 import { CaseListEntry } from '../case-list'
 import { Defendant, DeleteDefendantResponse } from '../defendant'
-import { CreateCivilClaimantInput } from '../defendant/dto/createCivilClaimant.input'
-import { UpdateCivilClaimantInput } from '../defendant/dto/updateCivilClaimant.input'
 import { CivilClaimant } from '../defendant/models/civilClaimant.model'
 import { DeleteCivilClaimantResponse } from '../defendant/models/deleteCivilClaimant.response'
 import { CreateEventLogInput } from '../event-log'
