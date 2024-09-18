@@ -668,12 +668,11 @@ export class AdminClientsService {
       ...(input.addedDelegationTypes ?? []),
     ]
 
-    if (
-      !isSuperUser &&
-      allDelegationTypes.some((delegationType) =>
-        SUPER_USER_DELEGATION_TYPES.includes(delegationType),
-      )
-    ) {
+    const hasSuperUserDelegationType = allDelegationTypes.some(
+      (delegationType) => SUPER_USER_DELEGATION_TYPES.includes(delegationType),
+    )
+
+    if (!isSuperUser && hasSuperUserDelegationType) {
       return false
     }
 

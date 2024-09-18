@@ -27,7 +27,10 @@ import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScopeDelegationType } from '../models/api-scope-delegation-type.model'
-import { delegationTypeSuperUserFilter } from '../utils/filters'
+import {
+  delegationTypeSuperUserFilter,
+  SUPER_USER_DELEGATION_TYPES,
+} from '../utils/filters'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -409,14 +412,11 @@ export class AdminScopeService {
       ...(input.removedDelegationTypes ?? []),
     ]
 
-    const isPersonalRepresentativeUpdate = allDelegationTypes.some(
-      (delegationType) =>
-        delegationType.startsWith(
-          `${AuthDelegationType.PersonalRepresentative}:`,
-        ),
+    const hasSuperUserDelegationType = allDelegationTypes.some(
+      (delegationType) => SUPER_USER_DELEGATION_TYPES.includes(delegationType),
     )
 
-    if (isPersonalRepresentativeUpdate && !isSuperUser) {
+    if (!isSuperUser && hasSuperUserDelegationType) {
       return false
     }
 
