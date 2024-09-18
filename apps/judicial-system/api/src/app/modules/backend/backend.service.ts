@@ -335,7 +335,7 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   createCivilClaimant(
     caseId: string,
-    createCivilClaimant: CreateCivilClaimantInput,
+    createCivilClaimant: unknown,
   ): Promise<CivilClaimant> {
     return this.post(`case/${caseId}/civilClaimant`, createCivilClaimant)
   }
@@ -343,7 +343,7 @@ export class BackendService extends DataSource<{ req: Request }> {
   updateCivilClaimant(
     caseId: string,
     civilClaimantId: string,
-    updateCivilClaimant: UpdateCivilClaimantInput,
+    updateCivilClaimant: unknown,
   ): Promise<CivilClaimant> {
     return this.patch(
       `case/${caseId}/civilClaimant/${civilClaimantId}`,
