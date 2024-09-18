@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { EndorsementTag } from '../../endorsementList/constants'
+import { EndorsementTag } from '../../endorsement-list/constants'
 
 // this exists to provide a pruned version of the endorsement list
 

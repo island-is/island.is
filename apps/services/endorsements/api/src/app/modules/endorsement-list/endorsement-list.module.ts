@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { EndorsementList } from './endorsementList.model'
-import { EndorsementListController } from './endorsementList.controller'
-import { EndorsementListService } from './endorsementList.service'
+import { EndorsementList } from './endorsement-list.model'
+import { EndorsementListController } from './endorsement-list.controller'
+import { EndorsementListService } from './endorsement-list.service'
 import { Endorsement } from '../endorsement/models/endorsement.model'
 
 import { EmailModule } from '@island.is/email-service'

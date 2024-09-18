@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import type { EndorsementList } from '../src/app/modules/endorsementList/endorsementList.model'
+import type { EndorsementList } from '../src/app/modules/endorsement-list/endorsement-list.model'
 
 export {}
 declare global {

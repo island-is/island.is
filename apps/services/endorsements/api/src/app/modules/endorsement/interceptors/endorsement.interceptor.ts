@@ -10,7 +10,7 @@ import { Endorsement } from '../models/endorsement.model'
 import { maskEndorsement } from './endorsement.mask'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { EndorsementService } from '../endorsement.service'
-import { EndorsementListService } from '../../endorsementList/endorsementList.service'
+import { EndorsementListService } from '../../endorsement-list/endorsement-list.service'
 import { User } from '@island.is/auth-nest-tools'
 @Injectable()
 export class EndorsementInterceptor implements NestInterceptor {

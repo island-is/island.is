@@ -31,8 +31,8 @@ import {
   ApiResponse,
 } from '@nestjs/swagger'
 import { environment } from '../../../environments'
-import { EndorsementList } from '../endorsementList/endorsementList.model'
-import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementListById.pipe'
+import { EndorsementList } from '../endorsement-list/endorsement-list.model'
+import { EndorsementListByIdPipe } from '../endorsement-list/pipes/endorsementListById.pipe'
 import { EndorsementDto } from './dto/endorsement.dto'
 import { Endorsement } from './models/endorsement.model'
 import { EndorsementService } from './endorsement.service'

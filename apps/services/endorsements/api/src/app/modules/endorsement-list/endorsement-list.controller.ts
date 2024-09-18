@@ -8,7 +8,6 @@ import {
   Post,
   Put,
   Query,
-  Res,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
@@ -23,8 +22,8 @@ import {
   IntersectionType,
 } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
-import { EndorsementList } from './endorsementList.model'
-import { EndorsementListService } from './endorsementList.service'
+import { EndorsementList } from './endorsement-list.model'
+import { EndorsementListService } from './endorsement-list.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
 import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
@@ -322,7 +321,7 @@ export class EndorsementListController {
   ): Promise<EndorsementList> {
     return await this.endorsementListService.create({
       ...endorsementList,
-      owner: user.nationalId,
+      ownerNationalId: user.nationalId,
     })
   }
 

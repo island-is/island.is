@@ -5,8 +5,8 @@ import {
   PipeTransform,
 } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { EndorsementList } from '../endorsementList.model'
-import { EndorsementListService } from '../endorsementList.service'
+import { EndorsementList } from '../endorsement-list.model'
+import { EndorsementListService } from '../endorsement-list.service'
 import type { EndorsementRequest } from '../../../../../types'
 import type { User } from '@island.is/auth-nest-tools'
 

@@ -9,7 +9,7 @@ import {
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AccessGroup } from './access.enum'
 import { ACCESS_GROUP_KEY } from './access.decorator'
-import { EndorsementListService } from '../../modules/endorsementList/endorsementList.service'
+import { EndorsementListService } from '../../modules/endorsement-list/endorsement-list.service'
 import type { Logger } from '@island.is/logging'
 
 /**
@@ -54,7 +54,10 @@ export class AccessGuard implements CanActivate {
               request.auth,
             )
 
-            if (endorsementList?.owner === request.auth.nationalId || isAdmin) {
+            if (
+              endorsementList?.ownerNationalId === request.auth.nationalId ||
+              isAdmin
+            ) {
               return true
             }
           }

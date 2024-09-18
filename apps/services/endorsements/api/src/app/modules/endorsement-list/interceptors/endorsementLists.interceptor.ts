@@ -11,7 +11,7 @@ import {
 import { maskEndorsementList } from './endorsementList.mask'
 import { PaginatedEndorsementListDto } from '../dto/paginatedEndorsementList.dto'
 import { GqlExecutionContext } from '@nestjs/graphql'
-import { EndorsementListService } from '../endorsementList.service'
+import { EndorsementListService } from '../endorsement-list.service'
 import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
@@ -28,7 +28,8 @@ export class EndorsementListsInterceptor implements NestInterceptor {
       map((retEndorsementLists: PaginatedEndorsementListDto) => {
         retEndorsementLists.data = retEndorsementLists.data.map(
           (retEndorsementList) => {
-            const isListOwner = user?.nationalId === retEndorsementList.owner
+            const isListOwner =
+              user?.nationalId === retEndorsementList.ownerNationalId
             return maskEndorsementList(retEndorsementList, isListOwner, isAdmin)
           },
         )
