@@ -238,7 +238,7 @@ export class SignatureCollectionClientService {
       medmaelalistarRequestDTO: {
         frambodID: parseInt(candidateId),
         medmaelalistar: filteredAreas.map((area) => ({
-          svaediId: parseInt(area.id),
+          svaediID: parseInt(area.id),
           listiNafn: `${name} - ${area.name}`,
         })),
       },
