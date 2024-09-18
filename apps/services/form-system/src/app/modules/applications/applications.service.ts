@@ -45,10 +45,7 @@ export class ApplicationsService {
       })
     })
 
-    const applicationDto = this.applicationMapper.mapFormToApplicationDto(
-      form,
-      newApplication,
-    )
+    const applicationDto = await this.getApplication(newApplication.id)
 
     return applicationDto
   }
@@ -62,7 +59,80 @@ export class ApplicationsService {
       )
     }
 
-    return new ApplicationDto()
+    var form = await this.getApplicationForm(application.formId, applicationId)
+
+    const applicationDto = this.applicationMapper.mapFormToApplicationDto(
+      form,
+      application,
+    )
+
+    return applicationDto
+  }
+
+  private async getApplicationForm(
+    formId: string,
+    applicationId: string,
+  ): Promise<Form> {
+    const form = await this.formModel.findOne({
+      where: { id: formId },
+      include: [
+        {
+          model: Section,
+          as: 'sections',
+          include: [
+            {
+              model: Screen,
+              as: 'screens',
+              include: [
+                {
+                  model: Field,
+                  as: 'fields',
+                  include: [
+                    {
+                      model: FieldSettings,
+                      as: 'fieldSettings',
+                      include: [
+                        {
+                          model: ListItem,
+                          as: 'list',
+                        },
+                      ],
+                    },
+                    {
+                      model: Value,
+                      as: 'values',
+                      where: { applicationId: applicationId },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      order: [
+        [{ model: Section, as: 'sections' }, 'displayOrder', 'ASC'],
+        [
+          { model: Section, as: 'sections' },
+          { model: Screen, as: 'screens' },
+          'displayOrder',
+          'ASC',
+        ],
+        [
+          { model: Section, as: 'sections' },
+          { model: Screen, as: 'screens' },
+          { model: Field, as: 'fields' },
+          'displayOrder',
+          'ASC',
+        ],
+      ],
+    })
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${formId}' not found`)
+    }
+
+    return form
   }
 
   private async getForm(slug: string): Promise<Form> {

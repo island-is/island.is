@@ -29,6 +29,6 @@ export class FieldDto {
   @ApiProperty({ enum: FieldTypes })
   fieldType!: string
 
-  @ApiProperty({ type: ValueDto })
-  value?: ValueDto
+  @ApiProperty({ type: [ValueDto] })
+  values?: ValueDto[]
 }

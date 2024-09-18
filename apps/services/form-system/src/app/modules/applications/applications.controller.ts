@@ -19,7 +19,7 @@ export class ApplicationsController {
     type: ApplicationDto,
   })
   @ApiParam({ name: 'id', type: String })
-  @Get()
+  @Get(':id')
   async getApplication(@Param('id') id: string): Promise<ApplicationDto> {
     return this.applicationsService.getApplication(id)
   }
