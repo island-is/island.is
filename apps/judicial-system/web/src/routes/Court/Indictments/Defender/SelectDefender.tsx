@@ -99,7 +99,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
         <DefenderInput
           disabled={defendant.defenderChoice === DefenderChoice.WAIVE}
           onDefenderNotFound={setDefenderNotFound}
-          defendantId={defendant.id}
+          clientId={defendant.id}
         />
       </BlueBox>
     </Box>

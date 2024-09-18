@@ -67,6 +67,13 @@ export const strings = {
     description:
       'Notaður sem texti fyrir kröfuhafi í "Kröfuhafi er ekki með íslenska kennitölu" í einkaréttarkröfu á Málsmeðferðarskjánum.',
   }),
+  civilClaimantShareFilesWithDefender: defineMessage({
+    id: 'judicial.system.indictments:processing.civil_claimant_share_files_with_defender',
+    defaultMessage:
+      'Deila gögnum með {defenderIsLawyer, select, true {lögmanni} other {réttargæslumanni}} kröfuhafa',
+    description:
+      'Notaður sem texti fyrir kröfuhafi í "Kröfuhafi er ekki með íslenska kennitölu" í einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
   addDefender: defineMessage({
     id: 'judicial.system.indictments:processing.add_defender',
     defaultMessage: 'Bæta við lögmanni kröfuhafa',

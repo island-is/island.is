@@ -29,6 +29,16 @@ export class UpdateCivilClaimantInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly hasSpokesperson?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly spokespersonNationalId?: string
+
+  @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly spokespersonName?: string
 

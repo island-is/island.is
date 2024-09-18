@@ -37,6 +37,14 @@ module.exports = {
             type: Sequelize.BOOLEAN,
             allowNull: true,
           },
+          has_spokesperson: {
+            type: Sequelize.BOOLEAN,
+            allowNull: true,
+          },
+          spokesperson_national_id: {
+            type: Sequelize.STRING,
+            allowNull: true,
+          },
           spokesperson_name: {
             type: Sequelize.STRING,
             allowNull: true,

@@ -312,13 +312,15 @@ query Case($input: CaseQueryInput!) {
       id
       caseId
       name
+      nationalId
+      noNationalId
+      hasSpokesperson
+      spokespersonNationalId
       spokespersonName
       spokespersonEmail
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
       isLawyer
-      nationalId
-      noNationalId
     }
     civilDemands
     hasCivilClaims

@@ -15,6 +15,7 @@ import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
+  DefenderInput,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -71,7 +72,6 @@ const Processing: FC = () => {
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
   const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
     useState<{ nationalId: string; civilClaimantId: string }>()
-  const [claimantHasDefender, setClaimantHasDefender] = useState<boolean>(false)
   const [defenderType, setDefenderType] = useState<'L' | 'R'>('L')
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
     useState<boolean>()
@@ -178,7 +178,7 @@ const Processing: FC = () => {
       return
     }
 
-    if (Boolean(noNationalId)) {
+    if (noNationalId) {
       handleUpdateCivilClaimant({
         caseId: workingCase.id,
         civilClaimantId,
@@ -456,53 +456,105 @@ const Processing: FC = () => {
                     <Button
                       variant="text"
                       colorScheme={
-                        claimantHasDefender ? 'destructive' : 'default'
+                        civilClaimant.hasSpokesperson
+                          ? 'destructive'
+                          : 'default'
                       }
-                      onClick={() =>
-                        setClaimantHasDefender(!claimantHasDefender)
-                      }
+                      onClick={() => {
+                        handleUpdateCivilClaimant({
+                          caseId: workingCase.id,
+                          civilClaimantId: civilClaimant.id,
+                          hasSpokesperson: !civilClaimant.hasSpokesperson,
+                          spokespersonEmail: null,
+                          spokespersonPhoneNumber: null,
+                          spokespersonName: null,
+                          isLawyer: null,
+                          caseFilesSharedWithSpokesperson: null,
+                        })
+                      }}
                     >
                       {formatMessage(
-                        claimantHasDefender
+                        civilClaimant.hasSpokesperson
                           ? strings.removeDefender
                           : strings.addDefender,
                       )}
                     </Button>
                   </Box>
-                  {claimantHasDefender && (
+                  {civilClaimant.hasSpokesperson && (
                     <>
                       <Box display="flex" marginY={2}>
                         <Box width="half" marginRight={1}>
                           <RadioButton
                             name="defenderType"
-                            id="defender_type_L"
+                            id="defender_type_lawyer"
                             label={formatMessage(strings.lawyer)}
                             large
                             backgroundColor="white"
-                            onChange={() => setDefenderType('L')}
-                            checked={defenderType === 'L'}
+                            onChange={() =>
+                              handleUpdateCivilClaimant({
+                                caseId: workingCase.id,
+                                civilClaimantId: civilClaimant.id,
+                                isLawyer: true,
+                              })
+                            }
+                            checked={Boolean(civilClaimant.isLawyer)}
                           />
                         </Box>
                         <Box width="half" marginLeft={1}>
                           <RadioButton
                             name="defenderType"
-                            id="defender_type_R"
+                            id="defender_type_legal_rights_protector"
                             label={formatMessage(strings.legalRightsProtector)}
                             large
                             backgroundColor="white"
-                            onChange={() => setDefenderType('R')}
-                            checked={defenderType === 'R'}
+                            onChange={() =>
+                              handleUpdateCivilClaimant({
+                                caseId: workingCase.id,
+                                civilClaimantId: civilClaimant.id,
+                                isLawyer: false,
+                              })
+                            }
+                            checked={civilClaimant.isLawyer === false}
                           />
                         </Box>
                       </Box>
-                      {/* <DefenderInput
-                    onDefenderNotFound={function (
-                      defenderNotFound: boolean,
-                      ): void {
-                        throw new Error('Function not implemented.')
+                      <Box marginBottom={2}>
+                        <DefenderInput
+                          onDefenderNotFound={() => {
+                            console.log('changethis')
+                          }}
+                          clientId={civilClaimant.id}
+                          isCivilClaim={true}
+                          defenderType={
+                            civilClaimant.isLawyer
+                              ? 'lawyer'
+                              : 'legalRightsProtector'
+                          }
+                        />
+                      </Box>
+                      <Checkbox
+                        name="civilClaimantShareFilesWithDefender"
+                        label={formatMessage(
+                          strings.civilClaimantShareFilesWithDefender,
+                          {
+                            defenderIsLawyer: civilClaimant.isLawyer,
+                          },
+                        )}
+                        checked={Boolean(
+                          civilClaimant.caseFilesSharedWithSpokesperson,
+                        )}
+                        onChange={() => {
+                          handleUpdateCivilClaimant({
+                            caseId: workingCase.id,
+                            civilClaimantId: civilClaimant.id,
+                            caseFilesSharedWithSpokesperson:
+                              !civilClaimant.caseFilesSharedWithSpokesperson,
+                          })
                         }}
-                        defendantId={'1212'}
-                        /> */}
+                        backgroundColor="white"
+                        large
+                        filled
+                      />
                     </>
                   )}
                 </BlueBox>
