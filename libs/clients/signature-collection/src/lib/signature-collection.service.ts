@@ -318,11 +318,12 @@ export class SignatureCollectionClientService {
       return { success: false, reasons: [ReasonKey.NoListToRemove] }
     }
 
-    listsToRemove.map(
-      async (list) =>
-        await this.getApiWithAuth(this.listsApi, auth).medmaelalistarIDDelete({
+    await Promise.all(
+      listsToRemove.map((list) =>
+        this.getApiWithAuth(this.listsApi, auth).medmaelalistarIDDelete({
           iD: parseInt(list.id),
         }),
+      ),
     )
     return { success: true }
   }
