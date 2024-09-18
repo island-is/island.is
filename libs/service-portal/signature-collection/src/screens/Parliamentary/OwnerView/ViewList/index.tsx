@@ -1,12 +1,11 @@
-import { Box, Button, Stack, Text, toast } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../../../lib/messages'
 import { useParams } from 'react-router-dom'
 import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
 import Signees from './Signees'
-import CancelCollection from '../../../shared/CancelCollection'
-import copyToClipboard from 'copy-to-clipboard'
+import { PaperSignees } from './PaperSignees'
 
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')
@@ -54,39 +53,8 @@ const ViewList = () => {
               )}
             </Box>
           </Box>
-          <Box
-            background="purple100"
-            borderRadius="large"
-            display={['block', 'flex', 'flex']}
-            justifyContent="spaceBetween"
-            alignItems="center"
-            padding={3}
-            marginY={2}
-          >
-            <Box marginHeight={5}>
-              <Text marginBottom={[2, 0, 0]}>
-                {formatMessage(m.copyLinkDescription)}
-              </Text>
-            </Box>
-            <Button
-              onClick={() => {
-                const copied = copyToClipboard(
-                  `${document.location.origin}${listInfo.slug}`,
-                )
-                if (!copied) {
-                  return toast.error(formatMessage(m.copyLinkError))
-                }
-                toast.success(formatMessage(m.copyLinkSuccess))
-              }}
-              variant="utility"
-              icon="link"
-            >
-              {formatMessage(m.copyLinkButton)}
-            </Button>
-          </Box>
           <Signees />
-
-          <CancelCollection listId={listInfo.id} />
+          <PaperSignees />
         </Stack>
       )}
     </Box>

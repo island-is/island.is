@@ -51,7 +51,7 @@ export const m = defineMessages({
   },
   copyLinkDescription: {
     id: 'sp.signatureCollection:copyLinkDescription',
-    defaultMessage: 'Hér getur þú afritað hlekk á þitt framboð til að deila.',
+    defaultMessage: 'Hér getur þú afritað hlekk á þitt framboð til að deila',
     description: '',
   },
   copyLinkSuccess: {
@@ -97,6 +97,11 @@ export const m = defineMessages({
   paperUploadedSignature: {
     id: 'sp.signatureCollection:paperUploadedSignature',
     defaultMessage: 'Meðmæli lesin inn',
+    description: '',
+  },
+  digitalSignature: {
+    id: 'sp.signatureCollection:digitalSignature',
+    defaultMessage: 'Skrifað undir: ',
     description: '',
   },
   signatureIsInvalid: {
@@ -184,6 +189,11 @@ export const m = defineMessages({
     defaultMessage: 'Já, hætta við söfnun meðmæla',
     description: '',
   },
+  cancelCollectionModalCancelButton: {
+    id: 'sp.signatureCollection:cancelCollectionModalCancelButton',
+    defaultMessage: 'Nei, hætta við',
+    description: '',
+  },
   cancelCollectionModalToastError: {
     id: 'sp.signatureCollection:modalToastError',
     defaultMessage: 'Ekki tókst að hætta við söfnun meðmæla',
@@ -254,6 +264,36 @@ export const m = defineMessages({
   signeeAddress: {
     id: 'sp.signatureCollection:signeeAddress',
     defaultMessage: 'Heimilisfang',
+    description: '',
+  },
+  paperSigneesHeader: {
+    id: 'sp.signatureCollection:paperSigneesHeader',
+    defaultMessage: 'Skrá meðmæli af blaði',
+    description: '',
+  },
+  paperNumber: {
+    id: 'sp.signatureCollection:paperNumber',
+    defaultMessage: 'Blaðsíðunúmer',
+    description: '',
+  },
+  paperSigneeName: {
+    id: 'sp.signatureCollection:paperSigneeName',
+    defaultMessage: 'Nafn meðmælanda',
+    description: '',
+  },
+  signPaperSigneeButton: {
+    id: 'sp.signatureCollection:signPaperSigneeButton',
+    defaultMessage: 'Skrá meðmæla á lista',
+    description: '',
+  },
+  paperSigneeTypoTitle: {
+    id: 'sp.signatureCollection:paperSigneeTypoTitle',
+    defaultMessage: 'Kennitala ekki á réttu formi',
+    description: '',
+  },
+  paperSigneeTypoMessage: {
+    id: 'sp.signatureCollection:paperSigneeTypoMessage',
+    defaultMessage: 'Vinsamlegast athugið kennitöluna og reynið aftur',
     description: '',
   },
 

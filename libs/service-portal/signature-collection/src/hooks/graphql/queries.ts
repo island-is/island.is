@@ -70,6 +70,7 @@ export const GetSignedList = gql`
       collectionId
       canUnsign
       slug
+      signedDate
     }
   }
 `
