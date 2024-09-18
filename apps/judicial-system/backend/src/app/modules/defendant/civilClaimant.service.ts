@@ -65,9 +65,8 @@ export class CivilClaimantService {
       this.logger.error(
         `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting civil claimant ${civilClaimantId} of case ${caseId}`,
       )
-      if (numberOfAffectedRows < 1) {
-        throw new Error(`Could not delete civil claimant ${civilClaimantId}`)
-      }
+    } else if (numberOfAffectedRows < 1) {
+      throw new Error(`Could not delete civil claimant ${civilClaimantId}`)
     }
 
     return true
