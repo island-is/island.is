@@ -465,6 +465,11 @@ const Processing: FC = () => {
                           caseId: workingCase.id,
                           civilClaimantId: civilClaimant.id,
                           hasSpokesperson: !civilClaimant.hasSpokesperson,
+                          spokespersonEmail: null,
+                          spokespersonPhoneNumber: null,
+                          spokespersonName: null,
+                          isLawyer: null,
+                          caseFilesSharedWithSpokesperson: null,
                         })
                       }}
                     >
