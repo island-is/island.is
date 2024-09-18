@@ -30,8 +30,8 @@ const BasicInformationSchema = z.object({
   markedCE: z.enum([YES, NO]),
   preRegistration: z.enum([YES, NO]).refine((v) => v.length > 0),
   isUsed: z.enum([NEW, USED]),
-  location: z.string().min(1),
-  cargoFileNumber: z.string().min(1),
+  location: z.string().optional(),
+  cargoFileNumber: z.string().optional(),
 })
 
 const AboutMachineSchema = z.object({
@@ -51,9 +51,11 @@ const TechInfoSchema = z.object({
 
 export const NewMachineAnswersSchema = z.object({
   approveExternalData: z.boolean(),
-  importerInformation: z
+  importerInformation: z.object({
+    importer: PersonInformationSchema,
+  }),
+  ownerInformation: z
     .object({
-      importer: PersonInformationSchema,
       isOwnerOtherThanImporter: z.enum([YES, NO]),
       owner: RemovablePersonInformationSchema.optional(),
     })

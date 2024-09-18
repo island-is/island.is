@@ -51,6 +51,7 @@ type HandleNotification = {
     emailNotifications: boolean
     locale?: string
   }
+  notificationId?: number | null
   messageId: string
   message: CreateHnippNotificationDto
 }
@@ -93,6 +94,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   async handleDocumentNotification({
     profile,
     messageId,
+    notificationId,
     message,
   }: HandleNotification) {
     // don't send message unless user wants this type of notification and national id is a person.
@@ -126,6 +128,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       nationalId: profile.nationalId,
       notification,
       messageId,
+      notificationId,
     })
   }
 
@@ -342,12 +345,13 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         await this.sleepOutsideWorkingHours(messageId)
 
         const notification = { messageId, ...message }
-        const messageIdExists = await this.notificationModel.count({
+        let dbNotification = await this.notificationModel.findOne({
           where: { messageId },
+          attributes: ['id'],
         })
 
-        if (messageIdExists > 0) {
-          // messageId exists do nothing
+        if (dbNotification) {
+          // messageId exists in db, do nothing
           this.logger.info('notification with messageId already exists in db', {
             messageId,
           })
@@ -355,8 +359,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           // messageId does not exist
           // write to db
           try {
-            const res = await this.notificationModel.create(notification)
-            if (res) {
+            dbNotification = await this.notificationModel.create(notification)
+            if (dbNotification) {
               this.logger.info('notification written to db', {
                 notification,
                 messageId,
@@ -398,6 +402,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         const handleNotificationArgs: HandleNotification = {
           profile: { ...profile, nationalId: message.recipient },
           messageId,
+          notificationId: dbNotification?.id,
           message,
         }
 

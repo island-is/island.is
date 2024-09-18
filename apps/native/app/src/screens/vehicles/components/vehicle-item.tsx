@@ -2,7 +2,7 @@ import { Label, VehicleCard } from '@ui'
 import React from 'react'
 import { FormattedDate, FormattedMessage } from 'react-intl'
 import { SafeAreaView, TouchableHighlight, View, ViewStyle } from 'react-native'
-import { useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import { ListVehiclesQuery } from '../../../graphql/types/schema'
 import { navigateTo } from '../../../lib/deep-linking'
 
@@ -13,6 +13,11 @@ function differenceInMonths(a: Date, b: Date) {
 type VehicleListItem = NonNullable<
   NonNullable<ListVehiclesQuery['vehiclesList']>['vehicleList']
 >[0]
+
+const Cell = styled(TouchableHighlight)`
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+  border-radius: ${({ theme }) => theme.border.radius.extraLarge};
+`
 
 export const VehicleItem = React.memo(
   ({
@@ -39,14 +44,10 @@ export const VehicleItem = React.memo(
 
     return (
       <View style={{ paddingHorizontal: theme.spacing[2], ...style }}>
-        <TouchableHighlight
+        <Cell
           underlayColor={
             theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
           }
-          style={{
-            marginBottom: theme.spacing[2],
-            borderRadius: theme.border.radius.extraLarge,
-          }}
           onPress={() => {
             navigateTo(`/vehicle/`, {
               id: item.permno,
@@ -78,7 +79,7 @@ export const VehicleItem = React.memo(
               }
             />
           </SafeAreaView>
-        </TouchableHighlight>
+        </Cell>
       </View>
     )
   },

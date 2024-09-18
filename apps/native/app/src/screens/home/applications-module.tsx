@@ -71,6 +71,8 @@ const ApplicationsModule = React.memo(
       return null
     }
 
+    const viewPagerItemWidth = screenWidth - theme.spacing[2] * 4
+
     const items = applications.slice(0, 3).map((application) => (
       <StatusCard
         key={application.id}
@@ -98,7 +100,7 @@ const ApplicationsModule = React.memo(
         style={
           count > 1
             ? {
-                width: screenWidth - theme.spacing[2] * 4,
+                width: viewPagerItemWidth,
                 marginLeft: 16,
               }
             : {}
@@ -169,7 +171,9 @@ const ApplicationsModule = React.memo(
               />
             )}
             {count === 1 && items}
-            {count >= 2 && <ViewPager>{items}</ViewPager>}
+            {count >= 2 && (
+              <ViewPager itemWidth={viewPagerItemWidth}>{items}</ViewPager>
+            )}
           </>
         )}
       </SafeAreaView>

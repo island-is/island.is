@@ -140,7 +140,7 @@ const OccupationalLicenseDetail = () => {
               content={license?.licenseNumber ?? ''}
             />
           )}
-          {(license?.dateOfBirth || loading) && (
+          {license?.dateOfBirth && (
             <UserInfoLine
               loading={loading}
               label={formatMessage(om.dateOfBirth)}

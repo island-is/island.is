@@ -604,10 +604,12 @@ export class ClientsService {
     ) {
       await this.clientModel.update(
         {
-          supportsCustomDelegation,
-          supportsLegalGuardians,
-          supportsProcuringHolders,
-          supportsPersonalRepresentatives,
+          ...(supportsLegalGuardians ? { supportsLegalGuardians } : {}),
+          ...(supportsPersonalRepresentatives
+            ? { supportsPersonalRepresentatives }
+            : {}),
+          ...(supportsProcuringHolders ? { supportsProcuringHolders } : {}),
+          ...(supportsCustomDelegation ? { supportsCustomDelegation } : {}),
         },
         {
           ...options,
