@@ -513,12 +513,42 @@ const Processing: FC = () => {
                           />
                         </Box>
                       </Box>
-                      <DefenderInput
-                        onDefenderNotFound={() => {
-                          console.log('changethis')
+                      <Box marginBottom={2}>
+                        <DefenderInput
+                          onDefenderNotFound={() => {
+                            console.log('changethis')
+                          }}
+                          clientId={civilClaimant.id}
+                          isCivilClaim={true}
+                          defenderType={
+                            civilClaimant.isLawyer
+                              ? 'lawyer'
+                              : 'legalRightsProtector'
+                          }
+                        />
+                      </Box>
+                      <Checkbox
+                        name="civilClaimantShareFilesWithDefender"
+                        label={formatMessage(
+                          strings.civilClaimantShareFilesWithDefender,
+                          {
+                            defenderIsLawyer: civilClaimant.isLawyer,
+                          },
+                        )}
+                        checked={Boolean(
+                          civilClaimant.caseFilesSharedWithSpokesperson,
+                        )}
+                        onChange={() => {
+                          handleUpdateCivilClaimant({
+                            caseId: workingCase.id,
+                            civilClaimantId: civilClaimant.id,
+                            caseFilesSharedWithSpokesperson:
+                              !civilClaimant.caseFilesSharedWithSpokesperson,
+                          })
                         }}
-                        clientId={civilClaimant.id}
-                        isCivilClaim={true}
+                        backgroundColor="white"
+                        large
+                        filled
                       />
                     </>
                   )}

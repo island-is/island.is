@@ -40,6 +40,7 @@ interface Props {
   disabled?: boolean | null
   clientId?: string | null
   isCivilClaim?: boolean
+  defenderType?: 'lawyer' | 'spokesperson' | 'legalRightsProtector'
 }
 
 interface PropertyValidation {
@@ -61,6 +62,7 @@ const DefenderInput: FC<Props> = ({
   disabled,
   clientId,
   isCivilClaim = false,
+  defenderType,
 }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -280,9 +282,13 @@ const DefenderInput: FC<Props> = ({
           name={`defenderName${clientId ? `-${clientId}` : ''}`}
           icon="search"
           options={options}
-          label={formatMessage(m.nameLabel, {
-            sessionArrangements: workingCase.sessionArrangements,
-          })}
+          label={
+            defenderType === 'legalRightsProtector'
+              ? formatMessage(m.spokespersonNameLabel)
+              : formatMessage(m.nameLabel, {
+                  sessionArrangements: workingCase.sessionArrangements,
+                })
+          }
           placeholder={formatMessage(m.namePlaceholder)}
           value={
             isCivilClaim
@@ -323,9 +329,13 @@ const DefenderInput: FC<Props> = ({
           data-testid={`defenderEmail${clientId ? `-${clientId}` : ''}`}
           name="defenderEmail"
           autoComplete="off"
-          label={formatMessage(m.emailLabel, {
-            sessionArrangements: workingCase.sessionArrangements,
-          })}
+          label={
+            defenderType === 'legalRightsProtector'
+              ? formatMessage(m.spokespersonEmailLabel)
+              : formatMessage(m.emailLabel, {
+                  sessionArrangements: workingCase.sessionArrangements,
+                })
+          }
           placeholder={formatMessage(m.emailPlaceholder)}
           value={
             isCivilClaim
@@ -435,9 +445,13 @@ const DefenderInput: FC<Props> = ({
           data-testid={`defenderPhoneNumber${clientId ? `-${clientId}` : ''}`}
           name="defenderPhoneNumber"
           autoComplete="off"
-          label={formatMessage(m.phoneNumberLabel, {
-            sessionArrangements: workingCase.sessionArrangements,
-          })}
+          label={
+            defenderType === 'legalRightsProtector'
+              ? formatMessage(m.spokespersonPhoneNumberLabel)
+              : formatMessage(m.phoneNumberLabel, {
+                  sessionArrangements: workingCase.sessionArrangements,
+                })
+          }
           placeholder={formatMessage(m.phoneNumberPlaceholder)}
           errorMessage={phoneNumberErrorMessage}
           hasError={phoneNumberErrorMessage !== ''}
