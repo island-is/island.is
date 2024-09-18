@@ -221,7 +221,7 @@ export const pruneNonSearchableSliceUnionFields = (
 export const extractChildEntryIds = <T>(rootNode: {
   fields: T
   sys: { id: string }
-}) => {
+}): string[] => {
   const childIds: string[] = []
 
   // Keys that don't lead to an entry id if traversed further down
@@ -232,7 +232,7 @@ export const extractChildEntryIds = <T>(rootNode: {
     visited = new Set(),
     keyAbove = '',
   ) => {
-    if (visited.has(node) || !node) return
+    if (!node || visited.has(node)) return
 
     visited.add(node)
 
