@@ -161,11 +161,11 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
       })
     }
 
-    const performerInAppliedForList = applicants.some(
+    const performerInAppliedForList: boolean = applicants.some(
       (appliedFor) => appliedFor.nationalId === auth.nationalId,
     )
 
-    const performerAlreadyInList = applicantsWithPdfData.some(
+    const performerAlreadyInList: boolean = applicantsWithPdfData.some(
       (applicantWithPdfData) =>
         applicantWithPdfData.nationalId === auth.nationalId,
     )
