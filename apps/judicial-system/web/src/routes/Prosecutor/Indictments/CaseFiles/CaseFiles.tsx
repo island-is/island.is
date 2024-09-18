@@ -172,6 +172,29 @@ const CaseFiles = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
+        <Box component="section" marginBottom={10}>
+          <SectionHeading
+            title={formatMessage(strings.caseFiles.civilClaimSection)}
+          />
+          <InputFileUpload
+            fileList={uploadFiles.filter(
+              (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
+            )}
+            accept={Object.values(fileExtensionWhitelist)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
+            onChange={(files) =>
+              handleUpload(
+                addUploadFiles(files, {
+                  category: CaseFileCategory.CIVIL_CLAIM,
+                }),
+                updateUploadFile,
+              )
+            }
+            onRemove={(file) => handleRemove(file, removeUploadFile)}
+            onRetry={(file) => handleRetry(file, updateUploadFile)}
+          />
+        </Box>
         {isTrafficViolationCaseCheck && (
           <Box marginBottom={10}>
             <PdfButton

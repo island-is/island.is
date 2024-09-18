@@ -94,7 +94,7 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: ({ externalData }: Application) => {
-                return externalData.nationalRegistry?.data.fullName
+                return externalData.parliamentaryIdentity?.data.fullName
               },
             }),
             buildTextField({
@@ -103,7 +103,9 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: (application: Application) =>
-                formatNationalId(application.applicant),
+                application?.applicantActors[0]
+                  ? formatNationalId(application?.applicantActors[0])
+                  : formatNationalId(application.applicant),
             }),
             buildPhoneField({
               id: 'applicant.phone',
