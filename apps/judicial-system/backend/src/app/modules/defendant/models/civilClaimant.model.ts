@@ -65,6 +65,17 @@ export class CivilClaimant extends Model {
   @ApiPropertyOptional({ type: String })
   nationalId?: string
 
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  hasSpokesperson?: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: String })
+  spokespersonNationalId?: string
+
   @Column({
     type: DataType.STRING,
     allowNull: true,

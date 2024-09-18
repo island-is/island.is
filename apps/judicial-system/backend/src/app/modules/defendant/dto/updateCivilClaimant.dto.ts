@@ -19,6 +19,16 @@ export class UpdateCivilClaimantDto {
   readonly nationalId?: string
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly hasSpokesperson?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly spokespersonNationalId?: string
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly spokespersonName?: string

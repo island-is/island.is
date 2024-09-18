@@ -23,6 +23,12 @@ export class CivilClaimant {
   @Field(() => String, { nullable: true })
   readonly nationalId?: string
 
+  @Field(() => Boolean, { nullable: true })
+  readonly hasSpokesperson?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly spokespersonNationalId?: string
+
   @Field(() => String, { nullable: true })
   readonly spokespersonName?: string
 
