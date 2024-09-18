@@ -69,13 +69,13 @@ const Subpoena: FC = () => {
         })
       }
 
-      const shouldSendNotification =
+      if (
         !hasSentNotification(
           NotificationType.COURT_DATE,
           workingCase.notifications,
-        ).hasSent && !courtDateHasChanged
-
-      if (shouldSendNotification) {
+        ).hasSent &&
+        !courtDateHasChanged
+      ) {
         promises.push(
           sendNotification(workingCase.id, NotificationType.COURT_DATE),
         )
