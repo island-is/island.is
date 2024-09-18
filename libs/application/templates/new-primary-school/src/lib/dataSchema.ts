@@ -153,34 +153,6 @@ export const dataSchema = z.object({
         params: errorMessages.languagesRequired,
       },
     ),
-  allergiesAndIntolerances: z
-    .object({
-      hasFoodAllergies: z.array(z.string()),
-      hasFoodIntolerances: z.array(z.string()),
-      foodAllergies: z.array(z.string()).optional(),
-      foodIntolerances: z.array(z.string()).optional(),
-      isUsingEpiPen: z.array(z.string()),
-    })
-    .refine(
-      ({ hasFoodAllergies, foodAllergies }) =>
-        hasFoodAllergies.includes(YES)
-          ? !!foodAllergies && foodAllergies.length > 0
-          : true,
-      {
-        path: ['foodAllergies'],
-        params: errorMessages.foodAllergyRequired,
-      },
-    )
-    .refine(
-      ({ hasFoodIntolerances, foodIntolerances }) =>
-        hasFoodIntolerances.includes(YES)
-          ? !!foodIntolerances && foodIntolerances.length > 0
-          : true,
-      {
-        path: ['foodIntolerances'],
-        params: errorMessages.foodIntoleranceRequired,
-      },
-    ),
   support: z.object({
     developmentalAssessment: z.enum([YES, NO]),
     specialSupport: z.enum([YES, NO]),

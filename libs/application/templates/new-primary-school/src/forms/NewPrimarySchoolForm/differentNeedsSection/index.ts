@@ -2,7 +2,6 @@ import { buildSection } from '@island.is/application/core'
 import { ReasonForApplicationOptions } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
-import { allergiesAndIntolerancesSubSection } from './allergiesAndIntolerancesSubSection'
 import { languageSubSection } from './languageSubSection'
 import { supportSubSection } from './supportSubSection'
 
@@ -14,9 +13,5 @@ export const differentNeedsSection = buildSection({
     const { reasonForApplication } = getApplicationAnswers(answers)
     return reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
   },
-  children: [
-    languageSubSection,
-    allergiesAndIntolerancesSubSection,
-    supportSubSection,
-  ],
+  children: [languageSubSection, supportSubSection],
 })

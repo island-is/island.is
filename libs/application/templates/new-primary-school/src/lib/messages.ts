@@ -501,67 +501,6 @@ export const newPrimarySchoolMessages: MessageDir = {
         "Icelandic is not spoken in the child's immediate environment",
     },
 
-    // Allergies and intolerances
-    allergiesAndIntolerancesSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.allergies.and.intolerances.sub.section.title',
-      defaultMessage: 'Ofnæmi og óþol',
-      description: 'Allergies and intolerances',
-    },
-    foodAllergiesAndIntolerancesTitle: {
-      id: 'dess.nps.application:different.needs.food.allergies.and.intolerances.title',
-      defaultMessage: 'Fæðuofnæmi og -óþol',
-      description: 'Food allergies and intolerances',
-    },
-    foodAllergiesAndIntolerancesDescription: {
-      id: 'dess.nps.application:different.needs.food.allergies.and.intolerances.description',
-      defaultMessage:
-        'Er barnið með fæðuofnæmi eða -óþol sem starfsfólk skóla þarf að vera meðvitað um?',
-      description:
-        'Does the child have food allergies or intolerances that the school staff need to be aware of?',
-    },
-    childHasFoodAllergies: {
-      id: 'dess.nps.application:different.needs.child.has.food.allergies',
-      defaultMessage: 'Barnið er með fæðuofnæmi',
-      description: 'Child has food allergies',
-    },
-    typeOfAllergies: {
-      id: 'dess.nps.application:different.needs.type.of.allergies',
-      defaultMessage: 'Tegund ofnæmis',
-      description: 'Type of allergies',
-    },
-    typeOfAllergiesPlaceholder: {
-      id: 'dess.nps.application:different.needs.type.of.allergies.placeholder',
-      defaultMessage: 'Veldu tegund ofnæmis',
-      description: 'Select type of allergies',
-    },
-    confirmFoodAllergiesAlertMessage: {
-      id: 'dess.nps.application:different.needs.confirm.food.allergies.alert.message',
-      defaultMessage:
-        'Athugið að skóli mun krefjast vottorðs frá lækni til staðfestingar á fæðuofnæmi.',
-      description:
-        "Please note that the school will require a doctor's certificate to confirm food allergies.",
-    },
-    childHasFoodIntolerances: {
-      id: 'dess.nps.application:different.needs.child.has.food.intolerances',
-      defaultMessage: 'Barnið er með fæðuóþol',
-      description: 'Child has food intolerances',
-    },
-    typeOfIntolerances: {
-      id: 'dess.nps.application:different.needs.type.of.intolerances',
-      defaultMessage: 'Tegund óþols',
-      description: 'Type of intolerances',
-    },
-    typeOfIntolerancesPlaceholder: {
-      id: 'dess.nps.application:different.needs.type.of.intolerances.placeholder',
-      defaultMessage: 'Veldu tegund óþols',
-      description: 'Select type of intolerances',
-    },
-    usesEpinephrinePen: {
-      id: 'dess.nps.application:different.needs.uses.epinephrine.pen',
-      defaultMessage: 'Notar adrenalínpenna',
-      description: 'Uses epinephrine pen',
-    },
-
     // Support
     supportSubSectionTitle: {
       id: 'dess.nps.application:different.needs.support.sub.section.title',
@@ -655,21 +594,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Íslenska er töluð í nærumhverfi barnsins',
       description: "Icelandic is spoken in the child's immediate environment",
     },
-    foodAllergies: {
-      id: 'dess.nps.application:overview.food.allergies',
-      defaultMessage: 'Fæðuofnæmi',
-      description: 'Food allergies',
-    },
-    foodIntolerances: {
-      id: 'dess.nps.application:overview.food.intolerances',
-      defaultMessage: 'Fæðuóþol',
-      description: 'Food intolerances',
-    },
-    usesEpinephrinePen: {
-      id: 'dess.nps.application:overview.uses.epinephrine.pen',
-      defaultMessage: 'Notar adrenalínpenna',
-      description: 'Uses an epinephrine pen',
-    },
     schoolTitle: {
       id: 'dess.nps.application:review.school.title',
       defaultMessage: 'Upplýsingar um skóla',
@@ -760,15 +684,18 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Það þarf að velja a.m.k eitt tungumál',
     description: 'At least one language must be selected',
   },
-  foodAllergyRequired: {
-    id: 'dess.nps.application:error.food.allergy.required',
-    defaultMessage: 'Það þarf að velja a.m.k eitt fæðuofnæmi',
-    description: 'At least one food allergy must be selected',
+  noChildrenFoundTitle: {
+    id: 'dess.nps.application:error.no.children.found.title',
+    defaultMessage: 'Því miður ert þú ekki með skráð barn á grunnskólaaldri',
+    description:
+      'Unfortunately, you do not have a child registered at primary school age',
   },
-  foodIntoleranceRequired: {
-    id: 'dess.nps.application:error.food.intolerance.required',
-    defaultMessage: 'Það þarf að velja a.m.k eitt fæðuóþol',
-    description: 'At least one food intolerance must be selected',
+  noChildrenFoundMessage: {
+    id: 'dess.nps.application:error.no.children.found.message#markdown',
+    defaultMessage:
+      'Eingöngu sá sem er með lögheimilisforsjá hefur heimild til að sækja um fyrir barn. \n\nÞjóðskrá skráir hver eða hverjir teljast foreldrar barns og hver fari með forsjárskyldur þess. Upplýsingar um skráningu forsjár og lögheimilisforeldris má nálgast hér: [Foreldrar og forsjá | Þjóðskrá (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nUpplýsingum um tengsl á milli barna og foreldra auk forsjáraðila eru einnig aðgengilegar á [Mínum síðum á Ísland.is](https://island.is/minarsidur)',
+    description:
+      'Only the person who has legal custody has the authority to apply for a child.\n\nThe National Registry records who or which individuals are considered to be the parents of a child and who has custody responsibilities. Information on registering custody and legal guardianship can be found here: [Parents and Custody | National Registry (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nInformation about the relationship between children and parents, as well as custody authorities, is also available on [My Pages on Ísland.is](https://island.is/minarsidur)',
   },
   noChildrenFoundTitle: {
     id: 'dess.nps.application:error.no.children.found.title',
