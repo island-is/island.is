@@ -8,7 +8,7 @@ export class SignatureCollectionAddListsInput extends SignatureCollectionIdInput
   @IsString()
   candidateId!: string
 
-  @Field(() => [String], { nullable: false, defaultValue: [] })
+  @Field(() => [String], { nullable: true, defaultValue: [] })
   @IsArray()
   areaIds?: string[]
 }
