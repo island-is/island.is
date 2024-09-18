@@ -68,7 +68,7 @@ export class EndorsementListService {
       },
     })
     if (endorsementList) {
-      return endorsementList.owner
+      return endorsementList.ownerNationalId
     } else {
       return null
     }
@@ -307,12 +307,13 @@ export class EndorsementListService {
     return result
   }
 
-  async getOwnerInfo(listId: string, owner?: string) {
+  //// WE ARE REMOVING THIS RIGHT ................................................................?
+  async getOwnerInfo(listId: string, ownerNationalId?: string) {
     // Is used by both unauthenticated users, authenticated users and admin
     // Admin needs to access locked lists and can not use the EndorsementListById pipe
     // Since the endpoint is not authenticated
     this.logger.info(`Finding single endorsement lists by id "${listId}"`)
-    if (!owner) {
+    if (!ownerNationalId) {
       const endorsementList = await this.endorsementListModel.findOne({
         where: {
           id: listId,
@@ -322,11 +323,11 @@ export class EndorsementListService {
         this.logger.warn('This endorsement list does not exist.')
         throw new NotFoundException(['This endorsement list does not exist.'])
       }
-      owner = endorsementList.owner
+      ownerNationalId = endorsementList.ownerNationalId
     }
 
     try {
-      const person = await this.nationalRegistryApiV3.getName(owner)
+      const person = await this.nationalRegistryApiV3.getName(ownerNationalId)
       return person?.fulltNafn ? person.fulltNafn : ''
     } catch (e) {
       if (e instanceof Error) {
@@ -433,7 +434,7 @@ export class EndorsementListService {
     }
     const ownerName = await this.getOwnerInfo(
       endorsementList?.id,
-      endorsementList.owner,
+      endorsementList.ownerNationalId,
     )
     this.logger.info(
       `sending list ${listId} to ${recipientEmail} from ${environment.email.sender}`,
@@ -524,7 +525,7 @@ export class EndorsementListService {
     const recipientEmail = this.getOwnerContact(endorsementList.meta, 'email')
     const ownerName = await this.getOwnerInfo(
       endorsementList?.id,
-      endorsementList.owner,
+      endorsementList.ownerNationalId,
     )
     this.logger.info(
       `sending list ${endorsementList.id} to ${recipientEmail} from ${environment.email.sender}`,
@@ -590,7 +591,7 @@ export class EndorsementListService {
     const ownerPhone = this.getOwnerContact(endorsementList.meta, 'phone')
     const ownerName = await this.getOwnerInfo(
       endorsementList?.id,
-      endorsementList.owner,
+      endorsementList.ownerNationalId,
     )
     this.logger.info(
       `sending new list ${endorsementList.id} to skra@skra.is from ${environment.email.sender}`,
@@ -647,7 +648,7 @@ export class EndorsementListService {
             {
               component: 'Copy',
               context: {
-                copy: `Kennitala stofnenda: ${endorsementList.owner}`,
+                copy: `Kennitala stofnenda: ${endorsementList.ownerNationalId}`,
                 small: true,
               },
             },
@@ -757,7 +758,7 @@ export class EndorsementListService {
     try {
       const ownerName = await this.getOwnerInfo(
         endorsementList.id,
-        endorsementList.owner,
+        endorsementList.ownerNationalId,
       )
       const pdfBuffer = await this.createDocumentBuffer(
         endorsementList,
@@ -792,6 +793,37 @@ export class EndorsementListService {
     } catch (error) {
       this.logger.error(`Failed to upload file to S3`, { error, filename })
       throw new Error('Error uploading file to S3')
+    }
+  }
+
+  async getOwnerName(ownerNationalId: string): Promise<string> {
+    try {
+      const person = await this.nationalRegistryApiV3.getName(ownerNationalId)
+      return person?.fulltNafn || ''
+    } catch (error) {
+      const message = `Error fetching owner name from NationalRegistryApi: ${error.message}`
+      this.logger.error(message)
+      throw new BadRequestException(message)
+    }
+  }
+
+  // Method to handle older lists without an ownerName - this will be removed after all lists have been populated
+  async populateOwnerNamesForExistingLists() {
+    const lists = await this.endorsementListModel.findAll({
+      where: {
+        ownerName: '',
+      },
+    })
+
+    this.logger.info(
+      `Populating owner names for ${lists.length} existing lists`,
+    )
+    for (const list of lists) {
+      const ownerName = await this.getOwnerName(list.ownerNationalId)
+      if (ownerName) {
+        list.ownerName = ownerName
+        await list.save()
+      }
     }
   }
 }
