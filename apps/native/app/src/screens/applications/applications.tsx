@@ -70,7 +70,10 @@ export const sortApplicationsStatus = (
   const completed: Application[] = []
 
   applications.forEach((application) => {
-    if (application.status === ApplicationResponseDtoStatusEnum.Draft) {
+    if (
+      application.status === ApplicationResponseDtoStatusEnum.Draft ||
+      application.status === ApplicationResponseDtoStatusEnum.Notstarted
+    ) {
       incomplete.push(application)
     } else if (
       application.status === ApplicationResponseDtoStatusEnum.Inprogress
