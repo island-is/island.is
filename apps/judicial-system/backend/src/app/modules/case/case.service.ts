@@ -341,6 +341,7 @@ export const order: OrderItem[] = [
   [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
   [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
   [{ model: Notification, as: 'notifications' }, 'created', 'DESC'],
+  [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
 ]
 
 export const caseListInclude: Includeable[] = [
