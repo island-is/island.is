@@ -27,7 +27,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScopeDelegationType } from '../models/api-scope-delegation-type.model'
-import { filterPersonalRepresentative } from '../utils/personalRepresentativeFilter'
+import { delegationTypeSuperUserFilter } from '../utils/filters'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -165,7 +165,7 @@ export class AdminScopeService {
         // Remove defined super admin fields
         ...omit(input, superUserScopeFields),
         // Remove personal representative from delegation types since it is not allowed for non-super admins
-        supportedDelegationTypes: filterPersonalRepresentative(
+        supportedDelegationTypes: delegationTypeSuperUserFilter(
           input.supportedDelegationTypes ?? [],
         ),
       }

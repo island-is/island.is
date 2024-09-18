@@ -41,7 +41,7 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { ClientDelegationType } from '../models/client-delegation-type.model'
-import { filterPersonalRepresentative } from '../../resources/utils/personalRepresentativeFilter'
+import { delegationTypeSuperUserFilter } from '../../resources/utils/filters'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -179,7 +179,7 @@ export class AdminClientsService {
         // Remove defined super admin fields
         ...omit(clientDto, superUserFields),
         // Remove personal representative from delegation types since it is not allowed for non-super admins
-        supportedDelegationTypes: filterPersonalRepresentative(
+        supportedDelegationTypes: delegationTypeSuperUserFilter(
           clientDto.supportedDelegationTypes ?? [],
         ),
       }
