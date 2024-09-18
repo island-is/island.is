@@ -2,22 +2,16 @@ import {
   InputFileUpload,
   Box,
   Text,
-  UploadFile,
   fileToObject,
   AlertMessage,
   Stack,
-  Button,
-  Inline,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useEffect, useState } from 'react'
-import { FileError, FileRejection } from 'react-dropzone'
+import { FileRejection } from 'react-dropzone'
 import {
-  InfoLine,
-  InfoLineStack,
   IntroHeader,
   LinkButton,
-  Modal,
   SAMGONGUSTOFA_SLUG,
   m,
 } from '@island.is/service-portal/core'
@@ -26,7 +20,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { AssetsPaths } from '../../lib/paths'
 import { useVehicleBulkMileagePostMutation } from './VehicleBulkMileageUpload.generated'
 import VehicleBulkMileageFileDownloader from '../VehicleBulkMileage/VehicleBulkMileageFileDownloader'
-import { vehicleMessage } from '@island.is/service-portal/assets/messages'
+import { vehicleMessage } from '../../lib/messages'
 
 const VehicleBulkMileageUpload = () => {
   useNamespaces('sp.vehicles')

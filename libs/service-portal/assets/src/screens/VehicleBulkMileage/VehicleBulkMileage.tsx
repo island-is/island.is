@@ -1,4 +1,4 @@
-import { Stack, Pagination, Text, Box, Inline } from '@island.is/island-ui/core'
+import { Stack, Pagination, Text, Inline } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m,
@@ -6,14 +6,12 @@ import {
   IntroHeader,
   LinkButton,
 } from '@island.is/service-portal/core'
-import { dummy } from './mocks/propsDummy'
 import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'
 import { useEffect, useState } from 'react'
 import VehicleBulkMileageTable from './VehicleBulkMileageTable'
 import { SubmissionState, VehicleType } from './types'
 import { FormProvider, useForm } from 'react-hook-form'
-import { MileageRecord } from '../../utils/parseCsvToMileage'
 import { useVehiclesListQuery } from './VehicleBulkMileage.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'

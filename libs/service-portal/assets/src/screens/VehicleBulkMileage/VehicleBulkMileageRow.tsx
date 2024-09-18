@@ -4,7 +4,6 @@ import {
   NestedFullTable,
   formatDate,
 } from '@island.is/service-portal/core'
-import { ReactNode, useEffect } from 'react'
 import * as styles from './VehicleBulkMileage.css'
 import { VehicleBulkMileageSaveButton } from './VehicleBulkMileageSaveButton'
 import { useLocale } from '@island.is/localization'

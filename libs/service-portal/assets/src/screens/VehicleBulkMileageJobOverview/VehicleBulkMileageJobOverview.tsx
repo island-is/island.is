@@ -12,7 +12,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useGetRequestsStatusQuery } from './VehicleBulkMileageJobOverview.generated'
 import { VehiclesBulkMileageRegistrationJob } from '@island.is/api/schema'
 import { AssetsPaths } from '../../lib/paths'
-import { vehicleMessage } from '@island.is/service-portal/assets/messages'
+import { vehicleMessage } from '../../lib/messages'
 
 const DATE_FORMAT = 'dd.MM.yyyy - HH:mm'
 

@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Icon,
-  Inline,
   Stack,
   Table as T,
   Text,
@@ -12,17 +11,12 @@ import {
   IntroHeader,
   SAMGONGUSTOFA_SLUG,
   m,
-  InfoLineStack,
-  InfoLine,
   EmptyTable,
   TableGrid,
   downloadFile,
 } from '@island.is/service-portal/core'
 import { Problem } from '@island.is/react-spa/shared'
-import {
-  VehiclesBulkMileageRegistrationRequestDetail,
-  VehiclesBulkMileageRegistrationRequestStatus,
-} from '@island.is/api/schema'
+import { VehiclesBulkMileageRegistrationRequestStatus } from '@island.is/api/schema'
 import { useParams } from 'react-router-dom'
 import {
   useGetJobRegistrationsQuery,
@@ -31,22 +25,17 @@ import {
 import { VehiclesBulkMileageRegistrationRequestOverview } from '@island.is/service-portal/graphql'
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import { useMemo, useState } from 'react'
-import VehicleBulkMileageFileDownloader from '../VehicleBulkMileage/VehicleBulkMileageFileDownloader'
 import { isDefined } from '@island.is/shared/utils'
-import { vehicleMessage } from '@island.is/service-portal/assets/messages'
+import { vehicleMessage } from '../../lib/messages'
 
 type UseParams = {
   id: string
 }
 
-const STATUS_PER_PAGE = 20
-
 const VehicleBulkMileageUploadJobDetail = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
-
-  const [page, setPage] = useState(0)
 
   const { data, loading, error, refetch } = useGetJobsStatusQuery({
     variables: {
