@@ -329,7 +329,23 @@
         "primaryButton": "Try again",
         "secondaryButton": "Cancel"
       },
-      "currentMileage": "Current mileage"
+      "currentMileage": "Current mileage",
+      "numberplate": {
+        "sectionTitle": "Number plates information",
+        "alert": {
+          "info": {
+            "title": "The vehicle is registered out of use at the Icelandic Transport Authority.",
+            "message": "The number plates are deposited at the Icelandic Transport Authority"
+          },
+          "warning": {
+            "title": "The vehicle is registered out of use with a sticker at the Icelandic Transport Authority.",
+            "message": "The number plates must accompany the vehicle"
+          }
+        },
+        "count": "Number of license plates returned with the vehicle",
+        "lost": "Number plates are missing",
+        "missingInfo": "If the number plates are found, they must be returned to the Icelandic Transport Authority"
+      }
     }
   },
   "recyclingFundOverview": {

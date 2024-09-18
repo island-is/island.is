@@ -30,9 +30,13 @@ export const TypeOfIdSubSection = buildSubSection({
           options: (application) => {
             const combinedAppplicantInformation =
               getCombinedApplicantInformation(application.externalData)
-            const chosenApplicant = getChosenApplicant(
+            const radioAnswerApplicant = getValueViaPath(
               application.answers,
+              'chosenApplicants',
+            ) as string
+            const chosenApplicant = getChosenApplicant(
               application.externalData,
+              radioAnswerApplicant,
             )
 
             if (!chosenApplicant.isApplicant) {
@@ -79,7 +83,14 @@ export const TypeOfIdSubSection = buildSubSection({
           condition: (answers, externalData) => {
             const combinedAppplicantInformation =
               getCombinedApplicantInformation(externalData)
-            const chosenApplicant = getChosenApplicant(answers, externalData)
+            const radioAnswerApplicant = getValueViaPath(
+              answers,
+              'chosenApplicants',
+            ) as string
+            const chosenApplicant = getChosenApplicant(
+              externalData,
+              radioAnswerApplicant,
+            )
             if (!chosenApplicant.isApplicant) {
               const childPassports = getValueViaPath(
                 externalData,

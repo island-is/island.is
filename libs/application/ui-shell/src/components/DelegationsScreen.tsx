@@ -68,7 +68,7 @@ export const DelegationsScreen = ({
 
   // Check whether application supports delegations
   useEffect(() => {
-    async function applicationSupportsDelegations() {
+    const applicationSupportsDelegations = async () => {
       if (type) {
         const template = await getApplicationTemplateByTypeId(type)
         const featureFlagEnabled = await featureFlagClient.getValue(

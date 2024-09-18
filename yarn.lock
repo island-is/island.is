@@ -10968,8 +10968,8 @@ __metadata:
   linkType: hard
 
 "@expo/metro-config@npm:~0.18.6":
-  version: 0.18.7
-  resolution: "@expo/metro-config@npm:0.18.7"
+  version: 0.18.11
+  resolution: "@expo/metro-config@npm:0.18.11"
   dependencies:
     "@babel/core": ^7.20.0
     "@babel/generator": ^7.20.5
@@ -10989,7 +10989,7 @@ __metadata:
     lightningcss: ~1.19.0
     postcss: ~8.4.32
     resolve-from: ^5.0.0
-  checksum: f9212492ed5bb1d28bb506280055d7488f1d7d2013f65fdaaec8158de07cdd46c887d30ae206d65b89fee24bf1def20b28caf1563f54c3daabe02ad0d210ee3e
+  checksum: 4de79b97c6d818a487c6eaa83a55d3d9d1a1b28262507d74ad407fa22c2c32658d2cd2fa38babf82c32cf58239aff2c5d85e130609eaa34ed29a8e20a295cd7f
   languageName: node
   linkType: hard
 
@@ -12759,6 +12759,7 @@ __metadata:
     expo: 51.0.25
     expo-file-system: 17.0.1
     expo-haptics: 13.0.1
+    expo-linking: 6.3.1
     expo-local-authentication: 14.0.1
     expo-notifications: 0.28.9
     intl: 1.2.5
@@ -25656,8 +25657,8 @@ __metadata:
   linkType: hard
 
 "babel-preset-expo@npm:~11.0.13":
-  version: 11.0.13
-  resolution: "babel-preset-expo@npm:11.0.13"
+  version: 11.0.14
+  resolution: "babel-preset-expo@npm:11.0.14"
   dependencies:
     "@babel/plugin-proposal-decorators": ^7.12.9
     "@babel/plugin-transform-export-namespace-from": ^7.22.11
@@ -25669,7 +25670,7 @@ __metadata:
     babel-plugin-react-compiler: ^0.0.0-experimental-592953e-20240517
     babel-plugin-react-native-web: ~0.19.10
     react-refresh: ^0.14.2
-  checksum: 6bfc721da903591bf94c73b711ead8ce5d28739fa6b5c893581c4c5f70f164aa6930982300066d412ce81e0c11e9e531e5c339751b05f002a37909e096f54b06
+  checksum: b41c3fab6592fceb4ae020a0a79cb8e1d2e0354daca1d468e7db2c3033a17d654ac4627fb0b26f728809bc9810b7a1065dfd2a8a1f05fdbc83bacdc90e8e79dd
   languageName: node
   linkType: hard
 
@@ -33175,13 +33176,13 @@ __metadata:
   linkType: hard
 
 "expo-font@npm:~12.0.9":
-  version: 12.0.9
-  resolution: "expo-font@npm:12.0.9"
+  version: 12.0.10
+  resolution: "expo-font@npm:12.0.10"
   dependencies:
     fontfaceobserver: ^2.1.0
   peerDependencies:
     expo: "*"
-  checksum: adad225ed6002d5d527808b8f463bc59a1a1626fb2ff34918dcbd2172757977c056101f737ed9523f6d55e0aa88a64988002eb9b6d22f379d5956883f7451379
+  checksum: c8fdc046158d4c2d71d81fcd9ba115bc0e142bc0d637ae9b5fea04cd816c62c051f63e44685530109106565d29feca2035ef6123c56cf9c951d0a2775a8cd9a7
   languageName: node
   linkType: hard
 
@@ -33200,6 +33201,16 @@ __metadata:
   peerDependencies:
     expo: "*"
   checksum: 1300c6663632bc00db71a7d3b8a8dfc30ec0cbdd01777ab30b54ef5269cdfd557ae9419ae9f4007dbab1d252610fa6bfd22ebb0b5c2012ecad929bb4c3f35188
+  languageName: node
+  linkType: hard
+
+"expo-linking@npm:6.3.1":
+  version: 6.3.1
+  resolution: "expo-linking@npm:6.3.1"
+  dependencies:
+    expo-constants: ~16.0.0
+    invariant: ^2.2.4
+  checksum: 32e2dbcffc802fc6570a5a9cd7839c873f6cfc40730f1cf3cdabeb2782c30b54455d41c98708dbba2649941d5ff8cb591b85689f9c1a3b7a3fcb20011aae0cb5
   languageName: node
   linkType: hard
 
