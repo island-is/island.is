@@ -254,7 +254,7 @@ export const getTransferredDays = (
   return days
 }
 
-export const getPersonaldays = (application: Application) => {
+export const getPersonalDays = (application: Application) => {
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
@@ -276,7 +276,7 @@ export const getPersonaldays = (application: Application) => {
 }
 
 export const getPersonalDaysInMonths = (application: Application) =>
-  daysToMonths(getPersonaldays(application)).toFixed(1)
+  daysToMonths(getPersonalDays(application)).toFixed(1)
 
 export const getMultipleBirthsDays = (application: Application) => {
   const selectedChild = getSelectedChild(

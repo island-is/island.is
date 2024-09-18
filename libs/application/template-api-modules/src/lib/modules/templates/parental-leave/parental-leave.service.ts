@@ -32,7 +32,7 @@ import {
   getUnApprovedEmployers,
   isParentWithoutBirthParent,
   Period as AnswerPeriod,
-  getPersonaldays,
+  getPersonalDays,
   getPersonalDaysInMonths,
   StartDateOptions,
 } from '@island.is/application/templates/parental-leave'
@@ -733,7 +733,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       throw new Error('Missing selected child')
     }
     const transferredDays = getTransferredDays(application, selectedChild)
-    const personalDays = getPersonaldays(application)
+    const personalDays = getPersonalDays(application)
 
     const mulitpleBirthsRights =
       applicationType === PARENTAL_LEAVE
@@ -850,6 +850,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     isActualDateOfBirth: boolean,
     rights: string,
   ): Period[] {
+    console.log({
+      d: this.calculatePeriodDays('2025-06-18', '2025-07-02', '4', ''),
+    })
+
     return periods.map((period, index) => {
       const isFirstPeriod = index === 0
       return {
