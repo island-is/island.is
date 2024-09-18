@@ -16,8 +16,8 @@ import { Skeleton } from '../../../skeletons'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import copyToClipboard from 'copy-to-clipboard'
-import SignedList from '../SignedList'
 import { SignatureCollection } from '@island.is/api/schema'
+import SignedList from '../../shared/SignedList'
 
 const OwnerView = ({
   currentCollection,
@@ -85,7 +85,9 @@ const OwnerView = ({
             </Box>
 
             {/* Signed list */}
-            {!user?.profile.actor && <SignedList />}
+            {!user?.profile.actor && (
+              <SignedList currentCollection={currentCollection} />
+            )}
 
             {/* Candidate created lists */}
             <Text marginTop={[5, 7]} marginBottom={2}>

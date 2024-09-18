@@ -20,6 +20,7 @@ import {
   getCommitteeAnswers,
   getRegularAnswers,
   getSignatureDefaultValues,
+  getSingleSignatureMarkup,
   isCommitteeSignature,
   isRegularSignature,
 } from '../../lib/utils'
@@ -61,9 +62,20 @@ export const InstitutionSignature = ({
     if (isRegularSignature(signature)) {
       const updatedRegularSignature = signature?.map((signature, index) => {
         if (index === signatureIndex) {
+          const additionalSignature =
+            application.answers.signatures?.additionalSignature?.regular
+          const html = getSingleSignatureMarkup(
+            {
+              ...signature,
+              [key]: value,
+            },
+            additionalSignature,
+          )
+
           return {
             ...signature,
             [key]: value,
+            html: html,
           }
         }
 
@@ -80,11 +92,24 @@ export const InstitutionSignature = ({
     }
 
     if (isCommitteeSignature(signature)) {
+      const chairman = signature.chairman
+      const additionalSignature =
+        application.answers.signatures?.additionalSignature?.committee
+      const html = getSingleSignatureMarkup(
+        {
+          ...signature,
+          [key]: value,
+        },
+        additionalSignature,
+        chairman,
+      )
+
       const updatedCommitteeSignature = set(
         currentAnswers,
         InputFields.signature[type],
         {
           ...signature,
+          html: html,
           [key]: value,
         },
       )
