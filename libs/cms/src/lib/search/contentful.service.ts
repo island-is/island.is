@@ -471,7 +471,8 @@ export class ContentfulService {
     chunkSize: number,
     indexableEntries: Entry<unknown>[],
   ) {
-    let idsChunk = ids.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
+    const idsCopy = [...ids]
+    let idsChunk = idsCopy.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
 
     while (idsChunk.length > 0) {
       const size = 1000
@@ -551,7 +552,7 @@ export class ContentfulService {
         }
       }
 
-      idsChunk = ids.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
+      idsChunk = idsCopy.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
     }
   }
 
