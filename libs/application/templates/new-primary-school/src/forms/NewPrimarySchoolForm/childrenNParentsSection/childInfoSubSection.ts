@@ -8,10 +8,8 @@ import {
 import { Application, NO, YES } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
-  formatGender,
   getApplicationAnswers,
   getApplicationExternalData,
-  getSelectedChild,
 } from '../../../lib/newPrimarySchoolUtils'
 import { OptionsType } from '../../../lib/constants'
 
@@ -48,8 +46,6 @@ export const childInfoSubSection = buildSubSection({
           title: newPrimarySchoolMessages.shared.address,
           width: 'half',
           disabled: true,
-          // TODO: Nota gögn frá Júní
-          // TODO: Hægt að nota heimilisfang innskráðs foreldris? (foreldri getur ekki sótt um nema barn sé með sama lögheimili)
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
               .applicantAddress,
@@ -59,8 +55,6 @@ export const childInfoSubSection = buildSubSection({
           title: newPrimarySchoolMessages.shared.postalCode,
           width: 'half',
           disabled: true,
-          // TODO: Nota gögn frá Júní
-          // TODO: Hægt að nota heimilisfang innskráðs foreldris? (foreldri getur ekki sótt um nema barn sé með sama lögheimili)
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
               .applicantPostalCode,
@@ -70,8 +64,6 @@ export const childInfoSubSection = buildSubSection({
           title: newPrimarySchoolMessages.shared.municipality,
           width: 'half',
           disabled: true,
-          // TODO: Nota gögn frá Júní
-          // TODO: Hægt að nota heimilisfang innskráðs foreldris? (foreldri getur ekki sótt um nema barn sé með sama lögheimili)
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData).applicantCity,
         }),
@@ -79,28 +71,10 @@ export const childInfoSubSection = buildSubSection({
           id: 'childInfo.preferredName',
           title:
             newPrimarySchoolMessages.childrenNParents.childInfoPreferredName,
-          width: 'half',
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
               .childInformation.preferredName ?? undefined,
         }),
-        buildCustomField(
-          {
-            id: 'childInfo.gender',
-            title: newPrimarySchoolMessages.childrenNParents.childInfoGender,
-            width: 'half',
-            component: 'FriggOptionsAsyncSelectField',
-            defaultValue: (application: Application) =>
-              formatGender(getSelectedChild(application)?.genderCode),
-          },
-          {
-            placeholder:
-              newPrimarySchoolMessages.childrenNParents
-                .childInfoGenderPlaceholder,
-            optionsType: OptionsType.GENDER,
-            isMulti: false,
-          },
-        ),
         buildCustomField(
           {
             id: 'childInfo.pronouns',

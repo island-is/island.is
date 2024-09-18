@@ -28,7 +28,6 @@ import {
   FriggSchoolsByMunicipalityQuery,
 } from '../types/schema'
 import {
-  Gender,
   ReasonForApplicationOptions,
   SiblingRelationOptions,
 } from './constants'
@@ -90,31 +89,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'languages.icelandicNotSpokenAroundChild',
   ) as string[]
 
-  const hasFoodAllergies = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.hasFoodAllergies',
-  ) as string[]
-
-  const foodAllergies = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.foodAllergies',
-  ) as string[]
-
-  const hasFoodIntolerances = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.hasFoodIntolerances',
-  ) as string[]
-
-  const foodIntolerances = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.foodIntolerances',
-  ) as string[]
-
-  const isUsingEpiPen = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.isUsingEpiPen',
-  ) as YesOrNo
-
   const developmentalAssessment = getValueViaPath(
     answers,
     'support.developmentalAssessment',
@@ -148,20 +122,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'schools.newSchool.hiddenInput',
   ) as string
 
-  const photographyConsent = getValueViaPath(
-    answers,
-    'photography.photographyConsent',
-  ) as YesOrNo
-
-  const photoSchoolPublication = getValueViaPath(
-    answers,
-    'photography.photoSchoolPublication',
-  ) as YesOrNo
-
-  const photoMediaPublication = getValueViaPath(
-    answers,
-    'photography.photoMediaPublication',
-  ) as YesOrNo
 
   return {
     childNationalId,
@@ -178,11 +138,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     otherLanguagesSpokenDaily,
     otherLanguages,
     icelandicNotSpokenAroundChild,
-    hasFoodAllergies,
-    foodAllergies,
-    hasFoodIntolerances,
-    foodIntolerances,
-    isUsingEpiPen,
     developmentalAssessment,
     specialSupport,
     requestMeeting,
@@ -190,20 +145,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     schoolMunicipality,
     selectedSchool,
     newSchoolHiddenInput,
-    photographyConsent,
-    photoSchoolPublication,
-    photoMediaPublication,
   }
 }
 
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
 ) => {
-  const children = getValueViaPath(
-    externalData,
-    'childrenCustodyInformation.data',
-    [],
-  ) as Child[]
+  const children = getValueViaPath(externalData, 'children.data', []) as Child[]
 
   const applicantName = getValueViaPath(
     externalData,
@@ -232,7 +180,7 @@ export const getApplicationExternalData = (
 
   const otherParentName = getValueViaPath(
     externalData,
-    'childrenCustodyInformation.data.otherParent.fullName',
+    'children.data.otherParent.fullName',
   ) as string
 
   const childInformation = getValueViaPath(
@@ -256,19 +204,6 @@ export const getApplicationExternalData = (
     childInformation,
     childGradeLevel,
   }
-}
-
-export const canApply = (child: Child): boolean => {
-  // Check if the child is at primary school age and lives with the applicant
-  if (
-    kennitala.info(child.nationalId).age >= 5 &&
-    kennitala.info(child.nationalId).age <= 15 &&
-    child.livesWithApplicant
-  ) {
-    return true
-  }
-
-  return false
 }
 
 export const getSelectedChild = (application: Application) => {
@@ -372,22 +307,6 @@ export const getSiblingRelationOptionLabel = (
 ) => {
   const relationOptions = getSiblingRelationOptions()
   return relationOptions.find((option) => option.value === value)?.label ?? ''
-}
-
-export const formatGender = (genderCode?: string): Gender | undefined => {
-  switch (genderCode) {
-    case '1':
-    case '3':
-      return Gender.MALE
-    case '2':
-    case '4':
-      return Gender.FEMALE
-    case '7':
-    case '8':
-      return Gender.OTHER
-    default:
-      return undefined
-  }
 }
 
 export const getOptionsListByType = async (
