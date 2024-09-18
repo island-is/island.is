@@ -267,12 +267,6 @@ export const EditBasics = () => {
                   required={false}
                   onChange={(option) => actions.setMinistry(option?.value)}
                   backgroundColor="white"
-                  hasError={
-                    draft.ministry.showError &&
-                    !!draft.ministry.error &&
-                    !!draft.ministry.value
-                  }
-                  errorMessage={draft.ministry.error && t(draft.ministry.error)}
                 />
               )
             )}
