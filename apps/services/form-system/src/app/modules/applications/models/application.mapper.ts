@@ -7,6 +7,7 @@ import { FieldDto } from '../../fields/models/dto/field.dto'
 import { OrganizationDto } from '../../organizations/models/dto/organization.dto'
 import { ScreenDto } from '../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../sections/models/dto/section.dto'
+import { ValueDto } from '../../values/models/dto/value.dto'
 
 @Injectable()
 export class ApplicationMapper {
@@ -19,6 +20,7 @@ export class ApplicationMapper {
       id: application.id,
       formId: form.id,
       slug: form.slug,
+      name: form.name,
       organization: new OrganizationDto(),
       sections: [],
     }
@@ -52,6 +54,12 @@ export class ApplicationMapper {
                     field.fieldSettings,
                     field.fieldType,
                   ),
+                values: field.values?.map((value) => {
+                  return {
+                    id: value.id,
+                    json: value.json,
+                  } as ValueDto
+                }),
               } as FieldDto
             }),
           } as ScreenDto
