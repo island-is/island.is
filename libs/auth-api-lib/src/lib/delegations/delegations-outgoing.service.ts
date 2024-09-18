@@ -11,10 +11,7 @@ import { isUuid, uuid } from 'uuidv4'
 
 import { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
-import {
-  NotificationsApi,
-  UserSystemNotificationModule,
-} from '../user-notification'
+import { NotificationsApi } from '../user-notification'
 
 import { ApiScope } from '../resources/models/api-scope.model'
 import { DelegationScopeService } from './delegation-scope.service'
@@ -345,7 +342,7 @@ export class DelegationsOutgoingService {
     if (
       !(await this.delegationResourceService.validateScopeAccess(
         user,
-        currentDelegation.domainName,
+        currentDelegation.domainName ?? null,
         DelegationDirection.OUTGOING,
         [
           ...(patchedDelegation.updateScopes ?? []).map((scope) => scope.name),
@@ -406,7 +403,7 @@ export class DelegationsOutgoingService {
 
     const userScopes = await this.delegationResourceService.findScopes(
       user,
-      delegation.domainName,
+      delegation.domainName ?? null,
     )
     await this.delegationScopeService.delete(
       delegationId,
@@ -460,7 +457,7 @@ export class DelegationsOutgoingService {
     // Verify and filter scopes.
     const userScopes = await this.delegationResourceService.findScopeNames(
       user,
-      delegation.domainName,
+      delegation.domainName ?? null,
       direction,
     )
     if (!userScopes.length) {

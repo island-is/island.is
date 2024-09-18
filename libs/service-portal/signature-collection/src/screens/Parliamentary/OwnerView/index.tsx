@@ -6,12 +6,13 @@ import {
   Table as T,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { constituencies } from '../../../lib/constants'
 import { useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
-import AddConstituency from './modals/AddConstituency'
+import AddConstituency from './AddConstituency'
+import { SignatureCollectionList } from '@island.is/api/schema'
+import { OwnerParliamentarySkeleton } from '../../../skeletons'
 import { useGetListsForOwner } from '../../../hooks'
 import { SignatureCollection } from '@island.is/api/schema'
 
@@ -29,12 +30,7 @@ const OwnerView = ({
   return (
     <Stack space={8}>
       <Box marginTop={5}>
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="baseline"
-          marginBottom={3}
-        >
+        <Box display="flex" justifyContent="spaceBetween" alignItems="baseline">
           <Text variant="h4">
             {formatMessage(m.myListsDescription) + ' '}
             <Tooltip
@@ -43,35 +39,49 @@ const OwnerView = ({
               color="blue400"
             />
           </Text>
-          <AddConstituency />
+          {/* If the number of lists is equal to 6, it means that
+          lists have been created in all of the constituencies */}
+          {listsForOwner.length < 6 && (
+            <AddConstituency lists={listsForOwner} />
+          )}
         </Box>
-        {constituencies.map((c: string, index: number) => (
-          <Box key={index} marginTop={3}>
-            <ActionCard
-              key={index}
-              backgroundColor="white"
-              heading={'Listi A - ' + c}
-              progressMeter={{
-                currentProgress: 10,
-                maxProgress: 350,
-                withLabel: true,
-              }}
-              cta={{
-                label: formatMessage(m.viewList),
-                variant: 'text',
-                icon: 'arrowForward',
-                onClick: () => {
-                  navigate(
-                    SignatureCollectionPaths.ViewParliamentaryList.replace(
-                      ':id',
-                      '1',
-                    ),
-                  )
-                },
-              }}
-            />
+        {loadingOwnerLists ? (
+          <Box marginTop={2}>
+            <OwnerParliamentarySkeleton />
           </Box>
-        ))}
+        ) : (
+          listsForOwner.map((list: SignatureCollectionList) => (
+            <Box key={list.id} marginTop={3}>
+              <ActionCard
+                backgroundColor="white"
+                heading={list.title}
+                progressMeter={{
+                  currentProgress: list.numberOfSignatures || 0,
+                  maxProgress: list.area?.min || 0,
+                  withLabel: true,
+                }}
+                cta={{
+                  label: formatMessage(m.viewList),
+                  variant: 'text',
+                  icon: 'arrowForward',
+                  onClick: () => {
+                    navigate(
+                      SignatureCollectionPaths.ViewParliamentaryList.replace(
+                        ':id',
+                        list.id,
+                      ),
+                      {
+                        state: {
+                          collectionId: currentCollection?.id || '',
+                        },
+                      },
+                    )
+                  },
+                }}
+              />
+            </Box>
+          ))
+        )}
       </Box>
       <Box>
         <Box

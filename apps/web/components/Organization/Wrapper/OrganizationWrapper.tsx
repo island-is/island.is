@@ -297,7 +297,9 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'utlendingastofnun':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader {...defaultProps} />
+      ) : (
         <UtlendingastofnunHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -421,7 +423,17 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'shh':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={
+            isSubpage
+              ? styles.shhHeaderGridContainerWidthSubpage
+              : styles.shhHeaderGridContainerWidth
+          }
+          titleSectionPaddingLeft={isSubpage ? 0 : 5}
+        />
+      ) : (
         <ShhHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
