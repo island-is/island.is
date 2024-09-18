@@ -845,10 +845,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     isActualDateOfBirth: boolean,
     rights: string,
   ): Period[] {
-    console.log({
-      d: this.calculatePeriodDays('2025-06-18', '2025-07-02', '4', ''),
-    })
-
     return periods.map((period, index) => {
       const isFirstPeriod = index === 0
       return {
