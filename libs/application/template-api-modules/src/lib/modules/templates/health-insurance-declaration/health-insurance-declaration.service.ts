@@ -140,12 +140,19 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
       throw new HttpException('No applicants for application', 500)
     }
 
+    const performerInAppliedForList = // Check if the performing user is in the list of applicants
+      0 <=
+      applicants.findIndex((appliedFor) => {
+        return appliedFor.nationalId === auth.nationalId
+      })
+
     const isApplicantInsured = getApplicantInsuranceStatus(application)
 
     /* If the applicant does not qualify for health insurance declaration
-       explicitily add the applicant to the return array to clarify.
+       explicitily add the applicant to the return array to clarify if the applicant
+       is on the applied for list.
     */
-    if (!isApplicantInsured) {
+    if (!isApplicantInsured && performerInAppliedForList) {
       applicantsWithPdfData.push({
         applicantName: persons[0].name,
         nationalId: persons[0].nationalId,
