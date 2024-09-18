@@ -493,6 +493,7 @@
     "/Frambod/{ID}/RemoveFrambodUser": {
       "post": {
         "tags": ["Frambod"],
+        "summary": "GAMALT. Nota DELETE /Frambod/{ID}.",
         "parameters": [
           {
             "name": "ID",
@@ -522,6 +523,7 @@
     "/Frambod/{ID}/RemoveFrambodAdmin": {
       "post": {
         "tags": ["Frambod"],
+        "summary": "GAMALT. Nota DELETE /Admin/Frambod/{ID}.",
         "parameters": [
           {
             "name": "ID",
@@ -551,6 +553,7 @@
     "/Frambod/{ID}/AddUmbod": {
       "post": {
         "tags": ["Frambod"],
+        "summary": "Ath. þarfnast skoðunar",
         "parameters": [
           {
             "name": "ID",
@@ -587,6 +590,7 @@
     "/Frambod/{ID}/RemoveUmbod/{Kennitala}": {
       "get": {
         "tags": ["Frambod"],
+        "summary": "Ath. þarfnast skoðunar",
         "parameters": [
           {
             "name": "ID",
@@ -816,6 +820,7 @@
     "/Medmaelalistar/AddListar": {
       "post": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Nota POST /Frambod til að stofna framboð.\r\nNota POST /Medmaelalistar til að bæta listum við þegar stofnað framboð.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -849,6 +854,7 @@
     "/Medmaelalistar/AddListarAdmin": {
       "post": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Nota POST /Admin/Frambod til að stofna framboð.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1033,6 +1039,7 @@
     "/Medmaelalistar/{ID}/AddMedmaeli": {
       "post": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Nota POST /Medmaelalistar/{ID}/Medmaeli til að bæta við meðmæli.",
         "parameters": [
           {
             "name": "ID",
@@ -1063,6 +1070,7 @@
     "/Medmaelalistar/{ID}/AddMedmaeliBulk": {
       "post": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Fyrir framboð: Nota POST /Medmaelalistar/{ID}/Medmaeli/Bulk til að bæta við skriflegum meðmælum.\r\nFyrir admin: Nota POST /Admin/Medmaelalistar/{ID}/Medmaeli/Bulk til að bæta við skriflegum meðmælum.",
         "parameters": [
           {
             "name": "ID",
@@ -1103,6 +1111,7 @@
     "/Medmaelalistar/{ID}/ExtendTime": {
       "patch": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Nota PATCH /Admin/Medmaelalistar/{ID}/ExtendTime til að framlengja meðmælalista.",
         "parameters": [
           {
             "name": "ID",
@@ -1140,6 +1149,7 @@
     "/Medmaelalistar/{ID}/ToggleList": {
       "patch": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Nota PATCH /Admin/Medmaelalistar/{ID}/ToggleList.",
         "parameters": [
           {
             "name": "ID",
@@ -1172,6 +1182,7 @@
     "/Medmaelalistar/{ID}/Compare": {
       "post": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Nota POST /Admin/Medmaelalistar/{ID}/Compare.",
         "parameters": [
           {
             "name": "ID",
@@ -1212,6 +1223,7 @@
     "/Medmaelalistar/{ID}/RemoveMedmaelalistiUser": {
       "post": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Fyrir framboð: Nota DELETE /Medmaelalistar/{ID}.\r\nFyrir admin: Nota DELETE /Admin/Medmaelalistar/{ID}.",
         "parameters": [
           {
             "name": "ID",
@@ -1474,6 +1486,7 @@
     "/Medmaelasofnun/{ID}/EinsInfoAdmin/{Kennitala}": {
       "get": {
         "tags": ["Medmaelasofnun"],
+        "summary": "GAMALT. Nota GET /Admin/Medmaelasofnun/{ID}/EinsInfo/{Kennitala}.",
         "parameters": [
           {
             "name": "ID",
@@ -1511,6 +1524,7 @@
     "/Medmaelasofnun/{ID}/ToggleSofnun": {
       "post": {
         "tags": ["Medmaelasofnun"],
+        "summary": "GAMALT. Nota PATCH /Admin/Medmaelasofnun/{ID}/ToggleSofnun.",
         "parameters": [
           {
             "name": "ID",
@@ -1541,6 +1555,7 @@
     "/Medmaelasofnun/{ID}/Compare": {
       "post": {
         "tags": ["Medmaelasofnun"],
+        "summary": "GAMALT. Nota POST /Admin/Medmaelasofnun/{ID}/Compare.",
         "parameters": [
           {
             "name": "ID",
@@ -1618,6 +1633,7 @@
     "/Medmaeli/{ID}/RemoveMedmaeliUser": {
       "post": {
         "tags": ["Medmaeli"],
+        "summary": "GAMALT. Nota DELETE /Medmaeli/{ID}",
         "parameters": [
           {
             "name": "ID",
@@ -1647,6 +1663,7 @@
     "/Medmaeli/{ID}/RemoveMedmaeliAdmin": {
       "post": {
         "tags": ["Medmaeli"],
+        "summary": "GAMALT. Nota DELETE Admin/Medmaeli/{ID}",
         "parameters": [
           {
             "name": "ID",
