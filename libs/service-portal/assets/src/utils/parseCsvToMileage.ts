@@ -18,34 +18,33 @@ export const parseCsvToMileageRecord = async (file: File) => {
     if (res.done) {
       return
     }
-
     const chunk = Buffer.from(res.value).toString('utf8')
 
     let rowIndex = 0
-
     for (const cell of chunk.matchAll(
       new RegExp(`([${letters}\\d]+)(${newlines}|${wordbreaks})?`, 'gi'),
     )) {
       const [_, trimmedValue, delimiter] = cell
       const lineBreak = ['\r\n', '\n', '\r'].includes(delimiter)
 
-      parsedLines[rowIndex].push(trimmedValue)
+      parsedLines[rowIndex].push(trimmedValue.trim())
       if (lineBreak) {
         parsedLines.push([])
         rowIndex++
       }
     }
   }
+
   await reader.read().then(parseChunk)
+  const [header, ...values] = parsedLines
 
-  const vehicleIndex = parsedLines[0].findIndex(
-    (l) => l === 'ökutæki' || l === 'Ökutæki',
+  const vehicleIndex = header.findIndex((l) => l.toLowerCase() === 'ökutæki')
+  const mileageIndex = header.findIndex(
+    (l) => l.toLowerCase() === 'kílómetraskráning',
   )
-
-  const [_, ...values] = parsedLines
   const uploadedOdometerStatuses: Array<MileageRecord> = values
     .map((row) => {
-      const mileage = parseInt(row[1 - vehicleIndex])
+      const mileage = parseInt(row[mileageIndex])
       if (Number.isNaN(mileage)) {
         return undefined
       }
@@ -55,5 +54,6 @@ export const parseCsvToMileageRecord = async (file: File) => {
       }
     })
     .filter(isDefined)
+
   return uploadedOdometerStatuses
 }

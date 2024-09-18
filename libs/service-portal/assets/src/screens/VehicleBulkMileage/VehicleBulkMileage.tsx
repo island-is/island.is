@@ -115,13 +115,13 @@ const VehicleBulkMileage = () => {
             <LinkButton
               to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
               text={formatMessage(vehicleMessage.bulkPostMileage)}
-              icon="arrowUp"
+              icon="upload"
               variant="utility"
             />
             <LinkButton
               to={AssetsPaths.AssetsVehiclesBulkMileageJobOverview}
               text={formatMessage(vehicleMessage.jobOverview)}
-              icon="document"
+              icon="receipt"
               variant="utility"
             />
           </Inline>
