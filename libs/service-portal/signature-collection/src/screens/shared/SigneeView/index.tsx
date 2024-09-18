@@ -2,14 +2,12 @@ import {
   ActionCard,
   AlertMessage,
   Box,
-  Button,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { EmptyState, IntroHeader } from '@island.is/service-portal/core'
+import { useLocale } from '@island.is/localization'
+import { EmptyState } from '@island.is/service-portal/core'
 import { useGetListsForUser, useGetSignedList } from '../../../hooks'
-import format from 'date-fns/format'
 import { Skeleton } from '../../../skeletons'
 import { useAuth } from '@island.is/auth/react'
 import { sortAlpha } from '@island.is/shared/utils'
@@ -22,9 +20,7 @@ const SigneeView = ({
 }: {
   currentCollection: SignatureCollection
 }) => {
-  useNamespaces('sp.signatureCollection')
   const { userInfo: user } = useAuth()
-
   const { formatMessage } = useLocale()
   const { signedLists, loadingSignedLists } = useGetSignedList()
   const { listsForUser, loadingUserLists } = useGetListsForUser(
@@ -35,31 +31,19 @@ const SigneeView = ({
     <Box>
       {!user?.profile.actor && !loadingSignedLists && !loadingUserLists ? (
         <Box>
-          {currentCollection?.isActive && (
-            <Button
-              icon="open"
-              iconType="outline"
-              onClick={() =>
-                window.open(
-                  `${document.location.origin}/umsoknir/medmaelasofnun/`,
-                )
-              }
-              size="small"
-            >
-              {formatMessage(m.createListButton)}
-            </Button>
-          )}
-          {listsForUser.length === 0 && signedLists.length === 0 && (
-            <Box marginTop={10}>
-              <EmptyState
-                title={m.noCollectionIsActive}
-                description={m.noCollectionIsActiveDescription}
-              />
-            </Box>
-          )}
+          {currentCollection.isPresidential &&
+            listsForUser.length === 0 &&
+            signedLists.length === 0 && (
+              <Box marginTop={10}>
+                <EmptyState
+                  title={m.noCollectionIsActive}
+                  description={m.noCollectionIsActiveDescription}
+                />
+              </Box>
+            )}
           <Box marginTop={[2, 7]}>
             {/* Signed list */}
-            <SignedList />
+            <SignedList currentCollection={currentCollection} />
 
             {/* Other available lists */}
             <Box marginTop={[5, 10]}>
@@ -70,18 +54,17 @@ const SigneeView = ({
               )}
 
               <Stack space={3}>
-                {listsForUser?.sort(sortAlpha('title')).map((list) => {
+                {[...listsForUser]?.sort(sortAlpha('title')).map((list) => {
                   return (
                     <ActionCard
                       key={list.id}
                       backgroundColor="white"
                       heading={list.title}
-                      eyebrow={
-                        formatMessage(m.endTime) +
-                        ' ' +
-                        format(new Date(list.endTime), 'dd.MM.yyyy')
+                      text={
+                        currentCollection.isPresidential
+                          ? formatMessage(m.collectionTitle)
+                          : formatMessage(m.collectionTitleParliamentary)
                       }
-                      text={formatMessage(m.collectionTitle)}
                       cta={
                         new Date(list.endTime) > new Date() && !list.maxReached
                           ? {

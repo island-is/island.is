@@ -144,6 +144,7 @@ export const GetCurrentCollection = gql`
       startTime
       name
       isActive
+      isPresidential
       status
       areas {
         id
