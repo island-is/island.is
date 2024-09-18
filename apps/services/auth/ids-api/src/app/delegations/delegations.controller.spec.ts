@@ -6,7 +6,9 @@ import request from 'supertest'
 import {
   ApiScope,
   ApiScopeDelegationType,
+  Client,
   Delegation,
+  DelegationDelegationType,
   DelegationProviderModel,
   DelegationScope,
   DelegationsIndexService,
@@ -53,7 +55,6 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
-import { DelegationDelegationType } from '../../../../../../../libs/auth-api-lib/src/lib/delegations/models/delegation-delegation-type.model'
 import { uuid } from 'uuidv4'
 import addDays from 'date-fns/addDays'
 
@@ -63,6 +64,7 @@ describe('DelegationsController', () => {
     let factory: FixtureFactory
     let server: request.SuperTest<request.Test>
     let apiScopeModel: typeof ApiScope
+    let clientModel: typeof Client
     let prScopePermission: typeof PersonalRepresentativeScopePermission
     let apiScopeDelegationTypeModel: typeof ApiScopeDelegationType
     let prModel: typeof PersonalRepresentative
@@ -154,6 +156,7 @@ describe('DelegationsController', () => {
       delegationScopesModel = app.get<typeof DelegationScope>(
         getModelToken(DelegationScope),
       )
+      clientModel = app.get<typeof Client>(getModelToken(Client))
       delegationModel = app.get<typeof Delegation>(getModelToken(Delegation))
       delegationDelegationTypeModelModel = app.get<
         typeof DelegationDelegationType
@@ -187,8 +190,9 @@ describe('DelegationsController', () => {
       await app.cleanUp()
     })
 
-    describe('when user calls GET /delegations/scopes with general mandate delegation type', () => {
+    describe('GET with general mandate delegation type', () => {
       const representeeNationalId = getFakeNationalId()
+      let nationalRegistryApiSpy: jest.SpyInstance
       const scopeNames = [
         'api-scope/generalMandate1',
         'api-scope/generalMandate2',
@@ -196,6 +200,9 @@ describe('DelegationsController', () => {
       ]
 
       beforeAll(async () => {
+        client.supportedDelegationTypes = delegationTypes
+        await factory.createClient(client)
+
         const delegations = await delegationModel.create({
           id: uuid(),
           fromDisplayName: 'Test',
@@ -208,13 +215,6 @@ describe('DelegationsController', () => {
           id: AuthDelegationProvider.Custom,
           name: 'Custom',
           description: 'Custom',
-        })
-
-        await delegationTypeModel.create({
-          id: AuthDelegationType.GeneralMandate,
-          name: 'generalMandate',
-          description: 'generalMandate',
-          providerId: AuthDelegationProvider.Custom,
         })
 
         await delegationDelegationTypeModelModel.create({
@@ -243,9 +243,25 @@ describe('DelegationsController', () => {
             delegationType: AuthDelegationType.GeneralMandate,
           },
         ])
+
+        nationalRegistryApiSpy = jest
+          .spyOn(nationalRegistryApi, 'getIndividual')
+          .mockImplementation(async (id) => {
+            const user = createNationalRegistryUser({
+              nationalId: representeeNationalId,
+            })
+
+            return user ?? null
+          })
       })
 
       afterAll(async () => {
+        await clientModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
         await delegationDelegationTypeModelModel.destroy({
           where: {},
           cascade: true,
@@ -282,6 +298,14 @@ describe('DelegationsController', () => {
           truncate: true,
           force: true,
         })
+        nationalRegistryApiSpy.mockClear()
+      })
+
+      it('should return mergedDelegationDTO with the generalMandate', async () => {
+        const response = await server.get('/v2/delegations')
+
+        expect(response.status).toEqual(200)
+        expect(response.body).toHaveLength(1)
       })
 
       it('should get all general mandate scopes', async () => {

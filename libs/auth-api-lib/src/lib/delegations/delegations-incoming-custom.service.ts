@@ -30,6 +30,8 @@ import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { getScopeValidityWhereClause } from './utils/scopes'
+import { DelegationDelegationType } from './models/delegation-delegation-type.model'
+import { DelegationTypeModel } from '@island.is/auth-api-lib'
 
 type FindAllValidIncomingOptions = {
   nationalId: string
@@ -149,6 +151,117 @@ export class DelegationsIncomingCustomService {
         fromName: person?.name ?? d.fromName ?? UNKNOWN_NAME,
       }
     })
+  }
+
+  async findAllAvailableGeneralMandate(
+    user: User,
+    clientAllowedApiScopes: ApiScopeInfo[],
+    requireApiScopes: boolean,
+  ): Promise<MergedDelegationDTO[]> {
+    const customApiScopes = clientAllowedApiScopes.filter((s) =>
+      s.supportedDelegationTypes?.some(
+        (dt) => dt.delegationType === AuthDelegationType.GeneralMandate,
+      ),
+    )
+
+    if (requireApiScopes && !(customApiScopes && customApiScopes.length > 0)) {
+      return []
+    }
+
+    const { delegations, fromNameInfo } =
+      await this.findAllIncomingGeneralMandates({
+        validity: DelegationValidity.INCLUDE_FUTURE,
+        nationalId: user.nationalId,
+      })
+
+    const mergedDelegationDTOs = uniqBy(
+      delegations.map((d) =>
+        d.toMergedDTO([AuthDelegationType.GeneralMandate]),
+      ),
+      'fromNationalId',
+    )
+
+    return mergedDelegationDTOs.map((d) => {
+      const person = this.getPersonByNationalId(fromNameInfo, d.fromNationalId)
+
+      return {
+        ...d,
+        fromName: person?.name ?? d.fromName ?? UNKNOWN_NAME,
+      } as MergedDelegationDTO
+    })
+  }
+
+  private async findAllIncomingGeneralMandates(
+    {
+      nationalId,
+      validity,
+    }: FindAllValidIncomingOptions & {
+      validity: DelegationValidity
+    },
+    useMaster = false,
+  ): Promise<{ delegations: Delegation[]; fromNameInfo: FromNameInfo[] }> {
+    const whereOptions = getScopeValidityWhereClause(validity)
+
+    const delegations = await this.delegationModel.findAll({
+      useMaster,
+      where: {
+        toNationalId: nationalId,
+      },
+      include: [
+        {
+          model: DelegationDelegationType,
+          where: {
+            ...whereOptions,
+            delegationTypeId: AuthDelegationType.GeneralMandate,
+          },
+          include: [
+            {
+              model: DelegationTypeModel,
+              where: {
+                id: AuthDelegationType.GeneralMandate,
+              },
+              include: [
+                {
+                  model: ApiScope,
+                  where: {
+                    enabled: true,
+                  },
+                  include: [
+                    {
+                      model: ApiScopeDelegationType,
+                      where: {
+                        delegationType: AuthDelegationType.GeneralMandate,
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+
+    // Check live status, i.e. dead or alive for delegations
+    const { aliveDelegations, deceasedDelegations, fromNameInfo } =
+      await this.getLiveStatusFromDelegations(delegations)
+
+    if (deceasedDelegations.length > 0) {
+      // Delete all deceased delegations by deleting them and their scopes.
+      const deletePromises = deceasedDelegations.map((delegation) =>
+        delegation.destroy(),
+      )
+
+      await Promise.all(deletePromises)
+
+      this.auditService.audit({
+        action: 'deleteDelegationsForMissingPeople',
+        resources: deceasedDelegations.map(({ id }) => id).filter(isDefined),
+        system: true,
+      })
+    }
+
+    return { delegations: aliveDelegations, fromNameInfo }
   }
 
   private async findAllIncoming(

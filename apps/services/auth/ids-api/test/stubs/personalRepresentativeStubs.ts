@@ -115,4 +115,5 @@ export const delegationTypes = [
   AuthDelegationType.PersonalRepresentative + ':valid2',
   AuthDelegationType.PersonalRepresentative + ':unactivated',
   AuthDelegationType.PersonalRepresentative + ':outdated',
+  AuthDelegationType.GeneralMandate,
 ]

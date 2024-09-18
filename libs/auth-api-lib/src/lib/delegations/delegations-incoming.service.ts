@@ -182,6 +182,17 @@ export class DelegationsIncomingService {
       )
     }
 
+    // This has a provider of Custom but needs to be handled separately
+    if (types?.includes(AuthDelegationType.GeneralMandate)) {
+      delegationPromises.push(
+        this.delegationsIncomingCustomService.findAllAvailableGeneralMandate(
+          user,
+          clientAllowedApiScopes,
+          client.requireApiScopes,
+        ),
+      )
+    }
+
     if (
       providers.includes(AuthDelegationProvider.PersonalRepresentativeRegistry)
     ) {

@@ -109,7 +109,7 @@ export class Delegation extends Model<
   @HasMany(() => DelegationDelegationType, { onDelete: 'cascade' })
   delegationDelegationTypes?: DelegationDelegationType[]
 
-  toDTO(): DelegationDTO {
+  toDTO(type = AuthDelegationType.Custom): DelegationDTO {
     return {
       id: this.id,
       fromName: this.fromDisplayName,
@@ -121,19 +121,19 @@ export class Delegation extends Model<
         ? this.delegationScopes.map((scope) => scope.toDTO())
         : [],
       provider: AuthDelegationProvider.Custom,
-      type: AuthDelegationType.Custom,
+      type: type,
       domainName: this.domainName,
     }
   }
 
-  toMergedDTO(): MergedDelegationDTO {
+  toMergedDTO(types = [AuthDelegationType.Custom]): MergedDelegationDTO {
     return {
       fromName: this.fromDisplayName,
       fromNationalId: this.fromNationalId,
       toNationalId: this.toNationalId,
       toName: this.toName,
       validTo: this.validTo,
-      types: [AuthDelegationType.Custom],
+      types: types,
       scopes: this.delegationScopes
         ? this.delegationScopes.map((scope) => scope.toDTO())
         : [],
