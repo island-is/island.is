@@ -11,6 +11,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
+import { forwardRef } from '@nestjs/common'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import type {
@@ -38,6 +39,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { CivilClaimant } from '../../defendant/models/civilClaimant.model'
 import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
@@ -181,7 +183,7 @@ export class Case extends Model {
   requestSharedWithDefender?: RequestSharedWithDefender
 
   /**********
-   * Indicates whether the secutity level of the case has been heightened -
+   * Indicates whether the security level of the case has been heightened -
    * optional
    **********/
   @Column({ type: DataType.BOOLEAN, allowNull: true })
@@ -1067,4 +1069,19 @@ export class Case extends Model {
   @HasMany(() => Case, 'mergeCaseId')
   @ApiPropertyOptional({ type: () => Case })
   mergedCases?: Case[]
+
+  /**********
+   * Indicates whether a case should include any civil claims -
+   * optional
+   **********/
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  hasCivilClaims?: boolean
+
+  // /**********
+  //  * The case's civil claimants
+  //  **********/
+  @HasMany(() => CivilClaimant, 'caseId')
+  @ApiPropertyOptional({ type: () => CivilClaimant, isArray: true })
+  civilClaimants?: CivilClaimant[]
 }
