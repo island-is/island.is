@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 
 import { Application } from '@island.is/application/types'
 
-import { BaseTemplateAPIModuleConfig } from '../../types'
+import { BaseTemplateAPIModuleConfig, SharedModuleConfig } from '../../types'
 
 export const createAssignToken = (
   application: Application,
@@ -25,10 +25,10 @@ export const createAssignToken = (
 }
 
 export const getConfigValue = (
-  configService: ConfigService<BaseTemplateAPIModuleConfig>,
+  configService: ConfigService<SharedModuleConfig>,
   key: keyof BaseTemplateAPIModuleConfig,
 ) => {
-  const value = configService.get(key)
+  const value = configService.get('SharedModuleConfig')[key]
 
   if (value === undefined) {
     throw new Error(

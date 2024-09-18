@@ -9,6 +9,7 @@ import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
 import { Message } from '@island.is/email-service'
 
 import type { Locale } from '@island.is/shared/types'
+import { sharedModuleConfig } from '../modules/shared'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -35,6 +36,10 @@ export interface BaseTemplateAPIModuleConfig {
     host: string
   }
   islykill: IslykillApiModuleConfig
+}
+
+export interface SharedModuleConfig {
+  SharedModuleConfig: typeof sharedModuleConfig
 }
 
 export interface TemplateApiModuleActionProps<Params = unknown> {

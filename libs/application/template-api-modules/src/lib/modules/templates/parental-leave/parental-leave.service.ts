@@ -57,7 +57,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { ConfigService } from '@nestjs/config'
 import {
-  BaseTemplateAPIModuleConfig,
+  SharedModuleConfig,
   TemplateApiModuleActionProps,
 } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
@@ -112,7 +112,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
-    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
+    private readonly configService: ConfigService<SharedModuleConfig>,
     private readonly childrenService: ChildrenService,
     private readonly nationalRegistryApi: NationalRegistryClientService,
   ) {
