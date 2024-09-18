@@ -11,7 +11,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
-import { editorMsgs as msg, errorMsgs, m } from '../lib/messages'
+import { editorMsgs as msg, errorMsgs, m, editorMsgs } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
@@ -238,34 +238,43 @@ export const EditBasics = () => {
                 />
               </Box>
             ) : (
-              <Select
-                size="sm"
-                label={t(m.regulationAdminMinistries)}
-                name="setMinistry"
-                isSearchable
-                value={
-                  draft.ministry.value
-                    ? {
-                        value: draft.ministry.value,
-                        label: draft.ministry.value,
-                      }
-                    : undefined
-                }
-                placeholder={t(m.regulationAdminMinistries)}
-                options={ministries.map((ministry) => ({
-                  value: ministry.name,
-                  label: ministry.name,
-                }))}
-                required={false}
-                onChange={(option) => actions.setMinistry(option?.value)}
-                backgroundColor="white"
-                hasError={
-                  draft.ministry.showError &&
-                  !!draft.ministry.error &&
-                  t(draft.ministry.error) !== t(errorMsgs.fieldRequired)
-                }
-                errorMessage={draft.ministry.error && t(draft.ministry.error)}
-              />
+              ministries.length > 0 &&
+              !draft.signatureText.value && (
+                <Select
+                  size="sm"
+                  label={t(m.regulationAdminMinistries)}
+                  name="setMinistry"
+                  isSearchable
+                  value={
+                    draft.ministry.value
+                      ? {
+                          value: draft.ministry.value,
+                          label: draft.ministry.value,
+                        }
+                      : undefined
+                  }
+                  placeholder={t(editorMsgs.selectMinistry)}
+                  options={[
+                    {
+                      label: t(editorMsgs.selectMinistry),
+                      value: undefined,
+                    },
+                    ...ministries.map((ministry) => ({
+                      value: ministry.name,
+                      label: ministry.name,
+                    })),
+                  ]}
+                  required={false}
+                  onChange={(option) => actions.setMinistry(option?.value)}
+                  backgroundColor="white"
+                  hasError={
+                    draft.ministry.showError &&
+                    !!draft.ministry.error &&
+                    !!draft.ministry.value
+                  }
+                  errorMessage={draft.ministry.error && t(draft.ministry.error)}
+                />
+              )
             )}
           </AccordionItem>
         </Accordion>
