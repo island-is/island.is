@@ -6,7 +6,7 @@ export class CivilClaimant {
   readonly id!: string
 
   @Field(() => String, { nullable: true })
-  readonly created!: string
+  readonly created?: string
 
   @Field(() => String, { nullable: true })
   readonly modified?: string
