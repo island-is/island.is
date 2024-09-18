@@ -97,6 +97,7 @@ import { RikissaksoknariHeader } from './Themes/RikissaksoknariTheme'
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
 import {
+  SjukratryggingarDefaultHeader,
   SjukratryggingarFooter,
   SjukratryggingarHeader,
 } from './Themes/SjukratryggingarTheme'
@@ -182,6 +183,10 @@ export const getThemeConfig = (
       ? 'organization'
       : 'default'
 
+  if (lightThemes.includes(theme ?? '') || usingDefaultHeader) {
+    return { themeConfig: { footerVersion } }
+  }
+
   if (blueberryThemes.includes(theme ?? ''))
     return {
       themeConfig: {
@@ -190,7 +195,6 @@ export const getThemeConfig = (
         footerVersion,
       },
     }
-
   if (darkThemes.includes(theme ?? '')) {
     return {
       themeConfig: {
@@ -199,10 +203,6 @@ export const getThemeConfig = (
         footerVersion,
       },
     }
-  }
-
-  if (lightThemes.includes(theme ?? '') || usingDefaultHeader) {
-    return { themeConfig: { footerVersion } }
   }
 
   return {
@@ -284,7 +284,13 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'sjukratryggingar':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <SjukratryggingarDefaultHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+        />
+      ) : (
         <SjukratryggingarHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -310,7 +316,15 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hsn':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'hsnHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg',
+          )}
+        />
+      ) : (
         <HeilbrigdisstofnunNordurlandsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -324,7 +338,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'landlaeknir':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'landlaeknirHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg',
+          )}
+          className={styles.landlaeknirHeaderGridContainer}
+        />
+      ) : (
         <LandlaeknirHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -367,7 +390,17 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'sak':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={styles.sakHeaderGridContainer}
+          image={n(
+            `sakHeaderBgImage`,
+            'https://images.ctfassets.net/8k0h54kbe6bj/4SjqwRBZRMWVWG0y73sXxq/cf8d0d16704cfea124362eca03afdb41/sak-header-trans_2x.png',
+          )}
+          titleSectionPaddingLeft={isSubpage ? 0 : 10}
+        />
+      ) : (
         <SAkHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -409,7 +442,15 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'nti':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'icelandicNaturalDisasterInsuranceHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/eXqcbclteE88H5iQ6J3lo/bbc1d0c9d3abee93d34ec0aa718c833b/Group__1_.svg',
+          )}
+        />
+      ) : (
         <IcelandicNaturalDisasterInsuranceHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -437,13 +478,20 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hms':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'hmsHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/5pAFV6h9PVzSTQgJY67rbT/3117436e3043bebf720b2f9a7e7619b8/hms-header-image.svg',
+          )}
+        />
+      ) : (
         <HmsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
         />
       )
-
     case 'rikissaksoknari':
       return (
         <RikissaksoknariHeader
