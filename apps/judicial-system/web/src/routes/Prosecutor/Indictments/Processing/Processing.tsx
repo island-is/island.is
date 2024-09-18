@@ -517,7 +517,7 @@ const Processing: FC = () => {
                         onDefenderNotFound={() => {
                           console.log('changethis')
                         }}
-                        defendantId={civilClaimant.id}
+                        clientId={civilClaimant.id}
                         isCivilClaim={true}
                       />
                     </>
