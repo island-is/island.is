@@ -62,6 +62,7 @@ export class SignatureCollectionAdminResolver {
 
     return {
       reasons: canSignInfo,
+      success: true,
     }
   }
 

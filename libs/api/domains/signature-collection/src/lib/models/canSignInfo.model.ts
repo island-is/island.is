@@ -6,4 +6,7 @@ registerEnumType(ReasonKey, { name: 'ReasonKey' })
 export class CanSignInfo {
   @Field(() => [ReasonKey])
   reasons?: ReasonKey[]
+
+  @Field(() => Boolean)
+  success!: boolean
 }
