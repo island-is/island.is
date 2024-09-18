@@ -64,8 +64,10 @@ export class IndexingService {
       let initialFetch = true
       let postSyncOptions: SyncResponse['postSyncOptions']
 
+      const isIncrementalUpdate = syncType === 'fromLast'
+
       const [nextSyncToken] = await Promise.all([
-        importer.getNextSyncToken?.(),
+        !isIncrementalUpdate ? importer.getNextSyncToken?.() : '',
         (async () => {
           while (initialFetch || nextPageToken) {
             const importerResponse = await importer.doSync({
@@ -78,8 +80,6 @@ export class IndexingService {
               didImportAll = false
               return true
             }
-
-            const isIncrementalUpdate = syncType === 'fromLast'
 
             const {
               nextPageToken: importerResponseNextPageToken,
