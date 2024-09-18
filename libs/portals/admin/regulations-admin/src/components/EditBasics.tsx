@@ -11,7 +11,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
-import { editorMsgs as msg, errorMsgs, m, editorMsgs } from '../lib/messages'
+import { editorMsgs as msg, errorMsgs, m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
@@ -253,17 +253,17 @@ export const EditBasics = () => {
                         }
                       : undefined
                   }
-                  placeholder={t(editorMsgs.selectMinistry)}
+                  placeholder={t(msg.selectMinistry)}
                   options={[
                     {
-                      label: t(editorMsgs.selectMinistry),
-                      value: undefined,
+                      label: t(msg.selectMinistry),
+                      value: '',
                     },
                     ...ministries.map((ministry) => ({
                       value: ministry.name,
                       label: ministry.name,
                     })),
-                  ]}
+                  ].filter((item) => item.label)}
                   required={false}
                   onChange={(option) => actions.setMinistry(option?.value)}
                   backgroundColor="white"

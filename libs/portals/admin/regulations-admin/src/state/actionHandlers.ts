@@ -136,7 +136,7 @@ export const actionHandlers: {
   },
 
   SET_MINISTRY: (state, { value }) => {
-    updateFieldValue(state.draft.ministry, value ?? undefined)
+    updateFieldValue(state.draft.ministry, value || undefined)
   },
 
   SET_IMPACT: (state, { impactId }) => {
