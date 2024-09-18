@@ -10,6 +10,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
@@ -63,6 +64,10 @@ const IndictmentOverview: FC = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
+
+  const hasLawsBroken = lawsBroken.size > 0
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
 
   return (
     <PageLayout
@@ -121,9 +126,17 @@ const IndictmentOverview: FC = () => {
             <InfoCardActiveIndictment />
           )}
         </Box>
-        {lawsBroken.size > 0 && (
+        {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
-            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            {hasLawsBroken && (
+              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            )}
+            {hasMergeCases &&
+              workingCase.mergedCases?.map((mergedCase) => (
+                <Box key={mergedCase.id}>
+                  <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
+                </Box>
+              ))}
           </Box>
         )}
         {workingCase.caseFiles && (

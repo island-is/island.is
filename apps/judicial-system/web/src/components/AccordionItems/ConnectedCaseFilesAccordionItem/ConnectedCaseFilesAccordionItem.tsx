@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
-import { AccordionItem } from '@island.is/island-ui/core'
+import { Accordion, AccordionItem } from '@island.is/island-ui/core'
 import { IndictmentCaseFilesList } from '@island.is/judicial-system-web/src/components'
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -20,18 +20,20 @@ const ConnectedCaseFilesAccordionItem: FC<Props> = ({ connectedCase }) => {
   }
 
   return (
-    <AccordionItem
-      id="connectedCaseFiles"
-      labelVariant="h3"
-      label={formatMessage(strings.heading, {
-        caseNumber: connectedCase.courtCaseNumber,
-      })}
-    >
-      <IndictmentCaseFilesList
-        workingCase={connectedCase}
-        displayHeading={false}
-      />
-    </AccordionItem>
+    <Accordion>
+      <AccordionItem
+        id="connectedCaseFiles"
+        labelVariant="h3"
+        label={formatMessage(strings.heading, {
+          caseNumber: connectedCase.courtCaseNumber,
+        })}
+      >
+        <IndictmentCaseFilesList
+          workingCase={connectedCase}
+          displayHeading={false}
+        />
+      </AccordionItem>
+    </Accordion>
   )
 }
 

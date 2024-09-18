@@ -10,10 +10,13 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     caseFiles {
       id
       created
+      modified
       name
+      type
       category
+      state
       key
-      policeCaseNumber
+      size
       userGeneratedFilename
       displayDate
       submittedBy
@@ -164,6 +167,40 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     mergeCase {
       id
       courtCaseNumber
+    }
+    indictmentCounts {
+      id
+      caseId
+      policeCaseNumber
+      created
+      modified
+      vehicleRegistrationNumber
+      offenses
+      substances
+      lawsBroken
+      incidentDescription
+      legalArguments
+    }
+    mergedCases {
+      id
+      courtCaseNumber
+      type
+      caseFiles {
+        id
+        created
+        modified
+        name
+        type
+        category
+        state
+        key
+        size
+        userGeneratedFilename
+        displayDate
+        submittedBy
+      }
+      policeCaseNumbers
+      indictmentSubtypes
     }
   }
 }
