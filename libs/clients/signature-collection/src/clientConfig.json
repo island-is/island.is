@@ -804,7 +804,10 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+                }
               }
             }
           },
@@ -1977,8 +1980,9 @@
         "type": "object",
         "properties": {
           "frambodID": { "type": "integer", "format": "int32" },
-          "medmaelalisti": {
-            "$ref": "#/components/schemas/FrambodListarRequestDTO"
+          "medmaelalistar": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/FrambodListarRequestDTO" }
           }
         },
         "additionalProperties": false
@@ -2112,7 +2116,7 @@
               "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
             }
           },
-          "sveitastjornakosningar": {
+          "sveitarstjornarkosningar": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"

@@ -231,18 +231,18 @@ export class SignatureCollectionClientService {
         )
       : collectionAreas
 
-    const promises = filteredAreas.map((area) =>
-      this.getApiWithAuth(this.listsApi, auth).medmaelalistarPost({
-        medmaelalistarRequestDTO: {
-          frambodID: parseInt(candidateId),
-          medmaelalisti: {
-            svaediID: parseInt(area.id),
-            listiNafn: `${name} - ${area.name}`,
-          },
-        },
-      }),
-    )
-    const lists = await Promise.all(promises)
+    const lists = await this.getApiWithAuth(
+      this.listsApi,
+      auth,
+    ).medmaelalistarPost({
+      medmaelalistarRequestDTO: {
+        frambodID: parseInt(candidateId),
+        medmaelalistar: filteredAreas.map((area) => ({
+          svaediId: parseInt(area.id),
+          listiNafn: `${name} - ${area.name}`,
+        })),
+      },
+    })
 
     if (filteredAreas.length !== lists.length) {
       throw new Error('Not all lists created')
