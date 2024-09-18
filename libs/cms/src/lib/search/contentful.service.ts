@@ -275,7 +275,7 @@ export class ContentfulService {
     }
   }
 
-  private async getSyncData(typeOfSync: typeOfSync) {
+  async getSyncData(typeOfSync: typeOfSync) {
     const syncData = await (
       this.contentfulClient.sync as (
         query: unknown,
@@ -350,7 +350,10 @@ export class ContentfulService {
         ? typeOfSync.nextPageToken
         : ''
 
-    if (resyncNextPageInformation || !isDeltaUpdate) {
+    if (
+      Boolean(resyncNextPageInformation) ||
+      (!resyncNextPageInformation && !isDeltaUpdate)
+    ) {
       const info: {
         skip: number
       } = resyncNextPageInformation

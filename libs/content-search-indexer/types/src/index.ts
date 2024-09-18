@@ -41,6 +41,7 @@ export interface SyncResponse<PostSyncOptionsType = any> {
 }
 
 export interface ContentSearchImporter<postSyncOptions = any> {
+  getNextSyncToken?: () => Promise<string>
   doSync: (
     options: SyncOptions,
   ) => Promise<SyncResponse<postSyncOptions> | null>
