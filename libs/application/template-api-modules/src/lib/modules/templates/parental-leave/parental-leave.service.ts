@@ -835,7 +835,14 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
     const start = parseISO(startDate)
     const end = parseISO(endDate)
-    const percentage = Number(ratio) / 100
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      throw new Error('Invalid startDate or endDate')
+    }
+    const ratioNumber = Number(ratio)
+    if (isNaN(ratioNumber) || ratioNumber <= 0) {
+      throw new Error('Invalid ratio value')
+    }
+    const percentage = ratioNumber / 100
     const periodLength = calculatePeriodLength(start, end)
     return Math.round(periodLength * percentage)
   }
