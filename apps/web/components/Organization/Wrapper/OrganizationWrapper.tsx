@@ -297,7 +297,9 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'utlendingastofnun':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader {...defaultProps} />
+      ) : (
         <UtlendingastofnunHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
