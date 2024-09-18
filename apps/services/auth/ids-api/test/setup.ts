@@ -89,6 +89,13 @@ class MockUserProfile {
   meUserProfileControllerFindUserProfile = jest.fn().mockResolvedValue({})
 }
 
+class MockSyslumennService {
+  checkIfDelegationExists = jest.fn(
+    (_toNationalId: string, fromNationalId: string) =>
+      fromNationalId !== nonExistingLegalRepresentativeNationalId,
+  )
+}
+
 interface SetupOptions {
   user: User
   scopes?: Scopes
@@ -130,12 +137,7 @@ export const setupWithAuth = async ({
           getIndividualRelationships: jest.fn().mockResolvedValue(null),
         })
         .overrideProvider(SyslumennService)
-        .useValue({
-          checkIfDelegationExists: (
-            _toNationalId: string,
-            fromNationalId: string,
-          ) => fromNationalId !== nonExistingLegalRepresentativeNationalId,
-        })
+        .useClass(MockSyslumennService)
         .overrideProvider(FeatureFlagService)
         .useValue({
           getValue: (feature: Features) =>
