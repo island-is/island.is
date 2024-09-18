@@ -30,6 +30,7 @@ import { CurrentSignee } from './decorators/signee.decorator'
 import { ApiScope } from '@island.is/auth/scopes'
 import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
+import { SignatureCollectionCanSignInput } from './dto/canSign.input'
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/signature-collection' })
@@ -123,6 +124,19 @@ export class SignatureCollectionResolver {
     @CurrentSignee() signee: SignatureCollectionSignee,
   ): Promise<SignatureCollectionSignee> {
     return signee
+  }
+
+  @Scopes(ApiScope.signatureCollection)
+  @Query(() => Boolean)
+  @AccessRequirement(OwnerAccess.AllowActor)
+  @Audit()
+  async signatureCollectionCanSign(
+    @Args('input') input: SignatureCollectionCanSignInput,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    return (
+      await this.signatureCollectionService.signee(user, input.signeeNationalId)
+    ).canSign
   }
 
   @Scopes(ApiScope.signatureCollection)
