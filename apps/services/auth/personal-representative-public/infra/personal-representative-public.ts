@@ -14,6 +14,16 @@ export const serviceSetup =
           staging: 'https://identity-server.staging01.devland.is',
           prod: 'https://innskra.island.is',
         },
+        SYSLUMENN_HOST: {
+          dev: 'https://api.syslumenn.is/staging',
+          staging: 'https://api.syslumenn.is/staging',
+          prod: 'https://api.syslumenn.is',
+        },
+        SYSLUMENN_TIMEOUT: '10000',
+      })
+      .secrets({
+        SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
+        SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
       })
       .ingress({
         primary: {
