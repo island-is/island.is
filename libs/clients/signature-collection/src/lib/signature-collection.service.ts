@@ -212,8 +212,6 @@ export class SignatureCollectionClientService {
     // check if user is already owner of lists
 
     const { canCreate, canCreateInfo, name } = await this.getSignee(auth)
-    console.log('canCreate', canCreate)
-    console.log('canCreateInfo', canCreateInfo)
     if (!canCreate) {
       // allow parliamentary owners to add more areas to their collection
       if (
@@ -233,9 +231,6 @@ export class SignatureCollectionClientService {
         )
       : collectionAreas
 
-    console.log(areas)
-    console.log(filteredAreas)
-
     const promises = filteredAreas.map((area) =>
       this.getApiWithAuth(this.listsApi, auth).medmaelalistarPost({
         medmaelalistarRequestDTO: {
@@ -249,18 +244,6 @@ export class SignatureCollectionClientService {
     )
     const lists = await Promise.all(promises)
 
-    // const lists = await this.getApiWithAuth(
-    //   this.listsApi,
-    //   auth,
-    // ).medmaelalistarPost({
-    //   medmaelalistarRequestDTO: {
-    //     frambodID: parseInt(id),
-    //     medmaelalisti: filteredAreas.map((area) => ({
-    //       svaediID: parseInt(area.id),
-    //       listiNafn: `${name} - ${area.name}`,
-    //     })),
-    //   },
-    // })
     if (filteredAreas.length !== lists.length) {
       throw new Error('Not all lists created')
     }
