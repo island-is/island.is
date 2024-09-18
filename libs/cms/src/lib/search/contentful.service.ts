@@ -630,7 +630,7 @@ export class ContentfulService {
       items: indexableEntries,
       deletedEntryIds,
       elasticIndex,
-      nextPageToken: nextPageToken,
+      nextPageToken,
     }
   }
 }
