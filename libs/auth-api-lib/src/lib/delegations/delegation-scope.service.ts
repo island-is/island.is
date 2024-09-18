@@ -267,18 +267,20 @@ export class DelegationScopeService {
   ): Promise<string[]> {
     // if no valid delegation exists, return empty array
     let delegationFound = false
+    let isError = false
     try {
       delegationFound = await this.syslumennService.checkIfDelegationExists(
         toNationalId,
         fromNationalId,
       )
     } catch (error) {
+      isError = true
       logger.error(
         `Failed checking if delegation exists at provider '${AuthDelegationProvider.DistrictCommissionersRegistry}'`,
       )
     }
-    if (!delegationFound) {
-      await Promise.all(
+    if (!delegationFound && !isError) {
+      Promise.all(
         delegationTypes.map((dt) =>
           this.delegationsIndexService.removeDelegationRecord({
             fromNationalId,
