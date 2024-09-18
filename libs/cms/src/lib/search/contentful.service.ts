@@ -199,12 +199,12 @@ export class ContentfulService {
           chunkSize = Math.floor(chunkSize / 2)
         } else {
           logger.error(error)
-          return { items, chunkSize, total: response?.total }
+          return { items, total: response?.total }
         }
       }
     }
 
-    return { items, chunkSize, total: response.total }
+    return { items, total: response.total }
   }
 
   /**
@@ -341,6 +341,7 @@ export class ContentfulService {
     locale: Locale,
     chunkSize: number,
   ) {
+    const isDeltaUpdate = !('initial' in typeOfSync)
     const resyncInformationPrefix = 're-sync-data-'
 
     const resyncNextPageInformation =
@@ -349,13 +350,16 @@ export class ContentfulService {
         ? typeOfSync.nextPageToken
         : ''
 
-    if (resyncNextPageInformation) {
-      const info = JSON.parse(
-        resyncNextPageInformation.split(resyncInformationPrefix)[1],
-      ) as {
-        chunkSize: number
+    if (resyncNextPageInformation || !isDeltaUpdate) {
+      const info: {
         skip: number
-      }
+      } = resyncNextPageInformation
+        ? JSON.parse(
+            resyncNextPageInformation.split(resyncInformationPrefix)[1],
+          )
+        : {
+            skip: 0,
+          }
 
       const contentfulData = await this.getContentfulDataPaginated(
         chunkSize,
@@ -368,7 +372,6 @@ export class ContentfulService {
       )
 
       info.skip += contentfulData.items.length
-      info.chunkSize = contentfulData.chunkSize
 
       return {
         indexableEntries: contentfulData.items,
@@ -377,7 +380,7 @@ export class ContentfulService {
         newNextSyncToken: '',
         nextPageToken:
           typeof contentfulData?.total === 'number' &&
-          info.skip < contentfulData?.total
+          info.skip < contentfulData.total
             ? `${resyncInformationPrefix}${JSON.stringify(info)}`
             : '',
       }
@@ -395,7 +398,6 @@ export class ContentfulService {
 
     // In case someone in the CMS triggers a sync by setting the translation of an entry to an inactive state we'd like to remove that entry
     const entriesThatHadTheirTranslationTurnedOff = new Set<string>()
-    const isDeltaUpdate = !('initial' in typeOfSync)
 
     if (isDeltaUpdate && locale !== 'is') {
       const localizedEntries = entries.filter((entry) =>
