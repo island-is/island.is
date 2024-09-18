@@ -16,6 +16,8 @@ import {
 } from '../case'
 import { CaseListEntry } from '../case-list'
 import { Defendant, DeleteDefendantResponse } from '../defendant'
+import { CreateCivilClaimantInput } from '../defendant/dto/createCivilClaimant.input'
+import { UpdateCivilClaimantInput } from '../defendant/dto/updateCivilClaimant.input'
 import { CivilClaimant } from '../defendant/models/civilClaimant.model'
 import { DeleteCivilClaimantResponse } from '../defendant/models/deleteCivilClaimant.response'
 import { CreateEventLogInput } from '../event-log'
@@ -333,7 +335,7 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   createCivilClaimant(
     caseId: string,
-    createCivilClaimant: unknown,
+    createCivilClaimant: CreateCivilClaimantInput,
   ): Promise<CivilClaimant> {
     return this.post(`case/${caseId}/civilClaimant`, createCivilClaimant)
   }
@@ -341,7 +343,7 @@ export class BackendService extends DataSource<{ req: Request }> {
   updateCivilClaimant(
     caseId: string,
     civilClaimantId: string,
-    updateCivilClaimant: unknown,
+    updateCivilClaimant: UpdateCivilClaimantInput,
   ): Promise<CivilClaimant> {
     return this.patch(
       `case/${caseId}/civilClaimant/${civilClaimantId}`,
