@@ -424,7 +424,11 @@ export const OrganizationHeader: React.FC<
       return n('usingDefaultHeader', false) ? (
         <DefaultHeader
           {...defaultProps}
-          className={isSubpage ? styles.shhHeaderGridContainerWidthSubpage : styles.shhHeaderGridContainerWidth}
+          className={
+            isSubpage
+              ? styles.shhHeaderGridContainerWidthSubpage
+              : styles.shhHeaderGridContainerWidth
+          }
           titleSectionPaddingLeft={isSubpage ? 0 : 5}
         />
       ) : (
