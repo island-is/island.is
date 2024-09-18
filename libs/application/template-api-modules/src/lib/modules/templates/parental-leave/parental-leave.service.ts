@@ -751,6 +751,22 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       },
     ]
 
+    const addMultipleBirthsRights = (
+      rightsArray: ApplicationRights[],
+      totalDays: number,
+      usedDays: number,
+    ) => {
+      rightsArray.push({
+        rightsUnit: mulitpleBirthsRights,
+        days: String(maximumMultipleBirthsDaysToSpend),
+        rightsDescription: rightsDescriptions[mulitpleBirthsRights],
+        months: String(getMaxMultipleBirthsInMonths(application.answers)),
+        daysLeft: String(
+          Math.max(0, totalDays + maximumMultipleBirthsDaysToSpend - usedDays),
+        ),
+      })
+    }
+
     if (otherParent === SINGLE) {
       rights.push({
         rightsUnit: apiConstants.rights.artificialInseminationRightsId,
@@ -772,36 +788,15 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         ),
       })
       if (maximumMultipleBirthsDaysToSpend > 0) {
-        rights.push({
-          rightsUnit: mulitpleBirthsRights,
-          days: String(maximumMultipleBirthsDaysToSpend),
-          rightsDescription: rightsDescriptions[mulitpleBirthsRights],
-          months: String(getMaxMultipleBirthsInMonths(application.answers)),
-          daysLeft: String(
-            Math.max(
-              0,
-              personalDays +
-                maximumAdditionalSingleParentDaysToSpend +
-                maximumMultipleBirthsDaysToSpend -
-                usedDays,
-            ),
-          ),
-        })
+        addMultipleBirthsRights(
+          rights,
+          personalDays + maximumAdditionalSingleParentDaysToSpend,
+          usedDays,
+        )
       }
     } else {
       if (maximumMultipleBirthsDaysToSpend > 0) {
-        rights.push({
-          rightsUnit: mulitpleBirthsRights,
-          days: String(maximumMultipleBirthsDaysToSpend),
-          rightsDescription: rightsDescriptions[mulitpleBirthsRights],
-          months: String(getMaxMultipleBirthsInMonths(application.answers)),
-          daysLeft: String(
-            Math.max(
-              0,
-              personalDays + maximumMultipleBirthsDaysToSpend - usedDays,
-            ),
-          ),
-        })
+        addMultipleBirthsRights(rights, personalDays, usedDays)
       }
       if (isRequestingRights === YES) {
         rights.push({
