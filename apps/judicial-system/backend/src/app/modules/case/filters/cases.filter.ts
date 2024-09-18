@@ -11,6 +11,7 @@ import {
   CaseState,
   CaseType,
   DateType,
+  EventType,
   IndictmentCaseReviewDecision,
   indictmentCases,
   investigationCases,
@@ -75,8 +76,20 @@ const getPublicProsecutionUserCasesQueryFilter = (): WhereOptions => {
   return {
     [Op.and]: [
       { is_archived: false },
-      { state: [CaseState.COMPLETED] },
       { type: indictmentCases },
+      { state: [CaseState.COMPLETED] },
+      {
+        indictment_ruling_decision: [
+          CaseIndictmentRulingDecision.FINE,
+          CaseIndictmentRulingDecision.RULING,
+        ],
+      },
+      {
+        // The following condition will filter out all event logs that are not of type INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR
+        // but that should be ok the case list for the public prosecutor is not using other event logs
+        '$eventLogs.event_type$':
+          EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      },
     ],
   }
 }
