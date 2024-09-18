@@ -376,7 +376,9 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'landskjorstjorn':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader {...defaultProps} />
+      ) : (
         <LandskjorstjornHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
