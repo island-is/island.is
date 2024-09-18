@@ -346,16 +346,23 @@ export class ContentfulService {
     })
 
     // Get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
-    const indexableEntries = await this.getPopulatedContentulEntries(
-      entries.filter(
-        (entry) =>
-          !entriesThatHadTheirTranslationTurnedOff.has(entry.sys.id) &&
-          // Only populate the indexable entries
-          environment.indexableTypes.includes(entry.sys.contentType.sys.id),
-      ),
-      locale,
-      chunkSize,
-    )
+    const indexableEntries = isDeltaUpdate
+      ? await this.getPopulatedContentulEntries(
+          entries.filter(
+            (entry) =>
+              !entriesThatHadTheirTranslationTurnedOff.has(entry.sys.id) &&
+              // Only populate the indexable entries
+              environment.indexableTypes.includes(entry.sys.contentType.sys.id),
+          ),
+          locale,
+          chunkSize,
+        )
+      : // TODO: paginate
+        await this.getContentfulData(chunkSize, {
+          include: this.defaultIncludeDepth,
+          'sys.contentType.sys.id[in]': environment.indexableTypes.join(','),
+          locale: this.contentfulLocaleMap[locale],
+        })
 
     // extract ids from deletedEntries
     const deletedEntryIds = deletedEntries.map((entry) => entry.sys.id)
@@ -517,7 +524,7 @@ export class ContentfulService {
     ) {
       logger.info('Finding root entries from nestedEntries')
 
-      const prevLength = indexableEntries.length
+      const previousLength = indexableEntries.length
 
       await this.resolveNestedEntries(
         nestedItemIds,
@@ -527,11 +534,10 @@ export class ContentfulService {
         indexableEntries, // This array is modified
       )
 
-      const rootEntriesFoundFromNestedEntries =
-        indexableEntries.length - prevLength
-
       logger.info(
-        `Found ${rootEntriesFoundFromNestedEntries} root entries from nested entries`,
+        `Found ${
+          indexableEntries.length - previousLength
+        } root entries from nested entries`,
       )
     }
 
@@ -540,7 +546,7 @@ export class ContentfulService {
       items: indexableEntries,
       deletedEntryIds,
       elasticIndex,
-      nextPageToken,
+      nextPageToken: isDeltaUpdate ? nextPageToken : undefined,
     }
   }
 }
