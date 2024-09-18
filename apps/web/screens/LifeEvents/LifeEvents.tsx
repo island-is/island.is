@@ -1,28 +1,30 @@
 import Head from 'next/head'
-import {
-  Text,
-  GridContainer,
-  GridRow,
-  GridColumn,
-  Breadcrumbs,
-} from '@island.is/island-ui/core'
-import {
-  LinkType,
-  linkResolver,
-  useNamespaceStrict as useNamespace,
-} from '@island.is/web/hooks'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  type QueryGetNamespaceArgs,
-  type GetNamespaceQuery,
-  type GetLifeEventsForOverviewQuery,
-} from '@island.is/web/graphql/schema'
-import type { Screen } from '../../types'
-import { CardWithFeaturedItems, GridItems } from '@island.is/web/components'
+
 import {
   ContentLanguage,
   QueryGetLifeEventsForOverviewArgs,
 } from '@island.is/api/schema'
+import {
+  Breadcrumbs,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
+import { CardWithFeaturedItems, GridItems } from '@island.is/web/components'
+import {
+  type GetLifeEventsForOverviewQuery,
+  type GetNamespaceQuery,
+  type QueryGetNamespaceArgs,
+} from '@island.is/web/graphql/schema'
+import {
+  LinkType,
+  useLinkResolver,
+  useNamespaceStrict as useNamespace,
+} from '@island.is/web/hooks'
+import { withMainLayout } from '@island.is/web/layouts/main'
+
+import type { Screen } from '../../types'
 import {
   GET_LIFE_EVENTS_FOR_OVERVIEW_QUERY,
   GET_NAMESPACE_QUERY,
@@ -37,6 +39,7 @@ interface Props {
 
 const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
   const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
   return (
     <>
       <Head>
