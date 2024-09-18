@@ -34,6 +34,8 @@ import {
   VehiclesMileage,
   UniversityCareers,
   Frigg,
+  HealthDirectorateVaccination,
+  HealthDirectorateOrganDonation,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
@@ -111,7 +113,7 @@ export const workerSetup =
       })
       .resources({
         limits: { cpu: '400m', memory: '768Mi' },
-        requests: { cpu: '100m', memory: '384Mi' },
+        requests: { cpu: '150m', memory: '384Mi' },
       })
 
 export const serviceSetup = (services: {
@@ -290,6 +292,8 @@ export const serviceSetup = (services: {
       OfficialJournalOfIcelandApplication,
       UniversityCareers,
       Frigg,
+      HealthDirectorateVaccination,
+      HealthDirectorateOrganDonation,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',

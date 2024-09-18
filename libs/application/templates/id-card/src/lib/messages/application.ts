@@ -2,8 +2,8 @@ import { defineMessages } from 'react-intl'
 
 export const application = defineMessages({
   name: {
-    id: 'id.application:name',
-    defaultMessage: 'Umsókn um nafnskírteini',
+    id: 'id.application:name#markdown',
+    defaultMessage: 'Umsókn um nafnskírteini {name}',
     description: `Application's name`,
   },
   institutionName: {

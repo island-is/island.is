@@ -2,16 +2,14 @@ import {
   buildMultiField,
   buildSubSection,
   buildRadioField,
-  getValueViaPath,
   buildCustomField,
 } from '@island.is/application/core'
-import {
-  IdentityDocument,
-  IdentityDocumentChild,
-  Routes,
-} from '../../../lib/constants'
+import { IdentityDocument, Routes } from '../../../lib/constants'
 import { idInformation } from '../../../lib/messages/idInformation'
-import { isAvailableForApplication } from '../../../utils'
+import {
+  getCombinedApplicantInformation,
+  isAvailableForApplication,
+} from '../../../utils'
 import { formatDate } from '../../../utils/formatDate'
 
 export const ChosenApplicantsSubSection = buildSubSection({
@@ -27,88 +25,61 @@ export const ChosenApplicantsSubSection = buildSubSection({
           id: Routes.CHOSENAPPLICANTS,
           title: '',
           largeButtons: true,
+          required: true,
           options: (application) => {
-            const applicantName = getValueViaPath(
+            const applicantInformation = getCombinedApplicantInformation(
               application.externalData,
-              'nationalRegistry.data.fullName',
-              '',
-            ) as string
+            )
 
-            const applicantNationalId = getValueViaPath(
-              application.externalData,
-              'nationalRegistry.data.nationalId',
-              '',
-            ) as string
+            const applicantIIDisabled = !isAvailableForApplication(
+              'II',
+              applicantInformation,
+            )
 
-            const applicantPassport = getValueViaPath(
-              application.externalData,
-              'identityDocument.data.userPassport',
-              undefined,
-            ) as IdentityDocument | undefined
-
-            const applicantChildren = getValueViaPath(
-              application.externalData,
-              'identityDocument.data.childPassports',
-              [],
-            ) as Array<IdentityDocumentChild>
-
-            const applicantIIDisabled = applicantPassport
-              ? !isAvailableForApplication(
-                  applicantPassport.expirationDate,
-                  'II',
-                  `${applicantPassport.type}${applicantPassport.subType}`,
-                )
-              : false
-
-            const applicantIDDisabled = applicantPassport
-              ? !isAvailableForApplication(
-                  applicantPassport.expirationDate,
-                  'ID',
-                  `${applicantPassport.type}${applicantPassport.subType}`,
-                )
-              : false
+            const applicantIDDisabled = !isAvailableForApplication(
+              'ID',
+              applicantInformation,
+            )
 
             const passportList: Array<any> = [
               {
-                label: applicantName,
-                subLabel: applicantPassport
+                label: applicantInformation.name,
+                subLabel: applicantInformation.passport
                   ? {
                       ...idInformation.labels.idNumber,
                       values: {
-                        passportNumber: applicantPassport?.number,
-                        expirationDate: formatDate(
-                          new Date(applicantPassport.expirationDate),
-                        ),
+                        passportNumber: applicantInformation.passport?.number,
+                        expirationDate:
+                          applicantInformation.passport.expirationDate &&
+                          formatDate(
+                            new Date(
+                              applicantInformation.passport.expirationDate,
+                            ),
+                          ),
                       },
                     }
                   : {
                       ...idInformation.labels.noIdNumber,
                     },
-                value: applicantNationalId,
+                value: applicantInformation.nationalId,
                 disabled: applicantIIDisabled && applicantIDDisabled,
               },
             ]
 
-            applicantChildren.map((item) => {
+            applicantInformation.children.map((item) => {
+              const isDisabledDueToCitizenship = item.citizenship?.kodi !== 'IS'
               const idDocument =
                 item.passports && item.passports.length > 0
                   ? (item.passports[0] as IdentityDocument)
                   : undefined
-              const IIDisabled = idDocument
-                ? !isAvailableForApplication(
-                    idDocument.expirationDate,
-                    'II',
-                    `${idDocument.type}${idDocument.subType}`,
-                  )
-                : false
 
-              const IDDisabled = idDocument
-                ? !isAvailableForApplication(
-                    idDocument.expirationDate,
-                    'ID',
-                    `${idDocument.type}${idDocument.subType}`,
-                  )
-                : false
+              const IIDisabled = !isAvailableForApplication('II', {
+                passport: idDocument,
+              })
+
+              const IDDisabled = !isAvailableForApplication('ID', {
+                passport: idDocument,
+              })
               return passportList.push({
                 label: item.childName,
                 subLabel: idDocument
@@ -116,9 +87,9 @@ export const ChosenApplicantsSubSection = buildSubSection({
                       ...idInformation.labels.idNumber,
                       values: {
                         passportNumber: idDocument.number,
-                        expirationDate: formatDate(
-                          new Date(idDocument.expirationDate),
-                        ),
+                        expirationDate:
+                          idDocument.expirationDate &&
+                          formatDate(new Date(idDocument.expirationDate)),
                       },
                     }
                   : {
@@ -126,7 +97,8 @@ export const ChosenApplicantsSubSection = buildSubSection({
                     },
 
                 value: item.childNationalId,
-                disabled: IIDisabled && IDDisabled,
+                disabled:
+                  (IIDisabled && IDDisabled) || isDisabledDueToCitizenship,
               })
             })
 

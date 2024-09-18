@@ -22,7 +22,6 @@ export const Child = ({
     application.answers,
   )
 
-  const genderOptions = useFriggOptions(OptionsType.GENDER)
   const pronounOptions = useFriggOptions(OptionsType.PRONOUN)
 
   return (
@@ -68,9 +67,8 @@ export const Child = ({
             />
           </GridColumn>
         </GridRow>
-        {(childInfo.gender ||
-          childInfo.preferredName ||
-          childInfo.pronouns ||
+        {(childInfo.preferredName ||
+          childInfo.pronouns?.length > 0 ||
           differentPlaceOfResidence === YES) && (
           <GridRow rowGap={2}>
             {childInfo.preferredName && (
@@ -81,19 +79,6 @@ export const Child = ({
                       .childInfoPreferredName,
                   )}
                   value={childInfo.preferredName}
-                />
-              </GridColumn>
-            )}
-            {childInfo.gender && (
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.childrenNParents.childInfoGender,
-                  )}
-                  value={getSelectedOptionLabel(
-                    genderOptions,
-                    childInfo.gender,
-                  )}
                 />
               </GridColumn>
             )}

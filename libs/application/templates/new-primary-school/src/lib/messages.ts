@@ -215,16 +215,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu fornafn',
       description: 'Select pronoun',
     },
-    childInfoGender: {
-      id: 'dess.nps.application:childrenNParents.child.info.gender',
-      defaultMessage: 'Kyn',
-      description: 'Gender',
-    },
-    childInfoGenderPlaceholder: {
-      id: 'dess.nps.application:childrenNParents.child.info.gender.placeholder',
-      defaultMessage: 'Veldu kyn',
-      description: 'Select gender',
-    },
     differentPlaceOfResidence: {
       id: 'dess.nps.application:childrenNParents.child.info.different.place.of.residence',
       defaultMessage: 'Er dvalarstaður barns annað en skráð lögheimili?',
@@ -298,16 +288,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:childrenNParents.relatives.delete.relative',
       defaultMessage: 'Eyða aðstandanda',
       description: 'Remove relative',
-    },
-    relativesCanPickUpChild: {
-      id: 'dess.nps.application:childrenNParents.relatives.can.pick.up.child',
-      defaultMessage: 'Má sækja barn í skólann',
-      description: 'Can pick up the child from school',
-    },
-    relativesCanPickUpChildTableHeader: {
-      id: 'dess.nps.application:childrenNParents.relatives.can.pick.up.child.table.header',
-      defaultMessage: 'Má sækja barn',
-      description: 'Can pick up the child',
     },
   }),
 
@@ -565,55 +545,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Óska eftir samtali við skóla',
       description: 'Request meeting with the school',
     },
-
-    // Use of footage
-    useOfFootageSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.use.of.footage.sub.section.title',
-      defaultMessage: 'Notkun myndefnis',
-      description: 'Use of footage',
-    },
-    photography: {
-      id: 'dess.nps.application:different.needs.photography',
-      defaultMessage:
-        'Samþykki vegna myndatöku, myndbandsupptöku og birtingu myndefnis grunnskóla',
-      description:
-        'Consent for photography, video recording and publication of elementary school footage',
-    },
-    photographyDescription: {
-      id: 'dess.nps.application:different.needs.photography.description',
-      defaultMessage:
-        'Þegar kemur að myndatöku og myndbirtingu skal virða sjálfsákvörðunarrétt barna og ungmenna og taka tillit til skoðana og viðhorfa þeirra í samræmi við aldur og þroska.',
-      description:
-        'When it comes to taking pictures and publishing pictures, the right of self-determination of children and young people must be respected and their views and attitudes taken into account in accordance with their age and maturity.',
-    },
-    photographyConsent: {
-      id: 'dess.nps.application:different.needs.photography.consent',
-      defaultMessage:
-        'Er heimilt að taka ljósmyndir/myndbönd af barni þínu í daglegu skólastarfi?',
-      description:
-        'Is it allowed to take photos/videos of your child during daily school activities?',
-    },
-    photoSchoolPublication: {
-      id: 'dess.nps.application:different.needs.photo.school.publication',
-      defaultMessage:
-        'Má birta myndefni á vettvangi skólans svo sem á vefsíðu hans, í fréttabréfi, samfélagsmiðlum og kynningarefni?',
-      description:
-        "Can footage be published on the school's website, in the newsletter, social media and promotional materials?",
-    },
-    photoMediaPublication: {
-      id: 'dess.nps.application:different.needs.photo.media.publication',
-      defaultMessage:
-        'Má birta myndefni hjá þriðja aðila svo sem í fjölmiðlum?',
-      description:
-        'Can footage be published by third parties such as in the media?',
-    },
-    photographyInfo: {
-      id: 'dess.nps.application:different.needs.photography.info',
-      defaultMessage:
-        'Ekki er heimilt að nota myndefni í öðrum tilgangi en samþykki nær til.\n\nEf myndefni er notað í öðrum tilgangi, eða myndataka er fyrirhuguð í öðrum tilgangi en samþykki nær til, verða foreldrar upplýstir sérstaklega og sérstaks samþykkis aflað, af viðkomandi skóla.\n\nForeldri getur afturkallað samþykki sitt með því að hafa samband við skóla. Afturköllun hefur þó ekki áhrif á lögmæti þeirrar myndatöku og myndbirtingar sem fram hefur farið fram að þeim tíma.\n\nHver og einn skóli er ábyrgðaraðili vegna persónuupplýsinga sem þar eru unnar. Frekari leiðbeiningar og fræðsla um mynda- og myndbandstökur sem og myndbirtingar má finna á vef viðkomandi sveitarfélags.',
-      description:
-        'It is not allowed to use visual material for any purpose other than what has been approved.\n\nIf visual material is used for a purpose other than what has been approved, or if photography is intended for a purpose other than what has been approved, parents will be informed specifically and a separate consent will be obtained from the relevant school.\n\nA parent can revoke their consent by contacting the school. However, revocation does not affect the legality of any photography or publication that has already taken place up to that time.\n\nEach school is responsible for the personal information processed there. Further guidance and education on photography and publication, as well as image processing, can be found on the website of the relevant municipality.',
-    },
   }),
 
   overview: defineMessages({
@@ -752,6 +683,19 @@ export const errorMessages = defineMessages({
     id: 'dess.nps.application:error.languages.required',
     defaultMessage: 'Það þarf að velja a.m.k eitt tungumál',
     description: 'At least one language must be selected',
+  },
+  noChildrenFoundTitle: {
+    id: 'dess.nps.application:error.no.children.found.title',
+    defaultMessage: 'Því miður ert þú ekki með skráð barn á grunnskólaaldri',
+    description:
+      'Unfortunately, you do not have a child registered at primary school age',
+  },
+  noChildrenFoundMessage: {
+    id: 'dess.nps.application:error.no.children.found.message#markdown',
+    defaultMessage:
+      'Eingöngu sá sem er með lögheimilisforsjá hefur heimild til að sækja um fyrir barn. \n\nÞjóðskrá skráir hver eða hverjir teljast foreldrar barns og hver fari með forsjárskyldur þess. Upplýsingar um skráningu forsjár og lögheimilisforeldris má nálgast hér: [Foreldrar og forsjá | Þjóðskrá (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nUpplýsingum um tengsl á milli barna og foreldra auk forsjáraðila eru einnig aðgengilegar á [Mínum síðum á Ísland.is](https://island.is/minarsidur)',
+    description:
+      'Only the person who has legal custody has the authority to apply for a child.\n\nThe National Registry records who or which individuals are considered to be the parents of a child and who has custody responsibilities. Information on registering custody and legal guardianship can be found here: [Parents and Custody | National Registry (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nInformation about the relationship between children and parents, as well as custody authorities, is also available on [My Pages on Ísland.is](https://island.is/minarsidur)',
   },
   noChildrenFoundTitle: {
     id: 'dess.nps.application:error.no.children.found.title',

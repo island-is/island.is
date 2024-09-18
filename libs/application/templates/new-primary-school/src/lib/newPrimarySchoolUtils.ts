@@ -6,7 +6,6 @@ import {
   YesOrNo,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
-import * as kennitala from 'kennitala'
 import {
   Child,
   ChildInformation,
@@ -18,7 +17,6 @@ import {
   SiblingsRow,
 } from '../types'
 import {
-  Gender,
   ReasonForApplicationOptions,
   SiblingRelationOptions,
 } from './constants'
@@ -112,21 +110,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'schools.newSchool.school',
   ) as string
 
-  const photographyConsent = getValueViaPath(
-    answers,
-    'photography.photographyConsent',
-  ) as YesOrNo
-
-  const photoSchoolPublication = getValueViaPath(
-    answers,
-    'photography.photoSchoolPublication',
-  ) as YesOrNo
-
-  const photoMediaPublication = getValueViaPath(
-    answers,
-    'photography.photoMediaPublication',
-  ) as YesOrNo
-
   return {
     childNationalId,
     childInfo,
@@ -145,10 +128,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     developmentalAssessment,
     specialSupport,
     requestMeeting,
-    photographyConsent,
-    photoSchoolPublication,
-    photoMediaPublication,
-
     startDate,
     schoolMunicipality,
     selectedSchool,
@@ -158,11 +137,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
 ) => {
-  const children = getValueViaPath(
-    externalData,
-    'childrenCustodyInformation.data',
-    [],
-  ) as Child[]
+  const children = getValueViaPath(externalData, 'children.data', []) as Child[]
 
   const applicantName = getValueViaPath(
     externalData,
@@ -191,7 +166,7 @@ export const getApplicationExternalData = (
 
   const otherParentName = getValueViaPath(
     externalData,
-    'childrenCustodyInformation.data.otherParent.fullName',
+    'children.data.otherParent.fullName',
   ) as string
 
   const childInformation = getValueViaPath(
@@ -209,19 +184,6 @@ export const getApplicationExternalData = (
     otherParentName,
     childInformation,
   }
-}
-
-export const canApply = (child: Child): boolean => {
-  // Check if the child is at primary school age and lives with the applicant
-  if (
-    kennitala.info(child.nationalId).age >= 5 &&
-    kennitala.info(child.nationalId).age <= 15 &&
-    child.livesWithApplicant
-  ) {
-    return true
-  }
-
-  return false
 }
 
 export const getSelectedChild = (application: Application) => {
@@ -325,22 +287,6 @@ export const getSiblingRelationOptionLabel = (
 ) => {
   const relationOptions = getSiblingRelationOptions()
   return relationOptions.find((option) => option.value === value)?.label ?? ''
-}
-
-export const formatGender = (genderCode?: string): Gender | undefined => {
-  switch (genderCode) {
-    case '1':
-    case '3':
-      return Gender.MALE
-    case '2':
-    case '4':
-      return Gender.FEMALE
-    case '7':
-    case '8':
-      return Gender.OTHER
-    default:
-      return undefined
-  }
 }
 
 export const getOptionsListByType = async (
