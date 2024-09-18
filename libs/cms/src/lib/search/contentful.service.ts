@@ -172,7 +172,7 @@ export class ContentfulService {
     const items: Entry<unknown>[] = []
     let response: EntryCollection<unknown> | null = null
 
-    while (response === null) {
+    while (response === null && chunkSize > 0) {
       try {
         response = await this.limiter.schedule(() =>
           this.contentfulClient.getEntries({
@@ -204,7 +204,7 @@ export class ContentfulService {
       }
     }
 
-    return { items, total: response.total }
+    return { items, total: response?.total }
   }
 
   /**
