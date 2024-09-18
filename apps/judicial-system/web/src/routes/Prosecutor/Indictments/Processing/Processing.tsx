@@ -178,7 +178,7 @@ const Processing: FC = () => {
       return
     }
 
-    if (Boolean(noNationalId)) {
+    if (noNationalId) {
       handleUpdateCivilClaimant({
         caseId: workingCase.id,
         civilClaimantId,
