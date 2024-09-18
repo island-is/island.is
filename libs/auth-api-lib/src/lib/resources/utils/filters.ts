@@ -1,7 +1,7 @@
 import { AuthDelegationType } from '@island.is/shared/types'
 
 // Defined delegation types that are only manageable by superusers
-const SUPER_USER_DELEGATION_TYPES = [
+export const SUPER_USER_DELEGATION_TYPES = [
   AuthDelegationType.PersonalRepresentative,
   AuthDelegationType.LegalRepresentative,
 ]
