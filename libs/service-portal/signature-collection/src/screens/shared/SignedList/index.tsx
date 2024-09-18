@@ -63,7 +63,9 @@ const SignedList = ({
     <Box>
       {!loadingSignedLists && !!signedLists?.length && (
         <Box marginTop={[5, 7]}>
-          <Text marginBottom={2}>{formatMessage(m.mySigneeListsHeader)}</Text>
+          <Text marginBottom={2} variant="h4">
+            {formatMessage(m.mySigneeListsHeader)}
+          </Text>
           {signedLists?.map((list: SignatureCollectionSignedList) => {
             return (
               <Box marginBottom={3} key={list.id}>
