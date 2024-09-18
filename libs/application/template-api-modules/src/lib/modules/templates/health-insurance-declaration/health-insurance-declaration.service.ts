@@ -141,7 +141,7 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
     }
 
     const performerInAppliedForList = applicants.some(
-      (appliedFor) => appliedFor.nationalId === auth.nationalId
+      (appliedFor) => appliedFor.nationalId === auth.nationalId,
     )
 
     const isApplicantInsured = getApplicantInsuranceStatus(application)
