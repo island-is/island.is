@@ -9,10 +9,7 @@ import {
   IndividualDto,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
-import {
-  CompanyExtendedInfo,
-  CompanyRegistryClientService,
-} from '@island.is/clients/rsk/company-registry'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AuditService } from '@island.is/nest/audit'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -31,7 +28,7 @@ import { DelegationValidity } from './types/delegationValidity'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { getScopeValidityWhereClause } from './utils/scopes'
 import { DelegationDelegationType } from './models/delegation-delegation-type.model'
-import { DelegationTypeModel } from '@island.is/auth-api-lib'
+import { DelegationTypeModel } from './models/delegation-type.model'
 
 type FindAllValidIncomingOptions = {
   nationalId: string
@@ -75,6 +72,33 @@ export class DelegationsIncomingCustomService {
     )
 
     const delegationDTOs = delegations.map((d) => d.toDTO())
+
+    return delegationDTOs.map((d) => {
+      const person = this.getPersonByNationalId(fromNameInfo, d.fromNationalId)
+
+      return {
+        ...d,
+        fromName: person?.name ?? d.fromName ?? UNKNOWN_NAME,
+      }
+    })
+  }
+
+  async findAllValidGeneralMandate(
+    { nationalId }: FindAllValidIncomingOptions,
+    useMaster = false,
+  ): Promise<DelegationDTO[]> {
+    const { delegations, fromNameInfo } =
+      await this.findAllIncomingGeneralMandates(
+        {
+          nationalId,
+          validity: DelegationValidity.INCLUDE_FUTURE,
+        },
+        useMaster,
+      )
+
+    const delegationDTOs = delegations.map((d) =>
+      d.toDTO(AuthDelegationType.GeneralMandate),
+    )
 
     return delegationDTOs.map((d) => {
       const person = this.getPersonByNationalId(fromNameInfo, d.fromNationalId)

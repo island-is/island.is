@@ -103,6 +103,12 @@ export class DelegationsIncomingService {
     )
 
     delegationPromises.push(
+      this.delegationsIncomingCustomService.findAllValidGeneralMandate({
+        nationalId: user.nationalId,
+      }),
+    )
+
+    delegationPromises.push(
       this.delegationsIncomingRepresentativeService.findAllIncoming({
         nationalId: user.nationalId,
       }),
