@@ -394,6 +394,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.RENTAL_AGREEMENT]: {
     slug: 'leigusamningur',
-    translation: [''],
+    translation: ['ra.application', 'uiForms.application'],
   },
 }
