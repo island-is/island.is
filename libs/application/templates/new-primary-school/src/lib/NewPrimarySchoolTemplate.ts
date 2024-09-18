@@ -23,7 +23,6 @@ import { assign } from 'xstate'
 import {
   ChildrenApi,
   GetKeyOptionsTypesApi,
-  GetSchoolsApi,
   OptionsApi,
 } from '../dataProviders'
 import {
@@ -89,7 +88,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 UserProfileApi,
                 GetKeyOptionsTypesApi,
                 OptionsApi,
-                GetSchoolsApi,
                 ChildrenApi,
               ],
             },

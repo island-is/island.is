@@ -10,7 +10,6 @@ import {
 import {
   ChildrenApi,
   GetKeyOptionsTypesApi,
-  GetSchoolsApi,
   OptionsApi,
 } from '../../dataProviders'
 import { newPrimarySchoolMessages } from '../../lib/messages'
@@ -48,10 +47,6 @@ export const externalDataSubSection = buildSubSection({
         buildDataProviderItem({
           provider: OptionsApi,
           title: 'Options',
-        }),
-        buildDataProviderItem({
-          provider: GetSchoolsApi,
-          title: 'Schools',
         }),
       ],
     }),
