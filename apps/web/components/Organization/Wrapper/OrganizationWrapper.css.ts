@@ -45,3 +45,30 @@ export const landlaeknirHeaderGridContainer = style({
     },
   }),
 })
+
+export const shhHeaderGridContainerWidth = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: '315px',
+      gridTemplateColumns: '65fr 35fr',
+      background:
+        "url('https://images.ctfassets.net/8k0h54kbe6bj/1glTNLK2OYnp9XsL4EVuVa/6813e691f7863dda32e4637de5142c71/Mynd_a___banner.svg') bottom right no-repeat",
+      backgroundSize: '450px 100%',
+    },
+  }),
+})
+
+export const shhHeaderGridContainerWidthSubpage = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: '315px',
+      gridTemplateColumns: '65fr 35fr',
+    },
+  }),
+})
