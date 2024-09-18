@@ -140,11 +140,9 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
       throw new HttpException('No applicants for application', 500)
     }
 
-    const performerInAppliedForList = // Check if the performing user is in the list of applicants
-      0 <=
-      applicants.findIndex((appliedFor) => {
-        return appliedFor.nationalId === auth.nationalId
-      })
+    const performerInAppliedForList = applicants.some(
+      (appliedFor) => appliedFor.nationalId === auth.nationalId
+    )
 
     const isApplicantInsured = getApplicantInsuranceStatus(application)
 
