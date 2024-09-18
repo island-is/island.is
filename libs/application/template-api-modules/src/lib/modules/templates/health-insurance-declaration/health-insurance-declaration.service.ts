@@ -140,25 +140,6 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
       throw new HttpException('No applicants for application', 500)
     }
 
-    const performerInAppliedForList = applicants.some(
-      (appliedFor) => appliedFor.nationalId === auth.nationalId,
-    )
-
-    const isApplicantInsured = getApplicantInsuranceStatus(application)
-
-    /* If the applicant does not qualify for health insurance declaration
-       explicitily add the applicant to the return array to clarify if the applicant
-       is on the applied for list.
-    */
-    if (!isApplicantInsured && performerInAppliedForList) {
-      applicantsWithPdfData.push({
-        applicantName: persons[0].name,
-        nationalId: persons[0].nationalId,
-        comment: 'Á ekki rétt á tryggingaryfirlýsingu',
-        approved: false,
-      })
-    }
-
     for (const applicant of applicants) {
       let pdfDataResponse
       const person = persons.find((p) => p.nationalId === applicant.nationalId)
@@ -177,6 +158,34 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
         pdfData: pdfDataResponse,
         comment: applicant.comment,
         approved: applicant.approved,
+      })
+    }
+
+    const performerInAppliedForList = applicants.some(
+      (appliedFor) => appliedFor.nationalId === auth.nationalId,
+    )
+
+    const performerAlreadyInList = applicantsWithPdfData.some(
+      (applicantWithPdfData) =>
+        applicantWithPdfData.nationalId === auth.nationalId,
+    )
+
+    const isApplicantInsured = getApplicantInsuranceStatus(application)
+
+    /* If the applicant does not qualify for health insurance declaration
+       explicitily add the applicant to the return array to clarify if the applicant
+       is on the applied for list.
+    */
+    if (
+      !isApplicantInsured &&
+      performerInAppliedForList &&
+      !performerAlreadyInList
+    ) {
+      applicantsWithPdfData.push({
+        applicantName: persons[0].name,
+        nationalId: persons[0].nationalId,
+        comment: 'Á ekki rétt á tryggingaryfirlýsingu',
+        approved: false,
       })
     }
     return applicantsWithPdfData
