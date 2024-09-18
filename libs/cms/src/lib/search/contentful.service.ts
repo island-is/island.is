@@ -163,6 +163,50 @@ export class ContentfulService {
     return items
   }
 
+  async getContentfulDataPaginated(
+    chunkSize: number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    query: any,
+    skip: number,
+  ) {
+    const items: Entry<unknown>[] = []
+    let response: EntryCollection<unknown> | null = null
+
+    while (response === null) {
+      try {
+        response = await this.limiter.schedule(() =>
+          this.contentfulClient.getEntries({
+            ...query,
+            limit: chunkSize,
+            skip,
+          }),
+        )
+        for (const item of response.items) {
+          items.push(item)
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        if (
+          (error?.message as string)
+            ?.toLowerCase()
+            ?.includes('response size too big')
+        ) {
+          logger.info(
+            `Chunk size too large, dividing it by 2: ${chunkSize} -> ${Math.floor(
+              chunkSize / 2,
+            )}`,
+          )
+          chunkSize = Math.floor(chunkSize / 2)
+        } else {
+          logger.error(error)
+          return { items, chunkSize, total: response?.total }
+        }
+      }
+    }
+
+    return { items, chunkSize, total: response.total }
+  }
+
   /**
    * Next sync token is returned by Contentful sync API to mark starting point for next sync.
    * We keep this token in elasticsearch per locale.
@@ -297,6 +341,48 @@ export class ContentfulService {
     locale: Locale,
     chunkSize: number,
   ) {
+    const resyncInformationPrefix = 're-sync-data-'
+
+    const resyncNextPageInformation =
+      'nextPageToken' in typeOfSync &&
+      typeOfSync.nextPageToken.startsWith(resyncInformationPrefix)
+        ? typeOfSync.nextPageToken
+        : ''
+
+    if (resyncNextPageInformation) {
+      const info = JSON.parse(
+        resyncNextPageInformation.split(resyncInformationPrefix)[1],
+      ) as {
+        chunkSize: number
+        skip: number
+      }
+
+      const contentfulData = await this.getContentfulDataPaginated(
+        chunkSize,
+        {
+          include: this.defaultIncludeDepth,
+          'sys.contentType.sys.id[in]': environment.indexableTypes.join(','),
+          locale: this.contentfulLocaleMap[locale],
+        },
+        info.skip,
+      )
+
+      info.skip += contentfulData.items.length
+      info.chunkSize = contentfulData.chunkSize
+
+      return {
+        indexableEntries: contentfulData.items,
+        nestedItems: [],
+        deletedEntryIds: [],
+        newNextSyncToken: '',
+        nextPageToken:
+          typeof contentfulData?.total === 'number' &&
+          info.skip < contentfulData?.total
+            ? `${resyncInformationPrefix}${JSON.stringify(info)}`
+            : '',
+      }
+    }
+
     // Gets all changes in all locales
     const {
       entries,
@@ -308,8 +394,8 @@ export class ContentfulService {
     } = await this.getSyncData(typeOfSync)
 
     // In case someone in the CMS triggers a sync by setting the translation of an entry to an inactive state we'd like to remove that entry
-    const isDeltaUpdate = !('initial' in typeOfSync)
     const entriesThatHadTheirTranslationTurnedOff = new Set<string>()
+    const isDeltaUpdate = !('initial' in typeOfSync)
 
     if (isDeltaUpdate && locale !== 'is') {
       const localizedEntries = entries.filter((entry) =>
@@ -346,23 +432,16 @@ export class ContentfulService {
     })
 
     // Get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
-    const indexableEntries = isDeltaUpdate
-      ? await this.getPopulatedContentulEntries(
-          entries.filter(
-            (entry) =>
-              !entriesThatHadTheirTranslationTurnedOff.has(entry.sys.id) &&
-              // Only populate the indexable entries
-              environment.indexableTypes.includes(entry.sys.contentType.sys.id),
-          ),
-          locale,
-          chunkSize,
-        )
-      : // TODO: paginate
-        await this.getContentfulData(chunkSize, {
-          include: this.defaultIncludeDepth,
-          'sys.contentType.sys.id[in]': environment.indexableTypes.join(','),
-          locale: this.contentfulLocaleMap[locale],
-        })
+    const indexableEntries = await this.getPopulatedContentulEntries(
+      entries.filter(
+        (entry) =>
+          !entriesThatHadTheirTranslationTurnedOff.has(entry.sys.id) &&
+          // Only populate the indexable entries
+          environment.indexableTypes.includes(entry.sys.contentType.sys.id),
+      ),
+      locale,
+      chunkSize,
+    )
 
     // extract ids from deletedEntries
     const deletedEntryIds = deletedEntries.map((entry) => entry.sys.id)
@@ -546,7 +625,7 @@ export class ContentfulService {
       items: indexableEntries,
       deletedEntryIds,
       elasticIndex,
-      nextPageToken: isDeltaUpdate ? nextPageToken : undefined,
+      nextPageToken: nextPageToken,
     }
   }
 }
