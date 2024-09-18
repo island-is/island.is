@@ -13,7 +13,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
@@ -361,14 +361,10 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
-    const formattedNationalId = formatNationalId(nationalId)
     return this.caseModel
       .findOne({
         where: {
-          [Op.or]: [
-            { defenderNationalId: formattedNationalId },
-            { defenderNationalId: nationalId },
-          ],
+          defenderNationalId: normalizeAndFormatNationalId(nationalId),
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },
