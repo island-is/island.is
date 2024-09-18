@@ -83,7 +83,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         // Origin for Android prod app
         'android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU',
       ]),
-      SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST', // todo: secret?
+      SYSLUMENN_HOST: {
+        dev: 'https://api.syslumenn.is/staging',
+        staging: 'https://api.syslumenn.is/staging',
+        prod: 'https://api.syslumenn.is',
+      },
       SYSLUMENN_TIMEOUT: '10000',
     })
     .secrets({
