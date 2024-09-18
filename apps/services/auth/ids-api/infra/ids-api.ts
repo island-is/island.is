@@ -83,6 +83,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         // Origin for Android prod app
         'android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU',
       ]),
+      SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST', // todo: secret?
+      SYSLUMENN_TIMEOUT: '10000',
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
@@ -92,6 +94,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
     })
     .xroad(Base, Client, RskProcuring, NationalRegistryAuthB2C)
     .readiness('/health/check')
