@@ -15,9 +15,12 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry } from '../case-list'
-import { Defendant, DeleteDefendantResponse } from '../defendant'
-import { CivilClaimant } from '../defendant/models/civilClaimant.model'
-import { DeleteCivilClaimantResponse } from '../defendant/models/deleteCivilClaimant.response'
+import {
+  CivilClaimant,
+  Defendant,
+  DeleteCivilClaimantResponse,
+  DeleteDefendantResponse,
+} from '../defendant'
 import { CreateEventLogInput } from '../event-log'
 import {
   CaseFile,
