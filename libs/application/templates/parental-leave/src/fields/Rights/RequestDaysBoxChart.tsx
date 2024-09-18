@@ -1,16 +1,12 @@
-import React, { FC, useState } from 'react'
+import { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Controller, useFormContext } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
-import { useLocale } from '@island.is/localization'
 import {
-  getApplicationAnswers,
   getMaxMultipleBirthsAndDefaultMonths,
   getMaxMultipleBirthsInMonths,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import Slider from '../components/Slider'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import {
   defaultMonths,
@@ -20,11 +16,10 @@ import {
 import { YES } from '../../constants'
 import { useEffectOnce } from 'react-use'
 
-const RequestDaysSlider: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+const RequestDaysBoxChart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
   application,
 }) => {
-  const maxDays = maxDaysToGiveOrReceive
   const alreadySelectedMonths = getMaxMultipleBirthsAndDefaultMonths(
     application.answers,
   )
@@ -33,18 +28,13 @@ const RequestDaysSlider: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const multipleBirthsInMonths = getMaxMultipleBirthsInMonths(
     application.answers,
   )
-  const { id } = field
-  const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
-  const { requestDays } = getApplicationAnswers(application.answers)
+  const { setValue, watch } = useFormContext()
 
   useEffectOnce(() => {
     setValue('requestRights.isRequestingRights', YES)
   })
 
-  const [chosenRequestDays, setChosenRequestDays] = useState<number>(
-    requestDays === 0 ? 1 : requestDays,
-  )
+  const chosenRequestDays = watch('requestRights.requestDays')
 
   const requestedMonths =
     defaultMonths + multipleBirthsInMonths + chosenRequestDays / daysInMonth
@@ -91,36 +81,6 @@ const RequestDaysSlider: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   return (
     <Box marginBottom={6} marginTop={5}>
-      <Box marginBottom={12}>
-        <Controller
-          defaultValue={chosenRequestDays}
-          name={id}
-          render={({ field: { onChange, value } }) => (
-            <Slider
-              label={{
-                singular: formatMessage(parentalLeaveFormMessages.shared.day),
-                plural: formatMessage(parentalLeaveFormMessages.shared.days),
-              }}
-              min={1}
-              max={maxDays}
-              step={1}
-              currentIndex={value}
-              showMinMaxLabels
-              showToolTip
-              trackStyle={{ gridTemplateRows: 8 }}
-              calculateCellStyle={() => {
-                return {
-                  background: theme.color.dark200,
-                }
-              }}
-              onChange={(newValue: number) => {
-                onChange(newValue.toString())
-                setChosenRequestDays(newValue)
-              }}
-            />
-          )}
-        />
-      </Box>
       <BoxChart
         application={application}
         boxes={Math.ceil(maxMonths)}
@@ -149,4 +109,4 @@ const RequestDaysSlider: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
 }
 
-export default RequestDaysSlider
+export default RequestDaysBoxChart
