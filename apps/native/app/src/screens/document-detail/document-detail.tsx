@@ -45,7 +45,7 @@ const PdfWrapper = styled.View`
   flex: 1;
   background-color: ${dynamicColor('background')};
 `
-const regexForBr = /<br \/>*\\?>/g
+const regexForBr = /<br\s*\/>/gi
 
 // Styles for html documents
 const useHtmlStyles = () => {
