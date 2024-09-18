@@ -872,6 +872,23 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     })
   }
 
+  async preparePeriodsAndRightsDTO(
+    application: Application,
+    periods: AnswerPeriod[],
+    firstPeriodStart: string | undefined,
+  ): Promise<{ rightsDTO: ApplicationRights[]; periodsDTO: Period[] }> {
+    const rightsDTO = await this.createRightsDTO(application)
+    const rights = rightsDTO.map(({ rightsUnit }) => rightsUnit).join(',')
+    const isActualDateOfBirth =
+      firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
+    const periodsDTO = this.createPeriodsDTO(
+      periods,
+      isActualDateOfBirth,
+      rights,
+    )
+    return { rightsDTO, periodsDTO }
+  }
+
   async sendApplication({
     application,
     params = undefined,
@@ -896,14 +913,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const attachments = await this.getAttachments(application)
     const type = getType(application)
 
-    const rightsDTO = await this.createRightsDTO(application)
-    const rights = rightsDTO.map(({ rightsUnit }) => rightsUnit).join(',')
-    const isActualDateOfBirth =
-      firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
-    const periodsDTO = this.createPeriodsDTO(
+    const { periodsDTO, rightsDTO } = await this.preparePeriodsAndRightsDTO(
+      application,
       periods,
-      isActualDateOfBirth,
-      rights,
+      firstPeriodStart,
     )
 
     try {
@@ -997,14 +1010,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
     const attachments = await this.getAttachments(application)
 
-    const rightsDTO = await this.createRightsDTO(application)
-    const rights = rightsDTO.map(({ rightsUnit }) => rightsUnit).join(',')
-    const isActualDateOfBirth =
-      firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
-    const periodsDTO = this.createPeriodsDTO(
+    const { periodsDTO, rightsDTO } = await this.preparePeriodsAndRightsDTO(
+      application,
       periods,
-      isActualDateOfBirth,
-      rights,
+      firstPeriodStart,
     )
 
     try {
