@@ -193,6 +193,7 @@ export const include: Includeable[] = [
         CaseFileCategory.CASE_FILE,
         CaseFileCategory.PROSECUTOR_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIM,
       ],
     },
   },
@@ -216,6 +217,7 @@ export const include: Includeable[] = [
     required: false,
     where: { stringType: { [Op.in]: stringTypes } },
   },
+  { model: Case, as: 'mergeCase', attributes },
 ]
 
 export const order: OrderItem[] = [
