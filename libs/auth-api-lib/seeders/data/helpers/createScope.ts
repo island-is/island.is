@@ -47,6 +47,11 @@ interface ScopeOptions {
    * Configures which claims the scope requires. Defaults to `nationalId`.
    */
   claims?: Array<string>
+
+  /**
+   * Should this scope be added to the actor claim object in the access token. Defaults to false.
+   */
+  alsoForDelegatedUser?: boolean
 }
 
 const getScopeFields = (options: ScopeOptions): DbScope => ({
@@ -55,7 +60,7 @@ const getScopeFields = (options: ScopeOptions): DbScope => ({
   description: options.description,
   grant_to_legal_guardians: options.delegation?.legalGuardians === true,
   grant_to_procuring_holders: options.delegation?.procuringHolders === true,
-  also_for_delegated_user: options.delegation?.custom === true,
+  also_for_delegated_user: options.alsoForDelegatedUser ?? false,
   is_access_controlled: options.accessControlled ?? false,
 
   // The scope name should be prefixed with the organisation domain, eg `@island.is/some-scope:name`.

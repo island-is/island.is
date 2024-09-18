@@ -1,5 +1,5 @@
 import { Box } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   IntroHeader,
@@ -7,11 +7,11 @@ import {
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import OwnerView from './OwnerView'
-import SigneeView from './SigneeView'
+import SigneeView from '../shared/SigneeView'
 import { useGetCurrentCollection, useIsOwner } from '../../hooks'
-import { Skeleton } from '../../skeletons'
 
 const SignatureListsParliamentary = () => {
+  useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
 
   const { isOwner, loadingIsOwner } = useIsOwner()
@@ -21,12 +21,12 @@ const SignatureListsParliamentary = () => {
   return (
     <Box>
       <IntroHeader
-        title={formatMessage(m.pageTitle)}
+        title={formatMessage(m.pageTitleParliamentary)}
         intro={formatMessage(m.pageDescriptionSignee)}
         serviceProviderTooltip={formatMessage(m.infoProviderTooltip)}
         serviceProviderSlug={THJODSKRA_SLUG}
       />
-      {!loadingIsOwner && !loadingCurrentCollection ? (
+      {!loadingIsOwner && !loadingCurrentCollection && (
         <Box>
           {!currentCollection?.isPresidential ? (
             isOwner.success ? (
@@ -41,8 +41,6 @@ const SignatureListsParliamentary = () => {
             />
           )}
         </Box>
-      ) : (
-        <Skeleton />
       )}
     </Box>
   )

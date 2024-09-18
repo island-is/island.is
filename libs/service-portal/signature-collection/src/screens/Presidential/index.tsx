@@ -1,11 +1,11 @@
 import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import SigneeView from './SigneeView'
 import OwnerView from './OwnerView'
 import { useGetCurrentCollection, useIsOwner } from '../../hooks'
 import { EmptyState, IntroHeader } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import { CollectionType } from '../../lib/constants'
+import SigneeView from '../shared/SigneeView'
 
 const SignatureLists = () => {
   useNamespaces('sp.signatureCollection')
