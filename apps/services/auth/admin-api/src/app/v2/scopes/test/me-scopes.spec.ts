@@ -12,6 +12,7 @@ import {
   ApiScopeDelegationType,
   AdminPatchScopeDto,
   ApiScope,
+  SUPER_USER_DELEGATION_TYPES,
 } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import {
@@ -125,6 +126,10 @@ const createTestData = async ({
       [
         AuthDelegationType.LegalGuardian,
         AuthDelegationProvider.NationalRegistry,
+      ],
+      [
+        AuthDelegationType.LegalRepresentative,
+        AuthDelegationProvider.DistrictCommissionersRegistry,
       ],
     ].map(async ([delegationType, provider]) =>
       fixtureFactory.createDelegationType({
@@ -373,6 +378,8 @@ interface PatchTestCase {
     allowExplicitDelegationGrant?: boolean
     grantToPersonalRepresentatives?: boolean
     isAccessControlled?: boolean
+    addedDelegationTypes?: AuthDelegationType[]
+    removedDelegationTypes?: AuthDelegationType[]
   }
   expected: {
     status: number
@@ -511,6 +518,44 @@ const patchTestCases: Record<string, PatchTestCase> = {
     },
   },
 }
+
+const expected403Response = {
+  status: 403,
+  body: {
+    title: 'Forbidden',
+    status: 403,
+    detail: 'User does not have access to update admin controlled fields',
+    type: 'https://httpstatuses.org/403',
+  },
+}
+
+SUPER_USER_DELEGATION_TYPES.map((delegationType) => {
+  const delegationTypeName = AuthDelegationType[delegationType]
+
+  patchTestCases[
+    `should return a forbidden exception when adding super user delegation type: ${delegationTypeName}`
+  ] = {
+    user: currentUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedPatchApiScope.name,
+    input: {
+      addedDelegationTypes: [delegationType],
+    },
+    expected: expected403Response,
+  }
+
+  patchTestCases[
+    `should return a forbidden exception when removing super user delegation type: ${delegationTypeName}`
+  ] = {
+    user: currentUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedPatchApiScope.name,
+    input: {
+      removedDelegationTypes: [delegationType],
+    },
+    expected: expected403Response,
+  }
+})
 
 describe('MeScopesController', () => {
   describe('with auth', () => {
@@ -760,7 +805,7 @@ describe('MeScopesController', () => {
     })
   })
 
-  describe('PATCH: /v2/me/tenants/:tenantId/scopes/:scopeName', () => {
+  describe('PATCH: /v2/me/tenants/:tenantId/scopes/:scopeName as super user', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
     let apiScopeDelegationTypeModel: typeof ApiScopeDelegationType
@@ -830,6 +875,7 @@ describe('MeScopesController', () => {
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.ProcurationHolder,
             AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.LegalRepresentative,
           ],
         },
         expected: {
@@ -842,6 +888,7 @@ describe('MeScopesController', () => {
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.ProcurationHolder,
             AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.LegalRepresentative,
           ],
         },
       })
@@ -855,6 +902,7 @@ describe('MeScopesController', () => {
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.ProcurationHolder,
             AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.LegalRepresentative,
           ],
         },
         expected: {
@@ -867,6 +915,7 @@ describe('MeScopesController', () => {
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.ProcurationHolder,
             AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.LegalRepresentative,
           ],
         },
       })
@@ -878,6 +927,7 @@ describe('MeScopesController', () => {
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.ProcurationHolder,
             AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.LegalRepresentative,
           ],
         },
         expected: {
@@ -944,7 +994,7 @@ describe('MeScopesController', () => {
     })
   })
 
-  describe('POST: /v2/me/tenants/:tenantId/scopes', () => {
+  describe('POST: /v2/me/tenants/:tenantId/scopes as super user', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
     let apiScopeDelegationTypeModel: typeof ApiScopeDelegationType
@@ -1028,7 +1078,7 @@ describe('MeScopesController', () => {
     })
   })
 
-  describe('POST: /v2/me/tenants/:tenantId/scopes', () => {
+  describe('POST: /v2/me/tenants/:tenantId/scopes as normal user', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
     let apiScopeDelegationTypeModel: typeof ApiScopeDelegationType

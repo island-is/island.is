@@ -7,10 +7,12 @@ import {
   AdminPatchClientDto,
   Client,
   clientBaseAttributes,
+  ClientDelegationType,
   ClientGrantType,
   defaultAcrValue,
   RefreshTokenExpiration,
   SequelizeConfigService,
+  SUPER_USER_DELEGATION_TYPES,
   translateRefreshTokenExpiration,
 } from '@island.is/auth-api-lib'
 import { User } from '@island.is/auth-nest-tools'
@@ -49,6 +51,10 @@ const createTestClientData = async (app: TestApp, user: User) => {
       [
         AuthDelegationType.LegalGuardian,
         AuthDelegationProvider.NationalRegistry,
+      ],
+      [
+        AuthDelegationType.LegalRepresentative,
+        AuthDelegationProvider.DistrictCommissionersRegistry,
       ],
     ].map(async ([delegationType, provider]) =>
       fixtureFactory.createDelegationType({
@@ -619,6 +625,7 @@ describe('MeClientsController with auth', () => {
         AuthDelegationType.PersonalRepresentative,
         AuthDelegationType.ProcurationHolder,
         AuthDelegationType.LegalGuardian,
+        AuthDelegationType.LegalRepresentative,
       ],
     }
 
@@ -635,6 +642,7 @@ describe('MeClientsController with auth', () => {
         AuthDelegationType.PersonalRepresentative,
         AuthDelegationType.ProcurationHolder,
         AuthDelegationType.LegalGuardian,
+        AuthDelegationType.LegalRepresentative,
       ]),
     )
   })
@@ -985,6 +993,7 @@ describe('MeClientsController with auth', () => {
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.PersonalRepresentative,
             AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.LegalRepresentative,
           ],
         }
 
@@ -997,6 +1006,7 @@ describe('MeClientsController with auth', () => {
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.PersonalRepresentative,
             AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.LegalRepresentative,
           ],
           supportsCustomDelegation: true,
           supportsLegalGuardians: true,
@@ -1025,6 +1035,7 @@ describe('MeClientsController with auth', () => {
               AuthDelegationType.LegalGuardian,
               AuthDelegationType.PersonalRepresentative,
               AuthDelegationType.ProcurationHolder,
+              AuthDelegationType.LegalRepresentative,
             ],
             supportsCustomDelegation: true,
             supportsLegalGuardians: true,
@@ -1036,6 +1047,7 @@ describe('MeClientsController with auth', () => {
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.PersonalRepresentative,
             AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.LegalRepresentative,
           ],
           supportsCustomDelegation: true,
           supportsLegalGuardians: true,
@@ -1049,6 +1061,7 @@ describe('MeClientsController with auth', () => {
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.PersonalRepresentative,
             AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.LegalRepresentative,
           ],
         }
 
@@ -1063,6 +1076,66 @@ describe('MeClientsController with auth', () => {
           supportsProcuringHolders: false,
         })
       })
+
+      it.each`
+        action
+        ${'added'}
+        ${'removed'}
+      `(
+        'should not have $action super user delegation type as normal',
+        async ({ action }) => {
+          // Arrange
+          const app = await setupApp({
+            AppModule,
+            SequelizeConfigService,
+            user,
+            dbType: 'postgres',
+          })
+          const server = request(app.getHttpServer())
+          await createTestClientData(app, user)
+
+          // Act
+          const res = await Promise.all(
+            SUPER_USER_DELEGATION_TYPES.map((delegationType) =>
+              server
+                .patch(
+                  `/v2/me/tenants/${tenantId}/clients/${encodeURIComponent(
+                    clientId,
+                  )}`,
+                )
+                .send({
+                  [`${action}DelegationTypes`]: [delegationType],
+                }),
+            ),
+          )
+
+          // Assert
+          res.forEach((r) => {
+            expect(r.status).toEqual(403)
+            expect(r.body).toEqual({
+              type: 'https://httpstatuses.org/403',
+              title: 'Forbidden',
+              status: 403,
+              detail:
+                'User does not have access to update admin controlled fields.',
+            })
+          })
+
+          // DB assert
+          const clientDelegationTypeModel = app.get(
+            getModelToken(ClientDelegationType),
+          )
+          const clientDelegationTypes = await clientDelegationTypeModel.findAll(
+            {
+              where: {
+                clientId,
+              },
+            },
+          )
+
+          expect(clientDelegationTypes.length).toEqual(0)
+        },
+      )
     })
   })
 })
