@@ -12,5 +12,12 @@ fragment ApplicationFragment on Application {
   actionCard {
     draftTotalSteps
     draftFinishedSteps
+    tag {
+      label
+      variant
+    }
+    pendingAction {
+      title
+    }
   }
 }

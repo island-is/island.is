@@ -487,6 +487,7 @@ export const is = {
     select,
     inprogress {Umsókn er í afgreiðsluferli}
     completed {Samþykkt}
+    rejected {Hafnað}
     other {}
   }`,
   'applicationStatusCard.status': `{

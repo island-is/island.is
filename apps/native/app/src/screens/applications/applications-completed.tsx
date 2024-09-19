@@ -36,7 +36,11 @@ export const ApplicationsCompletedScreen: NavigationFunctionComponent = ({
   const applicationsRes = useListApplicationsQuery({
     variables: {
       input: {
-        status: [ApplicationResponseDtoStatusEnum.Completed],
+        status: [
+          ApplicationResponseDtoStatusEnum.Completed,
+          ApplicationResponseDtoStatusEnum.Rejected,
+          ApplicationResponseDtoStatusEnum.Approved,
+        ],
       },
     },
   })
@@ -50,7 +54,6 @@ export const ApplicationsCompletedScreen: NavigationFunctionComponent = ({
   return (
     <ApplicationsList
       applicationsRes={applicationsRes}
-      badgeVariant="mint"
       displayProgress={false}
       displayDescription
       componentId={componentId}

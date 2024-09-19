@@ -488,6 +488,7 @@ export const en: TranslatedMessages = {
     select,
     inprogress {The application is being processed}
     completed {Completed}
+    rejected {Rejected}
     other {}
   }`,
   'applicationStatusCard.status': `{

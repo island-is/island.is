@@ -50,7 +50,6 @@ export const ApplicationsInProgressScreen: NavigationFunctionComponent = ({
   return (
     <ApplicationsList
       applicationsRes={applicationsRes}
-      badgeVariant="blueberry"
       displayProgress={false}
       displayDescription
       componentId={componentId}

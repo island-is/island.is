@@ -1,5 +1,6 @@
 import {
   Badge,
+  badgeColorSchemes,
   EmptyList,
   Problem,
   StatusCard,
@@ -26,6 +27,7 @@ import { useBrowser } from '../../../lib/use-browser'
 import { getApplicationUrl } from '../../../utils/applications-utils'
 import { BottomTabsIndicator } from '../../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { createSkeletonArr } from '../../../utils/create-skeleton-arr'
+import { getBadgeVariant } from '../utils/getBadgeVariant'
 
 type FlatListItem =
   | Application
@@ -35,7 +37,6 @@ type FlatListItem =
 interface ApplicationsListProps {
   applicationsRes: ListApplicationsQueryResult
   componentId: string
-  badgeVariant: 'mint' | 'blueberry' | 'blue'
   displayProgress: boolean
   displayDescription: boolean
   onRefetch: (refetching: boolean) => void
@@ -44,7 +45,6 @@ interface ApplicationsListProps {
 export const ApplicationsList = ({
   applicationsRes,
   componentId,
-  badgeVariant,
   displayDescription,
   displayProgress,
   onRefetch,
@@ -106,6 +106,9 @@ export const ApplicationsList = ({
         )
       }
 
+      const badgeVariant =
+        item?.actionCard?.tag?.variant ?? getBadgeVariant(item)
+
       return (
         <StatusCard
           key={item.id}
@@ -117,7 +120,7 @@ export const ApplicationsList = ({
                 { id: 'applicationStatusCard.status' },
                 { state: item.status || 'unknown' },
               )}
-              variant={badgeVariant}
+              variant={badgeVariant as keyof typeof badgeColorSchemes}
             />
           }
           progress={
@@ -143,7 +146,8 @@ export const ApplicationsList = ({
           }
           description={
             displayDescription
-              ? intl.formatMessage(
+              ? item.actionCard?.pendingAction?.title ??
+                intl.formatMessage(
                   { id: 'applicationStatusCard.description' },
                   { state: item.status || 'unknown' },
                 )

@@ -1,5 +1,6 @@
 import {
   Badge,
+  badgeColorSchemes,
   ChevronRight,
   Heading,
   StatusCard,
@@ -10,10 +11,9 @@ import { useIntl } from 'react-intl'
 import { TouchableOpacity, View } from 'react-native'
 import { useTheme } from 'styled-components'
 
-import {
-  Application,
-  ApplicationResponseDtoStatusEnum,
-} from '../../../graphql/types/schema'
+import { Application } from '../../../graphql/types/schema'
+import { getApplicationType } from '../utils/getApplicationType'
+import { getBadgeVariant } from '../utils/getBadgeVariant'
 import { useBrowser } from '../../../lib/use-browser'
 import { getApplicationUrl } from '../../../utils/applications-utils'
 import { navigateTo } from '../../../lib/deep-linking'
@@ -26,22 +26,6 @@ interface ApplicationsPreviewProps {
   headingTitleNavigationLink: string
   numberOfItems?: number
   slider?: boolean
-}
-
-const getTypeAndBadgeVariant = (
-  application: Application,
-): {
-  badgeVariant: 'blue' | 'mint' | 'blueberry'
-  type: 'incomplete' | 'completed' | 'inProgress'
-} => {
-  switch (application.status) {
-    case ApplicationResponseDtoStatusEnum.Draft:
-      return { badgeVariant: 'blue', type: 'incomplete' }
-    case ApplicationResponseDtoStatusEnum.Inprogress:
-      return { badgeVariant: 'blueberry', type: 'inProgress' }
-    default:
-      return { badgeVariant: 'mint', type: 'completed' }
-  }
 }
 
 export const ApplicationsPreview = ({
@@ -63,7 +47,9 @@ export const ApplicationsPreview = ({
     numberOfItems: number,
   ) => {
     return applications.slice(0, numberOfItems).map((application) => {
-      const type = getTypeAndBadgeVariant(application).type
+      const type = getApplicationType(application)
+      const badgeVariant =
+        application?.actionCard?.tag?.variant ?? getBadgeVariant(application)
 
       return (
         <StatusCard
@@ -78,7 +64,7 @@ export const ApplicationsPreview = ({
                 { id: 'applicationStatusCard.status' },
                 { state: application.status || 'unknown' },
               )}
-              variant={getTypeAndBadgeVariant(application).badgeVariant}
+              variant={badgeVariant as keyof typeof badgeColorSchemes}
             />
           }
           progress={
@@ -101,7 +87,8 @@ export const ApplicationsPreview = ({
           }
           description={
             type !== 'incomplete'
-              ? intl.formatMessage(
+              ? application.actionCard?.pendingAction?.title ??
+                intl.formatMessage(
                   { id: 'applicationStatusCard.description' },
                   { state: application.status || 'unknown' },
                 )
