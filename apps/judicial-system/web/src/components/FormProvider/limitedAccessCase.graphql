@@ -161,5 +161,9 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       created
       eventType
     }
+    mergeCase {
+      id
+      courtCaseNumber
+    }
   }
 }

@@ -40,17 +40,20 @@ export class EndorsementListDto {
   @IsObject()
   meta = {}
 
-  @ApiProperty({ type: Date })
-  @Type(() => Date)
-  @IsDate()
-  closedDate!: Date
-
-  @ApiProperty({ type: Date })
+  @ApiProperty({ type: Date, default: new Date() }) // default today
   @Type(() => Date)
   @IsDate()
   openedDate!: Date
 
-  @ApiProperty({ type: Boolean })
+  @ApiProperty({
+    type: Date,
+    default: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+  }) // default month from today
+  @Type(() => Date)
+  @IsDate()
+  closedDate!: Date
+
+  @ApiProperty({ type: Boolean, default: false })
   @IsBoolean()
   adminLock!: boolean
 }

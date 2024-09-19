@@ -6,6 +6,7 @@ module.exports = {
       queryInterface.addColumn('delegation', 'reference_id', {
         type: Sequelize.STRING,
         allowNull: true,
+        unique: true,
       }),
     ])
   },

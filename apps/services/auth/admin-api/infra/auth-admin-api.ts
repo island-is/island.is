@@ -26,6 +26,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       name: 'servicesauth',
     })
     .env({
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',

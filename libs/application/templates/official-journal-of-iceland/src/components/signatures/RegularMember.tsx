@@ -5,7 +5,12 @@ import { useLocale } from '@island.is/localization'
 import { signatures } from '../../lib/messages/signatures'
 import { InputFields } from '../../lib/types'
 import set from 'lodash/set'
-import { getEmptyMember, getRegularAnswers } from '../../lib/utils'
+import {
+  getEmptyMember,
+  getRegularAnswers,
+  getSignaturesMarkup,
+  getSingleSignatureMarkup,
+} from '../../lib/utils'
 import { memberItemSchema } from '../../lib/dataSchema'
 import { SignatureMember } from './Member'
 import * as z from 'zod'
@@ -42,18 +47,31 @@ export const RegularMember = ({
     if (signature) {
       const updatedRegularSignature = signature.map((s, index) => {
         if (index === si) {
+          const additionalSignature =
+            application.answers.signatures?.additionalSignature?.regular
+          const members = s.members?.map((member, memberIndex) => {
+            if (memberIndex === mi) {
+              return {
+                ...member,
+                [key]: value,
+              }
+            }
+
+            return member
+          })
+
+          const html = getSingleSignatureMarkup(
+            {
+              ...s,
+              members: members,
+            },
+            additionalSignature,
+          )
+
           return {
             ...s,
-            members: s.members?.map((member, memberIndex) => {
-              if (memberIndex === mi) {
-                return {
-                  ...member,
-                  [key]: value,
-                }
-              }
-
-              return member
-            }),
+            html: html,
+            members: members,
           }
         }
 
