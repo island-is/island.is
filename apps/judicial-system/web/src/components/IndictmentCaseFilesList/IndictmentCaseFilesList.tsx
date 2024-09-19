@@ -127,6 +127,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <Box marginBottom={2} key={`indictment-${workingCase.id}`}>
             <PdfButton
               caseId={workingCase.id}
+              connectedCaseParentId={connectedCaseParentId}
               title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
               pdfType="indictment"
               renderAs="row"
@@ -178,6 +179,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
             <PdfButton
               caseId={workingCase.id}
+              connectedCaseParentId={connectedCaseParentId}
               title={formatMessage(strings.caseFileButtonText, {
                 policeCaseNumber,
               })}

@@ -51,6 +51,7 @@ import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
+import { MergedCaseExistsGuard } from './guards/mergedCaseExists.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
@@ -244,9 +245,13 @@ export class LimitedAccessCaseController {
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(defenderRule)
-  @Get('case/:caseId/limitedAccess/caseFilesRecord/:policeCaseNumber')
+  @Get([
+    'case/:caseId/limitedAccess/caseFilesRecord/:policeCaseNumber',
+    'case/:caseId/limitedAccess/mergedCase/:mergedCaseId/caseFilesRecord/:policeCaseNumber',
+  ])
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description:
@@ -375,9 +380,13 @@ export class LimitedAccessCaseController {
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(defenderRule)
-  @Get('case/:caseId/limitedAccess/indictment')
+  @Get([
+    'case/:caseId/limitedAccess/indictment',
+    'case/:caseId/limitedAccess/mergedCase/:mergedCaseId/indictment',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },

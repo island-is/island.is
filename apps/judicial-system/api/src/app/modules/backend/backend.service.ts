@@ -269,9 +269,11 @@ export class BackendService extends DataSource<{ req: Request }> {
     id: string,
     mergedCaseId?: string,
   ): Promise<SignedUrl> {
-    const mergeCaseInjection = mergedCaseId ? `/mergedCase/${mergedCaseId}` : ''
+    const mergedCaseInjection = mergedCaseId
+      ? `/mergedCase/${mergedCaseId}`
+      : ''
 
-    return this.get(`case/${caseId}${mergeCaseInjection}/file/${id}/url`)
+    return this.get(`case/${caseId}${mergedCaseInjection}/file/${id}/url`)
   }
 
   deleteCaseFile(caseId: string, id: string): Promise<DeleteFileResponse> {
@@ -404,10 +406,12 @@ export class BackendService extends DataSource<{ req: Request }> {
     id: string,
     mergedCaseId?: string,
   ): Promise<SignedUrl> {
-    const mergeCaseInjection = mergedCaseId ? `/mergedCase/${mergedCaseId}` : ''
+    const mergedCaseInjection = mergedCaseId
+      ? `/mergedCase/${mergedCaseId}`
+      : ''
 
     return this.get(
-      `case/${caseId}/limitedAccess${mergeCaseInjection}/file/${id}/url`,
+      `case/${caseId}/limitedAccess${mergedCaseInjection}/file/${id}/url`,
     )
   }
 

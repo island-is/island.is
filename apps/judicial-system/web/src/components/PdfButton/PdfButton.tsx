@@ -8,6 +8,7 @@ import * as styles from './PdfButton.css'
 
 interface Props {
   caseId?: string
+  connectedCaseParentId?: string
   title?: string | null
   pdfType?:
     | 'ruling'
@@ -27,6 +28,7 @@ interface Props {
 
 const PdfButton: FC<PropsWithChildren<Props>> = ({
   caseId,
+  connectedCaseParentId,
   title,
   pdfType,
   disabled,
@@ -39,10 +41,14 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
   const { limitedAccess } = useContext(UserContext)
 
   const handlePdfClick = async () => {
-    const prefix = limitedAccess ? 'limitedAccess/' : ''
+    const prefix = `${limitedAccess ? 'limitedAccess/' : ''}${
+      connectedCaseParentId ? `mergedCase/${caseId}/` : ''
+    }`
     const postfix = elementId ? `/${elementId}` : ''
     const query = queryParameters ? `?${queryParameters}` : ''
-    const url = `${api.apiUrl}/api/case/${caseId}/${prefix}${pdfType}${postfix}${query}`
+    const url = `${api.apiUrl}/api/case/${
+      connectedCaseParentId ?? caseId
+    }/${prefix}${pdfType}${postfix}${query}`
 
     window.open(url, '_blank')
   }
