@@ -159,7 +159,11 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     return hashResult.hash.toString()
   }
 
-  async getNextSyncToken() {
+  async getNextSyncToken(syncType: SyncOptions['syncType']) {
+    if (syncType === 'fromLast') {
+      return ''
+    }
+
     let nextPageToken: string | undefined = ''
     let nextSyncToken = ''
 
