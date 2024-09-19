@@ -26,7 +26,6 @@ export class HealthDirectorateService {
       await this.organDonationApi.getOrganDonation(auth, lang)
     // Fetch organ list to get all names in correct language to sort out the names of the organs the user has limitations for
 
-    console.log('ORGAN DONOR DATA', data)
     if (data === null) {
       return null
     }
