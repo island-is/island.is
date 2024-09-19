@@ -143,18 +143,10 @@ const Summary: FC = () => {
               {formatMessage(strings.caseFilesSubtitleRuling)}
             </Text>
             {rulingFiles.length > 0 && (
-              <RenderFiles
-                caseFiles={rulingFiles}
-                workingCase={workingCase}
-                onOpenFile={onOpen}
-              />
+              <RenderFiles caseFiles={rulingFiles} onOpenFile={onOpen} />
             )}
             {courtRecordFiles.length > 0 && (
-              <RenderFiles
-                caseFiles={courtRecordFiles}
-                workingCase={workingCase}
-                onOpenFile={onOpen}
-              />
+              <RenderFiles caseFiles={courtRecordFiles} onOpenFile={onOpen} />
             )}
           </Box>
         )}
