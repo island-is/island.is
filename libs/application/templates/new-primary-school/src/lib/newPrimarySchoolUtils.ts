@@ -1,4 +1,3 @@
-import { ApolloClient } from '@apollo/client'
 import { NO, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
@@ -7,11 +6,6 @@ import {
   YesOrNo,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
-import * as kennitala from 'kennitala'
-import {
-  friggOptionsQuery,
-  friggSchoolsByMunicipalityQuery,
-} from '../graphql/queries'
 import {
   Child,
   ChildInformation,
@@ -22,7 +16,6 @@ import {
   SelectOption,
   SiblingsRow,
 } from '../types'
-import { FriggOptionsQuery, FriggOptionsQueryVariables } from '../types/schema'
 import {
   ReasonForApplicationOptions,
   SiblingRelationOptions,
@@ -302,36 +295,6 @@ export const getSiblingRelationOptionLabel = (
 ) => {
   const relationOptions = getSiblingRelationOptions()
   return relationOptions.find((option) => option.value === value)?.label ?? ''
-}
-
-export const getOptionsListByType = async (
-  apolloClient: ApolloClient<object>,
-  type: string,
-  lang: Locale,
-) => {
-  const { data } = await apolloClient.query<
-    FriggOptionsQuery,
-    FriggOptionsQueryVariables
-  >({
-    query: friggOptionsQuery,
-    variables: {
-      type: {
-        type,
-      },
-    },
-  })
-
-  return (
-    data?.friggOptions?.flatMap(({ options }) =>
-      options.flatMap(({ value, key }) => {
-        let content = value.find(({ language }) => language === lang)?.content
-        if (!content) {
-          content = value.find(({ language }) => language === 'is')?.content
-        }
-        return { value: key ?? '', label: content ?? '' }
-      }),
-    ) ?? []
-  )
 }
 
 export const getSelectedOptionLabel = (

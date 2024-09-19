@@ -7,12 +7,12 @@ import {
 } from '@island.is/application/core'
 import { ReasonForApplicationOptions } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import {
-  FriggOptionsQuery,
-  FriggOptionsQueryVariables,
-  FriggSchoolsByMunicipalityQuery,
-} from '../types/schema'
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '../../../lib/newPrimarySchoolUtils'
+import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
+import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
 
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
