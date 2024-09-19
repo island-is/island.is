@@ -432,6 +432,17 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       }
       return monthOptions.filter(({ value }) => value >= birthMonth + 1)
     }
+    if (
+      startYear ===
+        startYearOptions?.[(startYearOptions?.length ?? 1) - 1]?.value &&
+      typeof birthMonth === 'number' &&
+      typeof startMonth === 'number'
+    ) {
+      if (birthMonth === monthOptions[monthOptions.length - 1].value) {
+        return [monthOptions[0]]
+      }
+      return monthOptions.filter(({ value }) => value <= birthMonth + 1)
+    }
     return monthOptions
   }, [
     birthMonth,
