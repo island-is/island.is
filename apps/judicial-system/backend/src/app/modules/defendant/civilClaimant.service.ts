@@ -5,7 +5,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { Case } from '../case'
-import { CreateCivilClaimantDto } from './dto/createCivilClaimant.dto'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CivilClaimant } from './models/civilClaimant.model'
 
@@ -17,12 +16,8 @@ export class CivilClaimantService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async create(
-    theCase: Case,
-    claimantToCreate: CreateCivilClaimantDto,
-  ): Promise<CivilClaimant> {
+  async create(theCase: Case): Promise<CivilClaimant> {
     return this.civilClaimantModel.create({
-      ...claimantToCreate,
       caseId: theCase.id,
     })
   }
