@@ -41,7 +41,10 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { ClientDelegationType } from '../models/client-delegation-type.model'
-import { filterPersonalRepresentative } from '../../resources/utils/personalRepresentativeFilter'
+import {
+  delegationTypeSuperUserFilter,
+  SUPER_USER_DELEGATION_TYPES,
+} from '../../resources/utils/filters'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -179,7 +182,7 @@ export class AdminClientsService {
         // Remove defined super admin fields
         ...omit(clientDto, superUserFields),
         // Remove personal representative from delegation types since it is not allowed for non-super admins
-        supportedDelegationTypes: filterPersonalRepresentative(
+        supportedDelegationTypes: delegationTypeSuperUserFilter(
           clientDto.supportedDelegationTypes ?? [],
         ),
       }
@@ -659,28 +662,24 @@ export class AdminClientsService {
   ) {
     const isSuperUser = this.isSuperAdmin(user)
 
-    const updatedFields = Object.keys(input)
-    const superUserUpdatedFields = updatedFields.filter((field) =>
-      superUserFields.includes(field),
-    )
-
-    // Verify that the user is super admin, so they can update PersonalRepresentative in the delegation type
+    // Verify if superuser delegation types are being updated that user is super user
     const allDelegationTypes = [
       ...(input.removedDelegationTypes ?? []),
       ...(input.addedDelegationTypes ?? []),
     ]
 
-    if (!isSuperUser && allDelegationTypes.length > 0) {
-      for (const delegationType of allDelegationTypes) {
-        if (
-          delegationType.startsWith(
-            `${AuthDelegationType.PersonalRepresentative}:`,
-          )
-        ) {
-          return false
-        }
-      }
+    const hasSuperUserDelegationType = allDelegationTypes.some(
+      (delegationType) => SUPER_USER_DELEGATION_TYPES.includes(delegationType),
+    )
+
+    if (!isSuperUser && hasSuperUserDelegationType) {
+      return false
     }
+
+    const updatedFields = Object.keys(input)
+    const superUserUpdatedFields = updatedFields.filter((field) =>
+      superUserFields.includes(field),
+    )
 
     if (superUserUpdatedFields.length === 0) {
       // There are no superuser fields to update
