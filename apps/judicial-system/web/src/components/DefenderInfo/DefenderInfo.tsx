@@ -94,7 +94,7 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
       />
       {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
-        <InputAdvocate onDefenderNotFound={setDefenderNotFound} />
+        <InputAdvocate onAdvocateNotFound={setDefenderNotFound} />
         {isProsecutionUser(user) && (
           <>
             <Text variant="h4" marginTop={2} marginBottom={2}>

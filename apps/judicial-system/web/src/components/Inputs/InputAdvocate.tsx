@@ -35,9 +35,10 @@ import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import { defenderInput as m } from '../DefenderInfo/DefenderInput.strings'
 
 interface Props {
-  onDefenderNotFound: (defenderNotFound: boolean) => void
+  onAdvocateNotFound: (advocateNotFound: boolean) => void
   disabled?: boolean | null
   clientId?: string | null
+  advocateType?: 'defender' | 'spokesperson' | 'legal_rights_protector'
 }
 
 interface PropertyValidation {
@@ -48,12 +49,35 @@ interface PropertyValidation {
   }
 }
 
-type InputType = 'defenderEmail' | 'defenderPhoneNumber'
+type InputType =
+  | 'defenderEmail'
+  | 'defenderPhoneNumber'
+  | 'spokespersonEmail'
+  | 'spokespersonPhoneNumber'
 
+/**
+ * A component that handles setting any kind of legal advocate. In doing so
+ * there are three things to consider.
+ *
+ * 1. In R-cases, a single *defender* is set on the case itself.
+ * 2. In S-cases, a *defender* or *spokesperson* is set on each defendant,
+ *    depending on what SESSION_ARRANGEMENT is set.
+ * 3. In S-cases, a *legal rights protector* is set on each civil claimant.
+ */
 const InputAdvocate: FC<Props> = ({
-  onDefenderNotFound,
-  disabled,
+  // A function that runs if an advocate is not found.
+  onAdvocateNotFound,
+
+  /**
+   * The id of the client of the advocate. Used to update the advocate info
+   * of the client.
+   */
   clientId,
+
+  // The type of advocate being set. See description above.
+  advocateType,
+
+  disabled,
 }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -81,31 +105,33 @@ const InputAdvocate: FC<Props> = ({
 
   const handleLawyerChange = useCallback(
     (selectedOption: SingleValue<ReactSelectOption>) => {
-      let updatedLawyer = {
-        defenderName: '',
-        defenderNationalId: '',
-        defenderEmail: '',
-        defenderPhoneNumber: '',
+      if (!selectedOption) {
+        return
       }
 
-      if (selectedOption) {
-        const { label, value, __isNew__: defenderNotFound } = selectedOption
+      const { label, value, __isNew__: defenderNotFound } = selectedOption
 
-        onDefenderNotFound(defenderNotFound || false)
+      onAdvocateNotFound(defenderNotFound || false)
 
-        const lawyer = lawyers.find(
-          (l: Lawyer) => l.email === (value as string),
-        )
+      const lawyer = lawyers.find((l: Lawyer) => l.email === (value as string))
 
-        updatedLawyer = {
-          defenderName: lawyer ? lawyer.name : label,
-          defenderNationalId: lawyer ? lawyer.nationalId : '',
-          defenderEmail: lawyer ? lawyer.email : '',
-          defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
+      const updatedLawyer = {
+        defenderName: lawyer ? lawyer.name : label,
+        defenderNationalId: lawyer ? lawyer.nationalId : '',
+        defenderEmail: lawyer ? lawyer.email : '',
+        defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
+      }
+
+      if (advocateType === 'legal_rights_protector' && clientId) {
+        const updatedSpokesperson = {
+          spokespersonName: lawyer ? lawyer.name : label,
+          spokespersonNationalId: lawyer ? lawyer.nationalId : '',
+          spokespersonEmail: lawyer ? lawyer.email : '',
+          spokespersonPhoneNumber: lawyer ? lawyer.phoneNr : '',
         }
-      }
 
-      if (clientId) {
+        // TODO: Implement setAndSendCivilClaimantToServer and call it here.
+      } else if (clientId) {
         setAndSendDefendantToServer(
           { ...updatedLawyer, caseId: workingCase.id, defendantId: clientId },
           setWorkingCase,
@@ -120,7 +146,7 @@ const InputAdvocate: FC<Props> = ({
     },
     [
       clientId,
-      onDefenderNotFound,
+      onAdvocateNotFound,
       lawyers,
       setAndSendDefendantToServer,
       workingCase,
