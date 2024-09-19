@@ -23,7 +23,6 @@ export class MergedCaseExistsGuard implements CanActivate {
     }
 
     const mergedCaseId = request.params.mergedCaseId
-    console.log('mergedCaseId', mergedCaseId)
 
     if (!mergedCaseId) {
       return true
