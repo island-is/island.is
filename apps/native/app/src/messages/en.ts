@@ -474,27 +474,34 @@ export const en: TranslatedMessages = {
   // applications screen
   'applications.title': 'Applications',
   'applications.bottomTabText': 'Applications',
-  'applications.searchPlaceholder': 'Search...',
-  'applications.loadingText': 'Searching...',
-  'applications.resultText': 'results',
-  'applications.singleResultText': 'result',
-  'applications.noResultText': 'No results',
-  'applications.emptyListTitle': 'There are currently no links',
-  'applications.emptyListDescription':
-    'There are no links available at the moment',
+  'applications.emptyTitle': 'No applications',
+  'applications.emptyDescription':
+    'When you apply for services from the government, they will appear here.',
+  'applications.incomplete': 'Unfinished applications',
+  'applications.completed': 'Finished applications',
+  'applications.inProgress': 'Applications in progress',
 
   // cards
   'applicationStatusCard.openButtonLabel': 'Open application',
-  'applicationStatusCard.seeMoreApplications': 'View applications',
+  'applicationStatusCard.description': `{
+    state,
+    select,
+    inprogress {The application is being processed}
+    completed {Completed}
+    rejected {Rejected}
+    other {}
+  }`,
   'applicationStatusCard.status': `{
     state,
     select,
     inprogress {In progress}
     completed {Completed}
     rejected {Rejected}
+    draft {Application in progress}
     other {Unknown status}
   }`,
-  'applicationStatusCard.noActiveApplications': 'No active applications',
+  'applicationStatusCard.draftProgress':
+    'You have completed {draftFinishedSteps} of {draftTotalSteps} steps',
 
   // edit phone
   'edit.phone.screenTitle': 'Edit Phone',
