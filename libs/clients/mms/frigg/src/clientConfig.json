@@ -506,7 +506,7 @@
           "name": { "type": "string" },
           "preferredName": { "type": "object", "nullable": true },
           "pronouns": { "type": "array", "items": { "type": "string" } },
-          "gradeLevels": { "type": "array", "items": { "type": "string" } },
+          "gradeLevel": { "type": "string" },
           "email": { "type": "object", "nullable": true },
           "domicile": {
             "nullable": true,
@@ -534,7 +534,7 @@
           "name",
           "preferredName",
           "pronouns",
-          "gradeLevels",
+          "gradeLevel",
           "email",
           "domicile",
           "residence",

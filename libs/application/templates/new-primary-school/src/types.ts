@@ -96,7 +96,7 @@ export type FriggChildInformation = {
   agents: Agent[]
   pronouns: string[]
   nationalId: string
-  gradeLevels: string[]
+  gradeLevel: string
   memberships: Membership[]
   primaryOrgId: object
   preferredName: object | null

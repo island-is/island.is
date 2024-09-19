@@ -178,7 +178,7 @@ export const getApplicationExternalData = (
 
   const childGradeLevel = getValueViaPath(
     externalData,
-    'childInformation.data.gradeLevels[0]',
+    'childInformation.data.gradeLevel',
   ) as string
 
   return {
