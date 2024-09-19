@@ -458,7 +458,11 @@ export class AdminScopeService {
       AuthDelegationType.Custom,
     )
 
-    // create delegation type rows
+    if (allowExplicitDelegationGrant) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
+    }
+
+    // add delegation type rows
     await Promise.all(
       delegationTypes.map((delegationType) =>
         this.apiScopeDelegationType.upsert(
@@ -530,6 +534,10 @@ export class AdminScopeService {
     )
       ? false
       : undefined
+
+    if (delegationTypes.includes(AuthDelegationType.Custom)) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
+    }
 
     // remove delegation type rows
     await Promise.all(
