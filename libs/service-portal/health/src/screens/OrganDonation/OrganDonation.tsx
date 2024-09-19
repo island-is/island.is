@@ -36,7 +36,7 @@ const OrganDonation = () => {
         title={formatMessage(m.organDonation)}
         intro={formatMessage(m.organDonationDescription)}
       />
-      <Box>
+      <Box marginBottom={6}>
         <LinkResolver
           href={formatMessage(m.organDonationLink)}
           key="organ-donation"
@@ -53,12 +53,7 @@ const OrganDonation = () => {
       )}
       {!error && !loading && donorStatus !== null && (
         <Box>
-          <Text
-            variant="eyebrow"
-            color="purple400"
-            marginTop={5}
-            marginBottom={1}
-          >
+          <Text variant="eyebrow" color="purple400" marginBottom={1}>
             {formatMessage(m.takeOnOrganDonation)}
           </Text>
           <ActionCard

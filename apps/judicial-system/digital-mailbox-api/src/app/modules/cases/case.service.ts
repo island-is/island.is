@@ -190,7 +190,7 @@ export class CaseService {
   ): Promise<InternalCaseResponse> {
     try {
       const res = await fetch(
-        `${this.config.backendUrl}/api/internal/cases/indictment/${id}`,
+        `${this.config.backendUrl}/api/internal/case/indictment/${id}`,
         {
           method: 'POST',
           headers: {

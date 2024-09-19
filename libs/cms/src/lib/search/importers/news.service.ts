@@ -10,6 +10,7 @@ import {
   createTerms,
   extractStringsFromObject,
   pruneNonSearchableSliceUnionFields,
+  extractChildEntryIds,
 } from './utils'
 
 @Injectable()
@@ -60,6 +61,15 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
             tags.push({
               key: mapped.organization.slug,
               type: 'organization',
+            })
+          }
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+          for (const id of childEntryIds) {
+            tags.push({
+              key: id,
+              type: 'hasChildEntryWithId',
             })
           }
 
