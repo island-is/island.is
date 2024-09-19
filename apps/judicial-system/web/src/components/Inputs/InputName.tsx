@@ -7,8 +7,26 @@ import { core } from '@island.is/judicial-system-web/messages'
 import { validate } from '../../utils/validate'
 import { InputProps } from './types'
 
+/**
+ * A reusable input component for names. It handles input validation for names,
+ * setting and removing the validation's error message.
+ */
 const InputName: FC<InputProps> = (props) => {
-  const { value, onChange, onBlur, label, placeholder } = props
+  const {
+    // The initial value.
+    value,
+
+    // A function that runs on blur if the input is valid.
+    onBlur,
+
+    // A custom label. Id not set, a default label is used.
+    label,
+
+    // A custom placeholder. Id not set, a default placeholder is used.
+    placeholder,
+
+    onChange,
+  } = props
 
   const { formatMessage } = useIntl()
 
