@@ -340,6 +340,7 @@ components:
         - otherParentId
         - status
         - periods
+        - applicationRights
         - employers
         - testData
         - type
@@ -581,7 +582,6 @@ components:
           type: boolean
         applicationRights:
           type: array
-          nullable: true
           items:
             $ref: '#/components/schemas/ApplicationRights'
     PaymentInfo:
