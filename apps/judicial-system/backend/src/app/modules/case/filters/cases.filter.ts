@@ -77,7 +77,7 @@ const getPublicProsecutionUserCasesQueryFilter = (): WhereOptions => {
     [Op.and]: [
       { is_archived: false },
       { type: indictmentCases },
-      { state: [CaseState.COMPLETED] },
+      { state: CaseState.COMPLETED },
       {
         indictment_ruling_decision: [
           CaseIndictmentRulingDecision.FINE,
@@ -203,15 +203,10 @@ const getPrisonAdminUserCasesQueryFilter = (): WhereOptions => {
     [Op.or]: [
       {
         state: CaseState.ACCEPTED,
-        type: [
-          CaseType.CUSTODY,
-          CaseType.ADMISSION_TO_FACILITY,
-          CaseType.PAROLE_REVOCATION,
-          CaseType.TRAVEL_BAN,
-        ],
+        type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
       },
       {
-        type: CaseType.INDICTMENT,
+        type: indictmentCases,
         state: CaseState.COMPLETED,
         indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
         indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
