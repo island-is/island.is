@@ -86,7 +86,10 @@ const CreateDelegationScreen = () => {
 
   useEffect(() => {
     async function getFromNationalId() {
-      const unmaskedNationalId = await unmaskString(defaultFromNationalId ?? '', userInfo?.profile.nationalId ?? '')
+      const unmaskedNationalId = await unmaskString(
+        defaultFromNationalId ?? '',
+        userInfo?.profile.nationalId ?? '',
+      )
       console.log('unmaskedNationalId', unmaskedNationalId)
       if (unmaskedNationalId && validateNationalId(unmaskedNationalId)) {
         setFromNationalId(unmaskedNationalId)

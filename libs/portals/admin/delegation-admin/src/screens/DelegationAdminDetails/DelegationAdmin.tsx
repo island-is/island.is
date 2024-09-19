@@ -48,13 +48,18 @@ const DelegationAdminScreen = () => {
             <Button
               icon="arrowForward"
               onClick={async () => {
-                const maskedNationalId = (await maskString(delegationAdmin.nationalId, userInfo?.profile.nationalId || '')) ?? ''
+                const maskedNationalId =
+                  (await maskString(
+                    delegationAdmin.nationalId,
+                    userInfo?.profile.nationalId || '',
+                  )) ?? ''
                 const query = new URLSearchParams({
                   fromNationalId: maskedNationalId,
                 })
-                navigate(`${
+                navigate(
+                  `${
                     DelegationAdminPaths.CreateDelegation
-                  }?${query.toString()}`
+                  }?${query.toString()}`,
                 )
               }}
               size="small"
