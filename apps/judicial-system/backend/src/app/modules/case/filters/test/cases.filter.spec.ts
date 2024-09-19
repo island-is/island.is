@@ -452,10 +452,13 @@ describe('getCasesQueryFilter', () => {
                   ],
                 },
                 {
-                  '$defendants.defender_national_id$': [
-                    user.nationalId,
-                    user.nationalId,
-                  ],
+                  id: {
+                    [Op.in]: Sequelize.literal(`
+                (SELECT case_id
+                  FROM defendant
+                  WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}'))
+              `),
+                  },
                 },
               ],
             },
