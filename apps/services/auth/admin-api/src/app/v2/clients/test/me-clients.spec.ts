@@ -38,6 +38,7 @@ const createTestClientData = async (app: TestApp, user: User) => {
   await Promise.all(
     [
       [AuthDelegationType.Custom, AuthDelegationProvider.Custom],
+      [AuthDelegationType.GeneralMandate, AuthDelegationProvider.Custom],
       [
         AuthDelegationType.ProcurationHolder,
         AuthDelegationProvider.CompanyRegistry,
@@ -994,6 +995,8 @@ describe('MeClientsController with auth', () => {
           body,
           supportedDelegationTypes: [
             AuthDelegationType.Custom,
+            // Add general mandate since it is directly connected to Custom delegation type
+            AuthDelegationType.GeneralMandate,
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.PersonalRepresentative,
             AuthDelegationType.ProcurationHolder,
@@ -1033,6 +1036,8 @@ describe('MeClientsController with auth', () => {
           },
           supportedDelegationTypes: [
             AuthDelegationType.Custom,
+            // Add general mandate since it is directly connected to Custom delegation type
+            AuthDelegationType.GeneralMandate,
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.PersonalRepresentative,
             AuthDelegationType.ProcurationHolder,
