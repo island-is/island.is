@@ -31,6 +31,7 @@ export interface SyncOptions {
   syncType: 'full' | 'fromLast' | 'initialize'
   elasticIndex?: string
   nextPageToken?: string
+  folderHash?: string
 }
 
 export interface SyncResponse<PostSyncOptionsType = any> {
