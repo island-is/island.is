@@ -26,6 +26,7 @@ export class HealthDirectorateService {
       await this.organDonationApi.getOrganDonation(auth, lang)
     // Fetch organ list to get all names in correct language to sort out the names of the organs the user has limitations for
 
+    console.log('ORGAN DONOR DATA', data)
     if (data === null) {
       return null
     }
@@ -58,11 +59,19 @@ export class HealthDirectorateService {
     return limitations
   }
 
-  async updateDonorStatus(auth: Auth, input: DonorInput): Promise<void> {
-    return await this.organDonationApi.updateOrganDonation(auth, {
-      isDonor: input.isDonor,
-      exceptions: input.organLimitations ?? [],
-    })
+  async updateDonorStatus(
+    auth: Auth,
+    input: DonorInput,
+    locale: Locale,
+  ): Promise<void> {
+    return await this.organDonationApi.updateOrganDonation(
+      auth,
+      {
+        isDonor: input.isDonor,
+        exceptions: input.organLimitations ?? [],
+      },
+      locale === 'is' ? organLocale.Is : organLocale.En,
+    )
   }
 
   /* Vaccinations */
