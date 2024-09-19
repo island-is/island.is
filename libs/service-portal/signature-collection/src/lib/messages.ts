@@ -186,7 +186,7 @@ export const m = defineMessages({
   },
   cancelCollectionModalConfirmButton: {
     id: 'sp.signatureCollection:modalConfirmButton',
-    defaultMessage: 'Já, hætta við söfnun meðmæla',
+    defaultMessage: 'Já, hætta við',
     description: '',
   },
   cancelCollectionModalCancelButton: {
@@ -319,16 +319,6 @@ export const m = defineMessages({
     defaultMessage:
       'Þjóðskrá Íslands hefur umsjón með gögnum um meðmælasöfnun.',
   },
-  managers: {
-    id: 'sp.signatureCollection:managers',
-    defaultMessage: 'Ábyrgðaraðilar',
-    description: '',
-  },
-  addManager: {
-    id: 'sp.signatureCollection:addManager',
-    defaultMessage: 'Bæta við ábyrgðaraðila',
-    description: '',
-  },
   supervisors: {
     id: 'sp.signatureCollection:supervisors',
     defaultMessage: 'Umsjónaraðilar',
@@ -337,11 +327,6 @@ export const m = defineMessages({
   add: {
     id: 'sp.signatureCollection:add',
     defaultMessage: 'Bæta við',
-    description: '',
-  },
-  addSupervisor: {
-    id: 'sp.signatureCollection:addSupervisor',
-    defaultMessage: 'Bæta við umsjónaraðila',
     description: '',
   },
   personName: {
@@ -380,31 +365,14 @@ export const m = defineMessages({
       'Veldu viðeigandi kjördæmi sem þú vilt stofna meðmælendasöfnun í.',
     description: '',
   },
-  addConstituencyAlertInfo: {
-    id: 'sp.signatureCollection:addConstituencyAlertInfo',
-    defaultMessage:
-      'Athugið að skrá þarf viðeigandi ábyrgðar-/umsjónaraðila á yfirlitssíðu fyrir ný kjördæmi.',
+  addConstituencySuccess: {
+    id: 'sp.signatureCollection:addConstituencySuccess',
+    defaultMessage: 'Kjördæmi bætt við',
     description: '',
   },
-  deleteManager: {
-    id: 'sp.signatureCollection:deleteManager',
-    defaultMessage: 'Eyða umsjónaraðila',
-    description: '',
-  },
-  deleteManagerDescription: {
-    id: 'sp.signatureCollection:deleteManagerDescription',
-    defaultMessage:
-      'Þú ert að fara að taka Nafna Nafnason af lista yfir umsjónaraðila. Ertu viss um að þú viljir halda áfram?',
-    description: '',
-  },
-  delete: {
-    id: 'sp.signatureCollection:delete',
-    defaultMessage: 'Eyða',
-    description: '',
-  },
-  save: {
-    id: 'sp.signatureCollection:save',
-    defaultMessage: 'Vista',
+  addConstituencyError: {
+    id: 'sp.signatureCollection:addConstituencyError',
+    defaultMessage: 'Ekki tókst að bæta við kjördæmi',
     description: '',
   },
 })

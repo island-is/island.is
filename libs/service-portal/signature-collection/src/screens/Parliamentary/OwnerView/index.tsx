@@ -26,7 +26,6 @@ import { SignatureCollection } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
 import copyToClipboard from 'copy-to-clipboard'
-import { constituencies } from '../../../lib/constants'
 
 const OwnerView = ({
   currentCollection,
@@ -74,9 +73,15 @@ const OwnerView = ({
               color="blue400"
             />
           </Text>
-          {listsForOwner.length < constituencies.length && (
-            <AddConstituency lists={listsForOwner} />
-          )}
+          {!loadingOwnerLists &&
+            listsForOwner?.length < currentCollection?.areas.length && (
+              <AddConstituency
+                lists={listsForOwner}
+                collection={currentCollection}
+                candidateId={listsForOwner[0]?.candidate?.id}
+                refetch={refetchListsForOwner}
+              />
+            )}
         </Box>
         {loadingOwnerLists ? (
           <Box marginTop={2}>

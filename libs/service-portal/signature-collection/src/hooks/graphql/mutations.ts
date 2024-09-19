@@ -18,3 +18,13 @@ export const unSignList = gql`
     }
   }
 `
+export const addConstituency = gql`
+  mutation SignatureCollectionAddAreas(
+    $inputAdd: SignatureCollectionAddListsInput!
+  ) {
+    signatureCollectionAddAreas(input: $inputAdd) {
+      success
+      reasons
+    }
+  }
+`
