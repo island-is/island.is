@@ -72,7 +72,7 @@ describe('DelegationsController', () => {
     let prRightTypeModel: typeof PersonalRepresentativeRightType
     let prTypeModel: typeof PersonalRepresentativeType
     let prDelegationTypeModel: typeof PersonalRepresentativeDelegationTypeModel
-    let delegationDelegationTypeModelModel: typeof DelegationDelegationType
+    let delegationDelegationTypeModel: typeof DelegationDelegationType
     let delegationModel: typeof Delegation
     let delegationTypeModel: typeof DelegationTypeModel
     let nationalRegistryApi: NationalRegistryClientService
@@ -158,9 +158,9 @@ describe('DelegationsController', () => {
       )
       clientModel = app.get<typeof Client>(getModelToken(Client))
       delegationModel = app.get<typeof Delegation>(getModelToken(Delegation))
-      delegationDelegationTypeModelModel = app.get<
-        typeof DelegationDelegationType
-      >(getModelToken(DelegationDelegationType))
+      delegationDelegationTypeModel = app.get<typeof DelegationDelegationType>(
+        getModelToken(DelegationDelegationType),
+      )
       nationalRegistryApi = app.get(NationalRegistryClientService)
       delegationIndexService = app.get(DelegationsIndexService)
       factory = new FixtureFactory(app)
@@ -217,7 +217,7 @@ describe('DelegationsController', () => {
           description: 'Custom',
         })
 
-        await delegationDelegationTypeModelModel.create({
+        await delegationDelegationTypeModel.create({
           delegationId: delegations.id,
           delegationTypeId: AuthDelegationType.GeneralMandate,
         })
@@ -262,7 +262,7 @@ describe('DelegationsController', () => {
           truncate: true,
           force: true,
         })
-        await delegationDelegationTypeModelModel.destroy({
+        await delegationDelegationTypeModel.destroy({
           where: {},
           cascade: true,
           truncate: true,
@@ -328,7 +328,7 @@ describe('DelegationsController', () => {
           toName: 'Test',
         })
 
-        await delegationDelegationTypeModelModel.create({
+        await delegationDelegationTypeModel.create({
           delegationId: newDelegation.id,
           delegationTypeId: AuthDelegationType.GeneralMandate,
           validTo: addDays(new Date(), -1),
