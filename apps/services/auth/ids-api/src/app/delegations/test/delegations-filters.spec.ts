@@ -165,24 +165,23 @@ describe('DelegationsController', () => {
     })
 
     let res: request.Response
-    it(`GET ${path} returns verified response`, async () => {
-      res = await server
-        .get(path + `?delegationType=${AuthDelegationType.LegalRepresentative}`)
-        .set('X-Query-From-National-Id', testCase.fromLegalRepresentative[0])
+    it(`POST ${path} returns verified response`, async () => {
+      res = await server.post(path).send({
+        fromNationalId: testCase.fromLegalRepresentative[0],
+        delegationTypes: [AuthDelegationType.LegalRepresentative],
+      })
 
-      expect(res.status).toEqual(200)
+      expect(res.status).toEqual(201)
       expect(res.body.verified).toEqual(true)
     })
 
-    it(`GET ${path} returns non-verified response`, async () => {
-      res = await server
-        .get(path + `?delegationType=${AuthDelegationType.LegalRepresentative}`)
-        .set(
-          'X-Query-From-National-Id',
-          nonExistingLegalRepresentativeNationalId,
-        )
+    it(`POST ${path} returns non-verified response`, async () => {
+      res = await server.post(path).send({
+        fromNationalId: nonExistingLegalRepresentativeNationalId,
+        delegationTypes: [AuthDelegationType.LegalRepresentative],
+      })
 
-      expect(res.status).toEqual(200)
+      expect(res.status).toEqual(201)
       expect(res.body.verified).toEqual(false)
     })
   })
