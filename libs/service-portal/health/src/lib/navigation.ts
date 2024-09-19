@@ -5,22 +5,22 @@ import { HealthPaths } from './paths'
 
 export const healthNavigation: PortalNavigationItem = {
   name: m.health,
+  description: m.healthDescription,
+  serviceProvider: 'sjukratryggingar',
+  serviceProviderTooltip: messages.healthTooltip,
   path: HealthPaths.HealthRoot,
   icon: {
     icon: 'heart',
   },
   children: [
     {
-      name: m.health,
-      navHide: true,
-      path: HealthPaths.HealthRoot,
-    },
-    {
       name: messages.overviewTitle,
+      intro: messages.overviewIntro,
       path: HealthPaths.HealthOverview,
     },
     {
       name: m.therapies,
+      intro: messages.therapyDescription,
       path: HealthPaths.HealthTherapies,
       children: [
         {
@@ -42,6 +42,7 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: m.payments,
+      intro: messages.paymentsIntro,
       path: HealthPaths.HealthPayments,
       children: [
         {
@@ -58,14 +59,17 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: m.aidsAndNutrition,
+      intro: messages.aidsAndNutritionDescription,
       path: HealthPaths.HealthAidsAndNutrition,
     },
     {
       name: m.dentists,
+      intro: messages.dentistsDescription,
       path: HealthPaths.HealthDentists,
       children: [
         {
           name: messages.dentistRegisterationPageTitle,
+          intro: messages.dentistRegisterationPageDescription,
           path: HealthPaths.HealthDentistRegistration,
           navHide: true,
         },
@@ -73,10 +77,12 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: m.healthCenter,
+      intro: messages.healthCenterDescription,
       path: HealthPaths.HealthCenter,
       children: [
         {
           name: messages.healthCenterRegistrationTitle,
+          intro: messages.healthCenterRegistrationInfo,
           path: HealthPaths.HealthCenterRegistration,
           navHide: true,
         },
@@ -84,6 +90,7 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: messages.medicineTitle,
+      intro: messages.medicineTitleIntro,
       path: HealthPaths.HealthMedicine,
       children: [
         {
@@ -115,6 +122,9 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: messages.vaccinations,
+      intro: messages.vaccinationsIntro,
+      serviceProvider: 'landlaeknir',
+      serviceProviderTooltip: messages.landlaeknirVaccinationsTooltip,
       path: HealthPaths.HealthVaccinations,
       children: [
         {
@@ -131,6 +141,7 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: messages.organDonation,
+      intro: messages.organDonationDescription,
       path: HealthPaths.HealthOrganDonation,
       children: [
         {
@@ -141,5 +152,4 @@ export const healthNavigation: PortalNavigationItem = {
       ],
     },
   ],
-  description: m.healthDescription,
 }

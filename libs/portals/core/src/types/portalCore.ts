@@ -1,6 +1,6 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { FormatMessage } from '@island.is/localization'
-import { FC } from 'react'
+import { FC, ReactElement, ReactNode } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { RouteObject } from 'react-router-dom'
 
@@ -49,6 +49,14 @@ export interface PortalNavigationItem {
    * Description for module
    */
   description?: MessageDescriptor
+  /**
+   * text for the intro header for module
+   */
+  intro?: MessageDescriptor
+  /**
+   * jsx element for the intro header for module
+   */
+  introComponent?: ReactNode
   /**
    * Active state for navigation item
    */

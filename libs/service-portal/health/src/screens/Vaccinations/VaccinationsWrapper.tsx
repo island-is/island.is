@@ -36,12 +36,6 @@ export const VaccinationsWrapper = () => {
 
   return (
     <Box>
-      <IntroHeader
-        title={formatMessage(m.vaccinations)}
-        intro={formatMessage(m.vaccinationsIntro)}
-        serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-        serviceProviderTooltip={formatMessage(m.landlaeknirVaccinationsTooltip)}
-      />
       {/* Buttons */}
       <Box printHidden display="flex" flexDirection="row" marginBottom={6}>
         <LinkButton

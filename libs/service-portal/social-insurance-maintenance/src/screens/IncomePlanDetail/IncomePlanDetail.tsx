@@ -27,14 +27,14 @@ const IncomePlanDetail = () => {
   const { data, loading, error } = useGetIncomePlanDetailQuery()
   return (
     <Box>
-      <IntroHeader
+      {/*<IntroHeader
         title={formatMessage(coreMessages.latestIncomePlan)}
         intro={formatMessage(m.incomePlanDetail)}
         serviceProviderSlug={'tryggingastofnun'}
         serviceProviderTooltip={formatMessage(
           coreMessages.socialInsuranceTooltip,
         )}
-      />
+      />*/}
 
       {error && !loading ? (
         <Problem error={error} noBorder={false} />
@@ -117,9 +117,9 @@ const IncomePlanDetail = () => {
           )}
         </Stack>
       )}
-      <Hidden print>
+      {/*<Hidden print>
         <FootNote serviceProviderSlug="tryggingastofnun" />
-      </Hidden>
+      </Hidden>*/}
     </Box>
   )
 }

@@ -6,6 +6,7 @@ import {
   GridColumn,
   BreadcrumbsDeprecated as Breadcrumbs,
   Button,
+  Text,
 } from '@island.is/island-ui/core'
 import {
   m,

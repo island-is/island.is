@@ -76,14 +76,14 @@ const IncomePlan = () => {
 
   return (
     <Box>
-      <IntroHeader
+      {/*<IntroHeader
         title={formatMessage(coreMessages.incomePlan)}
         intro={formatMessage(coreMessages.incomePlanDescription)}
         serviceProviderSlug={'tryggingastofnun'}
         serviceProviderTooltip={formatMessage(
           coreMessages.socialInsuranceTooltip,
         )}
-      />
+      />*/}
 
       {error && !loading ? (
         <Problem error={error} noBorder={false} />
@@ -183,7 +183,9 @@ const IncomePlan = () => {
           )}
         </Stack>
       )}
-      <FootNote serviceProviderSlug="tryggingastofnun" />
+      {/*<Hidden print>
+          <FootNote serviceProviderSlug="tryggingastofnun" />
+        </Hidden>*/}
     </Box>
   )
 }

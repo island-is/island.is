@@ -132,10 +132,6 @@ export const DentistRegistration = () => {
 
   return (
     <Box paddingY={2}>
-      <IntroHeader
-        title={formatMessage(messages.dentistRegisterationPageTitle)}
-        intro={formatMessage(messages.dentistRegisterationPageDescription)}
-      />
       {errorTransfering && (
         <Box paddingBottom={4} ref={errorBoxRef}>
           <AlertMessage

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, isValidElement } from 'react'
 import {
   Box,
   Navigation,
@@ -11,6 +11,8 @@ import {
   ServicePortalNavigationItem,
   ModuleAlertBannerSection,
   GoBack,
+  FootNote,
+  IntroHeader,
 } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { useWindowSize } from 'react-use'
@@ -20,6 +22,7 @@ import { Link as ReactLink } from 'react-router-dom'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './Layout.css'
 import { PortalNavigationItem } from '@island.is/portals/core'
+import { MessageDescriptor } from 'react-intl'
 
 interface NarrowLayoutProps {
   activeParent?: PortalNavigationItem
@@ -70,6 +73,10 @@ export const NarrowLayout = ({
     ?.map((item: ServicePortalNavigationItem) => {
       return mapChildren(item)
     })
+
+  const activeItem = activeParent?.children?.find((c) =>
+    c.path ? pathname.includes(c.path) : undefined,
+  )
 
   return (
     <SidebarLayout
@@ -145,7 +152,18 @@ export const NarrowLayout = ({
           </Box>
         )}
         <ModuleAlertBannerSection />
+        {activeItem && (
+          <IntroHeader
+            title={activeItem.name}
+            intro={activeItem.intro}
+            introComponent={activeItem.introComponent}
+            serviceProviderSlug={
+              activeItem.serviceProvider ?? activeParent?.serviceProvider
+            }
+          />
+        )}
         {children}
+        <FootNote serviceProviderSlug={activeParent?.serviceProvider} />
       </Box>
     </SidebarLayout>
   )

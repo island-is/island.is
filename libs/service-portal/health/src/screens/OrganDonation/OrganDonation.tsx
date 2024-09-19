@@ -32,10 +32,6 @@ const OrganDonation = () => {
 
   return (
     <Box>
-      <IntroHeader
-        title={formatMessage(m.organDonation)}
-        intro={formatMessage(m.organDonationDescription)}
-      />
       <Box marginBottom={6}>
         <LinkResolver
           href={formatMessage(m.organDonationLink)}

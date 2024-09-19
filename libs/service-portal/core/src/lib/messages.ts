@@ -1476,6 +1476,11 @@ export const m = defineMessages({
     defaultMessage:
       'Ellilífeyrir, örorkulífeyrir, endurhæfingarlífeyrir og tengdar greiðslur eru tekjutengdar og reiknast út frá tekjuáætlun. Þegar sótt er um lífeyri þarf alltaf að skila inn tekjuáætlun. Hér er hægt að skoða gildandi tekjuáætlun.',
   },
+  incomePlanDetail: {
+    id: 'service.portal:income-plan-detail',
+    defaultMessage:
+      'Hér fyrir neðan er yfirlit yfir þá tekjuáætlun sem er í gildi. Ef þú óskar eftir því að breyta henni þarftu að velja ‘breyta tekjuáætlun’.',
+  },
   paymentPlan: {
     id: 'service.portal:payment-plan',
     defaultMessage: 'Greiðsluáætlun',
