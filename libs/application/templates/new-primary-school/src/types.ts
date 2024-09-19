@@ -50,6 +50,7 @@ export type Person = {
   phoneNumber: string
   address: {
     streetAddress: string
+    streetName?: string
     postalCode: string
     city: string
   }
