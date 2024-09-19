@@ -33,8 +33,8 @@ import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { Case } from '../models/case.model'
 import { CaseArchive } from '../models/caseArchive.model'
+import { CaseString } from '../models/caseString.model'
 import { DateLog } from '../models/dateLog.model'
-import { ExplanatoryComment } from '../models/explanatoryComment.model'
 import { PdfService } from '../pdf.service'
 
 jest.mock('@island.is/judicial-system/message')
@@ -114,7 +114,7 @@ export const createTestingCaseModule = async () => {
         },
       },
       {
-        provide: getModelToken(ExplanatoryComment),
+        provide: getModelToken(CaseString),
         useValue: {
           create: jest.fn(),
           findOne: jest.fn(),
@@ -164,8 +164,8 @@ export const createTestingCaseModule = async () => {
 
   const dateLogModel = caseModule.get<typeof DateLog>(getModelToken(DateLog))
 
-  const explanatoryCommentModel = caseModule.get<typeof ExplanatoryComment>(
-    getModelToken(ExplanatoryComment),
+  const caseStringModel = caseModule.get<typeof CaseString>(
+    getModelToken(CaseString),
   )
 
   const caseConfig = caseModule.get<ConfigType<typeof caseModuleConfig>>(
@@ -203,7 +203,7 @@ export const createTestingCaseModule = async () => {
     caseModel,
     caseArchiveModel,
     dateLogModel,
-    explanatoryCommentModel,
+    caseStringModel,
     caseConfig,
     caseService,
     limitedAccessCaseService,

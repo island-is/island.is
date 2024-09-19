@@ -141,10 +141,15 @@ const IndictmentOverview = () => {
             )
           }
           nextButtonText={formatMessage(core.continue)}
-          actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
-          actionButtonColorScheme={'destructive'}
-          actionButtonIsDisabled={!caseHasBeenReceivedByCourt}
-          onActionButtonClick={() => setModalVisible('RETURN_INDICTMENT')}
+          /* 
+            The return indictment feature has been removed for the time being but
+            we want to hold on to the functionality for now, since we are likely
+            to change this feature in the future.
+          */
+          // actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
+          // actionButtonColorScheme={'destructive'}
+          // actionButtonIsDisabled={!caseHasBeenReceivedByCourt}
+          // onActionButtonClick={() => setModalVisible('RETURN_INDICTMENT')}
         />
       </FormContentContainer>
       {modalVisible === 'RETURN_INDICTMENT' && (

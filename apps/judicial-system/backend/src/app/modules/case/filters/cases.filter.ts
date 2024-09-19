@@ -2,7 +2,7 @@ import { Op, Sequelize, WhereOptions } from 'sequelize'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
@@ -216,7 +216,9 @@ const getPrisonAdminUserCasesQueryFilter = (): WhereOptions => {
 }
 
 const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
-  const formattedNationalId = formatNationalId(user.nationalId)
+  const [normalizedNationalId, formattedNationalId] =
+    normalizeAndFormatNationalId(user.nationalId)
+
   const options: WhereOptions = [
     { is_archived: false },
     {
@@ -238,6 +240,8 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                 {
                   [Op.and]: [
                     { state: CaseState.RECEIVED },
+                    // The following condition will filter out all date logs that are not of type ARRAIGNMENT_DATE
+                    // but that should be ok for request cases since they only have one date log
                     { '$dateLogs.date_type$': DateType.ARRAIGNMENT_DATE },
                   ],
                 },
@@ -251,7 +255,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
               ],
             },
             {
-              defender_national_id: [user.nationalId, formattedNationalId],
+              defender_national_id: [normalizedNationalId, formattedNationalId],
             },
           ],
         },
@@ -266,10 +270,13 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
               ],
             },
             {
-              '$defendants.defender_national_id$': [
-                user.nationalId,
-                formattedNationalId,
-              ],
+              id: {
+                [Op.in]: Sequelize.literal(`
+                (SELECT case_id
+                  FROM defendant
+                  WHERE defender_national_id in ('${normalizedNationalId}', '${formattedNationalId}'))
+              `),
+              },
             },
           ],
         },

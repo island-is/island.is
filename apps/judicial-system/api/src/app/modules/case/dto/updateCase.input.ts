@@ -506,4 +506,9 @@ export class UpdateCaseInput {
   @IsOptional()
   @Field(() => ID, { nullable: true })
   readonly mergeCaseId?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly civilDemands?: string
 }
