@@ -170,7 +170,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         ) : null}
         {applicationsRes.loading &&
           !applicationsRes.data &&
-          Array.from({ length: 5 }).map((_, index) => (
+          Array.from({ length: 3 }).map((_, index) => (
             <View style={{ marginHorizontal: theme.spacing[2] }} key={index}>
               <StatusCardSkeleton />
             </View>
