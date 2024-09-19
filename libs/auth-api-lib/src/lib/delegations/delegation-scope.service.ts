@@ -279,17 +279,19 @@ export class DelegationScopeService {
         `Failed checking if delegation exists at provider '${AuthDelegationProvider.DistrictCommissionersRegistry}'`,
       )
     }
-    if (!delegationFound && !isError) {
-      Promise.all(
-        delegationTypes.map((dt) =>
-          this.delegationsIndexService.removeDelegationRecord({
-            fromNationalId,
-            toNationalId,
-            type: dt as AuthDelegationType,
-            provider: AuthDelegationProvider.DistrictCommissionersRegistry,
-          }),
-        ),
-      )
+    if (!delegationFound) {
+      if (!isError) {
+        Promise.all(
+          delegationTypes.map((dt) =>
+            this.delegationsIndexService.removeDelegationRecord({
+              fromNationalId,
+              toNationalId,
+              type: dt as AuthDelegationType,
+              provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+            }),
+          ),
+        )
+      }
       return []
     }
 
