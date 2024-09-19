@@ -11,6 +11,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 @Injectable()
 export class NewPrimarySchoolService extends BaseTemplateApiService {
@@ -49,6 +50,20 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
 
     // Check if the child is at primary school age and lives with the applicant
     const filteredChildren = children.filter((child) => {
+      // Allow children to pass through
+      const validChildren = [
+        '1111111119',
+        '2222222229',
+        '5555555559',
+        '6666666669',
+      ]
+      if (
+        isRunningOnEnvironment('local') &&
+        validChildren.includes(child.nationalId)
+      ) {
+        return true
+      }
+
       const yearOfBirth = kennitala
         .info(child.nationalId)
         .birthday.getFullYear()
