@@ -102,6 +102,7 @@ export const CoOwnerAndOperatorRepeater: FC<
         nationalId: '',
         email: '',
         phone: '',
+        needsAgeValidation: type === 'operator' ? false : true,
         type,
       },
     ])
