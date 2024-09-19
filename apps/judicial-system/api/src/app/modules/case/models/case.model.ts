@@ -1,5 +1,4 @@
 import { GraphQLJSONObject } from 'graphql-type-json'
-import { boolean } from 'yargs'
 
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
