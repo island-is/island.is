@@ -8,6 +8,7 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { ApplicationsList } from './components/applications-list'
+import { usePreferencesStore } from '../../stores/preferences-store'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -32,6 +33,7 @@ export const ApplicationsIncompleteScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
   const [refetching, setRefetching] = useState(false)
+  const { locale } = usePreferencesStore()
 
   const applicationsRes = useListApplicationsQuery({
     variables: {
@@ -41,6 +43,7 @@ export const ApplicationsIncompleteScreen: NavigationFunctionComponent = ({
           ApplicationResponseDtoStatusEnum.Notstarted,
         ],
       },
+      locale: locale === 'is-US' ? 'is' : 'en',
     },
   })
 

@@ -1,9 +1,11 @@
-import { EmptyList } from '@ui'
+import { EmptyList, StatusCardSkeleton } from '@ui'
 import { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Image, RefreshControl, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
+import { useTheme } from 'styled-components'
+
 import illustrationSrc from '../../assets/illustrations/le-jobs-s3.png'
 import {
   Application,
@@ -16,6 +18,7 @@ import { testIDs } from '../../utils/test-ids'
 import { isIos } from '../../utils/devices'
 import { ApplicationsPreview } from './components/applications-preview'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { usePreferencesStore } from '../../stores/preferences-store'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -96,10 +99,15 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
+  const theme = useTheme()
   const [refetching, setRefetching] = useState(false)
   const [hiddenContent, setHiddenContent] = useState(isIos)
+  const { locale } = usePreferencesStore()
 
-  const applicationsRes = useListApplicationsQuery()
+  const applicationsRes = useListApplicationsQuery({
+    variables: { locale: locale === 'is-US' ? 'is' : 'en' },
+  })
+
   const applications = useMemo(
     () => applicationsRes.data?.applicationApplications ?? [],
     [applicationsRes],
@@ -144,7 +152,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
       >
-        {!applications.length ? (
+        {!applications.length && !applicationsRes.loading ? (
           <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
             <EmptyList
               title={intl.formatMessage({ id: 'applications.emptyTitle' })}
@@ -160,6 +168,13 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
             />
           </View>
         ) : null}
+        {applicationsRes.loading &&
+          !applicationsRes.data &&
+          Array.from({ length: 5 }).map((_, index) => (
+            <View style={{ marginHorizontal: theme.spacing[2] }} key={index}>
+              <StatusCardSkeleton />
+            </View>
+          ))}
         <ApplicationsPreview
           componentId={componentId}
           headingTitleId="applications.incomplete"
