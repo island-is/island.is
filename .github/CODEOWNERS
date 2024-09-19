@@ -21,6 +21,8 @@
 
 /*                                                                                                       @island-is/core
 /libs/api/domains/identity/                                                                              @island-is/core
+# Edge case escaping the /infra/ and **/infra/ devops patterns below
+/libs/infra-nest-server/src/lib/infra/                                                                   @island-is/core
 /libs/testing/                                                                                           @island-is/core
 /libs/nest/swagger/                                                                                      @island-is/core
 
@@ -107,6 +109,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/service-portal/sessions                                                                            @island-is/aranja
 /apps/native/app/                                                                                        @island-is/aranja-app
 codemagic.yaml                                                                                           @island-is/aranja-app
+/apps/web/public/.well-known/                                                                            @island-is/aranja-app
 
 /apps/judicial-system/                                                                                   @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                                   @island-is/kolibri-justice-league
@@ -225,6 +228,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/              @island-is/norda
 /libs/shared/form-fields/                                                                                @island-is/norda @island-is/island-ui
 
+/libs/service-portal/applications/                                                                       @island-is/norda-applications
 /libs/portals/admin/application-system/                                                                  @island-is/norda-applications
 /libs/api/domains/application/                                                                           @island-is/norda-applications
 /libs/api/domains/payment/                                                                               @island-is/norda-applications

@@ -9,14 +9,14 @@ export const GetKeyOptionsTypesApi = defineTemplateApi({
   namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
 })
 
-export const GetSchoolsApi = defineTemplateApi({
-  action: 'getAllSchoolsByMunicipality',
-  externalDataId: 'schools',
-  namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
-})
-
 export const OptionsApi = defineTemplateApi({
   action: 'getAllKeyOptions',
   externalDataId: 'KeyOptions',
+  namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
+})
+
+export const ChildrenApi = defineTemplateApi({
+  action: 'getChildren',
+  externalDataId: 'children',
   namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
 })

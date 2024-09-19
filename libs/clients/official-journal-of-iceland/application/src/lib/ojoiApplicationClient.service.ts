@@ -10,6 +10,11 @@ import {
   GetPdfUrlResponse,
   GetPdfUrlByApplicationIdRequest,
   GetPdfByApplicationIdRequest,
+  GetPresignedUrlRequest,
+  PresignedUrlResponse,
+  AddApplicationAttachmentRequest,
+  GetApplicationAttachmentsRequest,
+  DeleteApplicationAttachmentRequest,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -27,11 +32,32 @@ export class OfficialJournalOfIcelandApplicationClientService {
   async getComments(
     params: GetCommentsRequest,
   ): Promise<GetCaseCommentsResponse> {
-    return await this.ojoiApplicationApi.getComments(params)
+    try {
+      return await this.ojoiApplicationApi.getComments(params)
+    } catch (error) {
+      console.log(error)
+      this.logger.error('Failed to get comments', {
+        error,
+        applicationId: params.id,
+        category: LOG_CATEGORY,
+      })
+
+      throw error
+    }
   }
 
-  async postComment(params: PostCommentRequest): Promise<void> {
-    await this.ojoiApplicationApi.postComment(params)
+  async postComment(params: PostCommentRequest): Promise<boolean> {
+    try {
+      await this.ojoiApplicationApi.postComment(params)
+      return true
+    } catch (error) {
+      this.logger.error(`Failed to post comment: ${error.message}`, {
+        error,
+        applicationId: params.id,
+        category: LOG_CATEGORY,
+      })
+      return false
+    }
   }
 
   async postApplication(params: PostApplicationRequest): Promise<boolean> {
@@ -39,6 +65,11 @@ export class OfficialJournalOfIcelandApplicationClientService {
       await this.ojoiApplicationApi.postApplication(params)
       return Promise.resolve(true)
     } catch (error) {
+      this.logger.error('Failed to post application', {
+        error,
+        applicationId: params.id,
+        category: LOG_CATEGORY,
+      })
       return Promise.reject(false)
     }
   }
@@ -79,7 +110,8 @@ export class OfficialJournalOfIcelandApplicationClientService {
     try {
       return await this.ojoiApplicationApi.getPrice(params)
     } catch (error) {
-      this.logger.warn('Failed to get price', {
+      this.logger.error('Failed to get price', {
+        applicationId: params.id,
         error,
         category: LOG_CATEGORY,
       })
@@ -87,5 +119,26 @@ export class OfficialJournalOfIcelandApplicationClientService {
         price: 0,
       }
     }
+  }
+  async getPresignedUrl(
+    params: GetPresignedUrlRequest,
+  ): Promise<PresignedUrlResponse> {
+    return await this.ojoiApplicationApi.getPresignedUrl(params)
+  }
+
+  async addApplicationAttachment(
+    params: AddApplicationAttachmentRequest,
+  ): Promise<void> {
+    await this.ojoiApplicationApi.addApplicationAttachment(params)
+  }
+
+  async getApplicationAttachments(params: GetApplicationAttachmentsRequest) {
+    return this.ojoiApplicationApi.getApplicationAttachments(params)
+  }
+
+  async deleteApplicationAttachment(
+    params: DeleteApplicationAttachmentRequest,
+  ) {
+    await this.ojoiApplicationApi.deleteApplicationAttachment(params)
   }
 }

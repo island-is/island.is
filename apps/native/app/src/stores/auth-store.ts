@@ -68,31 +68,21 @@ const getAppAuthConfig = () => {
   }
 }
 
-const clearPasskey = async (userNationalId?: string) => {
+const clearPasskey = async () => {
   // Clear passkey if exists
-  const isPasskeyEnabled = await featureFlagClient?.getValueAsync(
-    'isPasskeyEnabled',
-    false,
-    userNationalId ? { identifier: userNationalId } : undefined,
-  )
-  if (isPasskeyEnabled) {
-    preferencesStore.setState({
-      hasCreatedPasskey: false,
-      hasOnboardedPasskeys: false,
-      lastUsedPasskey: 0,
-    })
+  preferencesStore.setState({
+    hasCreatedPasskey: false,
+    hasOnboardedPasskeys: false,
+    lastUsedPasskey: 0,
+  })
 
-    const client = await getApolloClientAsync()
-    try {
-      await client.mutate<
-        DeletePasskeyMutation,
-        DeletePasskeyMutationVariables
-      >({
-        mutation: DeletePasskeyDocument,
-      })
-    } catch (e) {
-      console.error('Failed to delete passkey', e)
-    }
+  const client = await getApolloClientAsync()
+  try {
+    await client.mutate<DeletePasskeyMutation, DeletePasskeyMutationVariables>({
+      mutation: DeletePasskeyDocument,
+    })
+  } catch (e) {
+    console.error('Failed to delete passkey', e)
   }
 }
 
@@ -198,8 +188,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     notificationsStore.getState().reset()
 
     // Clear passkey if exists
-    const userNationalId = get().userInfo?.nationalId
-    await clearPasskey(userNationalId)
+    await clearPasskey()
 
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -225,6 +214,8 @@ export const authStore = create<AuthStore>((set, get) => ({
       }),
       true,
     )
+    // Reset home screen widgets
+    preferencesStore.getState().resetHomeScreenWidgets()
     return true
   },
 }))

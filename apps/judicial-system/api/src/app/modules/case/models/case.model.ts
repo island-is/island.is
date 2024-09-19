@@ -436,8 +436,8 @@ export class Case {
   @Field(() => Boolean, { nullable: true })
   readonly indictmentVerdictViewedByAll?: boolean
 
-  @Field(() => String, { nullable: true })
-  readonly indictmentVerdictAppealDeadline?: string
+  @Field(() => Boolean, { nullable: true })
+  readonly indictmentVerdictAppealDeadlineExpired?: boolean
 
   @Field(() => IndictmentDecision, { nullable: true })
   readonly indictmentDecision?: IndictmentDecision
@@ -453,4 +453,7 @@ export class Case {
 
   @Field(() => [Case], { nullable: true })
   readonly mergedCases?: Case[]
+
+  @Field(() => String, { nullable: true })
+  readonly civilDemands?: string
 }

@@ -264,7 +264,7 @@ query Case($input: CaseQueryInput!) {
     }
     indictmentAppealDeadline
     indictmentVerdictViewedByAll
-    indictmentVerdictAppealDeadline
+    indictmentVerdictAppealDeadlineExpired
     indictmentDecision
     indictmentReviewDecision
     indictmentCompletedDate
@@ -308,5 +308,6 @@ query Case($input: CaseQueryInput!) {
       policeCaseNumbers
       indictmentSubtypes
     }
+    civilDemands
   }
 }

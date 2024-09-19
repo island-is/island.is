@@ -9,7 +9,11 @@ import { AsyncSelectFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { OptionsType } from '../../lib/constants'
-import { getOptionsListByType } from '../../lib/newPrimarySchoolUtils'
+import { friggOptionsQuery } from '../../graphql/queries'
+import {
+  FriggOptionsQuery,
+  FriggOptionsQueryVariables,
+} from '../../types/schema'
 
 type FriggOptionsAsyncSelectFieldProps = {
   field: {
@@ -42,7 +46,33 @@ const FriggOptionsAsyncSelectField: FC<
         defaultValue,
         loadingError: coreErrorMessages.failedDataProvider,
         loadOptions: async ({ apolloClient }) => {
-          return await getOptionsListByType(apolloClient, optionsType, lang)
+          const { data } = await apolloClient.query<
+            FriggOptionsQuery,
+            FriggOptionsQueryVariables
+          >({
+            query: friggOptionsQuery,
+            variables: {
+              type: {
+                type: optionsType,
+              },
+            },
+          })
+
+          return (
+            data?.friggOptions?.flatMap(({ options }) =>
+              options.flatMap(({ value, key }) => {
+                let content = value.find(
+                  ({ language }) => language === lang,
+                )?.content
+                if (!content) {
+                  content = value.find(
+                    ({ language }) => language === 'is',
+                  )?.content
+                }
+                return { value: key ?? '', label: content ?? '' }
+              }),
+            ) ?? []
+          )
         },
         isMulti,
         backgroundColor: 'blue',

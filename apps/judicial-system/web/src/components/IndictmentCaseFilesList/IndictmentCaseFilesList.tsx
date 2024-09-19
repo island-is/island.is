@@ -5,7 +5,9 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import {
   isCompletedCase,
+  isDefenceUser,
   isDistrictCourtUser,
+  isProsecutionUser,
   isPublicProsecutor,
   isPublicProsecutorUser,
   isTrafficViolationCase,
@@ -99,6 +101,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
       file.category === CaseFileCategory.PROSECUTOR_CASE_FILE ||
       file.category === CaseFileCategory.DEFENDANT_CASE_FILE,
   )
+  const civilClaims = cf?.filter(
+    (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
+  )
 
   return (
     <>
@@ -126,7 +131,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
             <PdfButton
               caseId={workingCase.id}
               title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
-              pdfType={'indictment'}
+              pdfType="indictment"
               renderAs="row"
             />
           </Box>
@@ -184,7 +189,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
           />
         </Box>
       )}
-
       <Box marginBottom={5}>
         <Text variant="h4" as="h4" marginBottom={1}>
           {formatMessage(strings.caseFileTitle)}
@@ -196,24 +200,14 @@ const IndictmentCaseFilesList: FC<Props> = ({
               title={formatMessage(strings.caseFileButtonText, {
                 policeCaseNumber,
               })}
-              pdfType={'caseFilesRecord'}
+              pdfType="caseFilesRecord"
               elementId={policeCaseNumber}
               renderAs="row"
             />
           </Box>
         ))}
       </Box>
-
-      {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={3}>
-            {formatMessage(strings.uploadedCaseFiles)}
-          </Text>
-          <CaseFileTable caseFiles={uploadedCaseFiles} onOpenFile={onOpen} />
-        </Box>
-      )}
-      {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
-      (courtRecords?.length || rulings?.length) ? (
+      {courtRecords?.length || rulings?.length ? (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(strings.rulingAndCourtRecordsTitle)}
@@ -225,16 +219,41 @@ const IndictmentCaseFilesList: FC<Props> = ({
               workingCase={workingCase}
             />
           )}
-          {rulings && rulings.length > 0 && (
+          {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
+            rulings &&
+            rulings.length > 0 && (
+              <RenderFiles
+                caseFiles={rulings}
+                onOpenFile={onOpen}
+                workingCase={workingCase}
+              />
+            )}
+        </Box>
+      ) : null}
+      {civilClaims &&
+        civilClaims.length > 0 &&
+        (isDistrictCourtUser(user) ||
+          isProsecutionUser(user) ||
+          isDefenceUser(user)) && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={1}>
+              {formatMessage(caseFiles.civilClaimSection)}
+            </Text>
             <RenderFiles
-              caseFiles={rulings}
+              caseFiles={civilClaims}
               onOpenFile={onOpen}
               workingCase={workingCase}
             />
-          )}
+          </Box>
+        )}
+      {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={3}>
+            {formatMessage(strings.uploadedCaseFiles)}
+          </Text>
+          <CaseFileTable caseFiles={uploadedCaseFiles} onOpenFile={onOpen} />
         </Box>
-      ) : null}
-
+      )}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>

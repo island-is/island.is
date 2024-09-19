@@ -1,14 +1,18 @@
 import faker from 'faker'
 
+import {
+  AuthDelegationType,
+  DelegationRecordDTO,
+} from '@island.is/clients/auth/delegation-api'
 import { UserProfileDto } from '@island.is/clients/user-profile'
-import { createNationalId } from '@island.is/testing/fixtures'
-import { DelegationRecordDTO } from '@island.is/clients/auth/delegation-api'
 import { Features } from '@island.is/feature-flags'
-import type { User } from '@island.is/auth-nest-tools'
-import type { ConfigType } from '@island.is/nest/config'
+import { createNationalId } from '@island.is/testing/fixtures'
 
 import { UserNotificationsConfig } from '../../../../config'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
+
+import type { User } from '@island.is/auth-nest-tools'
+import type { ConfigType } from '@island.is/nest/config'
 
 export const mockFullName = 'mockFullName'
 export const delegationSubjectId = 'delegation-subject-id'
@@ -47,6 +51,17 @@ export const userWithNoDelegations: MockUserProfileDto = {
   mobilePhoneNumber: '1234567',
   email: 'email1@email.com',
   emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+}
+
+export const userWithNoEmail: MockUserProfileDto = {
+  name: 'userWithNoEmail',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  emailVerified: false,
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
@@ -101,6 +116,18 @@ export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
     isRestricted: false,
   }
 
+export const companyUser: MockUserProfileDto = {
+  name: 'companyUser',
+  nationalId: createNationalId('company'),
+  mobilePhoneNumber: '1234567',
+  email: 'email@company.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+}
+
 export const mockTemplateId = 'HNIPP.DEMO.ID'
 
 export const getMockHnippTemplate = ({
@@ -127,6 +154,8 @@ export const userProfiles = [
   userWithDocumentNotificationsDisabled,
   userWithFeatureFlagDisabled,
   userWithSendToDelegationsFeatureFlagDisabled,
+  userWithNoEmail,
+  companyUser,
 ]
 
 const delegations: Record<string, DelegationRecordDTO[]> = {
@@ -135,6 +164,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
       fromNationalId: userWithDelegations.nationalId,
       toNationalId: userWithNoDelegations.nationalId,
       subjectId: null, // test that 3rd party login is not used if subjectId is null
+      type: AuthDelegationType.ProcurationHolder,
     },
   ],
   [userWithDelegations2.nationalId]: [
@@ -142,6 +172,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
       fromNationalId: userWithDelegations2.nationalId,
       toNationalId: userWithDelegations.nationalId,
       subjectId: delegationSubjectId,
+      type: AuthDelegationType.ProcurationHolder,
     },
   ],
   [userWithSendToDelegationsFeatureFlagDisabled.nationalId]: [
@@ -149,6 +180,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
       fromNationalId: userWithSendToDelegationsFeatureFlagDisabled.nationalId,
       toNationalId: userWithNoDelegations.nationalId,
       subjectId: faker.datatype.uuid(),
+      type: AuthDelegationType.ProcurationHolder,
     },
   ],
 }

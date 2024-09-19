@@ -17,7 +17,7 @@ export const relativesSubSection = buildSubSection({
       children: [
         buildCustomField({
           id: 'relatives',
-          title: newPrimarySchoolMessages.differentNeeds.typeOfAllergies,
+          title: '',
           component: 'RelativesTableRepeater',
         }),
       ],

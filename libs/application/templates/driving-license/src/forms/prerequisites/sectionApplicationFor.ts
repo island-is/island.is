@@ -6,9 +6,18 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { DrivingLicense } from '../../lib/types'
-import { B_FULL, B_TEMP, BE, DrivingLicenseFakeData } from '../../lib/constants'
+import {
+  B_FULL,
+  B_FULL_RENEWAL_65,
+  B_TEMP,
+  BE,
+  DrivingLicenseFakeData,
+} from '../../lib/constants'
 
-export const sectionApplicationFor = (allowBELicense = false) =>
+export const sectionApplicationFor = (
+  allowBELicense = false,
+  allow65Renewal = false,
+) =>
   buildSubSection({
     id: 'applicationFor',
     title: m.applicationDrivingLicenseTitle,
@@ -76,6 +85,18 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                 },
               ]
 
+              if (allow65Renewal) {
+                options = options.concat({
+                  label: m.applicationForRenewalLicenseTitle,
+                  subLabel:
+                    m.applicationForRenewalLicenseDescription.defaultMessage,
+                  value: B_FULL_RENEWAL_65,
+                  disabled:
+                    !currentLicense ||
+                    (fakeData && fakeData.age ? fakeData.age < 65 : age < 65),
+                })
+              }
+
               if (allowBELicense) {
                 options = options.concat({
                   label: m.applicationForBELicenseTitle,
@@ -84,6 +105,7 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                   disabled:
                     !currentLicense ||
                     age < 18 ||
+                    age >= 65 ||
                     categories?.some((c) => c.nr.toUpperCase() === 'BE') ||
                     // validToCode === 8 is temporary license and should not be applicable for BE
                     !categories?.some(

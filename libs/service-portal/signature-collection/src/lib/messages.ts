@@ -16,7 +16,7 @@ export const m = defineMessages({
   pageDescriptionSignee: {
     id: 'sp.signatureCollection:pageDescriptionSignee',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet, dui eget iaculis vehicula, purus nibh lobortis urna, sit amet dignissim lacus metus non arcu.',
+      'Aðeins er hægt að mæla með einu framboði. Hægt er að afturkalla meðmæli þangað til söfnun lokar og mæla með öðrum frambjóðanda ef vill.',
     description: '',
   },
   createListButton: {
@@ -27,6 +27,11 @@ export const m = defineMessages({
   collectionTitle: {
     id: 'sp.signatureCollection:collectionTitle',
     defaultMessage: 'Forsetakosningar 2024',
+    description: '',
+  },
+  collectionTitleParliamentary: {
+    id: 'sp.signatureCollection:collectionTitleParliamentary',
+    defaultMessage: 'Alþingiskosningar',
     description: '',
   },
   myListsDescription: {

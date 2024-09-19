@@ -14,6 +14,12 @@ export const GET_TEAM_MEMBERS_QUERY = gql`
       items {
         name
         title
+        email
+        phone
+        tagGroups {
+          groupLabel
+          tagLabels
+        }
         image {
           ...ImageFields
         }

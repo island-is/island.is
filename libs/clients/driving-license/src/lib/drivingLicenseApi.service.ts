@@ -492,6 +492,18 @@ export class DrivingLicenseApi {
     return handledResponse.success
   }
 
+  async postRenewLicenseOver65(params: { auth: string }) {
+    return await this.v5.apiDrivinglicenseV5ApplicationsRenewal65Post({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.auth,
+      postRenewal65AndOver: {
+        renewalDate: new Date(),
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
+      },
+    })
+  }
+
   async postApplyForBELicense(params: {
     nationalIdApplicant: string
     token: string

@@ -6,7 +6,6 @@ import {
   YesOrNo,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
-import * as kennitala from 'kennitala'
 import {
   Child,
   ChildInformation,
@@ -18,15 +17,10 @@ import {
   SiblingsRow,
 } from '../types'
 import {
-  Gender,
   ReasonForApplicationOptions,
   SiblingRelationOptions,
 } from './constants'
 import { newPrimarySchoolMessages } from './messages'
-
-import { ApolloClient } from '@apollo/client'
-import { friggOptionsQuery } from '../graphql/queries'
-import { FriggOptionsQuery, FriggOptionsQueryVariables } from '../types/schema'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
@@ -84,31 +78,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'languages.icelandicNotSpokenAroundChild',
   ) as string[]
 
-  const hasFoodAllergies = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.hasFoodAllergies',
-  ) as string[]
-
-  const foodAllergies = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.foodAllergies',
-  ) as string[]
-
-  const hasFoodIntolerances = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.hasFoodIntolerances',
-  ) as string[]
-
-  const foodIntolerances = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.foodIntolerances',
-  ) as string[]
-
-  const isUsingEpiPen = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.isUsingEpiPen',
-  ) as string[]
-
   const developmentalAssessment = getValueViaPath(
     answers,
     'support.developmentalAssessment',
@@ -137,20 +106,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'schools.newSchool.school',
   ) as string
 
-  const photographyConsent = getValueViaPath(
+  const newSchoolHiddenInput = getValueViaPath(
     answers,
-    'photography.photographyConsent',
-  ) as YesOrNo
-
-  const photoSchoolPublication = getValueViaPath(
-    answers,
-    'photography.photoSchoolPublication',
-  ) as YesOrNo
-
-  const photoMediaPublication = getValueViaPath(
-    answers,
-    'photography.photoMediaPublication',
-  ) as YesOrNo
+    'schools.newSchool.hiddenInput',
+  ) as string
 
   return {
     childNationalId,
@@ -167,32 +126,20 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     otherLanguagesSpokenDaily,
     otherLanguages,
     icelandicNotSpokenAroundChild,
-    hasFoodAllergies,
-    foodAllergies,
-    hasFoodIntolerances,
-    foodIntolerances,
-    isUsingEpiPen,
     developmentalAssessment,
     specialSupport,
     requestMeeting,
-    photographyConsent,
-    photoSchoolPublication,
-    photoMediaPublication,
-
     startDate,
     schoolMunicipality,
     selectedSchool,
+    newSchoolHiddenInput,
   }
 }
 
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
 ) => {
-  const children = getValueViaPath(
-    externalData,
-    'childrenCustodyInformation.data',
-    [],
-  ) as Child[]
+  const children = getValueViaPath(externalData, 'children.data', []) as Child[]
 
   const applicantName = getValueViaPath(
     externalData,
@@ -221,13 +168,18 @@ export const getApplicationExternalData = (
 
   const otherParentName = getValueViaPath(
     externalData,
-    'childrenCustodyInformation.data.otherParent.fullName',
+    'children.data.otherParent.fullName',
   ) as string
 
   const childInformation = getValueViaPath(
     externalData,
     'childInformation.data',
   ) as FriggChildInformation
+
+  const childGradeLevel = getValueViaPath(
+    externalData,
+    'childInformation.data.gradeLevel',
+  ) as string
 
   return {
     children,
@@ -238,20 +190,8 @@ export const getApplicationExternalData = (
     applicantCity,
     otherParentName,
     childInformation,
+    childGradeLevel,
   }
-}
-
-export const canApply = (child: Child): boolean => {
-  // Check if the child is at primary school age and lives with the applicant
-  if (
-    kennitala.info(child.nationalId).age >= 5 &&
-    kennitala.info(child.nationalId).age <= 15 &&
-    child.livesWithApplicant
-  ) {
-    return true
-  }
-
-  return false
 }
 
 export const getSelectedChild = (application: Application) => {
@@ -357,52 +297,6 @@ export const getSiblingRelationOptionLabel = (
   return relationOptions.find((option) => option.value === value)?.label ?? ''
 }
 
-export const formatGender = (genderCode?: string): Gender | undefined => {
-  switch (genderCode) {
-    case '1':
-    case '3':
-      return Gender.MALE
-    case '2':
-    case '4':
-      return Gender.FEMALE
-    case '7':
-    case '8':
-      return Gender.OTHER
-    default:
-      return undefined
-  }
-}
-
-export const getOptionsListByType = async (
-  apolloClient: ApolloClient<object>,
-  type: string,
-  lang: Locale,
-) => {
-  const { data } = await apolloClient.query<
-    FriggOptionsQuery,
-    FriggOptionsQueryVariables
-  >({
-    query: friggOptionsQuery,
-    variables: {
-      type: {
-        type,
-      },
-    },
-  })
-
-  return (
-    data?.friggOptions?.flatMap(({ options }) =>
-      options.flatMap(({ value, key }) => {
-        let content = value.find(({ language }) => language === lang)?.content
-        if (!content) {
-          content = value.find(({ language }) => language === 'is')?.content
-        }
-        return { value: key ?? '', label: content ?? '' }
-      }),
-    ) ?? []
-  )
-}
-
 export const getSelectedOptionLabel = (
   options: SelectOption[],
   key?: string,
@@ -412,4 +306,21 @@ export const getSelectedOptionLabel = (
   }
 
   return options.find((option) => option.value === key)?.label
+}
+
+export const formatGrade = (gradeLevel: string, lang: Locale) => {
+  let grade = gradeLevel
+  if (gradeLevel[0] === '0') {
+    grade = gradeLevel[1]
+  }
+  switch (grade) {
+    case '1':
+      return lang === 'en' ? `${grade}st` : grade
+    case '2':
+      return lang === 'en' ? `${grade}nd` : grade
+    case '3':
+      return lang === 'en' ? `${grade}rd` : grade
+    default:
+      return lang === 'en' ? `${grade}th` : grade
+  }
 }
