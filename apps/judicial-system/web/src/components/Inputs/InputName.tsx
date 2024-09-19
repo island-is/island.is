@@ -19,10 +19,10 @@ const InputName: FC<InputProps> = (props) => {
     // A function that runs on blur if the input is valid.
     onBlur,
 
-    // A custom label. Id not set, a default label is used.
+    // A custom label. If not set, a default label is used.
     label,
 
-    // A custom placeholder. Id not set, a default placeholder is used.
+    // A custom placeholder. If not set, a default placeholder is used.
     placeholder,
 
     // If true, validation is skipped and a required indicator is set next to label.
