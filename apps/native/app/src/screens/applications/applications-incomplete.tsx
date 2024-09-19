@@ -38,10 +38,7 @@ export const ApplicationsIncompleteScreen: NavigationFunctionComponent = ({
   const applicationsRes = useListApplicationsQuery({
     variables: {
       input: {
-        status: [
-          ApplicationResponseDtoStatusEnum.Draft,
-          ApplicationResponseDtoStatusEnum.Notstarted,
-        ],
+        status: [ApplicationResponseDtoStatusEnum.Draft],
       },
       locale: locale === 'is-US' ? 'is' : 'en',
     },
