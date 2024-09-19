@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import {
   formatDate,
-  formatNationalId,
+  normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { DateType, DefenderChoice } from '@island.is/judicial-system/types'
 
@@ -47,13 +47,14 @@ export class SubpoenaResponse {
     defendantNationalId: string,
     lang?: string,
   ): SubpoenaResponse {
-    const formattedNationalId = formatNationalId(defendantNationalId)
     const t = getTranslations(lang)
 
     const defendantInfo = internalCase.defendants.find(
       (defendant) =>
-        defendant.nationalId === formattedNationalId ||
-        defendant.nationalId === defendantNationalId,
+        defendant.nationalId &&
+        normalizeAndFormatNationalId(defendantNationalId).includes(
+          defendant.nationalId,
+        ),
     )
 
     const waivedRight = defendantInfo?.defenderChoice === DefenderChoice.WAIVE
