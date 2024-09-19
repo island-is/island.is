@@ -2,6 +2,15 @@ import { NO, YES } from '@island.is/application/types'
 import { z } from 'zod'
 import { NEW, USED } from '../shared/types'
 import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const isValidEmail = (value: string) => emailRegex.test(value)
+export const isValidPhoneNumber = (phoneNumber: string) => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone && phone.isValid()
+}
 
 const PersonInformationSchema = z.object({
   name: z.string().min(1),
@@ -10,8 +19,8 @@ const PersonInformationSchema = z.object({
     .refine((nationalId) => nationalId && kennitala.isValid(nationalId)),
   address: z.string().min(1),
   postCode: z.string().min(1),
-  phone: z.string().min(1),
-  email: z.string().min(1),
+  phone: z.string().refine((v) => isValidPhoneNumber(v)),
+  email: z.string().refine((v) => isValidEmail(v)),
 })
 
 const RemovablePersonInformationSchema = z.object({
@@ -50,7 +59,7 @@ const TechInfoSchema = z.object({
 })
 
 export const NewMachineAnswersSchema = z.object({
-  approveExternalData: z.boolean(),
+  approveExternalData: z.boolean().refine((v) => v),
   importerInformation: z.object({
     importer: PersonInformationSchema,
   }),
@@ -103,7 +112,12 @@ export const NewMachineAnswersSchema = z.object({
     .refine(
       ({ isOwnerOtherThanImporter, owner }) => {
         if (isOwnerOtherThanImporter === NO) return true
-        return owner && owner.phone && owner.phone.length > 0
+        return (
+          owner &&
+          owner.phone &&
+          owner.phone.length > 0 &&
+          isValidPhoneNumber(owner.phone)
+        )
       },
       {
         path: ['owner', 'phone'],
@@ -112,7 +126,12 @@ export const NewMachineAnswersSchema = z.object({
     .refine(
       ({ isOwnerOtherThanImporter, owner }) => {
         if (isOwnerOtherThanImporter === NO) return true
-        return owner && owner.email && owner.email.length > 0
+        return (
+          owner &&
+          owner.email &&
+          owner.email.length > 0 &&
+          isValidEmail(owner.email)
+        )
       },
       {
         path: ['owner', 'email'],
@@ -167,7 +186,12 @@ export const NewMachineAnswersSchema = z.object({
     .refine(
       ({ hasOperator, operator }) => {
         if (hasOperator === NO) return true
-        return operator && operator.phone && operator.phone.length > 0
+        return (
+          operator &&
+          operator.phone &&
+          operator.phone.length > 0 &&
+          isValidPhoneNumber(operator.phone)
+        )
       },
       {
         path: ['operator', 'phone'],
@@ -176,7 +200,12 @@ export const NewMachineAnswersSchema = z.object({
     .refine(
       ({ hasOperator, operator }) => {
         if (hasOperator === NO) return true
-        return operator && operator.email && operator.email.length > 0
+        return (
+          operator &&
+          operator.email &&
+          operator.email.length > 0 &&
+          isValidEmail(operator.email)
+        )
       },
       {
         path: ['operator', 'email'],
