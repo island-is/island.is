@@ -32,6 +32,8 @@ import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionCanSignInput } from './dto/canSign.input'
 import { SignatureCollectionAddListsInput } from './dto/addLists.input'
+import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
+import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/signature-collection' })
@@ -171,5 +173,19 @@ export class SignatureCollectionResolver {
     @Args('input') input: SignatureCollectionAddListsInput,
   ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.add(input, user)
+  }
+
+  @Scopes(ApiScope.signatureCollection)
+  @AccessRequirement(OwnerAccess.RestrictActor)
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionUploadPaperSignature(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionUploadPaperSignatureInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.candidacyUploadPaperSignature(
+      input,
+      user,
+    )
   }
 }
