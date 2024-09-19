@@ -8,7 +8,6 @@ import {
   PersonalElectionSubmitInput,
 } from '@island.is/clients/financial-statements-inao'
 import { mapValuesToIndividualtype } from './mapValuesToUserTypes'
-import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 
 const LESS = 'less'
 const GREATER = 'greater'

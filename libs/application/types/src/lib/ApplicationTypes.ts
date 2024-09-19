@@ -33,6 +33,7 @@ export enum ApplicationTypes {
   FINANCIAL_STATEMENT_CEMETERY = 'FinancialStatementCemetery',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
   FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION = 'FinancialStatementIndividualElection',
+  FINANCIAL_STATEMENT_POLITICAL_PARTY = 'FinancialStatementPoliticalParty',
   OPERATING_LICENSE = 'OperatingLicense',
   ESTATE = 'Estate',
   DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
@@ -218,6 +219,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: {
     slug: 'skil-arsreikninga-einstaklingsframbod',
     translation: 'fsie.application',
+  },
+  [ApplicationTypes.FINANCIAL_STATEMENT_POLITICAL_PARTY]: {
+    slug: 'skil-arsreikninga-stjornmalaflokkar',
+    translation: 'fspp.application',
   },
   [ApplicationTypes.OPERATING_LICENSE]: {
     slug: 'rekstrarleyfi',
