@@ -73,6 +73,7 @@ export class IndexingService {
             const importerResponse = await importer.doSync({
               ...options,
               nextPageToken,
+              folderHash: postSyncOptions?.folderHash,
             })
 
             // importers can skip import by returning null

@@ -184,35 +184,40 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     options: SyncOptions,
   ): Promise<SyncResponse<PostSyncOptions> | null> {
     logger.info('Doing cms sync', options)
-    let cmsSyncOptions: SyncOptions
+    let cmsSyncOptions: SyncOptions = options
 
     /**
      * We don't want full sync to run every time we start a new pod
      * We want full sync to run once when the first pod initializes the first container
      * and then never again until a new index is deployed
      */
-    let folderHash
+    let folderHash = options.folderHash
+
     if (options.syncType === 'initialize') {
       const { elasticIndex = getElasticsearchIndex(options.locale) } = options
 
-      folderHash = await this.getModelsFolderHash()
-      const lastFolderHash = await this.getLastFolderHash(elasticIndex)
-      if (folderHash !== lastFolderHash) {
-        logger.info(
-          'Folder and index folder hash do not match, running full sync',
-          { locale: options.locale },
-        )
-        cmsSyncOptions = { ...options, syncType: 'full' }
-      } else {
-        logger.info('Folder and index folder hash match, skipping sync', {
-          locale: options.locale,
-        })
-        // we skip import if it is not needed
-        return null
+      if (folderHash === undefined) {
+        folderHash = await this.getModelsFolderHash()
+        const lastFolderHash = await this.getLastFolderHash(elasticIndex)
+        if (folderHash !== lastFolderHash) {
+          logger.info(
+            'Folder and index folder hash do not match, running full sync',
+            { locale: options.locale },
+          )
+          cmsSyncOptions = { ...options, syncType: 'full' }
+        } else {
+          logger.info('Folder and index folder hash match, skipping sync', {
+            locale: options.locale,
+          })
+          // we skip import if it is not needed
+          return null
+        }
       }
     } else if (options.syncType === 'full') {
       cmsSyncOptions = options
-      folderHash = await this.getModelsFolderHash() // we know full will update all models so we can set the folder hash here
+      if (folderHash === undefined) {
+        folderHash = await this.getModelsFolderHash() // we know full will update all models so we can set the folder hash here
+      }
     } else {
       cmsSyncOptions = options
       folderHash = '' // this will always be a partial update so we don't want to update folder hash
