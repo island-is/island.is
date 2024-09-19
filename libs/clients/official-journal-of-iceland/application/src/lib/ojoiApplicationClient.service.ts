@@ -18,6 +18,7 @@ import {
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application-client-service'
 
@@ -29,11 +30,16 @@ export class OfficialJournalOfIcelandApplicationClientService {
     private logger: Logger,
   ) {}
 
+  private ojoiApplicationApiWithAuth(auth: Auth) {
+    return this.ojoiApplicationApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   async getComments(
     params: GetCommentsRequest,
+    auth: Auth,
   ): Promise<GetCaseCommentsResponse> {
     try {
-      return await this.ojoiApplicationApi.getComments(params)
+      return await this.ojoiApplicationApiWithAuth(auth).getComments(params)
     } catch (error) {
       console.log(error)
       this.logger.error('Failed to get comments', {
@@ -46,9 +52,9 @@ export class OfficialJournalOfIcelandApplicationClientService {
     }
   }
 
-  async postComment(params: PostCommentRequest): Promise<boolean> {
+  async postComment(params: PostCommentRequest, auth: Auth): Promise<boolean> {
     try {
-      await this.ojoiApplicationApi.postComment(params)
+      await this.ojoiApplicationApiWithAuth(auth).postComment(params)
       return true
     } catch (error) {
       this.logger.error(`Failed to post comment: ${error.message}`, {
@@ -60,9 +66,12 @@ export class OfficialJournalOfIcelandApplicationClientService {
     }
   }
 
-  async postApplication(params: PostApplicationRequest): Promise<boolean> {
+  async postApplication(
+    params: PostApplicationRequest,
+    auth: Auth,
+  ): Promise<boolean> {
     try {
-      await this.ojoiApplicationApi.postApplication(params)
+      await this.ojoiApplicationApiWithAuth(auth).postApplication(params)
       return Promise.resolve(true)
     } catch (error) {
       this.logger.error('Failed to post application', {
@@ -76,14 +85,20 @@ export class OfficialJournalOfIcelandApplicationClientService {
 
   async getPdfUrl(
     params: GetPdfUrlByApplicationIdRequest,
+    auth: Auth,
   ): Promise<GetPdfUrlResponse> {
-    return await this.ojoiApplicationApi.getPdfUrlByApplicationId(params)
-  }
-
-  async getPdf(params: GetPdfByApplicationIdRequest): Promise<Buffer> {
-    const streamableFile = await this.ojoiApplicationApi.getPdfByApplicationId(
+    return await this.ojoiApplicationApiWithAuth(auth).getPdfUrlByApplicationId(
       params,
     )
+  }
+
+  async getPdf(
+    params: GetPdfByApplicationIdRequest,
+    auth: Auth,
+  ): Promise<Buffer> {
+    const streamableFile = await this.ojoiApplicationApiWithAuth(
+      auth,
+    ).getPdfByApplicationId(params)
 
     const isStreamable = (
       streamableFile: any,
@@ -106,9 +121,12 @@ export class OfficialJournalOfIcelandApplicationClientService {
     return Buffer.concat(chunks)
   }
 
-  async getPrice(params: GetPriceRequest): Promise<CasePriceResponse> {
+  async getPrice(
+    params: GetPriceRequest,
+    auth: Auth,
+  ): Promise<CasePriceResponse> {
     try {
-      return await this.ojoiApplicationApi.getPrice(params)
+      return await this.ojoiApplicationApiWithAuth(auth).getPrice(params)
     } catch (error) {
       this.logger.error('Failed to get price', {
         applicationId: params.id,
@@ -122,23 +140,44 @@ export class OfficialJournalOfIcelandApplicationClientService {
   }
   async getPresignedUrl(
     params: GetPresignedUrlRequest,
+    auth: Auth,
   ): Promise<PresignedUrlResponse> {
-    return await this.ojoiApplicationApi.getPresignedUrl(params)
+    return await this.ojoiApplicationApiWithAuth(auth).getPresignedUrl(params)
   }
 
   async addApplicationAttachment(
     params: AddApplicationAttachmentRequest,
+    auth: Auth,
   ): Promise<void> {
-    await this.ojoiApplicationApi.addApplicationAttachment(params)
+    try {
+      console.log(auth)
+      await this.ojoiApplicationApiWithAuth(auth).addApplicationAttachment(
+        params,
+      )
+    } catch (error) {
+      this.logger.error('Failed to add application attachment', {
+        category: LOG_CATEGORY,
+        applicationId: params.id,
+      })
+      throw error
+    }
   }
 
-  async getApplicationAttachments(params: GetApplicationAttachmentsRequest) {
-    return this.ojoiApplicationApi.getApplicationAttachments(params)
+  async getApplicationAttachments(
+    params: GetApplicationAttachmentsRequest,
+    auth: Auth,
+  ) {
+    return this.ojoiApplicationApiWithAuth(auth).getApplicationAttachments(
+      params,
+    )
   }
 
   async deleteApplicationAttachment(
     params: DeleteApplicationAttachmentRequest,
+    auth: Auth,
   ) {
-    await this.ojoiApplicationApi.deleteApplicationAttachment(params)
+    await this.ojoiApplicationApiWithAuth(auth).deleteApplicationAttachment(
+      params,
+    )
   }
 }
