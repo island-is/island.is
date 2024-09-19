@@ -516,7 +516,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'rikissaksoknari':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={
+            isSubpage
+              ? styles.rikissaksoknariHeaderGridContainerSubpage
+              : styles.rikissaksoknariHeaderGridContainerWidth
+          }
+        />
+      ) : (
         <RikissaksoknariHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
