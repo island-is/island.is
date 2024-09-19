@@ -652,6 +652,11 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Samtals frá TR eftir skatt',
     description: 'Niðurstöðuskjár, Samtals frá TR eftir skatt',
   },
+  'REIKNH.SAMTALS': {
+    id: 'web.pensionCalculator:REIKNH.SAMTALS',
+    defaultMessage: 'Samtals',
+    description: 'Niðurstöðuskjár, Samtals',
+  },
   'REIKNH.TEKJURAFATVINNU': {
     id: 'web.pensionCalculator:REIKNH.TEKJURAFATVINNU',
     defaultMessage: 'Tekjur af atvinnu',
