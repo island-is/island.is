@@ -7,11 +7,12 @@ import {
 } from '@island.is/application/core'
 import { ReasonForApplicationOptions } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import {
-  getApplicationAnswers,
-  getMunicipalityOptions,
-  getSchoolsByMunicipalityOptions,
-} from '../../../lib/newPrimarySchoolUtils'
+  FriggOptionsQuery,
+  FriggOptionsQueryVariables,
+  FriggSchoolsByMunicipalityQuery,
+} from '../types/schema'
 
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
@@ -33,7 +34,17 @@ export const newSchoolSubSection = buildSubSection({
           loadingError: coreErrorMessages.failedDataProvider,
           dataTestId: 'new-school-municipality',
           loadOptions: async ({ apolloClient }) => {
-            return getMunicipalityOptions(apolloClient)
+            const { data } =
+              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
+                query: friggSchoolsByMunicipalityQuery,
+              })
+
+            return (
+              data?.friggSchoolsByMunicipality?.map((municipality) => ({
+                value: municipality.name,
+                label: municipality.name,
+              })) ?? []
+            )
           },
         }),
         buildAsyncSelectField({
@@ -43,7 +54,29 @@ export const newSchoolSubSection = buildSubSection({
           loadingError: coreErrorMessages.failedDataProvider,
           dataTestId: 'new-school-school',
           loadOptions: async ({ application, apolloClient }) => {
-            return getSchoolsByMunicipalityOptions(apolloClient, application)
+            const { schoolMunicipality } = getApplicationAnswers(
+              application.answers,
+            )
+            const { childGradeLevel } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            const { data } =
+              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
+                query: friggSchoolsByMunicipalityQuery,
+              })
+
+            return (
+              data?.friggSchoolsByMunicipality
+                ?.find(({ name }) => name === schoolMunicipality)
+                ?.children?.filter((school) =>
+                  school.gradeLevels?.includes(childGradeLevel),
+                )
+                ?.map((school) => ({
+                  value: school.name,
+                  label: school.name,
+                })) ?? []
+            )
           },
           condition: (answers) => {
             const { schoolMunicipality, newSchoolHiddenInput } =

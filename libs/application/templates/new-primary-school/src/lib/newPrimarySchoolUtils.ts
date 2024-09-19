@@ -22,11 +22,7 @@ import {
   SelectOption,
   SiblingsRow,
 } from '../types'
-import {
-  FriggOptionsQuery,
-  FriggOptionsQueryVariables,
-  FriggSchoolsByMunicipalityQuery,
-} from '../types/schema'
+import { FriggOptionsQuery, FriggOptionsQueryVariables } from '../types/schema'
 import {
   ReasonForApplicationOptions,
   SiblingRelationOptions,
@@ -121,7 +117,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'schools.newSchool.hiddenInput',
   ) as string
-
 
   return {
     childNationalId,
@@ -348,44 +343,6 @@ export const getSelectedOptionLabel = (
   }
 
   return options.find((option) => option.value === key)?.label
-}
-
-export const getMunicipalityOptions = async (
-  apolloClient: ApolloClient<object>,
-) => {
-  const { data } = await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-    query: friggSchoolsByMunicipalityQuery,
-  })
-
-  return (
-    data?.friggSchoolsByMunicipality?.map((municipality) => ({
-      value: municipality.name,
-      label: municipality.name,
-    })) ?? []
-  )
-}
-
-export const getSchoolsByMunicipalityOptions = async (
-  apolloClient: ApolloClient<object>,
-  application: Application,
-) => {
-  const { schoolMunicipality } = getApplicationAnswers(application.answers)
-  const { childGradeLevel } = getApplicationExternalData(
-    application.externalData,
-  )
-
-  const { data } = await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-    query: friggSchoolsByMunicipalityQuery,
-  })
-
-  return (
-    data?.friggSchoolsByMunicipality
-      ?.find(({ name }) => name === schoolMunicipality)
-      ?.children?.filter((school) =>
-        school.gradeLevels?.includes(childGradeLevel),
-      )
-      ?.map((school) => ({ value: school.name, label: school.name })) ?? []
-  )
 }
 
 export const formatGrade = (gradeLevel: string, lang: Locale) => {
