@@ -25,6 +25,9 @@ const InputName: FC<InputProps> = (props) => {
     // A custom placeholder. Id not set, a default placeholder is used.
     placeholder,
 
+    // If true, validation is skipped and a required indicator is set next to label.
+    required,
+
     onChange,
   } = props
 
@@ -38,7 +41,9 @@ const InputName: FC<InputProps> = (props) => {
   ) => {
     const inputValidator = validate([[evt.target.value, ['empty']]])
 
-    if (inputValidator.isValid) {
+    if (!required) {
+      onBlur(inputValue)
+    } else if (inputValidator.isValid) {
       setErrorMessage(undefined)
       onBlur(inputValue)
     } else {
@@ -49,8 +54,12 @@ const InputName: FC<InputProps> = (props) => {
   const handleChange = (
     evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    if (evt.target.value) {
+      setErrorMessage(undefined)
+    }
+
     setInputValue(evt.target.value)
-    onChange && onChange(inputValue)
+    onChange && onChange(evt.target.value)
   }
 
   useEffect(() => {
@@ -58,6 +67,7 @@ const InputName: FC<InputProps> = (props) => {
       return
     }
 
+    setErrorMessage(undefined)
     setInputValue(value)
   }, [value])
 
@@ -73,6 +83,7 @@ const InputName: FC<InputProps> = (props) => {
       onChange={handleChange}
       onBlur={handleBlur}
       value={inputValue}
+      required={required}
     />
   )
 }
