@@ -5,12 +5,11 @@ import { useParams } from 'react-router-dom'
 import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
 import Signees from './Signees'
-import { PaperSignees } from './PaperSignees'
 
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const { id } = useParams()
+  const { id } = useParams() as { id: string }
   const { listInfo, loadingList } = useGetSignatureList(id || '')
 
   return (
@@ -54,7 +53,6 @@ const ViewList = () => {
             </Box>
           </Box>
           <Signees />
-          <PaperSignees />
         </Stack>
       )}
     </Box>

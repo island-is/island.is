@@ -271,6 +271,11 @@ export const m = defineMessages({
     defaultMessage: 'Skrá meðmæli af blaði',
     description: '',
   },
+  paperSigneesClearButton: {
+    id: 'sp.signatureCollection:paperSigneesClearButton',
+    defaultMessage: 'Hreinsa',
+    description: '',
+  },
   paperNumber: {
     id: 'sp.signatureCollection:paperNumber',
     defaultMessage: 'Blaðsíðunúmer',
@@ -283,7 +288,7 @@ export const m = defineMessages({
   },
   signPaperSigneeButton: {
     id: 'sp.signatureCollection:signPaperSigneeButton',
-    defaultMessage: 'Skrá meðmæla á lista',
+    defaultMessage: 'Skrá meðmæli á lista',
     description: '',
   },
   paperSigneeTypoTitle: {
@@ -294,6 +299,26 @@ export const m = defineMessages({
   paperSigneeTypoMessage: {
     id: 'sp.signatureCollection:paperSigneeTypoMessage',
     defaultMessage: 'Vinsamlegast athugið kennitöluna og reynið aftur',
+    description: '',
+  },
+  paperSigneeCantSignTitle: {
+    id: 'sp.signatureCollection:paperSigneeCantSignTitle',
+    defaultMessage: 'Ekki er hægt að skrá meðmæli',
+    description: '',
+  },
+  paperSigneeCantSignMessage: {
+    id: 'sp.signatureCollection:paperSigneeCantSign',
+    defaultMessage: 'Kennitala uppfyllir ekki skilyrði fyrir að skrá meðmæli',
+    description: '',
+  },
+  paperSigneeSuccess: {
+    id: 'sp.signatureCollection:paperSigneeSuccess',
+    defaultMessage: 'Meðmæli skráð',
+    description: '',
+  },
+  paperSigneeError: {
+    id: 'sp.signatureCollection:paperSigneeError',
+    defaultMessage: 'Ekki tókst að skrá meðmæli',
     description: '',
   },
 

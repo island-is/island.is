@@ -45,6 +45,7 @@ export const GetListSignatures = gql`
       isDigital
       valid
       created
+      pageNumber
     }
   }
 `
@@ -154,5 +155,11 @@ export const GetCurrentCollection = gql`
         max
       }
     }
+  }
+`
+
+export const GetCanSign = gql`
+  query Query($input: SignatureCollectionCanSignInput!) {
+    signatureCollectionCanSign(input: $input)
   }
 `

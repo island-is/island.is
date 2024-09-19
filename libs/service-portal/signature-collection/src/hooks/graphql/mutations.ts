@@ -28,3 +28,14 @@ export const addConstituency = gql`
     }
   }
 `
+
+export const uploadPaperSignature = gql`
+  mutation SignatureCollectionUploadPaperSignature(
+    $input: SignatureCollectionUploadPaperSignatureInput!
+  ) {
+    signatureCollectionUploadPaperSignature(input: $input) {
+      success
+      reasons
+    }
+  }
+`
