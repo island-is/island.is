@@ -159,7 +159,7 @@ export const EditSignature = () => {
               draftId={draft.id}
               value={
                 draft.signatureText.value ||
-                getDefaultSignatureText(formatDateFns)
+                getDefaultSignatureText(formatDateFns, draft.ministry.value)
               }
               onChange={(text) => updateState('signatureText', text)}
               required={!!draft.signatureText.required}

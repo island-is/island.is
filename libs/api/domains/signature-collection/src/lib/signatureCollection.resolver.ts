@@ -30,6 +30,8 @@ import { CurrentSignee } from './decorators/signee.decorator'
 import { ApiScope } from '@island.is/auth/scopes'
 import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
+import { SignatureCollectionCanSignInput } from './dto/canSign.input'
+import { SignatureCollectionAddListsInput } from './dto/addLists.input'
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/signature-collection' })
@@ -126,6 +128,19 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
+  @Query(() => Boolean)
+  @AccessRequirement(OwnerAccess.AllowActor)
+  @Audit()
+  async signatureCollectionCanSign(
+    @Args('input') input: SignatureCollectionCanSignInput,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    return (
+      await this.signatureCollectionService.signee(user, input.signeeNationalId)
+    ).canSign
+  }
+
+  @Scopes(ApiScope.signatureCollection)
   @AccessRequirement(UserAccess.RestrictActor)
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
@@ -145,5 +160,16 @@ export class SignatureCollectionResolver {
     @Args('input') input: SignatureCollectionCancelListsInput,
   ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.cancel(input, user)
+  }
+
+  @Scopes(ApiScope.signatureCollection)
+  @AccessRequirement(OwnerAccess.RestrictActor)
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAddAreas(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionAddListsInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.add(input, user)
   }
 }

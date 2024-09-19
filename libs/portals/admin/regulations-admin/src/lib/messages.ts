@@ -350,6 +350,10 @@ export const editorMsgs = defineMessages({
     defaultMessage:
       'Vakin er athygli á því að kerfið útbýr tillögu að breytingareglugerð sem starfsmaður þarf að rýna gaumgæfilega áður en haldið er áfram. Ekki er öruggt að inngangsliðir og efnisákvæði færist réttilega inn í breytingareglugerðina.',
   },
+  selectMinistry: {
+    id: 'ap.regulations-admin:select-ministry',
+    defaultMessage: 'Veldu ráðuneyti',
+  },
 })
 
 export const impactMsgs = defineMessages({
