@@ -627,6 +627,11 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Frádreginn skattur af öðrum greiðslum',
     description: 'Niðurstöðuskjár, Frádreginn skattur af öðrum greiðslum',
   },
+  'REIKNH.FRADRSKATTURTR': {
+    id: 'web.pensionCalculator:REIKNH.FRADRSKATTURTR',
+    defaultMessage: 'Frádreginn skattur af greiðslum TR',
+    description: 'Niðurstöðuskjár, Frádreginn skattur af greiðslum TR',
+  },
   'REIKNH.FRADRSKATTURTR1': {
     id: 'web.pensionCalculator:REIKNH.FRADRSKATTURTR1',
     defaultMessage: 'Frádreginn skattur TR (1. og 2. skattþrep)',
