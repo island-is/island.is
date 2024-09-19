@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Type } from 'class-transformer'
-import { IsArray, IsString } from 'class-validator'
+import { IsArray, IsEnum, IsString } from 'class-validator'
+
+import { AuthDelegationType } from '@island.is/shared/types'
 
 export class DelegationVerification {
   @IsString()
@@ -8,7 +9,7 @@ export class DelegationVerification {
   fromNationalId!: string
 
   @IsArray()
-  @Type(() => String)
-  @ApiProperty({ type: [String] })
-  delegationTypes!: string[]
+  @IsEnum(AuthDelegationType, { each: true })
+  @ApiProperty({ type: [AuthDelegationType] })
+  delegationTypes!: AuthDelegationType[]
 }

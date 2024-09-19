@@ -128,7 +128,7 @@ export class DelegationsController {
       await this.delegationsIncomingService.verifyDelegationAtProvider(
         user,
         request.fromNationalId,
-        request.delegationTypes as AuthDelegationType[],
+        request.delegationTypes,
       )
 
     return { verified }
