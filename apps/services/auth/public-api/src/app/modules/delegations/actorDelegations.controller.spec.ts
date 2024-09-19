@@ -339,6 +339,7 @@ describe('ActorDelegationsController', () => {
           fromNationalId:
             mockDelegations.incomingWithOtherDomain.fromNationalId,
           toNationalId: user.nationalId,
+          domainName: null,
           scopes: [],
         })
 
