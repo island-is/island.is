@@ -66,7 +66,7 @@ export const AccessCard = ({
   variant = 'outgoing',
   direction = 'outgoing',
   canModify = true,
-  href
+  href,
 }: AccessCardProps) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()

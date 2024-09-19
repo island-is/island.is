@@ -1,9 +1,7 @@
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { Box, Stack } from '@island.is/island-ui/core'
 import { AccessCard } from '@island.is/portals/shared-modules/delegations'
-import {
-  useDeleteCustomDelegationAdminMutation,
-} from '../screens/DelegationAdminDetails/DelegationAdmin.generated'
+import { useDeleteCustomDelegationAdminMutation } from '../screens/DelegationAdminDetails/DelegationAdmin.generated'
 import { useRevalidator } from 'react-router-dom'
 
 interface DelegationProps {
@@ -12,7 +10,8 @@ interface DelegationProps {
 }
 
 const DelegationList = ({ delegationsList, direction }: DelegationProps) => {
-  const [deleteCustomDelegationAdminMutation] = useDeleteCustomDelegationAdminMutation();
+  const [deleteCustomDelegationAdminMutation] =
+    useDeleteCustomDelegationAdminMutation()
   const { revalidate } = useRevalidator()
 
   return (
@@ -28,10 +27,10 @@ const DelegationList = ({ delegationsList, direction }: DelegationProps) => {
               const { data } = await deleteCustomDelegationAdminMutation({
                 variables: {
                   id: delegation.id as string,
-                }
-              });
+                },
+              })
               if (data) {
-                revalidate();
+                revalidate()
               }
             }}
           />
