@@ -83,14 +83,6 @@ export class PaymentService extends BaseTemplateApiService {
 
       const slug = getSlugFromType(application.typeId)
 
-      console.log(
-        'clientLocationOrigin',
-        getConfigValue(this.configService, 'clientLocationOrigin'),
-      )
-
-      console.log('configservice')
-      console.dir(this.configService)
-
       const clientLocationOrigin = getConfigValue(
         this.configService,
         'clientLocationOrigin',
