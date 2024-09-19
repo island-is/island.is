@@ -32,6 +32,7 @@ import { strings } from './IndictmentCaseFilesList.strings'
 interface Props {
   workingCase: Case
   displayHeading?: boolean
+  connectedCaseParentId?: string
 }
 
 interface RenderFilesProps {
@@ -39,17 +40,15 @@ interface RenderFilesProps {
   onOpenFile: (fileId: string) => void
 }
 
-export const RenderFiles: FC<Props & RenderFilesProps> = ({
+export const RenderFiles: FC<RenderFilesProps> = ({
   caseFiles,
   onOpenFile,
-  workingCase,
 }) => {
   return (
     <>
       {caseFiles.map((file) => (
         <Box key={file.id} marginBottom={2}>
           <PdfButton
-            caseId={workingCase.id}
             title={file.name}
             renderAs="row"
             disabled={!file.key}
@@ -64,11 +63,13 @@ export const RenderFiles: FC<Props & RenderFilesProps> = ({
 const IndictmentCaseFilesList: FC<Props> = ({
   workingCase,
   displayHeading = true,
+  connectedCaseParentId,
 }) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
+    connectedCaseParentId,
   })
 
   const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
@@ -115,11 +116,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.indictmentSection)}
           </Text>
-          <RenderFiles
-            caseFiles={indictments}
-            onOpenFile={onOpen}
-            workingCase={workingCase}
-          />
+          <RenderFiles caseFiles={indictments} onOpenFile={onOpen} />
         </Box>
       )}
       {showTrafficViolationCaseFiles && (
@@ -142,11 +139,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.criminalRecordSection)}
           </Text>
-          <RenderFiles
-            caseFiles={criminalRecords}
-            onOpenFile={onOpen}
-            workingCase={workingCase}
-          />
+          <RenderFiles caseFiles={criminalRecords} onOpenFile={onOpen} />
         </Box>
       )}
       {criminalRecordUpdate &&
@@ -158,11 +151,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(caseFiles.criminalRecordUpdateSection)}
             </Text>
-            <RenderFiles
-              caseFiles={criminalRecordUpdate}
-              onOpenFile={onOpen}
-              workingCase={workingCase}
-            />
+            <RenderFiles caseFiles={criminalRecordUpdate} onOpenFile={onOpen} />
           </Box>
         )}
       {costBreakdowns && costBreakdowns.length > 0 && (
@@ -170,11 +159,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.costBreakdownSection)}
           </Text>
-          <RenderFiles
-            caseFiles={costBreakdowns}
-            onOpenFile={onOpen}
-            workingCase={workingCase}
-          />
+          <RenderFiles caseFiles={costBreakdowns} onOpenFile={onOpen} />
         </Box>
       )}
       {others && others.length > 0 && (
@@ -182,11 +167,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.otherDocumentsSection)}
           </Text>
-          <RenderFiles
-            caseFiles={others}
-            onOpenFile={onOpen}
-            workingCase={workingCase}
-          />
+          <RenderFiles caseFiles={others} onOpenFile={onOpen} />
         </Box>
       )}
       <Box marginBottom={5}>
@@ -213,20 +194,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
             {formatMessage(strings.rulingAndCourtRecordsTitle)}
           </Text>
           {courtRecords && courtRecords.length > 0 && (
-            <RenderFiles
-              caseFiles={courtRecords}
-              onOpenFile={onOpen}
-              workingCase={workingCase}
-            />
+            <RenderFiles caseFiles={courtRecords} onOpenFile={onOpen} />
           )}
           {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
             rulings &&
             rulings.length > 0 && (
-              <RenderFiles
-                caseFiles={rulings}
-                onOpenFile={onOpen}
-                workingCase={workingCase}
-              />
+              <RenderFiles caseFiles={rulings} onOpenFile={onOpen} />
             )}
         </Box>
       ) : null}
@@ -239,11 +212,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(caseFiles.civilClaimSection)}
             </Text>
-            <RenderFiles
-              caseFiles={civilClaims}
-              onOpenFile={onOpen}
-              workingCase={workingCase}
-            />
+            <RenderFiles caseFiles={civilClaims} onOpenFile={onOpen} />
           </Box>
         )}
       {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (

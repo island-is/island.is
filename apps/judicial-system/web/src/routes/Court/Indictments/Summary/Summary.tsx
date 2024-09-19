@@ -130,7 +130,10 @@ const Summary: FC = () => {
           workingCase.mergedCases.length > 0 &&
           workingCase.mergedCases.map((mergedCase) => (
             <Box marginBottom={5} key={mergedCase.id}>
-              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
+              <ConnectedCaseFilesAccordionItem
+                connectedCaseParentId={workingCase.id}
+                connectedCase={mergedCase}
+              />
             </Box>
           ))}
         <SectionHeading title={formatMessage(strings.caseFiles)} />

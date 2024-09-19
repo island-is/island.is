@@ -158,7 +158,10 @@ const Completed: FC = () => {
             {hasMergeCases &&
               workingCase.mergedCases?.map((mergedCase) => (
                 <Box key={mergedCase.id}>
-                  <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
+                  <ConnectedCaseFilesAccordionItem
+                    connectedCaseParentId={workingCase.id}
+                    connectedCase={mergedCase}
+                  />
                 </Box>
               ))}
           </Box>

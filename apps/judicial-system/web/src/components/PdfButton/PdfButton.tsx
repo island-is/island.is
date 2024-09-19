@@ -7,7 +7,7 @@ import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PdfButton.css'
 
 interface Props {
-  caseId: string
+  caseId?: string
   title?: string | null
   pdfType?:
     | 'ruling'
