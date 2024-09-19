@@ -23,14 +23,12 @@ export const MedicineLicense = () => {
 
   return (
     <>
-      <Box>
-        <IntroHeader
-          title={formatMessage(messages.medicineLicenseTitle)}
-          intro={formatMessage(messages.medicineLicenseIntroText)}
-          serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-          serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-        />
-      </Box>
+      <IntroHeader
+        title={formatMessage(messages.medicineLicenseTitle)}
+        intro={formatMessage(messages.medicineLicenseIntroText)}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      />
       {error ? (
         <Problem error={error} noBorder={false} />
       ) : loading ? (

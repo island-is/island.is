@@ -7,10 +7,13 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { GoBack, UserInfoLine } from '@island.is/service-portal/core'
+import {
+  IntroHeader,
+  SJUKRATRYGGINGAR_SLUG,
+  UserInfoLine,
+} from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
@@ -37,16 +40,18 @@ export const MedicineCertificate = () => {
   const hasError = error && !loading && !data
 
   return (
-    <Box paddingTop={4}>
+    <Box>
+      <IntroHeader
+        title={formatMessage(messages.medicineLicenseTitle)}
+        intro={formatMessage(messages.medicineLicenseIntroText)}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      />
       <Stack dividers="blueberry200" space={1}>
         {isLoading && <SkeletonLoader height={35} space={2} repeat={4} />}
         {hasError && <Problem error={error} noBorder={false} />}
         {certificate && !isLoading && (
           <>
-            <GoBack
-              path={HealthPaths.HealthMedicineCertificates}
-              label={formatMessage(messages.medicineLicenseIntroTitle)}
-            />
             {certificate.drugName && (
               <UserInfoLine
                 paddingY={3}

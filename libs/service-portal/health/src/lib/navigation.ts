@@ -126,6 +126,14 @@ export const healthNavigation: PortalNavigationItem = {
         {
           name: messages.medicineLicenseTitle,
           path: HealthPaths.HealthMedicineCertificates,
+          children: [
+            {
+              name: messages.medicineLicenseTitle,
+              path: HealthPaths.HealthMedicineCertificate,
+              navHide: true,
+              breadcrumbHide: true,
+            },
+          ],
         },
       ],
     },
