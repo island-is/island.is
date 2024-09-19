@@ -18,7 +18,7 @@ import { useCase } from '../../utils/hooks'
 import RequiredStar from '../RequiredStar/RequiredStar'
 import { UserContext } from '../UserProvider/UserProvider'
 import { BlueBox, SectionHeading } from '..'
-import DefenderInput from './DefenderInput'
+import InputAdvocate from '../Inputs/InputAdvocate'
 import DefenderNotFound from './DefenderNotFound'
 import { defenderInfo } from './DefenderInfo.strings'
 
@@ -94,7 +94,7 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
       />
       {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
-        <DefenderInput onDefenderNotFound={setDefenderNotFound} />
+        <InputAdvocate onDefenderNotFound={setDefenderNotFound} />
         {isProsecutionUser(user) && (
           <>
             <Text variant="h4" marginTop={2} marginBottom={2}>

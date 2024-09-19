@@ -32,12 +32,12 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { defenderInput as m } from './DefenderInput.strings'
+import { defenderInput as m } from '../DefenderInfo/DefenderInput.strings'
 
 interface Props {
   onDefenderNotFound: (defenderNotFound: boolean) => void
   disabled?: boolean | null
-  defendantId?: string | null
+  clientId?: string | null
 }
 
 interface PropertyValidation {
@@ -50,10 +50,10 @@ interface PropertyValidation {
 
 type InputType = 'defenderEmail' | 'defenderPhoneNumber'
 
-const DefenderInput: FC<Props> = ({
+const InputAdvocate: FC<Props> = ({
   onDefenderNotFound,
   disabled,
-  defendantId,
+  clientId,
 }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -66,7 +66,7 @@ const DefenderInput: FC<Props> = ({
     useState<string>('')
 
   const defendantInDefendants = workingCase.defendants?.find(
-    (defendant) => defendant.id === defendantId,
+    (defendant) => defendant.id === clientId,
   )
 
   const options = useMemo(
@@ -105,9 +105,9 @@ const DefenderInput: FC<Props> = ({
         }
       }
 
-      if (defendantId) {
+      if (clientId) {
         setAndSendDefendantToServer(
-          { ...updatedLawyer, caseId: workingCase.id, defendantId },
+          { ...updatedLawyer, caseId: workingCase.id, defendantId: clientId },
           setWorkingCase,
         )
       } else {
@@ -119,7 +119,7 @@ const DefenderInput: FC<Props> = ({
       }
     },
     [
-      defendantId,
+      clientId,
       onDefenderNotFound,
       lawyers,
       setAndSendDefendantToServer,
@@ -165,7 +165,7 @@ const DefenderInput: FC<Props> = ({
 
   const handleLawyerPropertyChange = useCallback(
     (
-      defendantId: string,
+      clientId: string,
       property: InputType,
       value: string,
       setWorkingCase: Dispatch<SetStateAction<Case>>,
@@ -186,7 +186,7 @@ const DefenderInput: FC<Props> = ({
       )
 
       updateDefendantState(
-        { ...update, caseId: workingCase.id, defendantId },
+        { ...update, caseId: workingCase.id, defendantId: clientId },
         setWorkingCase,
       )
     },
@@ -194,12 +194,7 @@ const DefenderInput: FC<Props> = ({
   )
 
   const handleLawyerPropertyBlur = useCallback(
-    (
-      caseId: string,
-      defendantId: string,
-      property: InputType,
-      value: string,
-    ) => {
+    (caseId: string, clientId: string, property: InputType, value: string) => {
       const propertyValidation = propertyValidations(property)
       const update = formatUpdate(property, value)
 
@@ -209,7 +204,11 @@ const DefenderInput: FC<Props> = ({
         propertyValidation.errorMessageHandler.setErrorMessage,
       )
 
-      updateDefendant({ ...update, caseId: workingCase.id, defendantId })
+      updateDefendant({
+        ...update,
+        caseId: workingCase.id,
+        defendantId: clientId,
+      })
     },
     [formatUpdate, propertyValidations, updateDefendant, workingCase.id],
   )
@@ -218,7 +217,7 @@ const DefenderInput: FC<Props> = ({
     <>
       <Box marginBottom={2}>
         <Select
-          name={`defenderName${defendantId ? `-${defendantId}` : ''}`}
+          name={`defenderName${clientId ? `-${clientId}` : ''}`}
           icon="search"
           options={options}
           label={formatMessage(m.nameLabel, {
@@ -226,7 +225,7 @@ const DefenderInput: FC<Props> = ({
           })}
           placeholder={formatMessage(m.namePlaceholder)}
           value={
-            defendantId
+            clientId
               ? defendantInDefendants?.defenderName === '' ||
                 !defendantInDefendants?.defenderName
                 ? null
@@ -249,7 +248,7 @@ const DefenderInput: FC<Props> = ({
       </Box>
       <Box marginBottom={2}>
         <Input
-          data-testid={`defenderEmail${defendantId ? `-${defendantId}` : ''}`}
+          data-testid={`defenderEmail${clientId ? `-${clientId}` : ''}`}
           name="defenderEmail"
           autoComplete="off"
           label={formatMessage(m.emailLabel, {
@@ -257,7 +256,7 @@ const DefenderInput: FC<Props> = ({
           })}
           placeholder={formatMessage(m.emailPlaceholder)}
           value={
-            defendantId
+            clientId
               ? defendantInDefendants?.defenderEmail || ''
               : workingCase.defenderEmail || ''
           }
@@ -265,9 +264,9 @@ const DefenderInput: FC<Props> = ({
           hasError={emailErrorMessage !== ''}
           disabled={Boolean(disabled)}
           onChange={(event) => {
-            if (defendantId) {
+            if (clientId) {
               handleLawyerPropertyChange(
-                defendantId,
+                clientId,
                 'defenderEmail',
                 event.target.value,
                 setWorkingCase,
@@ -284,10 +283,10 @@ const DefenderInput: FC<Props> = ({
             }
           }}
           onBlur={(event) => {
-            if (defendantId) {
+            if (clientId) {
               handleLawyerPropertyBlur(
                 workingCase.id,
-                defendantId,
+                clientId,
                 'defenderEmail',
                 event.target.value,
               )
@@ -308,15 +307,15 @@ const DefenderInput: FC<Props> = ({
         mask="999-9999"
         maskPlaceholder={null}
         value={
-          defendantId
+          clientId
             ? defendantInDefendants?.defenderPhoneNumber || ''
             : workingCase.defenderPhoneNumber || ''
         }
         disabled={Boolean(disabled)}
         onChange={(event) => {
-          if (defendantId) {
+          if (clientId) {
             handleLawyerPropertyChange(
-              defendantId,
+              clientId,
               'defenderPhoneNumber',
               event.target.value,
               setWorkingCase,
@@ -333,10 +332,10 @@ const DefenderInput: FC<Props> = ({
           }
         }}
         onBlur={(event) => {
-          if (defendantId) {
+          if (clientId) {
             handleLawyerPropertyBlur(
               workingCase.id,
-              defendantId,
+              clientId,
               'defenderPhoneNumber',
               event.target.value,
             )
@@ -353,9 +352,7 @@ const DefenderInput: FC<Props> = ({
         }}
       >
         <Input
-          data-testid={`defenderPhoneNumber${
-            defendantId ? `-${defendantId}` : ''
-          }`}
+          data-testid={`defenderPhoneNumber${clientId ? `-${clientId}` : ''}`}
           name="defenderPhoneNumber"
           autoComplete="off"
           label={formatMessage(m.phoneNumberLabel, {
@@ -370,4 +367,4 @@ const DefenderInput: FC<Props> = ({
   )
 }
 
-export default DefenderInput
+export default InputAdvocate
