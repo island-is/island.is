@@ -195,7 +195,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
 
     if (options.syncType === 'initialize') {
       const { elasticIndex = getElasticsearchIndex(options.locale) } = options
-
+      cmsSyncOptions = { ...options, syncType: 'full' }
       if (folderHash === undefined) {
         folderHash = await this.getModelsFolderHash()
         const lastFolderHash = await this.getLastFolderHash(elasticIndex)
@@ -204,7 +204,6 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
             'Folder and index folder hash do not match, running full sync',
             { locale: options.locale },
           )
-          cmsSyncOptions = { ...options, syncType: 'full' }
         } else {
           logger.info('Folder and index folder hash match, skipping sync', {
             locale: options.locale,
