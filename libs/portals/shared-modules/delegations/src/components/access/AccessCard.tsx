@@ -20,7 +20,6 @@ import { m as coreMessages } from '@island.is/portals/core'
 import uniqBy from 'lodash/uniqBy'
 import sortBy from 'lodash/sortBy'
 import { m } from '../../lib/messages'
-import { DelegationPaths } from '../../lib/paths'
 import { AuthApiScope, AuthDelegationType } from '@island.is/api/schema'
 import {
   AuthCustomDelegation,
@@ -57,6 +56,7 @@ interface AccessCardProps {
   direction?: 'incoming' | 'outgoing'
 
   canModify?: boolean
+  href?: string
 }
 
 export const AccessCard = ({
@@ -66,6 +66,7 @@ export const AccessCard = ({
   variant = 'outgoing',
   direction = 'outgoing',
   canModify = true,
+  href
 }: AccessCardProps) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
@@ -74,7 +75,6 @@ export const AccessCard = ({
 
   const hasTags = tags.length > 0
   const isOutgoing = variant === 'outgoing'
-  const href = `${DelegationPaths.Delegations}/${delegation.id}`
 
   const isExpired = useMemo(() => {
     if (delegation.validTo) {
@@ -282,7 +282,7 @@ export const AccessCard = ({
                   >
                     {formatMessage(coreMessages.view)}
                   </Button>
-                ) : !isExpired ? (
+                ) : !isExpired && href ? (
                   <Button
                     icon="pencil"
                     iconType="outline"
@@ -292,7 +292,7 @@ export const AccessCard = ({
                   >
                     {formatMessage(coreMessages.buttonEdit)}
                   </Button>
-                ) : (
+                ) : href ? (
                   <Button
                     icon="reload"
                     iconType="outline"
@@ -302,7 +302,7 @@ export const AccessCard = ({
                   >
                     {formatMessage(coreMessages.buttonRenew)}
                   </Button>
-                )}
+                ) : null}
               </Box>
             </Box>
           )}

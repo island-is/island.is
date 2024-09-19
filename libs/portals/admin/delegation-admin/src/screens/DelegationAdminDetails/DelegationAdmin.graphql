@@ -56,3 +56,7 @@ query getCustomDelegationsAdmin($nationalId: String!) {
     }
   }
 }
+
+mutation deleteCustomDelegationAdmin($id: String!) {
+  authDeleteAdminDelegation(id: $id)
+}
