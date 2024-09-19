@@ -61,7 +61,12 @@
             "in": "path",
             "schema": { "type": "string" }
           },
-          { "name": "action", "required": true, "in": "path", "schema": { "type": "string" } }
+          {
+            "name": "action",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
         ],
         "responses": {
           "200": {

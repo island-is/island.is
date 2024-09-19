@@ -1,7 +1,7 @@
 import {
   FieldBaseProps,
   FieldComponents,
-  FieldTypes
+  FieldTypes,
 } from '@island.is/application/types'
 import {
   formatPhoneNumber,
