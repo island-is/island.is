@@ -160,6 +160,7 @@ describe('Limited Access View Case File Guard', () => {
           CaseFileCategory.CASE_FILE,
           CaseFileCategory.PROSECUTOR_CASE_FILE,
           CaseFileCategory.DEFENDANT_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIM,
         ]
 
         describe.each(allowedCaseFileCategories)(

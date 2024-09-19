@@ -32,7 +32,18 @@ export class OfficialJournalOfIcelandApplicationClientService {
   async getComments(
     params: GetCommentsRequest,
   ): Promise<GetCaseCommentsResponse> {
-    return await this.ojoiApplicationApi.getComments(params)
+    try {
+      return await this.ojoiApplicationApi.getComments(params)
+    } catch (error) {
+      console.log(error)
+      this.logger.error('Failed to get comments', {
+        error,
+        applicationId: params.id,
+        category: LOG_CATEGORY,
+      })
+
+      throw error
+    }
   }
 
   async postComment(params: PostCommentRequest): Promise<boolean> {
@@ -40,7 +51,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
       await this.ojoiApplicationApi.postComment(params)
       return true
     } catch (error) {
-      this.logger.error('Failed to post comment', {
+      this.logger.error(`Failed to post comment: ${error.message}`, {
         error,
         applicationId: params.id,
         category: LOG_CATEGORY,
