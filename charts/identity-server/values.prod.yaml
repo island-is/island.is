@@ -661,8 +661,6 @@ services-auth-personal-representative-public:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    SYSLUMENN_HOST: 'https://api.syslumenn.is'
-    SYSLUMENN_TIMEOUT: '10000'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -719,8 +717,6 @@ services-auth-personal-representative-public:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
-    SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
-    SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
