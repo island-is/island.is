@@ -17,6 +17,7 @@ import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import InputName from '@island.is/judicial-system-web/src/components/Inputs/InputName'
+import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
 import {
   Defendant,
   Gender,
@@ -169,7 +170,7 @@ const DefendantInfo: FC<Props> = (props) => {
                 caseId: workingCase.id,
                 defendantId: defendant.id,
                 noNationalId: !defendant.noNationalId,
-                nationalId: undefined,
+                nationalId: null,
               },
               setWorkingCase,
             )
@@ -178,7 +179,7 @@ const DefendantInfo: FC<Props> = (props) => {
               caseId: workingCase.id,
               defendantId: defendant.id,
               noNationalId: !defendant.noNationalId,
-              nationalId: undefined,
+              nationalId: null,
             })
           }}
           filled
@@ -187,65 +188,29 @@ const DefendantInfo: FC<Props> = (props) => {
         />
       </Box>
       <Box marginBottom={2}>
-        <InputMask
-          // eslint-disable-next-line local-rules/disallow-kennitalas
-          mask={defendant.noNationalId ? '99.99.9999' : '999999-9999'}
-          maskPlaceholder={null}
+        <InputNationalId
+          isDateOfBirth={Boolean(defendant.noNationalId)}
           value={defendant.nationalId ?? ''}
-          onChange={(evt) => {
-            setNationalIdNotFound(false)
-            removeErrorMessageIfValid(
-              defendant.noNationalId
-                ? ['date-of-birth']
-                : ['empty', 'national-id'],
-              evt.target.value,
-              nationalIdErrorMessage,
-              setNationalIdErrorMessage,
-            )
-
+          onBlur={(value) =>
+            onChange({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              nationalId: value,
+            })
+          }
+          onChange={(value) =>
             updateDefendantState(
               {
                 caseId: workingCase.id,
                 defendantId: defendant.id,
-                nationalId: evt.target.value,
+                nationalId: value,
               },
               setWorkingCase,
             )
-          }}
-          onBlur={async (evt) => {
-            validateAndSetErrorMessage(
-              defendant.noNationalId
-                ? ['date-of-birth']
-                : ['empty', 'national-id'],
-              evt.target.value,
-              setNationalIdErrorMessage,
-            )
-
-            onChange({
-              caseId: workingCase.id,
-              defendantId: defendant.id,
-              nationalId: evt.target.value,
-            })
-          }}
+          }
           disabled={nationalIdImmutable}
-        >
-          <Input
-            data-testid="nationalId"
-            name="accusedNationalId"
-            autoComplete="off"
-            label={formatMessage(
-              defendant.noNationalId ? core.dateOfBirth : core.nationalId,
-            )}
-            placeholder={formatMessage(
-              defendant.noNationalId
-                ? core.dateOfBirthPlaceholder
-                : core.nationalId,
-            )}
-            errorMessage={nationalIdErrorMessage}
-            hasError={nationalIdErrorMessage !== ''}
-            required={!defendant.noNationalId}
-          />
-        </InputMask>
+          required={!defendant.noNationalId}
+        />
         {defendant.nationalId?.length === 11 && nationalIdNotFound && (
           <Text color="red600" variant="eyebrow" marginTop={1}>
             {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
