@@ -322,7 +322,7 @@ export class EndorsementListController {
   ): Promise<EndorsementList> {
     return await this.endorsementListService.create({
       ...endorsementList,
-      owner: user.nationalId,
+      ownerNationalId: user.nationalId,
     })
   }
 

@@ -78,12 +78,12 @@ export class EndorsementList extends Model {
   })
   tags!: EndorsementTag[]
 
-  // @ApiProperty()
-  // @Column({
-  //   type: DataType.STRING,
-  //   allowNull: false,
-  // })
-  // owner!: string
+  @ApiProperty()
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  owner!: string
 
   @ApiProperty()
   @Column({
