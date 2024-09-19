@@ -1,11 +1,16 @@
 import {
-  buildExternalDataProvider,
+  buildCustomField,
+  buildDescriptionField,
   buildForm,
+  buildMultiField,
+  buildRadioField,
   buildSection,
+  buildSubSection,
 } from '@island.is/application/core'
 
 import { Form, FormModes } from '@island.is/application/types'
 import * as m from '../lib/messages'
+import { Routes } from '../lib/RentalAgreementTemplate'
 
 export const Prerequisites: Form = buildForm({
   id: 'RentalAgreementApplication',
@@ -13,22 +18,77 @@ export const Prerequisites: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: 'externalData',
-      title: m.section.information,
+      id: 'prerequisites',
+      title: m.prerequisites.intro.sectionTitle,
       children: [
-        buildExternalDataProvider({
-          title: 'm.externalData.general.pageTitle',
-          id: 'approveExternalData',
-          subTitle: 'm.externalData.general.subTitle',
-          description: 'm.externalData.general.description',
-          checkboxLabel: 'm.externalData.general.checkboxLabel',
-          dataProviders: [],
+        buildSubSection({
+          id: Routes.GENERALINFORMATION,
+          title: m.prerequisites.intro.subSectionTitle,
+          children: [
+            buildMultiField({
+              id: Routes.GENERALINFORMATION,
+              title: m.prerequisites.intro.pageTitle,
+              children: [
+                buildDescriptionField({
+                  id: 'prerequisiteIntroTitle',
+                  title: 'contractDescriptionTitle',
+                  description: 'contractDescriptionDescription',
+                }),
+                buildCustomField({
+                  id: 'generalInformation',
+                  title: 'contractDescriptionTitle',
+                  component: 'GeneralInfoForm',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'choseRole',
+          title: 'Hlutverk',
+          children: [
+            buildRadioField({
+              id: 'applicationType.option',
+              title: 'radioFieldTitle',
+              description: 'radioFieldDescription',
+              options: [
+                {
+                  value: 'yes',
+                  label: 'Yes',
+                },
+                {
+                  value: 'no',
+                  label: 'No',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
     buildSection({
-      id: 'conditions',
-      title: m.section.information,
+      id: 'applicantData',
+      title: 'Mínar upplýsingar',
+      children: [],
+    }),
+    buildSection({
+      id: 'accommodationData',
+      title: 'Húsnæðið',
+      children: [],
+    }),
+    buildSection({
+      id: 'periodAndAmount',
+      title: 'Tímabil og fjárhæð',
+      children: [],
+    }),
+    buildSection({
+      id: 'summary',
+      title: 'Samantekt',
+      children: [],
+    }),
+    buildSection({
+      id: 'signing',
+      title: 'Undirritun',
       children: [],
     }),
   ],

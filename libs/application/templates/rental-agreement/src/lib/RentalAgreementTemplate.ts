@@ -19,6 +19,38 @@ export enum ApplicationStates {
   MUNCIPALITYNOTREGISTERED = 'muncipalityNotRegistered',
 }
 
+export enum Routes {
+  GENERALINFORMATION = 'generalInformation',
+  ACCECPTCONTRACT = 'acceptContract',
+  INRELATIONSHIP = 'inRelationship',
+  UNKNOWNRELATIONSHIP = 'unknownRelationship',
+  HOMECIRCUMSTANCES = 'homeCircumstances',
+  STUDENT = 'student',
+  EMPLOYMENT = 'employment',
+  INCOME = 'income',
+  PERSONALTAXCREDIT = 'personalTaxCredit',
+  BANKINFO = 'bankInfo',
+  CONTACTINFO = 'contactInfo',
+  TAXRETURNFILES = 'taxReturnFiles',
+  INCOMEFILES = 'incomeFiles',
+  SUMMARY = 'summary',
+  CONFIRMATION = 'confirmation',
+  CHILDRENSCHOOLINFO = 'childrenSchoolInfo',
+  CHILDRENFILES = 'childrenFiles',
+  SPOUSEACCECPTCONTRACT = 'spouseAcceptContract',
+  SPOUSEINCOME = 'spouseIncome',
+  SPOUSEINCOMEFILES = 'spouseIncomeFiles',
+  SPOUSETAXRETURNFILES = 'spouseTaxReturnFiles',
+  SPOUSECONTACTINFO = 'spouseContactInfo',
+  SPOUSESUMMARY = 'spouseSummary',
+  SPOUSECONFIRMATION = 'spouseConfirmation',
+  MISSINGFILES = 'missingFiles',
+  APPLICANTSTATUS = 'applicantStatus',
+  MISSINGFILESCONFIRMATION = 'missingFilesConfirmation',
+  SPOUSESTATUS = 'spouseStatus',
+  SERVICECENTER = 'serviceCenter',
+}
+
 export enum Roles {
   APPLICANT = 'applicant',
   SPOUSE = 'spouse',
@@ -32,7 +64,8 @@ const RentalAgreementTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.RENTAL_AGREEMENT,
-  name: 'Rental Agreement',
+  name: 'Leigusamningur',
+  institution: 'Húsnæðis- og mannvirkjastofnun',
   dataSchema,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUISITES,
