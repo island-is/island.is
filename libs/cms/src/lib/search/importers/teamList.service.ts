@@ -1,9 +1,10 @@
-import { MappedData } from '@island.is/content-search-indexer/types'
-import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+import { logger } from '@island.is/logging'
+import type { MappedData } from '@island.is/content-search-indexer/types'
 import type { ITeamList } from '../../generated/contentfulTypes'
-import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapTeamList } from '../../models/teamList.model'
+import type { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
@@ -19,6 +20,8 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
     }
 
     const teamMembers: MappedData[] = []
+
+    const dateUpdated = new Date().getTime().toString()
 
     for (const teamListEntry of entries) {
       const teamList = mapTeamList(teamListEntry)
@@ -54,6 +57,22 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
       }
     }
 
-    return teamMembers
+    return teamMembers.concat(
+      // Append the team list document tagged with the ids of its members so we can later look up what list a member belongs to
+      entries.map((teamListEntry) => {
+        const childEntryIds = extractChildEntryIds(teamListEntry)
+        return {
+          _id: teamListEntry.sys.id,
+          title: teamListEntry.fields.title ?? '',
+          type: 'webTeamList',
+          dateCreated: teamListEntry.sys.createdAt,
+          dateUpdated: dateUpdated,
+          tags: childEntryIds.map((id) => ({
+            key: id,
+            type: 'hasChildEntryWithId',
+          })),
+        }
+      }),
+    )
   }
 }

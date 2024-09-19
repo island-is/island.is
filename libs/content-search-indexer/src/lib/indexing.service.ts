@@ -64,42 +64,51 @@ export class IndexingService {
       let initialFetch = true
       let postSyncOptions: SyncResponse['postSyncOptions']
 
-      while (initialFetch || nextPageToken) {
-        const importerResponse = await importer.doSync({
-          ...options,
-          nextPageToken,
-        })
+      const isIncrementalUpdate = syncType === 'fromLast'
 
-        // importers can skip import by returning null
-        if (!importerResponse) {
-          didImportAll = false
-          return true
-        }
+      const [nextSyncToken] = await Promise.all([
+        importer.getNextSyncToken?.(syncType),
+        (async () => {
+          while (initialFetch || nextPageToken) {
+            const importerResponse = await importer.doSync({
+              ...options,
+              nextPageToken,
+            })
 
-        const isIncrementalUpdate = syncType === 'fromLast'
+            // importers can skip import by returning null
+            if (!importerResponse) {
+              didImportAll = false
+              return true
+            }
 
-        const {
-          nextPageToken: importerResponseNextPageToken,
-          postSyncOptions: importerResponsePostSyncOptions,
-          ...elasticData
-        } = importerResponse
-        await this.elasticService.bulk(
-          elasticIndex,
-          elasticData,
-          isIncrementalUpdate,
-        )
+            const {
+              nextPageToken: importerResponseNextPageToken,
+              postSyncOptions: importerResponsePostSyncOptions,
+              ...elasticData
+            } = importerResponse
+            await this.elasticService.bulk(
+              elasticIndex,
+              elasticData,
+              isIncrementalUpdate,
+            )
 
-        // Invalidate cached pages in the background if we are performing an incremental update
-        if (isIncrementalUpdate) {
-          this.cacheInvalidationService.invalidateCache(
-            elasticData.add,
-            options.locale,
-          )
-        }
+            // Invalidate cached pages in the background if we are performing an incremental update
+            if (isIncrementalUpdate) {
+              this.cacheInvalidationService.invalidateCache(
+                elasticData.add,
+                options.locale,
+              )
+            }
 
-        nextPageToken = importerResponseNextPageToken
-        postSyncOptions = importerResponsePostSyncOptions
-        initialFetch = false
+            nextPageToken = importerResponseNextPageToken
+            postSyncOptions = importerResponsePostSyncOptions
+            initialFetch = false
+          }
+        })(),
+      ])
+
+      if (nextSyncToken) {
+        postSyncOptions = { ...postSyncOptions, token: nextSyncToken }
       }
 
       if (importer.postSync) {

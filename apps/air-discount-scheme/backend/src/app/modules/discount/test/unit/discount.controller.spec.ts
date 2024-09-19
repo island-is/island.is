@@ -17,6 +17,7 @@ import {
   NationalRegistryClientModule,
 } from '@island.is/clients/national-registry-v2'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { AirlineUser } from '../../../user/user.model'
 import { createTestUser } from '../../../../../../test/createTestUser'
@@ -71,6 +72,12 @@ describe('DiscountController', () => {
           provide: NationalRegistryService,
           useClass: jest.fn(() => ({
             getUser: () => ({}),
+          })),
+        },
+        {
+          provide: LOGGER_PROVIDER,
+          useClass: jest.fn(() => ({
+            error: () => ({}),
           })),
         },
         {
