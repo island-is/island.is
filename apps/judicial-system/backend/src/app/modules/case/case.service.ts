@@ -20,7 +20,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   Message,
   MessageService,
@@ -1355,42 +1355,46 @@ export class CaseService {
     caseId: string,
     defendant: Defendant,
   ): Promise<Case[]> {
-    let whereClause: WhereOptions = {
-      type: CaseType.INDICTMENT,
-      id: { [Op.ne]: caseId },
-      state: [CaseState.RECEIVED],
-    }
+    const whereClause: WhereOptions = [
+      { isArchived: false },
+      { type: CaseType.INDICTMENT },
+      { id: { [Op.ne]: caseId } },
+      { state: CaseState.RECEIVED },
+    ]
 
     if (defendant.noNationalId) {
-      whereClause = {
-        ...whereClause,
-        [Op.and]: [
-          { '$defendants.national_id$': defendant.nationalId },
-          { '$defendants.name$': defendant.name },
-        ],
-      }
+      whereClause.push({
+        id: {
+          [Op.in]: Sequelize.literal(`
+            (SELECT case_id
+              FROM defendant
+              WHERE national_id = '${defendant.nationalId}'
+              AND name = '${defendant.name}'
+          )`),
+        },
+      })
     } else {
-      const formattedNationalId = formatNationalId(defendant.nationalId)
-      whereClause = {
-        ...whereClause,
-        [Op.or]: [
-          { '$defendants.national_id$': defendant.nationalId },
-          { '$defendants.national_id$': formattedNationalId },
-        ],
-      }
+      const [normalizedNationalId, formattedNationalId] =
+        normalizeAndFormatNationalId(defendant.nationalId)
+
+      whereClause.push({
+        id: {
+          [Op.in]: Sequelize.literal(`
+            (SELECT case_id
+              FROM defendant
+              WHERE national_id in ('${normalizedNationalId}', '${formattedNationalId}')
+          )`),
+        },
+      })
     }
 
     return this.caseModel.findAll({
       include: [
+        { model: Institution, as: 'court' },
         { model: Defendant, as: 'defendants' },
-        {
-          model: DateLog,
-          as: 'dateLogs',
-        },
       ],
-      order: [[{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC']],
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
-      where: whereClause,
+      where: { [Op.and]: whereClause },
     })
   }
 
