@@ -55,7 +55,7 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { Defendant, DefendantService } from '../defendant'
+import { CivilClaimant, Defendant, DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
@@ -272,6 +272,7 @@ export const include: Includeable[] = [
   },
   { model: Case, as: 'childCase' },
   { model: Defendant, as: 'defendants' },
+  { model: CivilClaimant, as: 'civilClaimants' },
   { model: IndictmentCount, as: 'indictmentCounts' },
   {
     model: CaseFile,
@@ -339,6 +340,7 @@ export const order: OrderItem[] = [
   [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
   [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
   [{ model: Notification, as: 'notifications' }, 'created', 'DESC'],
+  [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
 ]
 
 export const caseListInclude: Includeable[] = [

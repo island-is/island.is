@@ -7,6 +7,7 @@ import { createTestUser } from '../../../../../../test/createTestUser'
 import { getModelToken } from '@nestjs/sequelize'
 import { ExplicitCode } from '../../discount.model'
 import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
   NationalRegistryService,
@@ -58,6 +59,12 @@ describe('DiscountService', () => {
           useClass: jest.fn(() => ({
             update: () => ({}),
             create: () => ({}),
+          })),
+        },
+        {
+          provide: LOGGER_PROVIDER,
+          useClass: jest.fn(() => ({
+            error: () => ({}),
           })),
         },
         {
