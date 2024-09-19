@@ -21,7 +21,7 @@ export const MachineAnswersSchema = z.object({
     fateOfMachine: z.string().optional(),
   }),
 
-  approveExternalData: z.boolean(),
+  approveExternalData: z.boolean().refine((v) => v),
 })
 
 export type MachineAnswers = z.TypeOf<typeof MachineAnswersSchema>

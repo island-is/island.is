@@ -81,7 +81,7 @@ export const useCourtArrangements = (
 
     setCourtDate((previous) => ({
       ...previous,
-      date: date ? formatDateForServer(date) : null,
+      date: date ? date.toISOString() : null,
     }))
   }
 
