@@ -9,7 +9,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import { SignatureCollectionPaths } from '../../../lib/paths'
-import CancelCollection from './CancelCollection'
 import { useGetListsForOwner } from '../../../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../../../skeletons'
@@ -18,6 +17,7 @@ import { useAuth } from '@island.is/auth/react'
 import copyToClipboard from 'copy-to-clipboard'
 import { SignatureCollection } from '@island.is/api/schema'
 import SignedList from '../../shared/SignedList'
+import CancelCollection from '../../shared/CancelCollection'
 
 const OwnerView = ({
   currentCollection,
@@ -144,9 +144,7 @@ const OwnerView = ({
           </Box>
           {listsForOwner?.length > 0 &&
             !user?.profile.actor &&
-            currentCollection.isActive && (
-              <CancelCollection collectionId={currentCollection?.id} />
-            )}
+            currentCollection.isActive && <CancelCollection />}
         </Box>
       ) : (
         <Skeleton />

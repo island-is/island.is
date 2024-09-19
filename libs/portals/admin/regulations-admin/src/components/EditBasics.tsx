@@ -188,16 +188,30 @@ export const EditBasics = () => {
                 <AlertMessage
                   type="default"
                   title="Uppfæra texta"
-                  message={updateText}
-                  action={
-                    <Button
-                      icon="reload"
-                      onClick={() => setIsModalVisible(true)}
-                      variant="text"
-                      size="small"
+                  message={
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      flexDirection="row"
                     >
-                      Uppfæra
-                    </Button>
+                      <Text variant="small">{updateText}</Text>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        height="full"
+                        flexShrink={0}
+                      >
+                        <Button
+                          icon="reload"
+                          onClick={() => setIsModalVisible(true)}
+                          variant="text"
+                          size="small"
+                        >
+                          Uppfæra
+                        </Button>
+                      </Box>
+                    </Box>
                   }
                 />
               </Box>
