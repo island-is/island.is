@@ -263,7 +263,6 @@ export class DelegationScopeService {
   private async findDistrictCommissionersRegistryScopesTo(
     toNationalId: string,
     fromNationalId: string,
-    delegationTypes: string[],
   ): Promise<string[]> {
     // if no valid delegation exists, return empty array
     let delegationFound = false
@@ -281,16 +280,12 @@ export class DelegationScopeService {
     }
     if (!delegationFound) {
       if (!isError) {
-        Promise.all(
-          delegationTypes.map((dt) =>
-            this.delegationsIndexService.removeDelegationRecord({
-              fromNationalId,
-              toNationalId,
-              type: dt as AuthDelegationType,
-              provider: AuthDelegationProvider.DistrictCommissionersRegistry,
-            }),
-          ),
-        )
+        this.delegationsIndexService.removeDelegationRecord({
+          fromNationalId,
+          toNationalId,
+          type: AuthDelegationType.LegalRepresentative,
+          provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+        })
       }
       return []
     }
@@ -306,7 +301,7 @@ export class DelegationScopeService {
           model: DelegationTypeModel,
           required: true,
           where: {
-            id: delegationTypes,
+            id: AuthDelegationType.LegalRepresentative,
             provider: AuthDelegationProvider.DistrictCommissionersRegistry,
           },
         },
@@ -383,7 +378,6 @@ export class DelegationScopeService {
         this.findDistrictCommissionersRegistryScopesTo(
           user.nationalId,
           fromNationalId,
-          delegationTypes,
         ),
       )
 
