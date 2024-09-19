@@ -94,12 +94,6 @@ export class Delegation extends Model<
   })
   referenceId?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  referenceId?: string
-
   get validTo(): Date | null | undefined {
     // 1. Find a value with null as validTo. Null means that delegation scope set valid not to a specific time period
     const withNullValue = this.delegationScopes?.find((x) => x.validTo === null)
