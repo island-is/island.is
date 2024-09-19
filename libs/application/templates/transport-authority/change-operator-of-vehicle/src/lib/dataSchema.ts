@@ -31,11 +31,7 @@ const RemovableUserSchemaBase = z
     ({ nationalId, wasRemoved }) => {
       return (
         wasRemoved === 'true' ||
-        (nationalId &&
-          nationalId.length > 0 &&
-          kennitala.isValid(nationalId) &&
-          (kennitala.isCompany(nationalId) ||
-            kennitala.info(nationalId).age >= 18))
+        (nationalId && nationalId.length > 0 && kennitala.isValid(nationalId))
       )
     },
     { path: ['nationalId'] },
