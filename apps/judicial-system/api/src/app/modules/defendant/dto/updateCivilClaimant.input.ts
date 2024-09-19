@@ -34,6 +34,11 @@ export class UpdateCivilClaimantInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly spokespersonIsLawyer?: boolean
+
+  @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly spokespersonNationalId?: string
 
@@ -56,9 +61,4 @@ export class UpdateCivilClaimantInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly caseFilesSharedWithSpokesperson?: boolean
-
-  @Allow()
-  @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  readonly isLawyer?: boolean
 }

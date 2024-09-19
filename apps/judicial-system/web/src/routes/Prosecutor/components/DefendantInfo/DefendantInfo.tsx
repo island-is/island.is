@@ -15,6 +15,7 @@ import {
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import InputName from '@island.is/judicial-system-web/src/components/Inputs/InputName'
 import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
 import {
   Defendant,
@@ -69,9 +70,6 @@ const DefendantInfo: FC<Props> = (props) => {
 
   const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
-  const [accusedNameErrorMessage, setAccusedNameErrorMessage] =
-    useState<string>('')
-
   const [accusedAddressErrorMessage, setAccusedAddressErrorMessage] =
     useState<string>('')
 
@@ -95,7 +93,6 @@ const DefendantInfo: FC<Props> = (props) => {
     }
 
     if (personData && personData.items && personData.items.length > 0) {
-      setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
       setIsGenderAndCitizenshipDisabled(false)
 
@@ -118,7 +115,6 @@ const DefendantInfo: FC<Props> = (props) => {
     }
 
     if (businessData && businessData.items && businessData.items.length > 0) {
-      setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
       setIsGenderAndCitizenshipDisabled(true)
 
@@ -215,44 +211,24 @@ const DefendantInfo: FC<Props> = (props) => {
         )}
       </Box>
       <Box marginBottom={2}>
-        <Input
-          data-testid="accusedName"
-          name="accusedName"
-          autoComplete="off"
-          label={formatMessage(core.fullName)}
-          placeholder={formatMessage(core.fullName)}
+        <InputName
           value={defendant.name ?? ''}
-          errorMessage={accusedNameErrorMessage}
-          hasError={accusedNameErrorMessage !== ''}
-          onChange={(evt) => {
-            removeErrorMessageIfValid(
-              ['empty'],
-              evt.target.value,
-              accusedNameErrorMessage,
-              setAccusedNameErrorMessage,
-            )
-
+          onBlur={(value) =>
+            onChange({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              name: value.trim(),
+            })
+          }
+          onChange={(value) => {
             updateDefendantState(
               {
                 caseId: workingCase.id,
                 defendantId: defendant.id,
-                name: evt.target.value,
+                name: value,
               },
               setWorkingCase,
             )
-          }}
-          onBlur={(evt) => {
-            validateAndSetErrorMessage(
-              ['empty'],
-              evt.target.value,
-              setAccusedNameErrorMessage,
-            )
-
-            onChange({
-              caseId: workingCase.id,
-              defendantId: defendant.id,
-              name: evt.target.value.trim(),
-            })
           }}
           required
         />

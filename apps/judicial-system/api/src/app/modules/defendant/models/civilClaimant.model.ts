@@ -6,7 +6,7 @@ export class CivilClaimant {
   readonly id!: string
 
   @Field(() => String, { nullable: true })
-  readonly created!: string
+  readonly created?: string
 
   @Field(() => String, { nullable: true })
   readonly modified?: string
@@ -26,6 +26,9 @@ export class CivilClaimant {
   @Field(() => Boolean, { nullable: true })
   readonly hasSpokesperson?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  readonly spokespersonIsLawyer?: boolean
+
   @Field(() => String, { nullable: true })
   readonly spokespersonNationalId?: string
 
@@ -40,7 +43,4 @@ export class CivilClaimant {
 
   @Field(() => Boolean, { nullable: true })
   readonly caseFilesSharedWithSpokesperson?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  readonly isLawyer?: boolean
 }

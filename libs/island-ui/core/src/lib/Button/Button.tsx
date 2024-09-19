@@ -55,10 +55,7 @@ export const Button = forwardRef<
           {
             [styles.truncate]: truncate,
             [styles.size[size]]:
-              variant !== 'utility' &&
-              !circle &&
-              !(variant === 'text' && size === 'small') &&
-              variant !== 'text',
+              variant !== 'utility' && !circle && variant !== 'text',
             [styles.fluid]: fluid,
             [styles.nowrap]: nowrap,
             [styles.size.utility]: variant === 'utility',

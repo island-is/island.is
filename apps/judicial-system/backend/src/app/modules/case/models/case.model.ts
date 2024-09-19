@@ -38,8 +38,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Defendant } from '../../defendant'
-import { CivilClaimant } from '../../defendant/models/civilClaimant.model'
+import { CivilClaimant, Defendant } from '../../defendant'
 import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'

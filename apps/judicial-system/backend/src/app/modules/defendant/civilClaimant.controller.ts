@@ -21,7 +21,6 @@ import {
 
 import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
-import { CreateCivilClaimantDto } from './dto/createCivilClaimant.dto'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CivilClaimant } from './models/civilClaimant.model'
 import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
@@ -46,11 +45,10 @@ export class CivilClaimantController {
   async create(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
-    @Body() createCivilClaimantDto: CreateCivilClaimantDto,
   ): Promise<CivilClaimant> {
     this.logger.debug(`Creating a new civil claimant for case ${caseId}`)
 
-    return this.civilClaimantService.create(theCase, createCivilClaimantDto)
+    return this.civilClaimantService.create(theCase)
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard)

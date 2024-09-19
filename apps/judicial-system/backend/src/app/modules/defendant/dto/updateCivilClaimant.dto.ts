@@ -24,6 +24,11 @@ export class UpdateCivilClaimantDto {
   readonly hasSpokesperson?: boolean
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly spokespersonIsLawyer?: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly spokespersonNationalId?: string
@@ -47,9 +52,4 @@ export class UpdateCivilClaimantDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly caseFilesSharedWithSpokesperson?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly isLawyer?: boolean
 }

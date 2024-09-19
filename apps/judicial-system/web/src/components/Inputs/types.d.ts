@@ -3,6 +3,7 @@ export interface InputProps {
   onChange?: (value: string) => void
   disabled?: boolean
   value?: string
+  required?: boolean
 
   // Use `label` to overwrite the default label
   label?: string

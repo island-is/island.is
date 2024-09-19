@@ -5,7 +5,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { Case } from '../case'
-import { CreateCivilClaimantDto } from './dto/createCivilClaimant.dto'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CivilClaimant } from './models/civilClaimant.model'
 
@@ -17,12 +16,8 @@ export class CivilClaimantService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async create(
-    theCase: Case,
-    claimantToCreate: CreateCivilClaimantDto,
-  ): Promise<CivilClaimant> {
+  async create(theCase: Case): Promise<CivilClaimant> {
     return this.civilClaimantModel.create({
-      ...claimantToCreate,
       caseId: theCase.id,
     })
   }
@@ -65,9 +60,8 @@ export class CivilClaimantService {
       this.logger.error(
         `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting civil claimant ${civilClaimantId} of case ${caseId}`,
       )
-      if (numberOfAffectedRows < 1) {
-        throw new Error(`Could not delete civil claimant ${civilClaimantId}`)
-      }
+    } else if (numberOfAffectedRows < 1) {
+      throw new Error(`Could not delete civil claimant ${civilClaimantId}`)
     }
 
     return true
