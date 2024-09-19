@@ -11,7 +11,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { forwardRef } from '@nestjs/common'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import type {
