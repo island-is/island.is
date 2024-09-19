@@ -16,6 +16,8 @@ import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionAddListsInput } from './dto/addLists.input'
 import { SignatureCollectionOwnerInput } from './dto/owner.input'
+import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
+import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -128,6 +130,16 @@ export class SignatureCollectionService {
     return await this.signatureCollectionClientService.createParliamentaryLists(
       { ...input, areas: input.areaIds?.map((area) => ({ areaId: area })) },
       user,
+    )
+  }
+
+  async candidacyUploadPaperSignature(
+    input: SignatureCollectionUploadPaperSignatureInput,
+    user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.candidacyUploadPaperSignature(
+      user,
+      input,
     )
   }
 }

@@ -268,6 +268,34 @@ export class SignatureCollectionClientService {
     return mapSignature(newSignature)
   }
 
+  async candidacyUploadPaperSignature(
+    auth: User,
+    {
+      listId,
+      nationalId,
+      pageNumber,
+    }: { listId: string; nationalId: string; pageNumber: number },
+  ): Promise<Success> {
+    const newSignature = await this.getApiWithAuth(
+      this.listsApi,
+      auth,
+    ).medmaelalistarIDMedmaeliBulkPost({
+      medmaeliBulkRequestDTO: {
+        medmaeli: [
+          {
+            kennitala: nationalId,
+            bladsida: pageNumber,
+          },
+        ],
+      },
+      iD: parseInt(listId),
+    })
+
+    return {
+      success: !!newSignature.medmaeliKenn?.includes(nationalId),
+    }
+  }
+
   async unsignList(listId: string, auth: User): Promise<Success> {
     const { signatures } = await this.getSignee(auth)
     const activeSignature = signatures?.find((signature) => signature.valid)
