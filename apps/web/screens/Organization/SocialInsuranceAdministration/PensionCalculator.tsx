@@ -159,6 +159,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       ? 12 * 7
       : 12 * 2
 
+  const maxMonthPensionDelay =
+    typeof birthYear === 'number' && birthYear < 1952
+      ? maxMonthPensionDelayIfBorn1951OrEarlier
+      : maxMonthPensionDelayIfBornAfter1951
+
   const basePensionTypeOptions = useMemo<Option<BasePensionType>[]>(() => {
     const options = [
       {
@@ -390,11 +395,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
         months: -maxMonthPensionHurry,
       }).getFullYear()
 
-      const maxMonthPensionDelay =
-        typeof birthYear === 'number' && birthYear < 1952
-          ? maxMonthPensionDelayIfBorn1951OrEarlier
-          : maxMonthPensionDelayIfBornAfter1951
-
       const maxYear = add(defaultPensionDate, {
         months: maxMonthPensionDelay,
       }).getFullYear()
@@ -408,13 +408,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     }
 
     return options
-  }, [
-    birthYear,
-    defaultPensionDate,
-    maxMonthPensionDelayIfBorn1951OrEarlier,
-    maxMonthPensionDelayIfBornAfter1951,
-    maxMonthPensionHurry,
-  ])
+  }, [defaultPensionDate, maxMonthPensionDelay, maxMonthPensionHurry])
 
   const title = `${formatMessage(translationStrings.mainTitle)} ${
     dateOfCalculationsOptions.find((o) => o.value === dateOfCalculations)
@@ -426,19 +420,14 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       return monthOptions
     }
 
-    if (startYear === startYearOptions[0].value) {
+    if (startYear === startYearOptions[0]?.value) {
       const minMonth = add(defaultPensionDate, {
         months: -maxMonthPensionHurry,
       }).getMonth()
       return monthOptions.filter((month) => month.value >= minMonth)
     }
 
-    if (startYear === startYearOptions[startYearOptions.length - 1].value) {
-      const maxMonthPensionDelay =
-        typeof birthYear === 'number' && birthYear < 1952
-          ? maxMonthPensionDelayIfBorn1951OrEarlier
-          : maxMonthPensionDelayIfBornAfter1951
-
+    if (startYear === startYearOptions[startYearOptions.length - 1]?.value) {
       const maxMonth = add(defaultPensionDate, {
         months: maxMonthPensionDelay,
       }).getMonth()
@@ -448,10 +437,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
 
     return monthOptions
   }, [
-    birthYear,
     defaultPensionDate,
-    maxMonthPensionDelayIfBorn1951OrEarlier,
-    maxMonthPensionDelayIfBornAfter1951,
+    maxMonthPensionDelay,
     maxMonthPensionHurry,
     monthOptions,
     startYear,
@@ -712,7 +699,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                         }
                                         if (
                                           option.value ===
-                                          startYearOptions[0].value
+                                          startYearOptions[0]?.value
                                         ) {
                                           const minMonth = add(
                                             defaultPensionDate,
@@ -735,14 +722,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                           option.value ===
                                           startYearOptions[
                                             startYearOptions.length - 1
-                                          ].value
+                                          ]?.value
                                         ) {
-                                          const maxMonthPensionDelay =
-                                            typeof birthYear === 'number' &&
-                                            birthYear < 1952
-                                              ? maxMonthPensionDelayIfBorn1951OrEarlier
-                                              : maxMonthPensionDelayIfBornAfter1951
-
                                           const maxMonth = add(
                                             defaultPensionDate,
                                             {
