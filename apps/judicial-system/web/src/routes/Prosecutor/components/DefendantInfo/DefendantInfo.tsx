@@ -135,8 +135,6 @@ const DefendantInfo: FC<Props> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessData, businessError])
 
-  // console.log(defendant.address, defendant.name)
-
   return (
     <BlueBox>
       {onDelete && (
