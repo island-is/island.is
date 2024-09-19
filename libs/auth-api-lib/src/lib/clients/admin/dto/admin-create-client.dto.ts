@@ -7,6 +7,8 @@ import {
   IsString,
 } from 'class-validator'
 
+import { AuthDelegationType } from '@island.is/shared/types'
+
 import { ClientType } from '../../../types'
 import { AdminPatchClientDto } from './admin-patch-client.dto'
 
@@ -50,9 +52,10 @@ export class AdminCreateClientDto extends OmitType(AdminPatchClientDto, [
 
   @IsArray()
   @IsOptional()
+  @IsEnum(AuthDelegationType, { each: true })
   @ApiProperty({
     example: ['Custom'],
     type: [String],
   })
-  supportedDelegationTypes?: string[]
+  supportedDelegationTypes?: AuthDelegationType[]
 }

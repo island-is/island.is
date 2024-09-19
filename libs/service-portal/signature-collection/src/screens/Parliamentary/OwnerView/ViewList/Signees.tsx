@@ -54,7 +54,7 @@ const Signees = () => {
   }, [searchTerm])
 
   return (
-    <Box marginTop={[0, 5]}>
+    <Box>
       <Text variant="h4">{formatMessage(m.signeesHeader)}</Text>
       <Box
         display={['block', 'flex']}
@@ -80,7 +80,6 @@ const Signees = () => {
                   <T.HeadData>{formatMessage(m.signeeDate)}</T.HeadData>
                   <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
                   <T.HeadData>{formatMessage(m.signeeNationalId)}</T.HeadData>
-                  <T.HeadData>{formatMessage(m.signeeAddress)}</T.HeadData>
                 </T.Row>
               </T.Head>
               <T.Body>
@@ -97,9 +96,6 @@ const Signees = () => {
                         </T.Data>
                         <T.Data text={{ variant: 'medium' }}>
                           {formatNationalId(s.signee.nationalId)}
-                        </T.Data>
-                        <T.Data text={{ variant: 'medium' }}>
-                          {s.signee.address}
                         </T.Data>
                       </T.Row>
                     )

@@ -16,7 +16,6 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { DEFAULT_DOMAIN } from '../../types'
 import { DelegationDTO } from '../dto/delegation.dto'
 import { DelegationScope } from './delegation-scope.model'
 import { Domain } from '../../resources/models/domain.model'
@@ -29,6 +28,12 @@ import {
 @Table({
   tableName: 'delegation',
   timestamps: false,
+  indexes: [
+    {
+      unique: true,
+      fields: ['domain_name', 'from_national_id', 'to_national_id'],
+    },
+  ],
 })
 export class Delegation extends Model<
   InferAttributes<Delegation>,
@@ -74,11 +79,10 @@ export class Delegation extends Model<
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    defaultValue: DEFAULT_DOMAIN,
+    allowNull: true,
   })
   @ForeignKey(() => Domain)
-  domainName!: CreationOptional<string>
+  domainName?: string
 
   /**
    * ReferenceId is a field for storing a reference to the zendesk ticket id

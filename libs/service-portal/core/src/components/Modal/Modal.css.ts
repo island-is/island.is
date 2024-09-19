@@ -27,13 +27,3 @@ export const closeButton = style({
   right: theme.spacing['1'],
   zIndex: 2,
 })
-
-export const image = style({
-  display: 'none',
-  ...themeUtils.responsiveStyle({
-    lg: {
-      marginRight: `-${theme.spacing['2']}px`,
-      display: 'initial',
-    },
-  }),
-})

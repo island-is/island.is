@@ -8,6 +8,12 @@ export const Skeleton = () => {
   )
 }
 
+export const OwnerParliamentarySkeleton = () => {
+  return (
+    <SkeletonLoader height={150} borderRadius="large" repeat={6} space={2} />
+  )
+}
+
 export const SkeletonTable = () => {
   return (
     <Box marginTop={5}>
