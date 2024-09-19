@@ -930,7 +930,7 @@ export const m = defineMessages({
       'Allow users to sign into this application using delegation types managed by the District Commissioner.',
   },
   clientDelegationTypeLegalRepresentativeName: {
-    id: 'ap.ids-admin:client-delegation-type-legal-guardian-name',
+    id: 'ap.ids-admin:client-delegation-type-legal-representative-name',
     defaultMessage: 'Legal representative',
   },
   apiScopeDelegationProviderDelegationdbName: {
