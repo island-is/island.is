@@ -159,6 +159,26 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     return hashResult.hash.toString()
   }
 
+  async getNextSyncToken(syncType: SyncOptions['syncType']) {
+    if (syncType === 'fromLast') {
+      return ''
+    }
+
+    let nextPageToken: string | undefined = ''
+    let nextSyncToken = ''
+
+    // We don't get the next sync token until we've reached the last page
+    while (!nextSyncToken) {
+      const response = await this.contentfulService.getSyncData({
+        initial: true,
+        nextPageToken,
+      })
+      nextPageToken = response.nextPageToken
+      nextSyncToken = response.nextSyncToken
+    }
+    return nextSyncToken
+  }
+
   // this is triggered from ES indexer service
   async doSync(
     options: SyncOptions,
