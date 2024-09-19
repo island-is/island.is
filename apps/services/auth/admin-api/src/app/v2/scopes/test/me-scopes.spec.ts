@@ -114,6 +114,7 @@ const createTestData = async ({
   await Promise.all(
     [
       [AuthDelegationType.Custom, AuthDelegationProvider.Custom],
+      [AuthDelegationType.GeneralMandate, AuthDelegationProvider.Custom],
       [
         AuthDelegationType.ProcurationHolder,
         AuthDelegationProvider.CompanyRegistry,
@@ -839,6 +840,8 @@ describe('MeScopesController', () => {
           allowExplicitDelegationGrant: true,
           supportedDelegationTypes: [
             AuthDelegationType.Custom,
+            // Add general mandate since it is directly connected to Custom delegation type
+            AuthDelegationType.GeneralMandate,
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.ProcurationHolder,
             AuthDelegationType.PersonalRepresentative,
@@ -864,6 +867,8 @@ describe('MeScopesController', () => {
           allowExplicitDelegationGrant: true,
           supportedDelegationTypes: [
             AuthDelegationType.Custom,
+            // Add general mandate since it is directly connected to Custom delegation type
+            AuthDelegationType.GeneralMandate,
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.ProcurationHolder,
             AuthDelegationType.PersonalRepresentative,
@@ -1019,6 +1024,8 @@ describe('MeScopesController', () => {
           allowExplicitDelegationGrant: true,
           supportedDelegationTypes: [
             AuthDelegationType.Custom,
+            // Add general mandate since it is directly connected to Custom delegation type
+            AuthDelegationType.GeneralMandate,
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.ProcurationHolder,
             AuthDelegationType.PersonalRepresentative,
@@ -1103,6 +1110,8 @@ describe('MeScopesController', () => {
           allowExplicitDelegationGrant: true,
           supportedDelegationTypes: [
             AuthDelegationType.Custom,
+            // Add general mandate since it is directly connected to Custom delegation type
+            AuthDelegationType.GeneralMandate,
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.ProcurationHolder,
           ],
