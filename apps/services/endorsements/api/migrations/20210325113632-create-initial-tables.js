@@ -29,7 +29,11 @@ module.exports = {
         type: Sequelize.JSONB,
         defaultValue: '[]',
       },
-      owner: {
+      ownerNationalId: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      ownerName: {
         type: Sequelize.STRING,
         allowNull: false,
       },
