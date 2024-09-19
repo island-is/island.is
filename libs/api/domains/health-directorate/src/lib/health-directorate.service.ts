@@ -24,8 +24,6 @@ export class HealthDirectorateService {
     const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
     const data: OrganDonorDto | null =
       await this.organDonationApi.getOrganDonation(auth, lang)
-    // Fetch organ list to get all names in correct language to sort out the names of the organs the user has limitations for
-
     if (data === null) {
       return null
     }
