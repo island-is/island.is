@@ -19,6 +19,9 @@ import { AuthCustomDelegation } from '@island.is/api/schema'
 import { DelegationsEmptyState } from '@island.is/portals/shared-modules/delegations'
 import { useAuth } from '@island.is/auth/react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { replaceParams } from '@island.is/react-spa/shared'
+import { maskNationalId } from '@island.is/shared/pii'
+import { maskString } from '@island.is/shared/utils'
 
 const DelegationAdminScreen = () => {
   const { formatMessage } = useLocale()
@@ -44,15 +47,14 @@ const DelegationAdminScreen = () => {
           <GridColumn span={['12/12', '4/12']}>
             <Button
               icon="arrowForward"
-              onClick={() => {
+              onClick={async () => {
+                const maskedNationalId = (await maskString(delegationAdmin.nationalId, userInfo?.profile.nationalId || '')) ?? ''
                 const query = new URLSearchParams({
-                  fromNationalId: delegationAdmin.nationalId,
+                  fromNationalId: maskedNationalId,
                 })
-
-                navigate(
-                  `${
+                navigate(`${
                     DelegationAdminPaths.CreateDelegation
-                  }?${query.toString()}`,
+                  }?${query.toString()}`
                 )
               }}
               size="small"

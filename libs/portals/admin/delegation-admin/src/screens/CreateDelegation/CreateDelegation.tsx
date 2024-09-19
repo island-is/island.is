@@ -40,9 +40,13 @@ import {
 import { CreateDelegationConfirmModal } from '../../components/CreateDelegationConfirmModal'
 import { Identity } from '@island.is/api/schema'
 import kennitala from 'kennitala'
+import { unmaskString } from '@island.is/shared/utils'
+import { useAuth } from '@island.is/auth/react'
 
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
+  const { userInfo } = useAuth()
+
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const submit = useSubmit()
@@ -52,9 +56,7 @@ const CreateDelegationScreen = () => {
   const [toIdentity, setToIdentity] = React.useState<Identity | null>(null)
   const [validTo, setValidTo] = React.useState<Date | null>(null)
   const [isConfirmed, setIsConfirmed] = React.useState(false)
-  const [fromNationalId, setFromNationalId] = React.useState(
-    () => searchParams.get('fromNationalId') || '',
-  )
+  const [fromNationalId, setFromNationalId] = React.useState('')
   const [toNationalId, setToNationalId] = React.useState('')
 
   const fromInputRef = React.useRef<HTMLInputElement>(null)
@@ -63,6 +65,8 @@ const CreateDelegationScreen = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-112px' })
   const defaultFromNationalId = searchParams.get('fromNationalId')
+
+  console.log('defaultFromNationalId', defaultFromNationalId)
 
   const typeOptions = [
     {
@@ -81,11 +85,18 @@ const CreateDelegationScreen = () => {
   }, [actionData])
 
   useEffect(() => {
-    if (defaultFromNationalId && validateNationalId(defaultFromNationalId)) {
-      getFromIdentity({
-        variables: { input: { nationalId: defaultFromNationalId } },
-      })
+    async function getFromNationalId() {
+      const unmaskedNationalId = await unmaskString(defaultFromNationalId ?? '', userInfo?.profile.nationalId ?? '')
+      console.log('unmaskedNationalId', unmaskedNationalId)
+      if (unmaskedNationalId && validateNationalId(unmaskedNationalId)) {
+        setFromNationalId(unmaskedNationalId)
+        getFromIdentity({
+          variables: { input: { nationalId: unmaskedNationalId } },
+        })
+      }
     }
+
+    getFromNationalId()
   }, [defaultFromNationalId])
 
   const noUserFoundToast = () => {
@@ -210,7 +221,7 @@ const CreateDelegationScreen = () => {
                     customInput={Input}
                     format="######-####"
                     onValueChange={handleNationalIdFromChange}
-                    value={fromNationalId}
+                    value={fromNationalId ?? ''}
                     required
                     getInputRef={fromInputRef}
                     errorMessage={formatMessage(
