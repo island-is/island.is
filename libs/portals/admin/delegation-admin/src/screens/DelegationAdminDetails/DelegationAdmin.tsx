@@ -11,7 +11,7 @@ import { useLocale } from '@island.is/localization'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { DelegationAdminResult } from './DelegationAdmin.loader'
 import { DelegationAdminPaths } from '../../lib/paths'
-import { IntroHeader } from '@island.is/portals/core'
+import { formatNationalId, IntroHeader } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import React from 'react'
 import DelegationList from '../../components/DelegationList'
@@ -40,7 +40,7 @@ const DelegationAdminScreen = () => {
         <GridColumn span={['12/12', '8/12']}>
           <IntroHeader
             title={delegationAdmin.name}
-            intro={delegationAdmin.nationalId}
+            intro={formatNationalId(delegationAdmin.nationalId)}
           />
         </GridColumn>
         {hasAdminAccess && (
