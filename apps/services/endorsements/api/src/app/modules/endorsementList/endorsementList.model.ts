@@ -78,12 +78,28 @@ export class EndorsementList extends Model {
   })
   tags!: EndorsementTag[]
 
+  // @ApiProperty()
+  // @Column({
+  //   type: DataType.STRING,
+  //   allowNull: false,
+  // })
+  // owner!: string
+
   @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  owner!: string
+  ownerNationalId!: string; // renamed from 'owner'
+
+  @ApiProperty()
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  ownerName!: string; // new column
+
 
   @ApiProperty()
   @Column({
