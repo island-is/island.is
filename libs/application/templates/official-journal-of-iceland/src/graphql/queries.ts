@@ -8,28 +8,6 @@ export const GET_PRICE_QUERY = gql`
   }
 `
 
-export const GET_APPLICATION_COMMENTS_QUERY = gql`
-  query GetApplicationComments(
-    $input: OfficialJournalOfIcelandApplicationGetCommentsInput!
-  ) {
-    officialJournalOfIcelandApplicationGetComments(input: $input) {
-      comments {
-        id
-        createdAt
-        internal
-        type
-        caseStatus
-        task {
-          from
-          to
-          title
-          comment
-        }
-      }
-    }
-  }
-`
-
 export const ADVERTS_QUERY = gql`
   query Adverts($input: OfficialJournalOfIcelandAdvertsInput!) {
     officialJournalOfIcelandAdverts(input: $input) {
@@ -296,17 +274,22 @@ export const GET_COMMENTS_QUERY = gql`
   ) {
     officialJournalOfIcelandApplicationGetComments(input: $input) {
       comments {
-        id
         createdAt
-        internal
-        type
-        caseStatus
-        state
+        type {
+          title
+        }
         task {
           from
           to
-          title
+          title {
+            title
+          }
           comment
+        }
+        status {
+          id
+          title
+          slug
         }
       }
     }

@@ -1,7 +1,7 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import useComponentSize from '@rehooks/component-size'
 import React, { CSSProperties, FC, useEffect, useRef, useState } from 'react'
-import { useDrag } from '../utils'
+import { useDrag } from './utils'
 import * as styles from './Slider.css'
 
 interface TooltipProps {
@@ -62,8 +62,17 @@ interface TrackProps {
     singular: string
     plural: string
   }
+  rangeDates?: {
+    start: {
+      date: string
+      message: string
+    }
+    end: { date: string; message: string }
+  }
   currentIndex: number
   onChange?: (index: number) => void
+  onChangeEnd?(index: number): void
+
   labelMultiplier?: number
 }
 
@@ -80,8 +89,10 @@ const Slider = ({
   showProgressOverlay = true,
   showToolTip = false,
   label,
+  rangeDates,
   currentIndex,
   onChange,
+  onChangeEnd,
   labelMultiplier = 1,
 }: TrackProps) => {
   const [isDragging, setIsDragging] = useState(false)
@@ -95,6 +106,14 @@ const Slider = ({
   const thumbRef = React.useRef<HTMLDivElement>(null)
   const remainderRef = React.useRef<HTMLDivElement>(null)
   const progressRef = React.useRef<HTMLDivElement>(null)
+
+  const convertDeltaToIndex = (delta: number) => {
+    const currentX = x + delta
+
+    dragX.current = Math.max(min * sizePerCell, Math.min(size.width, currentX))
+
+    return roundByNum(dragX.current / sizePerCell, step)
+  }
 
   useEffect(() => {
     if (thumbRef.current != null && !isDragging) {
@@ -126,7 +145,7 @@ const Slider = ({
   }
 
   const dragBind = useDrag({
-    onDragMove(deltaX) {
+    onDragMove(deltaX: number) {
       const currentX = x + deltaX
       const roundedMin = toFixedNumber(min, 1, 10)
       dragX.current = Math.max(0, Math.min(size.width, currentX))
@@ -160,8 +179,13 @@ const Slider = ({
     onDragStart() {
       setIsDragging(true)
     },
-    onDragEnd() {
+    onDragEnd(deltaX: number) {
       dragX.current = undefined
+      if (onChangeEnd) {
+        const index = convertDeltaToIndex(deltaX)
+
+        onChangeEnd?.(index)
+      }
       setIsDragging(false)
     },
   })
@@ -186,12 +210,12 @@ const Slider = ({
     switch (event.key) {
       case 'ArrowLeft':
         if (currentIndex > min) {
-          onChange(currentIndex - step)
+          onChange(Number(currentIndex) - step)
         }
         break
       case 'ArrowRight':
         if (currentIndex < max) {
-          onChange(currentIndex + step)
+          onChange(Number(currentIndex) + step)
         }
         break
     }
@@ -208,6 +232,7 @@ const Slider = ({
       index + min + roundByNum(percentClicked, step),
     )
     onChange && onChange(newIndex)
+    onChangeEnd?.(newIndex)
   }
 
   return (
@@ -231,7 +256,7 @@ const Slider = ({
         className={styles.TrackGrid}
         marginTop={1}
         style={{
-          gridTemplateColumns: `repeat(${stepCount}, 1fr)`,
+          gridTemplateColumns: `repeat(${Math.floor(stepCount)}, 1fr)`,
           ...trackStyle,
         }}
         ref={ref}
@@ -273,6 +298,36 @@ const Slider = ({
             style={progressStyle}
             ref={progressRef}
           />
+        )}
+      </Box>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        width="full"
+        marginTop={9}
+      >
+        {rangeDates && (
+          <>
+            <Box>
+              <Text color="blue400" variant="eyebrow">
+                {rangeDates.start.message}
+              </Text>
+
+              <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
+                {rangeDates.start.date}
+              </Text>
+            </Box>
+
+            <Box textAlign="right">
+              <Text color="blue400" variant="eyebrow">
+                {rangeDates.end.message}
+              </Text>
+
+              <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
+                {rangeDates.end.date}
+              </Text>
+            </Box>
+          </>
         )}
       </Box>
     </Box>
