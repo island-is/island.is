@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -46,11 +46,13 @@ const Processing: FC = () => {
     isCaseUpToDate,
     refreshCase,
   } = useContext(FormContext)
-  const { updateCase, transitionCase } = useCase()
+  const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
+
+  const [hasCivilClaimsChoice, setHasCivilClaimsChoice] = useState<boolean>()
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
@@ -95,6 +97,16 @@ const Processing: FC = () => {
     },
     [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
   )
+
+  const handleHasCivilClaimsChange = async (hasCivilClaims: boolean) => {
+    setHasCivilClaimsChoice(hasCivilClaims)
+
+    setAndSendCaseToServer(
+      [{ hasCivilClaims, force: true }],
+      workingCase,
+      setWorkingCase,
+    )
+  }
 
   return (
     <PageLayout
@@ -190,11 +202,56 @@ const Processing: FC = () => {
             ))}
           </Box>
         )}
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <CommentsInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
           />
+        </Box>
+        <Box
+          component="section"
+          marginBottom={workingCase.hasCivilClaims === true ? 5 : 10}
+        >
+          <BlueBox>
+            <SectionHeading
+              title={formatMessage(strings.hasCivilClaims)}
+              marginBottom={2}
+              heading="h4"
+              required
+            />
+            <Box display="flex">
+              <Box width="half" marginRight={1}>
+                <RadioButton
+                  name="hasCivilClaims"
+                  id="civil_caim_yes"
+                  label={formatMessage(strings.yes)}
+                  large
+                  backgroundColor="white"
+                  onChange={() => handleHasCivilClaimsChange(true)}
+                  checked={
+                    hasCivilClaimsChoice === true ||
+                    (hasCivilClaimsChoice === undefined &&
+                      workingCase.hasCivilClaims === true)
+                  }
+                />
+              </Box>
+              <Box width="half" marginLeft={1}>
+                <RadioButton
+                  name="hasCivilClaims"
+                  id="civil_caim_no"
+                  label={formatMessage(strings.no)}
+                  large
+                  backgroundColor="white"
+                  onChange={() => handleHasCivilClaimsChange(false)}
+                  checked={
+                    hasCivilClaimsChoice === false ||
+                    (hasCivilClaimsChoice === undefined &&
+                      workingCase.hasCivilClaims === false)
+                  }
+                />
+              </Box>
+            </Box>
+          </BlueBox>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

@@ -237,7 +237,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           isDefenceUser(user)) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.civilClaimSection)}
+              {formatMessage(strings.civilClaimsTitle)}
             </Text>
             <RenderFiles
               caseFiles={civilClaims}
