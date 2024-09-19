@@ -26,4 +26,3 @@ export const openApi = new DocumentBuilder()
     'ias',
   )
   .build()
-
