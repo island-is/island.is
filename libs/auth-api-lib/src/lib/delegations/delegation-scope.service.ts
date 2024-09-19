@@ -11,9 +11,7 @@ import {
   AuthDelegationType,
 } from '@island.is/shared/types'
 
-import {
-  PersonalRepresentativeDelegationTypeModel,
-} from '../personal-representative/models/personal-representative-delegation-type.model'
+import { PersonalRepresentativeDelegationTypeModel } from '../personal-representative/models/personal-representative-delegation-type.model'
 import { PersonalRepresentative } from '../personal-representative/models/personal-representative.model'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 import { ApiScope } from '../resources/models/api-scope.model'
@@ -42,8 +40,7 @@ export class DelegationScopeService {
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
     private delegationProviderService: DelegationProviderService,
-  ) {
-  }
+  ) {}
 
   async createOrUpdate(
     delegationId: string,
