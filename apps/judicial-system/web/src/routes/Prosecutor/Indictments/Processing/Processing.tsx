@@ -2,7 +2,7 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
+import { Box, RadioButton, Text, UploadFile } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { isTrafficViolationCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -20,6 +20,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 import {
+  CaseFileCategory,
   CaseState,
   CaseTransition,
   DefendantPlea,
@@ -29,6 +30,7 @@ import {
   useCase,
   useDefendants,
   useOnceOn,
+  useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -47,6 +49,7 @@ const Processing: FC = () => {
     refreshCase,
   } = useContext(FormContext)
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
+  const { handleRemove } = useS3Upload(workingCase.id)
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
   const router = useRouter()
@@ -106,6 +109,26 @@ const Processing: FC = () => {
       workingCase,
       setWorkingCase,
     )
+
+    if (hasCivilClaims === false) {
+      const civilClaims = workingCase.caseFiles?.filter(
+        (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
+      )
+
+      if (!civilClaims) {
+        return
+      }
+
+      setAndSendCaseToServer(
+        [{ civilDemands: null, force: true }],
+        workingCase,
+        setWorkingCase,
+      )
+
+      for (const civilClaim of civilClaims) {
+        handleRemove(civilClaim as UploadFile)
+      }
+    }
   }
 
   return (

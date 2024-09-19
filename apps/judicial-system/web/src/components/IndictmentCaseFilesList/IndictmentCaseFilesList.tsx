@@ -230,7 +230,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
         </Box>
       ) : null}
-      {civilClaims &&
+      {workingCase.hasCivilClaims &&
+        civilClaims &&
         civilClaims.length > 0 &&
         (isDistrictCourtUser(user) ||
           isProsecutionUser(user) ||
