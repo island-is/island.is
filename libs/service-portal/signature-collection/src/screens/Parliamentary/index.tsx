@@ -9,7 +9,6 @@ import { m } from '../../lib/messages'
 import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'
 import { useGetCurrentCollection, useIsOwner } from '../../hooks'
-import { Skeleton } from '../../skeletons'
 
 const SignatureListsParliamentary = () => {
   useNamespaces('sp.signatureCollection')
@@ -27,7 +26,7 @@ const SignatureListsParliamentary = () => {
         serviceProviderTooltip={formatMessage(m.infoProviderTooltip)}
         serviceProviderSlug={THJODSKRA_SLUG}
       />
-      {!loadingIsOwner && !loadingCurrentCollection ? (
+      {!loadingIsOwner && !loadingCurrentCollection && (
         <Box>
           {!currentCollection?.isPresidential ? (
             isOwner.success ? (
@@ -42,8 +41,6 @@ const SignatureListsParliamentary = () => {
             />
           )}
         </Box>
-      ) : (
-        <Skeleton />
       )}
     </Box>
   )

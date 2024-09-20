@@ -63,17 +63,15 @@ const SignedList = ({
     <Box>
       {!loadingSignedLists && !!signedLists?.length && (
         <Box marginTop={[5, 7]}>
-          <Text marginBottom={2}>{formatMessage(m.mySigneeListsHeader)}</Text>
+          <Text marginBottom={2} variant="h4">
+            {formatMessage(m.mySigneeListsHeader)}
+          </Text>
           {signedLists?.map((list: SignatureCollectionSignedList) => {
             return (
               <Box marginBottom={3} key={list.id}>
                 <ActionCard
-                  heading={list.title}
-                  eyebrow={`${
-                    list.isDigital
-                      ? formatMessage(m.signedTime)
-                      : formatMessage(m.uploadedTime)
-                  } ${format(new Date(list.signedDate), 'dd.MM.yyyy')}`}
+                  heading={list.title.split(' - ')[0]}
+                  eyebrow={list.area?.name}
                   text={
                     currentCollection.isPresidential
                       ? formatMessage(m.collectionTitle)
@@ -102,7 +100,15 @@ const SignedList = ({
                       : list.isValid && !list.isDigital
                       ? {
                           label: formatMessage(m.paperUploadedSignature),
-                          variant: 'blue',
+                          variant: 'blueberry',
+                          outlined: true,
+                        }
+                      : list.isValid && list.isDigital
+                      ? {
+                          label:
+                            formatMessage(m.digitalSignature) +
+                            format(new Date(list.signedDate), 'dd.MM.yyyy'),
+                          variant: 'blueberry',
                           outlined: true,
                         }
                       : !list.isValid

@@ -620,6 +620,10 @@ export class ClientsService {
       )
     }
 
+    if (supportsCustomDelegation) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
+    }
+
     return Promise.all(
       delegationTypes.map((delegationType) =>
         this.clientDelegationType.upsert(
@@ -685,6 +689,10 @@ export class ClientsService {
           },
         },
       )
+    }
+
+    if (delegationTypes.includes(AuthDelegationType.Custom)) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
     }
 
     return Promise.all(
