@@ -72,6 +72,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   })
 
   const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
+  const showSubpoenaPdf = workingCase.arraignmentDate
 
   const cf = workingCase.caseFiles
 
@@ -254,6 +255,28 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <CaseFileTable caseFiles={uploadedCaseFiles} onOpenFile={onOpen} />
         </Box>
       )}
+      {showSubpoenaPdf &&
+        workingCase.defendants &&
+        workingCase.defendants.length > 0 && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={1}>
+              {formatMessage(strings.subpoenaTitle)}
+            </Text>
+            {workingCase.defendants.map((defendant) => (
+              <Box marginBottom={2} key={`subpoena-${workingCase.id}`}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={formatMessage(strings.subpoenaButtonText, {
+                    name: defendant.name,
+                  })}
+                  pdfType="subpoena"
+                  elementId={defendant.id}
+                  renderAs="row"
+                />
+              </Box>
+            ))}
+          </Box>
+        )}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
