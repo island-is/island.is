@@ -31,6 +31,9 @@ import { SignatureCollectionNationalIdInput } from './dto/nationalId.input'
 import { SignatureCollectionSignatureIdInput } from './dto/signatureId.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
+import { SignatureCollectionCanSignInput } from './dto/canSign.input'
+import { ReasonKey } from '@island.is/clients/signature-collection'
+import { CanSignInfo } from './models/canSignInfo.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -41,6 +44,27 @@ export class SignatureCollectionAdminResolver {
     private signatureCollectionService: SignatureCollectionAdminService,
     private signatureCollectionManagerService: SignatureCollectionManagerService,
   ) {}
+
+  @Query(() => CanSignInfo, { nullable: true })
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
+  async signatureCollectionAdminCanSignInfo(
+    @CurrentUser()
+    user: User,
+    @Args('input') input: SignatureCollectionCanSignInput,
+  ): Promise<CanSignInfo> {
+    const canSignInfo = await this.signatureCollectionService.getCanSignInfo(
+      user,
+      input.signeeNationalId,
+    )
+
+    return {
+      reasons: canSignInfo,
+      success: true,
+    }
+  }
 
   @Query(() => SignatureCollection)
   @Scopes(

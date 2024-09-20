@@ -297,7 +297,9 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'utlendingastofnun':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader {...defaultProps} />
+      ) : (
         <UtlendingastofnunHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -374,7 +376,9 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'landskjorstjorn':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader {...defaultProps} />
+      ) : (
         <LandskjorstjornHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -421,7 +425,17 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'shh':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={
+            isSubpage
+              ? styles.shhHeaderGridContainerWidthSubpage
+              : styles.shhHeaderGridContainerWidth
+          }
+          titleSectionPaddingLeft={isSubpage ? 0 : 5}
+        />
+      ) : (
         <ShhHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -457,14 +471,25 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'samgongustofa':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader {...defaultProps} />
+      ) : (
         <TransportAuthorityHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
         />
       )
     case 'geislavarnir-rikisins':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          background="linear-gradient(96.23deg, rgba(1, 54, 65, 0.8) 0.85%, rgba(19, 101, 103, 0.93) 16.4%, rgba(19, 101, 103, 0.885709) 32.16%, rgba(1, 73, 87, 0.88) 56.43%, rgba(2, 69, 91, 0.98) 78.47%, rgba(1, 52, 62, 0.96) 100.8%)"
+          image={n(
+            'geislavarnirRikisinsHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/5KjaMY9IIB0aX0GOUU60H7/176b6ed26dc01fe4e2559ba2957e85b7/skjaldamerki-transparent.svg',
+          )}
+        />
+      ) : (
         <IcelandicRadiationSafetyAuthorityHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -493,7 +518,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'rikissaksoknari':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={
+            isSubpage
+              ? styles.rikissaksoknariHeaderGridContainerSubpage
+              : styles.rikissaksoknariHeaderGridContainerWidth
+          }
+        />
+      ) : (
         <RikissaksoknariHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
