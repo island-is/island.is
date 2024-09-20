@@ -42,7 +42,10 @@ export const Circumstance: FC<React.PropsWithChildren<FieldBaseProps>> = (
             return (
               <Select
                 name=""
-                options={[]}
+                options={activites.map((activity) => ({
+                  value: activity.code,
+                  label: activity.name,
+                }))}
                 backgroundColor="blue"
                 //value={{value: ''}}
                 placeholder={formatMessage(
