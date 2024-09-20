@@ -10,6 +10,10 @@ export class DelegationVerification {
 
   @IsArray()
   @IsEnum(AuthDelegationType, { each: true })
-  @ApiProperty({ type: [AuthDelegationType] })
+  @ApiProperty({
+    enum: AuthDelegationType,
+    enumName: 'AuthDelegationType',
+    isArray: true,
+  })
   delegationTypes!: AuthDelegationType[]
 }
