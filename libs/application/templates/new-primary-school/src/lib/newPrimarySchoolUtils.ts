@@ -5,28 +5,22 @@ import {
   FormValue,
   YesOrNo,
 } from '@island.is/application/types'
-import * as kennitala from 'kennitala'
+import { Locale } from '@island.is/shared/types'
 import {
   Child,
   ChildInformation,
+  FriggChildInformation,
   Parents,
   Person,
   RelativesRow,
+  SelectOption,
   SiblingsRow,
 } from '../types'
 import {
-  FoodAllergiesOptions,
-  FoodIntolerancesOptions,
-  Gender,
   ReasonForApplicationOptions,
-  RelationOptions,
   SiblingRelationOptions,
 } from './constants'
 import { newPrimarySchoolMessages } from './messages'
-
-import { ApolloClient } from '@apollo/client'
-import { friggOptionsQuery } from '../graphql/queries'
-import { FriggOptionsQuery, FriggOptionsQueryVariables } from '../types/schema'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
@@ -84,31 +78,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'languages.icelandicNotSpokenAroundChild',
   ) as string[]
 
-  const hasFoodAllergies = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.hasFoodAllergies',
-  ) as string[]
-
-  const foodAllergies = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.foodAllergies',
-  ) as FoodAllergiesOptions[]
-
-  const hasFoodIntolerances = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.hasFoodIntolerances',
-  ) as string[]
-
-  const foodIntolerances = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.foodIntolerances',
-  ) as FoodIntolerancesOptions[]
-
-  const isUsingEpiPen = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.isUsingEpiPen',
-  ) as YesOrNo
-
   const developmentalAssessment = getValueViaPath(
     answers,
     'support.developmentalAssessment',
@@ -137,20 +106,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'schools.newSchool.school',
   ) as string
 
-  const photographyConsent = getValueViaPath(
+  const newSchoolHiddenInput = getValueViaPath(
     answers,
-    'photography.photographyConsent',
-  ) as YesOrNo
-
-  const photoSchoolPublication = getValueViaPath(
-    answers,
-    'photography.photoSchoolPublication',
-  ) as YesOrNo
-
-  const photoMediaPublication = getValueViaPath(
-    answers,
-    'photography.photoMediaPublication',
-  ) as YesOrNo
+    'schools.newSchool.hiddenInput',
+  ) as string
 
   return {
     childNationalId,
@@ -167,32 +126,20 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     otherLanguagesSpokenDaily,
     otherLanguages,
     icelandicNotSpokenAroundChild,
-    hasFoodAllergies,
-    foodAllergies,
-    hasFoodIntolerances,
-    foodIntolerances,
-    isUsingEpiPen,
     developmentalAssessment,
     specialSupport,
     requestMeeting,
-    photographyConsent,
-    photoSchoolPublication,
-    photoMediaPublication,
-
     startDate,
     schoolMunicipality,
     selectedSchool,
+    newSchoolHiddenInput,
   }
 }
 
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
 ) => {
-  const children = getValueViaPath(
-    externalData,
-    'childrenCustodyInformation.data',
-    [],
-  ) as Child[]
+  const children = getValueViaPath(externalData, 'children.data', []) as Child[]
 
   const applicantName = getValueViaPath(
     externalData,
@@ -221,7 +168,17 @@ export const getApplicationExternalData = (
 
   const otherParentName = getValueViaPath(
     externalData,
-    'childrenCustodyInformation.data.otherParent.fullName',
+    'children.data.otherParent.fullName',
+  ) as string
+
+  const childInformation = getValueViaPath(
+    externalData,
+    'childInformation.data',
+  ) as FriggChildInformation
+
+  const childGradeLevel = getValueViaPath(
+    externalData,
+    'childInformation.data.gradeLevel',
   ) as string
 
   return {
@@ -232,20 +189,9 @@ export const getApplicationExternalData = (
     applicantPostalCode,
     applicantCity,
     otherParentName,
+    childInformation,
+    childGradeLevel,
   }
-}
-
-export const canApply = (child: Child): boolean => {
-  // Check if the child is at primary school age and lives with the applicant
-  if (
-    kennitala.info(child.nationalId).age >= 5 &&
-    kennitala.info(child.nationalId).age <= 15 &&
-    child.livesWithApplicant
-  ) {
-    return true
-  }
-
-  return false
 }
 
 export const getSelectedChild = (application: Application) => {
@@ -273,37 +219,6 @@ export const hasOtherParent = (
 ): boolean => {
   const otherParent = getOtherParent({ answers, externalData } as Application)
   return !!otherParent
-}
-
-export const getRelationOptions = () => [
-  {
-    value: RelationOptions.GRANDPARENT,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationGrandparent,
-  },
-  {
-    value: RelationOptions.SIBLING,
-    label: newPrimarySchoolMessages.childrenNParents.relativesRelationSibling,
-  },
-  {
-    value: RelationOptions.STEPPARENT,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationStepparent,
-  },
-  {
-    value: RelationOptions.RELATIVE,
-    label: newPrimarySchoolMessages.childrenNParents.relativesRelationRelative,
-  },
-  {
-    value: RelationOptions.FRIEND_OR_OTHER,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationFriendOrOther,
-  },
-]
-
-export const getRelationOptionLabel = (value: RelationOptions) => {
-  const relationOptions = getRelationOptions()
-  return relationOptions.find((option) => option.value === value)?.label ?? ''
 }
 
 export const getReasonForApplicationOptions = () => [
@@ -382,127 +297,30 @@ export const getSiblingRelationOptionLabel = (
   return relationOptions.find((option) => option.value === value)?.label ?? ''
 }
 
-export const getGenderOptions = () => [
-  {
-    value: Gender.MALE,
-    label: newPrimarySchoolMessages.shared.male,
-  },
-  {
-    value: Gender.FEMALE,
-    label: newPrimarySchoolMessages.shared.female,
-  },
-  {
-    value: Gender.OTHER,
-    label: newPrimarySchoolMessages.shared.otherGender,
-  },
-]
-
-export const formatGender = (genderCode?: string): Gender | undefined => {
-  switch (genderCode) {
-    case '1':
-    case '3':
-      return Gender.MALE
-    case '2':
-    case '4':
-      return Gender.FEMALE
-    case '7':
-    case '8':
-      return Gender.OTHER
-    default:
-      return undefined
+export const getSelectedOptionLabel = (
+  options: SelectOption[],
+  key?: string,
+) => {
+  if (key === undefined) {
+    return undefined
   }
+
+  return options.find((option) => option.value === key)?.label
 }
 
-export const getGenderOptionLabel = (value: Gender) => {
-  const genderOptions = getGenderOptions()
-  return genderOptions.find((option) => option.value === value)?.label ?? ''
-}
-
-export const getFoodAllergiesOptions = () => [
-  {
-    value: FoodAllergiesOptions.EGG_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.eggAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.FISH_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.fishAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.PENUT_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.nutAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.WHEAT_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.wheatAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.MILK_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.milkAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.OTHER,
-    label: newPrimarySchoolMessages.differentNeeds.other,
-  },
-]
-
-export const getFoodAllergiesOptionsLabel = (value: FoodAllergiesOptions) => {
-  const foodAllergiesOptions = getFoodAllergiesOptions()
-  return (
-    foodAllergiesOptions.find((option) => option.value === value)?.label ?? ''
-  )
-}
-
-export const getFoodIntolerancesOptions = () => [
-  {
-    value: FoodIntolerancesOptions.LACTOSE_INTOLERANCE,
-    label: newPrimarySchoolMessages.differentNeeds.lactoseIntolerance,
-  },
-  {
-    value: FoodIntolerancesOptions.GLUTEN_INTOLERANCE,
-    label: newPrimarySchoolMessages.differentNeeds.glutenIntolerance,
-  },
-  {
-    value: FoodIntolerancesOptions.MSG_INTOLERANCE,
-    label: newPrimarySchoolMessages.differentNeeds.msgIntolerance,
-  },
-  {
-    value: FoodIntolerancesOptions.OTHER,
-    label: newPrimarySchoolMessages.differentNeeds.other,
-  },
-]
-
-export const getFoodIntolerancesOptionsLabel = (
-  value: FoodIntolerancesOptions,
-) => {
-  const foodIntolerancesOptions = getFoodIntolerancesOptions()
-  return (
-    foodIntolerancesOptions.find((option) => option.value === value)?.label ??
-    ''
-  )
-}
-
-export const getOptionsListByType = async (
-  apolloClient: ApolloClient<object>,
-  type: string,
-) => {
-  const { data } = await apolloClient.query<
-    FriggOptionsQuery,
-    FriggOptionsQueryVariables
-  >({
-    query: friggOptionsQuery,
-    variables: {
-      type: {
-        type,
-      },
-    },
-  })
-
-  return (
-    data?.friggOptions?.flatMap(({ options }) =>
-      options.flatMap(({ value, id }) => {
-        const content = value.find(({ language }) => language === 'is')?.content
-        return { value: id ?? '', label: content ?? '' }
-      }),
-    ) ?? []
-  )
+export const formatGrade = (gradeLevel: string, lang: Locale) => {
+  let grade = gradeLevel
+  if (gradeLevel[0] === '0') {
+    grade = gradeLevel[1]
+  }
+  switch (grade) {
+    case '1':
+      return lang === 'en' ? `${grade}st` : grade
+    case '2':
+      return lang === 'en' ? `${grade}nd` : grade
+    case '3':
+      return lang === 'en' ? `${grade}rd` : grade
+    default:
+      return lang === 'en' ? `${grade}th` : grade
+  }
 }

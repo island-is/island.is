@@ -12,15 +12,26 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  ChildrenCustodyInformationApi,
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
-import { Events, ReasonForApplicationOptions, Roles, States } from './constants'
+import {
+  ChildrenApi,
+  GetKeyOptionsTypesApi,
+  OptionsApi,
+} from '../dataProviders'
+import {
+  ApiModuleActions,
+  Events,
+  ReasonForApplicationOptions,
+  Roles,
+  States,
+} from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
 import { getApplicationAnswers } from './newPrimarySchoolUtils'
@@ -51,11 +62,16 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               displayStatus: 'success',
             },
           },
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.getChildInformation,
+            externalDataId: 'childInformation',
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Prerequisites').then((val) =>
+                import('../forms/Prerequisites/index').then((val) =>
                   Promise.resolve(val.Prerequisites),
                 ),
               actions: [
@@ -68,9 +84,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                ChildrenCustodyInformationApi,
                 NationalRegistryUserApi,
                 UserProfileApi,
+                GetKeyOptionsTypesApi,
+                OptionsApi,
+                ChildrenApi,
               ],
             },
           ],
@@ -85,7 +103,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           'clearPlaceOfResidence',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
-          'clearPublication',
         ],
         meta: {
           name: States.DRAFT,
@@ -166,8 +183,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           unset(application.answers, 'siblings')
           unset(application.answers, 'languages')
           unset(application.answers, 'startDate')
-          unset(application.answers, 'photography')
-          unset(application.answers, 'allergiesAndIntolerances')
         } else {
           // Clear movingAbroad if "Moving abroad" is not selected as reason for application
           unset(application.answers, 'reasonForApplication.movingAbroad')
@@ -211,38 +226,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         if (otherLanguagesSpokenDaily === NO) {
           unset(application.answers, 'languages.otherLanguages')
           unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
-        }
-        return context
-      }),
-      /**
-       * If the user changes his answers,
-       * clear selected food allergies and intolerances.
-       */
-      clearAllergiesAndIntolerances: assign((context) => {
-        const { application } = context
-        const { hasFoodAllergies, hasFoodIntolerances } = getApplicationAnswers(
-          application.answers,
-        )
-
-        if (hasFoodAllergies?.length === 0) {
-          unset(application.answers, 'allergiesAndIntolerances.foodAllergies')
-        }
-        if (hasFoodIntolerances?.length === 0) {
-          unset(
-            application.answers,
-            'allergiesAndIntolerances.foodIntolerances',
-          )
-        }
-        return context
-      }),
-      clearPublication: assign((context) => {
-        const { application } = context
-        const { photographyConsent } = getApplicationAnswers(
-          application.answers,
-        )
-        if (photographyConsent === NO) {
-          unset(application.answers, 'photography.photoSchoolPublication')
-          unset(application.answers, 'photography.photoMediaPublication')
         }
         return context
       }),
