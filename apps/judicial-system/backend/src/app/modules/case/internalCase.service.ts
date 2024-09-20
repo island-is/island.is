@@ -20,7 +20,7 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import {
   formatCaseType,
-  formatNationalId,
+  normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
@@ -64,9 +64,9 @@ import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
+import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
 import { DeliverResponse } from './models/deliver.response'
-import { ExplanatoryComment } from './models/explanatoryComment.model'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'
 
@@ -119,9 +119,7 @@ const indictmentCountEncryptionProperties: (keyof IndictmentCount)[] = [
   'legalArguments',
 ]
 
-const explanatoryCommentEncryptionProperties: (keyof ExplanatoryComment)[] = [
-  'comment',
-]
+const caseStringEncryptionProperties: (keyof CaseString)[] = ['value']
 
 const collectEncryptionProperties = (
   properties: string[],
@@ -148,8 +146,8 @@ export class InternalCaseService {
 
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(ExplanatoryComment)
-    private readonly explanatoryCommentModel: typeof ExplanatoryComment,
+    @InjectModel(CaseString)
+    private readonly caseStringModel: typeof CaseString,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(CaseArchive)
     private readonly caseArchiveModel: typeof CaseArchive,
@@ -393,17 +391,13 @@ export class InternalCaseService {
         { model: Defendant, as: 'defendants' },
         { model: IndictmentCount, as: 'indictmentCounts' },
         { model: CaseFile, as: 'caseFiles' },
-        { model: ExplanatoryComment, as: 'explanatoryComments' },
+        { model: CaseString, as: 'caseStrings' },
       ],
       order: [
         [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
         [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
         [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
-        [
-          { model: ExplanatoryComment, as: 'explanatoryComments' },
-          'created',
-          'ASC',
-        ],
+        [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
       ],
       where: archiveFilter,
     })
@@ -463,19 +457,19 @@ export class InternalCaseService {
         )
       }
 
-      const explanatoryCommentsArchive = []
-      for (const comment of theCase.explanatoryComments ?? []) {
-        const [clearedExplanatoryCommentProperties, explanatoryCommentArchive] =
+      const caseStringsArchive = []
+      for (const caseString of theCase.caseStrings ?? []) {
+        const [clearedCaseStringProperties, caseStringArchive] =
           collectEncryptionProperties(
-            explanatoryCommentEncryptionProperties,
-            comment,
+            caseStringEncryptionProperties,
+            caseString,
           )
-        explanatoryCommentsArchive.push(explanatoryCommentArchive)
+        caseStringsArchive.push(caseStringArchive)
 
-        await this.explanatoryCommentModel.update(
-          clearedExplanatoryCommentProperties,
-          { where: { id: comment.id, caseId: theCase.id }, transaction },
-        )
+        await this.caseStringModel.update(clearedCaseStringProperties, {
+          where: { id: caseString.id, caseId: theCase.id },
+          transaction,
+        })
       }
 
       await this.caseArchiveModel.create(
@@ -487,7 +481,7 @@ export class InternalCaseService {
               defendants: defendantsArchive,
               caseFiles: caseFilesArchive,
               indictmentCounts: indictmentCountsArchive,
-              explanatoryComments: explanatoryCommentsArchive,
+              caseStrings: caseStringsArchive,
             }),
             this.config.archiveEncryptionKey,
             { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
@@ -1208,8 +1202,6 @@ export class InternalCaseService {
   // As this is only currently used by the digital mailbox API
   // we will only return indictment cases that have a court date
   async getIndictmentCases(nationalId: string): Promise<Case[]> {
-    const formattedNationalId = formatNationalId(nationalId)
-
     return this.caseModel.findAll({
       include: [
         { model: Defendant, as: 'defendants' },
@@ -1226,22 +1218,14 @@ export class InternalCaseService {
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
       where: {
         type: CaseType.INDICTMENT,
-        [Op.or]: [
-          { '$defendants.national_id$': nationalId },
-          { '$defendants.national_id$': formattedNationalId },
-        ],
+        // The national id could be without a hyphen or with a hyphen so we need to
+        // search for both
+        '$defendants.national_id$': normalizeAndFormatNationalId(nationalId),
       },
     })
   }
 
-  async getIndictmentCase(
-    caseId: string,
-    nationalId: string,
-  ): Promise<Case | null> {
-    // The national id could be without a hyphen or with a hyphen so we need to
-    // search for both
-    const formattedNationalId = formatNationalId(nationalId)
-
+  async getIndictmentCase(caseId: string, nationalId: string): Promise<Case> {
     const caseById = await this.caseModel.findOne({
       include: [
         { model: Defendant, as: 'defendants' },
@@ -1255,10 +1239,9 @@ export class InternalCaseService {
       where: {
         type: CaseType.INDICTMENT,
         id: caseId,
-        [Op.or]: [
-          { '$defendants.national_id$': nationalId },
-          { '$defendants.national_id$': formattedNationalId },
-        ],
+        // The national id could be without a hyphen or with a hyphen so we need to
+        // search for both
+        '$defendants.national_id$': normalizeAndFormatNationalId(nationalId),
       },
     })
 

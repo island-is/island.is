@@ -64,7 +64,13 @@ export function VehicleCard({
   return (
     <Host minHeight={minHeight}>
       <Content>
-        <Title variant="heading4">{title}</Title>
+        <Title
+          variant="heading4"
+          numberOfLines={minHeight ? 1 : undefined}
+          ellipsizeMode="tail"
+        >
+          {title}
+        </Title>
         <Text>
           {color} - {number}
         </Text>

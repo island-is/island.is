@@ -45,7 +45,7 @@ const PdfWrapper = styled.View`
   flex: 1;
   background-color: ${dynamicColor('background')};
 `
-const regexForBr = /<br \/>*\\?>/g
+const regexForBr = /<br\s*\/>/gi
 
 // Styles for html documents
 const useHtmlStyles = () => {
@@ -374,13 +374,14 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             (isHtml ? (
               <WebView
                 source={{
-                  html:
-                    // Removing all <br /> tags to fix a bug in react-native that renders <br /> with too much vertical space
-                    // https://github.com/facebook/react-native/issues/32062
-                    `${htmlStyles}${Document.content?.value.replaceAll(
-                      regexForBr,
-                      '',
-                    )}` ?? '',
+                  html: Document.content?.value
+                    ? // Removing all <br /> tags to fix a bug in react-native that renders <br /> with too much vertical space
+                      // https://github.com/facebook/react-native/issues/32062
+                      `${htmlStyles}${Document.content?.value.replace(
+                        regexForBr,
+                        '',
+                      )}`
+                    : '',
                 }}
                 scalesPageToFit
                 onLoadEnd={() => {

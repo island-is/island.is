@@ -120,6 +120,7 @@ const LicensesModule = React.memo(
     const count = licenses?.length ?? 0 + (passport ? 1 : 0)
 
     const allLicenses = [...(licenses ?? []), ...(passport ?? [])]
+    const viewPagerItemWidth = screenWidth - theme.spacing[2] * 3
 
     const items = allLicenses
       .filter(
@@ -135,7 +136,7 @@ const LicensesModule = React.memo(
           style={
             count > 1
               ? {
-                  width: screenWidth - theme.spacing[2] * 3,
+                  width: viewPagerItemWidth,
                   paddingLeft: theme.spacing[2],
                   paddingRight: 0,
                 }
@@ -201,7 +202,9 @@ const LicensesModule = React.memo(
                 />
               )}
               {count === 1 && items}
-              {count >= 2 && <ViewPager>{items}</ViewPager>}
+              {count >= 2 && (
+                <ViewPager itemWidth={viewPagerItemWidth}>{items}</ViewPager>
+              )}
             </>
           )}
         </Host>
