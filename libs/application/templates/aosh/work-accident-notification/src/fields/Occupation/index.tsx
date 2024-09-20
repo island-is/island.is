@@ -2,48 +2,20 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC, useEffect, useState } from 'react'
 import { Box, Select } from '@island.is/island-ui/core'
-import { SelectController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { employee } from '../../lib/messages'
-import { Controller } from 'react-hook-form'
-
-// TODO Add support for LabelEn and LabelIs!
-
-// TODO Remove these types when we get types from Generated files from api
-export type VictimsOccupationMajorGroup = {
-  Code: number
-  LabelIs: string
-  LabelEn: string
-  ValidToSelect: number
-}
-
-export type VictimsOccupationSubMajorGroup = {
-  Code: number
-  FK_MajorGroupCode: number
-  LabelIs: string
-  LabelEn: string
-  ValidToSelect: boolean
-}
-
-export type VictimOccupationMinorGroup = {
-  Code: number
-  FK_SubMajorGroupCode: number
-  LabelIs: string
-  LabelEn: string
-  ValidToSelect: number
-}
-
-export type VictimsOccupationUnitGroup = {
-  Code: number
-  FK_MinorGroupCode: number
-  LabelIs: string
-  LabelEn: string
-  ValidToSelect: number
-}
+import { Controller, useFormContext } from 'react-hook-form'
+import { VictimsOccupationDto } from '@island.is/clients/work-accident-ver'
+import { WorkAccidentNotification } from '../../lib/dataSchema'
 
 export type Options = {
   label: string
   value: string
+}
+
+type EventOption = {
+  value?: string | null | undefined
+  label?: string
 }
 
 export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
@@ -51,80 +23,92 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
 ) => {
   const { formatMessage, lang } = useLocale()
   const { application } = props
-  const [SelectedMajorGroup, setSelectedMajorGroup] = useState<Options | null>(
-    null,
+  const answers = application.answers as WorkAccidentNotification
+  const { setValue } = useFormContext()
+  const [selectedMajorGroup, setSelectedMajorGroup] = useState<Options | null>(
+    answers?.employee?.victimsOccupationMajor || null,
   )
-  const [SelectedSubMajorGroup, setSelectedSubMajorGroup] =
-    useState<Options | null>(null)
+  const [selectedSubMajorGroup, setSelectedSubMajorGroup] =
+    useState<Options | null>(
+      answers?.employee?.victimsOccupationSubMajor || null,
+    )
   const [SelectedMinorGroup, setSelectedMinorGroup] = useState<Options | null>(
-    null,
+    answers?.employee?.victimsOccupationMinor || null,
   )
-  const [SelectedUnitGroup, setSelectedUnitGroup] = useState<Options | null>(
-    null,
+  const [selectedUnitGroup, setSelectedUnitGroup] = useState<Options | null>(
+    answers?.employee?.victimsOccupationUnit || null,
   )
-  const [SelectedSearchGroup, setSelectedSearchGroup] =
+  const [selectedSearchGroup, setSelectedSearchGroup] =
     useState<Options | null>(null)
-  const [MajorGroupOptions, setMajorGroupOptions] = useState<
-    VictimsOccupationMajorGroup[]
+  const [majorGroupOptions, setMajorGroupOptions] = useState<
+    VictimsOccupationDto[]
   >([])
-  const [SubMajorGroupOptions, setSubMajorGroupOptions] = useState<
-    VictimsOccupationSubMajorGroup[]
+  const [subMajorGroupOptions, setSubMajorGroupOptions] = useState<
+    VictimsOccupationDto[]
   >([])
-  const [MinorGroupOptions, setMinorGroupOptions] = useState<
-    VictimOccupationMinorGroup[]
+  const [minorGroupOptions, setMinorGroupOptions] = useState<
+    VictimsOccupationDto[]
   >([])
-  const [UnitGroupOptions, setUnitGroupOptions] = useState<
-    VictimsOccupationUnitGroup[]
+  const [unitGroupOptions, setUnitGroupOptions] = useState<
+    VictimsOccupationDto[]
   >([])
 
-  const victimsOccupationMajorGroups = getValueViaPath(
-    application.externalData,
-    'aoshData.data.victimsOccupationMajorGroup',
-    [],
-  ) as VictimsOccupationMajorGroup[]
-  const victimsOccupationSubMajorGroups = getValueViaPath(
-    application.externalData,
-    'aoshData.data.victimsOccupationSubMajorGroup',
-    [],
-  ) as VictimsOccupationSubMajorGroup[]
-  const victimOccupationMinorGroups = getValueViaPath(
-    application.externalData,
-    'aoshData.data.victimOccupationMinorGroups',
-    [],
-  ) as VictimOccupationMinorGroup[]
-  const victimsOccupationUnitGroups = getValueViaPath(
-    application.externalData,
-    'aoshData.data.victimsOccupationUnitGroups',
-    [],
-  ) as VictimsOccupationUnitGroup[]
+  // const victimsOccupation = getValueViaPath(
+  //   application.externalData,
+  //   'aoshData.data.victimsOccupation',
+  //   [],
+  // ) as VictimsOccupationDto[]
+
+  const victimsOccupationMajorGroups = (
+    getValueViaPath(
+      application.externalData,
+      'aoshData.data.victimsOccupation',
+      [],
+    ) as VictimsOccupationDto[]
+  ).filter((group) => group.code?.length === 1)
+  const victimsOccupationSubMajorGroups = (
+    getValueViaPath(
+      application.externalData,
+      'aoshData.data.victimsOccupation',
+      [],
+    ) as VictimsOccupationDto[]
+  ).filter((group) => group.code?.length === 2)
+  const victimOccupationMinorGroups = (
+    getValueViaPath(
+      application.externalData,
+      'aoshData.data.victimsOccupation',
+      [],
+    ) as VictimsOccupationDto[]
+  ).filter((group) => group.code?.length === 3)
+  const victimsOccupationUnitGroups = (
+    getValueViaPath(
+      application.externalData,
+      'aoshData.data.victimsOccupation',
+      [],
+    ) as VictimsOccupationDto[]
+  ).filter((group) => group.code?.length === 4)
+
+  const getValidOptions = (groups: VictimsOccupationDto[]) => {
+    // Helper function that filters and maps valid options
+    return groups
+      .filter((x) => x.validToSelect)
+      .map((item) => ({
+        value: item.code,
+        label: item.name || '',
+      }))
+  }
 
   const getAllValidSelects = () => {
-    const majorGroups = victimsOccupationMajorGroups
-      .filter((x) => x.ValidToSelect === 1)
-      .map((item) => ({
-        value: item.Code.toString(),
-        label: lang === 'en' ? item.LabelEn : item.LabelIs,
-      }))
-    const subMajorGroups = victimsOccupationSubMajorGroups
-      .filter((x) => x.ValidToSelect)
-      .map((item) => ({
-        value: item.Code.toString(),
-        label: lang === 'en' ? item.LabelEn : item.LabelIs,
-      }))
-    const minorGroups = victimOccupationMinorGroups
-      .filter((x) => x.ValidToSelect)
-      .map((item) => ({
-        value: item.Code.toString(),
-        label: lang === 'en' ? item.LabelEn : item.LabelIs,
-      }))
-    const unitGroups = victimsOccupationUnitGroups
-      .filter((x) => x.ValidToSelect)
-      .map((item) => ({
-        value: item.Code.toString(),
-        label: lang === 'en' ? item.LabelEn : item.LabelIs,
-      }))
+    const majorGroups = getValidOptions(victimsOccupationMajorGroups)
+    const subMajorGroups = getValidOptions(victimsOccupationSubMajorGroups)
+    const minorGroups = getValidOptions(victimOccupationMinorGroups)
+    const unitGroups = getValidOptions(victimsOccupationUnitGroups)
 
     return [...majorGroups, ...subMajorGroups, ...minorGroups, ...unitGroups]
+  }
+
+  const findGroupByCode = (groups: VictimsOccupationDto[], code: string) => {
+    return groups.find((group) => group.code === code)
   }
 
   useEffect(() => {
@@ -132,44 +116,38 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
     setSubMajorGroupOptions(victimsOccupationSubMajorGroups)
     setMinorGroupOptions(victimOccupationMinorGroups)
     setUnitGroupOptions(victimsOccupationUnitGroups)
-  }, [
-    victimOccupationMinorGroups,
-    victimsOccupationMajorGroups,
-    victimsOccupationSubMajorGroups,
-    victimsOccupationUnitGroups,
-  ])
+  }, [])
 
   const searchChanges = (value: string) => {
     if (!value) return
     const majorGroup = victimsOccupationMajorGroups.find(
-      (group) => group.Code === parseInt(value[0]),
+      (group) => group.code === value[0],
     )
-    if (
-      !majorGroup ||
-      !majorGroup.Code ||
-      !majorGroup.LabelIs ||
-      !majorGroup.LabelEn
-    )
-      return
+    if (!majorGroup || !majorGroup.code || !majorGroup.name) return
     setSelectedMajorGroup(
-      { value: majorGroup?.Code.toString(), label: majorGroup?.LabelIs } ||
-        null,
+      { value: majorGroup.code, label: majorGroup.name } || null,
     )
   }
 
-  const onChangeMajorGroup = (
-    value: { value: string; label: string } | null,
-  ) => {
+  const onChangeMajorGroup = (value?: EventOption) => {
     if (!value || !value.value || !value.label) return
-    setSelectedMajorGroup({
+    const selectedGroup: Options = {
       value: value.value,
       label: value.label,
-    })
+    }
+    setSelectedMajorGroup(selectedGroup)
     setSubMajorGroupOptions(
       victimsOccupationSubMajorGroups.filter(
-        (x) => x.FK_MajorGroupCode === parseInt(value.value.substring(0, 1)),
+        (group) => group.code?.substring(0, 1) === value.value?.substring(0, 1),
       ),
     )
+
+    setValue('employee.victimsOccupationMajor', selectedGroup)
+    const chosenMajorGroup = findGroupByCode(majorGroupOptions, value.value)
+    if (chosenMajorGroup?.validToSelect) {
+      setValue('employee.victimsOccupation', selectedGroup)
+    }
+
     setSelectedSubMajorGroup(null)
     setSelectedMinorGroup(null)
     setSelectedUnitGroup(null)
@@ -177,134 +155,149 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
     setUnitGroupOptions([])
   }
 
-  const onChangeSubMajorGroup = (
-    value: { value: string; label: string } | null,
-  ) => {
-    console.log(value)
-    console.log(JSON.stringify(value))
-
+  const onChangeSubMajorGroup = (value?: EventOption) => {
     if (!value || !value.value || !value.label) return
-    setSelectedSubMajorGroup({
+    const selectedGroup: Options = {
       value: value.value,
       label: value.label,
-    })
+    }
+    setSelectedSubMajorGroup(selectedGroup)
 
     setMinorGroupOptions(
       victimOccupationMinorGroups.filter(
-        (x) => x.FK_SubMajorGroupCode === parseInt(value.value.substring(0, 2)),
+        (group) => group.code?.substring(0, 2) === value.value?.substring(0, 2),
       ),
     )
+
+    const chosenSubMajorGroup = findGroupByCode(
+      subMajorGroupOptions,
+      value.value,
+    )
+
+    setValue('employee.victimsOccupationSubMajor', selectedGroup)
+    if (chosenSubMajorGroup?.validToSelect) {
+      setValue('employee.victimsOccupation', selectedGroup)
+    }
+
     setSelectedMinorGroup(null)
     setSelectedUnitGroup(null)
     setUnitGroupOptions([])
   }
 
-  const onChangeMinorGroup = (
-    value: { value: string; label: string } | null,
-  ) => {
+  const onChangeMinorGroup = (value?: EventOption) => {
     if (!value || !value.value || !value.label) return
-    setSelectedMinorGroup({
+    const selectedGroup: Options = {
       value: value.value,
       label: value.label,
-    })
+    }
+    setSelectedMinorGroup(selectedGroup)
     setUnitGroupOptions(
       victimsOccupationUnitGroups.filter(
-        (x) => x.FK_MinorGroupCode === parseInt(value.value.substring(0, 3)),
+        (group) => group.code?.substring(0, 3) === value.value?.substring(0, 3),
       ),
     )
+
+    setValue('employee.victimsOccupationMinor', selectedGroup)
+    const chosenMinorGroup = findGroupByCode(minorGroupOptions, value.value)
+    if (chosenMinorGroup?.validToSelect) {
+      setValue('employee.victimsOccupation', selectedGroup)
+    }
+
     setSelectedUnitGroup(null)
   }
 
   useEffect(() => {
-    if (!SelectedMajorGroup) return
+    if (!selectedMajorGroup) return
 
-    if (SelectedSearchGroup) {
-      const codeString: string = SelectedSearchGroup.value
+    if (selectedSearchGroup) {
+      setValue('employee.victimsOccupationMajor', selectedMajorGroup)
+
+      const codeString: string = selectedSearchGroup.value
       const subMajorGroup = victimsOccupationSubMajorGroups.find(
-        (group) => group.Code === parseInt(codeString?.substring(0, 2)),
+        (group) => group.code?.substring(0, 2) === codeString?.substring(0, 2),
       )
-      if (
-        !subMajorGroup ||
-        !subMajorGroup.Code ||
-        !subMajorGroup.LabelIs ||
-        !subMajorGroup.LabelEn
-      ) {
+      if (!subMajorGroup || !subMajorGroup.code || !subMajorGroup.name) {
         setSelectedSubMajorGroup({ value: '', label: '' })
       } else {
         setSelectedSubMajorGroup({
-          value: subMajorGroup?.Code.toString(),
-          label: subMajorGroup?.LabelIs,
+          value: subMajorGroup.code,
+          label: subMajorGroup.name,
         })
       }
 
       setSubMajorGroupOptions(
         victimsOccupationSubMajorGroups.filter(
-          (x) => x.FK_MajorGroupCode === parseInt(codeString.substring(0, 1)),
+          (group) =>
+            group.code?.substring(0, 1) === codeString?.substring(0, 1),
         ),
       )
-    } else {
-      // Set the SelectedSubMajorGroup based on SelectedMajorGroup
     }
-    console.log('Running useEffec [SelectedMajorGroup]')
-  }, [SelectedMajorGroup])
+    console.log('Running useEffec [selectedMajorGroup]')
+  }, [selectedMajorGroup])
+
+  // useEffect(() => {
+  // }, [
+  //   selectedMajorGroup,
+  //   selectedSubMajorGroup,
+  //   SelectedMinorGroup,
+  //   selectedUnitGroup,
+  //   setValue,
+  // ])
 
   useEffect(() => {
-    if (!SelectedSubMajorGroup) return
+    if (!selectedSubMajorGroup) return
 
-    if (SelectedSearchGroup) {
-      const codeString = SelectedSearchGroup.value
+    if (selectedSearchGroup) {
+      setValue('employee.victimsOccupationSubMajor', selectedSubMajorGroup)
 
+      const codeString = selectedSearchGroup.value
       const minorGroup = victimOccupationMinorGroups.find(
-        (group) => group.Code === parseInt(codeString?.substring(0, 3)),
+        (group) => group.code?.substring(0, 3) === codeString?.substring(0, 3),
       )
 
-      if (
-        !minorGroup ||
-        !minorGroup.Code ||
-        !minorGroup.LabelIs ||
-        !minorGroup.LabelEn
-      ) {
+      if (!minorGroup || !minorGroup.code || !minorGroup.name) {
         setSelectedMinorGroup({ value: '', label: '' })
       } else {
         setSelectedMinorGroup({
-          value: minorGroup?.Code.toString(),
-          label: minorGroup?.LabelIs,
+          value: minorGroup.code,
+          label: minorGroup.name,
         })
       }
       setMinorGroupOptions(
         victimOccupationMinorGroups.filter(
-          (x) =>
-            x.FK_SubMajorGroupCode === parseInt(codeString.substring(0, 2)),
+          (group) =>
+            group.code?.substring(0, 2) === codeString?.substring(0, 2),
         ),
       )
     }
-    console.log('Running useEffec [SelectedSubMajorGroup]')
-  }, [SelectedSubMajorGroup])
+    console.log('Running useEffec [selectedSubMajorGroup]')
+  }, [selectedSubMajorGroup])
 
   useEffect(() => {
     if (!SelectedMinorGroup) return
 
-    if (SelectedSearchGroup) {
-      const codeString = SelectedSearchGroup.value
+    if (selectedSearchGroup) {
+      setValue('employee.victimsOccupationMinor', SelectedMinorGroup)
+
+      const codeString = selectedSearchGroup.value
       const unitGroup = victimsOccupationUnitGroups.find(
-        (group) => group.Code === parseInt(codeString?.substring(0, 4)),
+        (group) => group.code?.substring(0, 4) === codeString?.substring(0, 4),
       )
-      if (
-        !unitGroup ||
-        !unitGroup.Code ||
-        !unitGroup.LabelIs ||
-        !unitGroup.LabelEn
-      ) {
+      if (!unitGroup || !unitGroup.code || !unitGroup.name) {
         setSelectedUnitGroup({ value: '', label: '' })
+        setValue('employee.victimsOccupationUnit', { value: '', label: '' })
       } else {
-        setSelectedUnitGroup({
-          value: unitGroup?.Code.toString(),
-          label: unitGroup?.LabelIs,
-        })
+        const selectedUnitGroup: Options = {
+          value: unitGroup.code,
+          label: unitGroup.name,
+        }
+        setSelectedUnitGroup(selectedUnitGroup)
+        setValue('employee.victimsOccupationUnit', selectedUnitGroup)
       }
       setUnitGroupOptions(
         victimsOccupationUnitGroups.filter(
-          (x) => x.FK_MinorGroupCode === parseInt(codeString.substring(0, 3)),
+          (group) =>
+            group.code?.substring(0, 3) === codeString?.substring(0, 3),
         ),
       )
     }
@@ -322,7 +315,7 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                 name=""
                 options={getAllValidSelects()}
                 backgroundColor="blue"
-                value={SelectedSearchGroup}
+                value={selectedSearchGroup}
                 placeholder={formatMessage(employee.employee.searchPlaceholder)}
                 onChange={(value) => {
                   if (!value || !value.label || !value.value) {
@@ -350,11 +343,11 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
               <Select
                 label={formatMessage(employee.employee.majorGroupLabel)}
                 name="majorGroupSelect"
-                options={MajorGroupOptions.map((item) => ({
-                  label: item.LabelIs,
-                  value: item.Code.toString(),
+                options={majorGroupOptions.map((item) => ({
+                  label: item.name || '',
+                  value: item.code,
                 }))}
-                value={SelectedMajorGroup}
+                value={selectedMajorGroup}
                 backgroundColor="blue"
                 placeholder={formatMessage(
                   employee.employee.chooseFromListPlaceholder,
@@ -365,7 +358,7 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                     setSelectedMajorGroup(null)
                     return
                   }
-                  onChangeMajorGroup(v)
+                  onChangeMajorGroup({ value: v.value, label: v.label })
                 }}
               />
             )
@@ -382,13 +375,13 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                 label={formatMessage(employee.employee.subMajorGroupLabel)}
                 name="subMajorGroupSelect"
                 isDisabled={
-                  !SelectedMajorGroup || SubMajorGroupOptions.length === 0
+                  !selectedMajorGroup || subMajorGroupOptions.length === 0
                 }
-                options={SubMajorGroupOptions.map((item) => ({
-                  label: item.LabelIs,
-                  value: item.Code.toString(),
+                options={subMajorGroupOptions.map((item) => ({
+                  label: item.name || '',
+                  value: item.code,
                 }))}
-                value={SelectedSubMajorGroup}
+                value={selectedSubMajorGroup}
                 backgroundColor="blue"
                 placeholder={formatMessage(
                   employee.employee.chooseFromListPlaceholder,
@@ -416,11 +409,11 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                 label={formatMessage(employee.employee.minorGroupLabel)}
                 name="minorGroupSelect"
                 isDisabled={
-                  !SelectedSubMajorGroup || MinorGroupOptions.length === 0
+                  !selectedSubMajorGroup || minorGroupOptions.length === 0
                 }
-                options={MinorGroupOptions.map((item) => ({
-                  label: item.LabelIs,
-                  value: item.Code.toString(),
+                options={minorGroupOptions.map((item) => ({
+                  label: item.name || '',
+                  value: item.code,
                 }))}
                 value={SelectedMinorGroup}
                 backgroundColor="blue"
@@ -450,13 +443,13 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                 label={formatMessage(employee.employee.unitGroupLabel)}
                 name="unitGroupSelect"
                 isDisabled={
-                  !SelectedMinorGroup || UnitGroupOptions.length === 0
+                  !SelectedMinorGroup || unitGroupOptions.length === 0
                 }
-                options={UnitGroupOptions.map((item) => ({
-                  label: item.LabelIs,
-                  value: item.Code.toString(),
+                options={unitGroupOptions.map((item) => ({
+                  label: item.name || '',
+                  value: item.code,
                 }))}
-                value={SelectedUnitGroup}
+                value={selectedUnitGroup}
                 backgroundColor="blue"
                 placeholder={formatMessage(
                   employee.employee.chooseFromListPlaceholder,
@@ -466,10 +459,13 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                     setSelectedUnitGroup(null)
                     return
                   }
-                  setSelectedUnitGroup({
-                    value: value?.value,
+                  const selectedGroup: Options = {
+                    value: value.value || '',
                     label: value?.label,
-                  })
+                  }
+                  setSelectedUnitGroup(selectedGroup)
+                  setValue('employee.victimsOccupation', selectedGroup)
+                  setValue('employee.victimsOccupationUnit', selectedGroup)
                 }}
               />
             )

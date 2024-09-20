@@ -38,5 +38,28 @@ export const causeAndConsequences = {
       defaultMessage: 'Aðstæður slyss',
       description: 'Title of the circumstance page',
     },
+    description: {
+      id: 'aosh.wan.application:causeAndConsequences.circumstances.description',
+      defaultMessage:
+        'Lýstu því við hvaða aðstæður slysið varð með því að velja úr listanum hér fyrir neðan. Þú getur líka slegið inn í leitina.',
+      description: 'description of the circumstance page',
+    },
+    heading: {
+      id: 'aosh.wan.application:causeAndConsequences.circumstances.heading',
+      defaultMessage: 'Slysið varð við:',
+      description: 'Heading before choosing circumstance of accident',
+    },
+    subHeading: {
+      id: 'aosh.wan.application:causeAndConsequences.circumstances.subHeading',
+      defaultMessage:
+        'Lýstu því við hvaða aðstæður slysið varð með því að velja úr listanum hér fyrir neðan. Merktu við alla möguleika sem eiga við.',
+      description:
+        'Text below heading before choosing circumstance of accident',
+    },
+    searchPlaceholder: {
+      id: 'aosh.wan.application:causeAndConsequences.circumstances.searchPlaceholder',
+      defaultMessage: 'Sláðu inn leitarorð',
+      description: 'Placeholder of the search input',
+    },
   }),
 }

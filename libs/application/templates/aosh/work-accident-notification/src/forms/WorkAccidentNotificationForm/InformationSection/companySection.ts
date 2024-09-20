@@ -9,13 +9,10 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
-
-type SizeOfEnterprise = {
-  // TODO REMOVE ME WHEN WE GET GENERATED TYPES FROM API
-  Code: number
-  LabelIs: string
-  LabelEn: string
-}
+import {
+  PostCodeDto,
+  SizeOfTheEnterpriseDto,
+} from '@island.is/clients/work-accident-ver'
 
 export const companySection = buildSubSection({
   id: 'company',
@@ -66,7 +63,20 @@ export const companySection = buildSubSection({
           id: 'companyInformation.postnumber',
           title: information.labels.company.postNumberAndTown,
           width: 'half',
-          options: [],
+          options: (application) => {
+            const postCodes = getValueViaPath(
+              application.externalData,
+              'aoshData.data.postCode',
+              [],
+            ) as PostCodeDto[]
+
+            return postCodes
+              .filter((postCode) => postCode?.code && postCode?.name)
+              .map(({ code, name }) => ({
+                label: `${code} - ${name}`,
+                value: code || '',
+              }))
+          },
         }),
         buildSelectField({
           id: 'companyInformation.industryClassification',
@@ -82,14 +92,16 @@ export const companySection = buildSubSection({
           options: (application) => {
             const sizeOfEnterprises = getValueViaPath(
               application.externalData,
-              'aoshData.data.sizeOfEnterprises',
+              'aoshData.data.sizeOfTheEnterprise',
               [],
-            ) as SizeOfEnterprise[]
+            ) as SizeOfTheEnterpriseDto[]
 
-            return sizeOfEnterprises.map(({ Code, LabelIs, LabelEn }) => ({
-              value: Code.toString(),
-              label: LabelIs,
-            }))
+            return sizeOfEnterprises
+              .filter((size) => size?.code && size?.name)
+              .map(({ code, name }) => ({
+                label: name || '',
+                value: code || '',
+              }))
           },
         }),
         buildAlertMessageField({
@@ -116,7 +128,20 @@ export const companySection = buildSubSection({
           id: 'companyInformation.postnumberOfBranch',
           title: information.labels.company.postNumberAndTown,
           width: 'half',
-          options: [],
+          options: (application) => {
+            const postCodes = getValueViaPath(
+              application.externalData,
+              'aoshData.data.postCode',
+              [],
+            ) as PostCodeDto[]
+
+            return postCodes
+              .filter((postCode) => postCode?.code && postCode?.name)
+              .map(({ code, name }) => ({
+                label: `${code} - ${name}`,
+                value: code || '',
+              }))
+          },
         }),
       ],
     }),

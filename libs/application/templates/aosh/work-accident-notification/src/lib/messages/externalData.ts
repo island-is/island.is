@@ -34,9 +34,9 @@ export const externalData = {
       description: 'First heading of announcement page',
     },
     announcementHeadingSecond: {
-      id: 'aosh.wan.application:externalData.dataProvider.announcemeannouncementHeadingSecondntHeading',
+      id: 'aosh.wan.application:externalData.dataProvider.announcementHeadingSecond',
       defaultMessage:
-        'Ef engin kennitala fyrirtækis er skráð í reitinn hér fyrir neðan þá verður slysið skráð á Notanda {TODO User´s name} (xxxxxx-xxxx)',
+        'Ef engin kennitala fyrirtækis er skráð í reitinn hér fyrir neðan þá verður slysið skráð á Notanda TODO User´s name (xxxxxx-xxxx)',
       description: 'Second heading of announcement page',
     },
     announcementDescription: {

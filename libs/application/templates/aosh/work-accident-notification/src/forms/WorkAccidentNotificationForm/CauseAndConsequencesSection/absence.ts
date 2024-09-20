@@ -7,15 +7,7 @@ import {
 } from '@island.is/application/core'
 import { sections } from '../../../lib/messages'
 import { causeAndConsequences } from '../../../lib/messages'
-import { Application } from '@island.is/api/schema'
-
-// TODO Remove type when we get generated types
-export type AbsenceDueToAccident = {
-  FjarveraV: number
-  FK_DaysLostSeverityCode: string | null
-  LabelIs: string
-  LabelEn: string
-}
+import { AbsenceDueToAccidentDto } from '@island.is/clients/work-accident-ver'
 
 export const absenceSection = buildSubSection({
   id: 'absence',
@@ -39,13 +31,13 @@ export const absenceSection = buildSubSection({
               application.externalData,
               'aoshData.data.absenceDueToAccident',
               [],
-            ) as AbsenceDueToAccident[]
-            return absenceDueToAccident.map(
-              ({ FjarveraV, LabelIs, LabelEn }) => ({
-                value: FjarveraV.toString(),
-                label: LabelIs, // TODO Add LabelEn logic, where do I get locale inside a section ??
-              }),
-            )
+            ) as AbsenceDueToAccidentDto[]
+            return absenceDueToAccident
+              .filter((absence) => absence?.code && absence?.name)
+              .map(({ name, code }) => ({
+                label: name || '',
+                value: code || '',
+              }))
           },
         }),
       ],

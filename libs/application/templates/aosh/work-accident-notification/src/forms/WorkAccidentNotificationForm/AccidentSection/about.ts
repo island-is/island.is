@@ -1,18 +1,22 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildDateField,
   buildDescriptionField,
-  buildDividerField,
+  buildHiddenInput,
   buildMultiField,
+  buildRadioField,
   buildSelectField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { accident, sections, shared } from '../../../lib/messages'
 import { NO, YES } from '@island.is/application/types'
+import { MunicipalityDto } from '@island.is/clients/work-accident-ver'
 
 export const aboutSection = buildSubSection({
-  id: 'about',
+  id: 'accident',
   title: sections.draft.about,
   children: [
     buildMultiField({
@@ -20,23 +24,23 @@ export const aboutSection = buildSubSection({
       description: accident.about.description,
       children: [
         buildDescriptionField({
-          id: 'about.description',
+          id: 'accident.description',
           titleVariant: 'h5',
           title: accident.about.informationHeading,
         }),
         buildDateField({
-          id: 'about.date',
+          id: 'accident.date',
           title: accident.about.date,
           width: 'half',
         }),
         buildDateField({
           // TODO Replace me with some Time field
-          id: 'about.time',
+          id: 'accident.time',
           title: accident.about.time,
           width: 'half',
         }),
         buildSelectField({
-          id: 'about.didAoshCome',
+          id: 'accident.didAoshCome',
           title: accident.about.didAoshCome,
           width: 'half',
           required: true,
@@ -52,7 +56,7 @@ export const aboutSection = buildSubSection({
           ],
         }),
         buildSelectField({
-          id: 'about.didPoliceCome',
+          id: 'accident.didPoliceCome',
           title: accident.about.didPoliceCome,
           width: 'half',
           required: true,
@@ -68,61 +72,84 @@ export const aboutSection = buildSubSection({
           ],
         }),
         buildSelectField({
-          id: 'about.municipality',
+          id: 'accident.municipality',
           title: accident.about.municipality,
           width: 'half',
-          options: [],
+          options: (application) => {
+            const municipalities = getValueViaPath(
+              application.externalData,
+              'aoshData.data.municipality',
+              [],
+            ) as MunicipalityDto[]
+
+            return municipalities
+              .filter(
+                (municipality) => municipality?.code && municipality?.name,
+              )
+              .map(({ code, name }) => ({
+                value: code || '',
+                label: name || '',
+              }))
+          },
         }),
         buildTextField({
-          id: 'about.exactLocation',
+          id: 'accident.exactLocation',
           title: accident.about.exactLocation,
           width: 'half',
         }),
         buildDescriptionField({
-          id: 'about.describe.descriptionHeading',
+          id: 'accident.describe.descriptionHeading',
           titleVariant: 'h5',
           title: accident.about.describeHeading,
           marginTop: 3,
         }),
         buildDescriptionField({
-          id: 'about.describe.description',
+          id: 'accident.describe.description',
           title: '',
           description: accident.about.describeDescription,
           marginTop: 3,
           marginBottom: 2,
         }),
         buildAlertMessageField({
-          id: 'about.alertMessage',
+          id: 'accident.alertMessage',
           title: accident.about.alertFieldTitle,
           message: accident.about.alertFieldDescription,
           alertType: 'warning',
         }),
         buildTextField({
-          id: 'about.wasDoing',
+          id: 'accident.wasDoing',
           title: accident.about.wasDoingTitle,
           variant: 'textarea',
           placeholder: accident.about.wasDoingPlaceholder,
           rows: 7,
         }),
         buildTextField({
-          id: 'about.wentWrong',
+          id: 'accident.wentWrong',
           title: accident.about.wentWrongTitle,
           variant: 'textarea',
           placeholder: accident.about.wenWrongPlaceholder,
           rows: 7,
         }),
         buildTextField({
-          id: 'about.how',
+          id: 'accident.how',
           title: accident.about.howTitle,
           variant: 'textarea',
           placeholder: accident.about.howPlaceholder,
           rows: 7,
         }),
         buildDescriptionField({
-          id: 'about.describe.locationOfAccidentHeading',
+          id: 'accident.describe.locationOfAccidentHeading',
           titleVariant: 'h5',
           title: accident.about.locationOfAccidentHeading,
           marginTop: 3,
+        }),
+        buildHiddenInput({
+          id: 'accident.accidentLocationParentGroup',
+        }),
+        buildCustomField({
+          id: 'accident.accidentLocation',
+          title: '',
+          component: 'AccidentLocation',
         }),
       ],
     }),

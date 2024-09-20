@@ -109,5 +109,15 @@ export const accident = {
       defaultMessage: 'Vettvangur slyssins',
       description: 'Heading for location of the accident section',
     },
+    locationOfAccidentMajorGroup: {
+      id: 'aosh.wan.application:accident.about.locationOfAccidentMajorGroup',
+      defaultMessage: 'Yfirflokkur atvinnustarfsemi',
+      description: 'Label for the major group input for accident location',
+    },
+    locationOfAccidentMinorGroup: {
+      id: 'aosh.wan.application:accident.about.locationOfAccidentMinorGroup',
+      defaultMessage: 'Undirflokkur starfseminnar',
+      description: 'Label for the minor group input for accident location',
+    },
   }),
 }

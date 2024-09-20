@@ -53,6 +53,11 @@ export const employee = {
       defaultMessage: 'Hóf störf hjá fyrirtækinu',
       description: 'Started working for the company',
     },
+    tempEmploymentSSN: {
+      id: 'aosh.wan.application:employee.tempEmploymentSSN',
+      defaultMessage: 'Kennitala starfsmannaleigu',
+      description: 'SSN for temporary employment',
+    },
     employmentTime: {
       id: 'aosh.wan.application:employee.employmentTime',
       defaultMessage: 'Starfstími í sama starfi',
@@ -70,13 +75,23 @@ export const employee = {
     },
     date: {
       id: 'aosh.wan.application:employee.date',
-      defaultMessage: 'Dagsetning',
-      description: 'Date',
+      defaultMessage: 'Dagsetning slyss',
+      description: 'Date of accident',
     },
-    businessLocation: {
-      id: 'aosh.wan.application:employee.businessLocation',
+    time: {
+      id: 'aosh.wan.application:employee.time',
+      defaultMessage: 'Tímasetning slyss',
+      description: 'Time of accident',
+    },
+    timePlaceholder: {
+      id: 'aosh.wan.application:employee.timePlaceholder',
+      defaultMessage: '23:59',
+      description: 'placeholder for time of accident',
+    },
+    workstation: {
+      id: 'aosh.wan.application:employee.workstation',
       defaultMessage: 'Starfsstöð',
-      description: 'Business location',
+      description: 'Workstation',
     },
     occupationTitle: {
       id: 'aosh.wan.application:employee.occupationTitle',

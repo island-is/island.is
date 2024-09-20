@@ -28,7 +28,7 @@ export const workhealthSection = buildSubSection({
           message: information.labels.laborProtection.alertMessageText,
         }),
         buildCustomField({
-          id: 'companyLaborProtection.checkboxFieldCustom',
+          id: 'companyLaborProtection.workhealthAndSafetyOccupation',
           title: '',
           component: 'CheckboxFieldCustom',
         }),

@@ -11,9 +11,10 @@ export const circumstancesSection = buildSubSection({
   children: [
     buildMultiField({
       title: causeAndConsequences.circumstances.title,
+      description: causeAndConsequences.circumstances.description,
       children: [
         buildCustomField({
-          id: 'circumstances.customField',
+          id: 'circumstances.physicalActivities',
           title: '',
           component: 'Circumstance',
         }),
