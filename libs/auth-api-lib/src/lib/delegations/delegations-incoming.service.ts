@@ -268,32 +268,26 @@ export class DelegationsIncomingService {
     if (
       providers.includes(AuthDelegationProvider.DistrictCommissionersRegistry)
     ) {
-      let delegationFound = false
-      let isError = false
       try {
-        delegationFound = await this.syslumennService.checkIfDelegationExists(
-          user.nationalId,
-          fromNationalId,
-        )
+        const delegationFound =
+          await this.syslumennService.checkIfDelegationExists(
+            user.nationalId,
+            fromNationalId,
+          )
+
+        if (delegationFound) {
+          return true
+        } else {
+          this.delegationsIndexService.removeDelegationRecord({
+            fromNationalId,
+            toNationalId: user.nationalId,
+            type: AuthDelegationType.LegalRepresentative,
+            provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+          })
+        }
       } catch (error) {
-        isError = true
         logger.error(
           `Failed checking if delegation exists at provider '${AuthDelegationProvider.DistrictCommissionersRegistry}'`,
-        )
-      }
-
-      if (delegationFound) {
-        return true
-      } else if (!isError) {
-        Promise.all(
-          delegationTypes.map((dt) =>
-            this.delegationsIndexService.removeDelegationRecord({
-              fromNationalId,
-              toNationalId: user.nationalId,
-              type: dt,
-              provider: AuthDelegationProvider.DistrictCommissionersRegistry,
-            }),
-          ),
         )
       }
     }
