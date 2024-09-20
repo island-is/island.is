@@ -9,7 +9,7 @@ import {
   useDynamicShadow,
 } from '@island.is/portals/shared-modules/delegations'
 import { Identity } from '@island.is/api/schema'
-import format  from 'date-fns/format'
+import format from 'date-fns/format'
 
 type CreateDelegationConfirmModalProps = Pick<
   ModalProps,

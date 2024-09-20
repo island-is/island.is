@@ -102,37 +102,33 @@ const CreateDelegationScreen = () => {
     toast.warning(formatMessage(m.grantIdentityError))
   }
 
-  const [
-    getFromIdentity,
-    { loading: fromIdentityQueryLoading },
-  ] = useIdentityLazyQuery({
-    onError: (error) => {
-      console.error(error)
-    },
-    onCompleted: (data) => {
-      if (!data.identity) {
-        noUserFoundToast()
-      } else if (data.identity) {
-        setFromIdentity(data.identity)
-      }
-    },
-  })
+  const [getFromIdentity, { loading: fromIdentityQueryLoading }] =
+    useIdentityLazyQuery({
+      onError: (error) => {
+        console.error(error)
+      },
+      onCompleted: (data) => {
+        if (!data.identity) {
+          noUserFoundToast()
+        } else if (data.identity) {
+          setFromIdentity(data.identity)
+        }
+      },
+    })
 
-  const [
-    getToIdentity,
-    { loading: toIdentityQueryLoading },
-  ] = useIdentityLazyQuery({
-    onError: (error) => {
-      console.error(error)
-    },
-    onCompleted: (data) => {
-      if (!data.identity) {
-        noUserFoundToast()
-      } else if (data.identity) {
-        setToIdentity(data.identity)
-      }
-    },
-  })
+  const [getToIdentity, { loading: toIdentityQueryLoading }] =
+    useIdentityLazyQuery({
+      onError: (error) => {
+        console.error(error)
+      },
+      onCompleted: (data) => {
+        if (!data.identity) {
+          noUserFoundToast()
+        } else if (data.identity) {
+          setToIdentity(data.identity)
+        }
+      },
+    })
 
   const validateNationalId = (nationalId: string) => {
     const value = nationalId.replace('-', '').trim()
