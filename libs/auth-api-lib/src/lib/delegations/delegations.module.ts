@@ -39,6 +39,7 @@ import {
   ZendeskServiceOptions,
 } from '@island.is/clients/zendesk'
 import { environment } from '../environments'
+import { DelegationDelegationType } from './models/delegation-delegation-type.model'
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { environment } from '../environments'
       ApiScopeUserAccess,
       DelegationTypeModel,
       DelegationProviderModel,
+      DelegationDelegationType,
     ]),
     UserSystemNotificationModule,
   ],

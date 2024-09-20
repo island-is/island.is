@@ -100,6 +100,9 @@ export const AccessCard = ({
     let icon: IconType = 'people'
 
     switch (type) {
+      case AuthDelegationType.GeneralMandate:
+        label = formatMessage(m.delegationTypeGeneralMandate)
+        break
       case AuthDelegationType.LegalGuardian:
         label = formatMessage(m.delegationTypeLegalGuardian)
         break

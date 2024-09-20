@@ -6,7 +6,10 @@ import startOfDay from 'date-fns/startOfDay'
 import { Op, Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
-import { AuthDelegationProvider } from '@island.is/shared/types'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 import { PersonalRepresentativeDelegationTypeModel } from '../personal-representative/models/personal-representative-delegation-type.model'
 import { PersonalRepresentative } from '../personal-representative/models/personal-representative.model'
@@ -21,6 +24,7 @@ import { DelegationTypeModel } from './models/delegation-type.model'
 import { Delegation } from './models/delegation.model'
 
 import type { User } from '@island.is/auth-nest-tools'
+import { DelegationDelegationType } from './models/delegation-delegation-type.model'
 
 @Injectable()
 export class DelegationScopeService {
@@ -31,6 +35,8 @@ export class DelegationScopeService {
     private apiScopeModel: typeof ApiScope,
     @InjectModel(IdentityResource)
     private identityResourceModel: typeof IdentityResource,
+    @InjectModel(Delegation)
+    private delegationModel: typeof Delegation,
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
     private delegationProviderService: DelegationProviderService,
@@ -117,7 +123,7 @@ export class DelegationScopeService {
     })
   }
 
-  private findValidCustomScopesTo(
+  private async findValidCustomScopesTo(
     toNationalId: string,
     fromNationalId: string,
   ): Promise<DelegationScope[]> {
@@ -152,6 +158,47 @@ export class DelegationScopeService {
                 {
                   model: DelegationTypeModel,
                   where: { provider: AuthDelegationProvider.Custom },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+  }
+
+  private findValidGeneralMandateTo(
+    toNationalId: string,
+    fromNationalId: string,
+  ): Promise<Delegation[]> {
+    const today = startOfDay(new Date())
+
+    return this.delegationModel.findAll({
+      where: {
+        toNationalId: toNationalId,
+        fromNationalId: fromNationalId,
+      },
+      include: [
+        {
+          model: DelegationDelegationType,
+          where: {
+            validTo: { [Op.or]: [{ [Op.is]: undefined }, { [Op.gte]: today }] },
+          },
+          required: true,
+          include: [
+            {
+              model: DelegationTypeModel,
+              required: true,
+              where: {
+                id: AuthDelegationType.GeneralMandate,
+              },
+              include: [
+                {
+                  model: ApiScope,
+                  required: true,
+                  where: {
+                    enabled: true,
+                  },
                 },
               ],
             },
@@ -296,7 +343,7 @@ export class DelegationScopeService {
 
     if (
       providers.includes(AuthDelegationProvider.PersonalRepresentativeRegistry)
-    )
+    ) {
       scopePromises.push(
         this.findPersonalRepresentativeRegistryScopes(
           user.nationalId,
@@ -304,14 +351,31 @@ export class DelegationScopeService {
           delegationTypes,
         ),
       )
+    }
 
-    if (providers.includes(AuthDelegationProvider.Custom))
+    if (delegationTypes?.includes(AuthDelegationType.Custom)) {
       scopePromises.push(
         this.findValidCustomScopesTo(user.nationalId, fromNationalId).then(
           (delegationScopes: DelegationScope[]) =>
             delegationScopes.map((ds) => ds.scopeName),
         ),
       )
+    }
+
+    if (delegationTypes?.includes(AuthDelegationType.GeneralMandate)) {
+      scopePromises.push(
+        this.findValidGeneralMandateTo(user.nationalId, fromNationalId).then(
+          (delegations) =>
+            delegations
+              .map((d) =>
+                d.delegationDelegationTypes?.map((dt) =>
+                  dt.delegationType?.apiScopes.map((as) => as.name),
+                ),
+              )
+              .flat(3),
+        ) as Promise<string[]>,
+      )
+    }
 
     const scopeSets = await Promise.all(scopePromises)
 

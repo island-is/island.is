@@ -103,6 +103,12 @@ export class DelegationsIncomingService {
     )
 
     delegationPromises.push(
+      this.delegationsIncomingCustomService.findAllValidGeneralMandate({
+        nationalId: user.nationalId,
+      }),
+    )
+
+    delegationPromises.push(
       this.delegationsIncomingRepresentativeService.findAllIncoming({
         nationalId: user.nationalId,
       }),
@@ -175,6 +181,17 @@ export class DelegationsIncomingService {
     if (providers.includes(AuthDelegationProvider.Custom)) {
       delegationPromises.push(
         this.delegationsIncomingCustomService.findAllAvailableIncoming(
+          user,
+          clientAllowedApiScopes,
+          client.requireApiScopes,
+        ),
+      )
+    }
+
+    // This has a provider of Custom but needs to be handled separately
+    if (types?.includes(AuthDelegationType.GeneralMandate)) {
+      delegationPromises.push(
+        this.delegationsIncomingCustomService.findAllAvailableGeneralMandate(
           user,
           clientAllowedApiScopes,
           client.requireApiScopes,
