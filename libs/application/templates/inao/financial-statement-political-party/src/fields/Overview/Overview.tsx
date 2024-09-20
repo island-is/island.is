@@ -24,7 +24,7 @@ import {
   sectionColumn,
   starterColumnStyle,
 } from '../../components/css/overviewStyles.css'
-import { CapitalNumberOverview } from '../../components/CApitalNumberOverview'
+import { CapitalNumberOverview } from '../../components/CapitalNumberOverview'
 import { AssetDebtEquityOverview } from '../../components/AssetDebtEquityOverview'
 import { FileValueLine } from '../../components/FileValueLine'
 

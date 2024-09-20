@@ -26,7 +26,7 @@ import {
   sectionColumn,
   starterColumnStyle,
 } from '../../components/css/overviewStyles.css'
-import { CapitalNumberOverview } from '../../components/CApitalNumberOverview'
+import { CapitalNumberOverview } from '../../components/CapitalNumberOverview'
 
 export const PartyOverview = ({
   application,

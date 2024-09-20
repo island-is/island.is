@@ -41,10 +41,4 @@ export const formatCurrency = (answer: string) =>
 
 export const formatNumber = (num: number) => num.toLocaleString('de-DE')
 
-export const checkIfNegative = (inputNumber: string) => {
-  if (Number(inputNumber) < 0) {
-    return false
-  } else {
-    return true
-  }
-}
+export const checkIfNegative = (inputNumber: string) => Number(inputNumber) >= 0
