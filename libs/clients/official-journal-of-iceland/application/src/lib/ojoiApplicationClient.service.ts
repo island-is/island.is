@@ -41,8 +41,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
     try {
       return await this.ojoiApplicationApiWithAuth(auth).getComments(params)
     } catch (error) {
-      console.log(error)
-      this.logger.error('Failed to get comments', {
+      this.logger.warn('Failed to get comments', {
         error,
         applicationId: params.id,
         category: LOG_CATEGORY,
@@ -57,7 +56,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
       await this.ojoiApplicationApiWithAuth(auth).postComment(params)
       return true
     } catch (error) {
-      this.logger.error(`Failed to post comment: ${error.message}`, {
+      this.logger.warn(`Failed to post comment: ${error.message}`, {
         error,
         applicationId: params.id,
         category: LOG_CATEGORY,
@@ -74,7 +73,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
       await this.ojoiApplicationApiWithAuth(auth).postApplication(params)
       return Promise.resolve(true)
     } catch (error) {
-      this.logger.error('Failed to post application', {
+      this.logger.warn('Failed to post application', {
         error,
         applicationId: params.id,
         category: LOG_CATEGORY,
@@ -128,7 +127,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
     try {
       return await this.ojoiApplicationApiWithAuth(auth).getPrice(params)
     } catch (error) {
-      this.logger.error('Failed to get price', {
+      this.logger.warn('Failed to get price', {
         applicationId: params.id,
         error,
         category: LOG_CATEGORY,
@@ -150,12 +149,11 @@ export class OfficialJournalOfIcelandApplicationClientService {
     auth: Auth,
   ): Promise<void> {
     try {
-      console.log(auth)
       await this.ojoiApplicationApiWithAuth(auth).addApplicationAttachment(
         params,
       )
     } catch (error) {
-      this.logger.error('Failed to add application attachment', {
+      this.logger.warn('Failed to add application attachment', {
         category: LOG_CATEGORY,
         applicationId: params.id,
       })
