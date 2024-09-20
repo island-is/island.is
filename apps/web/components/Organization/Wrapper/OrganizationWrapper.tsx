@@ -387,7 +387,9 @@ export const OrganizationHeader: React.FC<
     case 'landing_page':
       return null
     case 'fjarsysla-rikisins':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader {...defaultProps} />
+      ) : (
         <FjarsyslaRikisinsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
