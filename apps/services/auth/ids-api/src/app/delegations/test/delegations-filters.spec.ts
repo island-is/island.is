@@ -171,7 +171,7 @@ describe('DelegationsController', () => {
         delegationTypes: [AuthDelegationType.LegalRepresentative],
       })
 
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(res.body.verified).toEqual(true)
     })
 
@@ -181,7 +181,7 @@ describe('DelegationsController', () => {
         delegationTypes: [AuthDelegationType.LegalRepresentative],
       })
 
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(res.body.verified).toEqual(false)
     })
   })

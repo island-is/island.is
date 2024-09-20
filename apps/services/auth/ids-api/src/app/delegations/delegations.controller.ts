@@ -27,6 +27,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Documentation } from '@island.is/nest/swagger'
 import { AuthDelegationType } from '@island.is/shared/types'
 
 import { DelegationVerificationResult } from './delegation-verification-result.dto'
@@ -34,7 +35,6 @@ import { DelegationVerification } from './delegation-verification.dto'
 
 import type { Logger } from '@island.is/logging'
 import type { User } from '@island.is/auth-nest-tools'
-
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
 @Controller({
@@ -118,6 +118,10 @@ export class DelegationsController {
 
   @Scopes('@identityserver.api/authentication')
   @Post('verify')
+  @Documentation({
+    description: 'Verifies a delegation at the source.',
+    response: { status: 200, type: DelegationVerificationResult },
+  })
   @ApiOkResponse({ type: DelegationVerificationResult })
   async verify(
     @CurrentUser() user: User,
