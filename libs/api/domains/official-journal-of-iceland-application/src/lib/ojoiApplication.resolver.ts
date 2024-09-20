@@ -1,5 +1,10 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { FeatureFlag, Features } from '@island.is/nest/feature-flags'
 import { OfficialJournalOfIcelandApplicationService } from './ojoiApplication.service'
@@ -7,7 +12,6 @@ import { GetCommentsInput } from '../models/getComments.input'
 import { GetCommentsResponse } from '../models/getComments.response'
 import { PostCommentInput } from '../models/postComment.input'
 import { PostCommentResponse } from '../models/postComment.response'
-import { PostApplicationInput } from '../models/postApplication.input'
 import { UseGuards } from '@nestjs/common'
 import { CaseGetPriceResponse } from '../models/getPrice.response'
 import { GetPdfUrlResponse } from '../models/getPdfUrlResponse'
@@ -18,6 +22,7 @@ import { AddApplicationAttachmentInput } from '../models/addApplicationAttachmen
 import { GetApplicationAttachmentInput } from '../models/getApplicationAttachment.input'
 import { GetApplicationAttachmentsResponse } from '../models/getApplicationAttachments.response'
 import { DeleteApplicationAttachmentInput } from '../models/deleteApplicationAttachment.input'
+import type { User } from '@island.is/auth-nest-tools'
 
 @Scopes(ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -31,36 +36,35 @@ export class OfficialJournalOfIcelandApplicationResolver {
   @Query(() => GetCommentsResponse, {
     name: 'officialJournalOfIcelandApplicationGetComments',
   })
-  getComments(@Args('input') input: GetCommentsInput) {
-    return this.ojoiApplicationService.getComments(input)
+  getComments(
+    @Args('input') input: GetCommentsInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.getComments(input, user)
   }
 
   @Mutation(() => PostCommentResponse, {
     name: 'officialJournalOfIcelandApplicationPostComment',
   })
-  postComment(@Args('input') input: PostCommentInput) {
-    return this.ojoiApplicationService.postComment(input)
-  }
-
-  @Query(() => Boolean, {
-    name: 'officialJournalOfIcelandApplicationPostApplication',
-  })
-  postApplication(@Args('input') input: PostApplicationInput) {
-    return this.ojoiApplicationService.postApplication(input)
+  postComment(
+    @Args('input') input: PostCommentInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.postComment(input, user)
   }
 
   @Query(() => CaseGetPriceResponse, {
     name: 'officialJournalOfIcelandApplicationGetPrice',
   })
-  getPrice(@Args('id') id: string) {
-    return this.ojoiApplicationService.getPrice(id)
+  getPrice(@Args('id') id: string, @CurrentUser() user: User) {
+    return this.ojoiApplicationService.getPrice(id, user)
   }
 
   @Query(() => GetPdfUrlResponse, {
     name: 'officialJournalOfIcelandApplicationGetPdfUrl',
   })
-  getPdfUrl(@Args('id') id: string) {
-    return this.ojoiApplicationService.getPdfUrl(id)
+  getPdfUrl(@Args('id') id: string, @CurrentUser() user: User) {
+    return this.ojoiApplicationService.getPdfUrl(id, user)
   }
 
   @Mutation(() => GetPresignedUrlResponse, {
@@ -69,8 +73,9 @@ export class OfficialJournalOfIcelandApplicationResolver {
   getPresignedUrl(
     @Args('input', { type: () => GetPresignedUrlInput })
     input: GetPresignedUrlInput,
+    @CurrentUser() user: User,
   ) {
-    return this.ojoiApplicationService.getPresignedUrl(input)
+    return this.ojoiApplicationService.getPresignedUrl(input, user)
   }
 
   @Mutation(() => AddApplicationAttachmentResponse, {
@@ -79,8 +84,9 @@ export class OfficialJournalOfIcelandApplicationResolver {
   addAttachment(
     @Args('input', { type: () => AddApplicationAttachmentInput })
     input: AddApplicationAttachmentInput,
+    @CurrentUser() user: User,
   ) {
-    return this.ojoiApplicationService.addApplicationAttachment(input)
+    return this.ojoiApplicationService.addApplicationAttachment(input, user)
   }
 
   @Query(() => GetApplicationAttachmentsResponse, {
@@ -89,8 +95,9 @@ export class OfficialJournalOfIcelandApplicationResolver {
   getAttachments(
     @Args('input', { type: () => GetApplicationAttachmentInput })
     input: AddApplicationAttachmentInput,
+    @CurrentUser() user: User,
   ) {
-    return this.ojoiApplicationService.getApplicationAttachments(input)
+    return this.ojoiApplicationService.getApplicationAttachments(input, user)
   }
 
   @Mutation(() => AddApplicationAttachmentResponse, {
@@ -99,7 +106,8 @@ export class OfficialJournalOfIcelandApplicationResolver {
   deleteAttachment(
     @Args('input', { type: () => DeleteApplicationAttachmentInput })
     input: DeleteApplicationAttachmentInput,
+    @CurrentUser() user: User,
   ) {
-    return this.ojoiApplicationService.deleteApplicationAttachment(input)
+    return this.ojoiApplicationService.deleteApplicationAttachment(input, user)
   }
 }
