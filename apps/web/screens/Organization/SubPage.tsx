@@ -19,6 +19,7 @@ import {
   OrganizationWrapper,
   SignLanguageButton,
   SliceDropdown,
+  SliceFilter,
   SliceMachine,
   SliceTableOfContents,
   TOC,
@@ -290,7 +291,8 @@ const renderSlices = (
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
-      return <SliceDropdown slices={slices} sliceExtraText={extraText} />
+      return <SliceFilter slices={slices} />
+    //return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     case 'SliceTableOfContents':
       return <SliceTableOfContents slices={slices} sliceExtraText={extraText} />
     default:
@@ -313,17 +315,19 @@ const renderSlices = (
         }
 
         return (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            namespace={namespace}
-            slug={slug}
-            marginBottom={index === slices.length - 1 ? 5 : 0}
-            params={{
-              renderAnchorPagesAsProfileCards: true,
-              forceTitleSectionHorizontalPadding: 'true',
-            }}
-          />
+          <>
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              namespace={namespace}
+              slug={slug}
+              marginBottom={index === slices.length - 1 ? 5 : 0}
+              params={{
+                renderAnchorPagesAsProfileCards: true,
+                forceTitleSectionHorizontalPadding: 'true',
+              }}
+            />
+          </>
         )
       })
   }
