@@ -62,10 +62,8 @@ const CreateDelegationScreen = () => {
   const toInputRef = React.useRef<HTMLInputElement>(null)
   const formRef = React.useRef<HTMLFormElement>(null)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
-  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-112px' })
+  const { showShadow } = useDynamicShadow({ rootMargin: '-112px' })
   const defaultFromNationalId = searchParams.get('fromNationalId')
-
-  console.log('defaultFromNationalId', defaultFromNationalId)
 
   const typeOptions = [
     {
@@ -89,7 +87,6 @@ const CreateDelegationScreen = () => {
         defaultFromNationalId ?? '',
         userInfo?.profile.nationalId ?? '',
       )
-      console.log('unmaskedNationalId', unmaskedNationalId)
       if (unmaskedNationalId && validateNationalId(unmaskedNationalId)) {
         setFromNationalId(unmaskedNationalId)
         getFromIdentity({
@@ -107,7 +104,7 @@ const CreateDelegationScreen = () => {
 
   const [
     getFromIdentity,
-    { loading: fromIdentityQueryLoading, error: fromQueryError },
+    { loading: fromIdentityQueryLoading },
   ] = useIdentityLazyQuery({
     onError: (error) => {
       console.error(error)
@@ -123,7 +120,7 @@ const CreateDelegationScreen = () => {
 
   const [
     getToIdentity,
-    { loading: toIdentityQueryLoading, error: toQueryError },
+    { loading: toIdentityQueryLoading },
   ] = useIdentityLazyQuery({
     onError: (error) => {
       console.error(error)

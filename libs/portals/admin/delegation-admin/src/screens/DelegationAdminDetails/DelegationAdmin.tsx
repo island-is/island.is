@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   GridColumn,
   GridRow,
@@ -19,8 +18,6 @@ import { AuthCustomDelegation } from '@island.is/api/schema'
 import { DelegationsEmptyState } from '@island.is/portals/shared-modules/delegations'
 import { useAuth } from '@island.is/auth/react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { replaceParams } from '@island.is/react-spa/shared'
-import { maskNationalId } from '@island.is/shared/pii'
 import { maskString } from '@island.is/shared/utils'
 
 const DelegationAdminScreen = () => {
