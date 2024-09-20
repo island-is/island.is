@@ -45,10 +45,10 @@ export class LoanHistory {
   municipality?: string | null
 
   @Field(() => Date, { nullable: true })
-  firstInterestDate?: Date
+  firstInterestDate?: string | null
 
   @Field(() => Date, { nullable: true })
-  firstPaymentDate?: Date
+  firstPaymentDate?: string | null
 
   @Field(() => Number, { nullable: true })
   totalNumberOfPayments?: number | null
@@ -87,13 +87,13 @@ export class LoanHistory {
   originalLoanAmount?: number | null
 
   @Field(() => Date, { nullable: true })
-  nextPaymentDate?: Date
+  nextPaymentDate?: string | null
 
   @Field(() => Date, { nullable: true })
-  lastPaymentDate?: Date
+  lastPaymentDate?: string | null
 
   @Field(() => Date, { nullable: true })
-  lastUnpaidInvoiceDate?: Date
+  lastUnpaidInvoiceDate?: string | null
 
   @Field(() => Number, { nullable: true })
   numberOfPaymentDatesRemaining?: number | null

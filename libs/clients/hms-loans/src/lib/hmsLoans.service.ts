@@ -1,30 +1,47 @@
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
+import { dataOr204Null } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
-import { LibraApi } from '../../gen/fetch'
+import {
+  postApiVbyVersionLibraLoanhistory,
+  postApiVbyVersionLibraLoanhistorypdf,
+  postApiVbyVersionLibraPaymenthistorybyloanid,
+} from '../../gen/fetch'
 
 @Injectable()
 export class HmsLoansClientService {
-  constructor(private readonly loansApi: LibraApi) {}
-
-  private apiWithAuth = (user: User) =>
-    this.loansApi.withMiddleware(new AuthMiddleware(user as Auth))
-
   async getHmsLoansHistory(user: User) {
-    return this.apiWithAuth(user).apiVversionLibraLoanhistoryPost({
-      version: '1',
-    })
+    return dataOr204Null(
+      postApiVbyVersionLibraLoanhistory({
+        path: {
+          version: '1',
+        },
+        auth: user,
+      }),
+    )
   }
 
   async getHmsLoansHistoryPdf(user: User) {
-    return this.apiWithAuth(user).apiVversionLibraLoanhistorypdfPost({
-      version: '1',
-    })
+    return dataOr204Null(
+      postApiVbyVersionLibraLoanhistorypdf({
+        path: {
+          version: '1',
+        },
+        auth: user,
+      }),
+    )
   }
 
   async getHmsLoansPaymentHistory(user: User, loanId: number) {
-    return this.apiWithAuth(user).apiVversionLibraPaymenthistorybyloanidPost({
-      version: '1',
-      loanId,
-    })
+    return dataOr204Null(
+      postApiVbyVersionLibraPaymenthistorybyloanid({
+        path: {
+          version: '1',
+        },
+        query: {
+          loanId,
+        },
+        auth: user,
+      }),
+    )
   }
 }

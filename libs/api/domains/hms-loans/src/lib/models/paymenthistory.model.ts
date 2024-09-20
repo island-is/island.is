@@ -3,10 +3,10 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType('HmsLoansPaymentHistory')
 export class PaymentHistory {
   @Field(() => Date, { nullable: true })
-  paymentDate?: Date
+  paymentDate?: string | null
 
   @Field(() => Date, { nullable: true })
-  transactionDate?: Date
+  transactionDate?: string | null
 
   @Field(() => Number, { nullable: true })
   paymentAmount?: number | null

@@ -28,7 +28,7 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/hms-loans/gen/fetch -i libs/clients/hms-loans/src/clientConfig.json"
+        "command": "yarn openapi-ts -o libs/clients/hms-loans/gen/fetch -i libs/clients/hms-loans/src/clientConfig.json -c @hey-api/client-fetch"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
