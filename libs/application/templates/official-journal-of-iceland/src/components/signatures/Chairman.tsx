@@ -3,7 +3,11 @@ import { useApplication } from '../../hooks/useUpdateApplication'
 import { useLocale } from '@island.is/localization'
 import { signatures } from '../../lib/messages/signatures'
 import { InputFields } from '../../lib/types'
-import { getCommitteeAnswers, getEmptyMember } from '../../lib/utils'
+import {
+  getCommitteeAnswers,
+  getEmptyMember,
+  getSingleSignatureMarkup,
+} from '../../lib/utils'
 import { memberItemSchema } from '../../lib/dataSchema'
 import { SignatureMember } from './Member'
 import set from 'lodash/set'
@@ -29,9 +33,22 @@ export const Chairman = ({ applicationId, member }: Props) => {
     )
 
     if (signature) {
+      const additionalSignature =
+        application.answers.signatures?.additionalSignature?.committee
+      const chairman = { ...signature.chairman, [key]: value }
+
+      const html = getSingleSignatureMarkup(
+        {
+          ...signature,
+        },
+        additionalSignature,
+        chairman,
+      )
+
       const updatedCommitteeSignature = {
         ...signature,
-        chairman: { ...signature.chairman, [key]: value },
+        chairman: chairman,
+        html: html,
       }
 
       const updatedSignatures = set(

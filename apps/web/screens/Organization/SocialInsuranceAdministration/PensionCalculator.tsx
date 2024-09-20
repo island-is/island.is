@@ -133,8 +133,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   const currencyInputMaxLength =
     customPageData?.configJson?.currencyInputMaxLength ?? 14
 
-  const maxMonthPensionDelay =
-    customPageData?.configJson?.maxMonthPensionDelay ?? 156
+  const maxMonthPensionDelayIfBornAfter1951 =
+    customPageData?.configJson?.maxMonthPensionDelayIfBornAfter1951 ?? 156
+
+  const maxMonthPensionDelayIfBorn1951OrEarlier =
+    customPageData?.configJson?.maxMonthPensionDelayIfBorn1951OrEarlier ?? 60
 
   const [loadingResultPage, setLoadingResultPage] = useState(false)
   const [hasLivedAbroad, setHasLivedAbroad] = useState(
@@ -386,6 +389,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       const minYear = add(defaultPensionDate, {
         months: -maxMonthPensionHurry,
       }).getFullYear()
+
+      const maxMonthPensionDelay =
+        typeof birthYear === 'number' && birthYear < 1952
+          ? maxMonthPensionDelayIfBorn1951OrEarlier
+          : maxMonthPensionDelayIfBornAfter1951
+
       const maxYear = add(defaultPensionDate, {
         months: maxMonthPensionDelay,
       }).getFullYear()
@@ -399,7 +408,13 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     }
 
     return options
-  }, [defaultPensionDate, maxMonthPensionDelay, maxMonthPensionHurry])
+  }, [
+    birthYear,
+    defaultPensionDate,
+    maxMonthPensionDelayIfBorn1951OrEarlier,
+    maxMonthPensionDelayIfBornAfter1951,
+    maxMonthPensionHurry,
+  ])
 
   const title = `${formatMessage(translationStrings.mainTitle)} ${
     dateOfCalculationsOptions.find((o) => o.value === dateOfCalculations)
