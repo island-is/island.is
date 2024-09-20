@@ -98,7 +98,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": [
-          "cross-env NODE_ENV=development yarn ts-node -P apps/portals/admin/tsconfig.app.json apps/portals/admin/start-with-bff.ts"
+          "cross-env NODE_ENV=development esbuild apps/portals/admin/start-with-bff.ts --bundle --platform=node --outfile=dist/start-with-bff.js && node --inspect dist/start-with-bff.js"
         ],
         "parallel": true
       }

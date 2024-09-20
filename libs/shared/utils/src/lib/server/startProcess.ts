@@ -25,6 +25,11 @@ export const startProcess = (
       shell: true,
     })
 
+    // Handle process termination on exit
+    process.on('exit', () => {
+      child.kill('SIGTERM')
+    })
+
     // Capture and handle stdout
     child.stdout?.on('data', (data) => {
       process.stdout.write(data.toString())
