@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import { BffContext, BffContextType } from './BffContext'
 import { AuthContext } from '@island.is/auth/react'
 import { BffUser, User } from '@island.is/shared/types'
+import { createBroadcasterHook } from '@island.is/react-spa/shared'
 
 /**
  * Maps an object to a BffUser type.
@@ -45,7 +46,7 @@ export const mapToBffUser = (input: User): BffUser => {
 /**
  * Dynamic hook to get the bff context.
  */
-export const useBffContext = (hookName: string): BffContextType => {
+export const useDynamicBffHook = (hookName: string): BffContextType => {
   const bffContext = useContext(BffContext)
 
   if (!bffContext) {
@@ -104,8 +105,21 @@ export const useUserInfo = (): BffUser => {
  * This hook is used to get the bff url generator.
  * The bff url generator is used to generate urls for the Bff in a conveinent way.
  */
-export const useBffUrlGenerator = () => {
-  const { bffUrlGenerator } = useBffContext('useBffUrlGenerator')
+export const useBffUrlGenerator = () =>
+  useDynamicBffHook(useBffUrlGenerator.name).bffUrlGenerator
 
-  return bffUrlGenerator
+export const useBff = () => useDynamicBffHook(useBff.name)
+
+export enum BffBroadcastEvents {
+  DELETEGATION_SWITCH = 'DELETEGATION_SWITCH',
+  NEW_SESSION = 'NEW_SESSION',
+  LOGOUT = 'LOGOUT',
 }
+
+export type BffBroadcastEvent = {
+  type: BffBroadcastEvents
+  userInfo: BffUser
+}
+
+export const useBffBroadcaster =
+  createBroadcasterHook<BffBroadcastEvent>('bff_auth_channel')
