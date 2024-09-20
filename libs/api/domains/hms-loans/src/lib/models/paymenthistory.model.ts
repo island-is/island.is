@@ -9,26 +9,26 @@ export class PaymentHistory {
   transactionDate?: Date
 
   @Field(() => Number, { nullable: true })
-  paymentAmount?: number
+  paymentAmount?: number | null
 
   @Field(() => Number, { nullable: true })
-  interest?: number
+  interest?: number | null
 
   @Field(() => Number, { nullable: true })
-  priceImprovementPayment?: number
+  priceImprovementPayment?: number | null
 
   @Field(() => Number, { nullable: true })
-  priceImprovementInterest?: number
+  priceImprovementInterest?: number | null
 
   @Field(() => Number, { nullable: true })
-  costPayment?: number
+  costPayment?: number | null
 
   @Field(() => Number, { nullable: true })
-  defaultInterest?: number
+  defaultInterest?: number | null
 
   @Field(() => Number, { nullable: true })
-  totalPayment?: number
+  totalPayment?: number | null
 
   @Field(() => Number, { nullable: true })
-  loanId?: number
+  loanId?: number | null
 }

@@ -3,11 +3,11 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType('HmsLoansHistoryPdf')
 export class LoanHistoryPdf {
   @Field(() => String, { nullable: true })
-  mime?: string
+  mime?: string | null
 
   @Field(() => String, { nullable: true })
-  data?: string
+  data?: string | null
 
   @Field(() => String, { nullable: true })
-  name?: string
+  name?: string | null
 }
