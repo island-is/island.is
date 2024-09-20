@@ -34,6 +34,12 @@ export const BffProvider = ({
       isNewSession(state.userInfo, event.data.userInfo)
     ) {
       setSessionExpiredScreen(true)
+    } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
+      dispatch({
+        type: ActionType.LOGGED_OUT,
+      })
+
+      signIn()
     }
   })
 
@@ -82,6 +88,10 @@ export const BffProvider = ({
   }
 
   const signIn = useCallback(() => {
+    dispatch({
+      type: ActionType.SIGNIN_START,
+    })
+
     window.location.href = bffUrlGenerator('/login', {
       target_link_uri: window.location.href,
     })
@@ -99,7 +109,15 @@ export const BffProvider = ({
     window.location.href = bffUrlGenerator('/logout', {
       sid: state.userInfo.profile.sid,
     })
-  }, [bffUrlGenerator, state.userInfo])
+
+    setTimeout(() => {
+      // We will wait 5 seconds before we post the logout message
+      // The reason is that ids will not log the user out immediately.
+      postMessage({
+        type: BffBroadcastEvents.LOGOUT,
+      })
+    }, 5000)
+  }, [bffUrlGenerator, postMessage, state.userInfo])
 
   const switchUser = (nationalId?: string) => {
     dispatch({

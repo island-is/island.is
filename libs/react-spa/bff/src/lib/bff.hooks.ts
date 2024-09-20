@@ -111,15 +111,20 @@ export const useBffUrlGenerator = () =>
 export const useBff = () => useDynamicBffHook(useBff.name)
 
 export enum BffBroadcastEvents {
-  DELETEGATION_SWITCH = 'DELETEGATION_SWITCH',
   NEW_SESSION = 'NEW_SESSION',
   LOGOUT = 'LOGOUT',
 }
 
-export type BffBroadcastEvent = {
-  type: BffBroadcastEvents
+type NewSessionEvent = {
+  type: BffBroadcastEvents.NEW_SESSION
   userInfo: BffUser
 }
+
+type LogoutEvent = {
+  type: BffBroadcastEvents.LOGOUT
+}
+
+export type BffBroadcastEvent = NewSessionEvent | LogoutEvent
 
 export const useBffBroadcaster =
   createBroadcasterHook<BffBroadcastEvent>('bff_auth_channel')
