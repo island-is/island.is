@@ -30,6 +30,8 @@ export type User = {
 export type Ticket = {
   id: number
   status: TicketStatus | string
+  custom_fields: Array<{ id: number; value: string }>
+  tags: Array<string>
 }
 
 export interface ZendeskServiceOptions {

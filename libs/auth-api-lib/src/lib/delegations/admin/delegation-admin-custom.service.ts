@@ -16,7 +16,12 @@ import { Sequelize } from 'sequelize-typescript'
 import { CreatePaperDelegationDto } from '../dto/create-paper-delegation.dto'
 import { DelegationDTO } from '../dto/delegation.dto'
 import { NamesService } from '../names.service'
-import { TicketStatus, ZendeskService } from '@island.is/clients/zendesk'
+import {
+  Ticket,
+  TicketStatus,
+  ZendeskService,
+} from '@island.is/clients/zendesk'
+import { DELEGATION_TAG, ZENDESK_CUSTOM_FIELDS } from '../constants/zendesk'
 
 @Injectable()
 export class DelegationAdminCustomService {
@@ -31,13 +36,24 @@ export class DelegationAdminCustomService {
     private sequelize: Sequelize,
   ) {}
 
-  private async getZendeskStatus(id: string): Promise<TicketStatus | string> {
-    try {
-      const zenDeskCase = await this.zendeskService.getTicket(id)
+  private getNationalIdsFromZendeskTicket(ticket: Ticket): {
+    fromReferenceId: string
+    toReferenceId: string
+  } {
+    const fromReferenceId = ticket.custom_fields.find(
+      (field) => field.id === ZENDESK_CUSTOM_FIELDS.DelegationFromReferenceId,
+    )
+    const toReferenceId = ticket.custom_fields.find(
+      (field) => field.id === ZENDESK_CUSTOM_FIELDS.DelegationToReferenceId,
+    )
 
-      return zenDeskCase.status
-    } catch (error) {
-      throw new Error('Error checking zendesk status')
+    if (!fromReferenceId || !toReferenceId) {
+      throw new Error('Zendesk ticket is missing required custom fields')
+    }
+
+    return {
+      fromReferenceId: fromReferenceId.value,
+      toReferenceId: toReferenceId.value,
     }
   }
 
@@ -120,10 +136,28 @@ export class DelegationAdminCustomService {
     if (delegation.fromNationalId === delegation.toNationalId)
       throw new Error('Cannot create a delegation between the same nationalId.')
 
-    const zendeskStatus = await this.getZendeskStatus(delegation.referenceId)
+    const zenDeskCase = await this.zendeskService.getTicket(
+      delegation.referenceId,
+    )
 
-    if (zendeskStatus !== TicketStatus.Solved) {
+    if (!zenDeskCase.tags.includes(DELEGATION_TAG)) {
+      throw new Error('Zendesk ticket is missing required tag')
+    }
+
+    if (zenDeskCase.status !== TicketStatus.Solved) {
       throw new Error('Zendesk case is not solved')
+    }
+
+    const { fromReferenceId, toReferenceId } =
+      this.getNationalIdsFromZendeskTicket(zenDeskCase)
+
+    if (
+      fromReferenceId !== delegation.fromNationalId ||
+      toReferenceId !== delegation.toNationalId
+    ) {
+      throw new Error(
+        'Zendesk ticket nationalIds does not match delegation nationalIds',
+      )
     }
 
     const [fromDisplayName, toName] = await Promise.all([
