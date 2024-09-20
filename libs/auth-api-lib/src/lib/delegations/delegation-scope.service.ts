@@ -265,28 +265,26 @@ export class DelegationScopeService {
     fromNationalId: string,
   ): Promise<string[]> {
     // if no valid delegation exists, return empty array
-    let delegationFound = false
-    let isError = false
     try {
-      delegationFound = await this.syslumennService.checkIfDelegationExists(
-        toNationalId,
-        fromNationalId,
-      )
-    } catch (error) {
-      isError = true
-      logger.error(
-        `Failed checking if delegation exists at provider '${AuthDelegationProvider.DistrictCommissionersRegistry}'`,
-      )
-    }
-    if (!delegationFound) {
-      if (!isError) {
+      const delegationFound =
+        await this.syslumennService.checkIfDelegationExists(
+          toNationalId,
+          fromNationalId,
+        )
+
+      if (!delegationFound) {
         this.delegationsIndexService.removeDelegationRecord({
           fromNationalId,
           toNationalId,
           type: AuthDelegationType.LegalRepresentative,
           provider: AuthDelegationProvider.DistrictCommissionersRegistry,
         })
+        return []
       }
+    } catch (error) {
+      logger.error(
+        `Failed checking if delegation exists at provider '${AuthDelegationProvider.DistrictCommissionersRegistry}'`,
+      )
       return []
     }
 
