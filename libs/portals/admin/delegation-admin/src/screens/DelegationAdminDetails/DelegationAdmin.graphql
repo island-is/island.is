@@ -5,6 +5,7 @@ query getCustomDelegationsAdmin($nationalId: String!) {
     incoming {
       id
       validTo
+      referenceId
       domain {
         name
         organisationLogoKey
@@ -31,6 +32,7 @@ query getCustomDelegationsAdmin($nationalId: String!) {
     outgoing {
       id
       validTo
+      referenceId
       domain {
         name
         organisationLogoKey

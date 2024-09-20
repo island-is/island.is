@@ -54,6 +54,9 @@ export abstract class Delegation {
 
   @Field(() => AuthDelegationProvider)
   provider!: AuthDelegationProvider
+
+  @Field(() => String, { nullable: true })
+  referenceId?: string
 }
 
 @ObjectType('AuthLegalGuardianDelegation', {
