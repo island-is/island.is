@@ -231,14 +231,15 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
         </Box>
       ) : null}
-      {civilClaims &&
+      {workingCase.hasCivilClaims &&
+        civilClaims &&
         civilClaims.length > 0 &&
         (isDistrictCourtUser(user) ||
           isProsecutionUser(user) ||
           isDefenceUser(user)) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.civilClaimSection)}
+              {formatMessage(strings.civilClaimsTitle)}
             </Text>
             <RenderFiles
               caseFiles={civilClaims}

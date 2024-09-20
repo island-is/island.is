@@ -34,6 +34,11 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á firyrkall hluta á dómskjalaskjá í ákærum.',
   },
+  civilClaimsTitle: {
+    id: 'judicial.system.core:indictment_case_files_list.civil_claims_title',
+    defaultMessage: 'Einkaréttarkröfur',
+    description: 'Notaður sem titill á dómskjalaskjá í ákærum.',
+  },
   subpoenaButtonText: {
     id: 'judicial.system.indictments:indictment_case_files_list.subpoena_button_text',
     defaultMessage: 'Fyrirkall {name}.pdf',

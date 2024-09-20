@@ -4,28 +4,28 @@ import {
   Table as T,
   Pagination,
   FilterInput,
+  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../../../lib/messages'
+import { m } from '../../../../../lib/messages'
 import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
-import { useGetListSignees } from '../../../../hooks'
-import { useLocation } from 'react-router-dom'
+import { useGetListSignees } from '../../../../../hooks'
+import { useParams } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
-import { SkeletonTable } from '../../../../skeletons'
+import { SkeletonTable } from '../../../../../skeletons'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
+import { PaperSignees } from './PaperSignees'
+import sortBy from 'lodash/sortBy'
 
 const Signees = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const { pathname } = useLocation()
-  const listId = pathname.replace(
-    '/min-gogn/listar/althingis-medmaelasofnun/',
-    '',
-  )
+  const { id } = useParams() as { id: string }
 
   const [searchTerm, setSearchTerm] = useState('')
-  const { listSignees, loadingSignees } = useGetListSignees(listId)
+  const { listSignees, loadingSignees, refetchListSignees } =
+    useGetListSignees(id)
   const [signees, setSignees] = useState(listSignees)
 
   const [page, setPage] = useState(1)
@@ -33,7 +33,11 @@ const Signees = () => {
 
   useEffect(() => {
     if (!loadingSignees && listSignees.length) {
-      setSignees(listSignees)
+      setSignees(
+        sortBy(listSignees, (item) => {
+          return item.created
+        }).reverse(),
+      )
     }
   }, [listSignees])
 
@@ -56,30 +60,25 @@ const Signees = () => {
   return (
     <Box>
       <Text variant="h4">{formatMessage(m.signeesHeader)}</Text>
-      <Box
-        display={['block', 'flex']}
-        justifyContent="spaceBetween"
-        marginTop={2}
-      >
-        <Box marginBottom={[2, 0]}>
-          <FilterInput
-            name="searchSignee"
-            value={searchTerm}
-            onChange={(v) => setSearchTerm(v)}
-            placeholder={formatMessage(m.searchInListPlaceholder)}
-            backgroundColor="white"
-          />
-        </Box>
+      <Box marginTop={1} width="half">
+        <FilterInput
+          name="searchSignee"
+          value={searchTerm}
+          onChange={(v) => setSearchTerm(v)}
+          placeholder={formatMessage(m.searchInListPlaceholder)}
+          backgroundColor="white"
+        />
       </Box>
       {!loadingSignees ? (
         signees.length > 0 ? (
-          <Box marginTop={[3, 5]}>
+          <Box marginTop={3}>
             <T.Table>
               <T.Head>
                 <T.Row>
                   <T.HeadData>{formatMessage(m.signeeDate)}</T.HeadData>
                   <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
                   <T.HeadData>{formatMessage(m.signeeNationalId)}</T.HeadData>
+                  <T.HeadData></T.HeadData>
                 </T.Row>
               </T.Head>
               <T.Body>
@@ -88,7 +87,7 @@ const Signees = () => {
                   .map((s: Signature) => {
                     return (
                       <T.Row key={s.id}>
-                        <T.Data text={{ variant: 'medium' }}>
+                        <T.Data text={{ variant: 'medium' }} width={'20%'}>
                           {format(new Date(), 'dd.MM.yyyy')}
                         </T.Data>
                         <T.Data text={{ variant: 'medium' }}>
@@ -97,13 +96,25 @@ const Signees = () => {
                         <T.Data text={{ variant: 'medium' }}>
                           {formatNationalId(s.signee.nationalId)}
                         </T.Data>
+                        <T.Data text={{ variant: 'medium' }}>
+                          {!s.isDigital && (
+                            <Box display={'flex'}>
+                              <Icon
+                                icon="document"
+                                type="outline"
+                                color="blue400"
+                              />
+                              <Text>{s.pageNumber}</Text>
+                            </Box>
+                          )}
+                        </T.Data>
                       </T.Row>
                     )
                   })}
               </T.Body>
             </T.Table>
 
-            <Box marginTop={5}>
+            <Box marginTop={3}>
               <Pagination
                 totalItems={signees.length}
                 itemsPerPage={pageSize}
@@ -134,6 +145,7 @@ const Signees = () => {
       ) : (
         <SkeletonTable />
       )}
+      <PaperSignees listId={id} refetchSignees={refetchListSignees} />
     </Box>
   )
 }
