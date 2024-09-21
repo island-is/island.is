@@ -1,35 +1,43 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Sequelize } from 'sequelize-typescript'
+import { uuid } from 'uuidv4'
+
+import { AuthDelegationType } from '@island.is/shared/types'
+import { User } from '@island.is/auth-nest-tools'
+import { NoContentException } from '@island.is/nest/problem'
+import {
+  Ticket,
+  TicketStatus,
+  ZendeskService,
+} from '@island.is/clients/zendesk'
 
 import { Delegation } from '../models/delegation.model'
 import { DelegationAdminCustomDto } from '../dto/delegation-admin-custom.dto'
 import { DelegationScope } from '../models/delegation-scope.model'
 import { ApiScope } from '../../resources/models/api-scope.model'
 import { ApiScopeDelegationType } from '../../resources/models/api-scope-delegation-type.model'
-import { AuthDelegationType } from '@island.is/shared/types'
-import { User } from '@island.is/auth-nest-tools'
 import { DelegationResourcesService } from '../../resources/delegation-resources.service'
 import { DelegationsIndexService } from '../delegations-index.service'
 import { DelegationScopeService } from '../delegation-scope.service'
-import { NoContentException } from '@island.is/nest/problem'
-import { Sequelize } from 'sequelize-typescript'
 import { CreatePaperDelegationDto } from '../dto/create-paper-delegation.dto'
 import { DelegationDTO } from '../dto/delegation.dto'
 import { NamesService } from '../names.service'
-import {
-  Ticket,
-  TicketStatus,
-  ZendeskService,
-} from '@island.is/clients/zendesk'
 import { DELEGATION_TAG, ZENDESK_CUSTOM_FIELDS } from '../constants/zendesk'
+import { DelegationDelegationType } from '../models/delegation-delegation-type.model'
+import { DelegationsIncomingCustomService } from '../delegations-incoming-custom.service'
+import { DelegationValidity } from '../types/delegationValidity'
 
 @Injectable()
 export class DelegationAdminCustomService {
   constructor(
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
+    @InjectModel(DelegationDelegationType)
+    private delegationDelegationTypeModel: typeof DelegationDelegationType,
     private readonly zendeskService: ZendeskService,
     private delegationResourceService: DelegationResourcesService,
+    private delegationsIncomingCustomService: DelegationsIncomingCustomService,
     private delegationIndexService: DelegationsIndexService,
     private delegationScopeService: DelegationScopeService,
     private namesService: NamesService,
@@ -60,37 +68,27 @@ export class DelegationAdminCustomService {
   async getAllDelegationsByNationalId(
     nationalId: string,
   ): Promise<DelegationAdminCustomDto> {
-    const [incomingDelegations, outgoingDelegations] = await Promise.all([
-      this.delegationModel.findAll({
-        where: {
-          toNationalId: nationalId,
-        },
-        include: [
-          {
-            model: DelegationScope,
-            required: true,
-            include: [
-              {
-                model: ApiScope,
-                as: 'apiScope',
-                required: true,
-                where: {
-                  enabled: true,
-                },
-                include: [
-                  {
-                    model: ApiScopeDelegationType,
-                    required: true,
-                    where: {
-                      delegationType: AuthDelegationType.Custom,
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-        ],
+    const incomingDelegationPromises = []
+
+    incomingDelegationPromises.push(
+      this.delegationsIncomingCustomService.findAllValidIncoming({
+        nationalId: nationalId,
+        validity: DelegationValidity.ALL,
       }),
+    )
+
+    incomingDelegationPromises.push(
+      this.delegationsIncomingCustomService.findAllValidGeneralMandate({
+        nationalId: nationalId,
+      }),
+    )
+
+    const [
+      incomingDelegationSets,
+      outgoingDelegations,
+      generalOutgoingDelegations,
+    ] = await Promise.all([
+      await Promise.all(incomingDelegationPromises),
       this.delegationModel.findAll({
         where: {
           fromNationalId: nationalId,
@@ -121,11 +119,30 @@ export class DelegationAdminCustomService {
           },
         ],
       }),
+      this.delegationModel.findAll({
+        where: {
+          fromNationalId: nationalId,
+        },
+        include: [
+          {
+            model: DelegationDelegationType,
+            required: true,
+            where: {
+              delegationTypeId: AuthDelegationType.GeneralMandate,
+            },
+          },
+        ],
+      }),
     ])
 
     return {
-      incoming: incomingDelegations.map((delegation) => delegation.toDTO()),
-      outgoing: outgoingDelegations.map((delegation) => delegation.toDTO()),
+      incoming: ([] as DelegationDTO[]).concat(...incomingDelegationSets),
+      outgoing: [
+        generalOutgoingDelegations.map((d) =>
+          d.toDTO(AuthDelegationType.GeneralMandate),
+        ),
+        outgoingDelegations.map((delegation) => delegation.toDTO()),
+      ].flat(),
     }
   }
 
@@ -168,6 +185,7 @@ export class DelegationAdminCustomService {
     return this.sequelize.transaction(async (transaction) => {
       const newDelegation = await this.delegationModel.create(
         {
+          id: uuid(),
           toNationalId: delegation.toNationalId,
           fromNationalId: delegation.fromNationalId,
           createdByNationalId: user.actor?.nationalId ?? user.nationalId,
@@ -180,19 +198,34 @@ export class DelegationAdminCustomService {
         },
       )
 
+      await this.delegationDelegationTypeModel.create(
+        {
+          delegationId: newDelegation.id,
+          delegationTypeId: AuthDelegationType.GeneralMandate,
+          validTo: delegation.validTo,
+        },
+        {
+          transaction,
+        },
+      )
+
       // Index custom delegations for the toNationalId
       void this.delegationIndexService.indexCustomDelegations(
         delegation.toNationalId,
       )
 
-      return newDelegation.toDTO()
+      return newDelegation.toDTO(AuthDelegationType.GeneralMandate)
     })
   }
 
   async deleteDelegation(user: User, delegationId: string): Promise<void> {
     const delegation = await this.delegationModel.findByPk(delegationId)
 
-    if (!delegation || !delegation.referenceId) {
+    if (!delegation) {
+      throw new NoContentException()
+    }
+
+    if (!delegation.referenceId) {
       throw new NoContentException()
     }
 
@@ -212,6 +245,7 @@ export class DelegationAdminCustomService {
       const remainingScopes = await this.delegationScopeService.findAll(
         delegationId,
       )
+
       if (remainingScopes.length === 0) {
         await this.delegationModel.destroy({
           transaction,
@@ -220,6 +254,13 @@ export class DelegationAdminCustomService {
           },
         })
       }
+
+      await this.delegationDelegationTypeModel.destroy({
+        transaction,
+        where: {
+          delegationId,
+        },
+      })
 
       // Index custom delegations for the toNationalId
       void this.delegationIndexService.indexCustomDelegations(

@@ -48,6 +48,7 @@ describe('DelegationAdmin - With authentication', () => {
       fromNationalId: user?.nationalId ?? '',
       domainName: domain.name,
       scopes: [{ scopeName: 's1' }],
+      referenceId: 'ref1',
     })
   }
 

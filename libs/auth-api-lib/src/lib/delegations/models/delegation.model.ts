@@ -136,6 +136,7 @@ export class Delegation extends Model<
         : [],
       provider: AuthDelegationProvider.Custom,
       type: type,
+      referenceId: this.referenceId,
       domainName: this.domainName,
     }
   }

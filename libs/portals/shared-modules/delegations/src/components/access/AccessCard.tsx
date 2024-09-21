@@ -57,6 +57,8 @@ interface AccessCardProps {
 
   canModify?: boolean
   href?: string
+
+  isAdminView?: boolean
 }
 
 export const AccessCard = ({
@@ -67,6 +69,7 @@ export const AccessCard = ({
   direction = 'outgoing',
   canModify = true,
   href,
+  isAdminView = false,
 }: AccessCardProps) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
@@ -77,7 +80,10 @@ export const AccessCard = ({
   const isOutgoing = variant === 'outgoing'
 
   const isExpired = useMemo(() => {
-    if (delegation.validTo) {
+    if (
+      delegation.validTo ||
+      delegation.type === AuthDelegationType.GeneralMandate
+    ) {
       return isDateExpired(delegation.validTo)
     }
 
@@ -176,10 +182,10 @@ export const AccessCard = ({
       <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
         <Stack space="smallGutter">
           <Box display="flex" columnGap={2} alignItems="center">
-            {!isOutgoing && (
+            {(isAdminView || !isOutgoing) && (
               <>
                 {renderDelegationTypeLabel(delegation.type)}
-                {delegation.domain && (
+                {delegation.domain?.name && (
                   <Text variant="eyebrow" color="blue300">
                     {'|'}
                   </Text>
@@ -239,22 +245,24 @@ export const AccessCard = ({
           flexDirection={['column', 'row']}
           width="full"
         >
-          {hasTags && (
-            <Box width="full">
-              <VisuallyHidden>{formatMessage(m.accessScopes)}</VisuallyHidden>
-              <Inline alignY="bottom" space={1}>
-                {tags.map((tag, index) => (
-                  <Tag
-                    disabled
-                    key={index}
-                    variant={tag.isExpired ? 'disabled' : 'blue'}
-                  >
-                    {tag.name}
-                  </Tag>
-                ))}
-              </Inline>
-            </Box>
-          )}
+          <div>
+            {hasTags && (
+              <Box width="full">
+                <VisuallyHidden>{formatMessage(m.accessScopes)}</VisuallyHidden>
+                <Inline alignY="bottom" space={1}>
+                  {tags.map((tag, index) => (
+                    <Tag
+                      disabled
+                      key={index}
+                      variant={tag.isExpired ? 'disabled' : 'blue'}
+                    >
+                      {tag.name}
+                    </Tag>
+                  ))}
+                </Inline>
+              </Box>
+            )}
+          </div>
           {showActions && (
             <Box
               display="flex"
