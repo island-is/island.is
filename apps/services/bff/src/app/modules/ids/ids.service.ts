@@ -4,8 +4,8 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 
 import { BffConfig } from '../../bff.config'
-import { ParResponse, TokenResponse } from './ids.types'
 import { CryptoService } from '../../services/crypto.service'
+import { ParResponse, TokenResponse } from './ids.types'
 
 @Injectable()
 export class IdsService {
@@ -20,7 +20,7 @@ export class IdsService {
 
     private readonly cryptoService: CryptoService,
   ) {
-    this.baseUrl = this.config.auth.issuer
+    this.baseUrl = this.config.ids.issuer
   }
 
   /**
@@ -76,9 +76,10 @@ export class IdsService {
     login_hint?: string
     prompt?: string
   } {
+    const { ids } = this.config
     return {
-      client_id: this.config.auth.clientId,
-      redirect_uri: this.config.auth.callbacksRedirectUris.login,
+      client_id: ids.clientId,
+      redirect_uri: this.config.callbacksRedirectUris.login,
       response_type: 'code',
       response_mode: 'query',
       scope: [
@@ -86,7 +87,7 @@ export class IdsService {
         'profile',
         // Allows us to get refresh tokens
         'offline_access',
-        ...this.config.auth.scopes,
+        ...ids.scopes,
       ].join(' '),
       state: sid,
       code_challenge: codeChallenge,
@@ -106,7 +107,7 @@ export class IdsService {
     prompt?: string
   }) {
     return this.postRequest<ParResponse>('/connect/par', {
-      client_secret: this.config.auth.secret,
+      client_secret: this.config.ids.secret,
       ...this.getLoginSearchParams(args),
     })
   }
@@ -119,12 +120,14 @@ export class IdsService {
     code: string
     codeVerifier: string
   }) {
+    const { ids } = this.config
+
     return this.postRequest<TokenResponse>('/connect/token', {
       grant_type: 'authorization_code',
       code,
-      client_secret: this.config.auth.secret,
-      client_id: this.config.auth.clientId,
-      redirect_uri: this.config.auth.callbacksRedirectUris.login,
+      client_secret: ids.secret,
+      client_id: ids.clientId,
+      redirect_uri: this.config.callbacksRedirectUris.login,
       code_verifier: codeVerifier,
     })
   }
@@ -134,12 +137,13 @@ export class IdsService {
    */
   public async refreshToken(refreshToken: string) {
     const decryptedRefreshToken = this.cryptoService.decrypt(refreshToken)
+    const { ids } = this.config
 
     return this.postRequest<TokenResponse>('/connect/token', {
       grant_type: 'refresh_token',
       refresh_token: decryptedRefreshToken,
-      client_secret: this.config.auth.secret,
-      client_id: this.config.auth.clientId,
+      client_secret: ids.secret,
+      client_id: ids.clientId,
     })
   }
 }

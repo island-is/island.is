@@ -22,12 +22,11 @@ export class AuthController {
 
   @Get('login')
   async login(
-    @Req() req: Request,
     @Res() res: Response,
     @Query(qsValidationPipe)
     query: LoginQuery,
   ): Promise<void> {
-    return this.authService.login({ req, res, query })
+    return this.authService.login({ res, query })
   }
 
   @Get('callbacks/login')

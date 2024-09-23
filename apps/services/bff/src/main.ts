@@ -7,7 +7,7 @@ bootstrap({
   appModule: AppModule,
   name: 'bff',
   port: environment.port,
-  globalPrefix: environment.globalPrefix,
+  globalPrefix: `${environment.keyPath}/bff`,
   ...(!environment.production && {
     enableCors: environment.enableCors,
   }),

@@ -1,38 +1,26 @@
 import { z } from 'zod'
 
-export const authSchema = z.strictObject({
-  issuer: z.string(),
-  clientId: z.string(),
-  audience: z.string().array(),
-  scopes: z.string().array(),
-  allowedRedirectUris: z.string().array(),
-  secret: z.string(),
-  callbacksRedirectUris: z.strictObject({
-    login: z.string(),
-    logout: z.string(),
-  }),
-  logoutRedirectUri: z.string(),
-})
+const KEY_PATH_ENV_VAR = 'BFF_CLIENT_KEY_PATH'
 
 export const environmentSchema = z.strictObject({
-  production: z.boolean(),
-  port: z.number(),
+  production: z.boolean().default(false),
+  port: z.preprocess(
+    (val) => (val ? parseInt(val as string, 10) : 3010),
+    z
+      .number({ required_error: 'PORT must be a valid number' })
+      .min(1000)
+      .max(10000),
+  ),
   /**
    * The global prefix for the API
    */
-  globalPrefix: z.string(),
-  /**
-   * Audit configuration
-   */
-  audit: z.strictObject({
-    defaultNamespace: z.string(),
-    groupName: z.string(),
-    serviceName: z.string(),
-  }),
-  /**
-   * Ids and Bff auth configuration
-   */
-  auth: authSchema,
+  keyPath: z
+    .string({
+      required_error: `${KEY_PATH_ENV_VAR} is required`,
+    })
+    .refine((val) => !val.endsWith('/bff'), {
+      message: `${KEY_PATH_ENV_VAR} must not end with /bff`,
+    }),
   /**
    * Enable CORS configuration
    */
@@ -45,4 +33,4 @@ export const environmentSchema = z.strictObject({
     .optional(),
 })
 
-export type BffEnvironmentSchema = z.infer<typeof environmentSchema>
+export type BffEnvironment = z.infer<typeof environmentSchema>

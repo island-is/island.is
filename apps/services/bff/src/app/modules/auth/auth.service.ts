@@ -21,7 +21,6 @@ import { CallbackLoginQuery } from './queries/callback-login.query'
 import { CallbackLogoutQuery } from './queries/callback-logout.query'
 import { LoginQuery } from './queries/login.query'
 import { LogoutQuery } from './queries/logout.query'
-import { removeTrailingSlash } from '../../../utils/removeTrailingSlash'
 
 @Injectable()
 export class AuthService {
@@ -39,7 +38,7 @@ export class AuthService {
     private readonly idsService: IdsService,
     private readonly cryptoService: CryptoService,
   ) {
-    this.baseUrl = this.config.auth.issuer
+    this.baseUrl = this.config.ids.issuer
   }
 
   /**
@@ -74,15 +73,6 @@ export class AuthService {
   }
 
   /**
-   * Get the origin URL from the request headers and add the global prefix
-   */
-  private getOriginUrl(req: Request) {
-    return `${removeTrailingSlash(
-      req.headers['origin'] || req.headers['referer'] || '',
-    )}${this.config.clientBasePath}`
-  }
-
-  /**
    * This method initiates the login flow.
    * It validates the target_link_uri and generates a unique session id, for a login attempt.
    * It also generates a code verifier and code challenge to enhance security.
@@ -90,18 +80,16 @@ export class AuthService {
    * The user is then redirected to the identity server login page.
    */
   async login({
-    req,
     res,
     query: { target_link_uri: targetLinkUri, login_hint: loginHint, prompt },
   }: {
-    req: Request
     res: Response
     query: LoginQuery
   }) {
     // Validate targetLinkUri if it is provided
     if (
       targetLinkUri &&
-      !validateUri(targetLinkUri, this.config.auth.allowedRedirectUris)
+      !validateUri(targetLinkUri, this.config.allowedRedirectUris)
     ) {
       this.logger.error('Invalid target_link_uri provided:', targetLinkUri)
 
@@ -117,14 +105,11 @@ export class AuthService {
       codeVerifier,
     )
 
-    // Get the calling URL
-    const originUrl = this.getOriginUrl(req)
-
     await this.cacheService.save({
       key: this.cacheService.createSessionKeyType('attempt', sid),
       value: {
         // Fallback if targetLinkUri is not provided
-        originUrl,
+        originUrl: `${this.config.clientBaseUrl}${environment.keyPath}`,
         // Code verifier to be used in the callback
         codeVerifier,
         targetLinkUri: targetLinkUri,
@@ -146,7 +131,7 @@ export class AuthService {
 
       searchParams = new URLSearchParams({
         request_uri: parResponse.request_uri,
-        client_id: this.config.auth.clientId,
+        client_id: this.config.ids.clientId,
       })
     } else {
       searchParams = new URLSearchParams(
@@ -222,7 +207,7 @@ export class AuthService {
 
     const searchParams = new URLSearchParams({
       id_token_hint: cachedTokenResponse.id_token,
-      post_logout_redirect_uri: this.config.auth.callbacksRedirectUris.logout,
+      post_logout_redirect_uri: this.config.callbacksRedirectUris.logout,
       state: encodeURIComponent(JSON.stringify({ sid })),
     })
 
@@ -259,6 +244,6 @@ export class AuthService {
     // Delete session cookie
     res.clearCookie('sid')
 
-    return res.redirect(environment.auth.logoutRedirectUri)
+    return res.redirect(this.config.logoutRedirectUri)
   }
 }

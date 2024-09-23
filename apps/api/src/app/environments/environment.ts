@@ -96,7 +96,6 @@ const prodConfig = () => ({
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
-  enableCors: undefined,
 })
 
 const devConfig = () => ({
@@ -208,14 +207,6 @@ const devConfig = () => ({
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
-  enableCors:
-    process.env.BFF_LOCAL_DEVELOPMENT_CORS === 'true'
-      ? {
-          origin: ['http://localhost:3010'],
-          methods: ['POST'],
-          credentials: true,
-        }
-      : undefined,
 })
 
 export const getConfig =

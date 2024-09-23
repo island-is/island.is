@@ -1,8 +1,15 @@
 import { defineConfig } from '@island.is/nest/config'
-import { authSchema } from '../environment/environment.schema'
 
 import { z } from 'zod'
 import { environment } from '../environment'
+import { removeTrailingSlash } from '../utils/removeTrailingSlash'
+
+export const idsSchema = z.strictObject({
+  issuer: z.string(),
+  clientId: z.string(),
+  scopes: z.string().array(),
+  secret: z.string(),
+})
 
 const BffConfigSchema = z.object({
   redis: z.object({
@@ -10,22 +17,43 @@ const BffConfigSchema = z.object({
     ssl: z.boolean(),
   }),
   graphqlApiEndpont: z.string(),
-  clientBasePath: z.string(),
-  auth: authSchema,
+  /**
+   * Bff client base URL
+   */
+  clientBaseUrl: z.string(),
+  ids: idsSchema,
+  /**
+   * The base64 encoded secret used for encrypting and decrypting tokens.
+   */
   tokenSecretBase64: z.string(),
-  // Determines if the BFF should support the PAR (Pushed Authorization Requests) flow or normal login flow
+  /**
+   * Determines if the BFF should support the PAR (Pushed Authorization Requests) flow or normal login flow
+   */
   parSupportEnabled: z.boolean().optional(),
+  /**
+   * Allowed external API URLs that the BFF can proxy requests to
+   */
   allowedExternalApiUrls: z.array(z.string()),
+  allowedRedirectUris: z.string().array(),
+  logoutRedirectUri: z.string(),
+  callbacksRedirectUris: z.strictObject({
+    login: z.string(),
+    logout: z.string(),
+  }),
 })
 
 export const BffConfig = defineConfig({
   name: 'BffConfig',
   schema: BffConfigSchema,
   load(env) {
+    const callbacksBaseRedirectPath = removeTrailingSlash(
+      env.required('BFF_CALLBACKS_BASE_PATH'),
+    )
+
     return {
       parSupportEnabled:
         env.optional('BFF_PAR_SUPPORT_ENABLED') === 'true' || false,
-      clientBasePath: env.required('BFF_CLIENT_BASE_PATH'),
+      clientBaseUrl: env.required('BFF_CLIENT_BASE_URL'),
       /**
        * Our main GraphQL API endpoint
        */
@@ -41,7 +69,18 @@ export const BffConfig = defineConfig({
         ]),
         ssl: environment.production,
       },
-      auth: environment.auth,
+      ids: {
+        issuer: env.required('IDENTITY_SERVER_ISSUER_URL'),
+        clientId: env.required('IDENTITY_SERVER_CLIENT_ID'),
+        secret: env.required('IDENTITY_SERVER_CLIENT_SECRET'),
+        scopes: env.requiredJSON('IDENTITY_SERVER_CLIENT_SCOPES'),
+      },
+      allowedRedirectUris: env.requiredJSON('BFF_ALLOWED_REDIRECT_URIS'),
+      callbacksRedirectUris: {
+        login: `${callbacksBaseRedirectPath}/login`,
+        logout: `${callbacksBaseRedirectPath}/logout`,
+      },
+      logoutRedirectUri: env.required('BFF_LOGOUT_REDIRECT_PATH'),
       /**
        * The base64 encoded secret used for encrypting and decrypting.
        */
