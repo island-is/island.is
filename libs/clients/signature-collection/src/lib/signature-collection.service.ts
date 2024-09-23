@@ -377,11 +377,7 @@ export class SignatureCollectionClientService {
           isDigital: signature.isDigital,
           pageNumber: signature.pageNumber,
           isValid: signature.valid,
-          canUnsign:
-            signature.isDigital &&
-            signature.valid &&
-            list.active &&
-            signedThisPeriod,
+          canUnsign: signature.valid && list.active && signedThisPeriod,
           ...list,
         } as SignedList
       }),
