@@ -1083,6 +1083,7 @@
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"
       ],
+      "@island.is/services/bff": ["libs/services/bff/src/index.ts"],
       "@island.is/services/license": ["libs/services/license/src/index.ts"],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],

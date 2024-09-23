@@ -1,8 +1,8 @@
 /**
  * Creates a function that can generate a BFF URLs based on the environment.
  * @usage
- * const bffBaseUrl = createBffUrlGenerator('/stjornbord)
- * const userUrl = bffBaseUrl('/user') // http://localhost:3010/stjornbord/bff/user
+ * const bffBaseUrl = createBffUrlGenerator('/myapplication)
+ * const userUrl = bffBaseUrl('/user') // http://localhost:3010/myapplication/bff/user
  */
 export const createBffUrlGenerator = (basePath: string) => {
   const sanitizedBasePath = sanitizePath(basePath)

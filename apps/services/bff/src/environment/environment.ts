@@ -1,4 +1,7 @@
-import { requiredString, requiredStringArray } from '../utils/env'
+import {
+  requiredString,
+  requiredStringArray,
+} from '@island.is/shared/utils/server'
 import { removeTrailingSlash } from '../utils/removeTrailingSlash'
 import type { BffEnvironmentSchema } from './environment.schema'
 
