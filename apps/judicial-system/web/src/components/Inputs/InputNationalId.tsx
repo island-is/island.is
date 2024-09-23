@@ -83,11 +83,6 @@ const InputNationalId: FC<Props> = (props) => {
     setInputValue(value)
   }, [value])
 
-  useEffect(() => {
-    setErrorMessage(undefined)
-    setInputValue('')
-  }, [isDateOfBirth])
-
   return (
     <InputMask
       // eslint-disable-next-line local-rules/disallow-kennitalas

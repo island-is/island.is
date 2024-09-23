@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { isTrafficViolationCase } from '@island.is/judicial-system/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
@@ -74,6 +74,7 @@ const Processing: FC = () => {
     useState<{ nationalId: string; civilClaimantId: string }>()
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
     useState<boolean>()
+  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
@@ -240,9 +241,11 @@ const Processing: FC = () => {
 
   useEffect(() => {
     if (!personData || !personData.items || personData.items.length === 0) {
+      setNationalIdNotFound(true)
       return
     }
 
+    setNationalIdNotFound(false)
     const update = {
       caseId: workingCase.id,
       civilClaimantId: civilClaimantNationalIdUpdate?.civilClaimantId || '',
@@ -427,6 +430,16 @@ const Processing: FC = () => {
                       isDateOfBirth={Boolean(civilClaimant.noNationalId)}
                       value={civilClaimant.nationalId ?? undefined}
                       onChange={(val) => {
+                        setNationalIdNotFound(false)
+
+                        if (val.length === 11) {
+                          handleCivilClaimantNationalIdBlur(
+                            val,
+                            civilClaimant.noNationalId,
+                            civilClaimant.id,
+                          )
+                        }
+
                         updateCivilClaimantState(
                           {
                             caseId: workingCase.id,
@@ -444,6 +457,14 @@ const Processing: FC = () => {
                         )
                       }
                     />
+                    {civilClaimant.nationalId?.length === 11 &&
+                      nationalIdNotFound && (
+                        <Text color="red600" variant="eyebrow" marginTop={1}>
+                          {formatMessage(
+                            core.nationalIdNotFoundInNationalRegistry,
+                          )}
+                        </Text>
+                      )}
                   </Box>
                   <InputName
                     value={civilClaimant.name ?? undefined}
