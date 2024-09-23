@@ -152,7 +152,7 @@ export const NarrowLayout = ({
           </Box>
         )}
         <ModuleAlertBannerSection />
-        {activeItem && (
+        {activeItem && activeItem?.displayIntroHeader && (
           <IntroHeader
             title={activeItem.name}
             intro={activeItem.intro}

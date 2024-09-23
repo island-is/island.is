@@ -1,10 +1,10 @@
 export const tagSelector = (str: string) => {
   const obj = {
-    Lokið: 'mint',
-    Ólokið: 'purple',
-    Metið: 'blue',
-    M: 'blue',
-    Féll: 'red',
+    finished: 'mint',
+    unfinished: 'purple',
+    rated: 'blue',
+    m: 'blue',
+    failed: 'red',
     'Féll á önn': 'red',
   }
 

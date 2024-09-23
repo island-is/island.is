@@ -73,6 +73,11 @@ export interface PortalNavigationItem {
   serviceProvider?: OrganizationSlugType
 
   /**
+   * If an intro header is rendered by navigation
+   */
+  displayIntroHeader?: boolean
+
+  /**
    * If the service provider logo should be displayed beneath the tab navigation
    */
   displayServiceProviderLogo?: boolean
