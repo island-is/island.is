@@ -1,6 +1,6 @@
 import { Resolver, Query, GraphQLModule } from '@nestjs/graphql'
 import { UserAccessGuard } from './userAccess.guard'
-import { ExecutionContext, INestApplication, UseGuards } from '@nestjs/common'
+import { INestApplication, UseGuards } from '@nestjs/common'
 import { AllowDelegation, IsOwner } from '../decorators'
 import { Test } from '@nestjs/testing'
 import { ApolloDriver } from '@nestjs/apollo'
@@ -19,7 +19,6 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { AuthDelegationType } from '@island.is/shared/types'
 import request from 'supertest'
 import {
   CollectionType,
@@ -28,9 +27,7 @@ import {
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { SignatureCollectionService } from '../signatureCollection.service'
-import { ApiScope } from '@island.is/auth/scopes'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
-import { CollectionStatus } from '../models/status.model'
 
 const ownerNationalId = '0101303019'
 const someNationalId = '1234567890'
@@ -38,8 +35,8 @@ const someNationalId = '1234567890'
 const basicUser = createCurrentUser({
   nationalIdType: 'person',
   nationalId: someNationalId,
-  scope: [ApiScope.signatureCollection],
 })
+
 const authGuard = new MockAuthGuard(basicUser)
 const delegatedUserNotToOwner = createCurrentUser({
   nationalIdType: 'person',
@@ -50,7 +47,6 @@ const delegatedUserToOwner = createCurrentUser({
   nationalIdType: 'person',
   actor: { nationalId: someNationalId },
   nationalId: ownerNationalId,
-  delegationType: AuthDelegationType.ProcurationHolder,
 })
 
 const isOwnerNotDelegated = createCurrentUser({
@@ -94,7 +90,7 @@ class TestResolver {
   }
 
   @Query(() => Boolean, { nullable: true })
-  getThatWorkForEveryUser() {
+  getForAllNonDelegatedUsers() {
     return true
   }
 }
@@ -166,7 +162,7 @@ describe('UserAccessGuard', () => {
     jest.clearAllMocks(), jest.restoreAllMocks()
   })
 
-  it('Should allow owner to access isOwner decorated paths', async () => {
+  it('Should allow owner to access IsOwner decorated paths', async () => {
     setupMockForUser(isOwnerNotDelegated)
 
     const response = await request(app.getHttpServer())
@@ -176,7 +172,7 @@ describe('UserAccessGuard', () => {
     expect(response.body).toMatchObject(okGraphQLResponse('getIfOwner'))
   })
 
-  it('Should not allow delegated user to access isOwner decorated paths without allowDelegation', async () => {
+  it('Should not allow user delegated to owner to access IsOwner decorated paths without AllowDelegation', async () => {
     setupMockForUser(delegatedUserToOwner)
 
     const response = await request(app.getHttpServer())
@@ -186,7 +182,17 @@ describe('UserAccessGuard', () => {
     expect(response.body).toMatchObject(forbiddenGraphqlResponse('getIfOwner'))
   })
 
-  it('Where delegationAllowed() and isOwner: Should allow user delegated to owner', async () => {
+  it('Should not allow basic users to access IsOwner when not owner', async () => {
+    setupMockForUser(basicUser)
+
+    const response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIfOwner }' })
+
+    expect(response.body).toMatchObject(forbiddenGraphqlResponse('getIfOwner'))
+  })
+
+  it('Where AllowDelegation and IsOwner: Should allow user delegated to owner', async () => {
     setupMockForUser(delegatedUserToOwner)
 
     const response = await request(app.getHttpServer())
@@ -198,7 +204,7 @@ describe('UserAccessGuard', () => {
     )
   })
 
-  it('Where delegationAllowed() and isOwner: Should not allow user delegated to non-owner', async () => {
+  it('Where AllowDelegation and IsOwner: Should not allow user delegated to non-owner', async () => {
     setupMockForUser(delegatedUserNotToOwner)
 
     const response = await request(app.getHttpServer())
@@ -207,6 +213,77 @@ describe('UserAccessGuard', () => {
 
     expect(response.body).toMatchObject(
       forbiddenGraphqlResponse('getIfOwnerWithDelegationAllowed'),
+    )
+  })
+
+  it('With no decorators present: Should restrict delegation to owner', async () => {
+    setupMockForUser(delegatedUserToOwner)
+
+    const response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getForAllNonDelegatedUsers }' })
+
+    expect(response.body).toMatchObject(
+      forbiddenGraphqlResponse('getForAllNonDelegatedUsers'),
+    )
+  })
+
+  it('With no decorators present: Should restrict delegation to non-owner', async () => {
+    setupMockForUser(delegatedUserNotToOwner)
+
+    const response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getForAllNonDelegatedUsers }' })
+
+    expect(response.body).toMatchObject(
+      forbiddenGraphqlResponse('getForAllNonDelegatedUsers'),
+    )
+  })
+
+  it('With no decorators present: Should allow basic users', async () => {
+    setupMockForUser(basicUser)
+
+    const response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getForAllNonDelegatedUsers }' })
+
+    expect(response.body).toMatchObject(
+      okGraphQLResponse('getForAllNonDelegatedUsers'),
+    )
+  })
+
+  it('When IsOwner not present: Should allow delegation with AllowDelegation for owner delegations', async () => {
+    setupMockForUser(delegatedUserToOwner)
+
+    const response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIfAllowedDelegation }' })
+
+    expect(response.body).toMatchObject(
+      okGraphQLResponse('getIfAllowedDelegation'),
+    )
+  })
+
+  it('When IsOwner not present: Should allow delegation with AllowDelegation for non-owner delegations', async () => {
+    setupMockForUser(delegatedUserNotToOwner)
+
+    const response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIfAllowedDelegation }' })
+
+    expect(response.body).toMatchObject(
+      okGraphQLResponse('getIfAllowedDelegation'),
+    )
+  })
+  it('With only AllowDelegation: Should not restrict basic users', async () => {
+    setupMockForUser(basicUser)
+
+    const response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIfAllowedDelegation }' })
+
+    expect(response.body).toMatchObject(
+      okGraphQLResponse('getIfAllowedDelegation'),
     )
   })
 })
