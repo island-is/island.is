@@ -51,10 +51,6 @@ const about = z.object({
   powerOfAttorneyName: z.string().optional(),
   phoneNumber: z.string().refine(
     (p) => {
-      // ignore validation on dev to test with Gervimenn remove b4 release
-      if (isRunningOnEnvironment('dev')) {
-        return true
-      }
       const phoneNumber = parsePhoneNumberFromString(p, 'IS')
       return phoneNumber?.isValid()
     },
