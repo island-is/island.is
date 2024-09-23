@@ -83,7 +83,7 @@ export const newPrimarySchoolMessages: MessageDir = {
     phoneNumber: {
       id: 'dess.nps.application:phoneNumber',
       defaultMessage: 'Símanúmer',
-      description: 'Phonenumber',
+      description: 'Phone number',
     },
     relation: {
       id: 'dess.nps.application:relation',
@@ -189,11 +189,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Upplýsingar um barn',
       description: 'Information about child',
     },
-    childInfoTitle: {
-      id: 'dess.nps.application:childrenNParents.child.info.title',
-      defaultMessage: 'Upplýsingar um barn',
-      description: 'Information about child',
-    },
     childInfoDescription: {
       id: 'dess.nps.application:childrenNParents.child.info.description',
       defaultMessage:
@@ -225,11 +220,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:childrenNParents.child.info.place.of.residence',
       defaultMessage: 'Dvalarstaður barns',
       description: "Child's place of residence",
-    },
-    currentSchool: {
-      id: 'dess.nps.application:childrenNParents.child.info.current.school',
-      defaultMessage: 'Núverandi skóli',
-      description: 'Current school',
     },
 
     // Parents/guardians
@@ -555,11 +545,6 @@ export const newPrimarySchoolMessages: MessageDir = {
   overview: defineMessages({
     sectionTitle: {
       id: 'dess.nps.application:overview.section.title',
-      defaultMessage: 'Yfirlit',
-      description: 'Overview',
-    },
-    overviewTitle: {
-      id: 'dess.nps.application:overview.title',
       defaultMessage: 'Yfirlit',
       description: 'Overview',
     },

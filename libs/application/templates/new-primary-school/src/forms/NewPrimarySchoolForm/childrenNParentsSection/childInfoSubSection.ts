@@ -23,7 +23,7 @@ export const childInfoSubSection = buildSubSection({
   children: [
     buildMultiField({
       id: 'childInfo',
-      title: newPrimarySchoolMessages.childrenNParents.childInfoTitle,
+      title: newPrimarySchoolMessages.childrenNParents.childInfoSubSectionTitle,
       description:
         newPrimarySchoolMessages.childrenNParents.childInfoDescription,
       children: [
@@ -139,9 +139,9 @@ export const childInfoSubSection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'childInfo.currentSchool.title',
-          title: newPrimarySchoolMessages.childrenNParents.currentSchool,
+          title: newPrimarySchoolMessages.overview.currentSchool,
           titleVariant: 'h4',
-          space: 4,
+          space: 2,
         }),
         buildActionCardListField({
           id: 'childInfo.currentSchool',
