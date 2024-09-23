@@ -56,5 +56,4 @@ export class EndorsementListDto {
   @ApiProperty({ type: Boolean, default: false })
   @IsBoolean()
   adminLock!: boolean
-  
 }

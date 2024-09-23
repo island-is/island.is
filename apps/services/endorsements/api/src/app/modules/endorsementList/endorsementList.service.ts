@@ -70,7 +70,7 @@ export class EndorsementListService {
   async getOwnerName(ownerNationalId: string): Promise<string> {
     try {
       const person = await this.nationalRegistryApiV3.getName(ownerNationalId)
-      console.log("person",person)
+      console.log('person', person)
       return person?.fulltNafn || ''
     } catch (error) {
       const message = `Error fetching owner name from NationalRegistryApi: ${error.message}`
@@ -276,7 +276,7 @@ export class EndorsementListService {
     const endorsementList = await this.endorsementListModel.create({
       ...list,
       ownerNationalId: user.nationalId,
-      ownerName
+      ownerName,
     })
 
     if (process.env.NODE_ENV === 'production') {
