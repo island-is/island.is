@@ -12,29 +12,52 @@ interface Props extends InputProps {
   isDateOfBirth: boolean
 }
 
+/**
+ * A reusable input component for national ids. A national id can eiter be a SSN
+ * or a date of birth. This component handles input validation for national ids,
+ * setting and removing the validation's error message.
+ */
 const InputNationalId: FC<Props> = (props) => {
   const {
+    // Controls wheter the national id is a SSN or a date of birth.
     isDateOfBirth,
+
+    // The initial value.
     value,
-    onChange,
+
+    // A function that runs on blur if the input is valid.
     onBlur,
-    disabled = false,
+
+    // A custom label. If not set, a default label is used.
     label,
+
+    // A custom placeholder. If not set, a default placeholder is used.
     placeholder,
+
+    // If true, validation is skipped and a required indicator is set next to label.
+    required,
+
+    onChange,
+    disabled,
   } = props
+
   const { formatMessage } = useIntl()
+
   const [errorMessage, setErrorMessage] = useState<string>()
-  const [inputValue, setInputValue] = useState<string>('')
+  const [inputValue, setInputValue] = useState<string>(value || '')
 
   const handleBlur = (evt: FocusEvent<HTMLInputElement, Element>) => {
     const inputValidator = validate([
       [
         evt.target.value,
+
         isDateOfBirth ? ['date-of-birth'] : ['empty', 'national-id'],
       ],
     ])
 
-    if (inputValidator.isValid && inputValue) {
+    if (!required) {
+      onBlur(inputValue)
+    } else if (inputValidator.isValid) {
       setErrorMessage(undefined)
       onBlur(inputValue)
     } else {
@@ -43,16 +66,21 @@ const InputNationalId: FC<Props> = (props) => {
   }
 
   const handleChange = (evt: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(evt.target.value)
+    if (evt.target.value) {
+      setErrorMessage(undefined)
+    }
 
-    onChange && inputValue && onChange(inputValue)
+    setInputValue(evt.target.value)
+    onChange && onChange(evt.target.value)
   }
 
   useEffect(() => {
-    console.log('value updated', value)
     if (value === undefined) {
-      setInputValue('')
+      return
     }
+
+    setErrorMessage(undefined)
+    setInputValue(value)
   }, [value])
 
   return (
@@ -83,7 +111,8 @@ const InputNationalId: FC<Props> = (props) => {
         }
         errorMessage={errorMessage}
         hasError={errorMessage !== undefined}
-        required={!isDateOfBirth}
+        required={required}
+        disabled={disabled}
       />
     </InputMask>
   )
