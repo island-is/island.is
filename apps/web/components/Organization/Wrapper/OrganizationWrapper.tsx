@@ -436,7 +436,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hve':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={styles.hveHeaderGridContainer}
+          image={n(
+            'hveHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/7ie5X2T4g8a7g5PLvu5226/4ec8b2cb69b5cb7193a61c562f9b36e0/minstur1.png',
+          )}
+        />
+      ) : (
         <HveHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
