@@ -21,16 +21,6 @@ const PaymentPlan = () => {
 
   return (
     <Box>
-      {/*<IntroHeader
-        title={formatMessage(coreMessages.paymentPlan)}
-        intro={formatMessage(
-          coreMessages.socialInsuranceMaintenanceDescription,
-        )}
-        serviceProviderSlug={'tryggingastofnun'}
-        serviceProviderTooltip={formatMessage(
-          coreMessages.socialInsuranceTooltip,
-        )}
-      />*/}
       {error && !loading ? (
         <Problem error={error} noBorder={false} />
       ) : !error && !loading && !data?.socialInsurancePayments ? (
