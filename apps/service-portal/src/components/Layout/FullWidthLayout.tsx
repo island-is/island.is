@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, ReactNode } from 'react'
+import { FC, useEffect, useState, ReactNode } from 'react'
 import {
   Box,
   GridContainer,
@@ -6,7 +6,6 @@ import {
   GridColumn,
   BreadcrumbsDeprecated as Breadcrumbs,
   Button,
-  Text,
 } from '@island.is/island-ui/core'
 import {
   m,
