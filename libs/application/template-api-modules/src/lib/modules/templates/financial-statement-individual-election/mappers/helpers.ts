@@ -11,7 +11,7 @@ import { mapValuesToIndividualtype } from './mapValuesToUserTypes'
 
 export enum FinancialElectionIncomeLimit {
   LESS = 'less',
-  GREATER = 'greater'
+  GREATER = 'greater',
 }
 
 export const getIndividualElectionValues = (answers: FormValue) => {
@@ -36,7 +36,10 @@ export const getIndividualElectionValues = (answers: FormValue) => {
 }
 
 export const getShouldGetFileName = (answers: FormValue) => {
-  const incomeLimit = getValueViaPath(answers, 'election.incomeLimit') as FinancialElectionIncomeLimit
+  const incomeLimit = getValueViaPath(
+    answers,
+    'election.incomeLimit',
+  ) as FinancialElectionIncomeLimit
   return incomeLimit === FinancialElectionIncomeLimit.GREATER
 }
 

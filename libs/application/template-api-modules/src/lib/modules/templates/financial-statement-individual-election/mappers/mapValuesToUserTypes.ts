@@ -36,17 +36,13 @@ export const mapValuesToIndividualtype = (answers: FormValue) => {
     fixedAssetsTotal: Number(
       getValueViaPath(answers, 'asset.fixedAssetsTotal'),
     ),
-    currentAssets: Number(
-      getValueViaPath(answers, 'asset.currentAssets')
-    ),
+    currentAssets: Number(getValueViaPath(answers, 'asset.currentAssets')),
     longTermLiabilitiesTotal: Number(
       getValueViaPath(answers, 'liability.longTerm'),
     ),
     shortTermLiabilitiesTotal: Number(
       getValueViaPath(answers, 'liability.shortTerm'),
     ),
-    equityTotal: Number(
-      getValueViaPath(answers, 'equity.totalEquity')
-    ),
+    equityTotal: Number(getValueViaPath(answers, 'equity.totalEquity')),
   }
 }
