@@ -111,14 +111,8 @@ describe('DelegationIndexController', () => {
       })
 
       server = request(app.getHttpServer())
-
-      delegationProviderModel = app.get(getModelToken(DelegationProviderModel))
-      delegationTypeModel = app.get(getModelToken(DelegationTypeModel))
-
-      await createDelegationProvidersAndTypes(
-        delegationProviderModel,
-        delegationTypeModel,
-      )
+      ;({ delegationProviderModel, delegationTypeModel } =
+        await setupDelegationModels(app))
     })
 
     afterAll(async () => {
@@ -177,16 +171,8 @@ describe('DelegationIndexController', () => {
           })
 
           server = request(app.getHttpServer())
-
-          delegationProviderModel = app.get(
-            getModelToken(DelegationProviderModel),
-          )
-          delegationTypeModel = app.get(getModelToken(DelegationTypeModel))
-
-          await createDelegationProvidersAndTypes(
-            delegationProviderModel,
-            delegationTypeModel,
-          )
+          ;({ delegationProviderModel, delegationTypeModel } =
+            await setupDelegationModels(app))
         })
 
         afterAll(async () => {
@@ -251,14 +237,8 @@ describe('DelegationIndexController', () => {
       })
 
       server = request(app.getHttpServer())
-
-      delegationProviderModel = app.get(getModelToken(DelegationProviderModel))
-      delegationTypeModel = app.get(getModelToken(DelegationTypeModel))
-
-      await createDelegationProvidersAndTypes(
-        delegationProviderModel,
-        delegationTypeModel,
-      )
+      ;({ delegationProviderModel, delegationTypeModel } =
+        await setupDelegationModels(app))
     })
 
     afterAll(async () => {
@@ -317,14 +297,8 @@ describe('DelegationIndexController', () => {
       server = request(app.getHttpServer())
 
       delegationIndexModel = app.get(getModelToken(DelegationIndex))
-
-      delegationProviderModel = app.get(getModelToken(DelegationProviderModel))
-      delegationTypeModel = app.get(getModelToken(DelegationTypeModel))
-
-      await createDelegationProvidersAndTypes(
-        delegationProviderModel,
-        delegationTypeModel,
-      )
+      ;({ delegationProviderModel, delegationTypeModel } =
+        await setupDelegationModels(app))
     })
 
     afterAll(async () => {
@@ -474,6 +448,20 @@ describe('DelegationIndexController', () => {
     })
   })
 })
+
+async function setupDelegationModels(app: TestApp) {
+  const delegationProviderModel = app.get(
+    getModelToken(DelegationProviderModel),
+  )
+  const delegationTypeModel = app.get(getModelToken(DelegationTypeModel))
+
+  await createDelegationProvidersAndTypes(
+    delegationProviderModel,
+    delegationTypeModel,
+  )
+
+  return { delegationProviderModel, delegationTypeModel }
+}
 
 async function createDelegationProvidersAndTypes(
   delegationProviderModel: typeof DelegationProviderModel,
