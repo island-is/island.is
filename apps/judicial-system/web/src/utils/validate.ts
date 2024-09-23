@@ -267,15 +267,25 @@ export const isProcessingStepValidIndictments = (
       return validate([[defendant.defendantPlea, ['empty']]]).isValid
     })
 
+  const hasCivilClaimSelected =
+    workingCase.hasCivilClaims !== null &&
+    workingCase.hasCivilClaims !== undefined
+
   return Boolean(
-    workingCase.prosecutor && workingCase.court && defendantsAreValid(),
+    workingCase.prosecutor &&
+      workingCase.court &&
+      hasCivilClaimSelected &&
+      defendantsAreValid(),
   )
 }
 
 export const isTrafficViolationStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  return Boolean(workingCase.demands && workingCase.civilDemands)
+  return Boolean(
+    workingCase.demands &&
+      (!workingCase.hasCivilClaims || workingCase.civilDemands),
+  )
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {
