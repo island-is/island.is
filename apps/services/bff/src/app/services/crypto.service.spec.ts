@@ -1,7 +1,6 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Test, TestingModule } from '@nestjs/testing'
-import { BffConfig } from '../bff.config'
 import { CryptoService } from './crypto.service'
 
 const DECRYPTED_TEXT = 'Hello, World!'
@@ -28,23 +27,16 @@ const mockLogger = {
   error: jest.fn(),
 } as unknown as Logger
 
-const invalidConfig = {
-  tokenSecretBase64: 'shortkey',
-}
+const createModule = async (valid = true): Promise<TestingModule> => {
+  process.env.BFF_TOKEN_SECRET_BASE64 = valid
+    ? // A valid 32-byte base64 key
+      'ABHlmq6Ic6Ihip4OnTa1MeUXtHFex8IT/mFZrjhsme0='
+    : 'invalid_key'
 
-const validConfig = {
-  // A valid 32-byte base64 key
-  tokenSecretBase64: 'ABHlmq6Ic6Ihip4OnTa1MeUXtHFex8IT/mFZrjhsme0=',
-}
-
-const createModule = async (
-  config: Record<string, string>,
-): Promise<TestingModule> => {
   return Test.createTestingModule({
     providers: [
       CryptoService,
       { provide: LOGGER_PROVIDER, useValue: mockLogger },
-      { provide: BffConfig.KEY, useValue: config },
     ],
   }).compile()
 }
@@ -52,7 +44,7 @@ const createModule = async (
 describe('CryptoService Constructor', () => {
   it('should throw an error if "tokenSecretBase64" is not 32 bytes long', async () => {
     try {
-      const module = await createModule(invalidConfig)
+      const module = await createModule(false)
       module.get<CryptoService>(CryptoService)
       // Fail the test if no error is thrown
       fail('Expected constructor to throw an error, but it did not.')
@@ -65,7 +57,7 @@ describe('CryptoService Constructor', () => {
 
   it('should not throw an error if "tokenSecretBase64" is 32 bytes long', async () => {
     try {
-      const module = await createModule(validConfig)
+      const module = await createModule()
       module.get<CryptoService>(CryptoService)
       // No error means the test passes
     } catch (error) {
@@ -78,7 +70,7 @@ describe('CryptoService', () => {
   let service: CryptoService
 
   beforeEach(async () => {
-    const module = await createModule(validConfig)
+    const module = await createModule()
     service = module.get<CryptoService>(CryptoService)
   })
 

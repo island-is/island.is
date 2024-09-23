@@ -5,9 +5,8 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 import * as crypto from 'crypto'
-import { BffConfig } from '../bff.config'
+import { requiredString } from '../../utils/env'
 
 @Injectable()
 export class CryptoService {
@@ -17,12 +16,11 @@ export class CryptoService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-
-    @Inject(BffConfig.KEY)
-    private readonly config: ConfigType<typeof BffConfig>,
   ) {
+    const tokenSecretBase64 = requiredString('BFF_TOKEN_SECRET_BASE64')
+
     // Decode from base64 to binary
-    this.key = Buffer.from(this.config.tokenSecretBase64, 'base64')
+    this.key = Buffer.from(tokenSecretBase64, 'base64')
 
     // Ensure the key is exactly 32 bytes (256 bits) long
     if (this.key.length !== 32) {

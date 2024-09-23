@@ -1,21 +1,19 @@
 import { requiredString, requiredStringArray } from '../utils/env'
+import { removeTrailingSlash } from '../utils/removeTrailingSlash'
 import type { BffEnvironmentSchema } from './environment.schema'
 
-export const isProduction = process.env.NODE_ENV === 'production'
+const isProduction = process.env.NODE_ENV === 'production'
 const port = parseInt(process.env.PORT as string, 10) || 3010
 
-const callbacksBaseRedirectPath = requiredString('BFF_CALLBACKS_BASE_PATH')
-  // Remove trailing slash if present
-  .replace(/\/$/, '')
-
+const callbacksBaseRedirectPath = removeTrailingSlash(
+  requiredString('BFF_CALLBACKS_BASE_PATH'),
+)
 const issuer = requiredString('IDENTITY_SERVER_ISSUER_URL')
 const logoutRedirectUri = requiredString('BFF_LOGOUT_REDIRECT_PATH')
 
 export const environment: BffEnvironmentSchema = {
   production: isProduction,
-  clientBasePath: requiredString('BFF_CLIENT_BASE_PATH'),
-  graphqlApiEndpont: requiredString('BFF_PROXY_API_ENDPOINT'),
-  globalPrefix: requiredString('BFF_API_URL_PREFIX'),
+  globalPrefix: `${requiredString('BFF_CLIENT_BASE_PATH')}/bff`,
   audit: {
     groupName: requiredString('AUDIT_GROUP_NAME'),
     defaultNamespace: '@island.is/bff',

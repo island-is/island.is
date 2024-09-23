@@ -21,6 +21,7 @@ import { CallbackLoginQuery } from './queries/callback-login.query'
 import { CallbackLogoutQuery } from './queries/callback-logout.query'
 import { LoginQuery } from './queries/login.query'
 import { LogoutQuery } from './queries/logout.query'
+import { removeTrailingSlash } from '../../../utils/removeTrailingSlash'
 
 @Injectable()
 export class AuthService {
@@ -76,9 +77,9 @@ export class AuthService {
    * Get the origin URL from the request headers and add the global prefix
    */
   private getOriginUrl(req: Request) {
-    return `${(req.headers['origin'] || req.headers['referer'] || '')
-      // Remove trailing slash and add the client base path
-      .replace(/\/$/, '')}${environment.clientBasePath}`
+    return `${removeTrailingSlash(
+      req.headers['origin'] || req.headers['referer'] || '',
+    )}${this.config.clientBasePath}`
   }
 
   /**
