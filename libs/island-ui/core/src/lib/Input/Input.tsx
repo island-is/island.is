@@ -41,6 +41,8 @@ export const Input = forwardRef(
       label,
       errorMessage = '',
       maxLength,
+      max,
+      min,
       hasError = Boolean(errorMessage),
       value,
       defaultValue,
@@ -59,6 +61,7 @@ export const Input = forwardRef(
       textarea,
       type,
       icon,
+      step,
       size = 'md',
       fixedFocusState,
       autoExpand,
@@ -226,6 +229,9 @@ export const Input = forwardRef(
               }}
               readOnly={readOnly}
               type={type}
+              step={step}
+              max={max}
+              min={min}
               {...(ariaError as AriaError)}
               {...inputProps}
               {...(required && { 'aria-required': true })}

@@ -37,15 +37,15 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Defendant } from '../../defendant'
+import { CivilClaimant, Defendant } from '../../defendant'
 import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { Notification } from '../../notification'
 import { User } from '../../user'
+import { CaseString } from './caseString.model'
 import { DateLog } from './dateLog.model'
-import { ExplanatoryComment } from './explanatoryComment.model'
 
 @Table({
   tableName: 'case',
@@ -181,7 +181,7 @@ export class Case extends Model {
   requestSharedWithDefender?: RequestSharedWithDefender
 
   /**********
-   * Indicates whether the secutity level of the case has been heightened -
+   * Indicates whether the security level of the case has been heightened -
    * optional
    **********/
   @Column({ type: DataType.BOOLEAN, allowNull: true })
@@ -901,11 +901,11 @@ export class Case extends Model {
   dateLogs?: DateLog[]
 
   /**********
-   * The case's explanatory comments
+   * The case's strings
    **********/
-  @HasMany(() => ExplanatoryComment, 'caseId')
-  @ApiPropertyOptional({ type: ExplanatoryComment, isArray: true })
-  explanatoryComments?: ExplanatoryComment[]
+  @HasMany(() => CaseString, 'caseId')
+  @ApiPropertyOptional({ type: CaseString, isArray: true })
+  caseStrings?: CaseString[]
 
   /**********
    * The appeal ruling expiration date and time - example: the end of custody in custody cases -
@@ -1067,4 +1067,19 @@ export class Case extends Model {
   @HasMany(() => Case, 'mergeCaseId')
   @ApiPropertyOptional({ type: () => Case })
   mergedCases?: Case[]
+
+  /**********
+   * Indicates whether a case should include any civil claims -
+   * optional
+   **********/
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  hasCivilClaims?: boolean
+
+  // /**********
+  //  * The case's civil claimants
+  //  **********/
+  @HasMany(() => CivilClaimant, 'caseId')
+  @ApiPropertyOptional({ type: () => CivilClaimant, isArray: true })
+  civilClaimants?: CivilClaimant[]
 }

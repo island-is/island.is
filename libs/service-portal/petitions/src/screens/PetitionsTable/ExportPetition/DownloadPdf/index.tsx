@@ -21,6 +21,7 @@ const MyPdfDocument = (data: {
   petitionSigners: PaginatedEndorsementResponse
 }) => {
   const { petition, petitionSigners } = data
+
   return (
     <Document>
       <Page style={pdfStyles.body}>
@@ -132,8 +133,8 @@ export const pdfStyles = StyleSheet.create({
     paddingBottom: 30,
   },
   tableView: {
-    paddingTop: 25,
-    borderTop: `1px solid ${dark200}`,
+    paddingTop: 20,
+    borderTop: `0.5px solid ${dark200}`,
   },
   tableRow: {
     flexDirection: 'row',

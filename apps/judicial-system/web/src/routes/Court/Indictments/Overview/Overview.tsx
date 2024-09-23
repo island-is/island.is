@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -12,18 +12,15 @@ import {
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
+  IndictmentCaseScheduledCard,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
-  InfoCardCaseScheduledIndictment,
   PageHeader,
   PageLayout,
   PageTitle,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseState,
-  IndictmentDecision,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { SubpoenaType } from '../../components'
@@ -41,7 +38,7 @@ const IndictmentOverview = () => {
   const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
-  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
+  // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -84,7 +81,7 @@ const IndictmentOverview = () => {
           workingCase.indictmentDecision !==
             IndictmentDecision.REDISTRIBUTING && (
             <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduledIndictment
+              <IndictmentCaseScheduledCard
                 court={workingCase.court}
                 indictmentDecision={workingCase.indictmentDecision}
                 courtDate={latestDate.date}
@@ -141,10 +138,15 @@ const IndictmentOverview = () => {
             )
           }
           nextButtonText={formatMessage(core.continue)}
-          actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
-          actionButtonColorScheme={'destructive'}
-          actionButtonIsDisabled={!caseHasBeenReceivedByCourt}
-          onActionButtonClick={() => setModalVisible('RETURN_INDICTMENT')}
+          /* 
+            The return indictment feature has been removed for the time being but
+            we want to hold on to the functionality for now, since we are likely
+            to change this feature in the future.
+          */
+          // actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
+          // actionButtonColorScheme={'destructive'}
+          // actionButtonIsDisabled={!caseHasBeenReceivedByCourt}
+          // onActionButtonClick={() => setModalVisible('RETURN_INDICTMENT')}
         />
       </FormContentContainer>
       {modalVisible === 'RETURN_INDICTMENT' && (

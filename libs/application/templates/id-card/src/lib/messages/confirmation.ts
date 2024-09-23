@@ -43,14 +43,22 @@ export const reviewConfirmation = {
       description: 'Review confirmation accordion title',
     },
     accordionText: {
-      id: 'id.application:reviewConfirmation.general.accordionText',
+      id: 'id.application:reviewConfirmation.general.accordionText#markdown',
+      defaultMessage: `* Þú þarft að mæta í myndatöku á næsta umsóknarstað.
+      \n* Umsókn er opin í 60 daga eftir forskráningu og mæta þarf til myndatöku innan þess tíma.  Ef af einhverjum ástæðum er ekki mætt í myndatöku, eða hætt er við umsókn að þeim tíma liðnum, þarf umsækjandi sjálfur að óska eftir endurgreiðslu með því að senda póst á endurgreidsla@island.is
+      \n* Þú færð senda tilkynningu á Mínar síður þegar nafnskírteinið er tilbúið og hvenær hægt verður að sækja það á þann afhendingarstað sem þú valdir.\n`,
+      description: 'Review confirmation accordion text',
+    },
+    accordionTextForChild: {
+      id: 'id.application:reviewConfirmation.general.accordionTextForChild#markdown',
       defaultMessage: `* Forsjáraðili þarf að mæta með barni í myndatöku á [umsóknarstað](https://island.is/nafnskirteini).
       \n* Hafi báðir forsjá raðiliar samþykkt útgáfu nafnskírteinis barns er hún opin í 60 daga.  
       Ef að einhverjum ástæðum er ekki mætt í myndatöku að þeim tíma liðnum þarf að sækja um 
       endurgreiðslu með því að senda póst á [endurgreidsla@island.is](endurgreidsla@island.is).
       \n* Geti FORSJÁRAÐILI ekki mætt með barni í myndatöku þarf að veita þriðja aðila 
       [umboð til þess](https://island.is/nafnskirteini).\n`,
-      description: 'Review confirmation accordion text',
+      description:
+        'Review confirmation accordion text when applying for a child',
     },
     infoMessageText1: {
       id: 'id.application:reviewConfirmation.general.infoMessageText1',
@@ -59,7 +67,7 @@ export const reviewConfirmation = {
       description: 'Review confirmation first information message',
     },
     infoMessageText2: {
-      id: 'id.application:reviewConfirmation.general.infoMessageText1',
+      id: 'id.application:reviewConfirmation.general.infoMessageText2',
       defaultMessage:
         'Athugaðu að eftir að báðir forsjáraðilar hafa samþykkt umsókn er hún opin í 60 daga inni á island.is - að þeim tíma liðnum þarf að sækja um endurgreiðslu ef ekki er mætt í myndatöku.',
       description: 'Review confirmation second information message',

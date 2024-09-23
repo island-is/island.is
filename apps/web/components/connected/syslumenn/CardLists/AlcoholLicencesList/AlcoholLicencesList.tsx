@@ -1,33 +1,36 @@
 import { FC, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client/react'
-import { GET_ALCOHOL_LICENCES_QUERY } from './queries'
+
+import {
+  AlertMessage,
+  Box,
+  Button,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Input,
+  LoadingDots,
+  Select,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
+import { SyslumennListCsvExport } from '@island.is/web/components'
 import {
   AlcoholLicence,
   ConnectedComponent,
   Query,
 } from '@island.is/web/graphql/schema'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+
 import {
-  prepareCsvString,
-  textSearch,
   getNormalizedSearchTerms,
   getValidPeriodRepresentation,
+  prepareCsvString,
+  textSearch,
 } from '../../utils'
-import {
-  Box,
-  Button,
-  Tag,
-  LoadingDots,
-  Text,
-  Input,
-  AlertMessage,
-  Select,
-  GridContainer,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
-import { SyslumennListCsvExport } from '@island.is/web/components'
-import { useNamespace } from '@island.is/web/hooks'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { GET_ALCOHOL_LICENCES_QUERY } from './queries'
+import { translation as t } from './translation.strings'
 
 const DEFAULT_PAGE_SIZE = 10
 
@@ -40,10 +43,10 @@ type ListState = 'loading' | 'loaded' | 'error'
 const AlcoholLicencesList: FC<
   React.PropsWithChildren<AlcoholLicencesListProps>
 > = ({ slice }) => {
-  const n = useNamespace(slice.json ?? {})
+  const { formatMessage } = useIntl()
   const { format } = useDateUtils()
   const PAGE_SIZE = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
-  const DATE_FORMAT = n('dateFormat', 'd. MMMM yyyy')
+  const DATE_FORMAT = formatMessage(t.dateFormat)
 
   const [listState, setListState] = useState<ListState>('loading')
   const [showCount, setShowCount] = useState(PAGE_SIZE)
@@ -88,15 +91,15 @@ const AlcoholLicencesList: FC<
     return new Promise<string>((resolve, reject) => {
       if (alcoholLicences) {
         const headerRow = [
-          n('csvHeaderLicenceType', 'Tegund'),
-          n('csvHeaderLicenceSubType', 'Tegund leyfis'),
-          n('csvHeaderLicenseNumber', 'Leyfisnúmer'),
-          n('csvHeaderLicenseHolder', 'Leyfishafi'),
-          n('csvHeaderLicenseResponsible', 'Ábyrgðarmaður'),
-          n('csvHeaderValidFrom', 'Gildir frá'),
-          n('csvHeaderValidTo', 'Gildir til'),
-          n('csvHeaderOffice', 'Embætti'),
-          n('csvHeaderLocation', 'Starfsstöð embættis'),
+          formatMessage(t.csvHeaderLicenceType),
+          formatMessage(t.csvHeaderLicenceSubType),
+          formatMessage(t.csvHeaderLicenseNumber),
+          formatMessage(t.csvHeaderLicenseHolder),
+          formatMessage(t.csvHeaderLicenseResponsible),
+          formatMessage(t.csvHeaderValidFrom),
+          formatMessage(t.csvHeaderValidTo),
+          formatMessage(t.csvHeaderOffice),
+          formatMessage(t.csvHeaderLocation),
         ]
         const dataRows = []
         for (const alcoholLicence of alcoholLicences) {
@@ -121,7 +124,7 @@ const AlcoholLicencesList: FC<
   }
 
   // Filter - Office
-  const allOfficesOption = n('filterOfficeAll', 'Öll embætti')
+  const allOfficesOption = formatMessage(t.filterOfficeAll)
   const avaibleOfficesOptions = [
     allOfficesOption,
     ...Array.from(
@@ -135,7 +138,7 @@ const AlcoholLicencesList: FC<
   )
 
   // Filter - Type
-  const allLicenceTypeOption = n('filterLicenceTypeAll', 'Allar tegundir')
+  const allLicenceTypeOption = formatMessage(t.filterLicenceTypeAll)
   const avaibleLicenceTypeOptions = [
     allLicenceTypeOption,
     ...Array.from(
@@ -191,8 +194,8 @@ const AlcoholLicencesList: FC<
       )}
       {listState === 'error' && (
         <AlertMessage
-          title={n('errorTitle', 'Villa')}
-          message={n('errorMessage', 'Ekki tókst að sækja áfengisleyfi.')}
+          title={formatMessage(t.errorTitle)}
+          message={formatMessage(t.errorMessage)}
           type="error"
         />
       )}
@@ -210,7 +213,7 @@ const AlcoholLicencesList: FC<
                   icon="chevronDown"
                   size="sm"
                   isSearchable
-                  label={n('alcoholLicencesFilterLicenceType', 'Tegund')}
+                  label={formatMessage(t.alcoholLicencesFilterLicenceType)}
                   name="licenceTypeSelect"
                   options={avaibleLicenceTypeOptions.map((x) => ({
                     label: x,
@@ -238,7 +241,7 @@ const AlcoholLicencesList: FC<
                   icon="chevronDown"
                   size="sm"
                   isSearchable
-                  label={n('alcoholLicencesFilterOffice', 'Embætti')}
+                  label={formatMessage(t.alcoholLicencesFilterOffice)}
                   name="officeSelect"
                   options={avaibleOfficesOptions.map((x) => ({
                     label: x,
@@ -262,7 +265,7 @@ const AlcoholLicencesList: FC<
               <GridColumn paddingBottom={[1, 1, 1]} span={'12/12'}>
                 <Input
                   name="alcoholLicencesSearchInput"
-                  placeholder={n('searchPlaceholder', 'Leita')}
+                  placeholder={formatMessage(t.searchPlaceholder)}
                   backgroundColor={['blue', 'blue', 'white']}
                   size="sm"
                   icon={{
@@ -273,19 +276,10 @@ const AlcoholLicencesList: FC<
                 />
                 <Box textAlign="right" marginRight={1} marginTop={1}>
                   <SyslumennListCsvExport
-                    defaultLabel={n(
-                      'csvButtonLabelDefault',
-                      'Sækja öll leyfi (CSV)',
-                    )}
-                    loadingLabel={n(
-                      'csvButtonLabelLoading',
-                      'Sæki öll leyfi...',
-                    )}
-                    errorLabel={n(
-                      'csvButtonLabelError',
-                      'Ekki tókst að sækja leyfi, reyndu aftur',
-                    )}
-                    csvFilenamePrefix={n('csvFileTitlePrefix', 'Áfengisleyfi')}
+                    defaultLabel={formatMessage(t.csvButtonLabelDefault)}
+                    loadingLabel={formatMessage(t.csvButtonLabelLoading)}
+                    errorLabel={formatMessage(t.csvButtonLabelError)}
+                    csvFilenamePrefix={formatMessage(t.csvFileTitlePrefix)}
                     csvStringProvider={csvStringProvider}
                   />
                 </Box>
@@ -296,7 +290,7 @@ const AlcoholLicencesList: FC<
       )}
       {listState === 'loaded' && filteredAlcoholLicences.length === 0 && (
         <Box display="flex" marginTop={4} justifyContent="center">
-          <Text variant="h3">{n('noResults', 'Engin leyfi fundust.')}</Text>
+          <Text variant="h3">{formatMessage(t.noResults)}</Text>
         </Box>
       )}
       {listState === 'loaded' && filteredAlcoholLicences.length > 0 && (
@@ -341,12 +335,12 @@ const AlcoholLicencesList: FC<
                       <Text variant="h3">{alcoholLicence.licenseHolder}</Text>
 
                       <Text paddingBottom={2}>
-                        {n('licenseNumber', 'Leyfisnúmer')}:{' '}
+                        {formatMessage(t.licenseNumber)}:{' '}
                         {alcoholLicence.licenseNumber}
                       </Text>
 
                       <Text>
-                        {n('validPeriodLabel', 'Gildistími')}:{' '}
+                        {formatMessage(t.validPeriodLabel)}:{' '}
                         {getValidPeriodRepresentation(
                           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                           // @ts-ignore make web strict
@@ -354,18 +348,15 @@ const AlcoholLicencesList: FC<
                           alcoholLicence.validTo,
                           DATE_FORMAT,
                           format,
-                          n('validPeriodUntil', 'Til'),
-                          n('validPeriodIndefinite', 'Ótímabundið'),
+                          formatMessage(t.validPeriodUntil),
+                          formatMessage(t.validPeriodIndefinite),
                         )}
                       </Text>
 
                       <Text>
-                        {n('licenseResponsible', 'Ábyrgðarmaður')}:{' '}
+                        {formatMessage(t.licenseResponsible)}:{' '}
                         {alcoholLicence.licenseResponsible ||
-                          n(
-                            'licenseResponsibleNotRegistered',
-                            'Enginn skráður',
-                          )}
+                          formatMessage(t.licenseResponsibleNotRegistered)}
                       </Text>
                     </Box>
                   </Box>
@@ -380,7 +371,7 @@ const AlcoholLicencesList: FC<
           >
             {showCount < filteredAlcoholLicences.length && (
               <Button onClick={() => setShowCount(showCount + PAGE_SIZE)}>
-                {n('loadMore', 'Sjá fleiri')} (
+                {formatMessage(t.loadMore)} (
                 {filteredAlcoholLicences.length - showCount})
               </Button>
             )}

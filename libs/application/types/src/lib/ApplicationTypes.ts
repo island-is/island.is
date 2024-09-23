@@ -30,7 +30,9 @@ export enum ApplicationTypes {
   MORTGAGE_CERTIFICATE = 'MortgageCertificate',
   MARRIAGE_CONDITIONS = 'MarriageConditions',
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
+  FINANCIAL_STATEMENT_CEMETERY = 'FinancialStatementCemetery',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
+  FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION = 'FinancialStatementIndividualElection',
   OPERATING_LICENSE = 'OperatingLicense',
   ESTATE = 'Estate',
   DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
@@ -53,6 +55,7 @@ export enum ApplicationTypes {
   PRESIDENTIAL_LIST_CREATION = 'PresidentialListCreation',
   PRESIDENTIAL_LIST_SIGNING = 'PresidentialListSigning',
   PARLIAMENTARY_LIST_CREATION = 'ParliamentaryListCreation',
+  PARLIAMENTARY_LIST_SIGNING = 'ParliamentaryListSigning',
   CITIZENSHIP = 'Citizenship',
   ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
   ENERGY_FUNDS = 'EnergyFunds',
@@ -70,7 +73,9 @@ export enum ApplicationTypes {
   ID_CARD = 'IdCard',
   HEALTH_INSURANCE_DECLARATION = 'HealthInsuranceDeclaration',
   STREET_REGISTRATION = 'StreetRegistration',
+  INCOME_PLAN = 'IncomePlan',
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
+  MACHINE_REGISTRATION = 'MachineRegistration',
 }
 
 export const ApplicationConfigurations = {
@@ -202,9 +207,17 @@ export const ApplicationConfigurations = {
     slug: 'skuldleysisvottord',
     translation: 'ndc.application',
   },
+  [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
+    slug: 'skil-arsreikninga-kirkjugardar',
+    translation: 'fsck.application',
+  },
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     slug: 'skilarsreikninga',
     translation: 'fsn.application',
+  },
+  [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: {
+    slug: 'skil-arsreikninga-einstaklingsframbod',
+    translation: 'fsie.application',
   },
   [ApplicationTypes.OPERATING_LICENSE]: {
     slug: 'rekstrarleyfi',
@@ -290,6 +303,10 @@ export const ApplicationConfigurations = {
     slug: 'althingis-medmaelasofnun',
     translation: 'plc.application',
   },
+  [ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]: {
+    slug: 'maela-med-althingisframbodi',
+    translation: 'pls.application',
+  },
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
     translation: ['doi.cs.application', 'uiForms.application'],
@@ -362,8 +379,16 @@ export const ApplicationConfigurations = {
     slug: 'gotuskraning-taekis',
     translation: 'aosh.sr.application',
   },
+  [ApplicationTypes.INCOME_PLAN]: {
+    slug: 'tekjuaaetlun',
+    translation: ['ip.application', 'sia.application', 'uiForms.application'],
+  },
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     slug: 'nyr-grunnskoli',
     translation: ['dess.nps.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.MACHINE_REGISTRATION]: {
+    slug: 'nyskraning-taekis',
+    translation: ['aosh.rnm.application'],
   },
 }

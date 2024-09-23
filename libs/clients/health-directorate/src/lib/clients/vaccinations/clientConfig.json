@@ -1,0 +1,1029 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/v1/me/vaccinations": {
+      "get": {
+        "operationId": "MeVaccinationController_getVaccinations",
+        "description": "Get all vaccinations for a user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/VaccinationDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["me/vaccinations"]
+      }
+    },
+    "/v1/me/vaccinations/diseases": {
+      "get": {
+        "operationId": "MeVaccinationController_getVaccinationsForDiseases",
+        "description": "Get overview of vaccinations for a user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DiseaseVaccinationDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["me/vaccinations"]
+      }
+    },
+    "/v1/me/vaccinations/diseases/{diseaseId}": {
+      "get": {
+        "operationId": "MeVaccinationController_getVaccinationForDisease",
+        "description": "Get overview of vaccinations for a user for a specific disease",
+        "parameters": [
+          {
+            "name": "diseaseId",
+            "required": true,
+            "in": "path",
+            "description": "id of the disease",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiseaseVaccinationDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["me/vaccinations"]
+      }
+    },
+    "/v1/diseases": {
+      "get": {
+        "operationId": "DiseaseController_getDiseases",
+        "description": "Get all diseases",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "schema": { "enum": ["en", "is"], "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/DiseaseDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["diseases"]
+      }
+    },
+    "/v1/diseases/{diseaseId}": {
+      "get": {
+        "operationId": "DiseaseController_getDisease",
+        "description": "Get disease by id",
+        "parameters": [
+          {
+            "name": "diseaseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "schema": { "enum": ["en", "is"], "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DiseaseDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["diseases"]
+      },
+      "patch": {
+        "operationId": "DiseaseController_updateDisease",
+        "description": "Update disease",
+        "parameters": [
+          {
+            "name": "diseaseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateDiseaseDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["diseases"]
+      }
+    },
+    "/v1/diseases/{diseaseId}/rules": {
+      "post": {
+        "operationId": "DiseaseController_createDiseaseRule",
+        "description": "Create disease rule",
+        "parameters": [
+          {
+            "name": "diseaseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateDiseaseRuleDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["diseases"]
+      }
+    },
+    "/v1/diseases/{diseaseId}/rules/{ruleId}": {
+      "patch": {
+        "operationId": "DiseaseController_updateDiseaseRule",
+        "description": "Update a single disease rule",
+        "parameters": [
+          {
+            "name": "diseaseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "ruleId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateDiseaseRuleDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["diseases"]
+      },
+      "delete": {
+        "operationId": "DiseaseController_deleteDiseaseRule",
+        "description": "Update a single disease rule",
+        "parameters": [
+          {
+            "name": "diseaseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "ruleId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["diseases"]
+      }
+    },
+    "/v1/vaccines": {
+      "get": {
+        "operationId": "VaccineController_getVaccines",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["vaccines"]
+      }
+    },
+    "/v1/vaccines/{vaccineId}": {
+      "get": {
+        "operationId": "VaccineController_getVaccineById",
+        "parameters": [
+          {
+            "name": "vaccineId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": { "200": { "description": "" } },
+        "tags": ["vaccines"]
+      }
+    },
+    "/v1/visualizer/diseases/{diseaseId}": {
+      "get": {
+        "operationId": "VisualizerController_getStatus",
+        "description": "Get vaccination status for a person",
+        "parameters": [
+          {
+            "name": "diseaseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "age",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "vaccinations",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "rejected",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          }
+        ],
+        "responses": {
+          "200": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/*": {
+      "get": {
+        "operationId": "VisualizerController_getVisualizer",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      }
+    }
+  },
+  "info": {
+    "title": "Vaccination API",
+    "description": "The api provides access to information about individuals' vaccination status and their administered vaccinations.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://identity-server.dev01.devland.is/connect/authorize",
+            "tokenUrl": "https://identity-server.dev01.devland.is/connect/token",
+            "scopes": {
+              "openid": "openid",
+              "vaccination": "vaccination",
+              "@landlaeknir.is/vaccinations:admin": "Manage disease- and vaccine data",
+              "@landlaeknir.is/vaccinations": "Get vaccination data for a user",
+              "@landlaeknir.is/vaccinations:read": "Get disease- and vaccine data"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "VaccinationDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number" },
+          "nationalId": { "type": "string", "example": "1234567890" },
+          "vaccineCode": { "type": "string", "example": "J07BJ51" },
+          "vaccineCodingSystem": { "type": "string", "example": "ATC" },
+          "vaccineCodeDescription": { "type": "string" },
+          "vaccineCodeDescriptionShort": { "type": "string" },
+          "vaccineUrl": { "type": "string" },
+          "vaccinationDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2021-01-01"
+          },
+          "vaccinationAge": {
+            "type": "object",
+            "example": { "years": 1, "months": 2 }
+          },
+          "generalComment": { "type": "string" },
+          "rejected": { "type": "boolean", "example": false }
+        },
+        "required": [
+          "id",
+          "nationalId",
+          "vaccineCode",
+          "vaccineCodingSystem",
+          "vaccineCodeDescription",
+          "vaccineCodeDescriptionShort",
+          "vaccineUrl",
+          "vaccinationDate",
+          "vaccinationAge",
+          "generalComment",
+          "rejected"
+        ]
+      },
+      "HttpProblemResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "object",
+            "description": "A URI reference that identifies the problem type"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type"
+          },
+          "status": { "type": "number", "description": "The HTTP status code" },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem"
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem."
+          }
+        },
+        "required": ["type", "title"]
+      },
+      "VaccinationStatusColor": {
+        "type": "string",
+        "enum": ["green", "yellow", "red"]
+      },
+      "DiseaseVaccinationDto": {
+        "type": "object",
+        "properties": {
+          "diseaseId": { "type": "string", "example": "tetanus" },
+          "diseaseName": { "type": "string", "example": "Stífkrampi" },
+          "diseaseDescription": { "type": "string" },
+          "isFeatured": {
+            "type": "boolean",
+            "description": "Is the vaccination scheduled as in \"almenn bólusetning\""
+          },
+          "vaccinationStatus": {
+            "type": "string",
+            "example": "vaccinated",
+            "enum": [
+              "valid",
+              "expired",
+              "complete",
+              "incomplete",
+              "undocumented",
+              "unvaccinated",
+              "rejected",
+              "undetermined"
+            ]
+          },
+          "vaccinationStatusName": { "type": "string", "example": "Í gildi" },
+          "vaccinationStatusColor": {
+            "$ref": "#/components/schemas/VaccinationStatusColor"
+          },
+          "lastVaccinationDate": { "format": "date-time", "type": "string" },
+          "vaccinations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/VaccinationDto" }
+          },
+          "comments": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": [
+          "diseaseId",
+          "diseaseName",
+          "isFeatured",
+          "vaccinations",
+          "comments"
+        ]
+      },
+      "VaccineDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number" },
+          "code": { "type": "string" },
+          "codingSystem": { "type": "string", "example": "ATC" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "diseases": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": [
+          "id",
+          "code",
+          "codingSystem",
+          "name",
+          "description",
+          "diseases"
+        ]
+      },
+      "Locale": { "type": "string", "enum": ["en", "is"] },
+      "DiseaseRuleTranslationDto": {
+        "type": "object",
+        "properties": {
+          "locale": { "$ref": "#/components/schemas/Locale" },
+          "comment": { "type": "string" }
+        },
+        "required": ["locale", "comment"]
+      },
+      "DiseaseRuleDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number" },
+          "diseaseId": { "type": "string" },
+          "order": { "type": "number" },
+          "type": { "type": "object" },
+          "cond1Type": { "type": "string" },
+          "cond1Min": { "type": "number" },
+          "cond1Max": { "type": "number" },
+          "cond2Type": { "type": "string" },
+          "cond2Min": { "type": "number" },
+          "cond2Max": { "type": "number" },
+          "cond3Type": { "type": "string" },
+          "cond3Min": { "type": "number" },
+          "cond3Max": { "type": "number" },
+          "status": { "type": "string" },
+          "statusName": { "type": "string" },
+          "internalComment": { "type": "string" },
+          "publicComment": { "type": "string" },
+          "translations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiseaseRuleTranslationDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "diseaseId",
+          "order",
+          "type",
+          "cond1Type",
+          "cond1Min",
+          "cond1Max",
+          "cond2Type",
+          "cond2Min",
+          "cond2Max",
+          "cond3Type",
+          "cond3Min",
+          "cond3Max",
+          "status",
+          "statusName",
+          "internalComment",
+          "publicComment",
+          "translations"
+        ]
+      },
+      "DiseaseTranslationDto": {
+        "type": "object",
+        "properties": {
+          "locale": { "$ref": "#/components/schemas/Locale" },
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["locale", "name", "description"]
+      },
+      "DiseaseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "doseSchedule": {
+            "description": "Array of numbers representing at which dates (in months) the doses should be administered",
+            "example": [2, 4, 6],
+            "type": "array",
+            "items": { "type": "number" }
+          },
+          "isFeatured": { "type": "boolean" },
+          "isVisible": { "type": "boolean" },
+          "vaccines": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/VaccineDto" }
+          },
+          "rules": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DiseaseRuleDto" }
+          },
+          "translations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DiseaseTranslationDto" }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "doseSchedule",
+          "isFeatured",
+          "isVisible",
+          "vaccines",
+          "rules",
+          "translations"
+        ]
+      },
+      "UpdateDiseaseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "doseSchedule": {
+            "description": "Array of numbers representing at which dates (in months) the doses should be administered",
+            "example": [2, 4, 6],
+            "type": "array",
+            "items": { "type": "number" }
+          },
+          "isFeatured": { "type": "boolean" },
+          "isVisible": { "type": "boolean" },
+          "rules": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DiseaseRuleDto" }
+          },
+          "translations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DiseaseTranslationDto" }
+          }
+        }
+      },
+      "CreateDiseaseRuleDto": {
+        "type": "object",
+        "properties": {
+          "order": { "type": "number" },
+          "type": { "type": "object" },
+          "cond1Type": { "type": "string" },
+          "cond1Min": { "type": "number" },
+          "cond1Max": { "type": "number" },
+          "cond2Type": { "type": "string" },
+          "cond2Min": { "type": "number" },
+          "cond2Max": { "type": "number" },
+          "cond3Type": { "type": "string" },
+          "cond3Min": { "type": "number" },
+          "cond3Max": { "type": "number" },
+          "status": { "type": "string" },
+          "statusName": { "type": "string" },
+          "internalComment": { "type": "string" },
+          "publicComment": { "type": "string" },
+          "translations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiseaseRuleTranslationDto"
+            }
+          }
+        },
+        "required": [
+          "order",
+          "type",
+          "cond1Type",
+          "cond1Min",
+          "cond1Max",
+          "cond2Type",
+          "cond2Min",
+          "cond2Max",
+          "cond3Type",
+          "cond3Min",
+          "cond3Max",
+          "status",
+          "statusName",
+          "internalComment",
+          "publicComment",
+          "translations"
+        ]
+      },
+      "UpdateDiseaseRuleDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number" },
+          "diseaseId": { "type": "string" },
+          "order": { "type": "number" },
+          "type": { "type": "object" },
+          "cond1Type": { "type": "string" },
+          "cond1Min": { "type": "number" },
+          "cond1Max": { "type": "number" },
+          "cond2Type": { "type": "string" },
+          "cond2Min": { "type": "number" },
+          "cond2Max": { "type": "number" },
+          "cond3Type": { "type": "string" },
+          "cond3Min": { "type": "number" },
+          "cond3Max": { "type": "number" },
+          "status": { "type": "string" },
+          "statusName": { "type": "string" },
+          "internalComment": { "type": "string" },
+          "publicComment": { "type": "string" },
+          "translations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiseaseRuleTranslationDto"
+            }
+          }
+        }
+      }
+    }
+  }
+}

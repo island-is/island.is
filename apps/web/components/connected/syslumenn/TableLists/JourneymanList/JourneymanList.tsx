@@ -1,4 +1,5 @@
 import { CSSProperties, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useQueryState } from 'next-usequerystate'
 import { useQuery } from '@apollo/client/react'
 
@@ -19,7 +20,6 @@ import {
 import { sortAlpha } from '@island.is/shared/utils'
 import { SyslumennListCsvExport } from '@island.is/web/components'
 import { JourneymanLicence } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import {
@@ -28,10 +28,15 @@ import {
   prepareCsvString,
 } from '../../utils'
 import { GET_JOURNEYMAN_LICENCES_QUERY } from './queries'
+import { translation as t } from './translation.strings'
 
 const DEFAULT_PAGE_SIZE = 20
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
-const SEARCH_KEYS: (keyof JourneymanLicence)[] = ['name', 'dateOfPublication']
+const SEARCH_KEYS: (keyof JourneymanLicence)[] = [
+  'name',
+  'dateOfPublication',
+  'nationalId',
+]
 
 interface JourneymanListProps {
   slice: ConnectedComponent
@@ -40,7 +45,7 @@ interface JourneymanListProps {
 type ListState = 'loading' | 'loaded' | 'error'
 
 const JourneymanList = ({ slice }: JourneymanListProps) => {
-  const n = useNamespace(slice.json ?? {})
+  const { formatMessage } = useIntl()
   const [listState, setListState] = useState<ListState>('loading')
   const [licences, setLicences] = useState<
     Query['getJourneymanLicences']['licences']
@@ -110,9 +115,10 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
     return new Promise<string>((resolve, reject) => {
       if (licences) {
         const headerRow = [
-          n('csvHeaderName', 'Nafn') as string,
-          n('csvHeaderProfession', 'Iðngrein') as string,
-          n('csvHeaderDateOfPublication', 'Útgáfuár') as string,
+          formatMessage(t.csvHeaderName),
+          formatMessage(t.csvHeaderProfession),
+          formatMessage(t.csvHeaderDateOfPublication),
+          formatMessage(t.csvHeaderNationaId),
         ]
         const dataRows = []
         for (const licence of licences) {
@@ -122,6 +128,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
             licence.dateOfPublication // Útgáfuár
               ? format(new Date(licence.dateOfPublication), 'yyyy')
               : '',
+            licence.nationalId ?? '',
           ])
         }
         return resolve(prepareCsvString(headerRow, dataRows))
@@ -131,10 +138,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
   }
 
   // Filter - Profession
-  const allLicenceProfessionOption = n(
-    'filterLicenceProfessionAll',
-    'Allar tegundir',
-  ) as string
+  const allLicenceProfessionOption = formatMessage(t.filterLicenceProfessionAll)
 
   // Filter
   const filteredLicences = getSortedAndFilteredList(
@@ -177,11 +181,8 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
       )}
       {listState === 'error' && (
         <AlertMessage
-          title={n('errorTitle', 'Villa')}
-          message={n(
-            'errorMessage',
-            'Ekki tókst að sækja lista yfir sveinsbréfin.',
-          )}
+          title={formatMessage(t.errorTitle)}
+          message={formatMessage(t.errorMessage)}
           type="error"
         />
       )}
@@ -199,7 +200,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                   icon="chevronDown"
                   size="sm"
                   isSearchable
-                  label={n('licencesFilterLicenceProfession', 'Iðngrein')}
+                  label={formatMessage(t.licencesFilterLicenceProfession)}
                   name="licenceProfessionSelect"
                   options={availableLicenceProfessionOptions}
                   value={filterLicenceProfession}
@@ -215,7 +216,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
               <GridColumn paddingBottom={[1, 1, 1]} span={'12/12'}>
                 <Input
                   name="licencesSearchInput"
-                  placeholder={n('searchPlaceholder', 'Leita')}
+                  placeholder={formatMessage(t.searchPlaceholder)}
                   backgroundColor={['blue', 'blue', 'white']}
                   size="sm"
                   icon={{
@@ -226,19 +227,10 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                 />
                 <Box textAlign="right" marginRight={1} marginTop={1}>
                   <SyslumennListCsvExport
-                    defaultLabel={n(
-                      'csvButtonLabelDefault',
-                      'Sækja öll leyfi (CSV)',
-                    )}
-                    loadingLabel={n(
-                      'csvButtonLabelLoading',
-                      'Sæki öll leyfi...',
-                    )}
-                    errorLabel={n(
-                      'csvButtonLabelError',
-                      'Ekki tókst að sækja leyfi, reyndu aftur',
-                    )}
-                    csvFilenamePrefix={n('csvFileTitlePrefix', 'Sveinslisti')}
+                    defaultLabel={formatMessage(t.csvButtonLabelDefault)}
+                    loadingLabel={formatMessage(t.csvButtonLabelLoading)}
+                    errorLabel={formatMessage(t.csvButtonLabelError)}
+                    csvFilenamePrefix={formatMessage(t.csvFileTitlePrefix)}
                     csvStringProvider={csvStringProvider}
                   />
                 </Box>
@@ -249,9 +241,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
       )}
       {listState === 'loaded' && filteredLicences.length === 0 && (
         <Box display="flex" marginTop={4} justifyContent="center">
-          <Text variant="h3">
-            {n('noLicencesFound', 'Engar niðurstöður fundust.')}
-          </Text>
+          <Text variant="h3">{formatMessage(t.noLicencesFound)}</Text>
         </Box>
       )}
       {listState === 'loaded' && filteredLicences.length > 0 && (
@@ -260,10 +250,12 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
             <T.Table>
               <T.Head>
                 <T.Row>
-                  <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
-                  <T.HeadData>{n('profession', 'Iðngrein')}</T.HeadData>
+                  <T.HeadData>{formatMessage(t.name)}</T.HeadData>
+                  <T.HeadData>{formatMessage(t.profession)}</T.HeadData>
+
+                  <T.HeadData>{formatMessage(t.dateOfPublication)}</T.HeadData>
                   <T.HeadData align="right">
-                    {n('dateOfPublication', 'Útgáfuár')}
+                    {formatMessage(t.nationalId)}
                   </T.HeadData>
                 </T.Row>
               </T.Head>
@@ -287,7 +279,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                         <T.Data>
                           {licences.dateOfPublication && (
                             <Box>
-                              <Text textAlign="right" variant="small">
+                              <Text variant="small">
                                 {format(
                                   new Date(licences.dateOfPublication),
                                   'yyyy',
@@ -295,6 +287,13 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                               </Text>
                             </Box>
                           )}
+                        </T.Data>
+                        <T.Data>
+                          <Box>
+                            <Text textAlign="right" variant="small">
+                              {licences.nationalId}
+                            </Text>
+                          </Box>
                         </T.Data>
                       </T.Row>
                     )

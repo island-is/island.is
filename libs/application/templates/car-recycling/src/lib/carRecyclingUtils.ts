@@ -9,22 +9,18 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     [],
   ) as VehicleDto[]
 
-  const allVehicles = getValueViaPath(
-    answers,
-    'vehicles.allVehicles',
-    [],
-  ) as VehicleDto[]
-
   const canceledVehicles = getValueViaPath(
     answers,
     'vehicles.canceledVehicles',
     [],
   ) as VehicleDto[]
 
+  const permnoSearch = getValueViaPath(answers, 'permnoSearch', '') as ''
+
   return {
     selectedVehicles,
-    allVehicles,
     canceledVehicles,
+    permnoSearch,
   }
 }
 
@@ -58,17 +54,17 @@ export const getApplicationExternalData = (
 
   const applicantMunicipality = applicantPostalCode + ' ' + city
 
-  const vehiclesList = getValueViaPath(
-    externalData,
-    'currentVehicles.data',
-    [],
-  ) as VehicleDto[]
-
   return {
     applicantName,
     applicantNationalId,
     applicantAddress,
     applicantMunicipality,
-    vehiclesList,
   }
+}
+
+export const filterVehiclesList = (
+  vehicle: VehicleDto,
+  list: VehicleDto[],
+): VehicleDto[] => {
+  return list.filter((item) => item.permno !== vehicle.permno)
 }

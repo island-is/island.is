@@ -1,15 +1,16 @@
-import React from 'react'
 import faker from 'faker'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {
+  Case,
   Gender,
   Notification,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as formatters from './formatters'
+import { validateAndSendToServer } from './formHelper'
 import {
   getAppealEndDate,
   getShortGender,
@@ -327,6 +328,53 @@ describe('Step helper', () => {
 
       // Assert
       expect(res).toEqual(false)
+    })
+  })
+
+  describe('validateAndSendToServer', () => {
+    test('should call the updateCase function with the correct parameters', () => {
+      // Arrange
+      const spy = jest.fn()
+      const fieldToUpdate = 'courtCaseNumber'
+      const value = '1234/1234'
+      const id = faker.datatype.uuid()
+      const theCase = { id } as Case
+      const update = {
+        courtCaseNumber: value,
+      }
+
+      // Act
+      validateAndSendToServer(
+        fieldToUpdate,
+        value,
+        ['appeal-case-number-format'],
+        theCase,
+        spy,
+      )
+
+      // Assert
+      expect(spy).toBeCalledWith(id, update)
+    })
+
+    test('should not call the updateCase function if the value is invalid', () => {
+      // Arrange
+      const spy = jest.fn()
+      const fieldToUpdate = 'courtCaseNumber'
+      const value = '12341234'
+      const id = faker.datatype.uuid()
+      const theCase = { id } as Case
+
+      // Act
+      validateAndSendToServer(
+        fieldToUpdate,
+        value,
+        ['appeal-case-number-format'],
+        theCase,
+        spy,
+      )
+
+      // Assert
+      expect(spy).not.toHaveBeenCalled()
     })
   })
 

@@ -1,39 +1,42 @@
-import { User } from '@island.is/auth-nest-tools'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+
+import { User } from '@island.is/auth-nest-tools'
+import {
+  IndividualDto,
+  NationalRegistryClientService,
+} from '@island.is/clients/national-registry-v2'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
+
+import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
+import { ClientDelegationType } from '../clients/models/client-delegation-type.model'
 import { Client } from '../clients/models/client.model'
+import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
+import { ApiScope } from '../resources/models/api-scope.model'
+import { UNKNOWN_NAME } from './constants/names'
+import { DelegationDTOMapper } from './delegation-dto.mapper'
+import { DelegationProviderService } from './delegation-provider.service'
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
 import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
-import { DelegationDTOMapper } from './delegation-dto.mapper'
-import { DelegationDTO } from './dto/delegation.dto'
-import { MergedDelegationDTO } from './dto/merged-delegation.dto'
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
 import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
-import { ApiScope } from '../resources/models/api-scope.model'
-import { WhereOptions } from 'sequelize'
-import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 import { DelegationsIndexService } from './delegations-index.service'
-import { AuthDelegationType } from '@island.is/shared/types'
+import { DelegationDTO } from './dto/delegation.dto'
+import { MergedDelegationDTO } from './dto/merged-delegation.dto'
 
 type ClientDelegationInfo = Pick<
   Client,
-  | 'supportsCustomDelegation'
-  | 'supportsLegalGuardians'
-  | 'supportsProcuringHolders'
-  | 'supportsPersonalRepresentatives'
-  | 'requireApiScopes'
+  'supportedDelegationTypes' | 'requireApiScopes'
 >
 
 export type ApiScopeInfo = Pick<
   ApiScope,
-  | 'name'
-  | 'enabled'
-  | 'grantToLegalGuardians'
-  | 'grantToProcuringHolders'
-  | 'grantToPersonalRepresentatives'
-  | 'allowExplicitDelegationGrant'
-  | 'isAccessControlled'
+  'name' | 'supportedDelegationTypes' | 'isAccessControlled'
 >
 
 interface FindAvailableInput {
@@ -50,7 +53,8 @@ interface FindAvailableInput {
 @Injectable()
 export class DelegationsIncomingService {
   constructor(
-    private featureFlagService: FeatureFlagService,
+    @Inject(LOGGER_PROVIDER)
+    protected readonly logger: Logger,
     @InjectModel(Client)
     private clientModel: typeof Client,
     @InjectModel(ClientAllowedScope)
@@ -62,6 +66,9 @@ export class DelegationsIncomingService {
     private delegationsIncomingRepresentativeService: DelegationsIncomingRepresentativeService,
     private delegationsIncomingWardService: DelegationsIncomingWardService,
     private delegationsIndexService: DelegationsIndexService,
+    private delegationProviderService: DelegationProviderService,
+    private nationalRegistryClient: NationalRegistryClientService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async findAllValid(
@@ -115,28 +122,35 @@ export class DelegationsIncomingService {
   async findAllAvailable({
     user,
     delegationTypes,
-    requestedScopes,
     otherUser,
   }: FindAvailableInput): Promise<MergedDelegationDTO[]> {
     const client = await this.getClientDelegationInfo(user)
+    if (!client?.supportedDelegationTypes) return []
 
-    const clientAllowedApiScopes = await this.getClientAllowedApiScopes(
-      user,
-      requestedScopes,
-    )
+    const types: AuthDelegationType[] = client.supportedDelegationTypes
+      .filter(
+        (dt) =>
+          !delegationTypes ||
+          delegationTypes.includes(dt.delegationType as AuthDelegationType),
+      )
+      .map((t) => t.delegationType as AuthDelegationType)
+
+    if (types.length == 0) return []
+
+    const providers = await this.delegationProviderService.findProviders(types)
+
+    const clientAllowedApiScopes: ApiScopeInfo[] =
+      await this.getClientAllowedApiScopes(user)
 
     const delegationPromises = []
 
-    if (
-      this.isRequested(AuthDelegationType.LegalGuardian, delegationTypes) &&
-      (!client || client.supportsLegalGuardians)
-    ) {
+    if (providers.includes(AuthDelegationProvider.NationalRegistry)) {
       delegationPromises.push(
         this.delegationsIncomingWardService
           .findAllIncoming(
             user,
             clientAllowedApiScopes,
-            client?.requireApiScopes,
+            client.requireApiScopes,
           )
           .then((ds) =>
             ds.map((d) => DelegationDTOMapper.toMergedDelegationDTO(d)),
@@ -144,16 +158,13 @@ export class DelegationsIncomingService {
       )
     }
 
-    if (
-      this.isRequested(AuthDelegationType.ProcurationHolder, delegationTypes) &&
-      (!client || client.supportsProcuringHolders)
-    ) {
+    if (providers.includes(AuthDelegationProvider.CompanyRegistry)) {
       delegationPromises.push(
         this.incomingDelegationsCompanyService
           .findAllIncoming(
             user,
             clientAllowedApiScopes,
-            client?.requireApiScopes,
+            client.requireApiScopes,
           )
           .then((ds) =>
             ds.map((d) => DelegationDTOMapper.toMergedDelegationDTO(d)),
@@ -161,32 +172,25 @@ export class DelegationsIncomingService {
       )
     }
 
-    if (
-      this.isRequested(AuthDelegationType.Custom, delegationTypes) &&
-      (!client || client.supportsCustomDelegation)
-    ) {
+    if (providers.includes(AuthDelegationProvider.Custom)) {
       delegationPromises.push(
         this.delegationsIncomingCustomService.findAllAvailableIncoming(
           user,
           clientAllowedApiScopes,
-          client?.requireApiScopes,
+          client.requireApiScopes,
         ),
       )
     }
 
     if (
-      this.isRequested(
-        AuthDelegationType.PersonalRepresentative,
-        delegationTypes,
-      ) &&
-      (!client || client.supportsPersonalRepresentatives)
+      providers.includes(AuthDelegationProvider.PersonalRepresentativeRegistry)
     ) {
       delegationPromises.push(
         this.delegationsIncomingRepresentativeService
           .findAllIncoming({
             nationalId: user.nationalId,
             clientAllowedApiScopes,
-            requireApiScopes: client?.requireApiScopes,
+            requireApiScopes: client.requireApiScopes,
           })
           .then((ds) =>
             ds.map((d) => DelegationDTOMapper.toMergedDelegationDTO(d)),
@@ -194,11 +198,38 @@ export class DelegationsIncomingService {
       )
     }
 
+    if (
+      providers.includes(AuthDelegationProvider.DistrictCommissionersRegistry)
+    ) {
+      const isLegalRepresentativeDelegationEnabled =
+        await this.featureFlagService.getValue(
+          Features.isLegalRepresentativeDelegationEnabled,
+          true,
+          user,
+        )
+      if (isLegalRepresentativeDelegationEnabled) {
+        delegationPromises.push(
+          this.getAvailableDistrictCommissionersRegistryDelegations(
+            user,
+            types,
+            clientAllowedApiScopes,
+            client.requireApiScopes,
+          ),
+        )
+      }
+    }
+
     const delegationSets = await Promise.all(delegationPromises)
 
     let delegations = ([] as MergedDelegationDTO[])
       .concat(...delegationSets)
       .filter((delegation) => delegation.fromNationalId !== user.nationalId)
+
+    if (delegationTypes) {
+      delegations = delegations.filter((d) =>
+        delegationTypes.some((t) => d.types.includes(t)),
+      )
+    }
 
     if (otherUser) {
       delegations = delegations.filter((d) => d.fromNationalId === otherUser)
@@ -225,47 +256,49 @@ export class DelegationsIncomingService {
     return [...mergedDelegationMap.values()]
   }
 
-  private isRequested(
-    type: AuthDelegationType,
-    delegationTypes?: AuthDelegationType[],
-  ): boolean {
-    const hasDelegationTypeFilter =
-      delegationTypes && delegationTypes.length > 0
+  private async getAvailableDistrictCommissionersRegistryDelegations(
+    user: User,
+    types: AuthDelegationType[],
+    clientAllowedApiScopes: ApiScopeInfo[],
+    requireApiScopes?: boolean,
+  ): Promise<MergedDelegationDTO[]> {
+    const records =
+      await this.delegationsIndexService.getAvailableDistrictCommissionersRegistryRecords(
+        user,
+        types,
+        clientAllowedApiScopes,
+        requireApiScopes,
+      )
+    const merged = records.map((d) =>
+      DelegationDTOMapper.recordToMergedDelegationDTO(d),
+    )
 
-    return !hasDelegationTypeFilter || delegationTypes.includes(type)
+    await Promise.all(merged.map((d) => this.updateName(d)))
+
+    return merged
   }
 
-  private async getClientDelegationInfo(
+  private getClientDelegationInfo(
     user: User,
   ): Promise<ClientDelegationInfo | null> {
-    return this.clientModel.findByPk(user.client, {
-      attributes: [
-        'supportsLegalGuardians',
-        'supportsProcuringHolders',
-        'supportsCustomDelegation',
-        'supportsPersonalRepresentatives',
-        'requireApiScopes',
-      ],
+    return this.clientModel.findOne({
+      where: { clientId: user.client, enabled: true },
+      include: {
+        model: ClientDelegationType,
+        required: true,
+      },
+      attributes: ['requireApiScopes'],
     })
   }
 
-  private async getClientAllowedApiScopes(
-    user: User,
-    requestedScopes?: string[],
-  ): Promise<ApiScopeInfo[]> {
+  private async getClientAllowedApiScopes(user: User): Promise<ApiScopeInfo[]> {
     if (!user) return []
-
-    const whereOptions: WhereOptions = {
-      clientId: user.client,
-    }
-
-    if (requestedScopes) {
-      whereOptions.scopeName = requestedScopes
-    }
 
     const clientAllowedScopes = (
       await this.clientAllowedScopeModel.findAll({
-        where: whereOptions,
+        where: {
+          clientId: user.client,
+        },
       })
     ).map((s) => s.scopeName)
 
@@ -274,15 +307,25 @@ export class DelegationsIncomingService {
         name: clientAllowedScopes,
         enabled: true,
       },
-      attributes: [
-        'name',
-        'enabled',
-        'grantToLegalGuardians',
-        'grantToProcuringHolders',
-        'grantToPersonalRepresentatives',
-        'allowExplicitDelegationGrant',
-        'isAccessControlled',
-      ],
+      include: {
+        model: ApiScopeDelegationType,
+        required: true,
+      },
+      attributes: ['name', 'isAccessControlled'],
     })
+  }
+
+  private async updateName(
+    mergedDelegation: MergedDelegationDTO,
+  ): Promise<void> {
+    try {
+      const fromIndividual: IndividualDto | null =
+        await this.nationalRegistryClient.getIndividual(
+          mergedDelegation.fromNationalId,
+        )
+      mergedDelegation.fromName = fromIndividual?.name ?? UNKNOWN_NAME
+    } catch (error) {
+      mergedDelegation.fromName = UNKNOWN_NAME
+    }
   }
 }

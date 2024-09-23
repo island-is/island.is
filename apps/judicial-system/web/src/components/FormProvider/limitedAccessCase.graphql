@@ -14,6 +14,9 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       category
       key
       policeCaseNumber
+      userGeneratedFilename
+      displayDate
+      submittedBy
     }
     defendants {
       id
@@ -157,6 +160,10 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       created
       eventType
+    }
+    mergeCase {
+      id
+      courtCaseNumber
     }
   }
 }

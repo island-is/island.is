@@ -35,6 +35,7 @@ import { ManualSyncService } from './importers/manual.service'
 import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
 import { CustomPageSyncService } from './importers/customPage.service'
 import { GenericListItemSyncService } from './importers/genericListItem.service'
+import { TeamListSyncService } from './importers/teamList.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -82,6 +83,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
     private readonly customPageSyncService: CustomPageSyncService,
     private readonly genericListItemSyncService: GenericListItemSyncService,
+    private readonly teamListSyncService: TeamListSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -107,6 +109,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.manualChapterItemSyncService,
       this.customPageSyncService,
       this.genericListItemSyncService,
+      this.teamListSyncService,
     ]
   }
 
@@ -156,40 +159,64 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     return hashResult.hash.toString()
   }
 
+  async getNextSyncToken(syncType: SyncOptions['syncType']) {
+    if (syncType === 'fromLast') {
+      return ''
+    }
+
+    let nextPageToken: string | undefined = ''
+    let nextSyncToken = ''
+
+    // We don't get the next sync token until we've reached the last page
+    while (!nextSyncToken) {
+      const response = await this.contentfulService.getSyncData({
+        initial: true,
+        nextPageToken,
+      })
+      nextPageToken = response.nextPageToken
+      nextSyncToken = response.nextSyncToken
+    }
+    return nextSyncToken
+  }
+
   // this is triggered from ES indexer service
   async doSync(
     options: SyncOptions,
   ): Promise<SyncResponse<PostSyncOptions> | null> {
     logger.info('Doing cms sync', options)
-    let cmsSyncOptions: SyncOptions
+    let cmsSyncOptions: SyncOptions = options
 
     /**
      * We don't want full sync to run every time we start a new pod
      * We want full sync to run once when the first pod initializes the first container
      * and then never again until a new index is deployed
      */
-    let folderHash
+    let folderHash = options.folderHash
+
     if (options.syncType === 'initialize') {
       const { elasticIndex = getElasticsearchIndex(options.locale) } = options
-
-      folderHash = await this.getModelsFolderHash()
-      const lastFolderHash = await this.getLastFolderHash(elasticIndex)
-      if (folderHash !== lastFolderHash) {
-        logger.info(
-          'Folder and index folder hash do not match, running full sync',
-          { locale: options.locale },
-        )
-        cmsSyncOptions = { ...options, syncType: 'full' }
-      } else {
-        logger.info('Folder and index folder hash match, skipping sync', {
-          locale: options.locale,
-        })
-        // we skip import if it is not needed
-        return null
+      cmsSyncOptions = { ...options, syncType: 'full' }
+      if (folderHash === undefined) {
+        folderHash = await this.getModelsFolderHash()
+        const lastFolderHash = await this.getLastFolderHash(elasticIndex)
+        if (folderHash !== lastFolderHash) {
+          logger.info(
+            'Folder and index folder hash do not match, running full sync',
+            { locale: options.locale },
+          )
+        } else {
+          logger.info('Folder and index folder hash match, skipping sync', {
+            locale: options.locale,
+          })
+          // we skip import if it is not needed
+          return null
+        }
       }
     } else if (options.syncType === 'full') {
       cmsSyncOptions = options
-      folderHash = await this.getModelsFolderHash() // we know full will update all models so we can set the folder hash here
+      if (folderHash === undefined) {
+        folderHash = await this.getModelsFolderHash() // we know full will update all models so we can set the folder hash here
+      }
     } else {
       cmsSyncOptions = options
       folderHash = '' // this will always be a partial update so we don't want to update folder hash

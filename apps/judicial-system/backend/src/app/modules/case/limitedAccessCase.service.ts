@@ -13,22 +13,18 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { formatNationalId } from '@island.is/judicial-system/formatters'
-import {
-  CaseMessage,
-  MessageService,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
   CaseState,
-  CommentType,
   DateType,
   EventType,
   NotificationType,
+  StringType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -43,8 +39,8 @@ import {
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
+import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
-import { ExplanatoryComment } from './models/explanatoryComment.model'
 import { PdfService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
@@ -120,7 +116,7 @@ export interface LimitedAccessUpdateCase
 
 const eventTypes = Object.values(EventType)
 const dateTypes = Object.values(DateType)
-const commentTypes = Object.values(CommentType)
+const stringTypes = Object.values(StringType)
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -189,12 +185,15 @@ export const include: Includeable[] = [
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
         CaseFileCategory.APPEAL_RULING,
+        CaseFileCategory.APPEAL_COURT_RECORD,
         CaseFileCategory.COURT_RECORD,
         CaseFileCategory.INDICTMENT,
         CaseFileCategory.CRIMINAL_RECORD,
         CaseFileCategory.COST_BREAKDOWN,
         CaseFileCategory.CASE_FILE,
-        CaseFileCategory.APPEAL_COURT_RECORD,
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIM,
       ],
     },
   },
@@ -203,7 +202,7 @@ export const include: Includeable[] = [
     as: 'eventLogs',
     required: false,
     where: { eventType: { [Op.in]: eventTypes } },
-    order: [['created', 'ASC']],
+    order: [['created', 'DESC']],
     separate: true,
   },
   {
@@ -213,11 +212,12 @@ export const include: Includeable[] = [
     where: { dateType: { [Op.in]: dateTypes } },
   },
   {
-    model: ExplanatoryComment,
-    as: 'explanatoryComments',
+    model: CaseString,
+    as: 'caseStrings',
     required: false,
-    where: { commentType: { [Op.in]: commentTypes } },
+    where: { stringType: { [Op.in]: stringTypes } },
   },
+  { model: Case, as: 'mergeCase', attributes },
 ]
 
 export const order: OrderItem[] = [
@@ -276,7 +276,7 @@ export class LimitedAccessCaseService {
       )
     }
 
-    const messages: CaseMessage[] = []
+    const messages = []
 
     if (update.appealState === CaseAppealState.APPEALED) {
       theCase.caseFiles
@@ -363,14 +363,10 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
-    const formattedNationalId = formatNationalId(nationalId)
     return this.caseModel
       .findOne({
         where: {
-          [Op.or]: [
-            { defenderNationalId: formattedNationalId },
-            { defenderNationalId: nationalId },
-          ],
+          defenderNationalId: normalizeAndFormatNationalId(nationalId),
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },

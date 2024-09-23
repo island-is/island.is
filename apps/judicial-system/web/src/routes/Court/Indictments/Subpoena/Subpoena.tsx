@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -69,30 +69,34 @@ const Subpoena: FC = () => {
         })
       }
 
-      const allDataSentToServer = await Promise.all(promises)
+      if (
+        !hasSentNotification(
+          NotificationType.COURT_DATE,
+          workingCase.notifications,
+        ).hasSent ||
+        courtDateHasChanged
+      ) {
+        promises.push(
+          sendNotification(workingCase.id, NotificationType.COURT_DATE),
+        )
+      }
 
+      const allDataSentToServer = await Promise.all(promises)
       if (!allDataSentToServer.every((result) => result)) {
         return
       }
 
-      if (
-        hasSentNotification(
-          NotificationType.COURT_DATE,
-          workingCase.notifications,
-        ).hasSent &&
-        !courtDateHasChanged
-      ) {
-        router.push(`${destination}/${workingCase.id}`)
-      } else {
-        setNavigateTo(destination)
-      }
+      router.push(`${destination}/${workingCase.id}`)
     },
     [
       isArraignmentDone,
       sendCourtDateToServer,
-      workingCase,
+      workingCase.defendants,
+      workingCase.notifications,
+      workingCase.id,
       courtDateHasChanged,
       updateDefendant,
+      sendNotification,
     ],
   )
 
@@ -165,7 +169,11 @@ const Subpoena: FC = () => {
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() => {
-            handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+            if (isArraignmentDone) {
+              router.push(
+                `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
+              )
+            } else setNavigateTo(constants.INDICTMENTS_DEFENDER_ROUTE)
           }}
           nextButtonText={
             isArraignmentDone
@@ -177,18 +185,16 @@ const Subpoena: FC = () => {
       </FormContentContainer>
       {navigateTo !== undefined && (
         <Modal
-          title={formatMessage(strings.modalTitle, {
-            courtDateHasChanged,
-          })}
+          title={formatMessage(strings.modalTitle)}
+          text={formatMessage(strings.modalText)}
           onPrimaryButtonClick={() => {
-            sendNotification(workingCase.id, NotificationType.COURT_DATE)
-            router.push(`${navigateTo}/${workingCase.id}`)
+            handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
           }}
           onSecondaryButtonClick={() => {
-            router.push(`${navigateTo}/${workingCase.id}`)
+            setNavigateTo(undefined)
           }}
           primaryButtonText={formatMessage(strings.modalPrimaryButtonText)}
-          secondaryButtonText={formatMessage(core.continue)}
+          secondaryButtonText={formatMessage(strings.modalSecondaryButtonText)}
           isPrimaryButtonLoading={false}
         />
       )}

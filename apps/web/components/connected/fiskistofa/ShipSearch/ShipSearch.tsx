@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react'
-import { useLazyQuery } from '@apollo/client'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { useLazyQuery } from '@apollo/client'
+
+import {
+  FiskistofaShipBasicInfo as ShipBasicInfo,
+  FiskistofaShipBasicInfoResponse,
+  QueryFiskistofaGetShipsArgs as QueryGetShipsArgs,
+} from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -9,34 +16,13 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  QueryFiskistofaGetShipsArgs as QueryGetShipsArgs,
-  FiskistofaShipBasicInfo as ShipBasicInfo,
-  FiskistofaShipBasicInfoResponse,
-} from '@island.is/api/schema'
-import { GET_SHIPS_QUERY } from './queries'
-import { useNamespace } from '@island.is/web/hooks'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
-interface ShipSearchProps {
-  namespace: {
-    shipDetailsHref?: string
-    searchStringIsTooShort?: string
-    resultsFound?: string
-    search?: string
-    noResultsFound?: string
-    errorOccuredWhileFetchingShips?: string
-    shipNumber?: string
-    shipName?: string
-    operator?: string
-    typeOfVessel?: string
-    homePort?: string
-    shipSearchInputLabel?: string
-  }
-}
+import { GET_SHIPS_QUERY } from './queries'
+import { translation as translationStrings } from './translation.strings'
 
-const ShipSearch = ({ namespace }: ShipSearchProps) => {
-  const n = useNamespace(namespace)
+const ShipSearch = () => {
+  const { formatMessage } = useIntl()
 
   const [nameInput, setNameInput] = useState('')
   const [nameInputDuringLastSearch, setNameInputDuringLastSearch] = useState('')
@@ -45,15 +31,15 @@ const ShipSearch = ({ namespace }: ShipSearchProps) => {
   const router = useRouter()
 
   const getShipDetailsHref = (id: number) => {
-    const href = n(
-      'shipDetailsHref',
-      '/v/gagnasidur-fiskistofu?selectedTab=skip',
-    ) as string
+    const href = formatMessage(translationStrings.shipDetailsHref)
 
     const [pathname, params] = href.split('?')
 
     const queryParams = new URLSearchParams(params)
-    queryParams.append(n('shipDetailsNumberQueryParam', 'nr'), String(id))
+    queryParams.append(
+      formatMessage(translationStrings.shipDetailsNumberQueryParam),
+      String(id),
+    )
     return `${pathname}?${queryParams.toString()}`
   }
 
@@ -75,12 +61,7 @@ const ShipSearch = ({ namespace }: ShipSearchProps) => {
   const handleShipSearch = (nameInput: string) => {
     const nameInputIsNumber = !isNaN(Number(nameInput)) && nameInput.length > 0
     if (!nameInputIsNumber && nameInput.length < 2) {
-      setInputError(
-        n(
-          'searchStringIsTooShort',
-          'Leitarstrengur þarf að vera a.m.k. 2 stafir',
-        ),
-      )
+      setInputError(formatMessage(translationStrings.searchStringIsTooShort))
       return
     } else {
       setInputError('')
@@ -108,7 +89,7 @@ const ShipSearch = ({ namespace }: ShipSearchProps) => {
     <Box>
       <Input
         name="ship-search"
-        label={n('shipSearchInputLabel', 'Skipaskrárnúmer eða nafn skips')}
+        label={formatMessage(translationStrings.shipSearchInputLabel)}
         value={nameInput}
         onChange={(ev) => setNameInput(ev.target.value)}
         hasError={inputError.length > 0}
@@ -126,7 +107,7 @@ const ShipSearch = ({ namespace }: ShipSearchProps) => {
           }
           onClick={() => handleShipSearch(nameInput)}
         >
-          {n('search', 'Leita')}
+          {formatMessage(translationStrings.search)}
         </Button>
       </Box>
 
@@ -141,17 +122,14 @@ const ShipSearch = ({ namespace }: ShipSearchProps) => {
       </Box>
       {ships.length === 0 && called && !loading && !error && (
         <Box display="flex" justifyContent="center">
-          <Text>{n('noResultsFound', 'Engar niðurstöður fundust')}</Text>
+          <Text>{formatMessage(translationStrings.noResultsFound)}</Text>
         </Box>
       )}
 
       {error && (
         <Box display="flex" justifyContent="center">
           <Text>
-            {n(
-              'errorOccuredWhileFetchingShips',
-              'Villa kom upp við að leita eftir skipi',
-            )}
+            {formatMessage(translationStrings.errorOccuredWhileFetchingShips)}
           </Text>
         </Box>
       )}
@@ -159,16 +137,26 @@ const ShipSearch = ({ namespace }: ShipSearchProps) => {
       {ships.length > 0 && (
         <>
           <Text color="blue600">
-            {n('resultsFound', 'Fjöldi skipa:')} {ships.length}
+            {formatMessage(translationStrings.resultsFound)} {ships.length}
           </Text>
           <T.Table>
             <T.Head>
               <T.Row>
-                <T.HeadData>{n('shipNumber', 'Skipnr.')}</T.HeadData>
-                <T.HeadData>{n('shipName', 'Nafn')}</T.HeadData>
-                <T.HeadData>{n('typeOfVessel', 'Útgerðarflokkur')}</T.HeadData>
-                <T.HeadData>{n('operator', 'Útgerð')}</T.HeadData>
-                <T.HeadData>{n('homePort', 'Heimahöfn')}</T.HeadData>
+                <T.HeadData>
+                  {formatMessage(translationStrings.shipNumber)}
+                </T.HeadData>
+                <T.HeadData>
+                  {formatMessage(translationStrings.shipName)}
+                </T.HeadData>
+                <T.HeadData>
+                  {formatMessage(translationStrings.typeOfVessel)}
+                </T.HeadData>
+                <T.HeadData>
+                  {formatMessage(translationStrings.operator)}
+                </T.HeadData>
+                <T.HeadData>
+                  {formatMessage(translationStrings.homePort)}
+                </T.HeadData>
               </T.Row>
             </T.Head>
             <T.Body>

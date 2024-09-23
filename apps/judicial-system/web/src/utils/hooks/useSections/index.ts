@@ -400,7 +400,8 @@ const useSections = (
     const { id, type, state } = workingCase
     const substepsShouldBeHidden =
       state === CaseState.RECEIVED ||
-      state === CaseState.WAITING_FOR_CANCELLATION
+      state === CaseState.WAITING_FOR_CANCELLATION ||
+      router.pathname === `${constants.INDICTMENTS_ADD_FILES_ROUTE}/[id]`
     const isTrafficViolation = isTrafficViolationCase(workingCase)
 
     return {
@@ -542,7 +543,7 @@ const useSections = (
                 ? false
                 : isActive(constants.INDICTMENTS_CASE_FILES_ROUTE),
               onClick:
-                !isActive(constants.INDICTMENTS_CASE_FILE_ROUTE) &&
+                !isActive(constants.INDICTMENTS_CASE_FILES_ROUTE) &&
                 validateFormStepper(
                   isValid,
                   [

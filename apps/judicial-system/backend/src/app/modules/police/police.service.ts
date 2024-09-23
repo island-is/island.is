@@ -26,8 +26,11 @@ import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
+import { Case } from '../case'
+import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
+import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
@@ -91,12 +94,17 @@ export class PoliceService {
   private agent: Agent
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
 
+  private policeCaseFileType = z.object({
+    kodi: z.string().nullish(),
+  })
   private policeCaseFileStructure = z.object({
     rvMalSkjolMals_ID: z.number(),
     heitiSkjals: z.string(),
     malsnumer: z.string(),
     domsSkjalsFlokkun: z.optional(z.string()),
     dagsStofnad: z.optional(z.string()),
+    skjalasnid: z.optional(z.string()),
+    tegundSkjals: z.optional(this.policeCaseFileType),
   })
   private readonly crimeSceneStructure = z.object({
     vettvangur: z.optional(z.string()),
@@ -252,12 +260,11 @@ export class PoliceService {
             if (!files.find((item) => item.id === id)) {
               files.push({
                 id,
-                name: file.heitiSkjals.endsWith('.pdf')
-                  ? file.heitiSkjals
-                  : `${file.heitiSkjals}.pdf`,
+                name: `${file.heitiSkjals}${file.skjalasnid ?? '.pdf'}`,
                 policeCaseNumber: file.malsnumer,
                 chapter: getChapter(file.domsSkjalsFlokkun),
                 displayDate: file.dagsStofnad,
+                type: file.tegundSkjals?.kodi ?? undefined,
               })
             }
           })
@@ -500,5 +507,73 @@ export class PoliceService {
 
         return false
       })
+  }
+
+  async createSubpoena(
+    workingCase: Case,
+    defendant: Defendant,
+    subpoena: string,
+    user: User,
+  ): Promise<CreateSubpoenaResponse> {
+    const { courtCaseNumber, dateLogs, prosecutor, policeCaseNumbers, court } =
+      workingCase
+    const { nationalId: defendantNationalId } = defendant
+    const { name: actor } = user
+
+    const documentName = `Fyrirkall í máli ${workingCase.courtCaseNumber}`
+    const arraignmentInfo = dateLogs?.find(
+      (dateLog) => dateLog.dateType === 'ARRAIGNMENT_DATE',
+    )
+    try {
+      const res = await this.fetchPoliceCaseApi(
+        `${this.xRoadPath}/CreateSubpoena`,
+        {
+          method: 'POST',
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'application/json',
+            'X-Road-Client': this.config.clientId,
+            'X-API-KEY': this.config.policeApiKey,
+          },
+          agent: this.agent,
+          body: JSON.stringify({
+            documentName: documentName,
+            documentBase64: subpoena,
+            courtRegistrationDate: arraignmentInfo?.date,
+            prosecutorSsn: prosecutor?.nationalId,
+            prosecutedSsn: defendantNationalId,
+            courtAddress: court?.address,
+            courtRoomNumber: arraignmentInfo?.location || '',
+            courtCeremony: 'Þingfesting',
+            lokeCaseNumber: policeCaseNumbers?.[0],
+            courtCaseNumber: courtCaseNumber,
+            fileTypeCode: 'BRTNG',
+          }),
+        } as RequestInit,
+      )
+
+      if (!res.ok) {
+        throw await res.json()
+      }
+
+      const subpoenaId = await res.json()
+      return { subpoenaId }
+    } catch (error) {
+      this.logger.error(`Failed create subpoena for case ${workingCase.id}`, {
+        error,
+      })
+
+      this.eventService.postErrorEvent(
+        'Failed to create subpoena',
+        {
+          caseId: workingCase.id,
+          defendantId: defendant?.nationalId,
+          actor,
+        },
+        error,
+      )
+
+      throw error
+    }
   }
 }

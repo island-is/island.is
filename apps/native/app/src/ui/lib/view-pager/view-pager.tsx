@@ -62,12 +62,12 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
           contentWidth - OFFSET - OFFSET_CARD,
           contentWidth - OFFSET - 60,
           contentWidth - 120,
-        ]
+        ].sort((a, b) => a - b) // Make sure inputRange is non-decreasing to prevent crash
       : [
           OFFSET * i - OFFSET,
           OFFSET * i,
           i === pages - 2 ? contentWidth - OFFSET - 60 : OFFSET * i + OFFSET,
-        ]
+        ].sort((a, b) => a - b) // Make sure inputRange is non-decreasing to prevent crash
 
   const x = useRef(new Animated.Value(0)).current
 
