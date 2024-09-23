@@ -89,7 +89,6 @@ const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
 const sessionsCleanupWorker = sessionsCleanupWorkerSetup()
 
-const authAdminApi = authAdminApiSetup()
 
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
@@ -98,6 +97,9 @@ const userNotificationService = userNotificationServiceSetup({
   userProfileApi: servicePortalApi,
 })
 
+const authAdminApi = authAdminApiSetup({
+  userNotification: userNotificationService,
+})
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,

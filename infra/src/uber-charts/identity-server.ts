@@ -21,7 +21,9 @@ const userNotification = userNotificationServiceSetup({
 const authIdsApi = authIdsApiSetup()
 const identityServer = identityServerSetup({ authIdsApi })
 const authAdminWeb = authAdminWebSetup()
-const authAdminApi = authAdminApiSetup()
+const authAdminApi = authAdminApiSetup({
+  userNotification,
+})
 const authPublicApi = authPublicApiSetup()
 const authDelegationApi = authDelegationApiSetup({
   userNotification,

@@ -119,6 +119,5 @@ export const serviceSetup = (services: {
       'nginx-ingress-external',
       'nginx-ingress-internal',
       'islandis',
-      'user-notification-worker',
     )
 }
