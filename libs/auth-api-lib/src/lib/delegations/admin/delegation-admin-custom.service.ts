@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { uuid } from 'uuidv4'
@@ -27,6 +27,11 @@ import { DELEGATION_TAG, ZENDESK_CUSTOM_FIELDS } from '../constants/zendesk'
 import { DelegationDelegationType } from '../models/delegation-delegation-type.model'
 import { DelegationsIncomingCustomService } from '../delegations-incoming-custom.service'
 import { DelegationValidity } from '../types/delegationValidity'
+import { NEW_DELEGATION_TEMPLATE_ID } from '../constants/hnipp'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { NotificationsApi } from '../../user-notification'
+import { Features } from '@island.is/feature-flags'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 @Injectable()
 export class DelegationAdminCustomService {
@@ -40,9 +45,61 @@ export class DelegationAdminCustomService {
     private delegationsIncomingCustomService: DelegationsIncomingCustomService,
     private delegationIndexService: DelegationsIndexService,
     private delegationScopeService: DelegationScopeService,
+    private notificationsApi: NotificationsApi,
     private namesService: NamesService,
+    private featureFlagService: FeatureFlagService,
     private sequelize: Sequelize,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
+
+  private async notifyDelegationCreated({
+    user,
+    delegation, fromName }: {
+  user: User,
+    delegation: DelegationDTO,
+    fromName: string,
+  }) {
+
+    try {
+      const allowDelegationNotification =
+        await this.featureFlagService.getValue(
+          Features.isDelegationNotificationEnabled,
+          false,
+          user,
+        )
+
+      if (
+        !allowDelegationNotification
+      ) {
+        return
+      }
+
+    const args = [
+      { key: 'name', value: fromName },
+      {
+        key: 'domainNameIs',
+        value: 'öll kerfi',
+      },
+      {
+        key: 'domainNameEn',
+        value: 'all systems',
+      },
+    ]
+      // Notify toNationalId of new delegation
+      await this.notificationsApi.notificationsControllerCreateHnippNotification(
+        {
+          createHnippNotificationDto: {
+            args,
+            recipient: delegation.toNationalId,
+            templateId: NEW_DELEGATION_TEMPLATE_ID,
+          },
+        },
+      )
+    } catch (e) {
+      this.logger.error(`Failed to send delegation notification`, e)
+    }
+  }
 
   private getNationalIdsFromZendeskTicket(ticket: Ticket): {
     fromReferenceId: string
@@ -179,10 +236,11 @@ export class DelegationAdminCustomService {
 
     const [fromDisplayName, toName] = await Promise.all([
       this.namesService.getPersonName(delegation.fromNationalId),
-      this.namesService.getPersonName(delegation.toNationalId),
+    this.namesService.getPersonName(delegation.toNationalId),
     ])
 
-    return this.sequelize.transaction(async (transaction) => {
+
+    const createdDelegation = await this.sequelize.transaction(async (transaction) => {
       const newDelegation = await this.delegationModel.create(
         {
           id: uuid(),
@@ -216,6 +274,14 @@ export class DelegationAdminCustomService {
 
       return newDelegation.toDTO(AuthDelegationType.GeneralMandate)
     })
+
+    await this.notifyDelegationCreated({
+      user,
+      delegation: createdDelegation,
+     fromName: fromDisplayName,
+    })
+
+    return createdDelegation
   }
 
   async deleteDelegation(user: User, delegationId: string): Promise<void> {

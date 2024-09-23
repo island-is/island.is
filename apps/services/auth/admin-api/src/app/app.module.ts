@@ -64,6 +64,7 @@ import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
         FeatureFlagConfig,
         XRoadConfig,
         IdsClientConfig,
+        DelegationApiUserSystemNotificationConfig,
       ],
       envFilePath: ['.env', '.env.secret'],
     }),
