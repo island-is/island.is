@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { Box, Select, Text } from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -11,12 +11,20 @@ import {
 import { useLocale } from '@island.is/localization'
 import { causeAndConsequences } from '../../lib/messages'
 import { Controller } from 'react-hook-form'
+import { Option } from '../Components/types'
+
+export type OptionAndKey = {
+  option: Option
+  key: string
+}
 
 export const Circumstance: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
   const { application } = props
   const { formatMessage } = useLocale()
+
+  const [pickedValue, setPickedValue] = useState<OptionAndKey>()
   const activityGroups = (
     getValueViaPath(
       application.externalData,
@@ -30,8 +38,8 @@ export const Circumstance: FC<React.PropsWithChildren<FieldBaseProps>> = (
     ) as Item[]
   ).filter((group) => group.validToSelect)
 
-  const onChange = (values?: OptionWithKey) => {
-    console.log('onChange in Circumstance index.ts', values)
+  const onChange = (answer: OptionWithKey) => {
+    console.log('Logging answers in Circumstance index.ts', answer)
   }
 
   return (
@@ -47,12 +55,20 @@ export const Circumstance: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   label: activity.name,
                 }))}
                 backgroundColor="blue"
-                //value={{value: ''}}
                 placeholder={formatMessage(
                   causeAndConsequences.circumstances.searchPlaceholder,
                 )}
                 onChange={(value) => {
-                  //
+                  const code = value?.value.substring(0, 1)
+                  const activity: Option = {
+                    value: value?.value || '',
+                    label: value?.label || '',
+                  }
+                  if (!code) return
+                  setPickedValue({
+                    option: activity,
+                    key: code,
+                  })
                 }}
                 icon="search"
               />
@@ -71,9 +87,10 @@ export const Circumstance: FC<React.PropsWithChildren<FieldBaseProps>> = (
       </Box>
       <Box>
         <MultiSelectDropdownController
+          onAnswerChange={onChange}
           groups={activityGroups}
           items={activites}
-          onAnswerChange={onChange}
+          pickedValue={pickedValue}
           answerId="circumstances.physicalActivities"
           {...props}
         />

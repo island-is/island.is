@@ -43,7 +43,7 @@ const companySchema = z.object({
 })
 
 const employeeSchema = z.object({
-  victimsOccupation: option,
+  victimsOccupation: option.optional(),
   victimsOccupationMajor: option.optional().nullish(),
   victimsOccupationSubMajor: option.optional().nullish(),
   victimsOccupationMinor: option.optional().nullish(),
