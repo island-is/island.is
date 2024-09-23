@@ -100,11 +100,11 @@ const UpdateSkilavottordVehicleInfoMutation = gql`
 `
 
 const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
-  const [reloadFlag, setReloadFlag] = useState(true)
+  const [reloadFlag, setReloadFlag] = useState(false)
 
   // Update reloadFlag to trigger the child component to reload
   const triggerReload = () => {
-    setReloadFlag(false)
+    setReloadFlag(true)
   }
 
   useEffect(() => {
