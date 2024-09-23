@@ -5,8 +5,11 @@ import {
   buildMessageWithLinkButtonField,
   buildDescriptionField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import { infer as zinfer } from 'zod'
+import { dataSchema } from '../lib/dataSchema'
+type Answers = zinfer<typeof dataSchema>
 
 export const Done: Form = buildForm({
   id: 'done',
@@ -32,12 +35,17 @@ export const Done: Form = buildForm({
         buildMultiField({
           id: 'doneScreen',
           title: m.listSigned,
-          description: m.listSignedDescription,
+          description: (application: Application) => ({
+            ...m.listSignedDescription,
+            values: {
+              name: (application.answers as Answers).list.name,
+            },
+          }),
           children: [
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
               title: '',
-              url: '/minarsidur/min-gogn/listar/medmaelasofnun',
+              url: '/minarsidur/min-gogn/listar/althingis-medmaelasofnun',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
             }),

@@ -215,6 +215,10 @@ export type Action =
       action?: 'add' | 'delete'
       value: LawChapterSlug
     }
+  | {
+      type: 'SET_MINISTRY'
+      value?: PlainText
+    }
   | ({
       type: 'UPDATE_PROP'
     } & FieldNameValuePair)

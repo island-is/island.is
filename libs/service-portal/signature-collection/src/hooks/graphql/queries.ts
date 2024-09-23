@@ -45,6 +45,7 @@ export const GetListSignatures = gql`
       isDigital
       valid
       created
+      pageNumber
     }
   }
 `
@@ -70,6 +71,7 @@ export const GetSignedList = gql`
       collectionId
       canUnsign
       slug
+      signedDate
     }
   }
 `
@@ -144,6 +146,7 @@ export const GetCurrentCollection = gql`
       startTime
       name
       isActive
+      isPresidential
       status
       areas {
         id
@@ -152,5 +155,11 @@ export const GetCurrentCollection = gql`
         max
       }
     }
+  }
+`
+
+export const GetCanSign = gql`
+  query Query($input: SignatureCollectionCanSignInput!) {
+    signatureCollectionCanSign(input: $input)
   }
 `

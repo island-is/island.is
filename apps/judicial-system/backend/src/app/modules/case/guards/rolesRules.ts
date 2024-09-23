@@ -52,6 +52,8 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'requestAppealRulingNotToBePublished',
   'indictmentDeniedExplanation',
   'indictmentReviewDecision',
+  'civilDemands',
+  'hasCivilClaims',
 ]
 
 const publicProsecutorFields: (keyof UpdateCaseDto)[] = ['indictmentReviewerId']

@@ -1,20 +1,17 @@
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  FormValue,
-  NationalRegistryIndividual,
-} from '@island.is/application/types'
+import { NationalRegistryIndividual } from '@island.is/application/types'
 import { IdentityDocumentChild } from '../lib/constants'
 
 export interface ChosenApplicant {
   name?: string | null
   isApplicant: boolean
-  nationalId?: string | null
+  nationalId: string | null
+  secondParentName?: string | null
 }
 
 export const getChosenApplicant = (
-  answers: FormValue,
   externalData: any,
-  nationalId?: string | null,
+  nationalId: string | null,
 ): ChosenApplicant => {
   const applicantIdentity = getValueViaPath(
     externalData,
@@ -28,6 +25,7 @@ export const getChosenApplicant = (
     [],
   ) as Array<IdentityDocumentChild>
 
+  //this nationalId null check is only because conditions are rendered before applicant has been chosen
   if (!nationalId || applicantIdentity?.nationalId === nationalId) {
     return {
       name: applicantIdentity?.fullName,
@@ -41,7 +39,8 @@ export const getChosenApplicant = (
     return {
       name: chosenChild.childName,
       isApplicant: false,
-      nationalId: chosenChild.childNationalId,
+      nationalId: chosenChild.childNationalId || '',
+      secondParentName: chosenChild.secondParentName,
     }
   }
 }

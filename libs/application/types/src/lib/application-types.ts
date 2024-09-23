@@ -1,3 +1,3 @@
-export function applicationTypes(): string {
+export const applicationTypes = (): string => {
   return 'application-types'
 }

@@ -8,4 +8,16 @@ fragment ApplicationFragment on Application {
   name
   progress
   status
+  institution
+  actionCard {
+    draftTotalSteps
+    draftFinishedSteps
+    tag {
+      label
+      variant
+    }
+    pendingAction {
+      title
+    }
+  }
 }

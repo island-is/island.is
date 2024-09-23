@@ -8,9 +8,10 @@ import {
   Button,
   AlertMessage,
   AlertBanner,
+  Select,
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
-import { editorMsgs as msg, errorMsgs } from '../lib/messages'
+import { editorMsgs as msg, errorMsgs, m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
@@ -32,7 +33,7 @@ const updateText =
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
-  const { draft, actions } = useDraftingState()
+  const { draft, actions, ministries } = useDraftingState()
   const [editorKey, setEditorKey] = useState('initial')
   const [titleError, setTitleError] = useState<string | undefined>(undefined)
   const [hasUpdated, setHasUpdated] = useState<boolean>(false)
@@ -162,13 +163,15 @@ export const EditBasics = () => {
             label={t(msg.text)}
             startExpanded={startTextExpanded}
           >
-            <Box marginBottom={3}>
-              <AlertBanner
-                description={t(msg.diffPrecisionWarning)}
-                variant="info"
-                dismissable
-              />
-            </Box>
+            {draft.type.value === RegulationDraftTypes.amending ? (
+              <Box marginBottom={3}>
+                <AlertBanner
+                  description={t(msg.diffPrecisionWarning)}
+                  variant="info"
+                  dismissable
+                />
+              </Box>
+            ) : undefined}
             <Box marginBottom={3}>
               <EditorInput
                 key={editorKey} // Force re-render of TinyMCE
@@ -185,16 +188,30 @@ export const EditBasics = () => {
                 <AlertMessage
                   type="default"
                   title="Uppfæra texta"
-                  message={updateText}
-                  action={
-                    <Button
-                      icon="reload"
-                      onClick={() => setIsModalVisible(true)}
-                      variant="text"
-                      size="small"
+                  message={
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      flexDirection="row"
                     >
-                      Uppfæra
-                    </Button>
+                      <Text variant="small">{updateText}</Text>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        height="full"
+                        flexShrink={0}
+                      >
+                        <Button
+                          icon="reload"
+                          onClick={() => setIsModalVisible(true)}
+                          variant="text"
+                          size="small"
+                        >
+                          Uppfæra
+                        </Button>
+                      </Box>
+                    </Box>
                   }
                 />
               </Box>
@@ -224,7 +241,7 @@ export const EditBasics = () => {
               <Divider />
               {' '}
             </Box>
-            {draft.signedDocumentUrl.value && (
+            {draft.signedDocumentUrl.value ? (
               <Box marginBottom={[4, 4, 6]}>
                 <EditorInput
                   label={t(msg.signatureText)}
@@ -234,6 +251,38 @@ export const EditBasics = () => {
                   readOnly
                 />
               </Box>
+            ) : (
+              ministries.length > 0 &&
+              !draft.signatureText.value && (
+                <Select
+                  size="sm"
+                  label={t(m.regulationAdminMinistries)}
+                  name="setMinistry"
+                  isSearchable
+                  value={
+                    draft.ministry.value
+                      ? {
+                          value: draft.ministry.value,
+                          label: draft.ministry.value,
+                        }
+                      : undefined
+                  }
+                  placeholder={t(msg.selectMinistry)}
+                  options={[
+                    {
+                      label: t(msg.selectMinistry),
+                      value: '',
+                    },
+                    ...ministries.map((ministry) => ({
+                      value: ministry.name,
+                      label: ministry.name,
+                    })),
+                  ].filter((item) => item.label)}
+                  required={false}
+                  onChange={(option) => actions.setMinistry(option?.value)}
+                  backgroundColor="white"
+                />
+              )
             )}
           </AccordionItem>
         </Accordion>

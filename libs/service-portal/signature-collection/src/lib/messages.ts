@@ -16,7 +16,7 @@ export const m = defineMessages({
   pageDescriptionSignee: {
     id: 'sp.signatureCollection:pageDescriptionSignee',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet, dui eget iaculis vehicula, purus nibh lobortis urna, sit amet dignissim lacus metus non arcu.',
+      'Aðeins er hægt að mæla með einu framboði. Hægt er að afturkalla meðmæli þangað til söfnun lokar og mæla með öðrum frambjóðanda ef vill.',
     description: '',
   },
   createListButton: {
@@ -27,6 +27,11 @@ export const m = defineMessages({
   collectionTitle: {
     id: 'sp.signatureCollection:collectionTitle',
     defaultMessage: 'Forsetakosningar 2024',
+    description: '',
+  },
+  collectionTitleParliamentary: {
+    id: 'sp.signatureCollection:collectionTitleParliamentary',
+    defaultMessage: 'Alþingiskosningar',
     description: '',
   },
   myListsDescription: {
@@ -46,7 +51,7 @@ export const m = defineMessages({
   },
   copyLinkDescription: {
     id: 'sp.signatureCollection:copyLinkDescription',
-    defaultMessage: 'Hér getur þú afritað hlekk á þitt framboð til að deila.',
+    defaultMessage: 'Hér getur þú afritað hlekk á þitt framboð til að deila',
     description: '',
   },
   copyLinkSuccess: {
@@ -92,6 +97,11 @@ export const m = defineMessages({
   paperUploadedSignature: {
     id: 'sp.signatureCollection:paperUploadedSignature',
     defaultMessage: 'Meðmæli lesin inn',
+    description: '',
+  },
+  digitalSignature: {
+    id: 'sp.signatureCollection:digitalSignature',
+    defaultMessage: 'Skrifað undir: ',
     description: '',
   },
   signatureIsInvalid: {
@@ -176,7 +186,12 @@ export const m = defineMessages({
   },
   cancelCollectionModalConfirmButton: {
     id: 'sp.signatureCollection:modalConfirmButton',
-    defaultMessage: 'Já, hætta við söfnun meðmæla',
+    defaultMessage: 'Já, hætta við',
+    description: '',
+  },
+  cancelCollectionModalCancelButton: {
+    id: 'sp.signatureCollection:cancelCollectionModalCancelButton',
+    defaultMessage: 'Nei, hætta við',
     description: '',
   },
   cancelCollectionModalToastError: {
@@ -251,6 +266,61 @@ export const m = defineMessages({
     defaultMessage: 'Heimilisfang',
     description: '',
   },
+  paperSigneesHeader: {
+    id: 'sp.signatureCollection:paperSigneesHeader',
+    defaultMessage: 'Skrá meðmæli af blaði',
+    description: '',
+  },
+  paperSigneesClearButton: {
+    id: 'sp.signatureCollection:paperSigneesClearButton',
+    defaultMessage: 'Hreinsa',
+    description: '',
+  },
+  paperNumber: {
+    id: 'sp.signatureCollection:paperNumber',
+    defaultMessage: 'Blaðsíðunúmer',
+    description: '',
+  },
+  paperSigneeName: {
+    id: 'sp.signatureCollection:paperSigneeName',
+    defaultMessage: 'Nafn meðmælanda',
+    description: '',
+  },
+  signPaperSigneeButton: {
+    id: 'sp.signatureCollection:signPaperSigneeButton',
+    defaultMessage: 'Skrá meðmæli á lista',
+    description: '',
+  },
+  paperSigneeTypoTitle: {
+    id: 'sp.signatureCollection:paperSigneeTypoTitle',
+    defaultMessage: 'Kennitala ekki á réttu formi',
+    description: '',
+  },
+  paperSigneeTypoMessage: {
+    id: 'sp.signatureCollection:paperSigneeTypoMessage',
+    defaultMessage: 'Vinsamlegast athugið kennitöluna og reynið aftur',
+    description: '',
+  },
+  paperSigneeCantSignTitle: {
+    id: 'sp.signatureCollection:paperSigneeCantSignTitle',
+    defaultMessage: 'Ekki er hægt að skrá meðmæli',
+    description: '',
+  },
+  paperSigneeCantSignMessage: {
+    id: 'sp.signatureCollection:paperSigneeCantSign',
+    defaultMessage: 'Kennitala uppfyllir ekki skilyrði fyrir að skrá meðmæli',
+    description: '',
+  },
+  paperSigneeSuccess: {
+    id: 'sp.signatureCollection:paperSigneeSuccess',
+    defaultMessage: 'Meðmæli skráð',
+    description: '',
+  },
+  paperSigneeError: {
+    id: 'sp.signatureCollection:paperSigneeError',
+    defaultMessage: 'Ekki tókst að skrá meðmæli',
+    description: '',
+  },
 
   /* Parliamentary */
   parliamentaryElectionsTitle: {
@@ -274,16 +344,6 @@ export const m = defineMessages({
     defaultMessage:
       'Þjóðskrá Íslands hefur umsjón með gögnum um meðmælasöfnun.',
   },
-  managers: {
-    id: 'sp.signatureCollection:managers',
-    defaultMessage: 'Ábyrgðaraðilar',
-    description: '',
-  },
-  addManager: {
-    id: 'sp.signatureCollection:addManager',
-    defaultMessage: 'Bæta við ábyrgðaraðila',
-    description: '',
-  },
   supervisors: {
     id: 'sp.signatureCollection:supervisors',
     defaultMessage: 'Umsjónaraðilar',
@@ -292,11 +352,6 @@ export const m = defineMessages({
   add: {
     id: 'sp.signatureCollection:add',
     defaultMessage: 'Bæta við',
-    description: '',
-  },
-  addSupervisor: {
-    id: 'sp.signatureCollection:addSupervisor',
-    defaultMessage: 'Bæta við umsjónaraðila',
     description: '',
   },
   personName: {
@@ -335,31 +390,14 @@ export const m = defineMessages({
       'Veldu viðeigandi kjördæmi sem þú vilt stofna meðmælendasöfnun í.',
     description: '',
   },
-  addConstituencyAlertInfo: {
-    id: 'sp.signatureCollection:addConstituencyAlertInfo',
-    defaultMessage:
-      'Athugið að skrá þarf viðeigandi ábyrgðar-/umsjónaraðila á yfirlitssíðu fyrir ný kjördæmi.',
+  addConstituencySuccess: {
+    id: 'sp.signatureCollection:addConstituencySuccess',
+    defaultMessage: 'Kjördæmi bætt við',
     description: '',
   },
-  deleteManager: {
-    id: 'sp.signatureCollection:deleteManager',
-    defaultMessage: 'Eyða umsjónaraðila',
-    description: '',
-  },
-  deleteManagerDescription: {
-    id: 'sp.signatureCollection:deleteManagerDescription',
-    defaultMessage:
-      'Þú ert að fara að taka Nafna Nafnason af lista yfir umsjónaraðila. Ertu viss um að þú viljir halda áfram?',
-    description: '',
-  },
-  delete: {
-    id: 'sp.signatureCollection:delete',
-    defaultMessage: 'Eyða',
-    description: '',
-  },
-  save: {
-    id: 'sp.signatureCollection:save',
-    defaultMessage: 'Vista',
+  addConstituencyError: {
+    id: 'sp.signatureCollection:addConstituencyError',
+    defaultMessage: 'Ekki tókst að bæta við kjördæmi',
     description: '',
   },
 })
