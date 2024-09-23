@@ -17,7 +17,7 @@ import { useAuth } from '@island.is/auth/react'
 import copyToClipboard from 'copy-to-clipboard'
 import { SignatureCollection } from '@island.is/api/schema'
 import SignedList from '../../shared/SignedList'
-import CancelCollection from '../../shared/CancelCollection'
+import CancelCollection from './CancelCollection'
 
 const OwnerView = ({
   currentCollection,

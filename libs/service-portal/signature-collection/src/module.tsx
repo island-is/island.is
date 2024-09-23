@@ -37,7 +37,7 @@ export const signatureCollectionModule: PortalModule = {
         element: <SignatureListsParliamentary />,
       },
       {
-        name: m.signatureCollectionPresidentialLists,
+        name: m.signatureCollectionParliamentaryLists,
         path: SignatureCollectionPaths.ViewParliamentaryList,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         key: 'ParliamentaryLists',

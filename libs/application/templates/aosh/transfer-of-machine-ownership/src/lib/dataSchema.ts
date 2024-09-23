@@ -97,7 +97,7 @@ export const MachineAnswersSchema = z.object({
     moreInfo: z.string(),
   }),
   buyerOperator: OperatorSchema,
-  approveExternalData: z.boolean(),
+  approveExternalData: z.boolean().refine((v) => v),
   rejecter: RejecterSchema,
 })
 

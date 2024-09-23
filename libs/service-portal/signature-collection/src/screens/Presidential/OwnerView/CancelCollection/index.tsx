@@ -1,31 +1,23 @@
 import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../../lib/messages'
+import { m } from '../../../../lib/messages'
 import { Modal } from '@island.is/service-portal/core'
 import { useState } from 'react'
-import { useGetCurrentCollection } from '../../../hooks'
+import { useGetCurrentCollection } from '../../../../hooks'
 import { useMutation } from '@apollo/client'
-import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
-import {
-  SignatureCollectionCancelListsInput,
-  SignatureCollectionSuccess,
-} from '@island.is/api/schema'
+import { cancelCollectionMutation } from '../../../../hooks/graphql/mutations'
+import { SignatureCollectionSuccess } from '@island.is/api/schema'
 
-const CancelCollection = ({ listId }: { listId?: string }) => {
+const CancelCollection = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const { currentCollection } = useGetCurrentCollection()
 
-  const input = {} as SignatureCollectionCancelListsInput
-  if (listId && !currentCollection?.isPresidential) {
-    input.listIds = [listId]
-  }
   const [cancelCollection, { loading }] =
     useMutation<SignatureCollectionSuccess>(cancelCollectionMutation, {
       variables: {
         input: {
-          ...input,
           collectionId: currentCollection?.id ?? '',
         },
       },

@@ -28,4 +28,9 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á innsend gögn hluta á dómskjalaskjá í ákærum.',
   },
+  civilClaimsTitle: {
+    id: 'judicial.system.core:indictment_case_files_list.civil_claims_title',
+    defaultMessage: 'Einkaréttarkröfur',
+    description: 'Notaður sem titill á dómskjalaskjá í ákærum.',
+  },
 })
