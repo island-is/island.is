@@ -63,7 +63,7 @@ export class VehicleService {
   async updateVehicleInfo(
     permno: string,
     mileage: number,
-    plateCount = 0,
+    plateCount: number,
     plateLost: boolean,
   ): Promise<boolean> {
     const findVehicle = await this.findByVehicleId(permno)

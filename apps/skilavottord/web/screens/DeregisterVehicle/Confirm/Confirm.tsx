@@ -87,7 +87,7 @@ const UpdateSkilavottordVehicleInfoMutation = gql`
   mutation updateSkilavottordVehicleInfo(
     $permno: String!
     $mileage: Float!
-    $plateCount: Float
+    $plateCount: Float!
     $plateLost: Boolean!
   ) {
     updateSkilavottordVehicleInfo(
@@ -100,20 +100,16 @@ const UpdateSkilavottordVehicleInfoMutation = gql`
 `
 
 const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
-  const [reloadFlag, setReloadFlag] = useState(false)
-
-  useEffect(() => {
-    setReloadFlag(false)
-  }, [reloadFlag])
+  const [reloadFlag, setReloadFlag] = useState(true)
 
   // Update reloadFlag to trigger the child component to reload
   const triggerReload = () => {
-    setReloadFlag(true)
+    setReloadFlag(false)
   }
 
   useEffect(() => {
     triggerReload()
-  }, [])
+  }, [setReloadFlag])
 
   const methods = useForm({
     mode: 'onChange',
