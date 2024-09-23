@@ -333,7 +333,15 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hsu':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'hsuHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/sSSuQeq3oIx9hOrKRvfzm/447c7e6811c3fa9e9d548ecd4b6d7985/vector-myndir-hsu.svg',
+          )}
+        />
+      ) : (
         <HeilbrigdisstofnunSudurlandsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
