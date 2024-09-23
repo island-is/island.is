@@ -33,6 +33,7 @@ export interface NonLoggedInState extends BffReducerStateBase {
 export interface LoggedInState extends BffReducerStateBase {
   authState: 'logged-in'
   userInfo: BffUser
+  isAuthenticated: true
 }
 
 export type BffReducerState = NonLoggedInState | LoggedInState
@@ -58,14 +59,6 @@ export type Action =
     }
   | { type: ActionType.ERROR; payload: Error }
 
-export const withState = <T extends BffReducerStateBase>(
-  state: T,
-  newState: Partial<T>,
-): T => ({
-  ...state,
-  ...newState,
-})
-
 export const reducer = (
   state: BffReducerState,
   action: Action,
@@ -76,7 +69,6 @@ export const reducer = (
         ...state,
         authState: 'loading',
         userInfo: null,
-        isAuthenticated: false,
       }
 
     case ActionType.SIGNIN_SUCCESS:
@@ -92,7 +84,6 @@ export const reducer = (
         ...state,
         authState: 'failed',
         userInfo: null,
-        isAuthenticated: false,
       }
 
     case ActionType.LOGGING_OUT:
