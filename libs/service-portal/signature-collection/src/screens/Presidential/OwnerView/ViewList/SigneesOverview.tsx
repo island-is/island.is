@@ -11,7 +11,7 @@ import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
 import * as styles from '../../styles.css'
 import { useGetListSignees } from '../../../../hooks'
-import { useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
 import { SkeletonTable } from '../../../../skeletons'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
@@ -19,11 +19,12 @@ import { SignatureCollectionSignature as Signature } from '@island.is/api/schema
 const Signees = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const { pathname } = useLocation()
-  const listId = pathname.replace('/min-gogn/listar/medmaelasofnun/', '')
+  const id = useParams()
 
   const [searchTerm, setSearchTerm] = useState('')
-  const { listSignees, loadingSignees } = useGetListSignees(listId)
+  const { listSignees, loadingSignees } = useGetListSignees(
+    id as unknown as string,
+  )
   const [signees, setSignees] = useState(listSignees)
 
   const [page, setPage] = useState(1)

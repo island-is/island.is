@@ -122,8 +122,8 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   return (
     <Box paddingTop={2}>
-      <GridRow marginBottom={2}>
-        <GridColumn span={['1/1', '1/2']}>
+      <GridRow>
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <InputController
             id={`${field.id}.type`}
             label={formatMessage(machine.labels.basicMachineInformation.type)}
@@ -139,7 +139,7 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
             }
           />
         </GridColumn>
-        <GridColumn span={['1/1', '1/2']}>
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <InputController
             id={`${field.id}.model`}
             label={formatMessage(machine.labels.basicMachineInformation.model)}
@@ -157,7 +157,7 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
         </GridColumn>
       </GridRow>
       <GridRow>
-        <GridColumn span={['1/1', '1/2']}>
+        <GridColumn span={['1/1', '1/2']} paddingBottom={[2, 0]}>
           <Controller
             name={`${field.id}.category`}
             render={({ field: { onChange } }) => {

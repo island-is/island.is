@@ -108,6 +108,17 @@ export const information = {
         defaultMessage: 'Netfang',
         description: `Owner email label`,
       },
+      alertTitle: {
+        id: 'aosh.rnm.application:information.labels.otherOwner.alertTitle',
+        defaultMessage: 'Kennitala sú sama og hjá innflytjanda',
+        description: `Owner alert title`,
+      },
+      alertMessage: {
+        id: 'aosh.rnm.application:information.labels.otherOwner.alertMessage',
+        defaultMessage:
+          'Kennitalan sem þú skráðir fyrir eiganda er sú sama og hjá innflytjanda, vertu viss um að þú hafir skráð inn rétta kennitölu.',
+        description: `Owner alert message`,
+      },
     }),
     operator: defineMessages({
       sectionTitle: {
@@ -159,6 +170,17 @@ export const information = {
         id: 'aosh.rnm.application:information.labels.operator.email',
         defaultMessage: 'Netfang',
         description: `Operator email label`,
+      },
+      alertTitle: {
+        id: 'aosh.rnm.application:information.labels.operator.alertTitle',
+        defaultMessage: 'Kennitala sú sama og hjá eiganda',
+        description: `Operator alert title`,
+      },
+      alertMessage: {
+        id: 'aosh.rnm.application:information.labels.operator.alertMessage',
+        defaultMessage:
+          'Kennitalan sem þú skráðir fyrir umráðarmann er sú sama og hjá eiganda, vertu viss um að þú hafir skráð inn rétta kennitölu.',
+        description: `Operator alert message`,
       },
     }),
     radioButtons: defineMessages({
