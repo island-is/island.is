@@ -656,10 +656,6 @@ export class DelegationsIndexService {
       })
       .then((d) => d.map((d) => d.name))
 
-    if (!validTypes) {
-      return false
-    }
-
     return validTypes.includes(type)
   }
 
