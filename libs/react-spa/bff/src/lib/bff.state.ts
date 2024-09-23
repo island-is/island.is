@@ -1,5 +1,6 @@
 import { BffUser } from '@island.is/shared/types'
 
+// Defining the possible states for authentication
 export type BffState =
   | 'logged-out'
   | 'loading'
@@ -9,6 +10,7 @@ export type BffState =
   | 'logging-out'
   | 'error'
 
+// Use enum to define the action types, providing more type-safety
 export enum ActionType {
   SIGNIN_START = 'SIGNIN_START',
   SIGNIN_SUCCESS = 'SIGNIN_SUCCESS',
@@ -19,31 +21,38 @@ export enum ActionType {
   ERROR = 'ERROR',
 }
 
+// Base interface for reducer state, shared by all states
 export interface BffReducerStateBase {
   authState: BffState
   isAuthenticated: boolean
-  error?: Error
+  error?: Error | null
 }
 
+// State when the user is not logged in
 export interface NonLoggedInState extends BffReducerStateBase {
   authState: Exclude<BffState, 'logged-in'>
   userInfo: null
 }
 
+// State when the user is logged in
 export interface LoggedInState extends BffReducerStateBase {
   authState: 'logged-in'
   userInfo: BffUser
   isAuthenticated: true
 }
 
+// Union type for the overall reducer state
 export type BffReducerState = NonLoggedInState | LoggedInState
 
+// Initial state, representing a logged-out user
 export const initialState: NonLoggedInState = {
   userInfo: null,
   authState: 'logged-out',
   isAuthenticated: false,
+  error: null,
 }
 
+// Define possible action types and payloads
 export type Action =
   | {
       type:
@@ -53,12 +62,18 @@ export type Action =
         | ActionType.LOGGED_OUT
         | ActionType.SWITCH_USER
     }
-  | {
-      type: ActionType.SIGNIN_SUCCESS
-      payload: BffUser
-    }
+  | { type: ActionType.SIGNIN_SUCCESS; payload: BffUser }
   | { type: ActionType.ERROR; payload: Error }
 
+// Helper function to reset user-related state when switching users or logging out
+const resetState = (authState: BffState): NonLoggedInState => ({
+  userInfo: null,
+  authState,
+  isAuthenticated: false,
+  error: null,
+})
+
+// Reducer function to handle state transitions based on actions
 export const reducer = (
   state: BffReducerState,
   action: Action,
@@ -77,28 +92,17 @@ export const reducer = (
         userInfo: action.payload,
         authState: 'logged-in',
         isAuthenticated: true,
+        error: null,
       }
 
     case ActionType.SIGNIN_FAILURE:
-      return {
-        ...state,
-        authState: 'failed',
-        userInfo: null,
-      }
+      return resetState('failed')
 
     case ActionType.LOGGING_OUT:
-      return {
-        ...state,
-        authState: 'logging-out',
-        userInfo: null,
-      }
+      return resetState('logging-out')
 
     case ActionType.SWITCH_USER:
-      return {
-        ...state,
-        authState: 'switching',
-        userInfo: null,
-      }
+      return resetState('switching')
 
     case ActionType.ERROR:
       return {

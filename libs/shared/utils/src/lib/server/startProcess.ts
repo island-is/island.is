@@ -19,24 +19,17 @@ export const startProcess = (
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
-<<<<<<< HEAD
       env: { ...process.env, ...env },
-=======
-      env: env || process.env,
->>>>>>> 045b0471e1 (Restructure dx for admin portal)
       // Use pipe for stdout and stderr to make sure that logs don't log inlined.
       stdio: ['inherit', 'pipe', 'pipe'],
       shell: true,
     })
 
-<<<<<<< HEAD
     // Handle process termination on exit
     process.on('exit', () => {
       child.kill('SIGTERM')
     })
 
-=======
->>>>>>> 045b0471e1 (Restructure dx for admin portal)
     // Capture and handle stdout
     child.stdout?.on('data', (data) => {
       process.stdout.write(data.toString())
