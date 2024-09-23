@@ -5,6 +5,7 @@ import { Entry } from 'contentful'
 import { IEnhancedAsset } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapEnhancedAsset } from '../../models/enhancedAsset.model'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class EnhancedAssetSyncService
@@ -27,6 +28,10 @@ export class EnhancedAssetSyncService
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapEnhancedAsset(entry)
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -45,6 +50,10 @@ export class EnhancedAssetSyncService
                 type: 'genericTag',
                 key: tag.slug,
                 value: tag.title,
+              })),
+              ...childEntryIds.map((id) => ({
+                key: id,
+                type: 'hasChildEntryWithId',
               })),
             ],
             dateCreated: entry.sys.createdAt,

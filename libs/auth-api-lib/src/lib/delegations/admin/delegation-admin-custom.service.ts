@@ -106,7 +106,7 @@ export class DelegationAdminCustomService {
 
     const userScopes = await this.delegationResourceService.findScopes(
       user,
-      delegation.domainName,
+      delegation.domainName ?? null,
     )
 
     await this.sequelize.transaction(async (transaction) => {

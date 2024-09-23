@@ -45,7 +45,7 @@ export const caseFiles = defineMessages({
   civilClaimSection: {
     id: 'judicial.system.core:indictments.case_files.civil_claim_section',
     defaultMessage: 'Bótakröfur',
-    description: 'Titill á bótakröfur hluta á dómskjalaskjá í ákærum.',
+    description: 'Titill á Bótakröfur hluta á dómskjalaskjá í ákærum.',
   },
   criminalRecordUpdateSection: {
     id: 'judicial.system.core:indictments.case_files.criminal_record_update_section',
