@@ -7,8 +7,6 @@ import {
 import {
   ActionCard,
   CardLoader,
-  FootNote,
-  IntroHeader,
   LinkButton,
   m as coreMessages,
   formatDate,
@@ -76,15 +74,6 @@ const IncomePlan = () => {
 
   return (
     <Box>
-      {/*<IntroHeader
-        title={formatMessage(coreMessages.incomePlan)}
-        intro={formatMessage(coreMessages.incomePlanDescription)}
-        serviceProviderSlug={'tryggingastofnun'}
-        serviceProviderTooltip={formatMessage(
-          coreMessages.socialInsuranceTooltip,
-        )}
-      />*/}
-
       {error && !loading ? (
         <Problem error={error} noBorder={false} />
       ) : loading ? (
@@ -183,9 +172,6 @@ const IncomePlan = () => {
           )}
         </Stack>
       )}
-      {/*<Hidden print>
-          <FootNote serviceProviderSlug="tryggingastofnun" />
-        </Hidden>*/}
     </Box>
   )
 }

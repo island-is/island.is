@@ -106,9 +106,6 @@ const IncomePlanDetail = () => {
           )}
         </Stack>
       )}
-      {/*<Hidden print>
-        <FootNote serviceProviderSlug="tryggingastofnun" />
-      </Hidden>*/}
     </Box>
   )
 }

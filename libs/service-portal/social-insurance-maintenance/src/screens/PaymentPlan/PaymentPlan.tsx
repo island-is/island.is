@@ -81,9 +81,6 @@ const PaymentPlan = () => {
           </Box>
         </>
       )}
-      {/*<Hidden print>
-          <FootNote serviceProviderSlug="tryggingastofnun" />
-        </Hidden>*/}
     </Box>
   )
 }
