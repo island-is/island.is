@@ -6,10 +6,14 @@ import {
   buildRadioField,
   buildSelectField,
   buildCustomField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { FormValue, NO, YES } from '@island.is/application/types'
-import { isOwnerOtherThanImporter } from '../../../utils/isOwnerOtherThanImporter'
+import {
+  isOwnerOtherThanImporter,
+  doOwnerAndImporterHaveSameNationalId,
+} from '../../../utils'
 import { postalCodes } from '@island.is/shared/utils'
 
 export const OwnerInformationSubSection = buildSubSection({
@@ -88,6 +92,14 @@ export const OwnerInformationSubSection = buildSubSection({
           required: true,
           maxLength: 250,
           condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
+        }),
+        buildAlertMessageField({
+          id: 'ownerInformation.alertMessage',
+          alertType: 'warning',
+          title: information.labels.owner.alertTitle,
+          message: information.labels.owner.alertMessage,
+          condition: (answer: FormValue) =>
+            doOwnerAndImporterHaveSameNationalId(answer),
         }),
         buildCustomField(
           {

@@ -193,8 +193,8 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
           {formatMessage(machine.labels.machineType.inputTitle)}
         </Text>
       </Box>
-      <GridRow marginBottom={5}>
-        <GridColumn span={['1/1', '1/2']}>
+      <GridRow marginBottom={3}>
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <Controller
             name={`${field.id}.type`}
             defaultValue={type}

@@ -15,7 +15,7 @@ type VehicleListItem = NonNullable<
 >[0]
 
 const Cell = styled(TouchableHighlight)`
-  margin-bottom: ${({ theme }) => theme.spacing[2]};
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
   border-radius: ${({ theme }) => theme.border.radius.extraLarge};
 `
 

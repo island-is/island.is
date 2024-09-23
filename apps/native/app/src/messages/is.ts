@@ -473,28 +473,34 @@ export const is = {
   // applications screen
   'applications.title': 'Umsóknir',
   'applications.bottomTabText': 'Umsóknir',
-  'applications.searchPlaceholder': 'Leita að umsóknum...',
-  'applications.loadingText': 'Leita í skjölum...',
-  'applications.resultText': 'niðurstöður fundust',
-  'applications.singleResultText': 'niðurstaða fannst',
-  'applications.noResultText': 'Engar niðurstöður fundust',
-  'applications.emptyListTitle': 'Hér eru engir linkar sem stendur',
-  'applications.emptyListDescription':
-    'Að einhverjum ástæðum þá eru engir linkar að umsóknum aðgengilegir eins og er',
+  'applications.emptyTitle': 'Engar umsóknir',
+  'applications.emptyDescription':
+    'Þegar þú stofnar stafræna umsókn á Ísland.is birtist staða hennar hér.',
+  'applications.incomplete': 'Ókláraðar umsóknir',
+  'applications.completed': 'Afgreiddar umsóknir',
+  'applications.inProgress': 'Umsóknir í vinnslu',
 
   // cards
   'applicationStatusCard.openButtonLabel': 'Opna umsókn',
-  'applicationStatusCard.seeMoreApplications': 'Skoða umsóknir',
+  'applicationStatusCard.description': `{
+    state,
+    select,
+    inprogress {Umsókn er í afgreiðsluferli}
+    completed {Samþykkt}
+    rejected {Hafnað}
+    other {}
+  }`,
   'applicationStatusCard.status': `{
     state,
     select,
-    inprogress {Í ferli}
-    completed {Lokið}
+    inprogress {Í vinnslu}
+    completed {Afgreidd}
     rejected {Hafnað}
+    draft {Í vinnslu hjá þér}
     other {Staða óþekkt}
   }`,
-  'applicationStatusCard.noActiveApplications':
-    'Þegar þú stofnar stafræna umsókn á Ísland.is birtist staða hennar hér.',
+  'applicationStatusCard.draftProgress':
+    'Þú hefur klárað {draftFinishedSteps} af {draftTotalSteps} skrefum',
 
   // edit phone
   'edit.phone.screenTitle': 'Breyta símanúmeri',
