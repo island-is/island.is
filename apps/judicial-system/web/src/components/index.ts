@@ -23,7 +23,6 @@ export { default as CourtRecordAccordionItem } from './AccordionItems/CourtRecor
 export { default as DateTime } from './DateTime/DateTime'
 export { default as Decision } from './Decision/Decision'
 export { default as DefenderInfo } from './DefenderInfo/DefenderInfo'
-export { default as DefenderInput } from './DefenderInfo/DefenderInput'
 export { default as DefenderNotFound } from './DefenderInfo/DefenderNotFound'
 export {
   default as FeatureProvider,
@@ -34,6 +33,7 @@ export { default as FormFooter } from './FormFooter/FormFooter'
 export { FormProvider, FormContext } from './FormProvider/FormProvider'
 export { default as Header } from './Header/Header'
 export { default as HideableText } from './HideableText/HideableText'
+export { default as InputAdvocate } from './Inputs/InputAdvocate'
 export { default as IndictmentInfo } from './IndictmentInfo/IndictmentInfo'
 export { default as IndictmentsCaseFilesAccordionItem } from './AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
 export { default as InfoBox } from './InfoBox/InfoBox'

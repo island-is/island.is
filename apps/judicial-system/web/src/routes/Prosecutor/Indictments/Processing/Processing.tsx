@@ -15,10 +15,10 @@ import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
-  DefenderInput,
   FormContentContainer,
   FormContext,
   FormFooter,
+  InputAdvocate,
   PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
@@ -409,7 +409,7 @@ const Processing: FC = () => {
                 <BlueBox>
                   <Box marginBottom={2}>
                     <Checkbox
-                      name="civilClaimantNoNationalId"
+                      name={`civilClaimantNoNationalId-${civilClaimant.id}`}
                       label={formatMessage(strings.civilClaimantNoNationalId)}
                       checked={Boolean(civilClaimant.noNationalId)}
                       onChange={() => {
@@ -507,7 +507,7 @@ const Processing: FC = () => {
                         <Box width="half" marginRight={1}>
                           <RadioButton
                             name="defenderType"
-                            id="defender_type_lawyer"
+                            id={`defender_type_lawyer-${civilClaimant.id}`}
                             label={formatMessage(strings.lawyer)}
                             large
                             backgroundColor="white"
@@ -526,7 +526,7 @@ const Processing: FC = () => {
                         <Box width="half" marginLeft={1}>
                           <RadioButton
                             name="defenderType"
-                            id="defender_type_legal_rights_protector"
+                            id={`defender_type_legal_rights_protector-${civilClaimant.id}`}
                             label={formatMessage(strings.legalRightsProtector)}
                             large
                             backgroundColor="white"
@@ -544,15 +544,15 @@ const Processing: FC = () => {
                         </Box>
                       </Box>
                       <Box marginBottom={2}>
-                        <DefenderInput
-                          onDefenderNotFound={() => {
+                        <InputAdvocate
+                          onAdvocateNotFound={() => {
                             console.log('changethis')
                           }}
                           clientId={civilClaimant.id}
-                          defenderType={
+                          advocateType={
                             civilClaimant.spokespersonIsLawyer
-                              ? 'lawyer'
-                              : 'legalRightsProtector'
+                              ? 'defender'
+                              : 'legal_rights_protector'
                           }
                           disabled={
                             civilClaimant.spokespersonIsLawyer === null ||
@@ -562,7 +562,7 @@ const Processing: FC = () => {
                         />
                       </Box>
                       <Checkbox
-                        name="civilClaimantShareFilesWithDefender"
+                        name={`civilClaimantShareFilesWithDefender-${civilClaimant.id}`}
                         label={formatMessage(
                           strings.civilClaimantShareFilesWithDefender,
                           {

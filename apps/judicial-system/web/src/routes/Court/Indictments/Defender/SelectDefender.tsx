@@ -6,9 +6,9 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
-  DefenderInput,
   DefenderNotFound,
   FormContext,
+  InputAdvocate,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Defendant,
@@ -96,9 +96,9 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             large
           />
         </Box>
-        <DefenderInput
+        <InputAdvocate
           disabled={defendant.defenderChoice === DefenderChoice.WAIVE}
-          onDefenderNotFound={setDefenderNotFound}
+          onAdvocateNotFound={setDefenderNotFound}
           clientId={defendant.id}
         />
       </BlueBox>
