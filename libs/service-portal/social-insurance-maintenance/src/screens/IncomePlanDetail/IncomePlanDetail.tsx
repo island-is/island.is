@@ -10,8 +10,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyTable,
-  FootNote,
-  IntroHeader,
   LinkButton,
   amountFormat,
   m as coreMessages,
@@ -27,15 +25,6 @@ const IncomePlanDetail = () => {
   const { data, loading, error } = useGetIncomePlanDetailQuery()
   return (
     <Box>
-      {/*<IntroHeader
-        title={formatMessage(coreMessages.latestIncomePlan)}
-        intro={formatMessage(m.incomePlanDetail)}
-        serviceProviderSlug={'tryggingastofnun'}
-        serviceProviderTooltip={formatMessage(
-          coreMessages.socialInsuranceTooltip,
-        )}
-      />*/}
-
       {error && !loading ? (
         <Problem error={error} noBorder={false} />
       ) : !error && !loading && !data?.socialInsuranceIncomePlan ? (
