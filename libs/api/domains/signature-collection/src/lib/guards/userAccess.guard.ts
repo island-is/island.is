@@ -85,10 +85,10 @@ export class UserAccessGuard implements CanActivate {
           )
           return isCollector
         }
-      } else if (!signee.isOwner) {
-        return false
       }
+      return signee.isOwner
     }
+
     return true
   }
 }

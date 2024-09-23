@@ -28,9 +28,12 @@ import {
 } from '@island.is/clients/signature-collection'
 import { SignatureCollectionService } from '../signatureCollection.service'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const ownerNationalId = '0101303019'
-const someNationalId = '1234567890'
+const ownerCompanyId = '0000000000'
+const someNationalId = '0101307789'
+const someCompanyId = '0000000001'
 
 const basicUser = createCurrentUser({
   nationalIdType: 'person',
@@ -49,9 +52,23 @@ const delegatedUserToOwner = createCurrentUser({
   nationalId: ownerNationalId,
 })
 
-const isOwnerNotDelegated = createCurrentUser({
+const userIsOwnerNotDelegated = createCurrentUser({
   nationalIdType: 'person',
   nationalId: ownerNationalId,
+})
+
+const userHasProcurationAndIsOwner = createCurrentUser({
+  nationalIdType: 'company',
+  actor: { nationalId: someNationalId },
+  nationalId: ownerCompanyId,
+  delegationType: [AuthDelegationType.ProcurationHolder],
+})
+
+const userHasProcurationAndIsNotOwner = createCurrentUser({
+  nationalIdType: 'company',
+  actor: { nationalId: someNationalId },
+  nationalId: someCompanyId,
+  delegationType: [AuthDelegationType.ProcurationHolder],
 })
 
 const okGraphQLResponse = (queryName: string) => ({
@@ -140,7 +157,7 @@ describe('UserAccessGuard', () => {
         return Promise.resolve({
           canCreate: true,
           canSign: true,
-          isOwner: user.nationalId === ownerNationalId,
+          isOwner: [ownerNationalId, ownerCompanyId].includes(user.nationalId),
           name: 'Test',
           nationalId: user.nationalId,
           candidate: {
@@ -163,7 +180,7 @@ describe('UserAccessGuard', () => {
   })
 
   it('Should allow owner to access IsOwner decorated paths', async () => {
-    setupMockForUser(isOwnerNotDelegated)
+    setupMockForUser(userIsOwnerNotDelegated)
 
     const response = await request(app.getHttpServer())
       .get('/graphql')
@@ -285,5 +302,25 @@ describe('UserAccessGuard', () => {
     expect(response.body).toMatchObject(
       okGraphQLResponse('getIfAllowedDelegation'),
     )
+  })
+
+  it('With only IsOwner: Should not restrict delegation of a procuration type even with no AllowDelegation when delegated to owner', async () => {
+    setupMockForUser(userHasProcurationAndIsOwner)
+
+    const response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIfOwner }' })
+
+    expect(response.body).toMatchObject(okGraphQLResponse('getIfOwner'))
+  })
+
+  it('With only IsOwner: Should restrict delegation of a procuration type even with no AllowDelegation when delegated to non-owner', async () => {
+    setupMockForUser(userHasProcurationAndIsNotOwner)
+
+    const response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIfOwner }' })
+
+    expect(response.body).toMatchObject(forbiddenGraphqlResponse('getIfOwner'))
   })
 })
