@@ -178,7 +178,7 @@ export class DelegationsIncomingService {
       )
     }
 
-    if (providers.includes(AuthDelegationProvider.Custom)) {
+    if (types?.includes(AuthDelegationType.Custom)) {
       delegationPromises.push(
         this.delegationsIncomingCustomService.findAllAvailableIncoming(
           user,
@@ -188,7 +188,6 @@ export class DelegationsIncomingService {
       )
     }
 
-    // This has a provider of Custom but needs to be handled separately
     if (types?.includes(AuthDelegationType.GeneralMandate)) {
       delegationPromises.push(
         this.delegationsIncomingCustomService.findAllAvailableGeneralMandate(

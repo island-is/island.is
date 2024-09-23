@@ -20,6 +20,12 @@ import { DelegationTypeModel } from './delegation-type.model'
 @Table({
   tableName: 'delegation_delegation_type',
   timestamps: false,
+  indexes: [
+    {
+      fields: ['delegation_id', 'delegation_type_id'],
+      unique: true,
+    },
+  ],
 })
 export class DelegationDelegationType extends Model<
   InferAttributes<DelegationDelegationType>,
