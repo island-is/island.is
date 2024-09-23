@@ -226,6 +226,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Dvalarstaður barns',
       description: "Child's place of residence",
     },
+    currentSchool: {
+      id: 'dess.nps.application:childrenNParents.child.info.current.school',
+      defaultMessage: 'Núverandi skóli',
+      description: 'Current school',
+    },
 
     // Parents/guardians
     parentsSubSectionTitle: {

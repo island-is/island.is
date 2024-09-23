@@ -15,6 +15,7 @@ import {
   RelativesRow,
   SelectOption,
   SiblingsRow,
+  Membership,
 } from '../types'
 import {
   ReasonForApplicationOptions,
@@ -181,6 +182,16 @@ export const getApplicationExternalData = (
     'childInformation.data.gradeLevel',
   ) as string
 
+  const primaryOrgId = getValueViaPath(
+    externalData,
+    'childInformation.data.primaryOrgId',
+  ) as string
+
+  const childMemberships = getValueViaPath(
+    externalData,
+    'childInformation.data.memberships',
+  ) as Membership[]
+
   return {
     children,
     applicantName,
@@ -191,6 +202,8 @@ export const getApplicationExternalData = (
     otherParentName,
     childInformation,
     childGradeLevel,
+    primaryOrgId,
+    childMemberships,
   }
 }
 
@@ -323,4 +336,15 @@ export const formatGrade = (gradeLevel: string, lang: Locale) => {
     default:
       return lang === 'en' ? `${grade}th` : grade
   }
+}
+
+export const getCurrentSchoolName = (application: Application) => {
+  const { primaryOrgId, childMemberships } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  // Find the school name since we only have primary org id
+  return childMemberships
+    .map((membership) => membership.organization)
+    .find((organization) => organization?.id === primaryOrgId)?.name
 }

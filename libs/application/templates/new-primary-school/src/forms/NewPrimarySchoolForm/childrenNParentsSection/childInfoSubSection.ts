@@ -1,17 +1,21 @@
 import {
+  buildActionCardListField,
   buildCustomField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
 import { Application, NO, YES } from '@island.is/application/types'
+import { OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  formatGrade,
+  getCurrentSchoolName,
 } from '../../../lib/newPrimarySchoolUtils'
-import { OptionsType } from '../../../lib/constants'
 
 export const childInfoSubSection = buildSubSection({
   id: 'childInfoSubSection',
@@ -131,6 +135,40 @@ export const childInfoSubSection = buildSubSection({
             const { differentPlaceOfResidence } = getApplicationAnswers(answers)
 
             return differentPlaceOfResidence === YES
+          },
+        }),
+        buildDescriptionField({
+          id: 'childInfo.currentSchool.title',
+          title: newPrimarySchoolMessages.childrenNParents.currentSchool,
+          titleVariant: 'h4',
+          space: 4,
+        }),
+        buildActionCardListField({
+          id: 'childInfo.currentSchool',
+          title: '',
+          doesNotRequireAnswer: true,
+          marginTop: 2,
+          items: (application, lang) => {
+            const { childGradeLevel } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            const currentSchool = getCurrentSchoolName(application)
+
+            return [
+              {
+                heading: currentSchool,
+                headingVariant: 'h4',
+                tag: {
+                  label: {
+                    ...newPrimarySchoolMessages.overview.currentGrade,
+                    values: { grade: formatGrade(childGradeLevel, lang) },
+                  },
+                  outlined: true,
+                  variant: 'blue',
+                },
+              },
+            ]
           },
         }),
       ],
