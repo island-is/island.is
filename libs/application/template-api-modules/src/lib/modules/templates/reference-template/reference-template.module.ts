@@ -9,12 +9,15 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 
 // Here you import your module service
 import { ReferenceTemplateService } from './reference-template.service'
-
+import { ApplicationsNotificationsModule } from '../../../notification/notifications.module'
 export class ReferenceTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: ReferenceTemplateModule,
-      imports: [SharedTemplateAPIModule.register(config)],
+      imports: [
+        SharedTemplateAPIModule.register(config),
+        ApplicationsNotificationsModule,
+      ],
       providers: [ReferenceTemplateService],
       exports: [ReferenceTemplateService],
     }

@@ -10,18 +10,32 @@ import {
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { NotificationsService } from '../../../notification/notifications.service'
+import { NotificationType } from '../../../notification/notificationTypes'
 
 const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
 export class ReferenceTemplateService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly notificationsService: NotificationsService,
   ) {
     super(ApplicationTypes.EXAMPLE)
   }
 
-  async getReferenceData({ application }: TemplateApiModuleActionProps) {
+  async getReferenceData({ application, auth }: TemplateApiModuleActionProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    this.notificationsService.sendNotification({
+      type: NotificationType.System,
+      messageParties: {
+        recipient: auth.nationalId,
+        sender: auth.nationalId,
+      },
+      args: {
+        documentId: '1231',
+      },
+    })
 
     const name = getValueViaPath(
       application.externalData,

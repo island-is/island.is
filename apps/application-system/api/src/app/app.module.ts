@@ -58,6 +58,7 @@ import { VmstClientConfig } from '@island.is/clients/vmst'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
 import { smsModuleConfig } from '@island.is/nova-sms'
 import { emailModuleConfig } from '@island.is/email-service'
+import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 
 @Module({
   imports: [
@@ -115,6 +116,7 @@ import { emailModuleConfig } from '@island.is/email-service'
         FriggClientConfig,
         smsModuleConfig,
         emailModuleConfig,
+        UserNotificationClientConfig,
       ],
     }),
   ],
