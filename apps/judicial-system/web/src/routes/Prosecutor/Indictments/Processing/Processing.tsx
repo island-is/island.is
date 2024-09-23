@@ -124,7 +124,7 @@ const Processing: FC = () => {
     [updateCivilClaimant, setWorkingCase, updateCivilClaimantState],
   )
 
-  const { personData, personError } = useNationalRegistry(
+  const { personData } = useNationalRegistry(
     civilClaimantNationalIdUpdate?.nationalId,
   )
 
@@ -468,6 +468,7 @@ const Processing: FC = () => {
                           spokespersonPhoneNumber: null,
                           spokespersonName: null,
                           spokespersonIsLawyer: null,
+                          spokespersonNationalId: null,
                           caseFilesSharedWithSpokesperson: null,
                         })
                       }}
@@ -527,12 +528,16 @@ const Processing: FC = () => {
                             console.log('changethis')
                           }}
                           clientId={civilClaimant.id}
-                          isCivilClaim={true}
                           defenderType={
                             civilClaimant.spokespersonIsLawyer
                               ? 'lawyer'
                               : 'legalRightsProtector'
                           }
+                          disabled={
+                            civilClaimant.spokespersonIsLawyer === null ||
+                            civilClaimant.spokespersonIsLawyer === undefined
+                          }
+                          isCivilClaim={true}
                         />
                       </Box>
                       <Checkbox
@@ -555,6 +560,10 @@ const Processing: FC = () => {
                               !civilClaimant.caseFilesSharedWithSpokesperson,
                           })
                         }}
+                        disabled={
+                          civilClaimant.spokespersonIsLawyer === null ||
+                          civilClaimant.spokespersonIsLawyer === undefined
+                        }
                         backgroundColor="white"
                         large
                         filled
