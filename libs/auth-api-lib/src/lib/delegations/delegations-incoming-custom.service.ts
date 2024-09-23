@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import * as kennitala from 'kennitala'
 import uniqBy from 'lodash/uniqBy'
 import { Op } from 'sequelize'
+import startOfDay from 'date-fns/startOfDay'
 
 import { User } from '@island.is/auth-nest-tools'
 import {
@@ -28,7 +29,6 @@ import { DelegationValidity } from './types/delegationValidity'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { getScopeValidityWhereClause } from './utils/scopes'
 import { DelegationDelegationType } from './models/delegation-delegation-type.model'
-import { DelegationTypeModel } from './models/delegation-type.model'
 
 type FindAllValidIncomingOptions = {
   nationalId: string
@@ -96,7 +96,6 @@ export class DelegationsIncomingCustomService {
       await this.findAllIncomingGeneralMandates(
         {
           nationalId,
-          validity: DelegationValidity.INCLUDE_FUTURE,
         },
         useMaster,
       )
@@ -200,7 +199,6 @@ export class DelegationsIncomingCustomService {
 
     const { delegations, fromNameInfo } =
       await this.findAllIncomingGeneralMandates({
-        validity: DelegationValidity.INCLUDE_FUTURE,
         nationalId: user.nationalId,
       })
 
@@ -222,15 +220,10 @@ export class DelegationsIncomingCustomService {
   }
 
   private async findAllIncomingGeneralMandates(
-    {
-      nationalId,
-      validity,
-    }: FindAllValidIncomingOptions & {
-      validity: DelegationValidity
-    },
+    { nationalId }: FindAllValidIncomingOptions,
     useMaster = false,
   ): Promise<{ delegations: Delegation[]; fromNameInfo: FromNameInfo[] }> {
-    const whereOptions = getScopeValidityWhereClause(validity)
+    const startOfToday = startOfDay(new Date())
 
     const delegations = await this.delegationModel.findAll({
       useMaster,
@@ -241,33 +234,14 @@ export class DelegationsIncomingCustomService {
         {
           model: DelegationDelegationType,
           where: {
-            ...whereOptions,
+            validTo: {
+              [Op.or]: {
+                [Op.gte]: startOfToday,
+                [Op.is]: null,
+              },
+            },
             delegationTypeId: AuthDelegationType.GeneralMandate,
           },
-          include: [
-            {
-              model: DelegationTypeModel,
-              where: {
-                id: AuthDelegationType.GeneralMandate,
-              },
-              include: [
-                {
-                  model: ApiScope,
-                  where: {
-                    enabled: true,
-                  },
-                  include: [
-                    {
-                      model: ApiScopeDelegationType,
-                      where: {
-                        delegationType: AuthDelegationType.GeneralMandate,
-                      },
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
         },
       ],
     })

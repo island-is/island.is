@@ -171,7 +171,7 @@ export class DelegationScopeService {
     toNationalId: string,
     fromNationalId: string,
   ): Promise<string[]> {
-    const today = new Date()
+    const today = startOfDay(new Date())
 
     const delegations = await this.delegationModel.findAll({
       where: {
