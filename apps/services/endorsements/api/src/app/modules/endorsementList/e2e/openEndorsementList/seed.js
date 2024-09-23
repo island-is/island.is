@@ -14,7 +14,7 @@ module.exports = {
     {
       ...getGenericEndorsementList(),
       id: '9c0b4106-4213-43be-a6b2-ff324f4ba018',
-      ownerNationalId: authNationalId,
+      owner_national_id: authNationalId,
       closed_date: new Date(),
     },
   ],
