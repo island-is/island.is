@@ -111,9 +111,8 @@ export class LawAndOrderService {
     const list: Lawyers = { items: [] }
     answer?.map((x) => {
       list.items?.push({
-        name: x.name,
+        title: [x.name, x.practice].join(', '),
         nationalId: x.nationalId,
-        practice: x.practice,
       })
     })
     return list

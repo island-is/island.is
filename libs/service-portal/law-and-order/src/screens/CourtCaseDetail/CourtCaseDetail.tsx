@@ -59,30 +59,32 @@ const CourtCaseDetail = () => {
       <Box marginBottom={3} display="flex" flexWrap="wrap">
         {data?.lawAndOrderCourtCaseDetail && !loading && (
           <Box paddingRight={2} marginBottom={[1]}>
-            {courtCase?.data?.acknowledged && (
-              <LinkResolver
-                href={LawAndOrderPaths.SubpoenaDetail.replace(
-                  ':id',
-                  id?.toString() || '',
-                )}
+            {/* TODO: Uncomment when ready in service */}
+            {/* {courtCase?.data?.acknowledged && ( */}
+
+            <LinkResolver
+              href={LawAndOrderPaths.SubpoenaDetail.replace(
+                ':id',
+                id?.toString() || '',
+              )}
+            >
+              <Button
+                as="span"
+                unfocusable
+                colorScheme="default"
+                icon="receipt"
+                iconType="outline"
+                size="default"
+                variant="utility"
               >
-                <Button
-                  as="span"
-                  unfocusable
-                  colorScheme="default"
-                  icon="receipt"
-                  iconType="outline"
-                  size="default"
-                  variant="utility"
-                >
-                  {formatMessage(messages.seeSubpoena)}
-                </Button>
-              </LinkResolver>
-            )}
+                {formatMessage(messages.seeSubpoena)}
+              </Button>
+            </LinkResolver>
+            {/* )} */}
           </Box>
         )}
-        {error && !loading && <Problem error={error} noBorder={false} />}
       </Box>
+      {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && courtCase && courtCase?.data?.groups && (
         <InfoLines groups={courtCase?.data?.groups} loading={loading} />
       )}

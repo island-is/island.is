@@ -38,7 +38,6 @@ interface Props {
   includeTopBorder?: boolean
   selected?: boolean
   bookmarked?: boolean
-  actionsEnabled?: boolean
 }
 
 export const DocumentLine: FC<Props> = ({
@@ -50,7 +49,6 @@ export const DocumentLine: FC<Props> = ({
   includeTopBorder,
   bookmarked,
   selected,
-  actionsEnabled = false,
 }) => {
   const [hasFocusOrHover, setHasFocusOrHover] = useState(false)
   const [hasAvatarFocus, setHasAvatarFocus] = useState(false)
@@ -206,7 +204,7 @@ export const DocumentLine: FC<Props> = ({
   useEffect(() => {
     if (id === documentLine.id) {
       // If the document is marked as urgent, the user needs to acknowledge the document before opening it.
-      if (actionsEnabled && isUrgent && !asFrame) {
+      if (isUrgent && !asFrame) {
         getDocumentMetadata()
       } else {
         getDocument()
@@ -233,7 +231,7 @@ export const DocumentLine: FC<Props> = ({
     if (match?.params?.id && match?.params?.id !== documentLine?.id) {
       navigate(DocumentsPaths.ElectronicDocumentsRoot, { replace: true })
     }
-    if (actionsEnabled && isUrgent && !asFrame) {
+    if (isUrgent && !asFrame) {
       getDocumentMetadata()
     } else {
       getDocument()
@@ -353,12 +351,12 @@ export const DocumentLine: FC<Props> = ({
                     }
                   />
                 )}
-              {actionsEnabled && isUrgent && <UrgentTag />}
+              {isUrgent && <UrgentTag />}
             </Box>
           </Box>
         </Box>
       </Box>
-      {actionsEnabled && isModalVisible && (
+      {isModalVisible && (
         <ConfirmationModal
           onSubmit={() => {
             setModalVisible(false)

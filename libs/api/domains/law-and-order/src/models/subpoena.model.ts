@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { Action } from './actions.model'
 import { Group } from './group.model'
+import { DefenseChoiceEnum } from './defenseChoiceEnum.model'
 
 @ObjectType('LawAndOrderSubpoenaTexts')
 export class Text {
@@ -28,8 +29,8 @@ export class Data {
   @Field({ nullable: true })
   chosenDefender?: string
 
-  @Field({ nullable: true })
-  defenderChoice?: string
+  @Field(() => DefenseChoiceEnum, { nullable: true })
+  defenderChoice?: DefenseChoiceEnum
 
   @Field(() => [Group], { nullable: true })
   groups?: Array<Group>

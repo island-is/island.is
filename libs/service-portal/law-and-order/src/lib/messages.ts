@@ -45,90 +45,6 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:subpoena-not-found',
     defaultMessage: 'Fyrirkall fannst ekki',
   },
-  process: {
-    id: 'sp.law-and-order:process',
-    defaultMessage: 'Ferill',
-  },
-  defenseAttorney: {
-    id: 'sp.law-and-order:defense-attorney',
-    defaultMessage: 'Verjandi',
-  },
-  caseInformation: {
-    id: 'sp.law-and-order:case-information',
-    defaultMessage: 'Málsupplýsingar',
-  },
-  LOKECaseNumber: {
-    id: 'sp.law-and-order:loke-case-number',
-    defaultMessage: 'LÖKE málsnúmer',
-  },
-  caseNumberCourt: {
-    id: 'sp.law-and-order:case-number-court',
-    defaultMessage: 'Málsnúmer héraðsdómstóls',
-  },
-  court: {
-    id: 'sp.law-and-order:court',
-    defaultMessage: 'Dómstóll',
-  },
-  prosecution: {
-    id: 'sp.law-and-order:prosecution',
-    defaultMessage: 'Sóknaraðili',
-  },
-  judge: {
-    id: 'sp.law-and-order:judge',
-    defaultMessage: 'Dómari',
-  },
-  requestedDateTime: {
-    id: 'sp.law-and-order:req-date-time',
-    defaultMessage: 'Ósk um fyrirtöku og tíma',
-  },
-  prosecutor: {
-    id: 'sp.law-and-order:prosecutor',
-    defaultMessage: 'Sækjandi',
-  },
-  timeOfArrest: {
-    id: 'sp.law-and-order:time-of-arrest',
-    defaultMessage: 'Tími handtöku',
-  },
-  confirmedHearingDateTime: {
-    id: 'sp.law-and-order:confirmed-hearing-date-time',
-    defaultMessage: 'Staðfestur fyrirtökutími',
-  },
-  state: {
-    id: 'sp.law-and-order:state',
-    defaultMessage: 'Staða',
-  },
-  type: {
-    id: 'sp.law-and-order:type',
-    defaultMessage: 'Tegund',
-  },
-  information: {
-    id: 'sp.law-and-order:information',
-    defaultMessage: 'Upplýsingar',
-  },
-  caseNumberShort: {
-    id: 'sp.law-and-order:case-nr-short',
-    defaultMessage: 'Mál nr.',
-  },
-  accuser: {
-    id: 'sp.law-and-order:accuser',
-    defaultMessage: 'Ákærandi',
-  },
-  accused: {
-    id: 'sp.law-and-order:accused',
-    defaultMessage: 'Ákærði',
-  },
-  dateOfHearing: {
-    id: 'sp.law-and-order:date-of-hearing',
-    defaultMessage: 'Verður tekið fyrir á dómþingi',
-  },
-  place: {
-    id: 'sp.law-and-order:place',
-    defaultMessage: 'Staður',
-  },
-  courtType: {
-    id: 'sp.law-and-order:court-type',
-    defaultMessage: 'Dómsathöfn',
-  },
   chooseDefenderTitle: {
     id: 'sp.law-and-order:choose-defender-title',
     defaultMessage: 'Val á verjanda',
@@ -143,12 +59,7 @@ export const messages = defineMessages({
   },
   defenderLimits: {
     id: 'sp.law-and-order:defender-limits',
-    defaultMessage:
-      'Það er hægt að breyta vali á verjanda all að þrisvar sinnum.',
-  },
-  office: {
-    id: 'sp.law-and-order:office',
-    defaultMessage: 'Embætti',
+    defaultMessage: 'Það er hægt að breyta vali á verjanda í eitt skipti.',
   },
   date: {
     id: 'sp.law-and-order:date',
@@ -178,12 +89,12 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:change',
     defaultMessage: 'Breyta',
   },
-  modalFromPolice: {
-    id: 'sp.law-and-order:modal-from-police',
-    defaultMessage: 'Lögreglustjóranum á höfuðborgarsvæðinu',
-  },
   pleaseChooseALawyer: {
     id: 'sp.law-and-order:please-choose-a-lawyer',
     defaultMessage: 'Vinsamlegast veljið verjanda',
+  },
+  goBackToCourtCase: {
+    id: 'sp.law-and-order:go-back-to-court-case',
+    defaultMessage: 'Til baka í dómsmál',
   },
 })

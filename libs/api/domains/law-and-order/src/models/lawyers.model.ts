@@ -3,13 +3,10 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType('LawAndOrderLawyersData')
 export class Data {
   @Field({ nullable: true })
-  name?: string
+  title?: string
 
   @Field({ nullable: true })
   nationalId?: string
-
-  @Field({ nullable: true })
-  practice?: string
 }
 
 @ObjectType('LawAndOrderLawyers')

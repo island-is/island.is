@@ -1,6 +1,7 @@
 import {
   AlertMessage,
   Box,
+  Button,
   Divider,
   GridColumn,
   GridContainer,
@@ -10,6 +11,7 @@ import {
 import {
   DOMSMALARADUNEYTID_SLUG,
   IntroHeader,
+  LinkResolver,
   m,
   Modal,
   UserInfoLine,
@@ -17,7 +19,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { isDefined } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
-import { Navigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useState } from 'react'
 import InfoLines from '../../components/InfoLines/InfoLines'
 import DefenderChoices from '../../components/DefenderChoices/DefenderChoices'
@@ -47,13 +49,14 @@ const Subpoena = () => {
   const subpoena = data?.lawAndOrderSubpoena
   const [defenderPopUp, setDefenderPopUp] = useState<boolean>(false)
 
-  if (
-    subpoena?.data &&
-    (!isDefined(subpoena.data.acknowledged) ||
-      subpoena.data.acknowledged === false)
-  ) {
-    return <Navigate to={LawAndOrderPaths.CourtCaseDetail.replace(':id', id)} />
-  }
+  // TODO - Uncomment when the feature is ready
+  // if (
+  //   subpoena?.data &&
+  //   (!isDefined(subpoena.data.acknowledged) ||
+  //     subpoena.data.acknowledged === false)
+  // ) {
+  //   return <Navigate to={LawAndOrderPaths.CourtCaseDetail.replace(':id', id)} />
+  // }
 
   return (
     <>
@@ -76,6 +79,31 @@ const Subpoena = () => {
           </GridRow>
         </GridContainer>
       )}
+      <Box marginBottom={3} display="flex" flexWrap="wrap">
+        {!loading && subpoena?.data && (
+          <Box paddingRight={2} marginBottom={[1]}>
+            <LinkResolver
+              href={LawAndOrderPaths.CourtCaseDetail.replace(
+                ':id',
+                id?.toString(),
+              )}
+            >
+              <Button
+                as="span"
+                unfocusable
+                colorScheme="default"
+                icon="receipt"
+                iconType="outline"
+                size="default"
+                variant="utility"
+              >
+                {formatMessage(messages.goBackToCourtCase)}
+              </Button>
+            </LinkResolver>
+          </Box>
+        )}
+      </Box>
+
       {error && !loading && <Problem error={error} noBorder={false} />}
 
       {subpoena?.data?.groups && subpoena.data.groups.length > 0 && (

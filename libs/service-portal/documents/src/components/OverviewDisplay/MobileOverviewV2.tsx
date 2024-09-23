@@ -15,7 +15,6 @@ interface Props {
   activeBookmark: boolean
   loading?: boolean
   category?: DocumentsV2Category
-  actionsEnabled?: boolean
 }
 
 export const MobileOverview: FC<Props> = ({
@@ -23,7 +22,6 @@ export const MobileOverview: FC<Props> = ({
   activeBookmark,
   category,
   loading,
-  actionsEnabled,
 }) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
@@ -57,7 +55,7 @@ export const MobileOverview: FC<Props> = ({
                 subject={formatMessage(m.activeDocumentOpenAriaLabel, {
                   subject: activeDocument.subject,
                 })}
-                actions={actionsEnabled ? activeDocument.actions : undefined}
+                actions={activeDocument.actions}
               />
               <Text variant="h3" as="h3" marginBottom={3}>
                 {activeDocument?.subject}

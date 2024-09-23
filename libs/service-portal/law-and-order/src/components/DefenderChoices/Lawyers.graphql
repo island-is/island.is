@@ -1,9 +1,8 @@
 query GetLawyers {
   lawAndOrderLawyers {
     items {
-      name
+      title
       nationalId
-      practice
     }
   }
 }

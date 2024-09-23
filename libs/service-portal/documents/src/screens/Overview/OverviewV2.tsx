@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import {
   Box,
   Stack,
@@ -29,10 +29,7 @@ import { pageSize, useDocumentList } from '../../hooks/useDocumentList'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import * as styles from './Overview.css'
 
-interface Props {
-  actionsEnabled?: boolean
-}
-export const ServicePortalDocumentsV2: FC<Props> = ({ actionsEnabled }) => {
+export const ServicePortalDocumentsV2 = () => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
@@ -246,7 +243,6 @@ export const ServicePortalDocumentsV2: FC<Props> = ({ actionsEnabled }) => {
                         }
                       }
                     }}
-                    actionsEnabled={actionsEnabled}
                   />
                 </Box>
               ))}
@@ -297,7 +293,6 @@ export const ServicePortalDocumentsV2: FC<Props> = ({ actionsEnabled }) => {
               code: error ? 'list' : 'single',
             }}
             loading={docLoading}
-            actionsEnabled={actionsEnabled}
           />
         </GridColumn>
       </GridRow>

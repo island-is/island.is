@@ -8,6 +8,7 @@ interface Choice {
   }
 }
 
+// Get localized messages for defense choices in Subpoena
 export const DefenseChoices: Record<string, Choice> = {
   WAIVE: {
     code: LawAndOrderDefenseChoiceEnum.WAIVE,
@@ -40,5 +41,3 @@ export const DefenseChoices: Record<string, Choice> = {
     },
   },
 }
-
-// Example function to get a localized message for a choice

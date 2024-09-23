@@ -17,11 +17,11 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
     {
       name: m.courtCases,
       path: LawAndOrderPaths.CourtCases,
+      breadcrumbHide: true,
       children: [
         {
           name: m.courtCases,
           path: LawAndOrderPaths.CourtCaseDetail,
-          breadcrumbHide: true,
           navHide: true,
           children: [
             {

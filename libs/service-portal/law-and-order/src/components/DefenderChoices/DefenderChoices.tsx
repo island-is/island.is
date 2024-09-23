@@ -13,13 +13,14 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Problem } from '@island.is/react-spa/shared'
 import { SelectController } from '@island.is/shared/form-fields'
 import { messages } from '../../lib/messages'
-import { Dispatch, FC, SetStateAction } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect } from 'react'
 import { DefenseChoices } from '../../lib/const'
 import {
   useGetLawyersQuery,
   usePostDefenseChoiceMutation,
 } from './Lawyers.generated'
 import { LawAndOrderDefenseChoiceEnum } from '@island.is/api/schema'
+import { isDefined } from '@island.is/shared/utils'
 
 interface Props {
   id: string
@@ -27,7 +28,7 @@ interface Props {
     setPopUp: Dispatch<SetStateAction<boolean>>
   }
   refetch?: () => void
-  choice?: string | undefined | null
+  choice?: LawAndOrderDefenseChoiceEnum | null
 }
 
 interface FormData {
@@ -50,10 +51,22 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
 
   const methods = useForm<FormData>()
 
+  const NATIONAL_ID = 'lawyersNationalId'
+  const CHOICE = 'choice'
+
+  // Choice should default to "delay" if no choice is present in the data
+  // We want to set the value in order to not have the form data undefined if user doesnt change from pre-selected value
+  useEffect(() => {
+    methods.setValue(CHOICE, choice ?? DefenseChoices.DELAY.code)
+  })
+
   const [postAction, { loading: postActionLoading }] =
     usePostDefenseChoiceMutation({
       onError: () => {
         toast.error(formatMessage(messages.registrationError))
+        methods.setError(CHOICE, {
+          message: formatMessage(messages.registrationError),
+        })
       },
       onCompleted: () => {
         refetch && refetch()
@@ -62,39 +75,37 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
       },
     })
 
-  // TODO: How to handle error
   const handleSubmitForm = (data: FormData) => {
-    if (data.choice) {
-      postAction({
-        variables: {
-          input: {
-            caseId: id,
-            choice: data.choice,
-            lawyersNationalId: data.lawyersNationalId,
-          },
-          locale: lang,
+    postAction({
+      variables: {
+        input: {
+          caseId: id,
+          choice: data.choice ?? DefenseChoices.DELAY.code,
+          lawyersNationalId: data.lawyersNationalId,
         },
-      })
-    }
+        locale: lang,
+      },
+    })
   }
 
   const getLocalizedMessage = (choiceCode: keyof typeof DefenseChoices) => {
     const messageDescriptor = DefenseChoices[choiceCode].message
-    if (!messageDescriptor) {
+    if (!isDefined(messageDescriptor)) {
       return ''
     }
     return formatMessage(messageDescriptor)
   }
 
+  const clearLawyersNationalId = () => {
+    methods.setValue(NATIONAL_ID, undefined)
+  }
+
   return (
     <Box marginTop={popUp ? 0 : 5}>
       {popUp ? (
-        <>
-          <Text variant="h3" marginBottom={1}>
-            {formatMessage(messages.chooseDefenderTitle)}
-          </Text>
-          <Text marginBottom={5}>{formatMessage(messages.defenderLimits)}</Text>
-        </>
+        <Text variant="h3" marginBottom={1}>
+          {formatMessage(messages.chooseDefenderTitle)}
+        </Text>
       ) : (
         <Text variant="eyebrow" color="purple400" marginBottom={3}>
           {formatMessage(messages.chooseDefenderTitle)}
@@ -108,7 +119,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(handleSubmitForm)}>
             <Controller
-              name="choice"
+              name={CHOICE}
               control={methods.control}
               render={({
                 field: {
@@ -118,25 +129,25 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
               }) => (
                 <Stack space={3}>
                   <RadioButton
-                    name="choice"
+                    name={CHOICE}
                     id={DefenseChoices.WAIVE.code}
                     value={DefenseChoices.WAIVE.code}
                     label={getLocalizedMessage(DefenseChoices.WAIVE.code)}
                     checked={DefenseChoices.WAIVE.code === value}
                     onChange={({ target }) => {
                       onChange(target.value)
-                      methods.setValue('lawyersNationalId', undefined)
+                      clearLawyersNationalId()
                     }}
                   />
                   <RadioButton
-                    name="choice"
+                    name={CHOICE}
                     id={DefenseChoices.CHOOSE.code}
                     value={DefenseChoices.CHOOSE.code}
                     label={getLocalizedMessage(DefenseChoices.CHOOSE.code)}
                     checked={DefenseChoices.CHOOSE.code === value}
                     onChange={({ target }) => {
                       onChange(target.value)
-                      methods.setValue('lawyersNationalId', undefined)
+                      clearLawyersNationalId()
                     }}
                   />
                   {value === DefenseChoices.CHOOSE.code &&
@@ -152,7 +163,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
                     >
                       <SelectController
                         id="lawyer-choice"
-                        name="lawyersNationalId"
+                        name={NATIONAL_ID}
                         isClearable
                         size="xs"
                         isSearchable
@@ -160,17 +171,14 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
                         placeholder={formatMessage(messages.chooseDefender)}
                         options={lawyers.map((x) => {
                           return {
-                            label: x.name + ', ' + x.practice,
+                            label: x.title ?? '',
                             value: x.nationalId,
                           }
                         })}
                         onSelect={(selected) => {
-                          methods.setValue('choice', DefenseChoices.CHOOSE.code)
+                          methods.setValue(CHOICE, DefenseChoices.CHOOSE.code)
                           selected.value &&
-                            methods.setValue(
-                              'lawyersNationalId',
-                              selected?.value,
-                            )
+                            methods.setValue(NATIONAL_ID, selected?.value)
                         }}
                         error={
                           methods.getValues().lawyersNationalId === undefined
@@ -182,25 +190,25 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
                     </GridColumn>
                   )}
                   <RadioButton
-                    name="choice"
+                    name={CHOICE}
                     id={DefenseChoices.DELAY.code}
                     value={DefenseChoices.DELAY.code}
                     label={getLocalizedMessage(DefenseChoices.DELAY.code)}
                     checked={DefenseChoices.DELAY.code === value}
                     onChange={({ target }) => {
                       onChange(target.value)
-                      methods.setValue('lawyersNationalId', undefined)
+                      clearLawyersNationalId()
                     }}
                   />
                   <RadioButton
-                    name="choice"
+                    name={CHOICE}
                     id={DefenseChoices.DELEGATE.code}
                     value={DefenseChoices.DELEGATE.code}
                     label={getLocalizedMessage(DefenseChoices.DELEGATE.code)}
                     checked={DefenseChoices.DELEGATE.code === value}
                     onChange={({ target }) => {
                       onChange(target.value)
-                      methods.setValue('lawyersNationalId', undefined)
+                      clearLawyersNationalId()
                     }}
                   />
                   {!popUp && (
