@@ -239,7 +239,7 @@ const Processing: FC = () => {
   ])
 
   useEffect(() => {
-    if (!personData || !personData.items) {
+    if (!personData || !personData.items || personData.items.length === 0) {
       return
     }
 

@@ -75,13 +75,18 @@ const InputNationalId: FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    if (value === undefined) {
+    if (!value) {
       return
     }
 
     setErrorMessage(undefined)
     setInputValue(value)
   }, [value])
+
+  useEffect(() => {
+    setErrorMessage(undefined)
+    setInputValue('')
+  }, [isDateOfBirth])
 
   return (
     <InputMask
