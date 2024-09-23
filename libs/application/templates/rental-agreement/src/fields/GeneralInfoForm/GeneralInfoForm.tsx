@@ -1,31 +1,30 @@
 import { Bullet, BulletList, Text } from '@island.is/island-ui/core'
 import * as m from '../../lib/messages'
+import { useIntl } from 'react-intl'
 
 const GeneralInfoForm = () => {
+  const { formatMessage } = useIntl()
+
   return (
     <>
       <Text variant="intro" marginBottom={4}>
-        Mikilvægt er að hafa í huga að í samningnum þurfa að koma fram öll þau
-        atriði sem aðilar samningsins eru sammála um og skipta máli við
-        skilgreiningar og skýringar á því um hvað samningurinn snýst.
+        {formatMessage(m.prerequisites.intro.subTitle)}
       </Text>
       <BulletList type="ul" space={2}>
         <Bullet>
-          Leigusamningur er skráður í Leiguskrá HMS þegar allir aðilar
-          samningsins hafa undirritað rafrænt
+          {formatMessage(m.prerequisites.intro.descriptionBullet1)}
         </Bullet>
         <Bullet>
-          Skráning leigusamnings í Leiguskrá HMS er ein forsenda þess að
-          leigjandi geti fengið greiddar húsnæðisbætur
+          {formatMessage(m.prerequisites.intro.descriptionBullet2)}
         </Bullet>
         <Bullet>
-          Hægt er að sækja um húsnæðisbætur samhliða skráningu á leigusamningnum
-          og því þinglýsing óþörf
+          {formatMessage(m.prerequisites.intro.descriptionBullet3)}
         </Bullet>
-        <Bullet>Með rafrænni skráningu eru vottar óþarfi</Bullet>
         <Bullet>
-          Staðfesting á brunavörnum og ástandi húsnæðis er hluti af
-          leigusamningnum
+          {formatMessage(m.prerequisites.intro.descriptionBullet4)}
+        </Bullet>
+        <Bullet>
+          {formatMessage(m.prerequisites.intro.descriptionBullet5)}
         </Bullet>
       </BulletList>
     </>

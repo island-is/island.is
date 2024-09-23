@@ -1,16 +1,20 @@
 import {
   buildCustomField,
-  buildDescriptionField,
+  buildDataProviderItem,
+  buildExternalDataProvider,
   buildForm,
   buildMultiField,
-  buildRadioField,
   buildSection,
   buildSubSection,
 } from '@island.is/application/core'
+import {
+  CurrentApplicationApi,
+  NationalRegistryUserApi,
+} from '../dataProviders'
 
 import { Form, FormModes } from '@island.is/application/types'
 import * as m from '../lib/messages'
-import { Routes } from '../lib/RentalAgreementTemplate'
+import { Routes } from '../lib/constants'
 
 export const Prerequisites: Form = buildForm({
   id: 'RentalAgreementApplication',
@@ -29,14 +33,9 @@ export const Prerequisites: Form = buildForm({
               id: Routes.GENERALINFORMATION,
               title: m.prerequisites.intro.pageTitle,
               children: [
-                buildDescriptionField({
-                  id: 'prerequisiteIntroTitle',
-                  title: 'contractDescriptionTitle',
-                  description: 'contractDescriptionDescription',
-                }),
                 buildCustomField({
-                  id: 'generalInformation',
-                  title: 'contractDescriptionTitle',
+                  id: Routes.GENERALINFORMATION,
+                  title: m.prerequisites.intro.subSectionTitle,
                   component: 'GeneralInfoForm',
                 }),
               ],
@@ -44,52 +43,53 @@ export const Prerequisites: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'choseRole',
-          title: 'Hlutverk',
+          id: 'externalData',
+          title: m.prerequisites.externalData.sectionTitle,
           children: [
-            buildRadioField({
-              id: 'applicationType.option',
-              title: 'radioFieldTitle',
-              description: 'radioFieldDescription',
-              options: [
-                {
-                  value: 'yes',
-                  label: 'Yes',
-                },
-                {
-                  value: 'no',
-                  label: 'No',
-                },
+            buildExternalDataProvider({
+              id: 'externalData',
+              title: m.prerequisites.externalData.pageTitle,
+              subTitle: m.prerequisites.externalData.subTitle,
+              description: '',
+              checkboxLabel: m.prerequisites.externalData.checkboxLabel,
+              dataProviders: [
+                buildDataProviderItem({
+                  provider: CurrentApplicationApi,
+                  title: m.prerequisites.externalData.currentApplicationTitle,
+                  subTitle:
+                    m.prerequisites.externalData.currentApplicationSubTitle,
+                }),
+                buildDataProviderItem({
+                  provider: NationalRegistryUserApi,
+                  title: m.prerequisites.externalData.nationalRegistryTitle,
+                  subTitle:
+                    m.prerequisites.externalData.nationalRegistrySubTitle,
+                }),
               ],
             }),
           ],
         }),
       ],
     }),
-    buildSection({
-      id: 'applicantData',
-      title: 'Mínar upplýsingar',
-      children: [],
-    }),
-    buildSection({
-      id: 'accommodationData',
-      title: 'Húsnæðið',
-      children: [],
-    }),
-    buildSection({
-      id: 'periodAndAmount',
-      title: 'Tímabil og fjárhæð',
-      children: [],
-    }),
-    buildSection({
-      id: 'summary',
-      title: 'Samantekt',
-      children: [],
-    }),
-    buildSection({
-      id: 'signing',
-      title: 'Undirritun',
-      children: [],
-    }),
+    // buildSection({
+    //   id: 'accommodationData',
+    //   title: 'Húsnæðið',
+    //   children: [],
+    // }),
+    // buildSection({
+    //   id: 'periodAndAmount',
+    //   title: 'Tímabil og fjárhæð',
+    //   children: [],
+    // }),
+    // buildSection({
+    //   id: 'summary',
+    //   title: 'Samantekt',
+    //   children: [],
+    // }),
+    // buildSection({
+    //   id: 'signing',
+    //   title: 'Undirritun',
+    //   children: [],
+    // }),
   ],
 })

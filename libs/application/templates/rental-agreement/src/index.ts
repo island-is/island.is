@@ -2,7 +2,7 @@ import RentalAgreementTemplate from './lib/RentalAgreementTemplate'
 
 export * from './lib/RentalAgreementTemplate'
 
-// export const getDataProviders = () => import('./dataProviders/')
+export const getDataProviders = () => import('./dataProviders/')
 
 export const getFields = () => import('./fields/')
 

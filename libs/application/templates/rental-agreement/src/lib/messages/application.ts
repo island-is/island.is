@@ -8,17 +8,6 @@ export const application = defineMessages({
   },
 })
 
-export const information = {
-  general: defineMessages({
-    description: {
-      id: 'ra.application:information.general.subTitle',
-      defaultMessage:
-        'Leigusamningur er skráður í Leiguskrá HMS þegar allir aðilar samningsins hafa undirritað rafrænt',
-      description: 'Information about the applicant',
-    },
-  }),
-}
-
 export const applicantInfo = {
   general: defineMessages({
     title: {

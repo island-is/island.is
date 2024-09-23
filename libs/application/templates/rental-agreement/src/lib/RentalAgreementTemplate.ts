@@ -4,59 +4,24 @@ import {
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
-
+import { Roles, ApplicationStates, DAY, MONTH } from './constants'
 import { dataSchema } from './dataSchema'
+import { application } from 'express'
 
-type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
+type Events =
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.EDIT }
 
-export enum ApplicationStates {
-  PREREQUISITES = 'prerequisites',
-  DRAFT = 'draft',
-  SUBMITTED = 'submitted',
-  SPOUSE = 'spouse',
-  PREREQUISITESSPOUSE = 'prerequisitesSpouse',
-  MUNCIPALITYNOTREGISTERED = 'muncipalityNotRegistered',
+const oneMonthLifeCycle = {
+  shouldBeListed: true,
+  shouldBePruned: true,
+  whenToPrune: MONTH,
 }
-
-export enum Routes {
-  GENERALINFORMATION = 'generalInformation',
-  ACCECPTCONTRACT = 'acceptContract',
-  INRELATIONSHIP = 'inRelationship',
-  UNKNOWNRELATIONSHIP = 'unknownRelationship',
-  HOMECIRCUMSTANCES = 'homeCircumstances',
-  STUDENT = 'student',
-  EMPLOYMENT = 'employment',
-  INCOME = 'income',
-  PERSONALTAXCREDIT = 'personalTaxCredit',
-  BANKINFO = 'bankInfo',
-  CONTACTINFO = 'contactInfo',
-  TAXRETURNFILES = 'taxReturnFiles',
-  INCOMEFILES = 'incomeFiles',
-  SUMMARY = 'summary',
-  CONFIRMATION = 'confirmation',
-  CHILDRENSCHOOLINFO = 'childrenSchoolInfo',
-  CHILDRENFILES = 'childrenFiles',
-  SPOUSEACCECPTCONTRACT = 'spouseAcceptContract',
-  SPOUSEINCOME = 'spouseIncome',
-  SPOUSEINCOMEFILES = 'spouseIncomeFiles',
-  SPOUSETAXRETURNFILES = 'spouseTaxReturnFiles',
-  SPOUSECONTACTINFO = 'spouseContactInfo',
-  SPOUSESUMMARY = 'spouseSummary',
-  SPOUSECONFIRMATION = 'spouseConfirmation',
-  MISSINGFILES = 'missingFiles',
-  APPLICANTSTATUS = 'applicantStatus',
-  MISSINGFILESCONFIRMATION = 'missingFilesConfirmation',
-  SPOUSESTATUS = 'spouseStatus',
-  SERVICECENTER = 'serviceCenter',
-}
-
-export enum Roles {
-  APPLICANT = 'applicant',
-  SPOUSE = 'spouse',
-}
-
-const DAY = 24 * 3600 * 1000
 
 const RentalAgreementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -64,8 +29,11 @@ const RentalAgreementTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.RENTAL_AGREEMENT,
-  name: 'Leigusamningur',
+  name: application.name,
   institution: 'Húsnæðis- og mannvirkjastofnun',
+  translationNamespaces: [
+    ApplicationConfigurations.RentalAgreement.translation,
+  ],
   dataSchema,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUISITES,
@@ -93,15 +61,32 @@ const RentalAgreementTemplate: ApplicationTemplate<
         },
 
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: 'draft',
-          },
+          SUBMIT: [{ target: ApplicationStates.DRAFT }],
+        },
+      },
+      [ApplicationStates.DRAFT]: {
+        meta: {
+          name: 'Leigusamningur',
+          status: 'draft',
+          lifecycle: oneMonthLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Application').then((module) =>
+                  Promise.resolve(module.Application),
+                ),
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
+          ],
         },
       },
     },
   },
   mapUserToRole() {
-    return 'applicant'
+    return Roles.APPLICANT
   },
 }
 
