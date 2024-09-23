@@ -92,7 +92,7 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
       return fileContent?.toString('base64') || ''
     } catch (error) {
       this.logger.error('Error retrieving attachment from S3', error)
-      throw new Error('Villa kom upp við að senda umsókn')
+      throw new Error('Failed to retrieve attachment from S3')
     }
   }
 
@@ -154,11 +154,15 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
     return mapValuesToPartyTypes(application.answers)
   }
 
-  private getOperatingYear(application: Application): string {
-    return getValueViaPath(
+  private getOperatingYear(application: Application) {
+    const year = getValueViaPath(
       application.answers,
       'conditionalAbout.operatingYear',
-    ) as string
+    )
+    if (typeof year !== 'string') {
+      throw new Error('Operating year not found or invalid')
+    }
+    return year
   }
 
   private validateUserType(application: Application) {
