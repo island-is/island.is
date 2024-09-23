@@ -8,10 +8,10 @@ import { toast } from '@island.is/island-ui/core'
 import { FormatMessage } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 
-export function handleServerError(
+export const handleServerError = (
   error: ApolloError,
   formatMessage: FormatMessage,
-): void {
+): void => {
   const problem = findProblemInApolloError(error)
   const message = problem ? problem.detail ?? problem.title : error.message
 

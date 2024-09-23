@@ -68,7 +68,7 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -99,6 +99,10 @@ import {
   prosecutorUpdateRule,
   publicProsecutorStaffUpdateRule,
 } from './guards/rolesRules'
+import {
+  CaseInterceptor,
+  CasesInterceptor,
+} from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { Case } from './models/case.model'
@@ -140,6 +144,7 @@ export class CaseController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @UseInterceptors(CaseInterceptor)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   async create(
@@ -167,6 +172,7 @@ export class CaseController {
     courtOfAppealsAssistantUpdateRule,
     publicProsecutorStaffUpdateRule,
   )
+  @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
@@ -284,6 +290,7 @@ export class CaseController {
     courtOfAppealsRegistrarTransitionRule,
     courtOfAppealsAssistantTransitionRule,
   )
+  @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/state')
   @ApiOkResponse({
     type: Case,
@@ -438,13 +445,13 @@ export class CaseController {
     prisonSystemStaffRule,
     defenderRule,
   )
+  @UseInterceptors(CaseListInterceptor)
   @Get('cases')
   @ApiOkResponse({
     type: Case,
     isArray: true,
     description: 'Gets all existing cases',
   })
-  @UseInterceptors(CaseListInterceptor)
   getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
@@ -463,9 +470,9 @@ export class CaseController {
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
   )
+  @UseInterceptors(CompletedAppealAccessedInterceptor, CaseInterceptor)
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
-  @UseInterceptors(CompletedAppealAccessedInterceptor)
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
     this.logger.debug(`Getting case ${caseId} by id`)
 
@@ -478,6 +485,7 @@ export class CaseController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
+  @UseInterceptors(CasesInterceptor)
   @Get('case/:caseId/connectedCases')
   @ApiOkResponse({ type: [Case], description: 'Gets all connected cases' })
   async getConnectedCases(
@@ -545,6 +553,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
@@ -700,6 +709,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
@@ -870,6 +880,7 @@ export class CaseController {
     CaseReadGuard,
   )
   @RolesRules(prosecutorRule)
+  @UseInterceptors(CaseInterceptor)
   @Post('case/:caseId/extend')
   @ApiCreatedResponse({
     type: Case,
@@ -899,6 +910,7 @@ export class CaseController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
+  @UseInterceptors(CaseInterceptor)
   @Post('case/:caseId/court')
   @ApiCreatedResponse({
     type: Case,

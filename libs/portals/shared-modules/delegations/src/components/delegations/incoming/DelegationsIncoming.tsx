@@ -76,6 +76,7 @@ export const DelegationsIncoming = () => {
                       delegation as AuthCustomDelegationIncoming,
                     )
                   }}
+                  direction="incoming"
                   variant="incoming"
                 />
               ),

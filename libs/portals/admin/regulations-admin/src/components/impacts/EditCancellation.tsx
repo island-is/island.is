@@ -142,7 +142,11 @@ export const EditCancellation = (props: EditCancellationProp) => {
             <ImpactModalTitle
               impact={activeCancellation}
               name={activeCancellation.name}
-              title={activeCancellation.regTitle}
+              title={
+                activeCancellation.name === 'self'
+                  ? 'stofnreglugerð'
+                  : activeCancellation.regTitle
+              }
               type={'cancel'}
               minDate={minDate}
               tag={

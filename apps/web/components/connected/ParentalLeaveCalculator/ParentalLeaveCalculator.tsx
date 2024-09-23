@@ -31,6 +31,7 @@ import { formatCurrency as formatCurrencyUtil } from '@island.is/web/utils/curre
 
 import { MarkdownText } from '../../Organization'
 import { translations as t } from './translations.strings'
+import { Calculator, Status, Union, WorkPercentage } from './utils'
 import * as styles from './ParentalLeaveCalculator.css'
 
 interface FieldProps {
@@ -62,17 +63,6 @@ const Field = ({
       {children}
     </Stack>
   )
-}
-
-enum Status {
-  PARENTAL_LEAVE = 'parentalLeave',
-  STUDENT = 'student',
-  OUTSIDE_WORKFORCE = 'outsideWorkForce',
-}
-
-enum WorkPercentage {
-  OPTION_1 = 'option1',
-  OPTION_2 = 'option2',
 }
 
 enum ParentalLeavePeriod {
@@ -121,7 +111,7 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
 
   const yearOptions = useMemo<Option<number>[]>(() => {
     const keys = Object.keys(slice.configJson?.yearConfig || {}).map(Number)
-    keys.sort()
+    keys.sort().reverse()
     return keys.map((key) => ({
       label: String(key),
       value: key,
@@ -146,8 +136,7 @@ const FormScreen = ({ slice, changeScreen }: ScreenProps) => {
   }, [formatMessage, slice.configJson?.additionalPensionFundingOptions])
 
   const unionOptions = useMemo<Option<string | null>[]>(() => {
-    const options: { label: string; percentage: number }[] = slice.configJson
-      ?.unionOptions
+    const options: Union[] = slice.configJson?.unionOptions
       ? [...slice.configJson.unionOptions]
       : []
 
@@ -532,6 +521,10 @@ const calculateResults = (
   },
   slice: ParentalLeaveCalculatorProps['slice'],
 ) => {
+  if (typeof input.birthyear !== 'number') {
+    return null
+  }
+
   const yearConfig = slice.configJson?.yearConfig?.[String(input.birthyear)]
   const parseResult = yearConfigSchema.safeParse(yearConfig)
   if (!parseResult.success) {
@@ -554,179 +547,55 @@ const calculateResults = (
     pensionFundingRequiredPercentage: parseResult.data['Skyldu lífeyrir'],
   }
 
-  let mainResultBeforeDeduction = 0
-  let mainResultAfterDeduction = 0
-  let unionFee = 0
-  let totalTax = 0
-  let usedPersonalDiscount = 0
-  let additionalPensionFunding = 0
-  let pensionFunding = 0
+  const unionOptions: Union[] = slice.configJson?.unionOptions ?? []
 
-  if (input.status === Status.STUDENT) {
-    mainResultBeforeDeduction = constants.parentalLeaveStudent
+  const calculator = new Calculator(
+    {
+      percentOfEarningsPaid: constants.parentalLeaveRatio,
+      tax1: constants.taxRate1,
+      tax2: constants.taxRate2,
+      tax3: constants.taxRate3,
+      tax1Amount: constants.taxBracket1,
+      tax2Amount: constants.taxBracket2,
+      taxDiscount: constants.personalDiscount,
+      pGrantStudents: constants.parentalLeaveStudent,
+      pGrant: constants.parentalLeaveGeneral,
+      pGrantHigher: constants.parentalLeaveHigh,
+      pGrantLower: constants.parentalLeaveLow,
+      maxEarnings: constants.maxIncome,
+      mandatoryPensionPercentage: constants.pensionFundingRequiredPercentage,
+    },
+    {
+      status: input.status ?? Status.PARENTAL_LEAVE,
+      childYearBorn: input.birthyear,
+      workPercentage: input.workPercentage ?? WorkPercentage.OPTION_1,
+      averageEarningsPerMonth: input.income ?? 0,
+      monthsInPL:
+        input.parentalLeavePeriod === ParentalLeavePeriod.TWO_WEEKS
+          ? 1 / 2
+          : input.parentalLeavePeriod === ParentalLeavePeriod.THREE_WEEKS
+          ? 3 / 4
+          : 1,
+      union: unionOptions.find((option) => option.label === input.union),
+      taxDiscountRate: input.personalDiscount ?? 100,
+      extraPension: input.additionalPensionFundingPercentage ?? 0,
+      plRate: input.parentalLeaveRatio ?? 100,
+    },
+  )
 
-    let taxStep = 1
-
-    if (mainResultBeforeDeduction > constants.taxBracket1) {
-      taxStep = 2
-    } else if (mainResultBeforeDeduction > constants.taxBracket2) {
-      taxStep = 3
-    }
-
-    if (taxStep === 1) {
-      totalTax = mainResultBeforeDeduction * (constants.taxRate1 / 100)
-    } else if (taxStep === 2) {
-      totalTax = mainResultBeforeDeduction * (constants.taxRate2 / 100)
-    } else if (taxStep === 3) {
-      totalTax = mainResultBeforeDeduction * (constants.taxRate3 / 100)
-    }
-
-    usedPersonalDiscount =
-      constants.personalDiscount * ((input.personalDiscount ?? 100) / 100)
-
-    if (usedPersonalDiscount > totalTax) {
-      usedPersonalDiscount = totalTax
-    }
-
-    mainResultAfterDeduction = mainResultBeforeDeduction
-
-    mainResultAfterDeduction =
-      mainResultAfterDeduction - (totalTax - usedPersonalDiscount)
-  }
-
-  if (input.status === Status.OUTSIDE_WORKFORCE) {
-    mainResultBeforeDeduction = constants.parentalLeaveGeneral
-
-    let taxStep = 1
-
-    if (mainResultBeforeDeduction > constants.taxBracket1) {
-      taxStep = 2
-    } else if (mainResultBeforeDeduction > constants.taxBracket2) {
-      taxStep = 3
-    }
-
-    if (taxStep === 1) {
-      totalTax = mainResultBeforeDeduction * (constants.taxRate1 / 100)
-    } else if (taxStep === 2) {
-      totalTax = mainResultBeforeDeduction * (constants.taxRate2 / 100)
-    } else if (taxStep === 3) {
-      totalTax = mainResultBeforeDeduction * (constants.taxRate3 / 100)
-    }
-
-    usedPersonalDiscount =
-      constants.personalDiscount * ((input.personalDiscount ?? 100) / 100)
-
-    if (usedPersonalDiscount > totalTax) {
-      usedPersonalDiscount = totalTax
-    }
-
-    mainResultAfterDeduction = mainResultBeforeDeduction
-
-    mainResultAfterDeduction =
-      mainResultAfterDeduction - (totalTax - usedPersonalDiscount)
-  }
-
-  if (input.status === Status.PARENTAL_LEAVE) {
-    if (
-      typeof input.income !== 'number' ||
-      typeof input.parentalLeaveRatio !== 'number'
-    ) {
-      return null
-    }
-
-    mainResultBeforeDeduction =
-      input.income * (constants.parentalLeaveRatio / 100)
-
-    if (
-      input.workPercentage === WorkPercentage.OPTION_1 &&
-      mainResultBeforeDeduction < constants.parentalLeaveLow
-    ) {
-      mainResultBeforeDeduction = constants.parentalLeaveLow
-    } else if (
-      input.workPercentage === WorkPercentage.OPTION_2 &&
-      mainResultBeforeDeduction < constants.parentalLeaveHigh
-    ) {
-      mainResultBeforeDeduction = constants.parentalLeaveHigh
-    }
-
-    if (mainResultBeforeDeduction > constants.maxIncome) {
-      mainResultBeforeDeduction = constants.maxIncome
-    }
-
-    mainResultBeforeDeduction *= input.parentalLeaveRatio / 100
-
-    let paternityLeavePeriodMultiplier = 1
-
-    if (input.parentalLeavePeriod === ParentalLeavePeriod.THREE_WEEKS) {
-      paternityLeavePeriodMultiplier = 3 / 4
-    } else if (input.parentalLeavePeriod === ParentalLeavePeriod.TWO_WEEKS) {
-      paternityLeavePeriodMultiplier = 1 / 2
-    }
-
-    mainResultBeforeDeduction *= paternityLeavePeriodMultiplier
-
-    let taxStep = 1
-
-    if (mainResultBeforeDeduction > constants.taxBracket1) {
-      taxStep = 2
-    } else if (mainResultBeforeDeduction > constants.taxBracket2) {
-      taxStep = 3
-    }
-
-    if (taxStep === 1) {
-      totalTax = mainResultBeforeDeduction * (constants.taxRate1 / 100)
-    } else if (taxStep === 2) {
-      totalTax = mainResultBeforeDeduction * (constants.taxRate2 / 100)
-    } else if (taxStep === 3) {
-      totalTax = mainResultBeforeDeduction * (constants.taxRate3 / 100)
-    }
-
-    usedPersonalDiscount =
-      constants.personalDiscount *
-      ((input.personalDiscount ?? 0) / 100) *
-      paternityLeavePeriodMultiplier
-
-    if (usedPersonalDiscount > totalTax) {
-      usedPersonalDiscount = totalTax
-    }
-
-    additionalPensionFunding =
-      mainResultBeforeDeduction *
-      ((input.additionalPensionFundingPercentage ?? 0) / 100)
-
-    pensionFunding =
-      mainResultBeforeDeduction *
-      (constants.pensionFundingRequiredPercentage / 100)
-
-    const unionOptions: { label: string; percentage: number }[] =
-      slice.configJson?.unionOptions ?? []
-
-    unionFee =
-      mainResultBeforeDeduction *
-      ((unionOptions.find((option) => option.label === input.union)
-        ?.percentage ?? 0) /
-        100)
-
-    /* --- After deduction --- */
-    mainResultAfterDeduction = mainResultBeforeDeduction
-    mainResultAfterDeduction -= unionFee
-    mainResultAfterDeduction =
-      mainResultAfterDeduction - (totalTax - usedPersonalDiscount)
-    mainResultAfterDeduction -= additionalPensionFunding
-    mainResultAfterDeduction -= pensionFunding
-  }
+  const results = calculator.calculateResults()
 
   return {
-    results: {
-      mainResultBeforeDeduction,
-      mainResultAfterDeduction,
-      unionFee,
-      pensionFunding,
-      totalTax,
-      usedPersonalDiscount,
-      additionalPensionFunding,
-    },
     constants,
+    results: {
+      mainResultBeforeDeduction: results.plBruttoPerMonth,
+      mainResultAfterDeduction: results.plNettoPerMonth,
+      unionFee: results.unionFees,
+      pensionFunding: results.pensionPerMonth,
+      totalTax: results.tax,
+      usedPersonalDiscount: results.taxDiscount,
+      additionalPensionFunding: results.extraPensionPerMonth,
+    },
   }
 }
 

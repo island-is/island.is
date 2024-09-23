@@ -31,8 +31,8 @@ export const priceList = {
       description: 'Location select dropdown placeholder',
     },
     regularPriceTitle: {
-      id: 'id.application:priceList.labels.regularPriceTitle',
-      defaultMessage: 'Almenn afgreiðsla: 18-66 ára - 9.200 kr.',
+      id: 'id.application:priceList.labels.regularPriceTitle#markdown',
+      defaultMessage: 'Almenn afgreiðsla: 18-66 ára - {price}',
       description: 'Regular price radio button title',
     },
     regularPriceDescription: {
@@ -41,8 +41,8 @@ export const priceList = {
       description: 'Regular price radio button description',
     },
     fastPriceTitle: {
-      id: 'id.application:priceList.labels.fastPriceTitle',
-      defaultMessage: 'Hraðafgreiðsla: 18-66 ára 18.400 kr.',
+      id: 'id.application:priceList.labels.fastPriceTitle#markdown',
+      defaultMessage: 'Hraðafgreiðsla: 18-66 ára - {price}',
       description: 'Fast price radio button title',
     },
     fastPriceDescription: {
@@ -51,13 +51,13 @@ export const priceList = {
       description: 'Fast price radio button description',
     },
     discountRegularPriceTitle: {
-      id: 'id.application:priceList.labels.discountRegularPriceTitle',
-      defaultMessage: 'Almenn afgreiðsla: börn, aldraðir, öryrkjar 4.600 kr.',
+      id: 'id.application:priceList.labels.discountRegularPriceTitle#markdown',
+      defaultMessage: 'Almenn afgreiðsla: börn, aldraðir, öryrkjar - {price}',
       description: 'Discount Regular price radio button title',
     },
     discountFastPriceTitle: {
-      id: 'id.application:priceList.labels.discountFastPriceTitle',
-      defaultMessage: 'Hraðafgreiðsla:  börn, aldraðir, öryrkjar - 9.200 kr.',
+      id: 'id.application:priceList.labels.discountFastPriceTitle#markdown',
+      defaultMessage: 'Hraðafgreiðsla:  börn, aldraðir, öryrkjar - {price}',
       description: 'Discount Fast price radio button title',
     },
   }),
