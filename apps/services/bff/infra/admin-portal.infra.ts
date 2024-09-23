@@ -47,10 +47,10 @@ export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
         '@admin.island.is/form-system:admin',
       ]),
       // BFF
+      BFF_CLIENT_KEY_PATH: '/stjornbord',
       BFF_CALLBACKS_BASE_PATH: generateWebBaseUrls('/stjornbord/bff/callbacks'),
-      BFF_LOGOUT_REDIRECT_PATH: generateWebBaseUrls(),
+      BFF_CLIENT_BASE_URL: generateWebBaseUrls(),
       BFF_PROXY_API_ENDPOINT: generateWebBaseUrls('/api/graphql'),
-      BFF_API_URL_PREFIX: 'stjornbord/bff',
       BFF_ALLOWED_EXTERNAL_API_URLS: {
         dev: json(['https://api.dev01.devland.is']),
         staging: json(['https://api.staging01.devland.is']),
@@ -79,5 +79,30 @@ export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
       requests: {
         cpu: '100m',
         memory: '256Mi',
+      },
+    })
+    .ingress({
+      primary: {
+        host: {
+          dev: ['beta'],
+          staging: ['beta'],
+          prod: ['', 'www.island.is'],
+        },
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
+        paths: ['/stjornbord/bff'],
       },
     })

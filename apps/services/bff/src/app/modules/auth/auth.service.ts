@@ -244,6 +244,6 @@ export class AuthService {
     // Delete session cookie
     res.clearCookie('sid')
 
-    return res.redirect(this.config.logoutRedirectUri)
+    return res.redirect(this.config.clientBaseUrl)
   }
 }

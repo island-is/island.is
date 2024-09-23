@@ -35,7 +35,6 @@ const BffConfigSchema = z.object({
    */
   allowedExternalApiUrls: z.array(z.string()),
   allowedRedirectUris: z.string().array(),
-  logoutRedirectUri: z.string(),
   callbacksRedirectUris: z.strictObject({
     login: z.string(),
     logout: z.string(),
@@ -80,7 +79,6 @@ export const BffConfig = defineConfig({
         login: `${callbacksBaseRedirectPath}/login`,
         logout: `${callbacksBaseRedirectPath}/logout`,
       },
-      logoutRedirectUri: env.required('BFF_LOGOUT_REDIRECT_PATH'),
       /**
        * The base64 encoded secret used for encrypting and decrypting.
        */
