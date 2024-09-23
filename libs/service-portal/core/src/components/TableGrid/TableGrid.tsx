@@ -58,7 +58,15 @@ export const TableGrid: FC<React.PropsWithChildren<Props>> = ({
                         </Text>
                       </Column>
                       <Column>
-                        <Text variant="medium" title={rowitem.detail}>
+                        <Text
+                          as={
+                            typeof rowitem.value === 'string'
+                              ? undefined
+                              : 'span'
+                          }
+                          variant="medium"
+                          title={rowitem.detail}
+                        >
                           {rowitem.value}
                         </Text>
                       </Column>

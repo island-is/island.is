@@ -33,10 +33,10 @@ const LookupOperator = ({
   return (
     <div>
       {names?.map((name, i) => (
-        <>
+        <React.Fragment key={i}>
           {i + 1}. {name}
           <br />
-        </>
+        </React.Fragment>
       ))}
       {someOperatorsAreAnonymous ? (
         <Box marginTop={1}>
