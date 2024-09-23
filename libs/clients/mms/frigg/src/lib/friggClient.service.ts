@@ -5,7 +5,7 @@ import {
   FriggApi,
   KeyOption,
   OrganizationModel,
-  SuccessModel,
+  FormSubmitSuccessModel,
   UserModel,
 } from '../../gen/fetch'
 
@@ -39,7 +39,7 @@ export class FriggClientService {
     })
   }
 
-  sendApplication(user: User, form: FormDto): Promise<SuccessModel> {
+  sendApplication(user: User, form: FormDto): Promise<FormSubmitSuccessModel> {
     return this.friggApiWithAuth(user).submitForm({ formDto: form })
   }
 }

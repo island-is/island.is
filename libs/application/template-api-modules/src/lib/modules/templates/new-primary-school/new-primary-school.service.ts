@@ -89,7 +89,6 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     return filteredChildren
   }
 
-  // TODO: Þarf auth?
   async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
     const newPrimarySchoolDTO =
       transformApplicationToNewPrimarySchoolDTO(application)
