@@ -1,8 +1,7 @@
 import { z } from 'zod'
 import { m } from './messages'
 import * as kennitala from 'kennitala'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { parsePhoneNumberFromString } from 'libphonenumber-js/min'
 import { checkIfNegative } from '../utils/helpers'
 
 const requiredNonNegativeString = z
@@ -31,12 +30,8 @@ const about = z.object({
   powerOfAttorneyName: z.string().optional(),
   phoneNumber: z.string().refine(
     (p) => {
-      // ignore validation on dev to test with Gervimenn remove b4 release
-      if (isRunningOnEnvironment('dev')) {
-        return true
-      }
       const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-      return phoneNumber && phoneNumber.isValid()
+      return phoneNumber?.isValid()
     },
     { params: m.dataSchemePhoneNumber },
   ),
@@ -97,7 +92,7 @@ const liability = z.object({
 })
 
 export const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
+  approveExternalData: z.literal(true),
   conditionalAbout,
   about,
   election, // Needed??
