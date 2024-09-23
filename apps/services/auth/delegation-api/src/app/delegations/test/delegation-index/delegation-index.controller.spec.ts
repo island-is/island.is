@@ -7,7 +7,11 @@ import {
   createNationalId,
 } from '@island.is/testing/fixtures'
 import { AuthScope } from '@island.is/auth/scopes'
-import { DelegationIndex } from '@island.is/auth-api-lib'
+import {
+  DelegationIndex,
+  DelegationProviderModel,
+  DelegationTypeModel,
+} from '@island.is/auth-api-lib'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
@@ -70,7 +74,29 @@ const invalidDelegationTypeAndProviderMapTestcases: Record<
   ],
 }
 
+const DELEGATION_PROVIDERS = [
+  {
+    provider: AuthDelegationProvider.NationalRegistry,
+    type: AuthDelegationType.LegalGuardian,
+  },
+  {
+    provider: AuthDelegationProvider.Custom,
+    type: AuthDelegationType.Custom,
+  },
+  {
+    provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
+    type: AuthDelegationType.PersonalRepresentativePostbox,
+  },
+  {
+    provider: AuthDelegationProvider.CompanyRegistry,
+    type: AuthDelegationType.ProcurationHolder,
+  },
+]
+
 describe('DelegationIndexController', () => {
+  let delegationTypeModel: typeof DelegationTypeModel
+  let delegationProviderModel: typeof DelegationProviderModel
+
   describe('Without valid scope', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
@@ -85,6 +111,14 @@ describe('DelegationIndexController', () => {
       })
 
       server = request(app.getHttpServer())
+
+      delegationProviderModel = app.get(getModelToken(DelegationProviderModel))
+      delegationTypeModel = app.get(getModelToken(DelegationTypeModel))
+
+      await createDelegationProvidersAndTypes(
+        delegationProviderModel,
+        delegationTypeModel,
+      )
     })
 
     afterAll(async () => {
@@ -143,6 +177,16 @@ describe('DelegationIndexController', () => {
           })
 
           server = request(app.getHttpServer())
+
+          delegationProviderModel = app.get(
+            getModelToken(DelegationProviderModel),
+          )
+          delegationTypeModel = app.get(getModelToken(DelegationTypeModel))
+
+          await createDelegationProvidersAndTypes(
+            delegationProviderModel,
+            delegationTypeModel,
+          )
         })
 
         afterAll(async () => {
@@ -207,6 +251,14 @@ describe('DelegationIndexController', () => {
       })
 
       server = request(app.getHttpServer())
+
+      delegationProviderModel = app.get(getModelToken(DelegationProviderModel))
+      delegationTypeModel = app.get(getModelToken(DelegationTypeModel))
+
+      await createDelegationProvidersAndTypes(
+        delegationProviderModel,
+        delegationTypeModel,
+      )
     })
 
     afterAll(async () => {
@@ -265,6 +317,14 @@ describe('DelegationIndexController', () => {
       server = request(app.getHttpServer())
 
       delegationIndexModel = app.get(getModelToken(DelegationIndex))
+
+      delegationProviderModel = app.get(getModelToken(DelegationProviderModel))
+      delegationTypeModel = app.get(getModelToken(DelegationTypeModel))
+
+      await createDelegationProvidersAndTypes(
+        delegationProviderModel,
+        delegationTypeModel,
+      )
     })
 
     afterAll(async () => {
@@ -414,3 +474,29 @@ describe('DelegationIndexController', () => {
     })
   })
 })
+
+async function createDelegationProvidersAndTypes(
+  delegationProviderModel: typeof DelegationProviderModel,
+  delegationTypeModel: typeof DelegationTypeModel,
+) {
+  for (const { provider, type } of DELEGATION_PROVIDERS) {
+    const [providerInstance] = await delegationProviderModel.findOrCreate({
+      where: { id: provider },
+      defaults: {
+        id: provider,
+        name: type,
+        description: 'Testing',
+      },
+    })
+
+    await delegationTypeModel.findOrCreate({
+      where: { id: type },
+      defaults: {
+        id: type,
+        name: type,
+        description: 'Testing',
+        providerId: providerInstance.id,
+      },
+    })
+  }
+}

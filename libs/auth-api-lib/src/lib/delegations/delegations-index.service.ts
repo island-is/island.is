@@ -27,6 +27,7 @@ import {
 import { DelegationDTO } from './dto/delegation.dto'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
 import { DelegationIndex } from './models/delegation-index.model'
+import { DelegationTypeModel } from './models/delegation-type.model'
 import { DelegationDirection } from './types/delegationDirection'
 import {
   DelegationRecordType,
@@ -34,7 +35,6 @@ import {
 } from './types/delegationRecord'
 import {
   delegationProviderTypeMap,
-  validateDelegationTypeAndProvider,
   validateToAndFromNationalId,
 } from './utils/delegations'
 
@@ -89,25 +89,6 @@ const getTimeUntilEighteen = (nationalId: string) => {
   return timeUntilEighteen > 0 ? new Date(timeUntilEighteen) : null
 }
 
-const validateCrudParams = (delegation: DelegationRecordInputDTO) => {
-  if (!validateDelegationTypeAndProvider(delegation)) {
-    throw new BadRequestException(
-      'Invalid delegation type and provider combination',
-    )
-  }
-
-  if (!validateToAndFromNationalId(delegation)) {
-    throw new BadRequestException('Invalid national ids')
-  }
-
-  if (
-    delegation.validTo &&
-    new Date(delegation.validTo).getTime() <= new Date().getTime()
-  ) {
-    throw new BadRequestException('Invalid validTo')
-  }
-}
-
 const hasAllSameScopes = (
   a: string[] | undefined,
   b: string[] | undefined,
@@ -150,6 +131,8 @@ export class DelegationsIndexService {
     private apiScopeModel: typeof ApiScope,
     @InjectModel(DelegationIndex)
     private delegationIndexModel: typeof DelegationIndex,
+    @InjectModel(DelegationTypeModel)
+    private delegationTypeModel: typeof DelegationTypeModel,
     @InjectModel(DelegationIndexMeta)
     private delegationIndexMetaModel: typeof DelegationIndexMeta,
     private delegationsIncomingCustomService: DelegationsIncomingCustomService,
@@ -279,7 +262,7 @@ export class DelegationsIndexService {
 
   /* Add item to index */
   async createOrUpdateDelegationRecord(delegation: DelegationRecordInputDTO) {
-    validateCrudParams(delegation)
+    await this.validateCrudParams(delegation)
 
     const [updatedDelegation] = await this.delegationIndexModel.upsert(
       delegation,
@@ -290,7 +273,7 @@ export class DelegationsIndexService {
 
   /* Delete record from index */
   async removeDelegationRecord(delegation: DelegationRecordInputDTO) {
-    validateCrudParams(delegation)
+    await this.validateCrudParams(delegation)
 
     await this.delegationIndexModel.destroy({
       where: {
@@ -627,5 +610,48 @@ export class DelegationsIndexService {
         },
       })
       .then((d) => d.map((d) => d.toDTO()))
+  }
+
+  private async validateDelegationTypeAndProvider(
+    delegation: DelegationRecordInputDTO,
+  ) {
+    const { type, provider } = delegation
+
+    const validTypes = await this.delegationTypeModel
+      .findAll({
+        where: {
+          provider,
+        },
+      })
+      .then((d) => d.map((d) => d.name))
+
+    if (!validTypes) {
+      return false
+    }
+
+    return validTypes.includes(type)
+  }
+
+  private async validateCrudParams(delegation: DelegationRecordInputDTO) {
+    const isValidDelegationType = await this.validateDelegationTypeAndProvider(
+      delegation,
+    )
+
+    if (!isValidDelegationType) {
+      throw new BadRequestException(
+        'Invalid delegation type and provider combination',
+      )
+    }
+
+    if (!validateToAndFromNationalId(delegation)) {
+      throw new BadRequestException('Invalid national ids')
+    }
+
+    if (
+      delegation.validTo &&
+      new Date(delegation.validTo).getTime() <= new Date().getTime()
+    ) {
+      throw new BadRequestException('Invalid validTo')
+    }
   }
 }
