@@ -79,6 +79,7 @@ const equityAndLiabilities = z.object({
 const asset = z.object({
   currentAssets: requiredNonNegativeString,
   fixedAssetsTotal: requiredNonNegativeString,
+  total: requiredString,
 })
 
 const equity = z.object({

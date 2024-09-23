@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { S3 } from 'aws-sdk'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
@@ -33,12 +34,15 @@ export const getCurrentUserType = (
   answers: Application['answers'],
   externalData: Application['externalData'],
 ) => {
-  const fakeUserType: any = getValueViaPath(answers, 'fakeData.options')
+  const fakeUserType = getValueViaPath(answers, 'fakeData.options') as
+    | number
+    | undefined
 
-  const currentUserType: any = getValueViaPath(
+  const currentUserType = getValueViaPath(
     externalData,
     'getUserType.data.value',
-  )
+  ) as number | undefined
+
   return fakeUserType ?? currentUserType
 }
 
@@ -62,7 +66,7 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
     ) as Array<AttachmentData>
 
     if (!attachments || attachments.length === 0) {
-      return Promise.reject({})
+      throw new Error('No attachments found in application')
     }
 
     const attachmentKey = attachments[0].key
@@ -74,7 +78,7 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
     )[attachmentKey]
 
     if (!fileName) {
-      return Promise.reject({})
+      throw new Error('Attachment file name not found')
     }
 
     const { bucket, key } = AmazonS3Uri(fileName)
@@ -87,6 +91,7 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
       const fileContent = file.Body as Buffer
       return fileContent?.toString('base64') || ''
     } catch (error) {
+      this.logger.error('Error retrieving attachment from S3', error)
       throw new Error('Villa kom upp við að senda umsókn')
     }
   }
@@ -107,75 +112,94 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
       throw new Error('Enginn umboðsmaður fannst')
     }
 
-    const answers = application.answers
-    const externalData = application.externalData
-    const currentUserType = getCurrentUserType(answers, externalData)
+    this.validateUserType(application)
 
-    if (currentUserType !== PARTY_USER_TYPE) {
-      throw new Error(`Application submission failed`)
+    const values = this.prepareValues(application)
+    const year = this.getOperatingYear(application)
+    const fileName = await this.getAttachment(application)
+    const client = { nationalId }
+    const contacts = this.prepareContacts(application, actor)
+    const digitalSignee = this.prepareDigitalSignee(application)
+
+    try {
+      const result =
+        await this.financialStatementClientService.postFinancialStatementForPoliticalParty(
+          client,
+          contacts,
+          digitalSignee,
+          year,
+          '',
+          values,
+          fileName,
+        )
+
+      if (!result) {
+        throw new Error('Application submission failed')
+      }
+
+      return { success: true }
+    } catch (error) {
+      this.logger.error('Error submitting application', error)
+      return {
+        success: false,
+        message: error.message,
+      }
+      // throw new Error('Application submission failed')
     }
+  }
 
-    const values: PoliticalPartyFinancialStatementValues =
-      mapValuesToPartyTypes(answers)
-    const year = getValueViaPath(
-      answers,
+  private prepareValues(
+    application: Application,
+  ): PoliticalPartyFinancialStatementValues {
+    return mapValuesToPartyTypes(application.answers)
+  }
+
+  private getOperatingYear(application: Application): string {
+    return getValueViaPath(
+      application.answers,
       'conditionalAbout.operatingYear',
     ) as string
+  }
 
+  private validateUserType(application: Application) {
+    const currentUserType = getCurrentUserType(
+      application.answers,
+      application.externalData,
+    )
+    if (currentUserType !== PARTY_USER_TYPE) {
+      throw new Error('Invalid user type for application submission')
+    }
+  }
+
+  private prepareContacts(
+    application: Application,
+    actor: { nationalId: string },
+  ): Array<Contact> {
     const actorsName = getValueViaPath(
-      answers,
+      application.answers,
       'about.powerOfAttorneyName',
     ) as string
-
-    const clientPhone = getValueViaPath(answers, 'about.phoneNumber') as string
-
-    const clientEmail = getValueViaPath(answers, 'about.email') as string
-
-    const fileName = await this.getAttachment(application)
-
-    const client = { nationalId }
-
-    const contacts: Array<Contact> = [
+    return [
       {
         nationalId: actor.nationalId,
         name: actorsName,
         contactType: ContactType.Actor,
       },
     ]
+  }
 
-    const digitalSignee: DigitalSignee = {
+  private prepareDigitalSignee(application: Application): DigitalSignee {
+    const clientPhone = getValueViaPath(
+      application.answers,
+      'about.phoneNumber',
+    ) as string
+    const clientEmail = getValueViaPath(
+      application.answers,
+      'about.email',
+    ) as string
+    return {
       email: clientEmail,
       phone: clientPhone,
     }
-
-    const result: DataResponse = await this.financialStatementClientService
-      .postFinancialStatementForPoliticalParty(
-        client,
-        contacts,
-        digitalSignee,
-        year,
-        '',
-        values,
-        fileName,
-      )
-      .then((data) => {
-        if (data === true) {
-          return { success: true }
-        } else {
-          return { success: false }
-        }
-      })
-      .catch((e) => {
-        return {
-          success: false,
-          message: e.message,
-        }
-      })
-
-    if (!result.success) {
-      throw new Error('Application submission failed')
-    }
-
-    return { success: result.success }
   }
 }
