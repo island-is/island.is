@@ -17,7 +17,6 @@ import {
   m,
   TableGrid,
   formatDate,
-  ErrorScreen,
   ExcludesFalse,
   FootNote,
   SAMGONGUSTOFA_SLUG,
@@ -31,6 +30,7 @@ import {
   useGetVehiclesSearchLazyQuery,
 } from './Lookup.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import LookupOperator from '../../components/LookupOperator'
 
 const Lookup = () => {
   useNamespaces('sp.vehicles')
@@ -78,9 +78,12 @@ const Lookup = () => {
     mass,
     massLaden,
     vehicleStatus,
-    co,
     co2Wltp,
     weightedco2Wltp,
+    engine,
+    operatorNames,
+    allOperatorsAreAnonymous,
+    someOperatorsAreAnonymous,
   } = vehicleSearch.data?.vehiclesSearch || {}
 
   const noInfo =
@@ -114,6 +117,7 @@ const Lookup = () => {
 
   const limit = searchLimitData?.data?.vehiclesSearchLimit || 0
   const limitExceeded = limit === 0
+  const hasOperatorNames = operatorNames && operatorNames?.length > 0
 
   return (
     <>
@@ -320,6 +324,26 @@ const Lookup = () => {
                   title: formatMessage(messages.weightedWLTPCo2),
                   value: String(weightedco2Wltp),
                 },
+                engine && {
+                  title: formatMessage(messages.engineType),
+                  value: engine,
+                },
+                hasOperatorNames ||
+                allOperatorsAreAnonymous ||
+                (someOperatorsAreAnonymous && hasOperatorNames)
+                  ? {
+                      title: formatMessage(messages.operator),
+                      value: (
+                        <LookupOperator
+                          names={operatorNames?.length ? operatorNames : []}
+                          allOperatorsAreAnonymous={!!allOperatorsAreAnonymous}
+                          someOperatorsAreAnonymous={
+                            !!someOperatorsAreAnonymous
+                          }
+                        />
+                      ),
+                    }
+                  : undefined,
               ].filter(Boolean as unknown as ExcludesFalse),
               2,
             )}

@@ -363,6 +363,14 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:name',
     defaultMessage: 'Nafn',
   },
+  anonymous: {
+    id: 'sp.vehicles:anonymous',
+    defaultMessage: 'Nafnlaus',
+  },
+  anonymousPartial: {
+    id: 'sp.vehicles:anonymous-partial',
+    defaultMessage: 'Hluti umráðamanna er nafnlaus',
+  },
   nationalId: {
     id: 'sp.vehicles:national-id',
     defaultMessage: 'Kennitala',

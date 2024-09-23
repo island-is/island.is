@@ -27,6 +27,7 @@ import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { isDefined } from '@island.is/shared/utils'
 import type { Logger } from '@island.is/logging'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
 import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
@@ -241,13 +242,22 @@ export class VehiclesService {
   async getVehiclesSearch(
     auth: User,
     search: string,
-  ): Promise<VehicleSearchDto | null> {
+  ): Promise<(VehicleSearchDto & { operatorNames?: string[] }) | null> {
     const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
       search,
     })
     const { data } = res
-    if (!data) return null
-    return data[0]
+    if (!data || !data.length) return null
+
+    const operatorNames = data[0].operators
+      ?.map((operator) => operator.fullname)
+      .filter(isDefined)
+
+    return {
+      ...data[0],
+      operatorNames:
+        operatorNames && operatorNames.length ? operatorNames : undefined,
+    }
   }
 
   async getVehicleMileage(

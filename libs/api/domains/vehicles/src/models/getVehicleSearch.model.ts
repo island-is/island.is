@@ -76,4 +76,19 @@ export class VehiclesVehicleSearch {
 
   @Field(() => Boolean, { nullable: true })
   canRegisterMileage?: boolean | null
+
+  @Field({ nullable: true })
+  engine?: string
+
+  @Field(() => [String], {
+    nullable: true,
+    description: 'Basic operator array, names only.',
+  })
+  operatorNames?: string[]
+
+  @Field({ nullable: true })
+  allOperatorsAreAnonymous?: boolean
+
+  @Field({ nullable: true })
+  someOperatorsAreAnonymous?: boolean
 }

@@ -4,7 +4,7 @@ import { tableStyles } from '../../utils/utils'
 
 interface TableItem {
   title: string
-  value: string
+  value: string | React.ReactNode
   detail?: string
 }
 
