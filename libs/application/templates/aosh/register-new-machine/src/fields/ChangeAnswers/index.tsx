@@ -26,7 +26,13 @@ export const ChangeAnswers: FC<
     `${sectionName}.${person}`,
   ) as PersonInformation
 
-  if (!personInformation) {
+  if (
+    !personInformation ||
+    !personInformation.address ||
+    !personInformation.name ||
+    !personInformation.nationalId ||
+    !personInformation.postCode
+  ) {
     setValue(`${sectionName}.${questionName}`, NO)
   }
 

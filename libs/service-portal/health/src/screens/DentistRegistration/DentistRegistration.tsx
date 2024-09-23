@@ -13,7 +13,7 @@ import {
   useGetPaginatedDentistsQuery,
   useRegisterDentistMutation,
 } from './DentistRegistration.generated'
-import { Modal, m } from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { messages } from '../../lib/messages'
@@ -22,6 +22,7 @@ import { useDebounce } from 'react-use'
 import { useNavigate } from 'react-router-dom'
 import { HealthPaths } from '../../lib/paths'
 import { RightsPortalDentist } from '@island.is/api/schema'
+import { RegisterModal } from '../../components/RegisterModal'
 import * as styles from './DentistRegistration.css'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -39,7 +40,6 @@ export const DentistRegistration = () => {
   const [activeSearch, setActiveSearch] = useState('')
   const [selectedDentist, setSelectedDentist] =
     useState<SelectedDentist | null>(null)
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [hoverId, setHoverId] = useState(0)
   const [errorTransfering, setErrorTransfering] = useState(false)
   const errorBoxRef = useRef<HTMLDivElement>(null)
@@ -158,6 +158,30 @@ export const DentistRegistration = () => {
           backgroundColor="blue"
         />
       </Box>
+
+      <RegisterModal
+        onClose={() => setSelectedDentist(null)}
+        onAccept={() => {
+          setErrorTransfering(false)
+          if (selectedDentist && selectedDentist.id) {
+            registerDentist({
+              variables: {
+                input: {
+                  id: `${selectedDentist.id}`,
+                },
+              },
+            })
+          }
+        }}
+        id={'dentistRegisterModal'}
+        title={`${formatMessage(messages.dentistModalTitle)} ${
+          selectedDentist?.name
+        }`}
+        description=""
+        isVisible={!!selectedDentist}
+        buttonLoading={loadingTranser}
+      />
+
       {loading ? (
         <SkeletonLoader repeat={3} space={2} height={40} />
       ) : (
@@ -195,69 +219,19 @@ export const DentistRegistration = () => {
                               visible: dentist.id === hoverId,
                             })}
                           >
-                            <Modal
-                              id={'dentistRegisterModal'}
-                              initialVisibility={false}
-                              iconSrc="./assets/images/coffee.svg"
-                              iconAlt="coffee"
-                              toggleClose={!modalVisible}
-                              onCloseModal={() => {
-                                setSelectedDentist(null)
+                            <Button
+                              size="small"
+                              variant="text"
+                              icon="pencil"
+                              onClick={() => {
+                                setSelectedDentist({
+                                  id: dentist.id,
+                                  name: dentist.name,
+                                })
                               }}
-                              title={`${formatMessage(
-                                messages.dentistModalTitle,
-                              )} ${selectedDentist?.name}`}
-                              buttons={[
-                                {
-                                  id: 'RegisterModalAccept',
-                                  type: 'primary' as const,
-                                  text: formatMessage(
-                                    messages.healthRegisterModalAccept,
-                                  ),
-                                  onClick: () => {
-                                    setErrorTransfering(false)
-                                    setModalVisible(false)
-                                    if (selectedDentist && selectedDentist.id) {
-                                      registerDentist({
-                                        variables: {
-                                          input: {
-                                            id: `${selectedDentist.id}`,
-                                          },
-                                        },
-                                      })
-                                    }
-                                  },
-                                },
-                                {
-                                  id: 'RegisterModalDecline',
-                                  type: 'ghost' as const,
-                                  text: formatMessage(
-                                    messages.healthRegisterModalDecline,
-                                  ),
-                                  onClick: () => {
-                                    setModalVisible(false)
-                                  },
-                                },
-                              ]}
-                              disclosure={
-                                <Button
-                                  size="small"
-                                  variant="text"
-                                  icon="pencil"
-                                  onClick={() => {
-                                    setModalVisible(true)
-                                    setSelectedDentist({
-                                      id: dentist.id,
-                                      name: dentist.name,
-                                    })
-                                  }}
-                                >
-                                  {formatMessage(
-                                    messages.healthRegistrationSave,
-                                  )}
-                                </Button>
-                              }
-                            />
+                            >
+                              {formatMessage(messages.healthRegistrationSave)}
+                            </Button>
                           </Box>
                         ) : undefined}
                       </T.Data>

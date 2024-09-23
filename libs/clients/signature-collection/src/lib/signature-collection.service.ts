@@ -13,9 +13,16 @@ import {
   CanCreateInput,
   CanSignInput,
   CreateParliamentaryCandidacyInput,
+  AddListsInput,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
-import { List, SignedList, mapList, mapListBase } from './types/list.dto'
+import {
+  List,
+  SignedList,
+  getSlug,
+  mapList,
+  mapListBase,
+} from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { Signee } from './types/user.dto'
 import { Success, mapReasons } from './types/success.dto'
@@ -179,7 +186,68 @@ export class SignatureCollectionClientService {
         })),
       },
     })
-    return { slug: 'frambodWowee' }
+    return {
+      slug: getSlug(
+        candidacy.id ?? '',
+        candidacy.medmaelasofnun?.kosningTegund ?? '',
+      ),
+    }
+  }
+
+  async createParliamentaryLists(
+    { collectionId, candidateId, areas }: AddListsInput,
+    auth: User,
+  ): Promise<Success> {
+    const {
+      id,
+      isActive,
+      isPresidential,
+      areas: collectionAreas,
+    } = await this.currentCollection()
+
+    // check if collectionId is current collection and current collection is open
+    if (collectionId !== id.toString() || !isActive) {
+      throw new Error('Collection is not open')
+    }
+    // check if user is already owner of lists
+
+    const { canCreate, canCreateInfo, name } = await this.getSignee(auth)
+    if (!canCreate) {
+      // allow parliamentary owners to add more areas to their collection
+      if (
+        !isPresidential &&
+        !(
+          canCreateInfo?.length === 1 &&
+          canCreateInfo[0] === ReasonKey.AlreadyOwner
+        )
+      ) {
+        return { success: false, reasons: canCreateInfo }
+      }
+    }
+
+    const filteredAreas = areas
+      ? collectionAreas.filter((area) =>
+          areas.flatMap((a) => a.areaId).includes(area.id),
+        )
+      : collectionAreas
+
+    const lists = await this.getApiWithAuth(
+      this.listsApi,
+      auth,
+    ).medmaelalistarPost({
+      medmaelalistarRequestDTO: {
+        frambodID: parseInt(candidateId),
+        medmaelalistar: filteredAreas.map((area) => ({
+          svaediID: parseInt(area.id),
+          listiNafn: `${name} - ${area.name}`,
+        })),
+      },
+    })
+
+    if (filteredAreas.length !== lists.length) {
+      throw new Error('Not all lists created')
+    }
+    return { success: true }
   }
 
   async signList(listId: string, auth: User): Promise<Signature> {
@@ -198,6 +266,34 @@ export class SignatureCollectionClientService {
     })
 
     return mapSignature(newSignature)
+  }
+
+  async candidacyUploadPaperSignature(
+    auth: User,
+    {
+      listId,
+      nationalId,
+      pageNumber,
+    }: { listId: string; nationalId: string; pageNumber: number },
+  ): Promise<Success> {
+    const newSignature = await this.getApiWithAuth(
+      this.listsApi,
+      auth,
+    ).medmaelalistarIDMedmaeliBulkPost({
+      medmaeliBulkRequestDTO: {
+        medmaeli: [
+          {
+            kennitala: nationalId,
+            bladsida: pageNumber,
+          },
+        ],
+      },
+      iD: parseInt(listId),
+    })
+
+    return {
+      success: !!newSignature.medmaeliKenn?.includes(nationalId),
+    }
   }
 
   async unsignList(listId: string, auth: User): Promise<Success> {
@@ -250,14 +346,12 @@ export class SignatureCollectionClientService {
       return { success: false, reasons: [ReasonKey.NoListToRemove] }
     }
 
-    listsToRemove.map(
-      async (list) =>
-        await this.getApiWithAuth(
-          this.listsApi,
-          auth,
-        ).medmaelalistarIDRemoveMedmaelalistiUserPost({
+    await Promise.all(
+      listsToRemove.map((list) =>
+        this.getApiWithAuth(this.listsApi, auth).medmaelalistarIDDelete({
           iD: parseInt(list.id),
         }),
+      ),
     )
     return { success: true }
   }

@@ -298,6 +298,9 @@ export class NationalRegistryService {
     const response = await this.personApi.getIndividual(nationalId)
 
     if (!response) {
+      this.logger.info('getUser individual not found', {
+        category: 'ads-backend',
+      })
       return null
     }
 
