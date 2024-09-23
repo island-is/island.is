@@ -1954,7 +1954,7 @@ search-indexer-service:
   env:
     AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.dev01.devland.is'
     APPLICATION_URL: 'http://search-indexer-service'
-    CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '20'
+    CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'preview.contentful.com'
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
@@ -2036,7 +2036,7 @@ search-indexer-service:
     env:
       AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.dev01.devland.is'
       APPLICATION_URL: 'http://search-indexer-service'
-      CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '20'
+      CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
       CONTENTFUL_ENVIRONMENT: 'master'
       CONTENTFUL_HOST: 'preview.contentful.com'
       CONTENTFUL_SPACE: '8k0h54kbe6bj'

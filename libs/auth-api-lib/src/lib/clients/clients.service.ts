@@ -55,9 +55,7 @@ export class ClientsService {
     private readonly clientDelegationType: typeof ClientDelegationType,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
-
     private readonly clientsTranslationService: ClientsTranslationService,
-
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -606,10 +604,12 @@ export class ClientsService {
     ) {
       await this.clientModel.update(
         {
-          supportsCustomDelegation,
-          supportsLegalGuardians,
-          supportsProcuringHolders,
-          supportsPersonalRepresentatives,
+          ...(supportsLegalGuardians ? { supportsLegalGuardians } : {}),
+          ...(supportsPersonalRepresentatives
+            ? { supportsPersonalRepresentatives }
+            : {}),
+          ...(supportsProcuringHolders ? { supportsProcuringHolders } : {}),
+          ...(supportsCustomDelegation ? { supportsCustomDelegation } : {}),
         },
         {
           ...options,
@@ -618,6 +618,10 @@ export class ClientsService {
           },
         },
       )
+    }
+
+    if (supportsCustomDelegation) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
     }
 
     return Promise.all(
@@ -685,6 +689,10 @@ export class ClientsService {
           },
         },
       )
+    }
+
+    if (delegationTypes.includes(AuthDelegationType.Custom)) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
     }
 
     return Promise.all(
