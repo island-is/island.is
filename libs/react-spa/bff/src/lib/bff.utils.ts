@@ -1,19 +1,12 @@
 /**
- * Creates a function that can generate a BFF URLs based on the environment.
+ * Creates a function that can generate a BFF URLs.
  * @usage
  * const bffBaseUrl = createBffUrlGenerator('/stjornbord)
  * const userUrl = bffBaseUrl('/user') // http://localhost:3010/stjornbord/bff/user
  */
 export const createBffUrlGenerator = (basePath: string) => {
   const sanitizedBasePath = sanitizePath(basePath)
-  const origin =
-    process.env.NODE_ENV === 'development'
-      ? // When developing against the BFF locally, use localhost
-        'http://localhost:3010'
-      : // Use current window origin for production
-        sanitizePath(window.location.origin)
-
-  const baseUrl = `${origin}/${sanitizedBasePath}/bff`
+  const baseUrl = `${window.location.origin}/${sanitizedBasePath}/bff`
 
   return (relativePath = '') => `${baseUrl}${relativePath}`
 }

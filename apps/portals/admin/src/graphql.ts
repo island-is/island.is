@@ -7,15 +7,9 @@ import {
 } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
-import { createBffUrlGenerator } from '@island.is/react-spa/bff'
-import { AdminPortalPaths } from './lib/paths'
-
-const bffUrlGenerator = createBffUrlGenerator(AdminPortalPaths.Base)
-
-const uri = bffUrlGenerator('/api/graphql')
 
 const httpLink = new HttpLink({
-  uri: ({ operationName }) => `${uri}?op=${operationName}`,
+  uri: ({ operationName }) => `/stjornbord/bff/api/graphql?op=${operationName}`,
   fetch,
   credentials: 'include',
 })
