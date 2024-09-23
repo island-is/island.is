@@ -458,44 +458,46 @@ const Indictment = () => {
             />
           </BlueBox>
         </Box>
-        <Box marginBottom={6}>
-          <SectionHeading title={formatMessage(strings.civilDemandsTitle)} />
-          <BlueBox>
-            <Input
-              name="civilDemands"
-              label={formatMessage(strings.civilDemandsLabel)}
-              placeholder={formatMessage(strings.civilDemandsPlaceholder)}
-              value={workingCase.civilDemands ?? ''}
-              errorMessage={civilDemandsErrorMessage}
-              hasError={civilDemandsErrorMessage !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'civilDemands',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  civilDemandsErrorMessage,
-                  setCivilDemandsErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'civilDemands',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCivilDemandsErrorMessage,
-                )
-              }
-              textarea
-              autoComplete="off"
-              required
-              rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
-            />
-          </BlueBox>
-        </Box>
+        {workingCase.hasCivilClaims && (
+          <Box marginBottom={6}>
+            <SectionHeading title={formatMessage(strings.civilDemandsTitle)} />
+            <BlueBox>
+              <Input
+                name="civilDemands"
+                label={formatMessage(strings.civilDemandsLabel)}
+                placeholder={formatMessage(strings.civilDemandsPlaceholder)}
+                value={workingCase.civilDemands ?? ''}
+                errorMessage={civilDemandsErrorMessage}
+                hasError={civilDemandsErrorMessage !== ''}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'civilDemands',
+                    event.target.value,
+                    ['empty'],
+                    setWorkingCase,
+                    civilDemandsErrorMessage,
+                    setCivilDemandsErrorMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'civilDemands',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setCivilDemandsErrorMessage,
+                  )
+                }
+                textarea
+                autoComplete="off"
+                required
+                rows={7}
+                autoExpand={{ on: true, maxHeight: 300 }}
+              />
+            </BlueBox>
+          </Box>
+        )}
         <Box marginBottom={10}>
           <PdfButton
             caseId={workingCase.id}
