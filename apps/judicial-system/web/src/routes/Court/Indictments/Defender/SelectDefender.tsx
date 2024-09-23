@@ -6,9 +6,9 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
-  InputAdvocate,
   DefenderNotFound,
   FormContext,
+  InputAdvocate,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Defendant,

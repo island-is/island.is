@@ -15,10 +15,10 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useCase } from '../../utils/hooks'
+import InputAdvocate from '../Inputs/InputAdvocate'
 import RequiredStar from '../RequiredStar/RequiredStar'
 import { UserContext } from '../UserProvider/UserProvider'
 import { BlueBox, SectionHeading } from '..'
-import InputAdvocate from '../Inputs/InputAdvocate'
 import DefenderNotFound from './DefenderNotFound'
 import { defenderInfo } from './DefenderInfo.strings'
 
