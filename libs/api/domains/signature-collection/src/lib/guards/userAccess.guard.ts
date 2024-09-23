@@ -1,70 +1,94 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { BYPASS_AUTH_KEY, getRequest } from '@island.is/auth-nest-tools'
+import { BYPASS_AUTH_KEY, getRequest, User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionService } from '../signatureCollection.service'
-import { UserDelegationContext } from './delegationGuards.guard'
+import { MetadataAbstractor } from '../utils'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { isPerson } from 'kennitala'
+import { ALLOW_DELEGATION_KEY, IS_OWNER_KEY } from './constants'
+
+enum UserDelegationContext {
+  Person = 'Person',
+  PersonDelegatedToPerson = 'PersonDelegatedToPerson',
+  PersonDelegatedToCompany = 'PersonDelegatedToCompany',
+  ProcurationHolder = 'ProcurationHolder',
+}
 
 @Injectable()
-export class IsOwnerGuard implements CanActivate {
+export class UserAccessGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private readonly signatureCollectionService: SignatureCollectionService,
   ) {}
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const bypassAuth = this.reflector.getAllAndOverride<boolean>(
-      BYPASS_AUTH_KEY,
-      [context.getHandler(), context.getClass()],
-    )
 
-    // if the bypass auth exists and is truthy we bypass auth
+  private determineUserDelegationContext(
+    user: Express.User & User,
+  ): UserDelegationContext {
+    // If actor found on user, then user is delegated
+    if (user.actor?.nationalId) {
+      // If delegation is from person to person
+      if (isPerson(user.nationalId)) {
+        return UserDelegationContext.PersonDelegatedToPerson
+      } else {
+        // Determine whether it's a procuration vs delegation to a company
+        const hasProcuration = user.delegationType?.some(
+          (delegation) => delegation === AuthDelegationType.ProcurationHolder,
+        )
+
+        return hasProcuration
+          ? UserDelegationContext.ProcurationHolder
+          : UserDelegationContext.PersonDelegatedToCompany
+      }
+    }
+
+    return UserDelegationContext.Person
+  }
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const m = new MetadataAbstractor(this.reflector, context)
+    const isOwnerRestriction = m.getMetadataIfExists<boolean>(IS_OWNER_KEY)
+    const bypassAuth = m.getMetadataIfExists<boolean>(BYPASS_AUTH_KEY)
+    const allowDelegation = m.getMetadataIfExists<boolean>(ALLOW_DELEGATION_KEY)
+
     if (bypassAuth) {
       return true
     }
+
     const request = getRequest(context)
-    const isOwnerRestriction = this.reflector.getAllAndOverride<boolean>(
-      'is-owner',
-      [context.getHandler(), context.getClass()],
-    )
-
-    // IsOwner decorator not used
-    if (!isOwnerRestriction) {
-      return true
-    }
-
-    const isDelegationRestrictions = this.reflector.getAllAndOverride<
-      UserDelegationContext[] | undefined
-    >('delegation-requirement', [context.getHandler(), context.getClass()])
-
-    const allowsDelegationToOwner = isDelegationRestrictions?.some(
-      (t) =>
-        t === UserDelegationContext.PersonDelegatedToPerson ||
-        t === UserDelegationContext.PersonDelegatedToCompany,
-    )
-
     const user = request.user
     if (!user) {
       return false
     }
-    const isDelegatedUser = !!user?.actor?.nationalId
+    const delegationContext = this.determineUserDelegationContext(user)
+    const isDelegatedUser = [
+      UserDelegationContext.PersonDelegatedToCompany,
+      UserDelegationContext.PersonDelegatedToPerson,
+    ].includes(delegationContext)
+
+    if (isDelegatedUser && !allowDelegation) {
+      return false
+    }
+
     // IsOwner needs signee
     const signee = await this.signatureCollectionService.signee(user)
     request.body = { ...request.body, signee }
 
     const { candidate } = signee
 
-    if (signee.isOwner && candidate) {
-      // Check if user is an actor for owner and if so check if registered collector, if not actor will be added as collector
-      if (isDelegatedUser && allowsDelegationToOwner) {
-        const isCollector = await this.signatureCollectionService.isCollector(
-          candidate.id,
-          user,
-        )
-        return isCollector
+    if (isOwnerRestriction) {
+      if (signee.isOwner && candidate) {
+        // Check if user is an actor for owner and if so check if registered collector, if not actor will be added as collector
+        if (isDelegatedUser && allowDelegation) {
+          const isCollector = await this.signatureCollectionService.isCollector(
+            candidate.id,
+            user,
+          )
+          return isCollector
+        }
+      } else if (!signee.isOwner) {
+        return false
       }
-      return true
     }
-
-    // if the user is not owner we return false
-    return false
+    return true
   }
 }

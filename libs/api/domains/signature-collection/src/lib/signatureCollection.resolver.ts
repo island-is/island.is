@@ -10,35 +10,28 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import { SignatureCollection } from './models/collection.model'
+import { Audit } from '@island.is/nest/audit'
+import { UserAccessGuard } from './guards/userAccess.guard'
+import { ApiScope } from '@island.is/auth/scopes'
 import {
+  SignatureCollectionAddListsInput,
+  SignatureCollectionCancelListsInput,
+  SignatureCollectionCanSignInput,
+  SignatureCollectionIdInput,
+  SignatureCollectionListIdInput,
+  SignatureCollectionUploadPaperSignatureInput,
+} from './dto'
+import { AllowDelegation, CurrentSignee, IsOwner } from './decorators'
+import {
+  SignatureCollection,
   SignatureCollectionList,
   SignatureCollectionListBase,
+  SignatureCollectionSignature,
   SignatureCollectionSignedList,
-} from './models/signatureList.model'
-import { SignatureCollectionListIdInput } from './dto/listId.input'
-import { SignatureCollectionSignature } from './models/signature.model'
-import { SignatureCollectionSignee } from './models/signee.model'
-import { Audit } from '@island.is/nest/audit'
-import { IsOwnerGuard } from './guards/userAccess.guard'
-import { IsOwner } from './decorators/isOwner.decorator'
-import { CurrentSignee } from './decorators/signee.decorator'
-import { ApiScope } from '@island.is/auth/scopes'
-import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
-import { SignatureCollectionIdInput } from './dto/collectionId.input'
-import { SignatureCollectionCanSignInput } from './dto/canSign.input'
-import { SignatureCollectionAddListsInput } from './dto/addLists.input'
-import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
-import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
-import {
-  DelegationTypeGuard,
-  UserDelegationContext,
-} from './guards/delegationGuards.guard'
-import { DelegationRequirement } from './decorators/delegationType.decorator'
+  SignatureCollectionSignee,
+} from './models'
 
-// TODO: clean up imports by having an index file with shared exports
-
-@UseGuards(IdsUserGuard, ScopesGuard, IsOwnerGuard, DelegationTypeGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/signature-collection' })
 export class SignatureCollectionResolver {
@@ -69,8 +62,7 @@ export class SignatureCollectionResolver {
 
   @Scopes(ApiScope.signatureCollection)
   //@AccessRequirement(OwnerAccess.AllowActor)
-  @IsOwner()
-  @DelegationRequirement(UserDelegationContext.AllowAll)
+  @AllowDelegation()
   @Query(() => [SignatureCollectionList])
   @Audit()
   async signatureCollectionListsForOwner(
@@ -84,10 +76,6 @@ export class SignatureCollectionResolver {
   @Scopes(ApiScope.signatureCollection)
   //@AccesRequirement(UserAccess.RestrictActor)
   @IsOwner()
-  @DelegationRequirement(
-    UserDelegationContext.Person,
-    UserDelegationContext.ProcurationHolder,
-  )
   @Query(() => [SignatureCollectionListBase])
   @Audit()
   async signatureCollectionListsForUser(
@@ -100,8 +88,7 @@ export class SignatureCollectionResolver {
 
   @Scopes(ApiScope.signatureCollection)
   //@AccessRequirement(OwnerAccess.AllowActor)
-  @IsOwner()
-  @DelegationRequirement(UserDelegationContext.AllowAll)
+  @AllowDelegation()
   @Query(() => SignatureCollectionList)
   @Audit()
   async signatureCollectionList(
@@ -114,10 +101,6 @@ export class SignatureCollectionResolver {
   @Scopes(ApiScope.signatureCollection)
   //@AccessRequirement(UserAccess.RestrictActor)
   @IsOwner()
-  @DelegationRequirement(
-    UserDelegationContext.Person,
-    UserDelegationContext.ProcurationHolder,
-  )
   @Query(() => [SignatureCollectionSignedList], { nullable: true })
   @Audit()
   async signatureCollectionSignedList(
@@ -129,7 +112,7 @@ export class SignatureCollectionResolver {
   @Scopes(ApiScope.signatureCollection)
   //@AccessRequirement(OwnerAccess.AllowActor)
   @IsOwner()
-  @DelegationRequirement(UserDelegationContext.AllowAll)
+  @AllowDelegation()
   @Query(() => [SignatureCollectionSignature], { nullable: true })
   @Audit()
   async signatureCollectionSignatures(
@@ -142,11 +125,6 @@ export class SignatureCollectionResolver {
   @Scopes(ApiScope.signatureCollection)
   @Query(() => SignatureCollectionSignee)
   //@AccessRequirement(UserAccess.RestrictActor)
-  @IsOwner()
-  @DelegationRequirement(
-    UserDelegationContext.Person,
-    UserDelegationContext.ProcurationHolder,
-  )
   @Audit()
   async signatureCollectionSignee(
     @CurrentSignee() signee: SignatureCollectionSignee,
@@ -158,7 +136,7 @@ export class SignatureCollectionResolver {
   @Query(() => Boolean)
   //@AccessRequirement(OwnerAccess.AllowActor)
   @IsOwner()
-  @DelegationRequirement(UserDelegationContext.AllowAll)
+  @AllowDelegation()
   @Audit()
   async signatureCollectionCanSign(
     @Args('input') input: SignatureCollectionCanSignInput,
@@ -171,11 +149,6 @@ export class SignatureCollectionResolver {
 
   @Scopes(ApiScope.signatureCollection)
   //@AccessRequirement(UserAccess.RestrictActor)
-  @IsOwner()
-  @DelegationRequirement(
-    UserDelegationContext.Person,
-    UserDelegationContext.ProcurationHolder,
-  )
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionUnsign(
@@ -188,10 +161,6 @@ export class SignatureCollectionResolver {
   @Scopes(ApiScope.signatureCollection)
   //@AccessRequirement(OwnerAccess.RestrictActor)
   @IsOwner()
-  @DelegationRequirement(
-    UserDelegationContext.Person,
-    UserDelegationContext.ProcurationHolder,
-  )
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionCancel(
@@ -204,10 +173,6 @@ export class SignatureCollectionResolver {
   @Scopes(ApiScope.signatureCollection)
   //@AccessRequirement(OwnerAccess.RestrictActor)
   @IsOwner()
-  @DelegationRequirement(
-    UserDelegationContext.Person,
-    UserDelegationContext.ProcurationHolder,
-  )
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionAddAreas(
@@ -220,10 +185,6 @@ export class SignatureCollectionResolver {
   @Scopes(ApiScope.signatureCollection)
   //@AccessRequirement(OwnerAccess.RestrictActor)
   @IsOwner()
-  @DelegationRequirement(
-    UserDelegationContext.Person,
-    UserDelegationContext.ProcurationHolder,
-  )
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionUploadPaperSignature(
