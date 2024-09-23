@@ -34,13 +34,14 @@ export class CaseResponse {
     const subpoenaDateLog = res.dateLogs?.find(
       (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
     )
-    const subpoenaCreatedDate = subpoenaDateLog?.created.toString() ?? ''
+    const subpoenaCreatedDate = subpoenaDateLog?.created.toString() ?? '' //TODO: Change to created from subpoena db entry?
+    const subpoenas = defendant.subpoenas ?? []
 
     return {
       caseId: res.id,
       data: {
         caseNumber: `${t.caseNumber} ${res.courtCaseNumber}`,
-        acknowledged: false, // TODO: Connect to real data
+        acknowledged: subpoenas.length > 0 ? subpoenas[0].acknowledged : false,
         groups: [
           {
             label: t.defendant,
