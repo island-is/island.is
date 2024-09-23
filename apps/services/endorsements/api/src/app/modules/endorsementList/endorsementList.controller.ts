@@ -320,10 +320,7 @@ export class EndorsementListController {
     @Body() endorsementList: EndorsementListDto,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
-    return await this.endorsementListService.create({
-      ...endorsementList,
-      ownerNationalId: user.nationalId,
-    })
+    return await this.endorsementListService.create(endorsementList, user)
   }
 
   @ApiOperation({ summary: 'Fetches owner info from national registry' })

@@ -29,9 +29,9 @@ import csvStringify from 'csv-stringify/lib/sync'
 import { AwsService } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 
-interface CreateInput extends EndorsementListDto {
-  ownerNationalId: string
-}
+// interface CreateInput extends EndorsementListDto {
+//   ownerNationalId: string
+// }
 
 @Injectable()
 export class EndorsementListService {
@@ -47,6 +47,44 @@ export class EndorsementListService {
     private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
     private readonly awsService: AwsService,
   ) {}
+
+  async populateOwnerNamesForExistingLists() {
+    const lists = await this.endorsementListModel.findAll({
+      where: {
+        ownerName: '',
+      },
+    })
+
+    this.logger.info(
+      `Populating owner names for ${lists.length} existing lists`,
+    )
+    for (const list of lists) {
+      const ownerName = await this.getOwnerName(list.ownerNationalId)
+      if (ownerName) {
+        list.ownerName = ownerName
+        await list.save()
+      }
+    }
+  }
+
+  async getOwnerName(ownerNationalId: string): Promise<string> {
+    try {
+      const person = await this.nationalRegistryApiV3.getName(ownerNationalId)
+      console.log("person",person)
+      return person?.fulltNafn || ''
+    } catch (error) {
+      const message = `Error fetching owner name from NationalRegistryApi: ${error.message}`
+      this.logger.error(message)
+      throw new BadRequestException(message)
+    }
+  }
+
+  async onModuleInit() {
+    // spit out some counts of tables - basic data overview
+
+    // Populate owner names for existing lists if they are missing
+    await this.populateOwnerNamesForExistingLists()
+  }
 
   hasAdminScope(user: User): boolean {
     if (user?.scope) {
@@ -211,7 +249,7 @@ export class EndorsementListService {
     return await endorsementList.update({ ...endorsementList, ...newData })
   }
 
-  async create(list: CreateInput) {
+  async create(list: EndorsementListDto, user: User) {
     if (!list.openedDate || !list.closedDate) {
       this.logger.warn('Body missing openedDate or closedDate value.')
       throw new BadRequestException([
@@ -233,7 +271,13 @@ export class EndorsementListService {
       ])
     }
     this.logger.info(`Creating endorsement list: ${list.title}`)
-    const endorsementList = await this.endorsementListModel.create({ ...list })
+    // store user name with nationalId
+    const ownerName = await this.getOwnerName(user.nationalId)
+    const endorsementList = await this.endorsementListModel.create({
+      ...list,
+      ownerNationalId: user.nationalId,
+      ownerName
+    })
 
     if (process.env.NODE_ENV === 'production') {
       await this.emailCreated(endorsementList)
