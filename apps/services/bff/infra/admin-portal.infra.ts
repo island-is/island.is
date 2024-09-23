@@ -50,6 +50,7 @@ export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
       BFF_CLIENT_KEY_PATH: '/stjornbord',
       BFF_CALLBACKS_BASE_PATH: generateWebBaseUrls('/stjornbord/bff/callbacks'),
       BFF_CLIENT_BASE_URL: generateWebBaseUrls(),
+      BFF_LOGOUT_REDIRECT_URI: generateWebBaseUrls(),
       BFF_PROXY_API_ENDPOINT: generateWebBaseUrls('/api/graphql'),
       BFF_ALLOWED_EXTERNAL_API_URLS: {
         dev: json(['https://api.dev01.devland.is']),

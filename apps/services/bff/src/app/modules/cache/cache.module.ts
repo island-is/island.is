@@ -11,20 +11,14 @@ import { CacheService } from './cache.service'
 export class CacheModule {
   static register(): DynamicModule {
     const imports =
-      process.env.NODE_ENV === 'test' || process.env.INIT_SCHEMA === 'true'
+      process.env.NODE_ENV === 'test'
         ? [NestCacheModule.register()]
         : [
             NestCacheModule.registerAsync({
-              useFactory: ({
-                redis: { ssl, nodes },
-              }: ConfigType<typeof BffConfig>) => ({
-                store: redisInsStore(
-                  createRedisCluster({
-                    name: 'bff',
-                    ssl,
-                    nodes,
-                  }),
-                ),
+              useFactory: ({ redis }: ConfigType<typeof BffConfig>) => ({
+                store: redis
+                  ? redisInsStore(createRedisCluster(redis))
+                  : undefined,
               }),
               inject: [BffConfig.KEY],
             }),

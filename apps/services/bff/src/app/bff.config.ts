@@ -1,7 +1,7 @@
 import { defineConfig } from '@island.is/nest/config'
 
 import { z } from 'zod'
-import { environment } from '../environment'
+import { isProduction } from '../environment'
 import { removeTrailingSlash } from '../utils/removeTrailingSlash'
 
 export const idsSchema = z.strictObject({
@@ -12,11 +12,19 @@ export const idsSchema = z.strictObject({
 })
 
 const BffConfigSchema = z.object({
-  redis: z.object({
-    nodes: z.array(z.string()),
-    ssl: z.boolean(),
-  }),
+  redis: z
+    .object({
+      name: z.string(),
+      nodes: z.array(z.string()),
+      ssl: z.boolean(),
+    })
+    // Only required in production
+    .optional(),
   graphqlApiEndpont: z.string(),
+  /**
+   * The URL to redirect to after logging out
+   */
+  logoutRedirectUri: z.string(),
   /**
    * Bff client base URL
    */
@@ -48,25 +56,32 @@ export const BffConfig = defineConfig({
     const callbacksBaseRedirectPath = removeTrailingSlash(
       env.required('BFF_CALLBACKS_BASE_PATH'),
     )
+    // Redis nodes are only required in production
+    // In development, we can use a local Redis server or
+    // rely on the default in-memory cache provided by CacheModule
+    const redisNodes = env.optionalJSON('BFF_REDIS_URL_NODES')
 
     return {
       parSupportEnabled: env.optionalJSON('BFF_PAR_SUPPORT_ENABLED') ?? false,
       clientBaseUrl: env.required('BFF_CLIENT_BASE_URL'),
+      logoutRedirectUri: env.required('BFF_LOGOUT_REDIRECT_URI'),
       /**
        * Our main GraphQL API endpoint
        */
       graphqlApiEndpont: env.required('BFF_PROXY_API_ENDPOINT'),
-      redis: {
-        nodes: env.requiredJSON('REDIS_URL_NODE_01', [
-          'localhost:7000',
-          'localhost:7001',
-          'localhost:7002',
-          'localhost:7003',
-          'localhost:7004',
-          'localhost:7005',
-        ]),
-        ssl: environment.production,
-      },
+      redis: isProduction
+        ? {
+            name: env.required('BFF_REDIS_NAME'),
+            nodes: env.requiredJSON('BFF_REDIS_URL_NODES'),
+            ssl: true,
+          }
+        : redisNodes
+        ? {
+            name: env.optional('BFF_REDIS_NAME') ?? 'unnamed-bff',
+            nodes: redisNodes,
+            ssl: false,
+          }
+        : undefined,
       ids: {
         issuer: env.required('IDENTITY_SERVER_ISSUER_URL'),
         clientId: env.required('IDENTITY_SERVER_CLIENT_ID'),
