@@ -333,7 +333,15 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hsu':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'hsuHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/sSSuQeq3oIx9hOrKRvfzm/447c7e6811c3fa9e9d548ecd4b6d7985/vector-myndir-hsu.svg',
+          )}
+        />
+      ) : (
         <HeilbrigdisstofnunSudurlandsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -387,7 +395,9 @@ export const OrganizationHeader: React.FC<
     case 'landing_page':
       return null
     case 'fjarsysla-rikisins':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader {...defaultProps} />
+      ) : (
         <FjarsyslaRikisinsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -471,7 +481,9 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'samgongustofa':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader {...defaultProps} />
+      ) : (
         <TransportAuthorityHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -516,7 +528,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'rikissaksoknari':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={
+            isSubpage
+              ? styles.rikissaksoknariHeaderGridContainerSubpage
+              : styles.rikissaksoknariHeaderGridContainerWidth
+          }
+        />
+      ) : (
         <RikissaksoknariHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}

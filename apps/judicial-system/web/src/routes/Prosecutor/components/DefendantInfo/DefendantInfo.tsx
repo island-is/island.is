@@ -94,6 +94,7 @@ const DefendantInfo: FC<Props> = (props) => {
 
     if (personData && personData.items && personData.items.length > 0) {
       setAccusedAddressErrorMessage('')
+      setNationalIdNotFound(false)
       setIsGenderAndCitizenshipDisabled(false)
 
       onChange({
@@ -164,7 +165,7 @@ const DefendantInfo: FC<Props> = (props) => {
                 caseId: workingCase.id,
                 defendantId: defendant.id,
                 noNationalId: !defendant.noNationalId,
-                nationalId: undefined,
+                nationalId: null,
               },
               setWorkingCase,
             )
@@ -173,7 +174,7 @@ const DefendantInfo: FC<Props> = (props) => {
               caseId: workingCase.id,
               defendantId: defendant.id,
               noNationalId: !defendant.noNationalId,
-              nationalId: undefined,
+              nationalId: null,
             })
           }}
           filled
@@ -183,10 +184,16 @@ const DefendantInfo: FC<Props> = (props) => {
       </Box>
       <Box marginBottom={2}>
         <InputNationalId
-          isDateOfBirth={defendant.noNationalId ?? false}
-          value={defendant.nationalId ?? undefined}
-          disabled={nationalIdImmutable}
-          onChange={(value) => {
+          isDateOfBirth={Boolean(defendant.noNationalId)}
+          value={defendant.nationalId ?? ''}
+          onBlur={(value) =>
+            onChange({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              nationalId: value,
+            })
+          }
+          onChange={(value) =>
             updateDefendantState(
               {
                 caseId: workingCase.id,
@@ -195,14 +202,9 @@ const DefendantInfo: FC<Props> = (props) => {
               },
               setWorkingCase,
             )
-          }}
-          onBlur={(value) => {
-            onChange({
-              caseId: workingCase.id,
-              defendantId: defendant.id,
-              nationalId: value,
-            })
-          }}
+          }
+          disabled={nationalIdImmutable}
+          required={!defendant.noNationalId}
         />
         {defendant.nationalId?.length === 11 && nationalIdNotFound && (
           <Text color="red600" variant="eyebrow" marginTop={1}>
