@@ -50,8 +50,7 @@ export const BffConfig = defineConfig({
     )
 
     return {
-      parSupportEnabled:
-        env.optional('BFF_PAR_SUPPORT_ENABLED') === 'true' || false,
+      parSupportEnabled: env.optionalJSON('BFF_PAR_SUPPORT_ENABLED') ?? false,
       clientBaseUrl: env.required('BFF_CLIENT_BASE_URL'),
       /**
        * Our main GraphQL API endpoint
