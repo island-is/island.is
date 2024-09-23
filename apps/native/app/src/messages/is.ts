@@ -214,6 +214,7 @@ export const is = {
   'inbox.cardNoInboxDocuments':
     'Þegar þú færð sendan póst í pósthólfið þá birtist hann hér.',
   'inbox.urgent': 'Áríðandi',
+  'inbox.openDocument': 'Opna erindi',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Sía skjöl',

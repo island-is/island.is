@@ -133,6 +133,7 @@ const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
               onPress={() =>
                 navigateTo(`/inbox/${item.id}`, {
                   title: item.sender.name,
+                  isUrgent: item.isUrgent,
                 })
               }
             />

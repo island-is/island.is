@@ -214,6 +214,7 @@ export const en: TranslatedMessages = {
   'inbox.cardNoInboxDocuments':
     'When you receive mail in your mailbox, it will appear here.',
   'inbox.urgent': 'Urgent',
+  'inbox.openDocument': 'Open document',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',

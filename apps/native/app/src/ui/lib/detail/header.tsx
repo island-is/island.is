@@ -1,9 +1,10 @@
 import React from 'react'
 import { ImageSourcePropType } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { Skeleton } from '../skeleton/skeleton'
 import { Typography } from '../typography/typography'
+import { Label } from '@ui'
 
 const Host = styled.View<{ hasBorder?: boolean }>`
   padding-bottom: ${({ theme }) => theme.spacing[2]}px;
@@ -43,6 +44,7 @@ const LogoBackground = styled.View`
 const Row = styled.View`
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   padding-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
@@ -60,6 +62,7 @@ interface HeaderProps {
   message?: string
   isLoading?: boolean
   hasBorder?: boolean
+  label?: string
 }
 
 export function Header({
@@ -69,7 +72,9 @@ export function Header({
   message,
   isLoading,
   hasBorder = true,
+  label = '',
 }: HeaderProps) {
+  const theme = useTheme()
   return (
     <Host hasBorder={hasBorder}>
       <Row>
@@ -97,13 +102,24 @@ export function Header({
           </>
         )}
       </Row>
-      {message && isLoading ? (
-        <Skeleton active style={{ borderRadius: 4 }} height={32} />
-      ) : message && !isLoading ? (
-        <Typography style={{ paddingBottom: 8, fontWeight: '600' }}>
-          {message}
-        </Typography>
-      ) : null}
+      <Row>
+        {message && isLoading ? (
+          <Skeleton active style={{ borderRadius: 4 }} height={32} />
+        ) : message && !isLoading ? (
+          <Typography
+            style={{
+              fontWeight: '600',
+            }}
+          >
+            {message}
+          </Typography>
+        ) : null}
+        {label && (
+          <Label color="danger" icon>
+            {label}
+          </Label>
+        )}
+      </Row>
     </Host>
   )
 }

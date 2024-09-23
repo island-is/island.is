@@ -1,9 +1,15 @@
 import { useApolloClient, useFragment_experimental } from '@apollo/client'
-import { blue400, dynamicColor, Header, Loader } from '@ui'
+import { Alert, blue400, dynamicColor, Header, Loader } from '@ui'
 import { Problem } from '@ui/lib/problem/problem'
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Animated, Platform, StyleSheet, View } from 'react-native'
+import {
+  Alert as RNAlert,
+  Animated,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native'
 import {
   NavigationFunctionComponent,
   OptionsTopBarButton,
@@ -206,10 +212,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   const client = useApolloClient()
   const intl = useIntl()
+  const theme = useTheme()
   const htmlStyles = useHtmlStyles()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   const [accessToken, setAccessToken] = useState<string>()
   const [error, setError] = useState(false)
+  const [showConfirmedAlert, setShowConfirmedAlert] = useState(false)
 
   // Check if we have the document in the cache
   const doc = useFragment_experimental<DocumentV2>({
@@ -226,10 +234,43 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     variables: {
       input: {
         id: docId,
+        // If the document is marked at urgent we first need to fetch actions before the content
         includeDocument: !isUrgent,
       },
     },
     fetchPolicy: 'no-cache',
+    onCompleted: () => {
+      if (isUrgent && !showConfirmedAlert) {
+        const confirmationAction = Document.actions?.find(
+          (action) => action.type === 'confirmation',
+        )
+        if (confirmationAction) {
+          RNAlert.alert(
+            confirmationAction.title ?? '',
+            confirmationAction.data ?? '',
+            [
+              {
+                text: intl.formatMessage({
+                  id: 'inbox.markAllAsReadPromptCancel',
+                }),
+                style: 'cancel',
+              },
+              {
+                text: intl.formatMessage({
+                  id: 'inbox.openDocument',
+                }),
+                onPress: async () => {
+                  docRes.refetch({
+                    input: { id: docId, includeDocument: true },
+                  })
+                  setShowConfirmedAlert(true)
+                },
+              },
+            ],
+          )
+        }
+      }
+    },
   })
 
   const Document = {
@@ -286,12 +327,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   useNavigationComponentDidAppear(() => {
     setVisible(true)
   })
-
-  useEffect(() => {
-    if (isUrgent) {
-      // open modal
-    }
-  }, [isUrgent])
 
   useEffect(() => {
     if (Document.opened) {
@@ -363,12 +398,14 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           isLoading={loading && !Document.subject}
           hasBorder={false}
           logo={getOrganizationLogoUrl(Document.sender?.name ?? '', 75)}
+          label={isUrgent ? intl.formatMessage({ id: 'inbox.urgent' }) : ''}
         />
       </Host>
       <Border />
       <View
         style={{
           flex: 1,
+          marginHorizontal: theme.spacing[2],
         }}
       >
         <Animated.View
@@ -377,6 +414,13 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             opacity: fadeAnim,
           }}
         >
+          {showConfirmedAlert && ( // TODO: this will come from the server
+            <Alert
+              type="success"
+              hasBorder
+              message="Staðfesting á móttöku hefur verið send á dómstóla" // TODO use message from actions?
+            />
+          )}
           {fileTypeLoaded &&
             !error &&
             (isHtml ? (

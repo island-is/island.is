@@ -1,4 +1,4 @@
-import { Alert, Typography } from '@ui'
+import { Label, Typography } from '@ui'
 import React, { isValidElement } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Image, ImageSourcePropType, Pressable } from 'react-native'
@@ -140,16 +140,9 @@ export function ListItem({
               {subtitle}
             </Typography>
             {urgent && (
-              <Alert
-                type="error"
-                message={intl.formatMessage({ id: 'inbox.urgent' })}
-                hasBorder
-                small
-                style={{
-                  marginTop: -theme.spacing.smallGutter,
-                  minWidth: 90,
-                }}
-              />
+              <Label color="danger" icon>
+                {intl.formatMessage({ id: 'inbox.urgent' })}
+              </Label>
             )}
             <Pressable hitSlop={16} onPress={onStarPress}>
               <StarImage
