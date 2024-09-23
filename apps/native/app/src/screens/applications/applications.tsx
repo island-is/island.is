@@ -104,8 +104,10 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const [hiddenContent, setHiddenContent] = useState(isIos)
   const { locale } = usePreferencesStore()
 
+  const queryLocale = locale === 'is-IS' ? 'is' : 'en'
+
   const applicationsRes = useListApplicationsQuery({
-    variables: { locale: locale === 'is-US' ? 'is' : 'en' },
+    variables: { locale: queryLocale },
   })
 
   const applications = useMemo(
