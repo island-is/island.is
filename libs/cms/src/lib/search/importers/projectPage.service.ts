@@ -5,6 +5,7 @@ import { Entry } from 'contentful'
 import { IProjectPage } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapProjectPage } from '../../models/projectPage.model'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class ProjectPageSyncService implements CmsSyncProvider<IProjectPage> {
@@ -24,6 +25,25 @@ export class ProjectPageSyncService implements CmsSyncProvider<IProjectPage> {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapProjectPage(entry)
+
+          const tags = entry.fields?.slug
+            ? [
+                {
+                  key: entry.fields.slug,
+                  type: 'slug',
+                },
+              ]
+            : []
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+          for (const id of childEntryIds) {
+            tags.push({
+              key: id,
+              type: 'hasChildEntryWithId',
+            })
+          }
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -32,14 +52,7 @@ export class ProjectPageSyncService implements CmsSyncProvider<IProjectPage> {
               ...mapped,
               typename: 'ProjectPage',
             }),
-            tags: entry.fields?.slug
-              ? [
-                  {
-                    key: entry.fields.slug,
-                    type: 'slug',
-                  },
-                ]
-              : [],
+            tags,
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
           }

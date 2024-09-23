@@ -99,6 +99,7 @@ export * from './lib/resources/admin/dto/admin-create-scope.dto'
 export * from './lib/resources/admin/dto/admin-patch-scope.dto'
 export * from './lib/resources/resource-translation.service'
 export * from './lib/resources/scope.service'
+export { SUPER_USER_DELEGATION_TYPES } from './lib/resources/utils/filters'
 
 // Clients module
 export * from './lib/clients/clients.module'

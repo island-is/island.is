@@ -31,7 +31,7 @@ const SigneeView = ({
     <Box>
       {!user?.profile.actor && !loadingSignedLists && !loadingUserLists ? (
         <Box>
-          {currentCollection.isPresidential &&
+          {currentCollection?.isPresidential &&
             listsForUser.length === 0 &&
             signedLists.length === 0 && (
               <Box marginTop={10}>
@@ -48,7 +48,7 @@ const SigneeView = ({
             {/* Other available lists */}
             <Box marginTop={[5, 10]}>
               {listsForUser.length > 0 && (
-                <Text marginBottom={2}>
+                <Text marginBottom={2} variant="h4">
                   {formatMessage(m.mySigneeListsByAreaHeader)}
                 </Text>
               )}
@@ -59,7 +59,8 @@ const SigneeView = ({
                     <ActionCard
                       key={list.id}
                       backgroundColor="white"
-                      heading={list.title}
+                      eyebrow={list.area?.name}
+                      heading={list.title.split(' - ')[0]}
                       text={
                         currentCollection.isPresidential
                           ? formatMessage(m.collectionTitle)

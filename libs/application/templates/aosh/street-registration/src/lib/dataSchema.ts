@@ -60,7 +60,7 @@ export const MachineAnswersSchema = z.object({
       },
       { path: ['recipient'] },
     ),
-  approveExternalData: z.boolean(),
+  approveExternalData: z.boolean().refine((v) => v),
 })
 
 export type MachineAnswers = z.TypeOf<typeof MachineAnswersSchema>

@@ -76,6 +76,12 @@ export const formatNationalId = (nationalId?: string | null): string => {
   }
 }
 
+export const normalizeAndFormatNationalId = (
+  nationalId?: string | null,
+): [string, string] => {
+  return [nationalId?.replace(/-/g, '') ?? '', formatNationalId(nationalId)]
+}
+
 export const getInitials = (name?: string | null): string | undefined => {
   if (!name?.trim()) return undefined
 

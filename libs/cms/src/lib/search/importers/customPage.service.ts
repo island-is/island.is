@@ -5,6 +5,7 @@ import { MappedData } from '@island.is/content-search-indexer/types'
 import { ICustomPage } from '../../generated/contentfulTypes'
 import { mapCustomPage } from '../../models/customPage.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class CustomPageSyncService implements CmsSyncProvider<ICustomPage> {
@@ -49,6 +50,15 @@ export class CustomPageSyncService implements CmsSyncProvider<ICustomPage> {
                     type: 'slug',
                   },
                 ]
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+          for (const id of childEntryIds) {
+            tags.push({
+              key: id,
+              type: 'hasChildEntryWithId',
+            })
+          }
 
           return {
             _id: mapped.id,
