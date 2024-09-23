@@ -96,16 +96,17 @@ export class DelegationsIncomingCustomService {
         useMaster,
       )
 
-    const delegationDTOs = delegations.map((d) =>
-      d.toDTO(AuthDelegationType.GeneralMandate),
-    )
+    return delegations.map((delegation) => {
+      const delegationDTO = delegation.toDTO(AuthDelegationType.GeneralMandate)
 
-    return delegationDTOs.map((d) => {
-      const person = this.getPersonByNationalId(fromNameInfo, d.fromNationalId)
+      const person = this.getPersonByNationalId(
+        fromNameInfo,
+        delegationDTO.fromNationalId,
+      )
 
       return {
-        ...d,
-        fromName: person?.name ?? d.fromName ?? UNKNOWN_NAME,
+        ...delegationDTO,
+        fromName: person?.name ?? delegationDTO.fromName ?? UNKNOWN_NAME,
       }
     })
   }

@@ -123,11 +123,11 @@ export class DelegationScopeService {
     })
   }
 
-  private async findValidCustomScopesTo(
+  private findValidCustomScopesTo(
     toNationalId: string,
     fromNationalId: string,
   ): Promise<DelegationScope[]> {
-    const today = startOfDay(new Date())
+    const today = new Date()
 
     return this.delegationScopeModel.findAll({
       where: {
@@ -167,45 +167,49 @@ export class DelegationScopeService {
     })
   }
 
-  private findValidGeneralMandateTo(
+  private async findValidGeneralMandateScopesTo(
     toNationalId: string,
     fromNationalId: string,
-  ): Promise<Delegation[]> {
-    const today = startOfDay(new Date())
+  ): Promise<string[]> {
+    const today = new Date()
 
-    return this.delegationModel.findAll({
+    const delegations = await this.delegationModel.findAll({
       where: {
-        toNationalId: toNationalId,
-        fromNationalId: fromNationalId,
+        toNationalId,
+        fromNationalId,
       },
       include: [
         {
           model: DelegationDelegationType,
-          where: {
-            validTo: { [Op.or]: [{ [Op.is]: undefined }, { [Op.gte]: today }] },
-          },
           required: true,
-          include: [
-            {
-              model: DelegationTypeModel,
-              required: true,
-              where: {
-                id: AuthDelegationType.GeneralMandate,
-              },
-              include: [
-                {
-                  model: ApiScope,
-                  required: true,
-                  where: {
-                    enabled: true,
-                  },
-                },
-              ],
+          where: {
+            delegationTypeId: AuthDelegationType.GeneralMandate,
+            validTo: {
+              [Op.or]: [{ [Op.is]: undefined }, { [Op.gte]: today }],
             },
-          ],
+          },
         },
       ],
     })
+
+    if (delegations.length === 0) return []
+
+    return this.apiScopeModel
+      .findAll({
+        attributes: ['name'],
+        where: {
+          enabled: true,
+        },
+        include: [
+          {
+            model: ApiScopeDelegationType,
+            where: {
+              delegationType: AuthDelegationType.GeneralMandate,
+            },
+          },
+        ],
+      })
+      .then((apiScopes) => apiScopes.map((apiScope) => apiScope.name))
   }
 
   private async findAllNationalRegistryScopes(): Promise<string[]> {
@@ -364,16 +368,7 @@ export class DelegationScopeService {
 
     if (delegationTypes?.includes(AuthDelegationType.GeneralMandate)) {
       scopePromises.push(
-        this.findValidGeneralMandateTo(user.nationalId, fromNationalId).then(
-          (delegations) =>
-            delegations
-              .map((d) =>
-                d.delegationDelegationTypes?.map((dt) =>
-                  dt.delegationType?.apiScopes.map((as) => as.name),
-                ),
-              )
-              .flat(3),
-        ) as Promise<string[]>,
+        this.findValidGeneralMandateScopesTo(user.nationalId, fromNationalId),
       )
     }
 

@@ -7,10 +7,7 @@ import {
   ApiScope,
   ApiScopeDelegationType,
   Client,
-  Delegation,
-  DelegationDelegationType,
   DelegationProviderModel,
-  DelegationScope,
   DelegationsIndexService,
   DelegationTypeModel,
   Domain,
@@ -55,8 +52,6 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
-import { uuid } from 'uuidv4'
-import addDays from 'date-fns/addDays'
 
 describe('Personal Representative DelegationsController', () => {
   describe('Given a user is authenticated', () => {

@@ -1,5 +1,7 @@
 import { getModelToken } from '@nestjs/sequelize'
 import request from 'supertest'
+import { uuid } from 'uuidv4'
+import addDays from 'date-fns/addDays'
 
 import {
   ApiScope,
@@ -29,8 +31,6 @@ import { TestApp } from '@island.is/testing/nest'
 
 import { defaultScopes, setupWithAuth } from '../../../../test/setup'
 import { getFakeNationalId } from '../../../../test/stubs/genericStubs'
-import { uuid } from 'uuidv4'
-import addDays from 'date-fns/addDays'
 
 describe('DelegationsController', () => {
   describe('Given a user is authenticated', () => {
@@ -218,7 +218,7 @@ describe('DelegationsController', () => {
         await delegationDelegationTypeModel.create({
           delegationId: newDelegation.id,
           delegationTypeId: AuthDelegationType.GeneralMandate,
-          validTo: addDays(new Date(), -1),
+          validTo: addDays(new Date(), -2),
         })
 
         const response = await server.get('/delegations/scopes').query({
