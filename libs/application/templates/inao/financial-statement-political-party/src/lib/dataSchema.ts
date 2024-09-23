@@ -5,13 +5,20 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { checkIfNegative } from '../utils/helpers'
 
+const requiredNonNegativeString = z
+  .string()
+  .refine((x) => !!x, { params: m.required })
+  .refine((x) => checkIfNegative(x), { params: m.negativeNumberError })
+
+const requiredString = z.string().refine((x) => !!x, { params: m.required })
+
 const FileSchema = z.object({
   name: z.string(),
   key: z.string(),
   url: z.string().optional(),
 })
 const conditionalAbout = z.object({
-  operatingYear: z.string().refine((x) => !!x, { params: m.required }),
+  operatingYear: requiredString,
 })
 const about = z.object({
   nationalId: z
@@ -19,7 +26,7 @@ const about = z.object({
     .refine((val) => (val ? kennitala.isValid(val) : false), {
       params: m.nationalIdError,
     }),
-  fullName: z.string().refine((x) => !!x, { params: m.required }),
+  fullName: requiredString,
   powerOfAttorneyNationalId: z.string().optional(),
   powerOfAttorneyName: z.string().optional(),
   phoneNumber: z.string().refine(
@@ -40,66 +47,33 @@ const election = z.object({
   selectElection: z.string().optional(),
   electionName: z.string().optional(),
   genitiveName: z.string().optional(),
-  incomeLimit: z.string().refine((x) => !!x, { params: m.required }),
+  incomeLimit: requiredString,
 })
 
 const operatingCost = z.object({
-  total: z.string().refine((x) => !!x, { params: m.required }),
+  total: requiredString,
 })
 
 const partyIncome = z.object({
-  contributionsFromTheTreasury: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  parliamentaryPartySupport: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  municipalContributions: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  contributionsFromLegalEntities: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  contributionsFromIndividuals: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  generalMembershipFees: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  otherIncome: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  contributionsFromTheTreasury: requiredNonNegativeString,
+  parliamentaryPartySupport: requiredNonNegativeString,
+  municipalContributions: requiredNonNegativeString,
+  contributionsFromLegalEntities: requiredNonNegativeString,
+  contributionsFromIndividuals: requiredNonNegativeString,
+  generalMembershipFees: requiredNonNegativeString,
+  otherIncome: requiredNonNegativeString,
   total: z.string(),
 })
 
 const partyExpense = z.object({
-  electionOffice: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  otherCost: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  electionOffice: requiredNonNegativeString,
+  otherCost: requiredNonNegativeString,
   total: z.string(),
 })
 
 const capitalNumbers = z.object({
-  capitalIncome: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  capitalCost: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  capitalIncome: requiredNonNegativeString,
+  capitalCost: requiredNonNegativeString,
   total: z.string(),
 })
 
@@ -108,34 +82,18 @@ const equityAndLiabilities = z.object({
 })
 
 const asset = z.object({
-  currentAssets: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  fixedAssetsTotal: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  total: z.string().refine((x) => !!x, { params: m.required }),
+  currentAssets: requiredNonNegativeString,
+  fixedAssetsTotal: requiredNonNegativeString,
 })
 
 const equity = z.object({
-  totalEquity: z.string().refine((x) => !!x, { params: m.required }),
+  totalEquity: requiredString,
 })
 
 const liability = z.object({
-  longTerm: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  shortTerm: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  total: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  longTerm: requiredNonNegativeString,
+  shortTerm: requiredNonNegativeString,
+  total: requiredNonNegativeString,
 })
 
 export const dataSchema = z.object({

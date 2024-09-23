@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { m } from '../../lib/messages'
 import * as kennitala from 'kennitala'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { parsePhoneNumberFromString } from 'libphonenumber-js/min'
 import {
   Override,
   NestedType,
@@ -56,7 +56,7 @@ const about = z.object({
         return true
       }
       const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-      return phoneNumber && phoneNumber.isValid()
+      return phoneNumber?.isValid()
     },
     { params: m.dataSchemePhoneNumber },
   ),
@@ -345,7 +345,7 @@ const cemetryCaretaker = z
   )
 
 export const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
+  approveExternalData: z.literal(true),
   conditionalAbout,
   about,
   election,

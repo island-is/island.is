@@ -23,6 +23,7 @@ import {
   UserInfoApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { Features } from '@island.is/feature-flags'
 
 const configuration =
   ApplicationConfigurations[
@@ -39,6 +40,7 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
   institution: m.institutionName,
   translationNamespaces: [configuration.translation],
   dataSchema,
+  featureFlag: Features.FinancialStatementPoliticalPartyEnabled,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   stateMachineConfig: {
     initial: States.PREREQUISITES,

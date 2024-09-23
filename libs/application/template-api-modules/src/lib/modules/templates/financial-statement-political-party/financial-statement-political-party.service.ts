@@ -29,14 +29,17 @@ export interface DataResponse {
   message?: string
 }
 
-export const getCurrentUserType = (answers: any, externalData: any) => {
+export const getCurrentUserType = (
+  answers: Application['answers'],
+  externalData: Application['externalData'],
+) => {
   const fakeUserType: any = getValueViaPath(answers, 'fakeData.options')
 
   const currentUserType: any = getValueViaPath(
     externalData,
     'getUserType.data.value',
   )
-  return fakeUserType ? fakeUserType : currentUserType
+  return fakeUserType ?? currentUserType
 }
 
 const PARTY_USER_TYPE = 150000001
@@ -46,17 +49,21 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
   s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private financialStatementPoliticalPartyService: FinancialStatementsInaoClientService,
+    private financialStatementClientService: FinancialStatementsInaoClientService,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENT_POLITICAL_PARTY)
     this.s3 = new S3()
   }
 
   private async getAttachment(application: Application): Promise<string> {
-    const attachments: AttachmentData[] | undefined = getValueViaPath(
+    const attachments = getValueViaPath(
       application.answers,
       'attachments.files',
-    ) as Array<{ key: string; name: string }>
+    ) as Array<AttachmentData>
+
+    if (!attachments || attachments.length === 0) {
+      return Promise.reject({})
+    }
 
     const attachmentKey = attachments[0].key
 
@@ -87,23 +94,17 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
   async getUserType({ auth }: TemplateApiModuleActionProps) {
     const { nationalId } = auth
     if (kennitala.isPerson(nationalId)) {
-      return this.financialStatementPoliticalPartyService.getClientType(
-        'Einstaklingur',
-      )
+      return this.financialStatementClientService.getClientType('Einstaklingur')
     } else {
-      return (
-        this,
-        this.financialStatementPoliticalPartyService.getUserClientType(
-          nationalId,
-        )
-      )
+      return this.financialStatementClientService.getUserClientType(nationalId)
     }
   }
+
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { nationalId, actor } = auth
 
     if (!actor) {
-      return new Error('Enginn umboðsmaður fannst')
+      throw new Error('Enginn umboðsmaður fannst')
     }
 
     const answers = application.answers
@@ -147,30 +148,29 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
       phone: clientPhone,
     }
 
-    const result: DataResponse =
-      await this.financialStatementPoliticalPartyService
-        .postFinancialStatementForPoliticalParty(
-          client,
-          contacts,
-          digitalSignee,
-          year,
-          '',
-          values,
-          fileName,
-        )
-        .then((data) => {
-          if (data === true) {
-            return { success: true }
-          } else {
-            return { success: false }
-          }
-        })
-        .catch((e) => {
-          return {
-            success: false,
-            message: e.message,
-          }
-        })
+    const result: DataResponse = await this.financialStatementClientService
+      .postFinancialStatementForPoliticalParty(
+        client,
+        contacts,
+        digitalSignee,
+        year,
+        '',
+        values,
+        fileName,
+      )
+      .then((data) => {
+        if (data === true) {
+          return { success: true }
+        } else {
+          return { success: false }
+        }
+      })
+      .catch((e) => {
+        return {
+          success: false,
+          message: e.message,
+        }
+      })
 
     if (!result.success) {
       throw new Error('Application submission failed')

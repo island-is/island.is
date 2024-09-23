@@ -33,14 +33,17 @@ export interface DataResponse {
   message?: string
 }
 
-export const getCurrentUserType = (answers: any, externalData: any) => {
+export const getCurrentUserType = (
+  answers: Application['answers'],
+  externalData: Application['externalData'],
+) => {
   const fakeUserType: any = getValueViaPath(answers, 'fakeData.options')
 
   const currentUserType: any = getValueViaPath(
     externalData,
     'getUserType.data.value',
   )
-  return fakeUserType ? fakeUserType : currentUserType
+  return fakeUserType ?? currentUserType
 }
 
 export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiService {
