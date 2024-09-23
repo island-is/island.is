@@ -1,9 +1,4 @@
-import {
-  json,
-  service,
-  ServiceBuilder,
-  ref,
-} from '../../../../infra/src/dsl/dsl'
+import { ServiceBuilder, json, service } from '../../../../infra/src/dsl/dsl'
 
 const generateWebBaseUrls = (path = '') => {
   if (!path.startsWith('/')) {
@@ -17,10 +12,7 @@ const generateWebBaseUrls = (path = '') => {
   }
 }
 
-export const serviceSetup = (services: {
-  servicesBffAdminPortal: ServiceBuilder<'services-bff-admin-portal'>
-  regulationsAdminBackend: ServiceBuilder<'regulations-admin-backend'>
-}): ServiceBuilder<'services-bff-admin-portal'> =>
+export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
   service('services-bff-admin-portal')
     .namespace('services-bff')
     .image('services-bff')
@@ -59,9 +51,11 @@ export const serviceSetup = (services: {
       BFF_LOGOUT_REDIRECT_PATH: generateWebBaseUrls(),
       BFF_PROXY_API_ENDPOINT: generateWebBaseUrls('/api/graphql'),
       BFF_API_URL_PREFIX: 'stjornbord/bff',
-      BFF_ALLOWED_EXTERNAL_API_URLS: json([
-        ref((h) => `http://${h.svc(services.regulationsAdminBackend)}`),
-      ]),
+      BFF_ALLOWED_EXTERNAL_API_URLS: {
+        dev: json(['https://api.dev01.devland.is']),
+        staging: json(['https://api.staging01.devland.is']),
+        prod: json(['https://api.island.is']),
+      },
     })
     .secrets({
       // The secret should be a valid 32-byte base64 key.
