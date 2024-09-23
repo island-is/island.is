@@ -56,7 +56,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'National id',
     },
     email: {
-      id: 'dess.nps.application.email',
+      id: 'dess.nps.application:email',
       defaultMessage: 'Netfang',
       description: 'Email address',
     },
