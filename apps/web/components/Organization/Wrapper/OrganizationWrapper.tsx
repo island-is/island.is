@@ -421,7 +421,15 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'gev':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'gevHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/13E4vIA69gDNF87pkHwJgc/c2175b5ce58e50c93ddef5ea26854740/figura.png',
+          )}
+        />
+      ) : (
         <GevHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
