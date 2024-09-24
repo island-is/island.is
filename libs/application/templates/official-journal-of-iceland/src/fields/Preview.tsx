@@ -1,45 +1,36 @@
-import { Box, Button, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Bullet,
+  BulletList,
+  SkeletonLoader,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { signatureConfig } from '../components/htmlEditor/config/signatureConfig'
-import { advertisementTemplate } from '../components/htmlEditor/templates/content'
-import {
-  regularSignatureTemplate,
-  committeeSignatureTemplate,
-} from '../components/htmlEditor/templates/signatures'
-import { preview } from '../lib/messages'
-import {
-  OJOIFieldBaseProps,
-  OfficialJournalOfIcelandGraphqlResponse,
-} from '../lib/types'
+import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
-import { useQuery } from '@apollo/client'
-import { PDF_QUERY, PDF_URL_QUERY, TYPE_QUERY } from '../graphql/queries'
+import { HTMLText } from '@island.is/regulations-tools/types'
+import { getAdvertMarkup, getSignaturesMarkup } from '../lib/utils'
+import { SignatureTypes } from '../lib/constants'
+import { useApplication } from '../hooks/useUpdateApplication'
+import { advert, error, preview } from '../lib/messages'
+import { useType } from '../hooks/useType'
 
-export const Preview = (props: OJOIFieldBaseProps) => {
+export const Preview = ({ application }: OJOIFieldBaseProps) => {
+  const { application: currentApplication } = useApplication({
+    applicationId: application.id,
+  })
+
   const { formatMessage: f } = useLocale()
-  const { answers, id } = props.application
-  const { advert, signature } = answers
 
-  const { data, loading } = useQuery(TYPE_QUERY, {
-    variables: {
-      params: {
-        id: advert?.type,
-      },
-    },
-  })
-
-  const type = data?.officialJournalOfIcelandType?.type?.title
-
-  const { data: pdfUrlData } = useQuery(PDF_URL_QUERY, {
-    variables: {
-      id: id,
-    },
-  })
-
-  const { data: pdfData } = useQuery(PDF_QUERY, {
-    variables: {
-      id: id,
-    },
+  const {
+    type,
+    loading,
+    error: typeError,
+  } = useType({
+    typeId: currentApplication.answers.advert?.typeId,
   })
 
   if (loading) {
@@ -48,75 +39,63 @@ export const Preview = (props: OJOIFieldBaseProps) => {
     )
   }
 
-  const onCopyPreviewLink = () => {
-    if (!pdfData) {
-      return
-    }
+  const signatureMarkup = getSignaturesMarkup({
+    signatures: currentApplication.answers.signatures,
+    type: currentApplication.answers.misc?.signatureType as SignatureTypes,
+  })
 
-    const url = pdfData.officialJournalOfIcelandApplicationGetPdfUrl.url
+  const advertMarkup = getAdvertMarkup({
+    type: type?.title,
+    title: currentApplication.answers.advert?.title,
+    html: currentApplication.answers.advert?.html,
+  })
 
-    navigator.clipboard.writeText(url)
-  }
+  const hasMarkup =
+    !!currentApplication.answers.advert?.html ||
+    type?.title ||
+    currentApplication.answers.advert?.title
 
-  const onOpenPdfPreview = () => {
-    if (!pdfData) {
-      return
-    }
-
-    window.open(
-      `data:application/pdf,${pdfData.officialJournalOfIcelandApplicationGetPdf.pdf}`,
-      '_blank',
-    )
-  }
+  const combinedHtml = hasMarkup
+    ? (`${advertMarkup}<br />${signatureMarkup}` as HTMLText)
+    : (`${signatureMarkup}` as HTMLText)
 
   return (
-    <>
-      <Box display="flex" columnGap={2}>
-        {!!pdfUrlData && (
-          <Button
-            onClick={onOpenPdfPreview}
-            variant="utility"
-            icon="download"
-            iconType="outline"
-          >
-            {f(preview.buttons.fetchPdf)}
-          </Button>
+    <Stack space={4}>
+      <Stack space={2}>
+        {typeError && (
+          <AlertMessage
+            type="error"
+            message={f(error.fetchFailedMessage)}
+            title={f(error.fetchFailedTitle)}
+          />
         )}
-        {!!pdfData && (
-          <Button
-            onClick={onCopyPreviewLink}
-            variant="utility"
-            icon="link"
-            iconType="outline"
-          >
-            {f(preview.buttons.copyPreviewLink)}
-          </Button>
+        {!hasMarkup && (
+          <AlertMessage
+            type="warning"
+            title={f(preview.errors.noContent)}
+            message={
+              <Stack space={1}>
+                <Text>{f(error.missingHtmlMessage)}</Text>
+                <BulletList space={1} color="black">
+                  <Bullet>{f(advert.inputs.department.label)}</Bullet>
+                  <Bullet>{f(advert.inputs.type.label)}</Bullet>
+                  <Bullet>{f(advert.inputs.title.label)}</Bullet>
+                  <Bullet>{f(advert.inputs.editor.label)}</Bullet>
+                </BulletList>
+              </Stack>
+            }
+          />
         )}
-      </Box>
+      </Stack>
       <Box border="standard" borderRadius="large">
         <HTMLEditor
           name="preview.document"
           config={signatureConfig}
           readOnly={true}
           hideWarnings={true}
-          value={advertisementTemplate({
-            category: type,
-            content: advert?.document,
-            title: advert?.title,
-            signature:
-              signature?.type === 'regular'
-                ? regularSignatureTemplate({
-                    signatureGroups: signature?.regular,
-                    additionalSignature: signature?.additional,
-                  })
-                : committeeSignatureTemplate({
-                    signature: signature?.committee,
-                    additionalSignature: signature?.additional,
-                  }),
-            readonly: true,
-          })}
+          value={combinedHtml}
         />
       </Box>
-    </>
+    </Stack>
   )
 }

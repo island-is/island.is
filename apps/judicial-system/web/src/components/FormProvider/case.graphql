@@ -264,7 +264,7 @@ query Case($input: CaseQueryInput!) {
     }
     indictmentAppealDeadline
     indictmentVerdictViewedByAll
-    indictmentVerdictAppealDeadline
+    indictmentVerdictAppealDeadlineExpired
     indictmentDecision
     indictmentReviewDecision
     indictmentCompletedDate
@@ -308,5 +308,21 @@ query Case($input: CaseQueryInput!) {
       policeCaseNumbers
       indictmentSubtypes
     }
+    civilClaimants {
+      id
+      caseId
+      name
+      nationalId
+      noNationalId
+      hasSpokesperson
+      spokespersonIsLawyer
+      spokespersonNationalId
+      spokespersonName
+      spokespersonEmail
+      spokespersonPhoneNumber
+      caseFilesSharedWithSpokesperson
+    }
+    civilDemands
+    hasCivilClaims
   }
 }
