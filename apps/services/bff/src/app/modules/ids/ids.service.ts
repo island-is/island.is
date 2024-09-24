@@ -1,6 +1,6 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 
 import { BffConfig } from '../../bff.config'
@@ -40,7 +40,7 @@ export class IdsService {
       })
 
       if (!response.ok) {
-        throw new BadRequestException(`HTTP error! Status: ${response.status}`)
+        throw new Error(`HTTP error! Status: ${response.status}`)
       }
 
       return response.json()
@@ -50,7 +50,7 @@ export class IdsService {
         JSON.stringify(error),
       )
 
-      throw new BadRequestException(`Failed to fetch from ${endpoint}`)
+      throw new Error(`Failed to fetch from ${endpoint}`)
     }
   }
 

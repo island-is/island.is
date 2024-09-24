@@ -94,6 +94,7 @@ export const reducer = (
 
     case ActionType.ERROR:
       return withState({
+        authState: 'error',
         error: action.payload,
       })
 

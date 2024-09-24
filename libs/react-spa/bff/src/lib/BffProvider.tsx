@@ -99,8 +99,28 @@ export const BffProvider = ({
     window.location.href = bffUrlGenerator(`/login?${qs}`)
   }
 
+  const checkQueryStringError = () => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const error = urlParams.get('bff_error_code')
+    const errorDescription = urlParams.get('bff_error_description')
+
+    if (error) {
+      dispatch({
+        type: ActionType.ERROR,
+        payload: new Error(`${error}: ${errorDescription}`),
+      })
+    }
+
+    // Returns true if there is an error
+    return !!error
+  }
+
   useEffectOnce(() => {
-    checkLogin()
+    const hasError = checkQueryStringError()
+
+    if (!hasError) {
+      checkLogin()
+    }
   })
 
   const onRetry = () => {

@@ -1,16 +1,5 @@
 import { ServiceBuilder, json, service } from '../../../../infra/src/dsl/dsl'
-
-const generateWebBaseUrls = (path = '') => {
-  if (!path.startsWith('/')) {
-    path = `/${path}`
-  }
-
-  return {
-    dev: `https://beta.dev01.devland.is${path}`,
-    staging: `https://beta.staging01.devland.is${path}`,
-    prod: `https://island.is${path}`,
-  }
-}
+import { createPortalEnv } from './utils/createPortalEnv'
 
 export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
   service('services-bff-admin-portal')
@@ -18,13 +7,7 @@ export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
     .image('services-bff')
     .redis()
     .env({
-      // Idenity server
-      IDENTITY_SERVER_CLIENT_ID: '@admin.island.is/bff',
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
+      ...createPortalEnv('stjornbord'),
       IDENTITY_SERVER_CLIENT_SCOPES: json([
         '@admin.island.is/delegation-system',
         '@admin.island.is/delegation-system:admin',
@@ -46,24 +29,14 @@ export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
         '@admin.island.is/form-system',
         '@admin.island.is/form-system:admin',
       ]),
-      // BFF
-      BFF_CLIENT_KEY_PATH: '/stjornbord',
-      BFF_CALLBACKS_BASE_PATH: generateWebBaseUrls('/stjornbord/bff/callbacks'),
-      BFF_CLIENT_BASE_URL: generateWebBaseUrls(),
-      BFF_LOGOUT_REDIRECT_URI: generateWebBaseUrls(),
-      BFF_PROXY_API_ENDPOINT: generateWebBaseUrls('/api/graphql'),
-      BFF_ALLOWED_EXTERNAL_API_URLS: {
-        dev: json(['https://api.dev01.devland.is']),
-        staging: json(['https://api.staging01.devland.is']),
-        prod: json(['https://api.island.is']),
-      },
     })
     .secrets({
       // The secret should be a valid 32-byte base64 key.
       // Generate key example: `openssl rand -base64 32`
-      BFF_TOKEN_SECRET_BASE64: '/k8s/services-bff/BFF_TOKEN_SECRET_BASE64',
+      BFF_TOKEN_SECRET_BASE64:
+        '/k8s/services-bff/admin-portal/BFF_TOKEN_SECRET_BASE64',
       IDENTITY_SERVER_CLIENT_SECRET:
-        '/k8s/services-bff/IDENTITY_SERVER_CLIENT_SECRET',
+        '/k8s/services-bff/admin-portal/IDENTITY_SERVER_CLIENT_SECRET',
     })
     .readiness('/health/check')
     .liveness('/liveness')

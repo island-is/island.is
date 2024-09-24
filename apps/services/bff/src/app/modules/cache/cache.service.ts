@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { Cache as CacheManager } from 'cache-manager'
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
@@ -37,7 +37,7 @@ export class CacheService {
     const value = await this.cacheManager.get(key)
 
     if (!value) {
-      throw new BadRequestException('Not found')
+      throw new Error(`Cache key "${key}" not found.`)
     }
 
     return value as Value

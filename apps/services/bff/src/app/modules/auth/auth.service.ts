@@ -11,6 +11,10 @@ import { uuid } from 'uuidv4'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
+import {
+  CreateErrorQueryStrArgs,
+  createErrorQueryStr,
+} from '../../utils/create-error-query-str'
 import { validateUri } from '../../utils/validate-uri'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
@@ -39,6 +43,33 @@ export class AuthService {
     private readonly cryptoService: CryptoService,
   ) {
     this.baseUrl = this.config.ids.issuer
+  }
+
+  /**
+   * Creates the client base URL with the path appended.
+   */
+  private createClientBaseUrl() {
+    return `${this.config.clientBaseUrl}${environment.keyPath}`
+  }
+
+  /**
+   * Redirects the user to the client base URL with an error query string.
+   */
+  private createClientBaseUrlWithError(args: CreateErrorQueryStrArgs) {
+    return `${this.createClientBaseUrl()}?${createErrorQueryStr(args)}`
+  }
+
+  /**
+   * Redirects the user to the client base URL with an error query string.
+   */
+  private redirectWithError(
+    res: Response,
+    args?: Partial<CreateErrorQueryStrArgs>,
+  ) {
+    const code = args?.code || 500
+    const error = args?.error || 'Login failed!'
+
+    return res.redirect(this.createClientBaseUrlWithError({ code, error }))
   }
 
   /**
@@ -93,60 +124,68 @@ export class AuthService {
     ) {
       this.logger.error('Invalid target_link_uri provided:', targetLinkUri)
 
-      throw new BadRequestException('Login failed')
+      return this.redirectWithError(res, {
+        code: 400,
+      })
     }
 
-    // Generate a unique session id to be used in the login flow
-    const sid = uuid()
+    try {
+      // Generate a unique session id to be used in the login flow
+      const sid = uuid()
 
-    // Generate a code verifier and code challenge to enhance security
-    const codeVerifier = await this.pkceService.generateCodeVerifier()
-    const codeChallenge = await this.pkceService.generateCodeChallenge(
-      codeVerifier,
-    )
-
-    await this.cacheService.save({
-      key: this.cacheService.createSessionKeyType('attempt', sid),
-      value: {
-        // Fallback if targetLinkUri is not provided
-        originUrl: `${this.config.clientBaseUrl}${environment.keyPath}`,
-        // Code verifier to be used in the callback
+      // Generate a code verifier and code challenge to enhance security
+      const codeVerifier = await this.pkceService.generateCodeVerifier()
+      const codeChallenge = await this.pkceService.generateCodeChallenge(
         codeVerifier,
-        targetLinkUri: targetLinkUri,
-        ...(loginHint && { loginHint }),
-        ...(prompt && { prompt }),
-      },
-      ttl: 60 * 60 * 24 * 7 * 1000, // 1 week
-    })
+      )
 
-    let searchParams: URLSearchParams
-
-    if (this.config.parSupportEnabled) {
-      const parResponse = await this.idsService.getPar({
-        sid,
-        codeChallenge,
-        loginHint,
-        prompt,
+      await this.cacheService.save({
+        key: this.cacheService.createSessionKeyType('attempt', sid),
+        value: {
+          // Fallback if targetLinkUri is not provided
+          originUrl: this.createClientBaseUrl(),
+          // Code verifier to be used in the callback
+          codeVerifier,
+          targetLinkUri: targetLinkUri,
+          ...(loginHint && { loginHint }),
+          ...(prompt && { prompt }),
+        },
+        ttl: 60 * 60 * 24 * 7 * 1000, // 1 week
       })
 
-      searchParams = new URLSearchParams({
-        request_uri: parResponse.request_uri,
-        client_id: this.config.ids.clientId,
-      })
-    } else {
-      searchParams = new URLSearchParams(
-        this.idsService.getLoginSearchParams({
+      let searchParams: URLSearchParams
+
+      if (this.config.parSupportEnabled) {
+        const parResponse = await this.idsService.getPar({
           sid,
           codeChallenge,
           loginHint,
           prompt,
-        }),
-      )
-    }
+        })
 
-    return res.redirect(
-      `${this.baseUrl}/connect/authorize?${searchParams.toString()}`,
-    )
+        searchParams = new URLSearchParams({
+          request_uri: parResponse.request_uri,
+          client_id: this.config.ids.clientId,
+        })
+      } else {
+        searchParams = new URLSearchParams(
+          this.idsService.getLoginSearchParams({
+            sid,
+            codeChallenge,
+            loginHint,
+            prompt,
+          }),
+        )
+      }
+
+      return res.redirect(
+        `${this.baseUrl}/connect/authorize?${searchParams.toString()}`,
+      )
+    } catch (error) {
+      this.logger.error('Login failed: ', error)
+
+      return this.redirectWithError(res)
+    }
   }
 
   /**
@@ -158,37 +197,67 @@ export class AuthService {
    * Finally, we redirect the user back to the original URL.
    */
   async callbackLogin(res: Response, query: CallbackLoginQuery) {
-    // Get login attempt from cache
-    const loginAttemptData = await this.cacheService.get<{
-      targetLinkUri?: string
-      loginHint?: string
-      codeVerifier: string
-      originUrl: string
-    }>(this.cacheService.createSessionKeyType('attempt', query.state))
+    const idsError = query.invalid_request
 
-    // Get tokens and user information from the authorization code
-    const tokenResponse = await this.idsService.getTokens({
-      code: query.code,
-      codeVerifier: loginAttemptData.codeVerifier,
-    })
+    // IDS might respond with an error if the request is missing a required parameter.
+    if (idsError) {
+      this.logger.error('Callback login IDS invalid request: ', idsError)
 
-    const value = await this.updateTokenCache(tokenResponse)
+      return this.redirectWithError(res, {
+        code: 500,
+        error: idsError,
+      })
+    }
 
-    // Clean up the login attempt from the cache since we have a successful login.
-    await this.cacheService.delete(
-      this.cacheService.createSessionKeyType('attempt', query.state),
-    )
+    // Validate query params
+    if (!query.code || !query.state) {
+      const missingParam = !query.code ? 'code' : 'state'
+      this.logger.error(
+        `Callback login failed: No query param "${missingParam}" provided.`,
+      )
 
-    // Create session cookie with successful login session id
-    res.cookie('sid', value.userProfile.sid, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-    })
+      return this.redirectWithError(res, {
+        code: 400,
+      })
+    }
 
-    return res.redirect(
-      loginAttemptData.targetLinkUri || loginAttemptData.originUrl,
-    )
+    try {
+      // Get login attempt from cache
+      const loginAttemptData = await this.cacheService.get<{
+        targetLinkUri?: string
+        loginHint?: string
+        codeVerifier: string
+        originUrl: string
+      }>(this.cacheService.createSessionKeyType('attempt', query.state))
+
+      // Get tokens and user information from the authorization code
+      const tokenResponse = await this.idsService.getTokens({
+        code: query.code,
+        codeVerifier: loginAttemptData.codeVerifier,
+      })
+
+      const value = await this.updateTokenCache(tokenResponse)
+
+      // Clean up the login attempt from the cache since we have a successful login.
+      await this.cacheService.delete(
+        this.cacheService.createSessionKeyType('attempt', query.state),
+      )
+
+      // Create session cookie with successful login session id
+      res.cookie('sid', value.userProfile.sid, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      })
+
+      return res.redirect(
+        loginAttemptData.targetLinkUri || loginAttemptData.originUrl,
+      )
+    } catch (error) {
+      this.logger.error('Callback login failed: ', error)
+
+      return this.redirectWithError(res)
+    }
   }
 
   /**

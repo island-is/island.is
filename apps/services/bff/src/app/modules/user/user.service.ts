@@ -47,10 +47,6 @@ export class UserService {
           this.cacheService.createSessionKeyType('current', sid),
         )
 
-      if (!cachedTokenResponse.userProfile) {
-        throw new Error('userProfile not found in cache')
-      }
-
       // Check if the access token is expired
       if (isExpired(cachedTokenResponse.accessTokenExp)) {
         // Get new token data with refresh token
@@ -67,7 +63,7 @@ export class UserService {
 
       return this.formatUserResponse(cachedTokenResponse)
     } catch (error) {
-      this.logger.error('Error getting user from cache: ', error)
+      this.logger.error('Get user error: ', error)
 
       throw new UnauthorizedException()
     }
