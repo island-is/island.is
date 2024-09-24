@@ -104,4 +104,11 @@ export const strings = {
     description:
       'Notaður sem texti í "Réttargæslumaður" valmöguleikanum við einkaréttarkröfu á Málsmeðferðarskjánum.',
   }),
+  civilClaimantShareFilesWithDefenderTooltip: defineMessage({
+    id: 'judicial.system.indictments:processing.civil_claimant_share_files_with_defender_tooltip',
+    defaultMessage:
+      'Ef hakað er í þennan reit fær lögmaður kröfuhafa aðgang að gögnum málsins',
+    description:
+      'Notaður sem upplýsingartexti við "Deila gögnum" valmöguleikanum við einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
 }

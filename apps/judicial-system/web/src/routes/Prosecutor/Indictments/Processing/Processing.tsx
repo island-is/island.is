@@ -589,6 +589,9 @@ const Processing: FC = () => {
                           civilClaimant.spokespersonIsLawyer === null ||
                           civilClaimant.spokespersonIsLawyer === undefined
                         }
+                        tooltip={formatMessage(
+                          strings.civilClaimantShareFilesWithDefenderTooltip,
+                        )}
                         backgroundColor="white"
                         large
                         filled
