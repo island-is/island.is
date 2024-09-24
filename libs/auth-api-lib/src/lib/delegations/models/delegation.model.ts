@@ -96,6 +96,16 @@ export class Delegation extends Model<
   referenceId?: string
 
   get validTo(): Date | null | undefined {
+    if (
+      this.delegationDelegationTypes &&
+      this.delegationDelegationTypes.length > 0
+    ) {
+      const dates = this.delegationDelegationTypes
+        .map((x) => x.validTo)
+        .filter((x) => x !== null) as Array<Date>
+      return max(dates)
+    }
+
     // 1. Find a value with null as validTo. Null means that delegation scope set valid not to a specific time period
     const withNullValue = this.delegationScopes?.find((x) => x.validTo === null)
     if (withNullValue) {

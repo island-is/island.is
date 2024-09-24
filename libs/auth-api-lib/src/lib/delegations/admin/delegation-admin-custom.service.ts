@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import kennitala from 'kennitala'
 import { uuid } from 'uuidv4'
 
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -150,8 +151,10 @@ export class DelegationAdminCustomService {
     user: User,
     delegation: CreatePaperDelegationDto,
   ): Promise<DelegationDTO> {
-    if (delegation.fromNationalId === delegation.toNationalId)
-      throw new Error('Cannot create a delegation between the same nationalId.')
+    this.validatePersonsNationalIds(
+      delegation.toNationalId,
+      delegation.fromNationalId,
+    )
 
     const zenDeskCase = await this.zendeskService.getTicket(
       delegation.referenceId,
@@ -198,7 +201,7 @@ export class DelegationAdminCustomService {
         },
       )
 
-      await this.delegationDelegationTypeModel.create(
+      const ddt = await this.delegationDelegationTypeModel.create(
         {
           delegationId: newDelegation.id,
           delegationTypeId: AuthDelegationType.GeneralMandate,
@@ -208,6 +211,8 @@ export class DelegationAdminCustomService {
           transaction,
         },
       )
+
+      newDelegation.delegationDelegationTypes = [ddt]
 
       // Index custom delegations for the toNationalId
       void this.delegationIndexService.indexCustomDelegations(
@@ -267,5 +272,24 @@ export class DelegationAdminCustomService {
         delegation.toNationalId,
       )
     })
+  }
+
+  private validatePersonsNationalIds(
+    toNationalId: string,
+    fromNationalId: string,
+  ) {
+    if (toNationalId === fromNationalId) {
+      throw new BadRequestException(
+        'Cannot create a delegation between the same nationalId.',
+      )
+    }
+
+    if (
+      !(kennitala.isPerson(fromNationalId) && kennitala.isPerson(toNationalId))
+    ) {
+      throw new BadRequestException(
+        'National ids needs to be valid person national ids',
+      )
+    }
   }
 }

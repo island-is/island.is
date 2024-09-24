@@ -28,7 +28,7 @@ export type User = {
 }
 
 export type Ticket = {
-  id: number
+  id: string
   status: TicketStatus | string
   custom_fields: Array<{ id: number; value: string }>
   tags: Array<string>
