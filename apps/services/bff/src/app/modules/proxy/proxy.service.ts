@@ -48,20 +48,28 @@ export class ProxyService {
       throw new UnauthorizedException()
     }
 
-    let cachedTokenResponse = await this.cacheService.get<CachedTokenResponse>(
-      this.cacheService.createSessionKeyType('current', sid),
-    )
+    try {
+      let cachedTokenResponse =
+        await this.cacheService.get<CachedTokenResponse>(
+          this.cacheService.createSessionKeyType('current', sid),
+        )
 
-    if (isExpired(cachedTokenResponse.accessTokenExp)) {
-      const tokenResponse = await this.idsService.refreshToken(
-        cachedTokenResponse.refresh_token,
-      )
-      cachedTokenResponse = await this.authService.updateTokenCache(
-        tokenResponse,
-      )
+      if (isExpired(cachedTokenResponse.accessTokenExp)) {
+        const tokenResponse = await this.idsService.refreshToken(
+          cachedTokenResponse.refresh_token,
+        )
+
+        cachedTokenResponse = await this.authService.updateTokenCache(
+          tokenResponse,
+        )
+      }
+
+      return this.cryptoService.decrypt(cachedTokenResponse.access_token)
+    } catch (error) {
+      this.logger.error('Error getting access token:', error)
+
+      throw new UnauthorizedException()
     }
-
-    return this.cryptoService.decrypt(cachedTokenResponse.access_token)
   }
 
   /**
@@ -144,8 +152,9 @@ export class ProxyService {
     res: Response
   }): Promise<void> {
     const accessToken = await this.getAccessToken(req)
-    const targetUrl = `${this.config.graphqlApiEndpont}?${
-      req.url.split('?')[1]
+    const queryString = req.url.split('?')[1]
+    const targetUrl = `${this.config.graphqlApiEndpont}${
+      queryString ? `?${queryString}` : ''
     }`
 
     this.executeStreamRequest({
@@ -178,19 +187,12 @@ export class ProxyService {
     }
 
     const accessToken = await this.getAccessToken(req)
-    const isDownloadService = url.includes('/download/v1/regulation')
 
     this.executeStreamRequest({
       accessToken,
       targetUrl: url,
       req,
       res,
-      ...(isDownloadService && {
-        body: {
-          // The download service expects the accessToken to be passed in the body as "__accessToken".
-          __accessToken: accessToken,
-        },
-      }),
     })
   }
 }

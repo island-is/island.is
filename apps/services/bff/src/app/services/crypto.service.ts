@@ -63,7 +63,7 @@ export class CryptoService {
     } catch (error) {
       this.logger.error('Error encrypting text:', error)
 
-      throw new InternalServerErrorException()
+      throw new Error('Failed to encrypt the text.')
     }
   }
 
@@ -99,7 +99,7 @@ export class CryptoService {
     } catch (error) {
       this.logger.error('Error decrypting text:', error)
 
-      throw new InternalServerErrorException()
+      throw new Error('Failed to decrypt the text.')
     }
   }
 }
