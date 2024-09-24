@@ -460,7 +460,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hsa':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={
+            isSubpage
+              ? styles.hsaHeaderGridContainerWidthSubpage
+              : styles.hsaHeaderGridContainerWidth
+          }
+        />
+      ) : (
         <HeilbrigdisstofnunAusturlandsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
