@@ -1,7 +1,7 @@
 import { useLocale } from '@island.is/localization'
 import { DropdownMenu } from '@island.is/island-ui/core'
-import { m } from '../../../../lib/messages'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
+import { m } from '../../lib/messages'
 
 const SortSignees = ({
   signees,
