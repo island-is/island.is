@@ -19,7 +19,7 @@ export const m = defineMessages({
   },
   createNewDelegation: {
     id: 'admin.delegationAdmin:delegationAdminCreateNewDelegation',
-    defaultMessage: 'Stofna nýtt umboð',
+    defaultMessage: 'Skrá nýtt umboð',
   },
   delegationFrom: {
     id: 'admin.delegationAdmin:delegationAdminDelegationFrom',

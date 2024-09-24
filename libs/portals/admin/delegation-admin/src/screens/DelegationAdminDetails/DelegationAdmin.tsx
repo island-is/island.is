@@ -1,7 +1,7 @@
 import {
   Button,
   GridColumn,
-  GridRow,
+  Box,
   Stack,
   Tabs,
 } from '@island.is/island-ui/core'
@@ -33,17 +33,23 @@ const DelegationAdminScreen = () => {
   return (
     <Stack space="containerGutter">
       <BackButton onClick={() => navigate(DelegationAdminPaths.Root)} />
-      <GridRow rowGap={3}>
-        <GridColumn span={['12/12', '8/12']}>
+
           <IntroHeader
             title={delegationAdmin.name}
             intro={formatNationalId(delegationAdmin.nationalId)}
-          />
-        </GridColumn>
+         >
+
+
         {hasAdminAccess && (
-          <GridColumn span={['12/12', '4/12']}>
+
+          <GridColumn span={['8/8', '3/8']}>
+            <Box
+              display={'flex'}
+              justifyContent={['flexStart', 'flexEnd']}
+              alignItems={['flexStart', 'center']}
+              height={'full'}
+            >
             <Button
-              icon="arrowForward"
               onClick={async () => {
                 const maskedNationalId =
                   (await maskString(
@@ -63,9 +69,11 @@ const DelegationAdminScreen = () => {
             >
               {formatMessage(m.createNewDelegation)}
             </Button>
+            </Box>
           </GridColumn>
         )}
-      </GridRow>
+          </IntroHeader>
+
       <Tabs
         contentBackground="white"
         label={'Delegation Admin'}
