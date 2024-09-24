@@ -11,15 +11,6 @@ export const countryAreas = [
   { value: 'Austfirðingafjórðungur', label: 'Austfirðingafjórðungur' },
 ]
 
-export enum Constituencies {
-  Nordausturkjordaemi = 'Norðausturkjördæmi',
-  Nordvesturkjordaemi = 'Norðvesturkjördæmi',
-  ReykjavikurkjordaemiNordur = 'Reykjavíkurkjördæmi norður',
-  ReykjavikurkjordaemiSudur = 'Reykjavíkurkjördæmi suður',
-  Sudurkjordaemi = 'Suðurkjördæmi',
-  Sudvesturkjordaemi = 'Suðvesturkjördæmi',
-}
-
 export type Filters = {
   area: Array<string>
   candidate: Array<string>

@@ -5,7 +5,6 @@ import { SignatureCollectionPaths } from './lib/paths'
 import { listsLoader } from './screens-presidential/AllLists/AllLists.loader'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { listLoader } from './screens-presidential/List/List.loader'
-import { Constituencies } from './lib/utils'
 
 /* parliamentary */
 const ParliamentaryRoot = lazy(() => import('./screens-parliamentary'))
