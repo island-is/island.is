@@ -30,11 +30,11 @@ export class CaseResponse {
     lang?: string,
   ): CaseResponse {
     const t = getTranslations(lang)
-    const defendant = internalCase.defendants[0]
+    const defendant = internalCase.defendants[0] ?? {}
     const subpoenaDateLog = internalCase.dateLogs?.find(
       (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
     )
-    const subpoenaCreatedDate = subpoenaDateLog?.created.toString() ?? '' //TODO: Change to created from subpoena db entry?
+    const subpoenaCreatedDate = subpoenaDateLog?.created?.toString() ?? '' //TODO: Change to created from subpoena db entry?
     const subpoenas = defendant.subpoenas ?? []
 
     return {
