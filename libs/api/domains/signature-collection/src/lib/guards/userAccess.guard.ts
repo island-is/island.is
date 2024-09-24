@@ -5,7 +5,11 @@ import { SignatureCollectionService } from '../signatureCollection.service'
 import { MetadataAbstractor } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { isPerson } from 'kennitala'
-import { ALLOW_DELEGATION_KEY, IS_OWNER_KEY } from './constants'
+import {
+  ALLOW_DELEGATION_KEY,
+  IS_OWNER_KEY,
+  RESTRICT_GUARANTOR_KEY,
+} from './constants'
 
 enum UserDelegationContext {
   Person = 'Person',
@@ -49,6 +53,9 @@ export class UserAccessGuard implements CanActivate {
     const isOwnerRestriction = m.getMetadataIfExists<boolean>(IS_OWNER_KEY)
     const bypassAuth = m.getMetadataIfExists<boolean>(BYPASS_AUTH_KEY)
     const allowDelegation = m.getMetadataIfExists<boolean>(ALLOW_DELEGATION_KEY)
+    const restrictGuarantors = m.getMetadataIfExists<boolean>(
+      RESTRICT_GUARANTOR_KEY,
+    )
 
     if (bypassAuth) {
       return true
@@ -66,6 +73,10 @@ export class UserAccessGuard implements CanActivate {
     ].includes(delegationContext)
 
     if (isDelegatedUser && !allowDelegation) {
+      return false
+    }
+
+    if (restrictGuarantors && !isDelegatedUser) {
       return false
     }
 

@@ -1,7 +1,12 @@
 import { Resolver, Query, GraphQLModule } from '@nestjs/graphql'
 import { UserAccessGuard } from './userAccess.guard'
 import { INestApplication, UseGuards } from '@nestjs/common'
-import { AllowDelegation, IsOwner } from '../decorators'
+import {
+  AllowDelegation,
+  IsOwner,
+  RestrictGuarantor,
+  AllowManager,
+} from '../decorators'
 import { Test } from '@nestjs/testing'
 import { ApolloDriver } from '@nestjs/apollo'
 import { ConfigModule } from '@nestjs/config'
@@ -21,10 +26,8 @@ import {
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import request from 'supertest'
 import {
-  CollectionType,
   SignatureCollectionClientConfig,
   SignatureCollectionClientModule,
-  SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { SignatureCollectionService } from '../signatureCollection.service'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
@@ -71,6 +74,13 @@ const userHasProcurationAndIsNotOwner = createCurrentUser({
   delegationType: [AuthDelegationType.ProcurationHolder],
 })
 
+const userDelegatedToCompanyButNotProcurationHolder = createCurrentUser({
+  nationalIdType: 'company',
+  actor: { nationalId: someNationalId },
+  nationalId: someCompanyId,
+  delegationType: [AuthDelegationType.Custom],
+})
+
 const okGraphQLResponse = (queryName: string) => ({
   data: {
     [queryName]: true,
@@ -108,6 +118,32 @@ class TestResolver {
 
   @Query(() => Boolean, { nullable: true })
   getForAllNonDelegatedUsers() {
+    return true
+  }
+
+  @Query(() => Boolean, { nullable: true })
+  @RestrictGuarantor()
+  getIsRestrictedToGuarantors() {
+    return true
+  }
+
+  @Query(() => Boolean, { nullable: true })
+  @AllowManager()
+  getIsAllowedForManagers() {
+    return true
+  }
+
+  @Query(() => Boolean, { nullable: true })
+  @RestrictGuarantor()
+  @AllowManager()
+  getIsRestrictedToGuarantorsAndAllowedForManagers() {
+    return true
+  }
+
+  @Query(() => Boolean, { nullable: true })
+  @IsOwner()
+  @AllowManager()
+  getIfOwnerWithAllowManager() {
     return true
   }
 }
@@ -322,5 +358,162 @@ describe('UserAccessGuard', () => {
       .query({ query: '{ getIfOwner }' })
 
     expect(response.body).toMatchObject(forbiddenGraphqlResponse('getIfOwner'))
+  })
+
+  it('With RestrictGuarantor: Should restrict access to guarantors', async () => {
+    setupMockForUser(userIsOwnerNotDelegated)
+
+    let response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIsRestrictedToGuarantors }' })
+
+    expect(response.body).toMatchObject(
+      forbiddenGraphqlResponse('getIsRestrictedToGuarantors'),
+    )
+
+    setupMockForUser(userHasProcurationAndIsOwner)
+
+    response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIsRestrictedToGuarantors }' })
+
+    expect(response.body).toMatchObject(
+      forbiddenGraphqlResponse('getIsRestrictedToGuarantors'),
+    )
+
+    setupMockForUser(userHasProcurationAndIsNotOwner)
+
+    response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIsRestrictedToGuarantors }' })
+
+    expect(response.body).toMatchObject(
+      forbiddenGraphqlResponse('getIsRestrictedToGuarantors'),
+    )
+  })
+
+  it('With RestrictGuarantor and AllowManager: Should allow access to managers', async () => {
+    setupMockForUser(userIsOwnerNotDelegated)
+
+    // DISALLOW ALL GUARANTORS
+    let response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIsRestrictedToGuarantorsAndAllowedForManagers }' })
+
+    expect(response.body).toMatchObject(
+      forbiddenGraphqlResponse(
+        'getIsRestrictedToGuarantorsAndAllowedForManagers',
+      ),
+    )
+
+    setupMockForUser(userHasProcurationAndIsOwner)
+
+    response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIsRestrictedToGuarantorsAndAllowedForManagers }' })
+
+    expect(response.body).toMatchObject(
+      forbiddenGraphqlResponse(
+        'getIsRestrictedToGuarantorsAndAllowedForManagers',
+      ),
+    )
+
+    setupMockForUser(userHasProcurationAndIsNotOwner)
+
+    response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIsRestrictedToGuarantorsAndAllowedForManagers }' })
+
+    expect(response.body).toMatchObject(
+      forbiddenGraphqlResponse(
+        'getIsRestrictedToGuarantorsAndAllowedForManagers',
+      ),
+    )
+
+    // ALLOW ALL MANAGERS
+    setupMockForUser(delegatedUserNotToOwner)
+
+    response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIsRestrictedToGuarantorsAndAllowedForManagers }' })
+
+    expect(response.body).toMatchObject(
+      okGraphQLResponse('getIsRestrictedToGuarantorsAndAllowedForManagers'),
+    )
+
+    setupMockForUser(delegatedUserToOwner)
+
+    response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIsRestrictedToGuarantorsAndAllowedForManagers }' })
+
+    expect(response.body).toMatchObject(
+      okGraphQLResponse('getIsRestrictedToGuarantorsAndAllowedForManagers'),
+    )
+
+    setupMockForUser(userDelegatedToCompanyButNotProcurationHolder)
+
+    response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIsRestrictedToGuarantorsAndAllowedForManagers }' })
+
+    expect(response.body).toMatchObject(
+      okGraphQLResponse('getIsRestrictedToGuarantorsAndAllowedForManagers'),
+    )
+  })
+
+  it('With AllowManager: Should allow access to managers', async () => {
+    // ALLOW ALL MANAGERS
+    setupMockForUser(delegatedUserNotToOwner)
+
+    let response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIsRestrictedToGuarantorsAndAllowedForManagers }' })
+
+    expect(response.body).toMatchObject(
+      okGraphQLResponse('getIsRestrictedToGuarantorsAndAllowedForManagers'),
+    )
+
+    setupMockForUser(delegatedUserToOwner)
+
+    response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIsRestrictedToGuarantorsAndAllowedForManagers }' })
+
+    expect(response.body).toMatchObject(
+      okGraphQLResponse('getIsRestrictedToGuarantorsAndAllowedForManagers'),
+    )
+
+    setupMockForUser(userDelegatedToCompanyButNotProcurationHolder)
+
+    response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIsRestrictedToGuarantorsAndAllowedForManagers }' })
+
+    expect(response.body).toMatchObject(
+      okGraphQLResponse('getIsRestrictedToGuarantorsAndAllowedForManagers'),
+    )
+  })
+
+  it('Allow manager does not override the IsOwner decorator', async () => {
+    setupMockForUser(delegatedUserToOwner)
+
+    let response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIfOwnerWithAllowManager }' })
+
+    expect(response.body).toMatchObject(
+      okGraphQLResponse('getIfOwnerWithAllowManager'),
+    )
+
+    setupMockForUser(delegatedUserNotToOwner)
+
+    response = await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: '{ getIfOwnerWithAllowManager }' })
+
+    expect(response.body).toMatchObject(
+      forbiddenGraphqlResponse('getIfOwnerWithAllowManager'),
+    )
   })
 })
