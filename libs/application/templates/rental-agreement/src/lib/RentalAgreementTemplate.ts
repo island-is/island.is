@@ -4,24 +4,27 @@ import {
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
-  ApplicationConfigurations,
 } from '@island.is/application/types'
-import { Roles, ApplicationStates, DAY, MONTH } from './constants'
+
 import { dataSchema } from './dataSchema'
-import { application } from 'express'
 
-type Events =
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ASSIGN }
-  | { type: DefaultEvents.EDIT }
+type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
-const oneMonthLifeCycle = {
-  shouldBeListed: true,
-  shouldBePruned: true,
-  whenToPrune: MONTH,
+export enum ApplicationStates {
+  PREREQUISITES = 'prerequisites',
+  DRAFT = 'draft',
+  SUBMITTED = 'submitted',
+  SPOUSE = 'spouse',
+  PREREQUISITESSPOUSE = 'prerequisitesSpouse',
+  MUNCIPALITYNOTREGISTERED = 'muncipalityNotRegistered',
 }
+
+export enum Roles {
+  APPLICANT = 'applicant',
+  SPOUSE = 'spouse',
+}
+
+const DAY = 24 * 3600 * 1000
 
 const RentalAgreementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -29,11 +32,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.RENTAL_AGREEMENT,
-  name: application.name,
-  institution: 'Húsnæðis- og mannvirkjastofnun',
-  translationNamespaces: [
-    ApplicationConfigurations.RentalAgreement.translation,
-  ],
+  name: 'Rental Agreement',
   dataSchema,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUISITES,
@@ -61,32 +60,15 @@ const RentalAgreementTemplate: ApplicationTemplate<
         },
 
         on: {
-          SUBMIT: [{ target: ApplicationStates.DRAFT }],
-        },
-      },
-      [ApplicationStates.DRAFT]: {
-        meta: {
-          name: 'Leigusamningur',
-          status: 'draft',
-          lifecycle: oneMonthLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Application').then((module) =>
-                  Promise.resolve(module.Application),
-                ),
-              write: 'all',
-              read: 'all',
-              delete: true,
-            },
-          ],
+          [DefaultEvents.SUBMIT]: {
+            target: 'draft',
+          },
         },
       },
     },
   },
   mapUserToRole() {
-    return Roles.APPLICANT
+    return 'applicant'
   },
 }
 

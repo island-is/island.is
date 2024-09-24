@@ -8,6 +8,24 @@ export const application = defineMessages({
   },
 })
 
+export const section = defineMessages({
+  information: {
+    id: 'ra.application:section.information',
+    defaultMessage: 'Upplýsingar',
+    description: 'Information about the rental agreement',
+  },
+})
+
+export const information = {
+  general: defineMessages({
+    pageageTitle: {
+      id: 'ra.application:information.general.sectionTitle',
+      defaultMessage: 'Almennt',
+      description: 'General information section title',
+    },
+  }),
+}
+
 export const applicantInfo = {
   general: defineMessages({
     title: {

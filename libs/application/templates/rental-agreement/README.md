@@ -1,4 +1,4 @@
-# Rental Agreement Application Template
+# application-templates-rental-agreement
 
 This library was generated with [Nx](https://nx.dev).
 
