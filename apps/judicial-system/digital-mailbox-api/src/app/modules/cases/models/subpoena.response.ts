@@ -19,17 +19,34 @@ class DefenderInfo {
 
   @ApiProperty({ type: () => String })
   defenderName?: string
+
+  @ApiProperty({ type: () => Boolean })
+  canEdit?: boolean
+
+  @ApiProperty({ type: () => String })
+  courtContactInfo?: string
+}
+
+class AlertMessage {
+  @ApiProperty({ type: () => String })
+  type!: string
+
+  @ApiProperty({ type: () => String })
+  message!: string
 }
 
 class SubpoenaData {
   @ApiProperty({ type: () => String })
   title!: string
 
-  @ApiProperty({ type: Boolean })
-  acknowledged?: boolean
+  @ApiProperty({ type: () => [AlertMessage] })
+  alerts?: AlertMessage[]
 
   @ApiProperty({ type: () => [Groups] })
   groups!: Groups[]
+
+  @ApiProperty({ type: Boolean })
+  acknowledged?: boolean
 }
 
 export class SubpoenaResponse {
@@ -59,31 +76,48 @@ export class SubpoenaResponse {
 
     const waivedRight = defendantInfo?.defenderChoice === DefenderChoice.WAIVE
     const hasDefender = defendantInfo?.defenderName !== undefined
+    const subpoena = defendantInfo?.subpoenas ?? []
+    const subpoenaAcknowledged = subpoena[0]?.acknowledged ?? false
+    const canChangeDefenseChoice = !waivedRight && !hasDefender
 
     const subpoenaDateLog = internalCase.dateLogs?.find(
       (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
     )
     const arraignmentDate = subpoenaDateLog?.date ?? ''
     const subpoenaCreatedDate = subpoenaDateLog?.created ?? '' //TODO: Change to subpoena created in RLS
+    const arraignmentLocation = `${internalCase.court.name}, Dómsalur ${subpoenaDateLog?.location}`
 
     return {
       caseId: internalCase.id,
       data: {
         title: t.subpoena,
-        acknowledged: false, // TODO: Connect to real data
+        acknowledged: subpoenaAcknowledged,
+        alerts: [
+          ...(subpoenaAcknowledged
+            ? [
+                {
+                  type: 'success',
+                  message: t.subpoenaServed,
+                },
+              ]
+            : []),
+        ],
         groups: [
           {
             label: `${t.caseNumber} ${internalCase.courtCaseNumber}`,
             items: [
               [t.date, formatDate(subpoenaCreatedDate, 'PP')],
-              [t.institution, 'Lögreglustjórinn á höfuðborgarsvæðinu'],
+              [
+                t.institution,
+                internalCase.prosecutor?.institution?.name ?? t.notAvailable,
+              ],
               [t.prosecutor, internalCase.prosecutor?.name],
               [t.accused, defendantInfo?.name],
               [
                 t.arraignmentDate,
                 formatDate(arraignmentDate, "d.M.yyyy 'kl.' HH:mm"),
               ],
-              [t.location, subpoenaDateLog?.location ?? ''],
+              [t.location, arraignmentLocation],
               [t.courtCeremony, t.parliamentaryConfirmation],
             ].map((item) => ({
               label: item[0] ?? '',
@@ -100,6 +134,10 @@ export class SubpoenaResponse {
               !waivedRight && hasDefender
                 ? defendantInfo?.defenderName
                 : undefined,
+            canEdit: canChangeDefenseChoice,
+            courtContactInfo: canChangeDefenseChoice
+              ? t.courtContactInfo
+              : undefined,
           }
         : undefined,
     }

@@ -1246,7 +1246,11 @@ export class InternalCaseService {
         { model: Institution, as: 'court' },
         { model: Institution, as: 'prosecutorsOffice' },
         { model: User, as: 'judge' },
-        { model: User, as: 'prosecutor' },
+        {
+          model: User,
+          as: 'prosecutor',
+          include: [{ model: Institution, as: 'institution' }],
+        },
         { model: DateLog, as: 'dateLogs' },
       ],
       attributes: ['courtCaseNumber', 'id'],

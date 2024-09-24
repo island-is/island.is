@@ -5,6 +5,14 @@ import { isCompletedCase } from '@island.is/judicial-system/types'
 import { InternalCasesResponse } from './internal/internalCases.response'
 import { getTranslations } from './utils/translations.strings'
 
+class StateTag {
+  @ApiProperty({ type: String })
+  color!: string
+
+  @ApiProperty({ type: String })
+  label!: string
+}
+
 export class CasesResponse {
   @ApiProperty({ type: String })
   id!: string
@@ -15,11 +23,8 @@ export class CasesResponse {
   @ApiProperty({ type: String })
   type!: string
 
-  @ApiProperty({ type: Object })
-  state!: {
-    color: string
-    label: string
-  }
+  @ApiProperty({ type: StateTag })
+  state!: StateTag
 
   static fromInternalCasesResponse(
     response: InternalCasesResponse[],
