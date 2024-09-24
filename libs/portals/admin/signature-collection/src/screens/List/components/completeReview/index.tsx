@@ -46,22 +46,20 @@ const ActionReviewComplete = ({
 
   return (
     <Box marginTop={10}>
-      <Box display="flex" justifyContent="center">
-        <Box>
-          <Button
-            iconType="outline"
-            variant="text"
-            disabled={
-              listStatus !== ListStatus.Reviewed &&
-              listStatus !== ListStatus.InReview
-            }
-            icon={listReviewed ? 'lockOpened' : 'lockClosed'}
-            colorScheme={listReviewed ? 'default' : 'destructive'}
-            onClick={() => setModalSubmitReviewIsOpen(true)}
-          >
-            {modalText}
-          </Button>
-        </Box>
+      <Box display="flex" justifyContent="flexEnd">
+        <Button
+          iconType="outline"
+          variant="ghost"
+          /*disabled={
+            listStatus !== ListStatus.Reviewed &&
+            listStatus !== ListStatus.InReview
+          }*/
+          icon={listReviewed ? 'lockOpened' : 'lockClosed'}
+          colorScheme={listReviewed ? 'default' : 'destructive'}
+          onClick={() => setModalSubmitReviewIsOpen(true)}
+        >
+          {modalText}
+        </Button>
       </Box>
       <Modal
         id="toggleReviewComplete"

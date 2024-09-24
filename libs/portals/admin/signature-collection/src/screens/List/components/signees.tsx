@@ -123,13 +123,16 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
                         {!s.isDigital && (
                           <Box display="flex">
                             <Text>{s.pageNumber}</Text>
-                            <Box marginLeft={1}>
-                              <Icon
-                                icon="document"
-                                type="outline"
-                                color="blue400"
-                              />
-                            </Box>
+                            <Icon
+                              icon="document"
+                              type="outline"
+                              color="blue400"
+                            />
+                            <EditPage
+                              page={s.pageNumber ?? 0}
+                              name={s.signee.name}
+                              nationalId={formatNationalId(s.signee.nationalId)}
+                            />
                           </Box>
                         )}
                       </T.Data>
