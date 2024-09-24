@@ -127,7 +127,7 @@ export const PaperSignees = ({
                 }}
                 error={nationalIdTypo ? ' ' : undefined}
                 loading={loading || loadingCanSign}
-                icon={canSign ? 'checkmark' : undefined}
+                icon={name && canSign ? 'checkmark' : undefined}
               />
             </GridColumn>
             <GridColumn span={['5/12', '4/12']}>
@@ -157,7 +157,7 @@ export const PaperSignees = ({
             <Button
               variant="ghost"
               size="small"
-              disabled={!canSign}
+              disabled={!canSign || !page}
               onClick={() => upload()}
               loading={uploadingPaperSignature}
             >

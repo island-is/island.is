@@ -6,6 +6,7 @@ import request from 'supertest'
 import {
   ApiScope,
   ApiScopeDelegationType,
+  Client,
   DelegationProviderModel,
   DelegationsIndexService,
   DelegationTypeModel,
@@ -52,12 +53,13 @@ import {
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
 
-describe('DelegationsController', () => {
+describe('Personal Representative DelegationsController', () => {
   describe('Given a user is authenticated', () => {
     let app: TestApp
     let factory: FixtureFactory
     let server: request.SuperTest<request.Test>
     let apiScopeModel: typeof ApiScope
+    let clientModel: typeof Client
     let prScopePermission: typeof PersonalRepresentativeScopePermission
     let apiScopeDelegationTypeModel: typeof ApiScopeDelegationType
     let prModel: typeof PersonalRepresentative
@@ -143,6 +145,7 @@ describe('DelegationsController', () => {
       delegationProviderModel = app.get<typeof DelegationProviderModel>(
         getModelToken(DelegationProviderModel),
       )
+      clientModel = app.get<typeof Client>(getModelToken(Client))
       nationalRegistryApi = app.get(NationalRegistryClientService)
       delegationIndexService = app.get(DelegationsIndexService)
       factory = new FixtureFactory(app)
