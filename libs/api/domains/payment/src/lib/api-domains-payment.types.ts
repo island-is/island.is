@@ -1,6 +1,5 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator'
-import { ApplicationTypes } from '@island.is/application/types'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsEnum, IsString } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
 
 export interface ChargeResult {
   success: boolean
@@ -26,17 +25,14 @@ export enum PaidStatus {
 }
 
 export class Callback {
-  @IsNotEmpty()
   @IsString()
   @ApiProperty()
   readonly receptionID!: string
 
-  @IsNotEmpty()
   @IsString()
   @ApiProperty()
   readonly chargeItemSubject!: string
 
-  @IsNotEmpty()
   @IsEnum(PaidStatus)
   @ApiProperty({ enum: PaidStatus })
   readonly status!: PaidStatus
