@@ -10,6 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   DOMSMALARADUNEYTID_SLUG,
+  InfoLine,
   IntroHeader,
   LinkResolver,
   m,
@@ -25,7 +26,6 @@ import InfoLines from '../../components/InfoLines/InfoLines'
 import DefenderChoices from '../../components/DefenderChoices/DefenderChoices'
 import { useGetSubpoenaQuery } from './Subpoena.generated'
 import { LawAndOrderPaths } from '../../lib/paths'
-import { DefenseChoices } from '../../lib/const'
 import { messages } from '../../lib/messages'
 
 type UseParams = {
@@ -63,19 +63,17 @@ const Subpoena = () => {
       <IntroHeader
         loading={loading}
         title={formatMessage(messages.subpoena)}
-        intro={subpoena?.texts?.intro ?? undefined}
         serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
         serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
       />
-      {!loading && subpoena?.texts?.confirmation && (
+      {!loading && subpoena?.data?.alerts && (
         <GridContainer>
           <GridRow>
-            <GridColumn span="10/12">
-              <AlertMessage
-                type="success"
-                message={subpoena.texts.confirmation}
-              />
-            </GridColumn>
+            {subpoena.data.alerts.map((alert, index) => (
+              <GridColumn span="10/12" key={`alert-message-${index}`}>
+                <AlertMessage type="success" message={alert.message} />
+              </GridColumn>
+            ))}
           </GridRow>
         </GridContainer>
       )}
@@ -92,8 +90,8 @@ const Subpoena = () => {
                 as="span"
                 unfocusable
                 colorScheme="default"
-                icon="receipt"
-                iconType="outline"
+                preTextIcon="arrowBack"
+                preTextIconType="outline"
                 size="default"
                 variant="utility"
               >
@@ -112,23 +110,19 @@ const Subpoena = () => {
           {isDefined(subpoena?.data.defenderChoice) && (
             <>
               <Box paddingTop={1} />
-              <UserInfoLine
+              <InfoLine
                 loading={loading}
                 label={messages.chooseDefenderTitle}
-                content={[
-                  formatMessage(
-                    DefenseChoices[subpoena.data.defenderChoice].message,
-                  ),
-                  subpoena.data.chosenDefender,
-                ]
-                  .filter(Boolean)
-                  .join(', ')}
+                content={subpoena.data.chosenDefender ?? ''}
                 labelColumnSpan={['1/1', '6/12']}
                 valueColumnSpan={['1/1', '4/12']}
-                editColumnSpan={['2/12']}
+                buttonColumnSpan={['2/12']}
                 button={{
-                  title: messages.change,
-                  onClick: () => {
+                  type: 'action',
+                  variant: 'text',
+                  label: messages.change,
+                  icon: 'pencil',
+                  action: () => {
                     setDefenderPopUp(true)
                   },
                 }}
@@ -137,14 +131,12 @@ const Subpoena = () => {
               <Divider />
             </>
           )}
-
-          {subpoena.texts && (
-            <GridRow>
-              <GridColumn span={['8/8', '8/8', '6/8']} paddingTop={5}>
-                <Text>{subpoena?.texts?.description}</Text>
-              </GridColumn>
-            </GridRow>
-          )}
+          <Box paddingRight={[0, 0, 24]} marginTop={5}>
+            <Text marginBottom={2}>
+              {formatMessage(messages.subpoenaInfoText)}
+            </Text>
+            <Text>{formatMessage(messages.subpoenaInfoText2)}</Text>
+          </Box>
 
           {!loading && !subpoena?.data.defenderChoice && (
             <DefenderChoices id={id} refetch={refetch} />

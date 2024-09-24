@@ -2,6 +2,7 @@ import { Box, Button } from '@island.is/island-ui/core'
 import {
   DOMSMALARADUNEYTID_SLUG,
   IntroHeader,
+  LinkButton,
   LinkResolver,
   m,
   NotFound,
@@ -40,10 +41,6 @@ const CourtCaseDetail = () => {
     refetch()
   }, [lang])
 
-  if (data?.lawAndOrderCourtCaseDetail == null && !loading) {
-    return <NotFound title={formatMessage(messages.courtCaseNotFound)} />
-  }
-
   return (
     <>
       <IntroHeader
@@ -62,24 +59,17 @@ const CourtCaseDetail = () => {
             {/* TODO: Uncomment when ready in service */}
             {/* {courtCase?.data?.acknowledged && ( */}
 
-            <LinkResolver
-              href={LawAndOrderPaths.SubpoenaDetail.replace(
+            <LinkButton
+              to={LawAndOrderPaths.SubpoenaDetail.replace(
                 ':id',
                 id?.toString() || '',
               )}
-            >
-              <Button
-                as="span"
-                unfocusable
-                colorScheme="default"
-                icon="receipt"
-                iconType="outline"
-                size="default"
-                variant="utility"
-              >
-                {formatMessage(messages.seeSubpoena)}
-              </Button>
-            </LinkResolver>
+              text={formatMessage(messages.seeSubpoena)}
+              icon="receipt"
+              variant="utility"
+              size="default"
+            />
+
             {/* )} */}
           </Box>
         )}

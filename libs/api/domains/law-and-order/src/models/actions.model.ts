@@ -1,9 +1,19 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { registerEnumType } from '@nestjs/graphql'
+
+export enum ActionTypeEnum {
+  file = 'file',
+  url = 'url',
+  inbox = 'inbox',
+}
+registerEnumType(ActionTypeEnum, {
+  name: 'LawAndOrderActionTypeEnum',
+})
 
 @ObjectType('LawAndOrderAction')
 export class Action {
-  @Field({ nullable: true })
-  type?: 'file' | 'url' | 'inbox'
+  @Field(() => ActionTypeEnum, { nullable: true })
+  type?: ActionTypeEnum
 
   @Field({ nullable: true })
   title?: string

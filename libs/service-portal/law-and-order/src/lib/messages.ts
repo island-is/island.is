@@ -97,4 +97,13 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:go-back-to-court-case',
     defaultMessage: 'Til baka í dómsmál',
   },
+  subpoenaInfoText: {
+    id: 'sp.law-and-order:subpoena-info-text',
+    defaultMessage:
+      'Ákærði er kvaddur til að koma fyrir dóm, hlýða á ákæru, halda uppi vörnum og sæta dómi. Sæki ákærði ekki þing má hann búast við því að fjarvist hans verði metin til jafns við það að hann viðurkenni að hafa framið brot það sem hann er ákærður fyrir og dómur verði lagður á málið að honum fjarstöddum.',
+  },
+  subpoenaInfoText2: {
+    id: 'sp.law-and-order:subpoena-info-text2',
+    defaultMessage: 'Birtingarfrestur er þrír sólarhringar.',
+  },
 })

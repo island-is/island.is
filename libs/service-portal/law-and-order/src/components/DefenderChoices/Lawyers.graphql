@@ -1,8 +1,12 @@
-query GetLawyers {
-  lawAndOrderLawyers {
-    items {
+query GetLawyers($locale: String!) {
+  lawAndOrderLawyers(locale: $locale) {
+    lawyers {
       title
       nationalId
+    }
+    choices {
+      id
+      label
     }
   }
 }

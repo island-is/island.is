@@ -8,13 +8,21 @@ import {
   SubpoenaResponse,
 } from '@island.is/clients/judicial-system-sp'
 import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
-import { mapDefenseChoice } from './helpers/mappers'
+import { DefenseChoices, mapDefenseChoice } from './helpers/mappers'
 import { Item } from '../models/item.model'
 import { Lawyers } from '../models/lawyers.model'
+import { ActionTypeEnum } from '../models/actions.model'
+import { IntlService } from '@island.is/cms-translations'
+import { isDefined } from '@island.is/shared/utils'
+import { DefenseChoiceEnum } from '../models/defenseChoiceEnum.model'
 
+const namespaces = ['api.law-and-order']
 @Injectable()
 export class LawAndOrderService {
-  constructor(private api: JudicialSystemSPClientService) {}
+  constructor(
+    private api: JudicialSystemSPClientService,
+    private readonly intlService: IntlService,
+  ) {}
 
   async getCourtCases(user: User, locale: Locale) {
     const cases: Array<CasesResponse> | null = await this.api.getCases(
@@ -24,7 +32,7 @@ export class LawAndOrderService {
     if (cases === null) return null
 
     return {
-      items:
+      cases:
         cases?.map((x: CasesResponse) => {
           return {
             id: x.id,
@@ -38,10 +46,23 @@ export class LawAndOrderService {
   }
 
   async getCourtCase(user: User, id: string, locale: Locale) {
+    const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
     const singleCase = await this.api.getCase(id, user, locale)
     const isSubpoenaAcknowledged = singleCase?.data.acknowledged
 
-    const subpoenaString = locale === 'is' ? 'Fyrirkall' : 'Subpoena'
+    const subpoenaString = formatMessage({
+      id: 'api.law-and-order:subpoena',
+      defaultMessage: 'Fyrirkall',
+    })
+    const seeSubpoenaString = formatMessage({
+      id: 'api.law-and-order:see-subpoena',
+      defaultMessage: 'Sjá fyrirkall',
+    })
+    const seeSubpoenaInMailboxString = formatMessage({
+      id: 'api.law-and-order:see-subpoena-in-mailbox',
+      defaultMessage: 'Sjá fyrirkall í pósthólfi',
+    })
+
     const subpoenaSentIndex = singleCase?.data.groups[0].items.findIndex(
       (item) => item.label.includes(subpoenaString),
     )
@@ -52,15 +73,10 @@ export class LawAndOrderService {
       action: !isSubpoenaAcknowledged
         ? {
             data: '/postholf',
-            title:
-              locale === 'is'
-                ? isSubpoenaAcknowledged
-                  ? 'Sjá fyrirkall'
-                  : 'Sjá fyrirkall í pósthólfi'
-                : isSubpoenaAcknowledged
-                ? 'See subpoena'
-                : 'See subpoena in mailbox',
-            type: 'inbox',
+            title: isSubpoenaAcknowledged
+              ? seeSubpoenaString
+              : seeSubpoenaInMailboxString,
+            type: ActionTypeEnum.file,
           }
         : undefined,
     }
@@ -90,14 +106,25 @@ export class LawAndOrderService {
   }
 
   async getSubpoena(user: User, id: string, locale: Locale) {
+    const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
+
     const subpoena: SubpoenaResponse | undefined | null =
       await this.api.getSubpoena(id, user, locale)
+
+    const defenderChoice = subpoena?.defenderInfo.defenderChoice
+    const message = defenderChoice
+      ? formatMessage(
+          DefenseChoices[subpoena?.defenderInfo.defenderChoice].message,
+        )
+      : ''
 
     return {
       data: {
         id: subpoena?.caseId ?? id,
         acknowledged: subpoena?.data.acknowledged,
-        chosenDefender: subpoena?.defenderInfo?.defenderName,
+        chosenDefender: [message, subpoena?.defenderInfo?.defenderName]
+          .filter(isDefined)
+          .join(', '),
         defenderChoice: subpoena?.defenderInfo?.defenderChoice,
         groups: subpoena?.data.groups,
       },
@@ -105,16 +132,24 @@ export class LawAndOrderService {
     }
   }
 
-  async getLawyers(user: User) {
+  async getLawyers(user: User, locale: Locale) {
+    const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
+
     const answer: Array<Defender> | undefined | null =
       await this.api.getLawyers(user)
-    const list: Lawyers = { items: [] }
+    const list: Lawyers = { lawyers: [] }
     answer?.map((x) => {
-      list.items?.push({
-        title: [x.name, x.practice].join(', '),
+      list.lawyers?.push({
+        title: [x.name, x.practice].filter(isDefined).join(', '),
         nationalId: x.nationalId,
       })
     })
+
+    list.choices = Object.entries(DefenseChoices).map(([code, value]) => ({
+      id: code,
+      label: formatMessage(value.message),
+    }))
+
     return list
   }
 

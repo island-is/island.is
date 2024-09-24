@@ -25,7 +25,7 @@ export class Actions {
   @Field({ nullable: true })
   data?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   icon?: string
 }
 

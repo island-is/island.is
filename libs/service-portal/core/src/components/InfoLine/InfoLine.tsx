@@ -63,12 +63,16 @@ export const InfoLine = ({
   label,
   content,
   renderContent,
-  labelColumnSpan = ['12/12', '4/12', '6/12', '6/12', '4/12'],
-  valueColumnSpan = ['1/1', '5/12', '6/12', '6/12', '4/12'],
-  buttonColumnSpan = ['1/1', '3/12', '3/12', '3/12', '3/12'],
   loading,
   button,
   tooltip,
+  labelColumnSpan = button
+    ? ['1/1', '4/12']
+    : ['1/1', '4/12', '6/12', '6/12', '4/12'],
+  valueColumnSpan = button
+    ? ['1/1', '4/12']
+    : ['1/1', '5/12', '6/12', '6/12', '4/12'],
+  buttonColumnSpan = ['1/1', '4/12'],
   paddingY = 2,
   paddingBottom,
   warning,
@@ -147,13 +151,7 @@ export const InfoLine = ({
             {button ? (
               <Box
                 display="flex"
-                justifyContent={[
-                  'flexStart',
-                  'flexEnd',
-                  'flexStart',
-                  'flexStart',
-                  'flexEnd',
-                ]}
+                justifyContent={['flexStart', 'flexEnd']}
                 alignItems="center"
                 height="full"
                 printHidden

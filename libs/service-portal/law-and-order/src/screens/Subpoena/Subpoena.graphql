@@ -1,18 +1,8 @@
 query GetSubpoena($input: LawAndOrderSubpoenaInput!, $locale: String!) {
   lawAndOrderSubpoena(input: $input, locale: $locale) {
-    texts {
-      intro
-      confirmation
-      description
-    }
-    actions {
-      type
-      title
-      data
-    }
     data {
       id
-      acknowledged
+      hasBeenServed
       chosenDefender
       defenderChoice
       groups {
@@ -21,12 +11,11 @@ query GetSubpoena($input: LawAndOrderSubpoenaInput!, $locale: String!) {
           label
           value
           link
-          action {
-            title
-            data
-            type
-          }
         }
+      }
+      alerts {
+        type
+        message
       }
     }
   }

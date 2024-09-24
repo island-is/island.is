@@ -24,8 +24,9 @@ const CourtCases = () => {
     },
   })
 
-  const cases = data?.lawAndOrderCourtCasesList?.items
+  const cases = data?.lawAndOrderCourtCasesList?.cases
 
+  console.log('cases', data?.lawAndOrderCourtCasesList)
   useEffect(() => {
     refetch()
   }, [lang])
@@ -49,14 +50,14 @@ const CourtCases = () => {
       {!loading &&
         cases &&
         cases.length > 0 &&
-        cases?.map((x) => (
+        cases.map((x) => (
           <Box marginTop={2}>
             <ActionCard
               translateLabel="no"
               heading={x.caseNumberTitle ?? ''}
               text={x.type ?? ''}
               tag={{
-                label: x.state?.title ?? '',
+                label: x.state?.label ?? '',
                 variant: 'blue',
                 outlined: false,
               }}
@@ -71,7 +72,7 @@ const CourtCases = () => {
             />
           </Box>
         ))}
-      {!loading && !error && cases?.length === 0 && (
+      {!loading && !error && !cases && (
         <Problem
           type="no_data"
           noBorder={false}

@@ -1,9 +1,9 @@
-import { Box, Divider } from '@island.is/island-ui/core'
+import { Box, Divider, Text } from '@island.is/island-ui/core'
 import {
   DOMSMALARADUNEYTID_SLUG,
   IntroHeader,
   m,
-  UserInfoLine,
+  InfoLine,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -21,13 +21,15 @@ const LawAndOrderOverview = () => {
         serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
       />
       <Box>
-        <UserInfoLine
-          title={formatMessage(messages.myData)}
+        <Text variant="eyebrow" color="purple400" marginBottom={2}>
+          {formatMessage(messages.myData)}
+        </Text>
+        <InfoLine
           label={formatMessage(messages.courtCases)}
-          editLink={{
-            external: true,
-            url: LawAndOrderPaths.CourtCases,
-            title: formatMessage(messages.seeInfo),
+          button={{
+            type: 'link',
+            to: LawAndOrderPaths.CourtCases,
+            label: formatMessage(messages.seeInfo),
             icon: 'arrowForward',
           }}
         />

@@ -78,8 +78,12 @@ export class LawAndOrderResolver {
   @Scopes(ApiScope.lawAndOrder)
   @Query(() => Lawyers, { name: 'lawAndOrderLawyers', nullable: true })
   @Audit()
-  getLawyers(@CurrentUser() user: User) {
-    return this.lawAndOrderService.getLawyers(user)
+  getLawyers(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ) {
+    return this.lawAndOrderService.getLawyers(user, locale)
   }
 
   @Scopes(ApiScope.lawAndOrder)

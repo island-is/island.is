@@ -17,13 +17,10 @@ export class Data {
   id!: string
 
   @Field({ nullable: true })
-  acknowledged?: boolean
-
-  @Field({ nullable: true })
-  caseNumber?: string
-
-  @Field({ nullable: true })
   caseNumberTitle?: string
+
+  @Field({ nullable: true })
+  hasBeenServed?: boolean
 
   @Field(() => [Group], { nullable: true })
   groups?: Array<Group>

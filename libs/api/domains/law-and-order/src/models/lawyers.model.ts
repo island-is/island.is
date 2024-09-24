@@ -1,7 +1,17 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { DefenseChoiceEnum } from './defenseChoiceEnum.model'
 
-@ObjectType('LawAndOrderLawyersData')
-export class Data {
+@ObjectType('LawAndOrderLawyerChoices')
+export class Choice {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field({ nullable: true })
+  label?: string
+}
+
+@ObjectType('LawAndOrderLawyer')
+export class Lawyer {
   @Field({ nullable: true })
   title?: string
 
@@ -11,6 +21,9 @@ export class Data {
 
 @ObjectType('LawAndOrderLawyers')
 export class Lawyers {
-  @Field(() => [Data], { nullable: true })
-  items?: Array<Data>
+  @Field(() => [Lawyer], { nullable: true })
+  lawyers?: Array<Lawyer>
+
+  @Field(() => [Choice], { nullable: true })
+  choices?: Array<Choice>
 }

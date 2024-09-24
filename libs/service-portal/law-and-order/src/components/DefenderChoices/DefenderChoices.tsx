@@ -14,13 +14,11 @@ import { Problem } from '@island.is/react-spa/shared'
 import { SelectController } from '@island.is/shared/form-fields'
 import { messages } from '../../lib/messages'
 import { Dispatch, FC, SetStateAction, useEffect } from 'react'
-import { DefenseChoices } from '../../lib/const'
 import {
   useGetLawyersQuery,
   usePostDefenseChoiceMutation,
 } from './Lawyers.generated'
 import { LawAndOrderDefenseChoiceEnum } from '@island.is/api/schema'
-import { isDefined } from '@island.is/shared/utils'
 
 interface Props {
   id: string
@@ -45,9 +43,12 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   useNamespaces('sp.law-and-order')
   const { formatMessage, lang } = useLocale()
-  const { data, loading, error } = useGetLawyersQuery()
+  const { data, loading, error } = useGetLawyersQuery({
+    variables: { locale: lang },
+  })
 
-  const lawyers = data?.lawAndOrderLawyers?.items
+  const lawyers = data?.lawAndOrderLawyers?.lawyers
+  const choices = data?.lawAndOrderLawyers?.choices
 
   const methods = useForm<FormData>()
 
@@ -57,7 +58,8 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
   // Choice should default to "delay" if no choice is present in the data
   // We want to set the value in order to not have the form data undefined if user doesnt change from pre-selected value
   useEffect(() => {
-    methods.setValue(CHOICE, choice ?? DefenseChoices.DELAY.code)
+    if (methods.formState.isSubmitting || methods.formState.isSubmitted) return
+    methods.setValue(CHOICE, choice ?? LawAndOrderDefenseChoiceEnum.DELAY)
   })
 
   const [postAction, { loading: postActionLoading }] =
@@ -69,9 +71,9 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
         })
       },
       onCompleted: () => {
-        refetch && refetch()
         popUp && popUp.setPopUp(false)
         toast.success(formatMessage(messages.registrationCompleted))
+        refetch && refetch()
       },
     })
 
@@ -80,20 +82,12 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
       variables: {
         input: {
           caseId: id,
-          choice: data.choice ?? DefenseChoices.DELAY.code,
+          choice: data.choice ?? LawAndOrderDefenseChoiceEnum.DELAY,
           lawyersNationalId: data.lawyersNationalId,
         },
         locale: lang,
       },
     })
-  }
-
-  const getLocalizedMessage = (choiceCode: keyof typeof DefenseChoices) => {
-    const messageDescriptor = DefenseChoices[choiceCode].message
-    if (!isDefined(messageDescriptor)) {
-      return ''
-    }
-    return formatMessage(messageDescriptor)
   }
 
   const clearLawyersNationalId = () => {
@@ -111,7 +105,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
           {formatMessage(messages.chooseDefenderTitle)}
         </Text>
       )}
-      {!popUp && loading && !error && <LoadingDots />}
+      {loading && !error && <LoadingDots />}
       {!loading && error && <Problem size="small" />}
       {lawyers === null ? (
         <Problem size="small" />
@@ -123,94 +117,75 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
               control={methods.control}
               render={({
                 field: {
-                  value = choice ?? DefenseChoices.DELAY.code,
+                  value = choice ?? LawAndOrderDefenseChoiceEnum.DELAY,
                   onChange,
                 },
               }) => (
                 <Stack space={3}>
-                  <RadioButton
-                    name={CHOICE}
-                    id={DefenseChoices.WAIVE.code}
-                    value={DefenseChoices.WAIVE.code}
-                    label={getLocalizedMessage(DefenseChoices.WAIVE.code)}
-                    checked={DefenseChoices.WAIVE.code === value}
-                    onChange={({ target }) => {
-                      onChange(target.value)
-                      clearLawyersNationalId()
-                    }}
-                  />
-                  <RadioButton
-                    name={CHOICE}
-                    id={DefenseChoices.CHOOSE.code}
-                    value={DefenseChoices.CHOOSE.code}
-                    label={getLocalizedMessage(DefenseChoices.CHOOSE.code)}
-                    checked={DefenseChoices.CHOOSE.code === value}
-                    onChange={({ target }) => {
-                      onChange(target.value)
-                      clearLawyersNationalId()
-                    }}
-                  />
-                  {value === DefenseChoices.CHOOSE.code &&
-                    loading &&
-                    !lawyers && <LoadingDots />}
-                  {lawyers && value === DefenseChoices.CHOOSE.code && (
-                    <GridColumn
-                      span={
-                        popUp
-                          ? '12/12'
-                          : ['12/12', '12/12', '10/12', '6/8', '4/8']
-                      }
-                    >
-                      <SelectController
-                        id="lawyer-choice"
-                        name={NATIONAL_ID}
-                        isClearable
-                        size="xs"
-                        isSearchable
-                        label={formatMessage(messages.defenderList)}
-                        placeholder={formatMessage(messages.chooseDefender)}
-                        options={lawyers.map((x) => {
-                          return {
-                            label: x.title ?? '',
-                            value: x.nationalId,
-                          }
-                        })}
-                        onSelect={(selected) => {
-                          methods.setValue(CHOICE, DefenseChoices.CHOOSE.code)
-                          selected.value &&
-                            methods.setValue(NATIONAL_ID, selected?.value)
+                  {choices?.map((item) => (
+                    <>
+                      <RadioButton
+                        name={CHOICE}
+                        id={item.id ?? ''}
+                        value={item.id ?? ''}
+                        label={item.label ?? ''}
+                        checked={item.id === value}
+                        onChange={({ target }) => {
+                          onChange(target.value)
+                          clearLawyersNationalId()
                         }}
-                        error={
-                          methods.getValues().lawyersNationalId === undefined
-                            ? formatMessage(messages.pleaseChooseALawyer)
-                            : undefined
-                        }
-                        required
                       />
-                    </GridColumn>
-                  )}
-                  <RadioButton
-                    name={CHOICE}
-                    id={DefenseChoices.DELAY.code}
-                    value={DefenseChoices.DELAY.code}
-                    label={getLocalizedMessage(DefenseChoices.DELAY.code)}
-                    checked={DefenseChoices.DELAY.code === value}
-                    onChange={({ target }) => {
-                      onChange(target.value)
-                      clearLawyersNationalId()
-                    }}
-                  />
-                  <RadioButton
-                    name={CHOICE}
-                    id={DefenseChoices.DELEGATE.code}
-                    value={DefenseChoices.DELEGATE.code}
-                    label={getLocalizedMessage(DefenseChoices.DELEGATE.code)}
-                    checked={DefenseChoices.DELEGATE.code === value}
-                    onChange={({ target }) => {
-                      onChange(target.value)
-                      clearLawyersNationalId()
-                    }}
-                  />
+                      {item.id === LawAndOrderDefenseChoiceEnum.CHOOSE &&
+                        value === LawAndOrderDefenseChoiceEnum.CHOOSE &&
+                        loading &&
+                        !lawyers && <LoadingDots />}
+                      {lawyers &&
+                        item.id === LawAndOrderDefenseChoiceEnum.CHOOSE &&
+                        value === LawAndOrderDefenseChoiceEnum.CHOOSE && (
+                          <GridColumn
+                            span={
+                              popUp
+                                ? '12/12'
+                                : ['12/12', '12/12', '10/12', '6/8', '4/8']
+                            }
+                          >
+                            <SelectController
+                              id="lawyer-choice"
+                              name={NATIONAL_ID}
+                              isClearable
+                              size="xs"
+                              isSearchable
+                              label={formatMessage(messages.defenderList)}
+                              placeholder={formatMessage(
+                                messages.chooseDefender,
+                              )}
+                              options={lawyers.map((x) => {
+                                return {
+                                  label: x.title ?? '',
+                                  value: x.nationalId,
+                                }
+                              })}
+                              onSelect={(selected) => {
+                                methods.setValue(
+                                  CHOICE,
+                                  LawAndOrderDefenseChoiceEnum.CHOOSE,
+                                )
+                                selected.value &&
+                                  methods.setValue(NATIONAL_ID, selected?.value)
+                              }}
+                              error={
+                                methods.getValues().lawyersNationalId ===
+                                undefined
+                                  ? formatMessage(messages.pleaseChooseALawyer)
+                                  : undefined
+                              }
+                              required
+                            />
+                          </GridColumn>
+                        )}
+                    </>
+                  ))}
+
                   {!popUp && (
                     <Button
                       type="submit"

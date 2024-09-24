@@ -2,9 +2,11 @@ import React from 'react'
 
 import { Box, Divider, Link, Stack, Text } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
-import { UserInfoLine } from '@island.is/service-portal/core'
-import { LawAndOrderGroup } from '@island.is/api/schema'
-import * as styles from './InfoLines.css'
+import { InfoLine } from '@island.is/service-portal/core'
+import {
+  LawAndOrderActionTypeEnum,
+  LawAndOrderGroup,
+} from '@island.is/api/schema'
 
 interface Props {
   groups: Array<LawAndOrderGroup>
@@ -18,17 +20,25 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
     <Stack space={1}>
       {props.groups.map((x) => {
         return (
-          // eslint-disable-next-line react/jsx-no-useless-fragment
           <>
             <Box marginTop={4} />
             {x.items?.map((y, i) => {
               return (
                 <>
-                  <UserInfoLine
+                  {x.label && i === 0 && (
+                    <Text
+                      variant="eyebrow"
+                      color="purple400"
+                      marginBottom={[0, 2]}
+                    >
+                      {x.label}
+                    </Text>
+                  )}
+                  <InfoLine
                     loading={props.loading}
-                    title={x.label && i === 0 ? x.label : undefined}
                     label={y.label ?? ''}
                     content={y.value ?? ''}
+                    labelColumnSpan={['1/1', '6/12']}
                     renderContent={() =>
                       y.link ? (
                         <Link
@@ -36,7 +46,6 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
                           underlineVisibility="always"
                           href={y.link + y.value}
                           color="blue400"
-                          className={styles.link}
                         >
                           {y.value}
                         </Link>
@@ -44,17 +53,14 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         <Text>{y.value}</Text>
                       )
                     }
-                    labelColumnSpan={['1/1', '6/12']}
-                    valueColumnSpan={
-                      y.action?.title ? ['1/1', '3/12'] : ['1/1', '6/12']
-                    }
-                    editLink={
-                      y.action?.type !== 'popup' &&
+                    button={
+                      y.action?.type === LawAndOrderActionTypeEnum.url &&
                       y.action?.title &&
                       y.action.data
                         ? {
-                            title: y.action?.title,
-                            url: y.action?.data ?? '',
+                            type: 'link',
+                            to: y.action?.data,
+                            label: y.action?.title,
                             icon: 'arrowForward',
                           }
                         : undefined

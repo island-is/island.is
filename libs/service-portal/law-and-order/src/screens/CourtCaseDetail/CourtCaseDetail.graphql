@@ -4,15 +4,9 @@ query GetCourtCase($input: LawAndOrderCourtCaseInput!, $locale: String!) {
       intro
       footnote
     }
-    actions {
-      type
-      title
-      data
-    }
     data {
       id
-      acknowledged
-      caseNumber
+      hasBeenServed
       caseNumberTitle
       groups {
         label
@@ -20,11 +14,6 @@ query GetCourtCase($input: LawAndOrderCourtCaseInput!, $locale: String!) {
           label
           value
           link
-          action {
-            title
-            data
-            type
-          }
         }
       }
     }

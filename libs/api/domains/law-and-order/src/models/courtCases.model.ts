@@ -3,22 +3,16 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 @ObjectType('LawAndOrderCourtCasesState')
 export class State {
   @Field({ nullable: true })
-  title?: string
+  label?: string
 
   @Field({ nullable: true })
-  date?: string
-
-  @Field({ nullable: true })
-  theme?: string
+  color?: string
 }
 
 @ObjectType('LawAndOrderCourtCasesCase')
-export class Item {
+export class Case {
   @Field(() => ID)
   id!: string
-
-  @Field({ nullable: true })
-  caseNumber?: string
 
   @Field({ nullable: true })
   caseNumberTitle?: string
@@ -32,6 +26,6 @@ export class Item {
 
 @ObjectType('LawAndOrderCourtCases')
 export class CourtCases {
-  @Field(() => [Item], { nullable: true })
-  items?: Array<Item>
+  @Field(() => [Case], { nullable: true })
+  cases?: Array<Case>
 }
