@@ -79,7 +79,7 @@ export const m = defineMessages({
   },
   referenceId: {
     id: 'admin.delegationAdmin:referenceId',
-    defaultMessage: 'Númer mála í Zendesk',
+    defaultMessage: 'Númer máls í Zendesk',
   },
   errorDefault: {
     id: 'admin.delegationAdmin:errorDefault',
@@ -117,4 +117,8 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:createDelegationConfirmModalTitle',
     defaultMessage: 'Þú ert að skrá nýtt umboð',
   },
+  createDelegationSuccessToast: {
+    id: 'admin.delegationAdmin:createDelegationSuccessToast',
+    defaultMessage: 'Umboð var skráð',
+  }
 })

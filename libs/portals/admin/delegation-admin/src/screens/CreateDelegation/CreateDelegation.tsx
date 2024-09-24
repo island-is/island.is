@@ -21,7 +21,7 @@ import { DelegationAdminPaths } from '../../lib/paths'
 import NumberFormat from 'react-number-format'
 
 import {
-  Form,
+  Form, redirect,
   useActionData,
   useNavigate,
   useSearchParams,
@@ -73,6 +73,11 @@ const CreateDelegationScreen = () => {
   ]
 
   useEffect(() => {
+    if (actionData?.success) {
+      successToast()
+      navigate(DelegationAdminPaths.Root, { replace: true })
+    }
+
     if (actionData?.data && !actionData.errors) {
       setIsConfirmed(true)
       setShowConfirmModal(true)
@@ -100,6 +105,10 @@ const CreateDelegationScreen = () => {
 
   const noUserFoundToast = () => {
     toast.warning(formatMessage(m.grantIdentityError))
+  }
+
+  const successToast = () => {
+    toast.success(formatMessage(m.createDelegationSuccessToast))
   }
 
   const [getFromIdentity, { loading: fromIdentityQueryLoading }] =
@@ -339,6 +348,7 @@ const CreateDelegationScreen = () => {
                   errorMessage={formatMessage(
                     m[actionData?.errors?.validTo as keyof typeof m],
                   )}
+                  minDate={new Date()}
                 />
                 <input
                   type="hidden"
