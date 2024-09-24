@@ -17,6 +17,7 @@ import { SignatureCollectionSignature as Signature } from '@island.is/api/schema
 import SortSignees from '../sortSignees'
 import { pageSize } from '../../lib/utils'
 import { m } from '../../lib/messages'
+import EditPage from './editPage'
 
 const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
   const { formatMessage } = useLocale()
@@ -54,7 +55,7 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
             value={searchTerm}
             onChange={(v) => setSearchTerm(v)}
             placeholder={formatMessage(m.searchInListPlaceholder)}
-            backgroundColor="white"
+            backgroundColor="blue"
           />
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '6/12']}>

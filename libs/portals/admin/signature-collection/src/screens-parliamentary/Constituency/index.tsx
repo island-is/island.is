@@ -101,7 +101,6 @@ export const Constituency = () => {
                       ': ' +
                       new Date(list.endTime).toLocaleDateString()
                     }
-                    eyebrow={constituencyName}
                     heading={list.title.split(' - ')[0]}
                     progressMeter={{
                       currentProgress: list.numberOfSignatures ?? 0,

@@ -17,11 +17,6 @@ export const m = defineMessages({
     defaultMessage: 'Kjördæmi',
     description: '',
   },
-  signatureListsConstituencyTitle: {
-    id: 'admin-portal.signature-collection:signatureListsConstituencyTitle',
-    defaultMessage: 'Kjördæmi',
-    description: '',
-  },
   signatureListsDescription: {
     id: 'admin-portal.signature-collection:signatureListsDescription',
     defaultMessage:
