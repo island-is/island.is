@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 import { environment } from '../../../../environments'
 
-export function verifyToken<T>(token: string): T | null {
+export const verifyToken = <T>(token: string): T | null => {
   try {
     const decoded = jwt.verify(
       token,

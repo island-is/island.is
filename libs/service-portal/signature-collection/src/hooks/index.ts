@@ -7,6 +7,7 @@ import {
   GetSignedList,
   GetListsForOwner,
   GetCurrentCollection,
+  GetCanSign,
 } from './graphql/queries'
 import {
   SignatureCollectionListBase,
@@ -146,4 +147,20 @@ export const useGetCurrentCollection = () => {
     loadingCurrentCollection,
     refetchCurrentCollection,
   }
+}
+
+export const useGetCanSign = (signeeId: string, isValidId: boolean) => {
+  const { data: getCanSignData, loading: loadingCanSign } = useQuery(
+    GetCanSign,
+    {
+      variables: {
+        input: {
+          signeeNationalId: signeeId,
+        },
+      },
+      skip: !signeeId || signeeId.length !== 10 || !isValidId,
+    },
+  )
+  const canSign = getCanSignData?.signatureCollectionCanSign ?? false
+  return { canSign, loadingCanSign }
 }
