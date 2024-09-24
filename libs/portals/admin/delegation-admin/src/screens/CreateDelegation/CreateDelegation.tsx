@@ -39,8 +39,9 @@ import {
 import { CreateDelegationConfirmModal } from '../../components/CreateDelegationConfirmModal'
 import { Identity } from '@island.is/api/schema'
 import kennitala from 'kennitala'
-import { unmaskString } from '@island.is/shared/utils'
+import { maskString, unmaskString } from '@island.is/shared/utils'
 import { useAuth } from '@island.is/auth/react'
+import { replaceParams } from '@island.is/react-spa/shared'
 
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
@@ -73,9 +74,27 @@ const CreateDelegationScreen = () => {
   ]
 
   useEffect(() => {
-    if (actionData?.success) {
+    // async function to mark string and redirect
+    async function success() {
+      const maskedNationalId = await maskString(
+        fromIdentity?.nationalId ?? '',
+        userInfo?.profile.nationalId ?? '',
+      )
       successToast()
-      navigate(DelegationAdminPaths.Root, { replace: true })
+      navigate(
+        replaceParams({
+          href: DelegationAdminPaths.DelegationAdmin,
+          params: {
+            nationalId:
+              maskedNationalId ?? '',
+          },
+        }),
+        { replace: true }
+      )
+    }
+
+    if (actionData?.success) {
+      success()
     }
 
     if (actionData?.data && !actionData.errors) {
@@ -100,7 +119,7 @@ const CreateDelegationScreen = () => {
       }
     }
 
-    getFromNationalId()
+    !!defaultFromNationalId && getFromNationalId()
   }, [defaultFromNationalId])
 
   const noUserFoundToast = () => {
