@@ -590,51 +590,6 @@ export const m = defineMessages({
 })
 
 export const parliamentaryMessages = defineMessages({
-  listTitle: {
-    id: 'admin-portal.signature-collection-parliamentary:listTitle',
-    defaultMessage: 'Alþingiskosningar',
-    description: '',
-  },
-  signatureListsTitle: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureLists',
-    defaultMessage: 'Alþingiskosningar',
-    description: '',
-  },
-  signatureListsDescription: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureListsDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    description: '',
-  },
-  signatureListsIntro: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureListsIntro',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed etiam, ut inquit, in vita et in voluptate locum ponamus, isdem et in dolore et in odio.',
-    description: '',
-  },
-  compareListsButton: {
-    id: 'admin-portal.signature-collection-parliamentary:compareListsButton',
-    defaultMessage: 'Bera saman',
-    description: '',
-  },
-  compareListsDescription: {
-    id: 'admin-portal.signature-collection-parliamentary:compareListsDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-    description: '',
-  },
-  singleConstituencyIntro: {
-    id: 'admin-portal.signature-collection-parliamentary:singleConstituencyIntro',
-    defaultMessage:
-      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið í',
-    description: '',
-  },
-})
-
-export const parliamentaryMessages = defineMessages({
-  listTitle: {
-    id: 'admin-portal.signature-collection-parliamentary:listTitle',
-    defaultMessage: 'Alþingiskosningar',
-    description: '',
-  },
   signatureListsTitle: {
     id: 'admin-portal.signature-collection-parliamentary:signatureLists',
     defaultMessage: 'Alþingiskosningar',
