@@ -20,7 +20,7 @@ export class ApplicationMapper {
       id: application.id,
       formId: form.id,
       slug: form.slug,
-      name: form.name,
+      formName: form.name,
       organization: new OrganizationDto(),
       sections: [],
     }

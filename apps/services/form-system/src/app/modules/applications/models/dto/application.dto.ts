@@ -13,6 +13,9 @@ export class ApplicationDto {
   @ApiPropertyOptional()
   formId?: string
 
+  @ApiPropertyOptional({ type: LanguageType })
+  formName?: LanguageType
+
   @ApiPropertyOptional()
   slug?: string
 
@@ -21,9 +24,6 @@ export class ApplicationDto {
 
   @ApiPropertyOptional({ type: Date })
   modified?: Date
-
-  @ApiPropertyOptional({ type: LanguageType })
-  name?: LanguageType
 
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]
