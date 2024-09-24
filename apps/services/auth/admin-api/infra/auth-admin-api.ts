@@ -64,7 +64,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         staging: 'https://api.syslumenn.is/staging',
         prod: 'https://api.syslumenn.is',
       },
-      SYSLUMENN_TIMEOUT: '10000',
+      SYSLUMENN_TIMEOUT: '3000',
     })
     .secrets({
       CLIENT_SECRET_ENCRYPTION_KEY:
