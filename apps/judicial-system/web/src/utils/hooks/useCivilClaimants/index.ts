@@ -36,8 +36,10 @@ const useCivilClaimants = () => {
             return data.createCivilClaimant?.id
           }
         }
+        return null
       } catch (error) {
         toast.error(formatMessage(errors.createCivilClaimant))
+        return null
       }
     },
     [createCivilClaimantMutation, formatMessage, isCreatingCivilClaimant],
