@@ -32,8 +32,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { defenderInput as m } from '../DefenderInfo/DefenderInput.strings'
 import useCivilClaimants from '../../utils/hooks/useCivilClaimants'
+import { defenderInput as m } from '../DefenderInfo/DefenderInput.strings'
 
 interface Props {
   onAdvocateNotFound: (advocateNotFound: boolean) => void
@@ -166,12 +166,13 @@ const InputAdvocate: FC<Props> = ({
       }
     },
     [
-      clientId,
       onAdvocateNotFound,
       lawyers,
-      setAndSendDefendantToServer,
+      clientId,
+      setAndSendCivilClaimantToServer,
       workingCase,
       setWorkingCase,
+      setAndSendDefendantToServer,
       setAndSendCaseToServer,
     ],
   )
@@ -254,7 +255,13 @@ const InputAdvocate: FC<Props> = ({
         )
       }
     },
-    [formatUpdate, propertyValidations, updateDefendantState, workingCase.id],
+    [
+      formatUpdate,
+      propertyValidations,
+      updateCivilClaimantState,
+      updateDefendantState,
+      workingCase.id,
+    ],
   )
 
   const handleLawyerPropertyBlur = useCallback(
@@ -274,7 +281,13 @@ const InputAdvocate: FC<Props> = ({
         updateDefendant({ ...update, caseId, defendantId: clientId })
       }
     },
-    [formatUpdate, propertyValidations, updateDefendant, workingCase.id],
+    [
+      formatUpdate,
+      isCivilClaim,
+      propertyValidations,
+      updateCivilClaimant,
+      updateDefendant,
+    ],
   )
 
   return (

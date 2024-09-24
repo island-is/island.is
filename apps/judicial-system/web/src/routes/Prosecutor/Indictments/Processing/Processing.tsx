@@ -254,6 +254,8 @@ const Processing: FC = () => {
     }
 
     handleUpdateCivilClaimant(update)
+    // We want this hook to run exclusively when personData changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personData])
 
   return (
