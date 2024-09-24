@@ -18,6 +18,7 @@ import {
   MultiValue,
   MultiValueLabel,
   customStyles,
+  CustomClearIndicator,
 } from './Components'
 import { Option as OptionType, SelectProps } from './Select.types'
 
@@ -40,6 +41,8 @@ export const Select = <
   errorMessage = '',
   placeholder = '',
   defaultValue,
+  hideSelectedOptions = true,
+  hideClearIndicator = false,
   icon = 'chevronDown',
   isSearchable = true,
   isCreatable = false,
@@ -61,6 +64,8 @@ export const Select = <
       }
     : undefined
   const [currentValue, setCurrentValue] = React.useState('')
+
+  const ClearIndicator = hideClearIndicator ? () => null : undefined
 
   return isCreatable ? (
     <div
@@ -159,9 +164,11 @@ export const Select = <
         hasError={hasError}
         isSearchable={isSearchable}
         size={size}
+        hideSelectedOptions={hideSelectedOptions}
         required={required}
         formatGroupLabel={formatGroupLabel}
         filterOption={createFilter(filterConfig)}
+        // showClear={true}
         components={{
           Control,
           Input,
@@ -174,6 +181,7 @@ export const Select = <
           Option,
           MultiValue,
           MultiValueLabel,
+          // ClearIndicator: CustomClearIndicator,
         }}
         isClearable={isClearable}
         backspaceRemovesValue={isClearable}

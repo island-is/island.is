@@ -16,6 +16,7 @@ export type Item = {
   code: string
   name: string
   validToSelect: boolean
+  isSelected: boolean
 }
 
 export type OptionWithKey = {
@@ -40,13 +41,27 @@ export const MultiSelectDropdownController: FC<
     (getValueViaPath(application.answers, answerId) as OptionWithKey) || {},
   )
 
-  const onChange = (values: Option[], code: string, checked: boolean) => {
+  const [stateItems, setStateItems] = useState<Array<Item>>(
+    items.map((x) => ({ ...x, isSelected: false })),
+  )
+
+  const onChange = (
+    values: Option[],
+    code: string,
+    checked: boolean,
+    fullItemCode: string,
+  ) => {
     if (values === undefined) return
     if (checked) {
       setAnswers((currentValue) => ({
         ...currentValue,
         [code]: values,
       }))
+
+      const updatedStateItems = stateItems.map((item) =>
+        item.code === fullItemCode ? { ...item, isSelected: true } : item,
+      )
+      setStateItems(updatedStateItems)
       setValue(answerId, {
         ...answers,
         [code]: values,
@@ -56,9 +71,13 @@ export const MultiSelectDropdownController: FC<
       setAnswers((currentValue) => ({
         ...currentValue,
         [code]: (currentValue[code] || []).filter(
-          (value) => value !== valueToRemove,
+          (value) => value.value !== valueToRemove.value,
         ),
       }))
+      const updatedStateItems = stateItems.map((item) =>
+        item.code === fullItemCode ? { ...item, isSelected: false } : item,
+      )
+      setStateItems(updatedStateItems)
       setValue(answerId, {
         ...answers,
         [code]: (answers[code] || []).filter(
@@ -95,7 +114,7 @@ export const MultiSelectDropdownController: FC<
       {groups.map((group, index) => (
         <MultiSelectDropdown
           group={group}
-          options={items.filter(
+          options={stateItems.filter(
             (item) => item.code.substring(0, 1) === group.code.substring(0, 1),
           )}
           values={answers[group.code.substring(0, 1)]}

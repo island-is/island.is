@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { Group, Item } from './MultiSelectDropdownController'
 import { Box, Select } from '@island.is/island-ui/core'
 import { Controller } from 'react-hook-form'
@@ -8,7 +8,12 @@ import { Option } from '../Components/types'
 type MultiSelectDropdownProps = {
   group: Group
   options: Item[]
-  onChange: (values: Option[], code: string, checked: boolean) => void
+  onChange: (
+    values: Option[],
+    code: string,
+    checked: boolean,
+    fullItemCode: string,
+  ) => void
   values: Option[]
 }
 
@@ -30,19 +35,36 @@ export const MultiSelectDropdown: FC<
               label={group.name}
               // placeholder={group.name}
               closeMenuOnSelect={false}
+              hideSelectedOptions={false}
+              hideClearIndicator={true}
               options={options.map((option) => ({
                 value: option.code,
                 label: option.name,
+                withCheckmark: true,
+                isSelected: option.isSelected,
               }))}
               value={values}
               onChange={(ev, meta) => {
                 if (meta.action === 'select-option') {
-                  onChange(ev as Option[], group.code.substring(0, 1), true)
+                  onChange(
+                    ev as Option[],
+                    group.code.substring(0, 1),
+                    true,
+                    meta.option?.value || '',
+                  )
                 } else if (meta.action === 'remove-value') {
                   onChange(
                     [meta.removedValue] as Option[],
                     group.code.substring(0, 1),
                     false,
+                    meta.removedValue?.value,
+                  )
+                } else if (meta.action === 'deselect-option') {
+                  onChange(
+                    [meta.option] as Option[],
+                    group.code.substring(0, 1),
+                    false,
+                    meta.option?.value || '',
                   )
                 }
               }}

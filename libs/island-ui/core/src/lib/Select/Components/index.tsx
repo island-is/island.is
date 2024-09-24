@@ -21,10 +21,16 @@ import {
   GroupBase,
   MultiValueProps,
   MultiValueGenericProps,
+  ClearIndicatorProps,
+  Props,
 } from 'react-select'
 
 import { Icon } from '../../IconRC/Icon'
-import { Option as OptionType } from '../Select.types'
+import {
+  CustomSelectProps,
+  Option as OptionType,
+  OptionTypeNew,
+} from '../Select.types'
 import * as styles from '../Select.css'
 
 export const MultiValue = <
@@ -55,6 +61,18 @@ export const MultiValueLabel = <
   )
 }
 
+export const CustomClearIndicator = (
+  props: ClearIndicatorProps<OptionTypeNew>,
+) => {
+  const { selectProps } = props as { selectProps: CustomSelectProps }
+
+  if (!selectProps.showClear) {
+    return null
+  }
+
+  return <components.ClearIndicator {...props} />
+}
+
 export const Menu = <
   Value,
   IsMulti extends boolean,
@@ -79,10 +97,13 @@ export const Option = <
   props: OptionProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { size = 'md' } = props.selectProps
+
   const description = props.data?.description
   // Truncate description by default
   const descriptionTruncated =
     !!description && props.data?.descriptionTruncated !== false
+
+  const showCheckmark = props.data?.withCheckmark
 
   return (
     <components.Option
@@ -92,6 +113,14 @@ export const Option = <
       {...props}
     >
       <>
+        {showCheckmark && (
+          <input
+            type="checkbox"
+            checked={props.isSelected && props.data?.isSelected}
+            onChange={() => null}
+            style={{ marginRight: 10 }}
+          />
+        )}
         {props.children}
         {!!description && (
           <div
