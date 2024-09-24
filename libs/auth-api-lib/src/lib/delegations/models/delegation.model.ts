@@ -24,6 +24,7 @@ import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
+import { DelegationDelegationType } from './delegation-delegation-type.model'
 
 @Table({
   tableName: 'delegation',
@@ -45,7 +46,7 @@ export class Delegation extends Model<
     primaryKey: true,
     allowNull: false,
   })
-  id!: CreationOptional<string>
+  id!: string
 
   @Column({
     type: DataType.STRING,
@@ -119,7 +120,10 @@ export class Delegation extends Model<
   @HasMany(() => DelegationScope, { onDelete: 'cascade' })
   delegationScopes?: NonAttribute<DelegationScope[]>
 
-  toDTO(): DelegationDTO {
+  @HasMany(() => DelegationDelegationType, { onDelete: 'cascade' })
+  delegationDelegationTypes?: DelegationDelegationType[]
+
+  toDTO(type = AuthDelegationType.Custom): DelegationDTO {
     return {
       id: this.id,
       fromName: this.fromDisplayName,
@@ -131,19 +135,19 @@ export class Delegation extends Model<
         ? this.delegationScopes.map((scope) => scope.toDTO())
         : [],
       provider: AuthDelegationProvider.Custom,
-      type: AuthDelegationType.Custom,
+      type: type,
       domainName: this.domainName,
     }
   }
 
-  toMergedDTO(): MergedDelegationDTO {
+  toMergedDTO(types = [AuthDelegationType.Custom]): MergedDelegationDTO {
     return {
       fromName: this.fromDisplayName,
       fromNationalId: this.fromNationalId,
       toNationalId: this.toNationalId,
       toName: this.toName,
       validTo: this.validTo,
-      types: [AuthDelegationType.Custom],
+      types: types,
       scopes: this.delegationScopes
         ? this.delegationScopes.map((scope) => scope.toDTO())
         : [],
