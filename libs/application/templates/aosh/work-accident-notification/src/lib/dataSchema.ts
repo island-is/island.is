@@ -50,6 +50,11 @@ const employeeSchema = z.object({
   victimsOccupationUnit: option.optional().nullish(),
 })
 
+const circumstancesSchema = z.object({
+  physicialActivities: z.array(option).optional(),
+  physicialActivitiesMostSerious: z.string().optional(),
+})
+
 const companyLaborProtectionSchema = z.object({
   workhealthAndSafetyOccupation: z.array(z.string()).optional(),
 })
@@ -74,6 +79,7 @@ export const WorkAccidentNotificationAnswersSchema = z.object({
   accident: accidentSchema,
   employee: employeeSchema,
   projectPurchase: projectPurchaseSchema,
+  circumstances: circumstancesSchema,
 })
 
 export type WorkAccidentNotification = z.TypeOf<

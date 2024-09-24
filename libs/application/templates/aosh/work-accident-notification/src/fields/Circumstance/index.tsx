@@ -1,6 +1,12 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC, useState } from 'react'
-import { Box, Select, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  RadioButton,
+  Select,
+  Text,
+} from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   Group,
@@ -10,8 +16,9 @@ import {
 } from '../Components/MultiSelectDropdownController'
 import { useLocale } from '@island.is/localization'
 import { causeAndConsequences } from '../../lib/messages'
-import { Controller } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { Option } from '../Components/types'
+import { WorkAccidentNotification } from '../../lib/dataSchema'
 
 export type OptionAndKey = {
   option: Option
@@ -22,8 +29,13 @@ export const Circumstance: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
   const { application } = props
+  const answers = application.answers as WorkAccidentNotification
+  const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
-
+  const [mostSerious, setMostSeriousList] = useState<Option[]>([])
+  const [mostSeriousChosen, setMostSeriousChosen] = useState<string>(
+    answers?.circumstances?.physicialActivitiesMostSerious || '',
+  )
   const [pickedValue, setPickedValue] = useState<OptionAndKey>()
   const activityGroups = (
     getValueViaPath(
@@ -38,8 +50,14 @@ export const Circumstance: FC<React.PropsWithChildren<FieldBaseProps>> = (
     ) as Item[]
   ).filter((group) => group.validToSelect)
 
-  const onChange = (answer: OptionWithKey) => {
-    console.log('Logging answers in Circumstance index.ts', answer)
+  const onChange = (answers: OptionWithKey) => {
+    const options: Option[] = []
+    for (const key in answers) {
+      answers[key].forEach((option) => {
+        options.push(option)
+      })
+    }
+    setMostSeriousList(options)
   }
 
   return (
@@ -95,6 +113,40 @@ export const Circumstance: FC<React.PropsWithChildren<FieldBaseProps>> = (
           {...props}
         />
       </Box>
+      {mostSerious.length > 0 ? (
+        <Box marginTop={2} border="standard" padding={4}>
+          <Box marginBottom={2}>
+            <AlertMessage
+              type="warning"
+              message={'Hakaðu við það sem þú telur að sé alvarlegast.'}
+            />
+          </Box>
+          <Box>
+            {mostSerious.map((item, index) => {
+              return (
+                <Box marginBottom={1}>
+                  <RadioButton
+                    id={`${item.label}-${index}-radio`}
+                    name={`most serious-${index}`}
+                    label={item.label}
+                    value={item.value}
+                    checked={item.value === mostSeriousChosen}
+                    //error={errors && getErrorViaPath(errors, operatesWithinEuropeField)}
+                    backgroundColor="white"
+                    onChange={(e) => {
+                      setMostSeriousChosen(e.target.value)
+                      setValue(
+                        'circumstances.physicalActivitiesMostSerious',
+                        e.target.value,
+                      )
+                    }}
+                  />
+                </Box>
+              )
+            })}
+          </Box>
+        </Box>
+      ) : null}
     </Box>
   )
 }

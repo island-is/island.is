@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildHiddenInput,
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
@@ -13,6 +14,9 @@ export const circumstancesSection = buildSubSection({
       title: causeAndConsequences.circumstances.title,
       description: causeAndConsequences.circumstances.description,
       children: [
+        buildHiddenInput({
+          id: 'circumstances.physicalActivitiesMostSerious',
+        }),
         buildCustomField({
           id: 'circumstances.physicalActivities',
           title: '',
