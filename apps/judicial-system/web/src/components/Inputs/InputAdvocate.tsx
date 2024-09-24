@@ -32,6 +32,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 
+import { CivilClaimant } from '../../graphql/schema'
 import useCivilClaimants from '../../utils/hooks/useCivilClaimants'
 import { defenderInput as m } from '../DefenderInfo/DefenderInput.strings'
 
@@ -118,7 +119,11 @@ const InputAdvocate: FC<Props> = ({
   )
 
   const handleLawyerChange = useCallback(
-    (selectedOption: SingleValue<ReactSelectOption>, isCivilClaim: boolean) => {
+    (
+      selectedOption: SingleValue<ReactSelectOption>,
+      isCivilClaim: boolean,
+      clientId?: string | null,
+    ) => {
       let updatedLawyer = {
         defenderName: '',
         defenderNationalId: '',
@@ -162,6 +167,10 @@ const InputAdvocate: FC<Props> = ({
             ...updatedSpokesperson,
             caseId: workingCase.id,
             civilClaimantId: clientId,
+            caseFilesSharedWithSpokesperson:
+              updatedSpokesperson.spokespersonNationalId
+                ? civilClaimantInCivilClaimants?.caseFilesSharedWithSpokesperson
+                : null,
           },
           setWorkingCase,
         )
@@ -181,9 +190,9 @@ const InputAdvocate: FC<Props> = ({
     [
       onAdvocateNotFound,
       lawyers,
-      clientId,
       setAndSendCivilClaimantToServer,
       workingCase,
+      civilClaimantInCivilClaimants?.caseFilesSharedWithSpokesperson,
       setWorkingCase,
       setAndSendDefendantToServer,
       setAndSendCaseToServer,
@@ -345,7 +354,7 @@ const InputAdvocate: FC<Props> = ({
               : null
           }
           onChange={(selectedOption) =>
-            handleLawyerChange(selectedOption, isCivilClaim)
+            handleLawyerChange(selectedOption, isCivilClaim, clientId)
           }
           filterConfig={{ matchFrom: 'start' }}
           isDisabled={Boolean(disabled)}
