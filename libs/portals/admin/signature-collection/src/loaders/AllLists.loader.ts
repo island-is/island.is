@@ -1,16 +1,16 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import {
-  AllListsDocument,
-  AllListsQuery,
-} from './graphql/getAllSignatureLists.generated'
-import {
   SignatureCollection,
   SignatureCollectionList,
 } from '@island.is/api/schema'
 import {
   CollectionDocument,
   CollectionQuery,
-} from './graphql/getCollectionStatus.generated'
+} from './allListsGraphql/getCollectionStatus.generated'
+import {
+  AllListsDocument,
+  AllListsQuery,
+} from './allListsGraphql/getAllSignatureLists.generated'
 
 export interface ListsLoaderReturn {
   allLists: SignatureCollectionList[]
@@ -19,9 +19,7 @@ export interface ListsLoaderReturn {
 }
 
 export const listsLoader: WrappedLoaderFn = ({ client }) => {
-  return async ({
-    params,
-  }): Promise<{
+  return async (): Promise<{
     allLists: SignatureCollectionList[]
     collectionStatus: string
     collection: SignatureCollection

@@ -7,12 +7,12 @@ import {
   Box,
   Breadcrumbs,
   DialogPrompt,
+  Icon,
+  Tag,
   GridColumn,
   GridContainer,
   GridRow,
-  Icon,
   Stack,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
@@ -101,6 +101,7 @@ export const Constituency = () => {
                       ': ' +
                       new Date(list.endTime).toLocaleDateString()
                     }
+                    eyebrow={constituencyName}
                     heading={list.title.split(' - ')[0]}
                     progressMeter={{
                       currentProgress: list.numberOfSignatures ?? 0,

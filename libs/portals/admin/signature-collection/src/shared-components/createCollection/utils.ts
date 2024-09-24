@@ -1,4 +1,4 @@
-import { createCollectionErrorMessages } from '../../../../lib/messages'
+import { createCollectionErrorMessages } from '../../lib/messages'
 
 export const enum ReasonKey {
   UnderAge = 'underAge',

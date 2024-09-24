@@ -11,11 +11,11 @@ import { signatureCollectionNavigation } from '../../lib/navigation'
 import { m, parliamentaryMessages } from '../../lib/messages'
 import { useLoaderData } from 'react-router-dom'
 import { SignatureCollectionList } from '@island.is/api/schema'
-import ActionExtendDeadline from '../../shared-components/extendDeadline'
 import Signees from '../../shared-components/signees'
 import ActionReviewComplete from '../../shared-components/completeReview'
 import { PaperSignees } from './paperSignees'
 import { SignatureCollectionPaths } from '../../lib/paths'
+import ActionExtendDeadline from '../../shared-components/extendDeadline'
 
 const List = () => {
   const { formatMessage } = useLocale()

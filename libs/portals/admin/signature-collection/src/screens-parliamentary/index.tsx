@@ -1,11 +1,13 @@
 import {
   ActionCard,
+  FilterInput,
   GridColumn,
   GridContainer,
   GridRow,
   Stack,
   Box,
   Breadcrumbs,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
@@ -55,6 +57,18 @@ const ParliamentaryRoot = () => {
             imgPosition="right"
             imgHiddenBelow="sm"
           />
+          <Box width="half" marginBottom={8}>
+            <FilterInput
+              name="searchSignee"
+              value={''}
+              onChange={() => console.log('search')}
+              placeholder={formatMessage(m.searchInListPlaceholder)}
+              backgroundColor="blue"
+            />
+          </Box>
+          <Text variant="eyebrow" marginBottom={3}>
+            {formatMessage(m.totalListResults) + ' ' + collection?.areas.length}
+          </Text>
           <Stack space={3}>
             {collection?.areas.map((area) => (
               <ActionCard

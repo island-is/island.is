@@ -8,15 +8,15 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../../lib/messages'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useBulkCompareMutation } from './compareLists.generated'
 import { format as formatNationalId } from 'kennitala'
 import { SignatureCollectionSignature } from '@island.is/api/schema'
-import { createFileList, getFileData } from '../../../../lib/utils'
 import { Skeleton } from './skeleton'
 import { useUnsignAdminMutation } from './removeSignatureFromList.generated'
+import { m } from '../../lib/messages'
+import { createFileList, getFileData } from '../../lib/utils'
 
 const CompareLists = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
@@ -57,7 +57,7 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
         },
       })
 
-      if (res.data && res.data.signatureCollectionAdminUnsign.success) {
+      if (res.data?.signatureCollectionAdminUnsign.success) {
         toast.success(formatMessage(m.unsignFromListSuccess))
         setUploadResults(
           uploadResults?.filter((result: SignatureCollectionSignature) => {
@@ -84,20 +84,20 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
   return (
     <Box marginTop={10}>
       <Box
-        background="purple100"
+        background="blue100"
         borderRadius="large"
         display={['block', 'flex', 'flex']}
         justifyContent="spaceBetween"
         alignItems="center"
         padding={3}
       >
-        <Text marginBottom={[2, 0, 0]}>
+        <Text marginBottom={[2, 0, 0]} variant="medium">
           {formatMessage(m.compareListsDescription)}
         </Text>
         <Button
           icon="documents"
           iconType="outline"
-          variant="utility"
+          variant="ghost"
           size="small"
           onClick={() => setModalIsOpen(true)}
         >
@@ -156,9 +156,9 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
                   <T.Body>
                     {!loading ? (
                       uploadResults?.map(
-                        (result: SignatureCollectionSignature, index) => {
+                        (result: SignatureCollectionSignature) => {
                           return (
-                            <T.Row key={index}>
+                            <T.Row key={result.id}>
                               <T.Data style={{ minWidth: '140px' }}>
                                 {formatNationalId(result.signee.nationalId)}
                               </T.Data>
