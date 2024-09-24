@@ -1,20 +1,20 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import {
-  ListbyidDocument,
-  ListbyidQuery,
-} from './graphql/getSignatureList.generated'
-import {
   SignatureCollectionList,
   SignatureCollectionSignature,
 } from '@island.is/api/schema'
 import {
-  ListStatusDocument,
-  ListStatusQuery,
-} from './graphql/getListStatus.generated'
+  ListbyidDocument,
+  ListbyidQuery,
+} from './listGraphql/getSignatureList.generated'
 import {
   SignaturesDocument,
   SignaturesQuery,
-} from './graphql/getListSignees.generated'
+} from './listGraphql/getListSignees.generated'
+import {
+  ListStatusDocument,
+  ListStatusQuery,
+} from './listGraphql/getListStatus.generated'
 
 export const listLoader: WrappedLoaderFn = ({ client }) => {
   return async ({
@@ -29,7 +29,7 @@ export const listLoader: WrappedLoaderFn = ({ client }) => {
       fetchPolicy: 'network-only',
       variables: {
         input: {
-          listId: params.id,
+          listId: params.listId,
         },
       },
     })
@@ -39,7 +39,7 @@ export const listLoader: WrappedLoaderFn = ({ client }) => {
       fetchPolicy: 'network-only',
       variables: {
         input: {
-          listId: params.id,
+          listId: params.listId,
         },
       },
     })
@@ -49,7 +49,7 @@ export const listLoader: WrappedLoaderFn = ({ client }) => {
       fetchPolicy: 'network-only',
       variables: {
         input: {
-          listId: params.id,
+          listId: params.listId,
         },
       },
     })
