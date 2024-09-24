@@ -70,10 +70,10 @@ export class DelegationAdminCustomService {
     nationalId: string,
   ): Promise<DelegationAdminCustomDto> {
     const [
-      incomingDelegations,
-      generalIncomingDelegations,
-      outgoingDelegations,
-      generalOutgoingDelegations,
+      incomingCustomDelegations,
+      incomingGeneralDelegations,
+      outgoingCustomDelegations,
+      outgoingGeneralDelegations,
     ] = await Promise.all([
       this.delegationsIncomingCustomService.findAllValidIncoming({
         nationalId: nationalId,
@@ -129,12 +129,12 @@ export class DelegationAdminCustomService {
     ])
 
     return {
-      incoming: [...incomingDelegations, ...generalIncomingDelegations],
+      incoming: [...incomingCustomDelegations, ...incomingGeneralDelegations],
       outgoing: [
-        ...generalOutgoingDelegations.map((d) =>
+        ...outgoingGeneralDelegations.map((d) =>
           d.toDTO(AuthDelegationType.GeneralMandate),
         ),
-        ...outgoingDelegations.map((delegation) => delegation.toDTO()),
+        ...outgoingCustomDelegations.map((delegation) => delegation.toDTO()),
       ],
     }
   }
