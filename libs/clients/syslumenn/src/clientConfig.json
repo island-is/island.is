@@ -472,6 +472,58 @@
         ]
       }
     },
+    "/api/Logradamadur/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "Logradamadur_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "kennitala",
+            "in": "query",
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LogradamadurSvar"
+              }
+            }
+          },
+          "500": {
+            "x-nullable": false,
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/api/Logmannalisti": {
       "get": {
         "tags": ["Syslumenn"],
@@ -862,6 +914,99 @@
         ]
       }
     },
+    "/v1/Heimagistingar/{audkenni}": {
+      "put": {
+        "tags": ["Syslumenn"],
+        "operationId": "Heimagistingar_Put",
+        "consumes": ["application/json", "text/json", "application/*+json"],
+        "parameters": [
+          {
+            "name": "payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UppfaeraHeimagistingarModel"
+            },
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "default": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      },
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "Heimagistingar_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/HeimagistingarModel"
+              }
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "default": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/v1/VirkarHeimagistingar/{audkenni}": {
       "get": {
         "tags": ["Syslumenn"],
@@ -1154,13 +1299,7 @@
           },
           {
             "type": "string",
-            "name": "Hjonaefni1",
-            "in": "query",
-            "x-nullable": true
-          },
-          {
-            "type": "string",
-            "name": "Hjonaefni2",
+            "name": "kennitala",
             "in": "query",
             "x-nullable": true
           }
@@ -1356,7 +1495,7 @@
             "type": "string",
             "name": "malsnumer",
             "in": "query",
-            "x-nullable": false
+            "x-nullable": true
           },
           {
             "type": "string",
@@ -3356,6 +3495,18 @@
         }
       }
     },
+    "LogradamadurSvar": {
+      "type": "object",
+      "properties": {
+        "kennitala": {
+          "type": "string"
+        },
+        "gildirTil": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "Logmenn": {
       "type": "object",
       "properties": {
@@ -3669,6 +3820,62 @@
         "hamarksfjoldiGestaIVeitingum": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "UppfaeraHeimagistingarModel": {
+      "type": "object",
+      "properties": {
+        "leyfi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UppfaeraHeimagistingDetail"
+          }
+        }
+      }
+    },
+    "UppfaeraHeimagistingDetail": {
+      "type": "object",
+      "properties": {
+        "tegund": {
+          "type": "string"
+        },
+        "numer": {
+          "type": "string"
+        },
+        "markadsefniSlod": {
+          "type": "string"
+        },
+        "fannst": {
+          "type": "boolean"
+        }
+      }
+    },
+    "HeimagistingarModel": {
+      "type": "object",
+      "properties": {
+        "leyfi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HeimagistingDetail"
+          }
+        }
+      }
+    },
+    "HeimagistingDetail": {
+      "type": "object",
+      "properties": {
+        "tegund": {
+          "type": "string"
+        },
+        "numerLeyfist": {
+          "type": "string"
+        },
+        "virkt": {
+          "type": "boolean"
+        },
+        "utgefid": {
+          "type": "string"
         }
       }
     },
@@ -4011,6 +4218,12 @@
           "type": "string"
         },
         "skyring": {
+          "type": "string"
+        },
+        "simi": {
+          "type": "string"
+        },
+        "netfang": {
           "type": "string"
         }
       }
