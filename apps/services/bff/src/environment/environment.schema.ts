@@ -21,16 +21,6 @@ export const environmentSchema = z.strictObject({
     .refine((val) => !val.endsWith('/bff'), {
       message: `${KEY_PATH_ENV_VAR} must not end with /bff`,
     }),
-  /**
-   * Enable CORS configuration
-   */
-  enableCors: z
-    .object({
-      origin: z.string().array(),
-      methods: z.enum(['GET', 'POST']).array(),
-      credentials: z.boolean().optional(),
-    })
-    .optional(),
 })
 
 export type BffEnvironment = z.infer<typeof environmentSchema>

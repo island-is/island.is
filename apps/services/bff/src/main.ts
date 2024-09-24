@@ -8,9 +8,6 @@ bootstrap({
   name: 'bff',
   port: environment.port,
   globalPrefix: `${environment.keyPath}/bff`,
-  ...(!environment.production && {
-    enableCors: environment.enableCors,
-  }),
   healthCheck: {
     timeout: 1000,
   },
