@@ -182,17 +182,8 @@ export const BenefitsOfDigitalProcessesCalculator = ({
         'Fórnarkostnaður borgarar (meðallaun í landi á klst)'
       ] ?? 5122,
     kilometerFeePerKilometer: slice.configJson?.['Km gjald pr km'] ?? 141,
-    averageGreenhouseGasesEmittedByCarPerKilometer:
-      slice.configJson?.[
-        'Average greenhouse gases emitted by car per km kg CO2e/km'
-      ] ?? 0,
     averageDrivingSpeedInKilometersPerHour:
       slice.configJson?.['Meðalökuhraði km/klst'] ?? 40,
-    bias: slice.configJson?.['Bias'] ?? 0,
-    co2EmissionPerDrivenKilometer: slice.configJson?.['Kg co2 á ekinn km'] ?? 0,
-    etsCO2Price: slice.configJson?.['Verð á CO2 kg (ETS) í krónum'] ?? 12,
-    carbonWoodCO2Price:
-      slice.configJson?.['Verð á CO2 kg (Kolviður) í krónum'] ?? 3,
     staffHourAverageInYear:
       slice.configJson?.['Klukkustundir í stöðugildi á ári'] ?? 1606,
     ringRoadDistanceInKilometers:

@@ -155,7 +155,7 @@ export const t = {
       description: 'Dagar',
     },
     currencyPostfix: {
-      id: 'web.digitalIceland.benefitsOfDigitalProcesses:results.days',
+      id: 'web.digitalIceland.benefitsOfDigitalProcesses:results.currencyPostfix',
       defaultMessage: ' kr.',
       description: 'Viðskeyti eftir krónutölu',
     },
