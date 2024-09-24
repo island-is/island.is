@@ -93,14 +93,18 @@ const useCivilClaimants = () => {
             (civilClaimant) => civilClaimant.id === update.civilClaimantId,
           )
 
-        const newCivilClaimants = [...prevWorkingCase.civilClaimants]
+        if (indexOfCivilClaimantToUpdate === -1) {
+          return prevWorkingCase
+        } else {
+          const newCivilClaimants = [...prevWorkingCase.civilClaimants]
 
-        newCivilClaimants[indexOfCivilClaimantToUpdate] = {
-          ...newCivilClaimants[indexOfCivilClaimantToUpdate],
-          ...update,
-        } as CivilClaimant
+          newCivilClaimants[indexOfCivilClaimantToUpdate] = {
+            ...newCivilClaimants[indexOfCivilClaimantToUpdate],
+            ...update,
+          } as CivilClaimant
 
-        return { ...prevWorkingCase, civilClaimants: newCivilClaimants }
+          return { ...prevWorkingCase, civilClaimants: newCivilClaimants }
+        }
       })
     },
     [],
