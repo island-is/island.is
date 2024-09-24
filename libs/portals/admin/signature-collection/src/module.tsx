@@ -2,9 +2,9 @@ import { PortalModule } from '@island.is/portals/core'
 import { lazy } from 'react'
 import { m } from './lib/messages'
 import { SignatureCollectionPaths } from './lib/paths'
-import { listsLoader } from './screens-presidential/AllLists/AllLists.loader'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { listLoader } from './screens-presidential/List/List.loader'
+import { listsLoader } from './loaders/AllLists.loader'
+import { listLoader } from './loaders/List.loader'
 
 /* parliamentary */
 const ParliamentaryRoot = lazy(() => import('./screens-parliamentary'))

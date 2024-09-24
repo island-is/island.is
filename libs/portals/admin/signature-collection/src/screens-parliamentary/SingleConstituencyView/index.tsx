@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import { ListsLoaderReturn } from '../../screens-presidential/AllLists/AllLists.loader'
+import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 
 export const SingleConstituencyView = () => {
   const { formatMessage } = useLocale()

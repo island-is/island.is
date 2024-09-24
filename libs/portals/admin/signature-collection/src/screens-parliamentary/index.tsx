@@ -13,9 +13,9 @@ import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../lib/navigation'
 import { m, parliamentaryMessages } from '../lib/messages'
 import { useLoaderData, useNavigate } from 'react-router-dom'
-import { ListsLoaderReturn } from '../screens-presidential/AllLists/AllLists.loader'
 import { SignatureCollectionPaths } from '../lib/paths'
 import CompareLists from '../shared-components/compareLists'
+import { ListsLoaderReturn } from '../loaders/AllLists.loader'
 
 const ParliamentaryRoot = () => {
   const { formatMessage } = useLocale()

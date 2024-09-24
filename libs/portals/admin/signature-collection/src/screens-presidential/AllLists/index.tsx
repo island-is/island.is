@@ -32,10 +32,10 @@ import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
 import ListInfo from '../List/components/listInfoAlert'
-import { ListsLoaderReturn } from './AllLists.loader'
 import EmptyState from '../../shared-components/emptyState'
 import ReviewCandidates from './components/reviewCandidates'
 import CompareLists from '../../shared-components/compareLists'
+import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
