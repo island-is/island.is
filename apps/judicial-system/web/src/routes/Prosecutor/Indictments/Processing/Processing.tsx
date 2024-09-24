@@ -224,7 +224,7 @@ const Processing: FC = () => {
 
     const allCivilClaimantsDeleted = await Promise.all(promises)
 
-    if (allCivilClaimantsDeleted) {
+    if (allCivilClaimantsDeleted.every((deleted) => deleted)) {
       setWorkingCase((prev) => ({ ...prev, civilClaimants: [] }))
     }
   }, [
