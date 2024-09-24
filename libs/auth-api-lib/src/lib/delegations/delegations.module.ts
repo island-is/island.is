@@ -11,7 +11,6 @@ import {
   ZendeskServiceOptions,
 } from '@island.is/clients/zendesk'
 
-
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 import { Client } from '../clients/models/client.model'
 import { PersonalRepresentativeModule } from '../personal-representative/personal-representative.module'
