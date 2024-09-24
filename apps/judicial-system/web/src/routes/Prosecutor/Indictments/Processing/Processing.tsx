@@ -38,11 +38,11 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
+  useCivilClaimants,
   useDefendants,
   useNationalRegistry,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import useCivilClaimants from '@island.is/judicial-system-web/src/utils/hooks/useCivilClaimants'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { ProsecutorSection, SelectCourt } from '../../components'

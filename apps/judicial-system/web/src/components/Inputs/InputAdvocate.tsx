@@ -27,12 +27,12 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
+  useCivilClaimants,
   useDefendants,
   useGetLawyers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 
-import useCivilClaimants from '../../utils/hooks/useCivilClaimants'
 import { strings } from './Input.strings'
 
 interface Props {
