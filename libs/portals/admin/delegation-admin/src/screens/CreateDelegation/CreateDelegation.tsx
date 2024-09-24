@@ -74,7 +74,6 @@ const CreateDelegationScreen = () => {
   ]
 
   useEffect(() => {
-    // async function to mark string and redirect
     async function success() {
       const maskedNationalId = await maskString(
         fromIdentity?.nationalId ?? '',
