@@ -3,6 +3,8 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
@@ -70,12 +72,15 @@ export class EndorsementListService {
   async getOwnerName(ownerNationalId: string): Promise<string> {
     try {
       const person = await this.nationalRegistryApiV3.getName(ownerNationalId)
-      console.log("person",person)
       return person?.fulltNafn || ''
     } catch (error) {
-      const message = `Error fetching owner name from NationalRegistryApi: ${error.message}`
-      this.logger.error(message)
-      throw new BadRequestException(message)
+      // const message = `Error fetching owner name from NationalRegistryApi: ${error.message}`
+      // this.logger.error(message)
+      // throw new BadRequestException(message)
+      throw new HttpException(
+        error?.response || 'Error fetching owner name',
+        error?.status || HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 
