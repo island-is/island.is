@@ -1,42 +1,37 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Test, TestingModule } from '@nestjs/testing'
+import crypto from 'crypto'
 import { CryptoService } from './crypto.service'
+import { BffConfig } from '../bff.config'
 
 const DECRYPTED_TEXT = 'Hello, World!'
-const ENCRYPTED_TEXT = 'bW9ja2VkZGl'
 
-// Mock the crypto module
-jest.mock('crypto', () => {
-  const actualCrypto = jest.requireActual('crypto')
-
-  return {
-    ...actualCrypto,
-    createCipheriv: jest.fn(() => ({
-      update: jest.fn().mockReturnValue(ENCRYPTED_TEXT),
-      final: jest.fn().mockReturnValue(''),
-    })),
-    createDecipheriv: jest.fn(() => ({
-      update: jest.fn().mockReturnValue(DECRYPTED_TEXT),
-      final: jest.fn().mockReturnValue(''),
-    })),
-  }
+Object.defineProperty(global, 'crypto', {
+  value: {
+    getRandomValues: (arr: Buffer) => crypto.randomBytes(arr.length),
+  },
 })
+
+const invalidConfig = {
+  tokenSecretBase64: 'shortkey',
+}
+
+const validConfig = {
+  // A valid 32-byte base64 key
+  tokenSecretBase64: 'ABHlmq6Ic6Ihip4OnTa1MeUXtHFex8IT/mFZrjhsme0=',
+}
 
 const mockLogger = {
   error: jest.fn(),
 } as unknown as Logger
 
-const createModule = async (valid = true): Promise<TestingModule> => {
-  process.env.BFF_TOKEN_SECRET_BASE64 = valid
-    ? // A valid 32-byte base64 key
-      'ABHlmq6Ic6Ihip4OnTa1MeUXtHFex8IT/mFZrjhsme0='
-    : 'invalid_key'
-
+const createModule = async (config = validConfig): Promise<TestingModule> => {
   return Test.createTestingModule({
     providers: [
       CryptoService,
       { provide: LOGGER_PROVIDER, useValue: mockLogger },
+      { provide: BffConfig.KEY, useValue: config },
     ],
   }).compile()
 }
@@ -44,7 +39,7 @@ const createModule = async (valid = true): Promise<TestingModule> => {
 describe('CryptoService Constructor', () => {
   it('should throw an error if "tokenSecretBase64" is not 32 bytes long', async () => {
     try {
-      const module = await createModule(false)
+      const module = await createModule(invalidConfig)
       module.get<CryptoService>(CryptoService)
       // Fail the test if no error is thrown
       fail('Expected constructor to throw an error, but it did not.')
@@ -77,9 +72,9 @@ describe('CryptoService', () => {
   describe('encrypt', () => {
     it('should encrypt and return a string containing IV and encrypted text', () => {
       const encryptedText = service.encrypt(DECRYPTED_TEXT)
-      const [ivBase64, encrypted] = encryptedText.split(':')
+      const [algorithm, ivBase64, encrypted] = encryptedText.split(':')
 
-      // Verify the length of the IV and the encrypted part
+      expect(algorithm).toEqual('aes-256-cbc')
       // IV in base64 (16 bytes) should be 24 characters long
       expect(ivBase64).toHaveLength(24)
       expect(encrypted.length).toBeGreaterThan(0)
