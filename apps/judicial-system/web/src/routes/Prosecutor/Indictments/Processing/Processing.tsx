@@ -75,7 +75,6 @@ const Processing: FC = () => {
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
     useState<boolean>()
   const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
-  const [advocateNotFound, setAdvocateNotFound] = useState<boolean>(false)
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
@@ -596,7 +595,6 @@ const Processing: FC = () => {
                       </Box>
                       <Box marginBottom={2}>
                         <InputAdvocate
-                          onAdvocateNotFound={setAdvocateNotFound}
                           clientId={civilClaimant.id}
                           advocateType={
                             civilClaimant.spokespersonIsLawyer

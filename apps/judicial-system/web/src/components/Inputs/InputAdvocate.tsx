@@ -36,7 +36,7 @@ import useCivilClaimants from '../../utils/hooks/useCivilClaimants'
 import { strings } from './Input.strings'
 
 interface Props {
-  onAdvocateNotFound: (advocateNotFound: boolean) => void
+  onAdvocateNotFound?: (advocateNotFound: boolean) => void
   disabled?: boolean | null
   clientId?: string | null
   advocateType?: 'defender' | 'spokesperson' | 'legal_rights_protector'
@@ -140,7 +140,7 @@ const InputAdvocate: FC<Props> = ({
       if (selectedOption) {
         const { label, value, __isNew__: defenderNotFound } = selectedOption
 
-        onAdvocateNotFound(defenderNotFound || false)
+        onAdvocateNotFound && onAdvocateNotFound(defenderNotFound || false)
 
         const lawyer = lawyers.find(
           (l: Lawyer) => l.email === (value as string),
