@@ -41,7 +41,7 @@ test.describe.serial('Search warrant tests', () => {
     await page.locator('#type').click()
     await page.locator('#react-select-type-option-0').click()
     await page.getByRole('checkbox').first().check()
-    await page.locator('input[name=accusedName]').fill(faker.name.findName())
+    await page.locator('input[name=inputName]').fill(faker.name.findName())
     await page.locator('input[name=accusedAddress]').fill('Einhversstaðar 1')
     await page.locator('#defendantGender').click()
     await page.locator('#react-select-defendantGender-option-0').click()
