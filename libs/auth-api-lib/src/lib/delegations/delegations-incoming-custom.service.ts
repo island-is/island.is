@@ -3,16 +3,14 @@ import { InjectModel } from '@nestjs/sequelize'
 import * as kennitala from 'kennitala'
 import uniqBy from 'lodash/uniqBy'
 import { Op } from 'sequelize'
+import startOfDay from 'date-fns/startOfDay'
 
 import { User } from '@island.is/auth-nest-tools'
 import {
   IndividualDto,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
-import {
-  CompanyExtendedInfo,
-  CompanyRegistryClientService,
-} from '@island.is/clients/rsk/company-registry'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AuditService } from '@island.is/nest/audit'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -30,6 +28,7 @@ import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { getScopeValidityWhereClause } from './utils/scopes'
+import { DelegationDelegationType } from './models/delegation-delegation-type.model'
 
 type FindAllValidIncomingOptions = {
   nationalId: string
@@ -80,6 +79,33 @@ export class DelegationsIncomingCustomService {
       return {
         ...d,
         fromName: person?.name ?? d.fromName ?? UNKNOWN_NAME,
+      }
+    })
+  }
+
+  async findAllValidGeneralMandate(
+    { nationalId }: FindAllValidIncomingOptions,
+    useMaster = false,
+  ): Promise<DelegationDTO[]> {
+    const { delegations, fromNameInfo } =
+      await this.findAllIncomingGeneralMandates(
+        {
+          nationalId,
+        },
+        useMaster,
+      )
+
+    return delegations.map((delegation) => {
+      const delegationDTO = delegation.toDTO(AuthDelegationType.GeneralMandate)
+
+      const person = this.getPersonByNationalId(
+        fromNameInfo,
+        delegationDTO.fromNationalId,
+      )
+
+      return {
+        ...delegationDTO,
+        fromName: person?.name ?? delegationDTO.fromName ?? UNKNOWN_NAME,
       }
     })
   }
@@ -149,6 +175,92 @@ export class DelegationsIncomingCustomService {
         fromName: person?.name ?? d.fromName ?? UNKNOWN_NAME,
       }
     })
+  }
+
+  async findAllAvailableGeneralMandate(
+    user: User,
+    clientAllowedApiScopes: ApiScopeInfo[],
+    requireApiScopes: boolean,
+  ): Promise<MergedDelegationDTO[]> {
+    const customApiScopes = clientAllowedApiScopes.filter((s) =>
+      s.supportedDelegationTypes?.some(
+        (dt) => dt.delegationType === AuthDelegationType.GeneralMandate,
+      ),
+    )
+
+    if (requireApiScopes && !(customApiScopes && customApiScopes.length > 0)) {
+      return []
+    }
+
+    const { delegations, fromNameInfo } =
+      await this.findAllIncomingGeneralMandates({
+        nationalId: user.nationalId,
+      })
+
+    const mergedDelegationDTOs = uniqBy(
+      delegations.map((d) =>
+        d.toMergedDTO([AuthDelegationType.GeneralMandate]),
+      ),
+      'fromNationalId',
+    )
+
+    return mergedDelegationDTOs.map((d) => {
+      const person = this.getPersonByNationalId(fromNameInfo, d.fromNationalId)
+
+      return {
+        ...d,
+        fromName: person?.name ?? d.fromName ?? UNKNOWN_NAME,
+      } as MergedDelegationDTO
+    })
+  }
+
+  private async findAllIncomingGeneralMandates(
+    { nationalId }: FindAllValidIncomingOptions,
+    useMaster = false,
+  ): Promise<{ delegations: Delegation[]; fromNameInfo: FromNameInfo[] }> {
+    const startOfToday = startOfDay(new Date())
+
+    const delegations = await this.delegationModel.findAll({
+      useMaster,
+      where: {
+        toNationalId: nationalId,
+      },
+      include: [
+        {
+          model: DelegationDelegationType,
+          where: {
+            validTo: {
+              [Op.or]: {
+                [Op.gte]: startOfToday,
+                [Op.is]: null,
+              },
+            },
+            delegationTypeId: AuthDelegationType.GeneralMandate,
+          },
+        },
+      ],
+    })
+
+    // Check live status, i.e. dead or alive for delegations
+    const { aliveDelegations, deceasedDelegations, fromNameInfo } =
+      await this.getLiveStatusFromDelegations(delegations)
+
+    if (deceasedDelegations.length > 0) {
+      // Delete all deceased delegations by deleting them and their scopes.
+      const deletePromises = deceasedDelegations.map((delegation) =>
+        delegation.destroy(),
+      )
+
+      await Promise.all(deletePromises)
+
+      this.auditService.audit({
+        action: 'deleteDelegationsForMissingPeople',
+        resources: deceasedDelegations.map(({ id }) => id).filter(isDefined),
+        system: true,
+      })
+    }
+
+    return { delegations: aliveDelegations, fromNameInfo }
   }
 
   private async findAllIncoming(
