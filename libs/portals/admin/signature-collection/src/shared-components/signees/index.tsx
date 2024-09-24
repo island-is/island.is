@@ -37,7 +37,7 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
       )
     })
   }, [allSignees, searchTerm])
-  
+
   useEffect(() => {
     setPage(1)
     setSignees(filteredSignees)
