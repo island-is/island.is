@@ -59,6 +59,12 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
       },
       COMPANY_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
+      SYSLUMENN_HOST: {
+        dev: 'https://api.syslumenn.is/staging',
+        staging: 'https://api.syslumenn.is/staging',
+        prod: 'https://api.syslumenn.is',
+      },
+      SYSLUMENN_TIMEOUT: '3000',
     })
     .secrets({
       CLIENT_SECRET_ENCRYPTION_KEY:
@@ -67,6 +73,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
       NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+      SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
     })
     .xroad(Base, Client, RskProcuring)
     .ingress({
