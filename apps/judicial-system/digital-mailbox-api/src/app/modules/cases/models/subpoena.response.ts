@@ -48,11 +48,14 @@ class SubpoenaData {
   @ApiProperty({ type: () => String })
   title!: string
 
-  @ApiProperty({ type: () => [AlertMessage] })
-  alerts?: AlertMessage[]
+  @ApiProperty({ type: String })
+  subtitle?: string
 
   @ApiProperty({ type: () => [Groups] })
   groups!: Groups[]
+
+  @ApiProperty({ type: () => [AlertMessage] })
+  alerts?: AlertMessage[]
 
   @ApiProperty({ type: Boolean })
   hasBeenServed?: boolean
@@ -97,11 +100,13 @@ export class SubpoenaResponse {
     const arraignmentLocation = subpoenaDateLog?.location
       ? `${internalCase.court.name}, Dómsalur ${subpoenaDateLog.location}`
       : internalCase.court.name
+    const courtNameAndAddress = `${internalCase.court.name}, ${internalCase.court.address}`
 
     return {
       caseId: internalCase.id,
       data: {
         title: t.subpoena,
+        subtitle: courtNameAndAddress,
         hasBeenServed: hasBeenServed,
         alerts: [
           ...(hasBeenServed
