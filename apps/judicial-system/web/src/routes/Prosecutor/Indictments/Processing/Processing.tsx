@@ -19,14 +19,14 @@ import {
   FormContext,
   FormFooter,
   InputAdvocate,
+  InputName,
+  InputNationalId,
   PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import InputName from '@island.is/judicial-system-web/src/components/Inputs/InputName'
-import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
 import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 import {
   CaseState,
@@ -471,10 +471,20 @@ const Processing: FC = () => {
                   </Box>
                   <InputName
                     value={civilClaimant.name ?? undefined}
-                    required={Boolean(!civilClaimant.noNationalId)}
+                    onChange={(val) =>
+                      updateCivilClaimantState(
+                        {
+                          caseId: workingCase.id,
+                          civilClaimantId: civilClaimant.id ?? '',
+                          name: val,
+                        },
+                        setWorkingCase,
+                      )
+                    }
                     onBlur={(val) =>
                       handleCivilClaimantNameBlur(val, civilClaimant.id)
                     }
+                    required
                   />
                   <Box display="flex" justifyContent="flexEnd" marginTop={2}>
                     <Button

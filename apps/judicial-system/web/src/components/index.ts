@@ -43,6 +43,8 @@ export { default as InfoCardActiveIndictment } from './InfoCard/InfoCardActiveIn
 export { default as InfoCardClosedIndictment } from './InfoCard/InfoCardClosedIndictment/InfoCardClosedIndictment'
 export { default as CaseScheduledCard } from './BlueBoxWithIcon/CaseScheduledCard'
 export { default as IndictmentCaseScheduledCard } from './BlueBoxWithIcon/IndictmentCaseScheduledCard'
+export { default as InputName } from './Inputs/InputName'
+export { default as InputNationalId } from './Inputs/InputNationalId'
 export { default as Loading } from './Loading/Loading'
 export { default as Logo } from './Logo/Logo'
 export { default as MarkdownWrapper } from './MarkdownWrapper/MarkdownWrapper'
