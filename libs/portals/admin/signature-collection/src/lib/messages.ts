@@ -155,6 +155,11 @@ export const m = defineMessages({
     defaultMessage: 'Skoða söfnun',
     description: '',
   },
+  viewConstituency: {
+    id: 'admin-portal.signature-collection:viewConstituency',
+    defaultMessage: 'Skoða kjördæmi',
+    description: '',
+  },
   noLists: {
     id: 'admin-portal.signature-collection:noLists',
     defaultMessage: 'Engin söfnun í gangi',

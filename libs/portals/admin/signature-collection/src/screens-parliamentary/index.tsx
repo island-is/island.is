@@ -56,15 +56,16 @@ const ParliamentaryRoot = () => {
             />
           </Box>
           <Text variant="eyebrow" marginBottom={3}>
-            {formatMessage('Kjördæmi: 6')}
+            {formatMessage(m.totalListResults) + ' ' + collection?.areas.length}
           </Text>
           <Stack space={3}>
             {collection?.areas.map((area) => (
               <ActionCard
                 key={area.id}
+                eyebrow={'Fjöldi lista: XXX'}
                 heading={area.name}
                 cta={{
-                  label: 'Skoða nánar',
+                  label: formatMessage(m.viewConstituency),
                   variant: 'text',
                   onClick: () => {
                     navigate(

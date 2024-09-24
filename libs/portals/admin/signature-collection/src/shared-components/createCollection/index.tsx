@@ -8,7 +8,6 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../../lib/messages'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { InputController } from '@island.is/shared/form-fields'
@@ -16,6 +15,7 @@ import { Control, useForm } from 'react-hook-form'
 import { useCandidateLookupLazyQuery } from './candidateLookup.generated'
 import { setReason } from './utils'
 import { useCreateCollectionMutation } from './createCollection.generated'
+import { m } from '../../lib/messages'
 
 const CreateCollection = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
@@ -98,9 +98,10 @@ const CreateCollection = ({ collectionId }: { collectionId: string }) => {
         style={{ minWidth: '150px' }}
       >
         <Button
-          variant="ghost"
+          variant="utility"
           size="small"
           nowrap
+          icon="add"
           onClick={() => {
             setModalIsOpen(true)
           }}

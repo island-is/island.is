@@ -11,9 +11,7 @@ const ParliamentaryRoot = lazy(() => import('./screens-parliamentary'))
 const ParliamentaryConstituency = lazy(() =>
   import('./screens-parliamentary/Constituency'),
 )
-const ParliamentaryList = lazy(() =>
-  import('./screens-parliamentary/List'),
-)
+const ParliamentaryList = lazy(() => import('./screens-parliamentary/List'))
 
 /* presidential */
 const AllLists = lazy(() => import('./screens-presidential/AllLists'))

@@ -4,20 +4,23 @@ import { useLocale } from '@island.is/localization'
 import { m, parliamentaryMessages } from '../../lib/messages'
 import {
   ActionCard,
+  Box,
   GridColumn,
   GridContainer,
   GridRow,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
+import CreateCollection from '../../shared-components/createCollection'
 
 export const Constituency = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { allLists } = useLoaderData() as ListsLoaderReturn
+  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
   const { constituencyName } = useParams() as { constituencyName: string }
 
   const constituencyLists = allLists.filter(
@@ -53,10 +56,26 @@ export const Constituency = () => {
           />
           <GridRow>
             <GridColumn span={'12/12'}>
+              <Box
+                marginBottom={3}
+                display="flex"
+                justifyContent="spaceBetween"
+                alignItems="center"
+              >
+                <Text variant="eyebrow">
+                  {formatMessage(m.totalListResults) +
+                    ': ' +
+                    constituencyLists.length}
+                </Text>
+                {constituencyLists?.length > 0 && (
+                  <CreateCollection collectionId={collection?.id} />
+                )}
+              </Box>
               <Stack space={3}>
                 {constituencyLists.map((list) => (
                   <ActionCard
                     key={list.id}
+                    eyebrow={constituencyName}
                     heading={list.title.split(' - ')[0]}
                     progressMeter={{
                       currentProgress: list.numberOfSignatures ?? 0,
@@ -64,7 +83,7 @@ export const Constituency = () => {
                       withLabel: true,
                     }}
                     cta={{
-                      label: 'Skoða nánar',
+                      label: formatMessage(m.viewList),
                       variant: 'text',
                       onClick: () => {
                         navigate(

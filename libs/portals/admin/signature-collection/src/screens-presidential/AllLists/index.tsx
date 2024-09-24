@@ -27,7 +27,6 @@ import {
   pageSize,
 } from '../../lib/utils'
 import { format as formatNationalId } from 'kennitala'
-import CreateCollection from './components/createCollection'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
@@ -36,6 +35,7 @@ import EmptyState from '../../shared-components/emptyState'
 import ReviewCandidates from './components/reviewCandidates'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
+import CreateCollection from '../../shared-components/createCollection'
 
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
