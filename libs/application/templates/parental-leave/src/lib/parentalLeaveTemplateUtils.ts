@@ -143,3 +143,51 @@ export const restructureVMSTPeriods = (context: ApplicationContext) => {
 
   return newPeriods
 }
+
+export const restructureVMSTApplicationRights = (
+  context: ApplicationContext,
+) => {
+  // Possibly remove since it might not be needed
+  // const { application } = context
+  // const { VMSTApplicationRights } = getApplicationExternalData(
+  //   application.externalData,
+  // )
+  // const { periods } = getApplicationAnswers(application.answers)
+  // const today = new Date()
+  // const newPeriods: Period[] = []
+  // VMSTPeriods?.forEach((period, index) => {
+  //   /*
+  //    ** VMST could change startDate but still return 'date_of_birth'
+  //    ** Make sure if period is in the past then we use the date they sent
+  //    */
+  //   let firstPeriodStart =
+  //     period.firstPeriodStart === 'date_of_birth'
+  //       ? 'actualDateOfBirth'
+  //       : 'specificDate'
+  //   if (new Date(period.from).getTime() <= today.getTime()) {
+  //     firstPeriodStart = 'specificDate'
+  //   }
+  //   let useLength = NO
+  //   if (firstPeriodStart === 'actualDateOfBirth') {
+  //     useLength = periods[0].useLength ?? NO
+  //   }
+  //   if (!period.rightsCodePeriod.includes('DVAL')) {
+  //     // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
+  //     const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+  //     const obj = {
+  //       startDate: period.from,
+  //       endDate: period.to,
+  //       ratio: period.ratio.split(',')[0],
+  //       rawIndex: index,
+  //       firstPeriodStart: firstPeriodStart,
+  //       useLength: useLength as YesOrNo,
+  //       rightCodePeriod: rightsCodePeriod,
+  //       daysToUse: period.days,
+  //       paid: period.paid,
+  //       approved: period.approved,
+  //     }
+  //     newPeriods.push(obj)
+  //   }
+  // })
+  // return newPeriods
+}

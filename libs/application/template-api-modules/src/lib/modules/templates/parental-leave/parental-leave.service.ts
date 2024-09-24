@@ -1552,4 +1552,55 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     return null
   }
+
+  async setApplicationRights({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    // Testing
+    return [
+      {
+        rightsUnit: 'F-ANDV22',
+        rightsDescription: 'dfads',
+        months: '1',
+        days: '30',
+        daysLeft: '30',
+      },
+    ]
+    try {
+      const { parentalLeaves } =
+        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
+          nationalRegistryId: auth.nationalId,
+        })
+      const { applicationFundId } = getApplicationExternalData(
+        application.externalData,
+      )
+
+      const parentalLeaveApplication = parentalLeaves?.find(
+        (parentalLeave) => parentalLeave.applicationId === applicationFundId,
+      )
+      parentalLeaves?.forEach((p) => console.log({ p }))
+      const c = {
+        ...parentalLeaveApplication,
+        applicationRights: [
+          {
+            rightsUnit: 'F-ANDV22',
+            rightsDescription: 'dfads',
+            months: '1',
+            days: '30',
+            daysLeft: '30',
+          },
+        ],
+      }
+      console.log({ application, parentalLeaveApplication })
+
+      return c?.applicationRights ?? ''
+    } catch (e) {
+      this.logger.warn(
+        `Could not fetch applicationRights on nationalId with error: ${e}`,
+      )
+    }
+
+    return null
+  }
 }
