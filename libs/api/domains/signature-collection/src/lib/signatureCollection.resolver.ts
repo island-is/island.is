@@ -30,7 +30,7 @@ import { CurrentSignee } from './decorators/signee.decorator'
 import { ApiScope } from '@island.is/auth/scopes'
 import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
-import { SignatureCollectionCanSignInput } from './dto/canSign.input'
+import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
 import { SignatureCollectionAddListsInput } from './dto/addLists.input'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
@@ -133,13 +133,11 @@ export class SignatureCollectionResolver {
   @Query(() => Boolean)
   @AccessRequirement(OwnerAccess.AllowActor)
   @Audit()
-  async signatureCollectionCanSign(
-    @Args('input') input: SignatureCollectionCanSignInput,
+  async signatureCollectionCanSignFromPaper(
+    @Args('input') input: SignatureCollectionCanSignFromPaperInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return (
-      await this.signatureCollectionService.signee(user, input.signeeNationalId)
-    ).canSign
+    return await this.signatureCollectionService.canSignFromPaper(user, input)
   }
 
   @Scopes(ApiScope.signatureCollection)
