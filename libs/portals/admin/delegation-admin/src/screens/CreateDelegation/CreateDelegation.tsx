@@ -368,6 +368,7 @@ const CreateDelegationScreen = () => {
                     m[actionData?.errors?.validTo as keyof typeof m],
                   )}
                   minDate={new Date()}
+                  appearInline
                 />
                 <input
                   type="hidden"
