@@ -46,7 +46,7 @@ class SubpoenaData {
   groups!: Groups[]
 
   @ApiProperty({ type: Boolean })
-  acknowledged?: boolean
+  hasBeenServed?: boolean
 }
 
 export class SubpoenaResponse {
@@ -77,7 +77,7 @@ export class SubpoenaResponse {
     const waivedRight = defendantInfo?.defenderChoice === DefenderChoice.WAIVE
     const hasDefender = defendantInfo?.defenderName !== undefined
     const subpoena = defendantInfo?.subpoenas ?? []
-    const subpoenaAcknowledged = subpoena[0]?.acknowledged ?? false
+    const hasBeenServed = subpoena[0]?.acknowledged ?? false
     const canChangeDefenseChoice = !waivedRight && !hasDefender
 
     const subpoenaDateLog = internalCase.dateLogs?.find(
@@ -85,15 +85,17 @@ export class SubpoenaResponse {
     )
     const arraignmentDate = subpoenaDateLog?.date ?? ''
     const subpoenaCreatedDate = subpoenaDateLog?.created ?? '' //TODO: Change to subpoena created in RLS
-    const arraignmentLocation = `${internalCase.court.name}, Dómsalur ${subpoenaDateLog?.location}`
+    const arraignmentLocation = subpoenaDateLog?.location
+      ? `${internalCase.court.name}, Dómsalur ${subpoenaDateLog.location}`
+      : internalCase.court.name
 
     return {
       caseId: internalCase.id,
       data: {
         title: t.subpoena,
-        acknowledged: subpoenaAcknowledged,
+        hasBeenServed: hasBeenServed,
         alerts: [
-          ...(subpoenaAcknowledged
+          ...(hasBeenServed
             ? [
                 {
                   type: 'success',
