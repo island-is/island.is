@@ -7,6 +7,7 @@ import {
   Button,
   GridColumn,
   GridRow,
+  Box
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import { useSubmitting } from '@island.is/react-spa/shared'
@@ -48,25 +49,34 @@ const Root = () => {
 
   return (
     <>
-      <GridRow rowGap={3}>
-        <GridColumn span={['12/12', '8/12']}>
-          <IntroHeader
+
+        <IntroHeader
             title={m.delegationAdmin}
             intro={m.delegationAdminDescription}
-          />
-        </GridColumn>
-        {hasAdminAccess && (
-          <GridColumn span={['12/12', '4/12']}>
-            <Button
-              icon="arrowForward"
-              onClick={() => navigate(DelegationAdminPaths.CreateDelegation)}
-              size="small"
-            >
-              {formatMessage(m.createNewDelegation)}
-            </Button>
-          </GridColumn>
-        )}
-        <GridColumn span={['12/12', '8/12']}>
+          >
+          {hasAdminAccess && (
+            <GridColumn span={['8/8', '3/8']}>
+              <Box
+                display={'flex'}
+                justifyContent={['flexStart', 'flexEnd']}
+                alignItems={['flexStart', 'center']}
+                height={'full'}
+              >
+              <Button
+                onClick={() => navigate(DelegationAdminPaths.CreateDelegation)}
+                size="small"
+              >
+                {formatMessage(m.createNewDelegation)}
+              </Button>
+              </Box>
+            </GridColumn>
+          )}
+        </IntroHeader>
+
+
+      <GridRow>
+
+        <GridColumn span={['8/8', '4/8']}>
           <Form method="post">
             <AsyncSearchInput
               hasFocus={focused}
