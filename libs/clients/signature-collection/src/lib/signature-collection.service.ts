@@ -410,7 +410,6 @@ export class SignatureCollectionClientService {
   }
 
   async getSignee(auth: User, nationalId?: string): Promise<Signee> {
-    console.log('WHAT ABOUT THIS? BEING CALLED????')
     const collection = await this.currentCollection()
     const { id, isPresidential, isActive, areas } = collection
     const user = await this.getApiWithAuth(
