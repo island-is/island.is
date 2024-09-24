@@ -12,6 +12,14 @@ import { InternalCaseResponse } from './internal/internalCase.response'
 import { Groups } from './shared/groups.model'
 import { getTranslations } from './utils/translations.strings'
 
+enum AlertMessageType {
+  ERROR = 'error',
+  INFO = 'info',
+  SUCCESS = 'success',
+  WARNING = 'warning',
+  DEFAULT = 'default',
+}
+
 class DefenderInfo {
   @IsEnum(DefenderChoice)
   @ApiProperty({ enum: DefenderChoice })
@@ -28,11 +36,12 @@ class DefenderInfo {
 }
 
 class AlertMessage {
-  @ApiProperty({ type: () => String })
-  type!: string
+  @IsEnum(AlertMessageType)
+  @ApiProperty({ enum: AlertMessageType })
+  type?: AlertMessageType
 
   @ApiProperty({ type: () => String })
-  message!: string
+  message?: string
 }
 
 class SubpoenaData {
@@ -98,7 +107,7 @@ export class SubpoenaResponse {
           ...(hasBeenServed
             ? [
                 {
-                  type: 'success',
+                  type: AlertMessageType.SUCCESS,
                   message: t.subpoenaServed,
                 },
               ]
