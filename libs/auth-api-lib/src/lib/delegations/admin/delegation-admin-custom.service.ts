@@ -28,7 +28,11 @@ import { DELEGATION_TAG, ZENDESK_CUSTOM_FIELDS } from '../constants/zendesk'
 import { DelegationDelegationType } from '../models/delegation-delegation-type.model'
 import { DelegationsIncomingCustomService } from '../delegations-incoming-custom.service'
 import { DelegationValidity } from '../types/delegationValidity'
-import { NEW_DELEGATION_TEMPLATE_ID } from '../constants/hnipp'
+import {
+  DOMAIN_NAME_EN,
+  DOMAIN_NAME_IS,
+  NEW_DELEGATION_TEMPLATE_ID,
+} from '../constants/hnipp'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { NotificationsApi } from '../../user-notification'
 import { Features } from '@island.is/feature-flags'
@@ -79,11 +83,11 @@ export class DelegationAdminCustomService {
         { key: 'name', value: fromName },
         {
           key: 'domainNameIs',
-          value: 'öll kerfi',
+          value: DOMAIN_NAME_IS,
         },
         {
           key: 'domainNameEn',
-          value: 'all systems',
+          value: DOMAIN_NAME_EN,
         },
       ]
       // Notify toNationalId of new delegation
