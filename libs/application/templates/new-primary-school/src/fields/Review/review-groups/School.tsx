@@ -6,6 +6,7 @@ import {
   formatGrade,
   getApplicationAnswers,
   getApplicationExternalData,
+  getCurrentSchoolName,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
@@ -22,6 +23,8 @@ export const School = ({
     application.externalData,
   )
 
+  const currentSchool = getCurrentSchoolName(application)
+
   return (
     <ReviewGroup
       isEditable={editable}
@@ -37,12 +40,11 @@ export const School = ({
         </GridRow>
         <GridRow rowGap={2}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            {/* TODO: Bæta við núverandi skóla */}
             <DataValue
               label={formatMessage(
                 newPrimarySchoolMessages.overview.currentSchool,
               )}
-              value={'- TBA -'}
+              value={currentSchool}
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>

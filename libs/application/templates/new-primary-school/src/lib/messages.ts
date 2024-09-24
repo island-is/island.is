@@ -56,7 +56,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'National id',
     },
     email: {
-      id: 'dess.nps.application.email',
+      id: 'dess.nps.application:email',
       defaultMessage: 'Netfang',
       description: 'Email address',
     },
@@ -83,7 +83,7 @@ export const newPrimarySchoolMessages: MessageDir = {
     phoneNumber: {
       id: 'dess.nps.application:phoneNumber',
       defaultMessage: 'Símanúmer',
-      description: 'Phonenumber',
+      description: 'Phone number',
     },
     relation: {
       id: 'dess.nps.application:relation',
@@ -186,11 +186,6 @@ export const newPrimarySchoolMessages: MessageDir = {
     // Child information
     childInfoSubSectionTitle: {
       id: 'dess.nps.application:childrenNParents.child.info.sub.section.title',
-      defaultMessage: 'Upplýsingar um barn',
-      description: 'Information about child',
-    },
-    childInfoTitle: {
-      id: 'dess.nps.application:childrenNParents.child.info.title',
       defaultMessage: 'Upplýsingar um barn',
       description: 'Information about child',
     },
@@ -550,11 +545,6 @@ export const newPrimarySchoolMessages: MessageDir = {
   overview: defineMessages({
     sectionTitle: {
       id: 'dess.nps.application:overview.section.title',
-      defaultMessage: 'Yfirlit',
-      description: 'Overview',
-    },
-    overviewTitle: {
-      id: 'dess.nps.application:overview.title',
       defaultMessage: 'Yfirlit',
       description: 'Overview',
     },
