@@ -97,10 +97,9 @@ export class DelegationAdminCustomService {
   }
 
   async deleteDelegation(user: User, delegationId: string): Promise<void> {
-    // TODO: Check if delegation has a ReferenceId and throw error if it does not.
     const delegation = await this.delegationModel.findByPk(delegationId)
 
-    if (!delegation) {
+    if (!delegation || !delegation.referenceId) {
       throw new NoContentException()
     }
 

@@ -12,7 +12,7 @@ class IndictmentCaseData {
   caseNumber!: string
 
   @ApiProperty({ type: Boolean })
-  acknowledged?: boolean
+  hasBeenServed?: boolean
 
   @ApiProperty({ type: [Groups] })
   groups!: Groups[]
@@ -26,21 +26,22 @@ export class CaseResponse {
   data!: IndictmentCaseData
 
   static fromInternalCaseResponse(
-    res: InternalCaseResponse,
+    internalCase: InternalCaseResponse,
     lang?: string,
   ): CaseResponse {
     const t = getTranslations(lang)
-    const defendant = res.defendants[0]
-    const subpoenaDateLog = res.dateLogs?.find(
+    const defendant = internalCase.defendants[0] ?? {}
+    const subpoenaDateLog = internalCase.dateLogs?.find(
       (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
     )
-    const subpoenaCreatedDate = subpoenaDateLog?.created.toString() ?? ''
+    const subpoenaCreatedDate = subpoenaDateLog?.created?.toString() ?? '' //TODO: Change to created from subpoena db entry?
+    const subpoenas = defendant.subpoenas ?? []
 
     return {
-      caseId: res.id,
+      caseId: internalCase.id,
       data: {
-        caseNumber: `${t.caseNumber} ${res.courtCaseNumber}`,
-        acknowledged: false, // TODO: Connect to real data
+        caseNumber: `${t.caseNumber} ${internalCase.courtCaseNumber}`,
+        hasBeenServed: subpoenas.length > 0 ? subpoenas[0].acknowledged : false,
         groups: [
           {
             label: t.defendant,
@@ -75,23 +76,23 @@ export class CaseResponse {
               },
               {
                 label: t.courtCaseNumber,
-                value: res.courtCaseNumber,
+                value: internalCase.courtCaseNumber,
               },
               {
                 label: t.court,
-                value: res.court.name,
+                value: internalCase.court.name,
               },
               {
                 label: t.judge,
-                value: res.judge.name,
+                value: internalCase.judge.name,
               },
               {
                 label: t.institution,
-                value: res.prosecutorsOffice.name,
+                value: internalCase.prosecutorsOffice.name,
               },
               {
                 label: t.prosecutor,
-                value: res.prosecutor.name,
+                value: internalCase.prosecutor.name,
               },
             ],
           },
