@@ -202,14 +202,6 @@ const Processing: FC = () => {
       return
     }
 
-    const civilClaimantToUpdate = workingCase.civilClaimants?.find(
-      (c) => c.id === civilClaimantId,
-    )
-
-    if (civilClaimantToUpdate?.name === name) {
-      return
-    }
-
     updateCivilClaimant({ name, civilClaimantId, caseId: workingCase.id })
   }
 
@@ -239,6 +231,29 @@ const Processing: FC = () => {
     workingCase.civilClaimants,
     workingCase.id,
   ])
+
+  const removeCivilClaimantById = useCallback(
+    async (caseId: string, civilClaimantId?: string | null) => {
+      if (!civilClaimantId) {
+        return
+      }
+
+      const deleteSuccess = await deleteCivilClaimant(caseId, civilClaimantId)
+
+      if (!deleteSuccess) {
+        return
+      }
+
+      const newCivilClaimants = workingCase.civilClaimants?.filter(
+        (civilClaimant) => civilClaimant.id !== civilClaimantId,
+      )
+
+      console.log(newCivilClaimants)
+
+      setWorkingCase((prev) => ({ ...prev, civilClaimants: newCivilClaimants }))
+    },
+    [deleteCivilClaimant, setWorkingCase, workingCase.civilClaimants],
+  )
 
   useEffect(() => {
     if (!personData || !personData.items || personData.items.length === 0) {
@@ -407,9 +422,29 @@ const Processing: FC = () => {
         {workingCase.hasCivilClaims && (
           <>
             <SectionHeading title={formatMessage(strings.civilClaimant)} />
-            {workingCase.civilClaimants?.map((civilClaimant) => (
+            {workingCase.civilClaimants?.map((civilClaimant, index) => (
               <Box component="section" marginBottom={5} key={civilClaimant.id}>
                 <BlueBox>
+                  {index > 0 && (
+                    <Box
+                      display="flex"
+                      justifyContent="flexEnd"
+                      marginBottom={2}
+                    >
+                      <Button
+                        variant="text"
+                        colorScheme="destructive"
+                        onClick={() => {
+                          removeCivilClaimantById(
+                            workingCase.id,
+                            civilClaimant.id,
+                          )
+                        }}
+                      >
+                        {formatMessage(strings.remove)}
+                      </Button>
+                    </Box>
+                  )}
                   <Box marginBottom={2}>
                     <Checkbox
                       name={`civilClaimantNoNationalId-${civilClaimant.id}`}
