@@ -21,6 +21,32 @@ import { formatCurrency } from '@island.is/web/utils/currency'
 import { formatValueForPresentation } from '../../Charts/v2/utils'
 import { t } from './translation.strings'
 
+const avinningurR = (
+  laun: number,
+  f2f: number,
+  lengd: number,
+  magn: number,
+) => {
+  return (laun / 60) * f2f * lengd * magn
+}
+
+const avinningurB = (
+  fornarkostnadur: number,
+  lengd: number,
+  f2f: number,
+  km: number,
+  kmgjald: number,
+  okuhradi: number,
+  magn: number,
+) => {
+  return (
+    (f2f * 2 * km * kmgjald +
+      (60 / okuhradi) * km * 2 * f2f * (fornarkostnadur / 60) +
+      ((f2f * lengd) / 60) * fornarkostnadur) *
+    magn
+  )
+}
+
 interface FieldProps {
   heading: string
   description?: string
@@ -138,7 +164,8 @@ export const BenefitsOfDigitalProcessesCalculator = ({
 
   const [userInput, setUserInput] = useState<UserInput>({
     amountPerYear: 0,
-    averageDistanceToProcessInKilometers: 0,
+    averageDistanceToProcessInKilometers:
+      slice.configJson?.['defaultAverageDistanceToProcessInKilometers'] ?? 7.5,
     nameOfProcess: '',
     processDurationInMinutes: 0,
     visitCountToCompleteProcess: 0,
@@ -159,7 +186,7 @@ export const BenefitsOfDigitalProcessesCalculator = ({
       ] ?? 0,
     averageDrivingSpeedInKilometersPerHour:
       slice.configJson?.['Meðalökuhraði km/klst'] ?? 40,
-    Bias: slice.configJson?.['Bias'] ?? 0,
+    bias: slice.configJson?.['Bias'] ?? 0,
     co2EmissionPerDrivenKilometer: slice.configJson?.['Kg co2 á ekinn km'] ?? 0,
     etsCO2Price: slice.configJson?.['Verð á CO2 kg (ETS) í krónum'] ?? 12,
     carbonWoodCO2Price:
@@ -171,16 +198,48 @@ export const BenefitsOfDigitalProcessesCalculator = ({
   }
 
   const results: Results = {
-    institutionGain: 0,
-    citizenGain: 0,
-    staffFreeToDoOtherThings: 0,
-    drivenKilometersSaved: 0,
-    citizenTimeSaved: 0,
+    institutionGain: avinningurR(
+      preConditions.staffIncomePerHour,
+      userInput.visitCountToCompleteProcess,
+      userInput.processDurationInMinutes,
+      userInput.amountPerYear,
+    ),
+    citizenGain: avinningurB(
+      preConditions.citizenIncomeLossPerHour,
+      userInput.processDurationInMinutes,
+      userInput.visitCountToCompleteProcess,
+      userInput.averageDistanceToProcessInKilometers,
+      preConditions.kilometerFeePerKilometer,
+      preConditions.averageDrivingSpeedInKilometersPerHour,
+      userInput.amountPerYear,
+    ),
+    staffFreeToDoOtherThings:
+      (userInput.amountPerYear *
+        userInput.processDurationInMinutes *
+        userInput.visitCountToCompleteProcess) /
+      60 /
+      preConditions.staffHourAverageInYear,
+    drivenKilometersSaved:
+      userInput.amountPerYear *
+      userInput.visitCountToCompleteProcess *
+      2 *
+      userInput.averageDistanceToProcessInKilometers,
+    citizenTimeSaved:
+      (((userInput.visitCountToCompleteProcess *
+        2 *
+        userInput.averageDistanceToProcessInKilometers *
+        60) /
+        preConditions.averageDrivingSpeedInKilometersPerHour +
+        userInput.visitCountToCompleteProcess *
+          userInput.processDurationInMinutes) *
+        userInput.amountPerYear) /
+      60 /
+      24,
   }
 
   const gainPerCitizen = 0
-  const ringRoadTripsSaved = 0
-  const citizenDaysSaved = 0
+  const ringRoadTripsSaved =
+    results.drivenKilometersSaved / preConditions.ringRoadDistanceInKilometers
 
   const resultColumnSpan: SpanType = ['1/1', '1/2', '1/1', '1/2']
 
@@ -361,6 +420,7 @@ export const BenefitsOfDigitalProcessesCalculator = ({
                 description={formatMessage(
                   t.results.institutionGainDescription,
                 )}
+                icon={<Icon icon="wallet" color="blue400" size="large" />}
               />
             </GridColumn>
             <GridColumn span={resultColumnSpan}>
@@ -368,6 +428,8 @@ export const BenefitsOfDigitalProcessesCalculator = ({
                 title={formatValueForPresentation(
                   activeLocale,
                   results.staffFreeToDoOtherThings,
+                  true,
+                  1,
                 )}
                 description={formatMessage(t.results.staffFreeToDoOtherThings)}
                 icon={<Icon icon="people" color="blue400" size="large" />}
@@ -384,6 +446,7 @@ export const BenefitsOfDigitalProcessesCalculator = ({
                 description={formatMessage(t.results.citizenGainDescription, {
                   nameOfProcess: userInput.nameOfProcess,
                 })}
+                icon={<Icon icon="person" color="blue400" size="large" />}
               />
             </GridColumn>
             <GridColumn span={resultColumnSpan}>
@@ -398,7 +461,10 @@ export const BenefitsOfDigitalProcessesCalculator = ({
             </GridColumn>
             <GridColumn span={resultColumnSpan}>
               <ResultCard
-                title={`${citizenDaysSaved} ${formatMessage(t.results.days)}`}
+                title={`${formatValueForPresentation(
+                  activeLocale,
+                  results.citizenTimeSaved,
+                )} ${formatMessage(t.results.days)}`}
                 description={formatMessage(t.results.savedCitizenDays)}
                 icon={<Icon icon="time" color="blue400" size="large" />}
               />
