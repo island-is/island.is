@@ -13,7 +13,7 @@ import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 
-export const SingleConstituencyView = () => {
+export const Constituency = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
@@ -86,4 +86,4 @@ export const SingleConstituencyView = () => {
   )
 }
 
-export default SingleConstituencyView
+export default Constituency

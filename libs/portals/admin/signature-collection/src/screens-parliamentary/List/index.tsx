@@ -9,7 +9,7 @@ import ActionExtendDeadline from '../../shared-components/extendDeadline'
 import Signees from '../../shared-components/signees'
 import ActionReviewComplete from '../../shared-components/completeReview'
 
-const SingleListView = () => {
+const List = () => {
   const { formatMessage } = useLocale()
   const { list } = useLoaderData() as {
     list: SignatureCollectionList
@@ -47,4 +47,4 @@ const SingleListView = () => {
   )
 }
 
-export default SingleListView
+export default List

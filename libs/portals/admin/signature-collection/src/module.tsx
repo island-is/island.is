@@ -9,10 +9,10 @@ import { listLoader } from './loaders/List.loader'
 /* parliamentary */
 const ParliamentaryRoot = lazy(() => import('./screens-parliamentary'))
 const ParliamentaryConstituency = lazy(() =>
-  import('./screens-parliamentary/SingleConstituencyView'),
+  import('./screens-parliamentary/Constituency'),
 )
 const ParliamentaryList = lazy(() =>
-  import('./screens-parliamentary/SingleListView'),
+  import('./screens-parliamentary/List'),
 )
 
 /* presidential */
