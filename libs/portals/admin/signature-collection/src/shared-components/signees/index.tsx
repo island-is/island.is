@@ -10,13 +10,13 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLoaderData } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
-import { m } from '../../../lib/messages'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
-import { pageSize } from '../../../lib/utils'
-import SortSignees from './sortSignees'
+import SortSignees from '../sortSignees'
+import { pageSize } from '../../lib/utils'
+import { m } from '../../lib/messages'
 
 const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
   const { formatMessage } = useLocale()
@@ -27,24 +27,21 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
 
-  useEffect(() => {
-    setSignees(allSignees)
-  }, [allSignees])
-
-  useEffect(() => {
-    let filteredSignees: Signature[] = allSignees
-
-    filteredSignees = filteredSignees.filter((s) => {
+  const filteredSignees = useMemo(() => {
+    return allSignees.filter((s) => {
+      const lowercaseSearchTerm = searchTerm.toLowerCase()
       return (
-        s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.signee.name.toLowerCase().includes(lowercaseSearchTerm) ||
         formatNationalId(s.signee.nationalId).includes(searchTerm) ||
         s.signee.nationalId.includes(searchTerm)
       )
     })
+  }, [allSignees, searchTerm])
 
+  useEffect(() => {
     setPage(1)
     setSignees(filteredSignees)
-  }, [searchTerm])
+  }, [filteredSignees])
 
   return (
     <Box marginTop={7}>
@@ -97,7 +94,6 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
                 <T.HeadData>{formatMessage(m.signeeDate)}</T.HeadData>
                 <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
                 <T.HeadData>{formatMessage(m.signeeNationalId)}</T.HeadData>
-                <T.HeadData>{formatMessage(m.signeeAddress)}</T.HeadData>
                 <T.HeadData></T.HeadData>
               </T.Row>
             </T.Head>
@@ -115,9 +111,6 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
                       </T.Data>
                       <T.Data text={{ variant: 'medium' }}>
                         {formatNationalId(s.signee.nationalId)}
-                      </T.Data>
-                      <T.Data text={{ variant: 'medium' }}>
-                        {s.signee.address}
                       </T.Data>
                       <T.Data>
                         {!s.isDigital && (

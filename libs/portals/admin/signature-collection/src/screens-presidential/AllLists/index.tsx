@@ -26,16 +26,16 @@ import {
   countryAreas,
   pageSize,
 } from '../../lib/utils'
-import CompareLists from './components/compareLists'
 import { format as formatNationalId } from 'kennitala'
-import CreateCollection from './components/createCollection'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
 import ListInfo from '../List/components/listInfoAlert'
-import { ListsLoaderReturn } from './AllLists.loader'
-import EmptyState from './components/emptyState'
+import EmptyState from '../../shared-components/emptyState'
 import ReviewCandidates from './components/reviewCandidates'
+import CompareLists from '../../shared-components/compareLists'
+import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
+import CreateCollection from '../../shared-components/createCollection'
 
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
@@ -226,7 +226,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               </Box>
             </GridColumn>
           </GridRow>
-          {lists?.length > 0 ? (
+          {lists?.length > 0 && collection.isPresidential ? (
             <>
               <Box marginBottom={2}>
                 {filters.input.length > 0 ||
@@ -282,8 +282,8 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                                 icon: 'arrowForward',
                                 onClick: () => {
                                   navigate(
-                                    SignatureCollectionPaths.SignatureList.replace(
-                                      ':id',
+                                    SignatureCollectionPaths.PresidentialList.replace(
+                                      ':listId',
                                       list.id,
                                     ),
                                   )
@@ -311,7 +311,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               />
             </Box>
           )}
-          {lists?.length > 0 && (
+          {lists?.length > 0 && collection.isPresidential && (
             <Box marginTop={5}>
               <Pagination
                 totalItems={lists.length}
@@ -346,7 +346,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             </Box>
           )}
 
-          {lists?.length > 0 && (
+          {lists?.length > 0 && collection.isPresidential && (
             <ReviewCandidates candidates={collection?.candidates ?? []} />
           )}
         </GridColumn>

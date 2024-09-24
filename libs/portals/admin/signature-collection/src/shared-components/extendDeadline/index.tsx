@@ -6,12 +6,12 @@ import {
   Input,
   toast,
 } from '@island.is/island-ui/core'
-import { m } from '../../../../lib/messages'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import format from 'date-fns/format'
 import { useExtendDeadlineMutation } from './extendDeadline.generated'
 import { useRevalidator } from 'react-router-dom'
+import { m } from '../../lib/messages'
 
 const ActionExtendDeadline = ({
   listId,
@@ -20,7 +20,7 @@ const ActionExtendDeadline = ({
 }: {
   listId: string
   endTime: string
-  allowedToProcess: boolean
+  allowedToProcess?: boolean
 }) => {
   const { formatMessage } = useLocale()
   const [modalChangeDateIsOpen, setModalChangeDateIsOpen] = useState(false)

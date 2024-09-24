@@ -4,7 +4,7 @@
       BEGIN;
         UPDATE api_scope
           SET also_for_delegated_user = false
-          WHERE name = '@island.is/signature-collection'
+          WHERE name = '@island.is/signature-collection';
 
       COMMIT;
     `)
@@ -15,7 +15,7 @@
       BEGIN;
         UPDATE api_scope
           SET also_for_delegated_user = true
-          WHERE name = '@island.is/signature-collection'
+          WHERE name = '@island.is/signature-collection';
 
       COMMIT;
     `)
