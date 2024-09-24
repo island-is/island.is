@@ -37,4 +37,22 @@ export const strings = {
     description:
       'Notaður sem texti í "Tekur ekki afstöðu" valmöguleikanum á Málsmeðferðarskjánum.',
   }),
+  hasCivilClaims: defineMessage({
+    id: 'judicial.system.indictments:processing.has_civil_claims',
+    defaultMessage: 'Er bótakrafa?',
+    description:
+      'Notaður sem titill fyrir "Er bótakrafa?" valmöguleikana við einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
+  yes: defineMessage({
+    id: 'judicial.system.indictments:processing.yes',
+    defaultMessage: 'Já',
+    description:
+      'Notaður sem texti í "Já" valmöguleikanum við einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
+  no: defineMessage({
+    id: 'judicial.system.indictments:processing.no',
+    defaultMessage: 'Nei',
+    description:
+      'Notaður sem texti í "Nei" valmöguleikanum við einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
 }

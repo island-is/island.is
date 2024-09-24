@@ -105,6 +105,16 @@ export const m = defineMessages({
     defaultMessage: 'Sýslumannsembætti',
     description: 'Information',
   },
+  pickupLocationTitle: {
+    id: 'dl.application:pickupLocationTitle',
+    defaultMessage: 'Afhendingarstaður',
+    description: 'location for pickup',
+  },
+  pickupLocationHeader: {
+    id: 'dl.application:pickupLocationHeader',
+    defaultMessage: 'Hvar viltu sækja/fá ökuskírteinið?',
+    description: 'Where do you want to pick up your driving license?',
+  },
   informationApplicant: {
     id: 'dl.application:information.applicant',
     defaultMessage: 'Umsækjandi',
@@ -118,6 +128,12 @@ export const m = defineMessages({
   healthDeclarationMultiFieldTitle: {
     id: 'dl.application:healthDeclarationMultiField.title',
     defaultMessage: 'Heilbrigðisyfirlýsing',
+    description: 'Health declaration',
+  },
+  healthDeclarationMultiField65Description: {
+    id: 'dl.application:healthDeclarationMultiField65Description#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nunc nec ultricies ultricies, nunc nisl ultricies nunc, nec ultricies nunc nisl nec nunc. Nullam auctor, nunc nec ultricies ultricies, nunc nisl ultricies nunc, nec ultricies nunc nisl nec nunc.',
     description: 'Health declaration',
   },
   healthDeclarationMultiFieldSubTitle: {
@@ -135,6 +151,12 @@ export const m = defineMessages({
     defaultMessage:
       'Ef einhverri spurningu er svarað játandi í heilbrigðisyfirlýsingu þarf læknisvottorð frá heimilislækni eða viðeigandi sérfræðilækni.',
     description: '',
+  },
+  healthDeclarationAge65MultiFieldSubTitle: {
+    id: 'dl.application:healthDeclarationAge65MultiFieldSubTitle.subTitle',
+    defaultMessage:
+      'Við endurnýjun ökuskírteinis fyrir 65 ára og eldri þarf að skila inn læknisvottorði frá heimilislækni. Vottorðið má ekki vera eldra en 3 mánaða.',
+    description: 'Health declaration for 65+',
   },
   alertHealthDeclarationGlassesMismatch: {
     id: 'dl.application:alertHealthDeclarationGlassesMismatch',
@@ -335,6 +357,16 @@ export const m = defineMessages({
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',
     description: `I'll bring a certificate from a doctor`,
   },
+  overviewPickupPost: {
+    id: 'dl.application:overview.pickupPost',
+    defaultMessage: 'Sent heim í pósti',
+    description: 'By mail',
+  },
+  overviewPickupDistrict: {
+    id: 'dl.application:overview.pickupDistrict',
+    defaultMessage: 'Sækja á afhendingarstað',
+    description: 'Pickup location',
+  },
   applicationDone: {
     id: 'dl.application:overview.done',
     defaultMessage: 'Umsókn móttekin',
@@ -489,6 +521,12 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn þín um fullnaðarskírteini hefur verið móttekin.',
     description: 'Application received',
   },
+  applicationDoneAlertMessage65Renewal: {
+    id: 'dl.application:applicationDoneAlertMessage65Renewal',
+    defaultMessage:
+      'Umsókn þín um endurnýjun ökuskírteina fyrir 65 og eldra hefur verið móttekin.',
+    description: 'Application received',
+  },
   applicationDoneAlertMessageBE: {
     id: 'dl.application:applicationDoneAlertMessageBE',
     defaultMessage:
@@ -512,10 +550,16 @@ export const m = defineMessages({
       'Næst þarf umsækjandi að mæta til sýslumanns. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: '',
   },
-  nextStepsDescriptionBEFull: {
-    id: 'dl.application:nextStepsDescriptionBEFull#markdown',
+  nextStepsDescriptionBE: {
+    id: 'dl.application:nextStepsDescriptionBE#markdown',
     defaultMessage:
-      'Næst þarf umsækjandi að mæta til sýslumanns. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
+    description: '',
+  },
+  nextStepsDescription65Renewal: {
+    id: 'dl.application:nextStepsDescription65Renewal#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at euismod nisi. In lobortis nisi purus, sit amet porta sem auctor vitae. Nunc aliquet elit nec ex gravida, a placerat quam eleifend.',
     description: '',
   },
   nextStepsInfoLink: {
@@ -580,6 +624,16 @@ export const m = defineMessages({
     id: 'dl.application:districtCommisionerTitle',
     defaultMessage: 'Sýslumannsembætti',
     description: 'Title for district commissioner',
+  },
+  districtCommissionerPickup: {
+    id: 'dl.application:districtCommisionerPickup',
+    defaultMessage: 'Afhending',
+    description: 'Pickup for district commissioner',
+  },
+  districtCommissionerPickupPlaceholder: {
+    id: 'dl.application:districtCommisionerPickupPlaceholder',
+    defaultMessage: 'Veldu sýslumannsembætti',
+    description: 'Choose district commissioner',
   },
   chooseDistrictCommisionerForFullLicense: {
     id: 'dl.application:chooseDistrictCommisionerForFullLicense',
@@ -653,6 +707,11 @@ export const m = defineMessages({
     defaultMessage: 'Réttindi sem sótt er um',
     description: 'Driving license type that is requested',
   },
+  informationFullName: {
+    id: 'dl.application:informationFullName',
+    defaultMessage: 'Nafn',
+    description: 'Full Name',
+  },
   informationStreetAddress: {
     id: 'dl.application:informationStreetAddress',
     defaultMessage: 'Heimilisfang',
@@ -720,6 +779,17 @@ export const m = defineMessages({
     description:
       'Option description for selecting to apply for temporary driving license',
   },
+  applicationForRenewalLicenseTitle: {
+    id: 'dl.application:applicationForRenewalLicenseTitle',
+    defaultMessage: 'Endurnýjun ökuskírteina fyrir 65 ára og eldri',
+    description: 'Option title for selecting to renew driving license',
+  },
+  applicationForRenewalLicenseDescription: {
+    id: 'dl.application:applicationForRenewalLicenseDescription',
+    defaultMessage:
+      'Umsókn um endurnýjun ökuréttinda í B flokki (fólksbifreið), fyrir 65 ára og eldri.',
+    description: 'Option description for selecting to renew driving license',
+  },
   applicationForBELicenseTitle: {
     id: 'dl.application:applicationForBELicenseTitle',
     defaultMessage: 'Eftirvagn BE',
@@ -783,13 +853,11 @@ export const m = defineMessages({
     description:
       'Alert message for health remarks on temporary driving license',
   },
-
   phoneNumberTitle: {
     id: 'dl.application:phoneNumberTitle',
     defaultMessage: 'Símanúmer',
     description: 'Phone number',
   },
-
   phoneNumberDescription: {
     id: 'dl.application:phoneNumberDescription',
     defaultMessage:

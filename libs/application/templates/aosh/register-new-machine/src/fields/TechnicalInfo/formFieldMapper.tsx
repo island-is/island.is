@@ -70,6 +70,7 @@ export const formFieldMapper = ({
           variant: 'number',
           max: maxLength ? parseInt(maxLength, 10) : undefined,
           min: 0,
+          step: type === 'float' ? '0.0000000001' : '1',
         }}
       />
     )

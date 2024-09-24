@@ -61,7 +61,8 @@ const Overview: FC = () => {
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
-  const isIndictmentNew = workingCase.state === CaseState.DRAFT
+  const isIndictmentNew =
+    workingCase.state === CaseState.DRAFT || modal !== 'noModal'
   const isIndictmentWaitingForConfirmation =
     workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
   const isIndictmentSubmitted = workingCase.state === CaseState.SUBMITTED
@@ -70,7 +71,9 @@ const Overview: FC = () => {
   const isIndictmentReceived = workingCase.state === CaseState.RECEIVED
 
   const userCanSendIndictmentToCourt =
-    Boolean(user?.canConfirmIndictment) && isIndictmentWaitingForConfirmation
+    Boolean(user?.canConfirmIndictment) &&
+    isIndictmentWaitingForConfirmation &&
+    modal === 'noModal'
   const userCanCancelIndictment =
     (isIndictmentSubmitted || isIndictmentReceived) &&
     !workingCase.indictmentDecision
@@ -212,11 +215,7 @@ const Overview: FC = () => {
         )}
         <Box
           marginBottom={
-            workingCase.indictmentDecision !==
-              IndictmentDecision.POSTPONING_UNTIL_VERDICT ||
-            userCanSendIndictmentToCourt
-              ? 5
-              : 10
+            userCanAddDocuments || userCanSendIndictmentToCourt ? 5 : 10
           }
         >
           <IndictmentCaseFilesList workingCase={workingCase} />

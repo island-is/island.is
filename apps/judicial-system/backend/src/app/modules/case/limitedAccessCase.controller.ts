@@ -40,7 +40,7 @@ import {
 
 import { nowFactory } from '../../factories'
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { User } from '../user'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
@@ -54,6 +54,8 @@ import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.g
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
+import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
+import { LimitedAccessCaseFileInterceptor } from './interceptors/limitedAccessCaseFile.interceptor'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
 import {
@@ -80,12 +82,16 @@ export class LimitedAccessCaseController {
     CaseReadGuard,
   )
   @RolesRules(prisonSystemStaffRule, defenderRule)
+  @UseInterceptors(
+    CompletedAppealAccessedInterceptor,
+    LimitedAccessCaseFileInterceptor,
+    CaseInterceptor,
+  )
   @Get('case/:caseId/limitedAccess')
   @ApiOkResponse({
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
   })
-  @UseInterceptors(CaseInterceptor)
   async getById(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
@@ -114,6 +120,7 @@ export class LimitedAccessCaseController {
     CaseCompletedGuard,
   )
   @RolesRules(defenderUpdateRule)
+  @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/limitedAccess')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   update(
@@ -142,6 +149,7 @@ export class LimitedAccessCaseController {
     CaseCompletedGuard,
   )
   @RolesRules(defenderTransitionRule)
+  @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/limitedAccess/state')
   @ApiOkResponse({
     type: Case,

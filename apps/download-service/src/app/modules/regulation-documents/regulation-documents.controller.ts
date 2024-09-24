@@ -76,6 +76,7 @@ export class RegulationDocumentsController {
       comments: draftRegulation.comments,
       name: draftRegulation.name,
       publishedDate: draftRegulation.idealPublishDate,
+      ministry: draftRegulation.ministry,
     }
 
     const documentResponse =
