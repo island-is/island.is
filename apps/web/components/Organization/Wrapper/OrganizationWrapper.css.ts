@@ -104,3 +104,16 @@ export const rikissaksoknariHeaderGridContainerWidth = style([
 
 export const rikissaksoknariHeaderGridContainerSubpage =
   rikissaksoknariHeaderGridContainerBase
+
+export const hveHeaderGridContainer = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  borderBottom: '8px solid #F01E28',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: '315px',
+      gridTemplateColumns: '65fr 35fr',
+    },
+  }),
+})
