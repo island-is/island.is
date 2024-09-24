@@ -188,7 +188,7 @@ const Processing: FC = () => {
         nationalId,
       })
     } else {
-      const cleanNationalId = nationalId.replace('-', '')
+      const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
       setCivilClaimantNationalIdUpdate({
         nationalId: cleanNationalId,
         civilClaimantId,
