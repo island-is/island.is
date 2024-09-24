@@ -5,8 +5,12 @@ import { NationalRegistryClientModule } from '@island.is/clients/national-regist
 import { RskRelationshipsClientModule } from '@island.is/clients-rsk-relationships'
 import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
-import { UserSystemNotificationModule } from '../user-notification'
+import {
+  ZendeskModule,
+  ZendeskServiceOptions,
+} from '@island.is/clients/zendesk'
 
+import { UserSystemNotificationModule } from '../user-notification'
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 import { Client } from '../clients/models/client.model'
 import { PersonalRepresentativeModule } from '../personal-representative/personal-representative.module'
@@ -34,10 +38,6 @@ import { DelegationProviderModel } from './models/delegation-provider.model'
 import { DelegationProviderService } from './delegation-provider.service'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 import { DelegationAdminCustomService } from './admin/delegation-admin-custom.service'
-import {
-  ZendeskModule,
-  ZendeskServiceOptions,
-} from '@island.is/clients/zendesk'
 import { environment } from '../environments'
 import { DelegationDelegationType } from './models/delegation-delegation-type.model'
 

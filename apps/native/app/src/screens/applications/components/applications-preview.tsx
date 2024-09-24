@@ -83,7 +83,7 @@ export const ApplicationsPreview = ({
             },
           )}
           progressContainerWidth={
-            slider ? screenWidth - theme.spacing[2] * 6 : undefined
+            slider && count > 1 ? screenWidth - theme.spacing[2] * 6 : undefined
           }
           description={
             type !== 'incomplete'
