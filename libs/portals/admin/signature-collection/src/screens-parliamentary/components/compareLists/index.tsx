@@ -93,7 +93,7 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
       >
         <Box marginHeight={5}>
           <Text marginBottom={[2, 0, 0]} variant="medium">
-            {formatMessage(parliamentaryMessages.compareListsButton)}
+            {formatMessage(parliamentaryMessages.compareListsDescription)}
           </Text>
         </Box>
         <Button

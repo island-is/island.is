@@ -511,7 +511,12 @@ export const parliamentaryMessages = defineMessages({
   },
   compareListsButton: {
     id: 'admin-portal.signature-collection-parliamentary:compareListsButton',
-    defaultMessage: 'Bera saman lista',
+    defaultMessage: 'Bera saman',
+    description: '',
+  },
+  compareListsDescription: {
+    id: 'admin-portal.signature-collection-parliamentary:compareListsDescription',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     description: '',
   },
   singleConstituencyIntro: {
