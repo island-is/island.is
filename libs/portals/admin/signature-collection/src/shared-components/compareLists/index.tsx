@@ -8,15 +8,15 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m, parliamentaryMessages } from '../../../lib/messages'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useBulkCompareMutation } from './compareLists.generated'
 import { format as formatNationalId } from 'kennitala'
 import { SignatureCollectionSignature } from '@island.is/api/schema'
-import { createFileList, getFileData } from '../../../lib/utils'
 import { Skeleton } from './skeleton'
 import { useUnsignAdminMutation } from './removeSignatureFromList.generated'
+import { m } from '../../lib/messages'
+import { createFileList, getFileData } from '../../lib/utils'
 
 const CompareLists = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
@@ -84,31 +84,30 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
   return (
     <Box marginTop={10}>
       <Box
-        background="blue100"
+        background="purple100"
         borderRadius="large"
         display={['block', 'flex', 'flex']}
         justifyContent="spaceBetween"
         alignItems="center"
         padding={3}
       >
-        <Box marginHeight={5}>
-          <Text marginBottom={[2, 0, 0]} variant="medium">
-            {formatMessage(parliamentaryMessages.compareListsDescription)}
-          </Text>
-        </Box>
+        <Text marginBottom={[2, 0, 0]}>
+          {formatMessage(m.compareListsDescription)}
+        </Text>
         <Button
-          onClick={() => setModalIsOpen(true)}
-          variant="ghost"
           icon="documents"
+          iconType="outline"
+          variant="utility"
           size="small"
+          onClick={() => setModalIsOpen(true)}
         >
-          {formatMessage(parliamentaryMessages.compareListsButton)}
+          {formatMessage(m.compareLists)}
         </Button>
       </Box>
       <Modal
         id="compareLists"
         isVisible={modalIsOpen}
-        title={formatMessage(parliamentaryMessages.compareListsButton)}
+        title={formatMessage(m.compareLists)}
         onClose={() => {
           setFileList([])
           setModalIsOpen(false)

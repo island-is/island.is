@@ -3,11 +3,11 @@ import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { m, parliamentaryMessages } from '../../lib/messages'
-import ActionExtendDeadline from '../components/extendDeadline'
-import Signees from '../components/signees'
-import ActionReviewComplete from '../components/completeReview'
 import { useLoaderData } from 'react-router-dom'
 import { SignatureCollectionList } from '@island.is/api/schema'
+import ActionExtendDeadline from '../../shared-components/extendDeadline'
+import Signees from '../../shared-components/signees'
+import ActionReviewComplete from '../../shared-components/completeReview'
 
 const SingleListView = () => {
   const { formatMessage } = useLocale()

@@ -1,11 +1,11 @@
 import { useLocale } from '@island.is/localization'
 import { Box, Button, Text, toast } from '@island.is/island-ui/core'
-import { m } from '../../../lib/messages'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useToggleListReviewMutation } from './toggleListReview.generated'
 import { useRevalidator } from 'react-router-dom'
-import { ListStatus } from '../../../lib/utils'
+import { m } from '../../lib/messages'
+import { ListStatus } from '../../lib/utils'
 
 const ActionReviewComplete = ({
   listId,

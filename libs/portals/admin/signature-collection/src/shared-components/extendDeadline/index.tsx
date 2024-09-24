@@ -6,12 +6,12 @@ import {
   Input,
   toast,
 } from '@island.is/island-ui/core'
-import { m } from '../../../lib/messages'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import format from 'date-fns/format'
 import { useExtendDeadlineMutation } from './extendDeadline.generated'
 import { useRevalidator } from 'react-router-dom'
+import { m } from '../../lib/messages'
 
 const ActionExtendDeadline = ({
   listId,
@@ -63,14 +63,16 @@ const ActionExtendDeadline = ({
           readOnly
           value={format(new Date(endDate), 'dd.MM.yyyy HH:mm')}
         />
-        <Box marginLeft={2}>
-          <Button
-            icon="calendar"
-            iconType="outline"
-            variant="ghost"
-            onClick={() => setModalChangeDateIsOpen(true)}
-          ></Button>
-        </Box>
+        {allowedToProcess && (
+          <Box marginLeft={2}>
+            <Button
+              icon="calendar"
+              iconType="outline"
+              variant="ghost"
+              onClick={() => setModalChangeDateIsOpen(true)}
+            ></Button>
+          </Box>
+        )}
       </Box>
       <Modal
         id="extendDeadline"
