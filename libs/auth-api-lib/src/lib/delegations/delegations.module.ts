@@ -28,6 +28,7 @@ import { DelegationsIncomingService } from './delegations-incoming.service'
 import { DelegationsIndexService } from './delegations-index.service'
 import { DelegationsOutgoingService } from './delegations-outgoing.service'
 import { DelegationsService } from './delegations.service'
+import { DelegationDelegationType } from './models/delegation-delegation-type.model'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
 import { DelegationIndex } from './models/delegation-index.model'
 import { DelegationProviderModel } from './models/delegation-provider.model'
@@ -58,6 +59,7 @@ import { NamesService } from './names.service'
       ApiScopeUserAccess,
       DelegationTypeModel,
       DelegationProviderModel,
+      DelegationDelegationType,
     ]),
     UserSystemNotificationModule,
     SyslumennClientModule,

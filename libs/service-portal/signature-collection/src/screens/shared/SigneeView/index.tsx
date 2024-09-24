@@ -59,7 +59,8 @@ const SigneeView = ({
                     <ActionCard
                       key={list.id}
                       backgroundColor="white"
-                      heading={list.title}
+                      eyebrow={list.area?.name}
+                      heading={list.title.split(' - ')[0]}
                       text={
                         currentCollection.isPresidential
                           ? formatMessage(m.collectionTitle)

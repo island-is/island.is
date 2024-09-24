@@ -103,6 +103,12 @@ export class DelegationsIncomingService {
     )
 
     delegationPromises.push(
+      this.delegationsIncomingCustomService.findAllValidGeneralMandate({
+        nationalId: user.nationalId,
+      }),
+    )
+
+    delegationPromises.push(
       this.delegationsIncomingRepresentativeService.findAllIncoming({
         nationalId: user.nationalId,
       }),
@@ -172,9 +178,19 @@ export class DelegationsIncomingService {
       )
     }
 
-    if (providers.includes(AuthDelegationProvider.Custom)) {
+    if (types?.includes(AuthDelegationType.Custom)) {
       delegationPromises.push(
         this.delegationsIncomingCustomService.findAllAvailableIncoming(
+          user,
+          clientAllowedApiScopes,
+          client.requireApiScopes,
+        ),
+      )
+    }
+
+    if (types?.includes(AuthDelegationType.GeneralMandate)) {
+      delegationPromises.push(
+        this.delegationsIncomingCustomService.findAllAvailableGeneralMandate(
           user,
           clientAllowedApiScopes,
           client.requireApiScopes,
