@@ -26,11 +26,8 @@ export class PKCEService {
     // Use Web Crypto API for async hashing
     const hashBuffer = await crypto.webcrypto.subtle.digest('SHA-256', data)
 
-    // Convert the buffer to a Uint8Array
-    const hashArray = new Uint8Array(hashBuffer)
-
     // and then Base64 URL encode
-    return this.base64UrlEncode(Buffer.from(hashArray))
+    return this.base64UrlEncode(Buffer.from(hashBuffer))
   }
 
   /**
