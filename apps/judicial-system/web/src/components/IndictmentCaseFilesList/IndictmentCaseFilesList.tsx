@@ -264,7 +264,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               {formatMessage(strings.subpoenaTitle)}
             </Text>
             {workingCase.defendants.map((defendant) => (
-              <Box marginBottom={2} key={`subpoena-${workingCase.id}`}>
+              <Box marginBottom={2} key={`subpoena-${defendant.id}`}>
                 <PdfButton
                   caseId={workingCase.id}
                   title={formatMessage(strings.subpoenaButtonText, {
