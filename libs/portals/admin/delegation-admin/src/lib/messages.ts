@@ -120,5 +120,5 @@ export const m = defineMessages({
   createDelegationSuccessToast: {
     id: 'admin.delegationAdmin:createDelegationSuccessToast',
     defaultMessage: 'Umboð var skráð',
-  }
+  },
 })

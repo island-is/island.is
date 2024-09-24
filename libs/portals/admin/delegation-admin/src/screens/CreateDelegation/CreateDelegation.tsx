@@ -21,7 +21,8 @@ import { DelegationAdminPaths } from '../../lib/paths'
 import NumberFormat from 'react-number-format'
 
 import {
-  Form, redirect,
+  Form,
+  redirect,
   useActionData,
   useNavigate,
   useSearchParams,
@@ -84,11 +85,10 @@ const CreateDelegationScreen = () => {
         replaceParams({
           href: DelegationAdminPaths.DelegationAdmin,
           params: {
-            nationalId:
-              maskedNationalId ?? '',
+            nationalId: maskedNationalId ?? '',
           },
         }),
-        { replace: true }
+        { replace: true },
       )
     }
 

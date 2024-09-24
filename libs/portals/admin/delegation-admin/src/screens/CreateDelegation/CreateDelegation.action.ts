@@ -12,7 +12,6 @@ import {
   CreateDelegationMutationVariables,
 } from './CreateDelegation.generated'
 
-
 const schema = z
   .object({
     fromNationalId: z
@@ -73,7 +72,7 @@ export const createDelegationAction: WrappedActionFn =
     }
 
     try {
-     await client.mutate<
+      await client.mutate<
         CreateDelegationMutation,
         CreateDelegationMutationVariables
       >({

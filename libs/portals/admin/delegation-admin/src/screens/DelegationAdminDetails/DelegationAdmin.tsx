@@ -1,10 +1,4 @@
-import {
-  Button,
-  GridColumn,
-  Box,
-  Stack,
-  Tabs,
-} from '@island.is/island-ui/core'
+import { Button, GridColumn, Box, Stack, Tabs } from '@island.is/island-ui/core'
 import { BackButton } from '@island.is/portals/admin/core'
 import { useLocale } from '@island.is/localization'
 import { useLoaderData, useNavigate } from 'react-router-dom'
@@ -34,14 +28,11 @@ const DelegationAdminScreen = () => {
     <Stack space="containerGutter">
       <BackButton onClick={() => navigate(DelegationAdminPaths.Root)} />
 
-          <IntroHeader
-            title={delegationAdmin.name}
-            intro={formatNationalId(delegationAdmin.nationalId)}
-         >
-
-
+      <IntroHeader
+        title={delegationAdmin.name}
+        intro={formatNationalId(delegationAdmin.nationalId)}
+      >
         {hasAdminAccess && (
-
           <GridColumn span={['8/8', '3/8']}>
             <Box
               display={'flex'}
@@ -49,30 +40,30 @@ const DelegationAdminScreen = () => {
               alignItems={['flexStart', 'center']}
               height={'full'}
             >
-            <Button
-              onClick={async () => {
-                const maskedNationalId =
-                  (await maskString(
-                    delegationAdmin.nationalId,
-                    userInfo?.profile.nationalId || '',
-                  )) ?? ''
-                const query = new URLSearchParams({
-                  fromNationalId: maskedNationalId,
-                })
-                navigate(
-                  `${
-                    DelegationAdminPaths.CreateDelegation
-                  }?${query.toString()}`,
-                )
-              }}
-              size="small"
-            >
-              {formatMessage(m.createNewDelegation)}
-            </Button>
+              <Button
+                onClick={async () => {
+                  const maskedNationalId =
+                    (await maskString(
+                      delegationAdmin.nationalId,
+                      userInfo?.profile.nationalId || '',
+                    )) ?? ''
+                  const query = new URLSearchParams({
+                    fromNationalId: maskedNationalId,
+                  })
+                  navigate(
+                    `${
+                      DelegationAdminPaths.CreateDelegation
+                    }?${query.toString()}`,
+                  )
+                }}
+                size="small"
+              >
+                {formatMessage(m.createNewDelegation)}
+              </Button>
             </Box>
           </GridColumn>
         )}
-          </IntroHeader>
+      </IntroHeader>
 
       <Tabs
         contentBackground="white"

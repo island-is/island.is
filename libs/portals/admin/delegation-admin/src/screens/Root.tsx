@@ -7,7 +7,7 @@ import {
   Button,
   GridColumn,
   GridRow,
-  Box
+  Box,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import { useSubmitting } from '@island.is/react-spa/shared'
@@ -49,33 +49,30 @@ const Root = () => {
 
   return (
     <>
-
-        <IntroHeader
-            title={m.delegationAdmin}
-            intro={m.delegationAdminDescription}
-          >
-          {hasAdminAccess && (
-            <GridColumn span={['8/8', '3/8']}>
-              <Box
-                display={'flex'}
-                justifyContent={['flexStart', 'flexEnd']}
-                alignItems={['flexStart', 'center']}
-                height={'full'}
-              >
+      <IntroHeader
+        title={m.delegationAdmin}
+        intro={m.delegationAdminDescription}
+      >
+        {hasAdminAccess && (
+          <GridColumn span={['8/8', '3/8']}>
+            <Box
+              display={'flex'}
+              justifyContent={['flexStart', 'flexEnd']}
+              alignItems={['flexStart', 'center']}
+              height={'full'}
+            >
               <Button
                 onClick={() => navigate(DelegationAdminPaths.CreateDelegation)}
                 size="small"
               >
                 {formatMessage(m.createNewDelegation)}
               </Button>
-              </Box>
-            </GridColumn>
-          )}
-        </IntroHeader>
-
+            </Box>
+          </GridColumn>
+        )}
+      </IntroHeader>
 
       <GridRow>
-
         <GridColumn span={['8/8', '4/8']}>
           <Form method="post">
             <AsyncSearchInput
