@@ -57,7 +57,7 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
         },
       })
 
-      if (res.data && res.data.signatureCollectionAdminUnsign.success) {
+      if (res.data?.signatureCollectionAdminUnsign.success) {
         toast.success(formatMessage(m.unsignFromListSuccess))
         setUploadResults(
           uploadResults?.filter((result: SignatureCollectionSignature) => {
@@ -156,9 +156,9 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
                   <T.Body>
                     {!loading ? (
                       uploadResults?.map(
-                        (result: SignatureCollectionSignature, index) => {
+                        (result: SignatureCollectionSignature) => {
                           return (
-                            <T.Row key={index}>
+                            <T.Row key={result.id}>
                               <T.Data style={{ minWidth: '140px' }}>
                                 {formatNationalId(result.signee.nationalId)}
                               </T.Data>
