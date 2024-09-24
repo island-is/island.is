@@ -11,15 +11,15 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import Signees from './components/signees'
-import ActionExtendDeadline from './components/extendDeadline'
-import ActionReviewComplete from './components/completeReview'
 import PaperUpload from './components/paperUpload'
 import ListInfo from './components/listInfoAlert'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { format as formatNationalId } from 'kennitala'
 import { ListStatus } from '../../lib/utils'
+import ActionReviewComplete from '../../shared-components/completeReview'
+import Signees from '../../shared-components/signees'
+import ActionExtendDeadline from '../../shared-components/extendDeadline'
 
 export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { list, listStatus } = useLoaderData() as {

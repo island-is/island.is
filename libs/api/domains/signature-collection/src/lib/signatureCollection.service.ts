@@ -148,8 +148,17 @@ export class SignatureCollectionService {
     user: User,
     input: SignatureCollectionCanSignFromPaperInput,
   ): Promise<boolean> {
-    const signee = await this.signee(user, input.signeeNationalId)
+    const signee = await this.signatureCollectionClientService.getSignee(
+      user,
+      input.signeeNationalId,
+    )
     const list = await this.list(input.listId, user)
-    return signee.canSign && list.area.id === signee.area?.id
+    // Current signatures should not prevent paper signatures
+    const canSign =
+      signee.canSign ||
+      (signee.canSignInfo?.length === 1 &&
+        signee.canSignInfo[0] === ReasonKey.AlreadySigned)
+
+    return canSign && list.area.id === signee.area?.id
   }
 }
