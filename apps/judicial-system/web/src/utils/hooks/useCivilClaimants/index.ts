@@ -37,7 +37,7 @@ const useCivilClaimants = () => {
           }
         }
       } catch (error) {
-        toast.error(formatMessage(errors.createDefendant))
+        toast.error(formatMessage(errors.createCivilClaimant))
       }
     },
     [createCivilClaimantMutation, formatMessage, isCreatingCivilClaimant],
@@ -52,7 +52,7 @@ const useCivilClaimants = () => {
 
         return Boolean(data?.deleteCivilClaimant.deleted)
       } catch (error) {
-        toast.error(formatMessage(errors.deleteDefendant))
+        toast.error(formatMessage(errors.deleteCivilClaimant))
         return false
       }
     },
@@ -70,7 +70,7 @@ const useCivilClaimants = () => {
 
         return Boolean(data)
       } catch (error) {
-        toast.error(formatMessage(errors.updateDefendant))
+        toast.error(formatMessage(errors.updateCivilClaimant))
         return false
       }
     },
