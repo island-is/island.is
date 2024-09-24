@@ -8,11 +8,11 @@ import { CivilClaimant } from '@island.is/judicial-system-web/src/graphql/schema
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
 import { strings } from './CivilClaimantInfo.strings'
 
-interface CivilClaumantInfoProps {
+interface CivilClaimantInfoProps {
   civilClaimant: CivilClaimant
 }
 
-export const CivilClaimantInfo: FC<CivilClaumantInfoProps> = (props) => {
+export const CivilClaimantInfo: FC<CivilClaimantInfoProps> = (props) => {
   const { civilClaimant } = props
   const { formatMessage } = useIntl()
 
