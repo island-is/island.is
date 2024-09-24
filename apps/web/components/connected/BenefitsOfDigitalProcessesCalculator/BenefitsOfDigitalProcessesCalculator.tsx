@@ -78,12 +78,14 @@ const ResultCard = ({ title, icon, description }: ResultCardProps) => {
   return (
     <Box
       padding={[2, 2, 3]}
-      border="standard"
-      borderRadius="large"
+      borderRightWidth="large"
+      borderColor="blue400"
       height="full"
+      background="blue100"
+      textAlign="right"
     >
       <Stack space={2}>
-        <Inline space={1}>
+        <Inline space={1} justifyContent="flexEnd">
           {icon && icon}
           <Text variant="h3">{title}</Text>
         </Inline>
@@ -241,7 +243,7 @@ export const BenefitsOfDigitalProcessesCalculator = ({
   const ringRoadTripsSaved =
     results.drivenKilometersSaved / preConditions.ringRoadDistanceInKilometers
 
-  const resultColumnSpan: SpanType = ['1/1', '1/2', '1/1', '1/2']
+  const resultColumnSpan: SpanType = ['1/1', '1/2', '1/1', '1/2', '1/3']
 
   const displayResults =
     resultMetadata.previousInput &&
@@ -403,7 +405,7 @@ export const BenefitsOfDigitalProcessesCalculator = ({
         <Stack space={3}>
           <Text variant="h2">{userInput.nameOfProcess}</Text>
 
-          <GridRow rowGap={3}>
+          <GridRow rowGap={4}>
             <GridColumn span={resultColumnSpan}>
               <ResultCard
                 title={
@@ -467,6 +469,16 @@ export const BenefitsOfDigitalProcessesCalculator = ({
                 )} ${formatMessage(t.results.days)}`}
                 description={formatMessage(t.results.savedCitizenDays)}
                 icon={<Icon icon="time" color="blue400" size="large" />}
+              />
+            </GridColumn>
+            <GridColumn span={resultColumnSpan}>
+              <ResultCard
+                title={formatValueForPresentation(
+                  activeLocale,
+                  userInput.amountPerYear,
+                )}
+                description={formatMessage(t.results.digitalProcessesPerYear)}
+                icon={<Icon icon="document" color="blue400" size="large" />}
               />
             </GridColumn>
           </GridRow>

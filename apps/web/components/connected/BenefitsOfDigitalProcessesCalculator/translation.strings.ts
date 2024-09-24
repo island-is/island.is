@@ -144,6 +144,11 @@ export const t = {
       description:
         'Lýsing á "sparaðir dagar hjá fólki við að sækja sér nauðsynlega þjónustu" niðurstöðu',
     },
+    digitalProcessesPerYear: {
+      id: 'web.digitalIceland.benefitsOfDigitalProcesses:results.digitalProcessesPerYear',
+      defaultMessage: 'stafrænar afgreiðslur á ári',
+      description: 'Lýsing á "stafrænar afgreiðslur á ári" niðurstöðu',
+    },
     days: {
       id: 'web.digitalIceland.benefitsOfDigitalProcesses:results.days',
       defaultMessage: 'dagar',
