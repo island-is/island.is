@@ -75,6 +75,7 @@ const Processing: FC = () => {
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
     useState<boolean>()
   const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
+  const [advocateNotFound, setAdvocateNotFound] = useState<boolean>(false)
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
@@ -112,7 +113,9 @@ const Processing: FC = () => {
     civilClaimantNationalIdUpdate?.nationalId,
   )
 
-  const stepIsValid = isProcessingStepValidIndictments(workingCase)
+  const stepIsValid =
+    isProcessingStepValidIndictments(workingCase) &&
+    nationalIdNotFound === false
 
   const handleUpdateDefendant = useCallback(
     (updatedDefendant: UpdateDefendantInput) => {
@@ -247,8 +250,6 @@ const Processing: FC = () => {
       const newCivilClaimants = workingCase.civilClaimants?.filter(
         (civilClaimant) => civilClaimant.id !== civilClaimantId,
       )
-
-      console.log(newCivilClaimants)
 
       setWorkingCase((prev) => ({ ...prev, civilClaimants: newCivilClaimants }))
     },
@@ -469,9 +470,9 @@ const Processing: FC = () => {
                       value={civilClaimant.nationalId ?? undefined}
                       required={Boolean(!civilClaimant.noNationalId)}
                       onChange={(val) => {
-                        setNationalIdNotFound(false)
-
-                        if (val.length === 11) {
+                        if (val.length < 11) {
+                          setNationalIdNotFound(false)
+                        } else if (val.length === 11) {
                           handleCivilClaimantNationalIdBlur(
                             val,
                             civilClaimant.noNationalId,
@@ -595,9 +596,7 @@ const Processing: FC = () => {
                       </Box>
                       <Box marginBottom={2}>
                         <InputAdvocate
-                          onAdvocateNotFound={() => {
-                            console.log('changethis')
-                          }}
+                          onAdvocateNotFound={setAdvocateNotFound}
                           clientId={civilClaimant.id}
                           advocateType={
                             civilClaimant.spokespersonIsLawyer
