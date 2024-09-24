@@ -138,8 +138,8 @@ export class SubpoenaResponse {
                 : undefined,
             canEdit: canChangeDefenseChoice,
             courtContactInfo: canChangeDefenseChoice
-              ? t.courtContactInfo
-              : undefined,
+              ? undefined
+              : t.courtContactInfo,
           }
         : undefined,
     }
