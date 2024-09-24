@@ -271,7 +271,6 @@ export const isProcessingStepValidIndictments = (
     workingCase.hasCivilClaims !== null &&
     workingCase.hasCivilClaims !== undefined
 
-  console.log(workingCase.civilClaimants)
   const allCivilClaimantsAreValid =
     workingCase.hasCivilClaims &&
     workingCase.civilClaimants?.every(
