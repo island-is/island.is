@@ -422,7 +422,7 @@ export const m = defineMessages({
   compareListsDescription: {
     id: 'admin-portal.signature-collection:compareListsDescription',
     defaultMessage:
-      'Fulltrúar í yfirkjörstjórnum og frambjóðendur geta ekki mælt með framboði.',
+      'Fulltrúar í yfirkjörstjórnum og frambjóðendur geta ekki mælt með framboði',
     description: '',
   },
   compareListsModalDescription: {

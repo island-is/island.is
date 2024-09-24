@@ -84,20 +84,20 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
   return (
     <Box marginTop={10}>
       <Box
-        background="purple100"
+        background="blue100"
         borderRadius="large"
         display={['block', 'flex', 'flex']}
         justifyContent="spaceBetween"
         alignItems="center"
         padding={3}
       >
-        <Text marginBottom={[2, 0, 0]}>
+        <Text marginBottom={[2, 0, 0]} variant="medium">
           {formatMessage(m.compareListsDescription)}
         </Text>
         <Button
           icon="documents"
           iconType="outline"
-          variant="utility"
+          variant="ghost"
           size="small"
           onClick={() => setModalIsOpen(true)}
         >
