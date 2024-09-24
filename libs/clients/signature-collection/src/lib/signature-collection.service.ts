@@ -358,7 +358,7 @@ export class SignatureCollectionClientService {
 
   async getSignedList(auth: User): Promise<SignedList[] | null> {
     const { signatures } = await this.getSignee(auth)
-    const { endTime } = await this.currentCollection()
+    const { endTime, isPresidential } = await this.currentCollection()
     if (!signatures) {
       return null
     }
@@ -372,12 +372,17 @@ export class SignatureCollectionClientService {
         )
         const isExtended = list.endTime > endTime
         const signedThisPeriod = signature.isInitialType === !isExtended
+        const canUnsignDigital = isPresidential ? signature.isDigital : true
         return {
           signedDate: signature.created,
           isDigital: signature.isDigital,
           pageNumber: signature.pageNumber,
           isValid: signature.valid,
-          canUnsign: signature.valid && list.active && signedThisPeriod,
+          canUnsign:
+            canUnsignDigital &&
+            signature.valid &&
+            list.active &&
+            signedThisPeriod,
           ...list,
         } as SignedList
       }),
