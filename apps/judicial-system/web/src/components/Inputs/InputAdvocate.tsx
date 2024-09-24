@@ -119,31 +119,44 @@ const InputAdvocate: FC<Props> = ({
 
   const handleLawyerChange = useCallback(
     (selectedOption: SingleValue<ReactSelectOption>, isCivilClaim: boolean) => {
-      if (!selectedOption) {
-        return
+      let updatedLawyer = {
+        defenderName: '',
+        defenderNationalId: '',
+        defenderEmail: '',
+        defenderPhoneNumber: '',
       }
 
-      const { label, value, __isNew__: defenderNotFound } = selectedOption
-
-      onAdvocateNotFound(defenderNotFound || false)
-
-      const lawyer = lawyers.find((l: Lawyer) => l.email === (value as string))
-
-      const updatedLawyer = {
-        defenderName: lawyer ? lawyer.name : label,
-        defenderNationalId: lawyer ? lawyer.nationalId : '',
-        defenderEmail: lawyer ? lawyer.email : '',
-        defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
+      let updatedSpokesperson = {
+        spokespersonName: '',
+        spokespersonNationalId: '',
+        spokespersonEmail: '',
+        spokespersonPhoneNumber: '',
       }
 
-      if (isCivilClaim && clientId) {
-        const updatedSpokesperson = {
+      if (selectedOption) {
+        const { label, value, __isNew__: defenderNotFound } = selectedOption
+
+        onAdvocateNotFound(defenderNotFound || false)
+
+        const lawyer = lawyers.find(
+          (l: Lawyer) => l.email === (value as string),
+        )
+        updatedLawyer = {
+          defenderName: lawyer ? lawyer.name : label,
+          defenderNationalId: lawyer ? lawyer.nationalId : '',
+          defenderEmail: lawyer ? lawyer.email : '',
+          defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
+        }
+
+        updatedSpokesperson = {
           spokespersonName: lawyer ? lawyer.name : label,
           spokespersonNationalId: lawyer ? lawyer.nationalId : '',
           spokespersonEmail: lawyer ? lawyer.email : '',
           spokespersonPhoneNumber: lawyer ? lawyer.phoneNr : '',
         }
+      }
 
+      if (isCivilClaim && clientId) {
         setAndSendCivilClaimantToServer(
           {
             ...updatedSpokesperson,
@@ -335,8 +348,9 @@ const InputAdvocate: FC<Props> = ({
             handleLawyerChange(selectedOption, isCivilClaim)
           }
           filterConfig={{ matchFrom: 'start' }}
-          isCreatable
           isDisabled={Boolean(disabled)}
+          isCreatable
+          isClearable
         />
       </Box>
       <Box marginBottom={2}>
