@@ -39,6 +39,8 @@ import {
 import { Features } from '@island.is/feature-flags'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { DelegationDelegationType } from './models/delegation-delegation-type.model'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 /**
  * Service class for outgoing delegations.
@@ -103,7 +105,34 @@ export class DelegationsOutgoingService {
       ],
     })
 
-    return delegations.map((d) => d.toDTO())
+    const delegationTypesDelegations = await this.delegationModel.findAll({
+      where: {
+        fromNationalId: user.nationalId,
+      },
+      include: [
+        {
+          model: DelegationDelegationType,
+          where: {
+            delegationTypeId: AuthDelegationType.GeneralMandate,
+            validTo: {
+              [Op.or]: {
+                [Op.gt]: new Date(),
+                [Op.is]: null,
+              },
+            },
+          },
+          required: true,
+        },
+      ],
+    })
+
+    const delegationTypesDTO = delegationTypesDelegations.map((d) =>
+      d.toDTO(AuthDelegationType.GeneralMandate),
+    )
+
+    const delegationsDTO = delegations.map((d) => d.toDTO())
+
+    return [...delegationsDTO, ...delegationTypesDTO]
   }
 
   async findByOtherUser(
