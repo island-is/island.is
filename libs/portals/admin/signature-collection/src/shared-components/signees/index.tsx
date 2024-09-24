@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLoaderData } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
@@ -27,24 +27,21 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
 
-  useEffect(() => {
-    setSignees(allSignees)
-  }, [allSignees])
-
-  useEffect(() => {
-    let filteredSignees: Signature[] = allSignees
-
-    filteredSignees = filteredSignees.filter((s) => {
+  const filteredSignees = useMemo(() => {
+    return allSignees.filter((s) => {
+      const lowercaseSearchTerm = searchTerm.toLowerCase()
       return (
-        s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.signee.name.toLowerCase().includes(lowercaseSearchTerm) ||
         formatNationalId(s.signee.nationalId).includes(searchTerm) ||
         s.signee.nationalId.includes(searchTerm)
       )
     })
-
+  }, [allSignees, searchTerm])
+  
+  useEffect(() => {
     setPage(1)
     setSignees(filteredSignees)
-  }, [searchTerm])
+  }, [filteredSignees])
 
   return (
     <Box marginTop={7}>
