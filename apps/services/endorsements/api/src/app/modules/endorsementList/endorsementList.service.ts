@@ -281,7 +281,7 @@ export class EndorsementListService {
     const endorsementList = await this.endorsementListModel.create({
       ...list,
       ownerNationalId: user.nationalId,
-      ownerName
+      ownerName,
     })
 
     if (process.env.NODE_ENV === 'production') {
