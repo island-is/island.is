@@ -1,13 +1,13 @@
 import React from 'react'
 import { ImageSourcePropType } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { Skeleton } from '../skeleton/skeleton'
 import { Typography } from '../typography/typography'
 import { Label } from '@ui'
 
 const Host = styled.View<{ hasBorder?: boolean }>`
-  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
   border-bottom-width: ${({ hasBorder }) => (hasBorder ? '1px' : 0)};
   border-bottom-color: ${dynamicColor(
     (props) => ({
@@ -74,7 +74,6 @@ export function Header({
   hasBorder = true,
   label = '',
 }: HeaderProps) {
-  const theme = useTheme()
   return (
     <Host hasBorder={hasBorder}>
       <Row>

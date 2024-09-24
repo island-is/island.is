@@ -19,7 +19,6 @@ import {
   useNavigationComponentDidAppear,
 } from 'react-native-navigation-hooks/dist'
 import Pdf, { Source } from 'react-native-pdf'
-import Share from 'react-native-share'
 import WebView from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
 import {
@@ -33,10 +32,13 @@ import { toggleAction } from '../../lib/post-mail-action'
 import { authStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { ButtonRegistry } from '../../utils/component-registry'
+import { getButtonsForActions } from './utils/getButtonsForActions'
+import { useBrowser } from '../../lib/use-browser'
+import { shareFile } from './utils/shareFile'
 
 const Host = styled.SafeAreaView`
-  margin-left: 24px;
-  margin-right: 24px;
+  margin-left: ${({ theme }) => theme.spacing[2]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Border = styled.View`
@@ -45,6 +47,12 @@ const Border = styled.View`
     dark: props.theme.shades.dark.shade200,
     light: props.theme.color.blue100,
   }))};
+`
+
+const ActionsWrapper = styled.View`
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  gap: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const PdfWrapper = styled.View`
@@ -214,6 +222,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const intl = useIntl()
   const theme = useTheme()
   const htmlStyles = useHtmlStyles()
+  const { openBrowser } = useBrowser()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   const [accessToken, setAccessToken] = useState<string>()
   const [error, setError] = useState(false)
@@ -291,6 +300,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     Document?.content?.type.toLocaleLowerCase() === 'html' &&
     Document.content?.value !== ''
 
+  const onShare = () =>
+    shareFile({ document: Document as DocumentV2, hasPdf, pdfUrl })
+
   useConnectivityIndicator({
     componentId,
     rightButtons: getRightButtonsForDocumentDetail({
@@ -311,16 +323,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       )
     }
     if (buttonId === ButtonRegistry.ShareButton && loaded) {
-      if (Platform.OS === 'android') {
-        authStore.setState({ noLockScreenUntilNextAppStateActive: true })
-      }
-      Share.open({
-        title: Document.subject!,
-        subject: Document.subject!,
-        message: `${Document.sender!.name!} \n ${Document.subject!}`,
-        type: hasPdf ? 'application/pdf' : undefined,
-        url: hasPdf ? `file://${pdfUrl}` : Document.downloadUrl!,
-      })
+      onShare()
     }
   }, componentId)
 
@@ -384,6 +387,10 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [loaded])
 
+  const hasAdditionalActions = Document.actions?.filter(
+    (action) => action.type !== 'confirmation',
+  )
+
   return (
     <>
       <Host>
@@ -401,11 +408,32 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           label={isUrgent ? intl.formatMessage({ id: 'inbox.urgent' }) : ''}
         />
       </Host>
+      {showConfirmedAlert && (
+        <ActionsWrapper>
+          {showConfirmedAlert && ( // TODO: this will come from the server
+            <Alert
+              type="success"
+              hasBorder
+              message="Staðfesting á móttöku hefur verið send á dómstóla"
+            />
+          )}
+          {hasAdditionalActions &&
+            showConfirmedAlert &&
+            getButtonsForActions(
+              openBrowser,
+              onShare,
+              componentId,
+              Document.actions,
+            )}
+        </ActionsWrapper>
+      )}
       <Border />
       <View
         style={{
           flex: 1,
           marginHorizontal: theme.spacing[2],
+          marginTop:
+            hasAdditionalActions && showConfirmedAlert ? theme.spacing[2] : 0,
         }}
       >
         <Animated.View
@@ -414,13 +442,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             opacity: fadeAnim,
           }}
         >
-          {showConfirmedAlert && ( // TODO: this will come from the server
-            <Alert
-              type="success"
-              hasBorder
-              message="Staðfesting á móttöku hefur verið send á dómstóla" // TODO use message from actions?
-            />
-          )}
           {fileTypeLoaded &&
             !error &&
             (isHtml ? (
