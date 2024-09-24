@@ -1,0 +1,411 @@
+import { type PropsWithChildren, type ReactNode, useState } from 'react'
+import { useIntl } from 'react-intl'
+import NumberFormat from 'react-number-format'
+
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Icon,
+  Inline,
+  Input,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import type { SpanType } from '@island.is/island-ui/core/types'
+import type { ConnectedComponent } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
+import { formatCurrency } from '@island.is/web/utils/currency'
+
+import { formatValueForPresentation } from '../../Charts/v2/utils'
+import { t } from './translation.strings'
+
+interface FieldProps {
+  heading: string
+  description?: string
+}
+
+const Field = ({
+  heading,
+  description,
+  children,
+}: PropsWithChildren<FieldProps>) => {
+  return (
+    <Stack space={2}>
+      <Inline flexWrap="nowrap" space={1} alignY="center">
+        <Text variant="h4">{heading}</Text>
+      </Inline>
+      {description && <Text variant="medium">{description}</Text>}
+      {children}
+    </Stack>
+  )
+}
+
+interface ResultCardProps {
+  title: string
+  icon?: ReactNode
+  description: string
+}
+
+const ResultCard = ({ title, icon, description }: ResultCardProps) => {
+  return (
+    <Box
+      padding={[2, 2, 3]}
+      border="standard"
+      borderRadius="large"
+      height="full"
+    >
+      <Stack space={2}>
+        <Inline space={1}>
+          {icon && icon}
+          <Text variant="h3">{title}</Text>
+        </Inline>
+
+        <Text>{description}</Text>
+      </Stack>
+    </Box>
+  )
+}
+
+interface UserInput {
+  nameOfProcess: string
+  amountPerYear: number
+  processDurationInMinutes: number
+  visitCountToCompleteProcess: number
+  averageDistanceToProcessInKilometers: number
+}
+
+interface Results {
+  /* Ávinningur stofnunar */
+  institutionGain: number
+
+  /* Ávinningur borgara */
+  citizenGain: number
+
+  /* Ígildi stöðugildis */
+  staffFreeToDoOtherThings: number
+
+  /* Eknir kílómetrar */
+  drivenKilometersSaved: number
+
+  /* Sparaðir dagar hjá fólki við að sækja sér þjónustu */
+  citizenTimeSaved: number
+}
+
+const canCalculate = (current: UserInput, previous: UserInput | null) => {
+  if (
+    !(
+      current.nameOfProcess.length > 0 &&
+      current.amountPerYear > 0 &&
+      current.processDurationInMinutes > 0 &&
+      current.visitCountToCompleteProcess > 0 &&
+      current.averageDistanceToProcessInKilometers > 0
+    )
+  ) {
+    return false
+  }
+
+  if (!previous) {
+    return true
+  }
+
+  for (const key in current) {
+    if (
+      current[key as keyof typeof current] !==
+      previous[key as keyof typeof current]
+    ) {
+      return true
+    }
+  }
+
+  return false
+}
+
+interface BenefitsOfDigitalProcessesCalculatorProps {
+  slice: ConnectedComponent
+}
+
+export const BenefitsOfDigitalProcessesCalculator = ({
+  slice,
+}: BenefitsOfDigitalProcessesCalculatorProps) => {
+  const { formatMessage } = useIntl()
+  const { activeLocale } = useI18n()
+
+  const [resultMetadata, setResultMetadata] = useState({
+    previousInput: null as null | UserInput,
+  })
+
+  const [userInput, setUserInput] = useState<UserInput>({
+    amountPerYear: 0,
+    averageDistanceToProcessInKilometers: 0,
+    nameOfProcess: '',
+    processDurationInMinutes: 0,
+    visitCountToCompleteProcess: 0,
+  })
+
+  const preConditions = {
+    staffIncomePerHour:
+      slice.configJson?.['Laun starfsmanna í framþjónustu krónur á klst'] ??
+      6010,
+    citizenIncomeLossPerHour:
+      slice.configJson?.[
+        'Fórnarkostnaður borgarar (meðallaun í landi á klst)'
+      ] ?? 5122,
+    kilometerFeePerKilometer: slice.configJson?.['Km gjald pr km'] ?? 141,
+    averageGreenhouseGasesEmittedByCarPerKilometer:
+      slice.configJson?.[
+        'Average greenhouse gases emitted by car per km kg CO2e/km'
+      ] ?? 0,
+    averageDrivingSpeedInKilometersPerHour:
+      slice.configJson?.['Meðalökuhraði km/klst'] ?? 40,
+    Bias: slice.configJson?.['Bias'] ?? 0,
+    co2EmissionPerDrivenKilometer: slice.configJson?.['Kg co2 á ekinn km'] ?? 0,
+    etsCO2Price: slice.configJson?.['Verð á CO2 kg (ETS) í krónum'] ?? 12,
+    carbonWoodCO2Price:
+      slice.configJson?.['Verð á CO2 kg (Kolviður) í krónum'] ?? 3,
+    staffHourAverageInYear:
+      slice.configJson?.['Klukkustundir í stöðugildi á ári'] ?? 1606,
+    ringRoadDistanceInKilometers:
+      slice.configJson?.['Hringvegurinn í km'] ?? 1321,
+  }
+
+  const results: Results = {
+    institutionGain: 0,
+    citizenGain: 0,
+    staffFreeToDoOtherThings: 0,
+    drivenKilometersSaved: 0,
+    citizenTimeSaved: 0,
+  }
+
+  const gainPerCitizen = 0
+  const ringRoadTripsSaved = 0
+  const citizenDaysSaved = 0
+
+  const resultColumnSpan: SpanType = ['1/1', '1/2', '1/1', '1/2']
+
+  const displayResults =
+    resultMetadata.previousInput &&
+    !canCalculate(userInput, resultMetadata.previousInput)
+
+  return (
+    <Stack space={4}>
+      <Box
+        background="blue100"
+        paddingY={[3, 3, 5]}
+        paddingX={[3, 3, 3, 3, 12]}
+      >
+        <Stack space={5}>
+          <Field heading={formatMessage(t.nameOfProcess.heading)}>
+            <Input
+              required={true}
+              name="nameOfProcess"
+              value={userInput.nameOfProcess}
+              onChange={(ev) => {
+                setUserInput((prevInput) => ({
+                  ...prevInput,
+                  nameOfProcess: ev.target.value,
+                }))
+              }}
+              label={formatMessage(t.nameOfProcess.label)}
+              placeholder={formatMessage(t.nameOfProcess.placeholder)}
+            />
+          </Field>
+
+          <Field
+            heading={formatMessage(t.amountPerYear.heading)}
+            description={formatMessage(t.amountPerYear.description)}
+          >
+            <NumberFormat
+              required={true}
+              value={String(userInput.amountPerYear || '')}
+              onValueChange={({ value }) => {
+                setUserInput((prevInput) => ({
+                  ...prevInput,
+                  amountPerYear: Number(value),
+                }))
+              }}
+              customInput={Input}
+              name="amountPerYear"
+              id="amountPerYear"
+              type="text"
+              inputMode="numeric"
+              thousandSeparator="."
+              decimalSeparator=","
+              label={formatMessage(t.amountPerYear.label)}
+              placeholder={formatMessage(t.amountPerYear.placeholder)}
+            />
+          </Field>
+
+          <Field
+            heading={formatMessage(t.processDurationInMinutes.heading)}
+            description={formatMessage(t.processDurationInMinutes.description)}
+          >
+            <NumberFormat
+              required={true}
+              value={String(userInput.processDurationInMinutes || '')}
+              onValueChange={({ value }) => {
+                setUserInput((prevInput) => ({
+                  ...prevInput,
+                  processDurationInMinutes: Number(value),
+                }))
+              }}
+              customInput={Input}
+              name="processDurationInMinutes"
+              id="processDurationInMinutes"
+              type="text"
+              inputMode="numeric"
+              thousandSeparator="."
+              decimalSeparator=","
+              label={formatMessage(t.processDurationInMinutes.label)}
+              placeholder={formatMessage(
+                t.processDurationInMinutes.placeholder,
+              )}
+            />
+          </Field>
+
+          <Field
+            heading={formatMessage(t.visitCountToCompleteProcess.heading)}
+            description={formatMessage(
+              t.visitCountToCompleteProcess.description,
+            )}
+          >
+            <NumberFormat
+              required={true}
+              value={String(userInput.visitCountToCompleteProcess || '')}
+              onValueChange={({ value }) => {
+                setUserInput((prevInput) => ({
+                  ...prevInput,
+                  visitCountToCompleteProcess: Number(value),
+                }))
+              }}
+              customInput={Input}
+              name="visitCountToCompleteProcess"
+              id="visitCountToCompleteProcess"
+              type="text"
+              inputMode="numeric"
+              thousandSeparator="."
+              decimalSeparator=","
+              label={formatMessage(t.visitCountToCompleteProcess.label)}
+              placeholder={formatMessage(
+                t.visitCountToCompleteProcess.placeholder,
+              )}
+            />
+          </Field>
+
+          <Field
+            heading={formatMessage(
+              t.averageDistanceToProcessInKilometers.heading,
+            )}
+            description={formatMessage(
+              t.averageDistanceToProcessInKilometers.description,
+            )}
+          >
+            <NumberFormat
+              required={true}
+              value={String(
+                userInput.averageDistanceToProcessInKilometers || '',
+              )}
+              onValueChange={({ value }) => {
+                setUserInput((prevInput) => ({
+                  ...prevInput,
+                  averageDistanceToProcessInKilometers: Number(value),
+                }))
+              }}
+              isNumericString={true}
+              customInput={Input}
+              name="averageDistanceToProcessInKilometers"
+              id="averageDistanceToProcessInKilometers"
+              inputMode="decimal"
+              thousandSeparator="."
+              decimalSeparator=","
+              label={formatMessage(
+                t.averageDistanceToProcessInKilometers.label,
+              )}
+            />
+          </Field>
+
+          <Button
+            disabled={!canCalculate(userInput, resultMetadata.previousInput)}
+            onClick={() => {
+              setResultMetadata({
+                previousInput: {
+                  ...userInput,
+                },
+              })
+            }}
+          >
+            {formatMessage(t.results.calculate)}
+          </Button>
+        </Stack>
+      </Box>
+
+      {displayResults && (
+        <Stack space={3}>
+          <Text variant="h2">{userInput.nameOfProcess}</Text>
+
+          <GridRow rowGap={3}>
+            <GridColumn span={resultColumnSpan}>
+              <ResultCard
+                title={
+                  results.institutionGain >= 1e6
+                    ? `${formatValueForPresentation(
+                        activeLocale,
+                        results.institutionGain,
+                      )}${formatMessage(t.results.currencyPostfix)}`
+                    : (formatCurrency(
+                        results.institutionGain,
+                        formatMessage(t.results.currencyPostfix),
+                      ) as string)
+                }
+                description={formatMessage(
+                  t.results.institutionGainDescription,
+                )}
+              />
+            </GridColumn>
+            <GridColumn span={resultColumnSpan}>
+              <ResultCard
+                title={formatValueForPresentation(
+                  activeLocale,
+                  results.staffFreeToDoOtherThings,
+                )}
+                description={formatMessage(t.results.staffFreeToDoOtherThings)}
+                icon={<Icon icon="people" color="blue400" size="large" />}
+              />
+            </GridColumn>
+            <GridColumn span={resultColumnSpan}>
+              <ResultCard
+                title={
+                  formatCurrency(
+                    gainPerCitizen,
+                    formatMessage(t.results.currencyPostfix),
+                  ) as string
+                }
+                description={formatMessage(t.results.citizenGainDescription, {
+                  nameOfProcess: userInput.nameOfProcess,
+                })}
+              />
+            </GridColumn>
+            <GridColumn span={resultColumnSpan}>
+              <ResultCard
+                title={formatValueForPresentation(
+                  activeLocale,
+                  ringRoadTripsSaved,
+                )}
+                description={formatMessage(t.results.ringRoadTripsSaved)}
+                icon={<Icon icon="car" color="blue400" size="large" />}
+              />
+            </GridColumn>
+            <GridColumn span={resultColumnSpan}>
+              <ResultCard
+                title={`${citizenDaysSaved} ${formatMessage(t.results.days)}`}
+                description={formatMessage(t.results.savedCitizenDays)}
+                icon={<Icon icon="time" color="blue400" size="large" />}
+              />
+            </GridColumn>
+          </GridRow>
+        </Stack>
+      )}
+    </Stack>
+  )
+}
