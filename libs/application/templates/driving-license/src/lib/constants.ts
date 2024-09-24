@@ -57,3 +57,5 @@ export interface DrivingLicenseFakeData {
   howManyDaysHaveYouLivedInIceland: string | number
   age: number
 }
+
+export const MAIL_DELIVERY_PRICE = 290

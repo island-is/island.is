@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildDescriptionField,
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
@@ -23,6 +24,11 @@ export const sectionDigitalLicenseInfo = buildSubSection({
               ? m.digitalLicenseInfoAlertMessageBTemp
               : m.digitalLicenseInfoAlertMessageBFull,
           alertType: 'info',
+        }),
+        buildDescriptionField({
+          id: 'extraInfo',
+          title: '',
+          description: m.digitalLicenseInfoAlertMessageExtraInfo,
         }),
       ],
     }),
