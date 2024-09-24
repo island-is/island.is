@@ -107,6 +107,11 @@ const Processing: FC = () => {
     },
     [router, setWorkingCase, transitionCase, workingCase],
   )
+
+  const { personData } = useNationalRegistry(
+    civilClaimantNationalIdUpdate?.nationalId,
+  )
+
   const stepIsValid = isProcessingStepValidIndictments(workingCase)
 
   const handleUpdateDefendant = useCallback(
@@ -123,10 +128,6 @@ const Processing: FC = () => {
       updateCivilClaimant(updatedCivilClaimant)
     },
     [updateCivilClaimant, setWorkingCase, updateCivilClaimantState],
-  )
-
-  const { personData } = useNationalRegistry(
-    civilClaimantNationalIdUpdate?.nationalId,
   )
 
   const handleCreateCivilClaimantClick = async () => {
