@@ -83,13 +83,24 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
 
   return (
     <Box marginTop={10}>
-      <Box display="flex" justifyContent="center">
+      <Box
+        background="blue100"
+        borderRadius="large"
+        display={['block', 'flex', 'flex']}
+        justifyContent="spaceBetween"
+        alignItems="center"
+        padding={3}
+      >
+        <Box marginHeight={5}>
+          <Text marginBottom={[2, 0, 0]} variant="medium">
+            {formatMessage(parliamentaryMessages.compareListsButton)}
+          </Text>
+        </Box>
         <Button
-          icon="documents"
-          iconType="outline"
-          variant="utility"
-          size="small"
           onClick={() => setModalIsOpen(true)}
+          variant="ghost"
+          icon="documents"
+          size="small"
         >
           {formatMessage(parliamentaryMessages.compareListsButton)}
         </Button>

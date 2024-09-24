@@ -19,9 +19,7 @@ export interface ListsLoaderReturn {
 }
 
 export const listsLoader: WrappedLoaderFn = ({ client }) => {
-  return async ({
-    params,
-  }): Promise<{
+  return async (): Promise<{
     allLists: SignatureCollectionList[]
     collectionStatus: string
     collection: SignatureCollection

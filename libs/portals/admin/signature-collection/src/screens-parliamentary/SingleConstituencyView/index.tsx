@@ -9,12 +9,20 @@ import {
   GridRow,
   Stack,
 } from '@island.is/island-ui/core'
-import { useNavigate } from 'react-router-dom'
+import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
+import { ListsLoaderReturn } from '../../screens-presidential/AllLists/AllLists.loader'
 
 export const SingleConstituencyView = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+
+  const { allLists } = useLoaderData() as ListsLoaderReturn
+  const { constituencyName } = useParams() as { constituencyName: string }
+
+  const constituencyLists = allLists.filter(
+    (list) => list.area.name === constituencyName,
+  )
 
   return (
     <GridContainer>
@@ -34,58 +42,41 @@ export const SingleConstituencyView = () => {
           span={['12/12', '12/12', '12/12', '8/12']}
         >
           <IntroHeader
-            title={formatMessage('Norðausturkjördæmi')}
-            intro={formatMessage(parliamentaryMessages.singleConstituencyIntro)}
+            title={constituencyName}
+            intro={
+              formatMessage(parliamentaryMessages.singleConstituencyIntro) +
+              ' ' +
+              constituencyName
+            }
             imgPosition="right"
             imgHiddenBelow="sm"
           />
           <GridRow>
             <GridColumn span={'12/12'}>
               <Stack space={3}>
-                <ActionCard
-                  heading={'Listi A'}
-                  progressMeter={{
-                    currentProgress: 10,
-                    maxProgress: 130,
-                    withLabel: true,
-                  }}
-                  cta={{
-                    label: 'Skoða nánar',
-                    variant: 'text',
-                    onClick: () => {
-                      navigate(
-                        SignatureCollectionPaths.ParliamentaryNordausturkjordaemiList.replace(
-                          ':id',
-                          '1',
-                        ),
-                      )
-                    },
-                  }}
-                />
-                <ActionCard
-                  heading={'Listi B'}
-                  progressMeter={{
-                    currentProgress: 50,
-                    maxProgress: 130,
-                    withLabel: true,
-                  }}
-                  cta={{
-                    label: 'Skoða nánar',
-                    variant: 'text',
-                  }}
-                />
-                <ActionCard
-                  heading={'Listi C'}
-                  progressMeter={{
-                    currentProgress: 100,
-                    maxProgress: 130,
-                    withLabel: true,
-                  }}
-                  cta={{
-                    label: 'Skoða nánar',
-                    variant: 'text',
-                  }}
-                />
+                {constituencyLists.map((list) => (
+                  <ActionCard
+                    key={list.id}
+                    heading={list.title.split(' - ')[0]}
+                    progressMeter={{
+                      currentProgress: list.numberOfSignatures ?? 0,
+                      maxProgress: list.area.min,
+                      withLabel: true,
+                    }}
+                    cta={{
+                      label: 'Skoða nánar',
+                      variant: 'text',
+                      onClick: () => {
+                        navigate(
+                          SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
+                            ':constituencyName',
+                            constituencyName,
+                          ).replace(':listId', list.id),
+                        )
+                      },
+                    }}
+                  />
+                ))}
               </Stack>
             </GridColumn>
           </GridRow>

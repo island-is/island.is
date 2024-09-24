@@ -36,41 +36,19 @@ export const signatureCollectionModule: PortalModule = {
       name: m.signatureListsTitle,
       path: SignatureCollectionPaths.ParliamentaryRoot,
       element: <ParliamentaryRoot />,
+      loader: listsLoader(props),
     },
     {
-      name: Constituencies.Nordausturkjordaemi,
-      path: SignatureCollectionPaths.ParliamentaryNordausturkjordaemi,
+      name: m.signatureListsConstituencyTitle,
+      path: SignatureCollectionPaths.ParliamentaryConstituency,
       element: <ParliamentaryConstituency />,
-    },
-    {
-      name: Constituencies.Nordvesturkjordaemi,
-      path: SignatureCollectionPaths.ParliamentaryNordvesturkjordaemi,
-      element: <ParliamentaryConstituency />,
-    },
-    {
-      name: Constituencies.ReykjavikurkjordaemiNordur,
-      path: SignatureCollectionPaths.ParliamentaryReykjavikurkjordaemiNordur,
-      element: <ParliamentaryConstituency />,
-    },
-    {
-      name: Constituencies.ReykjavikurkjordaemiSudur,
-      path: SignatureCollectionPaths.ParliamentaryReykjavikurkjordaemiSudur,
-      element: <ParliamentaryConstituency />,
-    },
-    {
-      name: Constituencies.Sudurkjordaemi,
-      path: SignatureCollectionPaths.ParliamentarySudurkjordaemi,
-      element: <ParliamentaryConstituency />,
-    },
-    {
-      name: Constituencies.Sudvesturkjordaemi,
-      path: SignatureCollectionPaths.ParliamentarySudvesturkjordaemi,
-      element: <ParliamentaryConstituency />,
+      loader: listsLoader(props),
     },
     {
       name: m.singleList,
-      path: SignatureCollectionPaths.ParliamentaryNordausturkjordaemiList,
+      path: SignatureCollectionPaths.ParliamentaryConstituencyList,
       element: <ParliamentaryList />,
+      loader: listLoader(props),
     },
 
     /* ------ Presidential ------ */

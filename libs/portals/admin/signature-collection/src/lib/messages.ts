@@ -12,6 +12,11 @@ export const m = defineMessages({
     defaultMessage: 'Meðmælasafnanir',
     description: '',
   },
+  signatureListsConstituencyTitle: {
+    id: 'admin-portal.signature-collection:signatureListsConstituencyTitle',
+    defaultMessage: 'Kjördæmi',
+    description: '',
+  },
   signatureListsDescription: {
     id: 'admin-portal.signature-collection:signatureListsDescription',
     defaultMessage:
@@ -512,7 +517,7 @@ export const parliamentaryMessages = defineMessages({
   singleConstituencyIntro: {
     id: 'admin-portal.signature-collection-parliamentary:singleConstituencyIntro',
     defaultMessage:
-      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið í Norðausturkjördæmi.',
+      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið í',
     description: '',
   },
 })

@@ -17,20 +17,12 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
       activeIfExact: true,
       children: [
         {
-          name: Constituencies.Nordausturkjordaemi,
-          path: SignatureCollectionPaths.ParliamentaryNordausturkjordaemi,
-        },
-        {
           name: Constituencies.Nordvesturkjordaemi,
           path: SignatureCollectionPaths.ParliamentaryNordvesturkjordaemi,
         },
         {
-          name: Constituencies.ReykjavikurkjordaemiNordur,
-          path: SignatureCollectionPaths.ParliamentaryReykjavikurkjordaemiNordur,
-        },
-        {
-          name: Constituencies.ReykjavikurkjordaemiSudur,
-          path: SignatureCollectionPaths.ParliamentaryReykjavikurkjordaemiSudur,
+          name: Constituencies.Nordausturkjordaemi,
+          path: SignatureCollectionPaths.ParliamentaryNordausturkjordaemi,
         },
         {
           name: Constituencies.Sudurkjordaemi,
@@ -39,6 +31,14 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
         {
           name: Constituencies.Sudvesturkjordaemi,
           path: SignatureCollectionPaths.ParliamentarySudvesturkjordaemi,
+        },
+        {
+          name: Constituencies.ReykjavikurkjordaemiSudur,
+          path: SignatureCollectionPaths.ParliamentaryReykjavikurkjordaemiSudur,
+        },
+        {
+          name: Constituencies.ReykjavikurkjordaemiNordur,
+          path: SignatureCollectionPaths.ParliamentaryReykjavikurkjordaemiNordur,
         },
       ],
     },

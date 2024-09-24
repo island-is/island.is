@@ -226,7 +226,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               </Box>
             </GridColumn>
           </GridRow>
-          {lists?.length > 0 ? (
+          {lists?.length > 0 && collection.isPresidential ? (
             <>
               <Box marginBottom={2}>
                 {filters.input.length > 0 ||
@@ -283,7 +283,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                                 onClick: () => {
                                   navigate(
                                     SignatureCollectionPaths.PresidentialList.replace(
-                                      ':id',
+                                      ':listId',
                                       list.id,
                                     ),
                                   )
@@ -311,7 +311,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               />
             </Box>
           )}
-          {lists?.length > 0 && (
+          {lists?.length > 0 && collection.isPresidential && (
             <Box marginTop={5}>
               <Pagination
                 totalItems={lists.length}
@@ -346,7 +346,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             </Box>
           )}
 
-          {lists?.length > 0 && (
+          {lists?.length > 0 && collection.isPresidential && (
             <ReviewCandidates candidates={collection?.candidates ?? []} />
           )}
         </GridColumn>

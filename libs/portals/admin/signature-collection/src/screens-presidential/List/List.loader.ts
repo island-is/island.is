@@ -29,7 +29,7 @@ export const listLoader: WrappedLoaderFn = ({ client }) => {
       fetchPolicy: 'network-only',
       variables: {
         input: {
-          listId: params.id,
+          listId: params.listId,
         },
       },
     })
@@ -39,7 +39,7 @@ export const listLoader: WrappedLoaderFn = ({ client }) => {
       fetchPolicy: 'network-only',
       variables: {
         input: {
-          listId: params.id,
+          listId: params.listId,
         },
       },
     })
@@ -49,7 +49,7 @@ export const listLoader: WrappedLoaderFn = ({ client }) => {
       fetchPolicy: 'network-only',
       variables: {
         input: {
-          listId: params.id,
+          listId: params.listId,
         },
       },
     })

@@ -6,9 +6,14 @@ import { m, parliamentaryMessages } from '../../lib/messages'
 import ActionExtendDeadline from '../components/extendDeadline'
 import Signees from '../components/signees'
 import ActionReviewComplete from '../components/completeReview'
+import { useLoaderData } from 'react-router-dom'
+import { SignatureCollectionList } from '@island.is/api/schema'
 
 const SingleListView = () => {
   const { formatMessage } = useLocale()
+  const { list } = useLoaderData() as {
+    list: SignatureCollectionList
+  }
 
   return (
     <GridContainer>
@@ -28,14 +33,14 @@ const SingleListView = () => {
           span={['12/12', '12/12', '12/12', '8/12']}
         >
           <IntroHeader
-            title={'Norðausturkjördæmi - Listi A'}
+            title={list?.title}
             intro={formatMessage(parliamentaryMessages.signatureListsIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
           />
-          <ActionExtendDeadline listId={'1'} endTime={'2021-09-30T00:00:00Z'} />
-          <Signees numberOfSignatures={0} />
-          <ActionReviewComplete listId={'1'} />
+          <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
+          <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
+          <ActionReviewComplete listId={list.id} />
         </GridColumn>
       </GridRow>
     </GridContainer>
