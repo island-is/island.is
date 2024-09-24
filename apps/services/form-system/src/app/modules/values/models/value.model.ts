@@ -31,7 +31,7 @@ export class Value extends Model<Value> {
     type: DataType.JSON,
     allowNull: true,
   })
-  json?: string
+  json?: object
 
   @ForeignKey(() => Field)
   @Column({
