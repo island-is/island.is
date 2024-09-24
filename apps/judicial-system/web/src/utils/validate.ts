@@ -271,10 +271,22 @@ export const isProcessingStepValidIndictments = (
     workingCase.hasCivilClaims !== null &&
     workingCase.hasCivilClaims !== undefined
 
+  console.log(workingCase.civilClaimants)
+  const allCivilClaimantsAreValid =
+    workingCase.hasCivilClaims &&
+    workingCase.civilClaimants?.every(
+      (civilClaimant) =>
+        civilClaimant.name &&
+        (civilClaimant.noNationalId ||
+          (civilClaimant.nationalId &&
+            civilClaimant.nationalId.replace('-', '').length === 10)),
+    )
+
   return Boolean(
     workingCase.prosecutor &&
       workingCase.court &&
       hasCivilClaimSelected &&
+      allCivilClaimantsAreValid &&
       defendantsAreValid(),
   )
 }

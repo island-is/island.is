@@ -431,6 +431,7 @@ const Processing: FC = () => {
                     <InputNationalId
                       isDateOfBirth={Boolean(civilClaimant.noNationalId)}
                       value={civilClaimant.nationalId ?? undefined}
+                      required={Boolean(!civilClaimant.noNationalId)}
                       onChange={(val) => {
                         setNationalIdNotFound(false)
 
@@ -470,6 +471,7 @@ const Processing: FC = () => {
                   </Box>
                   <InputName
                     value={civilClaimant.name ?? undefined}
+                    required={Boolean(!civilClaimant.noNationalId)}
                     onBlur={(val) =>
                       handleCivilClaimantNameBlur(val, civilClaimant.id)
                     }
