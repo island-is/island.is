@@ -18,7 +18,7 @@ const ActionReviewComplete = ({
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
   const [toggleListReviewMutation, { loading }] = useToggleListReviewMutation()
   const { revalidate } = useRevalidator()
-  const listReviewed = listStatus === ListStatus.Reviewed
+  const listReviewed = listStatus && listStatus === ListStatus.Reviewed
   const modalText = listReviewed
     ? formatMessage(m.confirmListReviewedToggleBack)
     : formatMessage(m.confirmListReviewed)

@@ -78,7 +78,7 @@ const ParliamentaryRoot = () => {
               />
             ))}
           </Stack>
-          <CompareLists collectionId={collection.id} />
+          <CompareLists collectionId={collection?.id} />
         </GridColumn>
       </GridRow>
     </GridContainer>
