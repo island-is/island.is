@@ -295,6 +295,9 @@ export const getMultipleBirthsDays = (application: Application) => {
   return getMultipleBirthRequestDays(application.answers)
 }
 
+export const getMultipleBirthsDaysInMonths = (application: Application) =>
+  daysToMonths(getMultipleBirthsDays(application)).toFixed(1)
+
 export const getMultipleBirthRequestDays = (
   answers: Application['answers'],
 ) => {
@@ -411,6 +414,10 @@ export const getAvailablePersonalRightsSingleParentInMonths = (
     getAvailablePersonalRightsInDays(application) +
       getAdditionalSingleParentRightsInDays(application),
   )
+
+export const getAdditionalSingleParentRightsInMonths = (
+  application: Application,
+) => daysToMonths(getAdditionalSingleParentRightsInDays(application)).toFixed(1)
 
 export const getAvailablePersonalRightsInMonths = (application: Application) =>
   daysToMonths(getAvailablePersonalRightsInDays(application))
@@ -1383,6 +1390,9 @@ export const getMinimumStartDate = (application: Application): Date => {
 
   return today
 }
+
+export const clamp = (value: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, value))
 
 export const calculateDaysUsedByPeriods = (periods: Period[]) =>
   Math.round(

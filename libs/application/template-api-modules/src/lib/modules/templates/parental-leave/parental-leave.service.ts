@@ -23,8 +23,6 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
   getAvailablePersonalRightsInDays,
-  getAvailablePersonalRightsSingleParentInMonths,
-  getMaxMultipleBirthsInMonths,
   getMultipleBirthsDays,
   getSelectedChild,
   getTransferredDays,
@@ -35,6 +33,9 @@ import {
   getPersonalDays,
   getPersonalDaysInMonths,
   StartDateOptions,
+  getAdditionalSingleParentRightsInMonths,
+  clamp,
+  getMultipleBirthsDaysInMonths,
 } from '@island.is/application/templates/parental-leave'
 import {
   Application,
@@ -760,9 +761,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         rightsUnit: mulitpleBirthsRights,
         days: String(maximumMultipleBirthsDaysToSpend),
         rightsDescription: rightsDescriptions[mulitpleBirthsRights],
-        months: String(getMaxMultipleBirthsInMonths(application.answers)),
+        months: String(getMultipleBirthsDaysInMonths(application)),
         daysLeft: String(
-          Math.max(0, totalDays + maximumMultipleBirthsDaysToSpend - usedDays),
+          clamp(
+            totalDays + maximumMultipleBirthsDaysToSpend - usedDays,
+            0,
+            maximumMultipleBirthsDaysToSpend,
+          ),
         ),
       })
     }
@@ -775,15 +780,14 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           rightsDescriptions[
             apiConstants.rights.artificialInseminationRightsId
           ],
-        months: String(
-          getAvailablePersonalRightsSingleParentInMonths(application),
-        ),
+        months: String(getAdditionalSingleParentRightsInMonths(application)),
         daysLeft: String(
-          Math.max(
-            0,
+          clamp(
             maximumPersonalDaysToSpend +
               maximumAdditionalSingleParentDaysToSpend -
               usedDays,
+            0,
+            maximumAdditionalSingleParentDaysToSpend,
           ),
         ),
       })
@@ -809,12 +813,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           ),
 
           daysLeft: String(
-            Math.max(
-              0,
+            clamp(
               maximumPersonalDaysToSpend +
                 maximumMultipleBirthsDaysToSpend +
                 transferredDays -
                 usedDays,
+              0,
+              transferredDays,
             ),
           ),
         })
