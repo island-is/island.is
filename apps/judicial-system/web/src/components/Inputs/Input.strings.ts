@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const defenderInput = defineMessages({
+export const strings = defineMessages({
   nameLabel: {
     id: 'judicial.system.core:defender_input.name_label',
     defaultMessage:

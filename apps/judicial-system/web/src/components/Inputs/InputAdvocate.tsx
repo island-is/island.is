@@ -32,9 +32,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { CivilClaimant } from '../../graphql/schema'
 import useCivilClaimants from '../../utils/hooks/useCivilClaimants'
-import { defenderInput as m } from '../DefenderInfo/DefenderInput.strings'
+import { strings } from './Input.strings'
 
 interface Props {
   onAdvocateNotFound: (advocateNotFound: boolean) => void
@@ -321,12 +320,12 @@ const InputAdvocate: FC<Props> = ({
           options={options}
           label={
             advocateType === 'legal_rights_protector'
-              ? formatMessage(m.spokespersonNameLabel)
-              : formatMessage(m.nameLabel, {
+              ? formatMessage(strings.spokespersonNameLabel)
+              : formatMessage(strings.nameLabel, {
                   sessionArrangements: workingCase.sessionArrangements,
                 })
           }
-          placeholder={formatMessage(m.namePlaceholder)}
+          placeholder={formatMessage(strings.namePlaceholder)}
           value={
             isCivilClaim
               ? civilClaimantInCivilClaimants?.spokespersonName === '' ||
@@ -369,12 +368,12 @@ const InputAdvocate: FC<Props> = ({
           autoComplete="off"
           label={
             advocateType === 'legal_rights_protector'
-              ? formatMessage(m.spokespersonEmailLabel)
-              : formatMessage(m.emailLabel, {
+              ? formatMessage(strings.spokespersonEmailLabel)
+              : formatMessage(strings.emailLabel, {
                   sessionArrangements: workingCase.sessionArrangements,
                 })
           }
-          placeholder={formatMessage(m.emailPlaceholder)}
+          placeholder={formatMessage(strings.emailPlaceholder)}
           value={
             isCivilClaim
               ? civilClaimantInCivilClaimants?.spokespersonEmail || ''
@@ -483,12 +482,12 @@ const InputAdvocate: FC<Props> = ({
           autoComplete="off"
           label={
             advocateType === 'legal_rights_protector'
-              ? formatMessage(m.spokespersonPhoneNumberLabel)
-              : formatMessage(m.phoneNumberLabel, {
+              ? formatMessage(strings.spokespersonPhoneNumberLabel)
+              : formatMessage(strings.phoneNumberLabel, {
                   sessionArrangements: workingCase.sessionArrangements,
                 })
           }
-          placeholder={formatMessage(m.phoneNumberPlaceholder)}
+          placeholder={formatMessage(strings.phoneNumberPlaceholder)}
           errorMessage={phoneNumberErrorMessage}
           hasError={phoneNumberErrorMessage !== ''}
         />
