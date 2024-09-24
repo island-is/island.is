@@ -9,7 +9,7 @@ export const m = defineMessages({
   },
   signatureListsTitle: {
     id: 'admin-portal.signature-collection:signatureLists',
-    defaultMessage: 'Meðmælasafnanir',
+    defaultMessage: 'Forsetakosningar',
     description: '',
   },
   signatureListsConstituencyTitle: {
@@ -495,7 +495,7 @@ export const parliamentaryMessages = defineMessages({
   },
   signatureListsTitle: {
     id: 'admin-portal.signature-collection-parliamentary:signatureLists',
-    defaultMessage: 'Meðmælasafnanir - Alþingiskosningar',
+    defaultMessage: 'Alþingiskosningar',
     description: '',
   },
   signatureListsDescription: {
