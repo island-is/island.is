@@ -1,4 +1,10 @@
-import { type PropsWithChildren, type ReactNode, useRef, useState } from 'react'
+import {
+  type PropsWithChildren,
+  type ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import NumberFormat from 'react-number-format'
 
@@ -131,6 +137,13 @@ export const BenefitsOfDigitalProcessesCalculator = ({
     slice,
     userInput,
   )
+
+  useEffect(() => {
+    if (!previousInput) return
+    resultsRef.current?.scrollIntoView({
+      behavior: 'smooth',
+    })
+  }, [previousInput])
 
   return (
     <Stack space={4}>
@@ -275,11 +288,6 @@ export const BenefitsOfDigitalProcessesCalculator = ({
               setPreviousInput({
                 ...userInput,
               })
-              setTimeout(() => {
-                resultsRef.current?.scrollIntoView({
-                  behavior: 'smooth',
-                })
-              }, 100)
             }}
           >
             {formatMessage(t.results.calculate)}
