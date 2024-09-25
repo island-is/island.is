@@ -1,6 +1,7 @@
 import { asDiv, HTMLText } from '@island.is/regulations'
 import { GroupedDraftImpactForms, RegDraftForm } from '../state/types'
 import format from 'date-fns/format'
+import isSameDay from 'date-fns/isSameDay'
 import is from 'date-fns/locale/is'
 import compact from 'lodash/compact'
 import flatten from 'lodash/flatten'
@@ -35,15 +36,9 @@ const allSameDay = (objects: AdditionObject[]): boolean => {
   const validObjects = objects.filter((obj) => obj.date !== undefined)
 
   if (validObjects.length === 0) return true
+  const firstDate = validObjects[0].date!
 
-  const getDateString = (date: string | Date): string => {
-    const d = new Date(date)
-    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
-  }
-
-  const firstDate = getDateString(validObjects[0].date!)
-
-  return validObjects.every((obj) => getDateString(obj.date!) === firstDate)
+  return validObjects.every((obj) => isSameDay(obj.date!, firstDate))
 }
 
 const formatAffectedAndPlaceAffectedAtEnd = (
