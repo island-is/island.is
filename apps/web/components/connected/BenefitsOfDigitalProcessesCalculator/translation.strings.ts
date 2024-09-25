@@ -159,7 +159,7 @@ export const t = {
       description: 'Viðskeyti eftir krónutölu',
     },
     kgPostfix: {
-      id: 'web.digitalIceland.benefitsOfDigitalProcesses:results.currencyPostfix',
+      id: 'web.digitalIceland.benefitsOfDigitalProcesses:results.kgPostfix',
       defaultMessage: ' kg',
       description: 'Viðskeyti eftir kílometratölu í niðurstöuspjöldum',
     },

@@ -363,10 +363,10 @@ export const BenefitsOfDigitalProcessesCalculator = ({
                     ? `${formatValueForPresentation(
                         activeLocale,
                         co2,
-                      )}${formatMessage(t.results.currencyPostfix)}`
+                      )}${formatMessage(t.results.kgPostfix)}`
                     : (formatCurrency(
                         co2,
-                        formatMessage(t.results.currencyPostfix),
+                        formatMessage(t.results.kgPostfix),
                       ) as string)
                 }
                 description={formatMessage(t.results.c02)}
