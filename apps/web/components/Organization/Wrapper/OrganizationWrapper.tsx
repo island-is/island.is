@@ -532,7 +532,9 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'rettindagaesla-fatlads-folks':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader {...defaultProps} />
+      ) : (
         <RettindagaeslaFatladsFolksHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
