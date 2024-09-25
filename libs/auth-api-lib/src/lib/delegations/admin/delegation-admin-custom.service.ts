@@ -57,7 +57,9 @@ export class DelegationAdminCustomService {
     )
 
     if (!fromReferenceId || !toReferenceId) {
-      throw new Error('Zendesk ticket is missing required custom fields')
+      throw new BadRequestException(
+        'Zendesk ticket is missing required custom fields',
+      )
     }
 
     return {

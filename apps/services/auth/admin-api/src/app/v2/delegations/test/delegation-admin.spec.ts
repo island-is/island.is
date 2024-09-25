@@ -58,6 +58,12 @@ describe('DelegationAdmin - With authentication', () => {
       .mockImplementation(async () => {
         return
       })
+
+    jest
+      .spyOn(delegationIndexServiceApi, 'indexGeneralMandateDelegations')
+      .mockImplementation(async () => {
+        return
+      })
   })
 
   afterEach(async () => {
@@ -72,7 +78,7 @@ describe('DelegationAdmin - With authentication', () => {
       ],
     })
 
-    return await factory.createCustomDelegation({
+    return factory.createCustomDelegation({
       fromNationalId: user?.nationalId ?? '',
       domainName: domain.name,
       scopes: [{ scopeName: 's1' }],
@@ -243,13 +249,7 @@ describe('DelegationAdmin - With authentication', () => {
     }
 
     afterEach(() => {
-      zendeskServiceApiSpy.mockRestore()
-      nationalRegistryApiSpy.mockRestore()
-    })
-
-    afterAll(() => {
       jest.restoreAllMocks()
-      app.cleanUp()
     })
 
     it('POST /delegation-admin should create delegation', async () => {
