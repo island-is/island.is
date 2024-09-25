@@ -20,12 +20,16 @@ import {
   SignatureCollectionList,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
-import { OwnerParliamentarySkeleton } from '../../../skeletons'
-import { useGetListsForOwner } from '../../../hooks'
+import {
+  CollectorSkeleton,
+  OwnerParliamentarySkeleton,
+} from '../../../skeletons'
+import { useGetCollectors, useGetListsForOwner } from '../../../hooks'
 import { SignatureCollection } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
 import copyToClipboard from 'copy-to-clipboard'
+import { formatNationalId } from '@island.is/portals/core'
 
 const OwnerView = ({
   currentCollection,
@@ -36,6 +40,7 @@ const OwnerView = ({
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
     useGetListsForOwner(currentCollection?.id || '')
+  const { collectors, loadingCollectors } = useGetCollectors()
 
   const [cancelCollection] = useMutation<SignatureCollectionSuccess>(
     cancelCollectionMutation,
@@ -84,7 +89,7 @@ const OwnerView = ({
             )}
         </Box>
         {loadingOwnerLists ? (
-          <Box marginTop={2}>
+          <Box marginTop={3}>
             <OwnerParliamentarySkeleton />
           </Box>
         ) : (
@@ -179,10 +184,23 @@ const OwnerView = ({
             </T.Row>
           </T.Head>
           <T.Body>
-            <T.Row>
-              <T.Data width={'40%'}>{'Nafni Nafnason'}</T.Data>
-              <T.Data>{'010130-3019'}</T.Data>
-            </T.Row>
+            {loadingCollectors ? (
+              <T.Row>
+                <T.Data>
+                  <CollectorSkeleton />
+                </T.Data>
+                <T.Data>
+                  <CollectorSkeleton />
+                </T.Data>
+              </T.Row>
+            ) : (
+              collectors.map((collector) => (
+                <T.Row key={collector.nationalId}>
+                  <T.Data width={'35%'}>{collector.name}</T.Data>
+                  <T.Data>{formatNationalId(collector.nationalId)}</T.Data>
+                </T.Row>
+              ))
+            )}
           </T.Body>
         </T.Table>
       </Box>
