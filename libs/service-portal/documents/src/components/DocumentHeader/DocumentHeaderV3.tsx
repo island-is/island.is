@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { DocumentV2Actions, DocumentsV2Category } from '@island.is/api/schema'
+import { DocumentV2Action, DocumentsV2Category } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { helperStyles } from '@island.is/island-ui/theme'
 import AvatarImage from '../DocumentLine/AvatarImage'
@@ -16,7 +16,7 @@ type DocumentHeaderProps = {
   date?: string
   category?: DocumentsV2Category
   actionBar?: DocumentActionBarProps
-  actions?: DocumentV2Actions[]
+  actions?: DocumentV2Action[]
   subject?: string
 }
 

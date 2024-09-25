@@ -4,7 +4,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 
 import {
   DocumentV2,
-  DocumentV2Actions,
+  DocumentV2Action,
   DocumentV2Content,
 } from '@island.is/api/schema'
 import { Box, Text, LoadingDots, Icon, toast } from '@island.is/island-ui/core'
@@ -102,7 +102,7 @@ export const DocumentLineV3: FC<Props> = ({
 
   const displayPdf = (
     content?: DocumentV2Content,
-    actions?: Array<DocumentV2Actions>,
+    actions?: Array<DocumentV2Action>,
   ) => {
     setActiveDocument({
       document: {
@@ -118,6 +118,7 @@ export const DocumentLineV3: FC<Props> = ({
       img,
       categoryId: documentLine.categoryId ?? undefined,
       actions: actions,
+      alert: documentLine.alert ?? undefined,
     })
     window.scrollTo({
       top: 0,
@@ -178,14 +179,14 @@ export const DocumentLineV3: FC<Props> = ({
       },
       fetchPolicy: 'no-cache',
       onCompleted: (data) => {
-        const actions = data?.documentV2?.actions ?? []
+        const actions: DocumentV2Action | undefined | null =
+          data?.documentV2?.confirmation
 
-        const dataIndex = actions?.findIndex((x) => x.type === 'confirmation')
         setDocumentDisplayError(undefined)
-        if (dataIndex && dataIndex > 0) {
+        if (actions) {
           setModalData({
-            title: actions[dataIndex].title ?? '',
-            text: actions[dataIndex].data ?? '',
+            title: actions.title ?? '',
+            text: actions.data ?? '',
           })
           setModalVisible(true)
         } else {

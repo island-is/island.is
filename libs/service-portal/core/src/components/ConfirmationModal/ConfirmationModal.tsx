@@ -30,7 +30,7 @@ export const ConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
   modalText,
   redirectPath,
 }) => {
-  useNamespaces('sp.law-and-order')
+  useNamespaces('service.portal')
   const { formatMessage } = useLocale()
 
   return (

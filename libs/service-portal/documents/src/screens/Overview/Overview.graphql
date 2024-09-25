@@ -55,9 +55,9 @@ query DocumentsV3($input: DocumentsV2DocumentsInput!) {
         value
       }
       isUrgent
-      alertMessage {
-        type
-        message
+      confirmation {
+        title
+        data
       }
     }
     totalCount
@@ -84,6 +84,14 @@ query GetDocumentInboxLineV3($input: DocumentInput!, $locale: String) {
       title
       data
       icon
+    }
+    confirmation {
+      title
+      data
+    }
+    alert {
+      title
+      data
     }
   }
 }

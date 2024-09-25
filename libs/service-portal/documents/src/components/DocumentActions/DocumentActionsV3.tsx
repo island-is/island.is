@@ -9,12 +9,7 @@ const DocumentActions = () => {
   const userInfo = useUserInfo()
   const DEFAULT_ICON: IconMapIcon = 'document'
   const actions = activeDocument?.actions
-    // Types are not typed in the API, so this will have to do for now
-    ?.filter((action) => action.type !== 'confirmation')
-    .filter((action) => action.type !== 'alert')
-  const alert = activeDocument?.actions?.find(
-    (action) => action.type === 'alert',
-  )
+  const alert = activeDocument?.alert
 
   return (
     <Box>
@@ -48,7 +43,7 @@ const DocumentActions = () => {
                     </Button>
                   </a>
                 )}
-                {a.type !== 'url' && activeDocument && (
+                {a.type === 'file' && activeDocument && (
                   <Button
                     size="small"
                     variant="utility"

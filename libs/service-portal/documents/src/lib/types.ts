@@ -1,7 +1,7 @@
 import {
   DocumentDetails,
   DocumentV2Content,
-  DocumentV2Actions,
+  DocumentV2Action,
 } from '@island.is/api/schema'
 
 type ActiveDoc = {
@@ -13,7 +13,8 @@ type ActiveDoc = {
   img?: string
   categoryId?: string
   senderNatReg?: string
-  actions?: Array<DocumentV2Actions>
+  actions?: Array<DocumentV2Action>
+  alert?: DocumentV2Action
 }
 
 export type ActiveDocumentType = {

@@ -68,7 +68,9 @@ export class DocumentServiceV2 {
       (action) => action.type === 'confirmation',
     )
     const alert = document.actions?.find((action) => action.type === 'alert')
-
+    const actions = document.actions?.filter(
+      (action) => action.type !== 'alert' && action.type !== 'confirmation',
+    )
     return {
       ...document,
       publicationDate: document.date,
@@ -86,7 +88,7 @@ export class DocumentServiceV2 {
           }
         : undefined,
       isUrgent: document.urgent,
-      actions: this.actionMapper(documentId, document.actions),
+      actions: this.actionMapper(documentId, actions),
       confirmation: confirmation,
       alert: alert,
     }
