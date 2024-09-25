@@ -31,11 +31,17 @@ export class SubpoenaService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async createSubpoena(defendant: Defendant): Promise<Subpoena> {
-    return await this.subpoenaModel.create({
-      defendantId: defendant.id,
-      caseId: defendant.caseId,
-    })
+  async createSubpoena(
+    defendant: Defendant,
+    transaction: Transaction,
+  ): Promise<Subpoena> {
+    return await this.subpoenaModel.create(
+      {
+        defendantId: defendant.id,
+        caseId: defendant.caseId,
+      },
+      { transaction },
+    )
   }
 
   async update(
@@ -112,24 +118,26 @@ export class SubpoenaService {
     user: User,
   ): Promise<DeliverResponse> {
     try {
-      const subpoena = await this.createSubpoena(defendant)
+      await this.sequelize.transaction(async (transaction) => {
+        const subpoena = await this.createSubpoena(defendant, transaction)
 
-      const createdSubpoena = await this.policeService.createSubpoena(
-        theCase,
-        defendant,
-        subpoenaFile,
-        user,
-      )
+        const createdSubpoena = await this.policeService.createSubpoena(
+          theCase,
+          defendant,
+          subpoenaFile,
+          user,
+        )
 
-      if (!createdSubpoena) {
-        this.logger.error('Failed to create subpoena file for police')
-        return { delivered: false }
-      }
+        if (!createdSubpoena) {
+          this.logger.error('Failed to create subpoena file for police')
+          return { delivered: false }
+        }
 
-      await this.subpoenaModel.update(
-        { subpoenaId: createdSubpoena.subpoenaId },
-        { where: { id: subpoena.id } },
-      )
+        await this.subpoenaModel.update(
+          { subpoenaId: createdSubpoena.subpoenaId },
+          { where: { id: subpoena.id }, transaction },
+        )
+      })
 
       return { delivered: true }
     } catch (error) {
