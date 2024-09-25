@@ -524,4 +524,23 @@ export class SignatureCollectionClientService {
     }
     return { success: true }
   }
+
+  async getCollectors(
+    auth: User,
+    { candidateId }: { candidateId: string },
+  ): Promise<{ name: string; nationalId: string }[]> {
+    const candidate = await this.getApiWithAuth(
+      this.candidateApi,
+      auth,
+    ).frambodIDGet({
+      iD: parseInt(candidateId),
+    })
+
+    return (
+      candidate.umbodList?.map((u) => ({
+        name: u.nafn ?? '',
+        nationalId: u.kennitala ?? '',
+      })) ?? []
+    )
+  }
 }

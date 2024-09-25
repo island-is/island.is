@@ -19,6 +19,8 @@ import { SignatureCollectionOwnerInput } from './dto/owner.input'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
 import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
+import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
+import { SignatureCollectionCollector } from './models/collector.model'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -160,5 +162,15 @@ export class SignatureCollectionService {
         signee.canSignInfo[0] === ReasonKey.AlreadySigned)
 
     return canSign && list.area.id === signee.area?.id
+  }
+
+  async collectors(
+    user: User,
+    input: SignatureCollectionCandidateIdInput,
+  ): Promise<SignatureCollectionCollector[]> {
+    return await this.signatureCollectionClientService.getCollectors(
+      user,
+      input,
+    )
   }
 }
