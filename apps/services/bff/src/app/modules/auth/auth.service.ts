@@ -6,7 +6,6 @@ import { CookieOptions, Response } from 'express'
 import { jwtDecode } from 'jwt-decode'
 
 import { IdTokenClaims } from '@island.is/shared/types'
-import omit from 'lodash/omit'
 import { uuid } from 'uuidv4'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
@@ -92,7 +91,7 @@ export class AuthService {
     const userProfile: IdTokenClaims = jwtDecode(tokenResponse.id_token)
 
     const value: CachedTokenResponse = {
-      ...omit(tokenResponse, ['access_token', 'refresh_token']),
+      ...tokenResponse,
       // Encrypt the access and refresh tokens before saving them to the cache
       // to prevent unauthorized access to the tokens if cached service is compromised.
       access_token: this.cryptoService.encrypt(tokenResponse.access_token),
