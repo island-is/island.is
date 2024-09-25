@@ -9,7 +9,7 @@ import { ParResponse, TokenResponse } from './ids.types'
 
 @Injectable()
 export class IdsService {
-  private readonly baseUrl
+  private readonly issuerUrl
 
   constructor(
     @Inject(LOGGER_PROVIDER)
@@ -20,7 +20,7 @@ export class IdsService {
 
     private readonly cryptoService: CryptoService,
   ) {
-    this.baseUrl = this.config.ids.issuer
+    this.issuerUrl = this.config.ids.issuer
   }
 
   /**
@@ -31,7 +31,7 @@ export class IdsService {
     body: Record<string, string>,
   ): Promise<T> {
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      const response = await fetch(`${this.issuerUrl}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

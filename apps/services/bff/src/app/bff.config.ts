@@ -52,10 +52,10 @@ const BffConfigSchema = z.object({
    * Time-to-live (TTL) for caching the user profile, in milliseconds.
    * This value determines how long the user profile will be cached before it is considered stale.
    *
-   * Note: The TTL should be aligned with the lifespan of the Ids client refresh token + the Ids session lifetime.
+   * Note: The TTL should be aligned with the lifespan of the Ids client refresh token.
    *       We also subtract 5 seconds from the TTL to handle latency and clock drift.
    *
-   * @default 28800000 (8 hours) + 3600 (1 hour) - 5 seconds = 28803595
+   * @default  1 hour - 5 seconds = 359995000ms
    */
   cacheUserProfileTTLms: z.number().default(DEFAULT_CACHE_USER_PROFILE_TTL_MS),
 })
