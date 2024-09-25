@@ -165,5 +165,20 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       courtCaseNumber
     }
+    hasCivilClaims
+    civilClaimants {
+      id
+      caseId
+      name
+      nationalId
+      noNationalId
+      hasSpokesperson
+      spokespersonIsLawyer
+      spokespersonNationalId
+      spokespersonName
+      spokespersonEmail
+      spokespersonPhoneNumber
+      caseFilesSharedWithSpokesperson
+    }
   }
 }

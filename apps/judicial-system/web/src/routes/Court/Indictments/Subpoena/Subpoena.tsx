@@ -4,7 +4,7 @@ import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
   CourtCaseInfo,

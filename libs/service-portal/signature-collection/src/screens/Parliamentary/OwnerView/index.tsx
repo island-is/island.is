@@ -20,8 +20,11 @@ import {
   SignatureCollectionList,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
-import { OwnerParliamentarySkeleton } from '../../../skeletons'
-import { useGetListsForOwner } from '../../../hooks'
+import {
+  CollectorSkeleton,
+  OwnerParliamentarySkeleton,
+} from '../../../skeletons'
+import { useGetCollectors, useGetListsForOwner } from '../../../hooks'
 import { SignatureCollection } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
@@ -36,6 +39,7 @@ const OwnerView = ({
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
     useGetListsForOwner(currentCollection?.id || '')
+  const { collectors, loadingCollectors } = useGetCollectors()
 
   const [cancelCollection] = useMutation<SignatureCollectionSuccess>(
     cancelCollectionMutation,
@@ -179,10 +183,20 @@ const OwnerView = ({
             </T.Row>
           </T.Head>
           <T.Body>
-            <T.Row>
-              <T.Data width={'40%'}>{'Nafni Nafnason'}</T.Data>
-              <T.Data>{'010130-3019'}</T.Data>
-            </T.Row>
+            {loadingCollectors ? (
+              <T.Row>
+                <T.Data colSpan={2}>
+                  <CollectorSkeleton></CollectorSkeleton>
+                </T.Data>
+              </T.Row>
+            ) : (
+              collectors.map((collector) => (
+                <T.Row key={collector.nationalId}>
+                  <T.Data width={'40%'}>{collector.name}</T.Data>
+                  <T.Data>{collector.nationalId}</T.Data>
+                </T.Row>
+              ))
+            )}
           </T.Body>
         </T.Table>
       </Box>
