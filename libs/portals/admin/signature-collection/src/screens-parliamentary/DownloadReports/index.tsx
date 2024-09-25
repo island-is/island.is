@@ -40,6 +40,7 @@ export const DownloadReports = ({
           <Stack space={3}>
             {areas.map((area) => (
               <ActionCard
+                key={area.id}
                 heading={formatMessage(area.name)}
                 backgroundColor="blue"
                 cta={{
