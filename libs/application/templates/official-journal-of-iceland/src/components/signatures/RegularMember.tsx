@@ -15,6 +15,7 @@ import { memberItemSchema } from '../../lib/dataSchema'
 import { SignatureMember } from './Member'
 import * as z from 'zod'
 import { RemoveRegularMember } from './RemoveRegularMember'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -35,6 +36,8 @@ export const RegularMember = ({
   const { debouncedOnUpdateApplicationHandler, application } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const handleMemberChange = (
     value: string,
@@ -83,6 +86,8 @@ export const RegularMember = ({
         InputFields.signature.regular,
         updatedRegularSignature,
       )
+
+      setValue(InputFields.signature.regular, updatedRegularSignature)
 
       return updatedSignatures
     }
