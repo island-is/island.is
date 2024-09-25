@@ -268,6 +268,34 @@ export class SignatureCollectionClientService {
     return mapSignature(newSignature)
   }
 
+  async candidacyUploadPaperSignature(
+    auth: User,
+    {
+      listId,
+      nationalId,
+      pageNumber,
+    }: { listId: string; nationalId: string; pageNumber: number },
+  ): Promise<Success> {
+    const newSignature = await this.getApiWithAuth(
+      this.listsApi,
+      auth,
+    ).medmaelalistarIDMedmaeliBulkPost({
+      medmaeliBulkRequestDTO: {
+        medmaeli: [
+          {
+            kennitala: nationalId,
+            bladsida: pageNumber,
+          },
+        ],
+      },
+      iD: parseInt(listId),
+    })
+
+    return {
+      success: !!newSignature.medmaeliKenn?.includes(nationalId),
+    }
+  }
+
   async unsignList(listId: string, auth: User): Promise<Success> {
     const { signatures } = await this.getSignee(auth)
     const activeSignature = signatures?.find((signature) => signature.valid)
@@ -330,7 +358,7 @@ export class SignatureCollectionClientService {
 
   async getSignedList(auth: User): Promise<SignedList[] | null> {
     const { signatures } = await this.getSignee(auth)
-    const { endTime } = await this.currentCollection()
+    const { endTime, isPresidential } = await this.currentCollection()
     if (!signatures) {
       return null
     }
@@ -344,13 +372,14 @@ export class SignatureCollectionClientService {
         )
         const isExtended = list.endTime > endTime
         const signedThisPeriod = signature.isInitialType === !isExtended
+        const canUnsignDigital = isPresidential ? signature.isDigital : true
         return {
           signedDate: signature.created,
           isDigital: signature.isDigital,
           pageNumber: signature.pageNumber,
           isValid: signature.valid,
           canUnsign:
-            signature.isDigital &&
+            canUnsignDigital &&
             signature.valid &&
             list.active &&
             signedThisPeriod,

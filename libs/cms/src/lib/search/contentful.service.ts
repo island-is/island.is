@@ -583,7 +583,7 @@ export class ContentfulService {
       nestedItems,
     } = await this.getPopulatedSyncEntries(typeOfSync, locale, chunkSize)
 
-    const isDeltaUpdate = syncType !== 'full'
+    const isDeltaUpdate = syncType === 'fromLast'
 
     let shouldResolveNestedEntries = false
     if (environment.runtimeEnvironment === 'local') {

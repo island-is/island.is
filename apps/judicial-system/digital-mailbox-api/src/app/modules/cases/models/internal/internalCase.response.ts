@@ -28,6 +28,7 @@ interface Defendant {
   defenderEmail?: string
   defenderPhoneNumber?: string
   defenderChoice?: DefenderChoice
+  subpoenas?: Subpoena[]
 }
 
 interface DateLog {
@@ -36,4 +37,10 @@ interface DateLog {
   dateType: DateType
   date: Date
   location?: string
+}
+
+interface Subpoena {
+  id: string
+  subpoenaId: string
+  acknowledged: boolean
 }
