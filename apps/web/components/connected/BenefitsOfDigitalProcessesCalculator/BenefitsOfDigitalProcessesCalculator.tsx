@@ -1,4 +1,4 @@
-import { type PropsWithChildren, type ReactNode, useState } from 'react'
+import { type PropsWithChildren, type ReactNode, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import NumberFormat from 'react-number-format'
 
@@ -110,6 +110,7 @@ export const BenefitsOfDigitalProcessesCalculator = ({
   const { formatMessage } = useIntl()
   const { activeLocale } = useI18n()
 
+  const resultsRef = useRef<HTMLDivElement | null>(null)
   const [previousInput, setPreviousInput] = useState<UserInput | null>(null)
 
   const [userInput, setUserInput] = useState<UserInput>({
@@ -274,6 +275,11 @@ export const BenefitsOfDigitalProcessesCalculator = ({
               setPreviousInput({
                 ...userInput,
               })
+              setTimeout(() => {
+                resultsRef.current?.scrollIntoView({
+                  behavior: 'smooth',
+                })
+              }, 100)
             }}
           >
             {formatMessage(t.results.calculate)}
@@ -281,101 +287,107 @@ export const BenefitsOfDigitalProcessesCalculator = ({
         </Stack>
       </Box>
 
-      {displayResults && (
-        <Stack space={3}>
-          <Text variant="h2">{userInput.nameOfProcess}</Text>
+      <div ref={resultsRef} style={{ scrollMarginTop: '32px' }}>
+        {displayResults && (
+          <Stack space={3}>
+            <Text variant="h2">{userInput.nameOfProcess}</Text>
 
-          <GridRow rowGap={4}>
-            <GridColumn span={resultColumnSpan}>
-              <ResultCard
-                title={
-                  results.institutionGain >= 1e6
-                    ? `${formatValueForPresentation(
-                        activeLocale,
-                        results.institutionGain,
-                      )}${formatMessage(t.results.currencyPostfix)}`
-                    : (formatCurrency(
-                        results.institutionGain,
-                        formatMessage(t.results.currencyPostfix),
-                      ) as string)
-                }
-                description={formatMessage(
-                  t.results.institutionGainDescription,
-                )}
-                icon={<Icon icon="wallet" color="blue400" size="large" />}
-              />
-            </GridColumn>
-            <GridColumn span={resultColumnSpan}>
-              <ResultCard
-                title={formatValueForPresentation(
-                  activeLocale,
-                  results.staffFreeToDoOtherThings,
-                  true,
-                  1,
-                )}
-                description={formatMessage(t.results.staffFreeToDoOtherThings)}
-                icon={<Icon icon="people" color="blue400" size="large" />}
-              />
-            </GridColumn>
-            <GridColumn span={resultColumnSpan}>
-              <ResultCard
-                title={
-                  gainPerCitizen >= 1e6
-                    ? `${formatValueForPresentation(
-                        activeLocale,
-                        gainPerCitizen,
-                      )}${formatMessage(t.results.currencyPostfix)}`
-                    : (formatCurrency(
-                        gainPerCitizen,
-                        formatMessage(t.results.currencyPostfix),
-                      ) as string)
-                }
-                description={formatMessage(t.results.citizenGainDescription, {
-                  nameOfProcess: userInput.nameOfProcess,
-                })}
-                icon={<Icon icon="person" color="blue400" size="large" />}
-              />
-            </GridColumn>
-            <GridColumn span={resultColumnSpan}>
-              <ResultCard
-                title={formatValueForPresentation(
-                  activeLocale,
-                  ringRoadTripsSaved,
-                )}
-                description={formatMessage(t.results.ringRoadTripsSaved)}
-                icon={<Icon icon="car" color="blue400" size="large" />}
-              />
-            </GridColumn>
-            <GridColumn span={resultColumnSpan}>
-              <ResultCard
-                title={`${formatValueForPresentation(
-                  activeLocale,
-                  results.citizenTimeSaved,
-                )} ${formatMessage(t.results.days)}`}
-                description={formatMessage(t.results.savedCitizenDays)}
-                icon={<Icon icon="time" color="blue400" size="large" />}
-              />
-            </GridColumn>
-            <GridColumn span={resultColumnSpan}>
-              <ResultCard
-                title={
-                  co2 >= 1e6
-                    ? `${formatValueForPresentation(
-                        activeLocale,
-                        co2,
-                      )}${formatMessage(t.results.kgPostfix)}`
-                    : (formatCurrency(
-                        co2,
-                        formatMessage(t.results.kgPostfix),
-                      ) as string)
-                }
-                description={formatMessage(t.results.c02)}
-                icon={<Icon icon="homeWithCar" color="blue400" size="large" />}
-              />
-            </GridColumn>
-          </GridRow>
-        </Stack>
-      )}
+            <GridRow rowGap={4}>
+              <GridColumn span={resultColumnSpan}>
+                <ResultCard
+                  title={
+                    results.institutionGain >= 1e6
+                      ? `${formatValueForPresentation(
+                          activeLocale,
+                          results.institutionGain,
+                        )}${formatMessage(t.results.currencyPostfix)}`
+                      : (formatCurrency(
+                          results.institutionGain,
+                          formatMessage(t.results.currencyPostfix),
+                        ) as string)
+                  }
+                  description={formatMessage(
+                    t.results.institutionGainDescription,
+                  )}
+                  icon={<Icon icon="wallet" color="blue400" size="large" />}
+                />
+              </GridColumn>
+              <GridColumn span={resultColumnSpan}>
+                <ResultCard
+                  title={formatValueForPresentation(
+                    activeLocale,
+                    results.staffFreeToDoOtherThings,
+                    true,
+                    1,
+                  )}
+                  description={formatMessage(
+                    t.results.staffFreeToDoOtherThings,
+                  )}
+                  icon={<Icon icon="people" color="blue400" size="large" />}
+                />
+              </GridColumn>
+              <GridColumn span={resultColumnSpan}>
+                <ResultCard
+                  title={
+                    gainPerCitizen >= 1e6
+                      ? `${formatValueForPresentation(
+                          activeLocale,
+                          gainPerCitizen,
+                        )}${formatMessage(t.results.currencyPostfix)}`
+                      : (formatCurrency(
+                          gainPerCitizen,
+                          formatMessage(t.results.currencyPostfix),
+                        ) as string)
+                  }
+                  description={formatMessage(t.results.citizenGainDescription, {
+                    nameOfProcess: userInput.nameOfProcess,
+                  })}
+                  icon={<Icon icon="person" color="blue400" size="large" />}
+                />
+              </GridColumn>
+              <GridColumn span={resultColumnSpan}>
+                <ResultCard
+                  title={formatValueForPresentation(
+                    activeLocale,
+                    ringRoadTripsSaved,
+                  )}
+                  description={formatMessage(t.results.ringRoadTripsSaved)}
+                  icon={<Icon icon="car" color="blue400" size="large" />}
+                />
+              </GridColumn>
+              <GridColumn span={resultColumnSpan}>
+                <ResultCard
+                  title={`${formatValueForPresentation(
+                    activeLocale,
+                    results.citizenTimeSaved,
+                  )} ${formatMessage(t.results.days)}`}
+                  description={formatMessage(t.results.savedCitizenDays)}
+                  icon={<Icon icon="time" color="blue400" size="large" />}
+                />
+              </GridColumn>
+              <GridColumn span={resultColumnSpan}>
+                <ResultCard
+                  title={
+                    co2 >= 1e6
+                      ? `${formatValueForPresentation(
+                          activeLocale,
+                          co2,
+                        )}${formatMessage(t.results.kgPostfix)}`
+                      : (formatCurrency(
+                          co2,
+                          formatMessage(t.results.kgPostfix),
+                        ) as string)
+                  }
+                  description={formatMessage(t.results.c02)}
+                  icon={
+                    <Icon icon="homeWithCar" color="blue400" size="large" />
+                  }
+                />
+              </GridColumn>
+            </GridRow>
+          </Stack>
+        )}
+      </div>
     </Stack>
   )
 }
