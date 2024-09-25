@@ -1,5 +1,5 @@
 import { useCallback, useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { MessageDescriptor, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
@@ -21,12 +21,33 @@ import {
   PageTitle,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
-import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  IndictmentDecision,
+  ServiceStatus,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { SubpoenaType } from '../../components'
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './Overview.strings'
+
+const mapServiceStatus = (
+  serviceStatus?: ServiceStatus | null,
+): MessageDescriptor => {
+  switch (serviceStatus) {
+    case ServiceStatus.DEFENDER:
+    case ServiceStatus.ELECTRONICALLY:
+    case ServiceStatus.IN_PERSON:
+      return strings.serviceStatusSuccess
+    case ServiceStatus.EXPIRED:
+      return strings.serviceStatusExpired
+    case ServiceStatus.FAILED:
+      return strings.serviceStatusFailed
+    // Should not happen
+    default:
+      return strings.inProgressTitle
+  }
+}
 
 const IndictmentOverview = () => {
   const router = useRouter()
@@ -80,11 +101,13 @@ const IndictmentOverview = () => {
           defendant.subpoenas?.map((subpoena) => (
             <Box marginBottom={2}>
               <AlertMessage
-                title={`${subpoena.serviceStatus} -- ${defendant.name}`}
+                title={`${formatMessage(
+                  mapServiceStatus(subpoena.serviceStatus),
+                )} - ${defendant.name}`}
                 message={
                   <Box>
                     <Text variant="small">
-                      {`${subpoena.servicedBy} -- ${formatDate(
+                      {`${subpoena.servicedBy} - ${formatDate(
                         subpoena.serviceDate,
                         'Pp',
                       )}`}
@@ -92,7 +115,12 @@ const IndictmentOverview = () => {
                     <Text variant="small">{subpoena.comment}</Text>
                   </Box>
                 }
-                type="warning"
+                type={
+                  subpoena.serviceStatus === ServiceStatus.FAILED ||
+                  subpoena.serviceStatus === ServiceStatus.EXPIRED
+                    ? 'warning'
+                    : 'success'
+                }
               />
             </Box>
           )),

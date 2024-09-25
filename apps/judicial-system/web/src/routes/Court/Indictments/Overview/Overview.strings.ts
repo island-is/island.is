@@ -12,4 +12,24 @@ export const strings = defineMessages({
     defaultMessage: 'Endursenda',
     description: 'Notaður sem texti á takka til að endursenda ákæru.',
   },
+  serviceStatusSuccess: {
+    id: 'judicial.system.core:indictment_overview.service_status_success',
+    defaultMessage: 'Birting tókst',
+    description: 'Notaður sem texti þegar birting tókst.',
+  },
+  serviceStatusExpired: {
+    id: 'judicial.system.core:indictment_overview.service_status_expired',
+    defaultMessage: 'Birting tókst ekki',
+    description: 'Notaður sem texti þegar birting rann út á tíma.',
+  },
+  serviceStatusFailed: {
+    id: 'judicial.system.core:indictment_overview.service_status_failed',
+    defaultMessage: 'Árangurslaus birting',
+    description: 'Notaður sem texti þegar birting tókst ekki.',
+  },
+  serviceStatusUnknown: {
+    id: 'judicial.system.core:indictment_overview.service_status_unknown',
+    defaultMessage: 'Birtingastaða óþekkt',
+    description: 'Notaður sem texti þegar ekki er vitað um stöðu birtingar.',
+  },
 })
