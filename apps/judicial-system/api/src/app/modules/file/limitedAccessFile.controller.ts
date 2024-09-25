@@ -6,6 +6,7 @@ import {
   Header,
   Inject,
   Param,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -19,7 +20,7 @@ import {
   CurrentHttpUser,
   JwtInjectBearerAuthGuard,
 } from '@island.is/judicial-system/auth'
-import type { User } from '@island.is/judicial-system/types'
+import type { SubpoenaType, User } from '@island.is/judicial-system/types'
 
 import { FileService } from './file.service'
 
@@ -169,6 +170,33 @@ export class LimitedAccessFileController {
       AuditedAction.GET_INDICTMENT_PDF,
       id,
       `limitedAccess/${mergedCaseInjection}indictment`,
+      req,
+      res,
+      'pdf',
+    )
+  }
+
+  @Get('subpoena/:defendantId')
+  @Header('Content-Type', 'application/pdf')
+  getSubpoenaPdf(
+    @Param('id') id: string,
+    @Param('defendantId') defendantId: string,
+    @Query('arraignmentDate') arraignmentDate: string,
+    @Query('location') location: string,
+    @Query('subpoenaType') subpoenaType: SubpoenaType,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting the subpoena for defendant ${defendantId} of case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_SUBPOENA_PDF,
+      id,
+      `limitedAccess/defendant/${defendantId}/subpoena?arraignmentDate=${arraignmentDate}&location=${location}&subpoenaType=${subpoenaType}`,
       req,
       res,
       'pdf',

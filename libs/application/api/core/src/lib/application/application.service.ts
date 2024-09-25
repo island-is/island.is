@@ -299,6 +299,7 @@ export class ApplicationService {
         | 'applicantActors'
         | 'draftTotalSteps'
         | 'draftFinishedSteps'
+        | 'pruneAt'
       >
     >,
   ) {

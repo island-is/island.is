@@ -1,0 +1,5 @@
+mutation CreateCivilClaimant($input: CreateCivilClaimantInput!) {
+  createCivilClaimant(input: $input) {
+    id
+  }
+}

@@ -57,6 +57,7 @@ export const shhHeaderGridContainerBase = style({
     },
   }),
 })
+
 export const shhHeaderGridContainerWidth = style([
   shhHeaderGridContainerBase,
   themeUtils.responsiveStyle({
@@ -67,4 +68,81 @@ export const shhHeaderGridContainerWidth = style([
     },
   }),
 ])
+
 export const shhHeaderGridContainerWidthSubpage = shhHeaderGridContainerBase
+
+export const rikissaksoknariHeaderGridContainerBase = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  backgroundBlendMode: 'saturation',
+  backgroundRepeat: 'no-repeat',
+  background: `
+      linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 92.19%),
+      linear-gradient(-93.41deg, rgba(0, 72, 153, 0.4) -4.61%, rgba(0, 72, 153, 0.62) 17.93%, rgba(0, 72, 153, 0.82) 47.83%, rgba(0, 72, 153, 0.94) 71.31%, rgba(0, 72, 153, 0.95) 94.11%, #004899 114.58%)
+      `,
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: '315px',
+      gridTemplateColumns: '65fr 35fr',
+    },
+  }),
+})
+
+export const rikissaksoknariHeaderGridContainerWidth = style([
+  rikissaksoknariHeaderGridContainerBase,
+  themeUtils.responsiveStyle({
+    lg: {
+      background: `
+    url('https://images.ctfassets.net/8k0h54kbe6bj/3k02pUiq44p3Hn6eLf2VuQ/23bbe8981afa02668ddd522e3dc6988f/rikissaksoknari-mynd_1.png') no-repeat right,
+    linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 92.19%),
+    linear-gradient(-93.41deg, rgba(0, 72, 153, 0.4) -4.61%, rgba(0, 72, 153, 0.62) 17.93%, rgba(0, 72, 153, 0.82) 47.83%, rgba(0, 72, 153, 0.94) 71.31%, rgba(0, 72, 153, 0.95) 94.11%, #004899 114.58%)
+    `,
+    },
+  }),
+])
+
+export const rikissaksoknariHeaderGridContainerSubpage =
+  rikissaksoknariHeaderGridContainerBase
+
+export const rikislogmadurHeaderGridContainerWidthBase = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  backgroundBlendMode: 'saturation',
+  backgroundRepeat: 'no-repeat',
+  background:
+    'linear-gradient(178.67deg, rgba(0, 61, 133, 0.2) 1.87%, rgba(0, 61, 133, 0.3) 99.6%)',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: '315px',
+      gridTemplateColumns: '60fr 40fr',
+    },
+  }),
+})
+
+export const rikislogmadurHeaderGridContainerWidth = style([
+  rikislogmadurHeaderGridContainerWidthBase,
+  themeUtils.responsiveStyle({
+    lg: {
+      background: `linear-gradient(178.67deg, rgba(0, 61, 133, 0.2) 1.87%, rgba(0, 61, 133, 0.3) 99.6%),
+          url('https://images.ctfassets.net/8k0h54kbe6bj/40IgMzNknBQUINDZZwblR/6c7dfdcf0acb3612f2bf61d912c3dd46/rikislogmadur-header-image.png') no-repeat right`,
+    },
+  }),
+])
+
+export const rikislogmadurHeaderGridContainerWidthSubpage =
+  rikislogmadurHeaderGridContainerWidthBase
+
+export const hveHeaderGridContainer = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  borderBottom: '8px solid #F01E28',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: '315px',
+      gridTemplateColumns: '65fr 35fr',
+    },
+  }),
+})

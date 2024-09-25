@@ -202,5 +202,20 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       policeCaseNumbers
       indictmentSubtypes
     }
+    hasCivilClaims
+    civilClaimants {
+      id
+      caseId
+      name
+      nationalId
+      noNationalId
+      hasSpokesperson
+      spokespersonIsLawyer
+      spokespersonNationalId
+      spokespersonName
+      spokespersonEmail
+      spokespersonPhoneNumber
+      caseFilesSharedWithSpokesperson
+    }
   }
 }

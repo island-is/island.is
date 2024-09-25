@@ -17,7 +17,7 @@ const envs = {
     prod: 'cdn.contentful.com',
   },
   CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: {
-    dev: '20',
+    dev: '40',
     staging: '40',
     prod: '40',
   },
