@@ -23,7 +23,6 @@ export { default as CourtRecordAccordionItem } from './AccordionItems/CourtRecor
 export { default as DateTime } from './DateTime/DateTime'
 export { default as Decision } from './Decision/Decision'
 export { default as DefenderInfo } from './DefenderInfo/DefenderInfo'
-export { default as DefenderInput } from './DefenderInfo/DefenderInput'
 export { default as DefenderNotFound } from './DefenderInfo/DefenderNotFound'
 export {
   default as FeatureProvider,
@@ -43,6 +42,9 @@ export { default as InfoCardActiveIndictment } from './InfoCard/InfoCardActiveIn
 export { default as InfoCardClosedIndictment } from './InfoCard/InfoCardClosedIndictment'
 export { default as CaseScheduledCard } from './BlueBoxWithIcon/CaseScheduledCard'
 export { default as IndictmentCaseScheduledCard } from './BlueBoxWithIcon/IndictmentCaseScheduledCard'
+export { default as InputAdvocate } from './Inputs/InputAdvocate'
+export { default as InputName } from './Inputs/InputName'
+export { default as InputNationalId } from './Inputs/InputNationalId'
 export { default as Loading } from './Loading/Loading'
 export { default as Logo } from './Logo/Logo'
 export { default as MarkdownWrapper } from './MarkdownWrapper/MarkdownWrapper'
