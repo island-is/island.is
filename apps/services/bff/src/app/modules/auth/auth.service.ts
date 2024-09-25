@@ -10,7 +10,7 @@ import { uuid } from 'uuidv4'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
-import { FIVE_SECONDS_IN_MS } from '../../constants/time'
+import { FIVE_SECONDS_IN_MS, ONE_WEEK_IN_MS } from '../../constants/time'
 import { CryptoService } from '../../services/crypto.service'
 import {
   CreateErrorQueryStrArgs,
@@ -50,8 +50,9 @@ export class AuthService {
     return {
       httpOnly: true,
       secure: true,
-      // 'strict' (Maximum Security) The cookie will only be sent for requests originating from the same site (same domain and subdomain).
-      sameSite: 'strict',
+      // The lax setting allows cookies to be sent on top-level navigations (such as redirects),
+      // while still providing some protection against CSRF attacks.
+      sameSite: 'lax',
       path: environment.keyPath,
     }
   }
@@ -141,8 +142,9 @@ export class AuthService {
     }
 
     try {
-      // Generate a unique session id to be used in the login flow
-      const loginId = uuid()
+      // Generate a unique session id to be used as a login attempt,
+      // e.g. to store data in the cache with key 'attempt_sid' to be used in the callback login.
+      const attemptLoginId = uuid()
 
       // Generate a code verifier and code challenge to enhance security
       const codeVerifier = await this.pkceService.generateCodeVerifier()
@@ -151,7 +153,7 @@ export class AuthService {
       )
 
       await this.cacheService.save({
-        key: this.cacheService.createSessionKeyType('attempt', loginId),
+        key: this.cacheService.createSessionKeyType('attempt', attemptLoginId),
         value: {
           // Fallback if targetLinkUri is not provided
           originUrl: this.createClientBaseUrl(),
@@ -159,14 +161,14 @@ export class AuthService {
           codeVerifier,
           targetLinkUri,
         },
-        ttl: 60 * 60 * 24 * 7 * 1000, // 1 week
+        ttl: ONE_WEEK_IN_MS, // 1 week
       })
 
       let searchParams: URLSearchParams
 
       if (this.config.parSupportEnabled) {
         const parResponse = await this.idsService.getPar({
-          sid: loginId,
+          sid: attemptLoginId,
           codeChallenge,
           loginHint,
           prompt,
@@ -179,7 +181,7 @@ export class AuthService {
       } else {
         searchParams = new URLSearchParams(
           this.idsService.getLoginSearchParams({
-            sid: loginId,
+            sid: attemptLoginId,
             codeChallenge,
             loginHint,
             prompt,
@@ -202,7 +204,8 @@ export class AuthService {
    * This method is called from the identity server after the user has logged in
    * and the authorization code has been issued.
    * The authorization code is then exchanged for tokens.
-   * We then save the tokens as well as decoded id token to the cache and create a session cookie.
+   * We save the tokens and user information in the cache and create a session cookie.
+   * We also clean up cache keys not being used anymore.
    * Finally, we redirect the user back to the original URL.
    */
   async callbackLogin({
@@ -252,29 +255,42 @@ export class AuthService {
         codeVerifier: loginAttemptData.codeVerifier,
       })
 
-      const value = await this.updateTokenCache(tokenResponse)
+      const updatedTokenResponse = await this.updateTokenCache(tokenResponse)
 
       // Clean up the login attempt from the cache since we have a successful login.
       await this.cacheService.delete(
         this.cacheService.createSessionKeyType('attempt', query.state),
       )
 
-      // Check if there is an old session cookie
-      const oldSessionCookie = req.cookies[SESSION_COOKIE_NAME]
-
-      if (oldSessionCookie) {
-        // Clean up the old session from the cache
-        await this.cacheService.delete(
-          this.cacheService.createSessionKeyType('current', oldSessionCookie),
-        )
-      }
-
       // Create session cookie with successful login session id
       res.cookie(
         SESSION_COOKIE_NAME,
-        value.userProfile.sid,
+        updatedTokenResponse.userProfile.sid,
         this.getCookieOptions(),
       )
+
+      // Check if there is an old session cookie and clean up the cache
+      const oldSessionCookie = req.cookies[SESSION_COOKIE_NAME]
+
+      if (
+        oldSessionCookie &&
+        oldSessionCookie !== updatedTokenResponse.userProfile.sid
+      ) {
+        // Clean up the old session key from the cache
+        await this.cacheService.delete(
+          this.cacheService.createSessionKeyType('current', oldSessionCookie),
+        )
+
+        // Revoke the refresh token on the identity server, since we have a new session
+        // We deliberately do not await this operation to make the login flow faster,
+        // since this operation is not critical part to await.
+        // If the operation fails, we log the error.
+        this.idsService
+          .revokeToken(updatedTokenResponse.refresh_token, 'refresh_token')
+          .catch((error) => {
+            this.logger.error('Failed to revoke refresh token:', error)
+          })
+      }
 
       return res.redirect(
         loginAttemptData.targetLinkUri || loginAttemptData.originUrl,
@@ -298,7 +314,21 @@ export class AuthService {
     )
 
     const cachedTokenResponse =
-      await this.cacheService.get<CachedTokenResponse>(currentLoginCacheKey)
+      await this.cacheService.get<CachedTokenResponse>(
+        currentLoginCacheKey,
+        // Do not throw an error if the key is not found
+        false,
+      )
+
+    if (!cachedTokenResponse) {
+      this.logger.error(
+        `Logout failed: ${this.cacheService.createKeyError(
+          currentLoginCacheKey,
+        )}`,
+      )
+
+      return res.redirect(this.config.callbacksRedirectUris.login)
+    }
 
     const searchParams = new URLSearchParams({
       id_token_hint: cachedTokenResponse.id_token,

@@ -6,9 +6,15 @@ import { ConfigType } from '@nestjs/config'
 import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
 import { ParResponse, TokenResponse } from './ids.types'
+import {
+  EnhancedFetchAPI,
+  createEnhancedFetch,
+} from '@island.is/clients/middlewares'
+import { environment } from '../../../environment'
 
 @Injectable()
 export class IdsService {
+  private readonly enhancedFetch: EnhancedFetchAPI
   private readonly issuerUrl
 
   constructor(
@@ -21,6 +27,9 @@ export class IdsService {
     private readonly cryptoService: CryptoService,
   ) {
     this.issuerUrl = this.config.ids.issuer
+    this.enhancedFetch = createEnhancedFetch({
+      name: `bff-${environment.name}-ids-serivce`,
+    })
   }
 
   /**
@@ -31,19 +40,24 @@ export class IdsService {
     body: Record<string, string>,
   ): Promise<T> {
     try {
-      const response = await fetch(`${this.issuerUrl}${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+      const response = await this.enhancedFetch(
+        `${this.issuerUrl}${endpoint}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams(body).toString(),
         },
-        body: new URLSearchParams(body).toString(),
-      })
+      )
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
+      const contentType = response.headers.get('content-type') || ''
+
+      if (contentType.includes('application/json')) {
+        return response.json() as Promise<T>
       }
 
-      return response.json()
+      return response.text() as Promise<T>
     } catch (error) {
       this.logger.error(
         `Error making request to ${endpoint}:`,
@@ -112,7 +126,12 @@ export class IdsService {
     })
   }
 
-  // Fetches tokens using the authorization code and code verifier
+  /**
+   * Fetches the tokens from the Ids
+   *
+   * @param obj.code - The code from the Ids
+   * @param obj.codeVerifier - The code verifier from the Ids
+   */
   public async getTokens({
     code,
     codeVerifier,
@@ -134,6 +153,8 @@ export class IdsService {
 
   /**
    * Use the refresh token to get a new tokens
+   *
+   * @param refreshToken - The refresh token
    */
   public async refreshToken(refreshToken: string) {
     const decryptedRefreshToken = this.cryptoService.decrypt(refreshToken)
@@ -142,6 +163,27 @@ export class IdsService {
     return this.postRequest<TokenResponse>('/connect/token', {
       grant_type: 'refresh_token',
       refresh_token: decryptedRefreshToken,
+      client_secret: ids.secret,
+      client_id: ids.clientId,
+    })
+  }
+
+  /**
+   * This endpoint allows revoking access tokens (reference tokens only) and refresh token.
+   *
+   * @param token - The token to revoke
+   * @param tokenTypeHint - The type of token to revoke (access_token or refresh_token)
+   */
+  public async revokeToken(
+    token: string,
+    tokenTypeHint: 'access_token' | 'refresh_token',
+  ) {
+    const decryptedToken = this.cryptoService.decrypt(token)
+    const { ids } = this.config
+
+    return this.postRequest('/connect/revocation', {
+      token: decryptedToken,
+      token_type_hint: tokenTypeHint,
       client_secret: ids.secret,
       client_id: ids.clientId,
     })

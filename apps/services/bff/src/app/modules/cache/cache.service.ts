@@ -10,6 +10,10 @@ export class CacheService {
     private readonly cacheManager: CacheManager,
   ) {}
 
+  public createKeyError(key: string) {
+    return `Cache key "${key}" not found.`
+  }
+
   /**
    * Creates s unique key with session id.
    * Type is either 'attempt' or 'current'.
@@ -33,11 +37,19 @@ export class CacheService {
     await this.cacheManager.set(key, value, ttl)
   }
 
-  public async get<Value>(key: string) {
+  /**
+   * Gets a value from the cache.
+   *
+   * @param key The key to get the value for.
+   * @param throwError If true, throws an error if the key is not found.
+   *
+   * @returns cache value
+   */
+  public async get<Value>(key: string, throwError = true): Promise<Value> {
     const value = await this.cacheManager.get(key)
 
-    if (!value) {
-      throw new Error(`Cache key "${key}" not found.`)
+    if (!value && throwError) {
+      throw new Error(this.createKeyError(key))
     }
 
     return value as Value

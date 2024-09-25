@@ -21,6 +21,7 @@ export const environmentSchema = z.strictObject({
     .refine((val) => !val.endsWith('/bff'), {
       message: `${KEY_PATH_ENV_VAR} must not end with /bff`,
     }),
+  name: z.string({ required_error: 'BFF_NAME is required' }),
 })
 
 export type BffEnvironment = z.infer<typeof environmentSchema>
