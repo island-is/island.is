@@ -4,7 +4,7 @@ import { CaseExistsGuard, CaseReadGuard, CaseTypeGuard } from '../../../case'
 import { DefendantController } from '../../defendant.controller'
 import { DefendantExistsGuard } from '../../guards/defendantExists.guard'
 
-describe('CaseController - Get custody notice pdf guards', () => {
+describe('DefendantController - Get custody notice pdf guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 

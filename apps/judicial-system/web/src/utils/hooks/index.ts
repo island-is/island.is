@@ -28,3 +28,4 @@ export {
 export { default as useSections } from './useSections'
 export { default as useCaseList } from './useCaseList'
 export { default as useNationalRegistry } from './useNationalRegistry'
+export { default as useCivilClaimants } from './useCivilClaimants'
