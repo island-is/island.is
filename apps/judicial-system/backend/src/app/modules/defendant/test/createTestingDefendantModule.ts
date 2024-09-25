@@ -16,6 +16,7 @@ import { UserService } from '../../user'
 import { DefendantController } from '../defendant.controller'
 import { DefendantService } from '../defendant.service'
 import { InternalDefendantController } from '../internalDefendant.controller'
+import { LimitedAccessDefendantController } from '../limitedAccessDefendant.controller'
 import { Defendant } from '../models/defendant.model'
 
 jest.mock('@island.is/judicial-system/message')
@@ -27,7 +28,11 @@ jest.mock('../../case/pdf.service')
 export const createTestingDefendantModule = async () => {
   const defendantModule = await Test.createTestingModule({
     imports: [ConfigModule.forRoot({ load: [sharedAuthModuleConfig] })],
-    controllers: [DefendantController, InternalDefendantController],
+    controllers: [
+      DefendantController,
+      InternalDefendantController,
+      LimitedAccessDefendantController,
+    ],
     providers: [
       SharedAuthModule,
       MessageService,
@@ -81,6 +86,11 @@ export const createTestingDefendantModule = async () => {
       InternalDefendantController,
     )
 
+  const limitedAccessDefendantController =
+    defendantModule.get<LimitedAccessDefendantController>(
+      LimitedAccessDefendantController,
+    )
+
   defendantModule.close()
 
   return {
@@ -92,5 +102,6 @@ export const createTestingDefendantModule = async () => {
     defendantService,
     defendantController,
     internalDefendantController,
+    limitedAccessDefendantController,
   }
 }
