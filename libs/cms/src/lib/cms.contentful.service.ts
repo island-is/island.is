@@ -310,10 +310,17 @@ export class CmsContentfulService {
     )
   }
 
-  async getOrganization(slug: string, lang: string): Promise<Organization> {
+  async getOrganization(
+    slug: string,
+    lang: string,
+  ): Promise<Organization | null> {
+    if (!slug) {
+      return null
+    }
+
     const params = {
       ['content_type']: 'organization',
-      include: 5,
+      include: 10,
       'fields.slug': slug,
     }
 
