@@ -9,6 +9,11 @@ export const m = defineMessages({
   },
   signatureListsTitle: {
     id: 'admin-portal.signature-collection:signatureLists',
+    defaultMessage: 'Meðmælasafnanir',
+    description: '',
+  },
+  signatureListsTitlePresidential: {
+    id: 'admin-portal.signature-collection-parliamentary:signatureLists',
     defaultMessage: 'Forsetakosningar',
     description: '',
   },
