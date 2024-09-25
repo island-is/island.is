@@ -240,29 +240,27 @@ export const AccessCard = ({
       <Box marginTop={hasTags && showActions ? 2 : 0}>
         <Box
           display="flex"
-          justifyContent={'spaceBetween'}
+          justifyContent={hasTags ? 'spaceBetween' : 'flexEnd'}
           alignItems={['stretch', 'flexEnd']}
           flexDirection={['column', 'row']}
           width="full"
         >
-          <div>
-            {hasTags && (
-              <Box width="full">
-                <VisuallyHidden>{formatMessage(m.accessScopes)}</VisuallyHidden>
-                <Inline alignY="bottom" space={1}>
-                  {tags.map((tag, index) => (
-                    <Tag
-                      disabled
-                      key={index}
-                      variant={tag.isExpired ? 'disabled' : 'blue'}
-                    >
-                      {tag.name}
-                    </Tag>
-                  ))}
-                </Inline>
-              </Box>
-            )}
-          </div>
+          {hasTags && (
+            <Box width="full">
+              <VisuallyHidden>{formatMessage(m.accessScopes)}</VisuallyHidden>
+              <Inline alignY="bottom" space={1}>
+                {tags.map((tag, index) => (
+                  <Tag
+                    disabled
+                    key={index}
+                    variant={tag.isExpired ? 'disabled' : 'blue'}
+                  >
+                    {tag.name}
+                  </Tag>
+                ))}
+              </Inline>
+            </Box>
+          )}
           {showActions && (
             <Box
               display="flex"
