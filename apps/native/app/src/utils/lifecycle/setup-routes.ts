@@ -180,6 +180,21 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/update-app', async (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.UpdateAppScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
   addRoute('/settings', async (passProps) => {
     Navigation.showModal({
       stack: {

@@ -28,8 +28,10 @@ import {
 } from '../../stores/preferences-store'
 import { useUiStore } from '../../stores/ui-store'
 import { isAndroid } from '../../utils/devices'
+import { needsToUpdateAppVersion } from '../../utils/minum-app-version'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
+import { navigateTo } from '../../lib/deep-linking'
 import {
   AirDiscountModule,
   useGetAirDiscountQuery,
@@ -254,12 +256,21 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const keyExtractor = useCallback((item: ListItem) => item.id, [])
   const scrollY = useRef(new Animated.Value(0)).current
 
+  const checkAppVersion = useCallback(async () => {
+    const needsUpdate = await needsToUpdateAppVersion()
+    if (needsUpdate) {
+      navigateTo('/update-app')
+    }
+  }, [])
+
   useEffect(() => {
     // Sync push tokens and unseen notifications
     syncToken()
     checkUnseen()
     // Get user locale from server
     getAndSetLocale()
+    // Check if upgrade wall should be shown
+    checkAppVersion()
   }, [])
 
   const refetch = useCallback(async () => {
