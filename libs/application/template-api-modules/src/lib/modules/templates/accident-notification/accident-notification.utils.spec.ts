@@ -16,7 +16,12 @@ import {
   AccidentNotificationAttachment,
   AttachmentTypeEnum,
 } from './types/attachments'
-import { Application, ApplicationStatus, ApplicationTypes, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationStatus,
+  ApplicationTypes,
+  FormValue,
+} from '@island.is/application/types'
 
 describe('applicationAnswersToXml', () => {
   it.each([
@@ -184,9 +189,9 @@ describe('getApplicationDocumentId', () => {
           },
         } as unknown as Application
 
-        const result = utils.getApplicationDocumentId(application)
-        expect(result).toEqual(expectedId)
-    })
+    const result = utils.getApplicationDocumentId(application)
+    expect(result).toEqual(expectedId)
+  })
 
     it('should throw when there is no valid application submission document id', () => {
       const application = {
@@ -197,9 +202,9 @@ describe('getApplicationDocumentId', () => {
         },
       } as unknown as Application
 
-        const act = () => utils.getApplicationDocumentId(application)
-        expect(act).toThrowError('No documentId found on application')
-    })
+    const act = () => utils.getApplicationDocumentId(application)
+    expect(act).toThrowError('No documentId found on application')
+  })
 })
 
 const getDefaultAttachments = (): AccidentNotificationAttachment[] => {
