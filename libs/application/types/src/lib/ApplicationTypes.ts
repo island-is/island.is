@@ -394,10 +394,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.RENTAL_AGREEMENT]: {
     slug: 'leigusamningur',
-<<<<<<< HEAD
     translation: 'ra.application',
-=======
-    translation: [''],
->>>>>>> parent of fda88fb135 (Modify rental agreement template to appear on web, wip.)
   },
 }

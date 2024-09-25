@@ -5,26 +5,11 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
 } from '@island.is/application/types'
+import { ApplicationStates, Roles, DAY } from './constants'
 
 import { dataSchema } from './dataSchema'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
-
-export enum ApplicationStates {
-  PREREQUISITES = 'prerequisites',
-  DRAFT = 'draft',
-  SUBMITTED = 'submitted',
-  SPOUSE = 'spouse',
-  PREREQUISITESSPOUSE = 'prerequisitesSpouse',
-  MUNCIPALITYNOTREGISTERED = 'muncipalityNotRegistered',
-}
-
-export enum Roles {
-  APPLICANT = 'applicant',
-  SPOUSE = 'spouse',
-}
-
-const DAY = 24 * 3600 * 1000
 
 const RentalAgreementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -32,7 +17,8 @@ const RentalAgreementTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.RENTAL_AGREEMENT,
-  name: 'Rental Agreement',
+  name: 'Leigusamningur',
+  institution: 'Húsnæðis- og mannvirkjastofnun',
   dataSchema,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUISITES,
@@ -53,7 +39,11 @@ const RentalAgreementTemplate: ApplicationTemplate<
                 import('../forms/Prerequisites').then((module) =>
                   Promise.resolve(module.Prerequisites),
                 ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
               write: 'all',
+              read: 'all',
               delete: true,
             },
           ],
@@ -68,7 +58,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
     },
   },
   mapUserToRole() {
-    return 'applicant'
+    return Roles.APPLICANT
   },
 }
 

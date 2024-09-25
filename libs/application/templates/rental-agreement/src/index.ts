@@ -4,7 +4,7 @@ export * from './lib/RentalAgreementTemplate'
 
 // export const getDataProviders = () => import('./dataProviders/')
 
-// export const getFields = () => import('./fields/')
+export const getFields = () => import('./fields/')
 
 // export * from './lib/types'
 
