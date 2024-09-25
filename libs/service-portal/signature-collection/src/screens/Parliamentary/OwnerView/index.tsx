@@ -183,20 +183,20 @@ const OwnerView = ({
             </T.Row>
           </T.Head>
           <T.Body>
-            <T.Row>
-              {loadingCollectors ? (
+            {loadingCollectors ? (
+              <T.Row>
                 <T.Data colSpan={2}>
                   <CollectorSkeleton></CollectorSkeleton>
                 </T.Data>
-              ) : (
-                collectors.map((collector) => (
-                  <>
-                    <T.Data width={'40%'}>{collector.name}</T.Data>
-                    <T.Data>{collector.nationalId}</T.Data>
-                  </>
-                ))
-              )}
-            </T.Row>
+              </T.Row>
+            ) : (
+              collectors.map((collector) => (
+                <T.Row key={collector.nationalId}>
+                  <T.Data width={'40%'}>{collector.name}</T.Data>
+                  <T.Data>{collector.nationalId}</T.Data>
+                </T.Row>
+              ))
+            )}
           </T.Body>
         </T.Table>
       </Box>
