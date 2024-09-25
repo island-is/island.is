@@ -31,6 +31,7 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { toggleAction } from '../../lib/post-mail-action'
 import { authStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
+import { usePreferencesStore } from '../../stores/preferences-store'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { getButtonsForActions } from './utils/getButtonsForActions'
 import { useBrowser } from '../../lib/use-browser'
@@ -222,6 +223,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const intl = useIntl()
   const theme = useTheme()
   const htmlStyles = useHtmlStyles()
+  const { locale } = usePreferencesStore()
   const { openBrowser } = useBrowser()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   const [accessToken, setAccessToken] = useState<string>()
@@ -246,6 +248,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         // If the document is marked at urgent we first need to fetch actions before the content
         includeDocument: !isUrgent,
       },
+      locale: locale === 'is-IS' ? 'is' : 'en',
     },
     fetchPolicy: 'no-cache',
     onCompleted: () => {
