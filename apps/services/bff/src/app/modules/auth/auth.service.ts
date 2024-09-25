@@ -157,9 +157,7 @@ export class AuthService {
           originUrl: this.createClientBaseUrl(),
           // Code verifier to be used in the callback
           codeVerifier,
-          targetLinkUri: targetLinkUri,
-          ...(loginHint && { loginHint }),
-          ...(prompt && { prompt }),
+          targetLinkUri,
         },
         ttl: 60 * 60 * 24 * 7 * 1000, // 1 week
       })
@@ -236,7 +234,6 @@ export class AuthService {
       // Get login attempt from cache
       const loginAttemptData = await this.cacheService.get<{
         targetLinkUri?: string
-        loginHint?: string
         codeVerifier: string
         originUrl: string
       }>(this.cacheService.createSessionKeyType('attempt', query.state))
