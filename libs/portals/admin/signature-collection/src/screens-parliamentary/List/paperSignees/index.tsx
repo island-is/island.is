@@ -118,6 +118,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
                 name="nationalId"
                 label={formatMessage(m.signeeNationalId)}
                 format="######-####"
+                required
                 defaultValue={nationalIdInput}
                 onChange={(e) => {
                   setNationalIdInput(e.target.value.replace(/\W/g, ''))
@@ -132,6 +133,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
                 id="page"
                 name="page"
                 type="number"
+                required
                 label={formatMessage(m.paperNumber)}
                 value={page}
                 onChange={(e) => setPage(e.target.value)}
