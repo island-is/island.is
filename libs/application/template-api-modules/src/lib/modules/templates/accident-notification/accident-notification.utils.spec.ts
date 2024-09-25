@@ -175,37 +175,31 @@ describe('applicationAnswersToXml', () => {
   )
 })
 
+const createMockPartialApplication = (documentId?: number): Application => ({
+    externalData: {
+      submitApplication: {
+        data: documentId ? { documentId, sentDocuments: ['hello', 'there'] } : undefined,
+      },
+    },
+  } as unknown as Application
+)
+
 describe('getApplicationDocumentId', () => {
     it('should return a valid application submission document id', () => {
         const expectedId = 5555
-        const application = {
-          externalData: {
-            submitApplication: {
-              data: {
-                documentId: expectedId,
-                sentDocuments: ['hello', 'there']
-              },
-            },
-          },
-        } as unknown as Application
+        const application = createMockPartialApplication(expectedId)
 
     const result = utils.getApplicationDocumentId(application)
     expect(result).toEqual(expectedId)
   })
 
     it('should throw when there is no valid application submission document id', () => {
-      const application = {
-        externalData: {
-          submitApplication: {
-            data: undefined
-          },
-        },
-      } as unknown as Application
+      const application = createMockPartialApplication(undefined)
 
-    const act = () => utils.getApplicationDocumentId(application)
-    expect(act).toThrowError('No documentId found on application')
+      expect(() => utils.getApplicationDocumentId(application)).toThrowError('No documentId found on application')
   })
 })
+
 
 const getDefaultAttachments = (): AccidentNotificationAttachment[] => {
   return [
