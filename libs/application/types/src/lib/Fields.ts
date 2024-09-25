@@ -361,6 +361,7 @@ export interface TextField extends BaseField {
   maxLength?: number
   max?: number
   min?: number
+  step?: string
   placeholder?: FormText
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor

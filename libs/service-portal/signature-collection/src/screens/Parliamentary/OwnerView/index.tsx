@@ -5,16 +5,30 @@ import {
   Text,
   Table as T,
   Tooltip,
+  DialogPrompt,
+  Tag,
+  Icon,
+  toast,
+  Button,
 } from '@island.is/island-ui/core'
 import { useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import AddConstituency from './AddConstituency'
-import { SignatureCollectionList } from '@island.is/api/schema'
-import { OwnerParliamentarySkeleton } from '../../../skeletons'
-import { useGetListsForOwner } from '../../../hooks'
+import {
+  SignatureCollectionList,
+  SignatureCollectionSuccess,
+} from '@island.is/api/schema'
+import {
+  CollectorSkeleton,
+  OwnerParliamentarySkeleton,
+} from '../../../skeletons'
+import { useGetCollectors, useGetListsForOwner } from '../../../hooks'
 import { SignatureCollection } from '@island.is/api/schema'
+import { useMutation } from '@apollo/client'
+import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
+import copyToClipboard from 'copy-to-clipboard'
 
 const OwnerView = ({
   currentCollection,
@@ -23,9 +37,33 @@ const OwnerView = ({
 }) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
-  const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
-    currentCollection?.id || '',
+  const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
+    useGetListsForOwner(currentCollection?.id || '')
+  const { collectors, loadingCollectors } = useGetCollectors()
+
+  const [cancelCollection] = useMutation<SignatureCollectionSuccess>(
+    cancelCollectionMutation,
+    {
+      onCompleted: () => {
+        toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
+        refetchListsForOwner()
+      },
+      onError: () => {
+        toast.error(formatMessage(m.cancelCollectionModalToastError))
+      },
+    },
   )
+
+  const onCancelCollection = (listId: string) => {
+    cancelCollection({
+      variables: {
+        input: {
+          collectionId: currentCollection?.id ?? '',
+          listIds: listId,
+        },
+      },
+    })
+  }
 
   return (
     <Stack space={8}>
@@ -39,11 +77,15 @@ const OwnerView = ({
               color="blue400"
             />
           </Text>
-          {/* If the number of lists is equal to 6, it means that
-          lists have been created in all of the constituencies */}
-          {listsForOwner.length < 6 && (
-            <AddConstituency lists={listsForOwner} />
-          )}
+          {!loadingOwnerLists &&
+            listsForOwner?.length < currentCollection?.areas.length && (
+              <AddConstituency
+                lists={listsForOwner}
+                collection={currentCollection}
+                candidateId={listsForOwner[0]?.candidate?.id}
+                refetch={refetchListsForOwner}
+              />
+            )}
         </Box>
         {loadingOwnerLists ? (
           <Box marginTop={2}>
@@ -54,12 +96,13 @@ const OwnerView = ({
             <Box key={list.id} marginTop={3}>
               <ActionCard
                 backgroundColor="white"
-                heading={list.title}
+                heading={list.area?.name}
                 progressMeter={{
                   currentProgress: list.numberOfSignatures || 0,
                   maxProgress: list.area?.min || 0,
                   withLabel: true,
                 }}
+                eyebrow={list.title.split(' - ')[0]}
                 cta={{
                   label: formatMessage(m.viewList),
                   variant: 'text',
@@ -77,6 +120,43 @@ const OwnerView = ({
                       },
                     )
                   },
+                }}
+                tag={{
+                  label: 'Cancel collection',
+                  renderTag: () => (
+                    <DialogPrompt
+                      baseId="cancel_collection_dialog"
+                      title={
+                        formatMessage(m.cancelCollectionButton) +
+                        ' - ' +
+                        list.area?.name
+                      }
+                      description={formatMessage(
+                        m.cancelCollectionModalMessage,
+                      )}
+                      ariaLabel="delete"
+                      disclosureElement={
+                        <Tag outlined variant="red">
+                          <Box display="flex" alignItems="center">
+                            <Icon icon="trash" size="small" type="outline" />
+                          </Box>
+                        </Tag>
+                      }
+                      onConfirm={() => {
+                        onCancelCollection(list.id)
+                      }}
+                      buttonTextConfirm={formatMessage(
+                        m.cancelCollectionModalConfirmButton,
+                      )}
+                      buttonPropsConfirm={{
+                        variant: 'primary',
+                        colorScheme: 'destructive',
+                      }}
+                      buttonTextCancel={formatMessage(
+                        m.cancelCollectionModalCancelButton,
+                      )}
+                    />
+                  ),
                 }}
               />
             </Box>
@@ -103,12 +183,52 @@ const OwnerView = ({
             </T.Row>
           </T.Head>
           <T.Body>
-            <T.Row>
-              <T.Data width={'40%'}>{'Nafni Nafnason'}</T.Data>
-              <T.Data>{'010130-3019'}</T.Data>
-            </T.Row>
+            {loadingCollectors ? (
+              <T.Row>
+                <T.Data colSpan={2}>
+                  <CollectorSkeleton></CollectorSkeleton>
+                </T.Data>
+              </T.Row>
+            ) : (
+              collectors.map((collector) => (
+                <T.Row key={collector.nationalId}>
+                  <T.Data width={'40%'}>{collector.name}</T.Data>
+                  <T.Data>{collector.nationalId}</T.Data>
+                </T.Row>
+              ))
+            )}
           </T.Body>
         </T.Table>
+      </Box>
+      <Box
+        background="blue100"
+        borderRadius="large"
+        display={['block', 'flex', 'flex']}
+        justifyContent="spaceBetween"
+        alignItems="center"
+        padding={3}
+      >
+        <Text marginBottom={[2, 0, 0]} variant="small">
+          {formatMessage(m.copyLinkDescription)}
+        </Text>
+        <Box>
+          <Button
+            onClick={() => {
+              const copied = copyToClipboard(
+                `${document.location.origin}${listsForOwner[0].slug}`,
+              )
+              if (!copied) {
+                return toast.error(formatMessage(m.copyLinkError))
+              }
+              toast.success(formatMessage(m.copyLinkSuccess))
+            }}
+            variant="text"
+            icon="link"
+            size="medium"
+          >
+            {formatMessage(m.copyLinkButton)}
+          </Button>
+        </Box>
       </Box>
     </Stack>
   )
