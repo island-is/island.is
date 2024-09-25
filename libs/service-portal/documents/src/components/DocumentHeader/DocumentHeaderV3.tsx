@@ -2,14 +2,12 @@ import { useEffect, useRef } from 'react'
 import { DocumentV2Actions, DocumentsV2Category } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { helperStyles } from '@island.is/island-ui/theme'
-import { isDefined } from '@island.is/shared/utils'
 import AvatarImage from '../DocumentLine/AvatarImage'
 import {
   DocumentActionBar,
   DocumentActionBarProps,
 } from '../DocumentActionBar/DocumentActionBarV2'
 import DocumentActions from '../DocumentActions/DocumentActionsV3'
-import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import * as styles from './DocumentHeader.css'
 
 type DocumentHeaderProps = {
@@ -32,7 +30,6 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
   subject,
 }) => {
   const wrapper = useRef<HTMLDivElement>(null)
-  const { documentDisplayError } = useDocumentContext()
 
   useEffect(() => {
     if (wrapper.current) {
@@ -81,7 +78,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
       </Box>
       {actions && (
         <Box>
-          <DocumentActions success={!isDefined(documentDisplayError)} />
+          <DocumentActions />
         </Box>
       )}
     </>

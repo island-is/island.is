@@ -3,29 +3,24 @@ import { IconMapIcon } from '@island.is/island-ui/core/types'
 import { sendForm } from '../../utils/downloadDocumentV2'
 import { useUserInfo } from '@island.is/auth/react'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
-import { useLocale } from '@island.is/localization'
-import { messages } from '../../utils/messages'
 
-interface Props {
-  success: boolean
-}
-const DocumentActions = ({ success = false }: Props) => {
+const DocumentActions = () => {
   const { activeDocument } = useDocumentContext()
   const userInfo = useUserInfo()
   const DEFAULT_ICON: IconMapIcon = 'document'
-  const actions = activeDocument?.actions?.filter(
-    (action) => action.type !== 'confirmation',
+  // Waiting for service to update type to enum
+  const actions = activeDocument?.actions
+    ?.filter((action) => action.type !== 'confirmation')
+    .filter((action) => action.type !== 'alert')
+  const alert = activeDocument?.actions?.find(
+    (action) => action.type === 'alert',
   )
-  const { formatMessage } = useLocale()
 
   return (
     <Box>
-      {success && (
-        <Box marginBottom={2}>
-          <AlertMessage
-            type="success"
-            message={formatMessage(messages.confirmation)}
-          />
+      {alert && (
+        <Box marginBottom={1}>
+          <AlertMessage type="success" message={alert.title} />
         </Box>
       )}
       {actions && (
@@ -36,9 +31,9 @@ const DocumentActions = ({ success = false }: Props) => {
           flexWrap="wrap"
         >
           {actions.map((a) => {
-            if (a.type === 'url' && a.data) {
-              return (
-                <Box marginRight={[0, 1]} marginBottom={[1, 0]}>
+            return (
+              <Box marginRight={1} marginTop={1}>
+                {a.type === 'url' && a.data && (
                   <a href={a.data}>
                     <Button
                       as="span"
@@ -52,12 +47,8 @@ const DocumentActions = ({ success = false }: Props) => {
                       {a.title}
                     </Button>
                   </a>
-                </Box>
-              )
-            }
-            return (
-              <Box marginRight={1}>
-                {activeDocument && (
+                )}
+                {a.type !== 'url' && activeDocument && (
                   <Button
                     size="small"
                     variant="utility"

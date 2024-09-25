@@ -116,9 +116,4 @@ export const messages = defineMessages({
     id: 'sp.documents:search-label',
     defaultMessage: 'Leita',
   },
-  confirmation: {
-    id: 'sp.documents:confirmation',
-    defaultMessage:
-      'Staðfesting á móttöku hefur verið send á dómstóla og ákæruvald.',
-  },
 })
