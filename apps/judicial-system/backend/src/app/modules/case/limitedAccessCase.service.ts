@@ -30,7 +30,7 @@ import {
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { Defendant, DefendantService } from '../defendant'
+import { CivilClaimant, Defendant, DefendantService } from '../defendant'
 import { EventLog } from '../event-log'
 import {
   CaseFile,
@@ -102,6 +102,7 @@ export const attributes: (keyof Case)[] = [
   'courtSessionType',
   'indictmentReviewDecision',
   'indictmentReviewerId',
+  'hasCivilClaims',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -169,6 +170,7 @@ export const include: Includeable[] = [
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
   { model: Defendant, as: 'defendants' },
+  { model: CivilClaimant, as: 'civilClaimants' },
   {
     model: CaseFile,
     as: 'caseFiles',
@@ -222,6 +224,7 @@ export const include: Includeable[] = [
 
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
   [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
 ]
 
