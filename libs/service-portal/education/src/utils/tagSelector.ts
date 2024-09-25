@@ -1,12 +1,16 @@
 export const tagSelector = (str: string) => {
-  const obj = {
-    Lokið: 'mint',
-    Ólokið: 'purple',
-    Metið: 'blue',
-    M: 'blue',
-    Féll: 'red',
-    'Féll á önn': 'red',
+  switch (str) {
+    case 'Lokið':
+      return 'mint'
+    case 'Ólokið':
+      return 'purple'
+    case 'Metið':
+    case 'M':
+      return 'blue'
+    case 'Féll':
+    case 'Féll á önn':
+      return 'red'
+    default:
+      return 'blue'
   }
-
-  return (obj as any)?.[str] || 'blue'
 }
