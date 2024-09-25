@@ -20,7 +20,10 @@ import {
   SignatureCollectionList,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
-import { CollectorSkeleton, OwnerParliamentarySkeleton } from '../../../skeletons'
+import {
+  CollectorSkeleton,
+  OwnerParliamentarySkeleton,
+} from '../../../skeletons'
 import { useGetCollectors, useGetListsForOwner } from '../../../hooks'
 import { SignatureCollection } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
@@ -36,7 +39,6 @@ const OwnerView = ({
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
     useGetListsForOwner(currentCollection?.id || '')
-
   const { collectors, loadingCollectors } = useGetCollectors()
   
   const [cancelCollection] = useMutation<SignatureCollectionSuccess>(
