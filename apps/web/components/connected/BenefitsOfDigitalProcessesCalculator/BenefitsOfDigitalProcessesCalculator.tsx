@@ -130,13 +130,19 @@ export const BenefitsOfDigitalProcessesCalculator = ({
 
   const resultColumnSpan: SpanType = ['1/1', '1/2', '1/1', '1/2', '1/3']
 
-  const displayResults =
-    previousInput && !canCalculate(userInput, previousInput)
-
   const { results, gainPerCitizen, ringRoadTripsSaved, co2 } = calculateResults(
     slice,
     userInput,
   )
+
+  const displayResults =
+    Boolean(previousInput) &&
+    !canCalculate(userInput, previousInput) &&
+    userInput.nameOfProcess.length > 0 &&
+    userInput.amountPerYear > 0 &&
+    userInput.processDurationInMinutes > 0 &&
+    userInput.visitCountToCompleteProcess > 0 &&
+    userInput.averageDistanceToProcessInKilometers > 0
 
   useEffect(() => {
     if (!previousInput) return
