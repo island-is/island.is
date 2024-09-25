@@ -99,9 +99,8 @@ export class AuthService {
       refresh_token: this.cryptoService.encrypt(tokenResponse.refresh_token),
       scopes: tokenResponse.scope.split(' '),
       userProfile,
-      accessTokenExp: new Date(
-        Date.now() + tokenResponse.expires_in * 1000,
-      ).getTime(),
+      // Subtract 5 seconds from the token expiration time to account for latency.
+      accessTokenExp: Date.now() + (tokenResponse.expires_in * 1000 - 5000),
     }
 
     // Save the tokenResponse to the cache
