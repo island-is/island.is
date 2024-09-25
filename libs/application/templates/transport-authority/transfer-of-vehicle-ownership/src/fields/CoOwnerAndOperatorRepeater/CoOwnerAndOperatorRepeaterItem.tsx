@@ -44,6 +44,7 @@ export const CoOwnerAndOperatorRepeaterItem: FC<
   const phoneField = `${fieldIndex}.phone`
   const typeField = `${fieldIndex}.type`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
+  const needsAgeValidation = `${fieldIndex}.needsAgeValidation`
 
   const onNationalIdChange = (nationalId: string) => {
     addNationalIdToCoOwners(nationalId, index)
@@ -52,6 +53,7 @@ export const CoOwnerAndOperatorRepeaterItem: FC<
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)
     setValue(typeField, userMessageId)
+    setValue(needsAgeValidation, userMessageId !== 'operator')
   }, [repeaterField.wasRemoved, userMessageId, setValue])
 
   return (
@@ -73,6 +75,7 @@ export const CoOwnerAndOperatorRepeaterItem: FC<
       <NationalIdWithName
         {...props}
         customId={fieldIndex}
+        needsAgeValidation={userMessageId !== 'operator'}
         customNameLabel={formatMessage(information.labels[userMessageId].name)}
         customNationalIdLabel={formatMessage(
           information.labels[userMessageId].nationalId,

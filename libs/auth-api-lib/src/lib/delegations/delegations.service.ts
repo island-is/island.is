@@ -136,7 +136,7 @@ export class DelegationsService {
 
     const allowedScopes = await this.delegationResourcesService.findScopeNames(
       user,
-      delegation.domainName,
+      delegation.domainName ?? null,
       direction,
     )
     // If the user doesn't have any allowed scope in the delegation domain we return null
@@ -156,6 +156,7 @@ export class DelegationsService {
    * if direction is incoming is then all delegation scopes will be deleted else only user scopes
    * @param user User object of the authenticated user.
    * @param id Id of the delegation to delete
+   * @param direction Direction of the delegation: incoming or outgoing
    * @returns
    */
   async delete(
@@ -199,6 +200,7 @@ export class DelegationsService {
   /**
    * Deprecated: Use DelegationsIncomingService instead for incoming delegations.
    */
+
   /***** Incoming Delegations *****/
 
   /**
