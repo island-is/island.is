@@ -126,7 +126,7 @@ export const BenefitsOfDigitalProcessesCalculator = ({
   const displayResults =
     previousInput && !canCalculate(userInput, previousInput)
 
-  const { results, gainPerCitizen, ringRoadTripsSaved } = calculateResults(
+  const { results, gainPerCitizen, ringRoadTripsSaved, co2 } = calculateResults(
     slice,
     userInput,
   )
@@ -320,10 +320,15 @@ export const BenefitsOfDigitalProcessesCalculator = ({
             <GridColumn span={resultColumnSpan}>
               <ResultCard
                 title={
-                  formatCurrency(
-                    gainPerCitizen,
-                    formatMessage(t.results.currencyPostfix),
-                  ) as string
+                  gainPerCitizen >= 1e6
+                    ? `${formatValueForPresentation(
+                        activeLocale,
+                        gainPerCitizen,
+                      )}${formatMessage(t.results.currencyPostfix)}`
+                    : (formatCurrency(
+                        gainPerCitizen,
+                        formatMessage(t.results.currencyPostfix),
+                      ) as string)
                 }
                 description={formatMessage(t.results.citizenGainDescription, {
                   nameOfProcess: userInput.nameOfProcess,
@@ -353,13 +358,19 @@ export const BenefitsOfDigitalProcessesCalculator = ({
             </GridColumn>
             <GridColumn span={resultColumnSpan}>
               <ResultCard
-                title={formatValueForPresentation(
-                  activeLocale,
-                  userInput.amountPerYear,
-                  false,
-                )}
-                description={formatMessage(t.results.digitalProcessesPerYear)}
-                icon={<Icon icon="document" color="blue400" size="large" />}
+                title={
+                  co2 >= 1e6
+                    ? `${formatValueForPresentation(
+                        activeLocale,
+                        co2,
+                      )}${formatMessage(t.results.currencyPostfix)}`
+                    : (formatCurrency(
+                        co2,
+                        formatMessage(t.results.currencyPostfix),
+                      ) as string)
+                }
+                description={formatMessage(t.results.c02)}
+                icon={<Icon icon="homeWithCar" color="blue400" size="large" />}
               />
             </GridColumn>
           </GridRow>

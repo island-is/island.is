@@ -127,8 +127,7 @@ export const t = {
     },
     citizenGainDescription: {
       id: 'web.digitalIceland.benefitsOfDigitalProcesses:results.citizenGainDescription',
-      defaultMessage:
-        'heildarábati Íslands, ríki og borgara af einu ({nameOfProcess})',
+      defaultMessage: 'heildarábati Íslands, ríki og borgara',
       description: 'Lýsing á "ávinningur borgara" niðurstöðu',
     },
     ringRoadTripsSaved: {
@@ -144,10 +143,10 @@ export const t = {
       description:
         'Lýsing á "sparaðir dagar hjá fólki við að sækja sér nauðsynlega þjónustu" niðurstöðu',
     },
-    digitalProcessesPerYear: {
-      id: 'web.digitalIceland.benefitsOfDigitalProcesses:results.digitalProcessesPerYear',
-      defaultMessage: 'stafrænar afgreiðslur á ári',
-      description: 'Lýsing á "stafrænar afgreiðslur á ári" niðurstöðu',
+    c02: {
+      id: 'web.digitalIceland.benefitsOfDigitalProcesses:results.c02',
+      defaultMessage: 'minni losun Co2 vegna færri bílferða',
+      description: 'Lýsing á "minni losun Co2 vegna færri bílferða" niðurstöðu',
     },
     days: {
       id: 'web.digitalIceland.benefitsOfDigitalProcesses:results.days',
@@ -158,6 +157,11 @@ export const t = {
       id: 'web.digitalIceland.benefitsOfDigitalProcesses:results.currencyPostfix',
       defaultMessage: ' kr.',
       description: 'Viðskeyti eftir krónutölu',
+    },
+    kgPostfix: {
+      id: 'web.digitalIceland.benefitsOfDigitalProcesses:results.currencyPostfix',
+      defaultMessage: ' kg',
+      description: 'Viðskeyti eftir kílometratölu í niðurstöuspjöldum',
     },
   }),
 }

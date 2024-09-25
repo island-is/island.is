@@ -70,6 +70,7 @@ export const calculateResults = (
       slice.configJson?.['Klukkustundir í stöðugildi á ári'] ?? 1606,
     ringRoadDistanceInKilometers:
       slice.configJson?.['Hringvegurinn í km'] ?? 1321,
+    kgCo2PerDrivenKilometer: slice.configJson?.['Kg co2 á ekinn km'] ?? 0.1082,
   }
 
   const results: Results = {
@@ -112,9 +113,12 @@ export const calculateResults = (
       24,
   }
 
-  const gainPerCitizen = 0
+  const gainPerCitizen = results.citizenGain + results.institutionGain
   const ringRoadTripsSaved =
     results.drivenKilometersSaved / preConditions.ringRoadDistanceInKilometers
 
-  return { results, gainPerCitizen, ringRoadTripsSaved }
+  const co2 =
+    preConditions.kgCo2PerDrivenKilometer * results.drivenKilometersSaved
+
+  return { results, gainPerCitizen, ringRoadTripsSaved, co2 }
 }
