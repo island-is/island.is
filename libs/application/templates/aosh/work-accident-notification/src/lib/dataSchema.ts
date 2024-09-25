@@ -26,11 +26,17 @@ const option = z.object({
 })
 
 const accidentSchema = z.object({
-  accidentLocation: z.object({
-    value: z.string(),
-    label: z.string(),
-  }),
+  accidentLocation: option,
   accidentLocationParentGroup: option.optional(),
+  date: z.string(), // Validate a date string
+  didAoshCome: z.string(), // Boolean ?
+  didPoliceCome: z.string(),
+  exactLocation: z.string(),
+  how: z.string(),
+  municipality: z.string(),
+  time: z.string(), // Need to use time refiner here, see commented code above
+  wasDoing: z.string(),
+  wentWrong: z.string(),
 })
 
 const companySchema = z.object({
@@ -40,6 +46,13 @@ const companySchema = z.object({
       (nationalId) =>
         nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId),
     ),
+  address: z.string().optional(),
+  addressOfBranch: z.string().optional(),
+  name: z.string().optional(),
+  nameOfBranch: z.string().optional(),
+  numberOfEmployees: z.string().optional(),
+  postnumber: z.string().optional(),
+  postnumberOfBranch: z.string().optional(),
 })
 
 const employeeSchema = z.object({
@@ -70,6 +83,7 @@ const projectPurchaseSchema = z.object({
         message: 'Invalid nationalId',
       },
     ),
+  name: z.string().optional(),
 })
 
 export const WorkAccidentNotificationAnswersSchema = z.object({

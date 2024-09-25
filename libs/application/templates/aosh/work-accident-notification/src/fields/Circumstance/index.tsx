@@ -60,6 +60,7 @@ export const Circumstance: FC<React.PropsWithChildren<FieldBaseProps>> = (
     setMostSeriousList(options)
   }
 
+  // TODO(balli) Need to cover case where user chooses a most serious circumstance and then removes that option from the list
   return (
     <Box>
       <Box marginBottom={2} marginTop={2}>

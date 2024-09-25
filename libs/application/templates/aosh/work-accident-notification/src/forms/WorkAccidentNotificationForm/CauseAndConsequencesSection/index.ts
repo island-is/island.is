@@ -7,15 +7,16 @@ import { typeOfInjurySection } from './typeOfInjury'
 import { injuredBodyPartsSection } from './injuredBodyParts'
 import { deviationSection } from './deviation'
 
-export const causeAndConsequencesSection = buildSection({
-  id: 'causeAndConsequencesSection',
-  title: sections.draft.causes,
-  children: [
-    absenceSection,
-    circumstancesSection,
-    deviationSection,
-    causeOfInjurySection,
-    typeOfInjurySection,
-    injuredBodyPartsSection,
-  ],
-})
+export const causeAndConsequencesSection = (index: number) =>
+  buildSection({
+    id: `causeAndConsequencesSection ${index}`,
+    title: sections.draft.causes,
+    children: [
+      absenceSection,
+      circumstancesSection,
+      deviationSection,
+      causeOfInjurySection,
+      typeOfInjurySection,
+      injuredBodyPartsSection,
+    ],
+  })

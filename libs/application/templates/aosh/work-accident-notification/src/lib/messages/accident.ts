@@ -25,8 +25,13 @@ export const accident = {
     },
     time: {
       id: 'aosh.wan.application:accident.about.time',
-      defaultMessage: 'Upplýsingar um slysið',
+      defaultMessage: 'Tímasetning',
       description: 'Label of time input field',
+    },
+    timePlaceholder: {
+      id: 'aosh.wan.application:accident.about.timePlaceholder',
+      defaultMessage: '23:59',
+      description: 'placeholder of time input field',
     },
     didAoshCome: {
       id: 'aosh.wan.application:accident.about.didAoshCome',
