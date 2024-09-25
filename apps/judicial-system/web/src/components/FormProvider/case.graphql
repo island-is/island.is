@@ -26,6 +26,12 @@ query Case($input: CaseQueryInput!) {
       verdictViewDate
       verdictAppealDeadline
       subpoenaType
+      subpoenas {
+        acknowledged
+        acknowledgedDate
+        registeredBy
+        comment
+      }
     }
     defenderName
     defenderNationalId

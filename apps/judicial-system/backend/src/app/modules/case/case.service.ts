@@ -62,6 +62,7 @@ import { CaseFile, FileService } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
+import { Subpoena } from '../subpoena/models/subpoena.model'
 import { User } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
@@ -271,7 +272,13 @@ export const include: Includeable[] = [
     ],
   },
   { model: Case, as: 'childCase' },
-  { model: Defendant, as: 'defendants' },
+  {
+    model: Defendant,
+    as: 'defendants',
+    include: [
+      { model: Subpoena, as: 'subpoenas', order: [['created', 'DESC']] },
+    ],
+  },
   { model: CivilClaimant, as: 'civilClaimants' },
   { model: IndictmentCount, as: 'indictmentCounts' },
   {

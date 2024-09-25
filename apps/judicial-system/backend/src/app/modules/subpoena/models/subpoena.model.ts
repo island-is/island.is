@@ -61,6 +61,10 @@ export class Subpoena extends Model {
   @ApiPropertyOptional({ type: Boolean })
   acknowledged?: string
 
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  acknowledgedDate?: Date
+
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   registeredBy?: string

@@ -2,8 +2,9 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   ConnectedCaseFilesAccordionItem,
@@ -75,6 +76,25 @@ const IndictmentOverview = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.defendants?.map((defendant) =>
+          defendant.subpoenas?.map((subpoena) => (
+            <AlertMessage
+              title={`${subpoena.acknowledged} -- ${defendant.name}`}
+              message={
+                <Box>
+                  <Text variant="small">
+                    {`${subpoena.registeredBy} -- ${formatDate(
+                      subpoena.acknowledgedDate,
+                      'Pp',
+                    )}`}
+                  </Text>
+                  <Text variant="small">{subpoena.comment}</Text>
+                </Box>
+              }
+              type="warning"
+            />
+          )),
+        )}
         {workingCase.court &&
           latestDate?.date &&
           workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
