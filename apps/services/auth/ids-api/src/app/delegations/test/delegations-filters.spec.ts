@@ -15,7 +15,10 @@ import {
 import { createNationalRegistryUser } from '@island.is/testing/fixtures'
 import { TestApp, truncate } from '@island.is/testing/nest'
 
-import { setupWithAuth } from '../../../../test/setup'
+import {
+  nonExistingLegalRepresentativeNationalId,
+  setupWithAuth,
+} from '../../../../test/setup'
 import { testCases } from './delegations-filters-test-cases'
 import { user } from './delegations-filters-types'
 
@@ -128,4 +131,58 @@ describe('DelegationsController', () => {
       })
     },
   )
+
+  describe('verify', () => {
+    const testCase = testCases['legalRepresentative1']
+    testCase.user = user
+    const path = '/v1/delegations/verify'
+
+    beforeAll(async () => {
+      await truncate(sequelize)
+
+      await Promise.all(
+        testCase.domains.map((domain) => factory.createDomain(domain)),
+      )
+
+      await factory.createClient(testCase.client)
+
+      await Promise.all(
+        testCase.clientAllowedScopes.map((scope) =>
+          factory.createClientAllowedScope(scope),
+        ),
+      )
+
+      await Promise.all(
+        testCase.apiScopes.map((scope) => factory.createApiScope(scope)),
+      )
+
+      await factory.createDelegationIndexRecord({
+        fromNationalId: nonExistingLegalRepresentativeNationalId,
+        toNationalId: testCase.user.nationalId,
+        type: AuthDelegationType.LegalRepresentative,
+        provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+      })
+    })
+
+    let res: request.Response
+    it(`POST ${path} returns verified response`, async () => {
+      res = await server.post(path).send({
+        fromNationalId: testCase.fromLegalRepresentative[0],
+        delegationTypes: [AuthDelegationType.LegalRepresentative],
+      })
+
+      expect(res.status).toEqual(200)
+      expect(res.body.verified).toEqual(true)
+    })
+
+    it(`POST ${path} returns non-verified response`, async () => {
+      res = await server.post(path).send({
+        fromNationalId: nonExistingLegalRepresentativeNationalId,
+        delegationTypes: [AuthDelegationType.LegalRepresentative],
+      })
+
+      expect(res.status).toEqual(200)
+      expect(res.body.verified).toEqual(false)
+    })
+  })
 })
