@@ -19,7 +19,7 @@ import { IntroHeader, m as coreMessages } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import { DelegationAdminPaths } from '../../lib/paths'
 import NumberFormat from 'react-number-format'
-
+import startOfDay from 'date-fns/startOfDay'
 import {
   Form,
   redirect,
@@ -74,8 +74,8 @@ const CreateDelegationScreen = () => {
     },
   ]
 
-  useEffect(() => {
-    async function success() {
+  async function success() {
+    try {
       const maskedNationalId = await maskString(
         fromIdentity?.nationalId ?? '',
         userInfo?.profile.nationalId ?? '',
@@ -90,8 +90,12 @@ const CreateDelegationScreen = () => {
         }),
         { replace: true },
       )
+    } catch (e) {
+      navigate(DelegationAdminPaths.Root)
     }
+  }
 
+  useEffect(() => {
     if (actionData?.success) {
       success()
     }
@@ -366,7 +370,7 @@ const CreateDelegationScreen = () => {
                   errorMessage={formatMessage(
                     m[actionData?.errors?.validTo as keyof typeof m],
                   )}
-                  minDate={new Date()}
+                  minDate={startOfDay(new Date())}
                   appearInline
                 />
                 <input
