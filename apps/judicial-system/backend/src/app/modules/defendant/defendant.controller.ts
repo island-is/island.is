@@ -156,6 +156,9 @@ export class DefendantController {
     DefendantExistsGuard,
   )
   @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,

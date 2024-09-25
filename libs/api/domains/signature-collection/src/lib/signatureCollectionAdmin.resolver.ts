@@ -31,7 +31,7 @@ import { SignatureCollectionNationalIdInput } from './dto/nationalId.input'
 import { SignatureCollectionSignatureIdInput } from './dto/signatureId.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
-import { SignatureCollectionCanSignInput } from './dto/canSign.input'
+import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
 import { ReasonKey } from '@island.is/clients/signature-collection'
 import { CanSignInfo } from './models/canSignInfo.model'
 
@@ -53,7 +53,7 @@ export class SignatureCollectionAdminResolver {
   async signatureCollectionAdminCanSignInfo(
     @CurrentUser()
     user: User,
-    @Args('input') input: SignatureCollectionCanSignInput,
+    @Args('input') input: SignatureCollectionCanSignFromPaperInput,
   ): Promise<CanSignInfo> {
     const canSignInfo = await this.signatureCollectionService.getCanSignInfo(
       user,

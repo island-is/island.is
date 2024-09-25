@@ -75,12 +75,8 @@ const InputNationalId: FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    if (value === undefined) {
-      return
-    }
-
     setErrorMessage(undefined)
-    setInputValue(value)
+    setInputValue(value ?? '')
   }, [value])
 
   return (
