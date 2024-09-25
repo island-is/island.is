@@ -41,7 +41,7 @@ const OwnerView = ({
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
     useGetListsForOwner(currentCollection?.id || '')
   const { collectors, loadingCollectors } = useGetCollectors()
-  
+
   const [cancelCollection] = useMutation<SignatureCollectionSuccess>(
     cancelCollectionMutation,
     {
