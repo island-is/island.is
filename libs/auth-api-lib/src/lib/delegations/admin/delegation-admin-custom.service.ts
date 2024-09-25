@@ -198,10 +198,8 @@ export class DelegationAdminCustomService {
       },
     )
 
-    // Index custom delegations for the toNationalId
-    void this.delegationIndexService.indexCustomDelegations(
-      delegation.toNationalId,
-    )
+    // Index delegations for the toNationalId
+    void this.indexDelegations(delegation.toNationalId)
 
     return newDelegation.toDTO(AuthDelegationType.GeneralMandate)
   }
@@ -243,10 +241,8 @@ export class DelegationAdminCustomService {
         })
       }
 
-      // Index custom delegations for the toNationalId
-      void this.delegationIndexService.indexCustomDelegations(
-        delegation.toNationalId,
-      )
+      // Index delegations for the toNationalId
+      void this.indexDelegations(delegation.toNationalId)
     })
   }
 
@@ -267,5 +263,10 @@ export class DelegationAdminCustomService {
         'National ids needs to be valid person national ids',
       )
     }
+  }
+
+  private indexDelegations(nationalId: string) {
+    void this.delegationIndexService.indexCustomDelegations(nationalId)
+    void this.delegationIndexService.indexGeneralMandateDelegations(nationalId)
   }
 }
