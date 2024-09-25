@@ -186,12 +186,12 @@ const createMockPartialApplication = (documentId?: number): Application => ({
 
 describe('getApplicationDocumentId', () => {
     it('should return a valid application submission document id', () => {
-        const expectedId = 5555
-        const application = createMockPartialApplication(expectedId)
+      const expectedId = 5555
+      const application = createMockPartialApplication(expectedId)
 
-    const result = utils.getApplicationDocumentId(application)
-    expect(result).toEqual(expectedId)
-  })
+      const result = utils.getApplicationDocumentId(application)
+      expect(result).toEqual(expectedId)
+    })
 
     it('should throw when there is no valid application submission document id', () => {
       const application = createMockPartialApplication(undefined)
