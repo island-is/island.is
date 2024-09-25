@@ -29,7 +29,7 @@ import csvStringify from 'csv-stringify/lib/sync'
 import { AwsService } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 import * as path from 'path';
-// import { fromSSO } from '@aws-sdk/credential-provider-sso';
+import { fromSSO } from '@aws-sdk/credential-provider-sso';
 // import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { S3 } from 'aws-sdk';
 import { FileService } from '@island.is/application/api/files';
@@ -41,8 +41,9 @@ interface CreateInput extends EndorsementListDto {
 
 @Injectable()
 export class EndorsementListService {
-  s3: S3;
+  private readonly s3: S3
   constructor(
+    // private s3 = new S3(), // Initialize S3 client from aws-sdk
     @InjectModel(Endorsement)
     private endorsementModel: typeof Endorsement,
     @InjectModel(EndorsementList)
@@ -53,11 +54,11 @@ export class EndorsementListService {
     private emailService: EmailService,
     private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
     private readonly awsService: AwsService,
-    private readonly fileService: FileService,  // Add FileService here
 
-    this.s3 = new S3(); // Initialize S3 client from aws-sdk
 
-  ) {}
+  ) {
+    this.s3 = new S3({ region: 'eu-west-1' });
+  }
 
   hasAdminScope(user: User): boolean {
     if (user?.scope) {
@@ -843,40 +844,9 @@ export class EndorsementListService {
   //     throw new Error('Error uploading file to S3')
   //   }
   // }
-  // private async uploadFileToS3(
-  //   fileBuffer: Buffer,
-  //   filename: string,
-  //   fileType: 'pdf' | 'csv',
-  // ): Promise<void> {
-  //   try {
-  //     // Use fromSSO to obtain credentials from AWS SSO
-  //     const ssoCredentials = fromSSO({
-  //       ssoStartUrl: 'https://island-is.awsapps.com/start', // SSO start URL from your config
-  //       ssoRegion: 'eu-west-1', // Your SSO region
-  //       ssoAccountId: '013313053092', // Your account ID
-  //       ssoRoleName: 'AWSPowerUserAccess', // Your role name
-  //     });
+ 
+
   
-  //     // Setup S3 client with SSO credentials
-  //     const s3Client = new S3Client({
-  //       region: 'eu-west-1',
-  //       credentials: ssoCredentials,
-  //     });
-  
-  //     const uploadParams = {
-  //       Bucket: environment.exportsBucketName,
-  //       Key: filename,
-  //       Body: fileBuffer,
-  //       ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
-  //     };
-  
-  //     await s3Client.send(new PutObjectCommand(uploadParams));
-  //     this.logger.info(`File uploaded successfully to S3: ${filename}`);
-  //   } catch (error) {
-  //     this.logger.error(`Failed to upload file to S3`, { error, filename });
-  //     throw new Error('Error uploading file to S3');
-  //   }
-  // }
   private async uploadFileToS3(
     fileBuffer: Buffer,
     fileName: string,
@@ -893,9 +863,9 @@ export class EndorsementListService {
       // Use the aws-sdk's S3 client to upload the file
       await this.s3.putObject(uploadParams).promise();
   
-      this.logger.info(`File uploaded successfully to S3: ${filename}`);
+      this.logger.info(`File uploaded successfully to S3: ${fileName}`);
     } catch (error) {
-      this.logger.error(`Failed to upload file to S3`, { error, filename });
+      this.logger.error(`Failed to upload file to S3`, { error, fileName });
       throw new Error('Error uploading file to S3');
     }
   }
