@@ -443,7 +443,11 @@ export const EditChange = (props: EditChangeProp) => {
           >
             <ImpactModalTitle
               type="edit"
-              title={activeChange.regTitle}
+              title={
+                activeChange.name === 'self'
+                  ? 'stofnreglugerð'
+                  : activeChange.regTitle
+              }
               name={activeChange.name}
               impact={activeChange}
               minDate={readOnly ? activeChange.date.value : minDate}

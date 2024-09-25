@@ -19,26 +19,33 @@ export const comments = {
       description: 'Title of comments section',
     },
   }),
-  errors: defineMessages({
-    fetchComments: {
-      id: 'ojoi.application:comments.errors.fetchComments',
-      defaultMessage: 'Villa kom upp við að sækja athugasemdir',
-      description: 'Error fetching comments',
+  warnings: defineMessages({
+    noCommentsTitle: {
+      id: 'ojoi.application:comments.warnings.noComments',
+      defaultMessage: 'Engar athugasemdir',
+      description: 'No comments',
     },
-    fetchCommentsMessage: {
-      id: 'ojoi.application:comments.errors.fetchCommentsMessage',
-      defaultMessage: 'Ekki tókst að sækja athugasemdir, reynið aftur síðar',
-      description: 'Error fetching comments message',
+    noCommentsMessage: {
+      id: 'ojoi.application:comments.warnings.noCommentsMessage',
+      defaultMessage: 'Engar athugasemdir eru skráðar á þessa innsendingu.',
+      description: 'No comments message',
     },
-    addComment: {
-      id: 'ojoi.application:comments.errors.addComment',
+    postCommentFailedTitle: {
+      id: 'ojoi.application:comments.warnings.postCommentFailedTitle',
       defaultMessage: 'Ekki tókst að vista athugasemd',
-      description: 'Error adding comment',
+      description: 'Post comment failed title',
     },
-    emptyComments: {
-      id: 'ojoi.application:comments.errors.emptyComments',
-      defaultMessage: 'Engar athugasemdir eru á þessari umsókn',
-      description: 'No comments on this application',
+    postCommentFailedMessage: {
+      id: 'ojoi.application:comments.warnings.postCommentFailedMessage',
+      defaultMessage: 'Ekki tókst að vista athugasemd, reyndu aftur síðar.',
+      description: 'Post comment failed message',
+    },
+  }),
+  unknownUser: defineMessages({
+    name: {
+      id: 'ojoi.application:comments.unknownUser.name',
+      defaultMessage: 'Óþekktur notandi',
+      description: 'Unknown user name',
     },
   }),
   dates: defineMessages({

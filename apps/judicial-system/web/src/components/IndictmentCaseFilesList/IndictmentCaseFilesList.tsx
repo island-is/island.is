@@ -5,7 +5,9 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import {
   isCompletedCase,
+  isDefenceUser,
   isDistrictCourtUser,
+  isProsecutionUser,
   isPublicProsecutor,
   isPublicProsecutorUser,
   isTrafficViolationCase,
@@ -70,6 +72,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   })
 
   const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
+  const showSubpoenaPdf = workingCase.arraignmentDate
 
   const cf = workingCase.caseFiles
 
@@ -98,6 +101,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
     (file) =>
       file.category === CaseFileCategory.PROSECUTOR_CASE_FILE ||
       file.category === CaseFileCategory.DEFENDANT_CASE_FILE,
+  )
+  const civilClaims = cf?.filter(
+    (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
   )
 
   return (
@@ -225,6 +231,23 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
         </Box>
       ) : null}
+      {workingCase.hasCivilClaims &&
+        civilClaims &&
+        civilClaims.length > 0 &&
+        (isDistrictCourtUser(user) ||
+          isProsecutionUser(user) ||
+          isDefenceUser(user)) && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={1}>
+              {formatMessage(strings.civilClaimsTitle)}
+            </Text>
+            <RenderFiles
+              caseFiles={civilClaims}
+              onOpenFile={onOpen}
+              workingCase={workingCase}
+            />
+          </Box>
+        )}
       {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={3}>
@@ -233,6 +256,28 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <CaseFileTable caseFiles={uploadedCaseFiles} onOpenFile={onOpen} />
         </Box>
       )}
+      {showSubpoenaPdf &&
+        workingCase.defendants &&
+        workingCase.defendants.length > 0 && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={1}>
+              {formatMessage(strings.subpoenaTitle)}
+            </Text>
+            {workingCase.defendants.map((defendant) => (
+              <Box marginBottom={2} key={`subpoena-${defendant.id}`}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={formatMessage(strings.subpoenaButtonText, {
+                    name: defendant.name,
+                  })}
+                  pdfType="subpoena"
+                  elementId={defendant.id}
+                  renderAs="row"
+                />
+              </Box>
+            ))}
+          </Box>
+        )}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>

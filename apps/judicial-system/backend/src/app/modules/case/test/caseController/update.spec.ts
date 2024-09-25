@@ -9,13 +9,13 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  CommentType,
   DateType,
   indictmentCases,
   InstitutionType,
   investigationCases,
   NotificationType,
   restrictionCases,
+  StringType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -28,8 +28,8 @@ import { FileService } from '../../../file'
 import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 import { Case } from '../../models/case.model'
+import { CaseString } from '../../models/caseString.model'
 import { DateLog } from '../../models/dateLog.model'
-import { ExplanatoryComment } from '../../models/explanatoryComment.model'
 
 jest.mock('../../../../factories')
 
@@ -73,7 +73,7 @@ describe('CaseController - Update', () => {
   let transaction: Transaction
   let mockCaseModel: typeof Case
   let mockDateLogModel: typeof DateLog
-  let mockExplanatoryCommentModel: typeof ExplanatoryComment
+  let mockCaseStringModel: typeof CaseString
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -84,7 +84,7 @@ describe('CaseController - Update', () => {
       sequelize,
       caseModel,
       dateLogModel,
-      explanatoryCommentModel,
+      caseStringModel,
       caseController,
     } = await createTestingCaseModule()
 
@@ -93,7 +93,7 @@ describe('CaseController - Update', () => {
     mockFileService = fileService
     mockCaseModel = caseModel
     mockDateLogModel = dateLogModel
-    mockExplanatoryCommentModel = explanatoryCommentModel
+    mockCaseStringModel = caseStringModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -913,11 +913,31 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockExplanatoryCommentModel.create).toHaveBeenCalledWith(
+      expect(mockCaseStringModel.create).toHaveBeenCalledWith(
         {
-          commentType: CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
+          stringType: StringType.POSTPONED_INDEFINITELY_EXPLANATION,
           caseId,
-          comment: postponedIndefinitelyExplanation,
+          value: postponedIndefinitelyExplanation,
+        },
+        { transaction },
+      )
+    })
+  })
+
+  describe('civil demands updated', () => {
+    const civilDemands = uuid()
+    const caseToUpdate = { civilDemands }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should update case', () => {
+      expect(mockCaseStringModel.create).toHaveBeenCalledWith(
+        {
+          stringType: StringType.CIVIL_DEMANDS,
+          caseId,
+          value: civilDemands,
         },
         { transaction },
       )

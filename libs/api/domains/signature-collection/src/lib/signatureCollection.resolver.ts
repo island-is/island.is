@@ -30,6 +30,12 @@ import { CurrentSignee } from './decorators/signee.decorator'
 import { ApiScope } from '@island.is/auth/scopes'
 import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
+import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
+import { SignatureCollectionAddListsInput } from './dto/addLists.input'
+import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
+import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
+import { SignatureCollectionCollector } from './models/collector.model'
+import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/signature-collection' })
@@ -126,6 +132,17 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
+  @Query(() => Boolean)
+  @AccessRequirement(OwnerAccess.AllowActor)
+  @Audit()
+  async signatureCollectionCanSignFromPaper(
+    @Args('input') input: SignatureCollectionCanSignFromPaperInput,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    return await this.signatureCollectionService.canSignFromPaper(user, input)
+  }
+
+  @Scopes(ApiScope.signatureCollection)
   @AccessRequirement(UserAccess.RestrictActor)
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
@@ -145,5 +162,44 @@ export class SignatureCollectionResolver {
     @Args('input') input: SignatureCollectionCancelListsInput,
   ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.cancel(input, user)
+  }
+
+  @Scopes(ApiScope.signatureCollection)
+  @AccessRequirement(OwnerAccess.RestrictActor)
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAddAreas(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionAddListsInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.add(input, user)
+  }
+
+  @Scopes(ApiScope.signatureCollection)
+  @AccessRequirement(OwnerAccess.RestrictActor)
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionUploadPaperSignature(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionUploadPaperSignatureInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.candidacyUploadPaperSignature(
+      input,
+      user,
+    )
+  }
+
+  @Scopes(ApiScope.signatureCollection)
+  @AccessRequirement(OwnerAccess.AllowActor)
+  @Query(() => [SignatureCollectionCollector])
+  @Audit()
+  async signatureCollectionCollectors(
+    @CurrentUser() user: User,
+    @CurrentSignee() signee: SignatureCollectionSignee,
+  ): Promise<SignatureCollectionCollector[]> {
+    return this.signatureCollectionService.collectors(
+      user,
+      signee.candidate?.id,
+    )
   }
 }

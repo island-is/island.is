@@ -6,6 +6,7 @@ import {
   UserAccess,
 } from '../decorators/acessRequirement.decorator'
 import { SignatureCollectionService } from '../signatureCollection.service'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 @Injectable()
 export class UserAccessGuard implements CanActivate {
@@ -34,6 +35,9 @@ export class UserAccessGuard implements CanActivate {
       return false
     }
     const isDelegatedUser = !!user?.actor?.nationalId
+    const isProcurationHolder = user?.delegationType?.some(
+      (delegation) => delegation === AuthDelegationType.ProcurationHolder,
+    )
     // IsOwner needs signee
     const signee = await this.signatureCollectionService.signee(user)
     request.body = { ...request.body, signee }
