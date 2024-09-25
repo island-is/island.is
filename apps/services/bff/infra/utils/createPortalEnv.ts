@@ -1,3 +1,5 @@
+import { DEFAULT_CACHE_USER_PROFILE_TTL_MS } from '../../src/app/constants/time'
+
 type PortalKeys = 'stjornbord' | 'minarsidur'
 
 const defaultEnvUrls = {
@@ -35,5 +37,6 @@ export const createPortalEnv = (key: PortalKeys) => {
       staging: 'https://api.staging01.devland.is',
       prod: 'https://api.island.is',
     },
+    BFF_CACHE_USER_PROFILE_TTL_MS: DEFAULT_CACHE_USER_PROFILE_TTL_MS.toString(),
   }
 }

@@ -25,6 +25,7 @@ import { CallbackLoginQuery } from './queries/callback-login.query'
 import { CallbackLogoutQuery } from './queries/callback-logout.query'
 import { LoginQuery } from './queries/login.query'
 import { LogoutQuery } from './queries/logout.query'
+import { FIVE_SECONDS_IN_MS } from '../../constants/time'
 
 @Injectable()
 export class AuthService {
@@ -99,14 +100,15 @@ export class AuthService {
       scopes: tokenResponse.scope.split(' '),
       userProfile,
       // Subtract 5 seconds from the token expiration time to account for latency.
-      accessTokenExp: Date.now() + (tokenResponse.expires_in * 1000 - 5000),
+      accessTokenExp:
+        Date.now() + (tokenResponse.expires_in * 1000 - FIVE_SECONDS_IN_MS),
     }
 
     // Save the tokenResponse to the cache
     await this.cacheService.save({
       key: this.cacheService.createSessionKeyType('current', userProfile.sid),
       value,
-      ttl: 60 * 60 * 1000, // 1 hour
+      ttl: this.config.cacheUserProfileTTLms,
     })
 
     return value
