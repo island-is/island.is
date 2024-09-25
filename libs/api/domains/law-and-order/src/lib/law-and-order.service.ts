@@ -2,19 +2,27 @@ import { Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import type { Locale } from '@island.is/shared/types'
 import {
+  AlertMessageTypeEnum,
   CasesResponse,
   Defender,
   JudicialSystemSPClientService,
   SubpoenaResponse,
 } from '@island.is/clients/judicial-system-sp'
 import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
-import { DefenseChoices, mapDefenseChoice } from './helpers/mappers'
+import {
+  DefenseChoices,
+  mapDefenseChoice,
+  mapDefenseChoiceForSubpoena,
+  mapTagTypes,
+} from './helpers/mappers'
 import { Item } from '../models/item.model'
 import { Lawyers } from '../models/lawyers.model'
 import { ActionTypeEnum } from '../models/actions.model'
 import { IntlService } from '@island.is/cms-translations'
 import { isDefined } from '@island.is/shared/utils'
-import { DefenseChoiceEnum } from '../models/defenseChoiceEnum.model'
+import { Subpoena } from '../models/subpoena.model'
+import { CourtCase } from '../models/courtCase.model'
+import { CourtCases } from '../models/courtCases.model'
 
 const namespaces = ['api.law-and-order']
 @Injectable()
@@ -29,26 +37,27 @@ export class LawAndOrderService {
       user,
       locale,
     )
-    if (cases === null) return null
 
-    return {
+    const data: CourtCases = {
       cases:
         cases?.map((x: CasesResponse) => {
           return {
             id: x.id,
             caseNumber: x.caseNumber,
             caseNumberTitle: x.caseNumber,
-            state: x.state,
+            state: { label: x.state.label, color: mapTagTypes(x.state.color) },
             type: x.type,
           }
         }) ?? [],
     }
+
+    return data
   }
 
   async getCourtCase(user: User, id: string, locale: Locale) {
     const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
     const singleCase = await this.api.getCase(id, user, locale)
-    const isSubpoenaAcknowledged = singleCase?.data.acknowledged
+    const hasBeenServed = singleCase?.data.hasBeenServed
 
     const subpoenaString = formatMessage({
       id: 'api.law-and-order:subpoena',
@@ -62,36 +71,40 @@ export class LawAndOrderService {
       id: 'api.law-and-order:see-subpoena-in-mailbox',
       defaultMessage: 'Sjá fyrirkall í pósthólfi',
     })
-
-    const subpoenaSentIndex = singleCase?.data.groups[0].items.findIndex(
-      (item) => item.label.includes(subpoenaString),
-    )
-
-    // If the subpoena has not been acknowledged
-    // add an action to the line including "fyrirkall" to redirect to the digital mailbox
-    const subpoenaSentItem: Item | undefined = {
-      action: !isSubpoenaAcknowledged
-        ? {
-            data: '/postholf',
-            title: isSubpoenaAcknowledged
-              ? seeSubpoenaString
-              : seeSubpoenaInMailboxString,
-            type: ActionTypeEnum.file,
-          }
-        : undefined,
+    const mailboxLink = formatMessage({
+      id: 'api.law-and-order:mailbox-link',
+      defaultMessage: '/postholf',
+    })
+    const subpoenaLink = {
+      id: 'api.law-and-order:subpoena-link',
+      defaultMessage: `/log-og-reglur/domsmal/{caseId}/fyrirkall`,
     }
 
-    return {
+    // If the subpoena has not been acknowledged
+    // add an action to the line including "fyrirkall" to redirect to the digital mailbox or detail page
+    const subpoenaSentItem: Item | undefined = {
+      action: {
+        data: hasBeenServed
+          ? formatMessage(subpoenaLink, { caseId: singleCase?.caseId })
+          : mailboxLink,
+        title: hasBeenServed ? seeSubpoenaString : seeSubpoenaInMailboxString,
+        type: hasBeenServed ? ActionTypeEnum.inbox : ActionTypeEnum.url,
+      },
+    }
+
+    const data: CourtCase = {
       data: {
         id: singleCase?.caseId ?? id,
-        acknowledged: isSubpoenaAcknowledged,
-        caseNumber: singleCase?.data.caseNumber,
+        hasBeenServed: hasBeenServed,
         caseNumberTitle: singleCase?.data.caseNumber,
         groups: singleCase?.data.groups.map((group, groupIndex) => {
           return {
-            items: group.items.map((item, itemIndex) => {
+            items: group.items.map((item) => {
               // Adding action to the line including "fyrirkall"
-              if (groupIndex === 0 && itemIndex === subpoenaSentIndex) {
+              if (
+                groupIndex === 0 &&
+                item.label.toLowerCase().includes(subpoenaString.toLowerCase())
+              ) {
                 return { ...item, action: subpoenaSentItem.action }
               }
               return item
@@ -103,6 +116,7 @@ export class LawAndOrderService {
 
       texts: undefined,
     }
+    return data
   }
 
   async getSubpoena(user: User, id: string, locale: Locale) {
@@ -118,18 +132,29 @@ export class LawAndOrderService {
         )
       : ''
 
-    return {
+    const data: Subpoena = {
       data: {
         id: subpoena?.caseId ?? id,
-        acknowledged: subpoena?.data.acknowledged,
+        hasBeenServed: subpoena?.data?.hasBeenServed,
         chosenDefender: [message, subpoena?.defenderInfo?.defenderName]
           .filter(isDefined)
           .join(', '),
-        defenderChoice: subpoena?.defenderInfo?.defenderChoice,
+        defenderChoice: mapDefenseChoiceForSubpoena(
+          subpoena?.defenderInfo?.defenderChoice,
+        ),
+        canEditDefenderChoice: subpoena?.defenderInfo?.canEdit,
         groups: subpoena?.data.groups,
+        courtContactInfo: subpoena?.defenderInfo?.courtContactInfo,
       },
       actions: undefined,
+      texts: {
+        confirmation: subpoena?.data.alerts?.find(
+          (alert) => alert.type === AlertMessageTypeEnum.Success,
+        )?.message,
+        description: subpoena?.data.subtitle,
+      },
     }
+    return data
   }
 
   async getLawyers(user: User, locale: Locale) {

@@ -1,11 +1,9 @@
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import {
   DOMSMALARADUNEYTID_SLUG,
   IntroHeader,
   LinkButton,
-  LinkResolver,
   m,
-  NotFound,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -56,21 +54,18 @@ const CourtCaseDetail = () => {
       <Box marginBottom={3} display="flex" flexWrap="wrap">
         {data?.lawAndOrderCourtCaseDetail && !loading && (
           <Box paddingRight={2} marginBottom={[1]}>
-            {/* TODO: Uncomment when ready in service */}
-            {/* {courtCase?.data?.acknowledged && ( */}
-
-            <LinkButton
-              to={LawAndOrderPaths.SubpoenaDetail.replace(
-                ':id',
-                id?.toString() || '',
-              )}
-              text={formatMessage(messages.seeSubpoena)}
-              icon="receipt"
-              variant="utility"
-              size="default"
-            />
-
-            {/* )} */}
+            {courtCase?.data?.hasBeenServed && (
+              <LinkButton
+                to={LawAndOrderPaths.SubpoenaDetail.replace(
+                  ':id',
+                  id?.toString() || '',
+                )}
+                text={formatMessage(messages.seeSubpoena)}
+                icon="receipt"
+                variant="utility"
+                size="default"
+              />
+            )}
           </Box>
         )}
       </Box>

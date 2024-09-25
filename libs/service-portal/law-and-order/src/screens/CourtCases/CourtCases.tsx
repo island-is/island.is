@@ -1,4 +1,4 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, TagVariant } from '@island.is/island-ui/core'
 import {
   ActionCard,
   CardLoader,
@@ -26,7 +26,6 @@ const CourtCases = () => {
 
   const cases = data?.lawAndOrderCourtCasesList?.cases
 
-  console.log('cases', data?.lawAndOrderCourtCasesList)
   useEffect(() => {
     refetch()
   }, [lang])
@@ -58,7 +57,7 @@ const CourtCases = () => {
               text={x.type ?? ''}
               tag={{
                 label: x.state?.label ?? '',
-                variant: 'blue',
+                variant: (x.state?.color as unknown as TagVariant) ?? 'blue',
                 outlined: false,
               }}
               cta={{
@@ -72,7 +71,7 @@ const CourtCases = () => {
             />
           </Box>
         ))}
-      {!loading && !error && !cases && (
+      {!loading && !error && cases?.length === 0 && (
         <Problem
           type="no_data"
           noBorder={false}

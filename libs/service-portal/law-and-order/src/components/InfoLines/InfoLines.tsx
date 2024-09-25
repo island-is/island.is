@@ -38,7 +38,9 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     loading={props.loading}
                     label={y.label ?? ''}
                     content={y.value ?? ''}
-                    labelColumnSpan={['1/1', '6/12']}
+                    labelColumnSpan={['1/1', '5/12']}
+                    valueColumnSpan={['1/1', '4/12']}
+                    buttonColumnSpan={['3/12']}
                     renderContent={() =>
                       y.link ? (
                         <Link

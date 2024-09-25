@@ -361,13 +361,37 @@
         "properties": { "version": { "type": "string" } },
         "required": ["version"]
       },
+      "StateTag": {
+        "type": "object",
+        "properties": {
+          "color": {
+            "type": "string",
+            "enum": [
+              "blue",
+              "darkerBlue",
+              "purple",
+              "white",
+              "red",
+              "rose",
+              "blueberry",
+              "dark",
+              "mint",
+              "yellow",
+              "disabled",
+              "warn"
+            ]
+          },
+          "label": { "type": "string" }
+        },
+        "required": ["color", "label"]
+      },
       "CasesResponse": {
         "type": "object",
         "properties": {
           "id": { "type": "string" },
           "caseNumber": { "type": "string" },
           "type": { "type": "string" },
-          "state": { "type": "object" }
+          "state": { "$ref": "#/components/schemas/StateTag" }
         },
         "required": ["id", "caseNumber", "type", "state"]
       },
@@ -395,13 +419,13 @@
         "type": "object",
         "properties": {
           "caseNumber": { "type": "string" },
-          "acknowledged": { "type": "boolean" },
+          "hasBeenServed": { "type": "boolean" },
           "groups": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/Groups" }
           }
         },
-        "required": ["caseNumber", "acknowledged", "groups"]
+        "required": ["caseNumber", "hasBeenServed", "groups"]
       },
       "CaseResponse": {
         "type": "object",
@@ -411,17 +435,33 @@
         },
         "required": ["caseId", "data"]
       },
+      "AlertMessage": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["error", "info", "success", "warning", "default"]
+          },
+          "message": { "type": "string" }
+        },
+        "required": ["type", "message"]
+      },
       "SubpoenaData": {
         "type": "object",
         "properties": {
           "title": { "type": "string" },
-          "acknowledged": { "type": "boolean" },
+          "subtitle": { "type": "string" },
           "groups": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/Groups" }
-          }
+          },
+          "alerts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AlertMessage" }
+          },
+          "hasBeenServed": { "type": "boolean" }
         },
-        "required": ["title", "acknowledged", "groups"]
+        "required": ["title", "subtitle", "groups", "alerts", "hasBeenServed"]
       },
       "DefenderInfo": {
         "type": "object",
@@ -430,9 +470,16 @@
             "type": "string",
             "enum": ["WAIVE", "CHOOSE", "DELAY", "DELEGATE"]
           },
-          "defenderName": { "type": "string" }
+          "defenderName": { "type": "string" },
+          "canEdit": { "type": "boolean" },
+          "courtContactInfo": { "type": "string" }
         },
-        "required": ["defenderChoice", "defenderName"]
+        "required": [
+          "defenderChoice",
+          "defenderName",
+          "canEdit",
+          "courtContactInfo"
+        ]
       },
       "SubpoenaResponse": {
         "type": "object",

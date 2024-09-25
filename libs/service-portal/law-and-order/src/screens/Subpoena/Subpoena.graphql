@@ -5,6 +5,8 @@ query GetSubpoena($input: LawAndOrderSubpoenaInput!, $locale: String!) {
       hasBeenServed
       chosenDefender
       defenderChoice
+      canEditDefenderChoice
+      courtContactInfo
       groups {
         label
         items {
@@ -17,6 +19,10 @@ query GetSubpoena($input: LawAndOrderSubpoenaInput!, $locale: String!) {
         type
         message
       }
+    }
+    texts {
+      confirmation
+      description
     }
   }
 }

@@ -37,6 +37,12 @@ export class Data {
   @Field({ nullable: true })
   chosenDefender?: string
 
+  @Field(() => Boolean, { nullable: true })
+  canEditDefenderChoice?: boolean
+
+  @Field({ nullable: true })
+  courtContactInfo?: string
+
   @Field(() => DefenseChoiceEnum, { nullable: true })
   defenderChoice?: DefenseChoiceEnum
 

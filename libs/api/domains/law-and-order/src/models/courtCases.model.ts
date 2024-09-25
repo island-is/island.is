@@ -1,12 +1,31 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { registerEnumType } from '@nestjs/graphql'
+
+export enum CourtCaseStateTagColorEnum {
+  blue = 'blue',
+  darkerBlue = 'darkerBlue',
+  purple = 'purple',
+  white = 'white',
+  red = 'red',
+  rose = 'rose',
+  blueberry = 'blueberry',
+  dark = 'dark',
+  mint = 'mint',
+  yellow = 'yellow',
+  disabled = 'disabled',
+  warn = 'warn',
+}
+registerEnumType(CourtCaseStateTagColorEnum, {
+  name: 'LawAndOrderCourtCaseStateTagColorEnum',
+})
 
 @ObjectType('LawAndOrderCourtCasesState')
 export class State {
   @Field({ nullable: true })
   label?: string
 
-  @Field({ nullable: true })
-  color?: string
+  @Field(() => CourtCaseStateTagColorEnum, { nullable: true })
+  color?: CourtCaseStateTagColorEnum
 }
 
 @ObjectType('LawAndOrderCourtCasesCase')

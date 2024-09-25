@@ -3,9 +3,6 @@ import {
   Box,
   Button,
   Divider,
-  GridColumn,
-  GridContainer,
-  GridRow,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -15,12 +12,11 @@ import {
   LinkResolver,
   m,
   Modal,
-  UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { isDefined } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
-import { useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { useState } from 'react'
 import InfoLines from '../../components/InfoLines/InfoLines'
 import DefenderChoices from '../../components/DefenderChoices/DefenderChoices'
@@ -49,35 +45,36 @@ const Subpoena = () => {
   const subpoena = data?.lawAndOrderSubpoena
   const [defenderPopUp, setDefenderPopUp] = useState<boolean>(false)
 
-  // TODO - Uncomment when the feature is ready
-  // if (
-  //   subpoena?.data &&
-  //   (!isDefined(subpoena.data.acknowledged) ||
-  //     subpoena.data.acknowledged === false)
-  // ) {
-  //   return <Navigate to={LawAndOrderPaths.CourtCaseDetail.replace(':id', id)} />
-  // }
+  if (
+    subpoena?.data &&
+    (!isDefined(subpoena.data.hasBeenServed) ||
+      subpoena.data.hasBeenServed === false)
+  ) {
+    return <Navigate to={LawAndOrderPaths.CourtCaseDetail.replace(':id', id)} />
+  }
 
   return (
     <>
       <IntroHeader
         loading={loading}
         title={formatMessage(messages.subpoena)}
+        intro={subpoena?.texts?.description ?? ''}
         serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
         serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+        children={
+          !loading &&
+          subpoena?.texts?.confirmation && (
+            <Box marginTop={4}>
+              <AlertMessage
+                type="success"
+                message={subpoena.texts.confirmation}
+              />
+            </Box>
+          )
+        }
       />
-      {!loading && subpoena?.data?.alerts && (
-        <GridContainer>
-          <GridRow>
-            {subpoena.data.alerts.map((alert, index) => (
-              <GridColumn span="10/12" key={`alert-message-${index}`}>
-                <AlertMessage type="success" message={alert.message} />
-              </GridColumn>
-            ))}
-          </GridRow>
-        </GridContainer>
-      )}
-      <Box marginBottom={3} display="flex" flexWrap="wrap">
+
+      <Box marginTop={3} display="flex" flexWrap="wrap">
         {!loading && subpoena?.data && (
           <Box paddingRight={2} marginBottom={[1]}>
             <LinkResolver
@@ -114,17 +111,20 @@ const Subpoena = () => {
                 loading={loading}
                 label={messages.chooseDefenderTitle}
                 content={subpoena.data.chosenDefender ?? ''}
-                labelColumnSpan={['1/1', '6/12']}
-                valueColumnSpan={['1/1', '4/12']}
-                buttonColumnSpan={['2/12']}
                 button={{
                   type: 'action',
                   variant: 'text',
                   label: messages.change,
-                  icon: 'pencil',
+                  icon: subpoena.data.canEditDefenderChoice
+                    ? 'pencil'
+                    : undefined,
                   action: () => {
                     setDefenderPopUp(true)
                   },
+                  disabled: !subpoena.data.canEditDefenderChoice,
+                  tooltip: subpoena.data.canEditDefenderChoice
+                    ? undefined
+                    : subpoena.data.courtContactInfo ?? '',
                 }}
               />
               <Box paddingBottom={1} />
@@ -157,7 +157,7 @@ const Subpoena = () => {
           )}
         </>
       )}
-      {!loading && !error && data?.lawAndOrderSubpoena === null && (
+      {!loading && !error && subpoena?.data?.groups?.length === 0 && (
         <Problem
           type="no_data"
           noBorder={false}
