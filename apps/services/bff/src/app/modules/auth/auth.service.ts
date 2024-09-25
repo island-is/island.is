@@ -2,7 +2,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import { CookieOptions, Response } from 'express'
+import { CookieOptions, Request, Response } from 'express'
 import { jwtDecode } from 'jwt-decode'
 
 import { IdTokenClaims } from '@island.is/shared/types'
@@ -10,6 +10,7 @@ import { uuid } from 'uuidv4'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
+import { FIVE_SECONDS_IN_MS } from '../../constants/time'
 import { CryptoService } from '../../services/crypto.service'
 import {
   CreateErrorQueryStrArgs,
@@ -25,7 +26,6 @@ import { CallbackLoginQuery } from './queries/callback-login.query'
 import { CallbackLogoutQuery } from './queries/callback-logout.query'
 import { LoginQuery } from './queries/login.query'
 import { LogoutQuery } from './queries/logout.query'
-import { FIVE_SECONDS_IN_MS } from '../../constants/time'
 
 @Injectable()
 export class AuthService {
@@ -205,7 +205,15 @@ export class AuthService {
    * We then save the tokens as well as decoded id token to the cache and create a session cookie.
    * Finally, we redirect the user back to the original URL.
    */
-  async callbackLogin(res: Response, query: CallbackLoginQuery) {
+  async callbackLogin({
+    req,
+    res,
+    query,
+  }: {
+    req: Request
+    res: Response
+    query: CallbackLoginQuery
+  }) {
     const idsError = query.invalid_request
 
     // IDS might respond with an error if the request is missing a required parameter.
@@ -250,6 +258,16 @@ export class AuthService {
       await this.cacheService.delete(
         this.cacheService.createSessionKeyType('attempt', query.state),
       )
+
+      // Check if there is an old session cookie
+      const oldSessionCookie = req.cookies[SESSION_COOKIE_NAME]
+
+      if (oldSessionCookie) {
+        // Clean up the old session from the cache
+        await this.cacheService.delete(
+          this.cacheService.createSessionKeyType('current', oldSessionCookie),
+        )
+      }
 
       // Create session cookie with successful login session id
       res.cookie(

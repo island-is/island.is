@@ -31,11 +31,12 @@ export class AuthController {
 
   @Get('callbacks/login')
   async callbackLogin(
+    @Req() req: Request,
     @Res() res: Response,
     @Query(qsValidationPipe)
     query: CallbackLoginQuery,
   ): Promise<void> {
-    return this.authService.callbackLogin(res, query)
+    return this.authService.callbackLogin({ req, res, query })
   }
 
   @Get('logout')
