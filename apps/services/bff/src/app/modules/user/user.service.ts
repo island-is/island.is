@@ -9,6 +9,7 @@ import { AuthService } from '../auth/auth.service'
 import { CachedTokenResponse } from '../auth/auth.types'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
+import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 
 @Injectable()
 export class UserService {
@@ -29,7 +30,7 @@ export class UserService {
   }
 
   public async getUser(req: Request): Promise<BffUser> {
-    const sid = req.cookies['sid']
+    const sid = req.cookies[SESSION_COOKIE_NAME]
 
     if (!sid) {
       throw new UnauthorizedException()

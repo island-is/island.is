@@ -2,7 +2,7 @@ import { defineConfig } from '@island.is/nest/config'
 
 import { z } from 'zod'
 import { isProduction } from '../environment'
-import { removeTrailingSlash } from '../utils/removeTrailingSlash'
+import { removeTrailingSlash } from './utils/removeTrailingSlash'
 
 export const idsSchema = z.strictObject({
   issuer: z.string(),

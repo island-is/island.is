@@ -2,7 +2,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import { Response } from 'express'
+import { CookieOptions, Response } from 'express'
 import { jwtDecode } from 'jwt-decode'
 
 import { IdTokenClaims } from '@island.is/shared/types'
@@ -10,6 +10,7 @@ import omit from 'lodash/omit'
 import { uuid } from 'uuidv4'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
+import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 import { CryptoService } from '../../services/crypto.service'
 import {
   CreateErrorQueryStrArgs,
@@ -43,6 +44,16 @@ export class AuthService {
     private readonly cryptoService: CryptoService,
   ) {
     this.baseUrl = this.config.ids.issuer
+  }
+
+  private getCookieOptions(): CookieOptions {
+    return {
+      httpOnly: true,
+      secure: true,
+      // 'strict' (Maximum Security) The cookie will only be sent for requests originating from the same site (same domain and subdomain).
+      sameSite: 'strict',
+      path: environment.keyPath,
+    }
   }
 
   /**
@@ -244,11 +255,11 @@ export class AuthService {
       )
 
       // Create session cookie with successful login session id
-      res.cookie('sid', value.userProfile.sid, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
-      })
+      res.cookie(
+        SESSION_COOKIE_NAME,
+        value.userProfile.sid,
+        this.getCookieOptions(),
+      )
 
       return res.redirect(
         loginAttemptData.targetLinkUri || loginAttemptData.originUrl,
@@ -311,7 +322,7 @@ export class AuthService {
     await this.cacheService.delete(currentLoginCacheKey)
 
     // Delete session cookie
-    res.clearCookie('sid')
+    res.clearCookie(SESSION_COOKIE_NAME, this.getCookieOptions())
 
     return res.redirect(this.config.logoutRedirectUri)
   }
