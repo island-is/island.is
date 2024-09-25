@@ -31,6 +31,7 @@ import { DelegationValidity } from '../types/delegationValidity'
 import {
   DOMAIN_NAME_EN,
   DOMAIN_NAME_IS,
+  NEW_DELEGATION_FROM_TEMPLATE_ID,
   NEW_DELEGATION_TEMPLATE_ID,
 } from '../constants/hnipp'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -62,46 +63,67 @@ export class DelegationAdminCustomService {
     user,
     delegation,
     fromName,
+    toName,
   }: {
     user: User
     delegation: Delegation
     fromName: string
+    toName: string
   }) {
+    const allowDelegationNotification = await this.featureFlagService.getValue(
+      Features.isDelegationNotificationEnabled,
+      false,
+      user,
+    )
+
+    if (!allowDelegationNotification) {
+      return
+    }
+
     try {
-      const allowDelegationNotification =
-        await this.featureFlagService.getValue(
-          Features.isDelegationNotificationEnabled,
-          false,
-          user,
-        )
-
-      if (!allowDelegationNotification) {
-        return
-      }
-
-      const args = [
-        { key: 'name', value: fromName },
-        {
-          key: 'domainNameIs',
-          value: DOMAIN_NAME_IS,
-        },
-        {
-          key: 'domainNameEn',
-          value: DOMAIN_NAME_EN,
-        },
-      ]
       // Notify toNationalId of new delegation
       await this.notificationsApi.notificationsControllerCreateHnippNotification(
         {
           createHnippNotificationDto: {
-            args,
+            args: [
+              { key: 'name', value: fromName },
+              {
+                key: 'domainNameIs',
+                value: DOMAIN_NAME_IS,
+              },
+              {
+                key: 'domainNameEn',
+                value: DOMAIN_NAME_EN,
+              },
+            ],
             recipient: delegation.toNationalId,
             templateId: NEW_DELEGATION_TEMPLATE_ID,
           },
         },
       )
     } catch (e) {
-      this.logger.error(`Failed to send delegation notification`, e)
+      this.logger.error(
+        `Failed to send delegation notification to delegation representative`,
+        e,
+      )
+    }
+
+    try {
+      // Notify fromNationalId of new delegation
+      await this.notificationsApi.notificationsControllerCreateHnippNotification(
+        {
+          createHnippNotificationDto: {
+            args: [{ key: 'name', value: toName }],
+            recipient: delegation.fromNationalId,
+            templateId: NEW_DELEGATION_FROM_TEMPLATE_ID,
+          },
+        },
+      )
+    } catch (e) {
+      this.logger.error(
+        `Failed to send delegation notification to delegation provider`,
+        e,
+      )
     }
   }
 
@@ -267,6 +289,7 @@ export class DelegationAdminCustomService {
       user,
       delegation: newDelegation,
       fromName: fromDisplayName,
+      toName,
     })
 
     return newDelegation.toDTO(AuthDelegationType.GeneralMandate)
