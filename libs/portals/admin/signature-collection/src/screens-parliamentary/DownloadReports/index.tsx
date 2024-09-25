@@ -33,9 +33,7 @@ export const DownloadReports = ({
         onClose={() => setModalDownloadReportsIsOpen(false)}
         closeButtonLabel={''}
       >
-        <Text>
-          {formatMessage(m.downloadReportsDescription)}
-        </Text>
+        <Text>{formatMessage(m.downloadReportsDescription)}</Text>
         <Box marginTop={5}>
           <Stack space={3}>
             {areas.map((area) => (

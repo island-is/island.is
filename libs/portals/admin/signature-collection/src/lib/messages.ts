@@ -274,7 +274,8 @@ export const m = defineMessages({
   },
   downloadReportsDescription: {
     id: 'admin-portal.signature-collection:downloadReportsDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus nec odio ultricies ultricies. Nullam nec purus nec odio ultricies ultricies.',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus nec odio ultricies ultricies. Nullam nec purus nec odio ultricies ultricies.',
     description: '',
   },
   downloadButton: {
