@@ -20,10 +20,11 @@ import { NotificationType } from '@island.is/judicial-system-web/src/graphql/sch
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
+import SelectCivilClaimantAdvocate from './SelectCivilClaimantAdvocate'
 import SelectDefender from './SelectDefender'
-import { defender as m } from './Defender.strings'
+import { strings } from './Advocates.strings'
 
-const HearingArrangements = () => {
+const Advocates = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const router = useRouter()
@@ -39,6 +40,7 @@ const HearingArrangements = () => {
   )
 
   const stepIsValid = !isSendingNotification && isDefenderStepValid(workingCase)
+  const hasCivilClaimants = (workingCase.civilClaimants?.length ?? 0) > 0
 
   return (
     <PageLayout
@@ -50,23 +52,36 @@ const HearingArrangements = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.defender)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.title)}</PageTitle>
+        <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <AlertMessage
-            message={formatMessage(m.alertBannerText)}
+            message={formatMessage(strings.alertBannerText)}
             type="info"
           />
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={hasCivilClaimants ? 5 : 10}>
           <SectionHeading
-            title={formatMessage(m.selectDefenderHeading)}
+            title={formatMessage(strings.selectDefenderHeading)}
             required
           />
           {workingCase.defendants?.map((defendant, index) => (
             <SelectDefender defendant={defendant} key={index} />
           ))}
         </Box>
+        {hasCivilClaimants && (
+          <Box component="section" marginBottom={10}>
+            <SectionHeading title={formatMessage(strings.civilClaimants)} />
+            {workingCase.civilClaimants?.map((civilClaimant, index) => (
+              <Box component="section" marginBottom={5}>
+                <SelectCivilClaimantAdvocate
+                  civilClaimant={civilClaimant}
+                  key={index}
+                />
+              </Box>
+            ))}
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
@@ -85,4 +100,4 @@ const HearingArrangements = () => {
   )
 }
 
-export default HearingArrangements
+export default Advocates
