@@ -71,7 +71,7 @@ export const ReasonForApplication = ({
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={formatMessage(
-                  newPrimarySchoolMessages.shared.postalcode,
+                  newPrimarySchoolMessages.shared.postalCode,
                 )}
                 value={reasonForApplicationPostalCode}
               />
