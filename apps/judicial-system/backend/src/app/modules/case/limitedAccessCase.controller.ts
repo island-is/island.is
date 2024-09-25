@@ -71,7 +71,6 @@ export class LimitedAccessCaseController {
     private readonly limitedAccessCaseService: LimitedAccessCaseService,
     private readonly eventService: EventService,
     private readonly pdfService: PdfService,
-
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 

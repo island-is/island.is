@@ -33,6 +33,7 @@ interface BoxProps {
   vinNumber?: string
   outInStatus: number
   useStatus: string
+  reloadFlag: boolean // To force reload of the component to make sure the data in the parent is correct
 }
 
 export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({

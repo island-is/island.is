@@ -5,6 +5,7 @@ import {
   DelegationAdminCustomDto,
 } from '@island.is/clients/auth/admin-api'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { CreateDelegationInput } from './dto/createDelegation.input'
 
 @Injectable()
 export class DelegationAdminService {
@@ -38,5 +39,18 @@ export class DelegationAdminService {
     } catch {
       return false
     }
+  }
+
+  async createDelegationAdmin(user: User, input: CreateDelegationInput) {
+    // Mock response
+    return Promise.resolve({
+      id: 'some-id',
+      fromNationalId: '0101302399',
+      toNationalId: '0101302399',
+      scopes: [],
+      validTo: null,
+      type: 'Custom',
+      provider: 'delegationdb',
+    })
   }
 }

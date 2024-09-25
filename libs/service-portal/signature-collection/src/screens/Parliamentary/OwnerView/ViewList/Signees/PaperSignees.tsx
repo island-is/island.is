@@ -44,6 +44,7 @@ export const PaperSignees = ({
   })
   const { canSign, loadingCanSign } = useGetCanSign(
     nationalIdInput,
+    listId,
     nationalId.isValid(nationalIdInput),
   )
 
