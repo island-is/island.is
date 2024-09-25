@@ -21,16 +21,10 @@ export class UserService {
     private readonly authService: AuthService,
   ) {}
 
-  private formatUserResponse(value: CachedTokenResponse): BffUser {
+  private mapToBffUser(value: CachedTokenResponse): BffUser {
     return {
-      scope: value.scope,
       scopes: value.scopes,
-      profile: {
-        ...value.userProfile,
-        ...(value.userProfile.birthdate && {
-          dateOfBirth: new Date(value.userProfile.birthdate),
-        }),
-      },
+      profile: value.userProfile,
     }
   }
 
@@ -58,10 +52,10 @@ export class UserService {
         const value: CachedTokenResponse =
           await this.authService.updateTokenCache(tokenResponse)
 
-        return this.formatUserResponse(value)
+        return this.mapToBffUser(value)
       }
 
-      return this.formatUserResponse(cachedTokenResponse)
+      return this.mapToBffUser(cachedTokenResponse)
     } catch (error) {
       this.logger.error('Get user error: ', error)
 

@@ -19,10 +19,6 @@ export interface IdTokenClaims {
 }
 
 export type BffUser = {
-  // User scope unparsed here for backwards compatibility
-  scope: string
   scopes: string[]
-  profile: IdTokenClaims & {
-    dateOfBirth?: Date
-  }
+  profile: IdTokenClaims
 }

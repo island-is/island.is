@@ -19,13 +19,11 @@ export const mapToBffUser = (input: User): BffUser => {
       delegationType,
       locale,
     },
-    scope,
     scopes,
   } = input
 
   // Return a mapped BffUser object
   return {
-    scope: scope || '',
     scopes: scopes || [],
     profile: {
       sid: sid || '',
@@ -36,7 +34,6 @@ export const mapToBffUser = (input: User): BffUser => {
       actor,
       subjectType,
       delegationType,
-      dateOfBirth: birthdate ? new Date(birthdate) : undefined,
       locale,
     },
   }
