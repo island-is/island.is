@@ -159,7 +159,7 @@ export const GetCurrentCollection = gql`
 `
 
 export const GetCanSign = gql`
-  query Query($input: SignatureCollectionCanSignInput!) {
-    signatureCollectionCanSign(input: $input)
+  query Query($input: SignatureCollectionCanSignFromPaperInput!) {
+    signatureCollectionCanSignFromPaper(input: $input)
   }
 `
