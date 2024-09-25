@@ -24,7 +24,7 @@ import {
 } from './VehicleBulkMileageJobDetail.generated'
 import { VehiclesBulkMileageRegistrationRequestOverview } from '@island.is/service-portal/graphql'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { isDefined } from '@island.is/shared/utils'
 import { vehicleMessage } from '../../lib/messages'
 
@@ -151,7 +151,6 @@ const VehicleBulkMileageUploadJobDetail = () => {
           </Button>
         </Box>
       </IntroHeader>
-      {error && <Problem error={error} />}
       {!error && !loading && !jobsStatus && (
         <Problem
           type="no_data"

@@ -15,7 +15,10 @@ import {
   SAMGONGUSTOFA_SLUG,
   m,
 } from '@island.is/service-portal/core'
-import { parseCsvToMileageRecord } from '../../utils/parseCsvToMileage'
+import {
+  MileageRecord,
+  parseCsvToMileageRecord,
+} from '../../utils/parseCsvToMileage'
 import { Problem } from '@island.is/react-spa/shared'
 import { AssetsPaths } from '../../lib/paths'
 import { useVehicleBulkMileagePostMutation } from './VehicleBulkMileageUpload.generated'
@@ -43,14 +46,13 @@ const VehicleBulkMileageUpload = () => {
     }
   }, [data?.vehicleBulkMileagePost?.requestId])
 
-  useEffect(() => {
-    if (uploadedFile) {
-      postMileage(uploadedFile)
-    }
-  }, [uploadedFile])
-
   const postMileage = async (file: File) => {
     const records = await parseCsvToMileageRecord(file)
+    console.log(records)
+    if (!records.length) {
+      setUploadErrorMessage('Engin gild kílómetrastaða fannst í skjali')
+      return
+    }
     vehicleBulkMileagePostMutation({
       variables: {
         input: {
@@ -72,7 +74,7 @@ const VehicleBulkMileageUpload = () => {
   const handleOnInputFileUploadChange = (files: File[]) => {
     const file = fileToObject(files[0])
     if (file.status === 'done' && file.originalFileObj instanceof File) {
-      setUploadedFile(file.originalFileObj)
+      postMileage(file.originalFileObj)
     }
   }
   return (
@@ -89,7 +91,7 @@ const VehicleBulkMileageUpload = () => {
       </IntroHeader>
 
       <Stack space={2}>
-        {error && <Problem error={error} />}
+        {error && <Problem error={error} noBorder={false} />}
         {data?.vehicleBulkMileagePost?.errorMessage && !loading && !error && (
           <AlertMessage
             type="warning"

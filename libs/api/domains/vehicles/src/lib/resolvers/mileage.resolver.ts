@@ -66,45 +66,6 @@ export class VehiclesMileageResolver {
     return this.vehiclesService.getVehicleMileage(user, input)
   }
 
-  @Query(() => VehiclesBulkMileageRegistrationJobHistory, {
-    name: 'vehicleBulkMileageRegistrationJobHistory',
-    nullable: true,
-  })
-  @Audit()
-  getVehicleMileageRegistrationJobHistory(@CurrentUser() user: User) {
-    return this.bulkService.getBulkMileageRegistrationJobHistory(user)
-  }
-
-  @Query(() => VehiclesBulkMileageRegistrationRequestStatus, {
-    name: 'vehicleBulkMileageRegistrationRequestStatus',
-    nullable: true,
-  })
-  @Audit()
-  getVehicleMileageRegistrationRequestStatus(
-    @CurrentUser() user: User,
-    @Args('input') input: BulkVehicleMileageRequestStatusInput,
-  ) {
-    return this.bulkService.getBulkMileageRegistrationRequestStatus(
-      user,
-      input.requestId,
-    )
-  }
-
-  @Query(() => VehiclesBulkMileageRegistrationRequestOverview, {
-    name: 'vehicleBulkMileageRegistrationRequestOverview',
-    nullable: true,
-  })
-  @Audit()
-  getVehicleMileageRegistrationRequestOverview(
-    @CurrentUser() user: User,
-    @Args('input') input: BulkVehicleMileageRequestOverviewInput,
-  ) {
-    return this.bulkService.getBulkMileageRegistrationRequestOverview(
-      user,
-      input.guid,
-    )
-  }
-
   @Mutation(() => VehicleMileageDetail, {
     name: 'vehicleMileagePost',
     nullable: true,
@@ -141,18 +102,6 @@ export class VehiclesMileageResolver {
     if (!res) return undefined
 
     return mileageDetailConstructor(res[0])
-  }
-
-  @Mutation(() => VehiclesBulkMileageReadingResponse, {
-    name: 'vehicleBulkMileagePost',
-    nullable: true,
-  })
-  @Audit()
-  async postBulkMileageReading(
-    @Args('input') input: PostVehicleBulkMileageInput,
-    @CurrentUser() user: User,
-  ) {
-    return this.bulkService.postBulkMileageReading(user, input)
   }
 
   @ResolveField('canRegisterMileage', () => Boolean, {

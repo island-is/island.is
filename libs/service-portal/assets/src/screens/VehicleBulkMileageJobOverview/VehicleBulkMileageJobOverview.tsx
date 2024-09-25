@@ -4,17 +4,55 @@ import {
   IntroHeader,
   SAMGONGUSTOFA_SLUG,
   m,
-  formatDate,
   LinkButton,
   EmptyTable,
+  formatDateWithTime,
 } from '@island.is/service-portal/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetRequestsStatusQuery } from './VehicleBulkMileageJobOverview.generated'
 import { VehiclesBulkMileageRegistrationJob } from '@island.is/api/schema'
 import { AssetsPaths } from '../../lib/paths'
 import { vehicleMessage } from '../../lib/messages'
+import compareDesc from 'date-fns/compareDesc'
 
-const DATE_FORMAT = 'dd.MM.yyyy - HH:mm'
+const sortDate = (dateOne?: Date, dateTwo?: Date) => {
+  if (!dateOne && !dateTwo) {
+    return 0
+  } else if (!dateOne) {
+    return -1
+  } else if (!dateTwo) {
+    return 1
+  }
+  const l = compareDesc(dateOne, dateTwo)
+  return l
+}
+
+const sortJobs = (
+  jobOne: VehiclesBulkMileageRegistrationJob,
+  jobTwo: VehiclesBulkMileageRegistrationJob,
+) => {
+  let sortedValue: number = 0
+  sortedValue = sortDate(
+    jobOne.dateFinished ? new Date(jobOne.dateFinished) : undefined,
+    jobTwo.dateFinished ? new Date(jobTwo.dateFinished) : undefined,
+  )
+
+  if (sortedValue === 0) {
+    sortedValue = sortDate(
+      jobOne.dateStarted ? new Date(jobOne.dateStarted) : undefined,
+      jobTwo.dateStarted ? new Date(jobTwo.dateStarted) : undefined,
+    )
+  }
+
+  if (sortedValue === 0) {
+    sortedValue = sortDate(
+      jobOne.dateRequested ? new Date(jobOne.dateRequested) : undefined,
+      jobTwo.dateRequested ? new Date(jobTwo.dateRequested) : undefined,
+    )
+  }
+
+  return sortedValue
+}
 
 const VehicleBulkMileageUploadJobOverview = () => {
   useNamespaces('sp.vehicles')
@@ -25,6 +63,8 @@ const VehicleBulkMileageUploadJobOverview = () => {
   const jobs: Array<VehiclesBulkMileageRegistrationJob> =
     data?.vehicleBulkMileageRegistrationJobHistory?.history ?? []
 
+  const sortedJobs = jobs.length > 1 ? [...jobs] : []
+  sortedJobs.sort((a, b) => sortJobs(a, b))
   return (
     <Box>
       <IntroHeader
@@ -51,16 +91,14 @@ const VehicleBulkMileageUploadJobOverview = () => {
             </T.Row>
           </T.Head>
           <T.Body>
-            {jobs.map((j) => (
+            {sortedJobs.map((j) => (
               <T.Row>
                 <T.Data>
-                  {j.dateRequested
-                    ? formatDate(j.dateRequested, DATE_FORMAT)
-                    : '-'}
+                  {j.dateRequested ? formatDateWithTime(j.dateRequested) : '-'}
                 </T.Data>
                 <T.Data>
                   {j.dateStarted ? (
-                    formatDate(j.dateStarted, DATE_FORMAT)
+                    formatDateWithTime(j.dateStarted)
                   ) : j.dateRequested ? (
                     <Tag outlined whiteBackground variant="blue">
                       {formatMessage(vehicleMessage.jobNotStarted)}
@@ -71,7 +109,7 @@ const VehicleBulkMileageUploadJobOverview = () => {
                 </T.Data>
                 <T.Data>
                   {j.dateFinished ? (
-                    formatDate(j.dateFinished, DATE_FORMAT)
+                    formatDateWithTime(j.dateFinished)
                   ) : j.dateStarted ? (
                     <Tag outlined whiteBackground variant="blue">
                       {formatMessage(vehicleMessage.jobInProgress)}

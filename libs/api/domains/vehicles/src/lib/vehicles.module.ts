@@ -10,12 +10,14 @@ import { VehiclesSharedResolver } from './resolvers/shared.resolver'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { BulkMileageService } from './services/bulkMileage.service'
 import { VehiclesV3Resolver } from './resolvers/vehicleV3.resolver'
+import { VehiclesBulkMileageResolver } from './resolvers/bulkMileage.resolver'
 
 @Module({
   providers: [
     VehiclesResolver,
     VehiclesSharedResolver,
     VehiclesMileageResolver,
+    VehiclesBulkMileageResolver,
     VehiclesV3Resolver,
     VehiclesService,
     BulkMileageService,

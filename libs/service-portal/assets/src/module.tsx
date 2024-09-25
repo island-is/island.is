@@ -6,69 +6,75 @@ import { AssetsPaths } from './lib/paths'
 import { translationLoader } from './screens/Translation.loader'
 import { Navigate } from 'react-router-dom'
 
-const IPOverview = lazy(() =>
-  import(
-    './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
-  ),
+const IPOverview = lazy(
+  () =>
+    import(
+      './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
+    ),
 )
-const IPDesignDetail = lazy(() =>
-  import(
-    './screens/IntellectualPropertiesDesignDetail/IntellectualPropertiesDesignDetail'
-  ),
+const IPDesignDetail = lazy(
+  () =>
+    import(
+      './screens/IntellectualPropertiesDesignDetail/IntellectualPropertiesDesignDetail'
+    ),
 )
-const IPTrademarkDetail = lazy(() =>
-  import(
-    './screens/IntellectualPropertiesTrademarkDetail/IntellectualPropertiesTrademarkDetail'
-  ),
+const IPTrademarkDetail = lazy(
+  () =>
+    import(
+      './screens/IntellectualPropertiesTrademarkDetail/IntellectualPropertiesTrademarkDetail'
+    ),
 )
-const IPPatentDetail = lazy(() =>
-  import(
-    './screens/IntellectualPropertiesPatentDetail/IntellectualPropertiesPatentDetail'
-  ),
+const IPPatentDetail = lazy(
+  () =>
+    import(
+      './screens/IntellectualPropertiesPatentDetail/IntellectualPropertiesPatentDetail'
+    ),
 )
 
-const AssetsOverview = lazy(() =>
-  import('./screens/AssetsOverview/AssetsOverview'),
+const AssetsOverview = lazy(
+  () => import('./screens/AssetsOverview/AssetsOverview'),
 )
-const RealEstateAssetDetail = lazy(() =>
-  import('./screens/RealEstateAssetDetail/RealEstateAssetDetail'),
+const RealEstateAssetDetail = lazy(
+  () => import('./screens/RealEstateAssetDetail/RealEstateAssetDetail'),
 )
 
 const Overview = lazy(() => import('./screens/Overview/Overview'))
 
-const VehicleDetail = lazy(() =>
-  import('./screens/VehicleDetail/VehicleDetail'),
+const VehicleDetail = lazy(
+  () => import('./screens/VehicleDetail/VehicleDetail'),
 )
-const VehicleHistory = lazy(() =>
-  import('./screens/VehicleHistory/VehicleHistory'),
+const VehicleHistory = lazy(
+  () => import('./screens/VehicleHistory/VehicleHistory'),
 )
 const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
-const WorkMachinesOverview = lazy(() =>
-  import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
+const WorkMachinesOverview = lazy(
+  () => import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
 )
-const WorkMachinesDetail = lazy(() =>
-  import('./screens/WorkMachinesDetail/WorkMachinesDetail'),
-)
-
-const VehicleMileage = lazy(() =>
-  import('./screens/VehicleMileage/VehicleMileage'),
+const WorkMachinesDetail = lazy(
+  () => import('./screens/WorkMachinesDetail/WorkMachinesDetail'),
 )
 
-const VehicleBulkMileage = lazy(() =>
-  import('./screens/VehicleBulkMileage/VehicleBulkMileage'),
+const VehicleMileage = lazy(
+  () => import('./screens/VehicleMileage/VehicleMileage'),
 )
 
-const VehicleBulkMileageUpload = lazy(() =>
-  import('./screens/VehicleBulkMileageUpload/VehicleBulkMileageUpload'),
+const VehicleBulkMileage = lazy(
+  () => import('./screens/VehicleBulkMileage/VehicleBulkMileage'),
 )
 
-const VehicleBulkMileageJobOverview = lazy(() =>
-  import(
-    './screens/VehicleBulkMileageJobOverview/VehicleBulkMileageJobOverview'
-  ),
+const VehicleBulkMileageUpload = lazy(
+  () => import('./screens/VehicleBulkMileageUpload/VehicleBulkMileageUpload'),
 )
-const VehicleBulkMileageJobDetail = lazy(() =>
-  import('./screens/VehicleBulkMileageJobDetail/VehicleBulkMileageJobDetail'),
+
+const VehicleBulkMileageJobOverview = lazy(
+  () =>
+    import(
+      './screens/VehicleBulkMileageJobOverview/VehicleBulkMileageJobOverview'
+    ),
+)
+const VehicleBulkMileageJobDetail = lazy(
+  () =>
+    import('./screens/VehicleBulkMileageJobDetail/VehicleBulkMileageJobDetail'),
 )
 
 export const assetsModule: PortalModule = {
@@ -149,28 +155,28 @@ export const assetsModule: PortalModule = {
         name: m.vehiclesBulkMileage,
         path: AssetsPaths.AssetsVehiclesBulkMileage,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        // key: 'VehicleBulkMileage',
+        key: 'VehicleBulkMileage',
         element: <VehicleBulkMileage />,
       },
       {
         name: m.vehiclesBulkMileageUpload,
         path: AssetsPaths.AssetsVehiclesBulkMileageUpload,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        // key: 'VehicleBulkMileage',
+        key: 'VehicleBulkMileage',
         element: <VehicleBulkMileageUpload />,
       },
       {
         name: m.vehiclesBulkMileageJobOverview,
         path: AssetsPaths.AssetsVehiclesBulkMileageJobOverview,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        // key: 'VehicleBulkMileage',
+        key: 'VehicleBulkMileage',
         element: <VehicleBulkMileageJobOverview />,
       },
       {
         name: m.vehiclesBulkMileageJobDetail,
         path: AssetsPaths.AssetsVehiclesBulkMileageJobDetail,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        // key: 'VehicleBulkMileage',
+        key: 'VehicleBulkMileage',
         element: <VehicleBulkMileageJobDetail />,
       },
       {
