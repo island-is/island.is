@@ -195,8 +195,11 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionCollectors(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionCandidateIdInput,
+    @CurrentSignee() signee: SignatureCollectionSignee,
   ): Promise<SignatureCollectionCollector[]> {
-    return this.signatureCollectionService.collectors(user, input)
+    return this.signatureCollectionService.collectors(
+      user,
+      signee.candidate?.id,
+    )
   }
 }

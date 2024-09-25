@@ -166,11 +166,14 @@ export class SignatureCollectionService {
 
   async collectors(
     user: User,
-    input: SignatureCollectionCandidateIdInput,
+    candidateId: string | undefined,
   ): Promise<SignatureCollectionCollector[]> {
+    if (!candidateId) {
+      return []
+    }
     return await this.signatureCollectionClientService.getCollectors(
       user,
-      input,
+      candidateId,
     )
   }
 }

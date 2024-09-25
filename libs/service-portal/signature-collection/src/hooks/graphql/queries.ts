@@ -163,3 +163,12 @@ export const GetCanSign = gql`
     signatureCollectionCanSignFromPaper(input: $input)
   }
 `
+
+export const GetCollectors = gql`
+  query SignatureCollectionCollectors {
+    signatureCollectionCollectors {
+      nationalId
+      name
+    }
+  }
+`

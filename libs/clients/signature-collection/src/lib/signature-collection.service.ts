@@ -527,7 +527,7 @@ export class SignatureCollectionClientService {
 
   async getCollectors(
     auth: User,
-    { candidateId }: { candidateId: string },
+    candidateId: string,
   ): Promise<{ name: string; nationalId: string }[]> {
     const candidate = await this.getApiWithAuth(
       this.candidateApi,
