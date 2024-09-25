@@ -142,7 +142,7 @@ export class AuthService {
 
     try {
       // Generate a unique session id to be used in the login flow
-      const sid = uuid()
+      const loginId = uuid()
 
       // Generate a code verifier and code challenge to enhance security
       const codeVerifier = await this.pkceService.generateCodeVerifier()
@@ -151,7 +151,7 @@ export class AuthService {
       )
 
       await this.cacheService.save({
-        key: this.cacheService.createSessionKeyType('attempt', sid),
+        key: this.cacheService.createSessionKeyType('attempt', loginId),
         value: {
           // Fallback if targetLinkUri is not provided
           originUrl: this.createClientBaseUrl(),
@@ -168,7 +168,7 @@ export class AuthService {
 
       if (this.config.parSupportEnabled) {
         const parResponse = await this.idsService.getPar({
-          sid,
+          sid: loginId,
           codeChallenge,
           loginHint,
           prompt,
@@ -181,7 +181,7 @@ export class AuthService {
       } else {
         searchParams = new URLSearchParams(
           this.idsService.getLoginSearchParams({
-            sid,
+            sid: loginId,
             codeChallenge,
             loginHint,
             prompt,
