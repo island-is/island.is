@@ -322,6 +322,7 @@ export class CmsContentfulService {
       ['content_type']: 'organization',
       include: 10,
       'fields.slug': slug,
+      limit: 1,
     }
 
     const result = await this.contentfulRepository
