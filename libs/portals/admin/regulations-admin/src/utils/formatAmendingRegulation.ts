@@ -1,45 +1,24 @@
 import { asDiv, HTMLText } from '@island.is/regulations'
 import { GroupedDraftImpactForms, RegDraftForm } from '../state/types'
 import format from 'date-fns/format'
-import isSameDay from 'date-fns/isSameDay'
 import is from 'date-fns/locale/is'
 import compact from 'lodash/compact'
 import flatten from 'lodash/flatten'
 import uniq from 'lodash/uniq'
-import { groupElementsByArticleTitleFromDiv } from './groupByArticleTitle'
+import {
+  allSameDay,
+  extractArticleTitleDisplay,
+  getTextWithSpaces,
+  groupElementsByArticleTitleFromDiv,
+  isGildisTaka,
+  removeRegPrefix,
+} from './formatAmendingUtils'
 import { getDeletionOrAddition } from './getDeletionOrAddition'
-
-export type AdditionObject = {
-  formattedRegBody: HTMLText[]
-  date: Date | undefined
-}
 
 // ----------------------------------------------------------------------
 const PREFIX = 'Reglugerð um '
 const PREFIX_AMENDING = 'breytingu á reglugerð nr. '
 const PREFIX_REPEALING = 'brottfellingu á reglugerð nr. '
-
-const removeRegPrefix = (title: string) => {
-  if (/^Reglugerð/.test(title)) {
-    return title.replace(/^Reglugerð/, '')
-  }
-  return title
-}
-
-const isGildisTaka = (str: string) => {
-  return /(öðlast|tekur).*gildi|sett.*með.*(?:heimild|stoð)/.test(
-    (str || '').toLowerCase(),
-  )
-}
-
-const allSameDay = (objects: AdditionObject[]): boolean => {
-  const validObjects = objects.filter((obj) => obj.date !== undefined)
-
-  if (validObjects.length === 0) return true
-  const firstDate = validObjects[0].date!
-
-  return validObjects.every((obj) => isSameDay(obj.date!, firstDate))
-}
 
 const formatAffectedAndPlaceAffectedAtEnd = (
   groups: {
@@ -251,13 +230,8 @@ export const formatAmendingRegBody = (
       if (element.classList.contains('article__title')) {
         const clone = element.cloneNode(true)
 
-        if (clone instanceof Element) {
-          const textContent = clone.textContent?.trim() ?? ''
-
-          articleTitle = textContent
-        } else {
-          articleTitle = element.innerText
-        }
+        const textContent = getTextWithSpaces(clone)
+        articleTitle = extractArticleTitleDisplay(textContent)
         testGroup.title = articleTitle
         isArticleTitle = true
         paragraph = 0 // Reset paragraph count for the new article
@@ -399,12 +373,8 @@ export const formatAmendingRegBody = (
     if (testGroup.isDeletion === true) {
       const articleTitleNumber = testGroup.title
 
-      const grMatch = articleTitleNumber.match(
-        /^\d+\. gr\.(?: [a-zA-Z])?(?= |$)/,
-      )
-      const articleTitleDisplay = grMatch ? grMatch[0] : articleTitleNumber
       additionArray.push([
-        `<p>${articleTitleDisplay} ${regNameDisplay} fellur brott.</p>` as HTMLText,
+        `<p>${articleTitleNumber} ${regNameDisplay} fellur brott.</p>` as HTMLText,
       ])
     } else if (testGroup.isAddition === true) {
       let prevArticleTitle = ''
@@ -417,9 +387,8 @@ export const formatAmendingRegBody = (
         ? flatten(testGroup.original)
         : []
 
-      const prevArticleTitleNumber = prevArticleTitle.match(
-        /^\d+\. gr\.(?: [a-zA-Z])?(?= |$)/,
-      )
+      const prevArticleTitleNumber =
+        extractArticleTitleDisplay(prevArticleTitle)
 
       let articleDisplayText = ''
 
