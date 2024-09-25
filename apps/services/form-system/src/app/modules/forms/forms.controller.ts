@@ -1,4 +1,3 @@
-import { Documentation } from '@island.is/nest/swagger'
 import {
   Body,
   Controller,
@@ -7,6 +6,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
@@ -20,6 +20,7 @@ import {
 import { FormsService } from './forms.service'
 import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
+import { UpdateFormDto } from './models/dto/updateForm.dto'
 
 @ApiTags('forms')
 @Controller({ path: 'forms', version: ['1', VERSION_NEUTRAL] })
@@ -68,6 +69,21 @@ export class FormsController {
     }
 
     return formResponse
+  }
+
+  @ApiOperation({ summary: 'Update form' })
+  @ApiCreatedResponse({
+    description: 'Update form',
+  })
+  @ApiBody({ type: UpdateFormDto })
+  @ApiParam({ name: 'id', type: String })
+  @Put(':id')
+  async updateForm(
+    @Param('id') id: string,
+    @Body() updateFormDto: UpdateFormDto,
+  ): Promise<void> {
+    console.log('updateFormDto', updateFormDto)
+    return this.formsService.update(id, updateFormDto)
   }
 
   @ApiOperation({ summary: 'Delete form' })
