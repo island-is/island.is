@@ -28,6 +28,12 @@ import csvStringify from 'csv-stringify/lib/sync'
 
 import { AwsService } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
+import * as path from 'path';
+// import { fromSSO } from '@aws-sdk/credential-provider-sso';
+// import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3 } from 'aws-sdk';
+import { FileService } from '@island.is/application/api/files';
+
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -35,6 +41,7 @@ interface CreateInput extends EndorsementListDto {
 
 @Injectable()
 export class EndorsementListService {
+  s3: S3;
   constructor(
     @InjectModel(Endorsement)
     private endorsementModel: typeof Endorsement,
@@ -46,6 +53,10 @@ export class EndorsementListService {
     private emailService: EmailService,
     private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
     private readonly awsService: AwsService,
+    private readonly fileService: FileService,  // Add FileService here
+
+    this.s3 = new S3(); // Initialize S3 client from aws-sdk
+
   ) {}
 
   hasAdminScope(user: User): boolean {
@@ -279,109 +290,179 @@ export class EndorsementListService {
   }
 
   async getOwnerInfo(listId: string, owner?: string) {
-    this.logger.info(`Finding single endorsement lists by id "${listId}"`)
-    if (!owner) {
-      const endorsementList = await this.endorsementListModel.findOne({
-        where: {
-          id: listId,
-        },
-      })
-      if (!endorsementList) {
-        this.logger.warn('This endorsement list does not exist.')
-        throw new NotFoundException(['This endorsement list does not exist.'])
-      }
-      owner = endorsementList.owner
-    }
 
-    try {
-      const person = await this.nationalRegistryApiV3.getName(owner)
-      return person?.fulltNafn ? person.fulltNafn : ''
-    } catch (e) {
-      if (e instanceof Error) {
-        this.logger.warn(
-          `Occured when fetching owner name from NationalRegistryApi ${e.message} \n${e.stack}`,
-        )
-        return ''
-      } else {
-        throw e
-      }
-    }
+    return "SomeName" // REMOVE ME .....................................................
+    // this.logger.info(`Finding single endorsement lists by id "${listId}"`)
+    // if (!owner) {
+    //   const endorsementList = await this.endorsementListModel.findOne({
+    //     where: {
+    //       id: listId,
+    //     },
+    //   })
+    //   if (!endorsementList) {
+    //     this.logger.warn('This endorsement list does not exist.')
+    //     throw new NotFoundException(['This endorsement list does not exist.'])
+    //   }
+    //   owner = endorsementList.owner
+    // }
+
+    // try {
+    //   const person = await this.nationalRegistryApiV3.getName(owner)
+    //   return person?.fulltNafn ? person.fulltNafn : ''
+    // } catch (e) {
+    //   if (e instanceof Error) {
+    //     this.logger.warn(
+    //       `Occured when fetching owner name from NationalRegistryApi ${e.message} \n${e.stack}`,
+    //     )
+    //     return ''
+    //   } else {
+    //     throw e
+    //   }
+    // }
   }
 
-  async createDocumentBuffer(endorsementList: any, ownerName: string) {
-    // build pdf
-    const doc = new PDFDocument()
-    const locale = 'is-IS'
-    const big = 16
-    const regular = 8
-    const fontRegular = 'Helvetica'
-    const fontBold = 'Helvetica-Bold'
+  // async createDocumentBuffer(endorsementList: any, ownerName: string) {
+  //   // build pdf
+  //   const doc = new PDFDocument()
+  //   const locale = 'is-IS'
+  //   const big = 16
+  //   const regular = 8
+  //   const fontRegular = 'Helvetica'
+  //   const fontBold = 'Helvetica-Bold'
 
-    doc
-      .fontSize(big)
-      .text('Upplýsingar um meðmælendalista')
-      .moveDown()
+  //   doc
+  //     .fontSize(big)
+  //     .text('Upplýsingar um meðmælendalista')
+  //     .moveDown()
 
-      .fontSize(regular)
-      .font(fontBold)
-      .text('Heiti meðmælendalista: ')
-      .font(fontRegular)
-      .text(endorsementList.title)
-      .moveDown()
+  //     .fontSize(regular)
+  //     .font(fontBold)
+  //     .text('Heiti meðmælendalista: ')
+  //     .font(fontRegular)
+  //     .text(endorsementList.title)
+  //     .moveDown()
 
-      .font(fontBold)
-      .text('Um meðmælendalista: ')
-      .font(fontRegular)
-      .text(endorsementList.description)
-      .moveDown()
+  //     .font(fontBold)
+  //     .text('Um meðmælendalista: ')
+  //     .font(fontRegular)
+  //     .text(endorsementList.description)
+  //     .moveDown()
 
-      .font(fontBold)
-      .text('Ábyrgðarmaður: ')
-      .font(fontRegular)
-      .text(ownerName)
-      .moveDown()
+  //     .font(fontBold)
+  //     .text('Ábyrgðarmaður: ')
+  //     .font(fontRegular)
+  //     .text(ownerName)
+  //     .moveDown()
 
-      .font(fontBold)
-      .text('Gildistímabil lista: ')
-      .font(fontRegular)
-      .text(
-        endorsementList.openedDate.toLocaleDateString(locale) +
-          ' - ' +
-          endorsementList.closedDate.toLocaleDateString(locale),
-      )
-      .moveDown()
+  //     .font(fontBold)
+  //     .text('Gildistímabil lista: ')
+  //     .font(fontRegular)
+  //     .text(
+  //       endorsementList.openedDate.toLocaleDateString(locale) +
+  //         ' - ' +
+  //         endorsementList.closedDate.toLocaleDateString(locale),
+  //     )
+  //     .moveDown()
 
-      .font(fontBold)
-      .text('Fjöldi skráðir: ')
-      .font(fontRegular)
-      .text(endorsementList.endorsements.length)
-      .moveDown(2)
+  //     .font(fontBold)
+  //     .text('Fjöldi skráðir: ')
+  //     .font(fontRegular)
+  //     .text(endorsementList.endorsements.length)
+  //     .moveDown(2)
 
-    if (endorsementList.endorsements.length) {
-      doc.fontSize(big).text('Yfirlit meðmæla').fontSize(regular).moveDown()
-      for (const val of endorsementList.endorsements) {
-        doc.text(
-          val.created.toLocaleDateString(locale) +
-            ' ' +
-            (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint') +
-            ' ' +
-            (val.meta.locality ? val.meta.locality : 'Sveitafélag ótilgreint'),
-        )
-      }
-    }
-    doc
-      .moveDown()
+  //   if (endorsementList.endorsements.length) {
+  //     doc.fontSize(big).text('Yfirlit meðmæla').fontSize(regular).moveDown()
+  //     for (const val of endorsementList.endorsements) {
+  //       doc.text(
+  //         val.created.toLocaleDateString(locale) +
+  //           ' ' +
+  //           (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint') +
+  //           ' ' +
+  //           (val.meta.locality ? val.meta.locality : 'Sveitafélag ótilgreint'),
+  //       )
+  //     }
+  //   }
+  //   doc
+  //     .moveDown()
 
-      .fontSize(regular)
-      .text(
-        'Þetta skjal var framkallað sjálfvirkt þann: ' +
-          new Date().toLocaleDateString(locale) +
-          ' klukkan ' +
-          new Date().toLocaleTimeString(locale),
-      )
-    doc.end()
-    return await getStream.buffer(doc)
-  }
+  //     .fontSize(regular)
+  //     .text(
+  //       'Þetta skjal var framkallað sjálfvirkt þann: ' +
+  //         new Date().toLocaleDateString(locale) +
+  //         ' klukkan ' +
+  //         new Date().toLocaleTimeString(locale),
+  //     )
+  //   doc.end()
+  //   return await getStream.buffer(doc)
+  // }
+
+  async createDocumentBuffer(endorsementList: any, ownerName: string): Promise<Buffer> {
+    console.log('Current working directory:', process.cwd()); // Log the CWD to verify
+    const doc = new PDFDocument({ margin: 60 });
+    const locale = 'is-IS';
+    const buffers: Buffer[] = [];
+    doc.on('data', buffers.push.bind(buffers));
+    doc.on('end', () => console.log('PDF generation complete'));
+
+    // Use process.cwd() to reference the assets relative to the project root
+    const regularFontPath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-regular.ttf');
+    const boldFontPath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-600.ttf');
+    const headerImagePath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/thjodskra.png');
+    const footerImagePath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/island.png');
+
+    // Register fonts with absolute paths
+    doc.registerFont('Regular', regularFontPath);
+    doc.registerFont('Bold', boldFontPath);
+
+    // Add header image
+    doc.image(headerImagePath, 60, 40, { width: 120 });
+
+    // Title and petition details
+    doc.font('Bold').fontSize(24).text('Upplýsingar um undirskriftalista', { align: 'left' }).moveDown();
+    doc.font('Bold').fontSize(14).text('Heiti undirskriftalista: ', { continued: true });
+    doc.font('Regular').text(endorsementList.title, { align: 'left' }).moveDown();
+
+    doc.font('Bold').fontSize(14).text('Um undirskriftalista: ', { continued: true });
+    doc.font('Regular').text(endorsementList.description, { align: 'left' }).moveDown();
+
+    // Petition details
+    doc.font('Bold').text('Ábyrgðarmaður: ', { continued: true });
+    doc.font('Regular').text(ownerName, { align: 'left' });
+
+    doc.font('Bold').text('Fjöldi skráðir: ', { continued: true });
+    doc.font('Regular').text(endorsementList.endorsements.length.toString(), { align: 'left' }).moveDown();
+
+    // Add endorsement signatures table
+    doc.moveDown().font('Bold').fontSize(12);
+    const dateX = 60;
+    const nameX = 160;
+    const localityX = 360;
+
+    doc.text('Dags. skráð', dateX, doc.y, { width: 100 });
+    doc.text('Nafn', nameX, doc.y, { width: 200 });
+    doc.text('Sveitarfélag', localityX, doc.y, { width: 200 });
+
+    endorsementList.endorsements.forEach((endorsement: Endorsement) => { // Assuming Endorsement is typed
+        if (doc.y > doc.page.height - 100) {
+            doc.addPage();
+            doc.text('Dags. skráð', dateX, doc.y, { width: 100 });
+            doc.text('Nafn', nameX, doc.y, { width: 200 });
+            doc.text('Sveitarfélag', localityX, doc.y, { width: 200 });
+        }
+        doc.moveDown();
+        const y = doc.y;
+        doc.font('Regular').fontSize(10);
+        doc.text(endorsement.created.toLocaleDateString(locale), dateX, y, { width: 100 });
+        doc.text(endorsement.meta.fullName || 'Nafn ótilgreint', nameX, y, { width: 200 });
+        doc.text(endorsement.meta.locality || 'Sveitafélag ótilgreint', localityX, y, { width: 200 });
+    });
+
+    // Add footer image
+    doc.image(footerImagePath, 60, doc.page.height - 80, { width: 120 });
+
+    doc.end();
+    return await getStream.buffer(doc);
+}
 
   async emailPDF(
     listId: string,
@@ -743,23 +824,80 @@ export class EndorsementListService {
     }
   }
 
+  // private async uploadFileToS3(
+  //   fileBuffer: Buffer,
+  //   filename: string,
+  //   fileType: 'pdf' | 'csv',
+  // ): Promise<void> {
+  //   try {
+  //     await this.awsService.uploadFile(
+  //       fileBuffer,
+  //       environment.exportsBucketName,
+  //       filename,
+  //       {
+  //         ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
+  //       },
+  //     )
+  //   } catch (error) {
+  //     this.logger.error(`Failed to upload file to S3`, { error, filename })
+  //     throw new Error('Error uploading file to S3')
+  //   }
+  // }
+  // private async uploadFileToS3(
+  //   fileBuffer: Buffer,
+  //   filename: string,
+  //   fileType: 'pdf' | 'csv',
+  // ): Promise<void> {
+  //   try {
+  //     // Use fromSSO to obtain credentials from AWS SSO
+  //     const ssoCredentials = fromSSO({
+  //       ssoStartUrl: 'https://island-is.awsapps.com/start', // SSO start URL from your config
+  //       ssoRegion: 'eu-west-1', // Your SSO region
+  //       ssoAccountId: '013313053092', // Your account ID
+  //       ssoRoleName: 'AWSPowerUserAccess', // Your role name
+  //     });
+  
+  //     // Setup S3 client with SSO credentials
+  //     const s3Client = new S3Client({
+  //       region: 'eu-west-1',
+  //       credentials: ssoCredentials,
+  //     });
+  
+  //     const uploadParams = {
+  //       Bucket: environment.exportsBucketName,
+  //       Key: filename,
+  //       Body: fileBuffer,
+  //       ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
+  //     };
+  
+  //     await s3Client.send(new PutObjectCommand(uploadParams));
+  //     this.logger.info(`File uploaded successfully to S3: ${filename}`);
+  //   } catch (error) {
+  //     this.logger.error(`Failed to upload file to S3`, { error, filename });
+  //     throw new Error('Error uploading file to S3');
+  //   }
+  // }
   private async uploadFileToS3(
     fileBuffer: Buffer,
-    filename: string,
+    fileName: string,
     fileType: 'pdf' | 'csv',
   ): Promise<void> {
     try {
-      await this.awsService.uploadFile(
-        fileBuffer,
-        environment.exportsBucketName,
-        filename,
-        {
-          ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
-        },
-      )
+      const uploadParams = {
+        Bucket: environment.exportsBucketName, // Replace with your S3 bucket name
+        Key: fileName, // File name to be saved in S3
+        Body: fileBuffer, // File buffer
+        ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv', // MIME type
+      };
+  
+      // Use the aws-sdk's S3 client to upload the file
+      await this.s3.putObject(uploadParams).promise();
+  
+      this.logger.info(`File uploaded successfully to S3: ${filename}`);
     } catch (error) {
-      this.logger.error(`Failed to upload file to S3`, { error, filename })
-      throw new Error('Error uploading file to S3')
+      this.logger.error(`Failed to upload file to S3`, { error, filename });
+      throw new Error('Error uploading file to S3');
     }
   }
+  
 }
