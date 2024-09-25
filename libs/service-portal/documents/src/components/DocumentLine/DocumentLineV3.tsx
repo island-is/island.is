@@ -2,10 +2,14 @@ import cn from 'classnames'
 import format from 'date-fns/format'
 import { FC, useEffect, useRef, useState } from 'react'
 
-import { DocumentV2, DocumentV2Content } from '@island.is/api/schema'
+import {
+  DocumentV2,
+  DocumentV2Actions,
+  DocumentV2Content,
+} from '@island.is/api/schema'
 import { Box, Text, LoadingDots, Icon, toast } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
-import { m } from '@island.is/service-portal/core'
+import { ConfirmationModal, m } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../utils/messages'
@@ -17,12 +21,13 @@ import {
   useLocation,
 } from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
-import { FavAndStash } from '../FavAndStash'
+import { FavAndStash } from '../FavAndStash/FavAndStash'
 import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
-import { useGetDocumentInboxLineV2LazyQuery } from '../../screens/Overview/Overview.generated'
+import { useGetDocumentInboxLineV3LazyQuery } from '../../screens/Overview/Overview.generated'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
-import { useDocumentList } from '../../hooks/useDocumentList'
+import { useDocumentList } from '../../hooks/useDocumentListV3'
 import { useMailAction } from '../../hooks/useMailActionV2'
+import UrgentTag from '../UrgentTag/UrgentTag'
 
 interface Props {
   documentLine: DocumentV2
@@ -35,7 +40,7 @@ interface Props {
   bookmarked?: boolean
 }
 
-export const DocumentLine: FC<Props> = ({
+export const DocumentLineV3: FC<Props> = ({
   documentLine,
   img,
   setSelectLine,
@@ -47,14 +52,20 @@ export const DocumentLine: FC<Props> = ({
 }) => {
   const [hasFocusOrHover, setHasFocusOrHover] = useState(false)
   const [hasAvatarFocus, setHasAvatarFocus] = useState(false)
-  const { formatMessage } = useLocale()
+  const [modalData, setModalData] = useState<{
+    title: string
+    text: string
+  } | null>(null)
+  const [isModalVisible, setModalVisible] = useState(false)
+
+  const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const location = useLocation()
   const date = format(new Date(documentLine.publicationDate), dateFormat.is)
   const { id } = useParams<{
     id: string
   }>()
-
+  const isUrgent = documentLine.isUrgent
   const {
     submitMailAction,
     loading: postLoading,
@@ -71,6 +82,10 @@ export const DocumentLine: FC<Props> = ({
     localRead,
   } = useDocumentContext()
 
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible)
+  }
+
   const wrapperRef = useRef(null)
   const avatarRef = useRef(null)
 
@@ -85,7 +100,10 @@ export const DocumentLine: FC<Props> = ({
     setHasAvatarFocus(isAvatarFocused)
   }, [isAvatarFocused])
 
-  const displayPdf = (content?: DocumentV2Content) => {
+  const displayPdf = (
+    content?: DocumentV2Content,
+    actions?: Array<DocumentV2Actions>,
+  ) => {
     setActiveDocument({
       document: {
         type: content?.type,
@@ -99,6 +117,7 @@ export const DocumentLine: FC<Props> = ({
       date: date,
       img,
       categoryId: documentLine.categoryId ?? undefined,
+      actions: actions,
     })
     window.scrollTo({
       top: 0,
@@ -107,12 +126,13 @@ export const DocumentLine: FC<Props> = ({
   }
 
   const [getDocument, { loading: fileLoading }] =
-    useGetDocumentInboxLineV2LazyQuery({
+    useGetDocumentInboxLineV3LazyQuery({
       variables: {
         input: {
           id: documentLine.id,
           provider: documentLine.sender?.name ?? 'unknown',
         },
+        locale: lang,
       },
       fetchPolicy: 'no-cache',
       onCompleted: (data) => {
@@ -125,8 +145,9 @@ export const DocumentLine: FC<Props> = ({
           )
         } else {
           const docContent = data?.documentV2?.content
+          const actions = data?.documentV2?.actions ?? undefined
           if (docContent) {
-            displayPdf(docContent)
+            displayPdf(docContent, actions)
             setDocumentDisplayError(undefined)
             setLocalRead([...localRead, documentLine.id])
           } else {
@@ -146,9 +167,48 @@ export const DocumentLine: FC<Props> = ({
       },
     })
 
+  const [getDocumentMetadata, { loading: metadataLoading }] =
+    useGetDocumentInboxLineV3LazyQuery({
+      variables: {
+        input: {
+          id: documentLine.id,
+          provider: documentLine.sender?.name ?? 'unknown',
+          includeDocument: false,
+        },
+      },
+      fetchPolicy: 'no-cache',
+      onCompleted: (data) => {
+        const actions = data?.documentV2?.actions ?? []
+
+        const dataIndex = actions?.findIndex((x) => x.type === 'confirmation')
+        setDocumentDisplayError(undefined)
+        if (dataIndex && dataIndex > 0) {
+          setModalData({
+            title: actions[dataIndex].title ?? '',
+            text: actions[dataIndex].data ?? '',
+          })
+          setModalVisible(true)
+        } else {
+          getDocument()
+        }
+      },
+      onError: () => {
+        setDocumentDisplayError(
+          formatMessage(messages.documentFetchError, {
+            senderName: documentLine.sender?.name ?? '',
+          }),
+        )
+      },
+    })
+
   useEffect(() => {
     if (id === documentLine.id) {
-      getDocument()
+      // If the document is marked as urgent, the user needs to acknowledge the document before opening it.
+      if (isUrgent && !asFrame) {
+        getDocumentMetadata()
+      } else {
+        getDocument()
+      }
     }
   }, [id, documentLine, getDocument])
 
@@ -156,6 +216,10 @@ export const DocumentLine: FC<Props> = ({
     setDocLoading(fileLoading)
   }, [fileLoading, setDocLoading])
 
+  // If document is marked as urgent, the user needs to acknowledge the document before opening it
+  // This is done by calling "getDocument" with "includeDocument=false" and receive the metadata about the document
+  // This metadata includes actions array that should include an action with type 'confirmation' (also title and data),
+  // which will be used to display a confirmation modal to the user
   const onLineClick = async () => {
     const pathName = location.pathname
     const match = matchPath(
@@ -167,7 +231,11 @@ export const DocumentLine: FC<Props> = ({
     if (match?.params?.id && match?.params?.id !== documentLine?.id) {
       navigate(DocumentsPaths.ElectronicDocumentsRoot, { replace: true })
     }
-    getDocument()
+    if (isUrgent && !asFrame) {
+      getDocumentMetadata()
+    } else {
+      getDocument()
+    }
   }
 
   const unread = !documentLine.opened && !localRead.includes(documentLine.id)
@@ -182,24 +250,25 @@ export const DocumentLine: FC<Props> = ({
         borderBottomWidth="standard"
         borderTopWidth={includeTopBorder ? 'standard' : undefined}
         paddingX={2}
+        paddingTop="p2"
+        paddingBottom={isUrgent ? 'p1' : 'p2'}
         width="full"
         className={cn(styles.docline, {
           [styles.active]: active,
           [styles.unread]: unread,
         })}
       >
-        <div ref={avatarRef}>
+        <div ref={avatarRef} className={styles.avatar}>
           <AvatarImage
             img={img}
             onClick={(e) => {
               e.stopPropagation()
-              if (documentLine.id && setSelectLine) {
+              if (documentLine.id && setSelectLine && !isUrgent) {
                 setSelectLine(documentLine.id)
               }
             }}
-            as={asFrame ? 'div' : 'button'}
             avatar={
-              (hasAvatarFocus || selected) && !asFrame ? (
+              (hasAvatarFocus || selected) && !asFrame && !isUrgent ? (
                 <Box
                   display="flex"
                   alignItems="center"
@@ -213,7 +282,7 @@ export const DocumentLine: FC<Props> = ({
               ) : undefined
             }
             background={
-              hasAvatarFocus
+              hasAvatarFocus && !isUrgent
                 ? asFrame
                   ? 'white'
                   : 'blue200'
@@ -232,10 +301,10 @@ export const DocumentLine: FC<Props> = ({
         >
           {active && <div className={styles.fakeBorder} />}
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <Text variant="small" truncate>
+            <Text variant="medium" truncate>
               {documentLine.sender?.name ?? ''}
             </Text>
-            <Text variant="small">{date}</Text>
+            <Text variant="medium">{date}</Text>
           </Box>
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
             <button
@@ -255,36 +324,59 @@ export const DocumentLine: FC<Props> = ({
                 {documentLine.subject}
               </Text>
             </button>
-            {(hasFocusOrHover || isBookmarked) &&
-              !postLoading &&
-              !fileLoading &&
-              !asFrame && (
-                <FavAndStash
-                  bookmarked={isBookmarked}
-                  onFav={
-                    isBookmarked || hasFocusOrHover
-                      ? async (e) => {
-                          e.stopPropagation()
-                          await submitMailAction(
-                            isBookmarked ? 'unbookmark' : 'bookmark',
-                            documentLine.id,
-                          )
-                          refetch(fetchObject)
-                        }
-                      : undefined
-                  }
-                />
+
+            <Box display="flex" alignItems="center">
+              {(postLoading || fileLoading || metadataLoading) && (
+                <Box display="flex" alignItems="center">
+                  <LoadingDots single />
+                </Box>
               )}
-            {(postLoading || fileLoading) && (
-              <Box display="flex" alignItems="center">
-                <LoadingDots single />
-              </Box>
-            )}
+              {(hasFocusOrHover || isBookmarked) &&
+                !postLoading &&
+                !fileLoading &&
+                !asFrame && (
+                  <FavAndStash
+                    bookmarked={isBookmarked}
+                    onFav={
+                      isBookmarked || hasFocusOrHover
+                        ? async (e) => {
+                            e.stopPropagation()
+                            await submitMailAction(
+                              isBookmarked ? 'unbookmark' : 'bookmark',
+                              documentLine.id,
+                            )
+                            refetch(fetchObject)
+                          }
+                        : undefined
+                    }
+                  />
+                )}
+              {isUrgent && <UrgentTag />}
+            </Box>
           </Box>
         </Box>
       </Box>
+      {isModalVisible && (
+        <ConfirmationModal
+          onSubmit={() => {
+            setModalVisible(false)
+            getDocument()
+          }}
+          onCancel={() => setModalVisible(false)}
+          onClose={toggleModal}
+          loading={false}
+          modalTitle={modalData?.title || formatMessage(m.acknowledgeTitle)}
+          modalText={
+            modalData?.text ||
+            formatMessage(m.acknowledgeText, {
+              arg: documentLine.sender.name,
+            })
+          }
+          redirectPath={''}
+        />
+      )}
     </Box>
   )
 }
 
-export default DocumentLine
+export default DocumentLineV3

@@ -19,6 +19,41 @@ query DocumentsV2($input: DocumentsV2DocumentsInput!) {
         type
         value
       }
+    }
+    totalCount
+    unreadCount
+    categories {
+      id
+      name
+    }
+    senders {
+      id
+      name
+    }
+  }
+}
+
+query DocumentsV3($input: DocumentsV2DocumentsInput!) {
+  documentsV2(input: $input) {
+    data {
+      id
+      name
+      categoryId
+      publicationDate
+      documentDate
+      subject
+      sender {
+        id
+        name
+      }
+      opened
+      bookmarked
+      archived
+      downloadUrl
+      content {
+        type
+        value
+      }
       isUrgent
       alertMessage {
         type
@@ -38,7 +73,7 @@ query DocumentsV2($input: DocumentsV2DocumentsInput!) {
   }
 }
 
-query GetDocumentInboxLineV2($input: DocumentInput!, $locale: String) {
+query GetDocumentInboxLineV3($input: DocumentInput!, $locale: String) {
   documentV2(input: $input, locale: $locale) {
     content {
       type
@@ -49,6 +84,15 @@ query GetDocumentInboxLineV2($input: DocumentInput!, $locale: String) {
       title
       data
       icon
+    }
+  }
+}
+
+query GetDocumentInboxLineV2($input: DocumentInput!) {
+  documentV2(input: $input) {
+    content {
+      type
+      value
     }
   }
 }

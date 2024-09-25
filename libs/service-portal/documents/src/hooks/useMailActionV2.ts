@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { useMailActionV2Mutation } from '../screens/Overview/Overview.generated'
 import { MailActions } from '../utils/types'
-import { useDocumentList } from './useDocumentList'
+import { useDocumentList } from './useDocumentListV3'
 import { messages as docMessages } from '../utils/messages'
 import { useDocumentContext } from '../screens/Overview/DocumentContext'
 

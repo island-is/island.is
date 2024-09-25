@@ -5,7 +5,7 @@ import { Box, Text, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { DocumentRenderer } from '../DocumentRenderer/DocumentRendererV2'
-import { DocumentHeader } from '../DocumentHeader/DocumentHeaderV2'
+import { DocumentHeader } from '../DocumentHeader/DocumentHeaderV3'
 import { DocumentActionBar } from '../../components/DocumentActionBar/DocumentActionBarV2'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import * as styles from './OverviewDisplay.css'
@@ -55,6 +55,7 @@ export const MobileOverview: FC<Props> = ({
                 subject={formatMessage(m.activeDocumentOpenAriaLabel, {
                   subject: activeDocument.subject,
                 })}
+                actions={activeDocument.actions}
               />
               <Text variant="h3" as="h3" marginBottom={3}>
                 {activeDocument?.subject}

@@ -17,24 +17,23 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import debounce from 'lodash/debounce'
 import DocumentsFilter from '../../components/DocumentFilter/DocumentsFilterV2'
-import DocumentLine from '../../components/DocumentLine/DocumentLineV2'
+import DocumentLine from '../../components/DocumentLine/DocumentLineV3'
 import { useKeyDown } from '../../hooks/useKeyDown'
 import { FavAndStash } from '../../components/FavAndStash'
 import { messages } from '../../utils/messages'
-import DocumentDisplay from '../../components/OverviewDisplay/OverviewDocumentDisplayV2'
+import DocumentDisplay from '../../components/OverviewDisplay/OverviewDocumentDisplayV3'
 import { DocumentsPaths } from '../../lib/paths'
 import { useDocumentContext } from './DocumentContext'
 import { useDocumentFilters } from '../../hooks/useDocumentFilters'
-import { pageSize, useDocumentList } from '../../hooks/useDocumentList'
+import { pageSize, useDocumentList } from '../../hooks/useDocumentListV3'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import * as styles from './Overview.css'
 
-export const ServicePortalDocumentsV2 = () => {
+export const ServicePortalDocumentsV3 = () => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const location = useLocation()
-
   const { data: organizations } = useOrganizations()
 
   const {
@@ -168,9 +167,9 @@ export const ServicePortalDocumentsV2 = () => {
                     checked={selectedLines.length > 0}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        const allDocumentIds = filteredDocuments.map(
-                          (item) => item.id,
-                        )
+                        const allDocumentIds = filteredDocuments
+                          .filter((x) => !x.isUrgent)
+                          .map((item) => item.id)
                         setSelectedLines([...allDocumentIds])
                       } else {
                         setSelectedLines([])
@@ -237,7 +236,11 @@ export const ServicePortalDocumentsV2 = () => {
                         )
                         setSelectedLines([...filtered])
                       } else {
-                        setSelectedLines([...selectedLines, docId])
+                        // Urgent documents can't be selected and marked "read"
+                        // Can be put in storage when being opened otherwise not
+                        if (!doc.isUrgent) {
+                          setSelectedLines([...selectedLines, docId])
+                        }
                       }
                     }}
                   />
@@ -297,4 +300,4 @@ export const ServicePortalDocumentsV2 = () => {
   )
 }
 
-export default ServicePortalDocumentsV2
+export default ServicePortalDocumentsV3
