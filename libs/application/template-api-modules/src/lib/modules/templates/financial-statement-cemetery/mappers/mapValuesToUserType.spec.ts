@@ -121,7 +121,7 @@ describe('mapValuesToUserType', () => {
 
       const contactsAnswer = [boardMemberContact, individualContact]
 
-      const expectedResult = [
+      const expectedResult: Contact[] = [
         {
           nationalId: actor.nationalId,
           name: actorsName,

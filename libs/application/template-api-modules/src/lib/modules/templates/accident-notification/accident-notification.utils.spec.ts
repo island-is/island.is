@@ -16,7 +16,7 @@ import {
   AccidentNotificationAttachment,
   AttachmentTypeEnum,
 } from './types/attachments'
-import { FormValue } from '@island.is/application/types'
+import { Application, ApplicationStatus, ApplicationTypes, FormValue } from '@island.is/application/types'
 
 describe('applictionAnswersToXml', () => {
   it.each([
@@ -168,6 +168,62 @@ describe('applictionAnswersToXml', () => {
       expect(result.includes('Company EHF')).toBeFalsy()
     },
   )
+})
+
+describe('getApplicationDocumentId', () => {
+    it('should return a valid application submission document id', () => {
+        const expectedId = 5555
+        const application: Application = {
+            id: '123456789',
+            state: '',
+            applicant: '',
+            assignees: [],
+            applicantActors: [],
+            typeId: ApplicationTypes.EXAMPLE,
+            modified: new Date('2024-09-22'),
+            created: new Date('2024-09-22'),
+            answers: {},
+            externalData: {
+                submitApplication: {
+                    data: {
+                        documentId: expectedId,
+                        sentDocuments: ['hello', 'there']
+                    },
+                    date: new Date('2024-09-22'),
+                    status: 'success'
+                }
+            },
+            status: ApplicationStatus.NOT_STARTED
+        }
+
+        const result = utils.getApplicationDocumentId(application)
+        expect(result).toEqual(expectedId)
+    })
+
+    it('should throw when there is no valid application submission document id', () => {
+        const application: Application = {
+            id: '123456789',
+            state: '',
+            applicant: '',
+            assignees: [],
+            applicantActors: [],
+            typeId: ApplicationTypes.EXAMPLE,
+            modified: new Date('2024-09-22'),
+            created: new Date('2024-09-22'),
+            answers: {},
+            externalData: {
+                submitApplication: {
+                    data: undefined,
+                    date: new Date('2024-09-22'),
+                    status: 'success'
+                }
+            },
+            status: ApplicationStatus.NOT_STARTED
+        }
+
+        const act = () => utils.getApplicationDocumentId(application)
+        expect(act).toThrowError('No documentId found on application')
+    })
 })
 
 const getDefaultAttachments = (): AccidentNotificationAttachment[] => {
