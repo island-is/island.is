@@ -91,6 +91,7 @@ export type Icon =
   | 'swapVertical'
   | 'thumbsUp'
   | 'thumbsDown'
+  | 'leaf'
 
 export default {
   filled: {
@@ -185,6 +186,7 @@ export default {
     swapVertical: 'SwapVertical',
     thumbsUp: 'ThumbsUp',
     thumbsDown: 'ThumbsDown',
+    leaf: 'Leaf',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -278,5 +280,6 @@ export default {
     swapVertical: 'SwapVertical',
     thumbsUp: 'ThumbsUpOutline',
     thumbsDown: 'ThumbsDownOutline',
+    leaf: 'LeafOutline',
   },
 }
