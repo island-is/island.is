@@ -18,7 +18,7 @@ import {
 } from './types/attachments'
 import { Application, ApplicationStatus, ApplicationTypes, FormValue } from '@island.is/application/types'
 
-describe('applictionAnswersToXml', () => {
+describe('applicationAnswersToXml', () => {
   it.each([
     AccidentTypeEnum.SPORTS,
     AccidentTypeEnum.RESCUEWORK,
@@ -32,7 +32,7 @@ describe('applictionAnswersToXml', () => {
       answers['accidentType.radioButton'] = accidentType
       delete answers['companyInfo']
 
-      const result = utils.applictionAnswersToXml(
+      const result = utils.applicationAnswersToXml(
         answers as AccidentNotificationAnswers,
         attachments,
       )
@@ -66,7 +66,7 @@ describe('applictionAnswersToXml', () => {
       if (data.fisherman)
         answers['workAccident.type'] = WorkAccidentTypeEnum.FISHERMAN
 
-      const result = utils.applictionAnswersToXml(
+      const result = utils.applicationAnswersToXml(
         answers as AccidentNotificationAnswers,
         attachments,
       )
@@ -137,7 +137,7 @@ describe('applictionAnswersToXml', () => {
       answers['whoIsTheNotificationFor.answer'] = data.for
       delete answers['companyInfo']
 
-      const result = utils.applictionAnswersToXml(
+      const result = utils.applicationAnswersToXml(
         answers as AccidentNotificationAnswers,
         attachments,
       )
@@ -173,53 +173,29 @@ describe('applictionAnswersToXml', () => {
 describe('getApplicationDocumentId', () => {
     it('should return a valid application submission document id', () => {
         const expectedId = 5555
-        const application: Application = {
-            id: '123456789',
-            state: '',
-            applicant: '',
-            assignees: [],
-            applicantActors: [],
-            typeId: ApplicationTypes.EXAMPLE,
-            modified: new Date('2024-09-22'),
-            created: new Date('2024-09-22'),
-            answers: {},
-            externalData: {
-                submitApplication: {
-                    data: {
-                        documentId: expectedId,
-                        sentDocuments: ['hello', 'there']
-                    },
-                    date: new Date('2024-09-22'),
-                    status: 'success'
-                }
+        const application = {
+          externalData: {
+            submitApplication: {
+              data: {
+                documentId: expectedId,
+                sentDocuments: ['hello', 'there']
+              },
             },
-            status: ApplicationStatus.NOT_STARTED
-        }
+          },
+        } as unknown as Application
 
         const result = utils.getApplicationDocumentId(application)
         expect(result).toEqual(expectedId)
     })
 
     it('should throw when there is no valid application submission document id', () => {
-        const application: Application = {
-            id: '123456789',
-            state: '',
-            applicant: '',
-            assignees: [],
-            applicantActors: [],
-            typeId: ApplicationTypes.EXAMPLE,
-            modified: new Date('2024-09-22'),
-            created: new Date('2024-09-22'),
-            answers: {},
-            externalData: {
-                submitApplication: {
-                    data: undefined,
-                    date: new Date('2024-09-22'),
-                    status: 'success'
-                }
-            },
-            status: ApplicationStatus.NOT_STARTED
-        }
+      const application = {
+        externalData: {
+          submitApplication: {
+            data: undefined
+          },
+        },
+      } as unknown as Application
 
         const act = () => utils.getApplicationDocumentId(application)
         expect(act).toThrowError('No documentId found on application')
@@ -309,7 +285,7 @@ const getFullBasicAnswers = (): FormValue => {
     },
     workMachineRadio: 'yes',
     workMachine: {
-      desriptionOfMachine: 'description of machine that messed someone up',
+      descriptionOfMachine: 'description of machine that messed someone up',
     },
     companyInfo: {
       nationalRegistrationId: '7654324321',

@@ -576,7 +576,7 @@ export const FormOverview: FC<
             <GridColumn span={['9/12', '9/12', '9/12', '10/12']}>
               <ValueLine
                 label={overview.labels.workMachine}
-                value={answers.workMachine.desriptionOfMachine}
+                value={answers.workMachine.descriptionOfMachine}
               />
             </GridColumn>
           )}
