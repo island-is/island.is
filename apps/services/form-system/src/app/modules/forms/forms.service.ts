@@ -28,6 +28,7 @@ import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { createFormTranslations } from '../translations/form'
 import { createSectionTranslations } from '../translations/section'
+import { UpdateFormDto } from './models/dto/updateForm.dto'
 
 @Injectable()
 export class FormsService {
@@ -114,9 +115,47 @@ export class FormsService {
     return formResponse
   }
 
+  async update(id: string, updateFormDto: UpdateFormDto): Promise<void> {
+    const form = await this.formModel.findByPk(id)
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    form.organizationId = updateFormDto.organizationId
+      ? updateFormDto.organizationId
+      : form.organizationId
+    form.name = updateFormDto.name ? updateFormDto.name : form.name
+    form.slug = updateFormDto.slug ? updateFormDto.slug : form.slug
+    form.invalidationDate = updateFormDto.invalidationDate
+      ? updateFormDto.invalidationDate
+      : form.invalidationDate
+    form.isTranslated = updateFormDto.isTranslated
+      ? updateFormDto.isTranslated
+      : form.isTranslated
+    form.applicationDaysToRemove = updateFormDto.applicationDaysToRemove
+      ? updateFormDto.applicationDaysToRemove
+      : form.applicationDaysToRemove
+    form.stopProgressOnValidatingScreen =
+      updateFormDto.stopProgressOnValidatingScreen
+        ? updateFormDto.stopProgressOnValidatingScreen
+        : form.stopProgressOnValidatingScreen
+    form.completedMessage = updateFormDto.completedMessage
+    form.dependencies = updateFormDto.dependencies
+    // form.certificationTypes = updateFormDto.certificationTypes
+    // form.applicants = updateFormDto.applicants
+
+    await form.save()
+  }
+
   async delete(id: string): Promise<void> {
     const form = await this.findById(id)
-    form?.destroy()
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    form.destroy()
   }
 
   private async findById(id: string): Promise<Form> {
@@ -273,6 +312,7 @@ export class FormsService {
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
       'completedMessage',
+      'dependencies',
     ]
     const formDto: FormDto = Object.assign(
       defaults(

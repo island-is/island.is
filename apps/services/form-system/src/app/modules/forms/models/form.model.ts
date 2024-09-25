@@ -16,6 +16,7 @@ import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormApplicant } from '../../applicants/models/formApplicant.model'
 import { CertificationType } from '../../certifications/models/certificationType.model'
 import { randomUUID } from 'crypto'
+import { Dependency } from '../../../dataTypes/dependency.model'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {
@@ -84,6 +85,12 @@ export class Form extends Model<Form> {
     defaultValue: () => new LanguageType(),
   })
   completedMessage?: LanguageType
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  dependencies?: Dependency
 
   @HasMany(() => Section)
   sections!: Section[]

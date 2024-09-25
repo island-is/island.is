@@ -58,6 +58,10 @@ module.exports = {
             type: Sequelize.JSON,
             allowNull: true,
           },
+          dependencies: {
+            type: Sequelize.JSON,
+            allowNull: true,
+          },
           organization_id: {
             type: Sequelize.UUID,
             allowNull: false,

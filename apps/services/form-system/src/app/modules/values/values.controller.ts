@@ -8,19 +8,18 @@ import {
 } from '@nestjs/swagger'
 import { ValuesService } from './values.service'
 import { ValueDto } from './models/dto/value.dto'
-import { UpdateValueDto } from './models/dto/updateValue.dto'
 
 @ApiTags('values')
 @Controller({ path: 'values', version: ['1', VERSION_NEUTRAL] })
 export class ValuesController {
   constructor(private readonly valuesService: ValuesService) {}
 
-  @ApiOperation({ summary: 'Updates value' })
+  @ApiOperation({ summary: 'Update a value' })
   @ApiCreatedResponse({
-    description: 'Updates a value',
+    description: 'Update a value',
     type: ValueDto,
   })
-  @ApiBody({ type: UpdateValueDto })
+  @ApiBody({ type: Object })
   @ApiParam({ name: 'id', type: String })
   @Put(':id')
   async update(
