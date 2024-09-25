@@ -78,21 +78,23 @@ const IndictmentOverview = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map((defendant) =>
           defendant.subpoenas?.map((subpoena) => (
-            <AlertMessage
-              title={`${subpoena.acknowledged} -- ${defendant.name}`}
-              message={
-                <Box>
-                  <Text variant="small">
-                    {`${subpoena.registeredBy} -- ${formatDate(
-                      subpoena.acknowledgedDate,
-                      'Pp',
-                    )}`}
-                  </Text>
-                  <Text variant="small">{subpoena.comment}</Text>
-                </Box>
-              }
-              type="warning"
-            />
+            <Box marginBottom={2}>
+              <AlertMessage
+                title={`${subpoena.serviceStatus} -- ${defendant.name}`}
+                message={
+                  <Box>
+                    <Text variant="small">
+                      {`${subpoena.servicedBy} -- ${formatDate(
+                        subpoena.serviceDate,
+                        'Pp',
+                      )}`}
+                    </Text>
+                    <Text variant="small">{subpoena.comment}</Text>
+                  </Box>
+                }
+                type="warning"
+              />
+            </Box>
           )),
         )}
         {workingCase.court &&

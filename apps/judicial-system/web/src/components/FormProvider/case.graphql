@@ -27,9 +27,9 @@ query Case($input: CaseQueryInput!) {
       verdictAppealDeadline
       subpoenaType
       subpoenas {
-        acknowledged
-        acknowledgedDate
-        registeredBy
+        serviceStatus
+        serviceDate
+        servicedBy
         comment
       }
     }

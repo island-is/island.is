@@ -1,4 +1,8 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+
+import { ServiceStatus } from '@island.is/judicial-system/types'
+
+registerEnumType(ServiceStatus, { name: 'ServiceStatus' })
 
 @ObjectType()
 export class Subpoena {
@@ -20,14 +24,14 @@ export class Subpoena {
   @Field(() => ID, { nullable: true })
   readonly caseId?: string
 
-  @Field(() => Boolean, { nullable: true })
-  readonly acknowledged?: boolean
+  @Field(() => ServiceStatus, { nullable: true })
+  readonly serviceStatus?: ServiceStatus
 
   @Field(() => String, { nullable: true })
-  readonly acknowledgedDate?: string
+  readonly serviceDate?: string
 
   @Field(() => String, { nullable: true })
-  readonly registeredBy?: string
+  readonly servicedBy?: string
 
   @Field(() => String, { nullable: true })
   readonly comment?: string
