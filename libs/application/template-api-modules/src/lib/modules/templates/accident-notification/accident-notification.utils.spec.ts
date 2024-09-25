@@ -34,11 +34,11 @@ describe('applicationAnswersToXml', () => {
       const attachments = getDefaultAttachments()
       const answers = getFullBasicAnswers()
 
-      answers['accidentType.radioButton'] = accidentType
-      delete answers['companyInfo']
+      answers.accidentType.radioButton = accidentType
+      answers.companyInfo = undefined
 
       const result = utils.applicationAnswersToXml(
-        answers as AccidentNotificationAnswers,
+        answers,
         attachments,
       )
 
@@ -66,13 +66,13 @@ describe('applicationAnswersToXml', () => {
       const attachments = getDefaultAttachments()
       const answers = getFullBasicAnswers()
 
-      answers['accidentType.radioButton'] = data.type
-      answers['workMachineRadio'] = 'yes'
+      answers.accidentType.radioButton = data.type
+      answers.workMachineRadio = 'yes'
       if (data.fisherman)
-        answers['workAccident.type'] = WorkAccidentTypeEnum.FISHERMAN
+        answers.workAccident.type = WorkAccidentTypeEnum.FISHERMAN
 
       const result = utils.applicationAnswersToXml(
-        answers as AccidentNotificationAnswers,
+        answers,
         attachments,
       )
 
@@ -139,11 +139,11 @@ describe('applicationAnswersToXml', () => {
     (data) => {
       const attachments = getDefaultAttachments()
       const answers = getFullBasicAnswers()
-      answers['whoIsTheNotificationFor.answer'] = data.for
-      delete answers['companyInfo']
+      answers.whoIsTheNotificationFor.answer = data.for
+      answers.companyInfo = undefined
 
       const result = utils.applicationAnswersToXml(
-        answers as AccidentNotificationAnswers,
+        answers,
         attachments,
       )
 
@@ -218,7 +218,7 @@ const getDefaultAttachments = (): AccidentNotificationAttachment[] => {
   ]
 }
 
-const getFullBasicAnswers = (): FormValue => {
+const getFullBasicAnswers = (): AccidentNotificationAnswers => {
   return {
     applicant: {
       name: 'Fullname Fullname',
@@ -351,5 +351,5 @@ const getFullBasicAnswers = (): FormValue => {
       type: PowerOfAttorneyUploadEnum.UPLOADLATER,
     },
     reviewApproval: ReviewApprovalEnum.NOTREVIEWED,
-  }
+  } as unknown as AccidentNotificationAnswers
 }
