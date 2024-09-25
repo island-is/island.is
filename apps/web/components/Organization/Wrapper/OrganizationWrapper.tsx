@@ -377,7 +377,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'rikislogmadur':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={
+            isSubpage
+              ? styles.rikislogmadurHeaderGridContainerWidthSubpage
+              : styles.rikislogmadurHeaderGridContainerWidth
+          }
+        />
+      ) : (
         <RikislogmadurHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}

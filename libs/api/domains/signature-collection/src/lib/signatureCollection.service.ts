@@ -18,6 +18,7 @@ import { SignatureCollectionAddListsInput } from './dto/addLists.input'
 import { SignatureCollectionOwnerInput } from './dto/owner.input'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
+import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -141,5 +142,23 @@ export class SignatureCollectionService {
       user,
       input,
     )
+  }
+
+  async canSignFromPaper(
+    user: User,
+    input: SignatureCollectionCanSignFromPaperInput,
+  ): Promise<boolean> {
+    const signee = await this.signatureCollectionClientService.getSignee(
+      user,
+      input.signeeNationalId,
+    )
+    const list = await this.list(input.listId, user)
+    // Current signatures should not prevent paper signatures
+    const canSign =
+      signee.canSign ||
+      (signee.canSignInfo?.length === 1 &&
+        signee.canSignInfo[0] === ReasonKey.AlreadySigned)
+
+    return canSign && list.area.id === signee.area?.id
   }
 }
