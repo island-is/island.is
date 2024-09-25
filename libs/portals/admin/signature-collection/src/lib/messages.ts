@@ -267,6 +267,21 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit meðmæla',
     description: '',
   },
+  downloadReports: {
+    id: 'admin-portal.signature-collection:downloadReports',
+    defaultMessage: 'Sækja skýrslur',
+    description: '',
+  },
+  downloadReportsDescription: {
+    id: 'admin-portal.signature-collection:downloadReportsDescription',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus nec odio ultricies ultricies. Nullam nec purus nec odio ultricies ultricies.',
+    description: '',
+  },
+  downloadButton: {
+    id: 'admin-portal.signature-collection:downloadButton',
+    defaultMessage: 'Hlaða niður',
+    description: '',
+  },
   searchInListPlaceholder: {
     id: 'admin-portal.signature-collection:searchInListPlaceholder',
     defaultMessage: 'Leitaðu að nafni eða kennitölu',
