@@ -389,7 +389,7 @@ const Processing: FC = () => {
               <Box width="half" marginRight={1}>
                 <RadioButton
                   name="isCivilClaim"
-                  id="civil_caim_yes"
+                  id="civil_claim_yes"
                   label={formatMessage(strings.yes)}
                   large
                   backgroundColor="white"
@@ -404,7 +404,7 @@ const Processing: FC = () => {
               <Box width="half" marginLeft={1}>
                 <RadioButton
                   name="isCivilClaim"
-                  id="civil_caim_no"
+                  id="civil_claim_no"
                   label={formatMessage(strings.no)}
                   large
                   backgroundColor="white"
