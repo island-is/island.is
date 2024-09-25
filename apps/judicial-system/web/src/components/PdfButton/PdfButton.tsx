@@ -28,6 +28,8 @@ interface Props {
 
 const PdfButton: FC<PropsWithChildren<Props>> = ({
   caseId,
+  // This is used when accessing data belonging to a case which has been merged into another case.
+  // For access control purposes, the data must be accessed through the parent case.
   connectedCaseParentId,
   title,
   pdfType,

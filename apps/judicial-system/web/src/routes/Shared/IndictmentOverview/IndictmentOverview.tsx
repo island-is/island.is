@@ -2,7 +2,7 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Button } from '@island.is/island-ui/core'
+import { Accordion, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
@@ -131,15 +131,18 @@ const IndictmentOverview: FC = () => {
             {hasLawsBroken && (
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
             )}
-            {hasMergeCases &&
-              workingCase.mergedCases?.map((mergedCase) => (
-                <Box key={mergedCase.id}>
-                  <ConnectedCaseFilesAccordionItem
-                    connectedCaseParentId={workingCase.id}
-                    connectedCase={mergedCase}
-                  />
-                </Box>
-              ))}
+            {hasMergeCases && (
+              <Accordion>
+                {workingCase.mergedCases?.map((mergedCase) => (
+                  <Box key={mergedCase.id}>
+                    <ConnectedCaseFilesAccordionItem
+                      connectedCaseParentId={workingCase.id}
+                      connectedCase={mergedCase}
+                    />
+                  </Box>
+                ))}
+              </Accordion>
+            )}
           </Box>
         )}
         {workingCase.caseFiles && (

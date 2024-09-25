@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
+  Accordion,
   Box,
   InputFileUpload,
   RadioButton,
@@ -155,15 +156,18 @@ const Completed: FC = () => {
             {hasLawsBroken && (
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
             )}
-            {hasMergeCases &&
-              workingCase.mergedCases?.map((mergedCase) => (
-                <Box key={mergedCase.id}>
-                  <ConnectedCaseFilesAccordionItem
-                    connectedCaseParentId={workingCase.id}
-                    connectedCase={mergedCase}
-                  />
-                </Box>
-              ))}
+            {hasMergeCases && (
+              <Accordion>
+                {workingCase.mergedCases?.map((mergedCase) => (
+                  <Box key={mergedCase.id}>
+                    <ConnectedCaseFilesAccordionItem
+                      connectedCaseParentId={workingCase.id}
+                      connectedCase={mergedCase}
+                    />
+                  </Box>
+                ))}
+              </Accordion>
+            )}
           </Box>
         )}
         <Box marginBottom={5} component="section">

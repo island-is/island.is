@@ -16,16 +16,17 @@ export class MergedCaseExistsGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
 
+    const mergedCaseId = request.params.mergedCaseId
+
+    // If the user is not accessing a merged case, we don't need to do anything
+    if (!mergedCaseId) {
+      return true
+    }
+
     const theCase: Case = request.case
 
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')
-    }
-
-    const mergedCaseId = request.params.mergedCaseId
-
-    if (!mergedCaseId) {
-      return true
     }
 
     const mergedCase = theCase.mergedCases?.find(

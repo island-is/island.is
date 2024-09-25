@@ -4,6 +4,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 
 import {
+  Accordion,
   AlertMessage,
   Box,
   Button,
@@ -218,15 +219,18 @@ const Overview: FC = () => {
             {hasLawsBroken && (
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
             )}
-            {hasMergeCases &&
-              workingCase.mergedCases?.map((mergedCase) => (
-                <Box key={mergedCase.id}>
-                  <ConnectedCaseFilesAccordionItem
-                    connectedCaseParentId={workingCase.id}
-                    connectedCase={mergedCase}
-                  />
-                </Box>
-              ))}
+            {hasMergeCases && (
+              <Accordion>
+                {workingCase.mergedCases?.map((mergedCase) => (
+                  <Box key={mergedCase.id}>
+                    <ConnectedCaseFilesAccordionItem
+                      connectedCaseParentId={workingCase.id}
+                      connectedCase={mergedCase}
+                    />
+                  </Box>
+                ))}
+              </Accordion>
+            )}
           </Box>
         )}
         <Box
