@@ -176,31 +176,31 @@ describe('applicationAnswersToXml', () => {
 })
 
 describe('getApplicationDocumentId', () => {
-    it('should return a valid application submission document id', () => {
-        const expectedId = 5555
-        const application = {
-          externalData: {
-            submitApplication: {
-              data: {
-                documentId: expectedId,
-                sentDocuments: ['hello', 'there']
-              },
-            },
+  it('should return a valid application submission document id', () => {
+    const expectedId = 5555
+    const application = {
+      externalData: {
+        submitApplication: {
+          data: {
+            documentId: expectedId,
+            sentDocuments: ['hello', 'there'],
           },
-        } as unknown as Application
+        },
+      },
+    } as unknown as Application
 
     const result = utils.getApplicationDocumentId(application)
     expect(result).toEqual(expectedId)
   })
 
-    it('should throw when there is no valid application submission document id', () => {
-      const application = {
-        externalData: {
-          submitApplication: {
-            data: undefined
-          },
+  it('should throw when there is no valid application submission document id', () => {
+    const application = {
+      externalData: {
+        submitApplication: {
+          data: undefined,
         },
-      } as unknown as Application
+      },
+    } as unknown as Application
 
     const act = () => utils.getApplicationDocumentId(application)
     expect(act).toThrowError('No documentId found on application')
