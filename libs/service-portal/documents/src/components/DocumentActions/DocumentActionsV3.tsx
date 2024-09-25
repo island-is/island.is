@@ -8,8 +8,8 @@ const DocumentActions = () => {
   const { activeDocument } = useDocumentContext()
   const userInfo = useUserInfo()
   const DEFAULT_ICON: IconMapIcon = 'document'
-  // Waiting for service to update type to enum
   const actions = activeDocument?.actions
+    // Types are not typed in the API, so this will have to do for now
     ?.filter((action) => action.type !== 'confirmation')
     .filter((action) => action.type !== 'alert')
   const alert = activeDocument?.actions?.find(

@@ -11,7 +11,7 @@ import {
   PaginatedDocuments,
   Document,
   DocumentPageNumber,
-  Actions,
+  Action,
 } from './models/v2/document.model'
 import type { ConfigType } from '@island.is/nest/config'
 import { DocumentsInput } from './models/v2/documents.input'
@@ -64,6 +64,10 @@ export class DocumentServiceV2 {
       default:
         type = FileType.UNKNOWN
     }
+    const confirmation = document.actions?.find(
+      (action) => action.type === 'confirmation',
+    )
+    const alert = document.actions?.find((action) => action.type === 'alert')
 
     return {
       ...document,
@@ -83,6 +87,8 @@ export class DocumentServiceV2 {
         : undefined,
       isUrgent: document.urgent,
       actions: this.actionMapper(documentId, document.actions),
+      confirmation: confirmation,
+      alert: alert,
     }
   }
 
@@ -351,7 +357,7 @@ export class DocumentServiceV2 {
       return undefined
     }
 
-    const mapped: Array<Actions> = actions?.map((x) => {
+    const mapped: Array<Action> = actions?.map((x) => {
       if (x.type === 'file') {
         return {
           ...x,

@@ -5,17 +5,8 @@ import { PaginatedResponse } from '@island.is/nest/pagination'
 import { Category } from './category.model'
 import { Type } from './type.model'
 
-@ObjectType('DocumentV2Message')
-export class Message {
-  @Field({ nullable: true })
-  type?: string
-
-  @Field({ nullable: true })
-  message?: string
-}
-
-@ObjectType('DocumentV2Actions')
-export class Actions {
+@ObjectType('DocumentV2Action')
+export class Action {
   @Field({ nullable: true })
   title?: string
 
@@ -70,11 +61,14 @@ export class Document {
   })
   downloadUrl?: string
 
-  @Field(() => Message, { nullable: true })
-  alertMessage?: Message
+  @Field(() => Action, { nullable: true })
+  alert?: Action
 
-  @Field(() => [Actions], { nullable: true })
-  actions?: Array<Actions>
+  @Field(() => Action, { nullable: true })
+  confirmation?: Action
+
+  @Field(() => [Action], { nullable: true })
+  actions?: Array<Action>
 
   @Field(() => Boolean, { nullable: true })
   isUrgent?: boolean
