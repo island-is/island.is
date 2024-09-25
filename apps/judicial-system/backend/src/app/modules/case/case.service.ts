@@ -1331,11 +1331,13 @@ export class CaseService {
       )
       const arraignmentDateChanged =
         updatedArraignmentDate &&
-        updatedArraignmentDate.date !== arraignmentDate?.date
+        updatedArraignmentDate.date.getTime() !==
+          arraignmentDate?.date.getTime()
       const courtDate = DateLog.courtDate(theCase.dateLogs)
       const updatedCourtDate = DateLog.courtDate(updatedCase.dateLogs)
       const courtDateChanged =
-        updatedCourtDate && updatedCourtDate.date !== courtDate?.date
+        updatedCourtDate &&
+        updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
 
       if (arraignmentDateChanged || courtDateChanged) {
         // New arraignment date or new court date
