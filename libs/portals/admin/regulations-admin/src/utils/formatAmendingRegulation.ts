@@ -8,6 +8,11 @@ import uniq from 'lodash/uniq'
 import { groupElementsByArticleTitleFromDiv } from './groupByArticleTitle'
 import { getDeletionOrAddition } from './getDeletionOrAddition'
 
+export type AdditionObject = {
+  formattedRegBody: HTMLText[]
+  date: Date | undefined
+}
+
 // ----------------------------------------------------------------------
 const PREFIX = 'Reglugerð um '
 const PREFIX_AMENDING = 'breytingu á reglugerð nr. '
@@ -26,11 +31,27 @@ const isGildisTaka = (str: string) => {
   )
 }
 
+const allSameDay = (objects: AdditionObject[]): boolean => {
+  const validObjects = objects.filter((obj) => obj.date !== undefined)
+
+  if (validObjects.length === 0) return true
+
+  const getDateString = (date: string | Date): string => {
+    const d = new Date(date)
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+  }
+
+  const firstDate = getDateString(validObjects[0].date!)
+
+  return validObjects.every((obj) => getDateString(obj.date!) === firstDate)
+}
+
 const formatAffectedAndPlaceAffectedAtEnd = (
   groups: {
     formattedRegBody: HTMLText[]
     date?: Date | undefined
   }[],
+  hideAffected?: boolean,
 ) => {
   function formatArray(arr: string[]): string {
     if (arr.length === 1) {
@@ -115,7 +136,10 @@ const formatAffectedAndPlaceAffectedAtEnd = (
   })
 
   const uniqueGildistaka = uniq(gildsTakaKeepArray)
-  const joinedAffected = updatedImpactAffectArray.join('. ')
+  let joinedAffected = updatedImpactAffectArray.join('. ')
+  if (hideAffected) {
+    joinedAffected = ''
+  }
   const gildistakaReturn = flatten([...uniqueGildistaka, joinedAffected]).join(
     '',
   ) as HTMLText
@@ -178,11 +202,11 @@ export const formatAmendingRegBody = (
 ) => {
   const regName = removeRegNamePrefix(name)
   if (repeal) {
-    const title = regTitle ? regTitle.replace(/^reglugerð\s*/i, '') + ' ' : ''
+    const title = regTitle ? regTitle.replace(/^reglugerð\s*/i, '').trim() : ''
     const text = `<p>Reglugerð nr. ${regName} ${title.replace(
       /\.$/,
       '',
-    )}fellur brott.</p>` as HTMLText
+    )} fellur brott.</p>` as HTMLText
     const gildistaka =
       `<p>Reglugerð þessi er sett með heimild í [].</p><p>Reglugerðin öðlast þegar gildi.</p>` as HTMLText
     return [text, gildistaka]
@@ -233,11 +257,6 @@ export const formatAmendingRegBody = (
         const clone = element.cloneNode(true)
 
         if (clone instanceof Element) {
-          const emElement = clone.querySelector('em')
-          if (emElement) {
-            emElement.parentNode?.removeChild(emElement)
-          }
-
           const textContent = clone.textContent?.trim() ?? ''
 
           articleTitle = textContent
@@ -385,7 +404,9 @@ export const formatAmendingRegBody = (
     if (testGroup.isDeletion === true) {
       const articleTitleNumber = testGroup.title
 
-      const grMatch = articleTitleNumber.match(/^\d+\. gr\./)
+      const grMatch = articleTitleNumber.match(
+        /^\d+\. gr\.(?: [a-zA-Z])?(?= |$)/,
+      )
       const articleTitleDisplay = grMatch ? grMatch[0] : articleTitleNumber
       additionArray.push([
         `<p>${articleTitleDisplay} ${regNameDisplay} fellur brott.</p>` as HTMLText,
@@ -401,7 +422,9 @@ export const formatAmendingRegBody = (
         ? flatten(testGroup.original)
         : []
 
-      const prevArticleTitleNumber = prevArticleTitle.match(/^\d+\. gr\./)
+      const prevArticleTitleNumber = prevArticleTitle.match(
+        /^\d+\. gr\.(?: [a-zA-Z])?(?= |$)/,
+      )
 
       let articleDisplayText = ''
 
@@ -449,7 +472,11 @@ export const formatAmendingBodyWithArticlePrefix = (
 
   const additions = flatten(impactAdditionArray)
 
-  const htmlForEditor = formatAffectedAndPlaceAffectedAtEnd(additions)
+  const hideAffected = allSameDay(additions)
+  const htmlForEditor = formatAffectedAndPlaceAffectedAtEnd(
+    additions,
+    hideAffected,
+  )
 
   const returnArray = compact(htmlForEditor)
 
