@@ -1,12 +1,13 @@
 import {
   getApplicationAnswers,
+  getApplicationExternalData,
   ReasonForApplicationOptions,
 } from '@island.is/application/templates/new-primary-school'
 import { Application, YES } from '@island.is/application/types'
 import {
+  AgentDto,
   FormDto,
   FormDtoTypeEnum,
-  AgentDto,
 } from '@island.is/clients/mms/frigg'
 
 export const transformApplicationToNewPrimarySchoolDTO = (
@@ -43,6 +44,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     startDate,
     requestMeeting,
   } = getApplicationAnswers(application.answers)
+
+  const { primaryOrgId } = getApplicationExternalData(application.externalData)
 
   const agents: AgentDto[] = [
     {
@@ -118,8 +121,9 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     // registration: RegistrationDto,: Upplýsingar um uppfærðu skráninguna
     registration: {
       // Required: defaultOrg, selectedOrg, requestingMeeting, expectedStartDate, reason
-      defaultOrg: '', // TODO: Current school
-      selectedOrg: selectedSchool, // TODO: New school
+      // TODO: Þurfum kannski að geyma upplýsingar um alla skóla í externalData? Þurfum að vita ID á bæði núverandi og nýjum skóla
+      defaultOrg: primaryOrgId, // TODO: Current school ID
+      selectedOrg: selectedSchool, // TODO: New school ID
       requestingMeeting: requestMeeting === YES,
       expectedStartDate: new Date(startDate),
       reason: reasonForApplication, // TODO: Hvað ef "Flutningur erlendis"? Setti optional á önnur svör, það þarf í raun bara að senda umsóknartýpu upplýsingar um barn og registration objectið.
@@ -142,28 +146,16 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     language: {
       // Required: nativeLanguage, noIcelandic
       nativeLanguage: nativeLanguage,
-      // TODO: Á að senda "false" og tóman lista ef "otherLanguagesSpokenDaily" er NO??
-      // ...(otherLanguagesSpokenDaily === YES && {
-      //   noIcelandic: icelandicNotSpokenAroundChild?.includes(YES),
-      //   otherLanguages: otherLanguages,
-      // }),
-
-      // TODO: Skoða hvað á að senda ef það er ekki svar hér (umsækjandi sér ekki þetta checkbox nema ef önnur tungumál töluð á heimili barns)
-      // noIcelandic: icelandicNotSpokenAroundChild?.includes(YES) ?? false,
       noIcelandic:
+        // TODO: Passa að ef búið að haka í checkbox og svo valið Íslenska þá er ennþá hakað í checkbox (ekki nóg að athuga hvort otherLanguagesSpokenDaily === YES og includes!!)
         otherLanguagesSpokenDaily === YES
-          ? icelandicNotSpokenAroundChild?.includes(YES)
+          ? // Check if Icelandic selected
+            nativeLanguage === 'is' || otherLanguages?.includes('is')
+            ? false
+            : icelandicNotSpokenAroundChild?.includes(YES)
           : nativeLanguage !== 'is',
       otherLanguages:
         otherLanguagesSpokenDaily === YES ? otherLanguages : undefined,
-      // ...(otherLanguagesSpokenDaily === YES
-      //   ? {
-      //       noIcelandic: icelandicNotSpokenAroundChild?.includes(YES),
-      //       otherLanguages: otherLanguages,
-      //     }
-      //   : {
-      //       noIcelandic: nativeLanguage !== 'is',
-      //     }),
     },
   }
   console.log('=====> newPrimarySchoolDTO: ', newPrimarySchoolDTO)
