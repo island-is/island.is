@@ -1,10 +1,10 @@
 import { FC, useContext } from 'react'
 
-import { EventType } from '../../../graphql/schema'
-import { FormContext } from '../../FormProvider/FormProvider'
-import { DefendantInfoActionButton } from '../DefendantInfo/DefendantInfo'
-import InfoCard from '../InfoCard'
-import useInfoCardItems from '../useInfoCardItems'
+import { EventType } from '../../graphql/schema'
+import { FormContext } from '../FormProvider/FormProvider'
+import { DefendantInfoActionButton } from './DefendantInfo/DefendantInfo'
+import InfoCard from './InfoCard'
+import useInfoCardItems from './useInfoCardItems'
 
 export interface Props {
   defendantInfoActionButton?: DefendantInfoActionButton
@@ -28,6 +28,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     indictmentReviewer,
     indictmentReviewDecision,
     indictmentReviewedDate,
+    civilClaimants,
   } = useInfoCardItems()
 
   const {
@@ -54,6 +55,9 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
             ),
           ],
         },
+        ...(workingCase.hasCivilClaims
+          ? [{ id: 'civil-claimant-section', items: [civilClaimants] }]
+          : []),
         {
           id: 'case-info-section',
           items: [

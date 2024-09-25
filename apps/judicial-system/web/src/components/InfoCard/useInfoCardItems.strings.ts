@@ -27,16 +27,6 @@ export const strings = defineMessages({
     defaultMessage: 'Ákvörðun',
     description: 'Notaður sem titill á "ákvörðun" hluta af yfirliti ákæru.',
   },
-  indictmentDefendant: {
-    id: 'judicial.system.core:info_card_indictment.indictment_defendant',
-    defaultMessage: 'Dómfelldi',
-    description: 'Notaður sem titill á "dómfelldi" hluta af yfirliti ákæru.',
-  },
-  indictmentDefendants: {
-    id: 'judicial.system.core:info_card_indictment.indictment_defendants',
-    defaultMessage: 'Dómfelldu',
-    description: 'Notaður sem titill á "dómfelldu" hluta af yfirliti ákæru.',
-  },
   reviewTagAppealed: {
     id: 'judicial.system.core:info_card_indictment.review_tag_appealed_v1',
     defaultMessage: 'Áfrýja dómi',
@@ -62,5 +52,17 @@ export const strings = defineMessages({
     id: 'judicial.system.core:info_card_indictment.merged_from_title',
     defaultMessage: 'Sameinað úr',
     description: 'Notaður sem titill á "Sameinað úr" hluta af yfirliti ákæru.',
+  },
+  civilClaimant: {
+    id: 'judicial.system.core:info_card_indictment.civil_claimant',
+    defaultMessage: 'Kröfuhafi',
+    description:
+      'Notaður sem titill á "kröfuhafa" hluta í yfirliti ákæru þegar kröfuhafi er einn.',
+  },
+  civilClaimants: {
+    id: 'judicial.system.core:info_card_indictment.civil_claimants',
+    defaultMessage: 'Kröfuhafar',
+    description:
+      'Notaður sem titill á "kröfuhafar" hluta í yfirliti ákæru þegar kröfuhafar eru fleiri en einn.',
   },
 })
