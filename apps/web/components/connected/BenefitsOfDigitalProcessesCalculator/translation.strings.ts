@@ -60,7 +60,7 @@ export const t = {
       id: 'web.digitalIceland.benefitsOfDigitalProcesses:processDurationInMinutes.description',
       defaultMessage:
         'Áætluð lengd afgreiðslu. Biðtími þjónustuþega er ekki meðtalinn.',
-      description: 'Placeholder á "Lengd afgreiðslu í mínútum"',
+      description: 'Lýsing á "Lengd afgreiðslu í mínútum"',
     },
   }),
   visitCountToCompleteProcess: defineMessages({
@@ -116,7 +116,7 @@ export const t = {
     },
     institutionGainDescription: {
       id: 'web.digitalIceland.benefitsOfDigitalProcesses:results.institutionGainDescription',
-      defaultMessage: 'árlegur fjárhagslegurstofnunar',
+      defaultMessage: 'árlegur fjárhagslegur ávinningur stofnunar',
       description: 'Lýsing á "ávinning stofnana" niðurstöðu',
     },
     staffFreeToDoOtherThings: {

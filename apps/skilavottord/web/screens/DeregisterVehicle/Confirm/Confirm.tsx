@@ -101,6 +101,10 @@ const UpdateSkilavottordVehicleInfoMutation = gql`
 
 const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
   const [reloadFlag, setReloadFlag] = useState(false)
+  const [
+    vehicleReadyToDeregisteredQueryCompleted,
+    setVehicleReadyToDeregisteredQueryCompleted,
+  ] = useState(false)
 
   // Update reloadFlag to trigger the child component to reload
   const triggerReload = () => {
@@ -134,6 +138,11 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
     SkilavottordVehicleReadyToDeregisteredQuery,
     {
       variables: { permno: id },
+      onCompleted: (data) => {
+        if (data && data.skilavottordVehicleReadyToDeregistered) {
+          setVehicleReadyToDeregisteredQueryCompleted(true)
+        }
+      },
     },
   )
 
@@ -143,6 +152,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
     SkilavottordTrafficQuery,
     {
       variables: { permno: id },
+      skip: !vehicleReadyToDeregisteredQueryCompleted,
     },
   )
 
