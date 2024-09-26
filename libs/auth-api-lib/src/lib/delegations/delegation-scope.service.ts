@@ -10,7 +10,7 @@ import { SyslumennService } from '@island.is/clients/syslumenn'
 import { logger } from '@island.is/logging'
 import {
   AuthDelegationProvider,
-  AuthDelegationType
+  AuthDelegationType,
 } from '@island.is/shared/types'
 
 import { PersonalRepresentativeDelegationTypeModel } from '../personal-representative/models/personal-representative-delegation-type.model'
