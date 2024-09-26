@@ -43,9 +43,9 @@ export const createSubpoena = (
   })
 
   const sinc: Buffer[] = []
-  const dateLog = theCase.dateLogs?.find(
-    (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-  )
+  const dateLog = arraignmentDate
+    ? undefined
+    : theCase.dateLogs?.find((d) => d.dateType === DateType.ARRAIGNMENT_DATE)
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
@@ -159,7 +159,7 @@ export const createSubpoena = (
       actor: theCase.judge?.name || '',
       title: theCase.judge?.title,
       institution: theCase.judge?.institution?.name || '',
-      date: dateLog.created,
+      date: dateLog.modified,
     })
   }
 
