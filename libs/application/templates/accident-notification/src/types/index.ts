@@ -17,6 +17,11 @@ export type Applicant = {
   jobTitle?: string
 }
 
+export enum Status {
+  SUCCESS = 'success',
+  FAILURE = 'failure',
+}
+
 export type AccidentNotifTypes =
   | 'InjuryCertificate'
   | 'ProxyDocument'
@@ -41,6 +46,16 @@ export type FileType = {
   url?: string | undefined
   name: string
   key: string
+}
+
+export enum OnBehalf {
+  MYSELF = 'myself',
+  OTHERS = 'others',
+}
+
+export enum ChoiceEnum {
+  YES = 'yes',
+  NO = 'no',
 }
 
 export enum DataProviderTypes {

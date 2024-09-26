@@ -10,7 +10,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import {
-  applictionAnswersToXml,
   getApplicationDocumentId,
   whiteListedErrorCodes,
 } from './accident-notification.utils'
@@ -27,7 +26,6 @@ import {
   getAddAttachmentSentDocumentHashList,
   getApplicationAttachmentStatus,
 } from './attachments/attachment.utils'
-import { AccidentNotificationAttachment } from './types/attachments'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { applicationToAccidentReport } from './accodent-notification-v2.utils'
@@ -56,7 +54,6 @@ export class AccidentNotificationService extends BaseTemplateApiService {
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     try {
       const requests = attachmentStatusToAttachmentRequests()
-
       const attachments = await this.attachmentProvider.getFiles(
         requests,
         application,

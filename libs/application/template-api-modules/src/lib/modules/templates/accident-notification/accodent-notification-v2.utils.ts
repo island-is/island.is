@@ -26,8 +26,7 @@ import {
   MinarsidurAPIModelsAccidentReportsEmployerDTO,
   MinarsidurAPIModelsAccidentReportsClubDTO,
   MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentDTO,
-  MinarsidurAPIModelsAccidentReportsReporterDTOReporterReportingFor,
-  MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentType,
+  MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 
 export const applicationToAccidentReport = (
@@ -46,22 +45,22 @@ export const applicationToAccidentReport = (
 
 const whoIsTheNotificationForToDTO = (who: WhoIsTheNotificationForEnum) => {
   if (WhoIsTheNotificationForEnum.ME === who) {
-    return MinarsidurAPIModelsAccidentReportsReporterDTOReporterReportingFor.NUMBER_1
+    return MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_1
   }
 
   if (WhoIsTheNotificationForEnum.JURIDICALPERSON === who) {
-    return MinarsidurAPIModelsAccidentReportsReporterDTOReporterReportingFor.NUMBER_2
+    return MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_2
   }
 
   if (WhoIsTheNotificationForEnum.POWEROFATTORNEY === who) {
-    return MinarsidurAPIModelsAccidentReportsReporterDTOReporterReportingFor.NUMBER_3
+    return MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_3
   }
 
   if (WhoIsTheNotificationForEnum.CHILDINCUSTODY === who) {
-    return MinarsidurAPIModelsAccidentReportsReporterDTOReporterReportingFor.NUMBER_4
+    return MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_4
   }
 
-  return MinarsidurAPIModelsAccidentReportsReporterDTOReporterReportingFor.NUMBER_1
+  return MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_1
 }
 
 /*

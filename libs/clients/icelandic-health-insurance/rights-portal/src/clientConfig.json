@@ -2559,7 +2559,7 @@
             "nullable": true
           },
           "location": {
-            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentLocation"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentLocationEnum"
           },
           "locationDescription": {
             "type": "string",
@@ -2621,7 +2621,7 @@
         "type": "object",
         "properties": {
           "shipLocation": {
-            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtSailorWorkDTO_AccidentAtSailorWorkShipLocation"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtSailorWorkDTO_AccidentAtSailorWorkShipLocationEnum"
           },
           "shipName": {
             "type": "string",
@@ -2642,7 +2642,7 @@
         },
         "additionalProperties": false
       },
-      "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtSailorWorkDTO_AccidentAtSailorWorkShipLocation": {
+      "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtSailorWorkDTO_AccidentAtSailorWorkShipLocationEnum": {
         "enum": [
           1,
           2,
@@ -2664,7 +2664,7 @@
         },
         "additionalProperties": false
       },
-      "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentLocation": {
+      "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentLocationEnum": {
         "enum": [
           0,
           1,
@@ -2681,7 +2681,7 @@
         "type": "object",
         "properties": {
           "type": {
-            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentType"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentTypeEnum"
           },
           "document": {
             "$ref": "#/components/schemas/Minarsidur.API.Models.DocumentDTO"
@@ -2689,11 +2689,12 @@
         },
         "additionalProperties": false
       },
-      "Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentType": {
+      "Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentTypeEnum": {
         "enum": [
           1,
           2,
-          3
+          3,
+          4
         ],
         "type": "integer",
         "format": "int32"
@@ -2706,7 +2707,7 @@
         "type": "object",
         "properties": {
           "party": {
-            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportConfirmationParty"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportConfirmationPartyEnum"
           },
           "accepted": {
             "type": "boolean"
@@ -2718,7 +2719,7 @@
         },
         "additionalProperties": false
       },
-      "Minarsidur.API.Models.AccidentReports.AccidentReportConfirmationParty": {
+      "Minarsidur.API.Models.AccidentReports.AccidentReportConfirmationPartyEnum": {
         "enum": [
           1,
           2
@@ -2886,12 +2887,12 @@
             "nullable": true
           },
           "reportingFor": {
-            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.ReporterDTO_ReporterReportingFor"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.ReporterDTO_ReportingForEnum"
           }
         },
         "additionalProperties": false
       },
-      "Minarsidur.API.Models.AccidentReports.ReporterDTO_ReporterReportingFor": {
+      "Minarsidur.API.Models.AccidentReports.ReporterDTO_ReportingForEnum": {
         "enum": [
           1,
           2,
@@ -2918,7 +2919,7 @@
             "nullable": true
           },
           "status": {
-            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.Response.GetAccidentReportStatusResponseDTO_AccidentReportStatus"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.Response.GetAccidentReportStatusResponseDTO_AccidentReportStatusEnum"
           },
           "confirmations": {
             "type": "array",
@@ -2937,7 +2938,7 @@
         },
         "additionalProperties": false
       },
-      "Minarsidur.API.Models.AccidentReports.Response.GetAccidentReportStatusResponseDTO_AccidentReportStatus": {
+      "Minarsidur.API.Models.AccidentReports.Response.GetAccidentReportStatusResponseDTO_AccidentReportStatusEnum": {
         "enum": [
           1,
           2,
@@ -2951,7 +2952,7 @@
         "type": "object",
         "properties": {
           "type": {
-            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentType"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentTypeEnum"
           },
           "received": {
             "type": "boolean",
@@ -2964,7 +2965,7 @@
         "type": "object",
         "properties": {
           "party": {
-            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportConfirmationParty"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportConfirmationPartyEnum"
           },
           "received": {
             "type": "boolean",
@@ -2976,18 +2977,13 @@
       "Minarsidur.API.Models.AccidentReports.Response.SubmitAccidentReportResponseDTO": {
         "type": "object",
         "properties": {
+          "success": {
+            "type": "boolean",
+            "nullable": true
+          },
           "requestId": {
             "type": "integer",
             "format": "int32",
-            "nullable": true
-          },
-          "submissionId": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
             "nullable": true
           },
           "errorMessage": {
@@ -2997,9 +2993,14 @@
           "errors": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Minarsidur.API.Models.DetailedMethodReponseDTO_ErrorDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.SaveDocumentMethodReponseDTO_ErrorDTO"
             },
             "nullable": true
+          },
+          "errorStack": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
           },
           "reportId": {
             "type": "integer",
@@ -3651,20 +3652,6 @@
         },
         "additionalProperties": false
       },
-      "Minarsidur.API.Models.DetailedMethodReponseDTO_ErrorDTO": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "Minarsidur.API.Models.DocumentDTO": {
         "required": [
           "data",
@@ -3946,9 +3933,11 @@
             "type": "string",
             "nullable": true
           },
+          "status": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.Drugs.DrugCertificateDTO_DrugCertificateStatusEnum"
+          },
           "processed": {
             "type": "boolean",
-            "nullable": true,
             "readOnly": true
           },
           "approved": {
@@ -3967,7 +3956,6 @@
           },
           "valid": {
             "type": "boolean",
-            "nullable": true,
             "readOnly": true
           },
           "comment": {
@@ -3988,6 +3976,16 @@
           }
         },
         "additionalProperties": false
+      },
+      "Minarsidur.API.Models.Drugs.DrugCertificateDTO_DrugCertificateStatusEnum": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "Minarsidur.API.Models.Drugs.DrugDTO": {
         "type": "object",
@@ -4236,6 +4234,10 @@
             "type": "string",
             "nullable": true
           },
+          "neighborhoodCenter": {
+            "type": "string",
+            "nullable": true
+          },
           "canRegister": {
             "type": "boolean",
             "nullable": true
@@ -4395,12 +4397,12 @@
             "nullable": true
           },
           "type": {
-            "$ref": "#/components/schemas/Minarsidur.API.Models.InsuranceStatements.ApplicantDTO_InsuranceApplicantType"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.InsuranceStatements.ApplicantDTO_InsuranceApplicantTypeEnum"
           }
         },
         "additionalProperties": false
       },
-      "Minarsidur.API.Models.InsuranceStatements.ApplicantDTO_InsuranceApplicantType": {
+      "Minarsidur.API.Models.InsuranceStatements.ApplicantDTO_InsuranceApplicantTypeEnum": {
         "enum": [
           0,
           1,
@@ -4479,9 +4481,26 @@
             "type": "boolean",
             "nullable": true
           },
+          "requestId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "errorMessage": {
             "type": "string",
             "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.SaveDocumentMethodReponseDTO_ErrorDTO"
+            },
+            "nullable": true
+          },
+          "errorStack": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
           },
           "applicationId": {
             "type": "integer",
@@ -4523,7 +4542,8 @@
       },
       "Minarsidur.API.Models.InsuranceStatements.StudentApplicationDTO": {
         "required": [
-          "applicants"
+          "applicants",
+          "attachment"
         ],
         "type": "object",
         "properties": {
@@ -4771,6 +4791,20 @@
         },
         "additionalProperties": false
       },
+      "Minarsidur.API.Models.SaveDocumentMethodReponseDTO_ErrorDTO": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Minarsidur.API.Models.SicknessAllowance.ApplicantDTO": {
         "required": [
           "address",
@@ -5006,18 +5040,13 @@
       "Minarsidur.API.Models.SicknessAllowance.Response.SubmitSicknessAllowanceApplicationResponseDTO": {
         "type": "object",
         "properties": {
+          "success": {
+            "type": "boolean",
+            "nullable": true
+          },
           "requestId": {
             "type": "integer",
             "format": "int32",
-            "nullable": true
-          },
-          "submissionId": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean",
             "nullable": true
           },
           "errorMessage": {
@@ -5027,9 +5056,14 @@
           "errors": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Minarsidur.API.Models.DetailedMethodReponseDTO_ErrorDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.SaveDocumentMethodReponseDTO_ErrorDTO"
             },
             "nullable": true
+          },
+          "errorStack": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
           },
           "applicationId": {
             "type": "integer",
