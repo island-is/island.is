@@ -21,7 +21,7 @@ const BffConfigSchema = z.object({
     })
     // Only required in production
     .optional(),
-  graphqlApiEndpont: z.string(),
+  graphqlApiEndpoint: z.string(),
   /**
    * The URL to redirect to after logging out
    */
@@ -79,7 +79,7 @@ export const BffConfig = defineConfig({
       /**
        * Our main GraphQL API endpoint
        */
-      graphqlApiEndpont: env.required('BFF_PROXY_API_ENDPOINT'),
+      graphqlApiEndpoint: env.required('BFF_PROXY_API_ENDPOINT'),
       redis: isProduction
         ? {
             name: env.required('BFF_REDIS_NAME'),

@@ -149,7 +149,7 @@ export class ProxyService {
   }): Promise<void> {
     const accessToken = await this.getAccessToken(req)
     const queryString = req.url.split('?')[1]
-    const targetUrl = `${this.config.graphqlApiEndpont}${
+    const targetUrl = `${this.config.graphqlApiEndpoint}${
       queryString ? `?${queryString}` : ''
     }`
 
