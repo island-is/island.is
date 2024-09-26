@@ -29,8 +29,6 @@ import { ListItem } from '../listItems/models/listItem.model'
 import { createFormTranslations } from '../translations/form'
 import { createSectionTranslations } from '../translations/section'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
-import { FormApplicant } from '../formApplicants/models/formApplicant.model'
-import { FormCertificationType } from '../certifications/models/formCertificationType.model'
 
 @Injectable()
 export class FormsService {

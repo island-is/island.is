@@ -59,7 +59,10 @@ export class ApplicationsService {
       )
     }
 
-    var form = await this.getApplicationForm(application.formId, applicationId)
+    const form = await this.getApplicationForm(
+      application.formId,
+      applicationId,
+    )
 
     const applicationDto = this.applicationMapper.mapFormToApplicationDto(
       form,
