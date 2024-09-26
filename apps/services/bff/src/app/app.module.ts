@@ -5,6 +5,7 @@ import { AuthModule as AppAuthModule } from './modules/auth/auth.module'
 import { CacheModule } from './modules/cache/cache.module'
 import { ProxyModule } from './modules/proxy/proxy.module'
 import { UserModule } from './modules/user/user.module'
+import { EnhancedFetchModule } from './modules/enhancedFetch/enhanced-fetch.module'
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserModule } from './modules/user/user.module'
     UserModule,
     AppAuthModule,
     ProxyModule,
+    EnhancedFetchModule,
   ],
 })
 export class AppModule {}

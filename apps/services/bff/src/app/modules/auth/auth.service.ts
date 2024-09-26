@@ -12,6 +12,7 @@ import { BffConfig } from '../../bff.config'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 import { FIVE_SECONDS_IN_MS, ONE_WEEK_IN_MS } from '../../constants/time'
 import { CryptoService } from '../../services/crypto.service'
+import { PKCEService } from '../../services/pkce.service'
 import {
   CreateErrorQueryStrArgs,
   createErrorQueryStr,
@@ -21,7 +22,6 @@ import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
 import { TokenResponse } from '../ids/ids.types'
 import { CachedTokenResponse } from './auth.types'
-import { PKCEService } from './pkce.service'
 import { CallbackLoginQuery } from './queries/callback-login.query'
 import { LoginQuery } from './queries/login.query'
 import { LogoutQuery } from './queries/logout.query'

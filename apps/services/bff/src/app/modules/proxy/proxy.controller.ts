@@ -33,6 +33,6 @@ export class ProxyController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
-    return this.proxyService.proxyRequest({ req, res })
+    return this.proxyService.proxyGraphQLRequest({ req, res })
   }
 }

@@ -19,7 +19,7 @@ import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
 import { ApiQuery } from './queries/api-proxy.query'
 
-const whiteListedHeaders = ['access-control-allow-origin']
+const droppedResponseHeaders = ['access-control-allow-origin']
 
 @Injectable()
 export class ProxyService {
@@ -99,16 +99,12 @@ export class ProxyService {
         body: JSON.stringify(body ?? req.body),
       })
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
-      }
-
       // Set the status code of the response
       res.status(response.status)
 
       response.headers.forEach((value, key) => {
-        // Only set headers that are not in the whiteListedHeaders array
-        if (!whiteListedHeaders.includes(key.toLowerCase())) {
+        // Only set headers that are not in the droppedResponseHeaders array
+        if (!droppedResponseHeaders.includes(key.toLowerCase())) {
           res.setHeader(key, value)
         }
       })
@@ -122,7 +118,7 @@ export class ProxyService {
         // This check ensures that `res.end()` is only called if the response has not already been ended.
         if (!res.writableEnded) {
           // Ensure the response is properly ended if an error occurs
-          res.end('An error occurred while streaming data.')
+          res.end()
         }
       })
 
@@ -144,7 +140,7 @@ export class ProxyService {
    * Proxies an incoming HTTP POST request to a target GraphQL API, handling authentication, token refresh,
    * and response streaming.
    */
-  public async proxyRequest({
+  public async proxyGraphQLRequest({
     req,
     res,
   }: {

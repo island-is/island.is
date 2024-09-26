@@ -3,33 +3,29 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 
+import { EnhancedFetchAPI } from '@island.is/clients/middlewares'
 import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
+import { ENHANCED_FETCH_PROVIDER_KEY } from '../enhancedFetch/enhanced-fetch.provider'
 import { ParResponse, TokenResponse } from './ids.types'
-import {
-  EnhancedFetchAPI,
-  createEnhancedFetch,
-} from '@island.is/clients/middlewares'
-import { environment } from '../../../environment'
 
 @Injectable()
 export class IdsService {
-  private readonly enhancedFetch: EnhancedFetchAPI
   private readonly issuerUrl
 
   constructor(
     @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    private readonly logger: Logger,
 
     @Inject(BffConfig.KEY)
     private readonly config: ConfigType<typeof BffConfig>,
 
+    @Inject(ENHANCED_FETCH_PROVIDER_KEY)
+    private readonly enhancedFetch: EnhancedFetchAPI,
+
     private readonly cryptoService: CryptoService,
   ) {
     this.issuerUrl = this.config.ids.issuer
-    this.enhancedFetch = createEnhancedFetch({
-      name: `bff-${environment.name}-ids-serivce`,
-    })
   }
 
   /**
