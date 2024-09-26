@@ -29,7 +29,7 @@ export class UserService {
     }
   }
 
-  public async getUser(req: Request): Promise<BffUser> {
+  public async getUser(req: Request, noRefresh = false): Promise<BffUser> {
     const sid = req.cookies[SESSION_COOKIE_NAME]
 
     if (!sid) {
@@ -50,6 +50,10 @@ export class UserService {
 
       // Check if the access token is expired
       if (isExpired(cachedTokenResponse.accessTokenExp)) {
+        if (noRefresh) {
+          throw new UnauthorizedException()
+        }
+
         // Get new token data with refresh token
         const tokenResponse = await this.idsService.refreshToken(
           cachedTokenResponse.refresh_token,
