@@ -6,6 +6,7 @@ import {
   isDefenceUser,
   isIndictmentCase,
   isPrisonAdminUser,
+  isPrisonStaffUser,
   isRequestCase,
   User,
 } from '@island.is/judicial-system/types'
@@ -39,6 +40,8 @@ const prisonAdminCaseFileCategories = [
   CaseFileCategory.RULING,
 ]
 
+const prisonStaffCaseFileCategories = [CaseFileCategory.APPEAL_RULING]
+
 export const canLimitedAcccessUserViewCaseFile = (
   user: User,
   caseType: CaseType,
@@ -68,12 +71,20 @@ export const canLimitedAcccessUserViewCaseFile = (
     }
   }
 
-  if (
-    isPrisonAdminUser(user) &&
-    isCompletedCase(caseState) &&
-    prisonAdminCaseFileCategories.includes(caseFileCategory)
-  ) {
-    return true
+  if (isCompletedCase(caseState)) {
+    if (
+      isPrisonStaffUser(user) &&
+      prisonStaffCaseFileCategories.includes(caseFileCategory)
+    ) {
+      return true
+    }
+
+    if (
+      isPrisonAdminUser(user) &&
+      prisonAdminCaseFileCategories.includes(caseFileCategory)
+    ) {
+      return true
+    }
   }
 
   return false
