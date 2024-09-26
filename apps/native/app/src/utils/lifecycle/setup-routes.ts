@@ -183,6 +183,11 @@ export function setupRoutes() {
   addRoute('/update-app', async (passProps) => {
     Navigation.showModal({
       stack: {
+        options: {
+          modal: {
+            swipeToDismiss: false,
+          },
+        },
         children: [
           {
             component: {

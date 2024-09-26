@@ -1,12 +1,13 @@
 import { Button, Typography, NavigationBarSheet } from '@ui'
 import React from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
-import { View, Image, SafeAreaView } from 'react-native'
+import { View, Image, SafeAreaView, Linking } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import logo from '../../assets/logo/logo-64w.png'
-import illustrationSrc from '../../assets/illustrations/digital-services-m1.png'
+import illustrationSrc from '../../assets/illustrations/digital-services-m1-dots.png'
+import { isIos } from '../../utils/devices'
 
 const Text = styled.View`
   margin-horizontal: ${({ theme }) => theme.spacing[7]}px;
@@ -19,6 +20,9 @@ const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
       visible: false,
+    },
+    hardwareBackButton: {
+      dismissModalOnPress: false,
     },
   }))
 
@@ -36,6 +40,7 @@ export const UpdateAppScreen: NavigationFunctionComponent = ({
         title={''}
         onClosePress={() => console.log('tried to close')}
         style={{ marginHorizontal: 16 }}
+        closable={false}
       />
       <SafeAreaView style={{ flex: 1 }}>
         <View
@@ -75,7 +80,7 @@ export const UpdateAppScreen: NavigationFunctionComponent = ({
           </Text>
           <Image
             source={illustrationSrc}
-            style={{ width: 195, height: 223 }}
+            style={{ width: 210, height: 240 }}
             resizeMode="contain"
           />
         </View>
@@ -91,7 +96,11 @@ export const UpdateAppScreen: NavigationFunctionComponent = ({
               defaultMessage: 'Uppfæra',
             })}
             onPress={() => {
-              console.log('Update clicked')
+              Linking.openURL(
+                isIos
+                  ? 'https://apps.apple.com/app/%C3%ADsland-is-stafr%C3%A6nt-%C3%ADsland/id1569828682'
+                  : 'https://play.google.com/store/apps/details?id=is.island.app',
+              )
             }}
           />
         </View>
