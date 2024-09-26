@@ -51,7 +51,7 @@ const Subpoena: FC = () => {
         return
       }
 
-      const promises: Promise<boolean | undefined>[] = [sendCourtDateToServer()]
+      const promises: Promise<boolean>[] = []
 
       if (workingCase.defendants) {
         workingCase.defendants.forEach((defendant) => {
@@ -65,8 +65,16 @@ const Subpoena: FC = () => {
         })
       }
 
-      const allDataSentToServer = await Promise.all(promises)
-      if (!allDataSentToServer.every((result) => result)) {
+      // Make sure defendants are updated before submitting the court date
+      const allDefendantsUpdated = await Promise.all(promises)
+
+      if (!allDefendantsUpdated.every((result) => result)) {
+        return
+      }
+
+      const courtDateUpdated = await sendCourtDateToServer()
+
+      if (!courtDateUpdated) {
         return
       }
 
