@@ -16,6 +16,11 @@ import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionAddListsInput } from './dto/addLists.input'
 import { SignatureCollectionOwnerInput } from './dto/owner.input'
+import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
+import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
+import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
+import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
+import { SignatureCollectionCollector } from './models/collector.model'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -128,6 +133,47 @@ export class SignatureCollectionService {
     return await this.signatureCollectionClientService.createParliamentaryLists(
       { ...input, areas: input.areaIds?.map((area) => ({ areaId: area })) },
       user,
+    )
+  }
+
+  async candidacyUploadPaperSignature(
+    input: SignatureCollectionUploadPaperSignatureInput,
+    user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.candidacyUploadPaperSignature(
+      user,
+      input,
+    )
+  }
+
+  async canSignFromPaper(
+    user: User,
+    input: SignatureCollectionCanSignFromPaperInput,
+  ): Promise<boolean> {
+    const signee = await this.signatureCollectionClientService.getSignee(
+      user,
+      input.signeeNationalId,
+    )
+    const list = await this.list(input.listId, user)
+    // Current signatures should not prevent paper signatures
+    const canSign =
+      signee.canSign ||
+      (signee.canSignInfo?.length === 1 &&
+        signee.canSignInfo[0] === ReasonKey.AlreadySigned)
+
+    return canSign && list.area.id === signee.area?.id
+  }
+
+  async collectors(
+    user: User,
+    candidateId: string | undefined,
+  ): Promise<SignatureCollectionCollector[]> {
+    if (!candidateId) {
+      return []
+    }
+    return await this.signatureCollectionClientService.getCollectors(
+      user,
+      candidateId,
     )
   }
 }

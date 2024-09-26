@@ -10,7 +10,11 @@ import {
 import { SignatureCollectionBulk } from './models/bulk.model'
 import { SignatureCollectionCandidateLookUp } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
-import { SignatureCollectionAdminClientService } from '@island.is/clients/signature-collection'
+import {
+  ReasonKey,
+  SignatureCollectionAdminClientService,
+  SignatureCollectionClientService,
+} from '@island.is/clients/signature-collection'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadline.input'
 import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
@@ -22,6 +26,7 @@ import { SignatureCollectionIdInput } from './dto/collectionId.input'
 export class SignatureCollectionAdminService {
   constructor(
     private signatureCollectionClientService: SignatureCollectionAdminClientService,
+    private signatureCollectionBasicService: SignatureCollectionClientService,
   ) {}
 
   async currentCollection(user: User): Promise<SignatureCollection> {
@@ -37,6 +42,15 @@ export class SignatureCollectionAdminService {
 
   async list(listId: string, user: User): Promise<SignatureCollectionList> {
     return await this.signatureCollectionClientService.getList(listId, user)
+  }
+
+  async getCanSignInfo(
+    auth: User,
+    nationalId: string,
+  ): Promise<ReasonKey[] | undefined> {
+    return (
+      await this.signatureCollectionBasicService.getSignee(auth, nationalId)
+    ).canSignInfo
   }
 
   async signatures(

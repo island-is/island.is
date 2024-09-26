@@ -58,6 +58,7 @@ import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Institution } from '../institution'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
+import { Subpoena } from '../subpoena/models/subpoena.model'
 import { User, UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
@@ -1204,7 +1205,10 @@ export class InternalCaseService {
   async getIndictmentCases(nationalId: string): Promise<Case[]> {
     return this.caseModel.findAll({
       include: [
-        { model: Defendant, as: 'defendants' },
+        {
+          model: Defendant,
+          as: 'defendants',
+        },
         {
           model: DateLog,
           as: 'dateLogs',
@@ -1228,11 +1232,25 @@ export class InternalCaseService {
   async getIndictmentCase(caseId: string, nationalId: string): Promise<Case> {
     const caseById = await this.caseModel.findOne({
       include: [
-        { model: Defendant, as: 'defendants' },
+        {
+          model: Defendant,
+          as: 'defendants',
+          include: [
+            {
+              model: Subpoena,
+              as: 'subpoenas',
+              order: [['created', 'DESC']],
+            },
+          ],
+        },
         { model: Institution, as: 'court' },
         { model: Institution, as: 'prosecutorsOffice' },
         { model: User, as: 'judge' },
-        { model: User, as: 'prosecutor' },
+        {
+          model: User,
+          as: 'prosecutor',
+          include: [{ model: Institution, as: 'institution' }],
+        },
         { model: DateLog, as: 'dateLogs' },
       ],
       attributes: ['courtCaseNumber', 'id'],

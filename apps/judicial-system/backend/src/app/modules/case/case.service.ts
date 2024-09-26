@@ -55,7 +55,7 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { Defendant, DefendantService } from '../defendant'
+import { CivilClaimant, Defendant, DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
@@ -272,6 +272,7 @@ export const include: Includeable[] = [
   },
   { model: Case, as: 'childCase' },
   { model: Defendant, as: 'defendants' },
+  { model: CivilClaimant, as: 'civilClaimants' },
   { model: IndictmentCount, as: 'indictmentCounts' },
   {
     model: CaseFile,
@@ -320,6 +321,10 @@ export const include: Includeable[] = [
               CaseFileCategory.CRIMINAL_RECORD,
               CaseFileCategory.COST_BREAKDOWN,
               CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+              CaseFileCategory.CASE_FILE,
+              CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIM,
             ],
           },
         },
@@ -336,6 +341,7 @@ export const include: Includeable[] = [
 
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
   [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
   [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
   [{ model: Notification, as: 'notifications' }, 'created', 'DESC'],
@@ -386,14 +392,13 @@ export const caseListInclude: Includeable[] = [
     as: 'eventLogs',
     required: false,
     where: { eventType: { [Op.in]: eventTypes } },
-    order: [['created', 'DESC']],
-    separate: true,
   },
 ]
 
 export const listOrder: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
   [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
+  [{ model: EventLog, as: 'eventLogs' }, 'created', 'DESC'],
 ]
 
 @Injectable()
