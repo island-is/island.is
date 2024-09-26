@@ -379,7 +379,6 @@ export class AuthService {
     const searchParams = new URLSearchParams({
       id_token_hint: cachedTokenResponse.id_token,
       post_logout_redirect_uri: this.config.logoutRedirectUri,
-      state: encodeURIComponent(JSON.stringify({ sid: query.sid })),
     })
 
     return res.redirect(
