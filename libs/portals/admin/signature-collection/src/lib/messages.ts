@@ -195,17 +195,17 @@ export const m = defineMessages({
   /* Hætta við söfnun modal */
   cancelCollectionButton: {
     id: 'dmin-portal.signature-collection:cancelCollectionButton',
-    defaultMessage: 'Hætta við söfnun meðmæla',
+    defaultMessage: 'Eyða lista',
     description: '',
   },
   cancelCollectionModalMessage: {
     id: 'dmin-portal.signature-collection:cancelCollectionModalMessage',
-    defaultMessage: 'Þú ert að fara að hætta við söfnun meðmæla. Ertu viss?',
+    defaultMessage: 'Þú ert að fara að eyða þessum lista. Ertu viss?',
     description: '',
   },
   cancelCollectionModalConfirmButton: {
     id: 'dmin-portal.signature-collection:modalConfirmButton',
-    defaultMessage: 'Já, hætta við',
+    defaultMessage: 'Já, eyða lista',
     description: '',
   },
   cancelCollectionModalCancelButton: {
@@ -215,12 +215,12 @@ export const m = defineMessages({
   },
   cancelCollectionModalToastError: {
     id: 'dmin-portal.signature-collection:modalToastError',
-    defaultMessage: 'Ekki tókst að hætta við söfnun meðmæla',
+    defaultMessage: 'Ekki tókst að eyða lista',
     description: '',
   },
   cancelCollectionModalToastSuccess: {
     id: 'dmin-portal.signature-collection:cancelCollectionModalToastSuccess',
-    defaultMessage: 'Tókst að hætta við söfnun meðmæla',
+    defaultMessage: 'Tókst að eyða lista',
     description: '',
   },
 
@@ -458,6 +458,11 @@ export const m = defineMessages({
   totalListResults: {
     id: 'admin-portal.signature-collection:totalListResults',
     defaultMessage: 'Samtals fjöldi',
+    description: '',
+  },
+  totalListsPerConstituency: {
+    id: 'admin-portal.signature-collection:totalListsPerConstituency',
+    defaultMessage: 'Fjöldi lista: ',
     description: '',
   },
   nationalIdsSuccess: {

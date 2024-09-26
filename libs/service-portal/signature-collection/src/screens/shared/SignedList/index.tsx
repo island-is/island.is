@@ -21,7 +21,9 @@ const SignedList = ({
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  const [listIdToUnsign, setListIdToUnsign] = useState<string | undefined>(undefined)
+  const [listIdToUnsign, setListIdToUnsign] = useState<string | undefined>(
+    undefined,
+  )
 
   // SignedList is typically singular, although it may consist of multiple entries, which in that case will all be invalid
   const { signedLists, loadingSignedLists, refetchSignedLists } =
