@@ -128,11 +128,6 @@ export class SubpoenaService {
           user,
         )
 
-        if (!createdSubpoena) {
-          this.logger.error('Failed to create subpoena file for police')
-          return { delivered: false }
-        }
-
         await this.subpoenaModel.update(
           { subpoenaId: createdSubpoena.subpoenaId },
           { where: { id: subpoena.id }, transaction },
@@ -141,7 +136,10 @@ export class SubpoenaService {
 
       return { delivered: true }
     } catch (error) {
-      this.logger.error('Error delivering subpoena to police', error)
+      this.logger.error(
+        'Error while attempting to deliver subpoena to police',
+        error,
+      )
       return { delivered: false }
     }
   }
