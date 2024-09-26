@@ -5,7 +5,7 @@ import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
 import { SectionTypes } from '../../enums/sectionTypes'
-import { FormApplicantDto } from '../applicants/models/dto/formApplicant.dto'
+import { FormApplicantDto } from '../formApplicants/models/dto/formApplicant.dto'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
 import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
@@ -29,6 +29,8 @@ import { ListItem } from '../listItems/models/listItem.model'
 import { createFormTranslations } from '../translations/form'
 import { createSectionTranslations } from '../translations/section'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { FormApplicant } from '../formApplicants/models/formApplicant.model'
+import { FormCertificationType } from '../certifications/models/formCertificationType.model'
 
 @Injectable()
 export class FormsService {
@@ -142,8 +144,6 @@ export class FormsService {
         : form.stopProgressOnValidatingScreen
     form.completedMessage = updateFormDto.completedMessage
     form.dependencies = updateFormDto.dependencies
-    // form.certificationTypes = updateFormDto.certificationTypes
-    // form.applicants = updateFormDto.applicants
 
     await form.save()
   }

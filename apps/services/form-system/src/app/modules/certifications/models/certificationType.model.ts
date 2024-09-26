@@ -51,14 +51,14 @@ export class CertificationType extends Model<CertificationType> {
   modified!: CreationOptional<Date>
 
   @BelongsToMany(() => Organization, {
-    through: 'organization_testimony_type',
+    through: 'organization_certification_type',
     foreignKey: 'certification_type_id',
     otherKey: 'organization_id',
   })
   organizations?: NonAttribute<Organization[]>
 
   @BelongsToMany(() => Form, {
-    through: 'form_testimony_type',
+    through: 'form_certification_type',
     foreignKey: 'certification_type_id',
     otherKey: 'form_id',
   })
