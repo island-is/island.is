@@ -35,4 +35,7 @@ export class Subpoena {
 
   @Field(() => String, { nullable: true })
   readonly comment?: string
+
+  @Field(() => String, { nullable: true })
+  readonly defenderNationalId?: string
 }

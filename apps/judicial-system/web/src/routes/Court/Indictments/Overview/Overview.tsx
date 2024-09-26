@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -24,8 +24,12 @@ import {
 import {
   IndictmentDecision,
   ServiceStatus,
+  Subpoena,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useDefendants,
+  useGetLawyer,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { SubpoenaType } from '../../components'
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
@@ -64,6 +68,60 @@ const mapComment = (
     default:
       return null
   }
+}
+
+interface ServiceAnnouncement {
+  subpoena: Subpoena
+  defendantName?: string | null
+}
+
+const ServiceAnnouncement: FC<ServiceAnnouncement> = (props) => {
+  const { subpoena, defendantName } = props
+
+  const { formatMessage } = useIntl()
+
+  const lawyer = useGetLawyer(
+    subpoena.defenderNationalId,
+    subpoena.serviceStatus === ServiceStatus.DEFENDER,
+  )
+
+  return !defendantName ? null : (
+    <Box marginBottom={2}>
+      <AlertMessage
+        title={`${formatMessage(
+          mapServiceStatus(subpoena.serviceStatus),
+        )} - ${defendantName}`}
+        message={
+          <Box>
+            <Text variant="small">
+              {`${subpoena.servedBy} - ${formatDate(
+                subpoena.serviceDate,
+                'Pp',
+              )}`}
+            </Text>
+            <Text variant="small">
+              {subpoena.serviceStatus === ServiceStatus.DEFENDER
+                ? formatMessage(strings.servedToDefender, {
+                    lawyerName: lawyer?.name,
+                    practice: lawyer?.practice,
+                  })
+                : subpoena.serviceStatus === ServiceStatus.ELECTRONICALLY
+                ? formatMessage(strings.servedToElectronically, {
+                    date: 'asdasd',
+                  })
+                : subpoena.comment}
+            </Text>
+          </Box>
+        }
+        type={
+          subpoena.serviceStatus === ServiceStatus.FAILED ||
+          subpoena.serviceStatus === ServiceStatus.EXPIRED
+            ? 'warning'
+            : 'success'
+        }
+      />
+    </Box>
+  )
 }
 
 const IndictmentOverview = () => {
@@ -116,42 +174,10 @@ const IndictmentOverview = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map((defendant) =>
           defendant.subpoenas?.map((subpoena) => (
-            <Box marginBottom={2}>
-              <AlertMessage
-                title={`${formatMessage(
-                  mapServiceStatus(subpoena.serviceStatus),
-                )} - ${defendant.name}`}
-                message={
-                  <Box>
-                    <Text variant="small">
-                      {`${subpoena.servedBy} - ${formatDate(
-                        subpoena.serviceDate,
-                        'Pp',
-                      )}`}
-                    </Text>
-                    <Text variant="small">
-                      {subpoena.serviceStatus === ServiceStatus.DEFENDER
-                        ? formatMessage(strings.servedToDefender, {
-                            lawyerName: 'asd',
-                            practice: 'asdasd',
-                          })
-                        : subpoena.serviceStatus ===
-                          ServiceStatus.ELECTRONICALLY
-                        ? formatMessage(strings.servedToElectronically, {
-                            date: 'asdasd',
-                          })
-                        : subpoena.comment}
-                    </Text>
-                  </Box>
-                }
-                type={
-                  subpoena.serviceStatus === ServiceStatus.FAILED ||
-                  subpoena.serviceStatus === ServiceStatus.EXPIRED
-                    ? 'warning'
-                    : 'success'
-                }
-              />
-            </Box>
+            <ServiceAnnouncement
+              subpoena={subpoena}
+              defendantName={defendant.name}
+            />
           )),
         )}
         {workingCase.court &&

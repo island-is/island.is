@@ -31,6 +31,7 @@ query Case($input: CaseQueryInput!) {
         serviceDate
         servedBy
         comment
+        defenderNationalId
       }
     }
     defenderName

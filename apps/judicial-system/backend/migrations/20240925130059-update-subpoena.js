@@ -32,6 +32,16 @@ module.exports = {
             'served_by',
             { transaction },
           ),
+
+          queryInterface.addColumn(
+            'subpoena',
+            'defender_national_id',
+            {
+              type: Sequelize.STRING,
+              allowNull: true,
+            },
+            { transaction },
+          ),
         ),
     )
   },
@@ -67,6 +77,10 @@ module.exports = {
             'registered_by',
             { transaction },
           ),
+
+          queryInterface.removeColumn('subpoena', 'defender_national_id', {
+            transaction,
+          }),
         ),
     )
   },
