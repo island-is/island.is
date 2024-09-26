@@ -12,7 +12,6 @@ export type BffState =
 export enum ActionType {
   SIGNIN_START = 'SIGNIN_START',
   SIGNIN_SUCCESS = 'SIGNIN_SUCCESS',
-  SIGNIN_FAILURE = 'SIGNIN_FAILURE',
   LOGGING_OUT = 'LOGGING_OUT',
   LOGGED_OUT = 'LOGGED_OUT',
   USER_LOADED = 'USER_LOADED',
@@ -37,7 +36,6 @@ export type Action =
   | {
       type:
         | ActionType.SIGNIN_START
-        | ActionType.SIGNIN_FAILURE
         | ActionType.LOGGING_OUT
         | ActionType.LOGGED_OUT
         | ActionType.SWITCH_USER
@@ -76,11 +74,6 @@ export const reducer = (
             userInfo: action.payload,
           })
         : state
-
-    case ActionType.SIGNIN_FAILURE:
-      return withState({
-        authState: 'failed',
-      })
 
     case ActionType.LOGGING_OUT:
       return withState({

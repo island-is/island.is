@@ -7,6 +7,16 @@ const randomBytesAsync = promisify(crypto.randomBytes)
 @Injectable()
 export class PKCEService {
   /**
+   * Creates an array of length "size" of random bytes
+   * @returns Array of random ints (0 to 255)
+   */
+  private async getRandomValues(size: number): Promise<Uint8Array> {
+    const randomBytes = await randomBytesAsync(size)
+
+    return new Uint8Array(randomBytes)
+  }
+
+  /**
    * Generate a PKCE code verifier
    * Generates a 50-character long verifier by default
    */
@@ -28,16 +38,6 @@ export class PKCEService {
 
     // and then Base64 URL encode
     return this.base64UrlEncode(Buffer.from(hashBuffer))
-  }
-
-  /**
-   * Creates an array of length "size" of random bytes
-   * @returns Array of random ints (0 to 255)
-   */
-  async getRandomValues(size: number): Promise<Uint8Array> {
-    const randomBytes = await randomBytesAsync(size)
-
-    return new Uint8Array(randomBytes)
   }
 
   /**
@@ -63,14 +63,8 @@ export class PKCEService {
   /**
    * Base64 URL encode the buffer input
    * This utility function converts a Buffer to a Base64 URL-safe string,
-   * replacing + with -, / with _, and removing any padding = characters.
-   * This is necessary because the standard Base64 encoding includes characters (+, /, and padding =) that are not URL-safe.
    */
   private base64UrlEncode(buffer: Buffer): string {
-    return buffer
-      .toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '')
+    return buffer.toString('base64url')
   }
 }

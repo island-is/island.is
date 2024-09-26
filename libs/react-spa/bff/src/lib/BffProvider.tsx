@@ -22,6 +22,14 @@ export const BffProvider = ({
   const bffUrlGenerator = createBffUrlGenerator(applicationBasePath)
   const [state, dispatch] = useReducer(reducer, initialState)
 
+  const { authState } = state
+  const showErrorScreen = authState === 'error'
+  const showLoadingScreen =
+    authState === 'loading' ||
+    authState === 'switching' ||
+    authState === 'logging-out'
+  const isLoggedIn = authState === 'logged-in'
+
   const checkLogin = async () => {
     dispatch({
       type: ActionType.SIGNIN_START,
@@ -127,13 +135,21 @@ export const BffProvider = ({
     window.location.href = applicationBasePath
   }
 
-  const { authState } = state
-  const showErrorScreen = authState === 'error'
-  const showLoadingScreen =
-    authState === 'loading' ||
-    authState === 'switching' ||
-    authState === 'logging-out'
-  const isLoggedIn = authState === 'logged-in'
+  const renderContent = () => {
+    if (showErrorScreen) {
+      return <ErrorScreen onRetry={onRetry} />
+    }
+
+    if (showLoadingScreen) {
+      return <LoadingScreen ariaLabel="Er að vinna í innskráningu" />
+    }
+
+    if (isLoggedIn) {
+      return children
+    }
+
+    return null
+  }
 
   return (
     <BffContext.Provider
@@ -145,13 +161,7 @@ export const BffProvider = ({
         bffUrlGenerator,
       }}
     >
-      {showErrorScreen ? (
-        <ErrorScreen onRetry={onRetry} />
-      ) : showLoadingScreen ? (
-        <LoadingScreen ariaLabel="Er að vinna í innskráningu" />
-      ) : isLoggedIn ? (
-        children
-      ) : null}
+      {renderContent()}
     </BffContext.Provider>
   )
 }

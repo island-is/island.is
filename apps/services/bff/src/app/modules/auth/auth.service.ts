@@ -6,7 +6,7 @@ import { CookieOptions, Request, Response } from 'express'
 import { jwtDecode } from 'jwt-decode'
 
 import { IdTokenClaims } from '@island.is/shared/types'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'

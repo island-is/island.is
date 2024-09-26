@@ -12,6 +12,6 @@ export const EnhancedFetchProvider: Provider<EnhancedFetchAPI> = {
   provide: ENHANCED_FETCH_PROVIDER_KEY,
   useFactory: () =>
     createEnhancedFetch({
-      name: `bff-${environment.name}-serivce`,
+      name: `bff-${environment.name}-service`,
     }),
 }

@@ -2,7 +2,7 @@ import { defineConfig } from '@island.is/nest/config'
 
 import { z } from 'zod'
 import { isProduction } from '../environment'
-import { removeTrailingSlash } from './utils/removeTrailingSlash'
+import { removeTrailingSlash } from './utils/remove-trailing-slash'
 import { DEFAULT_CACHE_USER_PROFILE_TTL_MS } from './constants/time'
 
 export const idsSchema = z.strictObject({
