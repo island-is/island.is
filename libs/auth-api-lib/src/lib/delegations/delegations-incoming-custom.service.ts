@@ -187,10 +187,12 @@ export class DelegationsIncomingCustomService {
     clientAllowedApiScopes: ApiScopeInfo[],
     requireApiScopes: boolean,
   ): Promise<MergedDelegationDTO[]> {
-    const customApiScopes = clientAllowedApiScopes.filter((s) =>
-      s.supportedDelegationTypes?.some(
-        (dt) => dt.delegationType === AuthDelegationType.GeneralMandate,
-      ),
+    const customApiScopes = clientAllowedApiScopes.filter(
+      (s) =>
+        !s.isAccessControlled &&
+        s.supportedDelegationTypes?.some(
+          (dt) => dt.delegationType === AuthDelegationType.GeneralMandate,
+        ),
     )
 
     if (requireApiScopes && !(customApiScopes && customApiScopes.length > 0)) {
