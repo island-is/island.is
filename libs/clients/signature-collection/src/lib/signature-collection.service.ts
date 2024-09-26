@@ -373,6 +373,7 @@ export class SignatureCollectionClientService {
         const isExtended = list.endTime > endTime
         const signedThisPeriod = signature.isInitialType === !isExtended
         const canUnsignDigital = isPresidential ? signature.isDigital : true
+        const canUnsignInvalid = isPresidential ? signature.valid : true
         return {
           signedDate: signature.created,
           isDigital: signature.isDigital,
@@ -380,7 +381,7 @@ export class SignatureCollectionClientService {
           isValid: signature.valid,
           canUnsign:
             canUnsignDigital &&
-            signature.valid &&
+            canUnsignInvalid &&
             list.active &&
             signedThisPeriod,
           ...list,
