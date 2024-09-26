@@ -6,11 +6,17 @@ import {
   CurrentUser,
   Scopes,
 } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { DownloadServiceConfig } from '@island.is/nest/config'
+import { ApiScope } from '@island.is/auth/scopes'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
+import type { User } from '@island.is/auth-nest-tools'
 import type { ConfigType } from '@island.is/nest/config'
-import { LawAndOrderService } from './law-and-order.service'
+import type { Locale } from '@island.is/shared/types'
 import { GetCourtCaseInput } from '../dto/getCourtCaseInput'
 import { CourtCases } from '../models/courtCases.model'
 import { CourtCase } from '../models/courtCase.model'
@@ -19,12 +25,12 @@ import { Subpoena } from '../models/subpoena.model'
 import { Lawyers } from '../models/lawyers.model'
 import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
 import { DefenseChoice } from '../models/defenseChoice.model'
-import { ApiScope } from '@island.is/auth/scopes'
-import type { Locale } from '@island.is/shared/types'
+import { LawAndOrderService } from './law-and-order.service'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/law-and-order' })
+@FeatureFlag(Features.servicePortalLawAndOrderModuleEnabled)
 export class LawAndOrderResolver {
   constructor(
     private readonly lawAndOrderService: LawAndOrderService,
