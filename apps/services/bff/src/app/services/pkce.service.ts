@@ -10,7 +10,7 @@ export class PKCEService {
    * Creates an array of length "size" of random bytes
    * @returns Array of random ints (0 to 255)
    */
-  private async getRandomValues(size: number): Promise<Uint8Array> {
+  async getRandomValues(size: number): Promise<Uint8Array> {
     const randomBytes = await randomBytesAsync(size)
 
     return new Uint8Array(randomBytes)
