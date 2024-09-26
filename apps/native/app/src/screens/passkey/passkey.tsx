@@ -15,7 +15,7 @@ import {
 } from 'react-native-navigation'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import logo from '../../assets/logo/logo-64w.png'
-import illustrationSrc from '../../assets/illustrations/digital-services-m1.png'
+import illustrationSrc from '../../assets/illustrations/digital-services-m1-dots.png'
 import { openNativeBrowser } from '../../lib/rn-island'
 import { preferencesStore } from '../../stores/preferences-store'
 import { useRegisterPasskey } from '../../lib/passkeys/useRegisterPasskey'
@@ -126,7 +126,7 @@ export const PasskeyScreen: NavigationFunctionComponent<{
           </Text>
           <Image
             source={illustrationSrc}
-            style={{ width: 195, height: 223 }}
+            style={{ width: 210, height: 240 }}
             resizeMode="contain"
           />
         </View>
