@@ -568,6 +568,16 @@ export const m = defineMessages({
     defaultMessage: 'Breyta blaðsíðunúmeri',
     description: '',
   },
+  editPaperNumberSuccess: {
+    id: 'admin-portal.signature-collection:editPaperNumberSuccess',
+    defaultMessage: 'Tókst að breyta blaðsíðunúmeri',
+    description: '',
+  },
+  editPaperNumberError: {
+    id: 'admin-portal.signature-collection:editPaperNumberSuccess',
+    defaultMessage: 'Ekki tókst að breyta blaðsíðunúmeri',
+    description: '',
+  },
   saveEditPaperNumber: {
     id: 'admin-portal.signature-collection:saveEditPaperNumber',
     defaultMessage: 'Uppfæra blaðsíðunúmer',
