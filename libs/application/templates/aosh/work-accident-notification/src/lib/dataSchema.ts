@@ -56,16 +56,32 @@ const companySchema = z.object({
 })
 
 const employeeSchema = z.object({
+  // TODO A lot of this optional stuff is to ease developement, go over what is and isn't required
   victimsOccupation: option.optional(),
   victimsOccupationMajor: option.optional().nullish(),
   victimsOccupationSubMajor: option.optional().nullish(),
   victimsOccupationMinor: option.optional().nullish(),
   victimsOccupationUnit: option.optional().nullish(),
+  address: z.string(),
+  dateOfAccident: z.string(), // date string, need to validate here or is the prebuilt date component enough ?
+  employmentStatus: z.string(),
+  employmentTime: z.string(),
+  //nationalField: TODO .... name and nationalId
+  nationality: z.string(),
+  postnumberAndMunicipality: z.string(),
+  startDate: z.string(), // date string
+  tempEmploymentSSN: z.string(), // Starfsmannaleiga
+  workhourArrangement: z.string(),
+  workStation: z.string(),
 })
 
 const circumstancesSchema = z.object({
   physicialActivities: z.array(option).optional(),
   physicialActivitiesMostSerious: z.string().optional(),
+})
+
+const absenceSchema = z.object({
+  absenceDueToAccident: z.string(),
 })
 
 const companyLaborProtectionSchema = z.object({
@@ -91,6 +107,7 @@ export const WorkAccidentNotificationAnswersSchema = z.object({
   companyInformation: companySchema,
   companyLaborProtection: companyLaborProtectionSchema,
   accident: accidentSchema,
+  absence: absenceSchema,
   employee: employeeSchema,
   projectPurchase: projectPurchaseSchema,
   circumstances: circumstancesSchema,
