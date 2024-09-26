@@ -51,13 +51,18 @@ export const DownloadDraftButton = ({ draftId, reviewButton }: Props) => {
     if (url && !isFetchingFile) {
       setIsFetchingFile(true)
 
-      fetch(bffUrlGenerator(`/api?url=${url}`), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      fetch(
+        bffUrlGenerator('/api', {
+          url,
+        }),
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
         },
-        credentials: 'include',
-      })
+      )
         .then((response) => {
           if (response.ok) {
             // Convert response to blob for download

@@ -2,11 +2,14 @@ import { createContext } from 'react'
 
 import { BffReducerState } from './bff.state'
 
-export interface BffContextType extends BffReducerState {
+export type BffContextType = BffReducerState & {
   signIn(): void
   signOut(): void
   switchUser(nationalId?: string): void
-  bffUrlGenerator(relativePath?: string): string
+  bffUrlGenerator(
+    relativePath?: string,
+    params?: Record<string, string>,
+  ): string
 }
 
 export const BffContext = createContext<BffContextType | undefined>(undefined)

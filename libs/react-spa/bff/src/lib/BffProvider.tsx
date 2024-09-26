@@ -1,11 +1,14 @@
 import { useEffectOnce } from '@island.is/react-spa/shared'
-import { ReactNode, useCallback, useReducer } from 'react'
+import { ReactNode, useCallback, useEffect, useReducer, useState } from 'react'
 
 import { LoadingScreen } from '@island.is/react/components'
-import { createBffUrlGenerator, createQueryStr } from './bff.utils'
+import { createBffUrlGenerator, isNewSession } from './bff.utils'
 import { BffContext } from './BffContext'
 import { ErrorScreen } from './ErrorScreen'
 import { reducer, initialState, ActionType } from './bff.state'
+import { BffPoller } from './BffPoller'
+import { BffBroadcastEvents, useBffBroadcaster } from './bff.hooks'
+import { BffSessionExpiredModal } from './BffSessionExpiredModal'
 
 type BffProviderProps = {
   children: ReactNode
@@ -19,16 +22,48 @@ export const BffProvider = ({
   children,
   applicationBasePath,
 }: BffProviderProps) => {
+  const [showSessionExpiredScreen, setSessionExpiredScreen] = useState(false)
   const bffUrlGenerator = createBffUrlGenerator(applicationBasePath)
   const [state, dispatch] = useReducer(reducer, initialState)
+  const isLoggedIn = state.authState === 'logged-in'
 
-  const checkLogin = async () => {
+  const { postMessage } = useBffBroadcaster((event) => {
+    if (
+      isLoggedIn &&
+      event.data.type === BffBroadcastEvents.NEW_SESSION &&
+      isNewSession(state.userInfo, event.data.userInfo)
+    ) {
+      setSessionExpiredScreen(true)
+    } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
+      dispatch({
+        type: ActionType.LOGGED_OUT,
+      })
+
+      signIn()
+    }
+  })
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      // Broadcast to all tabs/windows/iframes that a new session has started
+      postMessage({
+        type: BffBroadcastEvents.NEW_SESSION,
+        userInfo: state.userInfo,
+      })
+    }
+  }, [postMessage, state.userInfo, isLoggedIn])
+
+  const checkLogin = async (noRefresh = false) => {
     dispatch({
       type: ActionType.SIGNIN_START,
     })
 
     try {
-      const res = await fetch(bffUrlGenerator('/user'), {
+      const url = bffUrlGenerator('/user', {
+        no_refresh: noRefresh.toString(),
+      })
+
+      const res = await fetch(url, {
         credentials: 'include',
       })
 
@@ -53,11 +88,13 @@ export const BffProvider = ({
   }
 
   const signIn = useCallback(() => {
-    const qs = createQueryStr({
-      target_link_uri: window.location.href,
+    dispatch({
+      type: ActionType.SIGNIN_START,
     })
 
-    window.location.href = bffUrlGenerator(`/login?${qs}`)
+    window.location.href = bffUrlGenerator('/login', {
+      target_link_uri: window.location.href,
+    })
   }, [bffUrlGenerator])
 
   const signOut = useCallback(() => {
@@ -69,38 +106,52 @@ export const BffProvider = ({
       type: ActionType.LOGGING_OUT,
     })
 
-    window.location.href = bffUrlGenerator(
-      `/logout?sid=${state.userInfo.profile.sid}`,
-    )
-  }, [bffUrlGenerator, state.userInfo])
+    window.location.href = bffUrlGenerator('/logout', {
+      sid: state.userInfo.profile.sid,
+    })
+
+    setTimeout(() => {
+      // We will wait 5 seconds before we post the logout message
+      // The reason is that ids will not log the user out immediately.
+      postMessage({
+        type: BffBroadcastEvents.LOGOUT,
+      })
+    }, 5000)
+  }, [bffUrlGenerator, postMessage, state.userInfo])
 
   const switchUser = (nationalId?: string) => {
     dispatch({
       type: ActionType.SWITCH_USER,
     })
 
-    const qs = createQueryStr(
-      nationalId !== undefined
+    window.location.href = bffUrlGenerator(
+      '/login',
+      nationalId
         ? {
             login_hint: nationalId,
-            /**
-             * TODO: remove this.
-             * It is currently required to switch delegations, but we'd like
-             * the IDS to handle login_required and other potential road
-             * blocks. Now OidcSignIn is handling login_required.
-             */
-            prompt: 'none',
           }
         : {
             prompt: 'select_account',
           },
     )
-
-    window.location.href = bffUrlGenerator(`/login?${qs}`)
   }
 
   useEffectOnce(() => {
     checkLogin()
+  })
+
+  useEffectOnce(() => {
+    const oneHourMs = 1000 * 60 * 60
+    const timeout = setTimeout(() => {
+      // After one hour we check if the user is still logged in
+      // and we tell the /user endpoint not to refresh the tokens,
+      // since we are checking for timeout expiration.
+      checkLogin(true)
+    }, oneHourMs)
+
+    return () => {
+      clearTimeout(timeout)
+    }
   })
 
   const onRetry = () => {
@@ -113,7 +164,6 @@ export const BffProvider = ({
     authState === 'loading' ||
     authState === 'switching' ||
     authState === 'logging-out'
-  const isLoggedIn = authState === 'logged-in'
 
   return (
     <BffContext.Provider
@@ -129,8 +179,16 @@ export const BffProvider = ({
         <ErrorScreen onRetry={onRetry} />
       ) : showLoadingScreen ? (
         <LoadingScreen ariaLabel="Er að vinna í innskráningu" />
+      ) : showSessionExpiredScreen ? (
+        <BffSessionExpiredModal onLogin={signIn} />
       ) : isLoggedIn ? (
-        children
+        <BffPoller
+          newSessionCb={() => {
+            setSessionExpiredScreen(true)
+          }}
+        >
+          {children}
+        </BffPoller>
       ) : null}
     </BffContext.Provider>
   )

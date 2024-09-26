@@ -12,7 +12,7 @@ export const startWithBff = async (
     setDevEnvVars(client)
 
     // Start the BFF server with the updated environment
-    console.log(chalk.blue('Starting BFF server...'))
+    console.log(chalk.blue(`Starting ${client} BFF server...`))
     startProcess('yarn', ['nx', 'run', 'services-bff:dev'], process.env)
 
     // Start the client process
