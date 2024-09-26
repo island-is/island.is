@@ -15,11 +15,22 @@ import { URL } from 'url'
  * @returns True if the URI is valid, false otherwise.
  */
 export const validateUri = (uri: string, allowedUris: string[]): boolean => {
+  //  input validation for extra security
+  if (!uri || typeof uri !== 'string' || !Array.isArray(allowedUris)) {
+    return false
+  }
+
   try {
-    const parsedUri = new URL(uri)
+    // Normalize the URI to lowercase for case-insensitive comparison
+    const parsedUri = new URL(uri.trim().toLowerCase())
 
     return allowedUris.some((allowedUri) => {
-      const parsedAllowedUri = new URL(allowedUri)
+      if (typeof allowedUri !== 'string') {
+        return false
+      }
+
+      const parsedAllowedUri = new URL(allowedUri.trim().toLowerCase())
+
       const isSameProtocol = parsedUri.protocol === parsedAllowedUri.protocol
       const isSameHostname = parsedUri.hostname === parsedAllowedUri.hostname
       const isSamePathname =
