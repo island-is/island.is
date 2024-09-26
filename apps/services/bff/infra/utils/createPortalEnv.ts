@@ -1,3 +1,5 @@
+import { adminPortalScopes, servicePortalScopes } from '@island.is/auth/scopes'
+import { json } from '../../../../../infra/src/dsl/dsl'
 import { DEFAULT_CACHE_USER_PROFILE_TTL_MS } from '../../src/app/constants/time'
 
 type PortalKeys = 'stjornbord' | 'minarsidur'
@@ -8,9 +10,23 @@ const defaultEnvUrls = {
   prod: 'https://island.is',
 }
 
+const getScopes = (key: PortalKeys) => {
+  switch (key) {
+    case 'minarsidur':
+      return servicePortalScopes
+
+    case 'stjornbord':
+      return adminPortalScopes
+
+    default:
+      throw new Error('Invalid BFF client')
+  }
+}
+
 export const createPortalEnv = (key: PortalKeys) => {
   return {
     // Idenity server
+    IDENTITY_SERVER_CLIENT_SCOPES: json(getScopes(key)),
     IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${key}`,
     IDENTITY_SERVER_ISSUER_URL: {
       dev: 'https://identity-server.dev01.devland.is',
