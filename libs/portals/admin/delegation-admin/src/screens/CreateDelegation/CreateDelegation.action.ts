@@ -11,6 +11,7 @@ import {
   CreateDelegationMutation,
   CreateDelegationMutationVariables,
 } from './CreateDelegation.generated'
+import { findProblemInApolloError, ProblemType } from '@island.is/shared/problem'
 
 const schema = z
   .object({
@@ -50,6 +51,7 @@ export type CreateDelegationResult = ValidateFormDataResult<typeof schema> & {
    * Global error message if the mutation fails
    */
   globalError?: boolean
+  errorMessage?: string
   success?: boolean
 }
 
@@ -72,7 +74,7 @@ export const createDelegationAction: WrappedActionFn =
     }
 
     try {
-      await client.mutate<
+     await client.mutate<
         CreateDelegationMutation,
         CreateDelegationMutationVariables
       >({
@@ -89,11 +91,12 @@ export const createDelegationAction: WrappedActionFn =
         success: true,
       }
     } catch (e) {
-      console.error(e)
+      const problem = findProblemInApolloError(e)
       return {
         errors: null,
         data: null,
         globalError: true,
+        errorMessage: problem?.detail,
       }
     }
   }

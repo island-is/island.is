@@ -405,7 +405,7 @@ const CreateDelegationScreen = () => {
               <GridColumn span={['12/12']}>
                 <AlertMessage
                   title=""
-                  message={formatMessage(m.errorDefault)}
+                  message={actionData?.errorMessage || formatMessage(m.errorDefault)}
                   type="error"
                 />
               </GridColumn>
