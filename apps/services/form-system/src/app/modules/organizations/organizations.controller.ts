@@ -16,7 +16,6 @@ import {
 } from '@nestjs/swagger'
 import { OrganizationsService } from './organizations.service'
 import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
-import { Documentation } from '@island.is/nest/swagger'
 import { OrganizationsResponseDto } from './models/dto/organizations.response.dto'
 import { OrganizationDto } from './models/dto/organization.dto'
 
