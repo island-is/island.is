@@ -10,6 +10,7 @@ import { AccessListContainer } from '../../../access/AccessList/AccessListContai
 import { useAuthScopeTreeLazyQuery } from '../../../access/AccessList/AccessListContainer/AccessListContainer.generated'
 import { AuthCustomDelegationIncoming } from '../../../../types/customDelegation'
 import { m } from '../../../../lib/messages'
+import format from 'date-fns/format'
 
 type DelegationIncomingModalProps = {
   delegation?: AuthCustomDelegationIncoming
@@ -26,7 +27,7 @@ export const DelegationIncomingModal = ({
     useAuthScopeTreeLazyQuery()
 
   useEffect(() => {
-    if (delegation) {
+    if (delegation && delegation.domain) {
       getAuthScopeTree({
         variables: {
           input: {
@@ -84,6 +85,7 @@ export const DelegationIncomingModal = ({
             />
           )}
         </Box>
+
         {delegation?.domain && (
           <IdentityCard
             label={formatMessage(m.domain)}
@@ -91,13 +93,32 @@ export const DelegationIncomingModal = ({
             imgSrc={delegation.domain.organisationLogoUrl}
           />
         )}
+
+        {delegation?.type === 'GeneralMandate' && (
+          <IdentityCard
+            label={formatMessage(m.domain)}
+            title={formatMessage(m.delegationTypeGeneralMandate)}
+            imgSrc="./assets/images/skjaldarmerki.svg"
+          />
+        )}
+
+        {delegation?.validTo && delegation.type === 'GeneralMandate' && (
+          <IdentityCard
+            label={formatMessage(m.validTo)}
+            title={
+              format(new Date(delegation?.validTo), 'dd.MM.yyyy')
+            }
+          />
+        )}
       </Box>
+      {delegation?.type !== 'GeneralMandate' && (
       <AccessListContainer
         delegation={delegation}
         scopes={delegation?.scopes}
         scopeTree={authScopeTree}
         loading={scopeTreeLoading}
-      />
+      />)
+      }
     </Modal>
   )
 }
