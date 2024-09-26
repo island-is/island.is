@@ -38,7 +38,7 @@ const BffConfigSchema = z.object({
   /**
    * Determines if the BFF should support the PAR (Pushed Authorization Requests) flow or normal login flow
    */
-  parSupportEnabled: z.boolean().optional(),
+  parSupportEnabled: z.boolean(),
   /**
    * Allowed external API URLs that the BFF can proxy requests to
    */
