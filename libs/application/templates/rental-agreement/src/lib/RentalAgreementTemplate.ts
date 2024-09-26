@@ -36,8 +36,8 @@ const RentalAgreementTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Prerequisites').then((module) =>
-                  Promise.resolve(module.Prerequisites),
+                import('../forms/form').then((module) =>
+                  Promise.resolve(module.RentalAgreementForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
