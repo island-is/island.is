@@ -70,61 +70,63 @@ export class DelegationsOutgoingService {
     if (otherUser) {
       return this.findByOtherUser(user, otherUser, domainName)
     }
-    const delegations = await this.delegationModel.findAll({
-      where: and(
-        {
+
+    const [delegations, delegationTypesDelegations] = await Promise.all([
+      await this.delegationModel.findAll({
+        where: and(
+          {
+            fromNationalId: user.nationalId,
+          },
+          domainName ? { domainName } : {},
+          getDelegationNoActorWhereClause(user),
+          ...(await this.delegationResourceService.apiScopeFilter({
+            user,
+            prefix: 'delegationScopes->apiScope',
+            direction: DelegationDirection.OUTGOING,
+          })),
+        ),
+        include: [
+          {
+            model: DelegationScope,
+            include: [
+              {
+                attributes: ['displayName'],
+                model: ApiScope,
+                required: true,
+                include: [
+                  ...this.delegationResourceService.apiScopeInclude(
+                    user,
+                    DelegationDirection.OUTGOING,
+                  ),
+                ],
+              },
+            ],
+            required: validity !== DelegationValidity.ALL,
+            where: getScopeValidityWhereClause(validity),
+          },
+        ],
+      }),
+      this.delegationModel.findAll({
+        where: {
           fromNationalId: user.nationalId,
         },
-        domainName ? { domainName } : {},
-        getDelegationNoActorWhereClause(user),
-        ...(await this.delegationResourceService.apiScopeFilter({
-          user,
-          prefix: 'delegationScopes->apiScope',
-          direction: DelegationDirection.OUTGOING,
-        })),
-      ),
-      include: [
-        {
-          model: DelegationScope,
-          include: [
-            {
-              attributes: ['displayName'],
-              model: ApiScope,
-              required: true,
-              include: [
-                ...this.delegationResourceService.apiScopeInclude(
-                  user,
-                  DelegationDirection.OUTGOING,
-                ),
-              ],
-            },
-          ],
-          required: validity !== DelegationValidity.ALL,
-          where: getScopeValidityWhereClause(validity),
-        },
-      ],
-    })
-
-    const delegationTypesDelegations = await this.delegationModel.findAll({
-      where: {
-        fromNationalId: user.nationalId,
-      },
-      include: [
-        {
-          model: DelegationDelegationType,
-          where: {
-            delegationTypeId: AuthDelegationType.GeneralMandate,
-            validTo: {
-              [Op.or]: {
-                [Op.gt]: new Date(),
-                [Op.is]: null,
+        include: [
+          {
+            model: DelegationDelegationType,
+            where: {
+              delegationTypeId: AuthDelegationType.GeneralMandate,
+              validTo: {
+                [Op.or]: {
+                  [Op.gte]: new Date(),
+                  [Op.is]: null,
+                },
               },
             },
+            required: true,
           },
-          required: true,
-        },
-      ],
-    })
+        ],
+      }),
+    ])
 
     const delegationTypesDTO = delegationTypesDelegations.map((d) =>
       d.toDTO(AuthDelegationType.GeneralMandate),
