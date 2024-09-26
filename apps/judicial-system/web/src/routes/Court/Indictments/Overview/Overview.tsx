@@ -2,7 +2,7 @@ import { useCallback, useContext, useState } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -180,13 +180,18 @@ const IndictmentOverview = () => {
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
         )}
-        {workingCase.mergedCases &&
-          workingCase.mergedCases.length > 0 &&
-          workingCase.mergedCases.map((mergedCase) => (
-            <Box marginBottom={5} key={mergedCase.id}>
-              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
-            </Box>
-          ))}
+        {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
+          <Accordion>
+            {workingCase.mergedCases.map((mergedCase) => (
+              <Box marginBottom={5} key={mergedCase.id}>
+                <ConnectedCaseFilesAccordionItem
+                  connectedCaseParentId={workingCase.id}
+                  connectedCase={mergedCase}
+                />
+              </Box>
+            ))}
+          </Accordion>
+        )}
         {workingCase.caseFiles && (
           <Box component="section" marginBottom={10}>
             <IndictmentCaseFilesList workingCase={workingCase} />

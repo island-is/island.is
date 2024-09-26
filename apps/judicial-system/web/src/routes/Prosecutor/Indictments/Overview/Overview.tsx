@@ -4,6 +4,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 
 import {
+  Accordion,
   AlertMessage,
   Box,
   Button,
@@ -15,6 +16,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  ConnectedCaseFilesAccordionItem,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -153,6 +155,10 @@ const Overview: FC = () => {
     router.push(constants.CASES_ROUTE)
   }
 
+  const hasLawsBroken = lawsBroken.size > 0
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -208,9 +214,23 @@ const Overview: FC = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardActiveIndictment />
         </Box>
-        {lawsBroken.size > 0 && (
+        {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
-            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            {hasLawsBroken && (
+              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            )}
+            {hasMergeCases && (
+              <Accordion>
+                {workingCase.mergedCases?.map((mergedCase) => (
+                  <Box key={mergedCase.id}>
+                    <ConnectedCaseFilesAccordionItem
+                      connectedCaseParentId={workingCase.id}
+                      connectedCase={mergedCase}
+                    />
+                  </Box>
+                ))}
+              </Accordion>
+            )}
           </Box>
         )}
         <Box
