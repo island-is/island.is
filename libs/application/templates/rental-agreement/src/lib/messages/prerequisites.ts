@@ -1,5 +1,13 @@
 import { defineMessages } from 'react-intl'
 
+export const application = defineMessages({
+  name: {
+    id: 'ra.application:application.name',
+    defaultMessage: 'Leigusamningur',
+    description: `Name of rental agreement application`,
+  },
+})
+
 export const prerequisites = {
   intro: defineMessages({
     sectionTitle: {
