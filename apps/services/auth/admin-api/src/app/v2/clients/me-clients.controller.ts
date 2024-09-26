@@ -7,6 +7,7 @@ import {
   Post,
   UseGuards,
   Delete,
+  Query,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
@@ -74,7 +75,7 @@ export class MeClientsController {
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
-    @Param('includeArchived') includeArchived?: boolean,
+    @Query('includeArchived') includeArchived?: boolean,
   ): Promise<AdminClientDto> {
     return this.clientsService.findByTenantIdAndClientId(
       tenantId,

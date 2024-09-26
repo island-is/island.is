@@ -42,6 +42,17 @@ import {
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
 
+// When delegation providers have been refactored to use the webhook method
+// with hard check on action we need to exclude them from the standard indexing.
+// We register our current providers as indexed, as all new providers are expected
+// to use the webhook method.
+const INDEXED_DELEGATION_PROVIDERS = [
+  AuthDelegationProvider.Custom,
+  AuthDelegationProvider.PersonalRepresentativeRegistry,
+  AuthDelegationProvider.CompanyRegistry,
+  AuthDelegationProvider.NationalRegistry,
+]
+
 export type DelegationIndexInfo = Pick<
   DelegationIndex,
   | 'toNationalId'
@@ -269,6 +280,12 @@ export class DelegationsIndexService {
     await this.saveToIndex(nationalId, delegations)
   }
 
+  /* Index incoming general mandate delegations */
+  async indexGeneralMandateDelegations(nationalId: string) {
+    const delegations = await this.getGeneralMandateDelegation(nationalId, true)
+    await this.saveToIndex(nationalId, delegations)
+  }
+
   /* Index incoming personal representative delegations */
   async indexRepresentativeDelegations(nationalId: string) {
     const delegations = await this.getRepresentativeDelegations(
@@ -343,6 +360,7 @@ export class DelegationsIndexService {
     const currRecords = await this.delegationIndexModel.findAll({
       where: {
         toNationalId: nationalId,
+        provider: INDEXED_DELEGATION_PROVIDERS,
       },
     })
 
@@ -469,6 +487,19 @@ export class DelegationsIndexService {
         return { ...d, subjectId }
       }),
     )
+  }
+
+  private async getGeneralMandateDelegation(
+    nationalId: string,
+    useMaster = false,
+  ) {
+    const delegation =
+      await this.delegationsIncomingCustomService.findAllValidGeneralMandate(
+        { nationalId },
+        useMaster,
+      )
+
+    return delegation.map(toDelegationIndexInfo)
   }
 
   private async getCustomDelegations(nationalId: string, useMaster = false) {

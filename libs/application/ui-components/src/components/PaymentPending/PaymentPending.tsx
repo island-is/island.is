@@ -5,10 +5,15 @@ import {
   DefaultEvents,
   FieldBaseProps,
 } from '@island.is/application/types'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  LoadingDots,
+  Text,
+} from '@island.is/island-ui/core'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
 import { getRedirectStatus, getRedirectUrl, isComingFromRedirect } from './util'
-import { Company } from './assets'
 import { useSearchParams } from 'react-router-dom'
 
 export interface PaymentPendingProps {
@@ -84,10 +89,27 @@ export const PaymentPending: FC<
   if (submitError) {
     return (
       <Box>
-        <Text variant="h3">{msg(coreErrorMessages.paymentSubmitFailed)}</Text>
-        <Button onClick={() => refetch?.()}>
-          {msg(coreErrorMessages.paymentSubmitRetryButtonCaption)}
-        </Button>
+        <Box
+          marginTop={4}
+          display="flex"
+          width="full"
+          alignItems="center"
+          justifyContent="center"
+          style={{
+            height: 400,
+          }}
+        >
+          <AlertMessage
+            type="error"
+            title={msg(coreErrorMessages.paymentSubmitFailed)}
+            message={msg(coreErrorMessages.paymentSubmitFailedDescription)}
+          />
+        </Box>
+        <Box>
+          <Button onClick={() => refetch?.()}>
+            {msg(coreErrorMessages.paymentSubmitRetryButtonCaption)}
+          </Button>
+        </Box>
       </Box>
     )
   }
@@ -95,8 +117,17 @@ export const PaymentPending: FC<
   return (
     <Box height="full">
       <Text variant="h3">{msg(coreMessages.paymentPollingIndicator)}</Text>
-      <Box marginTop={4}>
-        <Company altText={msg(coreMessages.paymentPollingIndicator)} />
+      <Box
+        marginTop={4}
+        display="flex"
+        width="full"
+        alignItems="center"
+        justifyContent="center"
+        style={{
+          height: 400,
+        }}
+      >
+        <LoadingDots large />
       </Box>
     </Box>
   )

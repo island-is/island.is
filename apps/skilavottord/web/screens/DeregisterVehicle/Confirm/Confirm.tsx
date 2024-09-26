@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { useRouter } from 'next/router'
-import React, { FC, useContext, useEffect } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 
 import {
   Box,
@@ -33,7 +33,7 @@ import {
   Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { OutInUsage } from '@island.is/skilavottord-web/utils/consts'
+import { OutInUsage, UseStatus } from '@island.is/skilavottord-web/utils/consts'
 import { getYear } from '@island.is/skilavottord-web/utils/dateUtils'
 import { FormProvider, useForm } from 'react-hook-form'
 
@@ -100,6 +100,21 @@ const UpdateSkilavottordVehicleInfoMutation = gql`
 `
 
 const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
+  const [reloadFlag, setReloadFlag] = useState(false)
+  const [
+    vehicleReadyToDeregisteredQueryCompleted,
+    setVehicleReadyToDeregisteredQueryCompleted,
+  ] = useState(false)
+
+  // Update reloadFlag to trigger the child component to reload
+  const triggerReload = () => {
+    setReloadFlag(true)
+  }
+
+  useEffect(() => {
+    triggerReload()
+  }, [setReloadFlag])
+
   const methods = useForm({
     mode: 'onChange',
   })
@@ -123,6 +138,11 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
     SkilavottordVehicleReadyToDeregisteredQuery,
     {
       variables: { permno: id },
+      onCompleted: (data) => {
+        if (data && data.skilavottordVehicleReadyToDeregistered) {
+          setVehicleReadyToDeregisteredQueryCompleted(true)
+        }
+      },
     },
   )
 
@@ -132,6 +152,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
     SkilavottordTrafficQuery,
     {
       variables: { permno: id },
+      skip: !vehicleReadyToDeregisteredQueryCompleted,
     },
   )
 
@@ -184,6 +205,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
 
   const handleConfirm = () => {
     let newMileage = mileageValue
+    let plateCount = plateCountValue
 
     if (mileageValue !== undefined) {
       newMileage = +mileageValue.trim().replace(/\./g, '')
@@ -191,12 +213,17 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
       newMileage = vehicle?.mileage
     }
 
+    // If vehicle is out of use and not using ticket, set plate count to 0
+    if (outInStatus === OutInUsage.OUT && useStatus !== UseStatus.OUT_TICKET) {
+      plateCount = 0
+    }
+
     // Update vehicle table with latests information
     setVehicleRequest({
       variables: {
         permno: vehicle?.vehicleId,
         mileage: newMileage,
-        plateCount: plateCountValue === 0 ? 0 : plateCountValue,
+        plateCount,
         plateLost: !!plateLost?.length,
       },
     }).then(() => {
@@ -274,6 +301,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
                 mileage={vehicle.mileage || 0}
                 outInStatus={outInStatus}
                 useStatus={useStatus || ''}
+                reloadFlag={reloadFlag}
               />
             </FormProvider>
           </Stack>
