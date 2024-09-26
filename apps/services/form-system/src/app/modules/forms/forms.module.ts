@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { FormApplicant } from '../applicants/models/formApplicant.model'
+import { FormApplicant } from '../formApplicants/models/formApplicant.model'
 import { Screen } from '../screens/models/screen.model'
 import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
 import { FieldType } from '../fields/models/fieldType.model'

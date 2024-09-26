@@ -67,7 +67,7 @@ module.exports = {
             allowNull: true,
           },
           button_text: {
-            type: Sequelize.STRING,
+            type: Sequelize.JSON,
             allowNull: true,
           },
           has_property_input: {

@@ -16,6 +16,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ListItemsModule } from './modules/listItems/listItems.module'
 import { ApplicationsModule } from './modules/applications/applications.module'
 import { ValuesModule } from './modules/values/values.module'
+import { FormApplicantsModule } from './modules/formApplicants/formApplicants.module'
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ValuesModule } from './modules/values/values.module'
     ListItemsModule,
     ApplicationsModule,
     ValuesModule,
+    FormApplicantsModule,
   ],
 })
 export class AppModule {}

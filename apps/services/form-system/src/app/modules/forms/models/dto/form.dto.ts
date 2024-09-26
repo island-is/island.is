@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { FormApplicantDto } from '../../../applicants/models/dto/formApplicant.dto'
+import { FormApplicantDto } from '../../../formApplicants/models/dto/formApplicant.dto'
 import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { FieldDto } from '../../../fields/models/dto/field.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
@@ -44,8 +44,8 @@ export class FormDto {
   @ApiPropertyOptional({ type: LanguageType })
   completedMessage?: LanguageType
 
-  @ApiPropertyOptional({ type: Dependency })
-  dependencies?: Dependency
+  @ApiPropertyOptional({ type: [Dependency] })
+  dependencies?: Dependency[]
 
   @ApiPropertyOptional({ type: [CertificationTypeDto] })
   certificationTypes?: CertificationTypeDto[]

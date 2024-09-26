@@ -13,7 +13,7 @@ import {
 import { Section } from '../../sections/models/section.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { FormApplicant } from '../../applicants/models/formApplicant.model'
+import { FormApplicant } from '../../formApplicants/models/formApplicant.model'
 import { CertificationType } from '../../certifications/models/certificationType.model'
 import { randomUUID } from 'crypto'
 import { Dependency } from '../../../dataTypes/dependency.model'
@@ -90,7 +90,7 @@ export class Form extends Model<Form> {
     type: DataType.JSON,
     allowNull: true,
   })
-  dependencies?: Dependency
+  dependencies?: Dependency[]
 
   @HasMany(() => Section)
   sections!: Section[]
