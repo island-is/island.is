@@ -31,7 +31,6 @@ import {
   useDefendants,
   useGetLawyer,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FormatMessage } from '@island.is/localization'
 
 import { SubpoenaType } from '../../components'
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
@@ -39,7 +38,7 @@ import { strings } from './Overview.strings'
 
 const mapServiceStatusTitle = (
   serviceStatus?: ServiceStatus | null,
-): MessageDescriptor | null => {
+): MessageDescriptor => {
   switch (serviceStatus) {
     case ServiceStatus.DEFENDER:
     case ServiceStatus.ELECTRONICALLY:
@@ -51,7 +50,7 @@ const mapServiceStatusTitle = (
       return strings.serviceStatusFailed
     // Should not happen
     default:
-      return null
+      return strings.serviceStatusUnknown
   }
 }
 
@@ -109,7 +108,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncement> = (props) => {
   return !defendantName ? null : (
     <Box marginBottom={2}>
       <AlertMessage
-        title={`${title && formatMessage(title)} - ${defendantName}`}
+        title={`${formatMessage(title)} - ${defendantName}`}
         message={
           <Box>
             {messages.map((msg) => (

@@ -16,7 +16,7 @@ export class Subpoena {
   readonly modified?: string
 
   @Field(() => ID, { nullable: true })
-  readonly subpoenaId!: string
+  readonly subpoenaId?: string
 
   @Field(() => ID, { nullable: true })
   readonly defendantId?: string
