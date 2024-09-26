@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import kennitala from 'kennitala'
 import isFuture from 'date-fns/isFuture'
-import { redirect } from 'react-router-dom'
 import { WrappedActionFn } from '@island.is/portals/core'
 import {
   validateFormData,
@@ -12,7 +11,6 @@ import {
   CreateDelegationMutation,
   CreateDelegationMutationVariables,
 } from './CreateDelegation.generated'
-import { DelegationAdminPaths } from '../../lib/paths'
 
 const schema = z
   .object({
@@ -52,6 +50,7 @@ export type CreateDelegationResult = ValidateFormDataResult<typeof schema> & {
    * Global error message if the mutation fails
    */
   globalError?: boolean
+  success?: boolean
 }
 
 export const createDelegationAction: WrappedActionFn =
@@ -83,8 +82,14 @@ export const createDelegationAction: WrappedActionFn =
         },
       })
 
-      return redirect(DelegationAdminPaths.Root)
+      return {
+        errors: null,
+        data: null,
+        globalError: false,
+        success: true,
+      }
     } catch (e) {
+      console.error(e)
       return {
         errors: null,
         data: null,
