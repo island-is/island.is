@@ -11,7 +11,10 @@ import {
   CreateDelegationMutation,
   CreateDelegationMutationVariables,
 } from './CreateDelegation.generated'
-import { findProblemInApolloError, ProblemType } from '@island.is/shared/problem'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
 
 const schema = z
   .object({
@@ -74,7 +77,7 @@ export const createDelegationAction: WrappedActionFn =
     }
 
     try {
-     await client.mutate<
+      await client.mutate<
         CreateDelegationMutation,
         CreateDelegationMutationVariables
       >({
