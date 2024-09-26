@@ -126,6 +126,7 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
                               page={s.pageNumber ?? 0}
                               name={s.signee.name}
                               nationalId={formatNationalId(s.signee.nationalId)}
+                              signatureId={s.id}
                             />
                           </Box>
                         )}
