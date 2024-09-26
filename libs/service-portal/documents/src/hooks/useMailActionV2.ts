@@ -1,11 +1,10 @@
-import { gql, useMutation } from '@apollo/client'
 import { useState } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { useMailActionV2Mutation } from '../screens/Overview/Overview.generated'
 import { MailActions } from '../utils/types'
-import { useDocumentList } from './useDocumentListV3'
+import { useDocumentList } from './useDocumentList'
 import { messages as docMessages } from '../utils/messages'
 import { useDocumentContext } from '../screens/Overview/DocumentContext'
 
