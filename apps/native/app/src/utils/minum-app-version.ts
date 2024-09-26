@@ -5,7 +5,7 @@ import { featureFlagClient } from '../contexts/feature-flag-provider'
 export const needsToUpdateAppVersion = async (): Promise<boolean> => {
   const minimumVersionSupported = await featureFlagClient?.getValueAsync(
     'minimumSupportedAppVersion',
-    '1.2.0',
+    '1.0.0',
   )
 
   if (!minimumVersionSupported) {
