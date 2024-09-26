@@ -38,7 +38,9 @@ export const UpdateAppScreen: NavigationFunctionComponent = ({
       <NavigationBarSheet
         componentId={componentId}
         title={''}
-        onClosePress={() => console.log('tried to close')}
+        onClosePress={() => {
+          //noop
+        }}
         style={{ marginHorizontal: 16 }}
         closable={false}
       />
