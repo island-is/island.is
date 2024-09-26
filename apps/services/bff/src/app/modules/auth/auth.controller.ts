@@ -41,19 +41,11 @@ export class AuthController {
 
   @Get('logout')
   async logout(
+    @Req() req: Request,
     @Res() res: Response,
     @Query(qsValidationPipe)
     query: LogoutQuery,
   ): Promise<void> {
-    return this.authService.logout({ res, query })
-  }
-
-  @Get('callbacks/logout')
-  async callbackLogout(
-    @Res() res: Response,
-    @Query(qsValidationPipe)
-    query: CallbackLogoutQuery,
-  ): Promise<void> {
-    return this.authService.callbackLogout(res, query)
+    return this.authService.logout({ req, res, query })
   }
 }

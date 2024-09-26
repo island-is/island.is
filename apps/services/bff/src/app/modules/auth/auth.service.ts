@@ -116,6 +116,18 @@ export class AuthService {
   }
 
   /**
+   * Revoke the refresh token on the identity server, since we have a new session
+   * We deliberately do not await this operation to make the login flow faster,
+   * since this operation is not critical part to await.
+   * If the operation fails, we log the error.
+   */
+  private revokeRefreshToken(token: string) {
+    this.idsService.revokeToken(token, 'refresh_token').catch((error) => {
+      this.logger.error('Failed to revoke refresh token:', error)
+    })
+  }
+
+  /**
    * This method initiates the login flow.
    * It validates the target_link_uri and generates a unique session id, for a login attempt.
    * It also generates a code verifier and code challenge to enhance security.
@@ -281,15 +293,7 @@ export class AuthService {
           this.cacheService.createSessionKeyType('current', oldSessionCookie),
         )
 
-        // Revoke the refresh token on the identity server, since we have a new session
-        // We deliberately do not await this operation to make the login flow faster,
-        // since this operation is not critical part to await.
-        // If the operation fails, we log the error.
-        this.idsService
-          .revokeToken(updatedTokenResponse.refresh_token, 'refresh_token')
-          .catch((error) => {
-            this.logger.error('Failed to revoke refresh token:', error)
-          })
+        this.revokeRefreshToken(updatedTokenResponse.refresh_token)
       }
 
       return res.redirect(
@@ -303,14 +307,44 @@ export class AuthService {
   }
 
   /**
-   * This method initiates the logout flow.
-   * It gets necessary data from the cache and constructs a logout URL.
-   * The user is then redirected to the identity server logout page.
+   * This method handles user logout. What it does:
+   *
+   * - Validates the session id in the query param and the session cookie
+   * - Cleans up the cache and cookies
+   * - Revokes the current session refresh token
+   * - Redirects the user to the identity server end session endpoint
    */
-  async logout({ res, query: { sid } }: { res: Response; query: LogoutQuery }) {
+  async logout({
+    req,
+    res,
+    query,
+  }: {
+    req: Request
+    res: Response
+    query: LogoutQuery
+  }) {
+    const sidCookie = req.cookies[SESSION_COOKIE_NAME]
+
+    if (!sidCookie) {
+      this.logger.error('Logout failed: No session cookie found')
+
+      return res.redirect(this.config.logoutRedirectUri)
+    }
+
+    if (sidCookie !== query.sid) {
+      this.logger.error(
+        `Logout failed: Cookie sid "${sidCookie}" does not match the session id in query param "${query.sid}"`,
+      )
+
+      return this.redirectWithError(res, {
+        code: 400,
+        error: 'Logout failed!',
+      })
+    }
+
     const currentLoginCacheKey = this.cacheService.createSessionKeyType(
       'current',
-      sid,
+      query.sid,
     )
 
     const cachedTokenResponse =
@@ -327,48 +361,30 @@ export class AuthService {
         )}`,
       )
 
-      return res.redirect(this.config.callbacksRedirectUris.login)
+      return res.redirect(this.config.logoutRedirectUri)
     }
+
+    /**
+     * Clean up!
+     *
+     * - Revoke the refresh token on the identity server
+     * - Delete the current login from the cache
+     * - Clear the session cookie
+     *
+     * Note! We deliberately do not await this operation to make the logout flow faster.
+     */
+    res.clearCookie(SESSION_COOKIE_NAME, this.getCookieOptions())
+    this.cacheService.delete(currentLoginCacheKey)
+    this.revokeRefreshToken(cachedTokenResponse.refresh_token)
 
     const searchParams = new URLSearchParams({
       id_token_hint: cachedTokenResponse.id_token,
-      post_logout_redirect_uri: this.config.callbacksRedirectUris.logout,
-      state: encodeURIComponent(JSON.stringify({ sid })),
+      post_logout_redirect_uri: this.config.logoutRedirectUri,
+      state: encodeURIComponent(JSON.stringify({ sid: query.sid })),
     })
 
     return res.redirect(
       `${this.baseUrl}/connect/endsession?${searchParams.toString()}`,
     )
-  }
-
-  /**
-   * Callback for the logout flow.
-   * This method is called from the identity server after the user has logged out.
-   * We clean up the current login from the cache and delete the session cookie.
-   * Finally, we redirect the user back to the original URL.
-   */
-  async callbackLogout(res: Response, { state }: CallbackLogoutQuery) {
-    const { sid } = JSON.parse(decodeURIComponent(state))
-
-    if (!sid) {
-      this.logger.error(
-        'Logout failed: Invalid state param provided. No sid (session id) found',
-      )
-
-      throw new BadRequestException('Logout failed')
-    }
-
-    const currentLoginCacheKey = this.cacheService.createSessionKeyType(
-      'current',
-      state,
-    )
-
-    // Clean up current login from the cache since we have a successful logout.
-    await this.cacheService.delete(currentLoginCacheKey)
-
-    // Delete session cookie
-    res.clearCookie(SESSION_COOKIE_NAME, this.getCookieOptions())
-
-    return res.redirect(this.config.logoutRedirectUri)
   }
 }

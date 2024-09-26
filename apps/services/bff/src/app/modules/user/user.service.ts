@@ -40,7 +40,13 @@ export class UserService {
       const cachedTokenResponse =
         await this.cacheService.get<CachedTokenResponse>(
           this.cacheService.createSessionKeyType('current', sid),
+          // Do not throw error if the key is not found
+          false,
         )
+
+      if (!cachedTokenResponse) {
+        throw new UnauthorizedException()
+      }
 
       // Check if the access token is expired
       if (isExpired(cachedTokenResponse.accessTokenExp)) {
