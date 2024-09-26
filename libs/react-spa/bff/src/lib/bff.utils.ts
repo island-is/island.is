@@ -1,14 +1,28 @@
+import { BffUser } from '@island.is/shared/types'
+
 /**
  * Creates a function that can generate a BFF URLs.
+ *
  * @usage
- * const bffBaseUrl = createBffUrlGenerator('/stjornbord)
- * const userUrl = bffBaseUrl('/user') // http://localhost:3010/stjornbord/bff/user
+ * const bffBaseUrl = createBffUrlGenerator('/myapplication')
+ * const userUrl = bffBaseUrl('/user') // http://localhost:3010/myapplication/bff/user
+ * const userUrlWithParams = bffBaseUrl('/user', { id: '123' }) // http://localhost:3010/myapplication/bff/user?id=123
  */
 export const createBffUrlGenerator = (basePath: string) => {
   const sanitizedBasePath = sanitizePath(basePath)
   const baseUrl = `${window.location.origin}/${sanitizedBasePath}/bff`
 
-  return (relativePath = '') => `${baseUrl}${relativePath}`
+  return (relativePath = '', params?: Record<string, string>) => {
+    const url = `${baseUrl}${relativePath}`
+
+    if (params) {
+      const qs = createQueryStr(params)
+
+      return `${url}${qs ? `?${qs}` : ''}`
+    }
+
+    return url
+  }
 }
 
 /**
@@ -21,4 +35,14 @@ const sanitizePath = (path: string) => path.replace(/^\/+|\/+$/g, '')
  */
 export const createQueryStr = (params: Record<string, string>) => {
   return new URLSearchParams(params).toString()
+}
+
+/**
+ *  This method checks if the user has a new session
+ */
+export const isNewSession = (oldUser: BffUser, newUser: BffUser) => {
+  const oldSid = oldUser.profile.sid
+  const newSid = newUser.profile.sid
+
+  return oldSid && newSid && oldSid !== newSid
 }
