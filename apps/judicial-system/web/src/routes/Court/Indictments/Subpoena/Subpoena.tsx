@@ -2,7 +2,7 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -30,6 +30,7 @@ const Subpoena: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
   const {
@@ -40,10 +41,12 @@ const Subpoena: FC = () => {
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
 
   const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
+  const schedulingArraignmentDate =
+    !isArraignmentScheduled || newSubpoenas.length > 0
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      if (isArraignmentScheduled) {
+      if (!schedulingArraignmentDate) {
         router.push(`${destination}/${workingCase.id}`)
         return
       }
@@ -70,7 +73,7 @@ const Subpoena: FC = () => {
       router.push(`${destination}/${workingCase.id}`)
     },
     [
-      isArraignmentScheduled,
+      schedulingArraignmentDate,
       sendCourtDateToServer,
       workingCase.defendants,
       workingCase.id,
@@ -96,7 +99,27 @@ const Subpoena: FC = () => {
           <Box component="section" marginBottom={5}>
             {
               <SubpoenaType
-                defendants={workingCase.defendants}
+                subpoenaItems={workingCase.defendants.map((defendant) => ({
+                  defendant,
+                  disabled:
+                    isArraignmentScheduled &&
+                    !newSubpoenas.includes(defendant.id),
+                  children: isArraignmentScheduled && (
+                    <Button
+                      variant="text"
+                      icon="reload"
+                      disabled={newSubpoenas.includes(defendant.id)}
+                      onClick={() =>
+                        setNewSubpoenas((previous) => [
+                          ...previous,
+                          defendant.id,
+                        ])
+                      }
+                    >
+                      {formatMessage(strings.newSubpoenaButtonText)}
+                    </Button>
+                  ),
+                }))}
                 workingCase={workingCase}
                 setWorkingCase={setWorkingCase}
                 updateDefendantState={updateDefendantState}
@@ -112,8 +135,8 @@ const Subpoena: FC = () => {
             handleCourtDateChange={handleCourtDateChange}
             handleCourtRoomChange={handleCourtRoomChange}
             courtDate={workingCase.arraignmentDate}
-            dateTimeDisabled={isArraignmentScheduled}
-            courtRoomDisabled={isArraignmentScheduled}
+            dateTimeDisabled={!schedulingArraignmentDate}
+            courtRoomDisabled={!schedulingArraignmentDate}
             courtRoomRequired
           />
         </Box>
@@ -147,14 +170,14 @@ const Subpoena: FC = () => {
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() => {
-            if (isArraignmentScheduled) {
+            if (!schedulingArraignmentDate) {
               router.push(
                 `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
               )
             } else setNavigateTo(constants.INDICTMENTS_DEFENDER_ROUTE)
           }}
           nextButtonText={
-            isArraignmentScheduled
+            !schedulingArraignmentDate
               ? undefined
               : formatMessage(strings.nextButtonText)
           }
