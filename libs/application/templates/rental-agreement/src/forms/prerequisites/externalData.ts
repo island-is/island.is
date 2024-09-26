@@ -1,7 +1,15 @@
 import {
   buildDescriptionField,
   buildSubSection,
+  // TODO: Uncomment when data providers are implemented
+  // buildDataProviderItem,
+  // buildExternalDataProvider,
 } from '@island.is/application/core'
+// TODO: Uncomment when data providers are implemented
+// import {
+//   NationalRegistryUserApi,
+//   UserProfileApi,
+// } from '@island.is/application/types'
 
 import * as m from '../../lib/messages'
 
