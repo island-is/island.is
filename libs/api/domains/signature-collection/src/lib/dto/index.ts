@@ -5,7 +5,6 @@ import {
   SignatureCollectionListBulkUploadInput,
 } from './bulkUpload.input'
 import { SignatureCollectionCandidateIdInput } from './candidateId.input'
-import { SignatureCollectionCanSignInput } from './canSign.input'
 import { SignatureCollectionCancelListsInput } from './cencelLists.input'
 import { SignatureCollectionIdInput } from './collectionId.input'
 import { SignatureCollectionExtendDeadlineInput } from './extendDeadline.input'
@@ -15,6 +14,7 @@ import { SignatureCollectionOwnerInput } from './owner.input'
 import { SignatureCollectionSignatureIdInput } from './signatureId.input'
 import { SignatureCollectionListInput } from './singatureList.input'
 import { SignatureCollectionUploadPaperSignatureInput } from './uploadPaperSignature.input'
+import { SignatureCollectionCanSignFromPaperInput } from './canSignFromPaper.input'
 
 export {
   SignatureCollectionAddListsInput,
@@ -22,7 +22,6 @@ export {
   SignatureCollectionListBulkUploadInput,
   BulkUploadUser,
   SignatureCollectionCandidateIdInput,
-  SignatureCollectionCanSignInput,
   SignatureCollectionCancelListsInput,
   SignatureCollectionIdInput,
   SignatureCollectionExtendDeadlineInput,
@@ -32,4 +31,5 @@ export {
   SignatureCollectionSignatureIdInput,
   SignatureCollectionListInput,
   SignatureCollectionUploadPaperSignatureInput,
+  SignatureCollectionCanSignFromPaperInput,
 }

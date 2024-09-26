@@ -61,6 +61,7 @@ export const Input = forwardRef(
       textarea,
       type,
       icon,
+      step,
       size = 'md',
       fixedFocusState,
       autoExpand,
@@ -228,6 +229,7 @@ export const Input = forwardRef(
               }}
               readOnly={readOnly}
               type={type}
+              step={step}
               max={max}
               min={min}
               {...(ariaError as AriaError)}

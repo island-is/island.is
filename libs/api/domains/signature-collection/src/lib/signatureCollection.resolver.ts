@@ -16,7 +16,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import {
   SignatureCollectionAddListsInput,
   SignatureCollectionCancelListsInput,
-  SignatureCollectionCanSignInput,
+  SignatureCollectionCanSignFromPaperInput,
   SignatureCollectionIdInput,
   SignatureCollectionListIdInput,
   SignatureCollectionUploadPaperSignatureInput,
@@ -29,6 +29,7 @@ import {
 } from './decorators'
 import {
   SignatureCollection,
+  SignatureCollectionCollector,
   SignatureCollectionList,
   SignatureCollectionListBase,
   SignatureCollectionSignature,
@@ -102,7 +103,6 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @IsOwner()
   @Query(() => [SignatureCollectionSignedList], { nullable: true })
   @Audit()
   async signatureCollectionSignedList(
@@ -137,13 +137,11 @@ export class SignatureCollectionResolver {
   @IsOwner()
   @AllowManager()
   @Audit()
-  async signatureCollectionCanSign(
-    @Args('input') input: SignatureCollectionCanSignInput,
+  async signatureCollectionCanSignFromPaper(
+    @Args('input') input: SignatureCollectionCanSignFromPaperInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return (
-      await this.signatureCollectionService.signee(user, input.signeeNationalId)
-    ).canSign
+    return await this.signatureCollectionService.canSignFromPaper(user, input)
   }
 
   @Scopes(ApiScope.signatureCollection)
@@ -189,6 +187,20 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.candidacyUploadPaperSignature(
       input,
       user,
+    )
+  }
+
+  @Scopes(ApiScope.signatureCollection)
+  @IsOwner()
+  @Query(() => [SignatureCollectionCollector])
+  @Audit()
+  async signatureCollectionCollectors(
+    @CurrentUser() user: User,
+    @CurrentSignee() signee: SignatureCollectionSignee,
+  ): Promise<SignatureCollectionCollector[]> {
+    return this.signatureCollectionService.collectors(
+      user,
+      signee.candidate?.id,
     )
   }
 }

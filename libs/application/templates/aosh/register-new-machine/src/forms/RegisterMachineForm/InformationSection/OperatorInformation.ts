@@ -5,11 +5,13 @@ import {
   buildPhoneField,
   buildRadioField,
   buildSelectField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { FormValue, NO, YES } from '@island.is/application/types'
 import { hasOperator } from '../../../utils/hasOperator'
 import { postalCodes } from '@island.is/shared/utils'
+import { doOwnerAndOperatorHaveSameNationalId } from '../../../utils'
 
 export const OperatorInformationSubSection = buildSubSection({
   id: 'operatorInformation',
@@ -87,6 +89,14 @@ export const OperatorInformationSubSection = buildSubSection({
           variant: 'email',
           maxLength: 250,
           condition: (answer: FormValue) => hasOperator(answer),
+        }),
+        buildAlertMessageField({
+          id: 'operatorInformation.alertMessage',
+          alertType: 'warning',
+          title: information.labels.operator.alertTitle,
+          message: information.labels.operator.alertMessage,
+          condition: (answer: FormValue) =>
+            doOwnerAndOperatorHaveSameNationalId(answer),
         }),
       ],
     }),

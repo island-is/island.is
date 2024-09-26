@@ -1,3 +1,6 @@
+import { IsEnum, IsString } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+
 export interface ChargeResult {
   success: boolean
   error: Error | null
@@ -14,8 +17,23 @@ export interface CallbackResult {
   data?: Callback
 }
 
-export interface Callback {
-  receptionID: string
-  chargeItemSubject: string
-  status: 'paid' | 'cancelled' | 'recreated' | 'recreatedAndPaid'
+export enum PaidStatus {
+  paid = 'paid',
+  cancelled = 'cancelled',
+  recreated = 'recreated',
+  recreatedAndPaid = 'recreatedAndPaid',
+}
+
+export class Callback {
+  @IsString()
+  @ApiProperty()
+  readonly receptionID!: string
+
+  @IsString()
+  @ApiProperty()
+  readonly chargeItemSubject!: string
+
+  @IsEnum(PaidStatus)
+  @ApiProperty({ enum: PaidStatus })
+  readonly status!: PaidStatus
 }
