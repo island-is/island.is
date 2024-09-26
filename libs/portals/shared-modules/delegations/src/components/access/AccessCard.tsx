@@ -166,7 +166,10 @@ export const AccessCard = ({
   }
 
   const showActions =
-    canModify && (isOutgoing || delegation.type === AuthDelegationType.Custom || delegation.type === AuthDelegationType.GeneralMandate)
+    canModify &&
+    (isOutgoing ||
+      delegation.type === AuthDelegationType.Custom ||
+      delegation.type === AuthDelegationType.GeneralMandate)
 
   const canDelete =
     isOutgoing || (!isOutgoing && delegation.type === AuthDelegationType.Custom)

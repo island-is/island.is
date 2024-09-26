@@ -105,20 +105,18 @@ export const DelegationIncomingModal = ({
         {delegation?.validTo && delegation.type === 'GeneralMandate' && (
           <IdentityCard
             label={formatMessage(m.validTo)}
-            title={
-              format(new Date(delegation?.validTo), 'dd.MM.yyyy')
-            }
+            title={format(new Date(delegation?.validTo), 'dd.MM.yyyy')}
           />
         )}
       </Box>
       {delegation?.type !== 'GeneralMandate' && (
-      <AccessListContainer
-        delegation={delegation}
-        scopes={delegation?.scopes}
-        scopeTree={authScopeTree}
-        loading={scopeTreeLoading}
-      />)
-      }
+        <AccessListContainer
+          delegation={delegation}
+          scopes={delegation?.scopes}
+          scopeTree={authScopeTree}
+          loading={scopeTreeLoading}
+        />
+      )}
     </Modal>
   )
 }
