@@ -9,24 +9,19 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useIdentityQuery } from '@island.is/service-portal/graphql'
 import * as nationalId from 'kennitala'
 import { useEffect, useState } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
-import { m } from '../../../../../lib/messages'
-import { useGetCanSign } from '../../../../../hooks'
-import { useMutation } from '@apollo/client'
-import { uploadPaperSignature } from '../../../../../hooks/graphql/mutations'
 import { toast } from 'react-toastify'
+import { m } from '../../../lib/messages'
+import {
+  useCanSignQuery,
+  useIdentityQuery,
+} from './identityAndCanSignLookup.generated'
+import { useSignatureCollectionUploadPaperSignatureMutation } from './uploadPaperSignee.generated'
 
-export const PaperSignees = ({
-  listId,
-  refetchSignees,
-}: {
-  listId: string
-  refetchSignees: () => void
-}) => {
+export const PaperSignees = ({ listId }: { listId: string }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { control, reset } = useForm()
@@ -36,17 +31,20 @@ export const PaperSignees = ({
   const [page, setPage] = useState('')
   const [name, setName] = useState('')
 
-  /* identity & canSign fetching logic */
   const { data, loading } = useIdentityQuery({
     variables: { input: { nationalId: nationalIdInput } },
     skip: nationalIdInput.length !== 10 || !nationalId.isValid(nationalIdInput),
     onCompleted: (data) => setName(data.identity?.name || ''),
   })
-  const { canSign, loadingCanSign } = useGetCanSign(
-    nationalIdInput,
-    listId,
-    nationalId.isValid(nationalIdInput),
-  )
+
+  const { data: canSign, loading: loadingCanSign } = useCanSignQuery({
+    variables: {
+      input: {
+        signeeNationalId: nationalIdInput,
+        listId,
+      },
+    },
+  })
 
   useEffect(() => {
     if (nationalIdInput.length === 10) {
@@ -60,10 +58,8 @@ export const PaperSignees = ({
     }
   }, [nationalIdInput, loading, data])
 
-  /* upload paper signature logic */
-  const [upload, { loading: uploadingPaperSignature }] = useMutation(
-    uploadPaperSignature,
-    {
+  const [uploadPaperSignee, { loading: uploadingPaperSignature }] =
+    useSignatureCollectionUploadPaperSignatureMutation({
       variables: {
         input: {
           listId: listId,
@@ -73,13 +69,14 @@ export const PaperSignees = ({
       },
       onCompleted: () => {
         toast.success(formatMessage(m.paperSigneeSuccess))
-        refetchSignees()
+        reset()
+        setNationalIdTypo(false)
+        setName('')
       },
       onError: () => {
         toast.error(formatMessage(m.paperSigneeError))
       },
-    },
-  )
+    })
 
   const onClearForm = () => {
     reset() // resets nationalId field
@@ -160,7 +157,7 @@ export const PaperSignees = ({
               variant="ghost"
               size="small"
               disabled={!canSign || !page}
-              onClick={() => upload()}
+              onClick={() => uploadPaperSignee()}
               loading={uploadingPaperSignature}
             >
               {formatMessage(m.signPaperSigneeButton)}
