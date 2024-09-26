@@ -377,7 +377,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'rikislogmadur':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={
+            isSubpage
+              ? styles.rikislogmadurHeaderGridContainerWidthSubpage
+              : styles.rikislogmadurHeaderGridContainerWidth
+          }
+        />
+      ) : (
         <RikislogmadurHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -436,7 +445,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hve':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={styles.hveHeaderGridContainer}
+          image={n(
+            'hveHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/7ie5X2T4g8a7g5PLvu5226/4ec8b2cb69b5cb7193a61c562f9b36e0/minstur1.png',
+          )}
+        />
+      ) : (
         <HveHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -523,7 +541,9 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'rettindagaesla-fatlads-folks':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader {...defaultProps} />
+      ) : (
         <RettindagaeslaFatladsFolksHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}

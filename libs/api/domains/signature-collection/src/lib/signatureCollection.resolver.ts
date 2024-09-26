@@ -30,10 +30,12 @@ import { CurrentSignee } from './decorators/signee.decorator'
 import { ApiScope } from '@island.is/auth/scopes'
 import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
-import { SignatureCollectionCanSignInput } from './dto/canSign.input'
+import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
 import { SignatureCollectionAddListsInput } from './dto/addLists.input'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
+import { SignatureCollectionCollector } from './models/collector.model'
+import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/signature-collection' })
@@ -133,13 +135,11 @@ export class SignatureCollectionResolver {
   @Query(() => Boolean)
   @AccessRequirement(OwnerAccess.AllowActor)
   @Audit()
-  async signatureCollectionCanSign(
-    @Args('input') input: SignatureCollectionCanSignInput,
+  async signatureCollectionCanSignFromPaper(
+    @Args('input') input: SignatureCollectionCanSignFromPaperInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return (
-      await this.signatureCollectionService.signee(user, input.signeeNationalId)
-    ).canSign
+    return await this.signatureCollectionService.canSignFromPaper(user, input)
   }
 
   @Scopes(ApiScope.signatureCollection)
@@ -186,6 +186,20 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.candidacyUploadPaperSignature(
       input,
       user,
+    )
+  }
+
+  @Scopes(ApiScope.signatureCollection)
+  @AccessRequirement(OwnerAccess.AllowActor)
+  @Query(() => [SignatureCollectionCollector])
+  @Audit()
+  async signatureCollectionCollectors(
+    @CurrentUser() user: User,
+    @CurrentSignee() signee: SignatureCollectionSignee,
+  ): Promise<SignatureCollectionCollector[]> {
+    return this.signatureCollectionService.collectors(
+      user,
+      signee.candidate?.id,
     )
   }
 }
