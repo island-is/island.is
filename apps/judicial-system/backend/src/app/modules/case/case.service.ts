@@ -276,7 +276,7 @@ export const include: Includeable[] = [
     model: Defendant,
     as: 'defendants',
     include: [
-      { model: Subpoena, as: 'subpoenas', order: [['created', 'DESC']] },
+      { model: Subpoena, as: 'subpoenas', order: [['created', 'ASC']] },
     ],
   },
   { model: CivilClaimant, as: 'civilClaimants' },

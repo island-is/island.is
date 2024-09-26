@@ -1,10 +1,11 @@
 import { FC, useCallback, useContext, useState } from 'react'
-import { MessageDescriptor, useIntl } from 'react-intl'
+import { IntlShape, MessageDescriptor, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { type Lawyer } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   ConnectedCaseFilesAccordionItem,
@@ -30,14 +31,15 @@ import {
   useDefendants,
   useGetLawyer,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { FormatMessage } from '@island.is/localization'
 
 import { SubpoenaType } from '../../components'
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './Overview.strings'
 
-const mapServiceStatus = (
+const mapServiceStatusTitle = (
   serviceStatus?: ServiceStatus | null,
-): MessageDescriptor => {
+): MessageDescriptor | null => {
   switch (serviceStatus) {
     case ServiceStatus.DEFENDER:
     case ServiceStatus.ELECTRONICALLY:
@@ -49,24 +51,40 @@ const mapServiceStatus = (
       return strings.serviceStatusFailed
     // Should not happen
     default:
-      return strings.inProgressTitle
+      return null
   }
 }
 
-const mapComment = (
-  serviceStatus?: ServiceStatus | null,
-): MessageDescriptor | null => {
-  switch (serviceStatus) {
+const mapServiceStatusMessages = (
+  subpoena: Subpoena,
+  formatMessage: IntlShape['formatMessage'],
+  lawyer?: Lawyer,
+) => {
+  switch (subpoena.serviceStatus) {
     case ServiceStatus.DEFENDER:
-      return strings.servedToDefender
+      return [
+        `${subpoena.servedBy} - ${formatDate(subpoena.serviceDate, 'Pp')}`,
+        formatMessage(strings.servedToDefender, {
+          lawyerName: lawyer?.name,
+          practice: lawyer?.practice,
+        }),
+      ]
     case ServiceStatus.ELECTRONICALLY:
-      return strings.servedToElectronically
-    case ServiceStatus.EXPIRED:
-    case ServiceStatus.FAILED:
+      return [
+        formatMessage(strings.servedToElectronically, {
+          date: formatDate(subpoena.serviceDate, 'Pp'),
+        }),
+      ]
     case ServiceStatus.IN_PERSON:
-      return null
+    case ServiceStatus.FAILED:
+      return [
+        `${subpoena.servedBy} - ${formatDate(subpoena.serviceDate, 'Pp')}`,
+        subpoena.comment,
+      ]
+    case ServiceStatus.EXPIRED:
+      return [formatMessage(strings.serviceStatusExpiredMessage)]
     default:
-      return null
+      return []
   }
 }
 
@@ -85,32 +103,18 @@ const ServiceAnnouncement: FC<ServiceAnnouncement> = (props) => {
     subpoena.serviceStatus === ServiceStatus.DEFENDER,
   )
 
+  const title = mapServiceStatusTitle(subpoena.serviceStatus)
+  const messages = mapServiceStatusMessages(subpoena, formatMessage, lawyer)
+
   return !defendantName ? null : (
     <Box marginBottom={2}>
       <AlertMessage
-        title={`${formatMessage(
-          mapServiceStatus(subpoena.serviceStatus),
-        )} - ${defendantName}`}
+        title={`${title && formatMessage(title)} - ${defendantName}`}
         message={
           <Box>
-            <Text variant="small">
-              {`${subpoena.servedBy} - ${formatDate(
-                subpoena.serviceDate,
-                'Pp',
-              )}`}
-            </Text>
-            <Text variant="small">
-              {subpoena.serviceStatus === ServiceStatus.DEFENDER
-                ? formatMessage(strings.servedToDefender, {
-                    lawyerName: lawyer?.name,
-                    practice: lawyer?.practice,
-                  })
-                : subpoena.serviceStatus === ServiceStatus.ELECTRONICALLY
-                ? formatMessage(strings.servedToElectronically, {
-                    date: 'asdasd',
-                  })
-                : subpoena.comment}
-            </Text>
+            {messages.map((msg) => (
+              <Text variant="small">{msg}</Text>
+            ))}
           </Box>
         }
         type={

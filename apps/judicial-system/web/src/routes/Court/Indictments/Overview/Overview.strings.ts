@@ -22,6 +22,11 @@ export const strings = defineMessages({
     defaultMessage: 'Birting tókst ekki',
     description: 'Notaður sem texti þegar birting rann út á tíma.',
   },
+  serviceStatusExpiredMessage: {
+    id: 'judicial.system.core:indictment_overview.service_status_expired_message',
+    defaultMessage: 'Ekki tókst að birta fyrir þingfestingu.',
+    description: 'Notaður sem texti þegar birting rann út á tíma.',
+  },
   serviceStatusFailed: {
     id: 'judicial.system.core:indictment_overview.service_status_failed',
     defaultMessage: 'Árangurslaus birting',
