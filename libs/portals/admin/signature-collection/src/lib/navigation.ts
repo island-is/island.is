@@ -11,7 +11,7 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
   path: SignatureCollectionPaths.ParliamentaryRoot,
   children: [
     {
-      name: parliamentaryMessages.listTitle,
+      name: parliamentaryMessages.signatureListsTitle,
       path: SignatureCollectionPaths.ParliamentaryRoot,
       activeIfExact: true,
     },
