@@ -75,9 +75,6 @@ const ParliamentaryRoot = () => {
             </Box>
             <DownloadReports areas={collection.areas} />
           </Box>
-          <Text variant="eyebrow" marginBottom={3}>
-            {formatMessage(m.totalListResults)}: {collection?.areas.length}
-          </Text>
           <Stack space={3}>
             {collection?.areas.map((area) => (
               <ActionCard
