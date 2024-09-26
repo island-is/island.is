@@ -59,12 +59,7 @@ export class IdsService {
 
       return response.text() as Promise<T>
     } catch (error) {
-      this.logger.error(
-        `Error making request to ${endpoint}:`,
-        JSON.stringify(error),
-      )
-
-      throw new Error(`Failed to fetch from ${endpoint}`)
+      throw new Error(error)
     }
   }
 
