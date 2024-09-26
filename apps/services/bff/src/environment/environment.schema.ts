@@ -8,8 +8,8 @@ export const environmentSchema = z.strictObject({
     (val) => (val ? parseInt(val as string, 10) : 3010),
     z
       .number({ required_error: 'PORT must be a valid number' })
-      .min(1000)
-      .max(10000),
+      .min(1)
+      .max(65535),
   ),
   /**
    * The global prefix for the API
