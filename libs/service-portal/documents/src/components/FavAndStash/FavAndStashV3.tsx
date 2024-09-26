@@ -1,8 +1,8 @@
-import React, { MouseEvent } from 'react'
 import { Box, Button, LoadingDots } from '@island.is/island-ui/core'
-import * as styles from './FavAndStash.css'
-import { Tooltip, m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
+import { Tooltip, m } from '@island.is/service-portal/core'
+import React, { MouseEvent } from 'react'
+import * as styles from './FavAndStash.css'
 
 type FavAndStashProps = {
   onFav?: (event: MouseEvent<HTMLElement>) => void
@@ -13,7 +13,7 @@ type FavAndStashProps = {
   loading?: boolean
 }
 
-export const FavAndStash: React.FC<FavAndStashProps> = ({
+export const FavAndStashV3: React.FC<FavAndStashProps> = ({
   onFav,
   onStash,
   onRead,
@@ -82,4 +82,4 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
   )
 }
 
-export default FavAndStash
+export default FavAndStashV3

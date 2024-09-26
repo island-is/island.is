@@ -7,15 +7,13 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import type { ConfigType } from '@island.is/nest/config'
-import { DownloadServiceConfig } from '@island.is/nest/config'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
-import { Inject, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { GetCourtCaseInput } from '../dto/getCourtCaseInput'
 import { GetSubpoenaInput } from '../dto/getSubpoenaInput'
@@ -31,16 +29,10 @@ import { LawAndOrderService } from './law-and-order.service'
 @Resolver()
 @Audit({ namespace: '@island.is/api/law-and-order' })
 @FeatureFlag(Features.servicePortalLawAndOrderModuleEnabled)
+@Scopes(ApiScope.lawAndOrder)
 export class LawAndOrderResolver {
-  constructor(
-    private readonly lawAndOrderService: LawAndOrderService,
-    @Inject(DownloadServiceConfig.KEY)
-    private readonly downloadServiceConfig: ConfigType<
-      typeof DownloadServiceConfig
-    >,
-  ) {}
+  constructor(private readonly lawAndOrderService: LawAndOrderService) {}
 
-  @Scopes(ApiScope.lawAndOrder)
   @Query(() => CourtCases, {
     name: 'lawAndOrderCourtCasesList',
     nullable: true,
@@ -54,7 +46,6 @@ export class LawAndOrderResolver {
     return this.lawAndOrderService.getCourtCases(user, locale)
   }
 
-  @Scopes(ApiScope.lawAndOrder)
   @Query(() => CourtCase, {
     name: 'lawAndOrderCourtCaseDetail',
     nullable: true,
@@ -69,7 +60,6 @@ export class LawAndOrderResolver {
     return this.lawAndOrderService.getCourtCase(user, input.id, locale)
   }
 
-  @Scopes(ApiScope.lawAndOrder)
   @Query(() => Subpoena, { name: 'lawAndOrderSubpoena', nullable: true })
   @Audit()
   getSubpoena(
@@ -81,7 +71,6 @@ export class LawAndOrderResolver {
     return this.lawAndOrderService.getSubpoena(user, input.id, locale)
   }
 
-  @Scopes(ApiScope.lawAndOrder)
   @Query(() => Lawyers, { name: 'lawAndOrderLawyers', nullable: true })
   @Audit()
   getLawyers(
@@ -92,7 +81,6 @@ export class LawAndOrderResolver {
     return this.lawAndOrderService.getLawyers(user, locale)
   }
 
-  @Scopes(ApiScope.lawAndOrder)
   @Mutation(() => DefenseChoice, {
     name: 'lawAndOrderDefenseChoicePost',
     nullable: true,

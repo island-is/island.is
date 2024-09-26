@@ -25,6 +25,7 @@ import {
 } from './helpers/mappers'
 
 const namespaces = ['api.law-and-order']
+
 @Injectable()
 export class LawAndOrderService {
   constructor(
@@ -97,7 +98,7 @@ export class LawAndOrderService {
         id: singleCase?.caseId ?? id,
         hasBeenServed: hasBeenServed,
         caseNumberTitle: singleCase?.data.caseNumber,
-        groups: singleCase?.data.groups.map((group, groupIndex) => {
+        groups: (singleCase?.data.groups ?? []).map((group, groupIndex) => {
           return {
             items: group.items.map((item) => {
               // Adding action to the line including "fyrirkall"

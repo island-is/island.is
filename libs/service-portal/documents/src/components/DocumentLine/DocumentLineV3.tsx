@@ -7,27 +7,27 @@ import {
   DocumentV2Action,
   DocumentV2Content,
 } from '@island.is/api/schema'
-import { Box, Text, LoadingDots, Icon, toast } from '@island.is/island-ui/core'
-import { dateFormat } from '@island.is/shared/constants'
-import { ConfirmationModal, m } from '@island.is/service-portal/core'
-import * as styles from './DocumentLine.css'
+import { Box, Icon, LoadingDots, Text, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { messages } from '../../utils/messages'
-import AvatarImage from './AvatarImage'
+import { ConfirmationModal, m } from '@island.is/service-portal/core'
+import { dateFormat } from '@island.is/shared/constants'
 import {
   matchPath,
+  useLocation,
   useNavigate,
   useParams,
-  useLocation,
 } from 'react-router-dom'
-import { DocumentsPaths } from '../../lib/paths'
-import { FavAndStash } from '../FavAndStash/FavAndStash'
-import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
-import { useGetDocumentInboxLineV3LazyQuery } from '../../screens/Overview/Overview.generated'
-import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { useDocumentList } from '../../hooks/useDocumentListV3'
+import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 import { useMailAction } from '../../hooks/useMailActionV2'
+import { DocumentsPaths } from '../../lib/paths'
+import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import { useGetDocumentInboxLineV3LazyQuery } from '../../screens/Overview/Overview.generated'
+import { messages } from '../../utils/messages'
+import { FavAndStashV3 } from '../FavAndStash/FavAndStashV3'
 import UrgentTag from '../UrgentTag/UrgentTag'
+import AvatarImage from './AvatarImage'
+import * as styles from './DocumentLine.css'
 
 interface Props {
   documentLine: DocumentV2
@@ -336,7 +336,7 @@ export const DocumentLineV3: FC<Props> = ({
                 !postLoading &&
                 !fileLoading &&
                 !asFrame && (
-                  <FavAndStash
+                  <FavAndStashV3
                     bookmarked={isBookmarked}
                     onFav={
                       isBookmarked || hasFocusOrHover

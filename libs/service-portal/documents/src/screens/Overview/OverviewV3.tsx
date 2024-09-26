@@ -1,32 +1,32 @@
-import { useEffect, useMemo } from 'react'
 import {
   Box,
-  Stack,
-  Pagination,
-  Text,
-  GridContainer,
-  GridColumn,
-  GridRow,
-  SkeletonLoader,
   Checkbox,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Pagination,
+  SkeletonLoader,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { useOrganizations } from '@island.is/service-portal/graphql'
-import { GoBack, m, useScrollTopOnUpdate } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { GoBack, m, useScrollTopOnUpdate } from '@island.is/service-portal/core'
+import { useOrganizations } from '@island.is/service-portal/graphql'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import debounce from 'lodash/debounce'
+import { useEffect, useMemo } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import DocumentsFilter from '../../components/DocumentFilter/DocumentsFilterV2'
 import DocumentLine from '../../components/DocumentLine/DocumentLineV3'
-import { useKeyDown } from '../../hooks/useKeyDown'
-import { FavAndStash } from '../../components/FavAndStash'
-import { messages } from '../../utils/messages'
+import { FavAndStashV3 } from '../../components/FavAndStash/FavAndStashV3'
 import DocumentDisplay from '../../components/OverviewDisplay/OverviewDocumentDisplayV3'
-import { DocumentsPaths } from '../../lib/paths'
-import { useDocumentContext } from './DocumentContext'
 import { useDocumentFilters } from '../../hooks/useDocumentFilters'
 import { pageSize, useDocumentList } from '../../hooks/useDocumentListV3'
+import { useKeyDown } from '../../hooks/useKeyDown'
 import { useMailAction } from '../../hooks/useMailActionV2'
+import { DocumentsPaths } from '../../lib/paths'
+import { messages } from '../../utils/messages'
+import { useDocumentContext } from './DocumentContext'
 import * as styles from './Overview.css'
 
 export const ServicePortalDocumentsV3 = () => {
@@ -183,7 +183,7 @@ export const ServicePortalDocumentsV3 = () => {
               </Box>
 
               {selectedLines.length > 0 ? (
-                <FavAndStash
+                <FavAndStashV3
                   loading={batchActionLoading}
                   onStash={() =>
                     submitBatchAction(
