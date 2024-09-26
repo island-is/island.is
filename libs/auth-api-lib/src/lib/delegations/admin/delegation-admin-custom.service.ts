@@ -57,7 +57,9 @@ export class DelegationAdminCustomService {
     )
 
     if (!fromReferenceId || !toReferenceId) {
-      throw new Error('Zendesk ticket is missing required custom fields')
+      throw new BadRequestException(
+        'Zendesk ticket is missing required custom fields',
+      )
     }
 
     return {
@@ -69,27 +71,19 @@ export class DelegationAdminCustomService {
   async getAllDelegationsByNationalId(
     nationalId: string,
   ): Promise<DelegationAdminCustomDto> {
-    const incomingDelegationPromises = []
-
-    incomingDelegationPromises.push(
+    const [
+      incomingCustomDelegations,
+      incomingGeneralDelegations,
+      outgoingCustomDelegations,
+      outgoingGeneralDelegations,
+    ] = await Promise.all([
       this.delegationsIncomingCustomService.findAllValidIncoming({
         nationalId: nationalId,
         validity: DelegationValidity.ALL,
       }),
-    )
-
-    incomingDelegationPromises.push(
       this.delegationsIncomingCustomService.findAllValidGeneralMandate({
         nationalId: nationalId,
       }),
-    )
-
-    const [
-      incomingDelegationSets,
-      outgoingDelegations,
-      generalOutgoingDelegations,
-    ] = await Promise.all([
-      await Promise.all(incomingDelegationPromises),
       this.delegationModel.findAll({
         where: {
           fromNationalId: nationalId,
@@ -137,13 +131,13 @@ export class DelegationAdminCustomService {
     ])
 
     return {
-      incoming: ([] as DelegationDTO[]).concat(...incomingDelegationSets),
+      incoming: [...incomingCustomDelegations, ...incomingGeneralDelegations],
       outgoing: [
-        generalOutgoingDelegations.map((d) =>
+        ...outgoingGeneralDelegations.map((d) =>
           d.toDTO(AuthDelegationType.GeneralMandate),
         ),
-        outgoingDelegations.map((delegation) => delegation.toDTO()),
-      ].flat(),
+        ...outgoingCustomDelegations.map((delegation) => delegation.toDTO()),
+      ],
     }
   }
 
@@ -156,26 +150,26 @@ export class DelegationAdminCustomService {
       delegation.fromNationalId,
     )
 
-    const zenDeskCase = await this.zendeskService.getTicket(
+    const zendeskCase = await this.zendeskService.getTicket(
       delegation.referenceId,
     )
 
-    if (!zenDeskCase.tags.includes(DELEGATION_TAG)) {
-      throw new Error('Zendesk ticket is missing required tag')
+    if (!zendeskCase.tags.includes(DELEGATION_TAG)) {
+      throw new BadRequestException('Zendesk ticket is missing required tag')
     }
 
-    if (zenDeskCase.status !== TicketStatus.Solved) {
-      throw new Error('Zendesk case is not solved')
+    if (zendeskCase.status !== TicketStatus.Solved) {
+      throw new BadRequestException('Zendesk case is not solved')
     }
 
     const { fromReferenceId, toReferenceId } =
-      this.getNationalIdsFromZendeskTicket(zenDeskCase)
+      this.getNationalIdsFromZendeskTicket(zendeskCase)
 
     if (
       fromReferenceId !== delegation.fromNationalId ||
       toReferenceId !== delegation.toNationalId
     ) {
-      throw new Error(
+      throw new BadRequestException(
         'Zendesk ticket nationalIds does not match delegation nationalIds',
       )
     }
@@ -185,48 +179,41 @@ export class DelegationAdminCustomService {
       this.namesService.getPersonName(delegation.toNationalId),
     ])
 
-    return this.sequelize.transaction(async (transaction) => {
-      const newDelegation = await this.delegationModel.create(
-        {
-          id: uuid(),
-          toNationalId: delegation.toNationalId,
-          fromNationalId: delegation.fromNationalId,
-          createdByNationalId: user.actor?.nationalId ?? user.nationalId,
-          referenceId: delegation.referenceId,
-          toName,
-          fromDisplayName,
-        },
-        {
-          transaction,
-        },
-      )
+    const newDelegation = await this.delegationModel.create(
+      {
+        id: uuid(),
+        toNationalId: delegation.toNationalId,
+        fromNationalId: delegation.fromNationalId,
+        createdByNationalId: user.actor?.nationalId ?? user.nationalId,
+        referenceId: delegation.referenceId,
+        toName,
+        fromDisplayName,
+        delegationDelegationTypes: [
+          {
+            delegationTypeId: AuthDelegationType.GeneralMandate,
+            validTo: delegation.validTo,
+          },
+        ] as DelegationDelegationType[],
+      },
+      {
+        include: [this.delegationDelegationTypeModel],
+      },
+    )
 
-      const ddt = await this.delegationDelegationTypeModel.create(
-        {
-          delegationId: newDelegation.id,
-          delegationTypeId: AuthDelegationType.GeneralMandate,
-          validTo: delegation.validTo,
-        },
-        {
-          transaction,
-        },
-      )
+    // Index delegations for the toNationalId
+    void this.indexDelegations(delegation.toNationalId)
 
-      newDelegation.delegationDelegationTypes = [ddt]
-
-      // Index custom delegations for the toNationalId
-      void this.delegationIndexService.indexCustomDelegations(
-        delegation.toNationalId,
-      )
-
-      return newDelegation.toDTO(AuthDelegationType.GeneralMandate)
-    })
+    return newDelegation.toDTO(AuthDelegationType.GeneralMandate)
   }
 
   async deleteDelegation(user: User, delegationId: string): Promise<void> {
     const delegation = await this.delegationModel.findByPk(delegationId)
 
     if (!delegation || !delegation.referenceId) {
+      throw new NoContentException()
+    }
+
+    if (!delegation.referenceId) {
       throw new NoContentException()
     }
 
@@ -260,18 +247,33 @@ export class DelegationAdminCustomService {
         })
       }
 
-      await this.delegationDelegationTypeModel.destroy({
-        transaction,
-        where: {
-          delegationId,
-        },
-      })
-
-      // Index custom delegations for the toNationalId
-      void this.delegationIndexService.indexCustomDelegations(
-        delegation.toNationalId,
-      )
+      // Index delegations for the toNationalId
+      void this.indexDelegations(delegation.toNationalId)
     })
+  }
+
+  private validatePersonsNationalIds(
+    toNationalId: string,
+    fromNationalId: string,
+  ) {
+    if (toNationalId === fromNationalId) {
+      throw new BadRequestException(
+        'Cannot create a delegation between the same nationalId.',
+      )
+    }
+
+    if (
+      !(kennitala.isPerson(fromNationalId) && kennitala.isPerson(toNationalId))
+    ) {
+      throw new BadRequestException(
+        'National ids needs to be valid person national ids',
+      )
+    }
+  }
+
+  private indexDelegations(nationalId: string) {
+    void this.delegationIndexService.indexCustomDelegations(nationalId)
+    void this.delegationIndexService.indexGeneralMandateDelegations(nationalId)
   }
 
   private validatePersonsNationalIds(

@@ -13,6 +13,7 @@ import {
   CreatePaperDelegationDto,
   Delegation,
   DELEGATION_TAG,
+  DelegationDelegationType,
   DelegationsIndexService,
   SequelizeConfigService,
   ZENDESK_CUSTOM_FIELDS,
@@ -57,6 +58,12 @@ describe('DelegationAdmin - With authentication', () => {
       .mockImplementation(async () => {
         return
       })
+
+    jest
+      .spyOn(delegationIndexServiceApi, 'indexGeneralMandateDelegations')
+      .mockImplementation(async () => {
+        return
+      })
   })
 
   afterEach(async () => {
@@ -71,7 +78,7 @@ describe('DelegationAdmin - With authentication', () => {
       ],
     })
 
-    return await factory.createCustomDelegation({
+    return factory.createCustomDelegation({
       fromNationalId: user?.nationalId ?? '',
       domainName: domain.name,
       scopes: [{ scopeName: 's1' }],
@@ -172,10 +179,19 @@ describe('DelegationAdmin - With authentication', () => {
   describe('POST /delegation-admin', () => {
     const toNationalId = '0101302399'
     const fromNationalId = '0101307789'
+
     let zendeskServiceApiSpy: jest.SpyInstance
     let nationalRegistryApiSpy: jest.SpyInstance
 
+    let delegationModel: typeof Delegation
+    let delegationDelegationTypeModel: typeof DelegationDelegationType
+
     beforeEach(async () => {
+      delegationModel = await app.get(getModelToken(Delegation))
+      delegationDelegationTypeModel = await app.get(
+        getModelToken(DelegationDelegationType),
+      )
+
       await factory.createDomain({
         name: 'd1',
         apiScopes: [
@@ -287,6 +303,18 @@ describe('DelegationAdmin - With authentication', () => {
       expect(res.body.toNationalId).toEqual(toNationalId)
       expect(res.body.referenceId).toEqual(delegation.referenceId)
       expect(res.body).not.toHaveProperty('validTo')
+
+      // Assert db
+      const createdDelegation = await delegationModel.findByPk(res.body.id)
+      const createdDelegationDelegationType =
+        await delegationDelegationTypeModel.findOne({
+          where: {
+            delegationId: res.body.id,
+          },
+        })
+
+      expect(createdDelegation).not.toBeNull()
+      expect(createdDelegationDelegationType).not.toBeNull()
     })
 
     it('POST /delegation-admin should not create delegation with company national id', async () => {

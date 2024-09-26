@@ -25,6 +25,7 @@ import {
   AuthDelegationType,
 } from '@island.is/shared/types'
 import { DelegationDelegationType } from './delegation-delegation-type.model'
+import { isDefined } from '@island.is/shared/utils'
 
 @Table({
   tableName: 'delegation',
@@ -102,7 +103,7 @@ export class Delegation extends Model<
     ) {
       const dates = this.delegationDelegationTypes
         .map((x) => x.validTo)
-        .filter((x) => x !== null) as Array<Date>
+        .filter((x) => isDefined(x)) as Array<Date>
       return max(dates)
     }
 
@@ -114,7 +115,7 @@ export class Delegation extends Model<
 
     // 2. Find items with value in the array
     const dates = (this.delegationScopes
-      ?.filter((x) => x.validTo !== null && x.validTo !== undefined)
+      ?.filter((x) => isDefined(x.validTo))
       .map((x) => x.validTo) || []) as Array<Date>
 
     // Return the max value

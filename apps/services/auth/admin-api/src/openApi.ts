@@ -18,7 +18,6 @@ export const openApi = new DocumentBuilder()
           tokenUrl: `${environment.auth.issuer}/connect/token`,
           scopes: {
             openid: 'Default openid scope',
-            [AuthScope.delegations]: 'Access to manage delegations.',
           },
         },
       },

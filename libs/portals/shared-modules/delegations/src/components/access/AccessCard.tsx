@@ -242,7 +242,7 @@ export const AccessCard = ({
       <Box marginTop={hasTags && showActions ? 2 : 0}>
         <Box
           display="flex"
-          justifyContent={'spaceBetween'}
+          justifyContent={hasTags ? 'spaceBetween' : 'flexEnd'}
           alignItems={['stretch', 'flexEnd']}
           flexDirection={['column', 'row']}
           width="full"
