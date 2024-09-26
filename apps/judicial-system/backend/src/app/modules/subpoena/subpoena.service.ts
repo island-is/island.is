@@ -35,7 +35,7 @@ export class SubpoenaService {
     defendant: Defendant,
     transaction: Transaction,
   ): Promise<Subpoena> {
-    return await this.subpoenaModel.create(
+    return this.subpoenaModel.create(
       {
         defendantId: defendant.id,
         caseId: defendant.caseId,
