@@ -89,7 +89,6 @@ const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
 const sessionsCleanupWorker = sessionsCleanupWorkerSetup()
 
-
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
