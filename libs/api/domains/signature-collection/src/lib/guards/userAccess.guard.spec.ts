@@ -212,7 +212,8 @@ describe('UserAccessGuard', () => {
   })
 
   afterEach(() => {
-    jest.clearAllMocks(), jest.restoreAllMocks()
+    jest.clearAllMocks()
+    jest.restoreAllMocks()
   })
 
   const gqlQuery = (query: string) =>
