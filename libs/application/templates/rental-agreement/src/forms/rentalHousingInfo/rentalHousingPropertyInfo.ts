@@ -3,23 +3,23 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
+import * as m from '../../lib/messages'
 
 export const RentalHousingPropertyInfo = buildSubSection({
   id: 'rentalHousingPropertyInfo',
-  title: 'Skrá húsnæði',
+  title: m.registerHousingProperty.subSectionName,
   children: [
     buildMultiField({
       id: 'rentalHousingPropertyInfo',
-      title: 'Húsnæðið',
-      description:
-        'Finndu eignina með fasteignanúmeri eða heimilisfangi. Nánari upplýsingar er að finna í fasteignaskrá HMS.',
+      title: m.registerHousingProperty.pageTitle,
+      description: m.registerHousingProperty.pageDescription,
       children: [
         buildTextField({
           id: 'propertyAddress',
-          title: 'Heimilisfang leiguhúsnæðis',
+          title: m.registerHousingProperty.addressLabel,
+          placeholder: m.registerHousingProperty.addressPlaceholder,
           variant: 'text',
           defaultValue: '',
-          colSpan: '6/12',
         }),
       ],
     }),

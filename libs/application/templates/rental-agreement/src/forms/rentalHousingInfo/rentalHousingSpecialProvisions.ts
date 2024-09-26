@@ -4,48 +4,50 @@ import {
   buildDescriptionField,
   buildTextField,
 } from '@island.is/application/core'
+import * as m from '../../lib/messages'
 
 export const RentalHousingSpecialProvisions = buildSubSection({
   id: 'RentalHousingSpecialProvisions',
-  title: 'Sérákvæði',
+  title: m.specialProvisions.subSectionName,
   children: [
     buildMultiField({
       id: 'rentalHousingSpecialProvisionsDetails',
-      title: 'Nánari lýsing og sérákvæði',
-      description:
-        'Hér má taka fram hvað fylgir húsnæðinu, hvort húsreglur séu til staðar eða önnur ákvæði sem fylgja samningnum. Athugið að þau ákvæði sem eru andstætt húsaleigulögum munu ekki hafa gildi í túlkun leigusamningsins. Sjá nánar hér.',
+      title: m.specialProvisions.pageTitle,
+      description: m.specialProvisions.pageDescription,
       children: [
         buildDescriptionField({
           id: 'rentalHousingSpecialProvisionsDescriptionTitle',
-          title: 'Lýsing á húsnæðinu og því sem með fylgir',
-          titleTooltip: 'Þetta er tooltip fyrir titilinn',
+          title: m.specialProvisions.housingDescriptionTitle,
+          titleTooltip: m.specialProvisions.housingDescriptionTitleTooltip,
           titleVariant: 'h5',
         }),
         buildTextField({
           id: 'rentalHousingSpecialProvisionsDescriptionInput',
-          title: 'Lýsing á húsnæði',
+          title: m.specialProvisions.housingDescriptionInputLabel,
+          placeholder: m.specialProvisions.housingDescriptionInputPlaceholder,
           variant: 'textarea',
-          placeholder: 'Skrifaðu hér lýsingu á húsnæðinu',
+          rows: 8,
         }),
       ],
     }),
     buildMultiField({
       id: 'rentalHousingSpecialProvisionsDetails',
-      title: 'Nánari lýsing og sérákvæði',
-      description:
-        'Hér má taka fram hvað fylgir húsnæðinu, hvort húsreglur séu til staðar eða önnur ákvæði sem fylgja samningnum. Athugið að þau ákvæði sem eru andstætt húsaleigulögum munu ekki hafa gildi í túlkun leigusamningsins. Sjá nánar hér.',
+      title: m.specialProvisions.pageTitle,
+      description: m.specialProvisions.pageDescription,
       children: [
         buildDescriptionField({
           id: 'rentalHousingSpecialProvisionsTitle',
-          title: 'Sérákvæði eða húsreglur',
-          titleTooltip: 'Þetta er tooltip fyrir skýringu á þessum reit',
+          title: m.specialProvisions.housingRulesDescriptionTitle,
+          titleTooltip: m.specialProvisions.housingRulesDescriptionTitleTooltip,
           titleVariant: 'h5',
         }),
         buildTextField({
           id: 'rentalHousingSpecialProvisionsInput',
-          title: 'Sérákvæði',
+          title: m.specialProvisions.housingRulesDescriptionInputLabel,
+          placeholder:
+            m.specialProvisions.housingRulesDescriptionInputPlaceholder,
           variant: 'textarea',
-          placeholder: 'Skrifaðu hér allt sem á við',
+          rows: 8,
         }),
       ],
     }),

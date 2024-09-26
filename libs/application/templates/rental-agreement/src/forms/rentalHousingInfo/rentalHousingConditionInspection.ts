@@ -6,46 +6,56 @@ import {
   buildTextField,
   buildFileUploadField,
 } from '@island.is/application/core'
+import * as m from '../../lib/messages'
 
 export const RentalHousingConditionInspection = buildSubSection({
   id: 'rentalHousingConditionInspection',
-  title: 'Ástandsskoðun',
+  title: m.housingConditionInspection.subSectionName,
   children: [
     buildMultiField({
       id: 'rentalHousingConditionInspection',
-      title: 'Ástand húsnæðis',
-      description:
-        'Leigusamningur þarf lögum samkvæmt að innihalda ástandsúttekt á húsnæðinu. Sú úttekt þarf að fara fram við samningsgerðina. Gott er að skoða húsnæðið gaumgæfilega og taka myndir af ástandi. Sjá nánar hér.',
+      title: m.housingConditionInspection.pageTitle,
+      description: m.housingConditionInspection.pageDescription,
       children: [
         buildRadioField({
           id: 'rentalHousingConditionInspectionRadio',
-          title: 'Framkvæmdaraðili ástandsskoðunar',
-          width: 'half',
-          description:
-            'Athugið að aðilar geta sjálfir gert ástandsúttekt eða fengið óháðan aðila til þess og þá skiptist kostnaðurinn við það jafnt á milli aðila.',
+          title: m.housingConditionInspection.inspectorTitle,
+          description: m.housingConditionInspection.inspectorDescription,
           options: [
-            { value: 'contractParties', label: 'Samningsaðilar' },
-            { value: 'independentParty', label: 'Óháður aðili' },
+            {
+              value: 'contractParties',
+              label:
+                m.housingConditionInspection.inspectorOptionContractParties,
+            },
+            {
+              value: 'independentParty',
+              label:
+                m.housingConditionInspection.inspectorOptionIndependentParty,
+            },
           ],
+          width: 'half',
+          space: 1,
         }),
         buildDescriptionField({
           id: 'rentalHousingConditionInspectionTitle',
-          title: 'Niðurstöður ástandsúttektar',
+          title: m.housingConditionInspection.inspectionResultsTitle,
           description:
-            'Hér á að setja inn helstu niðurstöður ástandsúttektar. Gott er að taka myndir af þeim atriðum sem skipta máli. Ef óháður aðili hefur framkvæmt úttektina má setja niðurstöðurnar með sem fylgiskjal.',
+            m.housingConditionInspection.inspectionResultsDescription,
           titleVariant: 'h5',
+          space: 3,
         }),
         buildTextField({
           id: 'rentalHousingConditionInspectionTextInput',
-          title: 'Ástandsúttekt',
+          title: m.housingConditionInspection.inspectionResultsInputLabel,
+          placeholder:
+            m.housingConditionInspection.inspectionResultsInputPlaceholder,
           variant: 'textarea',
-          placeholder: 'Skrifaður hér allt sem á við',
+          rows: 8,
         }),
         buildFileUploadField({
           id: 'rentalHousingConditionInspectionFileUpload',
-          title: 'Dragðu skjöl hingað til að hlaða upp',
-          uploadDescription:
-            'Tekið er við skjölum með endingu: .png, .jpg, .jpeg, .pdf, .docx, .rtf. \nSkjöl geta ekki verið stærri en 0 mb og ekki fleiri en 0.',
+          title: m.housingConditionInspection.fileUploadTitle,
+          uploadDescription: m.housingConditionInspection.fileUploadDescription,
           uploadMultiple: true,
         }),
       ],

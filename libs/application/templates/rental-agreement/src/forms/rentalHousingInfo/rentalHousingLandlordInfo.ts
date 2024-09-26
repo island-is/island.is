@@ -3,36 +3,38 @@ import {
   buildMultiField,
   buildTextField,
 } from '@island.is/application/core'
+import * as m from '../../lib/messages'
 
 export const RentalHousingLandlordInfo = buildSubSection({
   id: 'rentalHousingLandlordInfo',
-  title: 'Leigusali',
+  title: m.landlordDetails.pageTitle,
   children: [
     buildMultiField({
       id: 'rentalHousingLandlordInfo',
-      title: 'Skrá leigusala',
+      title: m.landlordDetails.pageTitle,
+      description: m.landlordDetails.pageDescription,
       children: [
         buildTextField({
           id: 'rentalHousingLandlordNationalId',
-          title: 'Kennitala leigusala',
+          title: m.landlordDetails.nationalIdLabel,
           width: 'half',
           variant: 'number',
         }),
         buildTextField({
           id: 'rentalHousingLandlordName',
-          title: 'Fullt nafn',
+          title: m.landlordDetails.nameLabel,
           width: 'half',
           variant: 'text',
         }),
         buildTextField({
           id: 'rentalHousingLandlordEmail',
-          title: 'Netfang',
+          title: m.landlordDetails.emailLabel,
           width: 'half',
           variant: 'email',
         }),
         buildTextField({
           id: 'rentalHousingLandlordPhone',
-          title: 'Símanúmer',
+          title: m.landlordDetails.phoneLabel,
           width: 'half',
           variant: 'tel',
         }),
