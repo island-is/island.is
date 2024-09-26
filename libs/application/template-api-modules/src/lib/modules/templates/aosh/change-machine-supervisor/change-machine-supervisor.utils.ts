@@ -75,7 +75,7 @@ export const sendNotificationsToRecipients = async (
         .catch((e) => {
           errors.push(
             `Error sending email about submit application in application: ID: ${application.id}, 
-            role: supervisor`,
+            role: ${recipientList[i].role}`,
             e,
           )
         })
@@ -96,7 +96,7 @@ export const sendNotificationsToRecipients = async (
           errors.push(
             `Error sending sms about submit application to 
             a phonenumber in application: ID: ${application.id}, 
-            role: supervisor`,
+            role: ${recipientList[i].role}`,
             e,
           )
         })
