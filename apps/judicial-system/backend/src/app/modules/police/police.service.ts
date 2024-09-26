@@ -30,6 +30,7 @@ import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
+import { Subpoena } from '../subpoena/models/subpoena.model'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -121,6 +122,17 @@ export class PoliceService {
     malsnumer: z.string(),
     skjol: z.optional(z.array(this.policeCaseFileStructure)),
     malseinings: z.optional(z.array(this.crimeSceneStructure)),
+  })
+  private subpoenaStructure = z.object({
+    Acknowledged: z.boolean(),
+    Comment: z.string(),
+    DefenderChoice: z.string(),
+    DefenderNationalId: z.string(),
+    ProsecutedConfirmedSubpoenaThroughIslandis: z.boolean(),
+    ServedBy: z.string(),
+    Delivered: z.boolean(),
+    DeliveredOnPaper: z.boolean(),
+    DeliveredToLawyer: z.boolean(),
   })
 
   constructor(
@@ -314,6 +326,19 @@ export class PoliceService {
           detail: reason.message,
         })
       })
+  }
+
+  async getSubpoenaStatus(subpoenaId: string): Promise<Subpoena> {
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
+    ).then(async (res: Response) => {
+      if (res.ok) {
+        const response: z.infer<typeof this.subpoenaStructure> =
+          await res.json()
+
+        return response
+      }
+    })
   }
 
   async getPoliceCaseInfo(
