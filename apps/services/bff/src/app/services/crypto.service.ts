@@ -82,6 +82,12 @@ export class CryptoService {
       // Split the input into the algorithm, IV (initialization vector), and the encrypted text
       const [_algorithm, ivBase64, encrypted] = encryptedText.split(':')
 
+      // If encryptedText is malformed, this could lead to runtime errors or security vulnerabilities.
+      // This check ensures all parts are present before proceeding.
+      if (!ivBase64 || !encrypted) {
+        throw new Error('Invalid encrypted text format.')
+      }
+
       // Convert the base64-encoded IV back into a Buffer
       const iv = Buffer.from(ivBase64, 'base64')
 
