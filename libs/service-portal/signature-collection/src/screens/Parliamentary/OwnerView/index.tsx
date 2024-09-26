@@ -29,6 +29,7 @@ import { SignatureCollection } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
 import copyToClipboard from 'copy-to-clipboard'
+import { formatNationalId } from '@island.is/portals/core'
 
 const OwnerView = ({
   currentCollection,
@@ -88,7 +89,7 @@ const OwnerView = ({
             )}
         </Box>
         {loadingOwnerLists ? (
-          <Box marginTop={2}>
+          <Box marginTop={3}>
             <OwnerParliamentarySkeleton />
           </Box>
         ) : (
@@ -185,15 +186,18 @@ const OwnerView = ({
           <T.Body>
             {loadingCollectors ? (
               <T.Row>
-                <T.Data colSpan={2}>
-                  <CollectorSkeleton></CollectorSkeleton>
+                <T.Data>
+                  <CollectorSkeleton />
+                </T.Data>
+                <T.Data>
+                  <CollectorSkeleton />
                 </T.Data>
               </T.Row>
             ) : (
               collectors.map((collector) => (
                 <T.Row key={collector.nationalId}>
-                  <T.Data width={'40%'}>{collector.name}</T.Data>
-                  <T.Data>{collector.nationalId}</T.Data>
+                  <T.Data width={'35%'}>{collector.name}</T.Data>
+                  <T.Data>{formatNationalId(collector.nationalId)}</T.Data>
                 </T.Row>
               ))
             )}

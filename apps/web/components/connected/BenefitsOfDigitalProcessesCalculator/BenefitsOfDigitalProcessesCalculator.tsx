@@ -393,9 +393,7 @@ export const BenefitsOfDigitalProcessesCalculator = ({
                         ) as string)
                   }
                   description={formatMessage(t.results.c02)}
-                  icon={
-                    <Icon icon="homeWithCar" color="blue400" size="large" />
-                  }
+                  icon={<Icon icon="leaf" color="blue400" size="large" />}
                 />
               </GridColumn>
             </GridRow>

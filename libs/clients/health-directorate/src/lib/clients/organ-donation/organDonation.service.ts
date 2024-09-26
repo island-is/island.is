@@ -46,11 +46,13 @@ export class HealthDirectorateOrganDonationService {
   public async updateOrganDonation(
     auth: Auth,
     input: UpdateOrganDonorDto,
+    locale: Locale,
   ): Promise<void> {
     await this.organDonationApiWithAuth(
       auth,
     ).meDonorStatusControllerUpdateOrganDonorStatus({
       updateOrganDonorDto: input,
+      locale: locale,
     })
   }
 
