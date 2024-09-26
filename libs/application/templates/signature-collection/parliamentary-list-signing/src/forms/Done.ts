@@ -48,14 +48,14 @@ export const Done: Form = buildForm({
                   name: (application.answers as Answers).list.name,
                 },
               }),
-              alertType: "success"
+              alertType: 'success',
             }),
             buildImageField({
               id: 'doneImage',
               title: '',
               image: ManOnBenchIllustration,
-              imageWidth: "50%",
-              imagePosition: "center",
+              imageWidth: '50%',
+              imagePosition: 'center',
             }),
             buildDescriptionField({
               id: 'space',
