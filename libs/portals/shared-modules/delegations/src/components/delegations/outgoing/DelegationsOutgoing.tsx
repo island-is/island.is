@@ -17,6 +17,7 @@ import { useAuthDelegationsOutgoingQuery } from './DelegationsOutgoing.generated
 import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
 import { ALL_DOMAINS } from '../../../constants/domain'
 import { m } from '../../../lib/messages'
+import { DelegationPaths } from '../../../lib/paths'
 
 const prepareDomainName = (domainName: string | null) =>
   domainName === ALL_DOMAINS ? null : domainName
@@ -114,6 +115,7 @@ export const DelegationsOutgoing = () => {
                         )
                       }}
                       variant="outgoing"
+                      href={`${DelegationPaths.Delegations}/${delegation.id}`}
                     />
                   ),
               )}

@@ -54,10 +54,14 @@ export class FileController {
     )
   }
 
-  @Get('caseFilesRecord/:policeCaseNumber')
+  @Get([
+    'caseFilesRecord/:policeCaseNumber',
+    'mergedCase/:mergedCaseId/caseFilesRecord/:policeCaseNumber',
+  ])
   @Header('Content-Type', 'application/pdf')
   getCaseFilesRecordPdf(
     @Param('id') id: string,
+    @Param('mergedCaseId') mergedCaseId: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
@@ -65,11 +69,15 @@ export class FileController {
   ): Promise<Response> {
     this.logger.debug(`Getting the case files for case ${id} as a pdf document`)
 
+    const mergedCaseInjection = mergedCaseId
+      ? `mergedCase/${mergedCaseId}/`
+      : ''
+
     return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_CASE_FILES_PDF,
       id,
-      `caseFilesRecord/${policeCaseNumber}`,
+      `${mergedCaseInjection}caseFilesRecord/${policeCaseNumber}`,
       req,
       res,
       'pdf',
@@ -143,21 +151,26 @@ export class FileController {
     )
   }
 
-  @Get('indictment')
+  @Get(['indictment', 'mergedCase/:mergedCaseId/indictment'])
   @Header('Content-Type', 'application/pdf')
   getIndictmentPdf(
     @Param('id') id: string,
+    @Param('mergedCaseId') mergedCaseId: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<Response> {
     this.logger.debug(`Getting the indictment for case ${id} as a pdf document`)
 
+    const mergedCaseInjection = mergedCaseId
+      ? `mergedCase/${mergedCaseId}/`
+      : ''
+
     return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_INDICTMENT_PDF,
       id,
-      'indictment',
+      `${mergedCaseInjection}indictment`,
       req,
       res,
       'pdf',

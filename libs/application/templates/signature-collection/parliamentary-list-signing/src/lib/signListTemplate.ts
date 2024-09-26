@@ -17,12 +17,7 @@ import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
-import {
-  CanSignApi,
-  CurrentCollectionApi,
-  GetListApi,
-  OwnerRequirementsApi,
-} from '../dataProviders'
+import { CanSignApi, CurrentCollectionApi, GetListApi } from '../dataProviders'
 
 const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: false,
