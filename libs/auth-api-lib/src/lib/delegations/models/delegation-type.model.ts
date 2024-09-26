@@ -24,6 +24,7 @@ import { ClientDelegationType } from '../../clients/models/client-delegation-typ
 import { Client } from '../../clients/models/client.model'
 import { ApiScopeDelegationType } from '../../resources/models/api-scope-delegation-type.model'
 import { ApiScope } from '../../resources/models/api-scope.model'
+import { DelegationDelegationType } from './delegation-delegation-type.model'
 
 @Table({
   tableName: 'delegation_type',
@@ -78,6 +79,9 @@ export class DelegationTypeModel extends Model<
 
   @HasMany(() => PersonalRepresentativeDelegationTypeModel)
   prDelegationType?: PersonalRepresentativeDelegationTypeModel[]
+
+  @HasMany(() => DelegationDelegationType)
+  delegationDelegationTypes?: DelegationDelegationType[]
 
   toDTO(): DelegationTypeDto {
     return {

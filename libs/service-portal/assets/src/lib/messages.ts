@@ -167,6 +167,10 @@ export const messages = defineMessages({
     id: 'sp.work-machines:search-placeholder',
     defaultMessage: 'Leita',
   },
+  noInspection: {
+    id: 'sp.work-machines:no-inspection',
+    defaultMessage: 'Óskoðuð',
+  },
 })
 
 export const vehicleMessage = defineMessages({

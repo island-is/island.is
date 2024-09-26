@@ -101,6 +101,26 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
     description: '',
   },
+  selectCandidate: {
+    id: 'pls.application:selectCandidate',
+    defaultMessage: 'Veldu frambjóðanda',
+    description: '',
+  },
+  selectCandidateDescription: {
+    id: 'pls.application:selectCandidateDescription',
+    defaultMessage: 'Frambjóðendur á þínu svæði sem hægt er að mæla með:',
+    description: '',
+  },
+  selectCandidateMaxReached: {
+    id: 'pls.application:selectCandidateMaxReached',
+    defaultMessage: 'Hámarki meðmæla náð',
+    description: '',
+  },
+  selectCandidateListExpired: {
+    id: 'pls.application:selectCandidateListExpired',
+    defaultMessage: 'Söfnuninni lokið',
+    description: '',
+  },
   listName: {
     id: 'pls.application:listName',
     defaultMessage: 'Heiti framboðs',
