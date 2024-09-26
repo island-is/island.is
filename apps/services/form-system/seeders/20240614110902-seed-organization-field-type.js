@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert('organization_field_type', [
