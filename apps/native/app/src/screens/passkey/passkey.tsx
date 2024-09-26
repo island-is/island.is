@@ -31,6 +31,22 @@ const Text = styled.View`
   margin-top: ${({ theme }) => theme.spacing[5]}px;
 `
 
+const Host = styled.View`
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+`
+
+const ButtonWrapper = styled.View`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-vertical: ${({ theme }) => theme.spacing[4]}px;
+`
+
+const Title = styled(Typography)`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const LoadingOverlay = styled.View`
   flex: 1;
   justify-content: center;
@@ -83,32 +99,19 @@ export const PasskeyScreen: NavigationFunctionComponent<{
         style={{ marginHorizontal: 16 }}
       />
       <SafeAreaView style={{ flex: 1 }}>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            flex: 1,
-          }}
-        >
+        <Host>
           <Image
             source={logo}
             resizeMode="contain"
             style={{ width: 45, height: 45 }}
           />
           <Text>
-            <Typography
-              variant={'heading2'}
-              style={{
-                paddingHorizontal: theme.spacing[2],
-                marginBottom: theme.spacing[2],
-              }}
-              textAlign="center"
-            >
+            <Title variant={'heading2'} textAlign="center">
               <FormattedMessage
                 id="passkeys.headingTitle"
                 defaultMessage="Innskrá með Ísland.is appinu"
               />
-            </Typography>
+            </Title>
             <Typography textAlign="center">
               <FormattedMessage
                 id={
@@ -129,13 +132,8 @@ export const PasskeyScreen: NavigationFunctionComponent<{
             style={{ width: 210, height: 240 }}
             resizeMode="contain"
           />
-        </View>
-        <View
-          style={{
-            paddingHorizontal: theme.spacing[2],
-            paddingVertical: theme.spacing[4],
-          }}
-        >
+        </Host>
+        <ButtonWrapper>
           <Button
             title={intl.formatMessage({
               id: 'passkeys.createButton',
@@ -218,7 +216,7 @@ export const PasskeyScreen: NavigationFunctionComponent<{
               url && openBrowser(url, parentComponentId)
             }}
           />
-        </View>
+        </ButtonWrapper>
       </SafeAreaView>
       {isLoading && (
         <LoadingOverlay>
