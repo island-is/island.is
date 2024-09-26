@@ -6,6 +6,7 @@ import {
   GridRow,
   Stack,
   Box,
+  Breadcrumbs,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -16,6 +17,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../lib/paths'
 import CompareLists from '../shared-components/compareLists'
 import { ListsLoaderReturn } from '../loaders/AllLists.loader'
+import DownloadReports from './DownloadReports'
 
 const ParliamentaryRoot = () => {
   const { formatMessage } = useLocale()
@@ -40,23 +42,41 @@ const ParliamentaryRoot = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
+          <Box marginBottom={3}>
+            <Breadcrumbs
+              items={[
+                {
+                  title: formatMessage('Yfirlit'),
+                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
+                },
+              ]}
+            />
+          </Box>
           <IntroHeader
             title={formatMessage(parliamentaryMessages.signatureListsTitle)}
             intro={formatMessage(parliamentaryMessages.signatureListsIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
           />
-          <Box width="half" marginBottom={8}>
-            <FilterInput
-              name="searchSignee"
-              value={''}
-              onChange={() => console.log('search')}
-              placeholder={formatMessage(m.searchInListPlaceholder)}
-              backgroundColor="blue"
-            />
+          <Box
+            width="full"
+            marginBottom={8}
+            display="flex"
+            justifyContent="spaceBetween"
+          >
+            <Box width="half">
+              <FilterInput
+                name="searchSignee"
+                value={''}
+                onChange={() => console.log('search')}
+                placeholder={formatMessage(m.searchInListPlaceholder)}
+                backgroundColor="blue"
+              />
+            </Box>
+            <DownloadReports areas={collection.areas} />
           </Box>
           <Text variant="eyebrow" marginBottom={3}>
-            {formatMessage(m.totalListResults) + ' ' + collection?.areas.length}
+            {formatMessage(m.totalListResults)}: {collection?.areas.length}
           </Text>
           <Stack space={3}>
             {collection?.areas.map((area) => (
