@@ -20,7 +20,9 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import {
+  districtCourtAssistantRule,
   districtCourtJudgeRule,
+  districtCourtRegistrarRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
 } from '../../guards'
@@ -44,6 +46,8 @@ export class CivilClaimantController {
     prosecutorRule,
     prosecutorRepresentativeRule,
     districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
   )
   @Post()
   @ApiCreatedResponse({
@@ -64,6 +68,8 @@ export class CivilClaimantController {
     prosecutorRule,
     prosecutorRepresentativeRule,
     districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
   )
   @Patch(':civilClaimantId')
   @ApiOkResponse({
