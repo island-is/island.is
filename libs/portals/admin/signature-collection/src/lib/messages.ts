@@ -9,6 +9,11 @@ export const m = defineMessages({
   },
   signatureListsTitle: {
     id: 'admin-portal.signature-collection:signatureLists',
+    defaultMessage: 'Meðmælasafnanir',
+    description: '',
+  },
+  signatureListsTitlePresidential: {
+    id: 'admin-portal.signature-collection-parliamentary:signatureLists',
     defaultMessage: 'Forsetakosningar',
     description: '',
   },
@@ -187,6 +192,38 @@ export const m = defineMessages({
     description: '',
   },
 
+  /* Hætta við söfnun modal */
+  cancelCollectionButton: {
+    id: 'dmin-portal.signature-collection:cancelCollectionButton',
+    defaultMessage: 'Hætta við söfnun meðmæla',
+    description: '',
+  },
+  cancelCollectionModalMessage: {
+    id: 'dmin-portal.signature-collection:cancelCollectionModalMessage',
+    defaultMessage: 'Þú ert að fara að hætta við söfnun meðmæla. Ertu viss?',
+    description: '',
+  },
+  cancelCollectionModalConfirmButton: {
+    id: 'dmin-portal.signature-collection:modalConfirmButton',
+    defaultMessage: 'Já, hætta við',
+    description: '',
+  },
+  cancelCollectionModalCancelButton: {
+    id: 'dmin-portal.signature-collection:cancelCollectionModalCancelButton',
+    defaultMessage: 'Nei, hætta við',
+    description: '',
+  },
+  cancelCollectionModalToastError: {
+    id: 'dmin-portal.signature-collection:modalToastError',
+    defaultMessage: 'Ekki tókst að hætta við söfnun meðmæla',
+    description: '',
+  },
+  cancelCollectionModalToastSuccess: {
+    id: 'dmin-portal.signature-collection:cancelCollectionModalToastSuccess',
+    defaultMessage: 'Tókst að hætta við söfnun meðmæla',
+    description: '',
+  },
+
   // View list
   singleList: {
     id: 'admin-portal.signature-collection:singleList',
@@ -228,6 +265,22 @@ export const m = defineMessages({
   listSigneesHeader: {
     id: 'admin-portal.signature-collection:listSigneesHeader',
     defaultMessage: 'Yfirlit meðmæla',
+    description: '',
+  },
+  downloadReports: {
+    id: 'admin-portal.signature-collection:downloadReports',
+    defaultMessage: 'Sækja skýrslur',
+    description: '',
+  },
+  downloadReportsDescription: {
+    id: 'admin-portal.signature-collection:downloadReportsDescription',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus nec odio ultricies ultricies. Nullam nec purus nec odio ultricies ultricies.',
+    description: '',
+  },
+  downloadButton: {
+    id: 'admin-portal.signature-collection:downloadButton',
+    defaultMessage: 'Hlaða niður',
     description: '',
   },
   searchInListPlaceholder: {
@@ -490,14 +543,74 @@ export const m = defineMessages({
     defaultMessage: 'Loka lista',
     description: '',
   },
+  paperSigneesHeader: {
+    id: 'admin-portal.signature-collection:paperSigneesHeader',
+    defaultMessage: 'Skrá meðmæli af blaði',
+    description: '',
+  },
+  paperSigneesClearButton: {
+    id: 'admin-portal.signature-collection:paperSigneesClearButton',
+    defaultMessage: 'Hreinsa',
+    description: '',
+  },
+  paperNumber: {
+    id: 'admin-portal.signature-collection:paperNumber',
+    defaultMessage: 'Blaðsíðunúmer',
+    description: '',
+  },
+  editPaperNumber: {
+    id: 'admin-portal.signature-collection:editPaperNumber',
+    defaultMessage: 'Breyta blaðsíðunúmeri',
+    description: '',
+  },
+  saveEditPaperNumber: {
+    id: 'admin-portal.signature-collection:saveEditPaperNumber',
+    defaultMessage: 'Uppfæra blaðsíðunúmer',
+    description: '',
+  },
+  paperSigneeName: {
+    id: 'admin-portal.signature-collection:paperSigneeName',
+    defaultMessage: 'Nafn meðmælanda',
+    description: '',
+  },
+  signPaperSigneeButton: {
+    id: 'admin-portal.signature-collection:signPaperSigneeButton',
+    defaultMessage: 'Skrá meðmæli á lista',
+    description: '',
+  },
+  paperSigneeTypoTitle: {
+    id: 'admin-portal.signature-collection:paperSigneeTypoTitle',
+    defaultMessage: 'Kennitala ekki á réttu formi',
+    description: '',
+  },
+  paperSigneeTypoMessage: {
+    id: 'admin-portal.signature-collection:paperSigneeTypoMessage',
+    defaultMessage: 'Vinsamlegast athugið kennitöluna og reynið aftur',
+    description: '',
+  },
+  paperSigneeCantSignTitle: {
+    id: 'admin-portal.signature-collection:paperSigneeCantSignTitle',
+    defaultMessage: 'Ekki er hægt að skrá meðmæli',
+    description: '',
+  },
+  paperSigneeCantSignMessage: {
+    id: 'admin-portal.signature-collection:paperSigneeCantSign',
+    defaultMessage: 'Kennitala uppfyllir ekki skilyrði fyrir að skrá meðmæli',
+    description: '',
+  },
+  paperSigneeSuccess: {
+    id: 'admin-portal.signature-collection:paperSigneeSuccess',
+    defaultMessage: 'Meðmæli skráð',
+    description: '',
+  },
+  paperSigneeError: {
+    id: 'admin-portal.signature-collection:paperSigneeError',
+    defaultMessage: 'Ekki tókst að skrá meðmæli',
+    description: '',
+  },
 })
 
 export const parliamentaryMessages = defineMessages({
-  listTitle: {
-    id: 'admin-portal.signature-collection-parliamentary:listTitle',
-    defaultMessage: 'Alþingiskosningar',
-    description: '',
-  },
   signatureListsTitle: {
     id: 'admin-portal.signature-collection-parliamentary:signatureLists',
     defaultMessage: 'Alþingiskosningar',

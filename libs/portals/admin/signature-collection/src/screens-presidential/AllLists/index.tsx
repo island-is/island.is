@@ -125,7 +125,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           span={['12/12', '12/12', '12/12', '8/12']}
         >
           <IntroHeader
-            title={formatMessage(m.signatureListsTitle)}
+            title={formatMessage(m.signatureListsTitlePresidential)}
             intro={formatMessage(m.signatureListsIntro)}
             img={
               allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
