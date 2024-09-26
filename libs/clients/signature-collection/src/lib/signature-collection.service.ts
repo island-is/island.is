@@ -297,8 +297,11 @@ export class SignatureCollectionClientService {
   }
 
   async unsignList(listId: string, auth: User): Promise<Success> {
+    const { isPresidential } = await this.currentCollection()
     const { signatures } = await this.getSignee(auth)
-    const activeSignature = signatures?.find((signature) => signature.valid)
+    const activeSignature = signatures?.find((signature) =>
+      isPresidential ? signature.valid : signature.listId === listId,
+    )
     if (!signatures || !activeSignature || activeSignature.listId !== listId) {
       return { success: false, reasons: [ReasonKey.SignatureNotFound] }
     }
