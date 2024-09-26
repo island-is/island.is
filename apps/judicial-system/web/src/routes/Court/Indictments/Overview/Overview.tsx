@@ -49,6 +49,23 @@ const mapServiceStatus = (
   }
 }
 
+const mapComment = (
+  serviceStatus?: ServiceStatus | null,
+): MessageDescriptor | null => {
+  switch (serviceStatus) {
+    case ServiceStatus.DEFENDER:
+      return strings.servedToDefender
+    case ServiceStatus.ELECTRONICALLY:
+      return strings.servedToElectronically
+    case ServiceStatus.EXPIRED:
+    case ServiceStatus.FAILED:
+    case ServiceStatus.IN_PERSON:
+      return null
+    default:
+      return null
+  }
+}
+
 const IndictmentOverview = () => {
   const router = useRouter()
   const { workingCase, isLoadingWorkingCase, caseNotFound, setWorkingCase } =
@@ -107,12 +124,24 @@ const IndictmentOverview = () => {
                 message={
                   <Box>
                     <Text variant="small">
-                      {`${subpoena.servicedBy} - ${formatDate(
+                      {`${subpoena.servedBy} - ${formatDate(
                         subpoena.serviceDate,
                         'Pp',
                       )}`}
                     </Text>
-                    <Text variant="small">{subpoena.comment}</Text>
+                    <Text variant="small">
+                      {subpoena.serviceStatus === ServiceStatus.DEFENDER
+                        ? formatMessage(strings.servedToDefender, {
+                            lawyerName: 'asd',
+                            practice: 'asdasd',
+                          })
+                        : subpoena.serviceStatus ===
+                          ServiceStatus.ELECTRONICALLY
+                        ? formatMessage(strings.servedToElectronically, {
+                            date: 'asdasd',
+                          })
+                        : subpoena.comment}
+                    </Text>
                   </Box>
                 }
                 type={

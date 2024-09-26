@@ -29,7 +29,7 @@ query Case($input: CaseQueryInput!) {
       subpoenas {
         serviceStatus
         serviceDate
-        servicedBy
+        servedBy
         comment
       }
     }

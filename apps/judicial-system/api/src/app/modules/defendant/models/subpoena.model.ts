@@ -31,7 +31,7 @@ export class Subpoena {
   readonly serviceDate?: string
 
   @Field(() => String, { nullable: true })
-  readonly servicedBy?: string
+  readonly servedBy?: string
 
   @Field(() => String, { nullable: true })
   readonly comment?: string

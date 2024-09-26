@@ -13,7 +13,7 @@ export class UpdateSubpoenaDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  readonly servicedBy?: string
+  readonly servedBy?: string
 
   @IsOptional()
   @IsString()

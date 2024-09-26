@@ -29,7 +29,7 @@ module.exports = {
           queryInterface.renameColumn(
             'subpoena',
             'registered_by',
-            'serviced_by',
+            'served_by',
             { transaction },
           ),
         ),
@@ -63,7 +63,7 @@ module.exports = {
 
           queryInterface.renameColumn(
             'subpoena',
-            'serviced_by',
+            'served_by',
             'registered_by',
             { transaction },
           ),

@@ -32,4 +32,14 @@ export const strings = defineMessages({
     defaultMessage: 'Birtingastaða óþekkt',
     description: 'Notaður sem texti þegar ekki er vitað um stöðu birtingar.',
   },
+  servedToDefender: {
+    id: 'judicial.system.core:indictment_overview.served_to_defender',
+    defaultMessage: 'Birt fyrir verjanda - {lawyerName} {practice}',
+    description: 'Notaður sem texti þegar birti var verjanda.',
+  },
+  servedToElectronically: {
+    id: 'judicial.system.core:indictment_overview.served_electronically',
+    defaultMessage: 'Rafrænt pósthólf island.is - {date}',
+    description: 'Notaður sem texti þegar birti var í pósthólfi.',
+  },
 })
