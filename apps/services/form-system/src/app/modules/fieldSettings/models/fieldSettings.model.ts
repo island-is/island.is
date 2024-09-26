@@ -13,6 +13,7 @@ import { TimeIntervals } from '../../../enums/timeIntervals'
 import { Field } from '../../fields/models/field.model'
 import { ListTypes } from '../../../enums/listTypes'
 import { ListItem } from '../../listItems/models/listItem.model'
+import { LanguageType } from '../../../dataTypes/languageType.model'
 
 @Table({ tableName: 'field_settings' })
 export class FieldSettings extends Model<FieldSettings> {
@@ -97,10 +98,10 @@ export class FieldSettings extends Model<FieldSettings> {
   url?: string | null
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.JSON,
     allowNull: true,
   })
-  buttonText?: string | null
+  buttonText?: LanguageType | null
 
   @Column({
     type: DataType.BOOLEAN,

@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { ListItemDto } from '../../../listItems/models/dto/listItem.dto'
+import { LanguageType } from '../../../../dataTypes/languageType.model'
 
 export class FieldSettingsDto {
   @ApiPropertyOptional({ type: Number })
@@ -35,8 +36,8 @@ export class FieldSettingsDto {
   @ApiPropertyOptional({ type: String })
   url?: string
 
-  @ApiPropertyOptional({ type: String })
-  buttonText?: string
+  @ApiPropertyOptional({ type: LanguageType })
+  buttonText?: LanguageType
 
   @ApiPropertyOptional({ type: Boolean })
   hasPropertyInput?: boolean

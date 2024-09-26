@@ -1,12 +1,9 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { CertificationTypeDto } from '../../../certifications/models/dto/certificationType.dto'
-import { FormApplicantDto } from '../../../applicants/models/dto/formApplicant.dto'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import {
   IsArray,
   IsBoolean,
-  IsDate,
   IsDateString,
   IsNumber,
   IsOptional,
@@ -58,23 +55,10 @@ export class UpdateFormDto {
   @ApiPropertyOptional({ type: LanguageType })
   completedMessage?: LanguageType
 
-  // @ValidateNested()
+  @ValidateNested()
   @Type(() => Dependency)
-  @IsOptional()
-  @ApiPropertyOptional({ type: Dependency })
-  dependencies?: Dependency
-
-  @ValidateNested()
-  @Type(() => CertificationTypeDto)
   @IsArray()
   @IsOptional()
-  @ApiPropertyOptional({ type: [CertificationTypeDto] })
-  certificationTypes?: CertificationTypeDto[]
-
-  @ValidateNested()
-  @Type(() => FormApplicantDto)
-  @IsArray()
-  @IsOptional()
-  @ApiPropertyOptional({ type: [FormApplicantDto] })
-  applicants?: FormApplicantDto[]
+  @ApiPropertyOptional({ type: [Dependency] })
+  dependencies?: Dependency[]
 }
