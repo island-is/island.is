@@ -1,4 +1,4 @@
-import { ServiceBuilder, json, service } from '../../../../infra/src/dsl/dsl'
+import { ServiceBuilder, service } from '../../../../infra/src/dsl/dsl'
 import { createPortalEnv } from './utils/createPortalEnv'
 
 export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
