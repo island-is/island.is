@@ -135,7 +135,7 @@ const authLink = setContext(async (_, { headers }) => ({
     'X-Cognito-Token': `Bearer ${
       environmentStore.getState().cognito?.accessToken
     }`,
-    'X-User-Agent': getCustomUserAgent(),
+    'User-Agent': getCustomUserAgent(),
     cookie: [authStore.getState().cookies]
       .filter((x) => String(x) !== '')
       .join('; '),
