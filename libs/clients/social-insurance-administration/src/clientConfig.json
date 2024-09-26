@@ -2383,7 +2383,7 @@
             "format": "date-time",
             "nullable": true
           },
-          "cohabitationLessThan1Year": { "type": "boolean" }
+          "cohabitationLongerThan1Year": { "type": "boolean" }
         },
         "additionalProperties": false
       },

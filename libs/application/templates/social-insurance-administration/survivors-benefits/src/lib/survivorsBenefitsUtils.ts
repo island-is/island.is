@@ -209,9 +209,9 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationSpousalInfo.data.dateOfDeath',
   ) as Date
 
-  const deceasedSpouseCohabitationLessThan1Year = getValueViaPath(
+  const deceasedSpouseCohabitationLongerThan1Year = getValueViaPath(
     externalData,
-    'socialInsuranceAdministrationSpousalInfo.data.cohabitationLessThan1Year',
+    'socialInsuranceAdministrationSpousalInfo.data.cohabitationLongerThan1Year',
   ) as boolean
 
   return {
@@ -228,7 +228,7 @@ export const getApplicationExternalData = (
     deceasedSpouseName,
     deceasedSpouseNationalId,
     deceasedSpouseDateOfDeath,
-    deceasedSpouseCohabitationLessThan1Year,
+    deceasedSpouseCohabitationLongerThan1Year,
   }
 }
 
