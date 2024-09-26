@@ -13,7 +13,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
@@ -21,26 +21,27 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
-  CommentType,
   DateType,
   EventType,
   NotificationType,
+  StringType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { Defendant, DefendantService } from '../defendant'
+import { CivilClaimant, Defendant, DefendantService } from '../defendant'
 import { EventLog } from '../event-log'
 import {
   CaseFile,
   defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
 } from '../file'
+import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
+import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
-import { ExplanatoryComment } from './models/explanatoryComment.model'
 import { PdfService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
@@ -102,6 +103,7 @@ export const attributes: (keyof Case)[] = [
   'courtSessionType',
   'indictmentReviewDecision',
   'indictmentReviewerId',
+  'hasCivilClaims',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -116,7 +118,7 @@ export interface LimitedAccessUpdateCase
 
 const eventTypes = Object.values(EventType)
 const dateTypes = Object.values(DateType)
-const commentTypes = Object.values(CommentType)
+const stringTypes = Object.values(StringType)
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -169,6 +171,8 @@ export const include: Includeable[] = [
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
   { model: Defendant, as: 'defendants' },
+  { model: IndictmentCount, as: 'indictmentCounts' },
+  { model: CivilClaimant, as: 'civilClaimants' },
   {
     model: CaseFile,
     as: 'caseFiles',
@@ -191,9 +195,9 @@ export const include: Includeable[] = [
         CaseFileCategory.CRIMINAL_RECORD,
         CaseFileCategory.COST_BREAKDOWN,
         CaseFileCategory.CASE_FILE,
-        CaseFileCategory.CASE_FILE_RECORD,
         CaseFileCategory.PROSECUTOR_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIM,
       ],
     },
   },
@@ -212,15 +216,48 @@ export const include: Includeable[] = [
     where: { dateType: { [Op.in]: dateTypes } },
   },
   {
-    model: ExplanatoryComment,
-    as: 'explanatoryComments',
+    model: CaseString,
+    as: 'caseStrings',
     required: false,
-    where: { commentType: { [Op.in]: commentTypes } },
+    where: { stringType: { [Op.in]: stringTypes } },
+  },
+  { model: Case, as: 'mergeCase', attributes },
+  {
+    model: Case,
+    as: 'mergedCases',
+    where: { state: CaseState.COMPLETED },
+    include: [
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: {
+          state: { [Op.not]: CaseFileState.DELETED },
+          category: {
+            [Op.in]: [
+              CaseFileCategory.INDICTMENT,
+              CaseFileCategory.COURT_RECORD,
+              CaseFileCategory.CRIMINAL_RECORD,
+              CaseFileCategory.COST_BREAKDOWN,
+              CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+              CaseFileCategory.CASE_FILE,
+              CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIM,
+            ],
+          },
+        },
+        separate: true,
+      },
+    ],
+    separate: true,
   },
 ]
 
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
+  [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
   [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
 ]
 
@@ -362,14 +399,10 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
-    const formattedNationalId = formatNationalId(nationalId)
     return this.caseModel
       .findOne({
         where: {
-          [Op.or]: [
-            { defenderNationalId: formattedNationalId },
-            { defenderNationalId: nationalId },
-          ],
+          defenderNationalId: normalizeAndFormatNationalId(nationalId),
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },

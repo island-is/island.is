@@ -13,9 +13,16 @@ import {
   CanCreateInput,
   CanSignInput,
   CreateParliamentaryCandidacyInput,
+  AddListsInput,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
-import { List, SignedList, mapList, mapListBase } from './types/list.dto'
+import {
+  List,
+  SignedList,
+  getSlug,
+  mapList,
+  mapListBase,
+} from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { Signee } from './types/user.dto'
 import { Success, mapReasons } from './types/success.dto'
@@ -146,16 +153,15 @@ export class SignatureCollectionClientService {
     } = await this.currentCollection()
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id.toString() || !isActive) {
+      // TODO: create ApplicationTemplateError
       throw new Error('Collection is not open')
     }
-    // check if user is sending in their own nationalId
-    if (owner.nationalId !== auth.nationalId) {
-      throw new Error('NationalId does not match')
-    }
-    // check if user is already owner of lists
 
-    const { canCreate, isOwner, name } = await this.getSignee(auth)
+    const { canCreate, isOwner, partyBallotLetterInfo } = await this.getSignee(
+      auth,
+    )
     if (!canCreate || isOwner) {
+      // TODO: create ApplicationTemplateError
       throw new Error('User is already owner of lists')
     }
 
@@ -170,27 +176,78 @@ export class SignatureCollectionClientService {
       auth,
     ).frambodPost({
       frambodRequestDTO: {
-        umbodsadilar: agents.map((agent) => ({
-          kennitala: agent.nationalId,
-          tegundUmbodsID: agent.mandateType,
-          netfang: agent.email,
-          simi: agent.phoneNumber,
-          svaediIDList: agent.areas.map((area) => parseInt(area.areaId)),
-        })),
         sofnunID: parseInt(id),
-        kennitala: owner.nationalId,
+        kennitala: owner.nationalId.replace(/\D/g, ''),
         simi: owner.phone,
         netfang: owner.email,
+        medmaelalistar: filteredAreas.map((area) => ({
+          svaediID: parseInt(area.id),
+          listiNafn: `${partyBallotLetterInfo?.name}`,
+        })),
+      },
+    })
+    return {
+      slug: getSlug(
+        candidacy.id ?? '',
+        candidacy.medmaelasofnun?.kosningTegund ?? '',
+      ),
+    }
+  }
+
+  async createParliamentaryLists(
+    { collectionId, candidateId, areas }: AddListsInput,
+    auth: User,
+  ): Promise<Success> {
+    const {
+      id,
+      isActive,
+      isPresidential,
+      areas: collectionAreas,
+    } = await this.currentCollection()
+
+    // check if collectionId is current collection and current collection is open
+    if (collectionId !== id.toString() || !isActive) {
+      throw new Error('Collection is not open')
+    }
+    // check if user is already owner of lists
+
+    const { canCreate, canCreateInfo, name } = await this.getSignee(auth)
+    if (!canCreate) {
+      // allow parliamentary owners to add more areas to their collection
+      if (
+        !isPresidential &&
+        !(
+          canCreateInfo?.length === 1 &&
+          canCreateInfo[0] === ReasonKey.AlreadyOwner
+        )
+      ) {
+        return { success: false, reasons: canCreateInfo }
+      }
+    }
+
+    const filteredAreas = areas
+      ? collectionAreas.filter((area) =>
+          areas.flatMap((a) => a.areaId).includes(area.id),
+        )
+      : collectionAreas
+
+    const lists = await this.getApiWithAuth(
+      this.listsApi,
+      auth,
+    ).medmaelalistarPost({
+      medmaelalistarRequestDTO: {
+        frambodID: parseInt(candidateId),
         medmaelalistar: filteredAreas.map((area) => ({
           svaediID: parseInt(area.id),
           listiNafn: `${name} - ${area.name}`,
         })),
       },
     })
-    if (filteredAreas.length !== candidacy.umbodList?.length) {
+
+    if (filteredAreas.length !== lists.length) {
       throw new Error('Not all lists created')
     }
-    return { slug: 'frambodWowee' }
+    return { success: true }
   }
 
   async signList(listId: string, auth: User): Promise<Signature> {
@@ -211,9 +268,40 @@ export class SignatureCollectionClientService {
     return mapSignature(newSignature)
   }
 
+  async candidacyUploadPaperSignature(
+    auth: User,
+    {
+      listId,
+      nationalId,
+      pageNumber,
+    }: { listId: string; nationalId: string; pageNumber: number },
+  ): Promise<Success> {
+    const newSignature = await this.getApiWithAuth(
+      this.listsApi,
+      auth,
+    ).medmaelalistarIDMedmaeliBulkPost({
+      medmaeliBulkRequestDTO: {
+        medmaeli: [
+          {
+            kennitala: nationalId,
+            bladsida: pageNumber,
+          },
+        ],
+      },
+      iD: parseInt(listId),
+    })
+
+    return {
+      success: !!newSignature.medmaeliKenn?.includes(nationalId),
+    }
+  }
+
   async unsignList(listId: string, auth: User): Promise<Success> {
+    const { isPresidential } = await this.currentCollection()
     const { signatures } = await this.getSignee(auth)
-    const activeSignature = signatures?.find((signature) => signature.valid)
+    const activeSignature = signatures?.find((signature) =>
+      isPresidential ? signature.valid : signature.listId === listId,
+    )
     if (!signatures || !activeSignature || activeSignature.listId !== listId) {
       return { success: false, reasons: [ReasonKey.SignatureNotFound] }
     }
@@ -261,21 +349,19 @@ export class SignatureCollectionClientService {
       return { success: false, reasons: [ReasonKey.NoListToRemove] }
     }
 
-    listsToRemove.map(
-      async (list) =>
-        await this.getApiWithAuth(
-          this.listsApi,
-          auth,
-        ).medmaelalistarIDRemoveMedmaelalistiUserPost({
+    await Promise.all(
+      listsToRemove.map((list) =>
+        this.getApiWithAuth(this.listsApi, auth).medmaelalistarIDDelete({
           iD: parseInt(list.id),
         }),
+      ),
     )
     return { success: true }
   }
 
   async getSignedList(auth: User): Promise<SignedList[] | null> {
     const { signatures } = await this.getSignee(auth)
-    const { endTime } = await this.currentCollection()
+    const { endTime, isPresidential } = await this.currentCollection()
     if (!signatures) {
       return null
     }
@@ -289,14 +375,16 @@ export class SignatureCollectionClientService {
         )
         const isExtended = list.endTime > endTime
         const signedThisPeriod = signature.isInitialType === !isExtended
+        const canUnsignDigital = isPresidential ? signature.isDigital : true
+        const canUnsignInvalid = isPresidential ? signature.valid : true
         return {
           signedDate: signature.created,
           isDigital: signature.isDigital,
           pageNumber: signature.pageNumber,
           isValid: signature.valid,
           canUnsign:
-            signature.isDigital &&
-            signature.valid &&
+            canUnsignDigital &&
+            canUnsignInvalid &&
             list.active &&
             signedThisPeriod,
           ...list,
@@ -439,5 +527,24 @@ export class SignatureCollectionClientService {
       }
     }
     return { success: true }
+  }
+
+  async getCollectors(
+    auth: User,
+    candidateId: string,
+  ): Promise<{ name: string; nationalId: string }[]> {
+    const candidate = await this.getApiWithAuth(
+      this.candidateApi,
+      auth,
+    ).frambodIDGet({
+      iD: parseInt(candidateId),
+    })
+
+    return (
+      candidate.umbodList?.map((u) => ({
+        name: u.nafn ?? '',
+        nationalId: u.kennitala ?? '',
+      })) ?? []
+    )
   }
 }

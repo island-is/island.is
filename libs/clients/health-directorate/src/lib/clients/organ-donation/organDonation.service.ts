@@ -4,9 +4,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   DonationExceptionsApi,
   Locale,
-  MeDonorStatusApi,
+  MeOrganDonorStatusApi,
   OrganDonorDto,
   OrganDto,
+  UpdateOrganDonorDto,
 } from './gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -16,7 +17,7 @@ const LOG_CATEGORY = 'health-directorate-organ-donation-api'
 export class HealthDirectorateOrganDonationService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private readonly organDonationApi: MeDonorStatusApi,
+    private readonly organDonationApi: MeOrganDonorStatusApi,
     private readonly donationExceptionsApi: DonationExceptionsApi,
   ) {}
 
@@ -24,9 +25,12 @@ export class HealthDirectorateOrganDonationService {
     return this.organDonationApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  public async getOrganDonation(auth: Auth): Promise<OrganDonorDto | null> {
+  public async getOrganDonation(
+    auth: Auth,
+    input: Locale,
+  ): Promise<OrganDonorDto | null> {
     const organDonation = await this.organDonationApiWithAuth(auth)
-      .meDonorStatusControllerGetOrganDonorStatus()
+      .meDonorStatusControllerGetOrganDonorStatus({ locale: input })
       .catch(handle404)
 
     if (!organDonation) {
@@ -41,17 +45,15 @@ export class HealthDirectorateOrganDonationService {
 
   public async updateOrganDonation(
     auth: Auth,
-    input: OrganDonorDto,
+    input: UpdateOrganDonorDto,
+    locale: Locale,
   ): Promise<void> {
-    await this.organDonationApiWithAuth(auth)
-      .meDonorStatusControllerUpdateOrganDonorStatus({
-        updateOrganDonorDto: input,
-      })
-      .catch((error) => {
-        throw new Error(
-          `health-directorate-organ-donation-client: upload organ donation status failed ${error.type}`,
-        )
-      })
+    await this.organDonationApiWithAuth(
+      auth,
+    ).meDonorStatusControllerUpdateOrganDonorStatus({
+      updateOrganDonorDto: input,
+      locale: locale,
+    })
   }
 
   public async getDonationExceptions(

@@ -228,7 +228,7 @@ export const m = defineMessages({
     description: 'Firearms step answer no',
   },
   firearmsApplicantHeader: {
-    id: 'aod.application:firearmsApplicantHeader',
+    id: 'aod.application:firearmsApplicantHeader#markdown',
     defaultMessage: 'Skráning vörsluaðila:',
     description: '',
   },

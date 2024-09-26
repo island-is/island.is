@@ -1,11 +1,26 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/v1/me/donor-status": {
+    "/v1/me/organ-donor-status": {
       "get": {
         "operationId": "MeDonorStatusController_getOrganDonorStatus",
         "description": "Get user's donation-exception donor status",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "ip",
+            "required": false,
+            "in": "query",
+            "description": "The IP address of the user",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -48,12 +63,27 @@
             }
           }
         },
-        "tags": ["me/donor-status"]
+        "tags": ["me/organ-donor-status"]
       },
       "post": {
         "operationId": "MeDonorStatusController_updateOrganDonorStatus",
         "description": "Update user's donation-exception donor status",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "ip",
+            "required": false,
+            "in": "query",
+            "description": "The IP address of the user",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -97,7 +127,7 @@
             }
           }
         },
-        "tags": ["me/donor-status"]
+        "tags": ["me/organ-donor-status"]
       }
     },
     "/v1/donation-exceptions": {
@@ -164,7 +194,7 @@
   },
   "info": {
     "title": "Organ donor API",
-    "description": "The api provides access to information about individuals' donation-exception donation status.",
+    "description": "The api provides access to information about individuals' donation status.",
     "version": "1.0",
     "contact": {}
   },
@@ -180,33 +210,40 @@
             "tokenUrl": "https://identity-server.dev01.devland.is/connect/token",
             "scopes": {
               "openid": "openid",
-              "@landlaeknir.is/organ-donations": "Get and update donation-exception donation status for a user"
+              "@landlaeknir.is/organ-donations": "Get and update donation status for a user"
             }
           }
         }
       }
     },
     "schemas": {
+      "Locale": { "type": "string", "enum": ["en", "is"] },
+      "OrganDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" }
+        },
+        "required": ["id", "name"]
+      },
       "OrganDonorDto": {
         "type": "object",
         "properties": {
           "isDonor": { "type": "boolean" },
-          "exceptions": { "type": "array", "items": { "type": "string" } },
+          "exceptions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OrganDto" }
+          },
           "exceptionComment": { "type": "string" },
           "registrationDate": { "format": "date-time", "type": "string" }
         },
-        "required": [
-          "isDonor",
-          "exceptions",
-          "exceptionComment",
-          "registrationDate"
-        ]
+        "required": ["isDonor", "exceptions"]
       },
       "HttpProblemResponse": {
         "type": "object",
         "properties": {
           "type": {
-            "type": "string",
+            "type": "object",
             "description": "A URI reference that identifies the problem type"
           },
           "title": {
@@ -230,18 +267,9 @@
         "properties": {
           "isDonor": { "type": "boolean" },
           "exceptions": { "type": "array", "items": { "type": "string" } },
-          "exceptionComment": { "type": "string" }
+          "exceptionComment": { "type": "object" }
         },
-        "required": ["isDonor", "exceptions", "exceptionComment"]
-      },
-      "Locale": { "type": "string", "enum": ["en", "is"] },
-      "OrganDto": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" }
-        },
-        "required": ["id", "name"]
+        "required": ["isDonor", "exceptions"]
       }
     }
   }

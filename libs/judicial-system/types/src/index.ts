@@ -12,7 +12,7 @@ export { NotificationType } from './lib/notification'
 export type { Institution } from './lib/institution'
 export { EventType } from './lib/eventLog'
 export { DateType } from './lib/dateLog'
-export { CommentType } from './lib/comment'
+export { StringType } from './lib/caseString'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 
@@ -82,7 +82,7 @@ export {
   courtSessionTypeNames,
 } from './lib/case'
 
-export { getIndictmentVerdictAppealDeadline } from './lib/indictmentCase'
+export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
 
 export type {
   CrimeScene,
