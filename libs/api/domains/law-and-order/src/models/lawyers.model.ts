@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { DefenseChoiceEnum } from './defenseChoiceEnum.model'
 
 @ObjectType('LawAndOrderLawyerChoices')
 export class Choice {

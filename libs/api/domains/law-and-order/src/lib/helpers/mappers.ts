@@ -1,10 +1,10 @@
-import { CourtCaseStateTagColorEnum } from '../../models/courtCases.model'
-import { DefenseChoiceEnum } from '../../models/defenseChoiceEnum.model'
 import {
   DefenderInfoDefenderChoiceEnum,
   StateTagColorEnum,
   UpdateSubpoenaDtoDefenderChoiceEnum,
 } from '@island.is/clients/judicial-system-sp'
+import { CourtCaseStateTagColorEnum } from '../../models/courtCases.model'
+import { DefenseChoiceEnum } from '../../models/defenseChoiceEnum.model'
 
 // Maps the application's internal representation of defense choices to the judicial system's representation.
 export const mapDefenseChoice = (

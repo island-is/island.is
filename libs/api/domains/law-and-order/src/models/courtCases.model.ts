@@ -1,5 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { registerEnumType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 export enum CourtCaseStateTagColorEnum {
   blue = 'blue',

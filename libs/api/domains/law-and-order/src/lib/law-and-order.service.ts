@@ -1,6 +1,4 @@
-import { Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
-import type { Locale } from '@island.is/shared/types'
 import {
   AlertMessageTypeEnum,
   CasesResponse,
@@ -8,21 +6,23 @@ import {
   JudicialSystemSPClientService,
   SubpoenaResponse,
 } from '@island.is/clients/judicial-system-sp'
+import { IntlService } from '@island.is/cms-translations'
+import type { Locale } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
+import { Injectable } from '@nestjs/common'
 import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
+import { ActionTypeEnum } from '../models/actions.model'
+import { CourtCase } from '../models/courtCase.model'
+import { CourtCases } from '../models/courtCases.model'
+import { Item } from '../models/item.model'
+import { Lawyers } from '../models/lawyers.model'
+import { Subpoena } from '../models/subpoena.model'
 import {
   DefenseChoices,
   mapDefenseChoice,
   mapDefenseChoiceForSubpoena,
   mapTagTypes,
 } from './helpers/mappers'
-import { Item } from '../models/item.model'
-import { Lawyers } from '../models/lawyers.model'
-import { ActionTypeEnum } from '../models/actions.model'
-import { IntlService } from '@island.is/cms-translations'
-import { isDefined } from '@island.is/shared/utils'
-import { Subpoena } from '../models/subpoena.model'
-import { CourtCase } from '../models/courtCase.model'
-import { CourtCases } from '../models/courtCases.model'
 
 const namespaces = ['api.law-and-order']
 @Injectable()

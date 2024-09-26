@@ -1,5 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
-import { registerEnumType } from '@nestjs/graphql'
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 export enum ActionTypeEnum {
   file = 'file',

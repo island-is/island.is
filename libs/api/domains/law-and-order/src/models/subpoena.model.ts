@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { Action } from './actions.model'
-import { Group } from './group.model'
 import { DefenseChoiceEnum } from './defenseChoiceEnum.model'
+import { Group } from './group.model'
 
 @ObjectType('LawAndOrderSubpoenaAlert')
 export class Alert {
