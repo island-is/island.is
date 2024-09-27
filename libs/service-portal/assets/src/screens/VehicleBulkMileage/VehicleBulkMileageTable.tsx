@@ -9,10 +9,15 @@ import { VehicleBulkMileageRow } from './VehicleBulkMileageRow'
 
 interface Props {
   vehicles: Array<VehicleType>
+  loading: boolean
   updateVehicleStatus: (status: SubmissionState, vehicleId: string) => void
 }
 
-const VehicleBulkMileageTable = ({ vehicles, updateVehicleStatus }: Props) => {
+const VehicleBulkMileageTable = ({
+  vehicles,
+  loading,
+  updateVehicleStatus,
+}: Props) => {
   const { formatMessage } = useLocale()
 
   const { getValues, trigger } = useFormContext()
@@ -26,10 +31,8 @@ const VehicleBulkMileageTable = ({ vehicles, updateVehicleStatus }: Props) => {
       return
     }
     if (await trigger(formFieldId)) {
-      console.log('validation success')
       return value
     }
-    // -1 if validation failure
     return -1
   }
 
@@ -71,8 +74,11 @@ const VehicleBulkMileageTable = ({ vehicles, updateVehicleStatus }: Props) => {
             <T.Body>{rows}</T.Body>
           </T.Table>
         )}
-        {!rows.length && (
-          <EmptyTable message={formatMessage(vehicleMessage.noVehiclesFound)} />
+        {(!rows.length || loading) && (
+          <EmptyTable
+            loading={loading}
+            message={formatMessage(vehicleMessage.noVehiclesFound)}
+          />
         )}
       </form>
     </Box>

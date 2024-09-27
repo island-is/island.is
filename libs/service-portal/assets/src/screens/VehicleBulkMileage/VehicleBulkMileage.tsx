@@ -15,6 +15,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useVehiclesListQuery } from './VehicleBulkMileage.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
+import { Problem } from '@island.is/react-spa/shared'
 
 interface FormData {
   [key: string]: number
@@ -50,24 +51,14 @@ const VehicleBulkMileage = () => {
             vehicleId: v.vehicleId,
             vehicleType: v.type,
             submissionStatus: 'idle' as const,
-            lastRegistrationDate: new Date(),
+            lastRegistrationDate: undefined,
           }
         })
         .filter(isDefined)
       setVehicles(vehicles)
+      setTotalPages(data?.vehiclesListV3?.totalPages || 1)
     }
   }, [data?.vehiclesListV3])
-
-  useEffect(() => {
-    fetchMore({
-      variables: {
-        input: {
-          pageSize,
-          page,
-        },
-      },
-    })
-  }, [pageSize, page])
 
   const updateVehicleStatus = async (
     status: SubmissionState,
@@ -125,10 +116,14 @@ const VehicleBulkMileage = () => {
               variant="utility"
             />
           </Inline>
-          <VehicleBulkMileageTable
-            updateVehicleStatus={updateVehicleStatus}
-            vehicles={vehicles}
-          />
+          {error && !loading && <Problem error={error} noBorder={false} />}
+          {!error && (
+            <VehicleBulkMileageTable
+              updateVehicleStatus={updateVehicleStatus}
+              loading={loading}
+              vehicles={vehicles}
+            />
+          )}
 
           {totalPages > 1 && (
             <Pagination

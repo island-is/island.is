@@ -36,36 +36,15 @@ export class BulkMileageService {
     }
 
     const res: BulkMileageReadingRequestResultDto =
-      await this.getMileageWithAuth(auth)
-        .requestbulkmileagereadingPostRaw({
-          postBulkMileageReadingModel: {
-            originCode: input.originCode,
-            mileageData: input.mileageData.map((m) => ({
-              permno: m.vehicleId,
-              mileage: m.mileageNumber,
-            })),
-          },
-        })
-        .then((res) => {
-          return res.value()
-        })
-        .catch((e) => {
-          if (e instanceof FetchError && e.status === 429) {
-            this.logger.warn(
-              'Too many bulk mileage registration requests happening at once',
-              {
-                category: LOG_CATEGORY,
-                error: e,
-              },
-            )
-            return {
-              guid: '123',
-              errorMessage:
-                'Too many bulk mileage registration requests at once. Wait a few minutes',
-            }
-          }
-          throw e
-        })
+      await this.getMileageWithAuth(auth).requestbulkmileagereadingPost({
+        postBulkMileageReadingModel: {
+          originCode: input.originCode,
+          mileageData: input.mileageData.map((m) => ({
+            permno: m.vehicleId,
+            mileage: m.mileageNumber,
+          })),
+        },
+      })
 
     if (!res.guid) {
       this.logger.warn(

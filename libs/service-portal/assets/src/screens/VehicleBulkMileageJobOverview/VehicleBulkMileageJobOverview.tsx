@@ -31,7 +31,7 @@ const sortJobs = (
   jobOne: VehiclesBulkMileageRegistrationJob,
   jobTwo: VehiclesBulkMileageRegistrationJob,
 ) => {
-  let sortedValue: number = 0
+  let sortedValue = 0
   sortedValue = sortDate(
     jobOne.dateFinished ? new Date(jobOne.dateFinished) : undefined,
     jobTwo.dateFinished ? new Date(jobTwo.dateFinished) : undefined,
@@ -92,7 +92,7 @@ const VehicleBulkMileageUploadJobOverview = () => {
           </T.Head>
           <T.Body>
             {sortedJobs.map((j) => (
-              <T.Row>
+              <T.Row key={j.guid}>
                 <T.Data>
                   {j.dateRequested ? formatDateWithTime(j.dateRequested) : '-'}
                 </T.Data>

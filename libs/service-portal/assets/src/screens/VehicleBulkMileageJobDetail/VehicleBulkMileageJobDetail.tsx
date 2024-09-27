@@ -32,7 +32,7 @@ type UseParams = {
   id: string
 }
 
-const VehicleBulkMileageUploadJobDetail = () => {
+const VehicleBulkMileageJobDetail = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
@@ -70,7 +70,7 @@ const VehicleBulkMileageUploadJobDetail = () => {
       return [
         [
           {
-            title: 'Fjöldi innsendra',
+            title: formatMessage(vehicleMessage.totalSubmitted),
             value: jobsStatus?.jobsSubmitted
               ? jobsStatus.jobsSubmitted.toString()
               : '0',
@@ -79,13 +79,13 @@ const VehicleBulkMileageUploadJobDetail = () => {
         ],
         [
           {
-            title: 'Fjöldi lokið',
+            title: formatMessage(vehicleMessage.totalFinished),
             value: jobsStatus?.jobsFinished
               ? jobsStatus.jobsFinished.toString()
               : '0',
           },
           {
-            title: 'Fjöldi eftir',
+            title: formatMessage(vehicleMessage.totalRemaining),
             value: jobsStatus?.jobsRemaining
               ? jobsStatus.jobsRemaining.toString()
               : '0',
@@ -93,13 +93,13 @@ const VehicleBulkMileageUploadJobDetail = () => {
         ],
         [
           {
-            title: 'Heilbrigð verk',
+            title: formatMessage(vehicleMessage.healthyJobs),
             value: jobsStatus?.jobsValid
               ? jobsStatus.jobsValid.toString()
               : '0',
           },
           {
-            title: 'Misheppnuð verk',
+            title: formatMessage(vehicleMessage.unhealthyJobs),
             value: jobsStatus?.jobsErrored
               ? jobsStatus.jobsErrored.toString()
               : '0',
@@ -206,7 +206,7 @@ const VehicleBulkMileageUploadJobDetail = () => {
               <T.Body>
                 {!!registrations?.requests.length &&
                   registrations?.requests.map((j) => (
-                    <T.Row>
+                    <T.Row key={j.vehicleId}>
                       <T.Data>
                         <Box display="flex" justifyContent="spaceBetween">
                           <Icon
@@ -239,4 +239,4 @@ const VehicleBulkMileageUploadJobDetail = () => {
   )
 }
 
-export default VehicleBulkMileageUploadJobDetail
+export default VehicleBulkMileageJobDetail

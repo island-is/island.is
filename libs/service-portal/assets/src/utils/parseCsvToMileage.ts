@@ -37,8 +37,6 @@ export const parseCsvToMileageRecord = async (file: File) => {
 
   await reader.read().then(parseChunk)
   const [header, ...values] = parsedLines
-  console.log(header)
-  console.log(values)
   const vehicleIndex = header.findIndex((l) => l.toLowerCase() === 'ökutæki')
   const mileageIndex = header.findIndex(
     (l) => l.toLowerCase() === 'kílómetraskráning',

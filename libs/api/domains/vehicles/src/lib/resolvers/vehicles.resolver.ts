@@ -95,19 +95,6 @@ export class VehiclesResolver {
   }
 
   @Scopes(ApiScope.vehicles)
-  @Query(() => VehiclesCurrentListResponse, {
-    name: 'vehiclesListV3',
-    nullable: true,
-  })
-  @Audit()
-  async getVehicleListV3(
-    @CurrentUser() user: User,
-    @Args('input', { nullable: true }) input: GetVehiclesListV2Input,
-  ) {
-    return null
-  }
-
-  @Scopes(ApiScope.vehicles)
   @Query(() => VehiclesExcel, { name: 'getExcelVehicles', nullable: true })
   async getExcelVehicles(@CurrentUser() user: User) {
     const res = await this.vehiclesService.getExcelVehiclesForUser(user)

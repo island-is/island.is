@@ -126,29 +126,30 @@ export class VehiclesService {
       pageSize: res.pageSize,
       totalPages: res.totalPages,
       totalRecords: res.totalRecords,
-      data: res.data
-        ?.map((d) => {
-          if (
-            !d.permno ||
-            !d.regno ||
-            !d.canRegisterMilage ||
-            !d.requiresMileageRegistration
-          ) {
-            return null
-          }
-          return {
-            vehicleId: d.permno,
-            registrationNumber: d.regno,
-            userRole: d.role ?? undefined,
-            type: d.make ?? undefined,
-            color: d.colorName ?? undefined,
-            mileageDetails: {
-              canRegisterMileage: d.canRegisterMilage,
-              requiresMileageRegistration: d.requiresMileageRegistration,
-            },
-          }
-        })
-        .filter(isDefined),
+      data:
+        res.data
+          ?.map((d) => {
+            if (
+              !d.permno ||
+              !d.regno ||
+              !d.canRegisterMilage ||
+              !d.requiresMileageRegistration
+            ) {
+              return null
+            }
+            return {
+              vehicleId: d.permno,
+              registrationNumber: d.regno,
+              userRole: d.role ?? undefined,
+              type: d.make ?? undefined,
+              color: d.colorName ?? undefined,
+              mileageDetails: {
+                canRegisterMileage: d.canRegisterMilage,
+                requiresMileageRegistration: d.requiresMileageRegistration,
+              },
+            }
+          })
+          .filter(isDefined) ?? [],
     }
   }
 

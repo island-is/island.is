@@ -36,6 +36,7 @@ const VehicleBulkMileageUpload = () => {
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(
     null,
   )
+  const [downloadError, setDownloadError] = useState<string | null>()
 
   const [requestGuid, setRequestGuid] = useState<string | null>()
 
@@ -47,23 +48,28 @@ const VehicleBulkMileageUpload = () => {
   }, [data?.vehicleBulkMileagePost?.requestId])
 
   const postMileage = async (file: File) => {
-    const records = await parseCsvToMileageRecord(file)
-    console.log(records)
-    if (!records.length) {
-      setUploadErrorMessage('Engin gild kílómetrastaða fannst í skjali')
-      return
-    }
-    vehicleBulkMileagePostMutation({
-      variables: {
-        input: {
-          mileageData: records.map((r) => ({
-            mileageNumber: r.mileage,
-            vehicleId: r.vehicleId,
-          })),
-          originCode: 'ISLAND.IS',
+    try {
+      const records = await parseCsvToMileageRecord(file)
+      if (!records.length) {
+        setUploadErrorMessage('Engin gild kílómetrastaða fannst í skjali')
+        return
+      }
+      vehicleBulkMileagePostMutation({
+        variables: {
+          input: {
+            mileageData: records.map((r) => ({
+              mileageNumber: r.mileage,
+              vehicleId: r.vehicleId,
+            })),
+            originCode: 'ISLAND.IS',
+          },
         },
-      },
-    })
+      })
+    } catch (error) {
+      setUploadErrorMessage(
+        'Error occurred while processing the file: ' + error.message,
+      )
+    }
   }
 
   const handleOnInputFileUploadError = (files: FileRejection[]) =>
@@ -77,6 +83,11 @@ const VehicleBulkMileageUpload = () => {
       postMileage(file.originalFileObj)
     }
   }
+
+  const handleFileDownloadError = (error: string) => {
+    setDownloadError(error)
+  }
+
   return (
     <Box>
       <IntroHeader
@@ -86,12 +97,26 @@ const VehicleBulkMileageUpload = () => {
         serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       >
         <Box marginTop={2}>
-          <VehicleBulkMileageFileDownloader />
+          <VehicleBulkMileageFileDownloader onError={handleFileDownloadError} />
         </Box>
       </IntroHeader>
 
       <Stack space={2}>
         {error && <Problem error={error} noBorder={false} />}
+        {data?.vehicleBulkMileagePost?.errorMessage && !loading && !error && (
+          <AlertMessage
+            type="warning"
+            title={formatMessage(vehicleMessage.uploadFailed)}
+            message={data.vehicleBulkMileagePost.errorMessage}
+          />
+        )}
+        {downloadError && (
+          <AlertMessage
+            type="warning"
+            title={formatMessage(vehicleMessage.downloadFailed)}
+            message={downloadError}
+          />
+        )}
         {data?.vehicleBulkMileagePost?.errorMessage && !loading && !error && (
           <AlertMessage
             type="warning"

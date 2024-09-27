@@ -956,9 +956,33 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:upload-failed',
     defaultMessage: 'Upphleðsla mistókst',
   },
+  downloadFailed: {
+    id: 'sp.vehicles:download-failed',
+    defaultMessage: 'Niðurhal mistókst',
+  },
   uploadSuccess: {
     id: 'sp.vehicles:upload-success',
     defaultMessage: 'Upphleðsla tókst',
+  },
+  totalSubmitted: {
+    id: 'sp.vehicles:total-submitted',
+    defaultMessage: 'Fjöldi innsendra',
+  },
+  totalFinished: {
+    id: 'sp.vehicles:total-finished',
+    defaultMessage: 'Fjöldi lokið',
+  },
+  totalRemaining: {
+    id: 'sp.vehicles:total-remaining',
+    defaultMessage: 'Fjöldi eftir',
+  },
+  healthyJobs: {
+    id: 'sp.vehicles:healthy-jobs',
+    defaultMessage: 'Heilbrigð verk',
+  },
+  unhealthyJobs: {
+    id: 'sp.vehicles:unhealthy-jobs',
+    defaultMessage: 'Misheppnuð verk',
   },
   dragFileToUpload: {
     id: 'sp.vehicles:drag-file-to-upload',

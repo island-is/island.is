@@ -7,7 +7,7 @@ import {
 import * as styles from './VehicleBulkMileage.css'
 import { VehicleBulkMileageSaveButton } from './VehicleBulkMileageSaveButton'
 import { useLocale } from '@island.is/localization'
-import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
+import { vehicleMessage } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { VehicleType } from './types'
@@ -90,20 +90,27 @@ export const VehicleBulkMileageRow = ({ vehicle, onSave }: Props) => {
                           ? confirmedRegistrations
                           : [...vehicle.registrationHistory]
 
-                        const latestRegistration = detailArray[0].mileage ?? 0
+                        const latestRegistration =
+                          detailArray.length > 0 ? detailArray?.[0].mileage : 0
                         if (latestRegistration > value) {
-                          return formatMessage(messages.mileageInputTooLow)
+                          return formatMessage(
+                            vehicleMessage.mileageInputTooLow,
+                          )
                         }
                       }
                     },
                   },
                   minLength: {
                     value: 1,
-                    message: formatMessage(messages.mileageInputMinLength),
+                    message: formatMessage(
+                      vehicleMessage.mileageInputMinLength,
+                    ),
                   },
                   required: {
                     value: true,
-                    message: formatMessage(messages.mileageInputMinLength),
+                    message: formatMessage(
+                      vehicleMessage.mileageInputMinLength,
+                    ),
                   },
                 }}
               />
@@ -123,7 +130,7 @@ export const VehicleBulkMileageRow = ({ vehicle, onSave }: Props) => {
       {error ? (
         <AlertMessage
           type="error"
-          message={formatMessage(messages.mileageHistoryFetchFailed)}
+          message={formatMessage(vehicleMessage.mileageHistoryFetchFailed)}
         />
       ) : (
         <NestedFullTable
@@ -134,7 +141,7 @@ export const VehicleBulkMileageRow = ({ vehicle, onSave }: Props) => {
             formatMessage(vehicleMessage.odometer),
           ]}
           loading={loading}
-          emptyMessage={formatMessage(messages.mileageHistoryNotFound)}
+          emptyMessage={formatMessage(vehicleMessage.mileageHistoryNotFound)}
           data={
             data?.vehiclesMileageRegistrationHistory?.mileageRegistrationHistory?.map(
               (r) => [

@@ -49,10 +49,7 @@ import { BulkVehicleMileageRequestOverviewInput } from '../dto/getBulkVehicleMil
 @Audit({ namespace: '@island.is/api/vehicles' })
 @Scopes(ApiScope.vehicles)
 export class VehiclesMileageResolver {
-  constructor(
-    private readonly vehiclesService: VehiclesService,
-    private readonly bulkService: BulkMileageService,
-  ) {}
+  constructor(private readonly vehiclesService: VehiclesService) {}
 
   @Query(() => VehicleMileageOverview, {
     name: 'vehicleMileageDetails',
