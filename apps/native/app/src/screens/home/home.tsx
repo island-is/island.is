@@ -28,7 +28,7 @@ import {
 } from '../../stores/preferences-store'
 import { useUiStore } from '../../stores/ui-store'
 import { isAndroid } from '../../utils/devices'
-import { needsToUpdateAppVersion } from '../../utils/minum-app-version'
+import { needsToUpdateAppVersion } from '../../utils/minimum-app-version'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { navigateTo } from '../../lib/deep-linking'
