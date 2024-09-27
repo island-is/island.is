@@ -1747,9 +1747,9 @@ export class CaseService {
               this.subpoenaService.createSubpoena(
                 defendant.id,
                 theCase.id,
+                transaction,
                 updatedArraignmentDate?.date,
                 updatedArraignmentDate?.location,
-                transaction,
               ),
             ),
           )

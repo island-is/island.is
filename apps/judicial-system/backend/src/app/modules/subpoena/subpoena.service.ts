@@ -37,9 +37,9 @@ export class SubpoenaService {
   async createSubpoena(
     defendantId: string,
     caseId: string,
+    transaction: Transaction,
     arraignmentDate?: Date,
     location?: string,
-    transaction?: Transaction,
   ): Promise<Subpoena> {
     return this.subpoenaModel.create(
       {

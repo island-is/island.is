@@ -29,13 +29,7 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
-import {
-  Case,
-  CaseExistsGuard,
-  CaseWriteGuard,
-  CurrentCase,
-  PdfService,
-} from '../case'
+import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
@@ -49,7 +43,6 @@ import { DefendantService } from './defendant.service'
 @ApiTags('defendants')
 export class DefendantController {
   constructor(
-    private readonly pdfService: PdfService,
     private readonly defendantService: DefendantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
