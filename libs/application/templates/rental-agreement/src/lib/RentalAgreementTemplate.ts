@@ -6,7 +6,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/types'
 import { ApplicationStates, Roles, DAY } from './constants'
-
+import { Features } from '@island.is/feature-flags'
 import { dataSchema } from './dataSchema'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
@@ -20,6 +20,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
   name: 'Leigusamningur',
   institution: 'Húsnæðis- og mannvirkjastofnun',
   dataSchema,
+  featureFlag: Features.rentalAgreement,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUISITES,
     states: {

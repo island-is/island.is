@@ -39,6 +39,7 @@ export enum Features {
   ParliamentaryElectionApplication = 'isParliamentaryElectionApplicationEnabled',
   FinancialStatementIndividualElectionEnabled = 'isFinancialStatementIndividualElectionEnabled',
   IncomePlanEnabled = 'isIncomePlanEnabled',
+  rentalAgreement = 'isRentalAgreementEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
