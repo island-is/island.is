@@ -14,5 +14,5 @@ export const needsToUpdateAppVersion = async (): Promise<boolean> => {
 
   const currentVersion = DeviceInfo.getVersion()
 
-  return compareVersions.compare('1.4.5', currentVersion, '>')
+  return compareVersions.compare(minimumVersionSupported, currentVersion, '>')
 }
