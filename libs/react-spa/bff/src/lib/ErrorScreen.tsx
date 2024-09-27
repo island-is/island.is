@@ -2,6 +2,7 @@ import { Box, Button, ProblemTemplate } from '@island.is/island-ui/core'
 import { fullScreen } from './ErrorScreen.css'
 
 type ErrorScreenProps = {
+  title?: string
   /**
    * Retry callback
    */
@@ -11,7 +12,10 @@ type ErrorScreenProps = {
 /**
  * This screen is unfortunately not translated because at this point we don't have a user locale.
  */
-export const ErrorScreen = ({ onRetry }: ErrorScreenProps) => (
+export const ErrorScreen = ({
+  title = 'Innskráning mistókst',
+  onRetry,
+}: ErrorScreenProps) => (
   <Box
     display="flex"
     justifyContent="center"
@@ -23,7 +27,7 @@ export const ErrorScreen = ({ onRetry }: ErrorScreenProps) => (
       variant="error"
       expand
       tag="Villa"
-      title="Innskráning mistókst"
+      title={title}
       message={
         <>
           Vinsamlegast reyndu aftur síðar.{' '}

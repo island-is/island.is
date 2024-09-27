@@ -11,6 +11,7 @@ import { ActionType, initialState, reducer } from './bff.state'
 import { createBffUrlGenerator, isNewSession } from './bff.utils'
 
 const ONE_HOUR_MS = 1000 * 60 * 60
+const BFF_SERVER_UNAVAILABLE = 'BFF_SERVER_UNAVAILABLE'
 
 type BffProviderProps = {
   children: ReactNode
@@ -77,6 +78,12 @@ export const BffProvider = ({
       })
 
       if (!res.ok) {
+        // Bff server is down
+        if (res.status >= 500) {
+          throw new Error(BFF_SERVER_UNAVAILABLE)
+        }
+
+        // For other none ok responses, like 401/403, proceed with sign-in redirect.
         signIn()
 
         return
@@ -192,7 +199,14 @@ export const BffProvider = ({
 
   const renderContent = () => {
     if (showErrorScreen) {
-      return <ErrorScreen onRetry={onRetry} />
+      return (
+        <ErrorScreen
+          onRetry={onRetry}
+          {...(state?.error?.message === BFF_SERVER_UNAVAILABLE && {
+            title: 'Þjónusta liggur niðri',
+          })}
+        />
+      )
     }
 
     if (showLoadingScreen) {
