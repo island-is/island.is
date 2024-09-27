@@ -834,6 +834,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     endDate: string,
     ratio: string,
     daysToUse?: string,
+    months?: number,
   ) {
     if (daysToUse) {
       return daysToUse
@@ -848,7 +849,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       throw new Error('Invalid ratio value')
     }
     const percentage = ratioNumber / 100
-    const periodLength = calculatePeriodLength(start, end)
+    const periodLength = calculatePeriodLength(start, end, undefined, months)
     return Math.round(periodLength * percentage)
   }
 
@@ -873,6 +874,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           period.endDate,
           period.ratio,
           period.daysToUse,
+          period.months,
         )}`,
         approved: !!period.approved,
         paid: !!period.paid,
