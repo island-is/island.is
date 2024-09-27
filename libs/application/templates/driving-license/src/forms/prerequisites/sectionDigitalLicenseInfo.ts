@@ -28,6 +28,7 @@ export const sectionDigitalLicenseInfo = buildSubSection({
         buildDescriptionField({
           id: 'extraInfo',
           title: '',
+          marginTop: 2,
           description: m.digitalLicenseInfoAlertMessageExtraInfo,
         }),
       ],
