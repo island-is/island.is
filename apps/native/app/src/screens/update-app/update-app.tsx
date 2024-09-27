@@ -11,6 +11,7 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import logo from '../../assets/logo/logo-64w.png'
 import illustrationSrc from '../../assets/illustrations/digital-services-m1-dots.png'
 import { isIos } from '../../utils/devices'
+import { preferencesStore } from '../../stores/preferences-store'
 
 const Text = styled.View`
   margin-horizontal: ${({ theme }) => theme.spacing[7]}px;
@@ -69,7 +70,12 @@ export const UpdateAppScreen: NavigationFunctionComponent<{
       <NavigationBarSheet
         componentId={componentId}
         title={''}
-        onClosePress={() => closable && Navigation.dismissModal(componentId)}
+        onClosePress={() => {
+          if (closable) {
+            preferencesStore.setState({ skippedSoftUpdate: true })
+            Navigation.dismissModal(componentId)
+          }
+        }}
         style={{ marginHorizontal: 16 }}
         closable={closable}
       />
@@ -123,7 +129,10 @@ export const UpdateAppScreen: NavigationFunctionComponent<{
                 id: 'updateApp.buttonSkip',
                 defaultMessage: 'Sleppa',
               })}
-              onPress={() => Navigation.dismissModal(componentId)}
+              onPress={() => {
+                preferencesStore.setState({ skippedSoftUpdate: true })
+                Navigation.dismissModal(componentId)
+              }}
             />
           )}
         </ButtonWrapper>
