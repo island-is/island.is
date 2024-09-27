@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { uuid } from 'uuidv4'
@@ -33,7 +33,7 @@ import {
   NEW_DELEGATION_FROM_TEMPLATE_ID,
   NEW_DELEGATION_TEMPLATE_ID,
 } from '../constants/hnipp'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { NotificationsApi } from '../../user-notification'
 import { Features } from '@island.is/feature-flags'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
