@@ -956,6 +956,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:upload-failed',
     defaultMessage: 'Upphleðsla mistókst',
   },
+  errorWhileProcessing: {
+    id: 'sp.vehicles:error-while-processing',
+    defaultMessage: 'Villa við að meðhöndla skjal. Villur: ',
+  },
   downloadFailed: {
     id: 'sp.vehicles:download-failed',
     defaultMessage: 'Niðurhal mistókst',

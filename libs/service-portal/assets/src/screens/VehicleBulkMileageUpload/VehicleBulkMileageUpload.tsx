@@ -67,7 +67,8 @@ const VehicleBulkMileageUpload = () => {
       })
     } catch (error) {
       setUploadErrorMessage(
-        'Error occurred while processing the file: ' + error.message,
+        `${formatMessage(vehicleMessage.errorWhileProcessing) + error.message}
+        `,
       )
     }
   }
