@@ -1,7 +1,7 @@
 export interface VehicleProps {
   vehicleId: string
   vehicleType: string
-  lastMileageRegistration: Date
+  lastMileageRegistration?: Date
   submissionStatus: SubmissionState
 }
 
@@ -19,12 +19,8 @@ export interface Props {
   vehicles: Array<VehicleProps>
 }
 
-export interface VehicleType {
-  vehicleId: string
-  vehicleType: string
-  submissionStatus: SubmissionState
+export interface VehicleType extends VehicleProps {
   mileageUploadedFromFile?: number
-  lastRegistrationDate?: Date
   isCurrentlyEditing?: boolean
   registrationHistory?: Array<{
     date: Date

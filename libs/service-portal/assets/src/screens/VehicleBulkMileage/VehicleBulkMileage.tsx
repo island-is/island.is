@@ -51,7 +51,7 @@ const VehicleBulkMileage = () => {
             vehicleId: v.vehicleId,
             vehicleType: v.type,
             submissionStatus: 'idle' as const,
-            lastRegistrationDate: undefined,
+            lastMileageRegistration: undefined,
           }
         })
         .filter(isDefined)
@@ -60,10 +60,7 @@ const VehicleBulkMileage = () => {
     }
   }, [data?.vehiclesListV3])
 
-  const updateVehicleStatus = async (
-    status: SubmissionState,
-    vehicleId: string,
-  ) => {
+  const updateVehicleStatus = (status: SubmissionState, vehicleId: string) => {
     const newVehicles = vehicles.map((v) => {
       if (v.vehicleId === vehicleId) {
         return {

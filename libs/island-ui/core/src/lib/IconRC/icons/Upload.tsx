@@ -8,11 +8,10 @@ const SvgUpload = ({
 }: React.SVGProps<SVGSVGElement> & SVGRProps) => {
   return (
     <svg
-      rotate={180}
       className="upload_svg__ionicon"
       viewBox="0 0 512 512"
       aria-labelledby={titleId}
-      transform="matrix(1,0,0,-1,0,0)"
+      transform="rotate(180)"
       {...props}
     >
       {title ? <title id={titleId}>{title}</title> : null}

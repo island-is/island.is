@@ -15,7 +15,6 @@ import { Audit } from '@island.is/nest/audit'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import { VehiclesList, VehiclesListV2 } from '../models/usersVehicles.model'
-import { VehiclesService } from '../services/vehicles.service'
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
@@ -26,7 +25,7 @@ import {
   GetVehiclesListV2Input,
 } from '../dto/getVehiclesForUserInput'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
-import { VehiclesCurrentListResponse } from '../models/v3/currentVehicleListResponse.model'
+import { VehiclesService } from '../services/vehicles.service'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 

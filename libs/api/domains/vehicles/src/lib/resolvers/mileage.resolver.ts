@@ -34,14 +34,6 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { mileageDetailConstructor } from '../utils/helpers'
-import { PostVehicleBulkMileageInput } from '../dto/postBulkVehicleMileage.input'
-import { BulkMileageService } from '../services/bulkMileage.service'
-import { VehiclesBulkMileageReadingResponse } from '../models/v3/bulkMileage/bulkMileageReadingResponse.model'
-import { VehiclesBulkMileageRegistrationRequestOverview } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestOverview.model'
-import { VehiclesBulkMileageRegistrationJobHistory } from '../models/v3/bulkMileage/bulkMileageRegistrationJobHistory.model'
-import { VehiclesBulkMileageRegistrationRequestStatus } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestStatus.model'
-import { BulkVehicleMileageRequestStatusInput } from '../dto/getBulkVehicleMileageRequestStatus.input'
-import { BulkVehicleMileageRequestOverviewInput } from '../dto/getBulkVehicleMileageRequestOverview.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalVehicleMileagePageEnabled)

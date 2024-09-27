@@ -13,6 +13,7 @@ interface Props {
 export const VehicleBulkMileageSaveButton = ({
   submissionState,
   onClick,
+  disabled,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -47,6 +48,7 @@ export const VehicleBulkMileageSaveButton = ({
       type="button"
       variant="text"
       onClick={onClick}
+      disabled={disabled}
     >
       {tag.text}
     </Button>

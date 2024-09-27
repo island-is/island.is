@@ -53,7 +53,7 @@ export const VehicleBulkMileageRow = ({ vehicle, onSave }: Props) => {
           value: vehicle.vehicleId,
         },
         {
-          value: formatDate(vehicle.lastRegistrationDate),
+          value: formatDate(vehicle.lastMileageRegistration),
         },
         {
           value: (
@@ -64,6 +64,7 @@ export const VehicleBulkMileageRow = ({ vehicle, onSave }: Props) => {
                 name={vehicle.vehicleId}
                 type="number"
                 suffix=" km"
+                min={0}
                 thousandSeparator
                 size="xs"
                 maxLength={12}
