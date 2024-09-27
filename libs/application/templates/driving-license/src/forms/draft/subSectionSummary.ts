@@ -159,23 +159,37 @@ export const subSectionSummary = buildSubSection({
         buildDividerField({}),
         buildKeyValueField({
           label: m.overviewPaymentCharge,
-          value: ({ externalData, answers }) => {
-            const items = externalData.payment.data as {
+          value: (application) => {
+            console.log('application', application)
+            const items = application.externalData.payment.data as {
               priceAmount: number
               chargeItemCode: string
             }[]
             const targetCode =
-              answers.applicationFor === B_TEMP
+              application.answers.applicationFor === B_TEMP
                 ? 'AY114'
-                : answers.applicationFor === BE
+                : application.answers.applicationFor === BE
                 ? 'AY115'
                 : 'AY110'
+
+            let pickupItem = null
+
+            if (application.answers.pickup === Pickup.POST) {
+              pickupItem = items.find(
+                ({ chargeItemCode }) => chargeItemCode === 'AY145',
+              )
+            }
 
             const item = items.find(
               ({ chargeItemCode }) => chargeItemCode === targetCode,
             )
-            return (item?.priceAmount?.toLocaleString('is-IS') +
-              ' kr.') as StaticText
+
+            const price = item?.priceAmount ?? 0
+            const deliveryPrice = pickupItem?.priceAmount ?? 0
+
+            const total = deliveryPrice + price
+
+            return (total?.toLocaleString('is-IS') + ' kr.') as StaticText
           },
           width: 'full',
         }),

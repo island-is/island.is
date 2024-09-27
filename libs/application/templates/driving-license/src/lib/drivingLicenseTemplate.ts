@@ -33,6 +33,7 @@ import {
   B_FULL,
   B_FULL_RENEWAL_65,
   ApiActions,
+  Pickup,
 } from './constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -51,6 +52,10 @@ const getCodes = (application: Application) => {
     'B-full',
   )
 
+  const pickup = getValueViaPath<Pickup>(application.answers, 'pickup')
+
+  const codes: string[] = []
+
   const chargeItemCode =
     applicationFor === 'B-full'
       ? 'AY110'
@@ -58,10 +63,17 @@ const getCodes = (application: Application) => {
       ? 'AY115'
       : 'AY114'
 
+  codes.push(chargeItemCode)
+
+  if (pickup === Pickup.POST) {
+    codes.push('AY145')
+  }
+
   if (!chargeItemCode) {
     throw new Error('No selected charge item code')
   }
-  return [chargeItemCode]
+
+  return codes
 }
 
 const configuration =
