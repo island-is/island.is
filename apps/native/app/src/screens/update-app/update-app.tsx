@@ -1,9 +1,12 @@
 import { Button, Typography, NavigationBarSheet } from '@ui'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
 import { View, Image, SafeAreaView, Linking } from 'react-native'
 import styled from 'styled-components/native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import logo from '../../assets/logo/logo-64w.png'
 import illustrationSrc from '../../assets/illustrations/digital-services-m1-dots.png'
@@ -25,6 +28,7 @@ const Host = styled.View`
 const ButtonWrapper = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-vertical: ${({ theme }) => theme.spacing[4]}px;
+  gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const Title = styled(Typography)`
@@ -42,22 +46,32 @@ const { getNavigationOptions, useNavigationOptions } =
     },
   }))
 
-export const UpdateAppScreen: NavigationFunctionComponent = ({
-  componentId,
-}) => {
+export const UpdateAppScreen: NavigationFunctionComponent<{
+  closable?: boolean
+}> = ({ closable = true, componentId }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
+
+  useEffect(() => {
+    // Make sure to allow closing of the modal if this is a closable screen
+    Navigation.mergeOptions(componentId, {
+      hardwareBackButton: {
+        dismissModalOnPress: closable,
+      },
+      modal: {
+        swipeToDismiss: closable,
+      },
+    })
+  }, [])
 
   return (
     <View style={{ flex: 1 }}>
       <NavigationBarSheet
         componentId={componentId}
         title={''}
-        onClosePress={() => {
-          //noop
-        }}
+        onClosePress={() => closable && Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
-        closable={false}
+        closable={closable}
       />
       <SafeAreaView style={{ flex: 1 }}>
         <Host>
@@ -102,6 +116,16 @@ export const UpdateAppScreen: NavigationFunctionComponent = ({
               )
             }}
           />
+          {closable && (
+            <Button
+              isOutlined
+              title={intl.formatMessage({
+                id: 'updateApp.buttonSkip',
+                defaultMessage: 'Sleppa',
+              })}
+              onPress={() => Navigation.dismissModal(componentId)}
+            />
+          )}
         </ButtonWrapper>
       </SafeAreaView>
     </View>

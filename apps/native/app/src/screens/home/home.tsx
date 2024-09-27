@@ -259,7 +259,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const checkAppVersion = useCallback(async () => {
     const needsUpdate = await needsToUpdateAppVersion()
     if (needsUpdate) {
-      navigateTo('/update-app')
+      navigateTo('/update-app', { closable: false })
     }
   }, [])
 

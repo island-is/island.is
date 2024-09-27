@@ -602,4 +602,5 @@ export const en: TranslatedMessages = {
   'updateApp.description':
     'You are about to use an old version of the Island.is app. Please update the app to be able to continue.',
   'updateApp.button': 'Update',
+  'updateApp.buttonSkip': 'Skip',
 }
