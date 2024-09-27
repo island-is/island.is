@@ -23,7 +23,7 @@ const ParliamentaryRoot = () => {
   const { formatMessage } = useLocale()
 
   const navigate = useNavigate()
-  const { collection } = useLoaderData() as ListsLoaderReturn
+  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
 
   return (
     <GridContainer>
@@ -75,14 +75,14 @@ const ParliamentaryRoot = () => {
             </Box>
             <DownloadReports areas={collection.areas} />
           </Box>
-          <Text variant="eyebrow" marginBottom={3}>
-            {formatMessage(m.totalListResults)}: {collection?.areas.length}
-          </Text>
           <Stack space={3}>
             {collection?.areas.map((area) => (
               <ActionCard
                 key={area.id}
-                eyebrow={'Fjöldi lista: XXX'}
+                eyebrow={
+                  formatMessage(m.totalListsPerConstituency) +
+                  allLists.filter((l) => l.area.name === area.name).length
+                }
                 heading={area.name}
                 cta={{
                   label: formatMessage(m.viewConstituency),
