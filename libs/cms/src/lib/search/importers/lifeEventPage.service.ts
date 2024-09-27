@@ -10,6 +10,7 @@ import {
   createTerms,
   extractStringsFromObject,
   pruneNonSearchableSliceUnionFields,
+  extractChildEntryIds,
 } from './utils'
 
 @Injectable()
@@ -38,6 +39,9 @@ export class LifeEventPageSyncService
             mapped.content.map(pruneNonSearchableSliceUnionFields),
           )
 
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -46,7 +50,10 @@ export class LifeEventPageSyncService
             type: 'webLifeEventPage',
             termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, typename: 'LifeEventPage' }),
-            tags: [],
+            tags: childEntryIds.map((id) => ({
+              key: id,
+              type: 'hasChildEntryWithId',
+            })),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
           }

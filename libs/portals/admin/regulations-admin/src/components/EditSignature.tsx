@@ -25,7 +25,7 @@ import { useS3Upload } from '../utils/dataHooks'
 
 const defaultSignatureText = `
   <p class="Dags" align="center"><em>{ministry}nu, {dags}.</em></p>
-  <p class="FHUndirskr" align="center">F.h.r.</p>
+  <p class="FHUndirskr" align="center">F. h. r.</p>
   <p class="Undirritun" align="center"><strong>NAFN</strong></p>
   <p class="Undirritun" align="right"><em>NAFN.</em></p>
 ` as HTMLText
@@ -159,7 +159,7 @@ export const EditSignature = () => {
               draftId={draft.id}
               value={
                 draft.signatureText.value ||
-                getDefaultSignatureText(formatDateFns)
+                getDefaultSignatureText(formatDateFns, draft.ministry.value)
               }
               onChange={(text) => updateState('signatureText', text)}
               required={!!draft.signatureText.required}

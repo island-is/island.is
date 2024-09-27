@@ -1,11 +1,13 @@
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
   isCompletedCase,
+  isDefenceUser,
   isDistrictCourtUser,
+  isProsecutionUser,
   isPublicProsecutor,
   isPublicProsecutorUser,
   isTrafficViolationCase,
@@ -23,12 +25,14 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
 
 interface Props {
   workingCase: Case
   displayHeading?: boolean
+  connectedCaseParentId?: string
 }
 
 interface RenderFilesProps {
@@ -36,17 +40,15 @@ interface RenderFilesProps {
   onOpenFile: (fileId: string) => void
 }
 
-export const RenderFiles: FC<Props & RenderFilesProps> = ({
+export const RenderFiles: FC<RenderFilesProps> = ({
   caseFiles,
   onOpenFile,
-  workingCase,
 }) => {
   return (
     <>
       {caseFiles.map((file) => (
         <Box key={file.id} marginBottom={2}>
           <PdfButton
-            caseId={workingCase.id}
             title={file.name}
             renderAs="row"
             disabled={!file.key}
@@ -61,14 +63,17 @@ export const RenderFiles: FC<Props & RenderFilesProps> = ({
 const IndictmentCaseFilesList: FC<Props> = ({
   workingCase,
   displayHeading = true,
+  connectedCaseParentId,
 }) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
+    connectedCaseParentId,
   })
 
   const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
+  const showSubpoenaPdf = workingCase.arraignmentDate
 
   const cf = workingCase.caseFiles
 
@@ -93,6 +98,14 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const criminalRecordUpdate = cf?.filter(
     (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
   )
+  const uploadedCaseFiles = cf?.filter(
+    (file) =>
+      file.category === CaseFileCategory.PROSECUTOR_CASE_FILE ||
+      file.category === CaseFileCategory.DEFENDANT_CASE_FILE,
+  )
+  const civilClaims = cf?.filter(
+    (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
+  )
 
   return (
     <>
@@ -104,11 +117,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.indictmentSection)}
           </Text>
-          <RenderFiles
-            caseFiles={indictments}
-            onOpenFile={onOpen}
-            workingCase={workingCase}
-          />
+          <RenderFiles caseFiles={indictments} onOpenFile={onOpen} />
         </Box>
       )}
       {showTrafficViolationCaseFiles && (
@@ -119,8 +128,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <Box marginBottom={2} key={`indictment-${workingCase.id}`}>
             <PdfButton
               caseId={workingCase.id}
+              connectedCaseParentId={connectedCaseParentId}
               title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
-              pdfType={'indictment'}
+              pdfType="indictment"
               renderAs="row"
             />
           </Box>
@@ -131,11 +141,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.criminalRecordSection)}
           </Text>
-          <RenderFiles
-            caseFiles={criminalRecords}
-            onOpenFile={onOpen}
-            workingCase={workingCase}
-          />
+          <RenderFiles caseFiles={criminalRecords} onOpenFile={onOpen} />
         </Box>
       )}
       {criminalRecordUpdate &&
@@ -147,11 +153,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(caseFiles.criminalRecordUpdateSection)}
             </Text>
-            <RenderFiles
-              caseFiles={criminalRecordUpdate}
-              onOpenFile={onOpen}
-              workingCase={workingCase}
-            />
+            <RenderFiles caseFiles={criminalRecordUpdate} onOpenFile={onOpen} />
           </Box>
         )}
       {costBreakdowns && costBreakdowns.length > 0 && (
@@ -159,11 +161,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.costBreakdownSection)}
           </Text>
-          <RenderFiles
-            caseFiles={costBreakdowns}
-            onOpenFile={onOpen}
-            workingCase={workingCase}
-          />
+          <RenderFiles caseFiles={costBreakdowns} onOpenFile={onOpen} />
         </Box>
       )}
       {others && others.length > 0 && (
@@ -171,14 +169,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.otherDocumentsSection)}
           </Text>
-          <RenderFiles
-            caseFiles={others}
-            onOpenFile={onOpen}
-            workingCase={workingCase}
-          />
+          <RenderFiles caseFiles={others} onOpenFile={onOpen} />
         </Box>
       )}
-
       <Box marginBottom={5}>
         <Text variant="h4" as="h4" marginBottom={1}>
           {formatMessage(strings.caseFileTitle)}
@@ -187,39 +180,75 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
             <PdfButton
               caseId={workingCase.id}
+              connectedCaseParentId={connectedCaseParentId}
               title={formatMessage(strings.caseFileButtonText, {
                 policeCaseNumber,
               })}
-              pdfType={'caseFilesRecord'}
+              pdfType="caseFilesRecord"
               elementId={policeCaseNumber}
               renderAs="row"
             />
           </Box>
         ))}
       </Box>
-      {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
-      (courtRecords?.length || rulings?.length) ? (
+      {courtRecords?.length || rulings?.length ? (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(strings.rulingAndCourtRecordsTitle)}
           </Text>
           {courtRecords && courtRecords.length > 0 && (
-            <RenderFiles
-              caseFiles={courtRecords}
-              onOpenFile={onOpen}
-              workingCase={workingCase}
-            />
+            <RenderFiles caseFiles={courtRecords} onOpenFile={onOpen} />
           )}
-          {rulings && rulings.length > 0 && (
-            <RenderFiles
-              caseFiles={rulings}
-              onOpenFile={onOpen}
-              workingCase={workingCase}
-            />
-          )}
+          {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
+            rulings &&
+            rulings.length > 0 && (
+              <RenderFiles caseFiles={rulings} onOpenFile={onOpen} />
+            )}
         </Box>
       ) : null}
-
+      {workingCase.hasCivilClaims &&
+        civilClaims &&
+        civilClaims.length > 0 &&
+        (isDistrictCourtUser(user) ||
+          isProsecutionUser(user) ||
+          isDefenceUser(user)) && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={1}>
+              {formatMessage(strings.civilClaimsTitle)}
+            </Text>
+            <RenderFiles caseFiles={civilClaims} onOpenFile={onOpen} />
+          </Box>
+        )}
+      {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={3}>
+            {formatMessage(strings.uploadedCaseFiles)}
+          </Text>
+          <CaseFileTable caseFiles={uploadedCaseFiles} onOpenFile={onOpen} />
+        </Box>
+      )}
+      {showSubpoenaPdf &&
+        workingCase.defendants &&
+        workingCase.defendants.length > 0 && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={1}>
+              {formatMessage(strings.subpoenaTitle)}
+            </Text>
+            {workingCase.defendants.map((defendant) => (
+              <Box marginBottom={2} key={`subpoena-${defendant.id}`}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={formatMessage(strings.subpoenaButtonText, {
+                    name: defendant.name,
+                  })}
+                  pdfType="subpoena"
+                  elementId={defendant.id}
+                  renderAs="row"
+                />
+              </Box>
+            ))}
+          </Box>
+        )}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>

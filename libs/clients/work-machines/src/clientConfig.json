@@ -585,6 +585,16 @@
       },
       "post": {
         "tags": ["Machines"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1050,6 +1060,27 @@
         }
       }
     },
+    "/api/MachineStreetRegistration/MayStreetRegister": {
+      "get": {
+        "tags": ["MachineStreetRegistration"],
+        "summary": "Returns a list of registration number prefixes that require an inspection before street registration",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/MachineStreetRegistration/MustInspectBeforeRegistration": {
       "get": {
         "tags": ["MachineStreetRegistration"],
@@ -1213,6 +1244,13 @@
         "parameters": [
           {
             "name": "parentCategory",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subCategory",
             "in": "query",
             "schema": {
               "type": "string"
@@ -1500,6 +1538,9 @@
             "nullable": true
           },
           "paymentRequiredForOwnerChange": {
+            "type": "boolean"
+          },
+          "mayStreetRegister": {
             "type": "boolean"
           }
         },

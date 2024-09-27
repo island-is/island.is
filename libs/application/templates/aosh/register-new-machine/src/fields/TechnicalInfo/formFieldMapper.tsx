@@ -23,11 +23,15 @@ export const formFieldMapper = ({
   const { variableName, label, type, required, maxLength, values } = item
   const { application, field } = props
   const error =
-    displayError &&
-    required &&
-    variableName &&
-    watchTechInfoFields[variableName].length === 0
-      ? formatMessage(coreErrorMessages.defaultError)
+    displayError && required && variableName
+      ? (watchTechInfoFields[variableName].length === 0
+          ? formatMessage(coreErrorMessages.defaultError)
+          : undefined) ||
+        ((type === 'int' || type === 'float') &&
+        maxLength &&
+        watchTechInfoFields[variableName].length > maxLength
+          ? formatMessage(coreErrorMessages.defaultError)
+          : undefined)
       : undefined
   if (values && values.length > 0) {
     return (
@@ -63,8 +67,10 @@ export const formFieldMapper = ({
           children: undefined,
           backgroundColor: 'blue',
           required: required,
-          maxLength: maxLength ? parseInt(maxLength, 10) : undefined,
           variant: 'number',
+          max: maxLength ? parseInt(maxLength, 10) : undefined,
+          min: 0,
+          step: type === 'float' ? '0.0000000001' : '1',
         }}
       />
     )

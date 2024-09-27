@@ -5,13 +5,13 @@ import * as kennitala from 'kennitala'
 
 import {
   Box,
-  Text,
-  Stack,
-  Tag,
-  Inline,
+  Button,
   Icon,
   IconMapIcon as IconType,
-  Button,
+  Inline,
+  Stack,
+  Tag,
+  Text,
   Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -20,7 +20,6 @@ import { m as coreMessages } from '@island.is/portals/core'
 import uniqBy from 'lodash/uniqBy'
 import sortBy from 'lodash/sortBy'
 import { m } from '../../lib/messages'
-import { DelegationPaths } from '../../lib/paths'
 import { AuthApiScope, AuthDelegationType } from '@island.is/api/schema'
 import {
   AuthCustomDelegation,
@@ -48,9 +47,18 @@ const getTags = (delegation: AuthCustomDelegation) =>
 
 interface AccessCardProps {
   delegation: AuthCustomDelegation
+
   onDelete(delegation: AuthCustomDelegation): void
+
   onView?(delegation: AuthCustomDelegation): void
+
   variant?: 'outgoing' | 'incoming'
+  direction?: 'incoming' | 'outgoing'
+
+  canModify?: boolean
+  href?: string
+
+  isAdminView?: boolean
 }
 
 export const AccessCard = ({
@@ -58,6 +66,10 @@ export const AccessCard = ({
   onDelete,
   onView,
   variant = 'outgoing',
+  direction = 'outgoing',
+  canModify = true,
+  href,
+  isAdminView = false,
 }: AccessCardProps) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
@@ -66,10 +78,12 @@ export const AccessCard = ({
 
   const hasTags = tags.length > 0
   const isOutgoing = variant === 'outgoing'
-  const href = `${DelegationPaths.Delegations}/${delegation.id}`
 
   const isExpired = useMemo(() => {
-    if (delegation.validTo) {
+    if (
+      delegation.validTo ||
+      delegation.type === AuthDelegationType.GeneralMandate
+    ) {
       return isDateExpired(delegation.validTo)
     }
 
@@ -92,6 +106,9 @@ export const AccessCard = ({
     let icon: IconType = 'people'
 
     switch (type) {
+      case AuthDelegationType.GeneralMandate:
+        label = formatMessage(m.delegationTypeGeneralMandate)
+        break
       case AuthDelegationType.LegalGuardian:
         label = formatMessage(m.delegationTypeLegalGuardian)
         break
@@ -149,7 +166,7 @@ export const AccessCard = ({
   }
 
   const showActions =
-    isOutgoing || delegation.type === AuthDelegationType.Custom
+    canModify && (isOutgoing || delegation.type === AuthDelegationType.Custom)
 
   const canDelete =
     isOutgoing || (!isOutgoing && delegation.type === AuthDelegationType.Custom)
@@ -165,10 +182,12 @@ export const AccessCard = ({
       <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
         <Stack space="smallGutter">
           <Box display="flex" columnGap={2} alignItems="center">
-            {!isOutgoing && (
+            {(isAdminView ||
+              !isOutgoing ||
+              delegation.type === AuthDelegationType.GeneralMandate) && (
               <>
                 {renderDelegationTypeLabel(delegation.type)}
-                {delegation.domain && (
+                {delegation.domain?.name && (
                   <Text variant="eyebrow" color="blue300">
                     {'|'}
                   </Text>
@@ -196,7 +215,7 @@ export const AccessCard = ({
           </Box>
           <VisuallyHidden>{formatMessage(m.accessHolder)}</VisuallyHidden>
           <Text variant="h3" as="h2" color={isExpired ? 'dark300' : 'dark400'}>
-            {isOutgoing
+            {direction === 'outgoing'
               ? (delegation as AuthCustomDelegationOutgoing)?.to?.name
               : (delegation as AuthCustomDelegationIncoming)?.from?.name}
           </Text>
@@ -223,7 +242,7 @@ export const AccessCard = ({
       <Box marginTop={hasTags && showActions ? 2 : 0}>
         <Box
           display="flex"
-          justifyContent={'spaceBetween'}
+          justifyContent={hasTags ? 'spaceBetween' : 'flexEnd'}
           alignItems={['stretch', 'flexEnd']}
           flexDirection={['column', 'row']}
           width="full"
@@ -274,7 +293,7 @@ export const AccessCard = ({
                   >
                     {formatMessage(coreMessages.view)}
                   </Button>
-                ) : !isExpired ? (
+                ) : !isExpired && href ? (
                   <Button
                     icon="pencil"
                     iconType="outline"
@@ -284,7 +303,7 @@ export const AccessCard = ({
                   >
                     {formatMessage(coreMessages.buttonEdit)}
                   </Button>
-                ) : (
+                ) : href ? (
                   <Button
                     icon="reload"
                     iconType="outline"
@@ -294,7 +313,7 @@ export const AccessCard = ({
                   >
                     {formatMessage(coreMessages.buttonRenew)}
                   </Button>
-                )}
+                ) : null}
               </Box>
             </Box>
           )}

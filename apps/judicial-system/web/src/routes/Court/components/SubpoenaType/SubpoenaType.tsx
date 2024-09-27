@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction } from 'react'
+import { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
@@ -22,7 +22,7 @@ interface SubpoenaTypeProps {
   setWorkingCase: Dispatch<SetStateAction<Case>>
   updateDefendantState: (
     update: UpdateDefendantInput,
-    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
   ) => void
   required?: boolean
 }

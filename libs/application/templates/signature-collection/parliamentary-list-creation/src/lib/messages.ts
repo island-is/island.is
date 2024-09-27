@@ -82,8 +82,7 @@ export const m = defineMessages({
   },
   listInformationDescription: {
     id: 'plc.application:listInformationDescription#markdown',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet imperdiet odio.',
+    defaultMessage: 'Vinsamlegast yfirfarið að upplýsingarnar séu réttar.',
     description: '',
   },
   information: {
@@ -225,7 +224,7 @@ export const m = defineMessages({
   overviewDescription: {
     id: 'plc.application:overviewDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet imperdiet odio, id ornare ante tincidunt ac. Phasellus massa velit, condimentum quis est id, tristique vestibulum lectus.',
+      'Vinsamlegast yfirfarið upplýsingar áður en meðmælasöfnun er stofnuð.',
     description: '',
   },
   applicantOverviewHeader: {

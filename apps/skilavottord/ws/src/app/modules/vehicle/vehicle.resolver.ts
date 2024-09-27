@@ -104,11 +104,18 @@ export class VehicleResolver {
   }
 
   @Mutation(() => Boolean)
-  async updateSkilavottordVehicleMileage(
+  async updateSkilavottordVehicleInfo(
     @CurrentUser() user: User,
     @Args('permno') permno: string,
     @Args('mileage') mileage: number,
+    @Args('plateCount', { nullable: true }) plateCount: number,
+    @Args('plateLost') plateLost: boolean,
   ) {
-    return await this.vehicleService.updateMileage(permno, mileage)
+    return await this.vehicleService.updateVehicleInfo(
+      permno,
+      mileage,
+      plateCount,
+      plateLost,
+    )
   }
 }

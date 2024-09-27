@@ -1,4 +1,10 @@
-import React, { FC, PropsWithChildren } from 'react'
+import {
+  createContext,
+  FC,
+  PropsWithChildren,
+  useEffect,
+  useState,
+} from 'react'
 
 export type Rect = { width: number; height: number }
 
@@ -19,21 +25,21 @@ const getCurrentViewport = () => {
   }
 }
 
-export const ViewportContext = React.createContext<Rect>(getCurrentViewport())
+export const ViewportContext = createContext<Rect>(getCurrentViewport())
 
 export const ViewportProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [state, setState] = React.useState<Rect>(getCurrentViewport())
+  const [state, setState] = useState<Rect>(getCurrentViewport())
 
   const handleWindowResize = () => {
     const rect = getCurrentViewport()
     setState(rect)
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     handleWindowResize()
   }, [])
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener('resize', handleWindowResize)
     return () => window.removeEventListener('resize', handleWindowResize)
   }, [])

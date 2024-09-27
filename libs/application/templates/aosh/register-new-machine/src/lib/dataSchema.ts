@@ -2,6 +2,15 @@ import { NO, YES } from '@island.is/application/types'
 import { z } from 'zod'
 import { NEW, USED } from '../shared/types'
 import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const isValidEmail = (value: string) => emailRegex.test(value)
+export const isValidPhoneNumber = (phoneNumber: string) => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone && phone.isValid()
+}
 
 const PersonInformationSchema = z.object({
   name: z.string().min(1),
@@ -10,8 +19,17 @@ const PersonInformationSchema = z.object({
     .refine((nationalId) => nationalId && kennitala.isValid(nationalId)),
   address: z.string().min(1),
   postCode: z.string().min(1),
-  phone: z.string().min(1),
-  email: z.string().min(1),
+  phone: z.string().refine((v) => isValidPhoneNumber(v)),
+  email: z.string().refine((v) => isValidEmail(v)),
+})
+
+const RemovablePersonInformationSchema = z.object({
+  name: z.string().optional(),
+  nationalId: z.string().optional(),
+  address: z.string().optional(),
+  postCode: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().optional(),
 })
 
 const BasicInformationSchema = z.object({
@@ -21,8 +39,8 @@ const BasicInformationSchema = z.object({
   markedCE: z.enum([YES, NO]),
   preRegistration: z.enum([YES, NO]).refine((v) => v.length > 0),
   isUsed: z.enum([NEW, USED]),
-  location: z.string().min(1),
-  cargoFileNumber: z.string().min(1),
+  location: z.string().optional(),
+  cargoFileNumber: z.string().optional(),
 })
 
 const AboutMachineSchema = z.object({
@@ -41,16 +59,158 @@ const TechInfoSchema = z.object({
 })
 
 export const NewMachineAnswersSchema = z.object({
-  approveExternalData: z.boolean(),
+  approveExternalData: z.boolean().refine((v) => v),
   importerInformation: z.object({
     importer: PersonInformationSchema,
-    isOwnerOtherThanImporter: z.enum([YES, NO]),
-    owner: PersonInformationSchema.optional(),
   }),
-  operatorInformation: z.object({
-    operator: PersonInformationSchema.optional(),
-    hasOperator: z.enum([YES, NO]),
-  }),
+  ownerInformation: z
+    .object({
+      isOwnerOtherThanImporter: z.enum([YES, NO]),
+      owner: RemovablePersonInformationSchema.optional(),
+    })
+    .refine(
+      ({ isOwnerOtherThanImporter, owner }) => {
+        if (isOwnerOtherThanImporter === NO) return true
+        return owner && owner.name && owner.name.length > 0
+      },
+      {
+        path: ['owner', 'name'],
+      },
+    )
+    .refine(
+      ({ isOwnerOtherThanImporter, owner }) => {
+        if (isOwnerOtherThanImporter === NO) return true
+        return (
+          owner &&
+          owner.nationalId &&
+          owner.nationalId.length > 0 &&
+          kennitala.isValid(owner.nationalId)
+        )
+      },
+      {
+        path: ['owner', 'nationalId'],
+      },
+    )
+    .refine(
+      ({ isOwnerOtherThanImporter, owner }) => {
+        if (isOwnerOtherThanImporter === NO) return true
+        return owner && owner.address && owner.address.length > 0
+      },
+      {
+        path: ['owner', 'address'],
+      },
+    )
+    .refine(
+      ({ isOwnerOtherThanImporter, owner }) => {
+        if (isOwnerOtherThanImporter === NO) return true
+        return owner && owner.postCode && owner.postCode.length > 0
+      },
+      {
+        path: ['owner', 'postCode'],
+      },
+    )
+    .refine(
+      ({ isOwnerOtherThanImporter, owner }) => {
+        if (isOwnerOtherThanImporter === NO) return true
+        return (
+          owner &&
+          owner.phone &&
+          owner.phone.length > 0 &&
+          isValidPhoneNumber(owner.phone)
+        )
+      },
+      {
+        path: ['owner', 'phone'],
+      },
+    )
+    .refine(
+      ({ isOwnerOtherThanImporter, owner }) => {
+        if (isOwnerOtherThanImporter === NO) return true
+        return (
+          owner &&
+          owner.email &&
+          owner.email.length > 0 &&
+          isValidEmail(owner.email)
+        )
+      },
+      {
+        path: ['owner', 'email'],
+      },
+    ),
+  operatorInformation: z
+    .object({
+      operator: RemovablePersonInformationSchema.optional(),
+      hasOperator: z.enum([YES, NO]),
+    })
+    .refine(
+      ({ hasOperator, operator }) => {
+        if (hasOperator === NO) return true
+        return operator && operator.name && operator.name.length > 0
+      },
+      {
+        path: ['operator', 'name'],
+      },
+    )
+    .refine(
+      ({ hasOperator, operator }) => {
+        if (hasOperator === NO) return true
+        return (
+          operator &&
+          operator.nationalId &&
+          operator.nationalId.length > 0 &&
+          kennitala.isValid(operator.nationalId)
+        )
+      },
+      {
+        path: ['operator', 'nationalId'],
+      },
+    )
+    .refine(
+      ({ hasOperator, operator }) => {
+        if (hasOperator === NO) return true
+        return operator && operator.address && operator.address.length > 0
+      },
+      {
+        path: ['operator', 'address'],
+      },
+    )
+    .refine(
+      ({ hasOperator, operator }) => {
+        if (hasOperator === NO) return true
+        return operator && operator.postCode && operator.postCode.length > 0
+      },
+      {
+        path: ['operator', 'postCode'],
+      },
+    )
+    .refine(
+      ({ hasOperator, operator }) => {
+        if (hasOperator === NO) return true
+        return (
+          operator &&
+          operator.phone &&
+          operator.phone.length > 0 &&
+          isValidPhoneNumber(operator.phone)
+        )
+      },
+      {
+        path: ['operator', 'phone'],
+      },
+    )
+    .refine(
+      ({ hasOperator, operator }) => {
+        if (hasOperator === NO) return true
+        return (
+          operator &&
+          operator.email &&
+          operator.email.length > 0 &&
+          isValidEmail(operator.email)
+        )
+      },
+      {
+        path: ['operator', 'email'],
+      },
+    ),
   machine: z.object({
     machineType: z
       .object({

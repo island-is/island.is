@@ -1,80 +1,83 @@
-import {
-  AlcoholLicence,
-  SyslumennAuction,
-  Homestay,
-  PaginatedOperatingLicenses,
-  OperatingLicensesCSV,
-  CertificateInfoResponse,
-  DistrictCommissionerAgencies,
-  DataUploadResponse,
-  Person,
-  Attachment,
-  AssetType,
-  MortgageCertificate,
-  MortgageCertificateValidation,
-  AssetName,
-  EstateRegistrant,
-  EstateRelations,
-  EstateInfo,
-  RealEstateAgent,
-  Lawyer,
-  Broker,
-  PropertyDetail,
-  TemporaryEventLicence,
-  VehicleRegistration,
-  RegistryPerson,
-  InheritanceTax,
-  InheritanceReportInfo,
-  ManyPropertyDetail,
-} from './syslumennClient.types'
-import {
-  mapSyslumennAuction,
-  mapHomestay,
-  mapPaginatedOperatingLicenses,
-  mapOperatingLicensesCSV,
-  mapCertificateInfo,
-  mapDistrictCommissionersAgenciesResponse,
-  mapDataUploadResponse,
-  constructUploadDataObject,
-  mapAssetName,
-  mapEstateRegistrant,
-  mapEstateInfo,
-  mapRealEstateAgent,
-  mapLawyer,
-  mapBroker,
-  mapAlcoholLicence,
-  cleanPropertyNumber,
-  mapTemporaryEventLicence,
-  mapMasterLicence,
-  mapVehicle,
-  mapDepartedToRegistryPerson,
-  mapInheritanceTax,
-  mapEstateToInheritanceReportInfo,
-  mapJourneymanLicence,
-  mapProfessionRight,
-  mapVehicleResponse,
-  mapRealEstateResponse,
-  mapShipResponse,
-  mapPropertyCertificate,
-} from './syslumennClient.utils'
-import { Injectable, Inject } from '@nestjs/common'
-import {
-  SyslumennApi,
-  SvarSkeyti,
-  Configuration,
-  VirkLeyfiGetRequest,
-  VedbondTegundAndlags,
-  Skilabod,
-  VedbandayfirlitRegluverkGeneralSvar,
-  InnsigludSkjol,
-} from '../../gen/fetch'
-import { SyslumennClientConfig } from './syslumennClient.config'
-import type { ConfigType } from '@island.is/nest/config'
+import { Inject, Injectable } from '@nestjs/common'
+import startOfDay from 'date-fns/startOfDay'
+
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
-const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
+import {
+  Configuration,
+  InnsigludSkjol,
+  LogradamadurSvar,
+  Skilabod,
+  SvarSkeyti,
+  SyslumennApi,
+  VedbandayfirlitRegluverkGeneralSvar,
+  VedbondTegundAndlags,
+  VirkLeyfiGetRequest,
+} from '../../gen/fetch'
+import { SyslumennClientConfig } from './syslumennClient.config'
+import {
+  AlcoholLicence,
+  AssetName,
+  AssetType,
+  Attachment,
+  Broker,
+  CertificateInfoResponse,
+  DataUploadResponse,
+  DistrictCommissionerAgencies,
+  EstateInfo,
+  EstateRegistrant,
+  EstateRelations,
+  Homestay,
+  InheritanceReportInfo,
+  InheritanceTax,
+  Lawyer,
+  ManyPropertyDetail,
+  MortgageCertificate,
+  MortgageCertificateValidation,
+  OperatingLicensesCSV,
+  PaginatedOperatingLicenses,
+  Person,
+  PropertyDetail,
+  RealEstateAgent,
+  RegistryPerson,
+  SyslumennAuction,
+  TemporaryEventLicence,
+  VehicleRegistration,
+} from './syslumennClient.types'
+import {
+  cleanPropertyNumber,
+  constructUploadDataObject,
+  mapAlcoholLicence,
+  mapAssetName,
+  mapBroker,
+  mapCertificateInfo,
+  mapDataUploadResponse,
+  mapDepartedToRegistryPerson,
+  mapDistrictCommissionersAgenciesResponse,
+  mapEstateInfo,
+  mapEstateRegistrant,
+  mapEstateToInheritanceReportInfo,
+  mapHomestay,
+  mapInheritanceTax,
+  mapJourneymanLicence,
+  mapLawyer,
+  mapMasterLicence,
+  mapOperatingLicensesCSV,
+  mapPaginatedOperatingLicenses,
+  mapProfessionRight,
+  mapPropertyCertificate,
+  mapRealEstateAgent,
+  mapRealEstateResponse,
+  mapShipResponse,
+  mapSyslumennAuction,
+  mapTemporaryEventLicence,
+  mapVehicle,
+  mapVehicleResponse,
+} from './syslumennClient.utils'
 
+import type { ConfigType } from '@island.is/nest/config'
+const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 @Injectable()
 export class SyslumennService {
   constructor(
@@ -568,11 +571,11 @@ export class SyslumennService {
     return mapDepartedToRegistryPerson(res)
   }
 
-  async getInheritanceTax(dateOfDeath: Date): Promise<InheritanceTax> {
+  async getInheritanceTax(caseNumber: string): Promise<InheritanceTax> {
     const { id, api } = await this.createApi()
     const res = await api.erfdafjarskatturGet({
       audkenni: id,
-      danardagur: dateOfDeath,
+      malsnumer: caseNumber,
     })
 
     return mapInheritanceTax(res)
@@ -673,5 +676,23 @@ export class SyslumennService {
       audkenni: id,
       kennitala: nationalId,
     })
+  }
+
+  async checkIfDelegationExists(
+    toNationalId: string,
+    fromNationalId: string,
+  ): Promise<boolean> {
+    const { id, api } = await this.createApi()
+    const delegations: LogradamadurSvar[] = await api.logradamadurGet({
+      audkenni: id,
+      kennitala: toNationalId,
+    })
+
+    return delegations.some(
+      (delegation) =>
+        delegation.kennitala === fromNationalId &&
+        (!delegation.gildirTil ||
+          delegation.gildirTil > startOfDay(new Date())),
+    )
   }
 }

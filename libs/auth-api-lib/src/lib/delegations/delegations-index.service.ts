@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
-import * as kennitala from 'kennitala'
 import startOfDay from 'date-fns/startOfDay'
+import * as kennitala from 'kennitala'
+import union from 'lodash/union'
+import { Op } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import {
@@ -11,20 +12,23 @@ import {
   getPersonalRepresentativeDelegationType,
 } from '@island.is/shared/types'
 
-import { ApiScope } from '../resources/models/api-scope.model'
 import { PersonalRepresentativeScopePermissionService } from '../personal-representative/services/personal-representative-scope-permission.service'
-import { DelegationIndex } from './models/delegation-index.model'
-import { DelegationIndexMeta } from './models/delegation-index-meta.model'
-import { DelegationDTO } from './dto/delegation.dto'
+import { ApiScope } from '../resources/models/api-scope.model'
+import { UserIdentitiesService } from '../user-identities/user-identities.service'
+import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
+import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
+import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
+import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
+import { ApiScopeInfo } from './delegations-incoming.service'
 import {
   DelegationRecordDTO,
   DelegationRecordInputDTO,
   PaginatedDelegationRecordDTO,
 } from './dto/delegation-index.dto'
-import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
-import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
-import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
-import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
+import { DelegationDTO } from './dto/delegation.dto'
+import { DelegationIndexMeta } from './models/delegation-index-meta.model'
+import { DelegationIndex } from './models/delegation-index.model'
+import { DelegationDirection } from './types/delegationDirection'
 import {
   DelegationRecordType,
   PersonalRepresentativeDelegationType,
@@ -34,11 +38,20 @@ import {
   validateDelegationTypeAndProvider,
   validateToAndFromNationalId,
 } from './utils/delegations'
-import { DelegationDirection } from './types/delegationDirection'
-import { UserIdentitiesService } from '../user-identities/user-identities.service'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
+
+// When delegation providers have been refactored to use the webhook method
+// with hard check on action we need to exclude them from the standard indexing.
+// We register our current providers as indexed, as all new providers are expected
+// to use the webhook method.
+const INDEXED_DELEGATION_PROVIDERS = [
+  AuthDelegationProvider.Custom,
+  AuthDelegationProvider.PersonalRepresentativeRegistry,
+  AuthDelegationProvider.CompanyRegistry,
+  AuthDelegationProvider.NationalRegistry,
+]
 
 export type DelegationIndexInfo = Pick<
   DelegationIndex,
@@ -267,6 +280,12 @@ export class DelegationsIndexService {
     await this.saveToIndex(nationalId, delegations)
   }
 
+  /* Index incoming general mandate delegations */
+  async indexGeneralMandateDelegations(nationalId: string) {
+    const delegations = await this.getGeneralMandateDelegation(nationalId, true)
+    await this.saveToIndex(nationalId, delegations)
+  }
+
   /* Index incoming personal representative delegations */
   async indexRepresentativeDelegations(nationalId: string) {
     const delegations = await this.getRepresentativeDelegations(
@@ -301,6 +320,36 @@ export class DelegationsIndexService {
     })
   }
 
+  async getAvailableDistrictCommissionersRegistryRecords(
+    user: User,
+    types: AuthDelegationType[],
+    clientAllowedApiScopes: ApiScopeInfo[],
+    requireApiScopes?: boolean,
+  ): Promise<DelegationRecordDTO[]> {
+    if (requireApiScopes) {
+      const noSupportedScope = !clientAllowedApiScopes.some(
+        (s) =>
+          s.supportedDelegationTypes?.some(
+            (dt) => dt.delegationType == AuthDelegationType.LegalRepresentative,
+          ) && !s.isAccessControlled,
+      )
+      if (noSupportedScope) {
+        return []
+      }
+    }
+
+    return await this.delegationIndexModel
+      .findAll({
+        where: {
+          toNationalId: user.nationalId,
+          provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+          type: types,
+          validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
+        },
+      })
+      .then((d) => d.map((d) => d.toDTO()))
+  }
+
   /*
    * Private methods
    * */
@@ -311,6 +360,7 @@ export class DelegationsIndexService {
     const currRecords = await this.delegationIndexModel.findAll({
       where: {
         toNationalId: nationalId,
+        provider: INDEXED_DELEGATION_PROVIDERS,
       },
     })
 
@@ -439,10 +489,43 @@ export class DelegationsIndexService {
     )
   }
 
+  private async getGeneralMandateDelegation(
+    nationalId: string,
+    useMaster = false,
+  ) {
+    const delegation =
+      await this.delegationsIncomingCustomService.findAllValidGeneralMandate(
+        { nationalId },
+        useMaster,
+      )
+
+    return delegation.map(toDelegationIndexInfo)
+  }
+
   private async getCustomDelegations(nationalId: string, useMaster = false) {
-    return this.delegationsIncomingCustomService
-      .findAllValidIncoming({ nationalId }, useMaster)
-      .then((d) => d.map(toDelegationIndexInfo))
+    const delegations =
+      await this.delegationsIncomingCustomService.findAllValidIncoming(
+        { nationalId },
+        useMaster,
+      )
+
+    // Merge delegations by `fromNationalId`, combining scopes if necessary
+    const delegationMap = new Map()
+
+    delegations.forEach((delegation) => {
+      const existing = delegationMap.get(delegation.fromNationalId)
+
+      if (existing) {
+        existing.scopes = union(existing.scopes, delegation.scopes)
+      } else {
+        delegationMap.set(delegation.fromNationalId, delegation)
+      }
+    })
+
+    // Convert the map back to an array
+    const mergedDelegations = Array.from(delegationMap.values())
+
+    return mergedDelegations.map(toDelegationIndexInfo)
   }
 
   private async getRepresentativeDelegations(

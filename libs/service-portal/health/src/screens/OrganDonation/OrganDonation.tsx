@@ -1,6 +1,7 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
+  CardLoader,
   IntroHeader,
   LinkResolver,
 } from '@island.is/service-portal/core'
@@ -9,68 +10,70 @@ import { Button, Box, Text } from '@island.is/island-ui/core'
 import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetDonorStatusQuery } from './OrganDonation.generated'
+
 const OrganDonation = () => {
   useNamespaces('sp.health')
 
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useGetDonorStatusQuery()
-  const donorStatus = data?.HealthDirectorateOrganDonationGetDonorStatus
-
-  const exceptionText: string =
-    donorStatus?.exceptions?.length && donorStatus.exceptions.length > 0
+  const { data, loading, error } = useGetDonorStatusQuery({
+    fetchPolicy: 'no-cache',
+  })
+  const donorStatus = data?.healthDirectorateOrganDonation.donor
+  const cardText: string = donorStatus?.isDonor
+    ? donorStatus?.limitations?.hasLimitations
       ? [
-          donorStatus?.exceptionComment,
+          formatMessage(m.iAmOrganDonorWithExceptionsText),
+          donorStatus?.limitations.limitedOrgansList
+            ?.map((organ) => organ.name)
+            .join(', '),
+        ].join(' ') + '.' ?? ''
+      : formatMessage(m.iAmOrganDonorText)
+    : formatMessage(m.iAmNotOrganDonorText)
 
-          donorStatus?.exceptions?.join(', '),
-        ].join(':') ?? ''
-      : donorStatus?.exceptionComment ?? ''
+  const heading = donorStatus?.isDonor
+    ? donorStatus.limitations?.hasLimitations
+      ? formatMessage(m.iAmOrganDonorWithExceptions)
+      : formatMessage(m.iAmOrganDonor)
+    : formatMessage(m.iAmNotOrganDonor)
+
   return (
     <Box>
       <IntroHeader
         title={formatMessage(m.organDonation)}
         intro={formatMessage(m.organDonationDescription)}
       />
+      <Box marginBottom={6}>
+        <LinkResolver
+          href={formatMessage(m.organDonationLink)}
+          key="organ-donation"
+        >
+          <Button variant="utility" size="small" icon="open" iconType="outline">
+            {formatMessage(m.readAboutOrganDonation)}
+          </Button>
+        </LinkResolver>
+      </Box>
+      {loading && (
+        <Box marginY={4}>
+          <CardLoader />
+        </Box>
+      )}
       {!error && !loading && donorStatus !== null && (
-        <>
-          <Box>
-            <LinkResolver
-              href={formatMessage(m.organDonationLink)}
-              key="organ-donation"
-            >
-              <Button
-                variant="utility"
-                size="small"
-                icon="open"
-                iconType="outline"
-              >
-                {formatMessage(m.readAboutOrganDonation)}
-              </Button>
-            </LinkResolver>
-          </Box>
-          <Box>
-            <Text
-              variant="eyebrow"
-              color="purple400"
-              marginTop={5}
-              marginBottom={1}
-            >
-              {formatMessage(m.takeOnOrganDonation)}
-            </Text>
-            <ActionCard
-              heading={
-                donorStatus?.isDonor
-                  ? formatMessage(m.iAmOrganDonor)
-                  : formatMessage(m.iAmNotOrganDonor)
-              }
-              text={exceptionText}
-              cta={{
-                url: HealthPaths.HealthOrganDonationRegistration,
-                label: formatMessage(m.changeTake),
-                centered: true,
-              }}
-            />
-          </Box>
-        </>
+        <Box>
+          <Text variant="eyebrow" color="purple400" marginBottom={1}>
+            {formatMessage(m.takeOnOrganDonation)}
+          </Text>
+          <ActionCard
+            heading={heading}
+            text={cardText}
+            cta={{
+              url: HealthPaths.HealthOrganDonationRegistration,
+              label: formatMessage(m.changeTake),
+              centered: true,
+              variant: 'text',
+            }}
+            loading={loading}
+          />
+        </Box>
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && data === null && (

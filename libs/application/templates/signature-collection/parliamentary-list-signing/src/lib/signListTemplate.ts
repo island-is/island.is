@@ -7,15 +7,17 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
   NationalRegistryUserApi,
   StateLifeCycle,
   UserProfileApi,
 } from '@island.is/application/types'
-import { Events, Roles, States } from './constants'
+import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
+import { CanSignApi, CurrentCollectionApi, GetListApi } from '../dataProviders'
 
 const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: false,
@@ -31,6 +33,7 @@ const signListTemplate: ApplicationTemplate<
   type: ApplicationTypes.PARLIAMENTARY_LIST_SIGNING,
   name: m.applicationName,
   institution: m.institution,
+  initialQueryParameter: 'candidate',
   featureFlag: Features.ParliamentaryElectionApplication,
   dataSchema,
   translationNamespaces: [
@@ -66,8 +69,9 @@ const signListTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 UserProfileApi,
-                //OwnerRequirementsApi,
-                //CurrentCollectionApi,
+                CurrentCollectionApi,
+                CanSignApi,
+                GetListApi,
               ],
             },
           ],
@@ -120,11 +124,11 @@ const signListTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: WeekLifeCycle,
-          /*onEntry: defineTemplateApi({
+          onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          }),*/
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

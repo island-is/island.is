@@ -177,7 +177,12 @@ export class WorkMachinesResolver {
   async getTechnicalInfoInputs(
     @CurrentUser() auth: User,
     @Args('parentCategory') parentCategory: string,
+    @Args('subCategory') subCategory: string,
   ) {
-    return this.workMachinesService.getTechnicalInfoInputs(auth, parentCategory)
+    return this.workMachinesService.getTechnicalInfoInputs(
+      auth,
+      parentCategory,
+      subCategory,
+    )
   }
 }

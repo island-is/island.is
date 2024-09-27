@@ -9,7 +9,7 @@ import {
   formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { isRestrictionCase } from '@island.is/judicial-system/types'
+import { isRequestCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
@@ -20,13 +20,14 @@ import {
 
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
 import { FormContext } from '../FormProvider/FormProvider'
+import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
 import {
   DefendantInfo,
   DefendantInfoActionButton,
 } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { Item } from './InfoCard'
-import { strings } from './InfoCardIndictment.strings'
+import { strings } from './useInfoCardItems.strings'
 
 const useInfoCardItems = () => {
   const { formatMessage } = useIntl()
@@ -40,7 +41,7 @@ const useInfoCardItems = () => {
   ): Item => ({
     id: 'defendant-item',
     title: capitalize(
-      isRestrictionCase(caseType)
+      isRequestCase(caseType)
         ? formatMessage(core.defendant, {
             suffix:
               workingCase.defendants && workingCase.defendants.length > 1
@@ -81,7 +82,7 @@ const useInfoCardItems = () => {
   const prosecutor = (caseType?: CaseType | null): Item => ({
     id: 'prosecutor-item',
     title: formatMessage(
-      isRestrictionCase(caseType) ? core.prosecutorPerson : strings.prosecutor,
+      isRequestCase(caseType) ? core.prosecutorPerson : strings.prosecutor,
     ),
     values: [
       RenderPersonalData(
@@ -179,19 +180,6 @@ const useInfoCardItems = () => {
         formatDate(workingCase.requestedCourtDate, 'PPPP', true) ?? '',
       )} eftir kl. ${formatDate(
         workingCase.requestedCourtDate,
-        constants.TIME_FORMAT,
-      )}`,
-    ],
-  }
-
-  const confirmedCourtDate: Item = {
-    id: 'confirmed-court-date-item',
-    title: formatMessage(core.confirmedCourtDate),
-    values: [
-      `${capitalize(
-        formatDate(workingCase.arraignmentDate?.date, 'PPPP', true) ?? '',
-      )} kl. ${formatDate(
-        workingCase.arraignmentDate?.date,
         constants.TIME_FORMAT,
       )}`,
     ],
@@ -310,6 +298,23 @@ const useInfoCardItems = () => {
     ],
   }
 
+  const civilClaimants: Item = {
+    id: 'civil-claimant-item',
+    title: capitalize(
+      workingCase.civilClaimants && workingCase.civilClaimants.length > 1
+        ? formatMessage(strings.civilClaimants)
+        : formatMessage(strings.civilClaimant),
+    ),
+    values: workingCase.civilClaimants
+      ? workingCase.civilClaimants.map((civilClaimant) => (
+          <CivilClaimantInfo
+            key={civilClaimant.id}
+            civilClaimant={civilClaimant}
+          />
+        ))
+      : [],
+  }
+
   return {
     defendants,
     indictmentCreated,
@@ -324,7 +329,6 @@ const useInfoCardItems = () => {
     registrar,
     offence,
     requestedCourtDate,
-    confirmedCourtDate,
     mergeCase,
     mergedCasePoliceCaseNumbers,
     mergedCaseCourtCaseNumber,
@@ -338,6 +342,7 @@ const useInfoCardItems = () => {
     indictmentReviewDecision,
     indictmentReviewedDate,
     parentCaseValidToDate,
+    civilClaimants,
   }
 }
 

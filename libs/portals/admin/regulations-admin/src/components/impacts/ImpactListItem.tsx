@@ -72,7 +72,7 @@ export const ImpactListItem = (props: ImpactListItemProps) => {
         variant="small"
         color={getCurrentEffect(effect) ? 'mint800' : 'blueberry600'}
       >
-        Breytt af{' '}
+        Breytt með{' '}
         {getCurrentEffect(effect) ? 'núverandi reglugerð' : effect.name}
       </Text>
     </a>

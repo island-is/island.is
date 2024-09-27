@@ -1,12 +1,4 @@
-import {
-  DeleteObjectCommand,
-  GetObjectCommand,
-  HeadObjectCommand,
-  PutObjectCommand,
-  S3Client,
-} from '@aws-sdk/client-s3'
-import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { S3 } from 'aws-sdk'
 
 import { Inject, Injectable } from '@nestjs/common'
 
@@ -45,66 +37,72 @@ const formatS3Key = (caseType: CaseType, key: string) => {
 
 @Injectable()
 export class AwsS3Service {
-  private readonly s3Client: S3Client
+  private readonly s3: S3
 
   constructor(
     @Inject(awsS3ModuleConfig.KEY)
     private readonly config: ConfigType<typeof awsS3ModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
-    this.s3Client = new S3Client({ region: this.config.region })
+    this.s3 = new S3({ region: this.config.region })
   }
 
-  async createPresignedPost(
+  createPresignedPost(
     caseType: CaseType,
     key: string,
     type: string,
-  ): Promise<{ url: string; fields: Record<string, string> }> {
-    const { url, fields } = await createPresignedPost(this.s3Client, {
-      Bucket: this.config.bucket,
-      Key: formatS3Key(caseType, key),
-      Conditions: [
-        ['content-length-range', 0, 104857600], // 100 MB
-        ['starts-with', '$Content-Type', type],
-      ],
-      Fields: {
-        'content-type': type,
-        'Content-Disposition': 'inline',
-      },
-      Expires: this.config.timeToLivePost,
+  ): Promise<S3.PresignedPost> {
+    return new Promise((resolve, reject) => {
+      this.s3.createPresignedPost(
+        {
+          Bucket: this.config.bucket,
+          Expires: this.config.timeToLivePost,
+          Fields: {
+            key: formatS3Key(caseType, key),
+            'content-type': type,
+            'Content-Disposition': 'inline',
+          },
+        },
+        (err, data) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(data)
+          }
+        },
+      )
     })
-
-    return { url, fields }
   }
 
-  async objectExists(caseType: CaseType, key: string): Promise<boolean> {
-    try {
-      await this.s3Client.send(
-        new HeadObjectCommand({
-          Bucket: this.config.bucket,
-          Key: formatS3Key(caseType, key),
-        }),
+  objectExists(caseType: CaseType, key: string): Promise<boolean> {
+    return this.s3
+      .headObject({
+        Bucket: this.config.bucket,
+        Key: formatS3Key(caseType, key),
+      })
+      .promise()
+      .then(
+        () => true,
+        () => {
+          // The error is either 404 Not Found or 403 Forbidden.
+          // Normally, we would check if the error is 404 Not Found.
+          // However, to avoid granting the service ListBucket permissions,
+          // we also allow 403 Forbidden.
+          return false
+        },
       )
-      return true
-    } catch (error) {
-      // The error is either 404 Not Found or 403 Forbidden.
-      // Normally, we would check if the error is 404 Not Found.
-      // However, to avoid granting the service ListBucket permissions,
-      // we also allow 403 Forbidden.
-      return false
-    }
   }
 
   private async putObjectToS3(key: string, content: string): Promise<string> {
-    await this.s3Client.send(
-      new PutObjectCommand({
+    return this.s3
+      .putObject({
         Bucket: this.config.bucket,
         Key: key,
         Body: Buffer.from(content, 'binary'),
         ContentType: 'application/pdf',
-      }),
-    )
-    return key
+      })
+      .promise()
+      .then(() => key)
   }
 
   putObject(caseType: CaseType, key: string, content: string): Promise<string> {
@@ -123,22 +121,36 @@ export class AwsS3Service {
     return this.putObjectToS3(formatGeneratedRequestCaseKey(key), content)
   }
 
-  async getSignedUrl(
+  getSignedUrl(
     caseType: CaseType,
     key?: string,
     timeToLive?: number,
+    useFreshSession = false,
   ): Promise<string> {
     if (!key) {
       throw new Error('Key is required')
     }
 
-    const command = new GetObjectCommand({
-      Bucket: this.config.bucket,
-      Key: formatS3Key(caseType, key),
-    })
+    return new Promise((resolve, reject) => {
+      const s3 = useFreshSession
+        ? new S3({ region: this.config.region })
+        : this.s3
 
-    return getSignedUrl(this.s3Client, command, {
-      expiresIn: timeToLive ?? this.config.timeToLiveGet,
+      s3.getSignedUrl(
+        'getObject',
+        {
+          Bucket: this.config.bucket,
+          Key: formatS3Key(caseType, key),
+          Expires: timeToLive ?? this.config.timeToLiveGet,
+        },
+        (err, url) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(url)
+          }
+        },
+      )
     })
   }
 
@@ -148,6 +160,7 @@ export class AwsS3Service {
     force: boolean,
     confirmContent: (content: Buffer) => Promise<string | undefined>,
     timeToLive?: number,
+    useFreshSession = false,
   ): Promise<string> {
     if (!key) {
       throw new Error('Key is required')
@@ -160,7 +173,12 @@ export class AwsS3Service {
     const confirmedKey = formatConfirmedIndictmentCaseKey(key)
 
     if (!force && (await this.objectExists(caseType, confirmedKey))) {
-      return this.getSignedUrl(caseType, confirmedKey, timeToLive)
+      return this.getSignedUrl(
+        caseType,
+        confirmedKey,
+        timeToLive,
+        useFreshSession,
+      )
     }
 
     const confirmedContent = await this.getObject(caseType, key).then(
@@ -168,26 +186,22 @@ export class AwsS3Service {
     )
 
     if (!confirmedContent) {
-      return this.getSignedUrl(caseType, key, timeToLive)
+      return this.getSignedUrl(caseType, key, timeToLive, useFreshSession)
     }
 
     return this.putObject(caseType, confirmedKey, confirmedContent).then(() =>
-      this.getSignedUrl(caseType, confirmedKey, timeToLive),
+      this.getSignedUrl(caseType, confirmedKey, timeToLive, useFreshSession),
     )
   }
 
   private async getObjectFromS3(key: string): Promise<Buffer> {
-    const { Body } = await this.s3Client.send(
-      new GetObjectCommand({
+    return this.s3
+      .getObject({
         Bucket: this.config.bucket,
         Key: key,
-      }),
-    )
-    if (!Body) {
-      this.logger.error(`Failure when getting object from S3`, { key })
-      throw new Error('Failure when getting object from S3')
-    }
-    return Buffer.from(await Body.transformToByteArray())
+      })
+      .promise()
+      .then((data) => data.Body as Buffer)
   }
 
   async getObject(caseType: CaseType, key?: string): Promise<Buffer> {
@@ -245,21 +259,21 @@ export class AwsS3Service {
   async deleteObject(caseType: CaseType, key: string): Promise<boolean> {
     const s3Key = formatS3Key(caseType, key)
 
-    try {
-      await this.s3Client.send(
-        new DeleteObjectCommand({
-          Bucket: this.config.bucket,
-          Key: s3Key,
-        }),
-      )
-      return true
-    } catch (error) {
-      // Tolerate failure, but log error
-      this.logger.error(`Failed to delete object ${s3Key} from AWS S3`, {
-        reason: error,
+    return this.s3
+      .deleteObject({
+        Bucket: this.config.bucket,
+        Key: s3Key,
       })
-      return false
-    }
+      .promise()
+      .then(() => true)
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(`Failed to delete object ${s3Key} from AWS S3`, {
+          reason,
+        })
+
+        return false
+      })
   }
 
   deleteConfirmedIndictmentCaseObject(

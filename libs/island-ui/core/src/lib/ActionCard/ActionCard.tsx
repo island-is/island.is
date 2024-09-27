@@ -237,7 +237,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
     }
 
     return (
-      <Box marginTop={2}>
+      <Box marginTop={2} marginRight={5}>
         <ProgressMeter
           progress={
             Number(

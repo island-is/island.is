@@ -3,7 +3,6 @@ import { handle404 } from '@island.is/clients/middlewares'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   DiseaseVaccinationDto,
-  MeVaccinationControllerGetVaccinationsForDiseasesRequest,
   MeVaccinationsApi,
   VaccinationDto,
 } from './gen/fetch'
@@ -41,10 +40,9 @@ export class HealthDirectorateVaccinationsService {
 
   public async getVaccinationDiseaseDetail(
     auth: Auth,
-    input: MeVaccinationControllerGetVaccinationsForDiseasesRequest,
   ): Promise<Array<DiseaseVaccinationDto> | null> {
     const disease = await this.vaccinationsApiWithAuth(auth)
-      .meVaccinationControllerGetVaccinationsForDiseases(input)
+      .meVaccinationControllerGetVaccinationsForDiseases()
       .catch(handle404)
 
     if (!disease) {

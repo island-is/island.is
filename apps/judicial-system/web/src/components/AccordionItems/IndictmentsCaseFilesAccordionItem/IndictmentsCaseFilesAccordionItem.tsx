@@ -1,9 +1,12 @@
-import React, { FC, PointerEvent, useEffect, useMemo, useState } from 'react'
-import InputMask from 'react-input-mask'
+import {
+  Dispatch,
+  FC,
+  PointerEvent,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
-import { useMeasure } from 'react-use'
-import isValid from 'date-fns/isValid'
-import parseISO from 'date-fns/parseISO'
 import {
   animate,
   AnimatePresence,
@@ -19,12 +22,10 @@ import {
   AccordionItem,
   AlertMessage,
   Box,
-  Icon,
-  Input,
   Text,
   toast,
+  UploadFileStatus,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
@@ -40,8 +41,11 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import EditableCaseFile, {
+  TEditableCaseFile,
+} from '../../EditableCaseFile/EditableCaseFile'
 import { useUpdateFilesMutation } from './updateFiles.generated'
-import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
+import { strings } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
 interface Props {
@@ -51,27 +55,23 @@ interface Props {
   shouldStartExpanded: boolean
   subtypes?: IndictmentSubtypeMap
   crimeScenes?: CrimeSceneMap
+  setEditCount: Dispatch<SetStateAction<number>>
 }
 
 interface CaseFileProps {
   caseFile: ReorderableItem
   onReorder: (id?: string) => void
   onOpen: (id: string) => void
-  onRename: (id: string, name?: string, displayDate?: string) => void
-  onDelete: (id: string) => void
+  onRename: (id: string, name: string, displayDate: string) => void
+  onDelete: (file: TUploadFile) => void
+  setEditCount: Dispatch<SetStateAction<number>>
 }
 
-export interface ReorderableItem {
-  id: string
-  displayText?: string | null
+export interface ReorderableItem extends TEditableCaseFile {
   isDivider: boolean
   isHeading: boolean
-  created?: string | null
   chapter?: number | null
   orderWithinChapter?: number | null
-  userGeneratedFilename?: string | null
-  displayDate?: string | null
-  canOpen?: boolean
 }
 
 const useRaisedShadow = (value: MotionValue<number>) => {
@@ -80,7 +80,7 @@ const useRaisedShadow = (value: MotionValue<number>) => {
 
   useEffect(() => {
     let isActive = false
-    value.onChange((latest) => {
+    value.on('change', (latest) => {
       const wasActive = isActive
       if (latest !== 0) {
         isActive = true
@@ -115,11 +115,24 @@ export const getFilesToUpdate = (
       files[index - 1].chapter === null)
   ) {
     // The file is not in a chapter
-    return [null, null, [files[index]]]
+    return [
+      null,
+      null,
+      files[index].chapter === undefined || files[index].chapter === null
+        ? []
+        : [files[index]],
+    ]
   }
 
   const chapter = files[index - 1]?.chapter ?? 0
   const orderWithinChapter = (files[index - 1]?.orderWithinChapter ?? -1) + 1
+
+  if (
+    files[index].chapter === chapter &&
+    files[index].orderWithinChapter === orderWithinChapter
+  ) {
+    return [chapter, orderWithinChapter, []]
+  }
 
   const filesToUpdate: ReorderableItem[] = [files[index]]
   while (files[++index].chapter === chapter) {
@@ -137,16 +150,19 @@ export const sortedFilesInChapter = (
     .filter((file) => file.chapter === chapter)
     .map((file) => {
       return {
-        id: file.id,
-        displayText: file.name,
         isDivider: false,
         isHeading: false,
-        created: file.created,
         chapter: file.chapter,
         orderWithinChapter: file.orderWithinChapter,
+        id: file.id,
+        category: file.category,
+        created: file.created,
+        displayText: file.name,
         userGeneratedFilename: file.userGeneratedFilename,
         displayDate: file.displayDate,
         canOpen: Boolean(file.key),
+        status: 'done' as UploadFileStatus,
+        canEdit: true,
       }
     })
     .sort((a, b) => {
@@ -173,39 +189,12 @@ const renderChapter = (chapter: number, name?: string | null) => (
 )
 
 const CaseFile: FC<CaseFileProps> = (props) => {
-  const { caseFile, onReorder, onOpen, onRename, onDelete } = props
-  const { formatMessage } = useIntl()
+  const { caseFile, onReorder, onOpen, onRename, onDelete, setEditCount } =
+    props
   const y = useMotionValue(0)
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
   const [isDragging, setIsDragging] = useState<boolean>(false)
-  const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [editedFilename, setEditedFilename] = useState<
-    string | undefined | null
-  >(caseFile.userGeneratedFilename)
-  const [ref, { width }] = useMeasure<HTMLDivElement>()
-
-  const [editedDisplayDate, setEditedDisplayDate] = useState<
-    string | undefined
-  >(formatDate(caseFile.displayDate) ?? undefined)
-  const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
-
-  const handleEditFileButtonClick = () => {
-    const trimmedFilename = editedFilename?.trim()
-    const trimmedDisplayDate = editedDisplayDate?.trim()
-
-    if (trimmedFilename || trimmedDisplayDate) {
-      onRename(caseFile.id, trimmedFilename, trimmedDisplayDate)
-      setIsEditing(false)
-      setEditedDisplayDate(formatDate(caseFile.displayDate) ?? '')
-    }
-
-    setIsEditing(false)
-  }
-
-  const displayDate = useMemo(() => {
-    return formatDate(caseFile.displayDate ?? caseFile.created)
-  }, [caseFile.displayDate, caseFile.created])
 
   const getCursorStyle = () => {
     if (caseFile.isDivider || caseFile.isHeading) {
@@ -262,132 +251,15 @@ const CaseFile: FC<CaseFileProps> = (props) => {
           <Text>{caseFile.displayText?.split('|')[1]}</Text>
         </Box>
       ) : (
-        <div className={styles.caseFileWrapper}>
-          <Box
-            data-testid="caseFileDragHandle"
-            display="flex"
-            paddingX={3}
-            paddingY={2}
-          >
-            <Icon icon="menu" color="blue400" />
-          </Box>
-          <Box width="full">
-            <AnimatePresence initial={false} mode="wait">
-              {isEditing ? (
-                <motion.div
-                  initial={{ y: 10, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: 10, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  key={`${caseFile.id}-edit`}
-                >
-                  <Box display="flex">
-                    <Box className={styles.editCaseFileInputContainer}>
-                      <Box className={styles.editCaseFileName}>
-                        <Input
-                          name="fileName"
-                          size="xs"
-                          placeholder={formatMessage(m.simpleInputPlaceholder)}
-                          defaultValue={displayName ?? undefined}
-                          onChange={(evt) =>
-                            setEditedFilename(evt.target.value)
-                          }
-                        />
-                      </Box>
-                      <Box className={styles.editCaseFileDisplayDate}>
-                        <InputMask
-                          mask={'99.99.9999'}
-                          maskPlaceholder={null}
-                          value={editedDisplayDate || ''}
-                          onChange={(evt) => {
-                            setEditedDisplayDate(evt.target.value)
-                          }}
-                        >
-                          <Input
-                            name="fileDisplayDate"
-                            size="xs"
-                            placeholder={formatDate(new Date())}
-                            autoComplete="off"
-                          />
-                        </InputMask>
-                      </Box>
-                    </Box>
-                    <Box display="flex" alignItems="center">
-                      <button
-                        onClick={handleEditFileButtonClick}
-                        className={styles.editCaseFileButton}
-                      >
-                        <Icon icon="checkmark" color="blue400" />
-                      </button>
-                      <Box marginLeft={1}>
-                        <button
-                          onClick={() => onDelete(caseFile.id)}
-                          className={styles.editCaseFileButton}
-                        >
-                          <Icon icon="trash" color="blue400" type="outline" />
-                        </button>
-                      </Box>
-                    </Box>
-                  </Box>
-                </motion.div>
-              ) : (
-                <motion.div
-                  initial={{ y: -10, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -10, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  key={`${caseFile.id}-view`}
-                  ref={ref}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    component={caseFile.canOpen ? 'button' : undefined}
-                    onClick={() => {
-                      if (caseFile.canOpen && caseFile.id) {
-                        onOpen(caseFile.id)
-                      }
-                    }}
-                  >
-                    <Text variant="h5">
-                      <span
-                        style={{
-                          display: 'block',
-                          maxWidth: `${width - 180}px`,
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {displayName}
-                      </span>
-                    </Text>
-                    {caseFile.canOpen && (
-                      <Box marginLeft={2}>
-                        <Icon icon="open" type="outline" size="small" />
-                      </Box>
-                    )}
-                  </Box>
-                  <Box display="flex" alignItems="center">
-                    <Box marginRight={1}>
-                      <Text variant="small">{displayDate}</Text>
-                    </Box>
-                    <button
-                      onClick={() => setIsEditing(true)}
-                      className={styles.editCaseFileButton}
-                    >
-                      <Icon icon="pencil" color="blue400" />
-                    </button>
-                  </Box>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </Box>
-        </div>
+        <EditableCaseFile
+          caseFile={caseFile}
+          enableDrag
+          onDelete={onDelete}
+          onOpen={onOpen}
+          onRename={onRename}
+          onStartEditing={() => setEditCount((count) => count + 1)}
+          onStopEditing={() => setEditCount((count) => count - 1)}
+        />
       )}
     </Reorder.Item>
   )
@@ -401,13 +273,14 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     shouldStartExpanded,
     subtypes,
     crimeScenes,
+    setEditCount,
   } = props
   const { formatMessage } = useIntl()
   const [updateFilesMutation] = useUpdateFilesMutation()
-
-  const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
+  const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
+    caseId,
+  })
   const { handleRemove } = useS3Upload(caseId)
-
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
     [],
   )
@@ -417,7 +290,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(0, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(m.chapterInvesitgationProcess),
+        displayText: formatMessage(strings.chapterInvesitgationProcess),
         chapter: 1,
         isHeading: true,
         isDivider: false,
@@ -425,7 +298,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(1, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(m.chapterWitnesses),
+        displayText: formatMessage(strings.chapterWitnesses),
         chapter: 2,
         isHeading: true,
         isDivider: false,
@@ -433,7 +306,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(2, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(m.chapterDefendant),
+        displayText: formatMessage(strings.chapterDefendant),
         chapter: 3,
         isHeading: true,
         isDivider: false,
@@ -441,7 +314,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(3, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(m.chapterCaseFiles),
+        displayText: formatMessage(strings.chapterCaseFiles),
         chapter: 4,
         isHeading: true,
         isDivider: false,
@@ -449,7 +322,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(4, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(m.chapterElectronicDocuments),
+        displayText: formatMessage(strings.chapterElectronicDocuments),
         chapter: 5,
         isHeading: true,
         isDivider: false,
@@ -457,9 +330,9 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(5, caseFiles),
       {
         id: uuid(),
-        displayText: `${formatMessage(m.unorderedFilesTitle)}|${formatMessage(
-          m.unorderedFilesExplanation,
-        )}`,
+        displayText: `${formatMessage(
+          strings.unorderedFilesTitle,
+        )}|${formatMessage(strings.unorderedFilesExplanation)}`,
         isHeading: false,
         isDivider: true,
       },
@@ -470,14 +343,17 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
         )
         .map((caseFile) => {
           return {
+            isDivider: false,
+            isHeading: false,
             id: caseFile.id,
+            category: caseFile.category,
             created: caseFile.created,
             displayText: caseFile.name,
             userGeneratedFilename: caseFile.userGeneratedFilename,
-            isDivider: false,
-            isHeading: false,
-            canOpen: Boolean(caseFile.key),
             displayDate: caseFile.displayDate,
+            canOpen: Boolean(caseFile.key),
+            status: 'done' as UploadFileStatus,
+            canEdit: true,
           }
         }),
     ])
@@ -492,6 +368,10 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       fileId,
       reorderableItems,
     )
+
+    if (filesToUpdate.length === 0) {
+      return
+    }
 
     const { errors } = await updateFilesMutation({
       variables: {
@@ -516,44 +396,26 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     })
 
     if (errors) {
-      toast.error(formatMessage(m.reorderFailedErrorMessage))
+      toast.error(formatMessage(strings.reorderFailedErrorMessage))
     }
   }
 
   const handleRename = async (
     fileId: string,
-    newName?: string,
-    newDisplayDate?: string,
+    newName: string,
+    newDisplayDate: string,
   ) => {
-    let newDate: Date | null = null
-    const fileInReorderableItems = reorderableItems.findIndex(
-      (item) => item.id === fileId,
+    setReorderableItems((prev) =>
+      prev.map((item) =>
+        item.id === fileId
+          ? {
+              ...item,
+              userGeneratedFilename: newName,
+              displayDate: newDisplayDate,
+            }
+          : item,
+      ),
     )
-
-    if (fileInReorderableItems === -1) {
-      return
-    }
-
-    if (newDisplayDate) {
-      const [day, month, year] = newDisplayDate.split('.')
-      newDate = parseISO(`${year}-${month}-${day}`)
-
-      if (!isValid(newDate)) {
-        toast.error(formatMessage(m.invalidDateErrorMessage))
-        return
-      }
-    }
-
-    setReorderableItems((prev) => {
-      const newReorderableItems = [...prev]
-      newReorderableItems[fileInReorderableItems].userGeneratedFilename =
-        newName
-      newReorderableItems[fileInReorderableItems].displayDate = newDate
-        ? newDate.toISOString()
-        : newReorderableItems[fileInReorderableItems].displayDate
-
-      return newReorderableItems
-    })
 
     const { errors } = await updateFilesMutation({
       variables: {
@@ -563,7 +425,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
             {
               id: fileId,
               userGeneratedFilename: newName,
-              ...(newDate && { displayDate: newDate.toISOString() }),
+              displayDate: newDisplayDate,
             },
           ],
         },
@@ -571,12 +433,12 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     })
 
     if (errors) {
-      toast.error(formatMessage(m.renameFailedErrorMessage))
+      toast.error(formatMessage(strings.renameFailedErrorMessage))
     }
   }
 
-  const handleDelete = (fileId: string) => {
-    handleRemove({ id: fileId } as TUploadFile, (file: TUploadFile) =>
+  const handleDelete = (file: TUploadFile) => {
+    handleRemove({ id: file.id } as TUploadFile, (file) =>
       setReorderableItems((prev) => prev.filter((item) => item.id !== file.id)),
     )
   }
@@ -585,7 +447,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     <>
       <AccordionItem
         id="IndictmentsCaseFilesAccordionItem"
-        label={formatMessage(m.title, {
+        label={formatMessage(strings.title, {
           policeCaseNumber,
         })}
         labelVariant="h3"
@@ -599,7 +461,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
           />
         </Box>
         <Box marginBottom={3}>
-          <Text>{formatMessage(m.explanation)}</Text>
+          <Text>{formatMessage(strings.explanation)}</Text>
         </Box>
         {/* 
       Render the first chapter here, outside the reorder group because 
@@ -608,7 +470,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
         <Box marginBottom={2}>
           {renderChapter(
             0,
-            formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
+            formatMessage(strings.chapterIndictmentAndAccompanyingDocuments),
           )}
         </Box>
         <Reorder.Group
@@ -626,6 +488,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
                   onOpen={onOpen}
                   onRename={handleRename}
                   onDelete={handleDelete}
+                  setEditCount={setEditCount}
                 />
               </Box>
             )
@@ -641,7 +504,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
               >
                 <AlertMessage
                   type="success"
-                  message={formatMessage(m.noCaseFiles)}
+                  message={formatMessage(strings.noCaseFiles)}
                 />
               </motion.div>
             )}

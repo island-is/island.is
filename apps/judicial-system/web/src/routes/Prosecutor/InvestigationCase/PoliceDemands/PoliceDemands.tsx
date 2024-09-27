@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import router from 'next/router'
 

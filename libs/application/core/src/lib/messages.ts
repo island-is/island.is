@@ -188,6 +188,13 @@ export const coreMessages = defineMessages({
     description:
       'Your application is complete. The application has progressed in the process.',
   },
+  draftProgressMeter: {
+    id: 'application.system:application.progress',
+    defaultMessage:
+      'Þú hefur klárað {draftFinishedSteps} af {draftTotalSteps} skrefum',
+    description:
+      'You have completed {draftFinishedSteps} of {draftTotalSteps} steps',
+  },
   notLoggedIn: {
     id: 'application.system:not.logged.id',
     defaultMessage: 'Þú þarft að vera skrá þig inn.',
@@ -412,6 +419,12 @@ export const coreErrorMessages = defineMessages({
   paymentSubmitFailed: {
     id: 'application.system:core.payment.submitTitle',
     defaultMessage: 'Sending umsóknar mistókst',
+    description: 'Message indicating submission after payment failed',
+  },
+  paymentSubmitFailedDescription: {
+    id: 'application.system:core.payment.submitTitle',
+    defaultMessage:
+      'Villa hefur komið upp við áframhaldandi vinnslu. Vinsamlegast reynið aftur síðar. Ef villa endurtekur sig vinsamlegast hafið samband við island@island.is.',
     description: 'Message indicating submission after payment failed',
   },
   applicationSubmitFailed: {

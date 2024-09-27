@@ -3,7 +3,7 @@ import format from 'date-fns/format'
 import { FC, useEffect, useRef, useState } from 'react'
 
 import { DocumentV2, DocumentV2Content } from '@island.is/api/schema'
-import { Box, Text, LoadingDots, Icon } from '@island.is/island-ui/core'
+import { Box, Text, LoadingDots, Icon, toast } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
 import { m } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
@@ -58,11 +58,10 @@ export const DocumentLine: FC<Props> = ({
   const {
     submitMailAction,
     loading: postLoading,
-    archiveSuccess,
     bookmarkSuccess,
   } = useMailAction()
 
-  const { activeArchive, fetchObject, refetch } = useDocumentList()
+  const { fetchObject, refetch } = useDocumentList()
 
   const {
     setActiveDocument,
@@ -76,7 +75,7 @@ export const DocumentLine: FC<Props> = ({
   const avatarRef = useRef(null)
 
   const isFocused = useIsChildFocusedorHovered(wrapperRef)
-  const isAvatarFocused = useIsChildFocusedorHovered(avatarRef)
+  const isAvatarFocused = useIsChildFocusedorHovered(avatarRef, false)
 
   useEffect(() => {
     setHasFocusOrHover(isFocused)
@@ -136,11 +135,14 @@ export const DocumentLine: FC<Props> = ({
         }
       },
       onError: () => {
-        setDocumentDisplayError(
-          formatMessage(messages.documentFetchError, {
-            senderName: documentLine.sender?.name ?? '',
-          }),
-        )
+        const errorMessage = formatMessage(messages.documentFetchError, {
+          senderName: documentLine.sender?.name ?? '',
+        })
+        if (asFrame) {
+          toast.error(errorMessage, { toastId: 'overview-doc-error' })
+        } else {
+          setDocumentDisplayError(errorMessage)
+        }
       },
     })
 

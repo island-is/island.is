@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 
 import { FormContext } from '../FormProvider/FormProvider'
 import InfoCard from './InfoCard'
@@ -18,18 +18,18 @@ const InfoCardActiveIndictment = () => {
     mergedCaseProsecutor,
     mergedCaseJudge,
     mergedCaseCourt,
+    civilClaimants,
   } = useInfoCardItems()
 
   return (
     <InfoCard
       sections={[
-        ...(workingCase.defendants
-          ? [
-              {
-                id: 'defendant-section',
-                items: [defendants(workingCase.type)],
-              },
-            ]
+        {
+          id: 'defendant-section',
+          items: [defendants(workingCase.type)],
+        },
+        ...(workingCase.hasCivilClaims
+          ? [{ id: 'civil-claimant-section', items: [civilClaimants] }]
           : []),
         {
           id: 'case-info-section',

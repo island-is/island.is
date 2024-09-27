@@ -76,6 +76,24 @@ export const formatNationalId = (nationalId?: string | null): string => {
   }
 }
 
+export const normalizeAndFormatNationalId = (
+  nationalId?: string | null,
+): [string, string] => {
+  return [nationalId?.replace(/-/g, '') ?? '', formatNationalId(nationalId)]
+}
+
+export const getInitials = (name?: string | null): string | undefined => {
+  if (!name?.trim()) return undefined
+
+  const names = name.trim().split(' ')
+  const initials =
+    names.length > 1
+      ? `${names[0][0]}${names[names.length - 1][0]}`
+      : names[0][0]
+
+  return initials.toUpperCase()
+}
+
 export const formatPhoneNumber = (phoneNumber?: string | null) => {
   if (!phoneNumber) {
     return
@@ -112,6 +130,8 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
       return 'Frávísun'
     case CaseIndictmentRulingDecision.CANCELLATION:
       return 'Niðurfelling máls'
+    case CaseIndictmentRulingDecision.MERGE:
+      return 'Sameinað'
     default:
       return 'Ekki skráð'
   }
@@ -119,7 +139,7 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
 
 type CaseTypes = { [c in CaseType]: string }
 const caseTypes: CaseTypes = {
-  // Indicitment cases
+  // Indictment cases
   INDICTMENT: 'ákæra',
   // Restriction cases
   CUSTODY: 'gæsluvarðhald',

@@ -1,12 +1,16 @@
-import React, { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
+import { Accordion, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { isCompletedCase } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isDefenceUser,
+} from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
@@ -23,6 +27,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseIndictmentRulingDecision,
   CaseState,
   IndictmentDecision,
   UserRole,
@@ -50,11 +55,19 @@ const IndictmentOverview: FC = () => {
     isCompletedCase(workingCase.state) &&
     workingCase.indictmentReviewer?.id === user?.id &&
     Boolean(!workingCase.indictmentReviewDecision)
+  const canAddFiles =
+    isDefenceUser(user) &&
+    workingCase.indictmentDecision !==
+      IndictmentDecision.POSTPONING_UNTIL_VERDICT
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
+
+  const hasLawsBroken = lawsBroken.size > 0
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
 
   return (
     <PageLayout
@@ -103,25 +116,56 @@ const IndictmentOverview: FC = () => {
           {caseIsClosed ? (
             <InfoCardClosedIndictment
               displayAppealExpirationInfo={
-                user?.role === UserRole.DEFENDER ||
-                workingCase.indictmentReviewer?.id === user?.id
+                workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING &&
+                (user?.role === UserRole.DEFENDER ||
+                  workingCase.indictmentReviewer?.id === user?.id)
               }
             />
           ) : (
             <InfoCardActiveIndictment />
           )}
         </Box>
-        {lawsBroken.size > 0 && (
+        {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
-            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            {hasLawsBroken && (
+              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            )}
+            {hasMergeCases && (
+              <Accordion>
+                {workingCase.mergedCases?.map((mergedCase) => (
+                  <Box key={mergedCase.id}>
+                    <ConnectedCaseFilesAccordionItem
+                      connectedCaseParentId={workingCase.id}
+                      connectedCase={mergedCase}
+                    />
+                  </Box>
+                ))}
+              </Accordion>
+            )}
           </Box>
         )}
         {workingCase.caseFiles && (
           <Box
             component="section"
-            marginBottom={shouldDisplayReviewDecision ? 5 : 10}
+            marginBottom={shouldDisplayReviewDecision || canAddFiles ? 5 : 10}
           >
             <IndictmentCaseFilesList workingCase={workingCase} />
+          </Box>
+        )}
+        {canAddFiles && (
+          <Box display="flex" justifyContent="flexEnd" marginBottom={10}>
+            <Button
+              size="small"
+              icon="add"
+              onClick={() =>
+                router.push(
+                  `${constants.DEFENDER_ADD_FILES_ROUTE}/${workingCase.id}`,
+                )
+              }
+            >
+              {formatMessage(strings.addDocumentsButtonText)}
+            </Button>
           </Box>
         )}
         {shouldDisplayReviewDecision && (

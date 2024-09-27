@@ -26,11 +26,6 @@ export const information = {
           'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
         description: `Importer page description`,
       },
-      isOwnerOtherThenImporter: {
-        id: 'aosh.rnm.application:information.labels.importer.isOwnerOtherThenImporter',
-        defaultMessage: 'Er eigandi annar en innflytjandi?',
-        description: `Is owner other than importer question label`,
-      },
       name: {
         id: 'aosh.rnm.application:information.labels.importer.name',
         defaultMessage: 'Nafn',
@@ -63,40 +58,66 @@ export const information = {
       },
     }),
     owner: defineMessages({
+      sectionTitle: {
+        id: 'aosh.rnm.application:information.labels.owner.sectionTitle',
+        defaultMessage: 'Eigandi',
+        description: `Owner section title`,
+      },
       title: {
         id: 'aosh.rnm.application:information.labels.otherOwner.title',
         defaultMessage: 'Eigandi',
         description: `Owner title label`,
       },
+      description: {
+        id: 'aosh.rnm.application:information.labels.owner.description',
+        defaultMessage: 'Skráðu viðeigandi upplýsingar',
+        description: `Owner page description`,
+      },
+      isOwnerOtherThenImporter: {
+        id: 'aosh.rnm.application:information.labels.owner.isOwnerOtherThenImporter',
+        defaultMessage: 'Er eigandi annar en innflytjandi?',
+        description: `Is owner other than importer question label`,
+      },
       name: {
         id: 'aosh.rnm.application:information.labels.otherOwner.name',
-        defaultMessage: 'Nafn eiganda',
+        defaultMessage: 'Nafn',
         description: `Owner name label`,
       },
       nationalId: {
         id: 'aosh.rnm.application:information.labels.otherOwner.nationalId',
-        defaultMessage: 'Kennitala eiganda',
+        defaultMessage: 'Kennitala',
         description: `Owner nationalId label`,
       },
       address: {
         id: 'aosh.rnm.application:information.labels.otherOwner.address',
-        defaultMessage: 'Heimilisfang eiganda',
+        defaultMessage: 'Heimilisfang',
         description: `Owner address label`,
       },
       postCode: {
         id: 'aosh.rnm.application:information.labels.otherOwner.ostCode',
-        defaultMessage: 'Póstnúmer eiganda',
+        defaultMessage: 'Póstnúmer',
         description: `Owner post code label`,
       },
       phone: {
         id: 'aosh.rnm.application:information.labels.otherOwner.phone',
-        defaultMessage: 'Símanúmer eiganda',
+        defaultMessage: 'Símanúmer',
         description: `Owner phone number label`,
       },
       email: {
         id: 'aosh.rnm.application:information.labels.otherOwner.email',
-        defaultMessage: 'Netfang eiganda',
+        defaultMessage: 'Netfang',
         description: `Owner email label`,
+      },
+      alertTitle: {
+        id: 'aosh.rnm.application:information.labels.otherOwner.alertTitle',
+        defaultMessage: 'Kennitala sú sama og hjá innflytjanda',
+        description: `Owner alert title`,
+      },
+      alertMessage: {
+        id: 'aosh.rnm.application:information.labels.otherOwner.alertMessage',
+        defaultMessage:
+          'Kennitalan sem þú skráðir fyrir eiganda er sú sama og hjá innflytjanda, vertu viss um að þú hafir skráð inn rétta kennitölu.',
+        description: `Owner alert message`,
       },
     }),
     operator: defineMessages({
@@ -149,6 +170,17 @@ export const information = {
         id: 'aosh.rnm.application:information.labels.operator.email',
         defaultMessage: 'Netfang',
         description: `Operator email label`,
+      },
+      alertTitle: {
+        id: 'aosh.rnm.application:information.labels.operator.alertTitle',
+        defaultMessage: 'Kennitala sú sama og hjá eiganda',
+        description: `Operator alert title`,
+      },
+      alertMessage: {
+        id: 'aosh.rnm.application:information.labels.operator.alertMessage',
+        defaultMessage:
+          'Kennitalan sem þú skráðir fyrir umráðarmann er sú sama og hjá eiganda, vertu viss um að þú hafir skráð inn rétta kennitölu.',
+        description: `Operator alert message`,
       },
     }),
     radioButtons: defineMessages({
