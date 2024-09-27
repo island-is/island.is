@@ -301,6 +301,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         display="flex"
         flexDirection={['column', 'row', 'column', 'row']}
         rowGap={3}
+        columnGap={3}
       >
         {renderAvatar()}
 
@@ -335,11 +336,9 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
 
         <Box
           // The right content box
-          alignItems={['stretch', 'flexEnd']}
+          alignItems={['stretch', 'flexEnd', 'flexStart', 'flexEnd']}
           flexDirection="column"
           flexShrink={0}
-          marginTop={[2, 0]}
-          marginLeft={[0, 3]}
           className={styles.button}
           justifyContent="center"
           display={hasCTAElements ? 'flex' : 'none'}
