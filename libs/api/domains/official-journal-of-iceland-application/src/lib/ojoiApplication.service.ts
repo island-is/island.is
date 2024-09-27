@@ -166,4 +166,13 @@ export class OfficialJournalOfIcelandApplicationService {
       return { success: false }
     }
   }
+
+  async getUserInvolvedParties(input: GetCommentsInput, user: User) {
+    return this.ojoiApplicationService.getUserInvolvedParties(
+      {
+        id: input.id,
+      },
+      user,
+    )
+  }
 }

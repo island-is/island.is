@@ -15,6 +15,7 @@ import {
   AddApplicationAttachmentRequest,
   GetApplicationAttachmentsRequest,
   DeleteApplicationAttachmentRequest,
+  GetInvolvedPartiesRequest,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -177,5 +178,9 @@ export class OfficialJournalOfIcelandApplicationClientService {
     await this.ojoiApplicationApiWithAuth(auth).deleteApplicationAttachment(
       params,
     )
+  }
+
+  async getUserInvolvedParties(params: GetInvolvedPartiesRequest, auth: Auth) {
+    return this.ojoiApplicationApiWithAuth(auth).getInvolvedParties(params)
   }
 }
