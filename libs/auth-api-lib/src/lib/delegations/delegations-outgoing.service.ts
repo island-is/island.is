@@ -72,7 +72,7 @@ export class DelegationsOutgoingService {
     }
 
     const [delegations, delegationTypesDelegations] = await Promise.all([
-      await this.delegationModel.findAll({
+      this.delegationModel.findAll({
         where: and(
           {
             fromNationalId: user.nationalId,
