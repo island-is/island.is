@@ -12,7 +12,7 @@ const VehicleBulkMileageFileDownloader = ({ onError }: Props) => {
   const { formatMessage } = useLocale()
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleFileDownload = async () => {
+  const downloadExampleFile = async () => {
     setIsLoading(true)
     try {
       downloadFile(
@@ -35,7 +35,7 @@ const VehicleBulkMileageFileDownloader = ({ onError }: Props) => {
       iconType="outline"
       size="default"
       variant="utility"
-      onClick={handleFileDownload}
+      onClick={downloadExampleFile}
       loading={isLoading}
     >
       {formatMessage(vehicleMessage.downloadTemplate)}
