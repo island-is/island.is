@@ -189,13 +189,21 @@ export class DelegationsIncomingService {
     }
 
     if (types?.includes(AuthDelegationType.GeneralMandate)) {
-      delegationPromises.push(
-        this.delegationsIncomingCustomService.findAllAvailableGeneralMandate(
+      const isGeneralMandateDelegationEnabled =
+        await this.featureFlagService.getValue(
+          Features.isGeneralMandateDelegationEnabled,
+          true,
           user,
-          clientAllowedApiScopes,
-          client.requireApiScopes,
-        ),
-      )
+        )
+      if (isGeneralMandateDelegationEnabled) {
+        delegationPromises.push(
+          this.delegationsIncomingCustomService.findAllAvailableGeneralMandate(
+            user,
+            clientAllowedApiScopes,
+            client.requireApiScopes,
+          ),
+        )
+      }
     }
 
     if (
