@@ -159,6 +159,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       ? 12 * 7
       : 12 * 2
 
+  const maxMonthPensionDelay =
+    typeof birthYear === 'number' && birthYear < 1952
+      ? maxMonthPensionDelayIfBorn1951OrEarlier
+      : maxMonthPensionDelayIfBornAfter1951
+
   const basePensionTypeOptions = useMemo<Option<BasePensionType>[]>(() => {
     const options = [
       {
@@ -390,11 +395,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
         months: -maxMonthPensionHurry,
       }).getFullYear()
 
-      const maxMonthPensionDelay =
-        typeof birthYear === 'number' && birthYear < 1952
-          ? maxMonthPensionDelayIfBorn1951OrEarlier
-          : maxMonthPensionDelayIfBornAfter1951
-
       const maxYear = add(defaultPensionDate, {
         months: maxMonthPensionDelay,
       }).getFullYear()
@@ -408,13 +408,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     }
 
     return options
-  }, [
-    birthYear,
-    defaultPensionDate,
-    maxMonthPensionDelayIfBorn1951OrEarlier,
-    maxMonthPensionDelayIfBornAfter1951,
-    maxMonthPensionHurry,
-  ])
+  }, [defaultPensionDate, maxMonthPensionDelay, maxMonthPensionHurry])
 
   const title = `${formatMessage(translationStrings.mainTitle)} ${
     dateOfCalculationsOptions.find((o) => o.value === dateOfCalculations)
@@ -422,22 +416,31 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   }`
 
   const startMonthOptions = useMemo(() => {
-    if (
-      startYear === startYearOptions?.[0]?.value &&
-      typeof birthMonth === 'number' &&
-      typeof startMonth === 'number'
-    ) {
-      if (startMonth < birthMonth + 1) {
-        methods.setValue('startMonth', birthMonth + 1)
-      }
-      return monthOptions.filter(({ value }) => value >= birthMonth + 1)
+    if (!defaultPensionDate) {
+      return monthOptions
     }
+
+    if (startYear === startYearOptions[0]?.value) {
+      const minMonth = add(defaultPensionDate, {
+        months: -maxMonthPensionHurry,
+      }).getMonth()
+      return monthOptions.filter((month) => month.value >= minMonth)
+    }
+
+    if (startYear === startYearOptions[startYearOptions.length - 1]?.value) {
+      const maxMonth = add(defaultPensionDate, {
+        months: maxMonthPensionDelay,
+      }).getMonth()
+
+      return monthOptions.filter((month) => month.value <= maxMonth)
+    }
+
     return monthOptions
   }, [
-    birthMonth,
-    methods,
+    defaultPensionDate,
+    maxMonthPensionDelay,
+    maxMonthPensionHurry,
     monthOptions,
-    startMonth,
     startYear,
     startYearOptions,
   ])
@@ -600,20 +603,16 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                     translationStrings.birthMonthPlaceholder,
                                   )}
                                   onSelect={(option) => {
-                                    if (option.value > 10) {
-                                      methods.setValue('startMonth', 0)
-                                      if (startYear) {
-                                        methods.setValue(
-                                          'startYear',
-                                          startYear + 1,
-                                        )
-                                      }
-                                    } else {
-                                      methods.setValue(
-                                        'startMonth',
-                                        option.value + 1,
-                                      )
-                                    }
+                                    methods.setValue(
+                                      'startMonth',
+                                      option.value > 10 ? 0 : option.value + 1,
+                                    )
+                                    methods.setValue(
+                                      'startYear',
+                                      birthYear +
+                                        defaultPensionAge +
+                                        (option.value > 10 ? 1 : 0),
+                                    )
                                   }}
                                 />
                               </Box>
@@ -694,6 +693,55 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                       placeholder={formatMessage(
                                         translationStrings.startYearPlaceholder,
                                       )}
+                                      onSelect={(option) => {
+                                        if (!defaultPensionDate) {
+                                          return
+                                        }
+                                        if (
+                                          option.value ===
+                                          startYearOptions[0]?.value
+                                        ) {
+                                          const minMonth = add(
+                                            defaultPensionDate,
+                                            {
+                                              months: -maxMonthPensionHurry,
+                                            },
+                                          ).getMonth()
+                                          if (
+                                            typeof startMonth === 'number' &&
+                                            startMonth < minMonth
+                                          ) {
+                                            methods.setValue(
+                                              'startMonth',
+                                              minMonth,
+                                            )
+                                          }
+                                        }
+
+                                        if (
+                                          option.value ===
+                                          startYearOptions[
+                                            startYearOptions.length - 1
+                                          ]?.value
+                                        ) {
+                                          const maxMonth = add(
+                                            defaultPensionDate,
+                                            {
+                                              months: maxMonthPensionDelay,
+                                            },
+                                          ).getMonth()
+
+                                          if (
+                                            typeof startMonth === 'number' &&
+                                            startMonth > maxMonth
+                                          ) {
+                                            methods.setValue(
+                                              'startMonth',
+                                              maxMonth,
+                                            )
+                                          }
+                                        }
+                                      }}
                                     />
                                   </Box>
                                 </Inline>

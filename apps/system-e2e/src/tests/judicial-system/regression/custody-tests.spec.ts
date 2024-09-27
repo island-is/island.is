@@ -63,7 +63,7 @@ test.describe.serial('Custody tests', () => {
       .fill(randomPoliceCaseNumber())
     await page.getByRole('button', { name: 'Skrá númer' }).click()
     await page.getByRole('checkbox').first().check()
-    await page.locator('input[name=accusedName]').fill(faker.name.findName())
+    await page.locator('input[name=inputName]').fill(faker.name.findName())
     await page.locator('input[name=accusedAddress]').fill('Einhversstaðar 1')
     await page.locator('#defendantGender').click()
     await page.locator('#react-select-defendantGender-option-0').click()

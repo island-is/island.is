@@ -1,9 +1,11 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
   Headers,
   Param,
+  Post,
   UseGuards,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
@@ -16,8 +18,10 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import {
+  CreatePaperDelegationDto,
   DelegationAdminCustomDto,
   DelegationAdminCustomService,
+  DelegationDTO,
 } from '@island.is/auth-api-lib'
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit, AuditService } from '@island.is/nest/audit'
@@ -62,6 +66,28 @@ export class DelegationAdminController {
   ): Promise<DelegationAdminCustomDto> {
     return await this.delegationAdminService.getAllDelegationsByNationalId(
       nationalId,
+    )
+  }
+
+  @Post()
+  @Scopes(DelegationAdminScopes.admin)
+  @Documentation({
+    response: { status: 201, type: DelegationDTO },
+  })
+  create(
+    @CurrentUser() user: User,
+    @Body() delegation: CreatePaperDelegationDto,
+  ): Promise<DelegationDTO> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'create',
+        resources: (result) => {
+          return result?.id ?? undefined
+        },
+      },
+      this.delegationAdminService.createDelegation(user, delegation),
     )
   }
 

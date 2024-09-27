@@ -321,6 +321,10 @@ export const include: Includeable[] = [
               CaseFileCategory.CRIMINAL_RECORD,
               CaseFileCategory.COST_BREAKDOWN,
               CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+              CaseFileCategory.CASE_FILE,
+              CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIM,
             ],
           },
         },
@@ -337,10 +341,10 @@ export const include: Includeable[] = [
 
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
   [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
   [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
   [{ model: Notification, as: 'notifications' }, 'created', 'DESC'],
-  [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
 ]
 
 export const caseListInclude: Includeable[] = [
@@ -388,14 +392,13 @@ export const caseListInclude: Includeable[] = [
     as: 'eventLogs',
     required: false,
     where: { eventType: { [Op.in]: eventTypes } },
-    order: [['created', 'DESC']],
-    separate: true,
   },
 ]
 
 export const listOrder: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
   [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
+  [{ model: EventLog, as: 'eventLogs' }, 'created', 'DESC'],
 ]
 
 @Injectable()

@@ -106,6 +106,7 @@ describe('InternalFileController - Deliver case file to court of appeals', () =>
         theCase.type,
         key,
         mockFileConfig.robotS3TimeToLiveGet,
+        true,
       )
       expect(mockCourtService.updateAppealCaseWithFile).toHaveBeenCalledWith(
         user,
