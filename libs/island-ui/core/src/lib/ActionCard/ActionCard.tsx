@@ -297,9 +297,10 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
 
       <Box
         // The left content box
-        alignItems={['stretch', 'center']}
+        alignItems={['stretch', 'center', 'stretch', 'center']}
         display="flex"
-        flexDirection={['column', 'row']}
+        flexDirection={['column', 'row', 'column', 'row']}
+        rowGap={3}
       >
         {renderAvatar()}
 
