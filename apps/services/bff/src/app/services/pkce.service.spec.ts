@@ -18,6 +18,8 @@ describe('PKCEService', () => {
     const verifierTestCases = [
       { length: 50, description: 'default length 50' },
       { length: 64, description: 'specified length 64' },
+      { length: 43, description: 'minimum length 43' },
+      { length: 128, description: 'maximum length 128' },
     ]
 
     verifierTestCases.forEach(({ length, description }) => {
@@ -27,6 +29,18 @@ describe('PKCEService', () => {
         // Check allowed characters
         expect(verifier).toMatch(ALLOWED_VERIFIER_CHARACTERS_REGEX)
       })
+    })
+
+    it('should throw an error if the length is less than 43', async () => {
+      await expect(service.generateVerifier(42)).rejects.toThrow(
+        'Length must be a positive integer between 43 and 128',
+      )
+    })
+
+    it('should throw an error if the length is greater than 128', async () => {
+      await expect(service.generateVerifier(129)).rejects.toThrow(
+        'Length must be a positive integer between 43 and 128',
+      )
     })
   })
 

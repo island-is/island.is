@@ -43,8 +43,19 @@ export class PKCEService {
   /**
    * Generate a PKCE challenge verifier
    * Generates cryptographically strong random string
+   *
+   * @param length The length of the verifier to generate
+   *
+   * Note! According to the RFC from OAuth 2.0 PKCE RFC 7636, the PKCE code verifier must have a length between 43 and 128 characters.
    */
   async generateVerifier(length = 50): Promise<string> {
+    // Enforce PKCE length requirements: 43 <= length <= 128
+    if (!Number.isInteger(length) || length < 43 || length > 128) {
+      throw new Error(
+        'Length must be a positive integer between 43 and 128, inclusive',
+      )
+    }
+
     const mask =
       'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~'
 

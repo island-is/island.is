@@ -61,7 +61,7 @@ export class CryptoService {
       // The IV is used in decryption.
       return `${this.algorithm}:${iv.toString('base64')}:${encrypted}`
     } catch (error) {
-      this.logger.error('Error encrypting text:', error)
+      this.logger.error('Error encrypting text:', { message: error.message })
 
       throw new Error('Failed to encrypt the text.')
     }
@@ -103,7 +103,7 @@ export class CryptoService {
       // Return the decrypted plaintext
       return decrypted
     } catch (error) {
-      this.logger.error('Error decrypting text:', error)
+      this.logger.error('Error decrypting text:', { message: error.message })
 
       throw new Error('Failed to decrypt the text.')
     }

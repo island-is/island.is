@@ -56,6 +56,10 @@ export class CacheService {
   }
 
   public async delete(key: string) {
-    await this.cacheManager.del(key)
+    try {
+      await this.cacheManager.del(key)
+    } catch (error) {
+      throw new Error(`Failed to delete key "${key}" from cache.`)
+    }
   }
 }
