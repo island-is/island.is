@@ -12,7 +12,7 @@ import {
   CreateDelegationMutationVariables,
 } from './CreateDelegation.generated'
 import {
-  findProblemInApolloError,
+  findProblemInApolloError, Problem,
   ProblemType,
 } from '@island.is/shared/problem'
 
@@ -54,7 +54,7 @@ export type CreateDelegationResult = ValidateFormDataResult<typeof schema> & {
    * Global error message if the mutation fails
    */
   globalError?: boolean
-  errorMessage?: string
+  problem?: Problem
   success?: boolean
 }
 
@@ -99,7 +99,7 @@ export const createDelegationAction: WrappedActionFn =
         errors: null,
         data: null,
         globalError: true,
-        errorMessage: problem?.detail,
+        problem: problem,
       }
     }
   }

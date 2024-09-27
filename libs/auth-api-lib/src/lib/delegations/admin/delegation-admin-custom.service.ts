@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, HttpStatus, Injectable, } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import kennitala from 'kennitala'
@@ -28,6 +28,8 @@ import { DELEGATION_TAG, ZENDESK_CUSTOM_FIELDS } from '../constants/zendesk'
 import { DelegationDelegationType } from '../models/delegation-delegation-type.model'
 import { DelegationsIncomingCustomService } from '../delegations-incoming-custom.service'
 import { DelegationValidity } from '../types/delegationValidity'
+import { ErrorCodes } from '@island.is/shared/utils'
+
 
 @Injectable()
 export class DelegationAdminCustomService {
@@ -58,7 +60,10 @@ export class DelegationAdminCustomService {
 
     if (!fromReferenceId || !toReferenceId) {
       throw new BadRequestException(
-        'Zendesk ticket is missing required custom fields',
+        {
+          message: 'Zendesk ticket is missing required custom fields',
+          error: ErrorCodes.ZENDESK_CUSTOM_FIELDS_MISSING
+        }
       )
     }
 
@@ -155,11 +160,21 @@ export class DelegationAdminCustomService {
     )
 
     if (!zendeskCase.tags.includes(DELEGATION_TAG)) {
-      throw new BadRequestException('Zendesk ticket is missing required tag')
+      throw new BadRequestException(
+        {
+          message: 'Zendesk case is missing required tag',
+          error: ErrorCodes.ZENDESK_TAG_MISSING
+        }
+)
     }
 
     if (zendeskCase.status !== TicketStatus.Solved) {
-      throw new BadRequestException('Zendesk case is not solved')
+      throw new BadRequestException(
+        {
+          message: 'Zendesk case is not solved',
+          error: ErrorCodes.ZENDESK_STATUS
+        }
+     )
     }
 
     const { fromReferenceId, toReferenceId } =
@@ -170,7 +185,10 @@ export class DelegationAdminCustomService {
       toReferenceId !== delegation.toNationalId
     ) {
       throw new BadRequestException(
-        'Zendesk ticket nationalIds does not match delegation nationalIds',
+        {
+          message: 'National Ids do not match the Zendesk ticket',
+          error: ErrorCodes.ZENDESK_NATIONAL_IDS_MISMATCH
+        }
       )
     }
 
@@ -254,7 +272,10 @@ export class DelegationAdminCustomService {
   ) {
     if (toNationalId === fromNationalId) {
       throw new BadRequestException(
-        'Cannot create a delegation between the same nationalId.',
+          {
+            message: 'National Ids cannot be the same',
+            error: ErrorCodes.INPUT_VALIDATION_SAME_NATIONAL_ID
+          }
       )
     }
 
@@ -262,7 +283,10 @@ export class DelegationAdminCustomService {
       !(kennitala.isPerson(fromNationalId) && kennitala.isPerson(toNationalId))
     ) {
       throw new BadRequestException(
-        'National ids needs to be valid person national ids',
+        {
+          message: 'National Ids are not valid',
+          error: ErrorCodes.INPUT_VALIDATION_INVALID_PERSON
+        }
       )
     }
   }
