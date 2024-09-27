@@ -984,6 +984,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:unhealthy-jobs',
     defaultMessage: 'Misheppnuð verk',
   },
+  noValidMileage: {
+    id: 'sp.vehicles:no-valid-mileage',
+    defaultMessage: 'Engin gild kílómetrastaða fannst í skjali',
+  },
   dragFileToUpload: {
     id: 'sp.vehicles:drag-file-to-upload',
     defaultMessage: 'Dragðu skjal hingað til að hlaða upp',

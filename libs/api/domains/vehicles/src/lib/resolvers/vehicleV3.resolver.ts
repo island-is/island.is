@@ -45,6 +45,4 @@ export class VehiclesV3Resolver {
   ) {
     return this.vehiclesService.getVehicleMileageHistory(user, input)
   }
-
-  //field resolve mileage registrations?
 }

@@ -51,7 +51,7 @@ const VehicleBulkMileageUpload = () => {
     try {
       const records = await parseCsvToMileageRecord(file)
       if (!records.length) {
-        setUploadErrorMessage('Engin gild kílómetrastaða fannst í skjali')
+        setUploadErrorMessage(formatMessage(vehicleMessage.uploadFailed))
         return
       }
       vehicleBulkMileagePostMutation({
