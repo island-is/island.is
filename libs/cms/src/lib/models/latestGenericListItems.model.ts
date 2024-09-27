@@ -44,13 +44,18 @@ const mapSeeMorePage = (seeMorePage: IOrganizationSubpage | undefined) => {
   return mapOrganizationSubpage({
     ...seeMorePage,
     fields: {
-      ...seeMorePage.fields,
+      title: seeMorePage.fields?.title,
+      slug: seeMorePage.fields?.slug,
       organizationPage: {
-        ...seeMorePage.fields.organizationPage,
+        ...seeMorePage.fields?.organizationPage,
         fields: {
-          ...seeMorePage.fields.organizationPage?.fields,
-          slices: [],
-          bottomSlices: [],
+          title: seeMorePage.fields?.organizationPage?.fields?.title,
+          slug: seeMorePage.fields?.organizationPage?.fields?.slug,
+          featuredImage:
+            seeMorePage.fields?.organizationPage?.fields?.featuredImage,
+          organization:
+            seeMorePage.fields?.organizationPage?.fields?.organization,
+          theme: seeMorePage.fields?.organizationPage?.fields?.theme,
         },
       },
     },
