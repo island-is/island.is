@@ -7,4 +7,6 @@ export enum DynamicPaths {
   FinanceTransactionPeriods = '/fjarmal/faerslur/timabil',
 
   EducationDrivingLessons = '/menntun/okunam',
+
+  SocialInsuranceMaintenancePath = '/framfaersla/tekjuaaetlun',
 }

@@ -27,6 +27,14 @@ export const GET_DRIVING_LICENSE_BOOK_QUERY = gql`
   }
 `
 
+export const GET_INCOME_PLAN_QUERY = gql`
+  query SocialInsuranceIncomePlanEligibility {
+    socialInsuranceIncomePlanEligibility {
+      isEligible
+    }
+  }
+`
+
 /**
  * Returns an active navigation that matches all defined module routes
  */
@@ -37,6 +45,10 @@ export const useDynamicRoutes = () => {
 
   const { data: licenseBook, loading: licenseBookLoading } = useQuery<Query>(
     GET_DRIVING_LICENSE_BOOK_QUERY,
+  )
+
+  const { data: incomePlan, loading: incomePlanLoading } = useQuery<Query>(
+    GET_INCOME_PLAN_QUERY,
   )
 
   useEffect(() => {
@@ -69,6 +81,16 @@ export const useDynamicRoutes = () => {
     const licenseBookData = licenseBook?.drivingLicenseBookUserBook
     if (licenseBookData?.book?.id) {
       dynamicPathArray.push(DynamicPaths.EducationDrivingLessons)
+    }
+
+    /**
+     * service-portal/income
+     * Tabs control for driving lessons.
+     */
+    const incomePlanEligbility =
+      incomePlan?.socialInsuranceIncomePlanEligibility
+    if (incomePlanEligbility?.isEligible) {
+      dynamicPathArray.push(DynamicPaths.SocialInsuranceMaintenancePath)
     }
 
     // Combine routes, no duplicates.

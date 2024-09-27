@@ -43,4 +43,16 @@ export class IncomePlanResolver {
   async resolveField(@CurrentUser() user: User): Promise<IncomePlanEligbility> {
     return this.service.getIncomePlanChangeEligibility(user)
   }
+
+  @Query(() => IncomePlanEligbility, {
+    name: 'socialInsuranceIncomePlanEligibility',
+    nullable: true,
+  })
+  @FeatureFlag(Features.servicePortalSocialInsuranceIncomePlanPageEnabled)
+  @Scopes(ApiScope.internal)
+  @Audit()
+  async incomePlanEligibility(@CurrentUser() user: User) {
+    this.logger.debug(user)
+    return this.service.getIncomePlanChangeEligibility(user)
+  }
 }
