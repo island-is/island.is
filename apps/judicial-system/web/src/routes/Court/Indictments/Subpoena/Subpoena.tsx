@@ -19,14 +19,9 @@ import {
   SectionHeading,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/components'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  useCase,
-  useDefendants,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { subpoena as strings } from './Subpoena.strings'
@@ -39,12 +34,10 @@ const Subpoena: FC = () => {
   const { formatMessage } = useIntl()
   const {
     courtDate,
-    courtDateHasChanged,
     handleCourtDateChange,
     handleCourtRoomChange,
     sendCourtDateToServer,
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
-  const { sendNotification } = useCase()
 
   const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
 
@@ -69,18 +62,6 @@ const Subpoena: FC = () => {
         })
       }
 
-      if (
-        !hasSentNotification(
-          NotificationType.COURT_DATE,
-          workingCase.notifications,
-        ).hasSent ||
-        courtDateHasChanged
-      ) {
-        promises.push(
-          sendNotification(workingCase.id, NotificationType.COURT_DATE),
-        )
-      }
-
       const allDataSentToServer = await Promise.all(promises)
       if (!allDataSentToServer.every((result) => result)) {
         return
@@ -92,11 +73,8 @@ const Subpoena: FC = () => {
       isArraignmentScheduled,
       sendCourtDateToServer,
       workingCase.defendants,
-      workingCase.notifications,
       workingCase.id,
-      courtDateHasChanged,
       updateDefendant,
-      sendNotification,
     ],
   )
 
