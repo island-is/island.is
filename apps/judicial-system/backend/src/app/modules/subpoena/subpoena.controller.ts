@@ -44,7 +44,15 @@ import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsOptionalGuard } from './guards/subpoenaExists.guard'
 import { Subpoena } from './models/subpoena.model'
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(
+  JwtAuthGuard,
+  RolesGuard,
+  CaseExistsGuard,
+  new CaseTypeGuard(indictmentCases),
+  CaseReadGuard,
+  DefendantExistsGuard,
+  SubpoenaExistsOptionalGuard,
+)
 @Controller([
   'api/case/:caseId/defendant/:defendantId/subpoena',
   'api/case/:caseId/defendant/:defendantId/subpoena/:subpoenaId',
@@ -56,13 +64,6 @@ export class SubpoenaController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(
-    CaseExistsGuard,
-    new CaseTypeGuard(indictmentCases),
-    CaseReadGuard,
-    DefendantExistsGuard,
-    SubpoenaExistsOptionalGuard,
-  )
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
