@@ -115,6 +115,9 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   const handleUpdateRecyclingPartner = handleSubmit(async (input) => {
+    // Not needed to be sent to the backend, causes error if it is sent
+    delete input.__typename
+
     const { errors } = await updateSkilavottordRecyclingPartner({
       variables: { input },
     })

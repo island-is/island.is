@@ -297,8 +297,11 @@ export class SignatureCollectionClientService {
   }
 
   async unsignList(listId: string, auth: User): Promise<Success> {
+    const { isPresidential } = await this.currentCollection()
     const { signatures } = await this.getSignee(auth)
-    const activeSignature = signatures?.find((signature) => signature.valid)
+    const activeSignature = signatures?.find((signature) =>
+      isPresidential ? signature.valid : signature.listId === listId,
+    )
     if (!signatures || !activeSignature || activeSignature.listId !== listId) {
       return { success: false, reasons: [ReasonKey.SignatureNotFound] }
     }
@@ -373,6 +376,7 @@ export class SignatureCollectionClientService {
         const isExtended = list.endTime > endTime
         const signedThisPeriod = signature.isInitialType === !isExtended
         const canUnsignDigital = isPresidential ? signature.isDigital : true
+        const canUnsignInvalid = isPresidential ? signature.valid : true
         return {
           signedDate: signature.created,
           isDigital: signature.isDigital,
@@ -380,7 +384,7 @@ export class SignatureCollectionClientService {
           isValid: signature.valid,
           canUnsign:
             canUnsignDigital &&
-            signature.valid &&
+            canUnsignInvalid &&
             list.active &&
             signedThisPeriod,
           ...list,
@@ -523,5 +527,24 @@ export class SignatureCollectionClientService {
       }
     }
     return { success: true }
+  }
+
+  async getCollectors(
+    auth: User,
+    candidateId: string,
+  ): Promise<{ name: string; nationalId: string }[]> {
+    const candidate = await this.getApiWithAuth(
+      this.candidateApi,
+      auth,
+    ).frambodIDGet({
+      iD: parseInt(candidateId),
+    })
+
+    return (
+      candidate.umbodList?.map((u) => ({
+        name: u.nafn ?? '',
+        nationalId: u.kennitala ?? '',
+      })) ?? []
+    )
   }
 }

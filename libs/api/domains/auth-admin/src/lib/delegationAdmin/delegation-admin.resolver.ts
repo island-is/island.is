@@ -109,6 +109,16 @@ export class DelegationAdminResolver {
     @Loader(DomainLoader) domainLoader: DomainDataLoader,
     @Parent() delegation: DelegationDTO,
   ): Promise<Domain> {
+    if (!delegation.domainName) {
+      return {
+        name: '',
+        displayName: '',
+        description: '',
+        nationalId: '',
+        organisationLogoKey: '',
+      }
+    }
+
     const domainName = delegation.domainName ?? ISLAND_DOMAIN
     const domain = await domainLoader.load({
       lang: 'is',
