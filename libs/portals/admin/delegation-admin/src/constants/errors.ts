@@ -7,5 +7,5 @@ export const FORM_ERRORS = {
   [ErrorCodes.ZENDESK_TAG_MISSING]: m.zendeksMissingTagError,
   [ErrorCodes.ZENDESK_STATUS]: m.zendeskCaseNotSolvedError,
   [ErrorCodes.INPUT_VALIDATION_SAME_NATIONAL_ID]: m.sameNationalIdError,
-  [ErrorCodes.INPUT_VALIDATION_INVALID_PERSON]: m.validPersonError
+  [ErrorCodes.INPUT_VALIDATION_INVALID_PERSON]: m.validPersonError,
 }

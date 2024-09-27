@@ -407,9 +407,16 @@ const CreateDelegationScreen = () => {
                 <AlertMessage
                   title=""
                   message={
-                  // if problem title is object extract code and use it as key
-                    actionData?.problem?.title ? formatMessage(
-                          FORM_ERRORS[actionData?.problem?.title as keyof typeof FORM_ERRORS]) : actionData?.problem?.detail || formatMessage(m.errorDefault)
+                    // if problem title is object extract code and use it as key
+                    actionData?.problem?.title
+                      ? formatMessage(
+                          FORM_ERRORS[
+                            actionData?.problem
+                              ?.title as keyof typeof FORM_ERRORS
+                          ],
+                        )
+                      : actionData?.problem?.detail ||
+                        formatMessage(m.errorDefault)
                   }
                   type="error"
                 />

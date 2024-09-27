@@ -12,7 +12,8 @@ import {
   CreateDelegationMutationVariables,
 } from './CreateDelegation.generated'
 import {
-  findProblemInApolloError, Problem,
+  findProblemInApolloError,
+  Problem,
   ProblemType,
 } from '@island.is/shared/problem'
 

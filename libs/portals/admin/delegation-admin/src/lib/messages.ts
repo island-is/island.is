@@ -123,7 +123,8 @@ export const m = defineMessages({
   },
   nationalIdsMismatchError: {
     id: 'admin.delegationAdmin:nationalIdsMismatchError',
-    defaultMessage: 'Kennitölur á umboði stemma ekki við kennitölur í Zendesk máli',
+    defaultMessage:
+      'Kennitölur á umboði stemma ekki við kennitölur í Zendesk máli',
   },
   zendeskCaseNotSolvedError: {
     id: 'admin.delegationAdmin:zendeskCaseNotSolvedError',
@@ -135,7 +136,8 @@ export const m = defineMessages({
   },
   zendeskCustomFieldsMissingError: {
     id: 'admin.delegationAdmin:zendeskCustomFieldsMissingError',
-    defaultMessage: 'Zendesk málið vantar nauðsynlegar upplýsingar um kennitölur umboðsveitanda og umboðshafa',
+    defaultMessage:
+      'Zendesk málið vantar nauðsynlegar upplýsingar um kennitölur umboðsveitanda og umboðshafa',
   },
   sameNationalIdError: {
     id: 'admin.delegationAdmin:sameNationalIdError',
