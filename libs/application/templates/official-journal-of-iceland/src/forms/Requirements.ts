@@ -35,8 +35,25 @@ export const Requirements: Form = buildForm({
               title: '',
               component: 'RequirementsScreen',
             }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: Routes.INVOLVED_PARTY,
+      title: 'Test',
+      children: [
+        buildMultiField({
+          id: Routes.INVOLVED_PARTY,
+          title: '',
+          children: [
+            buildCustomField({
+              id: 'involvedParty',
+              title: '',
+              component: 'InvolvedPartyScreen',
+            }),
             buildSubmitField({
-              id: 'toDraft',
+              id: 'toComments',
               title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
