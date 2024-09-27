@@ -10,32 +10,33 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import { SignatureCollection } from './models/collection.model'
-import {
-  SignatureCollectionList,
-  SignatureCollectionListBase,
-  SignatureCollectionSignedList,
-} from './models/signatureList.model'
-import { SignatureCollectionListIdInput } from './dto/listId.input'
-import { SignatureCollectionSignature } from './models/signature.model'
-import { SignatureCollectionSignee } from './models/signee.model'
 import { Audit } from '@island.is/nest/audit'
 import { UserAccessGuard } from './guards/userAccess.guard'
-import {
-  AccessRequirement,
-  OwnerAccess,
-  UserAccess,
-} from './decorators/acessRequirement.decorator'
-import { CurrentSignee } from './decorators/signee.decorator'
 import { ApiScope } from '@island.is/auth/scopes'
-import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
-import { SignatureCollectionIdInput } from './dto/collectionId.input'
-import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
-import { SignatureCollectionAddListsInput } from './dto/addLists.input'
-import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
-import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
-import { SignatureCollectionCollector } from './models/collector.model'
-import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
+import {
+  SignatureCollectionAddListsInput,
+  SignatureCollectionCancelListsInput,
+  SignatureCollectionCanSignFromPaperInput,
+  SignatureCollectionIdInput,
+  SignatureCollectionListIdInput,
+  SignatureCollectionUploadPaperSignatureInput,
+} from './dto'
+import {
+  AllowDelegation,
+  AllowManager,
+  CurrentSignee,
+  IsOwner,
+} from './decorators'
+import {
+  SignatureCollection,
+  SignatureCollectionCollector,
+  SignatureCollectionList,
+  SignatureCollectionListBase,
+  SignatureCollectionSignature,
+  SignatureCollectionSignedList,
+  SignatureCollectionSignee,
+} from './models'
+
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/signature-collection' })
@@ -66,7 +67,8 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @AccessRequirement(OwnerAccess.AllowActor)
+  @AllowManager()
+  @IsOwner()
   @Query(() => [SignatureCollectionList])
   @Audit()
   async signatureCollectionListsForOwner(
@@ -78,7 +80,6 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @AccessRequirement(UserAccess.RestrictActor)
   @Query(() => [SignatureCollectionListBase])
   @Audit()
   async signatureCollectionListsForUser(
@@ -90,7 +91,8 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @AccessRequirement(OwnerAccess.AllowActor)
+  @IsOwner()
+  @AllowManager()
   @Query(() => SignatureCollectionList)
   @Audit()
   async signatureCollectionList(
@@ -101,7 +103,6 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @AccessRequirement(UserAccess.RestrictActor)
   @Query(() => [SignatureCollectionSignedList], { nullable: true })
   @Audit()
   async signatureCollectionSignedList(
@@ -111,7 +112,8 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @AccessRequirement(OwnerAccess.AllowActor)
+  @IsOwner()
+  @AllowManager()
   @Query(() => [SignatureCollectionSignature], { nullable: true })
   @Audit()
   async signatureCollectionSignatures(
@@ -123,7 +125,6 @@ export class SignatureCollectionResolver {
 
   @Scopes(ApiScope.signatureCollection)
   @Query(() => SignatureCollectionSignee)
-  @AccessRequirement(UserAccess.RestrictActor)
   @Audit()
   async signatureCollectionSignee(
     @CurrentSignee() signee: SignatureCollectionSignee,
@@ -133,7 +134,8 @@ export class SignatureCollectionResolver {
 
   @Scopes(ApiScope.signatureCollection)
   @Query(() => Boolean)
-  @AccessRequirement(OwnerAccess.AllowActor)
+  @IsOwner()
+  @AllowManager()
   @Audit()
   async signatureCollectionCanSignFromPaper(
     @Args('input') input: SignatureCollectionCanSignFromPaperInput,
@@ -143,7 +145,6 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @AccessRequirement(UserAccess.RestrictActor)
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionUnsign(
@@ -154,7 +155,7 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @AccessRequirement(OwnerAccess.RestrictActor)
+  @IsOwner()
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionCancel(
@@ -165,7 +166,7 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @AccessRequirement(OwnerAccess.RestrictActor)
+  @IsOwner()
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionAddAreas(
@@ -176,7 +177,7 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @AccessRequirement(OwnerAccess.RestrictActor)
+  @IsOwner()
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionUploadPaperSignature(
@@ -190,7 +191,7 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @AccessRequirement(OwnerAccess.AllowActor)
+  @IsOwner()
   @Query(() => [SignatureCollectionCollector])
   @Audit()
   async signatureCollectionCollectors(

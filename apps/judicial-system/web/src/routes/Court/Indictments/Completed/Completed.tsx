@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
+  Accordion,
   Box,
   InputFileUpload,
   RadioButton,
@@ -18,11 +19,13 @@ import {
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
+  IndictmentsLawsBrokenAccordionItem,
   InfoCardClosedIndictment,
   Modal,
   PageHeader,
   PageLayout,
   SectionHeading,
+  useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
@@ -48,6 +51,7 @@ const Completed: FC = () => {
     useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
+  const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const [modalVisible, setModalVisible] =
     useState<'SENT_TO_PUBLIC_PROSECUTOR'>()
 
@@ -126,6 +130,10 @@ const Completed: FC = () => {
         )
       : true
 
+  const hasLawsBroken = lawsBroken.size > 0
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -143,13 +151,25 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>
-        {workingCase.mergedCases &&
-          workingCase.mergedCases.length > 0 &&
-          workingCase.mergedCases.map((mergedCase) => (
-            <Box marginBottom={5} key={mergedCase.id}>
-              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
-            </Box>
-          ))}
+        {(hasLawsBroken || hasMergeCases) && (
+          <Box marginBottom={5}>
+            {hasLawsBroken && (
+              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            )}
+            {hasMergeCases && (
+              <Accordion>
+                {workingCase.mergedCases?.map((mergedCase) => (
+                  <Box key={mergedCase.id}>
+                    <ConnectedCaseFilesAccordionItem
+                      connectedCaseParentId={workingCase.id}
+                      connectedCase={mergedCase}
+                    />
+                  </Box>
+                ))}
+              </Accordion>
+            )}
+          </Box>
+        )}
         <Box marginBottom={5} component="section">
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
