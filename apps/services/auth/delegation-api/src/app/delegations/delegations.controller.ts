@@ -80,6 +80,7 @@ export class DelegationsController {
           nationalId,
           direction,
         },
+        alsoLog: true,
       },
       this.delegationIndexService.getDelegationRecords({
         scope,
