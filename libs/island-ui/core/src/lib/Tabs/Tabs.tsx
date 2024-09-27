@@ -70,7 +70,7 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
 
   useEffect(() => {
     const breakpoint =
-      tabs.length < 4 ? theme.breakpoints.md : theme.breakpoints.lg
+      tabs.length < 3 ? theme.breakpoints.md : theme.breakpoints.lg
     if (width < breakpoint) {
       return setIsMobile(true)
     }
