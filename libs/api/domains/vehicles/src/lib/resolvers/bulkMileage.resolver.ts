@@ -75,7 +75,7 @@ export class VehiclesBulkMileageResolver {
     nullable: true,
   })
   @Audit()
-  async postBulkMileageReading(
+  postBulkMileageReading(
     @Args('input') input: PostVehicleBulkMileageInput,
     @CurrentUser() user: User,
   ) {
