@@ -181,6 +181,10 @@ export class OfficialJournalOfIcelandApplicationClientService {
   }
 
   async getUserInvolvedParties(params: GetInvolvedPartiesRequest, auth: Auth) {
-    return this.ojoiApplicationApiWithAuth(auth).getInvolvedParties(params)
+    const data = await this.ojoiApplicationApiWithAuth(auth).getInvolvedParties(
+      params,
+    )
+    console.log(data)
+    return data
   }
 }

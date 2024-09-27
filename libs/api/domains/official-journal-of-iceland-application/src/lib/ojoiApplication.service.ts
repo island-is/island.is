@@ -17,6 +17,7 @@ import { DeleteApplicationAttachmentInput } from '../models/deleteApplicationAtt
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
+import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.input'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -167,10 +168,10 @@ export class OfficialJournalOfIcelandApplicationService {
     }
   }
 
-  async getUserInvolvedParties(input: GetCommentsInput, user: User) {
+  async getUserInvolvedParties(input: GetUserInvolvedPartiesInput, user: User) {
     return this.ojoiApplicationService.getUserInvolvedParties(
       {
-        id: input.id,
+        id: input.applicationId,
       },
       user,
     )

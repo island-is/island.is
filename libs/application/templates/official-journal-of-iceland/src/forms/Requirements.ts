@@ -16,6 +16,7 @@ import {
   preview,
   publishing,
   summary,
+  involvedParty,
 } from '../lib/messages'
 export const Requirements: Form = buildForm({
   id: 'OfficialJournalOfIcelandApplication',
@@ -41,7 +42,7 @@ export const Requirements: Form = buildForm({
     }),
     buildSection({
       id: Routes.INVOLVED_PARTY,
-      title: 'Test',
+      title: involvedParty.general.section,
       children: [
         buildMultiField({
           id: Routes.INVOLVED_PARTY,

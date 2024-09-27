@@ -24,6 +24,7 @@ import { GetApplicationAttachmentsResponse } from '../models/getApplicationAttac
 import { DeleteApplicationAttachmentInput } from '../models/deleteApplicationAttachment.input'
 import type { User } from '@island.is/auth-nest-tools'
 import { GetUserInvolvedPartiesResponse } from '../models/getUserInvolvedParties.response'
+import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.input'
 
 @Scopes(ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -116,8 +117,8 @@ export class OfficialJournalOfIcelandApplicationResolver {
     name: 'officialJournalOfIcelandApplicationGetUserInvolvedParties',
   })
   getUserInvolvedParties(
-    @Args('input', { type: () => GetCommentsInput })
-    input: GetCommentsInput,
+    @Args('input', { type: () => GetUserInvolvedPartiesInput })
+    input: GetUserInvolvedPartiesInput,
     @CurrentUser() user: User,
   ) {
     return this.ojoiApplicationService.getUserInvolvedParties(input, user)
