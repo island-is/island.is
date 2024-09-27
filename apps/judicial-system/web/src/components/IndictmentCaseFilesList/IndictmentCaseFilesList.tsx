@@ -73,7 +73,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
   })
 
   const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
-  const showSubpoenaPdf = workingCase.arraignmentDate
+  const showSubpoenaPdf = workingCase.defendants?.some(
+    (defendant) => defendant.subpoenas && defendant.subpoenas.length > 0,
+  )
 
   const cf = workingCase.caseFiles
 
@@ -227,28 +229,35 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <CaseFileTable caseFiles={uploadedCaseFiles} onOpenFile={onOpen} />
         </Box>
       )}
-      {showSubpoenaPdf &&
-        workingCase.defendants &&
-        workingCase.defendants.length > 0 && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(strings.subpoenaTitle)}
-            </Text>
-            {workingCase.defendants.map((defendant) => (
-              <Box marginBottom={2} key={`subpoena-${defendant.id}`}>
+      {showSubpoenaPdf && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={1}>
+            {formatMessage(strings.subpoenaTitle)}
+          </Text>
+          {workingCase.defendants?.map((defendant) =>
+            defendant.subpoenas?.map((subpoena) => (
+              <Box key={`subpoena-${subpoena.id}`} marginBottom={2}>
                 <PdfButton
                   caseId={workingCase.id}
                   title={formatMessage(strings.subpoenaButtonText, {
                     name: defendant.name,
+                    date: `${subpoena.created?.slice(
+                      8,
+                      10,
+                    )}.${subpoena.created?.slice(
+                      5,
+                      7,
+                    )}.${subpoena.created?.slice(0, 4)}`,
                   })}
                   pdfType="subpoena"
-                  elementId={defendant.id}
+                  elementId={[defendant.id, subpoena.id]}
                   renderAs="row"
                 />
               </Box>
-            ))}
-          </Box>
-        )}
+            )),
+          )}
+        </Box>
+      )}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>

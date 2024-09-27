@@ -31,11 +31,15 @@ import {
   CurrentCase,
   PdfService,
 } from '../case'
-import { CurrentDefendant } from './guards/defendant.decorator'
-import { DefendantExistsGuard } from './guards/defendantExists.guard'
-import { Defendant } from './models/defendant.model'
+import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
+import { CurrentSubpoena } from './guards/subpoena.decorator'
+import { SubpoenaExistsOptionalGuard } from './guards/subpoenaExists.guard'
+import { Subpoena } from './models/subpoena.model'
 
-@Controller('api/case/:caseId/limitedAccess/defendant/:defendantId/subpoena')
+@Controller([
+  'api/case/:caseId/limitedAccess/defendant/:defendantId/subpoena',
+  'api/case/:caseId/limitedAccess/defendant/:defendantId/subpoena/:subpoenaId',
+])
 @UseGuards(
   JwtAuthGuard,
   RolesGuard,
@@ -43,9 +47,10 @@ import { Defendant } from './models/defendant.model'
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
   DefendantExistsGuard,
+  SubpoenaExistsOptionalGuard,
 )
 @ApiTags('limited access defendants')
-export class LimitedAccessDefendantController {
+export class LimitedAccessSubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -61,20 +66,25 @@ export class LimitedAccessDefendantController {
   async getSubpoenaPdf(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
+    @CurrentSubpoena() subpoena: Subpoena,
     @Res() res: Response,
     @Query('arraignmentDate') arraignmentDate?: Date,
     @Query('location') location?: string,
     @Query('subpoenaType') subpoenaType?: SubpoenaType,
   ): Promise<void> {
     this.logger.debug(
-      `Getting the subpoena for defendant ${defendantId} of case ${caseId} as a pdf document`,
+      `Getting subpoena ${
+        subpoenaId ?? 'draft'
+      } for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 
     const pdf = await this.pdfService.getSubpoenaPdf(
       theCase,
       defendant,
+      subpoena,
       arraignmentDate,
       location,
       subpoenaType,

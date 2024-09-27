@@ -49,9 +49,9 @@ export class Subpoena extends Model {
   defendant?: Defendant
 
   @ForeignKey(() => Case)
-  @Column({ type: DataType.UUID, allowNull: true })
+  @Column({ type: DataType.UUID })
   @ApiProperty({ type: String })
-  caseId?: string
+  caseId!: string
 
   @BelongsTo(() => Case, 'caseId')
   @ApiPropertyOptional({ type: Case })
@@ -68,4 +68,12 @@ export class Subpoena extends Model {
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   comment?: string
+
+  @Column({ type: DataType.DATE, allowNull: false })
+  @ApiProperty({ type: Date })
+  arraignmentDate!: Date
+
+  @Column({ type: DataType.STRING, allowNull: false })
+  @ApiProperty({ type: String })
+  location!: string
 }

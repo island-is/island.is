@@ -153,31 +153,59 @@ const Subpoena: FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={10}>
-          {workingCase.defendants?.map((defendant, index) => (
-            <Box
-              key={defendant.id}
-              marginBottom={
-                index + 1 === workingCase.defendants?.length ? 0 : 2
-              }
-            >
-              <PdfButton
-                caseId={workingCase.id}
-                title={`Fyrirkall - ${defendant.name} - PDF`}
-                pdfType="subpoena"
-                disabled={
-                  isSchedulingArraignmentDateForDefendant(defendant.id) &&
-                  (!courtDate?.date ||
-                    !courtDate?.location ||
-                    !defendant.subpoenaType)
-                }
-                elementId={defendant.id}
-                queryParameters={
-                  isSchedulingArraignmentDateForDefendant(defendant.id)
-                    ? `arraignmentDate=${courtDate?.date}&location=${courtDate?.location}&subpoenaType=${defendant.subpoenaType}`
-                    : undefined
-                }
-              />
-            </Box>
+          {workingCase.defendants?.map((defendant, dIndex) => (
+            <>
+              {isSchedulingArraignmentDateForDefendant(defendant.id) && (
+                <Box
+                  key={defendant.id}
+                  marginBottom={
+                    dIndex + 1 === workingCase.defendants?.length &&
+                    (!defendant.subpoenas || defendant.subpoenas.length === 0)
+                      ? 0
+                      : 2
+                  }
+                >
+                  <PdfButton
+                    caseId={workingCase.id}
+                    title={`Fyrirkall - ${defendant.name} nýtt - PDF`}
+                    pdfType="subpoena"
+                    disabled={
+                      !courtDate?.date ||
+                      !courtDate?.location ||
+                      !defendant.subpoenaType
+                    }
+                    elementId={defendant.id}
+                    queryParameters={`arraignmentDate=${courtDate?.date}&location=${courtDate?.location}&subpoenaType=${defendant.subpoenaType}`}
+                  />
+                </Box>
+              )}
+              {defendant.subpoenas?.map((subpoena, sIndex) => (
+                <Box
+                  key={defendant.id}
+                  marginBottom={
+                    dIndex + 1 === workingCase.defendants?.length &&
+                    sIndex + 1 === defendant.subpoenas?.length
+                      ? 0
+                      : 2
+                  }
+                >
+                  <PdfButton
+                    caseId={workingCase.id}
+                    title={`Fyrirkall - ${
+                      defendant.name
+                    } ${subpoena.created?.slice(
+                      8,
+                      10,
+                    )}.${subpoena.created?.slice(
+                      5,
+                      7,
+                    )}.${subpoena.created?.slice(0, 4)} - PDF`}
+                    pdfType="subpoena"
+                    elementId={[defendant.id, subpoena.id]}
+                  />
+                </Box>
+              ))}
+            </>
           ))}
         </Box>
       </FormContentContainer>

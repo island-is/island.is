@@ -177,11 +177,12 @@ export class FileController {
     )
   }
 
-  @Get('subpoena/:defendantId')
+  @Get(['subpoena/:defendantId', 'subpoena/:defendantId/:subpoenaId'])
   @Header('Content-Type', 'application/pdf')
   getSubpoenaPdf(
     @Param('id') id: string,
     @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
@@ -193,6 +194,7 @@ export class FileController {
       `Getting the subpoena for defendant ${defendantId} of case ${id} as a pdf document`,
     )
 
+    const subpoenaIdInjection = subpoenaId ? `/${subpoenaId}` : ''
     const queryInjection = arraignmentDate
       ? `?arraignmentDate=${arraignmentDate}&location=${location}&subpoenaType=${subpoenaType}`
       : ''
@@ -201,7 +203,7 @@ export class FileController {
       user.id,
       AuditedAction.GET_SUBPOENA_PDF,
       id,
-      `defendant/${defendantId}/subpoena${queryInjection}`,
+      `defendant/${defendantId}/subpoena${subpoenaIdInjection}${queryInjection}`,
       req,
       res,
       'pdf',
