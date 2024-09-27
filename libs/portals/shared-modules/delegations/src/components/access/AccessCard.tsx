@@ -5,13 +5,13 @@ import * as kennitala from 'kennitala'
 
 import {
   Box,
-  Text,
-  Stack,
-  Tag,
-  Inline,
+  Button,
   Icon,
   IconMapIcon as IconType,
-  Button,
+  Inline,
+  Stack,
+  Tag,
+  Text,
   Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -185,7 +185,9 @@ export const AccessCard = ({
       <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
         <Stack space="smallGutter">
           <Box display="flex" columnGap={2} alignItems="center">
-            {(isAdminView || !isOutgoing) && (
+            {(isAdminView ||
+              !isOutgoing ||
+              delegation.type === AuthDelegationType.GeneralMandate) && (
               <>
                 {renderDelegationTypeLabel(delegation.type)}
                 {delegation.domain?.name && (
