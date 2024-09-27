@@ -13,14 +13,7 @@ import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
-import {
-  B_FULL_RENEWAL_65,
-  B_TEMP,
-  BE,
-  MAIL_DELIVERY_PRICE,
-  Pickup,
-  YES,
-} from '../../lib/constants'
+import { B_FULL_RENEWAL_65, B_TEMP, BE, Pickup, YES } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
@@ -181,23 +174,8 @@ export const subSectionSummary = buildSubSection({
             const item = items.find(
               ({ chargeItemCode }) => chargeItemCode === targetCode,
             )
-
-            // console.log(
-            //   'targetCode',
-            //   targetCode,
-            //   items,
-            //   answers,
-            //   MAIL_DELIVERY_PRICE,
-            // )
-
-            let price =
-              typeof item?.priceAmount === 'number' ? item.priceAmount : 0
-
-            if (answers.pickup === Pickup.POST) {
-              price += MAIL_DELIVERY_PRICE
-            }
-
-            return (price.toLocaleString('is-IS') + ' kr.') as StaticText
+            return (item?.priceAmount?.toLocaleString('is-IS') +
+              ' kr.') as StaticText
           },
           width: 'full',
         }),
