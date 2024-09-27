@@ -171,6 +171,8 @@ export const subSectionSummary = buildSubSection({
                 ? 'AY114'
                 : application.answers.applicationFor === BE
                 ? 'AY115'
+                : application.answers.applicationFor === B_FULL_RENEWAL_65
+                ? 'AY113'
                 : 'AY110'
 
             let pickupItem = null
