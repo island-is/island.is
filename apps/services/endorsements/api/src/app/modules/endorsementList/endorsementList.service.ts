@@ -29,10 +29,7 @@ import csvStringify from 'csv-stringify/lib/sync'
 import { AwsService } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 import * as path from 'path';
-import { fromSSO } from '@aws-sdk/credential-provider-sso';
-// import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { S3 } from 'aws-sdk';
-import { FileService } from '@island.is/application/api/files';
+
 
 
 interface CreateInput extends EndorsementListDto {
@@ -41,9 +38,7 @@ interface CreateInput extends EndorsementListDto {
 
 @Injectable()
 export class EndorsementListService {
-  private readonly s3: S3
   constructor(
-    // private s3 = new S3(), // Initialize S3 client from aws-sdk
     @InjectModel(Endorsement)
     private endorsementModel: typeof Endorsement,
     @InjectModel(EndorsementList)
@@ -56,9 +51,7 @@ export class EndorsementListService {
     private readonly awsService: AwsService,
 
 
-  ) {
-    this.s3 = new S3({ region: 'eu-west-1' });
-  }
+  ) {}
 
   hasAdminScope(user: User): boolean {
     if (user?.scope) {
@@ -291,35 +284,33 @@ export class EndorsementListService {
   }
 
   async getOwnerInfo(listId: string, owner?: string) {
+    this.logger.info(`Finding single endorsement lists by id "${listId}"`)
+    if (!owner) {
+      const endorsementList = await this.endorsementListModel.findOne({
+        where: {
+          id: listId,
+        },
+      })
+      if (!endorsementList) {
+        this.logger.warn('This endorsement list does not exist.')
+        throw new NotFoundException(['This endorsement list does not exist.'])
+      }
+      owner = endorsementList.owner
+    }
 
-    return "SomeName" // REMOVE ME .....................................................
-    // this.logger.info(`Finding single endorsement lists by id "${listId}"`)
-    // if (!owner) {
-    //   const endorsementList = await this.endorsementListModel.findOne({
-    //     where: {
-    //       id: listId,
-    //     },
-    //   })
-    //   if (!endorsementList) {
-    //     this.logger.warn('This endorsement list does not exist.')
-    //     throw new NotFoundException(['This endorsement list does not exist.'])
-    //   }
-    //   owner = endorsementList.owner
-    // }
-
-    // try {
-    //   const person = await this.nationalRegistryApiV3.getName(owner)
-    //   return person?.fulltNafn ? person.fulltNafn : ''
-    // } catch (e) {
-    //   if (e instanceof Error) {
-    //     this.logger.warn(
-    //       `Occured when fetching owner name from NationalRegistryApi ${e.message} \n${e.stack}`,
-    //     )
-    //     return ''
-    //   } else {
-    //     throw e
-    //   }
-    // }
+    try {
+      const person = await this.nationalRegistryApiV3.getName(owner)
+      return person?.fulltNafn ? person.fulltNafn : ''
+    } catch (e) {
+      if (e instanceof Error) {
+        this.logger.warn(
+          `Occured when fetching owner name from NationalRegistryApi ${e.message} \n${e.stack}`,
+        )
+        return ''
+      } else {
+        throw e
+      }
+    }
   }
 
   // async createDocumentBuffer(endorsementList: any, ownerName: string) {
@@ -398,51 +389,59 @@ export class EndorsementListService {
   // }
 
   async createDocumentBuffer(endorsementList: any, ownerName: string): Promise<Buffer> {
-    console.log('Current working directory:', process.cwd()); // Log the CWD to verify
     const doc = new PDFDocument({ margin: 60 });
     const locale = 'is-IS';
     const buffers: Buffer[] = [];
     doc.on('data', buffers.push.bind(buffers));
-    doc.on('end', () => console.log('PDF generation complete'));
-
-    // Use process.cwd() to reference the assets relative to the project root
+    doc.on('end', () => this.logger.info('PDF buffer created successfully for list id ' + endorsementList.id, { listId: endorsementList.id }));
+  
     const regularFontPath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-regular.ttf');
     const boldFontPath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-600.ttf');
     const headerImagePath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/thjodskra.png');
     const footerImagePath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/island.png');
-
+  
     // Register fonts with absolute paths
     doc.registerFont('Regular', regularFontPath);
     doc.registerFont('Bold', boldFontPath);
-
+  
+    // Dynamically calculate the height of the header image
+    const headerImageHeight = 40; // This can be any height you prefer; here it's 40 for demonstration
+    
     // Add header image
     doc.image(headerImagePath, 60, 40, { width: 120 });
-
+  
+    // Adjust the Y position for the text to appear below the image dynamically
+    let currentYPosition = 40 + headerImageHeight + 20; // 20px extra padding below the image
+  
     // Title and petition details
-    doc.font('Bold').fontSize(24).text('Upplýsingar um undirskriftalista', { align: 'left' }).moveDown();
+    doc.font('Bold').fontSize(24).text('Upplýsingar um undirskriftalista', 60, currentYPosition, { align: 'left' }).moveDown();
+  
+    // Adjust Y position after title
+    currentYPosition = doc.y + 10; // Adjust by adding extra padding if needed
+  
     doc.font('Bold').fontSize(14).text('Heiti undirskriftalista: ', { continued: true });
     doc.font('Regular').text(endorsementList.title, { align: 'left' }).moveDown();
-
+  
     doc.font('Bold').fontSize(14).text('Um undirskriftalista: ', { continued: true });
     doc.font('Regular').text(endorsementList.description, { align: 'left' }).moveDown();
-
+  
     // Petition details
     doc.font('Bold').text('Ábyrgðarmaður: ', { continued: true });
     doc.font('Regular').text(ownerName, { align: 'left' });
-
+  
     doc.font('Bold').text('Fjöldi skráðir: ', { continued: true });
     doc.font('Regular').text(endorsementList.endorsements.length.toString(), { align: 'left' }).moveDown();
-
+  
     // Add endorsement signatures table
     doc.moveDown().font('Bold').fontSize(12);
     const dateX = 60;
     const nameX = 160;
     const localityX = 360;
-
+  
     doc.text('Dags. skráð', dateX, doc.y, { width: 100 });
     doc.text('Nafn', nameX, doc.y, { width: 200 });
     doc.text('Sveitarfélag', localityX, doc.y, { width: 200 });
-
+  
     endorsementList.endorsements.forEach((endorsement: Endorsement) => { // Assuming Endorsement is typed
         if (doc.y > doc.page.height - 100) {
             doc.addPage();
@@ -457,13 +456,14 @@ export class EndorsementListService {
         doc.text(endorsement.meta.fullName || 'Nafn ótilgreint', nameX, y, { width: 200 });
         doc.text(endorsement.meta.locality || 'Sveitafélag ótilgreint', localityX, y, { width: 200 });
     });
-
+  
     // Add footer image
     doc.image(footerImagePath, 60, doc.page.height - 80, { width: 120 });
-
+  
     doc.end();
     return await getStream.buffer(doc);
-}
+  }
+  
 
   async emailPDF(
     listId: string,
@@ -825,49 +825,29 @@ export class EndorsementListService {
     }
   }
 
-  // private async uploadFileToS3(
-  //   fileBuffer: Buffer,
-  //   filename: string,
-  //   fileType: 'pdf' | 'csv',
-  // ): Promise<void> {
-  //   try {
-  //     await this.awsService.uploadFile(
-  //       fileBuffer,
-  //       environment.exportsBucketName,
-  //       filename,
-  //       {
-  //         ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
-  //       },
-  //     )
-  //   } catch (error) {
-  //     this.logger.error(`Failed to upload file to S3`, { error, filename })
-  //     throw new Error('Error uploading file to S3')
-  //   }
-  // }
- 
-
-  
   private async uploadFileToS3(
     fileBuffer: Buffer,
-    fileName: string,
+    filename: string,
     fileType: 'pdf' | 'csv',
   ): Promise<void> {
     try {
-      const uploadParams = {
-        Bucket: environment.exportsBucketName, // Replace with your S3 bucket name
-        Key: fileName, // File name to be saved in S3
-        Body: fileBuffer, // File buffer
-        ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv', // MIME type
-      };
-  
-      // Use the aws-sdk's S3 client to upload the file
-      await this.s3.putObject(uploadParams).promise();
-  
-      this.logger.info(`File uploaded successfully to S3: ${fileName}`);
+      await this.awsService.uploadFile(
+        fileBuffer,
+        environment.exportsBucketName,
+        filename,
+        {
+          ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
+        },
+      )
     } catch (error) {
-      this.logger.error(`Failed to upload file to S3`, { error, fileName });
-      throw new Error('Error uploading file to S3');
+      this.logger.error(`Failed to upload file to S3`, { error, filename })
+      throw new Error('Error uploading file to S3')
     }
   }
+ 
+
   
-}
+  
+  }
+  
+
