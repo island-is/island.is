@@ -8,10 +8,14 @@ import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import { strings } from './ConnectedCaseFilesAccordionItem.strings'
 
 interface Props {
+  connectedCaseParentId: string
   connectedCase: Case
 }
 
-const ConnectedCaseFilesAccordionItem: FC<Props> = ({ connectedCase }) => {
+const ConnectedCaseFilesAccordionItem: FC<Props> = ({
+  connectedCaseParentId,
+  connectedCase,
+}) => {
   const { formatMessage } = useIntl()
   const { caseFiles, courtCaseNumber } = connectedCase
 
@@ -30,6 +34,7 @@ const ConnectedCaseFilesAccordionItem: FC<Props> = ({ connectedCase }) => {
       <IndictmentCaseFilesList
         workingCase={connectedCase}
         displayHeading={false}
+        connectedCaseParentId={connectedCaseParentId}
       />
     </AccordionItem>
   )
