@@ -8,10 +8,10 @@ const SvgUploadOutline = ({
 }: React.SVGProps<SVGSVGElement> & SVGRProps) => {
   return (
     <svg
-      className="download-outline_svg__ionicon"
+      className="upload-outline_svg__ionicon"
       viewBox="0 0 512 512"
       aria-labelledby={titleId}
-      transform="matrix(1,0,0,-1,0,0)"
+      transform="rotate(180)"
       {...props}
     >
       {title ? <title id={titleId}>{title}</title> : null}
