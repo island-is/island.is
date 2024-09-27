@@ -872,11 +872,56 @@ describe('CaseController - Update', () => {
     })
   })
 
-  describe('court date updated', () => {
+  describe('indictment arraignment date updated', () => {
+    const arraignmentDate = { date: new Date(), location: uuid() }
+    const caseToUpdate = { arraignmentDate }
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should update case', () => {
+      expect(mockDateLogModel.create).toHaveBeenCalledWith(
+        { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
+        { transaction },
+      )
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: NotificationType.COURT_DATE },
+        },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: defendantId1,
+        },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: defendantId2,
+        },
+      ])
+    })
+  })
+
+  describe('indictment court date updated', () => {
     const courtDate = { date: new Date(), location: uuid() }
     const caseToUpdate = { courtDate }
     const updatedCase = {
       ...theCase,
+      type: CaseType.INDICTMENT,
       dateLogs: [{ dateType: DateType.COURT_DATE, ...courtDate }],
     }
 
@@ -892,7 +937,6 @@ describe('CaseController - Update', () => {
         { dateType: DateType.COURT_DATE, caseId, ...courtDate },
         { transaction },
       )
-
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.NOTIFICATION,
