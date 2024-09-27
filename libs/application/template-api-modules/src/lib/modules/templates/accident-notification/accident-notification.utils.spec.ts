@@ -37,10 +37,7 @@ describe('applicationAnswersToXml', () => {
       answers.accidentType.radioButton = accidentType
       answers.companyInfo = undefined
 
-      const result = utils.applicationAnswersToXml(
-        answers,
-        attachments,
-      )
+      const result = utils.applicationAnswersToXml(answers, attachments)
 
       expect(result.includes('Fullname Fullname')).toBeTruthy()
       expect(result.includes('7654321')).toBeTruthy()
@@ -71,10 +68,7 @@ describe('applicationAnswersToXml', () => {
       if (data.fisherman)
         answers.workAccident.type = WorkAccidentTypeEnum.FISHERMAN
 
-      const result = utils.applicationAnswersToXml(
-        answers,
-        attachments,
-      )
+      const result = utils.applicationAnswersToXml(answers, attachments)
 
       expect(result.includes('Fullname Fullname')).toBeTruthy()
       expect(result.includes('7654321')).toBeTruthy()
@@ -131,10 +125,7 @@ describe('applicationAnswersToXml', () => {
       answers.whoIsTheNotificationFor.answer = data.for
       answers.companyInfo = undefined
 
-      const result = utils.applicationAnswersToXml(
-        answers,
-        attachments,
-      )
+      const result = utils.applicationAnswersToXml(answers, attachments)
 
       expect(result.includes('Fullname Fullname')).toBeTruthy()
       if (data.someoneElse) {

@@ -33,6 +33,7 @@ import { DelegationDelegationType } from './models/delegation-delegation-type.mo
 type FindAllValidIncomingOptions = {
   nationalId: string
   domainName?: string
+  validity?: DelegationValidity
 }
 
 type FromNameInfo = {
@@ -59,13 +60,17 @@ export class DelegationsIncomingCustomService {
   ) {}
 
   async findAllValidIncoming(
-    { nationalId, domainName }: FindAllValidIncomingOptions,
+    {
+      nationalId,
+      domainName,
+      validity = DelegationValidity.NOW,
+    }: FindAllValidIncomingOptions,
     useMaster = false,
   ): Promise<DelegationDTO[]> {
     const { delegations, fromNameInfo } = await this.findAllIncoming(
       {
         nationalId,
-        validity: DelegationValidity.NOW,
+        validity,
         domainName,
       },
       useMaster,

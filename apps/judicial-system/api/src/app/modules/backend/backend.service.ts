@@ -269,8 +269,16 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${id}/file`, createFile)
   }
 
-  getCaseFileSignedUrl(caseId: string, id: string): Promise<SignedUrl> {
-    return this.get(`case/${caseId}/file/${id}/url`)
+  getCaseFileSignedUrl(
+    caseId: string,
+    id: string,
+    mergedCaseId?: string,
+  ): Promise<SignedUrl> {
+    const mergedCaseInjection = mergedCaseId
+      ? `/mergedCase/${mergedCaseId}`
+      : ''
+
+    return this.get(`case/${caseId}${mergedCaseInjection}/file/${id}/url`)
   }
 
   deleteCaseFile(caseId: string, id: string): Promise<DeleteFileResponse> {
@@ -426,8 +434,15 @@ export class BackendService extends DataSource<{ req: Request }> {
   limitedAccessGetCaseFileSignedUrl(
     caseId: string,
     id: string,
+    mergedCaseId?: string,
   ): Promise<SignedUrl> {
-    return this.get(`case/${caseId}/limitedAccess/file/${id}/url`)
+    const mergedCaseInjection = mergedCaseId
+      ? `/mergedCase/${mergedCaseId}`
+      : ''
+
+    return this.get(
+      `case/${caseId}/limitedAccess${mergedCaseInjection}/file/${id}/url`,
+    )
   }
 
   limitedAccessDeleteCaseFile(
