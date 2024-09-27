@@ -8,6 +8,7 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 import { and, Op, WhereOptions } from 'sequelize'
 import { isUuid, uuid } from 'uuidv4'
+import startOfDay from 'date-fns/startOfDay'
 
 import { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
@@ -117,7 +118,7 @@ export class DelegationsOutgoingService {
               delegationTypeId: AuthDelegationType.GeneralMandate,
               validTo: {
                 [Op.or]: {
-                  [Op.gte]: new Date(),
+                  [Op.gte]: startOfDay(new Date()),
                   [Op.is]: null,
                 },
               },
