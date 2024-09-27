@@ -34,7 +34,7 @@ export const DownloadReports = ({
         closeButtonLabel={''}
       >
         <Text>{formatMessage(m.downloadReportsDescription)}</Text>
-        <Box marginTop={5}>
+        <Box marginY={5}>
           <Stack space={3}>
             {areas.map((area) => (
               <ActionCard

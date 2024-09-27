@@ -8,7 +8,7 @@ const ListInfo = ({
   type?: AlertMessageType
 }) => {
   return (
-    <Box marginBottom={5}>
+    <Box marginBottom={5} width="half">
       <AlertMessage message={message} type={type ? type : 'info'} />
     </Box>
   )
