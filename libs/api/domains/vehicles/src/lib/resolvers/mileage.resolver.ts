@@ -88,7 +88,7 @@ export class VehiclesMileageResolver {
       mileage: Number(input.mileage ?? input.mileageNumber),
     })
 
-    if (!res) return undefined
+    if (!res?.length) return undefined
 
     return mileageDetailConstructor(res[0])
   }
