@@ -46,11 +46,9 @@ import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 
 const getCodes = (application: Application) => {
-  const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'BE'>(
-    application.answers,
-    'applicationFor',
-    'B-full',
-  )
+  const applicationFor = getValueViaPath<
+    'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'
+  >(application.answers, 'applicationFor', 'B-full')
 
   const pickup = getValueViaPath<Pickup>(application.answers, 'pickup')
 
@@ -61,6 +59,8 @@ const getCodes = (application: Application) => {
       ? 'AY110'
       : applicationFor === BE
       ? 'AY115'
+      : applicationFor === B_FULL_RENEWAL_65
+      ? 'AY113'
       : 'AY114'
 
   codes.push(chargeItemCode)
