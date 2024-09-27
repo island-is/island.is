@@ -6,7 +6,6 @@ type UseBroadcasterArgs<T> = {
 }
 
 type UseBroadcasterReturn<T> = {
-  channel: BroadcastChannel
   postMessage: (message: T) => void
   error: Error | null
 }
@@ -35,16 +34,13 @@ export const useBroadcaster = <T>({
     onMessageRef.current = onMessage
   }, [onMessage])
 
-  const handleBroadcastMessage = useCallback(
-    (event: MessageEvent<T>) => {
-      try {
-        onMessageRef.current?.(event)
-      } catch (err) {
-        setError(err as Error)
-      }
-    },
-    [onMessageRef],
-  )
+  const handleBroadcastMessage = useCallback((event: MessageEvent<T>) => {
+    try {
+      onMessageRef.current?.(event)
+    } catch (err) {
+      setError(err as Error)
+    }
+  }, [])
 
   useEffect(() => {
     channel.addEventListener('message', handleBroadcastMessage)
@@ -52,7 +48,8 @@ export const useBroadcaster = <T>({
     return () => {
       channel.removeEventListener('message', handleBroadcastMessage)
     }
-  }, [channel, handleBroadcastMessage])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [channel])
 
   const postMessage = useCallback(
     (message: T) => {
@@ -67,7 +64,6 @@ export const useBroadcaster = <T>({
   )
 
   return {
-    channel,
     postMessage,
     error,
   }
