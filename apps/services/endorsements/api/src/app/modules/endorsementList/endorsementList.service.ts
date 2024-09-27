@@ -28,9 +28,7 @@ import csvStringify from 'csv-stringify/lib/sync'
 
 import { AwsService } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
-import * as path from 'path';
-
-
+import * as path from 'path'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -49,8 +47,6 @@ export class EndorsementListService {
     private emailService: EmailService,
     private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
     private readonly awsService: AwsService,
-
-
   ) {}
 
   hasAdminScope(user: User): boolean {
@@ -388,82 +384,132 @@ export class EndorsementListService {
   //   return await getStream.buffer(doc)
   // }
 
-  async createDocumentBuffer(endorsementList: any, ownerName: string): Promise<Buffer> {
-    const doc = new PDFDocument({ margin: 60 });
-    const locale = 'is-IS';
-    const buffers: Buffer[] = [];
-    doc.on('data', buffers.push.bind(buffers));
-    doc.on('end', () => this.logger.info('PDF buffer created successfully for list id ' + endorsementList.id, { listId: endorsementList.id }));
-  
-    const regularFontPath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-regular.ttf');
-    const boldFontPath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-600.ttf');
-    const headerImagePath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/thjodskra.png');
-    const footerImagePath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/island.png');
-  
+  async createDocumentBuffer(
+    endorsementList: any,
+    ownerName: string,
+  ): Promise<Buffer> {
+    const doc = new PDFDocument({ margin: 60 })
+    const locale = 'is-IS'
+    const buffers: Buffer[] = []
+    doc.on('data', buffers.push.bind(buffers))
+    doc.on('end', () =>
+      this.logger.info(
+        'PDF buffer created successfully for list id ' + endorsementList.id,
+        { listId: endorsementList.id },
+      ),
+    )
+
+    const regularFontPath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-regular.ttf',
+    )
+    const boldFontPath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-600.ttf',
+    )
+    const headerImagePath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/thjodskra.png',
+    )
+    const footerImagePath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/island.png',
+    )
+
     // Register fonts with absolute paths
-    doc.registerFont('Regular', regularFontPath);
-    doc.registerFont('Bold', boldFontPath);
-  
+    doc.registerFont('Regular', regularFontPath)
+    doc.registerFont('Bold', boldFontPath)
+
     // Dynamically calculate the height of the header image
-    const headerImageHeight = 40; // This can be any height you prefer; here it's 40 for demonstration
-    
+    const headerImageHeight = 40 // This can be any height you prefer; here it's 40 for demonstration
+
     // Add header image
-    doc.image(headerImagePath, 60, 40, { width: 120 });
-  
+    doc.image(headerImagePath, 60, 40, { width: 120 })
+
     // Adjust the Y position for the text to appear below the image dynamically
-    let currentYPosition = 40 + headerImageHeight + 20; // 20px extra padding below the image
-  
+    let currentYPosition = 40 + headerImageHeight + 20 // 20px extra padding below the image
+
     // Title and petition details
-    doc.font('Bold').fontSize(24).text('Upplýsingar um undirskriftalista', 60, currentYPosition, { align: 'left' }).moveDown();
-  
+    doc
+      .font('Bold')
+      .fontSize(24)
+      .text('Upplýsingar um undirskriftalista', 60, currentYPosition, {
+        align: 'left',
+      })
+      .moveDown()
+
     // Adjust Y position after title
-    currentYPosition = doc.y + 10; // Adjust by adding extra padding if needed
-  
-    doc.font('Bold').fontSize(14).text('Heiti undirskriftalista: ', { continued: true });
-    doc.font('Regular').text(endorsementList.title, { align: 'left' }).moveDown();
-  
-    doc.font('Bold').fontSize(14).text('Um undirskriftalista: ', { continued: true });
-    doc.font('Regular').text(endorsementList.description, { align: 'left' }).moveDown();
-  
+    currentYPosition = doc.y + 10 // Adjust by adding extra padding if needed
+
+    doc
+      .font('Bold')
+      .fontSize(14)
+      .text('Heiti undirskriftalista: ', { continued: true })
+    doc
+      .font('Regular')
+      .text(endorsementList.title, { align: 'left' })
+      .moveDown()
+
+    doc
+      .font('Bold')
+      .fontSize(14)
+      .text('Um undirskriftalista: ', { continued: true })
+    doc
+      .font('Regular')
+      .text(endorsementList.description, { align: 'left' })
+      .moveDown()
+
     // Petition details
-    doc.font('Bold').text('Ábyrgðarmaður: ', { continued: true });
-    doc.font('Regular').text(ownerName, { align: 'left' });
-  
-    doc.font('Bold').text('Fjöldi skráðir: ', { continued: true });
-    doc.font('Regular').text(endorsementList.endorsements.length.toString(), { align: 'left' }).moveDown();
-  
+    doc.font('Bold').text('Ábyrgðarmaður: ', { continued: true })
+    doc.font('Regular').text(ownerName, { align: 'left' })
+
+    doc.font('Bold').text('Fjöldi skráðir: ', { continued: true })
+    doc
+      .font('Regular')
+      .text(endorsementList.endorsements.length.toString(), { align: 'left' })
+      .moveDown()
+
     // Add endorsement signatures table
-    doc.moveDown().font('Bold').fontSize(12);
-    const dateX = 60;
-    const nameX = 160;
-    const localityX = 360;
-  
-    doc.text('Dags. skráð', dateX, doc.y, { width: 100 });
-    doc.text('Nafn', nameX, doc.y, { width: 200 });
-    doc.text('Sveitarfélag', localityX, doc.y, { width: 200 });
-  
-    endorsementList.endorsements.forEach((endorsement: Endorsement) => { // Assuming Endorsement is typed
-        if (doc.y > doc.page.height - 100) {
-            doc.addPage();
-            doc.text('Dags. skráð', dateX, doc.y, { width: 100 });
-            doc.text('Nafn', nameX, doc.y, { width: 200 });
-            doc.text('Sveitarfélag', localityX, doc.y, { width: 200 });
-        }
-        doc.moveDown();
-        const y = doc.y;
-        doc.font('Regular').fontSize(10);
-        doc.text(endorsement.created.toLocaleDateString(locale), dateX, y, { width: 100 });
-        doc.text(endorsement.meta.fullName || 'Nafn ótilgreint', nameX, y, { width: 200 });
-        doc.text(endorsement.meta.locality || 'Sveitafélag ótilgreint', localityX, y, { width: 200 });
-    });
-  
+    doc.moveDown().font('Bold').fontSize(12)
+    const dateX = 60
+    const nameX = 160
+    const localityX = 360
+
+    doc.text('Dags. skráð', dateX, doc.y, { width: 100 })
+    doc.text('Nafn', nameX, doc.y, { width: 200 })
+    doc.text('Sveitarfélag', localityX, doc.y, { width: 200 })
+
+    endorsementList.endorsements.forEach((endorsement: Endorsement) => {
+      // Assuming Endorsement is typed
+      if (doc.y > doc.page.height - 100) {
+        doc.addPage()
+        doc.text('Dags. skráð', dateX, doc.y, { width: 100 })
+        doc.text('Nafn', nameX, doc.y, { width: 200 })
+        doc.text('Sveitarfélag', localityX, doc.y, { width: 200 })
+      }
+      doc.moveDown()
+      const y = doc.y
+      doc.font('Regular').fontSize(10)
+      doc.text(endorsement.created.toLocaleDateString(locale), dateX, y, {
+        width: 100,
+      })
+      doc.text(endorsement.meta.fullName || 'Nafn ótilgreint', nameX, y, {
+        width: 200,
+      })
+      doc.text(
+        endorsement.meta.locality || 'Sveitafélag ótilgreint',
+        localityX,
+        y,
+        { width: 200 },
+      )
+    })
+
     // Add footer image
-    doc.image(footerImagePath, 60, doc.page.height - 80, { width: 120 });
-  
-    doc.end();
-    return await getStream.buffer(doc);
+    doc.image(footerImagePath, 60, doc.page.height - 80, { width: 120 })
+
+    doc.end()
+    return await getStream.buffer(doc)
   }
-  
 
   async emailPDF(
     listId: string,
@@ -844,10 +890,4 @@ export class EndorsementListService {
       throw new Error('Error uploading file to S3')
     }
   }
- 
-
-  
-  
-  }
-  
-
+}
