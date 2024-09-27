@@ -280,6 +280,12 @@ export class DelegationsIndexService {
     await this.saveToIndex(nationalId, delegations)
   }
 
+  /* Index incoming general mandate delegations */
+  async indexGeneralMandateDelegations(nationalId: string) {
+    const delegations = await this.getGeneralMandateDelegation(nationalId, true)
+    await this.saveToIndex(nationalId, delegations)
+  }
+
   /* Index incoming personal representative delegations */
   async indexRepresentativeDelegations(nationalId: string) {
     const delegations = await this.getRepresentativeDelegations(
@@ -481,6 +487,19 @@ export class DelegationsIndexService {
         return { ...d, subjectId }
       }),
     )
+  }
+
+  private async getGeneralMandateDelegation(
+    nationalId: string,
+    useMaster = false,
+  ) {
+    const delegation =
+      await this.delegationsIncomingCustomService.findAllValidGeneralMandate(
+        { nationalId },
+        useMaster,
+      )
+
+    return delegation.map(toDelegationIndexInfo)
   }
 
   private async getCustomDelegations(nationalId: string, useMaster = false) {
