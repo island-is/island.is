@@ -77,9 +77,7 @@ const List = () => {
                 ? formatMessage(m.listStatusReviewedStatusAlert)
                 : formatMessage(m.listStatusActiveAlert)
             }
-            type={
-              listStatus === ListStatus.Reviewed ? 'success' : undefined
-            }
+            type={listStatus === ListStatus.Reviewed ? 'success' : undefined}
           />
           <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
           <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />

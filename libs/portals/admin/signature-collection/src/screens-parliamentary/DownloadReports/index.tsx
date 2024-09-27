@@ -40,6 +40,7 @@ export const DownloadReports = ({
               <ActionCard
                 key={area.id}
                 heading={formatMessage(area.name)}
+                headingVariant="h4"
                 backgroundColor="blue"
                 cta={{
                   label: formatMessage(m.downloadButton),
