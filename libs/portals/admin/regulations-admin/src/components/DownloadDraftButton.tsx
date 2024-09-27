@@ -70,6 +70,8 @@ export const DownloadDraftButton = ({ draftId, reviewButton }: Props) => {
               const downloadUrl = URL.createObjectURL(blob)
               // Open the download URL in a new tab
               window.open(downloadUrl, '_newtab')
+              // Release the object URL to free up memory
+              URL.revokeObjectURL(downloadUrl)
             })
           } else {
             toast.error(t(editorMsgs.signedDocumentDownloadFreshError))

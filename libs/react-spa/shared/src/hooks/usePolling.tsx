@@ -39,7 +39,7 @@ export const usePolling = <T,>({
   const [error, setError] = useState<Error | null>(null)
   const [shouldPoll, setShouldPoll] = useState(false)
 
-  const intervalIdRef = useRef<NodeJS.Timeout | null>(null)
+  const intervalIdRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const isCancelledRef = useRef(false)
 
   // Sync the external isCancelledProp with the ref to ensure real-time updates
@@ -61,13 +61,15 @@ export const usePolling = <T,>({
         setError(err as Error)
       }
     } finally {
-      if (!isCancelledRef.current) {
-        setLoading(false)
-      }
+      setLoading(false)
     }
   }, [fetcher])
 
   useEffect(() => {
+    // The cleanup function sets isCancelled to true to stop polling
+    // If the polling resumes then we set it back to false
+    isCancelledRef.current = false
+
     if (!shouldPoll) {
       return
     }
@@ -89,7 +91,7 @@ export const usePolling = <T,>({
   }, [fetcher, intervalMs, shouldPoll, poll])
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout | null = null
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
 
     if (waitToStartMS) {
       timeoutId = setTimeout(() => {
