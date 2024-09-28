@@ -301,28 +301,55 @@ export class DelegationsIndexService {
   }
 
   /* Add item to index */
-  async createOrUpdateDelegationRecord(delegation: DelegationRecordInputDTO) {
+  async createOrUpdateDelegationRecord(
+    delegation: DelegationRecordInputDTO,
+    auth: Auth,
+  ) {
     validateCrudParams(delegation)
 
-    const [updatedDelegation] = await this.delegationIndexModel.upsert(
-      delegation,
+    const [updatedDelegation] = await this.auditService.auditPromise(
+      {
+        auth,
+        action:
+          '@island.is/auth/delegation-index/create-or-update-delegation-record',
+        resources: delegation.toNationalId,
+        alsoLog: true,
+        meta: {
+          delegation,
+        },
+      },
+      this.delegationIndexModel.upsert(delegation),
     )
 
     return updatedDelegation.toDTO()
   }
 
   /* Delete record from index */
-  async removeDelegationRecord(delegation: DelegationRecordInputDTO) {
+  async removeDelegationRecord(
+    delegation: DelegationRecordInputDTO,
+    auth: Auth,
+  ) {
     validateCrudParams(delegation)
 
-    await this.delegationIndexModel.destroy({
-      where: {
-        fromNationalId: delegation.fromNationalId,
-        toNationalId: delegation.toNationalId,
-        provider: delegation.provider,
-        type: delegation.type,
+    await this.auditService.auditPromise(
+      {
+        auth,
+        action: '@island.is/auth/delegation-index/remove-delegation-record',
+        resources: delegation.toNationalId,
+        alsoLog: true,
+        meta: {
+          delegation,
+        },
       },
-    })
+      this.delegationIndexModel.destroy({
+        where: {
+          fromNationalId: delegation.fromNationalId,
+          toNationalId: delegation.toNationalId,
+          provider: delegation.provider,
+          type: delegation.type,
+        },
+      }),
+    )
   }
 
   async getAvailableDistrictCommissionersRegistryRecords(
@@ -407,11 +434,12 @@ export class DelegationsIndexService {
       ),
     ])
 
-    // saveToIndex is used by multiple entrypoints, when indexing so this
+    // saveToIndex is used by multiple entry points, when indexing so this
     // is the common place to audit updates in the index.
     this.auditService.audit({
       auth,
-      action: 'indexDelegations',
+      action: '@island.is/auth/delegation-index/save-to-index',
+      alsoLog: true,
       resources: nationalId,
       meta: {
         created,
