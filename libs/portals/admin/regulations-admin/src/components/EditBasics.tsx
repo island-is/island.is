@@ -20,7 +20,6 @@ import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
 import {
   formatAmendingRegTitle,
   formatAmendingBodyWithArticlePrefix,
-  hasAnyChange,
 } from '../utils/formatAmendingRegulation'
 import { HTMLText, RegName, Regulation } from '@island.is/regulations'
 import { findRegulationType } from '../utils/guessers'
@@ -29,6 +28,7 @@ import ConfirmModal from './ConfirmModal/ConfirmModal'
 import { ReferenceText } from './impacts/ReferenceText'
 import { DraftChangeForm, DraftImpactForm } from '../state/types'
 import { makeDraftAppendixForm } from '../state/makeFields'
+import { hasAnyChange } from '../utils/formatAmendingUtils'
 
 const updateText =
   'Ósamræmi er í texta stofnreglugerðar og breytingareglugerðar. Texti breytingareglugerðar þarf að samræmast breytingum sem gerðar hafa verið á stofnreglugerð, eigi breytingarnar að færast inn með réttum hætti.'
