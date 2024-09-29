@@ -299,11 +299,16 @@ query Case($input: CaseQueryInput!) {
       caseFiles {
         id
         created
+        modified
         name
+        type
+        category
         state
         key
         size
-        category
+        userGeneratedFilename
+        displayDate
+        submittedBy
       }
       policeCaseNumbers
       indictmentSubtypes

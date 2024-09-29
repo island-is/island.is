@@ -75,6 +75,13 @@
             "in": "query",
             "description": "The IP address of the user",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
           }
         ],
         "requestBody": {

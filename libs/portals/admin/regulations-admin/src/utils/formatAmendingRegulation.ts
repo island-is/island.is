@@ -9,7 +9,14 @@ import is from 'date-fns/locale/is'
 import compact from 'lodash/compact'
 import flatten from 'lodash/flatten'
 import uniq from 'lodash/uniq'
-import { groupElementsByArticleTitleFromDiv } from './groupByArticleTitle'
+import {
+  allSameDay,
+  extractArticleTitleDisplay,
+  getTextWithSpaces,
+  groupElementsByArticleTitleFromDiv,
+  isGildisTaka,
+  removeRegPrefix,
+} from './formatAmendingUtils'
 import { getDeletionOrAddition } from './getDeletionOrAddition'
 
 // ----------------------------------------------------------------------
@@ -43,6 +50,7 @@ const formatAffectedAndPlaceAffectedAtEnd = (
     formattedRegBody: HTMLText[]
     date?: Date | undefined
   }[],
+  hideAffected?: boolean,
 ) => {
   function formatArray(arr: string[]): string {
     if (arr.length === 1) {
@@ -127,7 +135,10 @@ const formatAffectedAndPlaceAffectedAtEnd = (
   })
 
   const uniqueGildistaka = uniq(gildsTakaKeepArray)
-  const joinedAffected = updatedImpactAffectArray.join('. ')
+  let joinedAffected = updatedImpactAffectArray.join('. ')
+  if (hideAffected) {
+    joinedAffected = ''
+  }
   const gildistakaReturn = flatten([...uniqueGildistaka, joinedAffected]).join(
     '',
   ) as HTMLText
@@ -191,11 +202,11 @@ export const formatAmendingRegBody = (
 ) => {
   const regName = removeRegNamePrefix(name)
   if (repeal) {
-    const title = regTitle ? regTitle.replace(/^reglugerð\s*/i, '') + ' ' : ''
+    const title = regTitle ? regTitle.replace(/^reglugerð\s*/i, '').trim() : ''
     const text = `<p>Reglugerð nr. ${regName} ${title.replace(
       /\.$/,
       '',
-    )}fellur brott.</p>` as HTMLText
+    )} fellur brott.</p>` as HTMLText
     const gildistaka =
       `<p>Reglugerð þessi er sett með heimild í [].</p><p>Reglugerðin öðlast þegar gildi.</p>` as HTMLText
     return [text, gildistaka]
@@ -245,18 +256,8 @@ export const formatAmendingRegBody = (
       if (element.classList.contains('article__title')) {
         const clone = element.cloneNode(true)
 
-        if (clone instanceof Element) {
-          const emElement = clone.querySelector('em')
-          if (emElement) {
-            emElement.parentNode?.removeChild(emElement)
-          }
-
-          const textContent = clone.textContent?.trim() ?? ''
-
-          articleTitle = textContent
-        } else {
-          articleTitle = element.innerText
-        }
+        const textContent = getTextWithSpaces(clone)
+        articleTitle = extractArticleTitleDisplay(textContent)
         testGroup.title = articleTitle
         isArticleTitle = true
         paragraph = 0 // Reset paragraph count for the new article
@@ -398,10 +399,8 @@ export const formatAmendingRegBody = (
     if (testGroup.isDeletion === true) {
       const articleTitleNumber = testGroup.title
 
-      const grMatch = articleTitleNumber.match(/^\d+\. gr\./)
-      const articleTitleDisplay = grMatch ? grMatch[0] : articleTitleNumber
       additionArray.push([
-        `<p>${articleTitleDisplay} ${regNameDisplay} fellur brott.</p>` as HTMLText,
+        `<p>${articleTitleNumber} ${regNameDisplay} fellur brott.</p>` as HTMLText,
       ])
     } else if (testGroup.isAddition === true) {
       let prevArticleTitle = ''
@@ -414,7 +413,8 @@ export const formatAmendingRegBody = (
         ? flatten(testGroup.original)
         : []
 
-      const prevArticleTitleNumber = prevArticleTitle.match(/^\d+\. gr\./)
+      const prevArticleTitleNumber =
+        extractArticleTitleDisplay(prevArticleTitle)
 
       let articleDisplayText = ''
 
@@ -514,7 +514,11 @@ export const formatAmendingBodyWithArticlePrefix = (
 
   const additions = flatten(impactAdditionArray)
 
-  const htmlForEditor = formatAffectedAndPlaceAffectedAtEnd(additions)
+  const hideAffected = allSameDay(additions)
+  const htmlForEditor = formatAffectedAndPlaceAffectedAtEnd(
+    additions,
+    hideAffected,
+  )
 
   const returnArray = compact(htmlForEditor)
 
