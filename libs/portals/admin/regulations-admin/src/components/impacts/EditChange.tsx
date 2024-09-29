@@ -56,6 +56,7 @@ import { DraftRegulationChange } from '@island.is/regulations/admin'
 import { useLocale } from '@island.is/localization'
 import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
 import { errorMsgs as msg } from '../../lib/messages'
+import { getWorkdayMinimumDate } from '../../utils'
 
 /* ---------------------------------------------------------------------------------------------------------------- */
 
@@ -197,7 +198,7 @@ export const EditChange = (props: EditChangeProp) => {
       !regulationLoading &&
       toISODate(minDate) !== toISODate(activeChange.date.value)
     ) {
-      changeDate(minDate)
+      changeDate(getWorkdayMinimumDate(10))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minDate, impactsLoading, regulationLoading])
