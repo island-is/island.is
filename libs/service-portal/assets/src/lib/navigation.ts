@@ -49,6 +49,10 @@ export const assetsNavigation: PortalNavigationItem = {
           path: AssetsPaths.AssetsVehiclesLookup,
         },
         {
+          name: m.vehiclesBulkMileage,
+          path: AssetsPaths.AssetsVehiclesBulkMileage,
+        },
+        {
           name: m.vehiclesHistory,
           path: AssetsPaths.AssetsVehiclesHistory,
         },

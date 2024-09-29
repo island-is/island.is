@@ -880,6 +880,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:mileage-external-link',
     defaultMessage: '/kilometragjald-a-vetnis-og-rafmagnsbila',
   },
+  bulkMileageButton: {
+    id: 'sp.vehicles:bulk-mileage-btn',
+    defaultMessage: 'Senda inn gögn',
+  },
 })
 
 export const ipMessages = defineMessages({
