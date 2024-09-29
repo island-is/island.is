@@ -24,6 +24,14 @@ const removeRegPrefix = (title: string) => {
   return title
 }
 
+export const hasAnyChange = (diff: string) => {
+  const testElement = asDiv(diff)
+  const hasDeletion = !!testElement.querySelector('del')
+  const hasInsert = !!testElement.querySelector('ins')
+
+  return hasDeletion || hasInsert
+}
+
 const isGildisTaka = (str: string) => {
   return /(öðlast|tekur).*gildi|sett.*með.*(?:heimild|stoð)/.test(
     (str || '').toLowerCase(),
@@ -427,20 +435,53 @@ export const formatAmendingRegBody = (
     }
   })
 
-  // IF appendixDiff exists,
-  // Add to addition array
+  // TODO: CHECK WHY DOES NOT APPEAR ON FIRST LOAD:! (MAYBE FIXED?)
   appendixes?.map((apx, idx) => {
     if (apx.diff?.value) {
       const defaultTitle = apx.title.value ?? `Viðauki ${idx + 1}`
-      const defaultText = apx.text.value
+
+      const updateAppendixWording = (input: string): string => {
+        return input.replace(/fylgiskjal|viðauki/gi, (match) => {
+          if (match[0] === match[0].toUpperCase()) {
+            // If the first letter is uppercase, capitalize the replacement
+            if (match.toLowerCase() === 'fylgiskjal') {
+              return 'Fylgiskjali'
+            } else if (match.toLowerCase() === 'viðauki') {
+              return 'Viðauka'
+            }
+          } else {
+            // If the first letter is lowercase, return lowercase replacement
+            if (match.toLowerCase() === 'fylgiskjal') {
+              return 'fylgiskjali'
+            } else if (match.toLowerCase() === 'viðauki') {
+              return 'viðauka'
+            }
+          }
+          return match // Fallback in case of no match (not expected)
+        })
+      }
+
+      const regNameTest =
+        regName && regName !== 'self'
+          ? `reglugerð nr. ${regName}`.replace(/\.$/, '')
+          : 'reglugerðina'
+
+      const regNameTest2 =
+        regName && regName !== 'self'
+          ? `, reglugerðar nr. ${regName}`.replace(/\.$/, '')
+          : ''
+
+      const testAddTitle = `Við ${regNameTest} bætist nýr viðauki, ${defaultTitle} sem ${
+        /fylgiskjal/i.test(defaultTitle) ? 'birt' : 'birtur'
+      } er með reglugerð þessari.`
+      const testChangeTitle = `Eftirfarandi breytingar eru gerðar á ${updateAppendixWording(
+        defaultTitle,
+      )}${regNameTest2}:`
+
       if (apx.diff?.value.includes('<div data-diff="new">')) {
-        additionArray.push([
-          `<p>Viðauki að nafni ${defaultTitle} bætist við og orðast svo:</p>${defaultText}` as HTMLText,
-        ])
-      } else {
-        additionArray.push([
-          `<p>Viðauki að nafni ${defaultTitle} breytist og orðast nú svo:</p>${defaultText}` as HTMLText,
-        ])
+        additionArray.push([`<p>${testAddTitle}</p>` as HTMLText])
+      } else if (hasAnyChange(apx.diff?.value)) {
+        additionArray.push([`<p>${testChangeTitle}</p><p>[]</p>` as HTMLText])
       }
     }
   })
@@ -455,17 +496,6 @@ export const formatAmendingBodyWithArticlePrefix = (
 
   const impactAdditionArray = Object.entries(impactsArray).map(
     ([key, impacts]) => {
-      const impactArray = impacts.map((item, i) =>
-        formatAmendingRegBody(
-          item.type === 'repeal' || draftImpactLength > 1 ? item.name : '',
-          item.type === 'repeal',
-          item.type === 'amend' ? item.diff?.value : undefined,
-          item.regTitle,
-          item.type === 'amend' ? item.appendixes : undefined,
-        ),
-      )
-      const flatArray = flatten(impactArray)
-      return flatArray
       const impactArray = impacts.map((item, i) => {
         return {
           formattedRegBody: formatAmendingRegBody(

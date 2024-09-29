@@ -228,9 +228,9 @@ export const EditChange = (props: EditChangeProp) => {
     return getDiff(dirtyClean(prev), dirtyClean(curr)).diff || emptyHTML
   }
 
-  const getAppendixDiffHtml = (activeText: HTMLText, i: number) => {
+  const getAppendixDiffHtml = (i: number) => {
     const previous = previousRegulation?.appendixes[i]?.text || emptyHTML
-    const current = activeText || emptyHTML
+    const current = activeChange?.appendixes[i]?.text.value || emptyHTML
 
     const diff = getDiff(dirtyClean(previous), dirtyClean(current)).diff
 
@@ -258,9 +258,10 @@ export const EditChange = (props: EditChangeProp) => {
             title: activeChange.title.value,
             text: activeChange.text.value,
             diff: getDiffHtml(),
-            appendixes: activeChange.appendixes.map((apx) => ({
+            appendixes: activeChange.appendixes.map((apx, i) => ({
               title: apx.title.value,
               text: apx.text.value,
+              diff: getAppendixDiffHtml(i),
             })),
             date: toISODate(activeChange.date.value),
           },
@@ -294,7 +295,7 @@ export const EditChange = (props: EditChangeProp) => {
                * IF NO DIFF => then 'diff' is undefined
                * IF NEW APPENDIX => 'diff' is <div data-diff="new"></div>
                */
-              diff: getAppendixDiffHtml(apx.text.value, i),
+              diff: getAppendixDiffHtml(i),
             })),
             date: toISODate(activeChange.date.value),
           },
