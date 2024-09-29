@@ -34,7 +34,7 @@ import {
 } from '../../graphql/types/schema'
 
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { navigateTo, navigateToNotification } from '../../lib/deep-linking'
+import { navigateTo, navigateToUniversalLink } from '../../lib/deep-linking'
 import { useNotificationsStore } from '../../stores/notifications-store'
 import {
   createSkeletonArr,
@@ -45,6 +45,7 @@ import { testIDs } from '../../utils/test-ids'
 import settings from '../../assets/icons/settings.png'
 import inboxRead from '../../assets/icons/inbox-read.png'
 import emptyIllustrationSrc from '../../assets/illustrations/le-company-s3.png'
+import { useBrowser } from '../../lib/use-browser'
 
 const LoadingWrapper = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
@@ -85,6 +86,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+  const { openBrowser } = useBrowser()
   const intl = useIntl()
   const theme = useTheme()
   const client = useApolloClient()
@@ -147,15 +149,19 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
     return data?.userNotifications?.data || []
   }, [data, loading])
 
-  const onNotificationPress = useCallback((notification: Notification) => {
-    // Mark notification as read and seen
-    void markUserNotificationAsRead({ variables: { id: notification.id } })
+  const onNotificationPress = useCallback(
+    (notification: Notification) => {
+      // Mark notification as read and seen
+      void markUserNotificationAsRead({ variables: { id: notification.id } })
 
-    navigateToNotification({
-      componentId,
-      link: notification.message?.link?.url,
-    })
-  }, [])
+      navigateToUniversalLink({
+        componentId,
+        link: notification.message?.link?.url,
+        openBrowser,
+      })
+    },
+    [markUserNotificationAsRead, componentId, openBrowser],
+  )
 
   const handleEndReached = async () => {
     if (

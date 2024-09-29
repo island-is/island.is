@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import * as styles from './TreeSlider.css'
 import { Controller } from 'react-hook-form'
@@ -10,7 +9,7 @@ import { useLocale } from '@island.is/localization'
 import { treeSliderConfig } from '../../lib/constants'
 import { Tree } from '../../assets/Tree'
 import { draft } from '../../lib/messages'
-import Slider from '../Components/SliderWithGraphic/Slider/Slider'
+import { Slider } from '@island.is/application/ui-components'
 
 export const TreeSlider = () => {
   const { formatMessage } = useLocale()

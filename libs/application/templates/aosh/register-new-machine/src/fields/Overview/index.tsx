@@ -67,7 +67,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               label: information.labels.owner.title,
               value: isOwnerOtherThanImporter(application.answers)
                 ? getPersonInformationForOverview(
-                    'importerInformation.owner',
+                    'ownerInformation.owner',
                     application.answers,
                     formatMessage,
                   )
@@ -133,7 +133,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             component: FieldComponents.KEY_VALUE,
             title: '',
             label: machine.labels.technicalMachineInformation.overviewTitle,
-            value: getTechnicalInformation(application.answers),
+            value: getTechnicalInformation(application.answers, formatMessage),
           }}
         />
       </ReviewGroup>
@@ -159,14 +159,6 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             }}
           />
         </ReviewGroup>
-      )}
-
-      {canMaybeRegisterToTraffic(application.answers) && (
-        <AlertMessage
-          type="warning"
-          title={formatMessage(overview.labels.alertMessageTitle)}
-          message={formatMessage(overview.labels.alertMessageMessage)}
-        />
       )}
     </Box>
   )

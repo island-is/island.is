@@ -86,6 +86,7 @@ const VehiclesModule = React.memo(
       return null
     }
 
+    const viewPagerItemWidth = screenWidth - theme.spacing[2] * 3
     const count = reorderedVehicles?.length ?? 0
 
     const items = reorderedVehicles?.slice(0, 3).map((vehicle, index) => (
@@ -93,14 +94,14 @@ const VehiclesModule = React.memo(
         key={vehicle.permno}
         item={vehicle}
         index={index}
-        minHeight={176}
+        minHeight={152}
         style={
           count > 1
             ? {
-                width: screenWidth - theme.spacing[2] * 3,
+                width: viewPagerItemWidth,
                 paddingHorizontal: 0,
                 paddingLeft: theme.spacing[2],
-                minHeight: 176,
+                minHeight: 152,
               }
             : {
                 width: '100%',
@@ -158,7 +159,9 @@ const VehiclesModule = React.memo(
                 />
               )}
               {count === 1 && items}
-              {count >= 2 && <ViewPager>{items}</ViewPager>}
+              {count >= 2 && (
+                <ViewPager itemWidth={viewPagerItemWidth}>{items}</ViewPager>
+              )}
             </>
           )}
         </Host>

@@ -816,21 +816,23 @@ describe('User profile API', () => {
       )
     })
 
-    it('POST /userProfile/{nationalId}/device-tokens duplicate token should return 400 bad request', async () => {
+    it('POST /userProfile/{nationalId}/device-tokens duplicate token should return the existing token', async () => {
       // create it
-      await request(app.getHttpServer())
+      const res1 = await request(app.getHttpServer())
         .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })
         .expect(201)
       // try to create same again
-      await request(app.getHttpServer())
+      const res2 = await request(app.getHttpServer())
         .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })
-        .expect(400)
+        .expect(201)
+
+      expect(res1.body).toEqual(res2.body)
     })
 
     it('POST /userProfile/{nationalId}/device-tokens with missing payload should 400 bad request', async () => {

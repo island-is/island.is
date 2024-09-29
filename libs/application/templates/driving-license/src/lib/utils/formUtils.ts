@@ -36,14 +36,13 @@ export const isVisible =
   }
 
 export const isApplicationForCondition =
-  (result: DrivingLicenseApplicationFor) => (answers: FormValue) => {
-    const applicationFor =
-      getValueViaPath<DrivingLicenseApplicationFor>(
-        answers,
-        'applicationFor',
-      ) ?? B_FULL
+  (result: DrivingLicenseApplicationFor | DrivingLicenseApplicationFor[]) =>
+  (answers: FormValue) => {
+    const strings = Array.isArray(result) ? result : [result]
 
-    return applicationFor === result
+    return strings.some(
+      (x) => x === getValueViaPath(answers, 'applicationFor') ?? B_FULL,
+    )
   }
 
 export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>

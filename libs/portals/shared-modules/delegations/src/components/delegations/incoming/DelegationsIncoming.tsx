@@ -14,6 +14,7 @@ import { DelegationsEmptyState } from '../DelegationsEmptyState'
 import { DelegationIncomingModal } from './DelegationIncomingModal/DelegationIncomingModal'
 import { useAuthDelegationsIncomingQuery } from './DelegationIncomingModal/DelegationIncomingModal.generated'
 import { AuthCustomDelegationIncoming } from '../../../types/customDelegation'
+import { DelegationPaths } from '../../../lib/paths'
 
 export const DelegationsIncoming = () => {
   const { formatMessage, lang = 'is' } = useLocale()
@@ -78,6 +79,7 @@ export const DelegationsIncoming = () => {
                   }}
                   direction="incoming"
                   variant="incoming"
+                  href={`${DelegationPaths.Delegations}/${delegation.id}`}
                 />
               ),
           )}

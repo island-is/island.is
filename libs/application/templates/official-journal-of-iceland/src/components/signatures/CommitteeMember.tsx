@@ -5,12 +5,16 @@ import { useLocale } from '@island.is/localization'
 import { signatures } from '../../lib/messages/signatures'
 import { InputFields } from '../../lib/types'
 import set from 'lodash/set'
-import { getCommitteeAnswers, getEmptyMember } from '../../lib/utils'
+import {
+  getCommitteeAnswers,
+  getEmptyMember,
+  getSingleSignatureMarkup,
+} from '../../lib/utils'
 import { memberItemSchema } from '../../lib/dataSchema'
 import { SignatureMember } from './Member'
 import * as z from 'zod'
 import { RemoveCommitteeMember } from './RemoveComitteeMember'
-import { getValueViaPath } from '@island.is/application/core'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -30,6 +34,8 @@ export const CommitteeMember = ({
     applicationId,
   })
 
+  const { setValue } = useFormContext()
+
   const handleMemberChange = (
     value: string,
     key: keyof MemberProperties,
@@ -40,18 +46,32 @@ export const CommitteeMember = ({
     )
 
     if (signature) {
+      const additionalSignature =
+        application.answers.signatures?.additionalSignature?.committee
+      const members = signature?.members?.map((m, i) => {
+        if (i === memberIndex) {
+          return {
+            ...m,
+            [key]: value,
+          }
+        }
+
+        return m
+      })
+
+      const html = getSingleSignatureMarkup(
+        {
+          ...signature,
+          members,
+        },
+        additionalSignature,
+        signature.chairman,
+      )
+
       const updatedCommitteeSignature = {
         ...signature,
-        members: signature?.members?.map((m, i) => {
-          if (i === memberIndex) {
-            return {
-              ...m,
-              [key]: value,
-            }
-          }
-
-          return m
-        }),
+        members: members,
+        html: html,
       }
 
       const updatedSignatures = set(
@@ -59,6 +79,8 @@ export const CommitteeMember = ({
         InputFields.signature.committee,
         updatedCommitteeSignature,
       )
+
+      setValue(InputFields.signature.committee, updatedCommitteeSignature)
 
       return updatedSignatures
     }

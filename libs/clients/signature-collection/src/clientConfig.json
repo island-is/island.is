@@ -74,6 +74,44 @@
         }
       }
     },
+    "/Admin/Medmaeli/{ID}/UpdateBls": {
+      "patch": {
+        "tags": ["Admin"],
+        "summary": "Uppfærir blaðsíðunúmer skriflegs meðmælis",
+        "description": "Aðeins m0gulegt fyrir skrifleg meðmæli",
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "description": "ID meðmælis sem á að uppfæra",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "blsNr",
+            "in": "query",
+            "description": "Nýtt blaðsíðutal",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Admin/Medmaelalisti/{ID}": {
       "delete": {
         "tags": ["Admin"],
@@ -493,6 +531,7 @@
     "/Frambod/{ID}/RemoveFrambodUser": {
       "post": {
         "tags": ["Frambod"],
+        "summary": "GAMALT. Nota DELETE /Frambod/{ID}.",
         "parameters": [
           {
             "name": "ID",
@@ -522,6 +561,7 @@
     "/Frambod/{ID}/RemoveFrambodAdmin": {
       "post": {
         "tags": ["Frambod"],
+        "summary": "GAMALT. Nota DELETE /Admin/Frambod/{ID}.",
         "parameters": [
           {
             "name": "ID",
@@ -551,6 +591,7 @@
     "/Frambod/{ID}/AddUmbod": {
       "post": {
         "tags": ["Frambod"],
+        "summary": "Ath. þarfnast skoðunar",
         "parameters": [
           {
             "name": "ID",
@@ -587,6 +628,7 @@
     "/Frambod/{ID}/RemoveUmbod/{Kennitala}": {
       "get": {
         "tags": ["Frambod"],
+        "summary": "Ath. þarfnast skoðunar",
         "parameters": [
           {
             "name": "ID",
@@ -800,7 +842,10 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+                }
               }
             }
           },
@@ -816,6 +861,7 @@
     "/Medmaelalistar/AddListar": {
       "post": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Nota POST /Frambod til að stofna framboð.\r\nNota POST /Medmaelalistar til að bæta listum við þegar stofnað framboð.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -849,6 +895,7 @@
     "/Medmaelalistar/AddListarAdmin": {
       "post": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Nota POST /Admin/Frambod til að stofna framboð.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1033,6 +1080,7 @@
     "/Medmaelalistar/{ID}/AddMedmaeli": {
       "post": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Nota POST /Medmaelalistar/{ID}/Medmaeli til að bæta við meðmæli.",
         "parameters": [
           {
             "name": "ID",
@@ -1063,6 +1111,7 @@
     "/Medmaelalistar/{ID}/AddMedmaeliBulk": {
       "post": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Fyrir framboð: Nota POST /Medmaelalistar/{ID}/Medmaeli/Bulk til að bæta við skriflegum meðmælum.\r\nFyrir admin: Nota POST /Admin/Medmaelalistar/{ID}/Medmaeli/Bulk til að bæta við skriflegum meðmælum.",
         "parameters": [
           {
             "name": "ID",
@@ -1103,6 +1152,7 @@
     "/Medmaelalistar/{ID}/ExtendTime": {
       "patch": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Nota PATCH /Admin/Medmaelalistar/{ID}/ExtendTime til að framlengja meðmælalista.",
         "parameters": [
           {
             "name": "ID",
@@ -1140,6 +1190,7 @@
     "/Medmaelalistar/{ID}/ToggleList": {
       "patch": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Nota PATCH /Admin/Medmaelalistar/{ID}/ToggleList.",
         "parameters": [
           {
             "name": "ID",
@@ -1172,6 +1223,7 @@
     "/Medmaelalistar/{ID}/Compare": {
       "post": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Nota POST /Admin/Medmaelalistar/{ID}/Compare.",
         "parameters": [
           {
             "name": "ID",
@@ -1212,6 +1264,7 @@
     "/Medmaelalistar/{ID}/RemoveMedmaelalistiUser": {
       "post": {
         "tags": ["Medmaelalistar"],
+        "summary": "GAMALT. Fyrir framboð: Nota DELETE /Medmaelalistar/{ID}.\r\nFyrir admin: Nota DELETE /Admin/Medmaelalistar/{ID}.",
         "parameters": [
           {
             "name": "ID",
@@ -1474,6 +1527,7 @@
     "/Medmaelasofnun/{ID}/EinsInfoAdmin/{Kennitala}": {
       "get": {
         "tags": ["Medmaelasofnun"],
+        "summary": "GAMALT. Nota GET /Admin/Medmaelasofnun/{ID}/EinsInfo/{Kennitala}.",
         "parameters": [
           {
             "name": "ID",
@@ -1511,6 +1565,7 @@
     "/Medmaelasofnun/{ID}/ToggleSofnun": {
       "post": {
         "tags": ["Medmaelasofnun"],
+        "summary": "GAMALT. Nota PATCH /Admin/Medmaelasofnun/{ID}/ToggleSofnun.",
         "parameters": [
           {
             "name": "ID",
@@ -1541,6 +1596,7 @@
     "/Medmaelasofnun/{ID}/Compare": {
       "post": {
         "tags": ["Medmaelasofnun"],
+        "summary": "GAMALT. Nota POST /Admin/Medmaelasofnun/{ID}/Compare.",
         "parameters": [
           {
             "name": "ID",
@@ -1618,6 +1674,7 @@
     "/Medmaeli/{ID}/RemoveMedmaeliUser": {
       "post": {
         "tags": ["Medmaeli"],
+        "summary": "GAMALT. Nota DELETE /Medmaeli/{ID}",
         "parameters": [
           {
             "name": "ID",
@@ -1647,6 +1704,7 @@
     "/Medmaeli/{ID}/RemoveMedmaeliAdmin": {
       "post": {
         "tags": ["Medmaeli"],
+        "summary": "GAMALT. Nota DELETE Admin/Medmaeli/{ID}",
         "parameters": [
           {
             "name": "ID",
@@ -1681,6 +1739,44 @@
             "name": "ID",
             "in": "path",
             "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaeli/{ID}/UpdateBls": {
+      "patch": {
+        "tags": ["Medmaeli"],
+        "summary": "Uppfærir blaðsíðunúmer skriflegs meðmælis",
+        "description": "Aðeins m0gulegt fyrir skrifleg meðmæli",
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "description": "ID meðmælis sem á að uppfæra",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "blsNr",
+            "in": "query",
+            "description": "Nýtt blaðsíðutal",
             "schema": { "type": "integer", "format": "int32" }
           }
         ],
@@ -1960,8 +2056,9 @@
         "type": "object",
         "properties": {
           "frambodID": { "type": "integer", "format": "int32" },
-          "medmaelalisti": {
-            "$ref": "#/components/schemas/FrambodListarRequestDTO"
+          "medmaelalistar": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/FrambodListarRequestDTO" }
           }
         },
         "additionalProperties": false
@@ -2095,7 +2192,7 @@
               "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
             }
           },
-          "sveitastjornakosningar": {
+          "sveitarstjornarkosningar": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
@@ -2181,11 +2278,12 @@
         "additionalProperties": false
       },
       "SvaediDTO": {
-        "required": ["nafn", "svaediTegundLysing"],
+        "required": ["nafn", "nr", "svaediTegundLysing"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
           "nafn": { "type": "string" },
+          "nr": { "type": "string" },
           "svaediTegund": { "type": "integer", "format": "int32" },
           "svaediTegundLysing": { "type": "string" },
           "fjoldi": { "type": "integer", "format": "int32" },
