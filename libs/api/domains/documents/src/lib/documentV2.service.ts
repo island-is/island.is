@@ -216,7 +216,7 @@ export class DocumentServiceV2 {
       this.logger.warn('Document page number error', {
         category: LOG_CATEGORY,
         documentId,
-        exception,
+        error: exception,
       })
       return {
         pageNumber: defaultRes,
