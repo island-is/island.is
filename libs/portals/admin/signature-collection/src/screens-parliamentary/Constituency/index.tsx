@@ -81,7 +81,7 @@ export const Constituency = () => {
                 marginBottom={3}
                 display="flex"
                 justifyContent="spaceBetween"
-                alignItems="center"
+                alignItems="flexEnd"
               >
                 <Text variant="eyebrow">
                   {formatMessage(m.totalListResults) +
