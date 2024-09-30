@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { VehicleMileageDetail } from './getVehicleMileage.model'
 
 @ObjectType()
 export class NextInspection {
@@ -11,6 +12,7 @@ export class NextInspection {
   })
   nextinspectiondateIfPassedInspectionToday?: Date
 }
+
 @ObjectType()
 export class VehiclesVehicle {
   @Field({ nullable: true })
@@ -243,6 +245,12 @@ export class VehicleListed {
 
   @Field({ nullable: true })
   nextMainInspection?: Date
+
+  @Field(() => VehicleMileageDetail, { nullable: true })
+  lastMileageRegistration?: VehicleMileageDetail
+
+  @Field(() => [VehicleMileageDetail], { nullable: true })
+  mileageRegistrationHistory?: Array<VehicleMileageDetail>
 }
 
 @ObjectType()

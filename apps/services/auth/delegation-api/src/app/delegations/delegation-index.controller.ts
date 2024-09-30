@@ -93,11 +93,14 @@ export class DelegationIndexController {
           ...parsedDelegationInfo,
         },
       },
-      this.delegationIndexService.createOrUpdateDelegationRecord({
-        ...parsedDelegationInfo,
-        provider: auth.delegationProvider,
-        validTo: body.validTo,
-      }),
+      this.delegationIndexService.createOrUpdateDelegationRecord(
+        {
+          ...parsedDelegationInfo,
+          provider: auth.delegationProvider,
+          validTo: body.validTo,
+        },
+        auth,
+      ),
     )
   }
 
@@ -126,10 +129,13 @@ export class DelegationIndexController {
           ...parsedDelegationInfo,
         },
       },
-      this.delegationIndexService.removeDelegationRecord({
-        ...parsedDelegationInfo,
-        provider: auth.delegationProvider,
-      }),
+      this.delegationIndexService.removeDelegationRecord(
+        {
+          ...parsedDelegationInfo,
+          provider: auth.delegationProvider,
+        },
+        auth,
+      ),
     )
   }
 }
