@@ -50,7 +50,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
         <Box
           key={item.defendant.id}
           marginBottom={
-            index === subpoenaItems.length ? 0 : item.children ? 5 : 3
+            index === subpoenaItems.length - 1 ? 0 : item.children ? 5 : 3
           }
         >
           <Box marginBottom={item.children ? 2 : 0}>
