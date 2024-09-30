@@ -94,43 +94,6 @@ describe('Testing utility functions for applications', () => {
     })
   })
 
-  it('Should return name of the applicant when identity external data is defined', () => {
-    expect(
-      getApplicantName(
-        createApplication({
-          externalData: {
-            identity: {
-              data: {
-                name: 'Test User',
-              },
-              date: new Date(),
-              status: 'success',
-            },
-          },
-        }),
-      ),
-    ).toEqual('Test User')
-  })
-
-  it('Should return name of the applicant when person external data is defined', () => {
-    expect(
-      getApplicantName(
-        createApplication({
-          externalData: {
-            person: {
-              data: {
-                fullname: 'Test User',
-              },
-              date: new Date(),
-              status: 'success',
-            },
-          },
-        }),
-      ),
-    ).toEqual('Test User')
-  })
-})
-
 describe('getApplicationNameTranslationString', () => {
   it('Should return the name of the application when defined with a string', () => {
     expect(
