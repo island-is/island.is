@@ -23,14 +23,19 @@ import {
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  ServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
-// import { Subpoena } from '../subpoena/models/subpoena.model'
+import { Subpoena } from '../subpoena'
+import { UpdateSubpoenaDto } from '../subpoena/dto/updateSubpoena.dto'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -124,15 +129,15 @@ export class PoliceService {
     malseinings: z.optional(z.array(this.crimeSceneStructure)),
   })
   private subpoenaStructure = z.object({
-    Acknowledged: z.boolean(),
-    Comment: z.string(),
-    DefenderChoice: z.string(),
-    DefenderNationalId: z.string(),
-    ProsecutedConfirmedSubpoenaThroughIslandis: z.boolean(),
-    ServedBy: z.string(),
-    Delivered: z.boolean(),
-    DeliveredOnPaper: z.boolean(),
-    DeliveredToLawyer: z.boolean(),
+    acknowledged: z.boolean(),
+    comment: z.string(),
+    defenderChoice: z.string(),
+    defenderNationalId: z.string(),
+    prosecutedConfirmedSubpoenaThroughIslandis: z.boolean(),
+    servedBy: z.string(),
+    delivered: z.boolean(),
+    deliveredOnPaper: z.boolean(),
+    deliveredToLawyer: z.boolean(),
   })
 
   constructor(
@@ -328,18 +333,56 @@ export class PoliceService {
       })
   }
 
-  // async getSubpoenaStatus(subpoenaId: string): Promise<Subpoena> {
-  //   return this.fetchPoliceDocumentApi(
-  //     `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
-  //   ).then(async (res: Response) => {
-  //     if (res.ok) {
-  //       const response: z.infer<typeof this.subpoenaStructure> =
-  //         await res.json()
+  async getSubpoenaStatus(
+    subpoenaId: string,
+    user: User,
+  ): Promise<UpdateSubpoenaDto> {
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
+    )
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const response: z.infer<typeof this.subpoenaStructure> =
+            await res.json()
 
-  //       return response
-  //     }
-  //   })
-  // }
+          this.subpoenaStructure.parse(response)
+
+          const a: UpdateSubpoenaDto = { serviceStatus: response.deliveredToLawyer ? ServiceStatus.DEFENDER : response.prosecutedConfirmedSubpoenaThroughIslandis ? ServiceStatus.ELECTRONICALLY : response.,servedBy: response.servedBy }
+
+          return response
+        }
+
+        const reason = await res.text()
+
+        // The police system does not provide a structured error response.
+        // When a subpoena does not exist, a stack trace is returned.
+        throw new NotFoundException({
+          message: `Subpoena with id ${subpoenaId} does not exist`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof ServiceUnavailableException) {
+          // Do not spam the logs with errors
+          // Act as if the case was updated
+          return true
+        } else {
+          this.logger.error(`Failed to get subpoena with id ${subpoenaId}`, {
+            reason,
+          })
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get subpoena',
+          {
+            subpoenaId,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          reason,
+        )
+      })
+  }
 
   async getPoliceCaseInfo(
     caseId: string,
