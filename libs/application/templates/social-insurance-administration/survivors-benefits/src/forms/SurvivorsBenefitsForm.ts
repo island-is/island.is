@@ -1,9 +1,11 @@
 import {
   buildAlertMessageField,
   buildCustomField,
+  buildDateField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
+  buildNationalIdWithNameField,
   buildRadioField,
   buildSection,
   buildSelectField,
@@ -33,7 +35,6 @@ import isEmpty from 'lodash/isEmpty'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  hasSpouseLessThanAYear,
 } from '../lib/survivorsBenefitsUtils'
 import {
   friendlyFormatIBAN,
@@ -345,11 +346,90 @@ export const SurvivorsBenefitsForm: Form = buildForm({
               title: survivorsBenefitsFormMessage.info.deceasedSpouseTitle,
               description:
                 survivorsBenefitsFormMessage.info.deceasedSpouseDescription,
+              condition: (_, externalData) =>
+                !!getApplicationExternalData(externalData)
+                  .deceasedSpouseNationalId,
               children: [
+                buildTextField({
+                  id: 'deceasedSpouseInfo.nationalId',
+                  title:
+                    survivorsBenefitsFormMessage.info.deceasedSpouseNationalId,
+                  width: 'half',
+                  defaultValue: (application: Application) =>
+                    getApplicationExternalData(application.externalData)
+                      .deceasedSpouseNationalId,
+                  readOnly: true,
+                }),
+                buildDateField({
+                  id: 'deceasedSpouseInfo.date',
+                  title: survivorsBenefitsFormMessage.info.deceasedSpouseDate,
+                  width: 'half',
+                  defaultValue: (application: Application) =>
+                    getApplicationExternalData(application.externalData)
+                      .deceasedSpouseDateOfDeath,
+                  readOnly: true,
+                }),
                 buildTextField({
                   id: 'deceasedSpouseInfo.name',
                   title: survivorsBenefitsFormMessage.info.deceasedSpouseName,
-                  width: 'half',
+                  defaultValue: (application: Application) =>
+                    getApplicationExternalData(application.externalData)
+                      .deceasedSpouseName,
+                  readOnly: true,
+                }),
+              ],
+            }),
+            buildMultiField({
+              id: 'deceasedSpouseNoInfo',
+              title: survivorsBenefitsFormMessage.info.deceasedSpouseTitle,
+              description:
+                survivorsBenefitsFormMessage.info
+                  .deceasedSpouseNotFoundDescription,
+              // Use correct value for condition
+              condition: (_, externalData) =>
+                !getApplicationExternalData(externalData)
+                  .deceasedSpouseNationalId,
+              children: [
+                buildNationalIdWithNameField({
+                  id: 'deceasedSpouseInfo',
+                  title: '',
+                  required: true,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'deceasedSpouseAttachmentSection',
+          title:
+            survivorsBenefitsFormMessage.info
+              .deceasedSpouseAttachmentSubSection,
+          condition: (_, externalData) =>
+            !getApplicationExternalData(externalData).deceasedSpouse,
+          children: [
+            buildMultiField({
+              id: 'deceasedSpouseAttachment',
+              title:
+                survivorsBenefitsFormMessage.info
+                  .deceasedSpouseAttachmentSubSection,
+              description:
+                survivorsBenefitsFormMessage.info
+                  .deceasedSpouseAttachmentSectionDescription,
+              children: [
+                buildFileUploadField({
+                  id: 'deceasedSpouseAttachment.file',
+                  title: '',
+                  uploadHeader:
+                    survivorsBenefitsFormMessage.info
+                      .deceasedSpouseAttachmentHeader,
+                  uploadDescription:
+                    survivorsBenefitsFormMessage.info
+                      .deceasedSpouseAttachmentDescription,
+                  uploadButtonLabel:
+                    survivorsBenefitsFormMessage.info
+                      .deceasedSpouseAttachmentButton,
+                  uploadAccept: '.pdf',
+                  uploadMultiple: false,
                 }),
               ],
             }),
@@ -385,11 +465,12 @@ export const SurvivorsBenefitsForm: Form = buildForm({
           id: 'expectingChildSection',
           title: survivorsBenefitsFormMessage.info.expectingChildTitle,
           condition: (_, externalData) => {
-            const { hasSpouse } = getApplicationExternalData(externalData)
-            const spouseLessThanAYear = hasSpouseLessThanAYear(externalData)
-
-            //if no spouse info is found or cohabitation has lasted less than a year, then show question
-            if (hasSpouse === null || spouseLessThanAYear) return true
+            const spouseAtLeast1Year =
+              getApplicationExternalData(
+                externalData,
+              ).deceasedSpouseCohabitationLongerThan1Year
+            //if cohabitation has lasted less than a year, then show question
+            if (spouseAtLeast1Year === false) return true
             return false
           },
           children: [

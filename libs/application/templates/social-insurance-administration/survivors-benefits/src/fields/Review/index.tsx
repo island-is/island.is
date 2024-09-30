@@ -15,6 +15,7 @@ import { Children } from './review-groups/Children'
 import { ExpectingChild } from './review-groups/ExpectingChild'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { handleServerError } from '@island.is/application/ui-components'
+import { DeceasedSpouse } from './review-groups/DeceasedSpouse'
 
 interface ReviewScreenProps {
   application: Application
@@ -159,6 +160,7 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <BaseInformation {...childProps} />
       <PaymentInformation {...childProps} />
+      <DeceasedSpouse {...childProps} />
       <Children {...childProps} />
       <ExpectingChild {...childProps} />
       <Comment {...childProps} />

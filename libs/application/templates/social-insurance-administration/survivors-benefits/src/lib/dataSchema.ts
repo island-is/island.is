@@ -11,6 +11,7 @@ import {
   validIBAN,
   validSWIFT,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import * as kennitala from 'kennitala'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -145,6 +146,17 @@ export const dataSchema = z.object({
       ({ spouseAllowance, spouseAllowanceUsage }) =>
         spouseAllowance === YES ? !!spouseAllowanceUsage : true,
       { path: ['spouseAllowanceUsage'] },
+    ),
+  deceasedSpouseInfo: z
+    .object({
+      nationalId: z.string().optional(),
+      name: z.string().optional(),
+    })
+    .refine(
+      ({ nationalId }) => (nationalId ? kennitala.isPerson(nationalId) : false),
+      {
+        path: ['nationalId'],
+      },
     ),
   expectingChild: z.object({
     question: z.enum([YES, NO]),

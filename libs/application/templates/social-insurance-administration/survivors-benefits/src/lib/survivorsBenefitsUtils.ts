@@ -19,7 +19,6 @@ import {
   BankInfo,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import addYears from 'date-fns/addYears'
 
 enum AttachmentTypes {
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
@@ -90,6 +89,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
   ) as FileType[]
 
+  const deceasedSpouseName = getValueViaPath(
+    answers,
+    'deceasedSpouseInfo.name',
+  ) as string
+
+  const deceasedSpouseNationalId = getValueViaPath(
+    answers,
+    'deceasedSpouseInfo.nationalId',
+  ) as string
+
   const tempAnswers = getValueViaPath(
     answers,
     'tempAnswers',
@@ -118,6 +127,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     spouseAllowanceUsage,
     taxLevel,
     additionalAttachmentsRequired,
+    deceasedSpouseName,
+    deceasedSpouseNationalId,
     tempAnswers,
     isExpectingChild,
   }
@@ -158,21 +169,6 @@ export const getApplicationExternalData = (
 
   const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
 
-  const hasSpouse = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data',
-  ) as object
-
-  const maritalStatus = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.maritalStatus',
-  ) as string
-
-  const lastModified = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.lastModified',
-  ) as string
-
   const bankInfo = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationApplicant.data.bankAccount',
@@ -193,19 +189,46 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
   ) as boolean
 
+  const deceasedSpouse = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationSpousalInfo.data.name',
+  ) as object
+
+  const deceasedSpouseName = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationSpousalInfo.data.name',
+  ) as string
+
+  const deceasedSpouseNationalId = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationSpousalInfo.data.nationalId',
+  ) as string
+
+  const deceasedSpouseDateOfDeath = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationSpousalInfo.data.dateOfDeath',
+  ) as Date
+
+  const deceasedSpouseCohabitationLongerThan1Year = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationSpousalInfo.data.cohabitadedLongerThan1Year',
+  ) as boolean
+
   return {
     applicantName,
     applicantNationalId,
     userProfileEmail,
     applicantAddress,
     applicantMunicipality,
-    hasSpouse,
     bankInfo,
     currencies,
     children,
-    maritalStatus,
-    lastModified,
     isEligible,
+    deceasedSpouse,
+    deceasedSpouseName,
+    deceasedSpouseNationalId,
+    deceasedSpouseDateOfDeath,
+    deceasedSpouseCohabitationLongerThan1Year,
   }
 }
 
@@ -248,21 +271,6 @@ export const getAttachments = (application: Application) => {
   }
 
   return attachments
-}
-
-export const hasSpouseLessThanAYear = (
-  externalData: Application['externalData'],
-) => {
-  const { maritalStatus, lastModified } =
-    getApplicationExternalData(externalData)
-  const today = new Date()
-  const oneYearAgo = addYears(today, -1)
-  const statusLastModified = new Date(lastModified)
-
-  if (maritalStatus === '3' && statusLastModified > oneYearAgo) {
-    return true
-  }
-  return false
 }
 
 export const isEligible = (externalData: ExternalData): boolean => {

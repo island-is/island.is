@@ -8,12 +8,14 @@ import {
   IncomePlanApi,
   PaymentPlanApi,
   PensionCalculatorApi,
+  DeathBenefitsApi,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+  TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
 } from '../../gen/fetch'
 import { handle404 } from '@island.is/clients/middlewares'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
@@ -28,6 +30,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly paymentPlanApi: PaymentPlanApi,
     private readonly currencyApi: GeneralApi,
     private readonly pensionCalculatorApi: PensionCalculatorApi,
+    private readonly deathBenefitsApi: DeathBenefitsApi,
     private readonly incomePlanApi: IncomePlanApi,
   ) {}
 
@@ -45,6 +48,9 @@ export class SocialInsuranceAdministrationClientService {
 
   private paymentPlanApiWithAuth = (user: User) =>
     this.paymentPlanApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private deathBenefitsApiWithAuth = (user: User) =>
+    this.deathBenefitsApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   private incomePlanApiWithAuth = (user: User) =>
     this.incomePlanApi.withMiddleware(new AuthMiddleware(user as Auth))
@@ -131,5 +137,12 @@ export class SocialInsuranceAdministrationClientService {
       trWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorInput:
         parameters,
     })
+  }
+  async getSpousalInfo(
+    user: User,
+  ): Promise<TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo> {
+    return this.deathBenefitsApiWithAuth(
+      user,
+    ).apiProtectedV1DeathBenefitsSpousalinfoGet()
   }
 }

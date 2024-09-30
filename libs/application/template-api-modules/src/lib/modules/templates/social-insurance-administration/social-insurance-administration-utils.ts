@@ -34,6 +34,12 @@ import {
   getApplicationExternalData as getPSApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 
+import {
+  ChildInformation,
+  getApplicationAnswers as getSBApplicationAnswers,
+  getApplicationExternalData as getSBApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/survivors-benefits'
+
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
   uploads: Attachment[],
@@ -298,11 +304,85 @@ export const transformApplicationToPensionSupplementDTO = (
   return pensionSupplementDTO
 }
 
+export const transformApplicationToSurvivorsBenefitsDTO = (
+  application: Application,
+  uploads: Attachment[],
+): ApplicationDTO => {
+  const {
+    applicantPhonenumber,
+    comment,
+    bankAccountType,
+    bank,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+    paymentInfo,
+    personalAllowance,
+    personalAllowanceUsage,
+    spouseAllowance,
+    spouseAllowanceUsage,
+    taxLevel,
+    deceasedSpouseNationalId,
+  } = getSBApplicationAnswers(application.answers)
+  const { bankInfo, userProfileEmail, children } = getSBApplicationExternalData(
+    application.externalData,
+  )
+
+  // TODO: Implement sendApplication for SURVIVORS_BENEFITS
+
+  const survivorsBenefitsDTO: ApplicationDTO = {
+    applicationId: application.id,
+    applicantInfo: {
+      email: userProfileEmail,
+      phonenumber: applicantPhonenumber,
+    },
+    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
+      ...((bankAccountType === undefined ||
+        bankAccountType === BankAccountType.ICELANDIC) && {
+        domesticBankInfo: {
+          bank: formatBank(bank),
+        },
+      }),
+      ...(bankAccountType === BankAccountType.FOREIGN && {
+        foreignBankInfo: {
+          iban: iban.replace(/[\s]+/g, ''),
+          swift: swift.replace(/[\s]+/g, ''),
+          foreignBankName: bankName,
+          foreignBankAddress: bankAddress,
+          foreignCurrency: currency,
+        },
+      }),
+    }),
+    taxInfo: {
+      personalAllowance: YES === personalAllowance,
+      personalAllowanceUsage:
+        YES === personalAllowance ? +personalAllowanceUsage : 0,
+      taxLevel: +taxLevel,
+    },
+    uploads,
+    comment,
+    deceasedNationalId: deceasedSpouseNationalId,
+    childrenNationalIds: getChildrenNationalIds(children),
+    spouseTaxCardUsage: {
+      useCard: spouseAllowance === YES,
+      ratio: Number(spouseAllowanceUsage),
+    },
+  }
+
+  return survivorsBenefitsDTO
+}
+
 export const getMonthNumber = (monthName: string): number => {
   // Parse the month name and get the month number (0-based)
   const monthNumber = parse(monthName, 'MMMM', new Date())
   return monthNumber.getMonth() + 1
 }
+
+export const getChildrenNationalIds = (
+  children: ChildInformation[],
+): string[] => children.map(({ nationalId }) => nationalId)
 
 export const getApplicationType = (application: Application): string => {
   const { applicationType } = getOAPApplicationAnswers(application.answers)

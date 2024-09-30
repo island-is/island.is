@@ -30,3 +30,9 @@ export const SocialInsuranceAdministrationIsApplicantEligibleApi =
     externalDataId: 'socialInsuranceAdministrationIsApplicantEligible',
     namespace: 'SocialInsuranceAdministration',
   })
+
+export const SocialInsuranceAdministrationSpousalInfo = defineTemplateApi({
+  action: 'getSpousalInfo',
+  externalDataId: 'socialInsuranceAdministrationSpousalInfo',
+  namespace: 'SocialInsuranceAdministration',
+})
