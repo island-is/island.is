@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDefenceUser,
@@ -241,13 +242,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   caseId={workingCase.id}
                   title={formatMessage(strings.subpoenaButtonText, {
                     name: defendant.name,
-                    date: `${subpoena.created?.slice(
-                      8,
-                      10,
-                    )}.${subpoena.created?.slice(
-                      5,
-                      7,
-                    )}.${subpoena.created?.slice(0, 4)}`,
+                    date: formatDate(subpoena.created),
                   })}
                   pdfType="subpoena"
                   elementId={[defendant.id, subpoena.id]}

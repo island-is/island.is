@@ -4,6 +4,7 @@ import router from 'next/router'
 
 import { Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
@@ -191,15 +192,9 @@ const Subpoena: FC = () => {
                 >
                   <PdfButton
                     caseId={workingCase.id}
-                    title={`Fyrirkall - ${
-                      defendant.name
-                    } ${subpoena.created?.slice(
-                      8,
-                      10,
-                    )}.${subpoena.created?.slice(
-                      5,
-                      7,
-                    )}.${subpoena.created?.slice(0, 4)} - PDF`}
+                    title={`Fyrirkall - ${defendant.name} ${formatDate(
+                      subpoena.created,
+                    )} - PDF`}
                     pdfType="subpoena"
                     elementId={[defendant.id, subpoena.id]}
                   />
