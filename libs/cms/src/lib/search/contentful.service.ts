@@ -526,6 +526,10 @@ export class ContentfulService {
           retries = MAX_RETRY_COUNT
         } catch (error) {
           if (error?.statusCode === 429 && retries > 0) {
+            logger.info('Retrying nested resolution request...', {
+              retriesLeft: retries - 1,
+              delay,
+            })
             await new Promise((resolve) => {
               setTimeout(resolve, delay)
             })
