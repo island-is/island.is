@@ -49,4 +49,9 @@ export class UpdateSubpoenaDto {
   @IsBoolean()
   @ApiProperty({ type: Boolean, required: false })
   deliveredToLawyer?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty({ type: Boolean, required: false })
+  deliveryInvalidated?: boolean
 }
