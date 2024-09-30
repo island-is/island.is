@@ -35,6 +35,10 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defenderPhoneNumber
       defenderChoice
       verdictViewDate
+      subpoenas {
+        id
+        created
+      }
     }
     defenderName
     defenderNationalId
