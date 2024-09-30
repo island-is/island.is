@@ -113,7 +113,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   }, [res.data, res.loading])
 
   const latestMileage =
-    data?.[0]?.__typename !== 'Skeleton' && data[0].mileage
+    data?.[0]?.__typename !== 'Skeleton' && data[0]?.mileage
       ? // Parse mileage from string to number
         +data[0].mileage
       : 0

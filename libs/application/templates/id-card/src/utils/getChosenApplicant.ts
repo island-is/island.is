@@ -25,7 +25,8 @@ export const getChosenApplicant = (
     [],
   ) as Array<IdentityDocumentChild>
 
-  if (applicantIdentity?.nationalId === nationalId) {
+  //this nationalId null check is only because conditions are rendered before applicant has been chosen
+  if (!nationalId || applicantIdentity?.nationalId === nationalId) {
     return {
       name: applicantIdentity?.fullName,
       isApplicant: true,

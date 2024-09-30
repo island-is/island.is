@@ -50,13 +50,10 @@ const useDefendants = () => {
           variables: { input: { caseId, defendantId } },
         })
 
-        if (data?.deleteDefendant?.deleted) {
-          return true
-        } else {
-          return false
-        }
+        return Boolean(data?.deleteDefendant?.deleted)
       } catch (error) {
-        formatMessage(errors.deleteDefendant)
+        toast.error(formatMessage(errors.deleteDefendant))
+        return false
       }
     },
     [deleteDefendantMutation, formatMessage],
@@ -71,13 +68,10 @@ const useDefendants = () => {
           },
         })
 
-        if (data) {
-          return true
-        } else {
-          return false
-        }
+        return Boolean(data)
       } catch (error) {
         toast.error(formatMessage(errors.updateDefendant))
+        return false
       }
     },
     [formatMessage, updateDefendantMutation],

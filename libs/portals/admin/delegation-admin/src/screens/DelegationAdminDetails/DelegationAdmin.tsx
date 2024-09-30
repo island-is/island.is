@@ -1,30 +1,70 @@
-import { Box, Stack, Tabs } from '@island.is/island-ui/core'
+import { Button, GridColumn, Box, Stack, Tabs } from '@island.is/island-ui/core'
 import { BackButton } from '@island.is/portals/admin/core'
 import { useLocale } from '@island.is/localization'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { DelegationAdminResult } from './DelegationAdmin.loader'
 import { DelegationAdminPaths } from '../../lib/paths'
-import { IntroHeader } from '@island.is/portals/core'
+import { formatNationalId, IntroHeader } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import React from 'react'
 import DelegationList from '../../components/DelegationList'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { DelegationsEmptyState } from '@island.is/portals/shared-modules/delegations'
+import { useAuth } from '@island.is/auth/react'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { maskString } from '@island.is/shared/utils'
 
 const DelegationAdminScreen = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const delegationAdmin = useLoaderData() as DelegationAdminResult
+  const { userInfo } = useAuth()
+
+  const hasAdminAccess = userInfo?.scopes.includes(
+    AdminPortalScope.delegationSystemAdmin,
+  )
 
   return (
     <Stack space="containerGutter">
       <BackButton onClick={() => navigate(DelegationAdminPaths.Root)} />
-      <Box width="full" display="flex" justifyContent="spaceBetween">
-        <IntroHeader
-          title={delegationAdmin.name}
-          intro={delegationAdmin.nationalId}
-        />
-      </Box>
+
+      <IntroHeader
+        title={delegationAdmin.name}
+        intro={formatNationalId(delegationAdmin.nationalId)}
+      >
+        {hasAdminAccess && (
+          <GridColumn span={['8/8', '3/8']}>
+            <Box
+              display={'flex'}
+              justifyContent={['flexStart', 'flexEnd']}
+              alignItems={['flexStart', 'center']}
+              height={'full'}
+            >
+              <Button
+                onClick={async () => {
+                  const maskedNationalId =
+                    (await maskString(
+                      delegationAdmin.nationalId,
+                      userInfo?.profile.nationalId || '',
+                    )) ?? ''
+                  const query = new URLSearchParams({
+                    fromNationalId: maskedNationalId,
+                  })
+                  navigate(
+                    `${
+                      DelegationAdminPaths.CreateDelegation
+                    }?${query.toString()}`,
+                  )
+                }}
+                size="small"
+              >
+                {formatMessage(m.createNewDelegation)}
+              </Button>
+            </Box>
+          </GridColumn>
+        )}
+      </IntroHeader>
+
       <Tabs
         contentBackground="white"
         label={'Delegation Admin'}
@@ -32,11 +72,11 @@ const DelegationAdminScreen = () => {
           {
             label: formatMessage(m.delegationFrom),
             content:
-              delegationAdmin.incoming.length > 0 ? (
+              delegationAdmin.outgoing.length > 0 ? (
                 <DelegationList
-                  direction="incoming"
+                  direction="outgoing"
                   delegationsList={
-                    delegationAdmin.incoming as AuthCustomDelegation[]
+                    delegationAdmin.outgoing as AuthCustomDelegation[]
                   }
                 />
               ) : (
@@ -49,11 +89,11 @@ const DelegationAdminScreen = () => {
           {
             label: formatMessage(m.delegationTo),
             content:
-              delegationAdmin.outgoing.length > 0 ? (
+              delegationAdmin.incoming.length > 0 ? (
                 <DelegationList
-                  direction="outgoing"
+                  direction="incoming"
                   delegationsList={
-                    delegationAdmin.outgoing as AuthCustomDelegation[]
+                    delegationAdmin.incoming as AuthCustomDelegation[]
                   }
                 />
               ) : (

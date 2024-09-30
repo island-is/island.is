@@ -18,8 +18,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { type Case } from '../case'
+import { CaseString } from '../case/models/caseString.model'
 import { DateLog } from '../case/models/dateLog.model'
-import { ExplanatoryComment } from '../case/models/explanatoryComment.model'
 import { eventModuleConfig } from './event.config'
 
 const errorEmojis = [
@@ -121,15 +121,11 @@ export class EventService {
             }\n>Dómritari ${
               theCase.registrar?.name ?? 'er ekki skráður'
             }\n>Fyrirtaka ${
-              ExplanatoryComment.postponedIndefinitelyExplanation(
-                theCase.explanatoryComments,
-              )
-                ? 'ekki ákveðin'
-                : formatDate(
-                    DateLog.courtDate(theCase.dateLogs)?.date ??
-                      DateLog.arraignmentDate(theCase.dateLogs)?.date,
-                    'Pp',
-                  ) ?? 'er ekki skráð'
+              formatDate(
+                DateLog.courtDate(theCase.dateLogs)?.date ??
+                  DateLog.arraignmentDate(theCase.dateLogs)?.date,
+                'Pp',
+              ) ?? 'er ekki skráð'
             }`
           : ''
 

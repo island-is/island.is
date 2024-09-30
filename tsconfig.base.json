@@ -376,13 +376,13 @@
         "libs/application/templates/financial-aid/src/index.ts"
       ],
       "@island.is/application/templates/financial-statement-cemetery": [
-        "libs/application/templates/financial-statement-cemetery/src/index.ts"
+        "libs/application/templates/inao/financial-statement-cemetery/src/index.ts"
       ],
       "@island.is/application/templates/financial-statement-individual-election": [
-        "libs/application/templates/financial-statement-individual-election/src/index.ts"
+        "libs/application/templates/inao/financial-statement-individual-election/src/index.ts"
       ],
       "@island.is/application/templates/financial-statement-individual-election/types": [
-        "libs/application/templates/financial-statement-individual-election/src/types/types.ts"
+        "libs/application/templates/inao/financial-statement-individual-election/src/types/types.ts"
       ],
       "@island.is/application/templates/financial-statements-inao": [
         "libs/application/templates/financial-statements-inao/src/index.ts"
