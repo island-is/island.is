@@ -24,7 +24,6 @@ import {
 } from './VehicleBulkMileageJobDetail.generated'
 import { VehiclesBulkMileageRegistrationRequestOverview } from '@island.is/service-portal/graphql'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { useMemo } from 'react'
 import { isDefined } from '@island.is/shared/utils'
 import { vehicleMessage } from '../../lib/messages'
 
@@ -34,7 +33,7 @@ type UseParams = {
 
 const VehicleBulkMileageJobDetail = () => {
   useNamespaces('sp.vehicles')
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
 
   const { data, loading, error, refetch } = useGetJobsStatusQuery({
