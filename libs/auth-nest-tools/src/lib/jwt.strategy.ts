@@ -47,7 +47,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       payload.nationalId = payload.client_nationalId
     }
 
-    const bodyAuthorization = request?.body[AUTH_BODY_FIELD_NAME]
+    const bodyAuthorization = request.body?.[AUTH_BODY_FIELD_NAME]
     const authorization =
       request.headers.authorization ||
       (bodyAuthorization && `Bearer ${bodyAuthorization}`) ||
