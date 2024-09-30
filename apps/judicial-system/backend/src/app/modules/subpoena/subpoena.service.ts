@@ -126,6 +126,7 @@ export class SubpoenaService {
         return { delivered: false }
       }
 
+      // TODO: Improve error handling by checking how many rows were affected and posting error event
       await this.subpoenaModel.update(
         { subpoenaId: createdSubpoena.subpoenaId },
         { where: { id: subpoena.id } },
