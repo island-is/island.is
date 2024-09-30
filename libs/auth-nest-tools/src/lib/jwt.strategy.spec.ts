@@ -123,7 +123,6 @@ describe('JwtStrategy#validate', () => {
     }
     const request = {
       headers: {
-        authorization: '',
         'user-agent': 'test user agent',
         'x-forwarded-for': '2.2.2.2, 3.3.3.3',
       },
@@ -136,7 +135,6 @@ describe('JwtStrategy#validate', () => {
     const user = await jwtStrategy.validate(request, payload)
 
     // Assert
-
     expect(user.authorization).toEqual('Bearer some-token')
   })
 
