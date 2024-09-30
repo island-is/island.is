@@ -287,14 +287,6 @@ export const EditChange = (props: EditChangeProp) => {
             appendixes: activeChange.appendixes.map((apx, i) => ({
               title: apx.title.value,
               text: apx.text.value,
-              /**
-               * These changes are needed to both display the diff in the regulation editory and
-               * to display the appendix in the change regulation:
-               *
-               * IF DIFF => Show diff with something similar to getDiffHtml()
-               * IF NO DIFF => then 'diff' is undefined
-               * IF NEW APPENDIX => 'diff' is <div data-diff="new"></div>
-               */
               diff: getAppendixDiffHtml(i),
             })),
             date: toISODate(activeChange.date.value),
