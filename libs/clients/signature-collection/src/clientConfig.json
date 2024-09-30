@@ -74,6 +74,44 @@
         }
       }
     },
+    "/Admin/Medmaeli/{ID}/UpdateBls": {
+      "patch": {
+        "tags": ["Admin"],
+        "summary": "Uppfærir blaðsíðunúmer skriflegs meðmælis",
+        "description": "Aðeins m0gulegt fyrir skrifleg meðmæli",
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "description": "ID meðmælis sem á að uppfæra",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "blsNr",
+            "in": "query",
+            "description": "Nýtt blaðsíðutal",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Admin/Medmaelalisti/{ID}": {
       "delete": {
         "tags": ["Admin"],
@@ -139,12 +177,60 @@
     "/Admin/Medmaelalisti/{ID}/ToggleList": {
       "patch": {
         "tags": ["Admin"],
+        "summary": "Toggle fyrir úrvinnslu lokið virkni í stjórnborði",
         "parameters": [
           {
             "name": "ID",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "shouldToggle",
+            "in": "query",
+            "description": "Optional. Sjálfkrafa true en hægt að setja false ef á að halda úrvinnslu áfram",
+            "schema": { "type": "boolean", "default": true }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedmaelalistiBaseDTO"
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Admin/Medmaelalisti/{ID}/LockList": {
+      "patch": {
+        "tags": ["Admin"],
+        "summary": "Lokar meðmælalista sem skilað hefur verið inn",
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "description": "ID meðmælalista sem á að loka",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "shouldLock",
+            "in": "query",
+            "description": "Optional. Sjálfkrafa true en hægt að setja false ef á að opna aftur á lokaðan lista",
+            "schema": { "type": "boolean", "default": true }
           }
         ],
         "responses": {
@@ -1159,6 +1245,11 @@
             "in": "path",
             "required": true,
             "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "shouldToggle",
+            "in": "query",
+            "schema": { "type": "boolean", "default": true }
           }
         ],
         "responses": {
@@ -1722,6 +1813,44 @@
         }
       }
     },
+    "/Medmaeli/{ID}/UpdateBls": {
+      "patch": {
+        "tags": ["Medmaeli"],
+        "summary": "Uppfærir blaðsíðunúmer skriflegs meðmælis",
+        "description": "Aðeins m0gulegt fyrir skrifleg meðmæli",
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "description": "ID meðmælis sem á að uppfæra",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "blsNr",
+            "in": "query",
+            "description": "Nýtt blaðsíðutal",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Tegund/Kosning": {
       "get": {
         "tags": ["Tegund"],
@@ -1999,6 +2128,7 @@
           "dagsetningLokar": { "type": "string", "format": "date-time" },
           "lokadHandvirkt": { "type": "boolean" },
           "listaLokad": { "type": "boolean" },
+          "urvinnslaLokid": { "type": "boolean" },
           "svaedi": { "$ref": "#/components/schemas/SvaediDTO" }
         },
         "additionalProperties": false
@@ -2015,6 +2145,7 @@
           "dagsetningLokar": { "type": "string", "format": "date-time" },
           "lokadHandvirkt": { "type": "boolean" },
           "listaLokad": { "type": "boolean" },
+          "urvinnslaLokid": { "type": "boolean" },
           "svaedi": { "$ref": "#/components/schemas/SvaediDTO" },
           "fjoldiMedmaela": { "type": "integer", "format": "int32" },
           "frambod": { "$ref": "#/components/schemas/FrambodBaseDTO" },
@@ -2197,16 +2328,18 @@
           "medmaeliTegundNr": { "type": "integer", "format": "int32" },
           "bladsidaNr": { "type": "integer", "format": "int32" },
           "dagsetning": { "type": "string", "format": "date-time" },
-          "valid": { "type": "boolean" }
+          "valid": { "type": "boolean" },
+          "locked": { "type": "boolean" }
         },
         "additionalProperties": false
       },
       "SvaediDTO": {
-        "required": ["nafn", "svaediTegundLysing"],
+        "required": ["nafn", "nr", "svaediTegundLysing"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
           "nafn": { "type": "string" },
+          "nr": { "type": "string" },
           "svaediTegund": { "type": "integer", "format": "int32" },
           "svaediTegundLysing": { "type": "string" },
           "fjoldi": { "type": "integer", "format": "int32" },

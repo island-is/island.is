@@ -105,6 +105,29 @@ export const rikissaksoknariHeaderGridContainerWidth = style([
 export const rikissaksoknariHeaderGridContainerSubpage =
   rikissaksoknariHeaderGridContainerBase
 
+export const hsaHeaderGridContainerBase = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: '315px',
+      gridTemplateColumns: '65fr 35fr',
+    },
+  }),
+})
+
+export const hsaHeaderGridContainerWidthSubpage = hsaHeaderGridContainerBase
+
+export const hsaHeaderGridContainerWidth = style([
+  hsaHeaderGridContainerBase,
+  themeUtils.responsiveStyle({
+    lg: {
+      background: `url('https://images.ctfassets.net/8k0h54kbe6bj/uc45ywvPOYsIUEQTNfE6s/72fd0f2229407e18c6e2908fb13f51c3/Header_HSA.png') no-repeat right bottom,linear-gradient(90deg, #CCDFFF 0%, #F6F6F6 84.85%)`,
+    },
+  }),
+])
+
 export const rikislogmadurHeaderGridContainerWidthBase = style({
   display: 'grid',
   maxWidth: '1342px',
@@ -131,8 +154,19 @@ export const rikislogmadurHeaderGridContainerWidth = style([
   }),
 ])
 
-export const rikislogmadurHeaderGridContainerWidthSubpage =
-  rikislogmadurHeaderGridContainerWidthBase
+export const rikislogmadurHeaderGridContainerWidthSubpage = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  background:
+    'linear-gradient(178.67deg, rgba(0, 61, 133, 0.2) 1.87%, rgba(0, 61, 133, 0.3) 99.6%)',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: 'auto',
+      gridTemplateColumns: '100fr',
+    },
+  }),
+})
 
 export const hveHeaderGridContainer = style({
   display: 'grid',

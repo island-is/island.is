@@ -17,7 +17,7 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import { VehiclesService } from './api-domains-vehicles.service'
+import { VehiclesService } from '../services/vehicles.service'
 import {
   VehicleMileageDetail,
   VehicleMileageOverview,
@@ -88,9 +88,9 @@ export class VehiclesMileageResolver {
       mileage: Number(input.mileage ?? input.mileageNumber),
     })
 
-    if (!res) return undefined
+    if (!res?.length) return undefined
 
-    return mileageDetailConstructor(res)
+    return mileageDetailConstructor(res[0])
   }
 
   @ResolveField('canRegisterMileage', () => Boolean, {
