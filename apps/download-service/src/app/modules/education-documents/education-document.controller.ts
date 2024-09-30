@@ -1,15 +1,3 @@
-import {
-  Body,
-  Controller,
-  Header,
-  Post,
-  Res,
-  Param,
-  UseGuards,
-} from '@nestjs/common'
-import { ApiOkResponse } from '@nestjs/swagger'
-import { Response } from 'express'
-import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -17,14 +5,17 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { AuditService } from '@island.is/nest/audit'
-import { GetEducationGraduationDocumentDto } from './dto/getEducationGraduationDocument'
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   UniversityCareersClientService,
   UniversityIdShort,
+  UniversityShortIdMap,
 } from '@island.is/clients/university-careers'
+import { AuditService } from '@island.is/nest/audit'
 import { Locale } from '@island.is/shared/types'
-import { UniversityShortIdMap } from '@island.is/clients/university-careers'
+import { Controller, Header, Param, Post, Res, UseGuards } from '@nestjs/common'
+import { ApiOkResponse } from '@nestjs/swagger'
+import { Response } from 'express'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
