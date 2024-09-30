@@ -258,7 +258,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
         },
       ]}
     >
-      {error || postError ? (
+      {error ? (
         <AlertMessage
           type="error"
           message={formatMessage(vehicleMessage.mileageHistoryFetchFailed)}
