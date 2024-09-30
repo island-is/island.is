@@ -35,9 +35,9 @@ import { authStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { ButtonRegistry } from '../../utils/component-registry'
-import { getButtonsForActions } from './utils/getButtonsForActions'
+import { getButtonsForActions } from './utils/get-buttons-for-actions'
 import { useBrowser } from '../../lib/use-browser'
-import { shareFile } from './utils/shareFile'
+import { shareFile } from './utils/share-file'
 
 const Host = styled.SafeAreaView`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
