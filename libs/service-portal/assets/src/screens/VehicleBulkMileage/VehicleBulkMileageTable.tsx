@@ -59,7 +59,7 @@ const VehicleBulkMileageTable = ({
   return (
     <Box>
       <form>
-        {rows && (
+        {rows && !loading && (
           <T.Table>
             <ExpandHeader
               data={[
