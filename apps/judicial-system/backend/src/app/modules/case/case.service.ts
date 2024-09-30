@@ -1183,7 +1183,7 @@ export class CaseService {
         (updatedDefendant) =>
           theCase.defendants?.find(
             (defendant) => defendant.id === updatedDefendant.id,
-          )?.subpoenas?.[0].id !== updatedDefendant.subpoenas?.[0].id,
+          )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id,
       )
       .map((updatedDefendant) => ({
         type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,

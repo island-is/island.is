@@ -14,8 +14,8 @@ export class Subpoena {
   @Field(() => String, { nullable: true })
   subpoenaId?: string
 
-  @Field(() => String, { nullable: true })
-  acknowledged?: string
+  @Field(() => Boolean, { nullable: true })
+  acknowledged?: boolean
 
   @Field(() => String, { nullable: true })
   registeredBy?: string

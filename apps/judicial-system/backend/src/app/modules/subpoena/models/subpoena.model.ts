@@ -59,7 +59,7 @@ export class Subpoena extends Model {
 
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
-  acknowledged?: string
+  acknowledged?: boolean
 
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
