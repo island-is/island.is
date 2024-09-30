@@ -1,20 +1,26 @@
-import { dynamicColor, font } from '@ui/utils'
+import { dynamicColor } from '@ui/utils'
 import { Image } from 'react-native'
 import styled, { DefaultTheme } from 'styled-components/native'
 import dangerIcon from '../../assets/alert/danger.png'
 import infoIcon from '../../assets/alert/info-alert.png'
 import warningIcon from '../../assets/alert/warning.png'
+import { Typography } from '../typography/typography'
 
 type LabelColor = 'default' | 'primary' | 'danger' | 'warning'
-type HelperProps = { theme: DefaultTheme; color: LabelColor }
+type HelperProps = {
+  theme: DefaultTheme
+  color: LabelColor
+  blackTextColor: boolean
+}
 
 interface LabelProps {
   color?: LabelColor
   icon?: React.ReactNode | boolean
   children?: React.ReactNode
+  blackTextColor?: boolean
 }
 
-function getBorderColor({ theme, color }: HelperProps) {
+const getBorderColor = ({ theme, color }: HelperProps) => {
   switch (color) {
     case 'danger':
       return { light: theme.color.red200, dark: theme.shades.dark.shade300 }
@@ -27,7 +33,7 @@ function getBorderColor({ theme, color }: HelperProps) {
   }
 }
 
-function getBackgroundColor({ theme, color }: HelperProps) {
+const getBackgroundColor = ({ theme, color }: HelperProps) => {
   switch (color) {
     case 'danger':
       return { light: theme.color.red100, dark: 'transparent' }
@@ -38,7 +44,10 @@ function getBackgroundColor({ theme, color }: HelperProps) {
   }
 }
 
-function getTextColor({ theme, color }: HelperProps) {
+const getTextColor = ({ theme, color, blackTextColor }: HelperProps) => {
+  if (blackTextColor) {
+    return { light: theme.color.dark400, dark: theme.color.dark100 }
+  }
   switch (color) {
     case 'danger':
       return { light: theme.color.red600, dark: theme.color.red400 }
@@ -49,7 +58,7 @@ function getTextColor({ theme, color }: HelperProps) {
   }
 }
 
-function getIconByColor(color: LabelColor) {
+const getIconByColor = (color: LabelColor) => {
   switch (color) {
     case 'primary':
       return infoIcon
@@ -77,16 +86,19 @@ const LabelHost = styled.View<{ color: LabelColor }>`
   background-color: ${dynamicColor(getBackgroundColor)};
 `
 
-const LabelText = styled.Text<{ color: LabelColor }>`
-  ${font({
-    fontWeight: '600',
-    fontSize: 12,
-  })}
-
+const LabelText = styled(Typography)<{
+  color: LabelColor
+  blackTextColor: boolean
+}>`
   color: ${dynamicColor(getTextColor, true)};
 `
 
-export function Label({ color = 'default', children, icon }: LabelProps) {
+export function Label({
+  color = 'default',
+  children,
+  icon,
+  blackTextColor = false,
+}: LabelProps) {
   const iconElement =
     typeof icon === 'boolean' && icon === true ? (
       <Image
@@ -101,7 +113,13 @@ export function Label({ color = 'default', children, icon }: LabelProps) {
   return (
     <LabelHost color={color}>
       {iconElement}
-      <LabelText color={color}>{children}</LabelText>
+      <LabelText
+        variant={'eyebrow'}
+        color={color}
+        blackTextColor={blackTextColor}
+      >
+        {children}
+      </LabelText>
     </LabelHost>
   )
 }
