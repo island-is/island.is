@@ -4,12 +4,12 @@ import { WhoIsTheNotificationForEnum } from '../types'
 import {
   isInjuredAndRepresentativeOfCompanyOrInstitute,
   isRepresentativeOfCompanyOrInstitute,
-} from './isRepresentativeOfCompanyOrInstitue'
+} from './isRepresentativeOfCompanyOrInstitute'
 import { NO, YES } from '../constants'
 
 const emptyObject = {}
 
-describe('isRepresentativeOfCompanyOrInstitue', () => {
+describe('isRepresentativeOfCompanyOrInstitute', () => {
   const representative: FormValue = {
     whoIsTheNotificationFor: {
       answer: WhoIsTheNotificationForEnum.JURIDICALPERSON,
@@ -37,11 +37,11 @@ describe('isRepresentativeOfCompanyOrInstitue', () => {
 
 describe('isInjuredAndRepresentativeOfCompanyOrInstitute', () => {
   const representative: FormValue = {
-    isRepresentativeOfCompanyOrInstitue: YES
+    isRepresentativeOfCompanyOrInstitute: YES
   }
 
   const notRepresentative: FormValue = {
-    isRepresentativeOfCompanyOrInstitue: NO
+    isRepresentativeOfCompanyOrInstitute: NO
   }
 
   it('should return true for someone that is a representative of the company or institue', () => {
@@ -61,6 +61,6 @@ describe('isInjuredAndRepresentativeOfCompanyOrInstitute', () => {
   })
 
   it('should return false for garbage string', () => {
-    expect(isRepresentativeOfCompanyOrInstitute({isRepresentativeOfCompanyOrInstitue: 'garbage'})).toEqual(false)
+    expect(isRepresentativeOfCompanyOrInstitute({isRepresentativeOfCompanyOrInstitute: 'garbage'})).toEqual(false)
   })
 })

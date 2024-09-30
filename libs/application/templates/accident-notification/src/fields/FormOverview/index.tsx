@@ -408,7 +408,7 @@ export const FormOverview: FC<
             </>
           )}
 
-          {answers.isRepresentativeOfCompanyOrInstitue?.toString() !== YES && (
+          {answers.isRepresentativeOfCompanyOrInstitute?.toString() !== YES && (
             <>
               <Text variant="h4" paddingTop={6} paddingBottom={3}>
                 {formatText(

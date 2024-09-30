@@ -10,23 +10,26 @@ import {
 } from './index'
 
 describe('isValid24HFormatTime', () => {
-  it('should return true for valid time', () => {
-    const result = isValid24HFormatTime('1234')
+  it.each(['0000', '2359', '1234'])('should return true for valid time', (time) => {
+    const result = isValid24HFormatTime(time)
     expect(result).toBeTruthy()
   })
 
-  it('should return false for invalid time', () => {
-    const resultHours = isValid24HFormatTime('2534')
-    const resultMinutes = isValid24HFormatTime('1265')
-    expect(resultHours).toBeFalsy()
-    expect(resultMinutes).toBeFalsy()
+  it.each(['2534', '1265', '2360', '2400', '12:34', '', '1', '12', '123', '12345'])('should return false for invalid time', (time) => {
+    const result = isValid24HFormatTime(time)
+    expect(result).toBeFalsy()
   })
 })
 
 describe('formatPhonenumber', () => {
-  it('should format phone number', () => {
-    const result = formatPhonenumber('1234567')
-    expect(result).toBe('123-4567')
+  it.each([
+    { input: '1234567', expected: '123-4567' },
+    { input: '1234567891011', expected: '123-4567891011' },
+    { input: 'ABCDEF@!()', expected: 'ABC-DEF@!()' },
+    { input: '123', expected: '123' },
+  ])('should format phone number', ({ input, expected }) => {
+    const result = formatPhonenumber(input)
+    expect(result).toBe(expected)
   })
 })
 

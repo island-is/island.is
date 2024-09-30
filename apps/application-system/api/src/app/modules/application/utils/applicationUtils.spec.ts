@@ -82,6 +82,16 @@ describe('Testing utility functions for applications', () => {
           ),
         ).toEqual('Test User')
       })
+
+      it('Should return null when no external data is defined', () => {
+        expect(
+          getApplicantName(
+            createApplication({
+              externalData: {},
+            }),
+          ),
+        ).toBeNull()
+      })
     })
 
 describe('getApplicationNameTranslationString', () => {
@@ -124,7 +134,7 @@ describe('getApplicationNameTranslationString', () => {
     ).toEqual('Adult Application')
   })
 
-  it('Should return name of the application according to applicant age', () => {
+  it('Should return the name of the application when defined with a static string', () => {
     expect(
       getApplicationNameTranslationString(
         createApplicationTemplate({
@@ -138,16 +148,16 @@ describe('getApplicationNameTranslationString', () => {
 })
 
 describe('getApplicationStatisticsNameTranslationString', () => {
+  const applicationStatistics = {
+    typeid: 'test',
+    count: 1,
+    draft: 1,
+    inprogress: 1,
+    completed: 1,
+    rejected: 1,
+    approved: 1,
+  }
     it('Should return the translated name of the application statistics when defined with a string', () => {
-      const applicationStatistics = {
-        typeid: 'test',
-        count: 1,
-        draft: 1,
-        inprogress: 1,
-        completed: 1,
-        rejected: 1,
-        approved: 1,
-      }
       expect(
         getApplicationStatisticsNameTranslationString(
           createApplicationTemplate({
@@ -160,15 +170,6 @@ describe('getApplicationStatisticsNameTranslationString', () => {
     })
 
     it('Should return the translated name of the application statistics when defined with a function', () => {
-      const applicationStatistics = {
-        typeid: 'test',
-        count: 1,
-        draft: 1,
-        inprogress: 1,
-        completed: 1,
-        rejected: 1,
-        approved: 1,
-      }
       expect(
         getApplicationStatisticsNameTranslationString(
           createApplicationTemplate({
@@ -181,15 +182,6 @@ describe('getApplicationStatisticsNameTranslationString', () => {
     })
 
     it('Should return the translated name of the application statistics when defined with a function that returns an object', () => {
-      const applicationStatistics = {
-        typeid: 'test',
-        count: 1,
-        draft: 1,
-        inprogress: 1,
-        completed: 1,
-        rejected: 1,
-        approved: 1,
-      }
       expect(
         getApplicationStatisticsNameTranslationString(
           createApplicationTemplate({
