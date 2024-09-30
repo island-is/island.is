@@ -45,85 +45,86 @@ describe('getErrorMessageForMissingDocuments', () => {
 })
 
 describe('hasReceivedAllDocuments', () => {
-    const testCases = [
-        { who: WhoIsTheNotificationForEnum.ME, fatal: NO },
-        { who: WhoIsTheNotificationForEnum.JURIDICALPERSON, fatal: NO },
-        { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: YES },
-        { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: NO }
-    ]
-    it.each(testCases)
-        ('should return true when all documents are received', (data) => {
-        const answers = getNoMissingDocuments() as AccidentNotification
-        answers.whoIsTheNotificationFor.answer = data.who
-        answers.wasTheAccidentFatal = data.fatal as unknown as 'no' | 'yes'
-        expect(hasReceivedAllDocuments(answers)).toEqual(true)
-    })
+  const testCases = [
+    { who: WhoIsTheNotificationForEnum.ME, fatal: NO },
+    { who: WhoIsTheNotificationForEnum.JURIDICALPERSON, fatal: NO },
+    { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: YES },
+    { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: NO },
+  ]
+  it.each(testCases)(
+    'should return true when all documents are received',
+    (data) => {
+      const answers = getNoMissingDocuments() as AccidentNotification
+      answers.whoIsTheNotificationFor.answer = data.who
+      answers.wasTheAccidentFatal = data.fatal as unknown as 'no' | 'yes'
+      expect(hasReceivedAllDocuments(answers)).toEqual(true)
+    },
+  )
 
-    it.each(testCases)
-        ('should return false when missing documents', (data) => {
-        const answers = getMissingDocuments() as AccidentNotification
-        answers.whoIsTheNotificationFor.answer = data.who
-        answers.wasTheAccidentFatal = data.fatal as unknown as 'no' | 'yes'
-        expect(hasReceivedAllDocuments(answers)).toEqual(false)
-    })
+  it.each(testCases)('should return false when missing documents', (data) => {
+    const answers = getMissingDocuments() as AccidentNotification
+    answers.whoIsTheNotificationFor.answer = data.who
+    answers.wasTheAccidentFatal = data.fatal as unknown as 'no' | 'yes'
+    expect(hasReceivedAllDocuments(answers)).toEqual(false)
+  })
 })
 
 const EMPTY_FILE: never[] = []
 
 const SAMPLE_FILE = {
-    name: 'test.pdf',
-    url: 'https://test.pdf'
+  name: 'test.pdf',
+  url: 'https://test.pdf',
 } as const
 const createAttachment = () => ({ file: [SAMPLE_FILE] })
 
 const getMissingDocuments = (): FormValue => ({
-    whoIsTheNotificationFor: {
-        answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY
+  whoIsTheNotificationFor: {
+    answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
+  },
+  wasTheAccidentFatal: YES,
+  injuryCertificate: {
+    answer: AttachmentsEnum.SENDCERTIFICATELATER,
+  },
+  accidentStatus: {
+    receivedAttachments: {
+      InjuryCertificate: false,
+      PoliceReport: false,
+      DeathCertificate: false,
+      ProxyDocument: false,
     },
-    wasTheAccidentFatal: YES,
-    injuryCertificate: {
-        answer: AttachmentsEnum.SENDCERTIFICATELATER
-    },
-    accidentStatus: {
-        receivedAttachments: {
-            InjuryCertificate: false,
-            PoliceReport: false,
-            DeathCertificate: false,
-            ProxyDocument: false
-        }
-    },
-    attachments: {
-        injuryCertificateFile: {file: EMPTY_FILE},
-        deathCertificateFile: {file: EMPTY_FILE},
-        powerOfAttorneyFile: {file: EMPTY_FILE}
-    }
+  },
+  attachments: {
+    injuryCertificateFile: { file: EMPTY_FILE },
+    deathCertificateFile: { file: EMPTY_FILE },
+    powerOfAttorneyFile: { file: EMPTY_FILE },
+  },
 })
 
 const getNoMissingDocuments = (): FormValue => ({
-    whoIsTheNotificationFor: {
-        answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY
+  whoIsTheNotificationFor: {
+    answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
+  },
+  wasTheAccidentFatal: YES,
+  injuryCertificate: {
+    answer: AttachmentsEnum.SENDCERTIFICATELATER,
+  },
+  accidentStatus: {
+    receivedAttachments: {
+      InjuryCertificate: true,
+      PoliceReport: true,
+      DeathCertificate: true,
+      ProxyDocument: true,
     },
-    wasTheAccidentFatal: YES,
-    injuryCertificate: {
-        answer: AttachmentsEnum.SENDCERTIFICATELATER
+  },
+  attachments: {
+    injuryCertificateFile: {
+      file: [createAttachment()],
     },
-    accidentStatus: {
-        receivedAttachments: {
-            InjuryCertificate: true,
-            PoliceReport: true,
-            DeathCertificate: true,
-            ProxyDocument: true
-        }
+    deathCertificateFile: {
+      file: [createAttachment()],
     },
-    attachments: {
-        injuryCertificateFile: {
-            file: [createAttachment()]
-        },
-        deathCertificateFile: {
-            file: [createAttachment()]
-        },
-        powerOfAttorneyFile: {
-            file: [createAttachment()]
-        }    
-    }
+    powerOfAttorneyFile: {
+      file: [createAttachment()],
+    },
+  },
 })

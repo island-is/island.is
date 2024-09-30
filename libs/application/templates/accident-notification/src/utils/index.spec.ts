@@ -10,12 +10,26 @@ import {
 } from './index'
 
 describe('isValid24HFormatTime', () => {
-  it.each(['0000', '2359', '1234'])('should return true for valid time', (time) => {
-    const result = isValid24HFormatTime(time)
-    expect(result).toBeTruthy()
-  })
+  it.each(['0000', '2359', '1234'])(
+    'should return true for valid time',
+    (time) => {
+      const result = isValid24HFormatTime(time)
+      expect(result).toBeTruthy()
+    },
+  )
 
-  it.each(['2534', '1265', '2360', '2400', '12:34', '', '1', '12', '123', '12345'])('should return false for invalid time', (time) => {
+  it.each([
+    '2534',
+    '1265',
+    '2360',
+    '2400',
+    '12:34',
+    '',
+    '1',
+    '12',
+    '123',
+    '12345',
+  ])('should return false for invalid time', (time) => {
     const result = isValid24HFormatTime(time)
     expect(result).toBeFalsy()
   })

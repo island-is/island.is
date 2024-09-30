@@ -48,53 +48,6 @@ describe('Testing utility functions for applications', () => {
     })
 
     it('Should return name of the applicant when identity external data is defined', () => {
-        expect(
-          getApplicantName(
-            createApplication({
-              externalData: {
-                identity: {
-                  data: {
-                    name: 'Test User',
-                  },
-                  date: new Date(),
-                  status: 'success',
-                },
-              },
-            }),
-          ),
-        ).toEqual('Test User')
-      })
-
-      it('Should return name of the applicant when person external data is defined', () => {
-        expect(
-          getApplicantName(
-            createApplication({
-              externalData: {
-                person: {
-                  data: {
-                    fullname: 'Test User',
-                  },
-                  date: new Date(),
-                  status: 'success',
-                },
-              },
-            }),
-          ),
-        ).toEqual('Test User')
-      })
-
-      it('Should return null when no external data is defined', () => {
-        expect(
-          getApplicantName(
-            createApplication({
-              externalData: {},
-            }),
-          ),
-        ).toBeNull()
-      })
-    })
-
-    it('Should return name of the applicant when identity external data is defined', () => {
       expect(
         getApplicantName(
           createApplication({
@@ -129,47 +82,94 @@ describe('Testing utility functions for applications', () => {
         ),
       ).toEqual('Test User')
     })
+
+    it('Should return null when no external data is defined', () => {
+      expect(
+        getApplicantName(
+          createApplication({
+            externalData: {},
+          }),
+        ),
+      ).toBeNull()
+    })
   })
 
-  describe('getApplicationNameTranslationString', () => {
-    it('Should return the name of the application when defined with a string', () => {
-      expect(
-        getApplicationNameTranslationString(
-          createApplicationTemplate(),
-          createApplication({
-            externalData: {
-              identity: {
-                data: {
-                  name: 'Test User',
-                },
-                date: new Date(),
-                status: 'success',
+  it('Should return name of the applicant when identity external data is defined', () => {
+    expect(
+      getApplicantName(
+        createApplication({
+          externalData: {
+            identity: {
+              data: {
+                name: 'Test User',
               },
+              date: new Date(),
+              status: 'success',
             },
-          }),
-          (message) => message as any,
-        ),
-      ).toEqual('Test application')
-    })
+          },
+        }),
+      ),
+    ).toEqual('Test User')
+  })
 
-    it('Should return name of the application according to applicant age', () => {
-      expect(
-        getApplicationNameTranslationString(
-          createApplicationTemplate({
-            name: (application) =>
-              Number(application.answers.age) >= 20
-                ? 'Adult Application'
-                : 'Child Application',
-          }),
-          createApplication({
-            answers: {
-              age: 20,
+  it('Should return name of the applicant when person external data is defined', () => {
+    expect(
+      getApplicantName(
+        createApplication({
+          externalData: {
+            person: {
+              data: {
+                fullname: 'Test User',
+              },
+              date: new Date(),
+              status: 'success',
             },
-          }),
-          (message) => message as any,
-        ),
-      ).toEqual('Adult Application')
-    })
+          },
+        }),
+      ),
+    ).toEqual('Test User')
+  })
+})
+
+describe('getApplicationNameTranslationString', () => {
+  it('Should return the name of the application when defined with a string', () => {
+    expect(
+      getApplicationNameTranslationString(
+        createApplicationTemplate(),
+        createApplication({
+          externalData: {
+            identity: {
+              data: {
+                name: 'Test User',
+              },
+              date: new Date(),
+              status: 'success',
+            },
+          },
+        }),
+        (message) => message as any,
+      ),
+    ).toEqual('Test application')
+  })
+
+  it('Should return name of the application according to applicant age', () => {
+    expect(
+      getApplicationNameTranslationString(
+        createApplicationTemplate({
+          name: (application) =>
+            Number(application.answers.age) >= 20
+              ? 'Adult Application'
+              : 'Child Application',
+        }),
+        createApplication({
+          answers: {
+            age: 20,
+          },
+        }),
+        (message) => message as any,
+      ),
+    ).toEqual('Adult Application')
+  })
 
   it('Should return the name of the application when defined with a static string', () => {
     expect(
@@ -183,16 +183,16 @@ describe('Testing utility functions for applications', () => {
     ).toEqual('Normal Application')
   })
 
-describe('getApplicationStatisticsNameTranslationString', () => {
-  const applicationStatistics = {
-    typeid: 'test',
-    count: 1,
-    draft: 1,
-    inprogress: 1,
-    completed: 1,
-    rejected: 1,
-    approved: 1,
-  }
+  describe('getApplicationStatisticsNameTranslationString', () => {
+    const applicationStatistics = {
+      typeid: 'test',
+      count: 1,
+      draft: 1,
+      inprogress: 1,
+      completed: 1,
+      rejected: 1,
+      approved: 1,
+    }
     it('Should return the translated name of the application statistics when defined with a string', () => {
       expect(
         getApplicationStatisticsNameTranslationString(

@@ -38,17 +38,19 @@ describe('isRepresentativeOfCompanyOrInstitute', () => {
     expect(isRepresentativeOfCompanyOrInstitute(emptyObject)).toEqual(false)
   })
   it('should return false for empty whoIsTheNotificationFor', () => {
-    expect(isRepresentativeOfCompanyOrInstitute(emptyRepresentative)).toEqual(false)
+    expect(isRepresentativeOfCompanyOrInstitute(emptyRepresentative)).toEqual(
+      false,
+    )
   })
 })
 
 describe('isInjuredAndRepresentativeOfCompanyOrInstitute', () => {
   const representative: FormValue = {
-    isRepresentativeOfCompanyOrInstitute: YES
+    isRepresentativeOfCompanyOrInstitute: YES,
   }
 
   const notRepresentative: FormValue = {
-    isRepresentativeOfCompanyOrInstitute: NO
+    isRepresentativeOfCompanyOrInstitute: NO,
   }
 
   it('should return true for someone that is a representative of the company or institute', () => {
@@ -64,14 +66,24 @@ describe('isInjuredAndRepresentativeOfCompanyOrInstitute', () => {
   })
 
   it('should return false for empty object', () => {
-    expect(isInjuredAndRepresentativeOfCompanyOrInstitute(emptyObject)).toEqual(false)
+    expect(isInjuredAndRepresentativeOfCompanyOrInstitute(emptyObject)).toEqual(
+      false,
+    )
   })
 
   it('should return false for garbage string', () => {
-    expect(isInjuredAndRepresentativeOfCompanyOrInstitute({isRepresentativeOfCompanyOrInstitute: 'garbage'})).toEqual(false)
+    expect(
+      isInjuredAndRepresentativeOfCompanyOrInstitute({
+        isRepresentativeOfCompanyOrInstitute: 'garbage',
+      }),
+    ).toEqual(false)
   })
 
   it('should return false for object with non string value', () => {
-    expect(isInjuredAndRepresentativeOfCompanyOrInstitute({isRepresentativeOfCompanyOrInstitute: true})).toEqual(false)
+    expect(
+      isInjuredAndRepresentativeOfCompanyOrInstitute({
+        isRepresentativeOfCompanyOrInstitute: true,
+      }),
+    ).toEqual(false)
   })
 })
