@@ -294,6 +294,17 @@ export class SignatureCollectionAdminClientService {
     }
   }
 
+  async removeList(listId: string, auth: Auth): Promise<Success> {
+    try {
+      await this.getApiWithAuth(this.listsApi, auth).medmaelalistarIDDelete({
+        iD: parseInt(listId),
+      })
+      return { success: true }
+    } catch (error) {
+      return { success: false, reasons: [ReasonKey.DeniedByService] }
+    }
+  }
+
   async updateSignaturePageNumber(
     auth: Auth,
     signatureId: string,
