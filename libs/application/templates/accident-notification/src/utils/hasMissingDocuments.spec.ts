@@ -1,8 +1,9 @@
-import { getErrorMessageForMissingDocuments, hasMissingDocuments } from './hasMissingDocuments'
+import { getErrorMessageForMissingDocuments, hasMissingDocuments, hasReceivedAllDocuments } from './hasMissingDocuments'
 import { WhoIsTheNotificationForEnum, AttachmentsEnum } from '../types'
-import { YES } from '../constants'
+import { NO, YES } from '../constants'
 import { FormatMessage } from '@island.is/localization'
 import { FormValue } from '@island.is/application/types'
+import { AccidentNotification } from '../lib/dataSchema'
 
 describe('hasMissingDocuments', () => {
 
@@ -24,6 +25,32 @@ describe('getErrorMessageForMissingDocuments', () => {
     })
 })
 
+describe('hasReceivedAllDocuments', () => {
+    it.each([
+        { who: WhoIsTheNotificationForEnum.ME, fatal: NO }, 
+        { who: WhoIsTheNotificationForEnum.JURIDICALPERSON, fatal: NO }, 
+        { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: YES }, 
+        { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: NO }])
+        ('should return true when all documents are received', (data) => {
+        const answers = getNoMissingDocuments() as AccidentNotification
+        answers.whoIsTheNotificationFor.answer = data.who
+        answers.wasTheAccidentFatal = data.fatal as unknown as 'no' | 'yes'
+        expect(hasReceivedAllDocuments(answers)).toEqual(true)
+    })
+
+    it.each([
+        { who: WhoIsTheNotificationForEnum.ME, fatal: NO }, 
+        { who: WhoIsTheNotificationForEnum.JURIDICALPERSON, fatal: NO }, 
+        { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: YES }, 
+        { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: NO }])
+        ('should return false when missing documents', (data) => {
+        const answers = getMissingDocuments() as AccidentNotification
+        answers.whoIsTheNotificationFor.answer = data.who
+        answers.wasTheAccidentFatal = data.fatal as unknown as 'no' | 'yes'
+        expect(hasReceivedAllDocuments(answers)).toEqual(false)
+    })
+})
+
 const getMissingDocuments = (): FormValue => {
     return {
         whoIsTheNotificationFor: {
@@ -32,6 +59,14 @@ const getMissingDocuments = (): FormValue => {
         wasTheAccidentFatal: YES,
         injuryCertificate: {
             answer: AttachmentsEnum.SENDCERTIFICATELATER
+        },
+        accidentStatus: {
+            receivedAttachments: {
+                InjuryCertificate: false,
+                PoliceReport: false,
+                DeathCertificate: false,
+                ProxyDocument: false
+            }
         },
         attachments: {
             injuryCertificateFile: {
@@ -55,6 +90,14 @@ const getNoMissingDocuments = (): FormValue => {
         wasTheAccidentFatal: YES,
         injuryCertificate: {
             answer: AttachmentsEnum.SENDCERTIFICATELATER
+        },
+        accidentStatus: {
+            receivedAttachments: {
+                InjuryCertificate: true,
+                PoliceReport: true,
+                DeathCertificate: true,
+                ProxyDocument: true
+            }
         },
         attachments: {
             injuryCertificateFile: {

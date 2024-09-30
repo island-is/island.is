@@ -5,6 +5,7 @@ import {
   isInjuredAndRepresentativeOfCompanyOrInstitute, 
   isRepresentativeOfCompanyOrInstitute 
 } from './isRepresentativeOfCompanyOrInstitue'
+import { NO, YES } from '../constants'
 
 const emptyObject = {}
 
@@ -36,22 +37,28 @@ describe('isRepresentativeOfCompanyOrInstitue', () => {
 
 describe('isInjuredAndRepresentativeOfCompanyOrInstitute', () => {
   const representative: FormValue = {
-    isRepresentativeOfCompanyOrInstitue: 'yes'
+    isRepresentativeOfCompanyOrInstitue: YES
   }
 
   const notRepresentative: FormValue = {
-    isRepresentativeOfCompanyOrInstitue: 'no'
+    isRepresentativeOfCompanyOrInstitue: NO
   }
 
   it('should return true for someone that is a representative of the company or institue', () => {
     expect(isInjuredAndRepresentativeOfCompanyOrInstitute(representative)).toEqual(true)
   })
+
   it('should return false for someone that isnt a representative of the company or institue', () => {
     expect(isInjuredAndRepresentativeOfCompanyOrInstitute(notRepresentative)).toEqual(
       false,
     )
   })
+
   it('should return false for empty object', () => {
     expect(isRepresentativeOfCompanyOrInstitute(emptyObject)).toEqual(false)
+  })
+
+  it('should return false for garbage string', () => {
+    expect(isRepresentativeOfCompanyOrInstitute({isRepresentativeOfCompanyOrInstitue: 'garbage'})).toEqual(false)
   })
 })
