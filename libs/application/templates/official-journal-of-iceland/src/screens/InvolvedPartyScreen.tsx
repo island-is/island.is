@@ -26,7 +26,7 @@ export const InvolvedPartyScreen = ({
     },
     onComplete: (data) => {
       const involvedParties =
-        data?.officialJournalOfIcelandApplicationGetUserInvolvedParties
+        data.officialJournalOfIcelandApplicationGetUserInvolvedParties
           .involvedParties
 
       if (involvedParties.length === 0 || involvedParties.length > 1) {
@@ -37,9 +37,7 @@ export const InvolvedPartyScreen = ({
         data.officialJournalOfIcelandApplicationGetUserInvolvedParties
           .involvedParties.length === 1
       ) {
-        const involvedParty =
-          data.officialJournalOfIcelandApplicationGetUserInvolvedParties
-            .involvedParties[0]
+        const involvedParty = involvedParties[0]
 
         setValue(InputFields.advert.involvedPartyId, involvedParty.id)
 

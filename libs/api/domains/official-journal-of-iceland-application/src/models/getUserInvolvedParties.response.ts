@@ -1,19 +1,19 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('OfficialJournalOfIcelandApplicationGetUserInvolvedParty')
-export class InvovledParty {
-  @Field()
+export class InvolvededParty {
+  @Field({ description: 'The id of the involved party' })
   id!: string
 
-  @Field()
+  @Field({ description: 'The title of the involved party' })
   title!: string
 
-  @Field()
+  @Field({ description: 'The slug of the involved party' })
   slug!: string
 }
 
 @ObjectType('OfficialJournalOfIcelandApplicationGetUserInvolvedPartiesResponse')
 export class GetUserInvolvedPartiesResponse {
-  @Field(() => [InvovledParty])
-  involvedParties!: InvovledParty[]
+  @Field(() => [InvolvededParty])
+  involvedParties!: InvolvededParty[]
 }

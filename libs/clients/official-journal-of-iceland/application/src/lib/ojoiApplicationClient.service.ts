@@ -181,10 +181,19 @@ export class OfficialJournalOfIcelandApplicationClientService {
   }
 
   async getUserInvolvedParties(params: GetInvolvedPartiesRequest, auth: Auth) {
-    const data = await this.ojoiApplicationApiWithAuth(auth).getInvolvedParties(
-      params,
-    )
-    console.log(data)
-    return data
+    try {
+      const data = await this.ojoiApplicationApiWithAuth(
+        auth,
+      ).getInvolvedParties(params)
+      return data
+    } catch (error) {
+      this.logger.warn('Failed to get involved parties', {
+        error,
+        applicationId: params.id,
+        category: LOG_CATEGORY,
+      })
+
+      throw error
+    }
   }
 }
