@@ -50,6 +50,10 @@ export const getButtonsForActions = (
             title={action.title}
             icon={icon}
             onPress={() => openBrowser(action.data!, componentId)}
+            style={{
+              paddingTop: 9,
+              paddingBottom: 9,
+            }}
           />
         </Action>
       )
@@ -63,6 +67,10 @@ export const getButtonsForActions = (
             title={action.title}
             icon={icon}
             onPress={onShare}
+            style={{
+              paddingTop: 9,
+              paddingBottom: 9,
+            }}
           />
         </Action>
       )
