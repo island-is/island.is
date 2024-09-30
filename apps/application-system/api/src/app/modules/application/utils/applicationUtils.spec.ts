@@ -152,7 +152,7 @@ describe('getApplicationNameTranslationString', () => {
     ).toEqual('Test application')
   })
 
-  it('Should return name of the application according to applicant age', () => {
+  it('Should return the correct application name based on a predefined age threshold', () => {
     expect(
       getApplicationNameTranslationString(
         createApplicationTemplate({
