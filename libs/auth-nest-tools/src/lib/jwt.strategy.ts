@@ -49,7 +49,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     const bodyAuthorization = request.body?.[AUTH_BODY_FIELD_NAME]
     const authorization =
-      request.headers.authorization ||
+      request.headers?.authorization ||
       (bodyAuthorization && `Bearer ${bodyAuthorization}`) ||
       ''
 
