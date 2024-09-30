@@ -133,7 +133,7 @@ export const AccessDeleteModal = ({
             />
           )}
         </Box>
-        {delegation?.type === 'GeneralMandate' ? (
+        {delegation?.type === AuthDelegationType.GeneralMandate ? (
           <IdentityCard
             label={formatMessage(m.domain)}
             title={formatMessage(m.delegationTypeGeneralMandate)}
