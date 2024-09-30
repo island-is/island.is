@@ -112,7 +112,7 @@ export const m = defineMessages({
   },
   typeOfSignee: {
     id: 'admin-portal.signature-collection:typeOfSignee',
-    defaultMessage: 'Tegund meðmælis',
+    defaultMessage: 'Tegund meðmæla',
     description: '',
   },
   createCollection: {
