@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native'
 import {
+  Navigation,
   NavigationFunctionComponent,
   OptionsTopBarButton,
 } from 'react-native-navigation'
@@ -267,7 +268,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             }),
             style: 'cancel',
             onPress: () => {
-              setLoaded(true)
+              Navigation.pop(componentId)
             },
           },
           {
@@ -276,16 +277,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             }),
             onPress: async () => {
               setRefetching(true)
-              docRes
-                .refetch({
+              try {
+                const result = await docRes.refetch({
                   input: { id: docId, includeDocument: true },
                 })
-                .then(() => {
-                  if (data.documentV2?.alert) {
-                    setShowConfirmedAlert(true)
-                  }
-                })
-                .finally(() => setRefetching(false))
+                if (result.data?.documentV2?.alert) {
+                  setShowConfirmedAlert(true)
+                }
+              } finally {
+                setRefetching(false)
+              }
             },
           },
         ])
