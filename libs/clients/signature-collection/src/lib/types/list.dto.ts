@@ -109,7 +109,7 @@ export const mapList = (
   const area = mapArea(areas)
   const numberOfSignatures = list.fjoldiMedmaela ?? 0
 
-  const isActive = list.listaLokad ?? false
+  const isActive = !list.listaLokad
   const isExtended = endTime > collection.sofnunEnd
   const reviewed = list.urvinnslaLokid ?? false
 
