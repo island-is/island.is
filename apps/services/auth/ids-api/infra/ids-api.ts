@@ -86,7 +86,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       SYSLUMENN_HOST: {
         dev: 'https://api.syslumenn.is/staging',
         staging: 'https://api.syslumenn.is/staging',
-        prod: 'https://api.syslumenn.is',
+        prod: 'https://api.syslumenn.is/api',
       },
       SYSLUMENN_TIMEOUT: '3000',
     })

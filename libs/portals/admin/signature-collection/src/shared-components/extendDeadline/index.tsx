@@ -67,10 +67,9 @@ const ActionExtendDeadline = ({
           <Button
             icon="calendar"
             iconType="outline"
+            variant="ghost"
             onClick={() => setModalChangeDateIsOpen(true)}
-          >
-            {formatMessage(m.editListEndTime)}
-          </Button>
+          ></Button>
         </Box>
       </Box>
       <Modal
