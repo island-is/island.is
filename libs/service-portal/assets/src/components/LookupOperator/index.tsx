@@ -7,7 +7,7 @@ import { OperatorAnonymityStatus } from '@island.is/api/schema'
 
 interface PropTypes {
   names?: string[]
-  operatorAnonymityStatus: any
+  operatorAnonymityStatus?: OperatorAnonymityStatus
 }
 
 const LookupOperator = ({ names, operatorAnonymityStatus }: PropTypes) => {
