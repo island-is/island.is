@@ -3,7 +3,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 
-import { EnhancedFetchAPI } from '@island.is/clients/middlewares'
+import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
 import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
 import { ENHANCED_FETCH_PROVIDER_KEY } from '../enhancedFetch/enhanced-fetch.provider'

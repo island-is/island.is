@@ -14,4 +14,5 @@ export default {
   coverageDirectory: '<rootDir>/coverage/apps/services/bff',
   displayName: 'bff',
   collectCoverageFrom: ['src/**/*.ts'],
+  setupFilesAfterEnv: [`${__dirname}/test/setup.ts`],
 }

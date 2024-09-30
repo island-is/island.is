@@ -12,4 +12,5 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '<rootDir>/coverage/libs/application/templates/estate',
   displayName: 'application-templates-estate',
+  setupFilesAfterEnv: [`${__dirname}/jest.setup.ts`],
 }
