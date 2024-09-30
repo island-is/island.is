@@ -190,6 +190,18 @@ export const DEPARTMENTS_QUERY = gql`
   }
 `
 
+export const INVOLVED_PARTIES_QUERY = gql`
+  query InvolvedParties($input: GetUserInvolvedPartiesInput!) {
+    officialJournalOfIcelandApplicationGetUserInvolvedParties(input: $input) {
+      involvedParties {
+        id
+        title
+        slug
+      }
+    }
+  }
+`
+
 export const CATEGORIES_QUERY = gql`
   query AdvertCategories($params: OfficialJournalOfIcelandQueryInput!) {
     officialJournalOfIcelandCategories(params: $params) {
