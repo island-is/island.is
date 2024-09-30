@@ -478,7 +478,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hsa':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={
+            isSubpage
+              ? styles.hsaHeaderGridContainerWidthSubpage
+              : styles.hsaHeaderGridContainerWidth
+          }
+        />
+      ) : (
         <HeilbrigdisstofnunAusturlandsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -532,7 +541,9 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'rettindagaesla-fatlads-folks':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader {...defaultProps} />
+      ) : (
         <RettindagaeslaFatladsFolksHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}

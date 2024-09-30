@@ -32,6 +32,7 @@ export type Icon =
   | 'documents'
   | 'dots'
   | 'download'
+  | 'upload'
   | 'ellipse'
   | 'ellipsisHorizontal'
   | 'ellipsisVertical'
@@ -90,6 +91,7 @@ export type Icon =
   | 'swapVertical'
   | 'thumbsUp'
   | 'thumbsDown'
+  | 'leaf'
 
 export default {
   filled: {
@@ -125,6 +127,7 @@ export default {
     documents: 'Documents',
     dots: 'Dots',
     download: 'Download',
+    upload: 'Upload',
     ellipse: 'Ellipse',
     ellipsisHorizontal: 'EllipsisHorizontal',
     ellipsisVertical: 'EllipsisVertical',
@@ -183,6 +186,7 @@ export default {
     swapVertical: 'SwapVertical',
     thumbsUp: 'ThumbsUp',
     thumbsDown: 'ThumbsDown',
+    leaf: 'Leaf',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -217,6 +221,7 @@ export default {
     documents: 'DocumentsOutline',
     dots: 'Dots',
     download: 'DownloadOutline',
+    upload: 'UploadOutline',
     ellipse: 'EllipseOutline',
     ellipsisHorizontal: 'EllipsisHorizontalOutline',
     ellipsisVertical: 'EllipsisVerticalOutline',
@@ -275,5 +280,6 @@ export default {
     swapVertical: 'SwapVertical',
     thumbsUp: 'ThumbsUpOutline',
     thumbsDown: 'ThumbsDownOutline',
+    leaf: 'LeafOutline',
   },
 }

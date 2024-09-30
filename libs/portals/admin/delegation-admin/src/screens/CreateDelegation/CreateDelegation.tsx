@@ -19,9 +19,10 @@ import { IntroHeader, m as coreMessages } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import { DelegationAdminPaths } from '../../lib/paths'
 import NumberFormat from 'react-number-format'
-
+import startOfDay from 'date-fns/startOfDay'
 import {
   Form,
+  redirect,
   useActionData,
   useNavigate,
   useSearchParams,
@@ -39,8 +40,9 @@ import {
 import { CreateDelegationConfirmModal } from '../../components/CreateDelegationConfirmModal'
 import { Identity } from '@island.is/api/schema'
 import kennitala from 'kennitala'
-import { unmaskString } from '@island.is/shared/utils'
+import { maskString, unmaskString } from '@island.is/shared/utils'
 import { useAuth } from '@island.is/auth/react'
+import { replaceParams } from '@island.is/react-spa/shared'
 
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
@@ -72,7 +74,32 @@ const CreateDelegationScreen = () => {
     },
   ]
 
+  async function success() {
+    try {
+      const maskedNationalId = await maskString(
+        fromIdentity?.nationalId ?? '',
+        userInfo?.profile.nationalId ?? '',
+      )
+      successToast()
+      navigate(
+        replaceParams({
+          href: DelegationAdminPaths.DelegationAdmin,
+          params: {
+            nationalId: maskedNationalId ?? '',
+          },
+        }),
+        { replace: true },
+      )
+    } catch (e) {
+      navigate(DelegationAdminPaths.Root)
+    }
+  }
+
   useEffect(() => {
+    if (actionData?.success) {
+      success()
+    }
+
     if (actionData?.data && !actionData.errors) {
       setIsConfirmed(true)
       setShowConfirmModal(true)
@@ -95,11 +122,15 @@ const CreateDelegationScreen = () => {
       }
     }
 
-    getFromNationalId()
+    !!defaultFromNationalId && getFromNationalId()
   }, [defaultFromNationalId])
 
   const noUserFoundToast = () => {
     toast.warning(formatMessage(m.grantIdentityError))
+  }
+
+  const successToast = () => {
+    toast.success(formatMessage(m.createDelegationSuccessToast))
   }
 
   const [getFromIdentity, { loading: fromIdentityQueryLoading }] =
@@ -339,6 +370,8 @@ const CreateDelegationScreen = () => {
                   errorMessage={formatMessage(
                     m[actionData?.errors?.validTo as keyof typeof m],
                   )}
+                  minDate={startOfDay(new Date())}
+                  appearInline
                 />
                 <input
                   type="hidden"
