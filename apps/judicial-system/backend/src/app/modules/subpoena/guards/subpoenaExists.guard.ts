@@ -47,9 +47,6 @@ export class SubpoenaExistsGuard implements CanActivate {
 
 @Injectable()
 export class SubpoenaExistsOptionalGuard extends SubpoenaExistsGuard {
-  constructor(subpoenaService: SubpoenaService) {
-    super(subpoenaService)
-  }
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
 
