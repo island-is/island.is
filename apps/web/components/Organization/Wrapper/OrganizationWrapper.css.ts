@@ -154,8 +154,19 @@ export const rikislogmadurHeaderGridContainerWidth = style([
   }),
 ])
 
-export const rikislogmadurHeaderGridContainerWidthSubpage =
-  rikislogmadurHeaderGridContainerWidthBase
+export const rikislogmadurHeaderGridContainerWidthSubpage = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  background:
+    'linear-gradient(178.67deg, rgba(0, 61, 133, 0.2) 1.87%, rgba(0, 61, 133, 0.3) 99.6%)',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: 'auto',
+      gridTemplateColumns: '100fr',
+    },
+  }),
+})
 
 export const hveHeaderGridContainer = style({
   display: 'grid',

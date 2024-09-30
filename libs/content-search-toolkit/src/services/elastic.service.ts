@@ -112,10 +112,10 @@ export class ElasticService {
     refresh = false,
   ) {
     try {
-      // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
       const client = await this.getClient()
 
-      let requestChunk = getValidBulkRequestChunk(requests)
+      // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
+      let requestChunk = getValidBulkRequestChunk(requests, 10)
 
       while (requestChunk.length) {
         // wait for request b4 continuing
