@@ -37,11 +37,11 @@ describe('isRepresentativeOfCompanyOrInstitue', () => {
 
 describe('isInjuredAndRepresentativeOfCompanyOrInstitute', () => {
   const representative: FormValue = {
-    isRepresentativeOfCompanyOrInstitue: YES
+    isRepresentativeOfCompanyOrInstitue: YES,
   }
 
   const notRepresentative: FormValue = {
-    isRepresentativeOfCompanyOrInstitue: NO
+    isRepresentativeOfCompanyOrInstitue: NO,
   }
 
   it('should return true for someone that is a representative of the company or institue', () => {
@@ -61,6 +61,10 @@ describe('isInjuredAndRepresentativeOfCompanyOrInstitute', () => {
   })
 
   it('should return false for garbage string', () => {
-    expect(isRepresentativeOfCompanyOrInstitute({isRepresentativeOfCompanyOrInstitue: 'garbage'})).toEqual(false)
+    expect(
+      isRepresentativeOfCompanyOrInstitute({
+        isRepresentativeOfCompanyOrInstitue: 'garbage',
+      }),
+    ).toEqual(false)
   })
 })
