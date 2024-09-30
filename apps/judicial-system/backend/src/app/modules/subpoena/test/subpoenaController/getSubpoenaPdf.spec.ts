@@ -43,8 +43,8 @@ describe('SubpoenaController - Get subpoena pdf', () => {
           subpoenaId,
           theCase,
           defendant,
-          subpoena,
           res,
+          subpoena,
         )
       } catch (error) {
         then.error = error as Error
