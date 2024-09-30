@@ -36,7 +36,7 @@ export const getButtonsForActions = (
   componentId: string,
   actions?: DocumentV2Action[] | null,
 ) => {
-  if (!actions) {
+  if (!actions || !actions.length) {
     return
   }
   const buttons = actions.map((action) => {
@@ -49,7 +49,7 @@ export const getButtonsForActions = (
             isOutlined
             title={action.title}
             icon={icon}
-            onPress={() => openBrowser(action.data!, componentId)}
+            onPress={() => openBrowser(action.data ?? '', componentId)}
             style={{
               paddingTop: 9,
               paddingBottom: 9,
