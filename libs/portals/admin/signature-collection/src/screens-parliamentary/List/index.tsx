@@ -19,11 +19,7 @@ import ActionReviewComplete from '../../shared-components/completeReview'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
-const List = ({
-  allowedToProcess
-}: {
-  allowedToProcess: boolean
-}) => {
+const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
   const { list, listStatus } = useLoaderData() as {
     list: SignatureCollectionList

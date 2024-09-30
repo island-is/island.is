@@ -20,7 +20,9 @@ import DownloadReports from './DownloadReports'
 import electionsCommitteeLogo from '../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../assets/nationalRegistry.svg'
 
-const ParliamentaryRoot = ({allowedToProcess}: {
+const ParliamentaryRoot = ({
+  allowedToProcess,
+}: {
   allowedToProcess: boolean
 }) => {
   const { formatMessage } = useLocale()

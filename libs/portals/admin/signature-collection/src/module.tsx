@@ -32,25 +32,37 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.signatureListsTitle,
       path: SignatureCollectionPaths.ParliamentaryRoot,
-      element: <ParliamentaryRoot  allowedToProcess={props.userInfo.scopes.some(
-        (scope) => scope === AdminPortalScope.signatureCollectionProcess,
-      )}/>,
+      element: (
+        <ParliamentaryRoot
+          allowedToProcess={props.userInfo.scopes.some(
+            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
+          )}
+        />
+      ),
       loader: listsLoader(props),
     },
     {
       name: m.signatureListsConstituencyTitle,
       path: SignatureCollectionPaths.ParliamentaryConstituency,
-      element: <ParliamentaryConstituency  allowedToProcess={props.userInfo.scopes.some(
-        (scope) => scope === AdminPortalScope.signatureCollectionProcess,
-      )}/>,
+      element: (
+        <ParliamentaryConstituency
+          allowedToProcess={props.userInfo.scopes.some(
+            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
+          )}
+        />
+      ),
       loader: listsLoader(props),
     },
     {
       name: m.singleList,
       path: SignatureCollectionPaths.ParliamentaryConstituencyList,
-      element: <ParliamentaryList allowedToProcess={props.userInfo.scopes.some(
-        (scope) => scope === AdminPortalScope.signatureCollectionProcess,
-      )}/>,
+      element: (
+        <ParliamentaryList
+          allowedToProcess={props.userInfo.scopes.some(
+            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
+          )}
+        />
+      ),
       loader: listLoader(props),
     },
 
