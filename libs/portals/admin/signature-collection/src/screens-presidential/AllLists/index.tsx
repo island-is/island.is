@@ -22,7 +22,7 @@ import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import {
   CollectionStatus,
-  Filters,
+  FiltersOverview,
   countryAreas,
   pageSize,
 } from '../../lib/utils'
@@ -48,7 +48,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const [page, setPage] = useState(1)
   // hasInReview is used to check if any list is in review
   const [hasInReview, setHasInReview] = useState(false)
-  const [filters, setFilters] = useState<Filters>({
+  const [filters, setFilters] = useState<FiltersOverview>({
     area: [],
     candidate: [],
     input: '',

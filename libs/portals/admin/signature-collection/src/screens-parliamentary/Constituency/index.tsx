@@ -19,6 +19,7 @@ import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import CreateCollection from '../../shared-components/createCollection'
+import format from 'date-fns/format'
 
 export const Constituency = () => {
   const { formatMessage } = useLocale()
@@ -52,15 +53,13 @@ export const Constituency = () => {
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage('Yfirlit'),
+                  title: formatMessage(
+                    parliamentaryMessages.signatureListsTitle,
+                  ),
                   href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
                 },
                 {
                   title: constituencyName,
-                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryConstituency.replace(
-                    ':constituencyName',
-                    constituencyName,
-                  )}`,
                 },
               ]}
             />
@@ -96,11 +95,7 @@ export const Constituency = () => {
                 {constituencyLists.map((list) => (
                   <ActionCard
                     key={list.id}
-                    eyebrow={
-                      formatMessage(m.listEndTime) +
-                      ': ' +
-                      new Date(list.endTime).toLocaleDateString()
-                    }
+                    date={format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')}
                     heading={list.title.split(' - ')[0]}
                     progressMeter={{
                       currentProgress: list.numberOfSignatures ?? 0,

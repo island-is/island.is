@@ -7,7 +7,6 @@ import {
   Stack,
   Box,
   Breadcrumbs,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
@@ -46,8 +45,9 @@ const ParliamentaryRoot = () => {
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage('Yfirlit'),
-                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
+                  title: formatMessage(
+                    parliamentaryMessages.signatureListsTitle,
+                  ),
                 },
               ]}
             />
@@ -69,7 +69,7 @@ const ParliamentaryRoot = () => {
                 name="searchSignee"
                 value={''}
                 onChange={() => console.log('search')}
-                placeholder={formatMessage(m.searchInListPlaceholder)}
+                placeholder={formatMessage(m.searchNationalIdPlaceholder)}
                 backgroundColor="blue"
               />
             </Box>

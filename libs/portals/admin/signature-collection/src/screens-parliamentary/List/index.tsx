@@ -44,7 +44,9 @@ const List = () => {
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage('Yfirlit'),
+                  title: formatMessage(
+                    parliamentaryMessages.signatureListsTitle,
+                  ),
                   href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
                 },
                 {
@@ -54,7 +56,7 @@ const List = () => {
                     list.area.name,
                   )}`,
                 },
-                { title: formatMessage(m.viewList) },
+                { title: list.title.split(' - ')[0] },
               ]}
             />
           </Box>
@@ -63,6 +65,7 @@ const List = () => {
             intro={formatMessage(parliamentaryMessages.signatureListsIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
+            marginBottom={3}
           />
           <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
           <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
