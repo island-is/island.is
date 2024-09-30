@@ -20,7 +20,11 @@ query vehiclesList($input: VehiclesListInputV3!) {
 
 mutation postSingleVehicleMileage($input: PostVehicleMileageInput!) {
   vehicleMileagePost(input: $input) {
-    ...VehicleMileageDetailFragment
+    permno
+    readDate
+    originCode
+    mileageNumber
+    internalId
   }
 }
 

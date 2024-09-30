@@ -110,6 +110,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
               input: {
                 internalId: parseInt(
                   mileageData.vehicleMileageDetails?.data?.[0]?.internalId,
+                  10,
                 ),
                 permno: vehicle.vehicleId,
                 mileageNumber: formValue,
