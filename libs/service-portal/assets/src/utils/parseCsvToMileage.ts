@@ -72,6 +72,5 @@ export const parseCsvToMileageRecord = async (
       }
     })
     .filter(isDefined)
-  console.log(uploadedOdometerStatuses)
   return uploadedOdometerStatuses
 }
