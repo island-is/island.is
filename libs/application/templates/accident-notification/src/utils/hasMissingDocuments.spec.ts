@@ -1,11 +1,8 @@
-<<<<<<< HEAD
-import { getErrorMessageForMissingDocuments, hasMissingDocuments, hasReceivedAllDocuments } from './hasMissingDocuments'
-=======
 import {
   getErrorMessageForMissingDocuments,
   hasMissingDocuments,
+  hasReceivedAllDocuments,
 } from './hasMissingDocuments'
->>>>>>> 116602b1c1d2fa35138d5e7a6e6fcd318f29dd79
 import { WhoIsTheNotificationForEnum, AttachmentsEnum } from '../types'
 import { NO, YES } from '../constants'
 import { FormatMessage } from '@island.is/localization'
