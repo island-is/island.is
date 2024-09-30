@@ -49,7 +49,7 @@ export class Subpoena extends Model {
   defendant?: Defendant
 
   @ForeignKey(() => Case)
-  @Column({ type: DataType.UUID })
+  @Column({ type: DataType.UUID, allowNull: false })
   @ApiProperty({ type: String })
   caseId!: string
 
