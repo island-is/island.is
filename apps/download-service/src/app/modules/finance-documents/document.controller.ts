@@ -1,16 +1,3 @@
-import {
-  Body,
-  Controller,
-  Header,
-  Post,
-  Res,
-  Param,
-  UseGuards,
-} from '@nestjs/common'
-import { ApiOkResponse } from '@nestjs/swagger'
-import { Response } from 'express'
-import { FinanceClientService } from '@island.is/clients/finance'
-import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -18,7 +5,20 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
+import { FinanceClientService } from '@island.is/clients/finance'
 import { AuditService } from '@island.is/nest/audit'
+import {
+  Body,
+  Controller,
+  Header,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common'
+import { ApiOkResponse } from '@nestjs/swagger'
+import { Response } from 'express'
 import { GetFinanceDocumentDto } from './dto/getFinanceDocument.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -42,20 +42,16 @@ export class FinanceDocumentController {
     @Body() resource: GetFinanceDocumentDto,
     @Res() res: Response,
   ) {
-    const authUser: User = {
-      ...user,
-      authorization: `Bearer ${resource.__accessToken}`,
-    }
     const documentResponse = resource.annualDoc
       ? await this.financeService.getAnnualStatusDocument(
           user.nationalId,
           pdfId,
-          authUser,
+          user,
         )
       : await this.financeService.getFinanceDocument(
           user.nationalId,
           pdfId,
-          authUser,
+          user,
         )
 
     const documentBase64 = documentResponse?.docment?.document
@@ -70,9 +66,9 @@ export class FinanceDocumentController {
 
       res.header('Content-length', buffer.length.toString())
       res.header('Content-Disposition', `inline; filename=${pdfId}.pdf`)
-      res.header('Pragma: no-cache')
-      res.header('Cache-Control: no-cache')
-      res.header('Cache-Control: nmax-age=0')
+      res.header('Pragma', 'no-cache')
+      res.header('Cache-Control', 'no-cache')
+      res.header('Cache-Control', 'nmax-age=0')
 
       return res.status(200).end(buffer)
     }

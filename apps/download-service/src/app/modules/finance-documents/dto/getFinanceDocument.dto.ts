@@ -1,11 +1,7 @@
-import { IsJWT, IsString, IsOptional } from 'class-validator'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
+import { IsOptional, IsString } from 'class-validator'
 
 export class GetFinanceDocumentDto {
-  @IsJWT()
-  @ApiProperty()
-  readonly __accessToken!: string
-
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
