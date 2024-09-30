@@ -10,7 +10,7 @@ type LabelColor = 'default' | 'primary' | 'danger' | 'warning'
 type HelperProps = {
   theme: DefaultTheme
   color: LabelColor
-  blackTextColor: boolean
+  blackTextColor?: boolean
 }
 
 interface LabelProps {
