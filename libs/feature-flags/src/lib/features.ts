@@ -50,6 +50,7 @@ export enum Features {
   servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
   servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
   servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
+  servicePortalVehicleBulkMileagePageEnabled = 'isServicePortalVehicleBulkMileagePageEnabled',
   servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
   servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
 
