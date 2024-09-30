@@ -46,7 +46,7 @@ export const TableGrid: FC<React.PropsWithChildren<Props>> = ({
                     colSpan={2}
                     style={tableStyles}
                   >
-                    <Columns collapseBelow="lg" space={2}>
+                    <Columns alignY="center" collapseBelow="lg" space={2}>
                       <Column>
                         <Text
                           title={rowitem.detail}

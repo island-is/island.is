@@ -31,6 +31,7 @@ import {
 } from './Lookup.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import LookupOperator from '../../components/LookupOperator'
+import { OperatorAnonymityStatus } from '@island.is/api/schema'
 
 const Lookup = () => {
   useNamespaces('sp.vehicles')
@@ -80,10 +81,9 @@ const Lookup = () => {
     vehicleStatus,
     co2Wltp,
     weightedco2Wltp,
-    engine,
     operatorNames,
-    allOperatorsAreAnonymous,
-    someOperatorsAreAnonymous,
+    engine,
+    operatorAnonymityStatus,
   } = vehicleSearch.data?.vehiclesSearch || {}
 
   const noInfo =
@@ -117,7 +117,8 @@ const Lookup = () => {
 
   const limit = searchLimitData?.data?.vehiclesSearchLimit || 0
   const limitExceeded = limit === 0
-  const hasOperatorNames = operatorNames && operatorNames?.length > 0
+  const operatorNamesArray =
+    operatorNames && operatorNames?.length > 0 ? operatorNames : []
 
   return (
     <>
@@ -328,18 +329,14 @@ const Lookup = () => {
                   title: formatMessage(messages.engineType),
                   value: engine,
                 },
-                hasOperatorNames ||
-                allOperatorsAreAnonymous ||
-                (someOperatorsAreAnonymous && hasOperatorNames)
+                operatorAnonymityStatus === OperatorAnonymityStatus.ALL ||
+                operatorNamesArray.length > 0
                   ? {
                       title: formatMessage(messages.operator),
                       value: (
                         <LookupOperator
-                          names={operatorNames?.length ? operatorNames : []}
-                          allOperatorsAreAnonymous={!!allOperatorsAreAnonymous}
-                          someOperatorsAreAnonymous={
-                            !!someOperatorsAreAnonymous
-                          }
+                          names={operatorNamesArray}
+                          operatorAnonymityStatus={operatorAnonymityStatus}
                         />
                       ),
                     }

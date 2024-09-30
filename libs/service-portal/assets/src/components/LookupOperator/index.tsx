@@ -3,52 +3,42 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { vehicleMessage as messages } from '../../lib/messages'
+import { OperatorAnonymityStatus } from '@island.is/api/schema'
 
 interface PropTypes {
-  names: string[]
-  allOperatorsAreAnonymous: boolean
-  someOperatorsAreAnonymous: boolean
+  names?: string[]
+  operatorAnonymityStatus: any
 }
 
-const LookupOperator = ({
-  names,
-  allOperatorsAreAnonymous,
-  someOperatorsAreAnonymous,
-}: PropTypes) => {
+const LookupOperator = ({ names, operatorAnonymityStatus }: PropTypes) => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
 
-  if (
-    !names.length &&
-    !allOperatorsAreAnonymous &&
-    !someOperatorsAreAnonymous
-  ) {
-    return ''
-  }
-
-  if (allOperatorsAreAnonymous) {
+  if (operatorAnonymityStatus === OperatorAnonymityStatus.ALL) {
     return <span>{formatMessage(messages.anonymous)}</span>
   }
 
-  return (
-    <div>
-      {names?.map((name, i) => (
-        <React.Fragment key={i}>
-          {i + 1}. {name}
-          <br />
-        </React.Fragment>
-      ))}
-      {someOperatorsAreAnonymous ? (
-        <Box marginTop={1}>
-          <Text variant="small">
-            {formatMessage(messages.anonymousPartial)}
-          </Text>
-        </Box>
-      ) : (
-        ''
-      )}
-    </div>
-  )
+  if (names?.length) {
+    return (
+      <div>
+        {names?.map((name, i) => (
+          <React.Fragment key={i}>
+            {i + 1}. {name}
+            <br />
+          </React.Fragment>
+        ))}
+        {operatorAnonymityStatus === OperatorAnonymityStatus.SOME ? (
+          <Box marginTop={1}>
+            <Text variant="small">
+              {formatMessage(messages.anonymousPartial)}
+            </Text>
+          </Box>
+        ) : undefined}
+      </div>
+    )
+  }
+
+  return ''
 }
 
 export default LookupOperator

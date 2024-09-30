@@ -9,7 +9,6 @@ import {
   BasicVehicleInformationGetRequest,
   PublicVehicleSearchApi,
   VehicleDtoListPagedResponse,
-  VehicleSearchDto,
   PersidnoLookupResultDto,
   CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
 } from '@island.is/clients/vehicles'
@@ -39,6 +38,8 @@ import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 import { mileageDetailConstructor } from '../utils/helpers'
 import { handle404 } from '@island.is/clients/middlewares'
+import { VehicleSearchCustomDto } from './api-domains-vehicles.type'
+import { operatorStatusMapper } from '../utils/operatorStatusMapper'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -242,21 +243,31 @@ export class VehiclesService {
   async getVehiclesSearch(
     auth: User,
     search: string,
-  ): Promise<(VehicleSearchDto & { operatorNames?: string[] }) | null> {
+  ): Promise<VehicleSearchCustomDto | null> {
     const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
       search,
     })
     const { data } = res
     if (!data || !data.length) return null
 
-    const operatorNames = data[0].operators
+    const vehicle = data[0]
+
+    const operatorNames = vehicle.operators
       ?.map((operator) => operator.fullname)
       .filter(isDefined)
 
+    const operatorAnonymityStatus = operatorStatusMapper(
+      operatorNames,
+      !!vehicle.allOperatorsAreAnonymous,
+      !!vehicle.someOperatorsAreAnonymous,
+    )
+
     return {
       ...data[0],
+
       operatorNames:
         operatorNames && operatorNames.length ? operatorNames : undefined,
+      operatorAnonymityStatus,
     }
   }
 

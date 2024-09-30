@@ -1,4 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+
+export enum OperatorAnonymityStatus {
+  ALL = 'all',
+  SOME = 'some',
+  UNKNOWN = 'unknown',
+}
+
+registerEnumType(OperatorAnonymityStatus, { name: 'OperatorAnonymityStatus' })
 
 @ObjectType()
 export class VehiclesVehicleSearchNextInspection {
@@ -86,9 +94,6 @@ export class VehiclesVehicleSearch {
   })
   operatorNames?: string[]
 
-  @Field({ nullable: true })
-  allOperatorsAreAnonymous?: boolean
-
-  @Field({ nullable: true })
-  someOperatorsAreAnonymous?: boolean
+  @Field(() => OperatorAnonymityStatus)
+  operatorAnonymityStatus!: OperatorAnonymityStatus
 }

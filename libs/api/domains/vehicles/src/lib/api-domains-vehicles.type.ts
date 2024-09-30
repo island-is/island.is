@@ -1,3 +1,6 @@
+import { VehicleSearchDto } from '@island.is/clients/vehicles'
+import { OperatorAnonymityStatus } from '../models/getVehicleSearch.model'
+
 /**
  *
  * @export
@@ -181,3 +184,12 @@ export interface UsersVehicles {
    */
   createdTimestamp?: string | null
 }
+
+export interface VehicleSearchOperatorDto {
+  operatorNames?: Array<string> | null
+  operatorAnonymityStatus?: OperatorAnonymityStatus
+}
+
+export interface VehicleSearchCustomDto
+  extends VehicleSearchDto,
+    VehicleSearchOperatorDto {}
