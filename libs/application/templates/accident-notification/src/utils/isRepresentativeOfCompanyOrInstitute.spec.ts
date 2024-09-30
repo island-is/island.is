@@ -22,6 +22,10 @@ describe('isRepresentativeOfCompanyOrInstitute', () => {
     },
   }
 
+  const emptyRepresentative: FormValue = {
+    whoIsTheNotificationFor: {},
+  }
+
   it('should return true for someone that is a representative of the company or institue', () => {
     expect(isRepresentativeOfCompanyOrInstitute(representative)).toEqual(true)
   })
@@ -32,6 +36,9 @@ describe('isRepresentativeOfCompanyOrInstitute', () => {
   })
   it('should return false for empty object', () => {
     expect(isRepresentativeOfCompanyOrInstitute(emptyObject)).toEqual(false)
+  })
+  it('should return false for empty whoIsTheNotificationFor', () => {
+    expect(isRepresentativeOfCompanyOrInstitute(emptyRepresentative)).toEqual(false)
   })
 })
 
@@ -44,23 +51,27 @@ describe('isInjuredAndRepresentativeOfCompanyOrInstitute', () => {
     isRepresentativeOfCompanyOrInstitute: NO
   }
 
-  it('should return true for someone that is a representative of the company or institue', () => {
+  it('should return true for someone that is a representative of the company or institute', () => {
     expect(
       isInjuredAndRepresentativeOfCompanyOrInstitute(representative),
     ).toEqual(true)
   })
 
-  it('should return false for someone that isnt a representative of the company or institue', () => {
+  it('should return false for someone that isnt a representative of the company or institute', () => {
     expect(
       isInjuredAndRepresentativeOfCompanyOrInstitute(notRepresentative),
     ).toEqual(false)
   })
 
   it('should return false for empty object', () => {
-    expect(isRepresentativeOfCompanyOrInstitute(emptyObject)).toEqual(false)
+    expect(isInjuredAndRepresentativeOfCompanyOrInstitute(emptyObject)).toEqual(false)
   })
 
   it('should return false for garbage string', () => {
-    expect(isRepresentativeOfCompanyOrInstitute({isRepresentativeOfCompanyOrInstitute: 'garbage'})).toEqual(false)
+    expect(isInjuredAndRepresentativeOfCompanyOrInstitute({isRepresentativeOfCompanyOrInstitute: 'garbage'})).toEqual(false)
+  })
+
+  it('should return false for object with non string value', () => {
+    expect(isInjuredAndRepresentativeOfCompanyOrInstitute({isRepresentativeOfCompanyOrInstitute: true})).toEqual(false)
   })
 })

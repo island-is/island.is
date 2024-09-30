@@ -171,20 +171,6 @@ describe('Testing utility functions for applications', () => {
       ).toEqual('Adult Application')
     })
 
-    it('Should return name of the application according to applicant age', () => {
-      expect(
-        getApplicationNameTranslationString(
-          createApplicationTemplate({
-            name: 'Normal Application',
-          }),
-          createApplication(),
-          (message) => message as any,
-        ),
-      ).toEqual('Normal Application')
-    })
-  })
-
-<<<<<<< HEAD
   it('Should return the name of the application when defined with a static string', () => {
     expect(
       getApplicationNameTranslationString(
@@ -196,7 +182,6 @@ describe('Testing utility functions for applications', () => {
       ),
     ).toEqual('Normal Application')
   })
-})
 
 describe('getApplicationStatisticsNameTranslationString', () => {
   const applicationStatistics = {
@@ -208,9 +193,6 @@ describe('getApplicationStatisticsNameTranslationString', () => {
     rejected: 1,
     approved: 1,
   }
-=======
-  describe('getApplicationStatisticsNameTranslationString', () => {
->>>>>>> 698c51dde51f4780da13296da216f8cbd7c4b4ab
     it('Should return the translated name of the application statistics when defined with a string', () => {
       expect(
         getApplicationStatisticsNameTranslationString(
