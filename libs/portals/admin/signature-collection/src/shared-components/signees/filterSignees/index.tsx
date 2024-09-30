@@ -17,11 +17,12 @@ const FilterSignees = ({
   const { formatMessage } = useLocale()
 
   const pageNumbers = useMemo(() => {
-    return Array.from(new Set(signees.map(s => s.pageNumber)))
-      .map(pageNumber => ({
+    return Array.from(new Set(signees.map((s) => s.pageNumber))).map(
+      (pageNumber) => ({
         label: String(pageNumber),
         value: String(pageNumber),
-      }))
+      }),
+    )
   }, [signees])
 
   return (
