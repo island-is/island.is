@@ -38,6 +38,7 @@ import {
 } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
+import { Subpoena } from '../subpoena'
 import { User } from '../user'
 import { Case } from './models/case.model'
 import { CaseString } from './models/caseString.model'
@@ -170,7 +171,22 @@ export const include: Includeable[] = [
   },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
-  { model: Defendant, as: 'defendants' },
+  {
+    model: Defendant,
+    as: 'defendants',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: Subpoena,
+        as: 'subpoenas',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
   { model: IndictmentCount, as: 'indictmentCounts' },
   { model: CivilClaimant, as: 'civilClaimants' },
   {
@@ -255,7 +271,6 @@ export const include: Includeable[] = [
 ]
 
 export const order: OrderItem[] = [
-  [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
   [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
   [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
   [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
