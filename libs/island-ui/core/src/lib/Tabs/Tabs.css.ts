@@ -187,10 +187,8 @@ export const tabNextToSelectedTab = style({
 
 export const tabText = style({
   padding: '0 8px',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  zIndex: theme.zIndex.above,
+  zIndex: theme.zIndex.aboveHeader,
+  fontSize: '16px',
 })
 
 export const borderElement = style({})

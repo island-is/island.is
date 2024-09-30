@@ -185,7 +185,7 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
                 >
                   <Text
                     fontWeight={isTabSelected ? 'semiBold' : 'light'}
-                    variant="medium"
+                    variant="small"
                     color={isTabSelected ? 'blue400' : 'black'}
                   >
                     {label}
