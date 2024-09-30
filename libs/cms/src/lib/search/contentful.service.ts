@@ -31,6 +31,9 @@ type SyncCollection = ContentfulSyncCollection & {
 
 const MAX_REQUEST_COUNT = 10
 
+const MAX_RETRY_COUNT = 3
+const INITIAL_DELAY = 500
+
 // Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const defaultContentfulClientLogging = (level: ClientLogLevel, data: any) => {
@@ -483,8 +486,8 @@ export class ContentfulService {
       let response: ApiResponse<SearchResponse<MappedData>> | null = null
       let total = -1
 
-      let delay = 500
-      let retries = 3
+      let delay = INITIAL_DELAY
+      let retries = MAX_RETRY_COUNT
 
       while (response === null || items.length < total) {
         try {
@@ -519,8 +522,8 @@ export class ContentfulService {
             from: (page - 1) * size,
           })
           // Reset variables in case we successfully receive a response
-          delay = 500
-          retries = 2
+          delay = INITIAL_DELAY
+          retries = MAX_RETRY_COUNT
         } catch (error) {
           if (error?.statusCode === 429 && retries > 0) {
             await new Promise((resolve) => {
