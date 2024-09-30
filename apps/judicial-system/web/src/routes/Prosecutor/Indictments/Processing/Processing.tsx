@@ -112,9 +112,7 @@ const Processing: FC = () => {
     civilClaimantNationalIdUpdate?.nationalId,
   )
 
-  const stepIsValid =
-    isProcessingStepValidIndictments(workingCase) &&
-    nationalIdNotFound === false
+  const stepIsValid = isProcessingStepValidIndictments(workingCase)
 
   const handleUpdateDefendant = useCallback(
     (updatedDefendant: UpdateDefendantInput) => {

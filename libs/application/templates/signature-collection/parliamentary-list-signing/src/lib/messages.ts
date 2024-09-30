@@ -206,7 +206,7 @@ export const m = defineMessages({
   },
   linkFieldMessage: {
     id: 'pls.application:linkFieldMessage',
-    defaultMessage: 'Á Mínum síðum geturðu séð hvaða framboði þú mældir með',
+    defaultMessage: 'Á Mínum síðum geturðu séð hvaða framboði þú mæltir með',
     description: '',
   },
 

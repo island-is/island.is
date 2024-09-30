@@ -1153,15 +1153,29 @@ export class CaseService {
   private addMessagesForNewCourtDateToQueue(
     theCase: Case,
     user: TUser,
+    arraignmentDateChanged: boolean,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
+    const messages: Message[] = [
       {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
         body: { type: NotificationType.COURT_DATE },
       },
-    ])
+    ]
+
+    if (arraignmentDateChanged) {
+      theCase.defendants?.forEach((defendant) => {
+        messages.push({
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: defendant.id,
+        })
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private async addMessagesForUpdatedCaseToQueue(
@@ -1320,11 +1334,29 @@ export class CaseService {
     }
 
     // This only applies to indictments
-    const courtDate = DateLog.courtDate(theCase.dateLogs)
-    const updatedCourtDate = DateLog.courtDate(updatedCase.dateLogs)
-    if (updatedCourtDate && updatedCourtDate.date !== courtDate?.date) {
-      // New court date
-      await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
+    if (isIndictment) {
+      const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
+      const updatedArraignmentDate = DateLog.arraignmentDate(
+        updatedCase.dateLogs,
+      )
+      const arraignmentDateChanged =
+        updatedArraignmentDate &&
+        updatedArraignmentDate.date.getTime() !==
+          arraignmentDate?.date.getTime()
+      const courtDate = DateLog.courtDate(theCase.dateLogs)
+      const updatedCourtDate = DateLog.courtDate(updatedCase.dateLogs)
+      const courtDateChanged =
+        updatedCourtDate &&
+        updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
+
+      if (arraignmentDateChanged || courtDateChanged) {
+        // New arraignment date or new court date
+        await this.addMessagesForNewCourtDateToQueue(
+          updatedCase,
+          user,
+          Boolean(arraignmentDateChanged),
+        )
+      }
     }
   }
 
