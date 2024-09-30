@@ -65,6 +65,8 @@ export const mapUglaApplication = async (
     },
   }
 
+  console.log('uglaApplication', uglaApplication)
+
   return uglaApplication
 }
 

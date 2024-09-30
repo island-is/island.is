@@ -45,9 +45,8 @@ export class UniversityOfIcelandApplicationClient {
     return ApplicationStatus.IN_REVIEW
   }
 
-  async createApplication(
-    application: IApplication,
-  ): Promise<InlineResponse2004> {
+  async createApplication(application: IApplication) {
+    //: Promise<InlineResponse2004>
     const mappedApplication = await mapUglaApplication(
       application,
       (courseExternalId: string, e: Error) => {
@@ -58,7 +57,9 @@ export class UniversityOfIcelandApplicationClient {
       },
     )
 
-    return this.applicationApi.applicationsPost(mappedApplication)
+    console.log('mappedApplication', mappedApplication)
+
+    return //this.applicationApi.applicationsPost(mappedApplication)
   }
 
   async updateApplicationStatus(externalId: string, status: ApplicationStatus) {

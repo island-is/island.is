@@ -158,10 +158,11 @@ export class UniversityApplicationService {
     ) {
       // TODO need to perform for all Uglu universities
       try {
+        console.log('applicationObj', applicationObj)
         const response = await this.universityOfIcelandClient.createApplication(
           applicationObj,
         )
-        applicationExternalId = response.id
+        // applicationExternalId = response.id // TODO uncomment
       } catch (e) {
         await this.applicationModel.destroy({
           where: {

@@ -28,6 +28,7 @@ import {
 } from '@island.is/application/templates/university'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { InnaClientService } from '@island.is/clients/inna'
+import { AttachmentKey } from './types/university-types'
 
 @Injectable()
 export class UniversityService extends BaseTemplateApiService {
@@ -149,7 +150,7 @@ export class UniversityService extends BaseTemplateApiService {
             degreeAttachments: await this.getAttachmentUrls(
               answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
                 (x, i) => {
-                  const type = this.mapFileTypes(i)
+                  const type = AttachmentKey.profskirteini
                   return {
                     name: x.name,
                     key: x.key,
@@ -179,7 +180,7 @@ export class UniversityService extends BaseTemplateApiService {
             degreeAttachments: await this.getAttachmentUrls(
               answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
                 (x, i) => {
-                  const type = this.mapFileTypes(i)
+                  const type = AttachmentKey.profskirteini
                   return {
                     name: x.name,
                     key: x.key,
@@ -197,7 +198,7 @@ export class UniversityService extends BaseTemplateApiService {
             ...item,
             degreeAttachments: await this.getAttachmentUrls(
               item.degreeAttachments?.map((x, i) => {
-                const type = this.mapFileTypes(i)
+                const type = AttachmentKey.profskirteini
                 return {
                   name: x.name,
                   key: x.key,
@@ -298,7 +299,7 @@ export class UniversityService extends BaseTemplateApiService {
         type = 'profskirteini3'
         break
       default:
-        type = ''
+        type = 'profskirteini'
     }
     return type
   }
