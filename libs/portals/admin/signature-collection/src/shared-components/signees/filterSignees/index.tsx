@@ -2,7 +2,7 @@ import { useLocale } from '@island.is/localization'
 import { Box, Filter, FilterMultiChoice } from '@island.is/island-ui/core'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
 import { m } from '../../../lib/messages'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { FiltersSigneeType, signeeTypes } from '../../../lib/utils'
 
 const FilterSignees = ({
@@ -16,29 +16,13 @@ const FilterSignees = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  // page numbers for filtering
-  const [pageNumbers, setPageNumbers] = useState<
-    Array<{
-      label: string
-      value: string
-    }>
-  >([])
-
-  useEffect(() => {
-    // set pageNumbers on initial load of lists
-    if (signees.length > 0) {
-      const pages = signees
-        .filter((value, index, self) => self.indexOf(value) === index)
-        .map((s) => {
-          return {
-            label: String(s.pageNumber),
-            value: String(s.pageNumber),
-          }
-        })
-
-      setPageNumbers(pages)
-    }
-  }, [])
+  const pageNumbers = useMemo(() => {
+    return Array.from(new Set(signees.map(s => s.pageNumber)))
+      .map(pageNumber => ({
+        label: String(pageNumber),
+        value: String(pageNumber),
+      }))
+  }, [signees])
 
   return (
     <Box>
