@@ -112,7 +112,9 @@ const ServiceAnnouncement: FC<ServiceAnnouncement> = (props) => {
         message={
           <Box>
             {messages.map((msg) => (
-              <Text variant="small">{msg}</Text>
+              <Text variant="small" key={`${msg}-${subpoena.created}`}>
+                {msg}
+              </Text>
             ))}
           </Box>
         }
@@ -178,6 +180,7 @@ const IndictmentOverview = () => {
         {workingCase.defendants?.map((defendant) =>
           defendant.subpoenas?.map((subpoena) => (
             <ServiceAnnouncement
+              key={`${subpoena.id}-${subpoena.created}`}
               subpoena={subpoena}
               defendantName={defendant.name}
             />

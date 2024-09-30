@@ -30,7 +30,7 @@ import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
-import { Subpoena } from '../subpoena/models/subpoena.model'
+// import { Subpoena } from '../subpoena/models/subpoena.model'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -328,18 +328,18 @@ export class PoliceService {
       })
   }
 
-  async getSubpoenaStatus(subpoenaId: string): Promise<Subpoena> {
-    return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
-    ).then(async (res: Response) => {
-      if (res.ok) {
-        const response: z.infer<typeof this.subpoenaStructure> =
-          await res.json()
+  // async getSubpoenaStatus(subpoenaId: string): Promise<Subpoena> {
+  //   return this.fetchPoliceDocumentApi(
+  //     `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
+  //   ).then(async (res: Response) => {
+  //     if (res.ok) {
+  //       const response: z.infer<typeof this.subpoenaStructure> =
+  //         await res.json()
 
-        return response
-      }
-    })
-  }
+  //       return response
+  //     }
+  //   })
+  // }
 
   async getPoliceCaseInfo(
     caseId: string,
