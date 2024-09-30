@@ -234,6 +234,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [visible, setVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
+  const [refetching, setRefetching] = useState(false)
 
   // Check if we have the document in the cache
   const doc = useFragment_experimental<DocumentV2>({
@@ -258,7 +259,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     fetchPolicy: 'no-cache',
     onCompleted: (data) => {
       const confirmation = data.documentV2?.confirmation
-      if (confirmation && !showConfirmedAlert) {
+      if (confirmation && !refetching && !showConfirmedAlert) {
         RNAlert.alert(confirmation.title ?? '', confirmation.data ?? '', [
           {
             text: intl.formatMessage({
@@ -274,12 +275,17 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               id: 'inbox.openDocument',
             }),
             onPress: async () => {
-              docRes.refetch({
-                input: { id: docId, includeDocument: true },
-              })
-              if (data.documentV2?.alert) {
-                setShowConfirmedAlert(true)
-              }
+              setRefetching(true)
+              docRes
+                .refetch({
+                  input: { id: docId, includeDocument: true },
+                })
+                .then(() => {
+                  if (data.documentV2?.alert) {
+                    setShowConfirmedAlert(true)
+                  }
+                })
+                .finally(() => setRefetching(false))
             },
           },
         ])
