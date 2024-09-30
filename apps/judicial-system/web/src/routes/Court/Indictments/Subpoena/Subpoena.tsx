@@ -158,7 +158,7 @@ const Subpoena: FC = () => {
             <>
               {isSchedulingArraignmentDateForDefendant(defendant.id) && (
                 <Box
-                  key={defendant.id}
+                  key={`subpoena-${defendant.id}`}
                   marginBottom={
                     dIndex + 1 === workingCase.defendants?.length &&
                     (!defendant.subpoenas || defendant.subpoenas.length === 0)
@@ -182,7 +182,7 @@ const Subpoena: FC = () => {
               )}
               {defendant.subpoenas?.map((subpoena, sIndex) => (
                 <Box
-                  key={defendant.id}
+                  key={`subpoena-${subpoena.id}`}
                   marginBottom={
                     dIndex + 1 === workingCase.defendants?.length &&
                     sIndex + 1 === defendant.subpoenas?.length
