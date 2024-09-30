@@ -33,10 +33,7 @@ export const InvolvedPartyScreen = ({
         setSubmitButtonDisabled && setSubmitButtonDisabled(true)
       }
 
-      if (
-        data.officialJournalOfIcelandApplicationGetUserInvolvedParties
-          .involvedParties.length === 1
-      ) {
+      if (involvedParties.length === 1) {
         const involvedParty = involvedParties[0]
 
         setValue(InputFields.advert.involvedPartyId, involvedParty.id)
