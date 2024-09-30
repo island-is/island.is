@@ -23,6 +23,7 @@ import WebView from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
 import {
   DocumentV2,
+  DocumentV2Action,
   ListDocumentFragmentDoc,
   useGetDocumentQuery,
 } from '../../graphql/types/schema'
@@ -215,8 +216,9 @@ const PdfViewer = React.memo(
 
 export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
-  isUrgent: boolean
-}> = ({ componentId, docId, isUrgent }) => {
+  isUrgent?: boolean
+  confirmation?: DocumentV2Action
+}> = ({ componentId, docId, isUrgent, confirmation }) => {
   useNavigationOptions(componentId)
 
   const client = useApolloClient()
@@ -229,6 +231,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [accessToken, setAccessToken] = useState<string>()
   const [error, setError] = useState(false)
   const [showConfirmedAlert, setShowConfirmedAlert] = useState(false)
+  const [visible, setVisible] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  const [pdfUrl, setPdfUrl] = useState('')
 
   // Check if we have the document in the cache
   const doc = useFragment_experimental<DocumentV2>({
@@ -245,42 +250,39 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     variables: {
       input: {
         id: docId,
-        // If the document is marked at urgent we first need to fetch actions before the content
-        includeDocument: !isUrgent,
+        // If the document has a confirmation action we first need to show confirmation modal before fetching the document content
+        includeDocument: !!confirmation,
       },
       locale: locale === 'is-IS' ? 'is' : 'en',
     },
     fetchPolicy: 'no-cache',
-    onCompleted: () => {
-      if (isUrgent && !showConfirmedAlert) {
-        const confirmationAction = Document.actions?.find(
-          (action) => action.type === 'confirmation',
-        )
-        if (confirmationAction) {
-          RNAlert.alert(
-            confirmationAction.title ?? '',
-            confirmationAction.data ?? '',
-            [
-              {
-                text: intl.formatMessage({
-                  id: 'inbox.markAllAsReadPromptCancel',
-                }),
-                style: 'cancel',
-              },
-              {
-                text: intl.formatMessage({
-                  id: 'inbox.openDocument',
-                }),
-                onPress: async () => {
-                  docRes.refetch({
-                    input: { id: docId, includeDocument: true },
-                  })
-                  setShowConfirmedAlert(true)
-                },
-              },
-            ],
-          )
-        }
+    onCompleted: (data) => {
+      const confirmation = data.documentV2?.confirmation
+      if (confirmation && !showConfirmedAlert) {
+        RNAlert.alert(confirmation.title ?? '', confirmation.data ?? '', [
+          {
+            text: intl.formatMessage({
+              id: 'inbox.markAllAsReadPromptCancel',
+            }),
+            style: 'cancel',
+            onPress: () => {
+              setLoaded(true)
+            },
+          },
+          {
+            text: intl.formatMessage({
+              id: 'inbox.openDocument',
+            }),
+            onPress: async () => {
+              docRes.refetch({
+                input: { id: docId, includeDocument: true },
+              })
+              if (data.documentV2?.alert) {
+                setShowConfirmedAlert(true)
+              }
+            },
+          },
+        ])
       }
     },
   })
@@ -290,9 +292,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     ...(docRes.data?.documentV2 || {}),
   }
 
-  const [visible, setVisible] = useState(false)
-  const [loaded, setLoaded] = useState(false)
-  const [pdfUrl, setPdfUrl] = useState('')
+  const hasActions = !!Document.actions?.length
+  const hasConfirmation = !!Document.confirmation
 
   const loading = docRes.loading || !accessToken
   const fileTypeLoaded = !!Document?.content?.type
@@ -390,10 +391,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [loaded])
 
-  const hasAdditionalActions = Document.actions?.filter(
-    (action) => action.type !== 'confirmation',
-  )
-
   return (
     <>
       <Host>
@@ -411,17 +408,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           label={isUrgent ? intl.formatMessage({ id: 'inbox.urgent' }) : ''}
         />
       </Host>
-      {showConfirmedAlert && (
+      {(showConfirmedAlert || (hasActions && !hasConfirmation)) && (
         <ActionsWrapper>
-          {showConfirmedAlert && ( // TODO: this will come from the server
+          {showConfirmedAlert && (
             <Alert
               type="success"
               hasBorder
-              message="Staðfesting á móttöku hefur verið send á dómstóla"
+              message={Document.alert?.title ?? undefined}
             />
           )}
-          {hasAdditionalActions &&
-            showConfirmedAlert &&
+          {hasActions &&
             getButtonsForActions(
               openBrowser,
               onShare,
@@ -435,8 +431,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         style={{
           flex: 1,
           marginHorizontal: theme.spacing[2],
-          marginTop:
-            hasAdditionalActions && showConfirmedAlert ? theme.spacing[2] : 0,
+          marginTop: hasActions || showConfirmedAlert ? theme.spacing[2] : 0,
         }}
       >
         <Animated.View

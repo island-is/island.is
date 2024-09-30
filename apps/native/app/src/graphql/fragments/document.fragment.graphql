@@ -15,6 +15,15 @@ fragment ListDocument on DocumentV2 {
     icon
     data
   }
+  alert {
+    title
+    data
+  }
+  confirmation {
+    title
+    data
+    icon
+  }
   sender {
     id
     name
