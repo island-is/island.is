@@ -90,7 +90,7 @@ export class InternalSubpoenaController {
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering subpoena ${subpoenaId} to police for defendant ${defendantId} og case ${caseId}`,
+      `Delivering subpoena ${subpoenaId} to police for defendant ${defendantId} of case ${caseId}`,
     )
 
     return await this.subpoenaService.deliverSubpoenaToPolice(
