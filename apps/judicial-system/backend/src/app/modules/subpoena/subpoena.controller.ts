@@ -12,8 +12,7 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   JwtAuthGuard,
@@ -22,7 +21,14 @@ import {
 } from '@island.is/judicial-system/auth'
 import { indictmentCases, SubpoenaType } from '@island.is/judicial-system/types'
 
-import { defenderRule } from '../../guards'
+import {
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
+  prosecutorRepresentativeRule,
+  prosecutorRule,
+  publicProsecutorStaffRule,
+} from '../../guards'
 import {
   Case,
   CaseExistsGuard,
@@ -31,11 +37,13 @@ import {
   CurrentCase,
   PdfService,
 } from '../case'
-import { CurrentDefendant } from './guards/defendant.decorator'
-import { DefendantExistsGuard } from './guards/defendantExists.guard'
-import { Defendant } from './models/defendant.model'
+import { Defendant } from '../defendant'
+import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
+import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
+import { CurrentSubpoena } from './guards/subpoena.decorator'
+import { SubpoenaExistsOptionalGuard } from './guards/subpoenaExists.guard'
+import { Subpoena } from './models/subpoena.model'
 
-@Controller('api/case/:caseId/limitedAccess/defendant/:defendantId/subpoena')
 @UseGuards(
   JwtAuthGuard,
   RolesGuard,
@@ -43,15 +51,27 @@ import { Defendant } from './models/defendant.model'
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
   DefendantExistsGuard,
+  SubpoenaExistsOptionalGuard,
 )
-@ApiTags('limited access defendants')
-export class LimitedAccessDefendantController {
+@Controller([
+  'api/case/:caseId/defendant/:defendantId/subpoena',
+  'api/case/:caseId/defendant/:defendantId/subpoena/:subpoenaId',
+])
+@ApiTags('subpoenas')
+export class SubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @RolesRules(defenderRule)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Get()
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -61,20 +81,25 @@ export class LimitedAccessDefendantController {
   async getSubpoenaPdf(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
     @Res() res: Response,
+    @CurrentSubpoena() subpoena?: Subpoena,
     @Query('arraignmentDate') arraignmentDate?: Date,
     @Query('location') location?: string,
     @Query('subpoenaType') subpoenaType?: SubpoenaType,
   ): Promise<void> {
     this.logger.debug(
-      `Getting the subpoena for defendant ${defendantId} of case ${caseId} as a pdf document`,
+      `Getting subpoena ${
+        subpoenaId ?? 'draft'
+      } for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 
     const pdf = await this.pdfService.getSubpoenaPdf(
       theCase,
       defendant,
+      subpoena,
       arraignmentDate,
       location,
       subpoenaType,

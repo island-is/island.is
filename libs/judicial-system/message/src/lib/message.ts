@@ -66,7 +66,7 @@ export type Message = {
   type: MessageType
   user?: User
   caseId?: string
-  elementId?: string
+  elementId?: string | string[]
   body?: { [key: string]: unknown }
   numberOfRetries?: number
   nextRetry?: number

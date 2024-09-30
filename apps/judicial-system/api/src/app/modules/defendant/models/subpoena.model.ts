@@ -10,32 +10,38 @@ export class Subpoena {
   readonly id!: string
 
   @Field(() => String, { nullable: true })
-  readonly created?: string
+  created?: string
 
   @Field(() => String, { nullable: true })
-  readonly modified?: string
+  modified?: string
 
-  @Field(() => ID, { nullable: true })
-  readonly subpoenaId?: string
+  @Field(() => String, { nullable: true })
+  subpoenaId?: string
 
-  @Field(() => ID, { nullable: true })
-  readonly defendantId?: string
+  @Field(() => String, { nullable: true })
+  defendantId?: string
 
-  @Field(() => ID, { nullable: true })
-  readonly caseId?: string
+  @Field(() => String, { nullable: true })
+  caseId?: string
 
   @Field(() => ServiceStatus, { nullable: true })
-  readonly serviceStatus?: ServiceStatus
+  serviceStatus?: ServiceStatus
 
   @Field(() => String, { nullable: true })
-  readonly serviceDate?: string
+  serviceDate?: string
 
   @Field(() => String, { nullable: true })
-  readonly servedBy?: string
+  servedBy?: string
 
   @Field(() => String, { nullable: true })
-  readonly comment?: string
+  comment?: string
 
   @Field(() => String, { nullable: true })
-  readonly defenderNationalId?: string
+  defenderNationalId?: string
+
+  @Field(() => String, { nullable: true })
+  arraignmentDate?: string
+
+  @Field(() => String, { nullable: true })
+  location?: string
 }
