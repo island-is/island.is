@@ -293,7 +293,7 @@ export class PdfService {
   async getSubpoenaPdf(
     theCase: Case,
     defendant: Defendant,
-    subpoena: Subpoena,
+    subpoena?: Subpoena,
     arraignmentDate?: Date,
     location?: string,
     subpoenaType?: SubpoenaType,
