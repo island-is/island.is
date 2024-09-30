@@ -333,10 +333,7 @@ export class PoliceService {
       })
   }
 
-  async getSubpoenaStatus(
-    subpoenaId: string,
-    user: User,
-  ): Promise<UpdateSubpoenaDto> {
+  async getSubpoenaStatus(subpoenaId: string): Promise<UpdateSubpoenaDto> {
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
     )
@@ -347,9 +344,19 @@ export class PoliceService {
 
           this.subpoenaStructure.parse(response)
 
-          const a: UpdateSubpoenaDto = { serviceStatus: response.deliveredToLawyer ? ServiceStatus.DEFENDER : response.prosecutedConfirmedSubpoenaThroughIslandis ? ServiceStatus.ELECTRONICALLY : response.,servedBy: response.servedBy }
+          const subpoena: UpdateSubpoenaDto = {
+            serviceStatus: response.deliveredToLawyer
+              ? ServiceStatus.DEFENDER
+              : response.prosecutedConfirmedSubpoenaThroughIslandis
+              ? ServiceStatus.ELECTRONICALLY
+              : undefined,
+            servedBy: response.servedBy,
+            comment: response.comment,
+            // TODO: defenderChoice
+            defenderNationalId: response.defenderNationalId,
+          }
 
-          return response
+          return subpoena
         }
 
         const reason = await res.text()
@@ -362,25 +369,18 @@ export class PoliceService {
         })
       })
       .catch((reason) => {
-        if (reason instanceof ServiceUnavailableException) {
-          // Do not spam the logs with errors
-          // Act as if the case was updated
-          return true
-        } else {
-          this.logger.error(`Failed to get subpoena with id ${subpoenaId}`, {
-            reason,
-          })
-        }
+        // TODO: Handle this
+        throw reason
 
-        this.eventService.postErrorEvent(
-          'Failed to get subpoena',
-          {
-            subpoenaId,
-            actor: user.name,
-            institution: user.institution?.name,
-          },
-          reason,
-        )
+        // this.eventService.postErrorEvent(
+        //   'Failed to get subpoena',
+        //   {
+        //     subpoenaId,
+        //     actor: user.name,
+        //     institution: user.institution?.name,
+        //   },
+        //   reason,
+        // )
       })
   }
 
