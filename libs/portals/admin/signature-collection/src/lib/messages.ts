@@ -117,7 +117,7 @@ export const m = defineMessages({
   },
   createCollection: {
     id: 'admin-portal.signature-collection:createCollection',
-    defaultMessage: 'Stofna söfnun',
+    defaultMessage: 'Stofna nýja meðmælasöfnun',
     description: '',
   },
   createCollectionSuccess: {

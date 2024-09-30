@@ -12,7 +12,7 @@ const ActionReviewComplete = ({
   listStatus,
 }: {
   listId: string
-  listStatus?: string
+  listStatus: string
 }) => {
   const { formatMessage } = useLocale()
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
@@ -75,10 +75,10 @@ const ActionReviewComplete = ({
             <Button
               iconType="outline"
               variant="ghost"
-              colorScheme="destructive"
               onClick={() => toggleReview()}
               loading={loading}
               icon={listReviewed ? 'lockOpened' : 'lockClosed'}
+              colorScheme={listReviewed ? 'default' : 'destructive'}
             >
               {modalText}
             </Button>

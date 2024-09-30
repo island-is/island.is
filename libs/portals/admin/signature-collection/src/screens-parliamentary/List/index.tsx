@@ -94,7 +94,7 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
           <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
           <PaperSignees listId={list.id} />
-          <ActionReviewComplete listId={list.id} />
+          <ActionReviewComplete listId={list.id} listStatus={listStatus} />
         </GridColumn>
       </GridRow>
     </GridContainer>

@@ -123,47 +123,55 @@ export const Constituency = ({
                         )
                       },
                     }}
-                    tag={{
-                      label: 'Cancel collection',
-                      renderTag: () => (
-                        <DialogPrompt
-                          baseId="cancel_collection_dialog"
-                          title={
-                            formatMessage(m.cancelCollectionButton) +
-                            ' - ' +
-                            list.area?.name
+                    tag={
+                      !list.reviewed
+                        ? {
+                            label: 'Cancel collection',
+                            renderTag: () => (
+                              <DialogPrompt
+                                baseId="cancel_collection_dialog"
+                                title={
+                                  formatMessage(m.cancelCollectionButton) +
+                                  ' - ' +
+                                  list.area?.name
+                                }
+                                description={formatMessage(
+                                  m.cancelCollectionModalMessage,
+                                )}
+                                ariaLabel="delete"
+                                disclosureElement={
+                                  <Tag outlined variant="red">
+                                    <Box display="flex" alignItems="center">
+                                      <Icon
+                                        icon="trash"
+                                        size="small"
+                                        type="outline"
+                                      />
+                                    </Box>
+                                  </Tag>
+                                }
+                                onConfirm={() => {
+                                  //onCancelCollection(list.id)
+                                }}
+                                buttonTextConfirm={formatMessage(
+                                  m.cancelCollectionModalConfirmButton,
+                                )}
+                                buttonPropsConfirm={{
+                                  variant: 'primary',
+                                  colorScheme: 'destructive',
+                                }}
+                                buttonTextCancel={formatMessage(
+                                  m.cancelCollectionModalCancelButton,
+                                )}
+                              />
+                            ),
                           }
-                          description={formatMessage(
-                            m.cancelCollectionModalMessage,
-                          )}
-                          ariaLabel="delete"
-                          disclosureElement={
-                            <Tag outlined variant="red">
-                              <Box display="flex" alignItems="center">
-                                <Icon
-                                  icon="trash"
-                                  size="small"
-                                  type="outline"
-                                />
-                              </Box>
-                            </Tag>
+                        : {
+                            label: m.confirmListReviewed.defaultMessage,
+                            variant: 'mint',
+                            outlined: false,
                           }
-                          onConfirm={() => {
-                            //onCancelCollection(list.id)
-                          }}
-                          buttonTextConfirm={formatMessage(
-                            m.cancelCollectionModalConfirmButton,
-                          )}
-                          buttonPropsConfirm={{
-                            variant: 'primary',
-                            colorScheme: 'destructive',
-                          }}
-                          buttonTextCancel={formatMessage(
-                            m.cancelCollectionModalCancelButton,
-                          )}
-                        />
-                      ),
-                    }}
+                    }
                   />
                 ))}
               </Stack>
