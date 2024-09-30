@@ -72,6 +72,7 @@ const VehicleBulkMileage = () => {
     setVehicles(newVehicles)
   }
 
+  console.log(totalPages)
   return (
     <Stack space={2}>
       <FormProvider {...methods}>

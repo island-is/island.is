@@ -129,12 +129,7 @@ export class VehiclesService {
       data:
         res.data
           ?.map((d) => {
-            if (
-              !d.permno ||
-              !d.regno ||
-              !d.canRegisterMilage ||
-              !d.requiresMileageRegistration
-            ) {
+            if (!d.permno || !d.regno) {
               return null
             }
             return {
@@ -144,8 +139,9 @@ export class VehiclesService {
               type: d.make ?? undefined,
               color: d.colorName ?? undefined,
               mileageDetails: {
-                canRegisterMileage: d.canRegisterMilage,
-                requiresMileageRegistration: d.requiresMileageRegistration,
+                canRegisterMileage: d.canRegisterMilage ?? undefined,
+                requiresMileageRegistration:
+                  d.requiresMileageRegistration ?? undefined,
               },
             }
           })

@@ -52,9 +52,10 @@ export const VehicleBulkMileageRow = ({ vehicle, onSave }: Props) => {
         {
           value: vehicle.vehicleId,
         },
-        {
+        // Until we get the data from the service
+        /*{
           value: formatDate(vehicle.lastMileageRegistration),
-        },
+        },*/
         {
           value: (
             <Box className={styles.mwInput}>
