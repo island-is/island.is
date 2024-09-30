@@ -128,9 +128,9 @@ export const m = defineMessages({
   },
   zendeskCaseNotSolvedError: {
     id: 'admin.delegationAdmin:zendeskCaseNotSolvedError',
-    defaultMessage: 'Zendesk málið er ekki í söðunni leyst',
+    defaultMessage: 'Zendesk málið er ekki í stöðunni leyst',
   },
-  zendeksMissingTagError: {
+  zendeskMissingTagError: {
     id: 'admin.delegationAdmin:zendeskMissingTagError',
     defaultMessage: 'Zendesk málið vantar nauðsynlegt tagg',
   },

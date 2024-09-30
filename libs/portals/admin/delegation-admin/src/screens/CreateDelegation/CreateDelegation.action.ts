@@ -100,7 +100,7 @@ export const createDelegationAction: WrappedActionFn =
         errors: null,
         data: null,
         globalError: true,
-        problem: problem,
+        problem,
       }
     }
   }
