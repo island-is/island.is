@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 import { getErrorMessageForMissingDocuments, hasMissingDocuments, hasReceivedAllDocuments } from './hasMissingDocuments'
+=======
+import {
+  getErrorMessageForMissingDocuments,
+  hasMissingDocuments,
+} from './hasMissingDocuments'
+>>>>>>> 116602b1c1d2fa35138d5e7a6e6fcd318f29dd79
 import { WhoIsTheNotificationForEnum, AttachmentsEnum } from '../types'
 import { NO, YES } from '../constants'
 import { FormatMessage } from '@island.is/localization'
@@ -6,23 +13,25 @@ import { FormValue } from '@island.is/application/types'
 import { AccidentNotification } from '../lib/dataSchema'
 
 describe('hasMissingDocuments', () => {
+  it('should return true when missing documents', () => {
+    expect(hasMissingDocuments(getMissingDocuments())).toEqual(true)
+  })
 
-
-    it('should return true when missing documents', () => {
-        expect(hasMissingDocuments(getMissingDocuments())).toEqual(true)
-    })
-
-    it('should return false when no missing documents', () => {
-        expect(hasMissingDocuments(getNoMissingDocuments())).toEqual(false)
-    })
+  it('should return false when no missing documents', () => {
+    expect(hasMissingDocuments(getNoMissingDocuments())).toEqual(false)
+  })
 })
 
 describe('getErrorMessageForMissingDocuments', () => {
-    const formatMessage: FormatMessage = jest.fn().mockReturnValue('test.pdf')
-    it('should return error message for missing documents', () => {
-        const result = getErrorMessageForMissingDocuments(getMissingDocuments(), formatMessage, false)
-        expect(result).toEqual('test.pdf, test.pdf, test.pdf')
-    })
+  const formatMessage: FormatMessage = jest.fn().mockReturnValue('test.pdf')
+  it('should return error message for missing documents', () => {
+    const result = getErrorMessageForMissingDocuments(
+      getMissingDocuments(),
+      formatMessage,
+      false,
+    )
+    expect(result).toEqual('test.pdf, test.pdf, test.pdf')
+  })
 })
 
 describe('hasReceivedAllDocuments', () => {

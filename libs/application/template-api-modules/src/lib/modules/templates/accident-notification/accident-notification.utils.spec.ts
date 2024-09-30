@@ -84,14 +84,22 @@ describe('applicationAnswersToXml', () => {
       const isHomeAccident = data.type === AccidentTypeEnum.HOMEACTIVITIES
       expect(result.includes('Company EHF')).toBe(!isHomeAccident)
       expect(result.includes('homeAccidentAddress123')).toBe(isHomeAccident)
-      expect(result.includes('homeAccidentAddress123PortalCode100')).toBe(isHomeAccident)
-      expect(result.includes('wtfIsCommunityHere?Kopavogur')).toBe(isHomeAccident)
-      expect(result.includes('more detail about home accident')).toBe(isHomeAccident)
+      expect(result.includes('homeAccidentAddress123PortalCode100')).toBe(
+        isHomeAccident,
+      )
+      expect(result.includes('wtfIsCommunityHere?Kopavogur')).toBe(
+        isHomeAccident,
+      )
+      expect(result.includes('more detail about home accident')).toBe(
+        isHomeAccident,
+      )
 
       if (!isHomeAccident) {
         expect(result.includes('SomeShipName')).toBe(data.fisherman)
         expect(result.includes('SomeShipCharacters')).toBe(data.fisherman)
-        expect(result.includes('description of machine that messed someone up')).toBe(!data.fisherman)
+        expect(
+          result.includes('description of machine that messed someone up'),
+        ).toBe(!data.fisherman)
       }
     },
   )

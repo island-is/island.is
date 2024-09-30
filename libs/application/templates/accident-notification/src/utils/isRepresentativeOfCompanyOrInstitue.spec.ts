@@ -1,9 +1,9 @@
 import { FormValue } from '@island.is/application/types'
 import { WhoIsTheNotificationForEnum } from '../types'
 
-import { 
-  isInjuredAndRepresentativeOfCompanyOrInstitute, 
-  isRepresentativeOfCompanyOrInstitute 
+import {
+  isInjuredAndRepresentativeOfCompanyOrInstitute,
+  isRepresentativeOfCompanyOrInstitute,
 } from './isRepresentativeOfCompanyOrInstitue'
 import { NO, YES } from '../constants'
 
@@ -45,13 +45,15 @@ describe('isInjuredAndRepresentativeOfCompanyOrInstitute', () => {
   }
 
   it('should return true for someone that is a representative of the company or institue', () => {
-    expect(isInjuredAndRepresentativeOfCompanyOrInstitute(representative)).toEqual(true)
+    expect(
+      isInjuredAndRepresentativeOfCompanyOrInstitute(representative),
+    ).toEqual(true)
   })
 
   it('should return false for someone that isnt a representative of the company or institue', () => {
-    expect(isInjuredAndRepresentativeOfCompanyOrInstitute(notRepresentative)).toEqual(
-      false,
-    )
+    expect(
+      isInjuredAndRepresentativeOfCompanyOrInstitute(notRepresentative),
+    ).toEqual(false)
   })
 
   it('should return false for empty object', () => {
