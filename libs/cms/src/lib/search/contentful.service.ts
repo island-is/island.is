@@ -483,37 +483,57 @@ export class ContentfulService {
       let response: ApiResponse<SearchResponse<MappedData>> | null = null
       let total = -1
 
+      let delay = 500
+      let retries = 3
+
       while (response === null || items.length < total) {
-        response = await this.elasticService.findByQuery(elasticIndex, {
-          query: {
-            bool: {
-              should: idsChunk.map((id) => ({
-                nested: {
-                  path: 'tags',
-                  query: {
-                    bool: {
-                      must: [
-                        {
-                          term: {
-                            'tags.key': id,
+        try {
+          response = await this.elasticService.findByQuery(elasticIndex, {
+            query: {
+              bool: {
+                should: idsChunk.map((id) => ({
+                  nested: {
+                    path: 'tags',
+                    query: {
+                      bool: {
+                        must: [
+                          {
+                            term: {
+                              'tags.key': id,
+                            },
                           },
-                        },
-                        {
-                          term: {
-                            'tags.type': 'hasChildEntryWithId',
+                          {
+                            term: {
+                              'tags.type': 'hasChildEntryWithId',
+                            },
                           },
-                        },
-                      ],
+                        ],
+                      },
                     },
                   },
-                },
-              })),
-              minimum_should_match: 1,
+                })),
+                minimum_should_match: 1,
+              },
             },
-          },
-          size,
-          from: (page - 1) * size,
-        })
+            size,
+            from: (page - 1) * size,
+          })
+          // Reset variables in case we successfully receive a response
+          delay = 500
+          retries = 2
+        } catch (error) {
+          if (error?.statusCode === 429 && retries > 0) {
+            await new Promise((resolve) => {
+              setTimeout(resolve, delay)
+            })
+            // Keep track of how often and for how long we should wait in case of failure
+            retries -= 1
+            delay *= 2
+            continue
+          } else {
+            throw error
+          }
+        }
 
         if (response.body.hits.hits.length === 0) {
           total = response.body.hits.total.value
