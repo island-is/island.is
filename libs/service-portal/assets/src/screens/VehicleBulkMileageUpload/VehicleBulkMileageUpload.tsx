@@ -45,6 +45,9 @@ const VehicleBulkMileageUpload = () => {
     if (id && id !== requestGuid) {
       setRequestGuid(id)
     }
+    if (uploadErrorMessage) {
+      setUploadErrorMessage(null)
+    }
   }, [data?.vehicleBulkMileagePost?.requestId])
 
   const postMileage = async (file: File) => {
@@ -83,6 +86,9 @@ const VehicleBulkMileageUpload = () => {
   const handleOnInputFileUploadRemove = () => setUploadedFile(null)
 
   const handleOnInputFileUploadChange = (files: File[]) => {
+    if (requestGuid) {
+      setRequestGuid(null)
+    }
     const file = fileToObject(files[0])
     if (file.status === 'done' && file.originalFileObj instanceof File) {
       postMileage(file.originalFileObj)
@@ -129,7 +135,7 @@ const VehicleBulkMileageUpload = () => {
             message={data.vehicleBulkMileagePost.errorMessage}
           />
         )}
-        {data?.vehicleBulkMileagePost?.requestId &&
+        {requestGuid &&
           !data?.vehicleBulkMileagePost?.errorMessage &&
           !loading &&
           !error && (
