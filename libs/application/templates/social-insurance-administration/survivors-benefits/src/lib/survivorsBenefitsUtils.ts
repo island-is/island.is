@@ -211,7 +211,7 @@ export const getApplicationExternalData = (
 
   const deceasedSpouseCohabitationLongerThan1Year = getValueViaPath(
     externalData,
-    'socialInsuranceAdministrationSpousalInfo.data.cohabitationLongerThan1Year',
+    'socialInsuranceAdministrationSpousalInfo.data.cohabitadedLongerThan1Year',
   ) as boolean
 
   return {
