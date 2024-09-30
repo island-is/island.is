@@ -221,12 +221,32 @@ export const EditChange = (props: EditChangeProp) => {
     validateImpact(activeChange)
   }, [activeChange])
 
-  const getDiffHtml = () => {
-    const emptyHTML = '' as HTMLText
-    const prev = previousRegulation?.text || emptyHTML
-    const current = activeChange.text.value || emptyHTML
+  const emptyHTML = '' as HTMLText
+  const getDiffHtml = (previous?: HTMLText, current?: HTMLText) => {
+    const prev = previous || previousRegulation?.text || emptyHTML
+    const curr = current || activeChange.text.value || emptyHTML
 
-    return getDiff(dirtyClean(prev), dirtyClean(current)).diff || emptyHTML
+    return getDiff(dirtyClean(prev), dirtyClean(curr)).diff || emptyHTML
+  }
+
+  const getAppendixDiffHtml = (i: number) => {
+    const previous = previousRegulation?.appendixes[i]?.text || emptyHTML
+    const current = activeChange?.appendixes[i]?.text.value || emptyHTML
+
+    const diff = getDiff(dirtyClean(previous), dirtyClean(current)).diff
+
+    if (!previousRegulation?.appendixes[i]) {
+      // If the appendix is new
+      return `<div data-diff="new">${diff}</div>` as HTMLText
+    }
+
+    if (diff) {
+      // If the appendix has changes
+      return diff
+    } else {
+      // If the appendix has no changes
+      return undefined
+    }
   }
 
   const saveChange = async () => {
@@ -239,9 +259,10 @@ export const EditChange = (props: EditChangeProp) => {
             title: activeChange.title.value,
             text: activeChange.text.value,
             diff: getDiffHtml(),
-            appendixes: activeChange.appendixes.map((apx) => ({
+            appendixes: activeChange.appendixes.map((apx, i) => ({
               title: apx.title.value,
               text: apx.text.value,
+              diff: getAppendixDiffHtml(i),
             })),
             date: toISODate(activeChange.date.value),
           },
@@ -264,9 +285,10 @@ export const EditChange = (props: EditChangeProp) => {
             title: activeChange.title.value,
             text: activeChange.text.value,
             diff: getDiffHtml(),
-            appendixes: activeChange.appendixes.map((apx) => ({
+            appendixes: activeChange.appendixes.map((apx, i) => ({
               title: apx.title.value,
               text: apx.text.value,
+              diff: getAppendixDiffHtml(i),
             })),
             date: toISODate(activeChange.date.value),
           },
