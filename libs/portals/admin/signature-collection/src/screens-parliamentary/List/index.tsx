@@ -18,6 +18,7 @@ import Signees from '../../shared-components/signees'
 import ActionReviewComplete from '../../shared-components/completeReview'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import ListInfo from '../../shared-components/listInfoAlert'
 
 const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
@@ -66,6 +67,18 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           <IntroHeader
             title={list?.title}
             intro={
+              allowedToProcess
+                ? formatMessage(m.singleListIntro)
+                : formatMessage(m.singleListIntroManage)
+            }
+            imgPosition="right"
+            imgHiddenBelow="sm"
+            img={
+              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            }
+          />
+          <ListInfo
+            message={
               listStatus === ListStatus.Extendable
                 ? formatMessage(m.listStatusExtendableAlert)
                 : listStatus === ListStatus.InReview
@@ -76,12 +89,7 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 ? formatMessage(m.listStatusReviewedStatusAlert)
                 : formatMessage(m.listStatusActiveAlert)
             }
-            imgPosition="right"
-            imgHiddenBelow="sm"
-            marginBottom={3}
-            img={
-              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
-            }
+            type={listStatus === ListStatus.Reviewed ? 'success' : undefined}
           />
           <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
           <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />

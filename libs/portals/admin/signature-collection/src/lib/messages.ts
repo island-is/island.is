@@ -244,13 +244,13 @@ export const m = defineMessages({
   singleListIntro: {
     id: 'admin-portal.signature-collection:singleListIntro',
     defaultMessage:
-      'Hér birtast nöfn meðmælenda frambjóðandans. Hægt er að framlengja tímafrest söfnunarinnar og bæta við meðmælum af blaði.',
+      'Hér birtast nöfn meðmælenda frambjoðs. Hægt er að framlengja tímafrest söfnunarinnar og bæta við meðmælum af blaði.',
     description: '',
   },
   singleListIntroManage: {
     id: 'admin-portal.signature-collection:singleListIntroManage',
     defaultMessage:
-      'Hér birtast nöfn meðmælenda frambjóðandans. Hægt er að leita að meðmælendum eftir nafni eða kennitölu.',
+      'Hér birtast nöfn meðmælenda frambjoðs. Hægt er að leita að meðmælendum eftir nafni eða kennitölu.',
     description: '',
   },
   collectors: {

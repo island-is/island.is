@@ -28,7 +28,6 @@ export const Constituency = ({
 }: {
   allowedToProcess: boolean
 }) => {
-  console.log('Constituency allowedToProcess', allowedToProcess)
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
