@@ -475,7 +475,7 @@ export class ContentfulService {
     let idsChunk = idsCopy.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
 
     while (idsChunk.length > 0) {
-      const size = 1000
+      const size = 100
       let page = 1
 
       const items: string[] = []

@@ -273,6 +273,7 @@ export class DelegationsOutgoingService {
     // Index custom delegations for the toNationalId
     void this.delegationIndexService.indexCustomDelegations(
       createDelegation.toNationalId,
+      user,
     )
 
     return newDelegation
@@ -418,11 +419,13 @@ export class DelegationsOutgoingService {
     // Index custom delegations for the toNationalId
     void this.delegationIndexService.indexCustomDelegations(
       delegation.toNationalId,
+      user,
     )
 
     const hasExistingScopes =
       (currentDelegation.delegationScopes?.length ?? 0) > 0
-    this.notifyDelegationUpdate(user, delegation, hasExistingScopes)
+
+    void this.notifyDelegationUpdate(user, delegation, hasExistingScopes)
 
     return delegation
   }
@@ -457,6 +460,7 @@ export class DelegationsOutgoingService {
     // Index custom delegations for the toNationalId
     void this.delegationIndexService.indexCustomDelegations(
       delegation.toNationalId,
+      user,
     )
   }
 

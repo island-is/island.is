@@ -5,7 +5,7 @@ import kennitala from 'kennitala'
 import { uuid } from 'uuidv4'
 
 import { AuthDelegationType } from '@island.is/shared/types'
-import { User } from '@island.is/auth-nest-tools'
+import { Auth, User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 import {
   Ticket,
@@ -210,7 +210,7 @@ export class DelegationAdminCustomService {
     )
 
     // Index delegations for the toNationalId
-    void this.indexDelegations(delegation.toNationalId)
+    void this.indexDelegations(delegation.toNationalId, user)
 
     return newDelegation.toDTO(AuthDelegationType.GeneralMandate)
   }
@@ -253,7 +253,7 @@ export class DelegationAdminCustomService {
       }
 
       // Index delegations for the toNationalId
-      void this.indexDelegations(delegation.toNationalId)
+      void this.indexDelegations(delegation.toNationalId, user)
     })
   }
 
@@ -278,8 +278,11 @@ export class DelegationAdminCustomService {
     }
   }
 
-  private indexDelegations(nationalId: string) {
-    void this.delegationIndexService.indexCustomDelegations(nationalId)
-    void this.delegationIndexService.indexGeneralMandateDelegations(nationalId)
+  private indexDelegations(nationalId: string, auth: Auth) {
+    void this.delegationIndexService.indexCustomDelegations(nationalId, auth)
+    void this.delegationIndexService.indexGeneralMandateDelegations(
+      nationalId,
+      auth,
+    )
   }
 }

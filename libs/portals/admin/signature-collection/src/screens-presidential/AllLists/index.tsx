@@ -30,7 +30,7 @@ import { format as formatNationalId } from 'kennitala'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
-import ListInfo from '../List/components/listInfoAlert'
+import ListInfo from '../../shared-components/listInfoAlert'
 import EmptyState from '../../shared-components/emptyState'
 import ReviewCandidates from './components/reviewCandidates'
 import CompareLists from '../../shared-components/compareLists'
@@ -163,7 +163,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 placeholder={formatMessage(m.searchInAllListsPlaceholder)}
                 value={filters.input}
                 onChange={(value) => setFilters({ ...filters, input: value })}
-                backgroundColor="white"
+                backgroundColor="blue"
               />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
