@@ -1,7 +1,10 @@
-import { m } from '../lib/messages'
+import { MessageDescriptor } from 'react-intl'
+
 import { ErrorCodes } from '@island.is/shared/utils'
 
-export const FORM_ERRORS = {
+import { m } from '../lib/messages'
+
+export const FORM_ERRORS: Record<ErrorCodes, MessageDescriptor> = {
   [ErrorCodes.ZENDESK_NATIONAL_IDS_MISMATCH]: m.nationalIdsMismatchError,
   [ErrorCodes.ZENDESK_CUSTOM_FIELDS_MISSING]: m.zendeskCustomFieldsMissingError,
   [ErrorCodes.ZENDESK_TAG_MISSING]: m.zendeskMissingTagError,
