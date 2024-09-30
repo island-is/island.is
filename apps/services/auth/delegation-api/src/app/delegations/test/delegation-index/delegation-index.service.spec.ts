@@ -451,7 +451,7 @@ describe('DelegationsIndexService', () => {
       const nationalId = user.nationalId
 
       // Act
-      await delegationIndexService.indexCustomDelegations(nationalId)
+      await delegationIndexService.indexCustomDelegations(nationalId, user)
 
       // Assert
       const delegations = await delegationIndexModel.findAll({
@@ -480,7 +480,10 @@ describe('DelegationsIndexService', () => {
       const nationalId = user.nationalId
 
       // Act
-      await delegationIndexService.indexRepresentativeDelegations(nationalId)
+      await delegationIndexService.indexRepresentativeDelegations(
+        nationalId,
+        user,
+      )
 
       // Assert
       const delegations = await delegationIndexModel.findAll({
@@ -625,7 +628,7 @@ describe('DelegationsIndexService', () => {
       const nationalId = user.nationalId
 
       // Act
-      await delegationIndexService.indexCustomDelegations(nationalId)
+      await delegationIndexService.indexCustomDelegations(nationalId, user)
 
       // Assert
       const delegations = await delegationModel.findAll({

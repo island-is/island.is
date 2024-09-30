@@ -1,5 +1,4 @@
-import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { json } from '../../../../../infra/src/dsl/dsl'
+import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
 const REDIS_NODE_CONFIG = {
@@ -64,12 +63,20 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
         // Origin for Android prod app
         'android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU',
       ]),
+      SYSLUMENN_HOST: {
+        dev: 'https://api.syslumenn.is/staging',
+        staging: 'https://api.syslumenn.is/staging',
+        prod: 'https://api.syslumenn.is/api',
+      },
+      SYSLUMENN_TIMEOUT: '3000',
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
       NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+      SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
     })
     .xroad(Base, Client, RskProcuring)
     .ingress({

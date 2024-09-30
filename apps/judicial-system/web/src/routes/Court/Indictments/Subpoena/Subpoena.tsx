@@ -4,7 +4,7 @@ import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
   CourtCaseInfo,
@@ -19,14 +19,9 @@ import {
   SectionHeading,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/components'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  useCase,
-  useDefendants,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { subpoena as strings } from './Subpoena.strings'
@@ -39,18 +34,16 @@ const Subpoena: FC = () => {
   const { formatMessage } = useIntl()
   const {
     courtDate,
-    courtDateHasChanged,
     handleCourtDateChange,
     handleCourtRoomChange,
     sendCourtDateToServer,
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
-  const { sendNotification } = useCase()
 
-  const isArraignmentDone = Boolean(workingCase.indictmentDecision)
+  const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      if (isArraignmentDone) {
+      if (isArraignmentScheduled) {
         router.push(`${destination}/${workingCase.id}`)
         return
       }
@@ -69,18 +62,6 @@ const Subpoena: FC = () => {
         })
       }
 
-      if (
-        !hasSentNotification(
-          NotificationType.COURT_DATE,
-          workingCase.notifications,
-        ).hasSent ||
-        courtDateHasChanged
-      ) {
-        promises.push(
-          sendNotification(workingCase.id, NotificationType.COURT_DATE),
-        )
-      }
-
       const allDataSentToServer = await Promise.all(promises)
       if (!allDataSentToServer.every((result) => result)) {
         return
@@ -89,14 +70,11 @@ const Subpoena: FC = () => {
       router.push(`${destination}/${workingCase.id}`)
     },
     [
-      isArraignmentDone,
+      isArraignmentScheduled,
       sendCourtDateToServer,
       workingCase.defendants,
-      workingCase.notifications,
       workingCase.id,
-      courtDateHasChanged,
       updateDefendant,
-      sendNotification,
     ],
   )
 
@@ -134,8 +112,8 @@ const Subpoena: FC = () => {
             handleCourtDateChange={handleCourtDateChange}
             handleCourtRoomChange={handleCourtRoomChange}
             courtDate={workingCase.arraignmentDate}
-            dateTimeDisabled={isArraignmentDone}
-            courtRoomDisabled={isArraignmentDone}
+            dateTimeDisabled={isArraignmentScheduled}
+            courtRoomDisabled={isArraignmentScheduled}
             courtRoomRequired
           />
         </Box>
@@ -169,14 +147,14 @@ const Subpoena: FC = () => {
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() => {
-            if (isArraignmentDone) {
+            if (isArraignmentScheduled) {
               router.push(
                 `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
               )
             } else setNavigateTo(constants.INDICTMENTS_DEFENDER_ROUTE)
           }}
           nextButtonText={
-            isArraignmentDone
+            isArraignmentScheduled
               ? undefined
               : formatMessage(strings.nextButtonText)
           }
