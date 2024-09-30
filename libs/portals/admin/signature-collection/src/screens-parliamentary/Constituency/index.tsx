@@ -20,8 +20,15 @@ import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import CreateCollection from '../../shared-components/createCollection'
 import format from 'date-fns/format'
+import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
-export const Constituency = () => {
+export const Constituency = ({
+  allowedToProcess,
+}: {
+  allowedToProcess: boolean
+}) => {
+  console.log('Constituency allowedToProcess', allowedToProcess)
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
@@ -73,6 +80,9 @@ export const Constituency = () => {
             }
             imgPosition="right"
             imgHiddenBelow="sm"
+            img={
+              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            }
           />
           <GridRow>
             <GridColumn span={'12/12'}>

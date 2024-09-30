@@ -8,7 +8,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import { m } from '../../lib/messages'
+import { m, parliamentaryMessages } from '../../lib/messages'
 import { useLoaderData } from 'react-router-dom'
 import { ListStatus, SignatureCollectionList } from '@island.is/api/schema'
 import { PaperSignees } from './paperSignees'
@@ -16,9 +16,14 @@ import { SignatureCollectionPaths } from '../../lib/paths'
 import ActionExtendDeadline from '../../shared-components/extendDeadline'
 import Signees from '../../shared-components/signees'
 import ActionReviewComplete from '../../shared-components/completeReview'
-import ListInfo from '../../shared-components/listInfoAlert'
+import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
-const List = () => {
+const List = ({
+  allowedToProcess
+}: {
+  allowedToProcess: boolean
+}) => {
   const { formatMessage } = useLocale()
   const { list, listStatus } = useLoaderData() as {
     list: SignatureCollectionList
@@ -64,12 +69,7 @@ const List = () => {
           </Box>
           <IntroHeader
             title={list?.title}
-            imgPosition="right"
-            imgHiddenBelow="sm"
-            marginBottom={3}
-          />
-          <ListInfo
-            message={
+            intro={
               listStatus === ListStatus.Extendable
                 ? formatMessage(m.listStatusExtendableAlert)
                 : listStatus === ListStatus.InReview
@@ -80,7 +80,12 @@ const List = () => {
                 ? formatMessage(m.listStatusReviewedStatusAlert)
                 : formatMessage(m.listStatusActiveAlert)
             }
-            type={listStatus === ListStatus.Reviewed ? 'success' : undefined}
+            imgPosition="right"
+            imgHiddenBelow="sm"
+            marginBottom={3}
+            img={
+              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            }
           />
           <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
           <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />

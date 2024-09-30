@@ -17,8 +17,12 @@ import { SignatureCollectionPaths } from '../lib/paths'
 import CompareLists from '../shared-components/compareLists'
 import { ListsLoaderReturn } from '../loaders/AllLists.loader'
 import DownloadReports from './DownloadReports'
+import electionsCommitteeLogo from '../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../assets/nationalRegistry.svg'
 
-const ParliamentaryRoot = () => {
+const ParliamentaryRoot = ({allowedToProcess}: {
+  allowedToProcess: boolean
+}) => {
   const { formatMessage } = useLocale()
 
   const navigate = useNavigate()
@@ -57,6 +61,9 @@ const ParliamentaryRoot = () => {
             intro={formatMessage(parliamentaryMessages.signatureListsIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
+            img={
+              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            }
           />
           <Box
             width="full"
