@@ -19,7 +19,6 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
-import { GetFinanceDocumentDto } from './dto/getFinanceDocument.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
@@ -37,12 +36,12 @@ export class FinanceDocumentController {
     description: 'Get a PDF document from the Finance service',
   })
   async getFinancePdf(
-    @Param('pdfId') pdfId: string,
     @CurrentUser() user: User,
-    @Body() resource: GetFinanceDocumentDto,
     @Res() res: Response,
+    @Param('pdfId') pdfId: string,
+    @Body('annualDoc') annualDoc?: string,
   ) {
-    const documentResponse = resource.annualDoc
+    const documentResponse = annualDoc
       ? await this.financeService.getAnnualStatusDocument(
           user.nationalId,
           pdfId,
@@ -55,6 +54,7 @@ export class FinanceDocumentController {
         )
 
     const documentBase64 = documentResponse?.docment?.document
+
     if (documentBase64) {
       this.auditService.audit({
         action: 'getFinancePdf',

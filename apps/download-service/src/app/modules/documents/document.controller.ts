@@ -40,7 +40,6 @@ export class DocumentController {
   async getPdf(
     @Param('pdfId') pdfId: string,
     @CurrentUser() user: User,
-    @Body() resource: GetDocumentDto,
     @Res() res: Response,
   ) {
     const rawDocumentDTO = await this.documentClient.customersDocument({
