@@ -1,8 +1,9 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import type { EntryProps, KeyValueMap } from 'contentful-management'
 import dynamic from 'next/dynamic'
 import type { EditorExtensionSDK } from '@contentful/app-sdk'
 import { Box } from '@contentful/f36-components'
-import { useSDK } from '@contentful/react-apps-toolkit'
+import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
 import { mapLocalesToFieldApis } from '../utils'
 import { TeamMemberFilterTagsField } from './TeamMemberFilterTagsField'
@@ -35,10 +36,27 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
 
 export const TeamMemberEditor = () => {
   const sdk = useSDK<EditorExtensionSDK>()
+  const cma = useCMA()
 
   const localeToFieldMapping = useMemo(() => {
     return createLocaleToFieldMapping(sdk)
   }, [sdk])
+
+  const [teamList, setTeamList] = useState<EntryProps<KeyValueMap>>()
+
+  useEffect(() => {
+    const fetchTeamList = async () => {
+      const teamLists = await cma.entry.getMany({
+        query: {
+          content_type: 'teamList',
+          links_to_entry: sdk.entry.getSys().id,
+        },
+      })
+      if (teamLists.items.length > 0) setTeamList(teamLists.items[0])
+    }
+
+    fetchTeamList()
+  }, [cma.entry, sdk.entry])
 
   return (
     <Box
@@ -68,7 +86,7 @@ export const TeamMemberEditor = () => {
       />
       <ContentfulField
         displayName="Image"
-        fieldID="mynd"
+        fieldID="image"
         localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
         widgetId="assetLinkEditor"
@@ -80,6 +98,29 @@ export const TeamMemberEditor = () => {
         sdk={sdk}
         widgetId="assetLinkEditor"
       />
+      {teamList?.fields?.variant?.[sdk.locales.default] === 'accordion' && (
+        <Box>
+          <ContentfulField
+            displayName="Email"
+            fieldID="email"
+            localeToFieldMapping={localeToFieldMapping}
+            sdk={sdk}
+          />
+          <ContentfulField
+            displayName="Phone"
+            fieldID="phone"
+            localeToFieldMapping={localeToFieldMapping}
+            sdk={sdk}
+          />
+          <ContentfulField
+            displayName="Free text"
+            fieldID="intro"
+            localeToFieldMapping={localeToFieldMapping}
+            sdk={sdk}
+            widgetId="richTextEditor"
+          />
+        </Box>
+      )}
       <TeamMemberFilterTagsField sdk={sdk} />
     </Box>
   )
