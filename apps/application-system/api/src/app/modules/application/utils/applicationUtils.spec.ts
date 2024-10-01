@@ -94,106 +94,106 @@ describe('Testing utility functions for applications', () => {
     })
   })
 
-describe('getApplicationNameTranslationString', () => {
-  it('Should return the name of the application when defined with a string', () => {
-    expect(
-      getApplicationNameTranslationString(
-        createApplicationTemplate(),
-        createApplication({
-          externalData: {
-            identity: {
-              data: {
-                name: 'Test User',
+  describe('getApplicationNameTranslationString', () => {
+    it('Should return the name of the application when defined with a string', () => {
+      expect(
+        getApplicationNameTranslationString(
+          createApplicationTemplate(),
+          createApplication({
+            externalData: {
+              identity: {
+                data: {
+                  name: 'Test User',
+                },
+                date: new Date(),
+                status: 'success',
               },
-              date: new Date(),
-              status: 'success',
             },
-          },
-        }),
-        (message) => message as any,
-      ),
-    ).toEqual('Test application')
-  })
-
-  it('Should return the correct application name based on a predefined age threshold', () => {
-    expect(
-      getApplicationNameTranslationString(
-        createApplicationTemplate({
-          name: (application) =>
-            Number(application.answers.age) >= 20
-              ? 'Adult Application'
-              : 'Child Application',
-        }),
-        createApplication({
-          answers: {
-            age: 20,
-          },
-        }),
-        (message) => message as any,
-      ),
-    ).toEqual('Adult Application')
-  })
-
-  it('Should return the name of the application when defined with a static string', () => {
-    expect(
-      getApplicationNameTranslationString(
-        createApplicationTemplate({
-          name: 'Normal Application',
-        }),
-        createApplication(),
-        (message) => message as any,
-      ),
-    ).toEqual('Normal Application')
-  })
-
-  describe('getApplicationStatisticsNameTranslationString', () => {
-    const applicationStatistics = {
-      typeid: 'test',
-      count: 1,
-      draft: 1,
-      inprogress: 1,
-      completed: 1,
-      rejected: 1,
-      approved: 1,
-    }
-    it('Should return the translated name of the application statistics when defined with a string', () => {
-      expect(
-        getApplicationStatisticsNameTranslationString(
-          createApplicationTemplate({
-            name: 'test name',
           }),
-          applicationStatistics,
-          (message) => (message + ' formatted') as string,
+          (message) => message as any,
         ),
-      ).toEqual('test name formatted')
+      ).toEqual('Test application')
     })
 
-    it('Should return the translated name of the application statistics when defined with a function', () => {
+    it('Should return the correct application name based on a predefined age threshold', () => {
       expect(
-        getApplicationStatisticsNameTranslationString(
+        getApplicationNameTranslationString(
           createApplicationTemplate({
-            name: (application) => application.typeId + ' name',
+            name: (application) =>
+              Number(application.answers.age) >= 20
+                ? 'Adult Application'
+                : 'Child Application',
           }),
-          applicationStatistics,
-          (message) => (message + ' formatted') as string,
+          createApplication({
+            answers: {
+              age: 20,
+            },
+          }),
+          (message) => message as any,
         ),
-      ).toEqual('test name formatted')
+      ).toEqual('Adult Application')
     })
 
-    it('Should return the translated name of the application statistics when defined with a function that returns an object', () => {
+    it('Should return the name of the application when defined with a static string', () => {
       expect(
-        getApplicationStatisticsNameTranslationString(
+        getApplicationNameTranslationString(
           createApplicationTemplate({
-            name: (application) => ({
-              name: application.typeId + ' name',
-              value: '1',
+            name: 'Normal Application',
+          }),
+          createApplication(),
+          (message) => message as any,
+        ),
+      ).toEqual('Normal Application')
+    })
+
+    describe('getApplicationStatisticsNameTranslationString', () => {
+      const applicationStatistics = {
+        typeid: 'test',
+        count: 1,
+        draft: 1,
+        inprogress: 1,
+        completed: 1,
+        rejected: 1,
+        approved: 1,
+      }
+      it('Should return the translated name of the application statistics when defined with a string', () => {
+        expect(
+          getApplicationStatisticsNameTranslationString(
+            createApplicationTemplate({
+              name: 'test name',
             }),
-          }),
-          applicationStatistics,
-          (message, value) => `${message} ${value?.value} formatted`,
-        ),
-      ).toEqual('test name 1 formatted')
+            applicationStatistics,
+            (message) => (message + ' formatted') as string,
+          ),
+        ).toEqual('test name formatted')
+      })
+
+      it('Should return the translated name of the application statistics when defined with a function', () => {
+        expect(
+          getApplicationStatisticsNameTranslationString(
+            createApplicationTemplate({
+              name: (application) => application.typeId + ' name',
+            }),
+            applicationStatistics,
+            (message) => (message + ' formatted') as string,
+          ),
+        ).toEqual('test name formatted')
+      })
+
+      it('Should return the translated name of the application statistics when defined with a function that returns an object', () => {
+        expect(
+          getApplicationStatisticsNameTranslationString(
+            createApplicationTemplate({
+              name: (application) => ({
+                name: application.typeId + ' name',
+                value: '1',
+              }),
+            }),
+            applicationStatistics,
+            (message, value) => `${message} ${value?.value} formatted`,
+          ),
+        ).toEqual('test name 1 formatted')
+      })
     })
   })
-})
 })
