@@ -290,7 +290,7 @@ jobs:
           ignore_paths: >-
             node_modules
             apps/native/app/android
-          severity: warning
+          severity: style
 
   formatting:
     needs:
