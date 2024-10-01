@@ -12,7 +12,7 @@ const Host = styled(View)<{ setMaxWidth: boolean }>`
   align-items: center;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing[2]}px;
-  max-width: ${({ setMaxWidth }) => setMaxWidth && 150}px;
+  max-width: ${({ setMaxWidth }) => (setMaxWidth ? '150px' : 'auto')};
 `
 
 const Action = styled(View)`

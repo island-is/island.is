@@ -130,7 +130,6 @@ const PressableListItem = React.memo(
           navigateTo(`/inbox/${item.id}`, {
             title: item.sender.name,
             isUrgent: item.isUrgent,
-            confirmation: item.confirmation,
             listParams,
           })
         }
