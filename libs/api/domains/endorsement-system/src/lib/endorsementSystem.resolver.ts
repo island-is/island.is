@@ -32,7 +32,6 @@ import { sendPdfEmailInput } from './dto/sendPdfEmail.input'
 import { ExportUrlResponse } from './dto/exportUrl.response'
 import { ExportEndorsementListInput } from './dto/exportEndorsementList.input'
 
-
 @UseGuards(IdsUserGuard)
 @Resolver(() => EndorsementList)
 export class EndorsementSystemResolver {
