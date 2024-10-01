@@ -9,6 +9,7 @@ import {
   Table as T,
   Button,
   FilterInput,
+  Select,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
@@ -58,11 +59,17 @@ const HealthCenterRegistration = () => {
   const [filter, setFilter] = useState('')
   const [loadingTransfer, setLoadingTransfer] = useState(false)
   const [errorTransfer, setErrorTransfer] = useState(false)
+
   const [selectedHealthCenter, setSelectedHealthCenter] =
     useState<SelectedHealthCenter | null>(null)
+
   const [healthCenterDoctors, setHealthCenterDoctors] = useState<
     HealthCenterDoctorOption[]
   >([])
+
+  const [selectedHealthCenterDoctor, setSelectedHealthCenterDoctor] = useState<
+    number | undefined
+  >()
 
   const handleOnError = () => {
     setSelectedHealthCenter(null)
@@ -124,14 +131,16 @@ const HealthCenterRegistration = () => {
     }
   }, [errorTransfer])
 
-  const handleHealthCenterTransfer = async (doctorId?: number) => {
+  const handleHealthCenterTransfer = async () => {
+    console.log(selectedHealthCenter)
+    console.log(selectedHealthCenterDoctor)
     setLoadingTransfer(true)
     if (selectedHealthCenter && selectedHealthCenter?.id) {
       await transferHealthCenter({
         variables: {
           input: {
             id: selectedHealthCenter.id,
-            doctorId: doctorId,
+            doctorId: selectedHealthCenterDoctor,
           },
         },
       })
@@ -344,7 +353,28 @@ const HealthCenterRegistration = () => {
                                       )}
                                     </Button>
                                   }
-                                />
+                                >
+                                  {healthCenterDoctors?.length ? (
+                                    <Box marginBottom={4}>
+                                      <Select
+                                        size="xs"
+                                        isClearable
+                                        options={healthCenterDoctors}
+                                        label={formatMessage(
+                                          messages.chooseDoctorLabel,
+                                        )}
+                                        placeholder={formatMessage(
+                                          messages.chooseDoctorPlaceholder,
+                                        )}
+                                        onChange={(val) => {
+                                          setSelectedHealthCenterDoctor(
+                                            val?.value,
+                                          )
+                                        }}
+                                      />
+                                    </Box>
+                                  ) : null}
+                                </Modal>
                               </Box>
                             </T.Data>
                           </tr>

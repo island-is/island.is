@@ -120,6 +120,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                 )}
                 {text && <Text>{text}</Text>}
               </Box>
+              {children}
               {buttons && (
                 <Inline space={2}>
                   {buttons.map((b) => (
@@ -136,7 +137,6 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                 </Inline>
               )}
             </Box>
-            {children}
             {iconSrc && (
               <Box marginLeft={6} className={styles.image}>
                 <img src={iconSrc} alt={iconAlt} />

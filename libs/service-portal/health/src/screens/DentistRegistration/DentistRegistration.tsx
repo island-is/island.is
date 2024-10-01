@@ -76,9 +76,7 @@ export const DentistRegistration = () => {
     }
   }, [errorTransfering])
 
-  const canRegister = status?.rightsPortalDentistStatus?.canRegister
-    ? true
-    : false
+  const canRegister = true
 
   const contractType = status?.rightsPortalDentistStatus?.contractType
     ? status.rightsPortalDentistStatus.contractType
@@ -144,7 +142,7 @@ export const DentistRegistration = () => {
               messages.healthCenterRegistrationTransferErrorTitle,
             )}
             message={formatMessage(
-              messages.healthCenterRegistrationTransferErrorInfo,
+              messages.dentistRegistrationTransferErrorInfo,
             )}
           />
         </Box>
