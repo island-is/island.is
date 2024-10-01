@@ -34,7 +34,10 @@ describe('hasReceivedConfirmation', () => {
     { for: 'juridical person', input: confirmedJuridicial, expected: true },
     { for: 'company', input: confirmedMe, expected: true },
     { for: 'not confirmed', input: notConfirmed, expected: false },
-  ])('should return $expected when confirmation is $for', ({ input, expected }) => {
-    expect(hasReceivedConfirmation(input)).toEqual(expected)
-  })
+  ])(
+    'should return $expected when confirmation is $for',
+    ({ input, expected }) => {
+      expect(hasReceivedConfirmation(input)).toEqual(expected)
+    },
+  )
 })

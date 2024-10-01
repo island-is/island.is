@@ -16,10 +16,7 @@ import {
   AccidentNotificationAttachment,
   AttachmentTypeEnum,
 } from './types/attachments'
-import {
-  Application,
-  FormValue,
-} from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 
 describe('applicationAnswersToXml', () => {
   it.each([
@@ -41,8 +38,12 @@ describe('applicationAnswersToXml', () => {
       expect(result.includes(answers.applicant.name)).toBeTruthy()
       expect(result.includes(answers.applicant.phoneNumber)).toBeTruthy()
       expect(result.includes(answers.applicant.nationalId)).toBeTruthy()
-      expect(result.includes(answers.accidentDetails.dateOfAccident)).toBeTruthy()
-      expect(result.includes((answers as any)['locationAndPurpose?'].location)).toBeTruthy()
+      expect(
+        result.includes(answers.accidentDetails.dateOfAccident),
+      ).toBeTruthy()
+      expect(
+        result.includes((answers as any)['locationAndPurpose?'].location),
+      ).toBeTruthy()
       expect(result.includes(attachments[0].name)).toBeTruthy()
       expect(result.includes(attachments[1].name)).toBeTruthy()
 
@@ -72,8 +73,12 @@ describe('applicationAnswersToXml', () => {
       expect(result.includes(answers.applicant.name)).toBeTruthy()
       expect(result.includes(answers.applicant.phoneNumber)).toBeTruthy()
       expect(result.includes(answers.applicant.nationalId)).toBeTruthy()
-      expect(result.includes(answers.accidentDetails.dateOfAccident)).toBeTruthy()
-      expect(result.includes((answers as any)['locationAndPurpose?'].location)).toBeTruthy()
+      expect(
+        result.includes(answers.accidentDetails.dateOfAccident),
+      ).toBeTruthy()
+      expect(
+        result.includes((answers as any)['locationAndPurpose?'].location),
+      ).toBeTruthy()
       expect(result.includes(attachments[0].name)).toBeTruthy()
       expect(result.includes(attachments[1].name)).toBeTruthy()
 
@@ -81,8 +86,12 @@ describe('applicationAnswersToXml', () => {
       expect(result.includes(answers.injuredPersonInformation.name)).toBeFalsy()
 
       const isHomeAccident = data.type === AccidentTypeEnum.HOMEACTIVITIES
-      expect(result.includes(answers.companyInfo?.name as string)).toBe(!isHomeAccident)
-      expect(result.includes(answers.homeAccident?.address)).toBe(isHomeAccident)
+      expect(result.includes(answers.companyInfo?.name as string)).toBe(
+        !isHomeAccident,
+      )
+      expect(result.includes(answers.homeAccident?.address)).toBe(
+        isHomeAccident,
+      )
       expect(result.includes(answers.homeAccident?.postalCode)).toBe(
         isHomeAccident,
       )
@@ -94,11 +103,15 @@ describe('applicationAnswersToXml', () => {
       )
 
       if (!isHomeAccident) {
-        expect(result.includes(answers.fishingShipInfo?.shipName)).toBe(data.fisherman)
-        expect(result.includes(answers.fishingShipInfo?.shipCharacters)).toBe(data.fisherman)
-        expect(
-          result.includes(answers.workMachine?.descriptionOfMachine),
-        ).toBe(!data.fisherman)
+        expect(result.includes(answers.fishingShipInfo?.shipName)).toBe(
+          data.fisherman,
+        )
+        expect(result.includes(answers.fishingShipInfo?.shipCharacters)).toBe(
+          data.fisherman,
+        )
+        expect(result.includes(answers.workMachine?.descriptionOfMachine)).toBe(
+          !data.fisherman,
+        )
       }
     },
   )
@@ -134,7 +147,7 @@ describe('applicationAnswersToXml', () => {
       answers.companyInfo = undefined
 
       const result = utils.applicationAnswersToXml(answers, attachments)
-      
+
       expect(result.includes(answers.applicant.name)).toBeTruthy()
       if (data.someoneElse) {
         data.for === WhoIsTheNotificationForEnum.CHILDINCUSTODY
@@ -148,13 +161,21 @@ describe('applicationAnswersToXml', () => {
             ).toBeTruthy()
 
         data.for === WhoIsTheNotificationForEnum.JURIDICALPERSON
-          ? expect(result.includes(answers.juridicalPerson.companyName)).toBeTruthy()
-          : expect(result.includes(answers.juridicalPerson.companyName)).toBeFalsy()
+          ? expect(
+              result.includes(answers.juridicalPerson.companyName),
+            ).toBeTruthy()
+          : expect(
+              result.includes(answers.juridicalPerson.companyName),
+            ).toBeFalsy()
       }
       expect(result.includes(answers.applicant.phoneNumber)).toBeTruthy()
       expect(result.includes(answers.applicant.nationalId)).toBeTruthy()
-      expect(result.includes(answers.accidentDetails.dateOfAccident)).toBeTruthy()
-      expect(result.includes((answers as any)['locationAndPurpose?'].location)).toBeTruthy()
+      expect(
+        result.includes(answers.accidentDetails.dateOfAccident),
+      ).toBeTruthy()
+      expect(
+        result.includes((answers as any)['locationAndPurpose?'].location),
+      ).toBeTruthy()
       expect(result.includes(attachments[0].name)).toBeTruthy()
       expect(result.includes(attachments[1].name)).toBeTruthy()
 
@@ -260,7 +281,7 @@ const getFullBasicAnswers = (): AccidentNotificationAnswers => {
     carAccidentHindrance: 'no',
     // getValueViaPath can find this when this object isnt types but is stringified
     // so we need to have this as a string to accomidate the ? when using the typed version
-    'locationAndPurpose?': { 
+    'locationAndPurpose?': {
       location: 'Somewhere',
     },
     accidentLocation: {

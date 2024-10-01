@@ -1,7 +1,6 @@
 import { mapValuesToIndividualtype } from './mapValuesToUserTypes'
 
 describe('mapValuesToIndividualtype', () => {
-
   it('should map correctly', () => {
     const answers = getAnswers()
 
