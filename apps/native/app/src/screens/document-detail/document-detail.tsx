@@ -218,8 +218,7 @@ const PdfViewer = React.memo(
 export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
   isUrgent?: boolean
-  confirmation?: DocumentV2Action
-}> = ({ componentId, docId, isUrgent, confirmation }) => {
+}> = ({ componentId, docId, isUrgent }) => {
   useNavigationOptions(componentId)
 
   const client = useApolloClient()
@@ -247,18 +246,26 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     returnPartialData: true,
   })
 
+  // We want to make sure we don't include the document content if isUrgent is undefined/null since then we don't have
+  // the info from the server and don't want to make any assumptions about it just yet
+  const shouldIncludeDocument = !(
+    isUrgent === true ||
+    isUrgent === undefined ||
+    isUrgent === null
+  )
+
   // Fetch the document to get the content information
   const docRes = useGetDocumentQuery({
     variables: {
       input: {
         id: docId,
-        // If the document has a confirmation action we first need to show confirmation modal before fetching the document content
-        includeDocument: !!confirmation,
+        // If the document is urgent we need to check if the user needs to confirm reception of it before fetching the document data
+        includeDocument: shouldIncludeDocument,
       },
       locale: locale === 'is-IS' ? 'is' : 'en',
     },
     fetchPolicy: 'no-cache',
-    onCompleted: (data) => {
+    onCompleted: async (data) => {
       const confirmation = data.documentV2?.confirmation
       if (confirmation && !refetching && !showConfirmedAlert) {
         RNAlert.alert(confirmation.title ?? '', confirmation.data ?? '', [
@@ -290,6 +297,19 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             },
           },
         ])
+      } else if (!confirmation && !refetching) {
+        // If the user has already confirmed accepting the document we fetch the content
+        setRefetching(true)
+        try {
+          const result = await docRes.refetch({
+            input: { id: docId, includeDocument: true },
+          })
+          if (result.data?.documentV2?.alert) {
+            setShowConfirmedAlert(true)
+          }
+        } finally {
+          setRefetching(false)
+        }
       }
     },
   })
