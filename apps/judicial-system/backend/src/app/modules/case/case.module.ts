@@ -15,6 +15,7 @@ import {
   FileModule,
   IndictmentCountModule,
   PoliceModule,
+  SubpoenaModule,
   UserModule,
 } from '../index'
 import { Case } from './models/case.model'
@@ -35,6 +36,7 @@ import { PdfService } from './pdf.service'
     CmsTranslationsModule,
     MessageModule,
     forwardRef(() => DefendantModule),
+    forwardRef(() => SubpoenaModule),
     forwardRef(() => UserModule),
     forwardRef(() => FileModule),
     forwardRef(() => IndictmentCountModule),

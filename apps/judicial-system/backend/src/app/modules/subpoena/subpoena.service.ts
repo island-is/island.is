@@ -1,3 +1,4 @@
+import { Base64 } from 'js-base64'
 import { Includeable, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
@@ -10,6 +11,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
+import { PdfService } from '../case/pdf.service'
 import { Defendant } from '../defendant/models/defendant.model'
 import { PoliceService } from '../police'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
@@ -26,16 +28,28 @@ export class SubpoenaService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
+    private readonly pdfService: PdfService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async createSubpoena(defendant: Defendant): Promise<Subpoena> {
-    return await this.subpoenaModel.create({
-      defendantId: defendant.id,
-      caseId: defendant.caseId,
-    })
+  async createSubpoena(
+    defendantId: string,
+    caseId: string,
+    transaction: Transaction,
+    arraignmentDate?: Date,
+    location?: string,
+  ): Promise<Subpoena> {
+    return this.subpoenaModel.create(
+      {
+        defendantId,
+        caseId,
+        arraignmentDate,
+        location,
+      },
+      { transaction },
+    )
   }
 
   async update(
@@ -108,24 +122,30 @@ export class SubpoenaService {
   async deliverSubpoenaToPolice(
     theCase: Case,
     defendant: Defendant,
-    subpoenaFile: string,
+    subpoena: Subpoena,
     user: User,
   ): Promise<DeliverResponse> {
     try {
-      const subpoena = await this.createSubpoena(defendant)
+      const pdf = await this.pdfService.getSubpoenaPdf(
+        theCase,
+        defendant,
+        subpoena,
+      )
 
       const createdSubpoena = await this.policeService.createSubpoena(
         theCase,
         defendant,
-        subpoenaFile,
+        Base64.btoa(pdf.toString('binary')),
         user,
       )
 
       if (!createdSubpoena) {
         this.logger.error('Failed to create subpoena file for police')
+
         return { delivered: false }
       }
 
+      // TODO: Improve error handling by checking how many rows were affected and posting error event
       await this.subpoenaModel.update(
         { subpoenaId: createdSubpoena.subpoenaId },
         { where: { id: subpoena.id } },
@@ -134,6 +154,7 @@ export class SubpoenaService {
       return { delivered: true }
     } catch (error) {
       this.logger.error('Error delivering subpoena to police', error)
+
       return { delivered: false }
     }
   }
