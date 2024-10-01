@@ -305,6 +305,35 @@ export const m = defineMessages({
     id: 'service.portal:vehicles-lookup',
     defaultMessage: 'Uppfletting í ökutækjaskrá',
   },
+  vehiclesBulkMileage: {
+    id: 'service.portal:vehicles-bulk-mileage',
+    defaultMessage: 'Magnskráning kílómetrastöðu',
+  },
+  vehiclesBulkMileageUpload: {
+    id: 'service.portal:vehicles-bulk-mileage-upload',
+    defaultMessage: 'Magnskrá með skjali',
+  },
+  vehiclesBulkMileageUploadDescription: {
+    id: 'service.portal:vehicles-bulk-mileage-upload-description',
+    defaultMessage:
+      'Hér geturu hlaðið upp skjali til að magnskrá kílómetrastöður',
+  },
+  vehiclesBulkMileageJobOverview: {
+    id: 'service.portal:vehicles-bulk-mileage-job-overview',
+    defaultMessage: 'Yfirlit skráninga',
+  },
+  vehiclesBulkMileageJobOverviewDescription: {
+    id: 'service.portal:vehicles-bulk-mileage-job-overview-description',
+    defaultMessage: 'Yfirlit yfir skráða kílómetrastöðu',
+  },
+  vehiclesBulkMileageJobDetail: {
+    id: 'service.portal:vehicles-bulk-mileage-job-detail',
+    defaultMessage: 'Magnskráning',
+  },
+  vehiclesBulkMileageJobRegistration: {
+    id: 'service.portal:vehicles-bulk-mileage-job-registration',
+    defaultMessage: 'Hvaða skráningar eru höndlaðar í þessu verki',
+  },
   vehiclesDrivingLessons: {
     id: 'service.portal:vehicles-driving-lessons',
     defaultMessage: 'Ökunám',
@@ -1084,6 +1113,10 @@ export const m = defineMessages({
     id: 'service.portal:save',
     defaultMessage: 'Vista',
   },
+  saved: {
+    id: 'service.portal:saved',
+    defaultMessage: 'Vistað',
+  },
   register: {
     id: 'service.portal:register',
     defaultMessage: 'Skrá',
@@ -1472,7 +1505,7 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit yfir núverandi tekjuáætlun',
   },
   incomePlanDescription: {
-    id: 'service.portal:income-plan',
+    id: 'service.portal:income-plan-description',
     defaultMessage:
       'Ellilífeyrir, örorkulífeyrir, endurhæfingarlífeyrir og tengdar greiðslur eru tekjutengdar og reiknast út frá tekjuáætlun. Þegar sótt er um lífeyri þarf alltaf að skila inn tekjuáætlun. Hér er hægt að skoða gildandi tekjuáætlun.',
   },
