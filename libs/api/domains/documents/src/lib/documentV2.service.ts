@@ -18,6 +18,10 @@ import { HEALTH_CATEGORY_ID } from './document.types'
 import { Type } from './models/v2/type.model'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
+import type { User } from '@island.is/auth-nest-tools'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { getBirthday } from './helpers/getBirthday'
+import differceInYears from 'date-fns/differenceInYears'
 
 const LOG_CATEGORY = 'documents-api-v2'
 @Injectable()
@@ -75,7 +79,7 @@ export class DocumentServiceV2 {
   }
 
   async listDocuments(
-    nationalId: string,
+    user: User,
     input: DocumentsInput,
   ): Promise<PaginatedDocuments> {
     //If a delegated user is viewing the mailbox, do not return any health related data
@@ -83,14 +87,25 @@ export class DocumentServiceV2 {
     const { categoryIds, ...restOfInput } = input
     let mutableCategoryIds = categoryIds ?? []
 
-    if (input.isLegalGuardian) {
+    const isLegalGuardian = user.delegationType?.includes(
+      AuthDelegationType.LegalGuardian,
+    )
+
+    const birthdate = getBirthday(user.nationalId)
+    let childAgeIsOver15 = false
+    if (birthdate) {
+      childAgeIsOver15 = differceInYears(new Date(), birthdate) > 15
+    }
+    const hideHealthData = isLegalGuardian && childAgeIsOver15
+
+    if (hideHealthData) {
       if (!mutableCategoryIds.length) {
-        mutableCategoryIds = (await this.getCategories(nationalId, true)).map(
-          (c) => c.id,
-        )
+        mutableCategoryIds = (
+          await this.getCategories(user.nationalId, true)
+        ).map((c) => c.id)
       } else {
         mutableCategoryIds = mutableCategoryIds.filter(
-          (c) => c === HEALTH_CATEGORY_ID,
+          (c) => c !== HEALTH_CATEGORY_ID,
         )
       }
     }
@@ -98,7 +113,7 @@ export class DocumentServiceV2 {
     const documents = await this.documentService.getDocumentList({
       ...restOfInput,
       categoryId: mutableCategoryIds.join(),
-      nationalId,
+      nationalId: user.nationalId,
     })
 
     if (typeof documents?.totalCount !== 'number') {
