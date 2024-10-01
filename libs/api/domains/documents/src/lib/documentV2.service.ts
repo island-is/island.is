@@ -385,7 +385,6 @@ export class DocumentServiceV2 {
           icon: 'open',
         }
       }
-      return { ...x, icon: 'receipt' }
     })
 
     return mapped

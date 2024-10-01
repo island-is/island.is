@@ -1656,11 +1656,11 @@ export const m = defineMessages({
     defaultMessage: 'Fyrirkall',
   },
   urgent: {
-    id: 'service-portal:urgent',
+    id: 'service.portal:urgent',
     defaultMessage: 'Áríðandi',
   },
   openErrand: {
-    id: 'sp.law-and-order:open-errand',
+    id: 'service.portal:open-errand',
     defaultMessage: 'Opna erindi',
   },
   readMoreAbout: {
