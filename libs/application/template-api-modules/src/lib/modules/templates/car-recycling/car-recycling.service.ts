@@ -50,7 +50,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
       // Support the newRegistrationDate, for now, to keep backwards compatibility
       if (vehicle.newRegistrationDate) {
-        modelYear = vehicle.newRegistrationDate
+        modelYear = new Date(vehicle.newRegistrationDate)
       } else if (vehicle.modelYear) {
         modelYear = new Date(vehicle.modelYear, 0, 1)
       }
