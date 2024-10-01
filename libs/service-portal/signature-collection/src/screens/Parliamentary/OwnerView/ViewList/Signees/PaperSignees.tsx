@@ -44,6 +44,7 @@ export const PaperSignees = ({
   })
   const { canSign, loadingCanSign } = useGetCanSign(
     nationalIdInput,
+    listId,
     nationalId.isValid(nationalIdInput),
   )
 
@@ -120,13 +121,14 @@ export const PaperSignees = ({
                 name="nationalId"
                 label={formatMessage(m.signeeNationalId)}
                 format="######-####"
+                required
                 defaultValue={nationalIdInput}
                 onChange={(e) => {
                   setNationalIdInput(e.target.value.replace(/\W/g, ''))
                 }}
                 error={nationalIdTypo ? ' ' : undefined}
                 loading={loading || loadingCanSign}
-                icon={canSign ? 'checkmark' : undefined}
+                icon={name && canSign ? 'checkmark' : undefined}
               />
             </GridColumn>
             <GridColumn span={['5/12', '4/12']}>
@@ -134,6 +136,7 @@ export const PaperSignees = ({
                 id="page"
                 name="page"
                 type="number"
+                required
                 label={formatMessage(m.paperNumber)}
                 value={page}
                 onChange={(e) => setPage(e.target.value)}
@@ -156,7 +159,7 @@ export const PaperSignees = ({
             <Button
               variant="ghost"
               size="small"
-              disabled={!canSign}
+              disabled={!canSign || !page}
               onClick={() => upload()}
               loading={uploadingPaperSignature}
             >

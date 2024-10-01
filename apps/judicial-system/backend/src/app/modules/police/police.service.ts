@@ -21,6 +21,7 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
@@ -520,6 +521,9 @@ export class PoliceService {
     const { nationalId: defendantNationalId } = defendant
     const { name: actor } = user
 
+    const normalizedNationalId =
+      normalizeAndFormatNationalId(defendantNationalId)[0]
+
     const documentName = `Fyrirkall í máli ${workingCase.courtCaseNumber}`
     const arraignmentInfo = dateLogs?.find(
       (dateLog) => dateLog.dateType === 'ARRAIGNMENT_DATE',
@@ -541,7 +545,7 @@ export class PoliceService {
             documentBase64: subpoena,
             courtRegistrationDate: arraignmentInfo?.date,
             prosecutorSsn: prosecutor?.nationalId,
-            prosecutedSsn: defendantNationalId,
+            prosecutedSsn: normalizedNationalId,
             courtAddress: court?.address,
             courtRoomNumber: arraignmentInfo?.location || '',
             courtCeremony: 'Þingfesting',
