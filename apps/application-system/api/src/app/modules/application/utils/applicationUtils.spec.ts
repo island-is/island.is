@@ -196,3 +196,4 @@ describe('getApplicationNameTranslationString', () => {
     })
   })
 })
+})
