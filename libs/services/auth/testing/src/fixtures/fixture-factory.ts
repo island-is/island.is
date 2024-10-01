@@ -468,6 +468,7 @@ export class FixtureFactory {
           providerId: delegationProvider.id,
           provider: delegationProvider,
           description: `Personal representative delegation type for right type ${id}`,
+          actorDiscretionRequired: false,
         },
       },
     )
@@ -568,7 +569,12 @@ export class FixtureFactory {
     const delegationTypes = await Promise.all(
       rightTypes
         ? rightTypes.map((rightType) =>
-            this.createDelegationType({ id: rightType?.code ?? '' }),
+            this.createDelegationType({
+              id: `${AuthDelegationType.PersonalRepresentative}:${
+                rightType?.code ?? ''
+              }`,
+              providerId: AuthDelegationProvider.PersonalRepresentativeRegistry,
+            }),
           )
         : [],
     )
@@ -697,6 +703,7 @@ export class FixtureFactory {
     name = faker.random.word(),
     description = faker.random.words(3),
     providerId,
+    actorDiscretionRequired = false,
   }: CreateDelegationType) {
     const delegationProvider = await this.createDelegationProvider({
       id: providerId,
@@ -711,10 +718,19 @@ export class FixtureFactory {
           description,
           providerId: delegationProvider.id,
           provider: delegationProvider,
+          actorDiscretionRequired,
         },
       },
     )
 
     return delegationType
+  }
+
+  async createAllDelegationTypes() {
+    await Promise.all(
+      Object.values(AuthDelegationType).map(async (delegationType) => {
+        await this.createDelegationType({ id: delegationType })
+      }),
+    )
   }
 }
