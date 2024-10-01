@@ -2,7 +2,7 @@ import { FormValue } from '@island.is/application/types'
 import { hasReceivedConfirmation } from './hasReceivedConfirmation'
 import { WhoIsTheNotificationForEnum } from '../types'
 describe('hasReceivedConfirmation', () => {
-  const confirmedJudicial: FormValue = {
+  const confirmedJuridicial: FormValue = {
     whoIsTheNotificationFor: {
       answer: WhoIsTheNotificationForEnum.JURIDICALPERSON,
     },
@@ -30,15 +30,11 @@ describe('hasReceivedConfirmation', () => {
     },
   }
 
-  it('should return true when confirmation is received for a juridical person', () => {
-    expect(hasReceivedConfirmation(confirmedJudicial)).toEqual(true)
-  })
-
-  it('should return true when confirmation is received for company', () => {
-    expect(hasReceivedConfirmation(confirmedMe)).toEqual(true)
-  })
-
-  it('should return false when confirmation is not received', () => {
-    expect(hasReceivedConfirmation(notConfirmed)).toEqual(false)
+  it.each([
+    { for: 'juridical person', input: confirmedJuridicial, expected: true },
+    { for: 'company', input: confirmedMe, expected: true },
+    { for: 'not confirmed', input: notConfirmed, expected: false },
+  ])('should return $expected when confirmation is $for', ({ input, expected }) => {
+    expect(hasReceivedConfirmation(input)).toEqual(expected)
   })
 })

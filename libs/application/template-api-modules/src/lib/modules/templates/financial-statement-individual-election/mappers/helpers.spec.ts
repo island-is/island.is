@@ -71,85 +71,6 @@ describe('Financial statement individual election helpers', () => {
 
   describe('getInput', () => {
     it('should return correct input and loggerInfo', () => {
-      const fileName = '98498465654849896546.pdf'
-      const electionId = 'blegh'
-      const nationalIdActor = '1234564321'
-      const nationalIdClient = '1234564321'
-      const clientName = 'Fullname Fullname'
-      const clientPhone = '1234567'
-      const clientEmail = 'email@mockemail.com'
-      const actor = { nationalId: nationalIdActor, scope: ['not', 'relevant'] }
-      const otherAnswersRaw = {
-        'individualIncome.contributionsByLegalEntities': 100,
-        'individualIncome.candidatesOwnContributions': 101,
-        'individualIncome.individualContributions': 102,
-        'individualIncome.otherIncome': 128,
-        'individualExpense.electionOffice': 129,
-        'individualExpense.advertisements': 130,
-        'individualExpense.travelCost': 131,
-        'individualExpense.otherCost': 132,
-        'capitalNumbers.capitalIncome': 139,
-        'capitalNumbers.capitalCost': 148,
-        'asset.fixedAssetsTotal': 150,
-        'asset.currentAssets': 160,
-        'liability.longTerm': 170,
-        'liability.shortTerm': 180,
-        'equity.totalEquity': 190,
-      }
-
-      const answers = {
-        'election.incomeLimit': FinancialElectionIncomeLimit.GREATER,
-        'election.selectElection': electionId,
-        'about.fullName': clientName,
-        'about.phoneNumber': clientPhone,
-        'about.email': clientEmail,
-        ...otherAnswersRaw,
-      }
-
-      const otherAnswersMapped = {
-        contributionsByLegalEntities: 100,
-        candidatesOwnContributions: 101,
-        individualContributions: 102,
-        otherIncome: 128,
-        electionOfficeExpenses: 129,
-        advertisingAndPromotions: 130,
-        meetingsAndTravelExpenses: 131,
-        otherExpenses: 132,
-        capitalIncome: 139,
-        financialExpenses: 148,
-        fixedAssetsTotal: 150,
-        currentAssets: 160,
-        longTermLiabilitiesTotal: 170,
-        shortTermLiabilitiesTotal: 180,
-        equityTotal: 190,
-      }
-
-      const otherAnswersMappedKeyNames = Object.keys(otherAnswersMapped)
-
-      const expectedInputResult = {
-        client: {
-          nationalId: nationalIdClient,
-          name: clientName,
-          phone: clientPhone,
-          email: clientEmail,
-        },
-        actor: {
-          nationalId: nationalIdActor,
-          name: clientName,
-          contactType: ContactType.Actor,
-        },
-        digitalSignee: {
-          phone: clientPhone,
-          email: clientEmail,
-        },
-        electionId: electionId,
-        noValueStatement: false,
-        values: {
-          ...otherAnswersMapped,
-        },
-        file: fileName,
-      }
-
       const result = financialHelper.getInput(
         answers,
         actor,
@@ -170,5 +91,84 @@ describe('Financial statement individual election helpers', () => {
         expect(result.loggerInfo.includes(keyName)).toBeTruthy()
       })
     })
+
+    const fileName = '98498465654849896546.pdf'
+    const electionId = 'blegh'
+    const nationalIdActor = '1234564321'
+    const nationalIdClient = '1234564322'
+    const clientName = 'Fullname Fullname'
+    const clientPhone = '1234567'
+    const clientEmail = 'email@mockemail.com'
+    const actor = { nationalId: nationalIdActor, scope: ['not', 'relevant'] }
+    const otherAnswersRaw = {
+      'individualIncome.contributionsByLegalEntities': 100,
+      'individualIncome.candidatesOwnContributions': 101,
+      'individualIncome.individualContributions': 102,
+      'individualIncome.otherIncome': 128,
+      'individualExpense.electionOffice': 129,
+      'individualExpense.advertisements': 130,
+      'individualExpense.travelCost': 131,
+      'individualExpense.otherCost': 132,
+      'capitalNumbers.capitalIncome': 139,
+      'capitalNumbers.capitalCost': 148,
+      'asset.fixedAssetsTotal': 150,
+      'asset.currentAssets': 160,
+      'liability.longTerm': 170,
+      'liability.shortTerm': 180,
+      'equity.totalEquity': 190,
+    }
+
+    const answers = {
+      'election.incomeLimit': FinancialElectionIncomeLimit.GREATER,
+      'election.selectElection': electionId,
+      'about.fullName': clientName,
+      'about.phoneNumber': clientPhone,
+      'about.email': clientEmail,
+      ...otherAnswersRaw,
+    }
+
+    const otherAnswersMapped = {
+      contributionsByLegalEntities: 100,
+      candidatesOwnContributions: 101,
+      individualContributions: 102,
+      otherIncome: 128,
+      electionOfficeExpenses: 129,
+      advertisingAndPromotions: 130,
+      meetingsAndTravelExpenses: 131,
+      otherExpenses: 132,
+      capitalIncome: 139,
+      financialExpenses: 148,
+      fixedAssetsTotal: 150,
+      currentAssets: 160,
+      longTermLiabilitiesTotal: 170,
+      shortTermLiabilitiesTotal: 180,
+      equityTotal: 190,
+    }
+
+    const otherAnswersMappedKeyNames = Object.keys(otherAnswersMapped)
+
+    const expectedInputResult = {
+      client: {
+        nationalId: nationalIdClient,
+        name: clientName,
+        phone: clientPhone,
+        email: clientEmail,
+      },
+      actor: {
+        nationalId: nationalIdActor,
+        name: clientName,
+        contactType: ContactType.Actor,
+      },
+      digitalSignee: {
+        phone: clientPhone,
+        email: clientEmail,
+      },
+      electionId: electionId,
+      noValueStatement: false,
+      values: {
+        ...otherAnswersMapped,
+      },
+      file: fileName,
+    }
   })
 })
