@@ -230,13 +230,14 @@ const MaritalStatusSchema = z.object({
 
 const CriminalRecordSchema = z.object({
   countryId: z.string().min(1),
-  attachment: z.array(FileDocumentSchema).optional(),
+  attachment: z.array(FileDocumentSchema),
 })
 
 const SupportingDocumentsSchema = z
   .object({
     birthCertificateRequired: z.string().min(1),
     birthCertificate: z.array(FileDocumentSchema).optional(),
+<<<<<<< HEAD
     subsistenceCertificate: z.array(FileDocumentSchema).min(1),
     subsistenceCertificateForTown: z.array(FileDocumentSchema).min(1),
     certificateOfLegalResidenceHistory: z.array(FileDocumentSchema).min(1),
@@ -255,14 +256,56 @@ const SupportingDocumentsSchema = z
       params: error.fileUploadRequired,
     },
   )
+=======
+    subsistenceCertificate: z.array(FileDocumentSchema),
+    subsistenceCertificateForTown: z.array(FileDocumentSchema),
+    certificateOfLegalResidenceHistory: z.array(FileDocumentSchema),
+    icelandicTestCertificate: z.array(FileDocumentSchema),
+    criminalRecord: z.array(CriminalRecordSchema).optional(),
+  })
+  .refine(({ birthCertificateRequired, birthCertificate }) => {
+    return (
+      birthCertificateRequired === 'false' ||
+      (birthCertificate && birthCertificate.length > 0)
+    )
+  })
+>>>>>>> 8aef2d4415 (required files)
 
-const ChildrenSupportingDocumentsSchema = z.object({
-  nationalId: z.string().min(1),
-  birthCertificate: z.array(FileDocumentSchema).optional(),
-  writtenConsentFromChild: z.array(FileDocumentSchema).optional(),
-  writtenConsentFromOtherParent: z.array(FileDocumentSchema).optional(),
-  custodyDocuments: z.array(FileDocumentSchema).optional(),
-})
+const ChildrenSupportingDocumentsSchema = z
+  .object({
+    nationalId: z.string().min(1),
+    birthCertificate: z.array(FileDocumentSchema),
+    writtenConsentFromChildRequired: z.string().min(1),
+    writtenConsentFromChild: z.array(FileDocumentSchema).optional(),
+    writtenConsentFromOtherParentRequired: z.string().min(1),
+    writtenConsentFromOtherParent: z.array(FileDocumentSchema).optional(),
+    custodyDocumentsRequired: z.string().min(1),
+    custodyDocuments: z.array(FileDocumentSchema).optional(),
+  })
+  .refine(({ writtenConsentFromChildRequired, writtenConsentFromChild }) => {
+    return (
+      writtenConsentFromChildRequired === 'false' ||
+      (writtenConsentFromChild && writtenConsentFromChild.length > 0)
+    )
+  })
+  .refine(
+    ({
+      writtenConsentFromOtherParentRequired,
+      writtenConsentFromOtherParent,
+    }) => {
+      return (
+        writtenConsentFromOtherParentRequired === 'false' ||
+        (writtenConsentFromOtherParent &&
+          writtenConsentFromOtherParent.length > 0)
+      )
+    },
+  )
+  .refine(({ custodyDocumentsRequired, custodyDocuments }) => {
+    return (
+      custodyDocumentsRequired === 'false' ||
+      (custodyDocuments && custodyDocuments.length > 0)
+    )
+  })
 
 export const SelectedChildSchema = z
   .object({
