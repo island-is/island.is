@@ -12,57 +12,58 @@ import { SortableContext } from '@dnd-kit/sortable'
 import { useContext, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { Box, Button } from '@island.is/island-ui/core'
-import { baseSettingsStep } from '../../utils/getBaseSettingsStep'
+import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
 import { NavbarTab } from './components/NavbarTab/NavbarTab'
 import {
-  FormSystemGroup,
-  FormSystemInput,
-  FormSystemStep,
+  FormSystemScreen,
+  FormSystemField,
+  FormSystemSection,
   Maybe,
+  FormSystemSectionDtoSectionTypeEnum,
 } from '@island.is/api/schema'
 import { ControlContext, IControlContext } from '../../context/ControlContext'
 import { ItemType } from '../../lib/utils/interfaces'
 import { removeTypename } from '../../lib/utils/removeTypename'
-import { useFormSystemCreateStepMutation } from './CreateStep.generated'
 import { useIntl } from 'react-intl'
 import { m } from '../../lib/messages'
 import { NavComponent } from '../NavComponent/NavComponent'
+import { useFormMutations } from '../../hooks/formProviderHooks'
 
 type DndAction =
-  | 'STEP_OVER_STEP'
-  | 'GROUP_OVER_STEP'
-  | 'GROUP_OVER_GROUP'
-  | 'INPUT_OVER_GROUP'
-  | 'INPUT_OVER_INPUT'
+  | 'SECTION_OVER_SECTION'
+  | 'SCREEN_OVER_SECTION'
+  | 'SCREEN_OVER_SCREEN'
+  | 'FIELD_OVER_SCREEN'
+  | 'FIELD_OVER_FIELD'
 
 export const Navbar = () => {
-  const { control, controlDispatch, setInSettings, inSettings, formUpdate } =
+  const { control, controlDispatch, setInSettings, inSettings } =
     useContext(ControlContext) as IControlContext
 
   const { formatMessage } = useIntl()
 
   const { activeItem, form } = control
-  const { stepsList: steps, groupsList: groups, inputsList: inputs } = form
-  const stepsIds = useMemo(
+  const { sections, screens, fields } = form
+  const sectionIds = useMemo(
     () =>
-      steps
-        ?.filter((s): s is FormSystemStep => s !== null && s !== undefined)
-        .map((s) => s?.guid as UniqueIdentifier),
-    [steps],
+      sections
+        ?.filter((s): s is FormSystemSection => s !== null && s !== undefined)
+        .map((s) => s?.id as UniqueIdentifier),
+    [sections],
   )
-  const groupsIds = useMemo(
+  const screenIds = useMemo(
     () =>
-      groups
-        ?.filter((g): g is FormSystemGroup => g !== null && g !== undefined)
-        .map((g) => g?.guid as UniqueIdentifier),
-    [groups],
+      screens
+        ?.filter((s): s is FormSystemScreen => s !== null && s !== undefined)
+        .map((s) => s?.id as UniqueIdentifier),
+    [screens],
   )
-  const inputsIds = useMemo(
+  const fieldsIds = useMemo(
     () =>
-      inputs
-        ?.filter((i): i is FormSystemInput => i !== null && i !== undefined)
-        .map((i) => i?.guid as UniqueIdentifier),
-    [inputs],
+      fields
+        ?.filter((f): f is FormSystemField => f !== null && f !== undefined)
+        .map((f) => f?.id as UniqueIdentifier),
+    [fields],
   )
 
   const sensors = useSensors(
@@ -72,26 +73,23 @@ export const Navbar = () => {
       },
     }),
   )
-  const [createStep] = useFormSystemCreateStepMutation()
+  const { createSection } = useFormMutations()
 
-  const addStep = async () => {
-    const newStep = await createStep({
+  const addSection = async () => {
+    const newSection = await createSection({
       variables: {
         input: {
-          stepCreationDto: {
-            formId: form?.id as number,
-            displayOrder: steps?.length,
-          },
+          formId: form.id
         },
       },
     })
-    if (newStep) {
+    if (newSection) {
       controlDispatch({
-        type: 'ADD_STEP',
+        type: 'ADD_SECTION',
         payload: {
-          step: removeTypename(
-            newStep.data?.formSystemCreateStep,
-          ) as FormSystemStep,
+          section: removeTypename(
+            newSection.data?.formSystemCreateStep,
+          ) as FormSystemSection,
         },
       })
     }
@@ -99,23 +97,23 @@ export const Navbar = () => {
 
   const focusComponent = (type: ItemType, id: UniqueIdentifier) => {
     const data =
-      type === 'Step'
-        ? steps?.find(
-            (item: Maybe<FormSystemStep> | undefined) => item?.guid === id,
+      type === 'Section'
+        ? sections?.find(
+          (item: Maybe<FormSystemSection> | undefined) => item?.id === id,
+        )
+        : type === 'Screen'
+          ? screens?.find(
+            (item: Maybe<FormSystemScreen> | undefined) => item?.id === id,
           )
-        : type === 'Group'
-        ? groups?.find(
-            (item: Maybe<FormSystemGroup> | undefined) => item?.guid === id,
+          : fields?.find(
+            (item: Maybe<FormSystemField> | undefined) => item?.id === id,
           )
-        : inputs?.find(
-            (item: Maybe<FormSystemInput> | undefined) => item?.guid === id,
-          )
-    if (id === baseSettingsStep.guid) {
+    if (id === baseSettingsStep.id) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
         payload: {
           activeItem: {
-            type: 'Step',
+            type: 'Section',
             data: baseSettingsStep,
           },
         },
@@ -154,44 +152,44 @@ export const Navbar = () => {
     const overId = over.id
 
     if (activeId === overId) return
-    const activeStep = active.data?.current?.type === 'Step'
-    const activeGroup = active.data?.current?.type === 'Group'
-    const activeInput = active.data?.current?.type === 'Input'
-    const overStep = over.data?.current?.type === 'Step'
-    const overGroup = over.data?.current?.type === 'Group'
-    const overInput = over.data?.current?.type === 'Input'
+    const activeSection = active.data?.current?.type === 'Section'
+    const activeScreen = active.data?.current?.type === 'Screen'
+    const activeField = active.data?.current?.type === 'Field'
+    const overSection = over.data?.current?.type === 'Section'
+    const overScreen = over.data?.current?.type === 'Screen'
+    const overField = over.data?.current?.type === 'Field'
 
     const dispatchDragAction = (type: DndAction) =>
       controlDispatch({ type, payload: { activeId: activeId, overId: overId } })
 
-    //Dragging step
-    if (activeStep && overStep) {
-      dispatchDragAction('STEP_OVER_STEP')
+    //Dragging section
+    if (activeSection && overSection) {
+      dispatchDragAction('SECTION_OVER_SECTION')
     }
 
-    // // Dragging Group
-    if (activeGroup) {
-      if (overStep) {
-        dispatchDragAction('GROUP_OVER_STEP')
+    // // Dragging screen
+    if (activeScreen) {
+      if (overSection) {
+        dispatchDragAction('SCREEN_OVER_SECTION')
       }
-      if (overGroup) {
-        dispatchDragAction('GROUP_OVER_GROUP')
+      if (overScreen) {
+        dispatchDragAction('SCREEN_OVER_SCREEN')
       }
     }
 
-    // // Dragging Input
-    if (activeInput) {
-      if (overGroup) {
-        dispatchDragAction('INPUT_OVER_GROUP')
+    // // Dragging field
+    if (activeField) {
+      if (overScreen) {
+        dispatchDragAction('FIELD_OVER_SCREEN')
       }
-      if (overInput) {
-        dispatchDragAction('INPUT_OVER_INPUT')
+      if (overField) {
+        dispatchDragAction('FIELD_OVER_FIELD')
       }
     }
   }
 
   const onDragEnd = () => {
-    formUpdate()
+    //formUpdate() TODO: Implement form update
   }
 
   if (inSettings) {
@@ -202,21 +200,21 @@ export const Navbar = () => {
         </Box>
         <div>
           <NavComponent
-            type="Step"
+            type="Section"
             data={baseSettingsStep}
-            active={activeItem.data?.guid === baseSettingsStep.guid}
+            active={activeItem.data?.id === baseSettingsStep.id}
             focusComponent={focusComponent}
           />
         </div>
-        {steps
-          ?.filter((s): s is FormSystemStep => s !== null && s !== undefined)
-          .filter((s) => s.type !== 'Input')
+        {sections
+          ?.filter((s): s is FormSystemSection => s !== null && s !== undefined)
+          .filter((s) => s.sectionType !== FormSystemSectionDtoSectionTypeEnum.Input)
           .map((s) => (
-            <Box key={s.guid}>
+            <Box key={s.id}>
               <NavComponent
-                type="Step"
+                type="Section"
                 data={s}
-                active={activeItem.data?.guid === s.guid}
+                active={activeItem.data?.id === s.id}
                 focusComponent={focusComponent}
               />
             </Box>
@@ -227,14 +225,14 @@ export const Navbar = () => {
             size="small"
             onClick={() => {
               setInSettings(false)
-              const step = steps?.find((s) => s?.type === 'Input')
-              if (step) {
+              const section = sections?.find((s) => s?.sectionType === FormSystemSectionDtoSectionTypeEnum.Input)
+              if (section) {
                 controlDispatch({
                   type: 'SET_ACTIVE_ITEM',
                   payload: {
                     activeItem: {
-                      type: 'Step',
-                      data: step,
+                      type: 'Section',
+                      data: section,
                     },
                   },
                 })
@@ -264,50 +262,50 @@ export const Navbar = () => {
           onDragEnd={onDragEnd}
           onDragOver={onDragOver}
         >
-          <SortableContext items={stepsIds ?? []}>
-            {steps
+          <SortableContext items={sectionIds ?? []}>
+            {sections
               ?.filter(
-                (s): s is FormSystemStep => s !== null && s !== undefined,
+                (s): s is FormSystemSection => s !== null && s !== undefined,
               )
-              .filter((s) => s.type === 'Input')
+              .filter((s) => s.sectionType === FormSystemSectionDtoSectionTypeEnum.Input)
               .map((s, i) => (
-                <Box key={s.guid}>
+                <Box key={s.id}>
                   <NavComponent
-                    type="Step"
+                    type="Section"
                     data={s}
-                    active={activeItem.data?.guid === s.guid}
+                    active={activeItem.data?.id === s.id}
                     index={i + 1}
                     focusComponent={focusComponent}
                   />
-                  <SortableContext items={groupsIds ?? []}>
-                    {groups
+                  <SortableContext items={screenIds ?? []}>
+                    {screens
                       ?.filter(
-                        (g): g is FormSystemGroup =>
+                        (g): g is FormSystemScreen =>
                           g !== null && g !== undefined,
                       )
-                      .filter((g) => g.stepGuid === s.guid)
+                      .filter((g) => g.sectionId === s.id)
                       .map((g) => (
-                        <Box key={g.guid}>
+                        <Box key={g.id}>
                           <NavComponent
-                            type="Group"
+                            type="Screen"
                             data={g}
-                            active={activeItem.data?.guid === g.guid}
+                            active={activeItem.data?.id === g.id}
                             focusComponent={focusComponent}
                           />
 
-                          <SortableContext items={inputsIds ?? []}>
-                            {inputs
+                          <SortableContext items={fieldsIds ?? []}>
+                            {fields
                               ?.filter(
-                                (i): i is FormSystemInput =>
+                                (i): i is FormSystemField =>
                                   i !== null && i !== undefined,
                               )
-                              .filter((i) => i.groupGuid === g.guid)
+                              .filter((i) => i.screenId === g.id)
                               .map((i) => (
                                 <NavComponent
-                                  key={i.guid}
-                                  type="Input"
+                                  key={i.id}
+                                  type="Field"
                                   data={i}
-                                  active={activeItem.data?.guid === i.guid}
+                                  active={activeItem.data?.id === i.id}
                                   focusComponent={focusComponent}
                                 />
                               ))}
@@ -331,11 +329,11 @@ export const Navbar = () => {
                   type={activeItem.type}
                   data={
                     activeItem.data as
-                      | FormSystemGroup
-                      | FormSystemStep
-                      | FormSystemInput
+                    | FormSystemScreen
+                    | FormSystemSection
+                    | FormSystemField
                   }
-                  active={activeItem.data?.guid === activeItem.data?.guid}
+                  active={activeItem.data?.id === activeItem.data?.id}
                   focusComponent={focusComponent}
                 />
               )}
@@ -344,7 +342,7 @@ export const Navbar = () => {
           )}
         </DndContext>
         <Box display="flex" justifyContent="center" paddingTop={3}>
-          <Button variant="ghost" size="small" onClick={addStep}>
+          <Button variant="ghost" size="small" onClick={addSection}>
             {formatMessage(m.addStep)}
           </Button>
         </Box>

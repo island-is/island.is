@@ -11,11 +11,11 @@ import {
 import { ChangeEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
-import { FormSystemInput } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { m } from '../../../lib/messages'
 
 interface Props {
-  item: FormSystemInput
+  item: FormSystemField
 }
 
 export const PropertyNumber = ({ item }: Props) => {

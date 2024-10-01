@@ -4,12 +4,12 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { useRef, useState } from 'react'
-import { FormSystemInput } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
 
 interface Props {
-  item: FormSystemInput
+  item: FormSystemField
 }
 
 export const Banknumber = ({ item }: Props) => {

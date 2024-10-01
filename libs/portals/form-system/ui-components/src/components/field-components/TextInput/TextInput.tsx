@@ -1,18 +1,18 @@
-import { FormSystemInput } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { Input } from '@island.is/island-ui/core'
 
 interface Props {
-  item: FormSystemInput
+  item: FormSystemField
 }
 
 export const TextInput = ({ item }: Props) => {
-  const { inputSettings } = item
+  const { fieldSettings } = item
 
   return (
     <Input
       label={item?.name?.is ?? ''}
       name="text"
-      textarea={inputSettings?.isLarge ?? false}
+      textarea={fieldSettings?.isLarge ?? false}
       required={item?.isRequired ?? false}
     />
   )

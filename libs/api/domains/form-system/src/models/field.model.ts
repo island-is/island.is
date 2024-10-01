@@ -28,4 +28,7 @@ export class Field {
 
   @FieldType(() => FieldDtoFieldTypeEnum, { nullable: true })
   fieldType?: FieldDtoFieldTypeEnum
+
+  @FieldType(() => Boolean, { nullable: true })
+  isRequired?: boolean
 }

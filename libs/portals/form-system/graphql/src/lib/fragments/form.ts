@@ -39,6 +39,7 @@ export const FormFragment = gql`
     fields {
       ...Field
     }
+    dependencies
   }
   ${LanguageFields}
   ${CertificateTypeFragment}

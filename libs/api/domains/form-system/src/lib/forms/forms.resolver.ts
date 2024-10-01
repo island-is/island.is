@@ -12,6 +12,7 @@ import {
   DeleteFormInput,
   GetAllFormsInput,
   GetFormInput,
+  UpdateFormInput,
 } from '../../dto/form.input'
 import { FormResponse } from '../../models/form.model'
 
@@ -19,7 +20,7 @@ import { FormResponse } from '../../models/form.model'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FormsResolver {
-  constructor(private readonly formsService: FormsService) {}
+  constructor(private readonly formsService: FormsService) { }
 
   @Mutation(() => FormResponse, {
     name: 'formSystemCreateForm',
@@ -45,7 +46,7 @@ export class FormsResolver {
     name: 'formSystemGetForm',
   })
   async getForm(
-    @Args('id', { type: () => GetFormInput }) id: GetFormInput,
+    @Args('input', { type: () => GetFormInput }) id: GetFormInput,
     @CurrentUser() user: User,
   ): Promise<FormResponse> {
     return this.formsService.getForm(user, id)
@@ -59,5 +60,15 @@ export class FormsResolver {
     @CurrentUser() user: User,
   ): Promise<FormResponse> {
     return this.formsService.getAllForms(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'formSystemUpdateForm',
+  })
+  async updateForm(
+    @Args('input', { type: () => UpdateFormInput }) input: UpdateFormInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.formsService.updateForm(user, input)
   }
 }

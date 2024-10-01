@@ -1,4 +1,4 @@
-import { FormSystemInput } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import {
   GridRow as Row,
   GridColumn as Column,
@@ -7,7 +7,7 @@ import {
 } from '@island.is/island-ui/core'
 
 interface Props {
-  item: FormSystemInput
+  item: FormSystemField
 }
 
 export const TimeInput = ({ item }: Props) => {
@@ -19,7 +19,7 @@ export const TimeInput = ({ item }: Props) => {
     const createOptions = (list: string[]) =>
       list.map((t) => ({ label: t, value: t }))
 
-    const interval = item?.inputSettings?.interval
+    const interval = item?.fieldSettings?.timeInterval
 
     switch (interval) {
       case 1:
@@ -58,7 +58,7 @@ export const TimeInput = ({ item }: Props) => {
           options={chosenMinuteList()}
           size="xs"
           isSearchable
-          isDisabled={item?.inputSettings?.interval === 1}
+          isDisabled={item?.fieldSettings?.timeInterval === 1}
         />
       </Column>
     </Row>

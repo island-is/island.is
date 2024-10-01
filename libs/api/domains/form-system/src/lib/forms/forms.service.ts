@@ -9,12 +9,14 @@ import {
   FormsControllerDeleteRequest,
   FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
+  FormsControllerUpdateFormRequest,
 } from '@island.is/clients/form-system'
 import {
   CreateFormInput,
   DeleteFormInput,
   GetAllFormsInput,
   GetFormInput,
+  UpdateFormInput,
 } from '../../dto/form.input'
 import { Form, FormResponse } from '../../models/form.model'
 
@@ -24,7 +26,7 @@ export class FormsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private formsService: FormsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -90,5 +92,17 @@ export class FormsService {
     }
 
     return response as FormResponse
+  }
+
+  async updateForm(auth: User, input: UpdateFormInput): Promise<void> {
+    const response = await this.formsApiWithAuth(auth)
+      .formsControllerUpdateForm(input as FormsControllerUpdateFormRequest)
+      .catch((e) => handle4xx(e, this.handleError, 'failed to update form'))
+
+    if (!response || response instanceof ApolloError) {
+      return
+    }
+
+    return response
   }
 }

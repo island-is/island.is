@@ -17,9 +17,7 @@ export const BaseSettings = () => {
     controlDispatch,
     setFocus,
     focus,
-    formUpdate,
-    updateSettings,
-    translationButtons,
+    formUpdate
   } = useContext(ControlContext)
   const { form } = control
   const { formatMessage } = useIntl()
@@ -58,10 +56,10 @@ export const BaseSettings = () => {
                 payload: { lang: 'en', newValue: e.target.value },
               })
             }
-            buttons={translationButtons(
-              form?.name?.is ?? '',
-              'CHANGE_FORM_NAME',
-            )}
+          // buttons={translationButtons(
+          //   form?.name?.is ?? '',
+          //   'CHANGE_FORM_NAME',
+          // )}
           />
         </Column>
       </Row>
@@ -72,9 +70,9 @@ export const BaseSettings = () => {
             placeholder={formatMessage(m.max120Days)}
             name="applicationsDaysToRemove"
             value={
-              form.applicationsDaysToRemove === 0
+              form.applicationDaysToRemove === 0
                 ? ''
-                : form.applicationsDaysToRemove ?? ''
+                : form.applicationDaysToRemove ?? ''
             }
             backgroundColor="blue"
             type="number"
@@ -112,13 +110,13 @@ export const BaseSettings = () => {
         <Column>
           <Checkbox
             label={formatMessage(m.allowProgress)}
-            checked={form.stopProgressOnValidatingStep ?? false}
+            checked={form.stopProgressOnValidatingScreen ?? false}
             onChange={(e) => {
               controlDispatch({
-                type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP',
+                type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN',
                 payload: {
                   value: e.target.checked,
-                  update: updateSettings,
+                  update: formUpdate
                 },
               })
             }}

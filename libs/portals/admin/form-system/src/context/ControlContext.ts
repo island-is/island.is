@@ -29,6 +29,7 @@ export interface IControlContext {
   setSelectStatus: Dispatch<NavbarSelectStatus>
   inListBuilder: boolean
   setInListBuilder: Dispatch<boolean>
+  formUpdate: () => void
 }
 
 export const ControlContext = createContext<IControlContext>({
@@ -60,5 +61,8 @@ export const ControlContext = createContext<IControlContext>({
   inListBuilder: false,
   setInListBuilder: function (_value: boolean): void {
     throw new Error('Function not implemented.')
-  }
+  },
+  formUpdate: function (): void {
+    throw new Error('Function not implemented.')
+  },
 })

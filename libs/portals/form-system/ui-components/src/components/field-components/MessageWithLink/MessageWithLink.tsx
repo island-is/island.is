@@ -1,8 +1,8 @@
-import { FormSystemInput } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 
 interface Props {
-  item: FormSystemInput
+  item: FormSystemField
 }
 
 export const MessageWithLink = ({ item }: Props) => {
@@ -31,7 +31,7 @@ export const MessageWithLink = ({ item }: Props) => {
           <Text>{item?.description?.is}</Text>
         </Box>
       </Box>
-      {item.inputSettings?.hasLink && (
+      {item.fieldSettings?.hasLink && (
         <Box
           alignItems="center"
           marginLeft="auto"
@@ -40,13 +40,13 @@ export const MessageWithLink = ({ item }: Props) => {
         >
           <Button
             onClick={() => {
-              window.open(formatUrl(item.inputSettings?.url ?? ''), '_blank')
+              window.open(formatUrl(item.fieldSettings?.url ?? ''), '_blank')
             }}
             size="small"
             icon="open"
             variant="ghost"
           >
-            {item?.inputSettings.buttonText?.is}
+            {item?.fieldSettings?.buttonText?.is}
           </Button>
         </Box>
       )}

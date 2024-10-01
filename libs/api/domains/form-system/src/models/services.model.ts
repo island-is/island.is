@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { ListItem } from './inputSettings.model'
 import graphqlTypeJson from 'graphql-type-json'
+import { ListItem } from './listItem.model'
 
 @ObjectType('FormSystemList')
 export class List {

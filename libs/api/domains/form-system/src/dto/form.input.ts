@@ -18,6 +18,15 @@ registerEnumType(CertificationTypeDtoTypeEnum, {
   name: 'FormSystemCertificationTypeDtoTypeEnum',
 })
 
+@InputType('FormSystemDependencyInput')
+export class DependencyInput {
+  @Field(() => String, { nullable: true })
+  parentProp?: string
+
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  childProps?: string[]
+}
+
 @InputType('FormSystemCreateFormInput')
 export class CreateFormInput {
   @Field(() => String, { nullable: true })
@@ -67,6 +76,45 @@ export class FormCertificationTypeInput {
 
   @Field(() => CertificationTypeDtoTypeEnum, { nullable: true })
   type?: CertificationTypeDtoTypeEnum
+}
+
+@InputType('FormSystemUpdateFormDtoInput')
+export class UpdateFormDtoInput {
+  @Field(() => String, { nullable: true })
+  organizationId?: string
+
+  @Field(() => LanguageTypeInput, { nullable: true })
+  name?: LanguageTypeInput
+
+  @Field(() => String, { nullable: true })
+  slug?: string
+
+  @Field(() => Date, { nullable: true })
+  invalidationDate?: Date
+
+  @Field(() => Boolean, { nullable: true })
+  isTranslated?: boolean
+
+  @Field(() => Int, { nullable: true })
+  applicationDaysToRemove?: number
+
+  @Field(() => Boolean, { nullable: true })
+  stopProgressOnValidatingScreen?: boolean
+
+  @Field(() => LanguageTypeInput, { nullable: true })
+  completedMessage?: LanguageTypeInput
+
+  @Field(() => [DependencyInput], { nullable: 'itemsAndList' })
+  dependencies?: DependencyInput[]
+}
+
+@InputType('FormSystemUpdateFormInput')
+export class UpdateFormInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => UpdateFormDtoInput, { nullable: true })
+  updateFormDto?: UpdateFormDtoInput
 }
 
 @InputType('FormSystemFormInput')
@@ -121,6 +169,9 @@ export class FormInput {
 
   @Field(() => [FieldInput], { nullable: 'itemsAndList' })
   fields?: FieldInput[]
+
+  @Field(() => [DependencyInput], { nullable: 'itemsAndList' })
+  dependencies?: DependencyInput[]
 }
 
 @InputType('FormSystemFormResponseInput')

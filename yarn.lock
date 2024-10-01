@@ -20174,16 +20174,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc-node/core@npm:^1.13.1":
-  version: 1.13.3
-  resolution: "@swc-node/core@npm:1.13.3"
-  peerDependencies:
-    "@swc/core": ">= 1.4.13"
-    "@swc/types": ">= 0.1"
-  checksum: 9bad56479b2e980af8cfbcc1f040b95a928e38ead40ee3f980cd5718814cdaa6dc93d3a1d4a584e9fb1105af9a8f06ee2d5d82c6465ac364e6febe637f6139d7
-  languageName: node
-  linkType: hard
-
 "@swc-node/core@npm:^1.8.2":
   version: 1.8.2
   resolution: "@swc-node/core@npm:1.8.2"
@@ -20225,39 +20215,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc-node/register@npm:~1.9.1":
-  version: 1.9.2
-  resolution: "@swc-node/register@npm:1.9.2"
-  dependencies:
-    "@swc-node/core": ^1.13.1
-    "@swc-node/sourcemap-support": ^0.5.0
-    colorette: ^2.0.20
-    debug: ^4.3.4
-    pirates: ^4.0.6
-    tslib: ^2.6.2
-  peerDependencies:
-    "@swc/core": ">= 1.4.13"
-    typescript: ">= 4.3"
-  checksum: 273cfd45f64ca1f1a1dff25228bd43bef3f18b48fca77805c39de00bbbd2f64e38aafddb208f7f94c7e71e52a60bf2c274fb65a5b6b08d5b98cf32f4ee42ee7b
-  languageName: node
-  linkType: hard
-
 "@swc-node/sourcemap-support@npm:^0.1.11":
   version: 0.1.11
   resolution: "@swc-node/sourcemap-support@npm:0.1.11"
   dependencies:
     source-map-support: ^0.5.21
   checksum: 1dd5007d3516c9d034757d5012a03fc05cbe63935a5432c2e414611e0f8006a591d7505fb4243842da3c88efb6dbbc419e9297f526210365bd819938baa6956d
-  languageName: node
-  linkType: hard
-
-"@swc-node/sourcemap-support@npm:^0.5.0":
-  version: 0.5.1
-  resolution: "@swc-node/sourcemap-support@npm:0.5.1"
-  dependencies:
-    source-map-support: ^0.5.21
-    tslib: ^2.6.3
-  checksum: 307be2a52c10f3899871dc316190584e7a6e48375de5b84638cd0ca96681c4ce89891b9f7e86dedb93aac106dea7eff42ac2192f443ac1a1242a206ec93d0caf
   languageName: node
   linkType: hard
 
@@ -28422,7 +28385,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colorette@npm:^2.0.10, colorette@npm:^2.0.19, colorette@npm:^2.0.20":
 "colorette@npm:^2.0.10, colorette@npm:^2.0.19, colorette@npm:^2.0.20":
   version: 2.0.20
   resolution: "colorette@npm:2.0.20"
@@ -46612,13 +46574,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pirates@npm:^4.0.6":
-  version: 4.0.6
-  resolution: "pirates@npm:4.0.6"
-  checksum: 46a65fefaf19c6f57460388a5af9ab81e3d7fd0e7bc44ca59d753cb5c4d0df97c6c6e583674869762101836d68675f027d60f841c105d72734df9dfca97cbcc6
-  languageName: node
-  linkType: hard
-
 "pkce-challenge@npm:^2.1.0":
   version: 2.1.0
   resolution: "pkce-challenge@npm:2.1.0"
@@ -54784,13 +54739,6 @@ __metadata:
   version: 2.3.1
   resolution: "tslib@npm:2.3.1"
   checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^2.6.3":
-  version: 2.6.3
-  resolution: "tslib@npm:2.6.3"
-  checksum: 74fce0e100f1ebd95b8995fbbd0e6c91bdd8f4c35c00d4da62e285a3363aaa534de40a80db30ecfd388ed7c313c42d930ee0eaf108e8114214b180eec3dbe6f5
   languageName: node
   linkType: hard
 

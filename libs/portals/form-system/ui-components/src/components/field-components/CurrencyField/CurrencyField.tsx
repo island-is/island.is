@@ -4,10 +4,10 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { ChangeEvent, useState } from 'react'
-import { FormSystemInput } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 
 interface Props {
-  item: FormSystemInput
+  item: FormSystemField
 }
 
 export const CurrencyField = ({ item }: Props) => {

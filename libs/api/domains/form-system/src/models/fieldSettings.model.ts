@@ -1,5 +1,6 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql'
 import { ListItem } from './listItem.model'
+import { LanguageType } from './languageType.model'
 
 @ObjectType('FormSystemFieldSettings')
 export class FieldSettings {
@@ -36,8 +37,8 @@ export class FieldSettings {
   @Field(() => String, { nullable: true })
   url?: string
 
-  @Field(() => String, { nullable: true })
-  buttonText?: string
+  @Field(() => LanguageType, { nullable: true })
+  buttonText?: LanguageType
 
   @Field(() => Boolean, { nullable: true })
   hasPropertyInput?: boolean

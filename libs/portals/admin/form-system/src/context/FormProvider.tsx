@@ -5,9 +5,10 @@ import { ControlState, controlReducer } from "../hooks/controlReducer"
 import { ActiveItem, NavbarSelectStatus } from "../lib/utils/interfaces"
 import { removeTypename } from "../lib/utils/removeTypename"
 import { updateDnd } from "../lib/utils/updateDnd"
-import { defaultStep } from "../utils/defaultStep"
-import { baseSettingsStep } from "../utils/getBaseSettingsStep"
+import { defaultStep } from "../lib/utils/defaultStep"
+import { baseSettingsStep } from "../lib/utils/getBaseSettingsSection"
 import { updateActiveItemFn } from "../lib/utils/updateActiveItem"
+import { useFormMutations } from "../hooks/formProviderHooks"
 
 
 export const FormProvider: React.FC<{ children: React.ReactNode, form: FormSystemFormResponse }> = ({ children, form }) => {
@@ -41,6 +42,34 @@ export const FormProvider: React.FC<{ children: React.ReactNode, form: FormSyste
   const updateDragAndDrop = useCallback(() =>
     updateDnd(control), [control])
 
+  const { updateForm } = useFormMutations()
+
+  const formUpdate = (updatedForm?: FormSystemForm) => {
+    if (updatedForm) {
+      updateForm[0]({
+        variables: {
+          input: {
+            id: updatedForm.id,
+            updateFormDto: {
+              ...updatedForm
+            }
+          }
+        }
+      })
+    } else {
+      updateForm[0]({
+        variables: {
+          input: {
+            id: control.form.id,
+            updateFormDto: {
+              ...control.form
+            }
+          }
+        }
+      })
+    }
+  }
+
 
   const context: IControlContext = useMemo(() => ({
     control,
@@ -58,7 +87,7 @@ export const FormProvider: React.FC<{ children: React.ReactNode, form: FormSyste
     setSelectStatus,
     inListBuilder,
     setInListBuilder,
-
+    formUpdate
   }), [control, controlDispatch])
 
   return (

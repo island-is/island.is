@@ -1,4 +1,4 @@
-import { FormSystemInput } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import {
   GridRow as Row,
   GridColumn as Column,
@@ -8,7 +8,7 @@ import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
 
 interface Props {
-  item: FormSystemInput
+  item: FormSystemField
 }
 
 export const PhoneNumber = ({ item }: Props) => {

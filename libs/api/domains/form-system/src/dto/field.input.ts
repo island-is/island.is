@@ -87,4 +87,7 @@ export class FieldInput {
 
   @Field(() => FieldDtoFieldTypeEnum, { nullable: true })
   fieldType?: FieldDtoFieldTypeEnum
+
+  @Field(() => Boolean, { nullable: true })
+  isRequired?: boolean
 }

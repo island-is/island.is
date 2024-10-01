@@ -1,8 +1,9 @@
 import { UniqueIdentifier } from '@dnd-kit/core'
 import {
-  FormSystemStep,
-  FormSystemGroup,
-  FormSystemInput,
+  FormSystemSection,
+  FormSystemScreen,
+  FormSystemField,
+  FormSystemSectionDtoSectionTypeEnum,
 } from '@island.is/api/schema'
 import { ItemType, NavbarSelectStatus } from '../../lib/utils/interfaces'
 import { useSortable } from '@dnd-kit/sortable'
@@ -16,7 +17,7 @@ import { NavButtons } from './components/NavButtons'
 
 type Props = {
   type: ItemType
-  data: FormSystemStep | FormSystemGroup | FormSystemInput
+  data: FormSystemSection | FormSystemScreen | FormSystemField
   active: boolean
   index?: number
   selectable?: boolean
@@ -31,20 +32,20 @@ export const NavComponent = ({
   selectable,
   focusComponent,
 }: Props) => {
-  const { control, selectStatus, controlDispatch, updateSettings } =
+  const { control, selectStatus, controlDispatch } = //TODO: this had updateSettings
     useContext(ControlContext)
   const { activeItem, activeListItem, form } = control
   const activeGuid =
     selectStatus === NavbarSelectStatus.LIST_ITEM
-      ? activeListItem?.guid ?? ''
-      : activeItem?.data?.guid ?? ''
+      ? activeListItem?.id ?? ''
+      : activeItem?.data?.id ?? ''
   const connected: boolean = form.dependencies[activeGuid]?.includes(
-    data.guid as string,
+    data.id as string,
   )
   const [editMode] = useState(false)
 
   const { setNodeRef, attributes, listeners, isDragging } = useSortable({
-    id: data.guid as UniqueIdentifier,
+    id: data.id as UniqueIdentifier,
     data: {
       type: type,
       data,
@@ -57,21 +58,21 @@ export const NavComponent = ({
       <div
         ref={setNodeRef}
         className={cn({
-          [styles.navComponent.step]: type === 'Step' && focusComponent,
-          [styles.navComponent.group]: type === 'Group' && focusComponent,
-          [styles.navComponent.input]: type === 'Input' && focusComponent,
-          [styles.navComponent.stepSelect]: type === 'Step' && !focusComponent,
+          [styles.navComponent.step]: type === 'Section' && focusComponent,
+          [styles.navComponent.group]: type === 'Screen' && focusComponent,
+          [styles.navComponent.input]: type === 'Field' && focusComponent,
+          [styles.navComponent.stepSelect]: type === 'Section' && !focusComponent,
           [styles.navComponent.groupSelect]:
-            type === 'Group' && !focusComponent,
+            type === 'Screen' && !focusComponent,
           [styles.navComponent.inputSelect]:
-            type === 'Input' && !focusComponent,
+            type === 'Field' && !focusComponent,
         })}
       >
         <div
           className={cn({
-            [styles.navBackgroundActive.step]: type === 'Step',
-            [styles.navBackgroundActive.group]: type === 'Group',
-            [styles.navBackgroundActive.input]: type === 'Input',
+            [styles.navBackgroundActive.step]: type === 'Section',
+            [styles.navBackgroundActive.group]: type === 'Screen',
+            [styles.navBackgroundActive.input]: type === 'Field',
           })}
         ></div>
       </div>
@@ -81,17 +82,17 @@ export const NavComponent = ({
   return (
     <Box
       className={cn({
-        [styles.navComponent.step]: type === 'Step' && focusComponent,
-        [styles.navComponent.group]: type === 'Group' && focusComponent,
-        [styles.navComponent.input]: type === 'Input' && focusComponent,
-        [styles.navComponent.stepSelect]: type === 'Step' && !focusComponent,
-        [styles.navComponent.groupSelect]: type === 'Group' && !focusComponent,
-        [styles.navComponent.inputSelect]: type === 'Input' && !focusComponent,
+        [styles.navComponent.step]: type === 'Section' && focusComponent,
+        [styles.navComponent.group]: type === 'Screen' && focusComponent,
+        [styles.navComponent.input]: type === 'Field' && focusComponent,
+        [styles.navComponent.stepSelect]: type === 'Section' && !focusComponent,
+        [styles.navComponent.groupSelect]: type === 'Screen' && !focusComponent,
+        [styles.navComponent.inputSelect]: type === 'Field' && !focusComponent,
       })}
       {...(focusComponent && {
         ...listeners,
         ...attributes,
-        onClick: () => focusComponent(type, data.guid as UniqueIdentifier),
+        onClick: () => focusComponent(type, data.id as UniqueIdentifier),
       })}
       ref={setNodeRef}
     >
@@ -99,9 +100,9 @@ export const NavComponent = ({
         <Box display="flex" flexDirection="row">
           <Box
             className={cn({
-              [styles.navBackgroundActive.step]: type === 'Step',
-              [styles.navBackgroundActive.group]: type === 'Group',
-              [styles.navBackgroundActive.input]: type === 'Input',
+              [styles.navBackgroundActive.step]: type === 'Section',
+              [styles.navBackgroundActive.group]: type === 'Screen',
+              [styles.navBackgroundActive.input]: type === 'Field',
             })}
           >
             {focusComponent ? index : ''}
@@ -123,7 +124,7 @@ export const NavComponent = ({
               }}
             >
               {!(
-                type === 'Step' && (data as FormSystemStep).type !== 'Input'
+                type === 'Section' && (data as FormSystemSection).sectionType !== FormSystemSectionDtoSectionTypeEnum.Input
               ) && <NavButtons />}
             </Box>
           )}
@@ -139,9 +140,9 @@ export const NavComponent = ({
           <Box
             id="1"
             className={cn({
-              [styles.navBackgroundDefault.step]: type === 'Step',
-              [styles.navBackgroundDefault.group]: type === 'Group',
-              [styles.navBackgroundDefault.input]: type === 'Input',
+              [styles.navBackgroundDefault.step]: type === 'Section',
+              [styles.navBackgroundDefault.group]: type === 'Screen',
+              [styles.navBackgroundDefault.input]: type === 'Field',
             })}
           >
             {/* {index} */}
@@ -158,7 +159,7 @@ export const NavComponent = ({
                     type: 'TOGGLE_DEPENDENCY',
                     payload: {
                       activeId: activeGuid,
-                      itemId: data.guid as string,
+                      itemId: data.id as string,
                       update: updateSettings,
                     },
                   })

@@ -1,5 +1,0 @@
-mutation formSystemUpdateFormSettings(
-  $input: FormSystemUpdateFormSettingsInput!
-) {
-  formSystemUpdateFormSettings(input: $input)
-}

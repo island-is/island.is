@@ -12,7 +12,7 @@ import { ControlContext } from '../../context/ControlContext'
 import { FormSystemSectionDtoSectionTypeEnum, FormSystemSection, FormSystemScreen } from '@island.is/api/schema'
 import { BaseSettings } from './components/BaseSettings/BaseSettings'
 import { Premises } from './components/Premises/Premises'
-import { InputContent } from './components/InputContent/InputContent'
+import { FieldContent } from './components/FieldContent/FieldContent'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { RelevantParties } from './components/RelevantParties/RevelantParties'
 import { useIntl } from 'react-intl'
@@ -24,8 +24,7 @@ export const MainContent = () => {
     controlDispatch,
     updateActiveItem,
     setFocus,
-    focus,
-    translationButtons,
+    focus
   } = useContext(ControlContext)
   const { activeItem } = control
   const [openPreview, setOpenPreview] = useState(false)
@@ -34,7 +33,7 @@ export const MainContent = () => {
   return (
     <Box padding={2}>
       {activeItem.type === 'Field' ? (
-        <InputContent />
+        <FieldContent />
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === "BaseSettings" ? (
         <BaseSettings />
@@ -87,10 +86,6 @@ export const MainContent = () => {
                 }
                 onFocus={(e) => setFocus(e.target.value)}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
-                buttons={translationButtons(
-                  activeItem?.data?.name?.is ?? '',
-                  'CHANGE_NAME',
-                )}
               />
             </Column>
           </Row>
@@ -107,7 +102,7 @@ export const MainContent = () => {
                       payload: {
                         checked: e.target.checked,
                         update: updateActiveItem,
-                      },
+                      }
                     })
                   }
                 />

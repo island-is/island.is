@@ -17,7 +17,9 @@
             }
           }
         },
-        "tags": ["internal"]
+        "tags": [
+          "internal"
+        ]
       }
     },
     "/version": {
@@ -36,7 +38,9 @@
             }
           }
         },
-        "tags": ["internal"]
+        "tags": [
+          "internal"
+        ]
       }
     },
     "/health/check": {
@@ -225,7 +229,9 @@
             }
           }
         },
-        "tags": ["organizations"]
+        "tags": [
+          "organizations"
+        ]
       },
       "get": {
         "operationId": "OrganizationsController_findAll",
@@ -243,7 +249,9 @@
             }
           }
         },
-        "tags": ["organizations"]
+        "tags": [
+          "organizations"
+        ]
       }
     },
     "/organizations/{id}": {
@@ -272,7 +280,9 @@
             }
           }
         },
-        "tags": ["organizations"]
+        "tags": [
+          "organizations"
+        ]
       }
     },
     "/forms": {
@@ -302,7 +312,9 @@
             }
           }
         },
-        "tags": ["forms"]
+        "tags": [
+          "forms"
+        ]
       }
     },
     "/forms/organization/{organizationId}": {
@@ -331,7 +343,9 @@
             }
           }
         },
-        "tags": ["forms"]
+        "tags": [
+          "forms"
+        ]
       }
     },
     "/forms/{id}": {
@@ -360,7 +374,41 @@
             }
           }
         },
-        "tags": ["forms"]
+        "tags": [
+          "forms"
+        ]
+      },
+      "put": {
+        "operationId": "FormsController_updateForm",
+        "summary": "Update form",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFormDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Update form"
+          }
+        },
+        "tags": [
+          "forms"
+        ]
       },
       "delete": {
         "operationId": "FormsController_delete",
@@ -380,7 +428,9 @@
             "description": "Delete field"
           }
         },
-        "tags": ["forms"]
+        "tags": [
+          "forms"
+        ]
       }
     },
     "/sections": {
@@ -410,7 +460,9 @@
             }
           }
         },
-        "tags": ["sections"]
+        "tags": [
+          "sections"
+        ]
       },
       "put": {
         "operationId": "SectionsController_updateDisplayOrder",
@@ -431,7 +483,9 @@
             "description": "Update display order of sections"
           }
         },
-        "tags": ["sections"]
+        "tags": [
+          "sections"
+        ]
       }
     },
     "/sections/{id}": {
@@ -470,7 +524,9 @@
             }
           }
         },
-        "tags": ["sections"]
+        "tags": [
+          "sections"
+        ]
       },
       "delete": {
         "operationId": "SectionsController_delete",
@@ -490,7 +546,9 @@
             "description": "Delete section by id"
           }
         },
-        "tags": ["sections"]
+        "tags": [
+          "sections"
+        ]
       }
     },
     "/screens": {
@@ -520,7 +578,9 @@
             }
           }
         },
-        "tags": ["screens"]
+        "tags": [
+          "screens"
+        ]
       },
       "put": {
         "operationId": "ScreensController_updateDisplayOrder",
@@ -541,13 +601,15 @@
             "description": "Update display order of screens"
           }
         },
-        "tags": ["screens"]
+        "tags": [
+          "screens"
+        ]
       }
     },
     "/screens/{id}": {
       "put": {
         "operationId": "ScreensController_update",
-        "summary": "Updates a new screen",
+        "summary": "Updates screen",
         "parameters": [
           {
             "name": "id",
@@ -580,7 +642,9 @@
             }
           }
         },
-        "tags": ["screens"]
+        "tags": [
+          "screens"
+        ]
       },
       "delete": {
         "operationId": "ScreensController_delete",
@@ -600,7 +664,9 @@
             "description": "Delete screen by id"
           }
         },
-        "tags": ["screens"]
+        "tags": [
+          "screens"
+        ]
       }
     },
     "/fields": {
@@ -630,7 +696,9 @@
             }
           }
         },
-        "tags": ["fields"]
+        "tags": [
+          "fields"
+        ]
       },
       "put": {
         "operationId": "FieldsController_updateDisplayOrder",
@@ -651,7 +719,9 @@
             "description": "Update display order of fields"
           }
         },
-        "tags": ["fields"]
+        "tags": [
+          "fields"
+        ]
       }
     },
     "/fields/{id}": {
@@ -683,7 +753,9 @@
             "description": "Update field"
           }
         },
-        "tags": ["fields"]
+        "tags": [
+          "fields"
+        ]
       },
       "delete": {
         "operationId": "FieldsController_delete",
@@ -703,7 +775,9 @@
             "description": "Delete field by id"
           }
         },
-        "tags": ["fields"]
+        "tags": [
+          "fields"
+        ]
       }
     },
     "/listItems": {
@@ -733,7 +807,9 @@
             }
           }
         },
-        "tags": ["list items"]
+        "tags": [
+          "list items"
+        ]
       },
       "put": {
         "operationId": "ListItemsController_updateDisplayOrder",
@@ -754,7 +830,9 @@
             "description": "Update display order of list items"
           }
         },
-        "tags": ["list items"]
+        "tags": [
+          "list items"
+        ]
       }
     },
     "/listItems/{id}": {
@@ -786,7 +864,9 @@
             "description": "Update list item"
           }
         },
-        "tags": ["list items"]
+        "tags": [
+          "list items"
+        ]
       },
       "delete": {
         "operationId": "ListItemsController_delete",
@@ -806,10 +886,12 @@
             "description": "Delete of list items"
           }
         },
-        "tags": ["list items"]
+        "tags": [
+          "list items"
+        ]
       }
     },
-    "/applications": {
+    "/applications/{id}": {
       "get": {
         "operationId": "ApplicationsController_getApplication",
         "summary": "Get an application by id",
@@ -835,7 +917,9 @@
             }
           }
         },
-        "tags": ["applications"]
+        "tags": [
+          "applications"
+        ]
       }
     },
     "/applications/{slug}": {
@@ -864,7 +948,138 @@
             }
           }
         },
-        "tags": ["applications"]
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/values/{id}": {
+      "put": {
+        "operationId": "ValuesController_update",
+        "summary": "Update a value",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Update a value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValueDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "values"
+        ]
+      }
+    },
+    "/formApplicants": {
+      "post": {
+        "operationId": "FormApplicantsController_create",
+        "summary": "Create new form applicant",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFormApplicantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Create new form applicant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormApplicantDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "form applicants"
+        ]
+      }
+    },
+    "/formApplicants/{id}": {
+      "put": {
+        "operationId": "FormApplicantsController_update",
+        "summary": "Update form applicant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFormApplicantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Update form applicant"
+          }
+        },
+        "tags": [
+          "form applicants"
+        ]
+      },
+      "delete": {
+        "operationId": "FormApplicantsController_delete",
+        "summary": "Delete form applicant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete form applicant"
+          }
+        },
+        "tags": [
+          "form applicants"
+        ]
       }
     }
   },
@@ -889,7 +1104,9 @@
             "type": "boolean"
           }
         },
-        "required": ["ok"]
+        "required": [
+          "ok"
+        ]
       },
       "Version": {
         "type": "object",
@@ -898,7 +1115,9 @@
             "type": "string"
           }
         },
-        "required": ["version"]
+        "required": [
+          "version"
+        ]
       },
       "LanguageType": {
         "type": "object",
@@ -910,7 +1129,10 @@
             "type": "string"
           }
         },
-        "required": ["is", "en"]
+        "required": [
+          "is",
+          "en"
+        ]
       },
       "CreateOrganizationDto": {
         "type": "object",
@@ -922,7 +1144,28 @@
             "type": "string"
           }
         },
-        "required": ["name", "nationalId"]
+        "required": [
+          "name",
+          "nationalId"
+        ]
+      },
+      "Dependency": {
+        "type": "object",
+        "properties": {
+          "parentProp": {
+            "type": "string"
+          },
+          "childProps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "parentProp",
+          "childProps"
+        ]
       },
       "CertificationTypeDto": {
         "type": "object",
@@ -948,7 +1191,12 @@
             ]
           }
         },
-        "required": ["id", "name", "description", "type"]
+        "required": [
+          "id",
+          "name",
+          "description",
+          "type"
+        ]
       },
       "FormApplicantDto": {
         "type": "object",
@@ -971,7 +1219,11 @@
             "$ref": "#/components/schemas/LanguageType"
           }
         },
-        "required": ["id", "applicantType", "name"]
+        "required": [
+          "id",
+          "applicantType",
+          "name"
+        ]
       },
       "ListItemDto": {
         "type": "object",
@@ -995,7 +1247,13 @@
             "type": "boolean"
           }
         },
-        "required": ["id", "label", "value", "displayOrder", "isSelected"]
+        "required": [
+          "id",
+          "label",
+          "value",
+          "displayOrder",
+          "isSelected"
+        ]
       },
       "FieldSettingsDto": {
         "type": "object",
@@ -1036,7 +1294,13 @@
             "type": "string"
           },
           "buttonText": {
-            "type": "string"
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "isRequired": {
+            "type": "boolean"
+          },
+          "isLarge": {
+            "type": "boolean"
           },
           "hasPropertyInput": {
             "type": "boolean"
@@ -1074,10 +1338,13 @@
             "type": "string"
           },
           "json": {
-            "type": "string"
+            "$ref": "#/components/schemas/"
           }
         },
-        "required": ["id", "json"]
+        "required": [
+          "id",
+          "json"
+        ]
       },
       "FieldDto": {
         "type": "object",
@@ -1131,8 +1398,11 @@
               "textbox"
             ]
           },
-          "value": {
-            "$ref": "#/components/schemas/ValueDto"
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValueDto"
+            }
           }
         },
         "required": [
@@ -1143,7 +1413,7 @@
           "description",
           "isPartOfMultiset",
           "fieldType",
-          "value"
+          "values"
         ]
       },
       "ScreenDto": {
@@ -1198,7 +1468,12 @@
           },
           "sectionType": {
             "type": "string",
-            "enum": ["premises", "parties", "input", "payment"]
+            "enum": [
+              "premises",
+              "parties",
+              "input",
+              "payment"
+            ]
           },
           "displayOrder": {
             "type": "number"
@@ -1270,6 +1545,12 @@
           "completedMessage": {
             "$ref": "#/components/schemas/LanguageType"
           },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dependency"
+            }
+          },
           "certificationTypes": {
             "type": "array",
             "items": {
@@ -1333,7 +1614,11 @@
             }
           }
         },
-        "required": ["id", "name", "nationalId"]
+        "required": [
+          "id",
+          "name",
+          "nationalId"
+        ]
       },
       "OrganizationsResponseDto": {
         "type": "object",
@@ -1345,7 +1630,9 @@
             }
           }
         },
-        "required": ["organizations"]
+        "required": [
+          "organizations"
+        ]
       },
       "CreateFormDto": {
         "type": "object",
@@ -1354,7 +1641,9 @@
             "type": "string"
           }
         },
-        "required": ["organizationId"]
+        "required": [
+          "organizationId"
+        ]
       },
       "FieldTypeDto": {
         "type": "object",
@@ -1403,7 +1692,13 @@
             "$ref": "#/components/schemas/FieldSettingsDto"
           }
         },
-        "required": ["id", "type", "name", "description", "isCommon"]
+        "required": [
+          "id",
+          "type",
+          "name",
+          "description",
+          "isCommon"
+        ]
       },
       "ListTypeDto": {
         "type": "object",
@@ -1424,7 +1719,13 @@
             "type": "boolean"
           }
         },
-        "required": ["id", "name", "description", "type", "isCommon"]
+        "required": [
+          "id",
+          "name",
+          "description",
+          "type",
+          "isCommon"
+        ]
       },
       "FormResponseDto": {
         "type": "object",
@@ -1458,6 +1759,42 @@
           }
         }
       },
+      "UpdateFormDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "invalidationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "isTranslated": {
+            "type": "boolean"
+          },
+          "applicationDaysToRemove": {
+            "type": "number"
+          },
+          "stopProgressOnValidatingScreen": {
+            "type": "boolean"
+          },
+          "completedMessage": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dependency"
+            }
+          }
+        }
+      },
       "CreateSectionDto": {
         "type": "object",
         "properties": {
@@ -1465,7 +1802,9 @@
             "type": "string"
           }
         },
-        "required": ["formId"]
+        "required": [
+          "formId"
+        ]
       },
       "UpdateSectionDto": {
         "type": "object",
@@ -1477,7 +1816,9 @@
             "$ref": "#/components/schemas/LanguageType"
           }
         },
-        "required": ["name"]
+        "required": [
+          "name"
+        ]
       },
       "SectionDisplayOrderDto": {
         "type": "object",
@@ -1486,7 +1827,9 @@
             "type": "string"
           }
         },
-        "required": ["id"]
+        "required": [
+          "id"
+        ]
       },
       "UpdateSectionsDisplayOrderDto": {
         "type": "object",
@@ -1498,7 +1841,9 @@
             }
           }
         },
-        "required": ["sectionsDisplayOrderDto"]
+        "required": [
+          "sectionsDisplayOrderDto"
+        ]
       },
       "CreateScreenDto": {
         "type": "object",
@@ -1507,7 +1852,9 @@
             "type": "string"
           }
         },
-        "required": ["sectionId"]
+        "required": [
+          "sectionId"
+        ]
       },
       "UpdateScreenDto": {
         "type": "object",
@@ -1522,7 +1869,11 @@
             "type": "boolean"
           }
         },
-        "required": ["name", "multiset", "callRuleset"]
+        "required": [
+          "name",
+          "multiset",
+          "callRuleset"
+        ]
       },
       "ScreenDisplayOrderDto": {
         "type": "object",
@@ -1534,7 +1885,10 @@
             "type": "string"
           }
         },
-        "required": ["id", "sectionId"]
+        "required": [
+          "id",
+          "sectionId"
+        ]
       },
       "UpdateScreensDisplayOrderDto": {
         "type": "object",
@@ -1546,7 +1900,9 @@
             }
           }
         },
-        "required": ["screensDisplayOrderDto"]
+        "required": [
+          "screensDisplayOrderDto"
+        ]
       },
       "CreateFieldDto": {
         "type": "object",
@@ -1555,7 +1911,9 @@
             "type": "string"
           }
         },
-        "required": ["screenId"]
+        "required": [
+          "screenId"
+        ]
       },
       "UpdateFieldSettingsDto": {
         "type": "object",
@@ -1596,7 +1954,13 @@
             "type": "string"
           },
           "buttonText": {
-            "type": "string"
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "isRequired": {
+            "type": "boolean"
+          },
+          "isLarge": {
+            "type": "boolean"
           },
           "hasPropertyInput": {
             "type": "boolean"
@@ -1683,7 +2047,10 @@
             "type": "string"
           }
         },
-        "required": ["id", "screenId"]
+        "required": [
+          "id",
+          "screenId"
+        ]
       },
       "UpdateFieldsDisplayOrderDto": {
         "type": "object",
@@ -1695,7 +2062,9 @@
             }
           }
         },
-        "required": ["fieldsDisplayOrderDto"]
+        "required": [
+          "fieldsDisplayOrderDto"
+        ]
       },
       "CreateListItemDto": {
         "type": "object",
@@ -1707,7 +2076,10 @@
             "type": "number"
           }
         },
-        "required": ["fieldId", "displayOrder"]
+        "required": [
+          "fieldId",
+          "displayOrder"
+        ]
       },
       "UpdateListItemDto": {
         "type": "object",
@@ -1725,7 +2097,11 @@
             "type": "boolean"
           }
         },
-        "required": ["label", "value", "isSelected"]
+        "required": [
+          "label",
+          "value",
+          "isSelected"
+        ]
       },
       "ListItemDisplayOrderDto": {
         "type": "object",
@@ -1734,7 +2110,9 @@
             "type": "string"
           }
         },
-        "required": ["id"]
+        "required": [
+          "id"
+        ]
       },
       "UpdateListItemsDisplayOrderDto": {
         "type": "object",
@@ -1746,7 +2124,9 @@
             }
           }
         },
-        "required": ["listItemsDisplayOrderDto"]
+        "required": [
+          "listItemsDisplayOrderDto"
+        ]
       },
       "ApplicationDto": {
         "type": "object",
@@ -1759,6 +2139,9 @@
           },
           "formId": {
             "type": "string"
+          },
+          "formName": {
+            "$ref": "#/components/schemas/LanguageType"
           },
           "slug": {
             "type": "string"
@@ -1778,6 +2161,44 @@
             }
           }
         }
+      },
+      "Object": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateFormApplicantDto": {
+        "type": "object",
+        "properties": {
+          "formId": {
+            "type": "string"
+          },
+          "applicantType": {
+            "type": "string",
+            "enum": [
+              "individual",
+              "individualWithDelegationFromIndividual",
+              "individualWithDelegationFromLegalEntity",
+              "individualWithProcuration",
+              "individualGivingDelegation",
+              "legalEntity"
+            ]
+          }
+        },
+        "required": [
+          "formId",
+          "applicantType"
+        ]
+      },
+      "UpdateFormApplicantDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          }
+        },
+        "required": [
+          "name"
+        ]
       }
     }
   }

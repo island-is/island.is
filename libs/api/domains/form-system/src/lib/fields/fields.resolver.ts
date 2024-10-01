@@ -12,14 +12,14 @@ import {
   DeleteFieldInput,
   UpdateFieldsDisplayOrderInput,
 } from '../../dto/field.input'
-import { FieldsService } from './fields.services'
+import { FieldsService } from './fields.service'
 import { Field } from '../../models/field.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FieldsResolver {
-  constructor(private readonly fieldsService: FieldsService) {}
+  constructor(private readonly fieldsService: FieldsService) { }
 
   @Mutation(() => Field, {
     name: 'formSystemCreateField',

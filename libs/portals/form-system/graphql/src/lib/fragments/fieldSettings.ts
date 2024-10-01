@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client'
 import { ListItemFragment } from './listItem'
+import { LanguageFields } from './languageFields'
 
 export const FieldSettingsFragment = gql`
   fragment FieldSettings on FormSystemFieldSettings {
@@ -14,7 +15,9 @@ export const FieldSettingsFragment = gql`
     year
     hasLink
     url
-    buttonText
+    buttonText {
+      ...LanguageFields
+    }
     hasPropertyInput
     hasPropertyList
     list {
@@ -25,6 +28,8 @@ export const FieldSettingsFragment = gql`
     fileMaxSize
     maxFiles
     timeInterval
+    isLarge
   }
   ${ListItemFragment}
+  ${LanguageFields}
 `

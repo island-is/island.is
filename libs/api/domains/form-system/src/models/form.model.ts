@@ -8,6 +8,15 @@ import { LanguageType } from './languageType.model'
 import { Screen as ScreenModel } from './screen.model'
 import { FieldType } from './fieldType.model'
 
+@ObjectType('FormSystemDependency')
+export class Dependency {
+  @Field(() => String, { nullable: true })
+  parentProp?: string
+
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  childProps?: string[]
+}
+
 @ObjectType('FormSystemForm')
 export class Form {
   @Field(() => String, { nullable: true })
@@ -60,6 +69,9 @@ export class Form {
 
   @Field(() => [FieldModel], { nullable: 'itemsAndList' })
   fields?: FieldModel[]
+
+  @Field(() => [Dependency], { nullable: 'itemsAndList' })
+  dependencies?: Dependency[]
 }
 
 @ObjectType('FormSystemFormResponse')

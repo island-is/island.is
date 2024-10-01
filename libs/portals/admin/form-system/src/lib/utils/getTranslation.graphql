@@ -1,5 +1,0 @@
-mutation formSystemGetTranslation($input: FormSystemGetTranslationInput!) {
-  formSystemGetTranslation(input: $input) {
-    translations
-  }
-}

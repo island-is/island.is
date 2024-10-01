@@ -2,15 +2,17 @@ import { Box, Inline } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import * as styles from './NavbarTab.css'
 import { useContext } from 'react'
-import { baseSettingsStep } from '../../../../utils/getBaseSettingsStep'
+import { baseSettingsStep } from '../../../../lib/utils/getBaseSettingsSection'
 import { ControlContext } from '../../../../context/ControlContext'
 import { useIntl } from 'react-intl'
-import { m } from '../../../../lib/messages'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { m } from '@island.is/form-system/ui'
+import { FormSystemSectionDtoSectionTypeEnum } from '@island.is/api/schema'
 
 export const NavbarTab = () => {
   const { control, controlDispatch, inSettings, setInSettings } =
     useContext(ControlContext)
-  const { stepsList: steps } = control.form
+  const { sections } = control.form
   const { formatMessage } = useIntl()
   return (
     <Box display="flex" flexDirection="row">
@@ -21,20 +23,20 @@ export const NavbarTab = () => {
             [styles.selected]: !inSettings,
           })}
           onClick={() => {
-            const step = steps?.find((s) => s?.type === 'Input')
+            const section = sections?.find((s) => s?.sectionType === FormSystemSectionDtoSectionTypeEnum.Input)
             controlDispatch({
               type: 'SET_ACTIVE_ITEM',
               payload: {
                 activeItem: {
-                  type: 'Step',
-                  data: step,
+                  type: 'Section',
+                  data: section,
                 },
               },
             })
             setInSettings(false)
           }}
         >
-          Skref
+          {formatMessage(m.step)}
         </Box>
         <Box
           className={cn({
@@ -46,7 +48,7 @@ export const NavbarTab = () => {
               type: 'SET_ACTIVE_ITEM',
               payload: {
                 activeItem: {
-                  type: 'Step',
+                  type: 'Section',
                   data: baseSettingsStep,
                 },
               },

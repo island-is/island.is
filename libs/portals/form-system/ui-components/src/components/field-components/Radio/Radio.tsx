@@ -1,13 +1,13 @@
-import { FormSystemInput, FormSystemListItem } from '@island.is/api/schema'
+import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
 import { RadioButton, Text, Box } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 
 interface Props {
-  item: FormSystemInput
+  item: FormSystemField
 }
 
 export const Radio = ({ item }: Props) => {
-  const radioButtons = item.inputSettings?.list as FormSystemListItem[]
+  const radioButtons = item.fieldSettings?.list as FormSystemListItem[]
   const [radioChecked, setRadioChecked] = useState<boolean[]>([])
 
   useEffect(() => {

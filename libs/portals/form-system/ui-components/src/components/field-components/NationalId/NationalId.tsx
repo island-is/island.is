@@ -1,11 +1,11 @@
 import { Input, Stack, GridColumn as Column } from '@island.is/island-ui/core'
-import { FormSystemInput } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
 
 
 interface Props {
-  item: FormSystemInput
+  item: FormSystemField
 }
 
 export const NationalId = ({ item }: Props) => {

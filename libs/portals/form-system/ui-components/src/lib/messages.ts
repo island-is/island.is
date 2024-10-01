@@ -341,6 +341,14 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:translations',
     defaultMessage: 'Þýðingar',
   },
+  translated: {
+    id: 'portals-admin.form-system:translated',
+    defaultMessage: 'Þýdd',
+  },
+  notTranslated: {
+    id: 'portals-admin.form-system:not-translated',
+    defaultMessage: 'Óþýdd',
+  },
   number: {
     id: 'portals-admin.form-system:number',
     defaultMessage: 'Númer',

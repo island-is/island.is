@@ -39,7 +39,7 @@ export enum EFormApplicantTypes {
   logadili = 'Lögaðili',
 }
 
-export interface InputSettings {
+export interface FieldSettings {
   hasInput?: boolean
   isList?: boolean
   isLarge?: boolean

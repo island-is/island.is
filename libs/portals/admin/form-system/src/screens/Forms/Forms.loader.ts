@@ -1,8 +1,4 @@
 import { WrappedLoaderFn } from '@island.is/portals/core'
-import {
-  FormSystemGetFormsDocument,
-  FormSystemGetFormsQuery,
-} from './Forms.generated'
 import { FormSystemForm } from '@island.is/api/schema'
 
 export interface FormsLoaderResponse {

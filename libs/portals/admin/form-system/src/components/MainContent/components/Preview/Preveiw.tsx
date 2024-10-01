@@ -1,4 +1,4 @@
-import { FormSystemInput } from '@island.is/api/schema'
+import { FormSystemField, FormSystemFieldDtoFieldTypeEnum } from '@island.is/api/schema'
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
@@ -15,49 +15,52 @@ import {
   TimeInput,
   Checkbox,
   List,
-  HomestayOverview
+  HomestayOverview,
+  m
 } from '@island.is/form-system/ui'
+import { useIntl } from 'react-intl'
+
 
 interface Props {
-  data: FormSystemInput
+  data: FormSystemField
 }
 
 export const Preview = ({ data }: Props) => {
-  const { type } = data
+  const { fieldType: type } = data
+  const { formatMessage } = useIntl()
   return (
     <Box padding={2} background="blue100">
-      {type === 'Message' && <MessageWithLink item={data} />}
-      {type === 'Bank_account' && (
+      {type === FormSystemFieldDtoFieldTypeEnum.Message && <MessageWithLink item={data} />}
+      {type === FormSystemFieldDtoFieldTypeEnum.BankAccount && (
         <div>
           <Text variant="h5">{data?.name?.is}</Text>
           <Banknumber item={data} />
         </div>
       )}
-      {type === 'Email' && <Email item={data} />}
-      {type === 'Date_picker' && (
+      {type === FormSystemFieldDtoFieldTypeEnum.Email && <Email item={data} />}
+      {type === FormSystemFieldDtoFieldTypeEnum.DatePicker && (
         <Box marginTop={2} width="half">
           <DatePicker
             label={
               data?.name?.is === '' || !data?.name?.is
-                ? 'Dagssetning'
+                ? formatMessage(m.datePicker)
                 : data?.name?.is
             }
-            placeholderText="Veldu dagsetningu"
+            placeholderText={formatMessage(m.chooseDate)}
           />
         </Box>
       )}
-      {type === 'National_id' && <NationalId item={data} />}
-      {type === 'Document' && <FileUpload item={data} />}
-      {type === 'Textalínubox' ||
-        (type === 'Textbox' && <TextInput item={data} />)}
-      {type === 'Dropdown_list' && <List item={data} />}
-      {type === 'Radio_buttons' && <Radio item={data} />}
-      {type === 'ISK_numberbox' && <CurrencyField item={data} />}
-      {type === 'Checkbox' && <Checkbox item={data} />}
-      {type === 'Phone_number' && <PhoneNumber item={data} />}
-      {type === 'Time_input' && <TimeInput item={data} />}
-      {type === 'Property_number' && <PropertyNumber item={data} />}
-      {type === 'Homestay_overview' && <HomestayOverview />}
+      {type === FormSystemFieldDtoFieldTypeEnum.NationalId && <NationalId item={data} />}
+      {type === FormSystemFieldDtoFieldTypeEnum.Document && <FileUpload item={data} />}
+      {type === FormSystemFieldDtoFieldTypeEnum.Textbox && <TextInput item={data} />}
+      {type === FormSystemFieldDtoFieldTypeEnum.DropdownList && <List item={data} />}
+      {type === FormSystemFieldDtoFieldTypeEnum.RadioButtons && <Radio item={data} />}
+      {type === FormSystemFieldDtoFieldTypeEnum.IskNumberbox && <CurrencyField item={data} />}
+      {type === FormSystemFieldDtoFieldTypeEnum.Checkbox && <Checkbox item={data} />}
+      {type === FormSystemFieldDtoFieldTypeEnum.PhoneNumber && <PhoneNumber item={data} />}
+      {type === FormSystemFieldDtoFieldTypeEnum.TimeInput && <TimeInput item={data} />}
+      {type === FormSystemFieldDtoFieldTypeEnum.PropertyNumber && <PropertyNumber item={data} />}
+      {type === FormSystemFieldDtoFieldTypeEnum.HomestayOverview && <HomestayOverview />}
     </Box>
   )
 }

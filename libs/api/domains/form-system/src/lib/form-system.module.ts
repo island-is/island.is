@@ -4,7 +4,7 @@ import { FormsService } from './forms/forms.service'
 import { FormsResolver } from './forms/forms.resolver'
 import { ApplicationsService } from './applications/applications.service'
 import { ApplicationsResolver } from './applications/applications.resolver'
-import { FieldsService } from './fields/fields.services'
+import { FieldsService } from './fields/fields.service'
 import { FieldsResolver } from './fields/fields.resolver'
 import { ListItemsService } from './listItems/listItems.service'
 import { ListItemsResolver } from './listItems/listItems.resolver'
@@ -35,4 +35,4 @@ import { SectionsResolver } from './sections/sections.resolver'
   exports: [],
   imports: [FormSystemClientModule],
 })
-export class FormSystemModule {}
+export class FormSystemModule { }

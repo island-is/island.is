@@ -18,7 +18,7 @@ export const updateActiveItemFn = (
         currentActiveItem
           ? (currentActiveItem.data as FormSystemSection)
           : (activeItem.data as FormSystemSection)
-      updateSection({
+      updateSection[0]({
         variables: {
           input: {
             stepId: id,
@@ -36,7 +36,7 @@ export const updateActiveItemFn = (
         currentActiveItem
           ? (currentActiveItem.data as FormSystemScreen)
           : (activeItem.data as FormSystemScreen)
-      updateScreen({
+      updateScreen[0]({
         variables: {
           input: {
             id: activeItem?.data?.id,
@@ -61,7 +61,7 @@ export const updateActiveItemFn = (
       } = currentActiveItem
           ? (currentActiveItem.data as FormSystemField)
           : (activeItem.data as FormSystemField)
-      updateField({
+      updateField[0]({
         variables: {
           input: {
             id: id,
