@@ -3,11 +3,11 @@ import { MileageRegistrationHistory } from './mileageRegistrationHistory.model'
 
 @ObjectType('VehiclesMileageDetails')
 export class MileageDetails {
-  @Field()
-  canRegisterMileage!: boolean
+  @Field({ nullable: true })
+  canRegisterMileage?: boolean
 
-  @Field()
-  requiresMileageRegistration!: boolean
+  @Field({ nullable: true })
+  requiresMileageRegistration?: boolean
 
   @Field(() => MileageRegistrationHistory, { nullable: true })
   mileageRegistrations?: MileageRegistrationHistory
