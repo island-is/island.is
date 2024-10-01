@@ -10,36 +10,29 @@ import {
 } from '@island.is/judicial-system/auth'
 import { MessageService } from '@island.is/judicial-system/message'
 
-import { CaseService, PdfService } from '../../case'
+import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import { UserService } from '../../user'
 import { DefendantController } from '../defendant.controller'
 import { DefendantService } from '../defendant.service'
 import { InternalDefendantController } from '../internalDefendant.controller'
-import { LimitedAccessDefendantController } from '../limitedAccessDefendant.controller'
 import { Defendant } from '../models/defendant.model'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../user/user.service')
 jest.mock('../../court/court.service')
 jest.mock('../../case/case.service')
-jest.mock('../../case/pdf.service')
 
 export const createTestingDefendantModule = async () => {
   const defendantModule = await Test.createTestingModule({
     imports: [ConfigModule.forRoot({ load: [sharedAuthModuleConfig] })],
-    controllers: [
-      DefendantController,
-      InternalDefendantController,
-      LimitedAccessDefendantController,
-    ],
+    controllers: [DefendantController, InternalDefendantController],
     providers: [
       SharedAuthModule,
       MessageService,
       UserService,
       CourtService,
       CaseService,
-      PdfService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -69,8 +62,6 @@ export const createTestingDefendantModule = async () => {
 
   const courtService = defendantModule.get<CourtService>(CourtService)
 
-  const pdfService = defendantModule.get<PdfService>(PdfService)
-
   const defendantModel = await defendantModule.resolve<typeof Defendant>(
     getModelToken(Defendant),
   )
@@ -86,22 +77,15 @@ export const createTestingDefendantModule = async () => {
       InternalDefendantController,
     )
 
-  const limitedAccessDefendantController =
-    defendantModule.get<LimitedAccessDefendantController>(
-      LimitedAccessDefendantController,
-    )
-
   defendantModule.close()
 
   return {
     messageService,
     userService,
     courtService,
-    pdfService,
     defendantModel,
     defendantService,
     defendantController,
     internalDefendantController,
-    limitedAccessDefendantController,
   }
 }

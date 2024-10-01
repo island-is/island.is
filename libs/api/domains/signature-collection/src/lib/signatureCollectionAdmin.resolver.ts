@@ -197,6 +197,15 @@ export class SignatureCollectionAdminResolver {
 
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
+  async signatureCollectionAdminRemoveList(
+    @CurrentUser() user: User,
+    @Args('input') { listId }: SignatureCollectionListIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.removeList(listId, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
   async signatureCollectionAdminUnsign(
     @CurrentUser() user: User,
     @Args('input') { signatureId }: SignatureCollectionSignatureIdInput,
