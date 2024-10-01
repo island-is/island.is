@@ -2,14 +2,15 @@ import React from 'react'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
 import { dynamicColor } from '../../utils'
-import { font } from '../../utils/font'
+import { Typography } from '../typography/typography'
 
 const Host = styled.View`
   display: flex;
   flex-direction: row;
-  padding: 20px 70px 20px 24px;
-  margin-bottom: 16px;
-  border-radius: 8px;
+  padding-horizontal: ${({ theme }) => theme.spacing[3]}px;
+  padding-vertical: ${({ theme }) => theme.spacing[3]}px;
+  min-height: 130px;
+  border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: 1px;
   border-color: ${dynamicColor(
     ({ theme }) => ({
@@ -18,19 +19,12 @@ const Host = styled.View`
     }),
     true,
   )};
+  column-gap: ${({ theme }) => theme.spacing[4]}px;
   align-items: center;
-  justify-content: space-between;
 `
 
-const Text = styled.Text`
-  padding-right: 30px;
-  margin-bottom: 16px;
-
-  ${font({
-    fontWeight: '400',
-    lineHeight: 16,
-    fontSize: 12,
-  })}
+const TextWrapper = styled.View`
+  flex: 1;
 `
 
 interface EmptyCardProps {
@@ -42,10 +36,10 @@ interface EmptyCardProps {
 export function EmptyCard({ text, image, link }: EmptyCardProps) {
   return (
     <Host>
-      <View>
-        <Text>{text}</Text>
-        <View>{link}</View>
-      </View>
+      <TextWrapper>
+        <Typography variant="body3">{text}</Typography>
+        {link && <View style={{ flexWrap: 'wrap' }}>{link}</View>}
+      </TextWrapper>
       <View>{image}</View>
     </Host>
   )

@@ -7,7 +7,7 @@ import { NotificationType } from '@island.is/judicial-system/types'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
-import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
+import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 
@@ -58,7 +58,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
         .sendCaseNotification(
           theCase.id,
           { ...theCase, notifications } as Case,
-          { type: NotificationType.REVOKED } as SendInternalNotificationDto,
+          { type: NotificationType.REVOKED } as CaseNotificationDto,
         )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))

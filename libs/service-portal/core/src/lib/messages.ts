@@ -139,11 +139,26 @@ export const m = defineMessages({
     id: 'service.portal:amount',
     defaultMessage: 'Upphæð',
   },
+  approved: {
+    id: 'service.portal:approved',
+    defaultMessage: 'Samþykkt',
+  },
+  processed: {
+    id: 'service.portal:processed',
+    defaultMessage: 'Afgreitt',
+  },
+  rejected: {
+    id: 'service.portal:rejected',
+    defaultMessage: 'Hafnað',
+  },
+  unknown: {
+    id: 'service.portal:unknown',
+    defaultMessage: 'Óþekkt',
+  },
   view: {
     id: 'service.portal:view',
     defaultMessage: 'Skoða',
   },
-
   chooseDate: {
     id: 'service.portal:choose-date',
     defaultMessage: 'Veldu dagsetningu',
@@ -290,6 +305,35 @@ export const m = defineMessages({
     id: 'service.portal:vehicles-lookup',
     defaultMessage: 'Uppfletting í ökutækjaskrá',
   },
+  vehiclesBulkMileage: {
+    id: 'service.portal:vehicles-bulk-mileage',
+    defaultMessage: 'Magnskráning kílómetrastöðu',
+  },
+  vehiclesBulkMileageUpload: {
+    id: 'service.portal:vehicles-bulk-mileage-upload',
+    defaultMessage: 'Magnskrá með skjali',
+  },
+  vehiclesBulkMileageUploadDescription: {
+    id: 'service.portal:vehicles-bulk-mileage-upload-description',
+    defaultMessage:
+      'Hér geturu hlaðið upp skjali til að magnskrá kílómetrastöður',
+  },
+  vehiclesBulkMileageJobOverview: {
+    id: 'service.portal:vehicles-bulk-mileage-job-overview',
+    defaultMessage: 'Yfirlit skráninga',
+  },
+  vehiclesBulkMileageJobOverviewDescription: {
+    id: 'service.portal:vehicles-bulk-mileage-job-overview',
+    defaultMessage: 'Yfirlit yfir skráða kílómetrastöðu',
+  },
+  vehiclesBulkMileageJobDetail: {
+    id: 'service.portal:vehicles-bulk-mileage-job-detail',
+    defaultMessage: 'Magnskráning',
+  },
+  vehiclesBulkMileageJobRegistration: {
+    id: 'service.portal:vehicles-bulk-mileage-job-registration',
+    defaultMessage: 'Hvaða skráningar eru höndlaðar í þessu verki',
+  },
   vehiclesDrivingLessons: {
     id: 'service.portal:vehicles-driving-lessons',
     defaultMessage: 'Ökunám',
@@ -344,6 +388,15 @@ export const m = defineMessages({
   menu: {
     defaultMessage: 'Valmynd',
     id: 'service.portal:menu',
+  },
+  menuButtonAria: {
+    id: 'service.portal:menu-button-aria',
+    description: 'Lýsing á notendavalmynd fyrir skjálesara',
+    defaultMessage: 'Valmynd fyrir yfirlit',
+  },
+  notificationButtonAria: {
+    id: 'service.portal:notification-button-aria',
+    defaultMessage: 'Valmynd fyrir tilkynningar',
   },
   middleLinksTitle: {
     defaultMessage: 'Þjónustuflokkar',
@@ -504,9 +557,21 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionLists',
     defaultMessage: 'Meðmælasöfnun',
   },
+  signatureCollectionParliamentaryLists: {
+    id: 'service.portal:signatureCollectionParliamentaryLists',
+    defaultMessage: 'Alþingiskosningar - Meðmælasöfnun',
+  },
+  signatureCollectionPresidentialLists: {
+    id: 'service.portal:signatureCollectionPresidentialLists',
+    defaultMessage: 'Forsetakosningar - Meðmælasöfnun',
+  },
   notifications: {
     id: 'service.portal:notifications',
     defaultMessage: 'Tilkynningar',
+  },
+  notificationsUnread: {
+    id: 'service.portal:notifications-unread-a11y',
+    defaultMessage: 'Þú átt ólesnar tilkynningar',
   },
   notificationsViewAll: {
     id: 'service.portal:notifications-view-all',
@@ -1048,6 +1113,10 @@ export const m = defineMessages({
     id: 'service.portal:save',
     defaultMessage: 'Vista',
   },
+  saved: {
+    id: 'service.portal:saved',
+    defaultMessage: 'Vistað',
+  },
   register: {
     id: 'service.portal:register',
     defaultMessage: 'Skrá',
@@ -1418,10 +1487,27 @@ export const m = defineMessages({
     id: 'service.portal:social-insurance-maintenance',
     defaultMessage: 'Framfærsla',
   },
+  socialInsuranceMaintenanceIntro: {
+    id: 'service.portal:social-insurance-maintenance-intro',
+    defaultMessage: 'Yfirlit yfir greiðslur frá almannatryggingum',
+  },
   socialInsuranceMaintenanceDescription: {
     id: 'service.portal:social-insurance-maintenance-description',
     defaultMessage:
       'Einstaklingar geta átt rétt á greiðslum frá Tryggingastofnun (TR) til að bæta afkomu sína og hag. Allar greiðslur frá TR þarf að sækja sérstaklega um.',
+  },
+  incomePlan: {
+    id: 'service.portal:income-plan',
+    defaultMessage: 'Tekjuáætlun',
+  },
+  latestIncomePlan: {
+    id: 'service.portal:latest-income-plan',
+    defaultMessage: 'Yfirlit yfir núverandi tekjuáætlun',
+  },
+  incomePlanDescription: {
+    id: 'service.portal:income-plan',
+    defaultMessage:
+      'Ellilífeyrir, örorkulífeyrir, endurhæfingarlífeyrir og tengdar greiðslur eru tekjutengdar og reiknast út frá tekjuáætlun. Þegar sótt er um lífeyri þarf alltaf að skila inn tekjuáætlun. Hér er hægt að skoða gildandi tekjuáætlun.',
   },
   paymentPlan: {
     id: 'service.portal:payment-plan',
@@ -1546,5 +1632,9 @@ export const m = defineMessages({
   readMoreAbout: {
     id: 'service.portal:read-more-about',
     defaultMessage: 'Lesa meira um {arg}',
+  },
+  submit: {
+    id: 'service.portal:submit',
+    defaultMessage: 'Staðfesta',
   },
 })

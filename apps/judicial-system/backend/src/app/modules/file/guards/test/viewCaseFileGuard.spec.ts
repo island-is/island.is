@@ -12,6 +12,7 @@ import {
   districtCourtRoles,
   InstitutionType,
   prosecutionRoles,
+  publicProsecutorRoles,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -75,7 +76,6 @@ describe('View Case File Guard', () => {
     describe.each([
       CaseState.SUBMITTED,
       CaseState.RECEIVED,
-      CaseState.MAIN_HEARING,
       ...completedCaseStates,
     ])('can view case files for %s cases', (state) => {
       let then: Then
@@ -100,7 +100,6 @@ describe('View Case File Guard', () => {
           ![
             CaseState.SUBMITTED,
             CaseState.RECEIVED,
-            CaseState.MAIN_HEARING,
             ...completedCaseStates,
           ].includes(state as CaseState),
       ),
@@ -209,6 +208,59 @@ describe('View Case File Guard', () => {
           })
         },
       )
+    })
+  })
+
+  describe.each(publicProsecutorRoles)('role %s', (role) => {
+    describe.each(completedCaseStates)('%s cases', (state) => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          user: {
+            role,
+            institution: {
+              type: InstitutionType.PROSECUTORS_OFFICE,
+              id: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
+            },
+          },
+          case: { state },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should activate', () => {
+        expect(then.result).toBe(true)
+      })
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !completedCaseStates.includes(state),
+      ),
+    )('%s cases', (state) => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          user: {
+            role,
+            institution: {
+              type: InstitutionType.PROSECUTORS_OFFICE,
+              id: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
+            },
+          },
+          case: { state },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error.message).toBe(`Forbidden for ${role}`)
+      })
     })
   })
 

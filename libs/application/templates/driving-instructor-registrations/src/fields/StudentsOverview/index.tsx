@@ -101,7 +101,7 @@ const StudentsOverview: FC<
           ? formatMessage(m.viewStudentTitle)
           : formatMessage(m.viewBEStudentTitle)}
       </Text>
-      {(showStudentOverview && showLicenseCategoryTabs) ?? (
+      {showStudentOverview && showLicenseCategoryTabs && (
         <Box marginBottom={5}>
           <Tabs
             selected={currentTab}

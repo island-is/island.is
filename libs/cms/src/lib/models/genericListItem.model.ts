@@ -28,6 +28,9 @@ export class GenericListItem {
   @Field(() => String, { nullable: true })
   slug?: string
 
+  @Field(() => String, { nullable: true })
+  assetUrl?: string
+
   @CacheField(() => [GenericTag], { nullable: true })
   filterTags?: GenericTag[]
 }
@@ -35,19 +38,30 @@ export class GenericListItem {
 export const mapGenericListItem = ({
   fields,
   sys,
-}: IGenericListItem): GenericListItem => ({
-  id: sys.id,
-  genericList: fields.genericList
-    ? mapGenericList(fields.genericList)
-    : undefined,
-  title: fields.title ?? '',
-  date: fields.date || null,
-  cardIntro: fields.cardIntro
-    ? mapDocument(fields.cardIntro, `${sys.id}:cardIntro`)
-    : [],
-  content: fields.content
-    ? mapDocument(fields.content, `${sys.id}:content`)
-    : [],
-  slug: fields.slug,
-  filterTags: fields.filterTags ? fields.filterTags.map(mapGenericTag) : [],
-})
+}: IGenericListItem): GenericListItem => {
+  let assetUrl = fields.asset?.fields?.file?.url ?? ''
+
+  // The asset url might not contain a protocol that's why we prepend https:
+  // https://www.contentful.com/developers/docs/concepts/images/
+  if (assetUrl.startsWith('//')) {
+    assetUrl = `https:${assetUrl}`
+  }
+
+  return {
+    id: sys.id,
+    genericList: fields.genericList
+      ? mapGenericList(fields.genericList)
+      : undefined,
+    title: fields.title ?? '',
+    date: fields.date || null,
+    cardIntro: fields.cardIntro
+      ? mapDocument(fields.cardIntro, `${sys.id}:cardIntro`)
+      : [],
+    content: fields.content
+      ? mapDocument(fields.content, `${sys.id}:content`)
+      : [],
+    slug: fields.slug,
+    assetUrl,
+    filterTags: fields.filterTags ? fields.filterTags.map(mapGenericTag) : [],
+  }
+}

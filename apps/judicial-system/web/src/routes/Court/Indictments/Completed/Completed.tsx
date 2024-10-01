@@ -1,8 +1,9 @@
-import React, { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
+  Accordion,
   Box,
   InputFileUpload,
   RadioButton,
@@ -13,19 +14,23 @@ import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  ConnectedCaseFilesAccordionItem,
   FormContentContainer,
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
+  IndictmentsLawsBrokenAccordionItem,
   InfoCardClosedIndictment,
   Modal,
   PageHeader,
   PageLayout,
   SectionHeading,
+  useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  EventType,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -33,32 +38,52 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 
 import strings from './Completed.strings'
 
 const Completed: FC = () => {
   const { formatMessage } = useIntl()
-  const { updateDefendantState } = useDefendants()
+  const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
     useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+  const { createEventLog } = useEventLog()
+  const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const [modalVisible, setModalVisible] =
     useState<'SENT_TO_PUBLIC_PROSECUTOR'>()
 
+  const sentToPublicProsecutor = workingCase.eventLogs?.some(
+    (log) => log.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+  )
+
   const handleNextButtonClick = useCallback(async () => {
     const allSucceeded = await handleUpload(
-      uploadFiles.filter((file) => !file.key),
+      uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
-
     if (!allSucceeded) {
       return
     }
 
+    const eventLogCreated = createEventLog({
+      caseId: workingCase.id,
+      eventType: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+    })
+    if (!eventLogCreated) {
+      return
+    }
+
     setModalVisible('SENT_TO_PUBLIC_PROSECUTOR')
-  }, [handleUpload, uploadFiles, updateUploadFile])
+  }, [
+    handleUpload,
+    uploadFiles,
+    updateUploadFile,
+    createEventLog,
+    workingCase.id,
+  ])
 
   const handleRemoveFile = useCallback(
     (file: UploadFile) => {
@@ -72,8 +97,11 @@ const Completed: FC = () => {
   )
 
   const handleCriminalRecordUpdateUpload = useCallback(
-    (files: File[], type: CaseFileCategory) => {
-      addUploadFiles(files, type, 'done')
+    (files: File[]) => {
+      addUploadFiles(files, {
+        category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+        status: 'done',
+      })
     },
     [addUploadFiles],
   )
@@ -90,6 +118,9 @@ const Completed: FC = () => {
       CaseIndictmentRulingDecision.FINE,
     ].includes(workingCase.indictmentRulingDecision)
 
+  const isRuling =
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
   const stepIsValid = () =>
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
       ? workingCase.defendants?.every(
@@ -98,6 +129,10 @@ const Completed: FC = () => {
             defendant.serviceRequirement !== null,
         )
       : true
+
+  const hasLawsBroken = lawsBroken.size > 0
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
 
   return (
     <PageLayout
@@ -116,11 +151,30 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>
+        {(hasLawsBroken || hasMergeCases) && (
+          <Box marginBottom={5}>
+            {hasLawsBroken && (
+              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            )}
+            {hasMergeCases && (
+              <Accordion>
+                {workingCase.mergedCases?.map((mergedCase) => (
+                  <Box key={mergedCase.id}>
+                    <ConnectedCaseFilesAccordionItem
+                      connectedCaseParentId={workingCase.id}
+                      connectedCase={mergedCase}
+                    />
+                  </Box>
+                ))}
+              </Accordion>
+            )}
+          </Box>
+        )}
         <Box marginBottom={5} component="section">
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        {isRulingOrFine && (
-          <Box marginBottom={5} component="section">
+        {!sentToPublicProsecutor && isRulingOrFine && (
+          <Box marginBottom={isRuling ? 5 : 10} component="section">
             <SectionHeading
               title={formatMessage(strings.criminalRecordUpdateTitle)}
             />
@@ -135,19 +189,13 @@ const Completed: FC = () => {
               description={formatMessage(core.uploadBoxDescription, {
                 fileEndings: '.pdf',
               })}
-              onChange={(files) =>
-                handleCriminalRecordUpdateUpload(
-                  files,
-                  CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-                )
-              }
-              onRemove={(file) => handleRemoveFile(file)}
+              onChange={handleCriminalRecordUpdateUpload}
+              onRemove={handleRemoveFile}
             />
           </Box>
         )}
-        {workingCase.indictmentRulingDecision ===
-          CaseIndictmentRulingDecision.RULING && (
-          <Box marginBottom={10}>
+        {isRuling && (
+          <Box marginBottom={10} component="section">
             <SectionHeading
               title={formatMessage(strings.serviceRequirementTitle)}
             />
@@ -177,8 +225,9 @@ const Completed: FC = () => {
                         defendant.serviceRequirement ===
                         ServiceRequirement.NOT_APPLICABLE
                       }
+                      disabled={sentToPublicProsecutor}
                       onChange={() => {
-                        updateDefendantState(
+                        setAndSendDefendantToServer(
                           {
                             defendantId: defendant.id,
                             caseId: workingCase.id,
@@ -203,8 +252,9 @@ const Completed: FC = () => {
                         defendant.serviceRequirement ===
                         ServiceRequirement.REQUIRED
                       }
+                      disabled={sentToPublicProsecutor}
                       onChange={() => {
-                        updateDefendantState(
+                        setAndSendDefendantToServer(
                           {
                             defendantId: defendant.id,
                             caseId: workingCase.id,
@@ -225,8 +275,9 @@ const Completed: FC = () => {
                       defendant.serviceRequirement ===
                       ServiceRequirement.NOT_REQUIRED
                     }
+                    disabled={sentToPublicProsecutor}
                     onChange={() => {
-                      updateDefendantState(
+                      setAndSendDefendantToServer(
                         {
                           defendantId: defendant.id,
                           caseId: workingCase.id,
@@ -248,7 +299,7 @@ const Completed: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
-          hideNextButton={!isRulingOrFine}
+          hideNextButton={!isRulingOrFine || sentToPublicProsecutor}
           nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
           nextIsDisabled={!stepIsValid()}
           onNextButtonClick={handleNextButtonClick}

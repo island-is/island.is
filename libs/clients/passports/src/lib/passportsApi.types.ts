@@ -23,6 +23,12 @@ export interface IdentityDocumentChild {
   secondParentName?: string | null
   childName?: string | null
   passports?: IdentityDocument[]
+  citizenship?: Citizenship | null
+}
+
+export interface Citizenship {
+  kodi?: string | null
+  land?: string | null
 }
 
 export interface ContactInfo {
@@ -63,6 +69,8 @@ export interface PreregistrationInput {
   contactInfo?: ContactInfo
   documents?: Document[]
   deliveryName?: string
+  type?: string
+  subType?: string
 }
 
 export interface DocumentLossnInput {
@@ -79,6 +87,8 @@ export interface Passport {
 export type Gender = 'F' | 'M' | 'X'
 
 export type ExpiryStatus = 'EXPIRED' | 'LOST'
+
+export type IdentityDocumentTypes = 'I'
 
 export interface PreregisterResponse {
   success: boolean

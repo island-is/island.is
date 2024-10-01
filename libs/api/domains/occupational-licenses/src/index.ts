@@ -1,1 +1,1 @@
-export { OccupationalLicensesModule } from './lib/occupationalLicenses.module'
+export * from './lib/occupationalLicenses.module'

@@ -25,7 +25,7 @@ import {
   StaticTextObject,
   SubSection,
 } from '@island.is/application/types'
-import { User } from 'user'
+import { User } from '@island.is/shared/types'
 
 const containsArray = (obj: RecordObject) => {
   let contains = false
@@ -39,15 +39,15 @@ const containsArray = (obj: RecordObject) => {
   return contains
 }
 
-export function getErrorViaPath(obj: RecordObject, path: string): string {
+export const getErrorViaPath = (obj: RecordObject, path: string): string => {
   return get(obj, path) as string
 }
 
-export function getValueViaPath<T = unknown>(
+export const getValueViaPath = <T = unknown>(
   obj: RecordObject,
   path: string,
   defaultValue?: T,
-): T | undefined {
+): T | undefined => {
   // Errors from dataSchema with array of object looks like e.g. `{ 'periods[1].startDate': 'error message' }`
   if (path.match(/.\[\d\]\../g) && !containsArray(obj)) {
     return (obj?.[path] ?? defaultValue) as T
@@ -111,12 +111,12 @@ export const getFormNodeLeaves = (node: FormNode): FormLeaf[] => {
   return leaves
 }
 
-export function getSectionsInForm(
+export const getSectionsInForm = (
   form: Form,
   answers: FormValue,
   externalData: ExternalData,
   user: User | null,
-): Section[] {
+): Section[] => {
   const sections: Section[] = []
   form.children.forEach((child) => {
     const shouldShowSection = shouldShowFormItem(
@@ -131,12 +131,13 @@ export function getSectionsInForm(
   })
   return sections
 }
-export function getSubSectionsInSection(
+
+export const getSubSectionsInSection = (
   section: Section,
   answers: FormValue,
   externalData: ExternalData,
   user: User | null,
-): SubSection[] {
+): SubSection[] => {
   const subSections: SubSection[] = []
   section?.children.forEach((child) => {
     const shouldShowSection = shouldShowFormItem(
@@ -152,10 +153,10 @@ export function getSubSectionsInSection(
   return subSections
 }
 
-export function findSectionIndex(
+export const findSectionIndex = (
   sections: Section[],
   section: Section,
-): number {
+): number => {
   if (!sections.length) {
     return -1
   }
@@ -167,10 +168,10 @@ export function findSectionIndex(
   return -1
 }
 
-export function findSubSectionIndex(
+export const findSubSectionIndex = (
   subSections: SubSection[],
   subSection: SubSection,
-): number {
+): number => {
   for (let i = 0; i < subSections.length; i++) {
     if (subSections[i].id === subSection.id) {
       return i
@@ -214,10 +215,10 @@ const overwriteArrayMerge = (
   return destination
 }
 
-export function mergeAnswers(
+export const mergeAnswers = (
   currentAnswers: RecordObject<any>,
   newAnswers: RecordObject<any>,
-): FormValue {
+): FormValue => {
   return deepmerge(currentAnswers, newAnswers, {
     arrayMerge: overwriteArrayMerge,
   })
@@ -241,11 +242,11 @@ const handleMessageFormatting = (
   return formatMessage(descriptor, values)
 }
 
-export function formatText<T extends FormTextArray | FormText>(
+export const formatText = <T extends FormTextArray | FormText>(
   text: T,
   application: Application,
   formatMessage: MessageFormatter,
-): T extends FormTextArray ? string[] : string {
+): T extends FormTextArray ? string[] : string => {
   if (typeof text === 'function') {
     const message = (text as (_: Application) => StaticText | StaticText[])(
       application,
@@ -277,18 +278,18 @@ export function formatText<T extends FormTextArray | FormText>(
   return formatMessage(text) as T extends FormTextArray ? string[] : string
 }
 
-export function formatAndParseAsHTML(
+export const formatAndParseAsHTML = (
   text: FormText,
   application: Application,
   formatMessage: MessageFormatter,
-): React.ReactElement[] {
+) => {
   return HtmlParser(formatText(text, application, formatMessage))
 }
 
 // periods[3].startDate -> 3
 // notPartOfRepeater -> -1
 // periods[5ab33f1].id -> -1
-export function extractRepeaterIndexFromField(field: Field): number {
+export const extractRepeaterIndexFromField = (field: Field): number => {
   if (!field?.isPartOfRepeater) {
     return -1
   }

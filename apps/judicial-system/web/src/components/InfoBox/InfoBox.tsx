@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import cn from 'classnames'
 
 import { Box, Icon, Text } from '@island.is/island-ui/core'
@@ -12,13 +12,13 @@ interface Props {
   light?: boolean
 }
 
-const InfoBox: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const InfoBox: FC<Props> = ({ text, onDismiss, fluid, light }) => {
   return (
     <div
       data-testid="infobox"
       className={cn(styles.infoBoxContainer, {
-        [styles.fluid]: props.fluid,
-        [styles.light]: props.light,
+        [styles.fluid]: fluid,
+        [styles.light]: light,
       })}
     >
       <Box display="flex" justifyContent="spaceBetween">
@@ -31,14 +31,14 @@ const InfoBox: React.FC<React.PropsWithChildren<Props>> = (props) => {
           >
             <Icon type="filled" color="blue400" icon="informationCircle" />
           </Box>
-          <Text variant="small">{props.text}</Text>
+          <Text variant="small">{text}</Text>
         </Box>
-        {props.onDismiss && (
+        {onDismiss && (
           <Box
             component="button"
             aria-label="Hætta við"
             className={styles.trashButton}
-            onClick={props.onDismiss}
+            onClick={onDismiss}
           >
             <Icon icon="trash" type="outline" color="blue400" />
           </Box>

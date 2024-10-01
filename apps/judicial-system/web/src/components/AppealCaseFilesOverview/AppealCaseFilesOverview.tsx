@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import router from 'next/router'
@@ -127,7 +127,6 @@ const AppealCaseFilesOverview = () => {
               <PdfButton
                 key={file.id}
                 renderAs="row"
-                caseId={workingCase.id}
                 title={file.name}
                 disabled={isDisabled}
                 handleClick={() => onOpen(file.id)}

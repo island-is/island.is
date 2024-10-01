@@ -12,7 +12,7 @@ import { StatisticsForm } from '../../components/StatisticsForm/StatisticsForm'
 import { useGetApplicationStatisticsQuery } from '../../queries/overview.generated'
 import { useState } from 'react'
 import StatisticsTable from '../../components/StatisticsTable/StatisticsTable'
-import { startOfMonth } from 'date-fns'
+import startOfMonth from 'date-fns/startOfMonth'
 
 const Statistics = () => {
   const { formatMessage } = useLocale()

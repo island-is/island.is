@@ -1,4 +1,12 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
@@ -6,7 +14,11 @@ import { motion } from 'framer-motion'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatDate,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import {
   core,
   signedVerdictOverview as m,
@@ -36,7 +48,7 @@ interface Props {
   onSubmit: (updateCase: UpdateCase) => Promise<boolean>
   isSendingNotification: boolean
   isUpdatingCase: boolean
-  setIsModifyingDates: React.Dispatch<React.SetStateAction<boolean>>
+  setIsModifyingDates: Dispatch<SetStateAction<boolean>>
 }
 
 export const createCaseModifiedExplanation = (
@@ -56,7 +68,7 @@ export const createCaseModifiedExplanation = (
     date: capitalize(formatDate(now, 'PPPP', true) || ''),
     time: formatDate(now, constants.TIME_FORMAT),
     userName: userName ?? '',
-    userTitle: userTitle ?? '',
+    userTitle: lowercase(userTitle),
     institutionName: institutionName ?? '',
     explanation: nextExplanation,
   })}`
@@ -155,7 +167,7 @@ const getModificationSuccessText = (
   })
 }
 
-const ModifyDatesModal: React.FC<React.PropsWithChildren<Props>> = ({
+const ModifyDatesModal: FC<Props> = ({
   workingCase,
   onSubmit,
   isSendingNotification,

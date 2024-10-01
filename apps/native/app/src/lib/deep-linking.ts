@@ -8,7 +8,7 @@ import {
   NotificationMessage,
 } from '../graphql/types/schema'
 import { ComponentRegistry, MainBottomTabs } from '../utils/component-registry'
-import { openBrowser } from './rn-island'
+import { openNativeBrowser } from './rn-island'
 
 export type RouteCallbackArgs =
   | boolean
@@ -186,16 +186,18 @@ export function navigateTo(url: string, extraProps: any = {}) {
 }
 
 /**
- * Navigate to a notification ClickActionUrl, if our mapping does not return a valid screen within the app - open a webview.
+ * Navigate to a specific universal link, if our mapping does not return a valid screen within the app - open a webview.
  */
-export function navigateToNotification({
+export function navigateToUniversalLink({
   link,
   componentId,
+  openBrowser = openNativeBrowser,
 }: {
   // url to navigate to
   link?: NotificationMessage['link']['url']
   // componentId to open web browser in
   componentId?: string
+  openBrowser?: (link: string, componentId?: string) => void
 }) {
   // If no link do nothing
   if (!link) return
@@ -217,12 +219,13 @@ export function navigateToNotification({
     })
   }
 
-  void openBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
+  openBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
 }
 
 // Map between notification link and app screen
 const urlMapping: { [key: string]: string } = {
   '/minarsidur/postholf/:id': '/inbox/:id',
+  '/minarsidur/postholf': '/inbox',
   '/minarsidur/min-gogn/stillingar': '/settings',
   '/minarsidur/skirteini': '/wallet',
   '/minarsidur/skirteini/tjodskra/vegabref/:id': '/walletpassport/:id',

@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -35,7 +35,7 @@ interface CasesAwaitingConfirmationTableProps {
   onContextMenuDeleteClick: (id: string) => void
 }
 
-const CasesAwaitingConfirmationTable: React.FC<
+const CasesAwaitingConfirmationTable: FC<
   CasesAwaitingConfirmationTableProps
 > = (props) => {
   const { loading, isFiltering, cases, onContextMenuDeleteClick } = props
@@ -58,14 +58,14 @@ const CasesAwaitingConfirmationTable: React.FC<
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendant' },
+                  sortable: { isSortable: true, key: 'defendants' },
                 },
                 {
                   title: formatMessage(tables.type),
                 },
                 {
                   title: capitalize(formatMessage(tables.created)),
-                  sortable: { isSortable: true, key: 'createdAt' },
+                  sortable: { isSortable: true, key: 'created' },
                 },
                 { title: formatMessage(tables.state) },
                 {

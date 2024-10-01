@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 
 import { Box, Tag } from '@island.is/island-ui/core'
 import { getShortRestrictionByValue } from '@island.is/judicial-system/formatters'
@@ -14,9 +14,7 @@ interface Props {
   workingCase: Case
 }
 
-const RestrictionTags: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { workingCase } = props
-
+const RestrictionTags: FC<Props> = ({ workingCase }) => {
   return (
     <>
       {isAcceptingCaseDecision(workingCase.decision) &&

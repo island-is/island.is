@@ -17,24 +17,28 @@ import {
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
   isTrafficViolationCase,
+  SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
 import {
+  Confirmation,
   createCaseFilesRecord,
   createIndictment,
+  createSubpoena,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
-  IndictmentConfirmation,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
+import { Defendant } from '../defendant'
+import { Subpoena } from '../subpoena'
 import { UserService } from '../user'
 import { Case } from './models/case.model'
 
 @Injectable()
-export class PDFService {
+export class PdfService {
   private throttle = Promise.resolve(Buffer.from(''))
 
   constructor(
@@ -75,7 +79,7 @@ export class PDFService {
       ?.filter(
         (caseFile) =>
           caseFile.policeCaseNumber === policeCaseNumber &&
-          caseFile.category === CaseFileCategory.CASE_FILE &&
+          caseFile.category === CaseFileCategory.CASE_FILE_RECORD &&
           caseFile.type === 'application/pdf' &&
           caseFile.key &&
           caseFile.chapter !== null &&
@@ -203,7 +207,7 @@ export class PDFService {
       )
     }
 
-    let confirmation: IndictmentConfirmation | undefined = undefined
+    let confirmation: Confirmation | undefined = undefined
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       if (theCase.indictmentHash) {
@@ -284,5 +288,26 @@ export class PDFService {
     )
 
     return await this.throttle
+  }
+
+  async getSubpoenaPdf(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena?: Subpoena,
+    arraignmentDate?: Date,
+    location?: string,
+    subpoenaType?: SubpoenaType,
+  ): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
+    return createSubpoena(
+      theCase,
+      defendant,
+      this.formatMessage,
+      subpoena,
+      arraignmentDate,
+      location,
+      subpoenaType,
+    )
   }
 }

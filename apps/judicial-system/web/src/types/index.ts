@@ -1,6 +1,7 @@
 import { CourtDocument, SubstanceMap } from '@island.is/judicial-system/types'
 import {
   Case,
+  CaseListEntry,
   IndictmentCount,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -18,11 +19,7 @@ export enum LoginErrorCodes {
 }
 
 export type directionType = 'ascending' | 'descending'
-export type sortableTableColumn =
-  | 'defendant'
-  | 'createdAt'
-  | 'courtDate'
-  | 'appealedDate'
+export type sortableTableColumn = keyof CaseListEntry
 
 export interface SortConfig {
   column: sortableTableColumn

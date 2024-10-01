@@ -4,6 +4,7 @@
   "sourceRoot": "apps/financial-aid/open-api/src",
   "projectType": "application",
   "prefix": "financial-aid-open-api",
+  "tags": ["scope:financial-aid-open-api"],
   "generators": {},
   "targets": {
     "build": {
@@ -30,16 +31,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/financial-aid/open-api/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/financial-aid/open-api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/financial-aid/open-api/jest.config.ts"
       }
     },
     "codegen/backend-schema": {
@@ -49,7 +46,8 @@
       },
       "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:financial-aid-open-api"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

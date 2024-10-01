@@ -1,10 +1,22 @@
 import {
   json,
+  ref,
   service,
   ServiceBuilder,
-  ref,
 } from '../../../../../infra/src/dsl/dsl'
 import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
+
+const REDIS_NODE_CONFIG = {
+  dev: json([
+    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+  ]),
+  staging: json([
+    'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+  ]),
+  prod: json([
+    'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+  ]),
+}
 
 export const serviceSetup = (services: {
   userNotification: ServiceBuilder<'user-notification'>
@@ -29,39 +41,33 @@ export const serviceSetup = (services: {
         staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
         prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
       },
-      XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
-        dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        ]),
-        staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        ]),
-        prod: json([
-          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
-        ]),
-      },
-      XROAD_RSK_PROCURING_REDIS_NODES: {
-        dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        ]),
-        staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        ]),
-        prod: json([
-          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
-        ]),
-      },
+      XROAD_NATIONAL_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
+      XROAD_RSK_PROCURING_REDIS_NODES: REDIS_NODE_CONFIG,
       USER_NOTIFICATION_API_URL: {
         dev: ref((h) => `http://${h.svc(services.userNotification)}`),
         staging: ref((h) => `http://${h.svc(services.userNotification)}`),
         prod: 'https://user-notification.internal.island.is',
       },
+      COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+        dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
+        staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+        prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+      },
+      COMPANY_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
+      SYSLUMENN_HOST: {
+        dev: 'https://api.syslumenn.is/staging',
+        staging: 'https://api.syslumenn.is/staging',
+        prod: 'https://api.syslumenn.is/api',
+      },
+      SYSLUMENN_TIMEOUT: '3000',
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
       NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+      SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
     })
     .xroad(Base, Client, RskProcuring)
     .readiness('/health/check')
@@ -92,5 +98,10 @@ export const serviceSetup = (services: {
         public: false,
       },
     })
-    .grantNamespaces('nginx-ingress-internal', 'islandis', 'service-portal')
+    .grantNamespaces(
+      'nginx-ingress-internal',
+      'islandis',
+      'service-portal',
+      'user-notification-worker',
+    )
 }

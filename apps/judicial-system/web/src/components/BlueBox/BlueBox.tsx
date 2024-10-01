@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC, PropsWithChildren } from 'react'
 import cn from 'classnames'
 
 import { TestSupport } from '@island.is/island-ui/utils'
@@ -16,9 +16,7 @@ interface Props {
   dataTestId?: string
 }
 
-const BlueBox: React.FC<React.PropsWithChildren<Props & TestSupport>> = (
-  props,
-) => {
+const BlueBox: FC<PropsWithChildren<Props & TestSupport>> = (props) => {
   const { children, size = 'large', justifyContent, height, dataTestId } = props
 
   return (

@@ -3,14 +3,13 @@ import { Image } from 'react-native'
 import styled from 'styled-components/native'
 import chevronForward from '../../assets/icons/chevron-forward.png'
 import { dynamicColor } from '../../utils'
-import { font } from '../../utils/font'
 import { Avatar } from '../avatar/avatar'
+import { Typography } from '../typography/typography'
 
 const Host = styled.View`
   display: flex;
   flex-direction: row;
-  padding: ${({ theme }) => theme.spacing[3]}px;
-  padding-right: ${({ theme }) => theme.spacing[1]}px;
+  padding: ${({ theme }) => theme.spacing[2]}px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${dynamicColor(
@@ -29,28 +28,16 @@ const Content = styled.View`
 `
 
 const ImageWrap = styled.View`
-  margin-right: ${({ theme }) => theme.spacing[3]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
 `
 
-const Title = styled.Text`
+const Title = styled(Typography)`
   padding-right: ${({ theme }) => theme.spacing[1]}px;
-  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
-
-  ${font({
-    fontWeight: '600',
-    lineHeight: 24,
-    fontSize: 18,
-  })}
+  margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
-const Text = styled.Text`
+const Text = styled(Typography)`
   padding-right: ${({ theme }) => theme.spacing[2]}px;
-
-  ${font({
-    fontWeight: '300',
-    lineHeight: 24,
-    fontSize: 16,
-  })}
 `
 
 const Icon = styled.View`
@@ -65,11 +52,13 @@ interface FamilyMemberCardProps {
 export function FamilyMemberCard({ name, nationalId }: FamilyMemberCardProps) {
   return (
     <Host>
-      <ImageWrap>
-        <Avatar name={name} isSmall />
-      </ImageWrap>
+      {name.length ? (
+        <ImageWrap>
+          <Avatar name={name} isSmall />
+        </ImageWrap>
+      ) : null}
       <Content>
-        <Title>{name}</Title>
+        <Title variant="heading5">{name}</Title>
         <Text>{nationalId}</Text>
       </Content>
       <Icon>

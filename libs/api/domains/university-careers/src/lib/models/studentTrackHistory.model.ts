@@ -1,8 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { StudentTrackTranscriptResult } from './studentTrackTranscriptResult.model'
+import { StudentTrackTranscriptError } from './studentTrackTranscriptError.model'
+import { StudentTrackTranscript } from './studentTrackTranscript.model'
 
 @ObjectType('UniversityCareersStudentTrackHistory')
 export class StudentTrackHistory {
-  @Field(() => [StudentTrackTranscriptResult])
-  trackResults!: Array<typeof StudentTrackTranscriptResult>
+  @Field(() => [StudentTrackTranscript])
+  transcripts!: Array<StudentTrackTranscript>
+
+  @Field(() => [StudentTrackTranscriptError], { nullable: true })
+  errors?: Array<StudentTrackTranscriptError>
 }

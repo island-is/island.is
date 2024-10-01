@@ -20,7 +20,7 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import { config } from '../../config'
-import { openBrowser } from '../../lib/rn-island'
+import { openNativeBrowser } from '../../lib/rn-island'
 import { cognitoAuthUrl, configs } from './config-switcher'
 
 const apolloConfig = {
@@ -142,14 +142,14 @@ export const CognitoAuthScreen: NavigationFunctionComponent = ({
       </Text>
       <Button
         onPress={() => {
-          openBrowser(cognitoAuthUrl(), componentId)
+          openNativeBrowser(cognitoAuthUrl(), componentId)
         }}
         title="Cognito Login"
       />
       <Button
         title="test"
         onPress={() => {
-          openBrowser(
+          openNativeBrowser(
             'https://auth.shared.devland.is/dev/oauth2/start?rd=https%3A%2F%2Fbeta.dev01.devland.is/',
             componentId,
           )

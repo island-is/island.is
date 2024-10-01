@@ -28,11 +28,13 @@ export const notificationMapper = (
   },
   message: {
     title: cleanString(notification.title),
-    body: cleanString(notification.body),
-    dataCopy: notification.dataCopy
-      ? cleanString(notification.dataCopy)
+    body: cleanString(notification.externalBody),
+    dataCopy: notification.internalBody
+      ? cleanString(notification.internalBody)
       : undefined,
-    displayBody: cleanString(notification.dataCopy ?? notification.body),
+    displayBody: cleanString(
+      notification.internalBody ?? notification.externalBody,
+    ),
     link: {
       url: notification.clickActionUrl,
     },

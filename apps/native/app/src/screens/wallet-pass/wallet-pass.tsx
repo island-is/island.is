@@ -71,6 +71,7 @@ const LicenseCardWrapper = styled(SafeAreaView)`
   left: 0;
   right: 0;
   z-index: 100;
+  elevation: 100;
 `
 
 const ButtonWrapper = styled(SafeAreaView)<{ floating?: boolean }>`
@@ -100,7 +101,7 @@ const LoadingOverlay = styled.View`
   z-index: 999;
 
   background-color: #000;
-  opacity: 0.25;
+  opacity: ${({ theme }) => (theme.isDark ? 0.6 : 0.4)};
   width: 100%;
   height: 100%;
 `
@@ -443,8 +444,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         <LoadingOverlay>
           <ActivityIndicator
             size="large"
-            color="#0061FF"
-            style={{ marginTop: 32 }}
+            color={theme.color.white}
+            style={{ marginTop: theme.spacing[4] }}
           />
         </LoadingOverlay>
       )}

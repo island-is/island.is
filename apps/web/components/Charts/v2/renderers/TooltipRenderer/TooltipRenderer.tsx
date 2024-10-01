@@ -1,10 +1,12 @@
+import { useMemo } from 'react'
 import { Tooltip, TooltipProps } from 'recharts'
 
 import { theme } from '@island.is/island-ui/theme'
 import { Chart } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
-import { ChartComponentWithRenderProps } from '../../types'
+import { messages } from '../../messages'
+import { ChartComponentWithRenderProps, CustomStyleConfig } from '../../types'
 import { formatValueForPresentation } from '../../utils'
 import * as style from './TooltipRenderer.css'
 
@@ -22,6 +24,14 @@ export const CustomTooltipRenderer = (props: CustomTooltipProps) => {
 
   const { activeLocale } = useI18n()
 
+  const customStyleConfig = useMemo(() => {
+    if (!props.slice.customStyleConfig) {
+      return {}
+    }
+
+    return JSON.parse(props.slice.customStyleConfig)
+  }, [props.slice.customStyleConfig]) as CustomStyleConfig
+
   if (!isActive) {
     return null
   }
@@ -34,7 +44,7 @@ export const CustomTooltipRenderer = (props: CustomTooltipProps) => {
         </p>
       )}
       <ul>
-        {payload.map((item, i) => {
+        {payload.map((item) => {
           const key = item?.payload?.key ?? item.dataKey
           let labelColor = theme.color.dark400
 
@@ -52,6 +62,26 @@ export const CustomTooltipRenderer = (props: CustomTooltipProps) => {
             labelColor = theme.color.blue400
           }
 
+          const value =
+            typeof item.value === 'number' || item.value
+              ? formatValueForPresentation(
+                  activeLocale,
+                  item.value,
+                  props.slice.reduceAndRoundValue ?? true,
+                  1,
+                )
+              : ''
+
+          const fractionSeparator =
+            messages[activeLocale].fractionSeparator ?? ','
+
+          const postfix =
+            !props.slice.reduceAndRoundValue &&
+            customStyleConfig.tooltip?.appendFractionToIntegers &&
+            Number.isInteger(item.value)
+              ? `${fractionSeparator}0`
+              : ''
+
           return (
             <li>
               <span
@@ -61,15 +91,8 @@ export const CustomTooltipRenderer = (props: CustomTooltipProps) => {
               >
                 {item.name}
               </span>
-              :{' '}
-              {item.value
-                ? formatValueForPresentation(
-                    activeLocale,
-                    item.value,
-                    props.slice.reduceAndRoundValue ?? true,
-                    1,
-                  )
-                : ''}
+              : {value}
+              {postfix}
             </li>
           )
         })}

@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage } from '@island.is/island-ui/core'
@@ -10,9 +10,7 @@ interface Props {
   explanation: string
 }
 
-const CaseResentExplanation: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
+const CaseResentExplanation: FC<Props> = (props) => {
   const { explanation } = props
   const { formatMessage } = useIntl()
 

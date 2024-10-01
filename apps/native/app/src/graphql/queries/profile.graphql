@@ -13,6 +13,15 @@ query GetProfile {
   }
 }
 
+query GetFrontPageImage($input: GetFrontpageInput!) {
+  getFrontpage(input: $input) {
+    imageMobile {
+      title
+      url
+    }
+  }
+}
+
 mutation UpdateProfile($input: UpdateUserProfileInput!) {
   updateProfile(input: $input) {
     nationalId

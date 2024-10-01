@@ -29,6 +29,7 @@ import {
   CaseState,
   CaseType,
   CourtDocument,
+  CourtSessionType,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
@@ -36,15 +37,15 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Defendant } from '../../defendant'
+import { CivilClaimant, Defendant } from '../../defendant'
 import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { Notification } from '../../notification'
 import { User } from '../../user'
+import { CaseString } from './caseString.model'
 import { DateLog } from './dateLog.model'
-import { ExplanatoryComment } from './explanatoryComment.model'
 
 @Table({
   tableName: 'case',
@@ -180,7 +181,7 @@ export class Case extends Model {
   requestSharedWithDefender?: RequestSharedWithDefender
 
   /**********
-   * Indicates whether the secutity level of the case has been heightened -
+   * Indicates whether the security level of the case has been heightened -
    * optional
    **********/
   @Column({ type: DataType.BOOLEAN, allowNull: true })
@@ -900,11 +901,11 @@ export class Case extends Model {
   dateLogs?: DateLog[]
 
   /**********
-   * The case's explanatory comments
+   * The case's strings
    **********/
-  @HasMany(() => ExplanatoryComment, 'caseId')
-  @ApiPropertyOptional({ type: ExplanatoryComment, isArray: true })
-  explanatoryComments?: ExplanatoryComment[]
+  @HasMany(() => CaseString, 'caseId')
+  @ApiPropertyOptional({ type: CaseString, isArray: true })
+  caseStrings?: CaseString[]
 
   /**********
    * The appeal ruling expiration date and time - example: the end of custody in custody cases -
@@ -1033,4 +1034,52 @@ export class Case extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   indictmentHash?: string
+
+  /**********
+   * The court session type in indictment cases - example: MAIN_HEARING
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CourtSessionType),
+  })
+  @ApiPropertyOptional({ enum: CourtSessionType })
+  courtSessionType?: CourtSessionType
+
+  /**********
+   * The surrogate key of the case an indictment was merged in to - only used if the has been merged
+   **********/
+  @ForeignKey(() => Case)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  mergeCaseId?: string
+
+  /**********
+   * The case this was merged in to - only used if the case was merged
+   **********/
+  @BelongsTo(() => Case, 'mergeCaseId')
+  @ApiPropertyOptional({ type: () => Case })
+  mergeCase?: Case
+
+  // /**********
+  //  * The cases that have been merged in to the current case - only used if the case was merged
+  //  **********/
+  @HasMany(() => Case, 'mergeCaseId')
+  @ApiPropertyOptional({ type: () => Case })
+  mergedCases?: Case[]
+
+  /**********
+   * Indicates whether a case should include any civil claims -
+   * optional
+   **********/
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  hasCivilClaims?: boolean
+
+  // /**********
+  //  * The case's civil claimants
+  //  **********/
+  @HasMany(() => CivilClaimant, 'caseId')
+  @ApiPropertyOptional({ type: () => CivilClaimant, isArray: true })
+  civilClaimants?: CivilClaimant[]
 }

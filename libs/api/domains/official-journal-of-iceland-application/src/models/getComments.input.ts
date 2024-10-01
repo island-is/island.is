@@ -1,7 +1,7 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, ID, InputType } from '@nestjs/graphql'
 
 @InputType('OfficialJournalOfIcelandApplicationGetCommentsInput')
 export class GetCommentsInput {
-  @Field(() => String)
+  @Field(() => ID)
   id!: string
 }

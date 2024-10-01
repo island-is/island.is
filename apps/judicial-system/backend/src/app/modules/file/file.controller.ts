@@ -37,6 +37,7 @@ import {
   prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../guards'
 import {
   Case,
@@ -48,6 +49,7 @@ import {
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
+import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
@@ -127,12 +129,14 @@ export class FileController {
     RolesGuard,
     CaseExistsGuard,
     CaseReadGuard,
+    MergedCaseExistsGuard,
     CaseFileExistsGuard,
     ViewCaseFileGuard,
   )
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
@@ -141,7 +145,7 @@ export class FileController {
     courtOfAppealsAssistantRule,
     prisonSystemStaffRule,
   )
-  @Get('file/:fileId/url')
+  @Get(['file/:fileId/url', 'mergedCase/:mergedCaseId/file/:fileId/url'])
   @ApiOkResponse({
     type: SignedUrl,
     description: 'Gets a signed url for a case file',

@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 
@@ -7,7 +7,7 @@ interface Props {
   smallText?: string
 }
 
-const BigTextSmallText: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const BigTextSmallText: FC<Props> = (props) => {
   const { bigText, smallText } = props
 
   return (

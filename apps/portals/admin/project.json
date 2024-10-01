@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/portals/admin/src",
   "projectType": "application",
+  "tags": ["scope:portals-admin"],
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
@@ -69,18 +70,13 @@
       ]
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/portals/admin/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/portals/admin"],
       "options": {
-        "jestConfig": "apps/portals/admin/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/portals/admin/jest.config.ts"
       }
     },
     "extract-strings": {
@@ -103,7 +99,8 @@
         "parallel": true
       }
     },
-    "docker-static": {}
-  },
-  "tags": ["scope:portals-admin"]
+    "docker-static": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-static`"
+    }
+  }
 }

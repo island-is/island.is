@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -15,9 +15,7 @@ interface Props {
   files?: CaseFile[] | null
 }
 
-const ParentCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
-  files,
-}) => {
+const ParentCaseFiles: FC<Props> = ({ files }) => {
   const { formatMessage } = useIntl()
 
   if (!files || files.length < 1) {

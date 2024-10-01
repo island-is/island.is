@@ -7,9 +7,11 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
+import { IndictmentDecision } from '@island.is/judicial-system/types'
+
 import { Case } from '../models/case.model'
+import { CaseString } from '../models/caseString.model'
 import { DateLog } from '../models/dateLog.model'
-import { ExplanatoryComment } from '../models/explanatoryComment.model'
 
 @Injectable()
 export class CaseListInterceptor implements NestInterceptor {
@@ -31,9 +33,11 @@ export class CaseListInterceptor implements NestInterceptor {
             courtCaseNumber: theCase.courtCaseNumber,
             decision: theCase.decision,
             validToDate: theCase.validToDate,
-            courtDate:
-              DateLog.courtDate(theCase.dateLogs)?.date ??
-              DateLog.arraignmentDate(theCase.dateLogs)?.date,
+            courtDate: theCase.indictmentDecision
+              ? theCase.indictmentDecision === IndictmentDecision.SCHEDULING
+                ? DateLog.courtDate(theCase.dateLogs)?.date
+                : undefined
+              : DateLog.arraignmentDate(theCase.dateLogs)?.date,
             initialRulingDate: theCase.initialRulingDate,
             rulingDate: theCase.rulingDate,
             rulingSignatureDate: theCase.rulingSignatureDate,
@@ -53,13 +57,13 @@ export class CaseListInterceptor implements NestInterceptor {
             appealRulingDecision: theCase.appealRulingDecision,
             prosecutorsOffice: theCase.prosecutorsOffice,
             postponedIndefinitelyExplanation:
-              ExplanatoryComment.postponedIndefinitelyExplanation(
-                theCase.explanatoryComments,
-              )?.comment,
+              CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
             indictmentReviewer: theCase.indictmentReviewer,
             indictmentReviewDecision: theCase.indictmentReviewDecision,
             indictmentDecision: theCase.indictmentDecision,
             indictmentRulingDecision: theCase.indictmentRulingDecision,
+            courtSessionType: theCase.courtSessionType,
+            eventLogs: theCase.eventLogs,
           }
         }),
       ),

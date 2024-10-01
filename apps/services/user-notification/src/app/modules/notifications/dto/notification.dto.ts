@@ -95,17 +95,12 @@ export class RenderedNotificationDto {
 
   @ApiProperty({ example: 'Compelling nofication body' })
   @IsString()
-  body!: string
+  externalBody!: string
 
   @ApiPropertyOptional({ example: 'Extra body text for further viewing' })
   @IsString()
   @IsOptional()
-  dataCopy?: string
-
-  @ApiPropertyOptional({ example: '//inbox/document-uuid' })
-  @IsString()
-  @IsOptional()
-  clickAction?: string
+  internalBody?: string
 
   @ApiPropertyOptional({ example: 'https://island.is/minarsidur/postholf' })
   @IsString()
@@ -136,17 +131,12 @@ export class Message {
 
   @ApiProperty({ example: 'Notification body text' })
   @IsString()
-  body!: string
+  externalBody!: string
 
   @ApiPropertyOptional({ example: 'Some data copy' })
   @IsOptional()
   @IsString()
-  dataCopy?: string
-
-  @ApiPropertyOptional({ example: 'click/action' })
-  @IsOptional()
-  @IsString()
-  clickAction?: string
+  internalBody?: string
 }
 
 export class PaginatedNotificationDto {

@@ -72,10 +72,10 @@ yarn get-secrets air-discount-scheme-backend
 yarn get-secrets air-discount-scheme-web
 ```
 
-2. Start the resources with docker-compose and migrate/seed the database:
+2. Start the resources with docker compose and migrate/seed the database:
 
 ```bash
-docker-compose -f apps/air-discount-scheme/backend/docker-compose.yml up
+docker compose -f apps/air-discount-scheme/backend/docker-compose.yml up
 ```
 
 ```bash
@@ -104,7 +104,7 @@ yarn start air-discount-scheme-backend
 
 6. Check Contentful and AWS
 
-Login here https://island-is.awsapps.com/start#/ (Contact devops if you need access)
+Login here <https://island-is.awsapps.com/start#/> (Contact devops if you need access)
 Copy env variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (image arrows 1,2,3)
 Paste env variables into terminal
 Run `./scripts/run-es-proxy.sh` from island.is root

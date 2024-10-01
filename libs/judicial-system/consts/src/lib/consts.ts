@@ -5,7 +5,7 @@ export const EXPIRES_IN_MILLISECONDS = EXPIRES_IN_SECONDS * 1000
 export const CSRF_COOKIE_NAME = 'judicial-system.csrf'
 export const ACCESS_TOKEN_COOKIE_NAME = 'judicial-system.token'
 export const CODE_VERIFIER_COOKIE_NAME = 'judicial-system.code_verifier'
-export const IDS_ID_TOKEN = 'judicial-system.ids.id_token'
+export const IDS_ID_TOKEN_NAME = 'judicial-system.ids.id_token'
 
 export const InvestigationCaseTypes = [
   {
@@ -90,6 +90,7 @@ export const TIME_FORMAT = 'HH:mm'
 export const DEFENDER_CASES_ROUTE = '/verjandi/krofur'
 export const DEFENDER_ROUTE = '/verjandi/krafa'
 export const DEFENDER_INDICTMENT_ROUTE = '/verjandi/akaera'
+export const DEFENDER_ADD_FILES_ROUTE = '/verjandi/akaera/gogn'
 
 export const DEFENDER_APPEAL_ROUTE = '/verjandi/kaera'
 export const DEFENDER_APPEAL_FILES_ROUTE = '/verjandi/kaera/gogn'
@@ -100,6 +101,13 @@ export const DEFENDER_STATEMENT_ROUTE = '/verjandi/greinargerd'
 export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE =
   '/rikissaksoknari/akaera/yfirlit'
 //#endregion Public prosecutor user routes
+
+//#region Prison user routes
+export const PRISON_CASES_ROUTE = '/fangelsi/krofur'
+export const PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE = '/fangelsi/krafa/yfirlit'
+export const PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE =
+  '/fangelsi/akaera/yfirlit'
+//#endregion Prison user routes
 
 //#region Court of appeals user routes
 export const COURT_OF_APPEAL_OVERVIEW_ROUTE = '/landsrettur/yfirlit'
@@ -182,6 +190,7 @@ export const INDICTMENTS_TRAFFIC_VIOLATION_ROUTE = '/akaera/akaera'
 export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
+export const INDICTMENTS_ADD_FILES_ROUTE = '/akaera/gogn'
 //#endregion Prosecutor user routes
 
 //#region Admin user routes

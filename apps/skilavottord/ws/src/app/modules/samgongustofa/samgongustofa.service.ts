@@ -1,12 +1,16 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common'
 import { HttpService } from '@nestjs/axios'
+import { forwardRef, Inject, Injectable } from '@nestjs/common'
 import { lastValueFrom } from 'rxjs'
 import * as xml2js from 'xml2js'
 
 import { environment } from '../../../environments'
 import { RecyclingRequestService } from '../recyclingRequest'
-import { VehicleInformation } from './samgongustofa.model'
+import { Traffic, VehicleInformation } from './samgongustofa.model'
+
 import { logger } from '@island.is/logging'
+import { TransportService } from './transport/transport.service'
+import { ApiVersion } from '../../utils/const'
+import { getShortPermno } from '../../utils/skilavottordUtils'
 
 @Injectable()
 export class SamgongustofaService {
@@ -14,8 +18,15 @@ export class SamgongustofaService {
     private httpService: HttpService,
     @Inject(forwardRef(() => RecyclingRequestService))
     private recyclingRequestService: RecyclingRequestService,
+    private transportService: TransportService,
   ) {}
 
+  /**
+   *
+   * @param nationalId
+   * @deprecated
+   * @returns
+   */
   async getUserVehiclesInformation(
     nationalId: string,
   ): Promise<VehicleInformation[]> {
@@ -306,6 +317,9 @@ export class SamgongustofaService {
     }
   }
 
+  /**
+   * @deprecated
+   */
   async getUserVehicle(
     nationalId: string,
     permno: string,
@@ -320,5 +334,92 @@ export class SamgongustofaService {
       return car.isRecyclable ? car : null
     }
     return car
+  }
+
+  async getTraffic(permno: string): Promise<Traffic> {
+    try {
+      const url = this.transportService.getRegistrationURL()
+
+      const result = await this.transportService.doGet(
+        url,
+        url + 'traffic/' + permno,
+        ApiVersion.REGISTRATIONS,
+      )
+
+      if (result.status === 200) {
+        if (result.data.length) {
+          // Get the latest registered traffic data
+          const traffic = Object.values(result.data).reduce(
+            (prev: Traffic, current: Traffic) =>
+              new Date(prev.useDate) > new Date(current.useDate)
+                ? prev
+                : current,
+            {} as Traffic,
+          ) as Traffic
+
+          logger.info(
+            `car-recycling: Got traffic data for ${getShortPermno(permno)}`,
+            {
+              permno: getShortPermno(traffic.permno),
+              outInStatus: traffic.outInStatus,
+              useStatus: traffic.useStatus,
+              useStatusName: traffic.useStatusName,
+            },
+          )
+
+          //
+          if (!traffic.outInStatus) {
+            logger.warn(
+              `car-recycling: No traffic data being returned for ${getShortPermno(
+                permno,
+              )}`,
+              { dataFromServer: result.data },
+            )
+          }
+
+          return traffic
+        }
+
+        logger.warn(
+          `car-recycling: No traffic data found for ${getShortPermno(permno)}`,
+        )
+
+        return {
+          permno,
+          outInStatus: '',
+          useStatus: '',
+          useStatusName: '',
+        } as Traffic
+      }
+
+      throw new Error(
+        `car-recycling: #1 Failed on getTraffic ${getShortPermno(permno)}`,
+      )
+    } catch (err) {
+      throw new Error(
+        `car-recycling: #2 Failed on getTraffic ${getShortPermno(
+          permno,
+        )} because: ${err}`,
+      )
+    }
+  }
+
+  // Get the Vehicle information from Icelandic Transport Authority (Samgöngustofa)
+  async getVehicleInformation(permno: string) {
+    try {
+      const url = this.transportService.getInformationURL()
+
+      return this.transportService.doGet(
+        url,
+        url + 'vehicleinformationmini/' + permno,
+        ApiVersion.INFORMATION,
+      )
+    } catch (err) {
+      throw new Error(
+        `car-recycling: Failed on getVehicleInformation vehicle ${permno.slice(
+          -3,
+        )} because: ${err}`,
+      )
+    }
   }
 }

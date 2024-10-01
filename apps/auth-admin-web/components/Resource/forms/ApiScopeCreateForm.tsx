@@ -254,7 +254,6 @@ const ApiScopeCreateForm: React.FC<React.PropsWithChildren<Props>> = (
                     {...register('apiScope.domainName', {
                       required: true,
                     })}
-                    placeholder={localization.fields['domainName'].placeholder}
                     title={localization.fields['domainName'].helpText}
                   >
                     {domains.map((domain: Domain) => {

@@ -1,4 +1,3 @@
-import React from 'react'
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -7,18 +6,15 @@ import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
   CaseState,
-  CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockJudgeQuery,
-  mockPrisonUserQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { LocaleProvider } from '@island.is/localization'
 
 import Cases from './Cases'
 import { CasesDocument } from './cases.generated'
-import { PrisonCasesDocument } from './prisonCases.generated'
 
 import '@testing-library/jest-dom'
 
@@ -183,42 +179,6 @@ const mockCourtCasesQuery = [
   },
 ]
 
-const mockPrisonUserCasesQuery = [
-  {
-    request: {
-      query: PrisonCasesDocument,
-    },
-    result: {
-      data: {
-        cases: [
-          {
-            id: 'test_id_1',
-            type: CaseType.CUSTODY,
-            created: '2020-05-16T19:50:08.033Z',
-            modified: '2020-09-16T19:51:39.466Z',
-            state: CaseState.ACCEPTED,
-            policeCaseNumbers: ['008-2020-X'],
-            defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
-            isValidToDateInThePast: true,
-            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
-          },
-          {
-            id: 'test_id_2',
-            type: CaseType.CUSTODY,
-            created: '2020-05-16T19:50:08.033Z',
-            modified: '2020-09-16T19:51:39.466Z',
-            state: CaseState.ACCEPTED,
-            policeCaseNumbers: ['008-2020-X'],
-            defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
-            isValidToDateInThePast: false,
-            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
-          },
-        ],
-      },
-    },
-  },
-]
-
 jest.mock('next/router', () => ({
   useRouter() {
     return {
@@ -244,9 +204,7 @@ describe('Cases', () => {
       )
 
       expect(
-        await waitFor(
-          () => screen.getAllByTestId('custody-cases-table-row').length,
-        ),
+        await waitFor(() => screen.getAllByTestId('tableRow').length),
       ).toEqual(5)
     })
 
@@ -282,9 +240,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      expect(
-        (await screen.findAllByTestId('custody-cases-table-row')).length,
-      ).toEqual(5)
+      expect((await screen.findAllByTestId('tableRow')).length).toEqual(5)
     })
   })
 
@@ -362,9 +318,9 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      await user.click(await screen.findByTestId('accusedNameSortButton'))
+      await user.click(await screen.findByTestId('defendantsSortButton'))
 
-      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
+      const tableRows = await screen.findAllByTestId('tableRow')
 
       expect(tableRows[0]).toHaveTextContent('D. M. Kil')
       expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
@@ -388,9 +344,9 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      await user.dblClick(await screen.findByTestId('accusedNameSortButton'))
+      await user.dblClick(await screen.findByTestId('defendantsSortButton'))
 
-      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
+      const tableRows = await screen.findAllByTestId('tableRow')
 
       expect(tableRows[0]).toHaveTextContent('D. M. Kil')
       expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
@@ -414,9 +370,9 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      await user.click(await screen.findByTestId('createdAtSortButton'))
+      await user.click(await screen.findByTestId('createdSortButton'))
 
-      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
+      const tableRows = await screen.findAllByTestId('tableRow')
 
       expect(tableRows[0]).toHaveTextContent('Erlingur L Kristinsson')
       expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
@@ -440,9 +396,9 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      await user.dblClick(await screen.findByTestId('createdAtSortButton'))
+      await user.dblClick(await screen.findByTestId('createdSortButton'))
 
-      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
+      const tableRows = await screen.findAllByTestId('tableRow')
 
       expect(tableRows[0]).toHaveTextContent('Erlingur L Kristinsson')
       expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')

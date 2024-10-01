@@ -1,3 +1,4 @@
+import { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import * as constants from '@island.is/judicial-system/consts'
@@ -11,9 +12,9 @@ export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  setWorkingCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: SetStateAction<Case>) => void,
   errorMessage?: string,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
+  setErrorMessage?: (value: SetStateAction<string>) => void,
 ) => {
   if (value.includes('\t')) {
     value = replaceTabs(value)
@@ -33,7 +34,7 @@ export const removeErrorMessageIfValid = (
   validationsToRun: validations.Validation[],
   value: string,
   errorMessage?: string,
-  errorMessageSetter?: (value: React.SetStateAction<string>) => void,
+  errorMessageSetter?: (value: SetStateAction<string>) => void,
 ) => {
   const isValid = validations.validate([[value, validationsToRun]]).isValid
 
@@ -45,23 +46,24 @@ export const removeErrorMessageIfValid = (
 export const validateAndSetErrorMessage = (
   validationsToRun: validations.Validation[],
   value: string,
-  errorMessageSetter?: (value: React.SetStateAction<string>) => void,
+  errorMessageSetter?: (value: SetStateAction<string>) => void,
 ) => {
   const validation = validations.validate([[value, validationsToRun]])
 
-  if (!validation.isValid && errorMessageSetter) {
+  if (errorMessageSetter) {
     errorMessageSetter(validation.errorMessage)
-    return
   }
+
+  return validation.isValid
 }
 
 export const validateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  setWorkingCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: SetStateAction<Case>) => void,
   errorMessage?: string,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
+  setErrorMessage?: (value: SetStateAction<string>) => void,
 ) => {
   removeErrorMessageIfValid(validations, value, errorMessage, setErrorMessage)
 
@@ -77,11 +79,15 @@ export const validateAndSendToServer = (
   validations: validations.Validation[],
   theCase: Case,
   updateCase: (id: string, updateCase: UpdateCase) => void,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
+  setErrorMessage?: (value: SetStateAction<string>) => void,
 ) => {
-  validateAndSetErrorMessage(validations, value, setErrorMessage)
+  const isValid = validateAndSetErrorMessage(
+    validations,
+    value,
+    setErrorMessage,
+  )
 
-  if (theCase.id !== '') {
+  if (theCase.id !== '' && isValid) {
     updateCase(theCase.id, { [field]: value })
   }
 }
@@ -101,7 +107,7 @@ export const setCheckboxAndSendToServer = (
   field: keyof UpdateCase,
   value: string,
   theCase: Case,
-  setWorkingCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
   const checks = theCase[field as keyof Case]

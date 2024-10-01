@@ -136,7 +136,7 @@ export class FinancialAidService extends BaseTemplateApiService {
 
     const directTaxPayments = () => {
       if (externalData?.taxDataSpouse?.data) {
-        return externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.concat(
+        externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.concat(
           externalData?.taxDataSpouse?.data.municipalitiesDirectTaxPayments
             ?.directTaxPayments,
         )

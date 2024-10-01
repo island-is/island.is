@@ -26,7 +26,7 @@ export const OfflineHoc = ({ children }: OfflineHocProps) => {
       bannerVisible &&
       !bannerHasBeenShown &&
       !isConnected &&
-      lockScreenActivatedAt === null
+      !lockScreenActivatedAt
     ) {
       void impactAsync(ImpactFeedbackStyle.Heavy)
       void Navigation.showOverlay({

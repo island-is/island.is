@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { IconMapIcon } from '@island.is/island-ui/core'
@@ -72,7 +72,7 @@ export const useWithdrawAppealMenuOption = () => {
   }
 }
 
-const WithdrawAppealContextMenuModal: React.FC<WithdrawAppealModalProps> = (
+const WithdrawAppealContextMenuModal: FC<WithdrawAppealModalProps> = (
   props,
 ) => {
   const { caseId, cases, onClose } = props

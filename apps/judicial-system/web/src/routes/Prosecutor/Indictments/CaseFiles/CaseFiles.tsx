@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -25,7 +25,7 @@ import {
 
 import * as strings from './CaseFiles.strings'
 
-const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
+const CaseFiles = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -43,11 +43,6 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
   const stepIsValid =
-    uploadFiles.some(
-      (file) =>
-        file.category === CaseFileCategory.COVER_LETTER &&
-        file.status === 'done',
-    ) &&
     (isTrafficViolationCaseCheck ||
       uploadFiles.some(
         (file) =>
@@ -83,28 +78,6 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={5}>
-          <SectionHeading
-            title={formatMessage(strings.caseFiles.coverLetterSection)}
-            required
-          />
-          <InputFileUpload
-            fileList={uploadFiles.filter(
-              (file) => file.category === CaseFileCategory.COVER_LETTER,
-            )}
-            accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
-            onChange={(files) =>
-              handleUpload(
-                addUploadFiles(files, CaseFileCategory.COVER_LETTER),
-                updateUploadFile,
-              )
-            }
-            onRemove={(file) => handleRemove(file, removeUploadFile)}
-            onRetry={(file) => handleRetry(file, updateUploadFile)}
-          />
-        </Box>
         {!isTrafficViolationCaseCheck && (
           <Box component="section" marginBottom={5}>
             <SectionHeading
@@ -120,7 +93,9 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
               buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
               onChange={(files) =>
                 handleUpload(
-                  addUploadFiles(files, CaseFileCategory.INDICTMENT),
+                  addUploadFiles(files, {
+                    category: CaseFileCategory.INDICTMENT,
+                  }),
                   updateUploadFile,
                 )
               }
@@ -143,7 +118,9 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(files, CaseFileCategory.CRIMINAL_RECORD),
+                addUploadFiles(files, {
+                  category: CaseFileCategory.CRIMINAL_RECORD,
+                }),
                 updateUploadFile,
               )
             }
@@ -164,7 +141,9 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(files, CaseFileCategory.COST_BREAKDOWN),
+                addUploadFiles(files, {
+                  category: CaseFileCategory.COST_BREAKDOWN,
+                }),
                 updateUploadFile,
               )
             }
@@ -172,22 +151,25 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box
+          component="section"
+          marginBottom={
+            workingCase.hasCivilClaims || isTrafficViolationCaseCheck ? 5 : 10
+          }
+        >
           <SectionHeading
             title={formatMessage(strings.caseFiles.otherDocumentsSection)}
           />
           <InputFileUpload
             fileList={uploadFiles.filter(
-              (file) =>
-                file.category === CaseFileCategory.CASE_FILE &&
-                !file.policeCaseNumber,
+              (file) => file.category === CaseFileCategory.CASE_FILE,
             )}
             accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(files, CaseFileCategory.CASE_FILE),
+                addUploadFiles(files, { category: CaseFileCategory.CASE_FILE }),
                 updateUploadFile,
               )
             }
@@ -195,6 +177,34 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
+        {workingCase.hasCivilClaims && (
+          <Box
+            component="section"
+            marginBottom={isTrafficViolationCaseCheck ? 5 : 10}
+          >
+            <SectionHeading
+              title={formatMessage(strings.caseFiles.civilClaimSection)}
+            />
+            <InputFileUpload
+              fileList={uploadFiles.filter(
+                (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
+              )}
+              accept={Object.values(fileExtensionWhitelist)}
+              header={formatMessage(strings.caseFiles.inputFieldLabel)}
+              buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
+              onChange={(files) =>
+                handleUpload(
+                  addUploadFiles(files, {
+                    category: CaseFileCategory.CIVIL_CLAIM,
+                  }),
+                  updateUploadFile,
+                )
+              }
+              onRemove={(file) => handleRemove(file, removeUploadFile)}
+              onRetry={(file) => handleRetry(file, updateUploadFile)}
+            />
+          </Box>
+        )}
         {isTrafficViolationCaseCheck && (
           <Box marginBottom={10}>
             <PdfButton

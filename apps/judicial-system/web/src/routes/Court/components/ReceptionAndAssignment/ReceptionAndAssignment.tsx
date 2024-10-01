@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -33,13 +33,11 @@ const ReceptionAndAssignment = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const getNextRoute = () => {
-    return isRestrictionCase(workingCase.type)
-      ? constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE
-      : isInvestigationCase(workingCase.type)
-      ? constants.INVESTIGATION_CASE_OVERVIEW_ROUTE
-      : constants.INDICTMENTS_SUBPOENA_ROUTE
-  }
+  const getNextRoute = isRestrictionCase(workingCase.type)
+    ? constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE
+    : isInvestigationCase(workingCase.type)
+    ? constants.INVESTIGATION_CASE_OVERVIEW_ROUTE
+    : constants.INDICTMENTS_SUBPOENA_ROUTE
 
   const stepIsValid = isReceptionAndAssignmentStepValid(workingCase)
   const handleNavigationTo = useCallback(
@@ -132,7 +130,7 @@ const ReceptionAndAssignment = () => {
               ? `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`
               : constants.CASES_ROUTE
           }
-          onNextButtonClick={() => handleNavigationTo(getNextRoute())}
+          onNextButtonClick={() => handleNavigationTo(getNextRoute)}
           nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>

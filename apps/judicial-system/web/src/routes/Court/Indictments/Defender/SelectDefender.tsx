@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { ChangeEvent, FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
@@ -6,9 +6,9 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
-  DefenderInput,
   DefenderNotFound,
   FormContext,
+  InputAdvocate,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Defendant,
@@ -22,8 +22,7 @@ interface Props {
   defendant: Defendant
 }
 
-const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { defendant } = props
+const SelectDefender: FC<Props> = ({ defendant }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()
@@ -86,7 +85,7 @@ const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
               }),
             )}
             checked={Boolean(defendant.defenderChoice === DefenderChoice.WAIVE)}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
               toggleDefendantWaivesRightToCounsel(
                 workingCase.id,
                 defendant,
@@ -97,10 +96,10 @@ const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
             large
           />
         </Box>
-        <DefenderInput
+        <InputAdvocate
           disabled={defendant.defenderChoice === DefenderChoice.WAIVE}
-          onDefenderNotFound={setDefenderNotFound}
-          defendantId={defendant.id}
+          onAdvocateNotFound={setDefenderNotFound}
+          clientId={defendant.id}
         />
       </BlueBox>
     </Box>

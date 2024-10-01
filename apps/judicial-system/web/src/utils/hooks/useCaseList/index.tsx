@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -15,6 +15,7 @@ import {
   isDefenceUser,
   isDistrictCourtUser,
   isInvestigationCase,
+  isPrisonSystemUser,
   isPublicProsecutorUser,
   isRequestCase,
   isRestrictionCase,
@@ -93,10 +94,12 @@ const useCaseList = () => {
           }
         }
       } else {
-        // The user is a prosecution user
+        // The user is a prosecution or prison system user. They can only see completed cases
         if (isRestrictionCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {
-            routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+            routeTo = isPrisonSystemUser(user)
+              ? constants.PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE
+              : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
               constants.prosecutorRestrictionCasesRoutes,
@@ -105,7 +108,9 @@ const useCaseList = () => {
           }
         } else if (isInvestigationCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {
-            routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+            routeTo = isPrisonSystemUser(user)
+              ? constants.PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE
+              : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
               constants.prosecutorInvestigationCasesRoutes,
@@ -114,7 +119,9 @@ const useCaseList = () => {
           }
         } else {
           if (isCompletedCase(caseToOpen.state)) {
-            routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+            routeTo = isPrisonSystemUser(user)
+              ? constants.PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE
+              : constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
               constants.prosecutorIndictmentRoutes(isTrafficViolation),

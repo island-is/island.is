@@ -115,28 +115,28 @@ export const EducationGraduationDetail = () => {
               title={`${item.organisation ?? ''} - ${item.periodName ?? ''}`}
               labels={{
                 name: formatMessage(edMessage.courseName),
-                brautarheiti: formatMessage(edMessage.courseId),
-                einingar: formatMessage(edMessage.units),
-                einkunn: formatMessage(edMessage.grade),
-                dags: formatMessage(edMessage.dateShort),
-                Staða: formatMessage(edMessage.status),
+                course: formatMessage(edMessage.courseId),
+                units: formatMessage(edMessage.units),
+                grade: formatMessage(edMessage.grade),
+                date: formatMessage(edMessage.dateShort),
+                status: formatMessage(edMessage.status),
               }}
               items={
                 item.courses?.map((course, i) => ({
                   id: course?.courseId ?? `${i}`,
                   name: course?.courseName ?? '',
-                  brautarheiti: course?.courseId ?? '',
-                  einingar: course?.units ?? '',
-                  einkunn: course?.finalgrade ?? '',
-                  dags: formatDate(course?.date ?? ''),
-                  Staða: course?.status ?? '',
+                  course: course?.courseId ?? '',
+                  units: course?.units ?? '',
+                  grade: course?.finalgrade ?? '',
+                  date: formatDate(course?.date ?? ''),
+                  status: course?.status ?? '',
                   tag: tagSelector(course?.status ?? ''),
                 })) ?? []
               }
               footer={{
                 name: `${formatMessage(edMessage.total)}:`,
-                brautarheiti: '',
-                einingar: addArray(
+                course: '',
+                units: addArray(
                   item.courses?.map((item) => item?.units || '') || [],
                 ),
               }}

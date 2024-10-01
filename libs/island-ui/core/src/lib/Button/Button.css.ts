@@ -110,6 +110,16 @@ export const size = styleVariants({
       },
     }),
   },
+  text: {
+    fontSize: 16,
+    lineHeight: 1.25,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: 18,
+        lineHeight: 1.6,
+      },
+    }),
+  },
   textSmall: {
     fontSize: 12,
     lineHeight: 1.25,
@@ -389,6 +399,11 @@ export const colors = {
       theme.color.dark200,
       theme.color.dark300,
     ),
+    purple: textColors(
+      theme.color.purple400,
+      theme.color.purple600,
+      theme.color.purple300,
+    ),
   }),
   utility: styleVariants({
     default: utilityColors(
@@ -457,6 +472,14 @@ export const colors = {
       theme.color.blue100,
       1,
       theme.color.white,
+    ),
+    purple: utilityColors(
+      theme.color.purple400,
+      theme.color.purple400,
+      theme.color.purple400,
+      theme.color.purple400,
+      theme.color.purple300,
+      theme.color.purple300,
     ),
   }),
 }

@@ -7,6 +7,7 @@ import {
 } from '../../../gen/fetch'
 import { Candidate, mapCandidate } from './candidate.dto'
 import { logger } from '@island.is/logging'
+import { getCollectionTypeFromNumber } from './collection.dto'
 
 export enum ListStatus {
   Active = 'active',
@@ -14,6 +15,11 @@ export enum ListStatus {
   Reviewed = 'reviewed',
   Extendable = 'extendable',
   Inactive = 'inactive',
+}
+
+export enum ListType {
+  Parliamentary = 'alþingiskosning',
+  Presidential = 'forsetakosning',
 }
 
 export interface ListBase {
@@ -47,8 +53,13 @@ export interface SignedList extends List {
   canUnsign: boolean
 }
 
-export const getSlug = (id: number | string): string => {
-  return `/umsoknir/maela-med-frambodi/?candidate=${id}`
+export const getSlug = (id: number | string, type: string): string => {
+  switch (type.toLowerCase()) {
+    case ListType.Parliamentary:
+      return `/umsoknir/maela-med-althingisframbodi?candidate=${id}`
+    default:
+      return `/umsoknir/maela-med-frambodi?candidate=${id}`
+  }
 }
 
 export const mapListBase = (list: MedmaelalistiBaseDTO): ListBase => {
@@ -98,9 +109,9 @@ export const mapList = (
   const area = mapArea(areas)
   const numberOfSignatures = list.fjoldiMedmaela ?? 0
 
-  const isActive = endTime > new Date()
+  const isActive = !list.listaLokad
   const isExtended = endTime > collection.sofnunEnd
-  const reviewed = list.lokadHandvirkt ?? false
+  const reviewed = list.urvinnslaLokid ?? false
 
   return {
     id: list.id?.toString() ?? '',
@@ -115,7 +126,7 @@ export const mapList = (
         }))
       : [],
     candidate: mapCandidate(candidate),
-    slug: getSlug(candidate.id),
+    slug: getSlug(candidate.id, collection.kosningTegund),
     area,
     active: isActive,
     numberOfSignatures,

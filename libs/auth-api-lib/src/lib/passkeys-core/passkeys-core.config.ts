@@ -35,9 +35,9 @@ export const PasskeysCoreConfig = defineConfig({
       passkey: {
         rpId: env.required('PASSKEY_CORE_RP_ID', 'localhost'),
         rpName: env.required('PASSKEY_CORE_RP_NAME', 'Island.is'),
-        allowedOrigins: env
-          .required('PASSKEY_CORE_ALLOWED_ORIGINS', 'http://localhost:4200')
-          .split(','),
+        allowedOrigins: env.requiredJSON('PASSKEY_CORE_ALLOWED_ORIGINS', [
+          'http://localhost:4200',
+        ]),
         challengeTtl: Number(
           env.required(
             'PASSKEY_CORE_CHALLENGE_TTL_MS',

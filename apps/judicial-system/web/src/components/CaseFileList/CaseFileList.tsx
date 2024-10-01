@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -61,7 +61,7 @@ const getIcon = (
   }
 }
 
-const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const CaseFileList: FC<Props> = (props) => {
   const {
     caseId,
     files,

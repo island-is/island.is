@@ -17,7 +17,7 @@ export const PassportsClientConfig = defineConfig<z.infer<typeof schema>>({
     return {
       xRoadServicePath: env.required(
         'XROAD_PASSPORT_LICENSE_PATH',
-        'IS-DEV/GOV/10001/SKRA-Protected/Forskraning-V1',
+        'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Forskraning-V1',
       ),
       fetch: {
         timeout: 10000,

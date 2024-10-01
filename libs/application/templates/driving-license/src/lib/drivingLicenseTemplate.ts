@@ -21,6 +21,7 @@ import {
   ExistingApplicationApi,
   InstitutionNationalIds,
   Application,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
@@ -30,6 +31,7 @@ import {
   BE,
   B_TEMP,
   B_FULL,
+  B_FULL_RENEWAL_65,
   ApiActions,
 } from './constants'
 import { dataSchema } from './dataSchema'
@@ -62,6 +64,9 @@ const getCodes = (application: Application) => {
   return [chargeItemCode]
 }
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.DRIVING_LICENSE]
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -79,9 +84,14 @@ const template: ApplicationTemplate<
       ? m.applicationForDrivingLicense.defaultMessage +
         ' - ' +
         m.applicationForFullLicenseTitle.defaultMessage
+      : application.answers.applicationFor === B_FULL_RENEWAL_65
+      ? m.applicationForDrivingLicense.defaultMessage +
+        ' - ' +
+        m.applicationForRenewalLicenseTitle.defaultMessage
       : m.applicationForDrivingLicense.defaultMessage,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -112,6 +122,8 @@ const template: ApplicationTemplate<
                     ],
                   allowBELicense:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
+                  allow65Renewal:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
                 })
               },
               write: 'all',
@@ -122,13 +134,13 @@ const template: ApplicationTemplate<
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
                 GlassesCheckApi,
+                JurisdictionApi,
                 CurrentLicenseApi.configure({
                   params: {
                     useLegacyVersion: true,
                   },
                 }),
                 DrivingAssessmentApi,
-                JurisdictionApi,
                 QualityPhotoApi,
                 ExistingApplicationApi.configure({
                   params: {
