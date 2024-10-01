@@ -1,0 +1,6 @@
+query SubpoenaStatus($input: SubpoenaStatusQueryInput!) {
+  subpoenaStatus(input: $input) {
+    serviceStatus
+    servedBy
+  }
+}

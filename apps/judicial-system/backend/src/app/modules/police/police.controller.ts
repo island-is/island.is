@@ -79,7 +79,7 @@ export class PoliceController {
     prosecutorRepresentativeRule,
     districtCourtJudgeRule,
   )
-  @Get('subpoenaStatus')
+  @Get('subpoenaStatus/:subpoenaId')
   @ApiOkResponse({
     type: UpdateSubpoenaDto,
     description: 'Gets subpoena status',

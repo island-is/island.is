@@ -34,8 +34,7 @@ import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
-import { Subpoena } from '../subpoena'
-import { UpdateSubpoenaDto } from '../subpoena/dto/updateSubpoena.dto'
+import { Subpoena, SubpoenaService } from '../subpoena'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -147,6 +146,8 @@ export class PoliceService {
     private readonly eventService: EventService,
     @Inject(forwardRef(() => AwsS3Service))
     private readonly awsS3Service: AwsS3Service,
+    @Inject(forwardRef(() => SubpoenaService))
+    private readonly subpoenaService: SubpoenaService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -333,30 +334,43 @@ export class PoliceService {
       })
   }
 
-  async getSubpoenaStatus(subpoenaId: string): Promise<UpdateSubpoenaDto> {
+  async getSubpoenaStatus(subpoenaId: string): Promise<Subpoena> {
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
     )
       .then(async (res: Response) => {
         if (res.ok) {
-          const response: z.infer<typeof this.subpoenaStructure> =
-            await res.json()
+          const response = await res.json()
 
-          this.subpoenaStructure.parse(response)
+          // TODO: parse this correctly
+          // this.subpoenaStructure.parse(response)
+          const parsedResponse = JSON.parse(response)
 
-          const subpoena: UpdateSubpoenaDto = {
-            serviceStatus: response.deliveredToLawyer
-              ? ServiceStatus.DEFENDER
-              : response.prosecutedConfirmedSubpoenaThroughIslandis
-              ? ServiceStatus.ELECTRONICALLY
-              : undefined,
-            servedBy: response.servedBy,
-            comment: response.comment,
-            // TODO: defenderChoice
-            defenderNationalId: response.defenderNationalId,
-          }
+          const subpoenaToUpdate = await this.subpoenaService.findBySubpoenaId(
+            subpoenaId,
+          )
 
-          return subpoena
+          const updatedSubpoena = await this.subpoenaService.update(
+            subpoenaToUpdate,
+            {
+              comment: parsedResponse.comment,
+              servedBy: parsedResponse.servedBy,
+              defenderNationalId: parsedResponse.defenderNationalId,
+              serviceStatus: parsedResponse.deliveredToLawyer
+                ? ServiceStatus.DEFENDER
+                : parsedResponse.prosecutedConfirmedSubpoenaThroughIslandis
+                ? ServiceStatus.ELECTRONICALLY
+                : parsedResponse.deliveredOnPaper
+                ? ServiceStatus.IN_PERSON
+                : parsedResponse.acknowledged === false &&
+                  parsedResponse.defenderChoice === 'HAS_NOT_ACKNOWLEDGED'
+                ? ServiceStatus.FAILED
+                : // TODO: handle expired
+                  undefined,
+            },
+          )
+
+          return updatedSubpoena
         }
 
         const reason = await res.text()

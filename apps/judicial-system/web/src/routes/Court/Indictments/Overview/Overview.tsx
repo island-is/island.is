@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { IntlShape, MessageDescriptor, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -30,6 +30,7 @@ import {
 import {
   useDefendants,
   useGetLawyer,
+  useSubpoena,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { SubpoenaType } from '../../components'
@@ -141,6 +142,7 @@ const IndictmentOverview = () => {
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
+  const { subpoenaStatus } = useSubpoena()
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNavigationTo = useCallback(
