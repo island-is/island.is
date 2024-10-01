@@ -1,10 +1,10 @@
 import { Response } from 'express'
 import { uuid } from 'uuidv4'
 
-import { createTestingDefendantModule } from '../createTestingDefendantModule'
+import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
 import { Case, PdfService } from '../../../case'
-import { Defendant } from '../../models/defendant.model'
+import { Subpoena } from '../../models/subpoena.model'
 
 interface Then {
   error: Error
@@ -12,10 +12,12 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
-describe('LimitedAccessDefendantController - Get subpoena pdf', () => {
+describe('LimitedAccessSubpoenaController - Get subpoena pdf', () => {
   const caseId = uuid()
+  const subpoenaId = uuid()
+  const subpoena = { id: subpoenaId } as Subpoena
   const defendantId = uuid()
-  const defendant = { id: defendantId } as Defendant
+  const defendant = { id: defendantId, subpoenas: [subpoena] } as Defendant
   const theCase = { id: caseId } as Case
   const res = { end: jest.fn() } as unknown as Response
   const pdf = Buffer.from(uuid())
@@ -23,8 +25,8 @@ describe('LimitedAccessDefendantController - Get subpoena pdf', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { pdfService, limitedAccessDefendantController } =
-      await createTestingDefendantModule()
+    const { pdfService, limitedAccessSubpoenaController } =
+      await createTestingSubpoenaModule()
 
     mockPdfService = pdfService
     const getSubpoenaPdfMock = mockPdfService.getSubpoenaPdf as jest.Mock
@@ -34,11 +36,13 @@ describe('LimitedAccessDefendantController - Get subpoena pdf', () => {
       const then = {} as Then
 
       try {
-        await limitedAccessDefendantController.getSubpoenaPdf(
+        await limitedAccessSubpoenaController.getSubpoenaPdf(
           caseId,
           defendantId,
+          subpoenaId,
           theCase,
           defendant,
+          subpoena,
           res,
         )
       } catch (error) {
@@ -58,6 +62,7 @@ describe('LimitedAccessDefendantController - Get subpoena pdf', () => {
       expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledWith(
         theCase,
         defendant,
+        subpoena,
         undefined,
         undefined,
         undefined,
