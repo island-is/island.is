@@ -201,14 +201,26 @@ export class DocumentServiceV2 {
     documentId: string,
     pageSize: number,
   ): Promise<DocumentPageNumber> {
-    const res = await this.documentService.getPageNumber(
-      nationalId,
-      documentId,
-      pageSize,
-    )
+    const defaultRes = 1
+    try {
+      const res = await this.documentService.getPageNumber(
+        nationalId,
+        documentId,
+        pageSize,
+      )
 
-    return {
-      pageNumber: res ?? 1,
+      return {
+        pageNumber: res ?? defaultRes,
+      }
+    } catch (exception) {
+      this.logger.warn('Document page number error', {
+        category: LOG_CATEGORY,
+        documentId,
+        error: exception,
+      })
+      return {
+        pageNumber: defaultRes,
+      }
     }
   }
 
