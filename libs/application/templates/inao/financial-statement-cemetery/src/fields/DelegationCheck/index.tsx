@@ -20,8 +20,6 @@ export const DelegationCheck = ({
       const userType = application.externalData.getUserType?.data
       const hasUserType = !!userType
 
-      console.log('UserType: ', userType)
-
       if (hasUserType) {
         setError(VALIDATOR, {
           type: 'custom',

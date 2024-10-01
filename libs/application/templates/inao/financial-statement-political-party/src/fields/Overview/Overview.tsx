@@ -86,68 +86,12 @@ export const Overview = ({
           </Text>
         </Box>
         <GridRow direction="row">
-          {/* <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
-            <Box paddingTop={3} paddingBottom={2}>
-              <Text variant="h4" as="h4">
-                {formatMessage(m.income)}
-              </Text>
-            </Box>
-
-            <ValueLine
-              label={m.contributionsFromLegalEntities}
-              value={formatCurrency(
-                answers.individualIncome?.contributionsByLegalEntities,
-              )}
-            />
-            <ValueLine
-              label={m.contributionsFromIndividuals}
-              value={formatCurrency(
-                answers.individualIncome?.individualContributions,
-              )}
-            />
-            <ValueLine
-              label={m.candidatesOwnContributions}
-              value={formatCurrency(
-                answers.individualIncome?.candidatesOwnContributions,
-              )}
-            />
-            <ValueLine
-              label={m.otherIncome}
-              value={formatCurrency(answers.individualIncome?.otherIncome)}
-            />
-            <ValueLine
-              label={m.totalIncome}
-              value={formatCurrency(answers.individualIncome?.total)}
-              isTotal
-            />
-          </GridColumn> */}
           <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
                 {formatMessage(m.expenses)}
               </Text>
             </Box>
-            {/* <ValueLine
-              label={m.electionOffice}
-              value={formatCurrency(answers.individualExpense?.electionOffice)}
-            />
-            <ValueLine
-              label={m.advertisements}
-              value={formatCurrency(answers.individualExpense?.advertisements)}
-            />
-            <ValueLine
-              label={m.travelCost}
-              value={formatCurrency(answers.individualExpense?.travelCost)}
-            />
-            <ValueLine
-              label={m.otherCost}
-              value={formatCurrency(answers.individualExpense?.otherCost)}
-            />
-            <ValueLine
-              label={m.totalExpenses}
-              value={formatCurrency(answers.individualExpense?.total)}
-              isTotal
-            /> */}
           </GridColumn>
         </GridRow>
       </Box>
