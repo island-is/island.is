@@ -72,6 +72,7 @@ export class IndexingService {
           while (initialFetch || nextPageToken) {
             const importerResponse = await importer.doSync({
               ...options,
+              elasticIndex,
               nextPageToken,
               folderHash: postSyncOptions?.folderHash,
             })
