@@ -1,9 +1,5 @@
 import { Test } from '@nestjs/testing'
 import { ConfigService } from '@nestjs/config'
-import {
-  ApplicationStatus,
-  ApplicationTypes,
-} from '@island.is/application/types'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { EmailService } from '@island.is/email-service'
 import { SharedTemplateApiService } from '../../shared'
@@ -13,18 +9,13 @@ import { AccidentNotificationAttachmentProvider } from './attachments/applicatio
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { DocumentApi } from '@island.is/clients/icelandic-health-insurance/health-insurance'
-import { createCurrentUser } from '@island.is/testing/fixtures'
 import { S3 } from 'aws-sdk'
-import type { Locale } from '@island.is/shared/types'
-import { createApplication } from '@island.is/application/testing'
-import get from 'lodash/get'
-import set from 'lodash/set'
 import { S3Service } from './attachments/s3.service'
 import { SmsService } from '@island.is/nova-sms'
 import { PaymentService } from '@island.is/application/api/payment'
 import { AccidentreportsApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
-const nationalId = '1234564321'
-let id = 0
+// const nationalId = '1234564321'
+// let id = 0
 
 const sendMail = () => ({
   messageId: 'some id',
