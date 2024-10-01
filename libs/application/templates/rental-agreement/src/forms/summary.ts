@@ -1,4 +1,4 @@
-import { buildSection } from 'libs/application/core/src/lib/formBuilders'
+import { buildSection } from '@island.is/application/core'
 
 export const Summary = buildSection({
   id: 'summary',
