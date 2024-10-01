@@ -21,7 +21,11 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
+import {
+  districtCourtJudgeRule,
+  prosecutorRepresentativeRule,
+  prosecutorRule,
+} from '../../guards'
 import {
   Case,
   CaseExistsGuard,
@@ -30,6 +34,7 @@ import {
   CaseReadGuard,
   CurrentCase,
 } from '../case'
+import { UpdateSubpoenaDto } from '../subpoena/dto/updateSubpoena.dto'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
@@ -67,6 +72,25 @@ export class PoliceController {
     this.logger.debug(`Getting all police files for case ${caseId}`)
 
     return this.policeService.getAllPoliceCaseFiles(theCase.id, user)
+  }
+
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+  )
+  @Get('subpoenaStatus')
+  @ApiOkResponse({
+    type: UpdateSubpoenaDto,
+    description: 'Gets subpoena status',
+  })
+  getSubpoenaStatus(
+    @Param('caseId') caseId: string,
+    @Param('subpoenaId') subpoenaId: string,
+  ): Promise<UpdateSubpoenaDto> {
+    this.logger.debug(`Gets subpoena status in case ${caseId}`)
+
+    return this.policeService.getSubpoenaStatus(subpoenaId)
   }
 
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
