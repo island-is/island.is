@@ -33,6 +33,7 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant } from '../defendant'
+import { Subpoena } from '../subpoena'
 import { UserService } from '../user'
 import { Case } from './models/case.model'
 
@@ -292,6 +293,7 @@ export class PdfService {
   async getSubpoenaPdf(
     theCase: Case,
     defendant: Defendant,
+    subpoena?: Subpoena,
     arraignmentDate?: Date,
     location?: string,
     subpoenaType?: SubpoenaType,
@@ -302,6 +304,7 @@ export class PdfService {
       theCase,
       defendant,
       this.formatMessage,
+      subpoena,
       arraignmentDate,
       location,
       subpoenaType,

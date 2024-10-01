@@ -34,6 +34,7 @@ import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
 import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
 import { ReasonKey } from '@island.is/clients/signature-collection'
 import { CanSignInfo } from './models/canSignInfo.model'
+import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -196,6 +197,15 @@ export class SignatureCollectionAdminResolver {
 
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
+  async signatureCollectionAdminRemoveList(
+    @CurrentUser() user: User,
+    @Args('input') { listId }: SignatureCollectionListIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.removeList(listId, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
   async signatureCollectionAdminUnsign(
     @CurrentUser() user: User,
     @Args('input') { signatureId }: SignatureCollectionSignatureIdInput,
@@ -240,5 +250,17 @@ export class SignatureCollectionAdminResolver {
     @Args('input') input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSignature[]> {
     return this.signatureCollectionService.compareLists(input, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAdminUpdatePaperSignaturePageNumber(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionSignatureUpdateInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.updateSignaturePageNumber(
+      user,
+      input,
+    )
   }
 }

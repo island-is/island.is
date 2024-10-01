@@ -121,4 +121,30 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:createDelegationSuccessToast',
     defaultMessage: 'Umboð var skráð',
   },
+  nationalIdsMismatchError: {
+    id: 'admin.delegationAdmin:nationalIdsMismatchError',
+    defaultMessage:
+      'Kennitölur á umboði stemma ekki við kennitölur í Zendesk máli',
+  },
+  zendeskCaseNotSolvedError: {
+    id: 'admin.delegationAdmin:zendeskCaseNotSolvedError',
+    defaultMessage: 'Zendesk málið er ekki í stöðunni leyst',
+  },
+  zendeskMissingTagError: {
+    id: 'admin.delegationAdmin:zendeskMissingTagError',
+    defaultMessage: 'Zendesk málið vantar nauðsynlegt tagg',
+  },
+  zendeskCustomFieldsMissingError: {
+    id: 'admin.delegationAdmin:zendeskCustomFieldsMissingError',
+    defaultMessage:
+      'Zendesk málið vantar nauðsynlegar upplýsingar um kennitölur umboðsveitanda og umboðshafa',
+  },
+  sameNationalIdError: {
+    id: 'admin.delegationAdmin:sameNationalIdError',
+    defaultMessage: 'Kennitölur mega ekki vera eins',
+  },
+  validPersonError: {
+    id: 'admin.delegationAdmin:validPersonError',
+    defaultMessage: 'Kennitölur þurfa að vera gildar kennitölur',
+  },
 })

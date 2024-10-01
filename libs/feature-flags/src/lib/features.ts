@@ -50,6 +50,7 @@ export enum Features {
   servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
   servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
   servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
+  servicePortalVehicleBulkMileagePageEnabled = 'isServicePortalVehicleBulkMileagePageEnabled',
   servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
   servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
 
@@ -109,6 +110,9 @@ export enum Features {
 
   // Legal represantative delegation type
   isLegalRepresentativeDelegationEnabled = 'isLegalRepresentativeDelegationEnabled',
+
+  // General mandate delegation type
+  isGeneralMandateDelegationEnabled = 'isGeneralMandateDelegationEnabled',
 }
 
 export enum ServerSideFeature {

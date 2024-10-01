@@ -20,6 +20,7 @@ import {
   AdminCollectionApi,
   AdminListApi,
   AdminSignatureApi,
+  AdminApi,
 } from './apis'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 
@@ -28,6 +29,7 @@ type Api =
   | AdminCollectionApi
   | AdminSignatureApi
   | AdminCandidateApi
+  | AdminApi
 
 @Injectable()
 export class SignatureCollectionAdminClientService {
@@ -37,6 +39,7 @@ export class SignatureCollectionAdminClientService {
     private signatureApi: AdminSignatureApi,
     private sharedService: SignatureCollectionSharedClientService,
     private candidateApi: AdminCandidateApi,
+    private adminApi: AdminApi,
   ) {}
 
   private getApiWithAuth<T extends Api>(api: T, auth: Auth) {
@@ -291,6 +294,38 @@ export class SignatureCollectionAdminClientService {
       return { success: res?.id === parseInt(candidateId) }
     } catch (error) {
       return { success: false, reasons: [ReasonKey.DeniedByService] }
+    }
+  }
+
+  async removeList(listId: string, auth: Auth): Promise<Success> {
+    try {
+      await this.getApiWithAuth(this.adminApi, auth).adminMedmaelalistiIDDelete(
+        {
+          iD: parseInt(listId),
+        },
+      )
+      return { success: true }
+    } catch (error) {
+      return { success: false, reasons: [ReasonKey.DeniedByService] }
+    }
+  }
+
+  async updateSignaturePageNumber(
+    auth: Auth,
+    signatureId: string,
+    pageNumber: number,
+  ): Promise<Success> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.signatureApi,
+        auth,
+      ).medmaeliIDUpdateBlsPatch({
+        iD: parseInt(signatureId),
+        blsNr: pageNumber,
+      })
+      return { success: res.bladsidaNr === pageNumber }
+    } catch {
+      return { success: false }
     }
   }
 }
