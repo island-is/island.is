@@ -31,6 +31,9 @@ type SyncCollection = ContentfulSyncCollection & {
 
 const MAX_REQUEST_COUNT = 10
 
+const MAX_RETRY_COUNT = 3
+const INITIAL_DELAY = 500
+
 // Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const defaultContentfulClientLogging = (level: ClientLogLevel, data: any) => {
@@ -483,37 +486,61 @@ export class ContentfulService {
       let response: ApiResponse<SearchResponse<MappedData>> | null = null
       let total = -1
 
+      let delay = INITIAL_DELAY
+      let retries = MAX_RETRY_COUNT
+
       while (response === null || items.length < total) {
-        response = await this.elasticService.findByQuery(elasticIndex, {
-          query: {
-            bool: {
-              should: idsChunk.map((id) => ({
-                nested: {
-                  path: 'tags',
-                  query: {
-                    bool: {
-                      must: [
-                        {
-                          term: {
-                            'tags.key': id,
+        try {
+          response = await this.elasticService.findByQuery(elasticIndex, {
+            query: {
+              bool: {
+                should: idsChunk.map((id) => ({
+                  nested: {
+                    path: 'tags',
+                    query: {
+                      bool: {
+                        must: [
+                          {
+                            term: {
+                              'tags.key': id,
+                            },
                           },
-                        },
-                        {
-                          term: {
-                            'tags.type': 'hasChildEntryWithId',
+                          {
+                            term: {
+                              'tags.type': 'hasChildEntryWithId',
+                            },
                           },
-                        },
-                      ],
+                        ],
+                      },
                     },
                   },
-                },
-              })),
-              minimum_should_match: 1,
+                })),
+                minimum_should_match: 1,
+              },
             },
-          },
-          size,
-          from: (page - 1) * size,
-        })
+            size,
+            from: (page - 1) * size,
+          })
+          // Reset variables in case we successfully receive a response
+          delay = INITIAL_DELAY
+          retries = MAX_RETRY_COUNT
+        } catch (error) {
+          if (error?.statusCode === 429 && retries > 0) {
+            logger.info('Retrying nested resolution request...', {
+              retriesLeft: retries - 1,
+              delay,
+            })
+            await new Promise((resolve) => {
+              setTimeout(resolve, delay)
+            })
+            // Keep track of how often and for how long we should wait in case of failure
+            retries -= 1
+            delay *= 2
+            continue
+          } else {
+            throw error
+          }
+        }
 
         if (response.body.hits.hits.length === 0) {
           total = response.body.hits.total.value

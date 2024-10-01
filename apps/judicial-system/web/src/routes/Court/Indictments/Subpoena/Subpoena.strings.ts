@@ -60,4 +60,10 @@ export const subpoena = defineMessages({
     description:
       'Notaður sem texti fyrir Handtökufyrirkall valkost á Fyrirkalls skjá í dómaraflæði í ákærum.',
   },
+  newSubpoenaButtonText: {
+    id: 'judicial.system.core:subpoena.new_subpoena_button_text',
+    defaultMessage: 'Nýtt fyrirkall',
+    description:
+      'Notaður sem texti á takka sem býður notanda að búa til nýtt fyrirkall.',
+  },
 })
