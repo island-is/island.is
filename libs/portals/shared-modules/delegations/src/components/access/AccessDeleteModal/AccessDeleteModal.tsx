@@ -1,11 +1,14 @@
+import { useEffect, useState } from 'react'
+
 import { useAuth } from '@island.is/auth/react'
 import { Box, toast, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useEffect, useState } from 'react'
-import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '@island.is/react/components'
+import { AuthDelegationType } from '@island.is/shared/types'
+
+import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
 import { IdentityCard } from '../../IdentityCard/IdentityCard'
 import { AccessListContainer } from '../AccessList/AccessListContainer/AccessListContainer'
 import { useAuthScopeTreeLazyQuery } from '../AccessList/AccessListContainer/AccessListContainer.generated'
@@ -16,7 +19,6 @@ import {
 } from '../../../types/customDelegation'
 import { m } from '../../../lib/messages'
 import { useDynamicShadow } from '../../../hooks/useDynamicShadow'
-import { AuthDelegationType } from '@island.is/shared/types'
 
 type AccessDeleteModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation?: AuthCustomDelegation
@@ -38,11 +40,11 @@ export const AccessDeleteModal = ({
     useAuthScopeTreeLazyQuery()
 
   useEffect(() => {
-    if (delegation) {
+    if (delegation && delegation.domain?.name) {
       getAuthScopeTree({
         variables: {
           input: {
-            domain: delegation.domain?.name ?? null,
+            domain: delegation.domain.name,
             lang,
           },
         },
