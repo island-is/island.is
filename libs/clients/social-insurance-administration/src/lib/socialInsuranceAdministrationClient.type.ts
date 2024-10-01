@@ -104,6 +104,8 @@ export enum DocumentTypeEnum {
   HALFWAY_HOUSE = 'halfwayHouse',
   HOUSE_RENT_AGREEMENT = 'houseRentAgreement',
   HOUSE_RENT_ALLOWANCE = 'houseRentAllowance',
+  EXPECTING_CHILD = 'expectingChild',
+  DEATH_CERTIFICATE = 'deathCertificate',
 }
 
 export type IncomePlanStatus = 'Accepted' | 'Cancelled' | 'InProgress'

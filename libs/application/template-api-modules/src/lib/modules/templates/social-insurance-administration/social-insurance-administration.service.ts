@@ -391,9 +391,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   private async getSBAttachments(
     application: Application,
   ): Promise<Attachment[]> {
-    const { additionalAttachments } = getSBApplicationAnswers(
-      application.answers,
-    )
+    const { 
+      additionalAttachments,
+      expectingChildAttachments,
+      deathCertificateAttachments,
+      isExpectingChild,
+    } = getSBApplicationAnswers(application.answers)
 
     const attachments: Attachment[] = []
 
@@ -403,6 +406,33 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
           application,
           DocumentTypeEnum.OTHER,
           additionalAttachments,
+        )),
+      )
+    }
+
+    if (
+      deathCertificateAttachments &&
+      deathCertificateAttachments.length > 0
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.DEATH_CERTIFICATE,
+          deathCertificateAttachments,
+        )),
+      )
+    }
+
+    if (
+      expectingChildAttachments &&
+      expectingChildAttachments.length > 0 &&
+      isExpectingChild === YES
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.EXPECTING_CHILD,
+          expectingChildAttachments,
         )),
       )
     }

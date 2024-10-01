@@ -2,6 +2,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
+  YES,
   YesOrNo,
 } from '@island.is/application/types'
 import { AttachmentLabel } from './constants'
@@ -10,7 +11,7 @@ import {
   Attachments,
   AdditionalInformation,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { ChildInformation } from '../types'
+import { ChildInformation, FileUpload } from '../types'
 import {
   BankAccountType,
   TaxLevelOptions,
@@ -22,6 +23,8 @@ import {
 
 enum AttachmentTypes {
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
+  EXPECTING_CHILD = 'expectingChild',
+  DEATH_CERTIFICATE = 'deathCertificate',
 }
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -35,6 +38,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const additionalAttachments = getValueViaPath(
     answers,
     'fileUploadAdditionalFiles.additionalDocuments',
+  ) as FileType[]
+
+  const expectingChildAttachments = getValueViaPath(
+    answers,
+    'fileUpload.expectingChild',
+  ) as FileType[]
+
+  const deathCertificateAttachments = getValueViaPath(
+    answers,
+    'fileUpload.deathCertificate',
   ) as FileType[]
 
   const bankAccountType = getValueViaPath(
@@ -113,6 +126,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     applicantPhonenumber,
     comment,
     additionalAttachments,
+    expectingChildAttachments,
+    deathCertificateAttachments,
     bankAccountType,
     bank,
     iban,
@@ -247,19 +262,38 @@ export const getAttachments = (application: Application) => {
 
   const { answers } = application
 
+  const {
+    isExpectingChild,
+    deathCertificateAttachments,
+    additionalAttachments,
+    additionalAttachmentsRequired,
+  } = getApplicationAnswers(answers)
+
   const attachments: Attachments[] = []
 
-  const additionalInfo =
-    answers.fileUploadAdditionalFiles as AdditionalInformation
+  const fileUpload = answers.fileUpload as FileUpload
+
+  if (deathCertificateAttachments && deathCertificateAttachments?.length > 0) {
+    getAttachmentDetails(
+      fileUpload?.deathCertificate,
+      AttachmentTypes.DEATH_CERTIFICATE,
+    )
+  }
+
+  if (isExpectingChild === YES) {
+    getAttachmentDetails(
+      fileUpload?.expectingChild,
+      AttachmentTypes.EXPECTING_CHILD,
+    )
+  }
 
   const additionalDocuments = [
-    ...(additionalInfo.additionalDocuments &&
-    additionalInfo.additionalDocuments?.length > 0
-      ? additionalInfo.additionalDocuments
+    ...(additionalAttachments && additionalAttachments?.length > 0
+      ? additionalAttachments
       : []),
-    ...(additionalInfo.additionalDocumentsRequired &&
-    additionalInfo.additionalDocumentsRequired?.length > 0
-      ? additionalInfo.additionalDocumentsRequired
+    ...(additionalAttachmentsRequired &&
+    additionalAttachmentsRequired?.length > 0
+      ? additionalAttachmentsRequired
       : []),
   ]
 

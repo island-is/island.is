@@ -163,6 +163,16 @@ export const survivorsBenefitsFormMessage: MessageDir = {
       defaultMessage: 'Persónuafsláttur maka',
       description: "Spouse's personal tax-free allowance",
     },
+    expectingChildAttachment: {
+      id: 'sb.application:confirm.expecting.child.attachment',
+      defaultMessage: 'Fylgiskjöl vegna væntanlegs barns',
+      description: 'Expected child attachments',
+    },
+    deathCertificateAttachment: {
+      id: 'sb.application:confirm.death.certificate.attachment',
+      defaultMessage: 'Fylgiskjöl dánarvottorð',
+      description: 'Death certificate attachments',
+    },
   }),
 
   conclusionScreen: defineMessages({

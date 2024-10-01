@@ -330,8 +330,6 @@ export const transformApplicationToSurvivorsBenefitsDTO = (
     application.externalData,
   )
 
-  // TODO: Implement sendApplication for SURVIVORS_BENEFITS
-
   const survivorsBenefitsDTO: ApplicationDTO = {
     applicationId: application.id,
     applicantInfo: {

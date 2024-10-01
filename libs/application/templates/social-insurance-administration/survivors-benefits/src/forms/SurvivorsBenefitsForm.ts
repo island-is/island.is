@@ -417,7 +417,7 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                   .deceasedSpouseAttachmentSectionDescription,
               children: [
                 buildFileUploadField({
-                  id: 'deceasedSpouseAttachment.file',
+                  id: 'fileUpload.deathCertificate',
                   title: '',
                   uploadHeader:
                     survivorsBenefitsFormMessage.info
