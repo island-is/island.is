@@ -28,3 +28,4 @@ export { FindVehicleFormField } from './FindVehicleFormField/FindVehicleFormFiel
 export { StaticTableFormField } from './StaticTableFormField/StaticTableFormField'
 export { AccordionFormField } from './AccordionFormField/AccordionFormField'
 export { BankAccountFormField } from './BankAccountFormField/BankAccountFormField'
+export { SliderFormField } from './SliderFormField/SliderFormField'

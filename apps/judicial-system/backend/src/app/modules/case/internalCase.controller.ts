@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -32,6 +33,10 @@ import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
+import {
+  CaseInterceptor,
+  CasesInterceptor,
+} from './interceptors/case.interceptor'
 import { ArchiveResponse } from './models/archive.response'
 import { Case } from './models/case.model'
 import { DeliverResponse } from './models/deliver.response'
@@ -47,6 +52,7 @@ export class InternalCaseController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @UseInterceptors(CaseInterceptor)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   async create(@Body() caseToCreate: InternalCreateCaseDto): Promise<Case> {
@@ -76,6 +82,7 @@ export class InternalCaseController {
     isArray: true,
     description: 'Gets all indictment cases',
   })
+  @UseInterceptors(CasesInterceptor)
   getIndictmentCases(
     @Body() internalCasesDto: InternalCasesDto,
   ): Promise<Case[]> {
@@ -86,15 +93,16 @@ export class InternalCaseController {
     )
   }
 
-  @Post('cases/indictment/:caseId')
+  @Post('case/indictment/:caseId')
   @ApiOkResponse({
     type: Case,
     description: 'Gets indictment case by id',
   })
+  @UseInterceptors(CaseInterceptor)
   getIndictmentCase(
     @Param('caseId') caseId: string,
     @Body() internalCasesDto: InternalCasesDto,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     this.logger.debug(`Getting indictment case ${caseId}`)
 
     return this.internalCaseService.getIndictmentCase(

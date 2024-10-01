@@ -228,7 +228,7 @@ export const m = defineMessages({
     description: 'Firearms step answer no',
   },
   firearmsApplicantHeader: {
-    id: 'aod.application:firearmsApplicantHeader',
+    id: 'aod.application:firearmsApplicantHeader#markdown',
     defaultMessage: 'Skráning vörsluaðila:',
     description: '',
   },
@@ -557,6 +557,11 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     id: 'aod.application:error.errorNumberEmpty',
     defaultMessage: 'Númer má ekki vera tómt',
     description: 'Invalid general asset number error message',
+  },
+  errorNoDateOfBirthProvided: {
+    id: 'aod.application:error.errorNoDateOfBirthProvided',
+    defaultMessage: 'Fæðingardagur þarf að vera fylltur út',
+    description: 'Date of birth is required',
   },
 
   /* Announcement */

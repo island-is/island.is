@@ -4,6 +4,7 @@ import {
   service,
   ServiceBuilder,
 } from '../../../../../infra/src/dsl/dsl'
+import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
 const REDIS_NODE_CONFIG = {
   dev: json([
@@ -25,6 +26,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       name: 'servicesauth',
     })
     .env({
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -57,15 +59,31 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
       },
       COMPANY_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
+      SYSLUMENN_HOST: {
+        dev: 'https://api.syslumenn.is/staging',
+        staging: 'https://api.syslumenn.is/staging',
+        prod: 'https://api.syslumenn.is/api',
+      },
+      SYSLUMENN_TIMEOUT: '3000',
+      ZENDESK_CONTACT_FORM_SUBDOMAIN: {
+        prod: 'digitaliceland',
+        staging: 'digitaliceland',
+        dev: 'digitaliceland',
+      },
     })
     .secrets({
+      ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
+      ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
       CLIENT_SECRET_ENCRYPTION_KEY:
         '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY',
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
       NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+      SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
     })
+    .xroad(Base, Client, RskProcuring)
     .ingress({
       primary: {
         host: {

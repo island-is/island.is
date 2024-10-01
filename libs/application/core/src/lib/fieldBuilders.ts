@@ -43,6 +43,7 @@ import {
   HiddenInputField,
   AccordionField,
   BankAccountField,
+  SliderField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
@@ -893,5 +894,58 @@ export const buildStaticTableField = (
     marginTop,
     marginBottom,
     titleVariant,
+  }
+}
+
+export const buildSliderField = (
+  data: Omit<SliderField, 'type' | 'component' | 'children' | 'title'>,
+): SliderField => {
+  const {
+    condition,
+    min = 0,
+    max = 10,
+    step = 1,
+    snap = true,
+    trackStyle,
+    calculateCellStyle,
+    showLabel = false,
+    showMinMaxLabels = false,
+    showRemainderOverlay = true,
+    showProgressOverlay = true,
+    showToolTip = false,
+    label,
+    rangeDates,
+    currentIndex,
+    onChange,
+    onChangeEnd,
+    labelMultiplier = 1,
+    id,
+    saveAsString,
+  } = data
+  return {
+    title: '',
+    id,
+    children: undefined,
+    type: FieldTypes.SLIDER,
+    component: FieldComponents.SLIDER,
+    min,
+    max,
+    step,
+    snap,
+    trackStyle,
+    calculateCellStyle,
+    showLabel,
+    showMinMaxLabels,
+    showRemainderOverlay,
+    showProgressOverlay,
+    showToolTip,
+    label,
+    rangeDates,
+    currentIndex,
+    onChange,
+    onChangeEnd,
+    labelMultiplier,
+    condition,
+    saveAsString,
   }
 }

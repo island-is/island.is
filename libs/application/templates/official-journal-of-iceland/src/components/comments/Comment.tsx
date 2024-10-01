@@ -3,12 +3,13 @@ import * as styles from './Comments.css'
 import { useLocale } from '@island.is/localization'
 import { comments } from '../../lib/messages/comments'
 import { countDaysAgo } from '../../lib/utils'
+import { Maybe } from 'graphql/jsutils/Maybe'
 export type Props = {
   as?: 'div' | 'li'
   date?: string
   from?: string
   task?: string
-  comment?: string
+  comment?: Maybe<string>
   type?: 'sent' | 'received'
 }
 
@@ -22,16 +23,16 @@ export const Comment = ({
 }: Props) => {
   const Wrapper = as
 
-  const { formatMessage } = useLocale()
+  const { formatMessage: f } = useLocale()
 
   const daysAgo = date ? countDaysAgo(new Date(date)) : null
 
-  const many = formatMessage(comments.dates.xDaysAgo, {
+  const many = f(comments.dates.xDaysAgo, {
     days: daysAgo,
   })
 
-  const yesterDay = formatMessage(comments.dates.yesterday)
-  const today = formatMessage(comments.dates.today)
+  const yesterDay = f(comments.dates.yesterday)
+  const today = f(comments.dates.today)
 
   const msg = daysAgo === 0 ? today : daysAgo === 1 ? yesterDay : many
 
@@ -50,11 +51,10 @@ export const Comment = ({
         )}
       </Box>
       <Box className={styles.contentColumn}>
-        {from && (
-          <Text>
-            <strong>{from}</strong> {task && `${task}`}
-          </Text>
-        )}
+        <Text>
+          <strong>{from ? from : f(comments.unknownUser.name)}</strong>{' '}
+          {task && `${task}`}
+        </Text>
         <Text>{comment}</Text>
       </Box>
       <Box className={styles.dateColumn}>
