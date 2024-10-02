@@ -45,6 +45,20 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   useEffect(() => {
     import('react-pdf')
       .then((pdf) => {
+        // @ts-expect-error This does not exist outside of polyfill.
+        if (typeof Promise.withResolvers === 'undefined') {
+          if (window)
+            // @ts-expect-error Need to polyfill withResolvers.
+            window.Promise.withResolvers = function () {
+              let resolve, reject
+              const promise = new Promise((res, rej) => {
+                resolve = res
+                reject = rej
+              })
+              return { promise, resolve, reject }
+            }
+        }
+
         pdf.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdf.pdfjs.version}/pdf.worker.min.mjs`
         setPdfLib(pdf)
       })
