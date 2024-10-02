@@ -292,6 +292,8 @@ jobs:
             apps/native/app/android
           severity: style
 
+      - uses: reviewdog/action-shfmt@v1
+
   formatting:
     needs:
       - prepare
