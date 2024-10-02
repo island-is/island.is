@@ -203,9 +203,20 @@ export const m = defineMessages({
     defaultMessage: 'Þú ert að fara að eyða þessum lista. Ertu viss?',
     description: '',
   },
+  cancelCollectionModalMessageLastList: {
+    id: 'dmin-portal.signature-collection:cancelCollectionModalMessageLastList#markdown',
+    defaultMessage:
+      'Þú ert að fara að eyða síðasta lista framboðsins. Athugaðu að með því að eyða síðasta lista framboðsins verður framboðinu einnig eytt. Ertu viss um að þú viljir eyða lista og framboðinu?',
+    description: '',
+  },
   cancelCollectionModalConfirmButton: {
     id: 'dmin-portal.signature-collection:modalConfirmButton',
     defaultMessage: 'Já, eyða lista',
+    description: '',
+  },
+  cancelCollectionAndCandidateModalConfirmButton: {
+    id: 'dmin-portal.signature-collection:modalConfirmButton',
+    defaultMessage: 'Já, eyða bæði lista og framboði',
     description: '',
   },
   cancelCollectionModalCancelButton: {
