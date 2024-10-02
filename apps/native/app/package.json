@@ -52,7 +52,7 @@
     "@react-native/metro-config": "0.74.87",
     "@react-native/typescript-config": "0.74.87",
     "apollo3-cache-persist": "0.15.0",
-    "configcat-js": "7.0.0",
+    "configcat-js": "9.5.0",
     "dynamic-color": "0.3.0",
     "expo": "51.0.25",
     "expo-file-system": "17.0.1",
