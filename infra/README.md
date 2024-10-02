@@ -58,7 +58,3 @@ This command automates the configuration setup, ensuring that the correct enviro
 - `--dry`: Run a dry preview without applying changes.
 - `--no-secrets`: Skip updating secrets.
 - `--proxies`: Enable proxies if required for local development.
-
----
-
-By using this CLI, developers can streamline their local setup, making it faster and easier to focus on building and testing services locally while ensuring consistent configuration across environments.
