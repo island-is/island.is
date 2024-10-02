@@ -19,7 +19,7 @@ yarn nx run clients-vehicles:update-openapi-document
 Caution:
 It has been modified manually so be careful when overwriting.
 
-### Regenerating the client:
+### Regenerating the client
 
 This regenerates the client from clientConfig.json file.
 
@@ -29,4 +29,4 @@ yarn nx run clients-vehicles:codegen/backend-client
 
 ## Code owners and maintainers
 
-- [Hugsmiðjan ](https://github.com/orgs/island-is/teams/hugsmidjan)
+- [Hugsmiðjan](https://github.com/orgs/island-is/teams/hugsmidjan)

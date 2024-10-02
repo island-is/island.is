@@ -18,7 +18,7 @@ Run `nx lint clients-fiskistofa` to execute the lint via [ESLint](https://eslint
 yarn nx run clients-fiskistofa:update-openapi-document
 ```
 
-### Regenerating the client:
+### Regenerating the client
 
 ```sh
 yarn nx run clients-fiskistofa:codegen/backend-client

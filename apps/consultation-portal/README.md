@@ -65,7 +65,7 @@ The frontend can be accessed through the following urls, the backend is hosted e
 
 9. Note that in order to use the upload feature you need to export the aws credentials.
 
-Login here https://island-is.awsapps.com/start#/ (Contact devops if you need access)
+Login here <https://island-is.awsapps.com/start#/> (Contact devops if you need access)
 Copy env variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (image arrows 1,2,3)
 Paste env variables into terminal
 

@@ -12,7 +12,7 @@ Run `nx test clients-icelandic-government-institution-vacancies` to execute the 
 yarn nx run clients-icelandic-government-institution-vacancies:update-openapi-document
 ```
 
-### Regenerating the client:
+### Regenerating the client
 
 ```sh
 yarn nx run clients-icelandic-government-institution-vacancies:codegen/backend-client

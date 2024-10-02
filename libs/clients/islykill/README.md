@@ -3,7 +3,7 @@
 ## About
 
 This library implements a client to use Islyklar API service:
-https://profun.island.is/IslyklarWebService/v5/
+<https://profun.island.is/IslyklarWebService/v5/>
 
 ## Code owners and maintainers
 

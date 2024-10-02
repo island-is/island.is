@@ -8,7 +8,7 @@ It shares technical architecture and module system with the [service portal](../
 
 ## URLs
 
-- [Development] (http://localhost:4201)
+- [Development] (<http://localhost:4201>)
 - [Dev](https://beta.dev01.devland.is/stjornbord)
 - [Staging](https://beta.staging01.devland.is/stjornbord)
 - [Production](https://island.is/stjornbord)

@@ -48,7 +48,7 @@ If you just want to run the API to have access to real data you can run the Elas
 
 To access elasticsearch instance from dev environment:
 
-1. Login here https://island-is.awsapps.com/start#/ (Contact devops if you need access)
+1. Login here <https://island-is.awsapps.com/start#/> (Contact devops if you need access)
 2. Copy env variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (image arrows 1,2,3)
 3. Paste env variables into terminal
 4. Run `./scripts/run-es-proxy.sh` from island.is root

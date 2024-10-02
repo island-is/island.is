@@ -165,7 +165,7 @@ export const ReferenceDataApi = defineTemplateApi({
 })
 ```
 
-### Add your provider to the appropriate role in a state.
+### Add your provider to the appropriate role in a state
 
 ```diff
 import { ReferenceDataApi } from '../dataProviders'
@@ -312,7 +312,7 @@ export const NationalRegistryUserApi = defineTemplateApi<SharedApiParameters>({
 
 ### 2. Create a module and a service
 
-[See step 2](#2-Create-the-module-and-a-service) identical setup from above exluding.
+[See step 2](#2-create-the-module-and-a-service) identical setup from above exluding.
 
 - Shared data provider modules should be located in `/lib/modules/shared/api` and modules and service exported from `/lib/modules/shared/api/index.ts`
 - The namspace set in the `defineTemplateApi` in step 1 should be passed into the `super` constructor

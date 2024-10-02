@@ -85,7 +85,7 @@ localhost:3344/api/swagger
 
 Migrations need to be created by hand.
 
-#### Generate a empty migration file you can simply run:
+#### Generate a empty migration file you can simply run
 
 ```
 npx sequelize-cli migration:generate --name update-case
@@ -136,7 +136,7 @@ Start the application
 yarn start judicial-system-web
 ```
 
-Then the project should be running on https://localhost:4200/.
+Then the project should be running on <https://localhost:4200/>.
 
 To be able to fetch a list of lawyers you need to provide a value for the environment variable `LAWYERS_ICELAND_API_KEY`
 
@@ -176,7 +176,7 @@ The e2e test can be run within VSCode, from the "Testing" panel.
 Running `yarn nx extract-strings judicial-system-{namespace}` in the root folder `/island.is` will extract messages from the project and create or update a Namespace entry in Contentful.
 Make sure you have the env `CONTENTFUL_ENVIRONMENT=test` to update the strings against `dev` and `staging` and `CONTENTFUL_ENVIRONMENT=master` to update against `prod`.
 
-### Example for namespaces in web:
+### Example for namespaces in web
 
 ```
 yarn nx extract-strings judicial-system-web
@@ -188,7 +188,7 @@ will update namespaces:
 - judicial.system.restriction_cases
 - judicial.system.investigation_cases
 
-### For backend:
+### For backend
 
 ```
 yarn nx extract-strings judicial-system-backend

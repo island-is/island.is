@@ -98,7 +98,7 @@ follow these steps:
 
 2. Run `yarn nx run api:contentful-types` in the root of the island.is project. This ensures type safety between Contentful and the API.
 
-3. Run `yarn nx run api:contentType --id=<contentTypeId>` where `<contentTypeId>` is the ID of your content type. _Note: Make sure you have the CONTENT_MANAGEMENT_ACCESS_TOKEN env variable set to your content management token. This token is generated per user at https://app.contentful.com/account/profile/cma_tokens_.
+3. Run `yarn nx run api:contentType --id=<contentTypeId>` where `<contentTypeId>` is the ID of your content type. _Note: Make sure you have the CONTENT_MANAGEMENT_ACCESS_TOKEN env variable set to your content management token. This token is generated per user at <https://app.contentful.com/account/profile/cma_tokens>_.
 
 4. Generate the GraphQL schemas and clients using the following commands in the island.is project root:
 

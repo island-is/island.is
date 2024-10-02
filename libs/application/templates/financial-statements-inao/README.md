@@ -4,7 +4,7 @@ This library was generated with [Nx](https://nx.dev).
 
 ### Setup
 
-First you need to enter the AWS environment variables (get from https://island-is.awsapps.com/start) to be able to upload documents while running locally
+First you need to enter the AWS environment variables (get from <https://island-is.awsapps.com/start>) to be able to upload documents while running locally
 
 `export AWS_ACCESS_KEY_ID="<access_key_id>"`
 
@@ -41,7 +41,7 @@ and visit `http://localhost:4242/umsoknir/skilarsreikninga`
 
 **Gervimaður Færeyjar** `01012399`
 
-### Company representation:
+### Company representation
 
 Act as a political party: **65°ARCTIC ehf.**
 

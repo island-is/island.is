@@ -4,7 +4,7 @@ This library was generated with [Nx](https://nx.dev).
 
 ## How to use
 
-### Generate the client:
+### Generate the client
 
 ```sh
 yarn nx run clients-passports:codegen/backend-client

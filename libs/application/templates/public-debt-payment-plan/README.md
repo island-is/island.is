@@ -8,6 +8,6 @@ Run `nx test application-templates-public-debt-payment-plan` to execute the unit
 
 ## Test Users
 
-### As an individual:
+### As an individual
 
 **Gervimaður Afríka** `0103019`

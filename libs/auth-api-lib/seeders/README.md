@@ -112,7 +112,7 @@ Notes about the arguments:
 - `addToResource` Deprecated, we no longer recommend assigning scopes to a resource or audience. Specifies which resource this scope belongs to. Defaults to `@island.is`.
 - `addToClients` adds this scope as `allowedScopes` for the specified clients.
 
-### Using compose.
+### Using compose
 
 Each seed migration can define multiple clients and scopes using `compose`:
 

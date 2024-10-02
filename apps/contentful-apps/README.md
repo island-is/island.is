@@ -7,7 +7,7 @@ To start the Contentful Apps Next.js server locally run the following command:
 
 Each app defines it's own page inside this project.
 
-To create a Contentful app you can mostly follow Contentful documentation, here's an example app guide: https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/
+To create a Contentful app you can mostly follow Contentful documentation, here's an example app guide: <https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/>
 
 The only change is that we aren't using the `create-contentful-app` script to bootstrap our Contentful app but instead you can simply add a new page inside the `/pages` folder.
 

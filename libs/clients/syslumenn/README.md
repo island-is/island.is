@@ -14,7 +14,7 @@ The client is generated from a copy of the openApi document provided by Syslumen
 yarn nx run clients-syslumenn:update-openapi-document
 ```
 
-### Regenerating the client:
+### Regenerating the client
 
 ```sh
 yarn nx run clients-syslumenn:codegen/backend-client

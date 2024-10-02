@@ -6,7 +6,7 @@ The service portal is the user personal pages where it will be able to find all 
 
 ## URLs
 
-- [Development] (http://localhost:4200)
+- [Development] (<http://localhost:4200>)
 - [Dev](https://beta.dev01.devland.is/minarsidur)
 - [Staging](https://beta.staging01.devland.is/minarsidur)
 - [Production](https://island.is/minarsidur)

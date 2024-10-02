@@ -14,7 +14,7 @@ Run `nx test clients-housing-benefit-calculator` to execute the unit tests via [
 yarn nx run clients-housing-benefit-calculator:update-openapi-document
 ```
 
-### Regenerating the client:
+### Regenerating the client
 
 ```sh
 yarn nx run clients-housing-benefit-calculator:codegen/backend-client

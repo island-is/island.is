@@ -23,7 +23,7 @@ AssetsXRoadService should now be available to use.
 
 # UI
 
-Example of usage can be found in: http://localhost:4200/minarsidur/fasteignir
+Example of usage can be found in: <http://localhost:4200/minarsidur/fasteignir>
 
 Service portal needs to be running.
 `yarn start service-portal`

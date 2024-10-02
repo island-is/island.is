@@ -1,6 +1,6 @@
 ## Development
 
-1.  Make sure you have Docker, then run:
+1. Make sure you have Docker, then run:
 
 ```bash
 yarn dev-services regulations-admin-backend

@@ -8,7 +8,7 @@ This library implements a client to use Samgöngustofa's Vehicle mileage usage c
 
 The client is generated from a copy of the openApi document provided in x-road.
 
-### Regenerating the client:
+### Regenerating the client
 
 This regenerates the client from clientConfig.json file.
 
@@ -18,7 +18,7 @@ yarn nx run clients-vehicles-mileage:codegen/backend-client
 
 ## Code owners and maintainers
 
-- [Hugsmiðjan ](https://github.com/orgs/island-is/teams/hugsmidjan)
+- [Hugsmiðjan](https://github.com/orgs/island-is/teams/hugsmidjan)
 
 ## Running unit tests
 

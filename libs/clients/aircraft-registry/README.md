@@ -12,7 +12,7 @@ Run `nx test clients-aircraft-registry` to execute the unit tests via [Jest](htt
 yarn nx run clients-aircraft-registry:update-openapi-document
 ```
 
-### Regenerating the client:
+### Regenerating the client
 
 ```sh
 yarn nx run clients-aircraft-registry:codegen/backend-client

@@ -2,7 +2,7 @@
 
 This library has TypeScript enums and types for the [problems](https://datatracker.ietf.org/doc/html/rfc7807) that our APIs return.
 
-## Handling problems with Apollo Client.
+## Handling problems with Apollo Client
 
 If you're using [`@island.is/nest/problem`](../../nest/problem/README.md) in your GraphQL API, the problem will be included as a GraphQL Error extension.
 

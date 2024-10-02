@@ -8,7 +8,7 @@ Run these two proxy clients for Þjóðskrá connection.
 
 Proxy the X-Road socat service (v2):
 
-First you need to enter the AWS environment variables (get from https://island-is.awsapps.com/start)
+First you need to enter the AWS environment variables (get from <https://island-is.awsapps.com/start>)
 
 `export AWS_ACCESS_KEY_ID="<access_key_id>"`
 

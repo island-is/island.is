@@ -3,7 +3,7 @@
 This library is responsible for calculating your primary country of residence
 according to the 185 day rule.
 
-https://www.reglugerd.is/reglugerdir/eftir-raduneytum/domsmalaraduneyti/nr/1149
+<https://www.reglugerd.is/reglugerdir/eftir-raduneytum/domsmalaraduneyti/nr/1149>
 
 ## Running unit tests
 

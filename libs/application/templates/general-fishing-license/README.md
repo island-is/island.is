@@ -8,11 +8,11 @@ Run `nx test application-templates-general-fishing-license` to execute the unit 
 
 ## Test Users
 
-### As an individual:
+### As an individual
 
 **Gervimaður Ameríka** `0102989`
 
-### Company representation:
+### Company representation
 
 **Gervimaður Noregur** `0102129`\
 Act as company **icelandic offshore**

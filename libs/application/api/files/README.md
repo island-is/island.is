@@ -6,18 +6,18 @@ This library handles file management for the Application system api.
 
 For this module to run the following variables are set.
 
-### Application system files:
+### Application system files
 
 `APPLICATION_ATTACHMENT_BUCKET` has a fallback locally \
 `FILE_SERVICE_PRESIGN_BUCKET` has a fallback locally \
 `REDIS_URL_NODE_01` has a fallback locally
 
-### Signing:
+### Signing
 
 `DOKOBIT_URL` has a fallback locally \
 `DOKOBIT_ACCESS_TOKEN` needs to be set for local development
 
-### File upload module:
+### File upload module
 
 `FILE_STORAGE_UPLOAD_BUCKET` has a fallback locally
 

@@ -68,8 +68,8 @@ The user can post empty values to the email and telephone fields. If they choose
 
 ```
 {
-	emailStatus:  DataStatus.EMPTY,
-	mobileStatus:  DataStatus.EMPTY,
+ emailStatus:  DataStatus.EMPTY,
+ mobileStatus:  DataStatus.EMPTY,
 }
 ```
 

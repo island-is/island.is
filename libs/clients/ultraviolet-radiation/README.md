@@ -8,7 +8,7 @@ This generated client calls a web service that belongs to the Icelandic Radiatio
 yarn nx run clients-ultraviolet-radiation:update-openapi-document --args="--apiKey=INSERT_API_KEY_HERE"
 ```
 
-## Regenerating the client:
+## Regenerating the client
 
 ```sh
 yarn nx run clients-ultraviolet-radiation:codegen/backend-client

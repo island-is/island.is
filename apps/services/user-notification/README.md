@@ -24,7 +24,7 @@ sequenceDiagram
     User-Notification-Worker->>User email: sends e-mail
 ```
 
-## Running the project:
+## Running the project
 
 ### Initial Setup
 

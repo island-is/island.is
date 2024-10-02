@@ -20,7 +20,7 @@ Run `nx lint clients-electronic-registration-statistics` to execute the lint via
 yarn nx run clients-electronic-registration-statistics:update-openapi-document
 ```
 
-### Regenerating the client:
+### Regenerating the client
 
 ```sh
 yarn nx run clients-electronic-registration-statistics:codegen/backend-client
