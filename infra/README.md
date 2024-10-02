@@ -15,24 +15,24 @@ While the CLI offers various commands, one of the most powerful and useful for d
 Here is a summary of all available commands in the CLI:
 
 ```text
-cli.ts <command>
+yarn cli <command>
 
 Commands:
-  cli.ts render-env        Render a chart for environment
-  cli.ts render-urls       Render URLs from ingress for environment
-  cli.ts render-secrets    Render secrets needed by service
-  cli.ts render-env-vars   Render environment variables needed by service.
-                           This is to be used when developing locally and
-                           loading of the environment variables for "dev"
-                           environment is needed.
-  cli.ts render-local-env  Render environment variables needed by service.
-                           This is to be used when developing locally and
-                           loading of the environment variables for "dev"
-                           environment is needed.
-  cli.ts run-local-env     Render environment and run the local environment.
-                           This is to be used when developing locally and
-                           loading of the environment variables for "dev"
-                           environment is needed.
+  yarn cli render-env        Render a chart for environment
+  yarn cli render-urls       Render urls from ingress for environment
+  yarn cli render-secrets    Render secrets secrets needed by service
+  yarn cli render-env-vars   Render environment variables needed by service.
+                             This is to be used when developing locally and
+                             loading of the environment variables for "dev"
+                             environment is needed.
+  yarn cli render-local-env  Render environment variables needed by service.
+                             This is to be used when developing locally and
+                             loading of the environment variables for "dev"
+                             environment is needed.
+  yarn cli run-local-env     Render environment and run the local environment.
+                             This is to be used when developing locally and
+                             loading of the environment variables for "dev"
+                             environment is needed.
 
 Options:
   --help     Show help                                                 [boolean]
