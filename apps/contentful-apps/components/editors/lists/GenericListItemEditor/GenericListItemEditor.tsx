@@ -4,7 +4,7 @@ import { EditorExtensionSDK } from '@contentful/app-sdk'
 import { Box } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
-import { mapLocalesToFieldApis } from '../utils'
+import { mapLocalesToFieldApis } from '../../utils'
 
 const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
   return {
@@ -26,7 +26,9 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
 const ContentfulField = dynamic(
   () =>
     // Dynamically import via client side rendering since the @contentful/default-field-editors package accesses the window and navigator global objects
-    import('../ContentfulField').then(({ ContentfulField }) => ContentfulField),
+    import('../../ContentfulField').then(
+      ({ ContentfulField }) => ContentfulField,
+    ),
   {
     ssr: false,
   },
