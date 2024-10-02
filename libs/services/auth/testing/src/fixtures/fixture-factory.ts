@@ -28,6 +28,7 @@ import {
   IdentityResource,
   Language,
   PersonalRepresentative,
+  PersonalRepresentativeDelegationType,
   PersonalRepresentativeDelegationTypeModel,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
@@ -574,6 +575,7 @@ export class FixtureFactory {
                 rightType?.code ?? ''
               }`,
               providerId: AuthDelegationProvider.PersonalRepresentativeRegistry,
+              actorDiscretionRequired: false,
             }),
           )
         : [],
@@ -728,7 +730,11 @@ export class FixtureFactory {
 
   async createAllDelegationTypes() {
     await Promise.all(
-      Object.values(AuthDelegationType).map(async (delegationType) => {
+      [
+        ...Object.values(AuthDelegationType),
+        PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
+        `${AuthDelegationType.PersonalRepresentative}:finance`,
+      ].map(async (delegationType) => {
         await this.createDelegationType({ id: delegationType })
       }),
     )
