@@ -22,6 +22,10 @@ import {
   AdminSignatureApi,
 } from './apis'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
+import {
+  AreaSummaryReport,
+  mapAreaSummaryReport,
+} from './types/areaSummaryReport.dto'
 
 type Api =
   | AdminListApi
@@ -310,6 +314,25 @@ export class SignatureCollectionAdminClientService {
       return { success: res.bladsidaNr === pageNumber }
     } catch {
       return { success: false }
+    }
+  }
+
+  async getAreaSummaryReport(
+    auth: Auth,
+    collectionId: string,
+    areaId: string,
+  ): Promise<AreaSummaryReport> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelasofnunIDSvaediInfoSvaediIDGet({
+        iD: parseInt(collectionId),
+        svaediID: parseInt(areaId),
+      })
+      return mapAreaSummaryReport(res)
+    } catch {
+      return {} as AreaSummaryReport
     }
   }
 }
