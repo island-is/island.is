@@ -390,9 +390,8 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
   },
   [ApplicationTypes.RENTAL_AGREEMENT]: {
-    // TODO: Fix this
-    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
-    slug: InstitutionTypes.STAFRAENT_ISLAND,
-    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
   },
 }
