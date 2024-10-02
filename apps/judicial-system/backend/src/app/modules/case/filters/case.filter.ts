@@ -6,6 +6,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  EventType,
   getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
   isCourtOfAppealsUser,
@@ -84,6 +85,27 @@ const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
 
   // Check case state access
   if (theCase.state !== CaseState.COMPLETED) {
+    return false
+  }
+
+  // Check indictment ruling decision access
+  if (
+    !theCase.indictmentRulingDecision ||
+    ![
+      CaseIndictmentRulingDecision.FINE,
+      CaseIndictmentRulingDecision.RULING,
+    ].includes(theCase.indictmentRulingDecision)
+  ) {
+    return false
+  }
+
+  // Make sure the indictment has been sent to the public prosecutor
+  if (
+    !theCase.eventLogs?.some(
+      (eventLog) =>
+        eventLog.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+    )
+  ) {
     return false
   }
 

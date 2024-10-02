@@ -13,6 +13,7 @@ import { SignatureMember } from './Member'
 import set from 'lodash/set'
 import * as styles from './Signatures.css'
 import * as z from 'zod'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -26,6 +27,8 @@ export const Chairman = ({ applicationId, member }: Props) => {
   const { application, debouncedOnUpdateApplicationHandler } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const handleChairmanChange = (value: string, key: keyof MemberProperties) => {
     const { signature, currentAnswers } = getCommitteeAnswers(
@@ -56,6 +59,8 @@ export const Chairman = ({ applicationId, member }: Props) => {
         InputFields.signature.committee,
         updatedCommitteeSignature,
       )
+
+      setValue(InputFields.signature.committee, updatedCommitteeSignature)
 
       return updatedSignatures
     }
