@@ -2,7 +2,7 @@ import {
   type CreationOptional,
   InferAttributes,
   InferCreationAttributes,
-  NonAttribute,
+  type NonAttribute,
 } from 'sequelize'
 import {
   BelongsTo,

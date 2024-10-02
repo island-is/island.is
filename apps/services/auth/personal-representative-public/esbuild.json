@@ -43,8 +43,7 @@
     "@protobufjs/pool",
     "@protobufjs/utf8",
     "safer-buffer",
-    "@mikro-orm/core",
-    "sequelize"
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }

@@ -63,8 +63,7 @@
     "mimic-response",
     "pdfkit",
     "path-scurry",
-    "@mikro-orm/core",
-    "sequelize"
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }
