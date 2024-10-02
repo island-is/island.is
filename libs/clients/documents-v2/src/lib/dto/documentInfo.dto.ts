@@ -11,6 +11,7 @@ export interface DocumentInfoDto
   withdrawn?: boolean
   widthdrawnReason?: string
   minimumAuthenticationType?: string
+  urgent?: boolean
 }
 
 export const mapToDocumentInfoDto = (

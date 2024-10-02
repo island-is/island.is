@@ -38,6 +38,7 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.internal,
   ApiScope.internalProcuring,
   ApiScope.meDetails,
+  ApiScope.lawAndOrder,
   ApiScope.licenses,
   ApiScope.licensesVerify,
   ApiScope.company,
