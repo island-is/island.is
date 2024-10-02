@@ -20,10 +20,6 @@ export const DownloadReports = ({
     document: <MyPdfDocument report={{}} />,
   })
 
-  if (document.error) {
-    console.warn(document.error)
-  }
-
   return (
     <Box>
       <Button
