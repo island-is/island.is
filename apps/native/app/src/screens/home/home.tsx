@@ -256,7 +256,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const keyExtractor = useCallback((item: ListItem) => item.id, [])
   const scrollY = useRef(new Animated.Value(0)).current
 
-  const checkAppVersion = useCallback(async () => {
+  const isAppUpdateRequired = useCallback(async () => {
     const needsUpdate = await needsToUpdateAppVersion()
     if (needsUpdate) {
       navigateTo('/update-app', { closable: false })
@@ -270,7 +270,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     // Get user locale from server
     getAndSetLocale()
     // Check if upgrade wall should be shown
-    checkAppVersion()
+    isAppUpdateRequired()
   }, [])
 
   const refetch = useCallback(async () => {

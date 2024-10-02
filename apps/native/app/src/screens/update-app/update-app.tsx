@@ -16,8 +16,7 @@ import { preferencesStore } from '../../stores/preferences-store'
 const Text = styled.View`
   margin-horizontal: ${({ theme }) => theme.spacing[7]}px;
   text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing[5]}px;
-  margin-top: ${({ theme }) => theme.spacing[5]}px;
+  margin-vertical: ${({ theme }) => theme.spacing[5]}px;
 `
 
 const Host = styled.View`
@@ -95,7 +94,7 @@ export const UpdateAppScreen: NavigationFunctionComponent<{
             </Title>
             <Typography textAlign="center">
               <FormattedMessage
-                id={'updateApp.description'}
+                id="updateApp.description"
                 defaultMessage={
                   'Þú ert að fara að nota gamla útgáfu af Ísland.is appinu. Vinsamlegast uppfærðu appið til að halda áfram.'
                 }
