@@ -236,12 +236,12 @@ const CriminalRecordSchema = z.object({
 const SupportingDocumentsSchema = z
   .object({
     birthCertificateRequired: z.string().min(1),
-    birthCertificate: z.array(FileDocumentSchema),
+    birthCertificate: z.array(FileDocumentSchema).optional(),
     subsistenceCertificate: z.array(FileDocumentSchema).min(1),
     subsistenceCertificateForTown: z.array(FileDocumentSchema).min(1),
     certificateOfLegalResidenceHistory: z.array(FileDocumentSchema).min(1),
     icelandicTestCertificate: z.array(FileDocumentSchema).min(1),
-    criminalRecord: z.array(CriminalRecordSchema),
+    criminalRecord: z.array(CriminalRecordSchema).optional(),
   })
   .refine(
     ({ birthCertificateRequired, birthCertificate }) => {
