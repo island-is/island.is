@@ -355,12 +355,15 @@ export const getAvailableRightsInDays = (application: Application) => {
     (acc, right) => acc + Number(right.days),
     0,
   )
+  if (VMSTDays) {
+    return VMSTDays
+  }
+
   return (
     selectedChild.remainingDays +
     additionalSingleParentDays +
     transferredDays +
-    multipleBirthsRequestDays +
-    VMSTDays
+    multipleBirthsRequestDays
   )
 }
 
