@@ -8,38 +8,55 @@ import {
   StyleSheet,
 } from '@react-pdf/renderer'
 import logo from './logo.png'
-
 import { dark200 } from '@island.is/island-ui/theme'
+import { SignatureCollectionAreaSummaryReport } from '@island.is/api/schema'
 
-const MyPdfDocument = (data: { report?: any }) => {
-  const { report } = data
+const MyPdfDocument = ({
+  report,
+}: {
+  report: SignatureCollectionAreaSummaryReport
+}) => {
   return (
     <Document>
-      <Page style={styles.body}>
-        <View>
-          <Text style={styles.pageTitle}>Norðvesturkjördæmi</Text>
-          <View style={styles.dividerLineBox}>
-            <View style={styles.dividerLine} />
-          </View>
+      {report && report.lists?.length
+        ? report.lists.map((list) => (
+            <Page style={styles.body} key={list.listName}>
+              <View>
+                <Text style={styles.pageTitle}>{report.name}</Text>
+                <View style={styles.dividerLineBox}>
+                  <View style={styles.dividerLine} />
+                </View>
 
-          <Text style={styles.header}>Flokkur:</Text>
-          <Text style={styles.text}>{'Gervimannaflokkur'}</Text>
+                <Text style={styles.header}>Flokkur:</Text>
+                <Text style={styles.text}>{list.candidateName}</Text>
 
-          <Text style={styles.header}>Listabókstafur:</Text>
-          <Text style={styles.text}>{'Æ'}</Text>
+                <Text style={styles.header}>Listabókstafur:</Text>
+                <Text style={styles.text}>{list.partyBallotLetter}</Text>
 
-          <Text style={styles.header}>Rafræn meðmæli:</Text>
-          <Text style={styles.text}>{'1346'}</Text>
+                <Text style={styles.header}>Rafræn meðmæli:</Text>
+                <Text style={styles.text}>{list.nrOfDigitalSignatures}</Text>
 
-          <Text style={styles.header}>Meðmæli af pappír:</Text>
-          <Text style={styles.text}>{'450'}</Text>
+                <Text style={styles.header}>Meðmæli af pappír:</Text>
+                <Text style={styles.text}>{list.nrOfPaperSignatures}</Text>
 
-          <Text style={styles.header}>Samtals fjöldi gildra meðmæla:</Text>
-          <Text style={styles.text}>{'1768'}</Text>
-        </View>
+                <Text style={styles.header}>
+                  Samtals fjöldi gildra meðmæla:
+                </Text>
+                <Text style={styles.text}>{list.nrOfSignatures}</Text>
+              </View>
 
-        <Image src={logo} style={styles.logo} fixed />
-      </Page>
+              <Image src={logo} style={styles.logo} fixed />
+            </Page>
+          ))
+        : report && (
+            <Page style={styles.body}>
+              <Text style={styles.pageTitle}>{report?.name}</Text>
+              <View style={styles.dividerLineBox}>
+                <View style={styles.dividerLine} />
+              </View>
+              <Text style={styles.text}>Engar upplýsingar til að birta</Text>
+            </Page>
+          )}
     </Document>
   )
 }

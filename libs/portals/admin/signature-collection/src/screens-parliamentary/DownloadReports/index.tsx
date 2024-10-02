@@ -1,24 +1,52 @@
 import { useLocale } from '@island.is/localization'
 import { ActionCard, Box, Button, Stack, Text } from '@island.is/island-ui/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { SignatureCollectionArea } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import { usePDF } from '@react-pdf/renderer'
 import MyPdfDocument from './MyPdfDocument'
+import { SignatureCollectionAreaSummaryReportDocument } from './MyPdfDocument/areaSummary.generated'
+import { useLazyQuery } from '@apollo/client'
+import { useDebounce } from 'react-use'
 
 export const DownloadReports = ({
   areas,
+  collectionId,
 }: {
   areas: SignatureCollectionArea[]
+  collectionId: string
 }) => {
   const { formatMessage } = useLocale()
   const [modalDownloadReportsIsOpen, setModalDownloadReportsIsOpen] =
     useState(false)
 
-  const [document] = usePDF({
-    document: <MyPdfDocument report={{}} />,
+  const [runGetSummaryReport, { data }] = useLazyQuery(
+    SignatureCollectionAreaSummaryReportDocument,
+  )
+
+  const [document, updateDocument] = usePDF({
+    document: (
+      <MyPdfDocument report={data?.signatureCollectionAreaSummaryReport} />
+    ),
   })
+
+  // Used debounce to make sure the document is ready before it is opened
+  useDebounce(
+    () => {
+      if (!document.loading && document.url) {
+        window.open(document.url, '_blank')
+      }
+    },
+    200,
+    [data],
+  )
+
+  useEffect(() => {
+    if (data?.signatureCollectionAreaSummaryReport) {
+      updateDocument()
+    }
+  }, [data, updateDocument])
 
   return (
     <Box>
@@ -36,7 +64,9 @@ export const DownloadReports = ({
         isVisible={modalDownloadReportsIsOpen}
         title={formatMessage(m.downloadReports)}
         label={''}
-        onClose={() => setModalDownloadReportsIsOpen(false)}
+        onClose={() => {
+          setModalDownloadReportsIsOpen(false)
+        }}
         closeButtonLabel={''}
       >
         <Text>{formatMessage(m.downloadReportsDescription)}</Text>
@@ -54,7 +84,14 @@ export const DownloadReports = ({
                   icon: 'download',
                   iconType: 'outline',
                   onClick: () => {
-                    window.open(document.url ?? '', '_blank')
+                    runGetSummaryReport({
+                      variables: {
+                        input: {
+                          areaId: area.id,
+                          collectionId: collectionId,
+                        },
+                      },
+                    })
                   },
                 }}
               />

@@ -207,7 +207,7 @@ export const m = defineMessages({
   cancelCollectionModalMessageLastList: {
     id: 'dmin-portal.signature-collection:cancelCollectionModalMessageLastList#markdown',
     defaultMessage:
-      'Þú ert að fara að eyða síðasta lista framboðsins. Athugaðu að með því að eyða síðasta lista framboðsins verður framboðinu einnig eytt. Ertu viss um að þú viljir eyða lista og framboðinu?',
+      'Þú ert að fara að eyða síðasta lista framboðsins. Athugaðu að með því að eyða síðasta lista framboðsins verður framboðinu einnig eytt. Ertu viss um að þú viljir eyða lista og framboði?',
     description: '',
   },
   cancelCollectionModalConfirmButton: {
