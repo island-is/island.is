@@ -70,7 +70,5 @@ main() {
   eval "${ACTION}"
 }
 
-# Exit if not directly run
-return 2>/dev/null || true
 _set_publish
 main "$@"
