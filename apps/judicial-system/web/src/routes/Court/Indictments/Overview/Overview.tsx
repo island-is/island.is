@@ -38,6 +38,7 @@ const IndictmentOverview = () => {
   const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
+  const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNavigationTo = useCallback(
@@ -122,7 +123,10 @@ const IndictmentOverview = () => {
           <Box component="section" marginBottom={5}>
             {
               <SubpoenaType
-                defendants={workingCase.defendants}
+                subpoenaItems={workingCase.defendants.map((defendant) => ({
+                  defendant,
+                  disabled: isArraignmentScheduled,
+                }))}
                 workingCase={workingCase}
                 setWorkingCase={setWorkingCase}
                 updateDefendantState={updateDefendantState}
