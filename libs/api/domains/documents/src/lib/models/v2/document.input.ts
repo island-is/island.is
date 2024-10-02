@@ -14,4 +14,7 @@ export class DocumentInput {
 
   @Field({ defaultValue: 10 })
   readonly pageSize!: number
+
+  @Field(() => Boolean, { nullable: true, defaultValue: true })
+  readonly includeDocument?: boolean
 }
