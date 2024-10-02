@@ -323,7 +323,7 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit skráninga',
   },
   vehiclesBulkMileageJobOverviewDescription: {
-    id: 'service.portal:vehicles-bulk-mileage-job-overview',
+    id: 'service.portal:vehicles-bulk-mileage-job-overview-description',
     defaultMessage: 'Yfirlit yfir skráða kílómetrastöðu',
   },
   vehiclesBulkMileageJobDetail: {
@@ -1505,7 +1505,7 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit yfir núverandi tekjuáætlun',
   },
   incomePlanDescription: {
-    id: 'service.portal:income-plan',
+    id: 'service.portal:income-plan-description',
     defaultMessage:
       'Ellilífeyrir, örorkulífeyrir, endurhæfingarlífeyrir og tengdar greiðslur eru tekjutengdar og reiknast út frá tekjuáætlun. Þegar sótt er um lífeyri þarf alltaf að skila inn tekjuáætlun. Hér er hægt að skoða gildandi tekjuáætlun.',
   },

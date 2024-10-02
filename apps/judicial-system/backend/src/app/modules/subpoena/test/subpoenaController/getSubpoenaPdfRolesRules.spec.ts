@@ -6,16 +6,16 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../../../guards'
-import { DefendantController } from '../../defendant.controller'
+import { SubpoenaController } from '../../subpoena.controller'
 
-describe('DefendantController - Get custody notice pdf rules', () => {
+describe('SubpoenaController - Get custody notice pdf rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let rules: any[]
 
   beforeEach(() => {
     rules = Reflect.getMetadata(
       'roles-rules',
-      DefendantController.prototype.getSubpoenaPdf,
+      SubpoenaController.prototype.getSubpoenaPdf,
     )
   })
 

@@ -3381,6 +3381,62 @@
           },
           "requiresMileageRegistration": {
             "type": "boolean"
+          },
+          "operators": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VehicleSearchOperatorDto"
+            },
+            "nullable": true
+          },
+          "engine": {
+            "type": "string",
+            "nullable": true
+          },
+          "allOperatorsAreAnonymous": {
+            "type": "boolean"
+          },
+          "someOperatorsAreAnonymous": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VehicleSearchOperatorDto": {
+        "type": "object",
+        "properties": {
+          "mainoperator": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "startdate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "enddate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "persidno": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullname": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalcode": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

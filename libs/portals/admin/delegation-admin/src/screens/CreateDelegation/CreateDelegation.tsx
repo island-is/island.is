@@ -43,6 +43,7 @@ import kennitala from 'kennitala'
 import { maskString, unmaskString } from '@island.is/shared/utils'
 import { useAuth } from '@island.is/auth/react'
 import { replaceParams } from '@island.is/react-spa/shared'
+import { FORM_ERRORS } from '../../constants/errors'
 
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
@@ -402,10 +403,21 @@ const CreateDelegationScreen = () => {
               />
             </GridColumn>
             {actionData?.globalError && (
-              <GridColumn span={['12/12']}>
+              <GridColumn span={['12/12', '12/12', '7/12']}>
                 <AlertMessage
                   title=""
-                  message={formatMessage(m.errorDefault)}
+                  message={
+                    // if problem title is object extract code and use it as key
+                    actionData?.problem?.title
+                      ? formatMessage(
+                          FORM_ERRORS[
+                            actionData?.problem
+                              ?.title as keyof typeof FORM_ERRORS
+                          ],
+                        )
+                      : actionData?.problem?.detail ||
+                        formatMessage(m.errorDefault)
+                  }
                   type="error"
                 />
               </GridColumn>
