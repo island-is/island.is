@@ -368,10 +368,9 @@ export class PoliceService {
                 ? ServiceStatus.DEFENDER
                 : response.prosecutedConfirmedSubpoenaThroughIslandis
                 ? ServiceStatus.ELECTRONICALLY
-                : response.deliveredOnPaper
+                : response.deliveredOnPaper || response.delivered === true
                 ? ServiceStatus.IN_PERSON
-                : response.acknowledged === false &&
-                  response.defenderChoice === 'HAS_NOT_ACKNOWLEDGED'
+                : response.acknowledged === false
                 ? ServiceStatus.FAILED
                 : // TODO: handle expired
                   undefined,
