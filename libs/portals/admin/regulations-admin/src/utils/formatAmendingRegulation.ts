@@ -1,5 +1,9 @@
 import { asDiv, HTMLText } from '@island.is/regulations'
-import { GroupedDraftImpactForms, RegDraftForm } from '../state/types'
+import {
+  AppendixDraftForm,
+  GroupedDraftImpactForms,
+  RegDraftForm,
+} from '../state/types'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import compact from 'lodash/compact'
@@ -10,8 +14,10 @@ import {
   extractArticleTitleDisplay,
   getTextWithSpaces,
   groupElementsByArticleTitleFromDiv,
+  hasAnyChange,
   isGildisTaka,
   removeRegPrefix,
+  updateAppendixWording,
 } from './formatAmendingUtils'
 import { getDeletionOrAddition } from './getDeletionOrAddition'
 
@@ -173,6 +179,7 @@ export const formatAmendingRegBody = (
   repeal?: boolean,
   diff?: HTMLText | string | undefined,
   regTitle?: string,
+  appendixes?: AppendixDraftForm[],
 ) => {
   const regName = removeRegNamePrefix(name)
   if (repeal) {
@@ -409,6 +416,34 @@ export const formatAmendingRegBody = (
     }
   })
 
+  appendixes?.map((apx, idx) => {
+    if (apx.diff?.value) {
+      const defaultTitle = apx.title.value ?? `Viðauki ${idx + 1}`
+
+      const regNameAddition =
+        regName && regName !== 'self'
+          ? `reglugerð nr. ${regName}`.replace(/\.$/, '')
+          : 'reglugerðina'
+      const regNameChange =
+        regName && regName !== 'self'
+          ? `, reglugerðar nr. ${regName}`.replace(/\.$/, '')
+          : ''
+
+      const testAddTitle = `Við ${regNameAddition} bætist nýr viðauki, ${defaultTitle} sem ${
+        /fylgiskjal/i.test(defaultTitle) ? 'birt' : 'birtur'
+      } er með reglugerð þessari.`
+      const testChangeTitle = `Eftirfarandi breytingar eru gerðar á ${updateAppendixWording(
+        defaultTitle,
+      )}${regNameChange}:`
+
+      if (apx.diff?.value.includes('<div data-diff="new">')) {
+        additionArray.push([`<p>${testAddTitle}</p>` as HTMLText])
+      } else if (hasAnyChange(apx.diff?.value)) {
+        additionArray.push([`<p>${testChangeTitle}</p><p>[]</p>` as HTMLText])
+      }
+    }
+  })
+
   return additionArray.flat()
 }
 
@@ -426,6 +461,7 @@ export const formatAmendingBodyWithArticlePrefix = (
             item.type === 'repeal',
             item.type === 'amend' ? item.diff?.value : undefined,
             item.regTitle,
+            item.type === 'amend' ? item.appendixes : undefined,
           ),
           date: item.date.value,
         }

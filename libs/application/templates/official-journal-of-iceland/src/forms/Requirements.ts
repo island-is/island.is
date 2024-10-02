@@ -16,6 +16,7 @@ import {
   preview,
   publishing,
   summary,
+  involvedParty,
 } from '../lib/messages'
 export const Requirements: Form = buildForm({
   id: 'OfficialJournalOfIcelandApplication',
@@ -35,8 +36,25 @@ export const Requirements: Form = buildForm({
               title: '',
               component: 'RequirementsScreen',
             }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: Routes.INVOLVED_PARTY,
+      title: involvedParty.general.section,
+      children: [
+        buildMultiField({
+          id: Routes.INVOLVED_PARTY,
+          title: '',
+          children: [
+            buildCustomField({
+              id: 'involvedParty',
+              title: '',
+              component: 'InvolvedPartyScreen',
+            }),
             buildSubmitField({
-              id: 'toDraft',
+              id: 'toComments',
               title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
