@@ -22,7 +22,6 @@ import { Link as ReactLink } from 'react-router-dom'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './Layout.css'
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { MessageDescriptor } from 'react-intl'
 
 interface NarrowLayoutProps {
   activeParent?: PortalNavigationItem
@@ -74,9 +73,23 @@ export const NarrowLayout = ({
       return mapChildren(item)
     })
 
-  const activeItem = activeParent?.children?.find((c) =>
-    c.path ? pathname.includes(c.path) : undefined,
-  )
+  const findLowestActiveItem = (
+    item: PortalNavigationItem,
+    parent?: PortalNavigationItem,
+  ): { item: PortalNavigationItem; parent?: PortalNavigationItem } => {
+    const activeChild = item.children?.find((c) => c.active)
+
+    if (!activeChild) {
+      return { item, parent }
+    }
+
+    return findLowestActiveItem(activeChild, item)
+  }
+
+  let lowestActiveItem
+  if (activeParent) {
+    lowestActiveItem = findLowestActiveItem(activeParent)
+  }
 
   return (
     <SidebarLayout
@@ -152,13 +165,26 @@ export const NarrowLayout = ({
           </Box>
         )}
         <ModuleAlertBannerSection />
-        {activeItem?.displayIntroHeader && (
+        {lowestActiveItem?.item?.displayIntroHeader && (
           <IntroHeader
-            title={activeItem.name}
-            intro={activeItem.intro}
-            introComponent={activeItem.introComponent}
+            title={lowestActiveItem.item.heading ?? lowestActiveItem.item.name}
+            intro={
+              lowestActiveItem.item.intro ?? lowestActiveItem?.parent?.intro
+            }
+            introComponent={
+              lowestActiveItem.item.introComponent ??
+              lowestActiveItem?.parent?.introComponent
+            }
             serviceProviderSlug={
-              activeItem.serviceProvider ?? activeParent?.serviceProvider
+              lowestActiveItem.item.serviceProvider ??
+              activeParent?.serviceProvider
+            }
+            serviceProviderTooltip={
+              lowestActiveItem.item.serviceProviderTooltip
+                ? formatMessage(lowestActiveItem.item.serviceProviderTooltip)
+                : activeParent?.serviceProviderTooltip
+                ? formatMessage(activeParent.serviceProviderTooltip)
+                : undefined
             }
           />
         )}

@@ -37,6 +37,11 @@ export const messages = defineMessages({
     id: 'sp.assets:real-estate',
     defaultMessage: 'Fasteign',
   },
+  intro: {
+    id: 'sp.assets:intro',
+    defaultMessage:
+      'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
+  },
   realEstateDetailIntro: {
     id: 'sp.assets:real-estate-detail-intro',
     defaultMessage:

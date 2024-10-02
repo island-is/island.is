@@ -3,6 +3,7 @@ import { ApplicationScope } from '@island.is/auth/scopes'
 import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { ApplicationsPaths } from './lib/paths'
+import { Navigate } from 'react-router-dom'
 
 const OverviewScreen = lazy(() => import('./screens/Overview'))
 
@@ -12,6 +13,12 @@ export const applicationsModule: PortalModule = {
     {
       name: m.applications,
       path: ApplicationsPaths.ApplicationRoot,
+      enabled: userInfo.scopes.includes(ApplicationScope.read),
+      element: <Navigate to={ApplicationsPaths.ApplicationMyApplications} />,
+    },
+    {
+      name: m.applications,
+      path: ApplicationsPaths.ApplicationMyApplications,
       enabled: userInfo.scopes.includes(ApplicationScope.read),
       element: <OverviewScreen />,
     },

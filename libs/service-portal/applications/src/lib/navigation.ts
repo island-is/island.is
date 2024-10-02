@@ -1,30 +1,44 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/service-portal/core'
+import { m as coreMessages } from '@island.is/service-portal/core'
+import { m } from '../lib/messages'
 import { ApplicationsPaths } from './paths'
 
 export const applicationsNavigation: PortalNavigationItem = {
-  name: m.applications,
+  name: coreMessages.applications,
+  description: coreMessages.applicationsDescription,
+  serviceProvider: 'stafraent-island',
   path: ApplicationsPaths.ApplicationRoot,
   icon: {
     icon: 'fileTrayFull',
   },
   children: [
     {
-      name: m.myApplications,
-      path: ApplicationsPaths.ApplicationRoot,
+      name: coreMessages.myApplications,
+      heading: m.heading,
+      intro: m.introCopy,
+      displayIntroHeader: true,
+      path: ApplicationsPaths.ApplicationMyApplications,
     },
     {
-      name: m.inProgressApplications,
+      name: coreMessages.inProgressApplications,
+      heading: m.headingInProgress,
+      intro: m.introCopyInProgress,
+      displayIntroHeader: true,
       path: ApplicationsPaths.ApplicationInProgressApplications,
     },
     {
-      name: m.unfinishedApplications,
+      name: coreMessages.unfinishedApplications,
+      heading: m.headingIncomplete,
+      intro: m.introCopyIncomplete,
+      displayIntroHeader: true,
       path: ApplicationsPaths.ApplicationIncompleteApplications,
     },
     {
-      name: m.finishedApplications,
+      name: coreMessages.finishedApplications,
+      heading: m.headingFinished,
+      intro: m.introCopyFinished,
+      displayIntroHeader: true,
       path: ApplicationsPaths.ApplicationCompleteApplications,
     },
   ],
-  description: m.applicationsDescription,
 }
