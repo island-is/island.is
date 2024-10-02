@@ -2,7 +2,14 @@ import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { IntlShape, MessageDescriptor, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AlertBanner,
+  AlertMessage,
+  Box,
+  LoadingDots,
+  Text,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { type Lawyer } from '@island.is/judicial-system/types'
@@ -142,7 +149,8 @@ const IndictmentOverview = () => {
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
-  const { subpoenaStatus } = useSubpoena()
+  const { subpoenaStatus, subpoenaStatusLoading, subpoenaStatusError } =
+    useSubpoena()
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNavigationTo = useCallback(
@@ -180,14 +188,22 @@ const IndictmentOverview = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {workingCase.defendants?.map((defendant) =>
-          defendant.subpoenas?.map((subpoena) => (
-            <ServiceAnnouncement
-              key={`${subpoena.id}-${subpoena.created}`}
-              subpoena={subpoena}
-              defendantName={defendant.name}
-            />
-          )),
+        {subpoenaStatusError ? (
+          <Box marginBottom={2}>
+            <AlertMessage type="error" message="ERROR" />
+          </Box>
+        ) : subpoenaStatusLoading ? (
+          <LoadingDots />
+        ) : (
+          workingCase.defendants?.map((defendant) =>
+            defendant.subpoenas?.map((subpoena) => (
+              <ServiceAnnouncement
+                key={`${subpoena.id}-${subpoena.created}`}
+                subpoena={subpoena}
+                defendantName={defendant.name}
+              />
+            )),
+          )
         )}
         {workingCase.court &&
           latestDate?.date &&

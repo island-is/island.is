@@ -340,11 +340,10 @@ export class PoliceService {
     )
       .then(async (res: Response) => {
         if (res.ok) {
-          const response = await res.json()
+          const response: z.infer<typeof this.subpoenaStructure> =
+            await res.json()
 
-          // TODO: parse this correctly
-          // this.subpoenaStructure.parse(response)
-          const parsedResponse = JSON.parse(response)
+          this.subpoenaStructure.parse(response)
 
           const subpoenaToUpdate = await this.subpoenaService.findBySubpoenaId(
             subpoenaId,
@@ -353,17 +352,17 @@ export class PoliceService {
           const updatedSubpoena = await this.subpoenaService.update(
             subpoenaToUpdate,
             {
-              comment: parsedResponse.comment,
-              servedBy: parsedResponse.servedBy,
-              defenderNationalId: parsedResponse.defenderNationalId,
-              serviceStatus: parsedResponse.deliveredToLawyer
+              comment: response.comment,
+              servedBy: response.servedBy,
+              defenderNationalId: response.defenderNationalId,
+              serviceStatus: response.deliveredToLawyer
                 ? ServiceStatus.DEFENDER
-                : parsedResponse.prosecutedConfirmedSubpoenaThroughIslandis
+                : response.prosecutedConfirmedSubpoenaThroughIslandis
                 ? ServiceStatus.ELECTRONICALLY
-                : parsedResponse.deliveredOnPaper
+                : response.deliveredOnPaper
                 ? ServiceStatus.IN_PERSON
-                : parsedResponse.acknowledged === false &&
-                  parsedResponse.defenderChoice === 'HAS_NOT_ACKNOWLEDGED'
+                : response.acknowledged === false &&
+                  response.defenderChoice === 'HAS_NOT_ACKNOWLEDGED'
                 ? ServiceStatus.FAILED
                 : // TODO: handle expired
                   undefined,

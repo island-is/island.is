@@ -1,7 +1,11 @@
 import { useSubpoenaStatusQuery } from './getSubpoenaStatus.generated'
 
 const useSubpoena = () => {
-  const { data: subpoenaStatus } = useSubpoenaStatusQuery({
+  const {
+    data: subpoenaStatus,
+    loading: subpoenaStatusLoading,
+    error: subpoenaStatusError,
+  } = useSubpoenaStatusQuery({
     variables: {
       input: {
         caseId: '8aee2f76-69cb-4336-9ce7-96e33a6c321b',
@@ -10,7 +14,7 @@ const useSubpoena = () => {
     },
   })
 
-  return { subpoenaStatus }
+  return { subpoenaStatus, subpoenaStatusLoading, subpoenaStatusError }
 }
 
 export default useSubpoena
