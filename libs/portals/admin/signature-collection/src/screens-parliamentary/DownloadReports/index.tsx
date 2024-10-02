@@ -44,12 +44,13 @@ export const DownloadReports = ({
         closeButtonLabel={''}
       >
         <Text>{formatMessage(m.downloadReportsDescription)}</Text>
-        <Box marginTop={5}>
+        <Box marginY={5}>
           <Stack space={3}>
             {areas.map((area) => (
               <ActionCard
                 key={area.id}
                 heading={formatMessage(area.name)}
+                headingVariant="h4"
                 backgroundColor="blue"
                 cta={{
                   label: formatMessage(m.downloadButton),

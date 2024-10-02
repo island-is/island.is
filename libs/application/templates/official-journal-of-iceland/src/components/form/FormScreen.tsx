@@ -2,11 +2,13 @@ import {
   AlertMessage,
   AlertMessageProps,
   Box,
+  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import * as styles from './FormScreen.css'
 import { useLocale } from '@island.is/localization'
 import { general } from '../../lib/messages'
+import { OJOI_INPUT_HEIGHT } from '../../lib/constants'
 
 type WarningProps = {
   type?: AlertMessageProps['type']
@@ -20,6 +22,7 @@ type Props = {
   button?: React.ReactNode
   warning?: WarningProps
   children?: React.ReactNode
+  loading?: boolean
 }
 
 export const FormScreen = ({
@@ -28,6 +31,7 @@ export const FormScreen = ({
   button,
   children,
   warning,
+  loading,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -61,7 +65,16 @@ export const FormScreen = ({
           </Box>
         )}
       </Box>
-      <Box className={styles.childrenWrapper}>{children}</Box>
+      {loading ? (
+        <SkeletonLoader
+          height={OJOI_INPUT_HEIGHT}
+          repeat={3}
+          borderRadius="standard"
+          space={2}
+        />
+      ) : (
+        <Box className={styles.childrenWrapper}>{children}</Box>
+      )}
     </>
   )
 }

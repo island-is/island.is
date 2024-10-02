@@ -127,12 +127,13 @@ export const m = defineMessages({
   },
   createCollectionModalDescription: {
     id: 'admin-portal.signature-collection:createCollectionModalDescription',
-    defaultMessage: 'Sláðu inn kennitölu frambjóðanda',
+    defaultMessage:
+      'Til þess að stofna meðmælasöfnun þarf að slá inn kennitölu frambjóðs.',
     description: '',
   },
   candidateNationalId: {
     id: 'admin-portal.signature-collection:candidateNationalId',
-    defaultMessage: 'Kennitala frambjóðanda',
+    defaultMessage: 'Kennitala framboðs',
     description: '',
   },
   candidateNationalIdNotFound: {
@@ -142,7 +143,7 @@ export const m = defineMessages({
   },
   candidateName: {
     id: 'admin-portal.signature-collection:candidateName',
-    defaultMessage: 'Nafn frambjóðanda',
+    defaultMessage: 'Nafn framboðs',
     description: '',
   },
   listEndTime: {
@@ -286,7 +287,7 @@ export const m = defineMessages({
   downloadReportsDescription: {
     id: 'admin-portal.signature-collection:downloadReportsDescription',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus nec odio ultricies ultricies. Nullam nec purus nec odio ultricies ultricies.',
+      'Hlaðið niður yfirlitsskýrslum yfir stöðu safnana í hverju kjördæmi fyrir sig eftir yfirferð.',
     description: '',
   },
   downloadButton: {
@@ -296,7 +297,7 @@ export const m = defineMessages({
   },
   searchInListPlaceholder: {
     id: 'admin-portal.signature-collection:searchInListPlaceholder',
-    defaultMessage: 'Leitaðu að nafni eða kennitölu',
+    defaultMessage: 'Leita eftir nafni eða kennitölu',
     description: '',
   },
   sortBy: {
@@ -650,7 +651,7 @@ export const parliamentaryMessages = defineMessages({
   signatureListsIntro: {
     id: 'admin-portal.signature-collection-parliamentary:signatureListsIntro',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed etiam, ut inquit, in vita et in voluptate locum ponamus, isdem et in dolore et in odio.',
+      'Hér er yfirlit yfir kjördæmin sex. Ýttu á viðeigandi kjördæmi til að sjá meðmælendalista í því kjördæmi.',
     description: '',
   },
   compareListsButton: {

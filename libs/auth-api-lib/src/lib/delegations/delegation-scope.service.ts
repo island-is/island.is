@@ -28,6 +28,7 @@ import { DelegationTypeModel } from './models/delegation-type.model'
 import { Delegation } from './models/delegation.model'
 
 import type { User } from '@island.is/auth-nest-tools'
+
 @Injectable()
 export class DelegationScopeService {
   constructor(
@@ -309,24 +310,27 @@ export class DelegationScopeService {
   }
 
   private async findDistrictCommissionersRegistryScopesTo(
-    toNationalId: string,
+    user: User,
     fromNationalId: string,
   ): Promise<string[]> {
     // if no valid delegation exists, return empty array
     try {
       const delegationFound =
         await this.syslumennService.checkIfDelegationExists(
-          toNationalId,
+          user.nationalId,
           fromNationalId,
         )
 
       if (!delegationFound) {
-        this.delegationsIndexService.removeDelegationRecord({
-          fromNationalId,
-          toNationalId,
-          type: AuthDelegationType.LegalRepresentative,
-          provider: AuthDelegationProvider.DistrictCommissionersRegistry,
-        })
+        void this.delegationsIndexService.removeDelegationRecord(
+          {
+            fromNationalId,
+            toNationalId: user.nationalId,
+            type: AuthDelegationType.LegalRepresentative,
+            provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+          },
+          user,
+        )
         return []
       }
     } catch (error) {
@@ -429,10 +433,7 @@ export class DelegationScopeService {
       providers.includes(AuthDelegationProvider.DistrictCommissionersRegistry)
     )
       scopePromises.push(
-        this.findDistrictCommissionersRegistryScopesTo(
-          user.nationalId,
-          fromNationalId,
-        ),
+        this.findDistrictCommissionersRegistryScopesTo(user, fromNationalId),
       )
 
     const scopeSets = await Promise.all(scopePromises)

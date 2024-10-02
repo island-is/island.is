@@ -178,6 +178,13 @@ export class SignatureCollectionAdminService {
     )
   }
 
+  async removeList(
+    listId: string,
+    user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.removeList(listId, user)
+  }
+
   async updateSignaturePageNumber(
     user: User,
     input: SignatureCollectionSignatureUpdateInput,
