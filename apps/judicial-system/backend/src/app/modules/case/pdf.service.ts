@@ -316,9 +316,9 @@ export class PdfService {
       }
 
       confirmation = {
-        actor: theCase.judge?.name || '',
+        actor: theCase.judge?.name ?? '',
         title: theCase.judge?.title,
-        institution: theCase.judge?.institution?.name || '',
+        institution: theCase.judge?.institution?.name ?? '',
         date: subpoena.created,
       }
     }
