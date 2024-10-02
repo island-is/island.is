@@ -5,14 +5,16 @@ import { Box, FormControl, Text } from '@contentful/f36-components'
 
 import { mapLocalesToFieldApis } from './utils'
 
-export const ContentfulField = (props: {
+export interface ContentfulFieldProps {
   sdk: EditorExtensionSDK
   localeToFieldMapping: Record<string, ReturnType<typeof mapLocalesToFieldApis>>
-  fieldID: keyof typeof props.localeToFieldMapping
+  fieldID: keyof ContentfulFieldProps['localeToFieldMapping']
   displayName: string
   widgetId?: string
   helpText?: string
-}) => {
+}
+
+export const ContentfulField = (props: ContentfulFieldProps) => {
   const availableLocales = useMemo(() => {
     const validLocales = props.sdk.locales.available.filter(
       (locale) => props.localeToFieldMapping[props.fieldID]?.[locale],
