@@ -22,10 +22,6 @@ query getCustomDelegationsAdmin($nationalId: String!) {
         name
         nationalId
       }
-      createdBy {
-        name
-        nationalId
-      }
       scopes {
         name
         displayName
@@ -50,10 +46,6 @@ query getCustomDelegationsAdmin($nationalId: String!) {
         nationalId
       }
       to {
-        name
-        nationalId
-      }
-      createdBy {
         name
         nationalId
       }
