@@ -1,7 +1,8 @@
 /* eslint-disable */
 export default {
+  displayName: 'portals-my-pages',
   preset: './jest.preset.js',
-  rootDir: '../..',
+  rootDir: '../../..',
   roots: [__dirname],
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
@@ -13,5 +14,4 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   coverageDirectory: '<rootDir>/coverage/apps/portals/my-pages',
   globals: {},
-  displayName: 'portals-my-pages',
 }
