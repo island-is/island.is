@@ -841,6 +841,17 @@ export const UniversityGatewayReykjavikUniversity = new XroadConf({
   },
 })
 
+export const JudicialSystemServicePortal = new XroadConf({
+  env: {
+    XROAD_JUDICIAL_SYSTEM_SP_PATH: {
+      dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      staging:
+        'IS-TEST/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      prod: 'IS-GOV/GOV/5804170510/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+    },
+  },
+})
+
 export const SocialInsuranceAdministration = new XroadConf({
   env: {
     XROAD_TR_PATH: {

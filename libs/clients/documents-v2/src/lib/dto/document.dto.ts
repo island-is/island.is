@@ -1,5 +1,5 @@
+import { DocumentDTO, MessageAction } from '../..'
 import sanitizeHtml from 'sanitize-html'
-import { DocumentDTO } from '../..'
 
 const customDocument = {
   senderName: 'Ríkisskattstjóri',
@@ -13,7 +13,7 @@ export type FileType = 'pdf' | 'html' | 'url'
 export type DocumentDto = {
   fileName?: string
   fileType: FileType
-  content: string
+  content?: string | null
   date?: Date
   bookmarked?: boolean
   archived?: boolean
@@ -21,10 +21,27 @@ export type DocumentDto = {
   senderNationalId?: string
   subject: string
   categoryId?: string
+  urgent?: boolean
+  actions?: Array<MessageAction>
 }
 
-export const mapToDocument = (document: DocumentDTO): DocumentDto | null => {
+export const mapToDocument = (
+  document: DocumentDTO,
+  includeDocument?: boolean,
+): DocumentDto | null => {
   let fileType: FileType, content: string
+  const returnData = {
+    fileName: document.fileName,
+    date: document.publicationDate,
+    bookmarked: document.bookmarked,
+    archived: document.archived,
+    senderName: document.senderName,
+    senderNationalId: document.senderKennitala,
+    subject: document.subject ?? 'Óþekktur titill', // All of the content in this service is strictly Icelandic. Fallback to match.
+    categoryId: document.categoryId?.toString(),
+    urgent: document.urgent,
+    actions: document.actions,
+  }
   if (document.content) {
     fileType = 'pdf'
     content = document.content
@@ -55,20 +72,14 @@ export const mapToDocument = (document: DocumentDTO): DocumentDto | null => {
       ]),
     })
     content = html
+  } else if (!includeDocument) {
+    return { ...returnData, content: null, fileType: 'pdf' }
   } else {
     return null
   }
-
   return {
-    fileName: document.fileName,
-    fileType: fileType,
-    content: content,
-    date: document.publicationDate,
-    bookmarked: document.bookmarked,
-    archived: document.archived,
-    senderName: document.senderName,
-    senderNationalId: document.senderKennitala,
-    subject: document.subject ?? 'Óþekktur titill', // All of the content in this service is strictly Icelandic. Fallback to match.
-    categoryId: document.categoryId?.toString(),
+    ...returnData,
+    content,
+    fileType,
   }
 }
