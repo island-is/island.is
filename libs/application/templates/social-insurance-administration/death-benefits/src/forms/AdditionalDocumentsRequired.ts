@@ -6,14 +6,14 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
-import { survivorsBenefitsFormMessage } from '../lib/messages'
+import { deathBenefitsFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
-  id: 'SurvivorsBenefitsInReviewUpload',
-  title: survivorsBenefitsFormMessage.shared.applicationTitle,
+  id: 'DeathBenefitsInReviewUpload',
+  title: deathBenefitsFormMessage.shared.applicationTitle,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenBackButton: true,

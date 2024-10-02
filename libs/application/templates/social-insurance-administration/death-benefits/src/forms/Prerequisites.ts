@@ -14,7 +14,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { survivorsBenefitsFormMessage } from '../lib/messages'
+import { deathBenefitsFormMessage } from '../lib/messages'
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationChildrenApi,
@@ -24,10 +24,10 @@ import {
 } from '../dataProviders'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { isEligible } from '../lib/survivorsBenefitsUtils'
+import { isEligible } from '../lib/deathBenefitsUtils'
 
 export const PrerequisitesForm: Form = buildForm({
-  id: 'SurvivorsBenefitsPrerequisites',
+  id: 'DeathBenefitsPrerequisites',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
@@ -63,8 +63,7 @@ export const PrerequisitesForm: Form = buildForm({
               provider: NationalRegistryUserApi,
               title:
                 socialInsuranceAdministrationMessage.pre.skraInformationTitle,
-              subTitle:
-                survivorsBenefitsFormMessage.pre.registryIcelandDescription,
+              subTitle: deathBenefitsFormMessage.pre.registryIcelandDescription,
             }),
             buildDataProviderItem({
               provider: UserProfileApi,
@@ -78,7 +77,7 @@ export const PrerequisitesForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationTitle,
               subTitle:
-                survivorsBenefitsFormMessage.pre
+                deathBenefitsFormMessage.pre
                   .socialInsuranceAdministrationDescription,
             }),
             buildDataProviderItem({
@@ -105,7 +104,7 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildMultiField({
           id: 'isNotEligible',
-          title: survivorsBenefitsFormMessage.pre.isNotEligibleTitle,
+          title: deathBenefitsFormMessage.pre.isNotEligibleTitle,
           condition: (_, externalData) => {
             // Show if applicant is not eligible
             return !isEligible(externalData)
@@ -115,7 +114,7 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'isNotEligible',
               title: '',
               description:
-                survivorsBenefitsFormMessage.pre.isNotEligibleDescription,
+                deathBenefitsFormMessage.pre.isNotEligibleDescription,
             }),
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({

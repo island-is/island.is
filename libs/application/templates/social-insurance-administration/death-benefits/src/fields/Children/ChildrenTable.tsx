@@ -4,7 +4,7 @@ import { Application } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { Table } from '@island.is/application/ui-components'
-import { getApplicationExternalData } from '../../lib/survivorsBenefitsUtils'
+import { getApplicationExternalData } from '../../lib/deathBenefitsUtils'
 import { format as formatKennitala } from 'kennitala'
 
 interface ChildrenTableProps {

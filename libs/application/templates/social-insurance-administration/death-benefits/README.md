@@ -1,10 +1,10 @@
-# Application Templates Survivors Benefits
+# Application Templates Death Benefits
 
 ## Description
 
-This application template allows applicants to apply for survivors benefits.
+This application template allows applicants to apply for death benefits.
 
-![Survivors Benefits flow chart](./src/assets/survivors-benefits.png)
+![Death Benefits flow chart](./src/assets/death-benefits.png)
 
 ### States
 
@@ -42,7 +42,7 @@ Application has been rejected by TR.
 
 All localisation can be found on Contentful.
 
-- [Survivors benefits application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/sb.application)
+- [Death benefits application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/db.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
 When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../../localization/README.md#message-extraction).

@@ -3,7 +3,7 @@ import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
-import { getApplicationAnswers } from '../../../lib/survivorsBenefitsUtils'
+import { getApplicationAnswers } from '../../../lib/deathBenefitsUtils'
 
 export const Comment = ({
   application,

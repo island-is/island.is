@@ -33,7 +33,7 @@ import {
   States,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { dataSchema } from './dataSchema'
-import { survivorsBenefitsFormMessage, statesMessages } from './messages'
+import { deathBenefitsFormMessage, statesMessages } from './messages'
 import {
   socialInsuranceAdministrationMessage,
   statesMessages as coreSIAStatesMessages,
@@ -45,18 +45,17 @@ import {
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationSpousalInfo,
 } from '../dataProviders'
-import { getApplicationAnswers, isEligible } from './survivorsBenefitsUtils'
+import { getApplicationAnswers, isEligible } from './deathBenefitsUtils'
 
-const SurvivorsBenefitsTemplate: ApplicationTemplate<
+const DeathBenefitsTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.SURVIVORS_BENEFITS,
-  name: survivorsBenefitsFormMessage.shared.applicationTitle,
+  type: ApplicationTypes.DEATH_BENEFITS,
+  name: deathBenefitsFormMessage.shared.applicationTitle,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  translationNamespaces:
-    ApplicationConfigurations.SurvivorsBenefits.translation,
+  translationNamespaces: ApplicationConfigurations.DeathBenefits.translation,
   dataSchema,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
@@ -136,8 +135,8 @@ const SurvivorsBenefitsTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/SurvivorsBenefitsForm').then((val) =>
-                  Promise.resolve(val.SurvivorsBenefitsForm),
+                import('../forms/DeathBenefitsForm').then((val) =>
+                  Promise.resolve(val.DeathBenefitsForm),
                 ),
               actions: [
                 {
@@ -480,4 +479,4 @@ const SurvivorsBenefitsTemplate: ApplicationTemplate<
   },
 }
 
-export default SurvivorsBenefitsTemplate
+export default DeathBenefitsTemplate

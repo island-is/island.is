@@ -175,9 +175,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/aosh/transfer-of-machine-ownership'
     ),
-  [ApplicationTypes.SURVIVORS_BENEFITS]: () =>
+  [ApplicationTypes.DEATH_BENEFITS]: () =>
     import(
-      '@island.is/application/templates/social-insurance-administration/survivors-benefits'
+      '@island.is/application/templates/social-insurance-administration/death-benefits'
     ),
   [ApplicationTypes.HOME_SUPPORT]: () =>
     import('@island.is/application/templates/home-support'),

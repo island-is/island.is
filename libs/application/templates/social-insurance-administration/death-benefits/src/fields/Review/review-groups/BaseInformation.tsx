@@ -5,7 +5,7 @@ import { format as formatKennitala } from 'kennitala'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-} from '../../../lib/survivorsBenefitsUtils'
+} from '../../../lib/deathBenefitsUtils'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
 import { formatNumber } from 'libphonenumber-js'

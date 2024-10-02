@@ -20,7 +20,7 @@ import {
   YES,
 } from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
-import { survivorsBenefitsFormMessage } from '../lib/messages'
+import { deathBenefitsFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   BankAccountType,
@@ -35,7 +35,7 @@ import isEmpty from 'lodash/isEmpty'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-} from '../lib/survivorsBenefitsUtils'
+} from '../lib/deathBenefitsUtils'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
@@ -47,8 +47,8 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 
-export const SurvivorsBenefitsForm: Form = buildForm({
-  id: 'SurvivorsBenefitsDraft',
+export const DeathBenefitsForm: Form = buildForm({
+  id: 'DeathBenefitsDraft',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.DRAFT,
@@ -298,10 +298,9 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'paymentInfo.spouseAllowance',
-                  title: survivorsBenefitsFormMessage.payment.spouseAllowance,
+                  title: deathBenefitsFormMessage.payment.spouseAllowance,
                   description:
-                    survivorsBenefitsFormMessage.payment
-                      .spouseAllowanceDescription,
+                    deathBenefitsFormMessage.payment.spouseAllowanceDescription,
                   options: getYesNoOptions(),
                   width: 'half',
                   largeButtons: true,
@@ -339,21 +338,20 @@ export const SurvivorsBenefitsForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'deceasedSpouse',
-          title: survivorsBenefitsFormMessage.info.deceasedSpouseSubSection,
+          title: deathBenefitsFormMessage.info.deceasedSpouseSubSection,
           children: [
             buildMultiField({
               id: 'deceasedSpouseInfo',
-              title: survivorsBenefitsFormMessage.info.deceasedSpouseTitle,
+              title: deathBenefitsFormMessage.info.deceasedSpouseTitle,
               description:
-                survivorsBenefitsFormMessage.info.deceasedSpouseDescription,
+                deathBenefitsFormMessage.info.deceasedSpouseDescription,
               condition: (_, externalData) =>
                 !!getApplicationExternalData(externalData)
                   .deceasedSpouseNationalId,
               children: [
                 buildTextField({
                   id: 'deceasedSpouseInfo.nationalId',
-                  title:
-                    survivorsBenefitsFormMessage.info.deceasedSpouseNationalId,
+                  title: deathBenefitsFormMessage.info.deceasedSpouseNationalId,
                   width: 'half',
                   defaultValue: (application: Application) =>
                     getApplicationExternalData(application.externalData)
@@ -362,7 +360,7 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 }),
                 buildDateField({
                   id: 'deceasedSpouseInfo.date',
-                  title: survivorsBenefitsFormMessage.info.deceasedSpouseDate,
+                  title: deathBenefitsFormMessage.info.deceasedSpouseDate,
                   width: 'half',
                   defaultValue: (application: Application) =>
                     getApplicationExternalData(application.externalData)
@@ -371,7 +369,7 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'deceasedSpouseInfo.name',
-                  title: survivorsBenefitsFormMessage.info.deceasedSpouseName,
+                  title: deathBenefitsFormMessage.info.deceasedSpouseName,
                   defaultValue: (application: Application) =>
                     getApplicationExternalData(application.externalData)
                       .deceasedSpouseName,
@@ -381,10 +379,9 @@ export const SurvivorsBenefitsForm: Form = buildForm({
             }),
             buildMultiField({
               id: 'deceasedSpouseNoInfo',
-              title: survivorsBenefitsFormMessage.info.deceasedSpouseTitle,
+              title: deathBenefitsFormMessage.info.deceasedSpouseTitle,
               description:
-                survivorsBenefitsFormMessage.info
-                  .deceasedSpouseNotFoundDescription,
+                deathBenefitsFormMessage.info.deceasedSpouseNotFoundDescription,
               // Use correct value for condition
               condition: (_, externalData) =>
                 !getApplicationExternalData(externalData)
@@ -402,31 +399,30 @@ export const SurvivorsBenefitsForm: Form = buildForm({
         buildSubSection({
           id: 'deceasedSpouseAttachmentSection',
           title:
-            survivorsBenefitsFormMessage.info
-              .deceasedSpouseAttachmentSubSection,
+            deathBenefitsFormMessage.info.deceasedSpouseAttachmentSubSection,
           condition: (_, externalData) =>
             !getApplicationExternalData(externalData).deceasedSpouse,
           children: [
             buildMultiField({
               id: 'deceasedSpouseAttachment',
               title:
-                survivorsBenefitsFormMessage.info
+                deathBenefitsFormMessage.info
                   .deceasedSpouseAttachmentSubSection,
               description:
-                survivorsBenefitsFormMessage.info
+                deathBenefitsFormMessage.info
                   .deceasedSpouseAttachmentSectionDescription,
               children: [
                 buildFileUploadField({
                   id: 'fileUpload.deathCertificate',
                   title: '',
                   uploadHeader:
-                    survivorsBenefitsFormMessage.info
+                    deathBenefitsFormMessage.info
                       .deceasedSpouseAttachmentHeader,
                   uploadDescription:
-                    survivorsBenefitsFormMessage.info
+                    deathBenefitsFormMessage.info
                       .deceasedSpouseAttachmentDescription,
                   uploadButtonLabel:
-                    survivorsBenefitsFormMessage.info
+                    deathBenefitsFormMessage.info
                       .deceasedSpouseAttachmentButton,
                   uploadAccept: '.pdf',
                   uploadMultiple: false,
@@ -437,7 +433,7 @@ export const SurvivorsBenefitsForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'childrenSection',
-          title: survivorsBenefitsFormMessage.info.childrenTitle,
+          title: deathBenefitsFormMessage.info.childrenTitle,
           condition: (_, externalData) => {
             const { children } = getApplicationExternalData(externalData)
             // if no children returned, dont show the table
@@ -447,9 +443,8 @@ export const SurvivorsBenefitsForm: Form = buildForm({
           children: [
             buildMultiField({
               id: 'children',
-              title: survivorsBenefitsFormMessage.info.childrenTitle,
-              description:
-                survivorsBenefitsFormMessage.info.childrenDescription,
+              title: deathBenefitsFormMessage.info.childrenTitle,
+              description: deathBenefitsFormMessage.info.childrenDescription,
               children: [
                 buildCustomField({
                   id: 'children.table',
@@ -463,7 +458,7 @@ export const SurvivorsBenefitsForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'expectingChildSection',
-          title: survivorsBenefitsFormMessage.info.expectingChildTitle,
+          title: deathBenefitsFormMessage.info.expectingChildTitle,
           condition: (_, externalData) => {
             const spouseAtLeast1Year =
               getApplicationExternalData(
@@ -476,8 +471,9 @@ export const SurvivorsBenefitsForm: Form = buildForm({
           children: [
             buildMultiField({
               id: 'expectingChild',
-              title: survivorsBenefitsFormMessage.info.expectingChildTitle,
-              description: survivorsBenefitsFormMessage.info.expectingChildDescription,
+              title: deathBenefitsFormMessage.info.expectingChildTitle,
+              description:
+                deathBenefitsFormMessage.info.expectingChildDescription,
               children: [
                 buildRadioField({
                   id: 'expectingChild.question',
@@ -495,16 +491,16 @@ export const SurvivorsBenefitsForm: Form = buildForm({
             return isExpectingChild === YES
           },
           id: 'expectingChild.fileUpload.section',
-          title: survivorsBenefitsFormMessage.info.expectingChildFileUpload,
+          title: deathBenefitsFormMessage.info.expectingChildFileUpload,
           children: [
             buildFileUploadField({
               id: 'fileUpload.expectingChild',
-              title: survivorsBenefitsFormMessage.info.expectingChildFileUpload,
+              title: deathBenefitsFormMessage.info.expectingChildFileUpload,
               description:
-                survivorsBenefitsFormMessage.info
+                deathBenefitsFormMessage.info
                   .expectingChildFileUploadDescription,
               introduction:
-                survivorsBenefitsFormMessage.info
+                deathBenefitsFormMessage.info
                   .expectingChildFileUploadDescription,
               ...fileUploadSharedProps,
             }),
@@ -609,11 +605,10 @@ export const SurvivorsBenefitsForm: Form = buildForm({
         socialInsuranceAdministrationMessage.conclusionScreen.receivedTitle,
       alertTitle:
         socialInsuranceAdministrationMessage.conclusionScreen.alertTitle,
-      alertMessage: survivorsBenefitsFormMessage.conclusionScreen.alertMessage,
+      alertMessage: deathBenefitsFormMessage.conclusionScreen.alertMessage,
       expandableDescription:
-        survivorsBenefitsFormMessage.conclusionScreen.bulletList,
-      expandableIntro:
-        survivorsBenefitsFormMessage.conclusionScreen.nextStepsText,
+        deathBenefitsFormMessage.conclusionScreen.bulletList,
+      expandableIntro: deathBenefitsFormMessage.conclusionScreen.nextStepsText,
     }),
   ],
 })

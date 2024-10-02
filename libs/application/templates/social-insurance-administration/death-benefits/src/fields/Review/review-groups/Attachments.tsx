@@ -2,7 +2,7 @@ import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { Box, TopicCard } from '@island.is/island-ui/core'
 import { ReviewGroupProps } from './props'
 import { useLocale } from '@island.is/localization'
-import { getAttachments } from '../../../lib/survivorsBenefitsUtils'
+import { getAttachments } from '../../../lib/deathBenefitsUtils'
 
 export const Attachments = ({ application }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()

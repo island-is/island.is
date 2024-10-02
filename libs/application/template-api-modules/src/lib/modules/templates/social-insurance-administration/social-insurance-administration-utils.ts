@@ -36,9 +36,9 @@ import {
 
 import {
   ChildInformation,
-  getApplicationAnswers as getSBApplicationAnswers,
-  getApplicationExternalData as getSBApplicationExternalData,
-} from '@island.is/application/templates/social-insurance-administration/survivors-benefits'
+  getApplicationAnswers as getDBApplicationAnswers,
+  getApplicationExternalData as getDBApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/death-benefits'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -304,7 +304,7 @@ export const transformApplicationToPensionSupplementDTO = (
   return pensionSupplementDTO
 }
 
-export const transformApplicationToSurvivorsBenefitsDTO = (
+export const transformApplicationToDeathBenefitsDTO = (
   application: Application,
   uploads: Attachment[],
 ): ApplicationDTO => {
@@ -325,17 +325,29 @@ export const transformApplicationToSurvivorsBenefitsDTO = (
     spouseAllowanceUsage,
     taxLevel,
     deceasedSpouseNationalId,
-  } = getSBApplicationAnswers(application.answers)
-  const { bankInfo, userProfileEmail, children } = getSBApplicationExternalData(
+  } = getDBApplicationAnswers(application.answers)
+  const { bankInfo, userProfileEmail, children } = getDBApplicationExternalData(
     application.externalData,
   )
 
-  const survivorsBenefitsDTO: ApplicationDTO = {
-    applicationId: application.id,
+  const deathBenefitsDTO: ApplicationDTO = {
+    deceasedNationalId: deceasedSpouseNationalId,
+    childrenNationalIds: getChildrenNationalIds(children),
+    spouseTaxCardUsage: {
+      usecard: spouseAllowance === YES,
+      ratio: Number(spouseAllowanceUsage),
+    },
     applicantInfo: {
       email: userProfileEmail,
       phonenumber: applicantPhonenumber,
     },
+    period: {
+      year: new Date().getFullYear(),
+      month: new Date().getMonth() + 1,
+    },
+    comment,
+    applicationId: application.id,
+    uploads,
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
       ...((bankAccountType === undefined ||
         bankAccountType === BankAccountType.ICELANDIC) && {
@@ -359,17 +371,8 @@ export const transformApplicationToSurvivorsBenefitsDTO = (
         YES === personalAllowance ? +personalAllowanceUsage : 0,
       taxLevel: +taxLevel,
     },
-    uploads,
-    comment,
-    deceasedNationalId: deceasedSpouseNationalId,
-    childrenNationalIds: getChildrenNationalIds(children),
-    spouseTaxCardUsage: {
-      useCard: spouseAllowance === YES,
-      ratio: Number(spouseAllowanceUsage),
-    },
   }
-
-  return survivorsBenefitsDTO
+  return deathBenefitsDTO
 }
 
 export const getMonthNumber = (monthName: string): number => {

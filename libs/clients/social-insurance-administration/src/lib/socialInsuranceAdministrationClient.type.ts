@@ -71,7 +71,7 @@ export interface Employer {
 }
 
 export interface SpouseTaxCardUsage {
-  useCard: boolean
+  usecard: boolean
   ratio: number
 }
 

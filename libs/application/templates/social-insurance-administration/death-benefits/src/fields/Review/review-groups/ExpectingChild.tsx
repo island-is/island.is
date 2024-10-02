@@ -1,9 +1,9 @@
 import { RadioValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { survivorsBenefitsFormMessage } from '../../../lib/messages'
+import { deathBenefitsFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
-import { getApplicationAnswers } from '../../../lib/survivorsBenefitsUtils'
+import { getApplicationAnswers } from '../../../lib/deathBenefitsUtils'
 
 export const ExpectingChild = ({
   application,
@@ -24,7 +24,7 @@ export const ExpectingChild = ({
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <RadioValue
               label={formatMessage(
-                survivorsBenefitsFormMessage.info.expectingChildTitle,
+                deathBenefitsFormMessage.info.expectingChildTitle,
               )}
               value={isExpectingChild}
             />

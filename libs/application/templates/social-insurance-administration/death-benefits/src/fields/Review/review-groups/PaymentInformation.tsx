@@ -13,10 +13,10 @@ import {
   friendlyFormatSWIFT,
   getTaxLevelOption,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { getApplicationAnswers } from '../../../lib/survivorsBenefitsUtils'
+import { getApplicationAnswers } from '../../../lib/deathBenefitsUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { YES } from '@island.is/application/types'
-import { survivorsBenefitsFormMessage } from '../../../lib/messages'
+import { deathBenefitsFormMessage } from '../../../lib/messages'
 
 export const PaymentInformation = ({
   application,
@@ -156,7 +156,7 @@ export const PaymentInformation = ({
         >
           <RadioValue
             label={formatMessage(
-              survivorsBenefitsFormMessage.confirm.spouseAllowance,
+              deathBenefitsFormMessage.confirm.spouseAllowance,
             )}
             value={spouseAllowance}
           />

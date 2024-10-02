@@ -4,9 +4,9 @@ import { useLocale } from '@island.is/localization'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-} from '../../../lib/survivorsBenefitsUtils'
+} from '../../../lib/deathBenefitsUtils'
 import { GridColumn, GridRow, Stack, Text } from '@island.is/island-ui/core'
-import { survivorsBenefitsFormMessage } from '../../../lib/messages'
+import { deathBenefitsFormMessage } from '../../../lib/messages'
 
 export const DeceasedSpouse = ({
   application,
@@ -30,9 +30,7 @@ export const DeceasedSpouse = ({
         <GridRow>
           <GridColumn span={'10/12'}>
             <Text variant="h3" as="h3">
-              {formatMessage(
-                survivorsBenefitsFormMessage.info.deceasedSpouseTitle,
-              )}
+              {formatMessage(deathBenefitsFormMessage.info.deceasedSpouseTitle)}
             </Text>
           </GridColumn>
         </GridRow>
@@ -40,7 +38,7 @@ export const DeceasedSpouse = ({
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(
-                survivorsBenefitsFormMessage.info.deceasedSpouseName,
+                deathBenefitsFormMessage.info.deceasedSpouseName,
               )}
               value={deceasedSpouseName}
             />
@@ -48,7 +46,7 @@ export const DeceasedSpouse = ({
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(
-                survivorsBenefitsFormMessage.info.deceasedSpouseNationalId,
+                deathBenefitsFormMessage.info.deceasedSpouseNationalId,
               )}
               value={deceasedSpouseNationalId}
             />

@@ -9,7 +9,6 @@ import { AttachmentLabel } from './constants'
 import {
   FileType,
   Attachments,
-  AdditionalInformation,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { ChildInformation, FileUpload } from '../types'
 import {

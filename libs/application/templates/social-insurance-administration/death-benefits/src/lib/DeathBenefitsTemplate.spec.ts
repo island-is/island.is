@@ -7,7 +7,7 @@ import {
   FormValue,
   ApplicationStatus,
 } from '@island.is/application/types'
-import SurvivorsBenefitsTemplate from './SurvivorsBenefitsTemplate'
+import DeathBenefitsTemplate from './DeathBenefitsTemplate'
 import { OAPEvents } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 const buildApplication = (data: {
@@ -20,7 +20,7 @@ const buildApplication = (data: {
     id: '12345',
     assignees: [],
     applicant: '123456-7890',
-    typeId: ApplicationTypes.SURVIVORS_BENEFITS,
+    typeId: ApplicationTypes.DEATH_BENEFITS,
     created: new Date(),
     status: ApplicationStatus.IN_PROGRESS,
     modified: new Date(),
@@ -31,7 +31,7 @@ const buildApplication = (data: {
   }
 }
 
-describe('Survivors Benefits Template', () => {
+describe('Death Benefits Template', () => {
   describe('state transitions', () => {
     it('should transition from draft to tryggingastofnunSubmitted on submit', () => {
       const helper = new ApplicationTemplateHelper(
@@ -40,7 +40,7 @@ describe('Survivors Benefits Template', () => {
             confirmCorrectInfo: true,
           },
         }),
-        SurvivorsBenefitsTemplate,
+        DeathBenefitsTemplate,
       )
       const [hasChanged, newState] = helper.changeState({
         type: DefaultEvents.SUBMIT,
@@ -58,7 +58,7 @@ describe('Survivors Benefits Template', () => {
             confirmCorrectInfo: true,
           },
         }),
-        SurvivorsBenefitsTemplate,
+        DeathBenefitsTemplate,
       )
       const [hasChanged, newState] = helper.changeState({
         type: DefaultEvents.ABORT,
@@ -74,7 +74,7 @@ describe('Survivors Benefits Template', () => {
         buildApplication({
           state: 'tryggingastofnunSubmitted',
         }),
-        SurvivorsBenefitsTemplate,
+        DeathBenefitsTemplate,
       )
 
       const [hasChanged, newState] = helper.changeState({
@@ -91,7 +91,7 @@ describe('Survivors Benefits Template', () => {
         buildApplication({
           state: 'tryggingastofnunSubmitted',
         }),
-        SurvivorsBenefitsTemplate,
+        DeathBenefitsTemplate,
       )
 
       const [hasChanged, newState] = helper.changeState({
@@ -108,7 +108,7 @@ describe('Survivors Benefits Template', () => {
         buildApplication({
           state: 'tryggingastofnunInReview',
         }),
-        SurvivorsBenefitsTemplate,
+        DeathBenefitsTemplate,
       )
 
       const [hasChanged, newState] = helper.changeState({
@@ -125,7 +125,7 @@ describe('Survivors Benefits Template', () => {
         buildApplication({
           state: 'tryggingastofnunInReview',
         }),
-        SurvivorsBenefitsTemplate,
+        DeathBenefitsTemplate,
       )
 
       const [hasChanged, newState] = helper.changeState({
@@ -150,7 +150,7 @@ describe('Survivors Benefits Template', () => {
             },
           },
         }),
-        SurvivorsBenefitsTemplate,
+        DeathBenefitsTemplate,
       )
 
       const [hasChanged, newState] = helper.changeState({
@@ -175,7 +175,7 @@ describe('Survivors Benefits Template', () => {
             },
           },
         }),
-        SurvivorsBenefitsTemplate,
+        DeathBenefitsTemplate,
       )
 
       const [hasChanged, newState] = helper.changeState({
@@ -185,5 +185,4 @@ describe('Survivors Benefits Template', () => {
       expect(newState).toBe('tryggingastofnunInReview')
     })
   })
-
-})  
+})

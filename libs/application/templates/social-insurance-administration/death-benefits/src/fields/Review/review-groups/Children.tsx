@@ -2,8 +2,8 @@ import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { Box, ActionCard } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'
-import { getApplicationExternalData } from '../../../lib/survivorsBenefitsUtils'
-import { survivorsBenefitsFormMessage } from '../../../lib/messages'
+import { getApplicationExternalData } from '../../../lib/deathBenefitsUtils'
+import { deathBenefitsFormMessage } from '../../../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
 
@@ -15,7 +15,7 @@ export const Children = ({ application }: ReviewGroupProps) => {
     children.length > 0 && (
       <ReviewGroup isLast>
         <Label marginBottom={1}>
-          {formatMessage(survivorsBenefitsFormMessage.info.childrenTitle)}
+          {formatMessage(deathBenefitsFormMessage.info.childrenTitle)}
         </Label>
         {children.map((child, index) => {
           return (

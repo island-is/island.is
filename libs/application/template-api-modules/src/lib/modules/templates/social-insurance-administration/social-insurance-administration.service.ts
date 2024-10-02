@@ -20,10 +20,10 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import {
-  getApplicationAnswers as getSBApplicationAnswers,
+  getApplicationAnswers as getDBApplicationAnswers,
   ChildInformation,
   DeathBenefits,
-} from '@island.is/application/templates/social-insurance-administration/survivors-benefits'
+} from '@island.is/application/templates/social-insurance-administration/death-benefits'
 import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
@@ -37,7 +37,7 @@ import {
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
   transformApplicationToAdditionalSupportForTheElderlyDTO,
-  transformApplicationToSurvivorsBenefitsDTO,
+  transformApplicationToDeathBenefitsDTO,
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
@@ -112,8 +112,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         application.answers,
       ).additionalAttachmentsRequired
     }
-    if (application.typeId === ApplicationTypes.SURVIVORS_BENEFITS) {
-      additionalAttachmentsRequired = getSBApplicationAnswers(
+    if (application.typeId === ApplicationTypes.DEATH_BENEFITS) {
+      additionalAttachmentsRequired = getDBApplicationAnswers(
         application.answers,
       ).additionalAttachmentsRequired
     }
@@ -388,15 +388,15 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
-  private async getSBAttachments(
+  private async getDBAttachments(
     application: Application,
   ): Promise<Attachment[]> {
-    const { 
+    const {
       additionalAttachments,
       expectingChildAttachments,
       deathCertificateAttachments,
       isExpectingChild,
-    } = getSBApplicationAnswers(application.answers)
+    } = getDBApplicationAnswers(application.answers)
 
     const attachments: Attachment[] = []
 
@@ -410,10 +410,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       )
     }
 
-    if (
-      deathCertificateAttachments &&
-      deathCertificateAttachments.length > 0
-    ) {
+    if (deathCertificateAttachments && deathCertificateAttachments.length > 0) {
       attachments.push(
         ...(await this.initAttachments(
           application,
@@ -521,18 +518,18 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       return response
     }
 
-    if (application.typeId === ApplicationTypes.SURVIVORS_BENEFITS) {
-      const attachments = await this.getSBAttachments(application)
+    if (application.typeId === ApplicationTypes.DEATH_BENEFITS) {
+      const attachments = await this.getDBAttachments(application)
 
-      const survivorsBenefitsDTO = transformApplicationToSurvivorsBenefitsDTO(
+      const deathBenefitsDTO = transformApplicationToDeathBenefitsDTO(
         application,
         attachments,
       )
 
       const response = await this.siaClientService.sendApplication(
         auth,
-        survivorsBenefitsDTO,
-        DeathBenefits,
+        deathBenefitsDTO,
+        application.typeId.toLowerCase(),
       )
       return response
     }
@@ -580,7 +577,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         auth,
         applicationType.toLowerCase(),
       )
-    } else if (application.typeId === ApplicationTypes.SURVIVORS_BENEFITS) {
+    } else if (application.typeId === ApplicationTypes.DEATH_BENEFITS) {
       return await this.siaClientService.getIsEligible(auth, DeathBenefits)
     } else {
       return await this.siaClientService.getIsEligible(

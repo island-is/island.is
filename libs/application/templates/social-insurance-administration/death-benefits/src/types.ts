@@ -1,4 +1,4 @@
-import { FileType } from "@island.is/application/templates/social-insurance-administration-core/types"
+import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export interface ChildInformation {
   nationalId: string
