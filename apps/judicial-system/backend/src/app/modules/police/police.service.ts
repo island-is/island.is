@@ -128,15 +128,15 @@ export class PoliceService {
     malseinings: z.optional(z.array(this.crimeSceneStructure)),
   })
   private subpoenaStructure = z.object({
-    acknowledged: z.boolean(),
-    comment: z.string(),
-    defenderChoice: z.string(),
-    defenderNationalId: z.string(),
-    prosecutedConfirmedSubpoenaThroughIslandis: z.boolean(),
-    servedBy: z.string(),
-    delivered: z.boolean(),
-    deliveredOnPaper: z.boolean(),
-    deliveredToLawyer: z.boolean(),
+    acknowledged: z.boolean().nullish(),
+    comment: z.string().nullish(),
+    defenderChoice: z.string().nullish(),
+    defenderNationalId: z.string().nullish(),
+    prosecutedConfirmedSubpoenaThroughIslandis: z.boolean().nullish(),
+    servedBy: z.string().nullish(),
+    delivered: z.boolean().nullish(),
+    deliveredOnPaper: z.boolean().nullish(),
+    deliveredToLawyer: z.boolean().nullish(),
   })
 
   constructor(
@@ -340,8 +340,14 @@ export class PoliceService {
     )
       .then(async (res: Response) => {
         if (res.ok) {
+          let subpoenaResponse = await res.json()
+
+          if (typeof subpoenaResponse === 'string') {
+            subpoenaResponse = JSON.parse(subpoenaResponse)
+          }
+
           const response: z.infer<typeof this.subpoenaStructure> =
-            await res.json()
+            subpoenaResponse
 
           this.subpoenaStructure.parse(response)
 
@@ -352,9 +358,9 @@ export class PoliceService {
           const updatedSubpoena = await this.subpoenaService.update(
             subpoenaToUpdate,
             {
-              comment: response.comment,
-              servedBy: response.servedBy,
-              defenderNationalId: response.defenderNationalId,
+              comment: response.comment ?? undefined,
+              servedBy: response.servedBy ?? undefined,
+              defenderNationalId: response.defenderNationalId ?? undefined,
               serviceStatus: response.deliveredToLawyer
                 ? ServiceStatus.DEFENDER
                 : response.prosecutedConfirmedSubpoenaThroughIslandis
