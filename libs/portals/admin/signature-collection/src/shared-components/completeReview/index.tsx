@@ -50,10 +50,10 @@ const ActionReviewComplete = ({
         <Button
           iconType="outline"
           variant="ghost"
-          /*disabled={
+          disabled={
             listStatus !== ListStatus.Reviewed &&
             listStatus !== ListStatus.InReview
-          }*/
+          }
           icon={listReviewed ? 'lockOpened' : 'lockClosed'}
           colorScheme={listReviewed ? 'default' : 'destructive'}
           onClick={() => setModalSubmitReviewIsOpen(true)}

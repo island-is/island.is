@@ -35,6 +35,9 @@ import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper
 import { ReasonKey } from '@island.is/clients/signature-collection'
 import { CanSignInfo } from './models/canSignInfo.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
+import { SignatureCollectionAreaInput } from './dto'
+import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
+import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -197,6 +200,15 @@ export class SignatureCollectionAdminResolver {
 
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
+  async signatureCollectionAdminRemoveList(
+    @CurrentUser() user: User,
+    @Args('input') { listId }: SignatureCollectionListIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.removeList(listId, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
   async signatureCollectionAdminUnsign(
     @CurrentUser() user: User,
     @Args('input') { signatureId }: SignatureCollectionSignatureIdInput,
@@ -253,5 +265,14 @@ export class SignatureCollectionAdminResolver {
       user,
       input,
     )
+  }
+
+  @Query(() => SignatureCollectionAreaSummaryReport)
+  @Audit()
+  async signatureCollectionAreaSummaryReport(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionAreaSummaryReportInput,
+  ): Promise<SignatureCollectionAreaSummaryReport> {
+    return this.signatureCollectionService.getAreaSummaryReport(input, user)
   }
 }
