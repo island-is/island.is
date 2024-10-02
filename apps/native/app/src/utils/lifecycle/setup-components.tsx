@@ -25,6 +25,7 @@ import { LoginScreen } from '../../screens/login/login'
 import { TestingLoginScreen } from '../../screens/login/testing-login'
 import { MoreScreen } from '../../screens/more/more'
 import { PasskeyScreen } from '../../screens/passkey/passkey'
+import { UpdateAppScreen } from '../../screens/update-app/update-app'
 import { PersonalInfoScreen } from '../../screens/more/personal-info'
 import { NotificationsScreen } from '../../screens/notifications/notifications'
 import { OnboardingBiometricsScreen } from '../../screens/onboarding/onboarding-biometrics'
@@ -103,6 +104,7 @@ export function registerAllComponents() {
   registerComponent(CR.InboxFilterScreen, InboxFilterScreen)
   registerComponent(CR.AirDiscountScreen, AirDiscountScreen)
   registerComponent(CR.PasskeyScreen, PasskeyScreen)
+  registerComponent(CR.UpdateAppScreen, UpdateAppScreen)
   registerComponent(CR.HomeOptionsScreen, HomeOptionsScreen)
   registerComponent(CR.ApplicationsCompletedScreen, ApplicationsCompletedScreen)
   registerComponent(
