@@ -24,16 +24,19 @@ const DelegationList = ({ delegationsList, direction }: DelegationProps) => {
               delegation={delegation}
               isAdminView
               variant={direction}
-              onDelete={!!delegation.referenceId && (async () => {
-                const { data } = await deleteCustomDelegationAdminMutation({
-                  variables: {
-                    id: delegation.id as string,
-                  },
+              onDelete={
+                !!delegation.referenceId &&
+                (async () => {
+                  const { data } = await deleteCustomDelegationAdminMutation({
+                    variables: {
+                      id: delegation.id as string,
+                    },
+                  })
+                  if (data) {
+                    revalidate()
+                  }
                 })
-                if (data) {
-                  revalidate()
-                }
-              })}
+              }
             />
           )
         })}

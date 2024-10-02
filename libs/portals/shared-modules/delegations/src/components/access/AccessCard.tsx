@@ -48,7 +48,7 @@ const getTags = (delegation: AuthCustomDelegation) =>
 interface AccessCardProps {
   delegation: AuthCustomDelegation
 
-  onDelete?: ((delegation: AuthCustomDelegation) => void ) | false
+  onDelete?: ((delegation: AuthCustomDelegation) => void) | false
   onEdit?: ((delegation: AuthCustomDelegation) => void) | false
   onView?: ((delegation: AuthCustomDelegation) => void) | false
   onRenew?: ((delegation: AuthCustomDelegation) => void) | false
@@ -62,7 +62,8 @@ export const AccessCard = ({
   delegation,
   onDelete,
   onView,
-  onEdit, onRenew,
+  onEdit,
+  onRenew,
   variant = 'outgoing',
   isAdminView = false,
 }: AccessCardProps) => {
@@ -70,7 +71,7 @@ export const AccessCard = ({
   const tags = useMemo(() => getTags(delegation), [delegation])
 
   const hasTags = tags.length > 0
-   const isOutgoing = variant === 'outgoing'
+  const isOutgoing = variant === 'outgoing'
 
   const isExpired = useMemo(() => {
     if (
@@ -157,7 +158,7 @@ export const AccessCard = ({
 
     return <Tooltip placement="bottom" as="button" text={text} />
   }
-  
+
   const hasActions = onView || onEdit || onDelete
   return (
     <Box
@@ -171,7 +172,7 @@ export const AccessCard = ({
         <Stack space="smallGutter">
           <Box display="flex" columnGap={2} alignItems="center">
             {(isAdminView ||
-               !isOutgoing ||
+              !isOutgoing ||
               delegation.type === AuthDelegationType.GeneralMandate) && (
               <>
                 {renderDelegationTypeLabel(delegation.type)}
@@ -292,16 +293,19 @@ export const AccessCard = ({
                   >
                     {formatMessage(coreMessages.buttonEdit)}
                   </Button>
-                ) : isExpired && onRenew && (
-                  <Button
-                    icon="reload"
-                    iconType="outline"
-                    size="small"
-                    variant="utility"
-                    onClick={() => onRenew?.(delegation)}
-                  >
-                    {formatMessage(coreMessages.buttonRenew)}
-                  </Button>
+                ) : (
+                  isExpired &&
+                  onRenew && (
+                    <Button
+                      icon="reload"
+                      iconType="outline"
+                      size="small"
+                      variant="utility"
+                      onClick={() => onRenew?.(delegation)}
+                    >
+                      {formatMessage(coreMessages.buttonRenew)}
+                    </Button>
+                  )
                 )}
               </Box>
             </Box>

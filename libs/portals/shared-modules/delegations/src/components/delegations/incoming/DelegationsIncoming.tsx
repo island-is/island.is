@@ -57,12 +57,13 @@ export const DelegationsIncoming = () => {
         />
       ) : (
         <Stack space={3}>
-          {delegations.map(
-            (delegation) => {
-              const isCustom = delegation.type === AuthDelegationType.Custom
-              const isGeneralMandate = delegation.type === AuthDelegationType.GeneralMandate
+          {delegations.map((delegation) => {
+            const isCustom = delegation.type === AuthDelegationType.Custom
+            const isGeneralMandate =
+              delegation.type === AuthDelegationType.GeneralMandate
 
-               return delegation.from && (
+            return (
+              delegation.from && (
                 <AccessCard
                   key={
                     delegation.type === AuthDelegationType.Custom
@@ -70,20 +71,29 @@ export const DelegationsIncoming = () => {
                       : `${delegation.type}-${delegation.from.nationalId}`
                   }
                   delegation={delegation}
-                  onDelete={isCustom && ((delegation) => delegation.type === AuthDelegationType.Custom && (() => {
-                    setDelegationDelete(
-                      delegation as AuthCustomDelegationIncoming,
-                    )
-                  }))}
-                  onView={(isCustom || isGeneralMandate) && ((delegation) => {
-                    setDelegationView(
-                      delegation as AuthCustomDelegationIncoming,
-                    )
-                  })}
+                  onDelete={
+                    isCustom &&
+                    ((delegation) =>
+                      delegation.type === AuthDelegationType.Custom &&
+                      (() => {
+                        setDelegationDelete(
+                          delegation as AuthCustomDelegationIncoming,
+                        )
+                      }))
+                  }
+                  onView={
+                    (isCustom || isGeneralMandate) &&
+                    ((delegation) => {
+                      setDelegationView(
+                        delegation as AuthCustomDelegationIncoming,
+                      )
+                    })
+                  }
                   variant="incoming"
                 />
               )
-            })}
+            )
+          })}
         </Stack>
       )}
       <AccessDeleteModal

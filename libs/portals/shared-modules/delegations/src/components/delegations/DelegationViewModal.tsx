@@ -9,7 +9,8 @@ import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { AccessListContainer } from '../access/AccessList/AccessListContainer/AccessListContainer'
 import { useAuthScopeTreeLazyQuery } from '../access/AccessList/AccessListContainer/AccessListContainer.generated'
 import {
-  AuthCustomDelegation, AuthCustomDelegationIncoming,
+  AuthCustomDelegation,
+  AuthCustomDelegationIncoming,
 } from '../../types/customDelegation'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
@@ -22,7 +23,7 @@ type DelegationIncomingModalProps = {
 
 export const DelegationViewModal = ({
   delegation,
-                                      direction = 'incoming',
+  direction = 'incoming',
   onClose,
   ...rest
 }: DelegationIncomingModalProps) => {
@@ -49,7 +50,9 @@ export const DelegationViewModal = ({
   const fromName = delegation?.from?.name
   const fromNationalId = delegation?.from?.nationalId
   const toName = isOutgoing ? delegation?.to?.name : userInfo?.profile.name
-  const toNationalId = isOutgoing ? delegation?.to?.nationalId : userInfo?.profile.nationalId
+  const toNationalId = isOutgoing
+    ? delegation?.to?.nationalId
+    : userInfo?.profile.nationalId
 
   return (
     <Modal
@@ -102,49 +105,49 @@ export const DelegationViewModal = ({
 
         {delegation?.type === AuthDelegationType.GeneralMandate && (
           <>
-          <Box
-            display="flex"
-            flexDirection={['column', 'row']}
-            justifyContent="spaceBetween"
-            columnGap={[0, 3]}
-            rowGap={[3, 0]}
-          >
-          <IdentityCard
-            label={formatMessage(m.domain)}
-            title={formatMessage(m.delegationTypeGeneralMandate)}
-            imgSrc="./assets/images/skjaldarmerki.svg"
-          />
-            {delegation?.createdBy && (
-            <IdentityCard
-              label={formatMessage(m.createdBy)}
-              title={delegation.createdBy.name}
-            />
-            )}
-          </Box>
-          <Box
-            display="flex"
-            flexDirection={['column', 'row']}
-            justifyContent="spaceBetween"
-            columnGap={[0, 3]}
-            rowGap={[3, 0]}
-          >
-          <IdentityCard
-            label={formatMessage(m.validTo)}
-            title={
-              delegation?.validTo
-                ? format(new Date(delegation?.validTo), 'dd.MM.yyyy')
-                : formatMessage(m.noValidToDate)
-            }          />
-            {delegation?.referenceId && (
+            <Box
+              display="flex"
+              flexDirection={['column', 'row']}
+              justifyContent="spaceBetween"
+              columnGap={[0, 3]}
+              rowGap={[3, 0]}
+            >
               <IdentityCard
-                label={formatMessage(m.referenceId)}
-                title={delegation?.referenceId}
+                label={formatMessage(m.domain)}
+                title={formatMessage(m.delegationTypeGeneralMandate)}
+                imgSrc="./assets/images/skjaldarmerki.svg"
               />
-            )}
-          </Box>
+              {delegation?.createdBy && (
+                <IdentityCard
+                  label={formatMessage(m.createdBy)}
+                  title={delegation.createdBy.name}
+                />
+              )}
+            </Box>
+            <Box
+              display="flex"
+              flexDirection={['column', 'row']}
+              justifyContent="spaceBetween"
+              columnGap={[0, 3]}
+              rowGap={[3, 0]}
+            >
+              <IdentityCard
+                label={formatMessage(m.validTo)}
+                title={
+                  delegation?.validTo
+                    ? format(new Date(delegation?.validTo), 'dd.MM.yyyy')
+                    : formatMessage(m.noValidToDate)
+                }
+              />
+              {delegation?.referenceId && (
+                <IdentityCard
+                  label={formatMessage(m.referenceId)}
+                  title={delegation?.referenceId}
+                />
+              )}
+            </Box>
           </>
         )}
-
       </Box>
       {delegation?.type !== 'GeneralMandate' && (
         <AccessListContainer
