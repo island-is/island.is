@@ -943,7 +943,7 @@ export const messages = defineMessages({
   medicineNameOfDocExtra: {
     id: 'sp.health:medicine-name-of-doc-extra',
     defaultMessage:
-      'Læknar sem hafa einnig leyfi til að ávísa Metylfenidat lyfjum fyrir einstakling',
+      'Aukalæknar skráðir á skírteini',
   },
   medicineCalculatorAddToPurchaseLabel: {
     id: 'sp.health:medicine-calculator-add-to-purchase-label',
