@@ -60,7 +60,7 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                     list.area.name,
                   )}`,
                 },
-                { title: list.title.split(' - ')[0] },
+                { title: list.candidate.name },
               ]}
             />
           </Box>

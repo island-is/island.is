@@ -105,7 +105,7 @@ export const Constituency = ({
                   <ActionCard
                     key={list.id}
                     date={format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')}
-                    heading={list.title.split(' - ')[0]}
+                    heading={list.candidate.name}
                     progressMeter={{
                       currentProgress: list.numberOfSignatures ?? 0,
                       maxProgress: list.area.min,
