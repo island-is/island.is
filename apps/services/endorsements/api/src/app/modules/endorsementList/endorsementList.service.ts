@@ -684,8 +684,8 @@ export class EndorsementListService {
 
       // Generate presigned URL with 60 minutes expiration
       const url = await this.awsService.getPresignedUrl(
-        environment.exportsBucketName,
-        filename,
+        { bucket: environment.exportsBucketName,
+        key: filename }
       )
       return { url }
     } catch (error) {
@@ -751,8 +751,8 @@ export class EndorsementListService {
     try {
       await this.awsService.uploadFile(
         fileBuffer,
-        environment.exportsBucketName,
-        filename,
+        {bucket: environment.exportsBucketName,
+        key: filename },
         {
           ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
         },
