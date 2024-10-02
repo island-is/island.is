@@ -20,6 +20,7 @@ import {
   AdminCollectionApi,
   AdminListApi,
   AdminSignatureApi,
+  AdminApi,
 } from './apis'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import {
@@ -32,6 +33,7 @@ type Api =
   | AdminCollectionApi
   | AdminSignatureApi
   | AdminCandidateApi
+  | AdminApi
 
 @Injectable()
 export class SignatureCollectionAdminClientService {
@@ -41,6 +43,7 @@ export class SignatureCollectionAdminClientService {
     private signatureApi: AdminSignatureApi,
     private sharedService: SignatureCollectionSharedClientService,
     private candidateApi: AdminCandidateApi,
+    private adminApi: AdminApi,
   ) {}
 
   private getApiWithAuth<T extends Api>(api: T, auth: Auth) {
@@ -293,6 +296,19 @@ export class SignatureCollectionAdminClientService {
         auth,
       ).frambodIDRemoveFrambodAdminPost({ iD: parseInt(candidateId) })
       return { success: res?.id === parseInt(candidateId) }
+    } catch (error) {
+      return { success: false, reasons: [ReasonKey.DeniedByService] }
+    }
+  }
+
+  async removeList(listId: string, auth: Auth): Promise<Success> {
+    try {
+      await this.getApiWithAuth(this.adminApi, auth).adminMedmaelalistiIDDelete(
+        {
+          iD: parseInt(listId),
+        },
+      )
+      return { success: true }
     } catch (error) {
       return { success: false, reasons: [ReasonKey.DeniedByService] }
     }

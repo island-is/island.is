@@ -24,7 +24,6 @@ import {
 } from './VehicleBulkMileageJobDetail.generated'
 import { VehiclesBulkMileageRegistrationRequestOverview } from '@island.is/service-portal/graphql'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { useMemo } from 'react'
 import { isDefined } from '@island.is/shared/utils'
 import { vehicleMessage } from '../../lib/messages'
 
@@ -64,50 +63,6 @@ const VehicleBulkMileageJobDetail = () => {
     | VehiclesBulkMileageRegistrationRequestOverview
     | undefined =
     registrationData?.vehicleBulkMileageRegistrationRequestOverview ?? undefined
-
-  const tableArray = useMemo(() => {
-    if (data?.vehicleBulkMileageRegistrationRequestStatus) {
-      return [
-        [
-          {
-            title: formatMessage(vehicleMessage.totalSubmitted),
-            value: jobsStatus?.jobsSubmitted
-              ? jobsStatus.jobsSubmitted.toString()
-              : '0',
-          },
-          { title: '', value: '' },
-        ],
-        [
-          {
-            title: formatMessage(vehicleMessage.totalFinished),
-            value: jobsStatus?.jobsFinished
-              ? jobsStatus.jobsFinished.toString()
-              : '0',
-          },
-          {
-            title: formatMessage(vehicleMessage.totalRemaining),
-            value: jobsStatus?.jobsRemaining
-              ? jobsStatus.jobsRemaining.toString()
-              : '0',
-          },
-        ],
-        [
-          {
-            title: formatMessage(vehicleMessage.healthyJobs),
-            value: jobsStatus?.jobsValid
-              ? jobsStatus.jobsValid.toString()
-              : '0',
-          },
-          {
-            title: formatMessage(vehicleMessage.unhealthyJobs),
-            value: jobsStatus?.jobsErrored
-              ? jobsStatus.jobsErrored.toString()
-              : '0',
-          },
-        ],
-      ]
-    }
-  }, [data?.vehicleBulkMileageRegistrationRequestStatus])
 
   const handleFileDownload = async () => {
     const requests = registrations?.requests ?? []
@@ -163,7 +118,49 @@ const VehicleBulkMileageJobDetail = () => {
         <Stack space={8}>
           <TableGrid
             title={formatMessage(vehicleMessage.jobStatus)}
-            dataArray={tableArray ?? [[]]}
+            dataArray={
+              data?.vehicleBulkMileageRegistrationRequestStatus
+                ? [
+                    [
+                      {
+                        title: formatMessage(vehicleMessage.totalSubmitted),
+                        value: jobsStatus?.jobsSubmitted
+                          ? jobsStatus.jobsSubmitted.toString()
+                          : '0',
+                      },
+                      { title: '', value: '' },
+                    ],
+                    [
+                      {
+                        title: formatMessage(vehicleMessage.totalFinished),
+                        value: jobsStatus?.jobsFinished
+                          ? jobsStatus.jobsFinished.toString()
+                          : '0',
+                      },
+                      {
+                        title: formatMessage(vehicleMessage.totalRemaining),
+                        value: jobsStatus?.jobsRemaining
+                          ? jobsStatus.jobsRemaining.toString()
+                          : '0',
+                      },
+                    ],
+                    [
+                      {
+                        title: formatMessage(vehicleMessage.healthyJobs),
+                        value: jobsStatus?.jobsValid
+                          ? jobsStatus.jobsValid.toString()
+                          : '0',
+                      },
+                      {
+                        title: formatMessage(vehicleMessage.unhealthyJobs),
+                        value: jobsStatus?.jobsErrored
+                          ? jobsStatus.jobsErrored.toString()
+                          : '0',
+                      },
+                    ],
+                  ]
+                : [[]]
+            }
           />
 
           {registrationError && <Problem error={registrationError} />}

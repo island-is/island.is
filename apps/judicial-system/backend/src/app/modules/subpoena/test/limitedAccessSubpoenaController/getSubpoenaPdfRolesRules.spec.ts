@@ -1,14 +1,14 @@
 import { defenderRule } from '../../../../guards'
-import { LimitedAccessDefendantController } from '../../limitedAccessDefendant.controller'
+import { LimitedAccessSubpoenaController } from '../../limitedAccessSubpoena.controller'
 
-describe('LimitedAccessDefendantController - Get custody notice pdf rules', () => {
+describe('LimitedAccessSubpoenaController - Get custody notice pdf rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let rules: any[]
 
   beforeEach(() => {
     rules = Reflect.getMetadata(
       'roles-rules',
-      LimitedAccessDefendantController.prototype.getSubpoenaPdf,
+      LimitedAccessSubpoenaController.prototype.getSubpoenaPdf,
     )
   })
 
