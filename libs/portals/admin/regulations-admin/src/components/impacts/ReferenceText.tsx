@@ -87,7 +87,10 @@ export const ReferenceText = (props: ReferenceTextProps) => {
           {appendixes.map(({ title, text }, i) => (
             <div className={s.referenceTextAppendix} key={i}>
               <h2 className={s.referenceTextAppendixTitle}>{title}</h2>
-              <HTMLDump className={ed.classes.editor} html={text as HTMLText} />
+              <HTMLDump
+                className={cn(ed.classes.editor, s.diff)}
+                html={text as HTMLText}
+              />
             </div>
           ))}
 

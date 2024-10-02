@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { ConfigType } from '@nestjs/config'
 import * as kennitala from 'kennitala'
 import uniqBy from 'lodash/uniqBy'
 import { Op } from 'sequelize'
@@ -29,6 +30,7 @@ import { DelegationValidity } from './types/delegationValidity'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { getScopeValidityWhereClause } from './utils/scopes'
 import { DelegationDelegationType } from './models/delegation-delegation-type.model'
+import { DelegationConfig } from './DelegationConfig'
 
 type FindAllValidIncomingOptions = {
   nationalId: string
@@ -56,6 +58,8 @@ export class DelegationsIncomingCustomService {
     private companyRegistryClient: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(DelegationConfig.KEY)
+    private delegationConfig: ConfigType<typeof DelegationConfig>,
     private auditService: AuditService,
   ) {}
 
@@ -182,15 +186,32 @@ export class DelegationsIncomingCustomService {
     })
   }
 
+  private filterByCustomScopeRule(scope: ApiScopeInfo) {
+    const foundCSR = this.delegationConfig.customScopeRules.find(
+      (csr) => csr.scopeName === scope.name,
+    )
+
+    if (!foundCSR) {
+      return true
+    }
+
+    return foundCSR.onlyForDelegationType.includes(
+      AuthDelegationType.GeneralMandate,
+    )
+  }
+
   async findAllAvailableGeneralMandate(
     user: User,
     clientAllowedApiScopes: ApiScopeInfo[],
     requireApiScopes: boolean,
   ): Promise<MergedDelegationDTO[]> {
-    const customApiScopes = clientAllowedApiScopes.filter((s) =>
-      s.supportedDelegationTypes?.some(
-        (dt) => dt.delegationType === AuthDelegationType.GeneralMandate,
-      ),
+    const customApiScopes = clientAllowedApiScopes.filter(
+      (s) =>
+        !s.isAccessControlled &&
+        this.filterByCustomScopeRule(s) &&
+        s.supportedDelegationTypes?.some(
+          (dt) => dt.delegationType === AuthDelegationType.GeneralMandate,
+        ),
     )
 
     if (requireApiScopes && !(customApiScopes && customApiScopes.length > 0)) {
