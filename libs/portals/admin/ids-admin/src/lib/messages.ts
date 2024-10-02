@@ -77,6 +77,14 @@ export const m = defineMessages({
     id: 'ap.ids-admin:clients-description',
     defaultMessage: 'Here you can view and create applications.',
   },
+  needHelpTitle: {
+    id: 'ap.ids-admin:need-help-title',
+    defaultMessage: 'Do you need help?',
+  },
+  needHelpDescription: {
+    id: 'ap.ids-admin:need-help-description',
+    defaultMessage: 'Check out the documentation.',
+  },
   learnMore: {
     id: 'ap.ids-admin:learn-more',
     defaultMessage: 'Learn more',
@@ -531,6 +539,14 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permissions-description',
     defaultMessage:
       'List of permissions (scopes) the application can request during authentication. Applications can always request standard scopes like oidc, profile, email, phone and address.{br}{br}Here you can add permissions from the current tenant. For third party permissions, the owner must grant access to your application.',
+  },
+  documentation: {
+    id: 'ap.ids-admin:documentation',
+    defaultMessage: 'Documentation',
+  },
+  documentationDescription: {
+    id: 'ap.ids-admin:documentation-description',
+    defaultMessage: 'Link to external documentation for IDS admin.',
   },
   permissionsAdd: {
     id: 'ap.ids-admin:permissions-add',

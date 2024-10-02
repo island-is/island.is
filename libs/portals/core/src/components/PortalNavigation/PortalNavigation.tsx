@@ -89,6 +89,7 @@ export function PortalNavigation({
             component: Link,
             href: undefined,
             to: href,
+            target: href.startsWith('http') ? '_blank' : undefined,
           })
         } else if (link.type !== FocusableBox) {
           console.warn('Unexpected Navigation link element', link)
