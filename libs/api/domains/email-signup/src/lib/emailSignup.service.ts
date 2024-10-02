@@ -4,6 +4,7 @@ import { CmsContentfulService } from '@island.is/cms'
 
 import { MailchimpSignupService } from './services/mailchimp/mailchimp.service'
 import { ZenterSignupService } from './services/zenter/zenter.service'
+import { CampaignMonitorSignupService } from './services/campaignMonitor/campaignMonitor.service'
 import { EmailSignupInput } from './dto/emailSignup.input'
 
 @Injectable()
@@ -11,6 +12,7 @@ export class EmailSignupService {
   constructor(
     private readonly zenterSignupService: ZenterSignupService,
     private readonly mailchimpSignupService: MailchimpSignupService,
+    private readonly campaignMonitorSignupService: CampaignMonitorSignupService,
     private readonly cmsContentfulService: CmsContentfulService,
   ) {}
 
@@ -37,6 +39,13 @@ export class EmailSignupService {
 
     if (emailSignupModel.signupType === 'zenter') {
       return this.zenterSignupService.subscribeToMailingList(
+        emailSignupModel,
+        inputFields,
+      )
+    }
+
+    if (emailSignupModel.signupType === 'campaign monitor') {
+      return this.campaignMonitorSignupService.subscribeToMailingList(
         emailSignupModel,
         inputFields,
       )
