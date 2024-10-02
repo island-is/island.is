@@ -43,22 +43,18 @@ export const OtherDocumentsSubSection = buildSubSection({
       children: [
         buildDescriptionField({
           id: `${Routes.SUPPORTINGDOCUMENTS}.title`,
-          title: supportingDocuments.labels.otherDocuments.title,
+          description: supportingDocuments.labels.otherDocuments.title,
           titleVariant: 'h5',
+          title: '',
         }),
         buildHiddenInput({
           id: `${Routes.SUPPORTINGDOCUMENTS}.birthCertificateRequired`,
           defaultValue: (application: Application) => {
             const answers = application.answers as Citizenship
-            console.log(
-              'answers?.parentInformation?.hasValidParents',
-              answers?.parentInformation?.hasValidParents,
-            )
             if (answers?.parentInformation?.hasValidParents === YES) {
-              console.log('in here??')
-              return true
+              return 'true'
             }
-            return false
+            return 'false'
           },
         }),
         buildFileUploadField({
