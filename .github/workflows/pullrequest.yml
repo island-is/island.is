@@ -293,6 +293,9 @@ jobs:
           severity: style
 
       - uses: reviewdog/action-shfmt@v1
+        with:
+          level: info
+          fail_on_error: true
 
   formatting:
     needs:
