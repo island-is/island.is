@@ -942,8 +942,7 @@ export const messages = defineMessages({
   },
   medicineNameOfDocExtra: {
     id: 'sp.health:medicine-name-of-doc-extra',
-    defaultMessage:
-      'Aukalæknar skráðir á skírteini',
+    defaultMessage: 'Aukalæknar skráðir á skírteini',
   },
   medicineCalculatorAddToPurchaseLabel: {
     id: 'sp.health:medicine-calculator-add-to-purchase-label',
