@@ -328,4 +328,27 @@ export class SignatureCollectionAdminClientService {
       return { success: false }
     }
   }
+
+  async signatureLookup(
+    auth: Auth,
+    collectionId: string,
+    nationalId: string,
+  ): Promise<Signature[]> {
+    const lists = await this.getLists({ collectionId }, auth)
+    try {
+      const res = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelasofnunIDComparePost({
+        iD: parseInt(collectionId, 10),
+        requestBody: [nationalId],
+      })
+      return res.map(mapSignature).map((s) => ({
+        ...s,
+        listTitle: lists.find((l) => l.id === s.listId)?.title,
+      }))
+    } catch {
+      return []
+    }
+  }
 }

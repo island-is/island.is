@@ -22,6 +22,8 @@ import { SignatureCollectionSlug } from './models/slug.model'
 import { SignatureCollectionListStatus } from './models/status.model'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
+import { SignatureCollectionNationalIdInput } from './dto'
+import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
 
 @Injectable()
 export class SignatureCollectionAdminService {
@@ -193,6 +195,17 @@ export class SignatureCollectionAdminService {
       user,
       input.signatureId,
       input.pageNumber,
+    )
+  }
+
+  async signatureLookup(
+    user: User,
+    input: SignatureCollectionSignatureLookupInput,
+  ): Promise<SignatureCollectionSignature[]> {
+    return await this.signatureCollectionClientService.signatureLookup(
+      user,
+      input.collectionId,
+      input.nationalId,
     )
   }
 }

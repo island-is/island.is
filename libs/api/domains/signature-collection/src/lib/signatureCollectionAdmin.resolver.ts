@@ -35,6 +35,7 @@ import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper
 import { ReasonKey } from '@island.is/clients/signature-collection'
 import { CanSignInfo } from './models/canSignInfo.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
+import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -262,5 +263,18 @@ export class SignatureCollectionAdminResolver {
       user,
       input,
     )
+  }
+
+  @Query(() => [SignatureCollectionSignature])
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
+  @Audit()
+  async signatureCollectionSignatureLookup(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionSignatureLookupInput,
+  ): Promise<SignatureCollectionSignature[]> {
+    return this.signatureCollectionService.signatureLookup(user, input)
   }
 }
