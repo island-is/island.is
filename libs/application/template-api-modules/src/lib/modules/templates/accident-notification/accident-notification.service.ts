@@ -11,7 +11,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import {
-  applictionAnswersToXml,
+  applicationAnswersToXml,
   getApplicationDocumentId,
   whiteListedErrorCodes,
 } from './accident-notification.utils'
@@ -59,7 +59,7 @@ export class AccidentNotificationService extends BaseTemplateApiService {
       const fileHashList = attachments.map((attachment) => attachment.hash)
 
       const answers = application.answers as AccidentNotificationAnswers
-      const xml = applictionAnswersToXml(answers, attachments)
+      const xml = applicationAnswersToXml(answers, attachments)
 
       const { ihiDocumentID } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
@@ -174,7 +174,7 @@ export class AccidentNotificationService extends BaseTemplateApiService {
   async reviewApplication({ application }: TemplateApiModuleActionProps) {
     const documentId = getApplicationDocumentId(application)
 
-    const isRepresentativeOfCompanyOrInstitue =
+    const isRepresentativeOfCompanyOrInstitute =
       utils.isRepresentativeOfCompanyOrInstitute(application.answers)
     const reviewApproval = getValueViaPath(
       application.answers,
@@ -187,7 +187,7 @@ export class AccidentNotificationService extends BaseTemplateApiService {
       confirmationIN: {
         confirmationType:
           reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
-        confirmationParty: isRepresentativeOfCompanyOrInstitue ? 1 : 2,
+        confirmationParty: isRepresentativeOfCompanyOrInstitute ? 1 : 2,
         objection: reviewComment as string,
       },
     })

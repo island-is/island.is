@@ -34,6 +34,18 @@ export const sakHeaderGridContainer = style({
   }),
 })
 
+export const sakHeaderGridContainerSubpage = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: 'auto',
+      gridTemplateColumns: '100fr',
+    },
+  }),
+})
+
 export const landlaeknirHeaderGridContainer = style({
   display: 'grid',
   maxWidth: '1342px',
@@ -42,6 +54,18 @@ export const landlaeknirHeaderGridContainer = style({
     lg: {
       gridTemplateRows: '315px',
       gridTemplateColumns: '60fr 40fr',
+    },
+  }),
+})
+
+export const landlaeknirHeaderGridContainerSubpage = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: 'auto',
+      gridTemplateColumns: '100fr',
     },
   }),
 })
@@ -69,7 +93,17 @@ export const shhHeaderGridContainerWidth = style([
   }),
 ])
 
-export const shhHeaderGridContainerWidthSubpage = shhHeaderGridContainerBase
+export const shhHeaderGridContainerWidthSubpage = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: 'auto',
+      gridTemplateColumns: '100fr',
+    },
+  }),
+})
 
 export const rikissaksoknariHeaderGridContainerBase = style({
   display: 'grid',
@@ -102,8 +136,56 @@ export const rikissaksoknariHeaderGridContainerWidth = style([
   }),
 ])
 
-export const rikissaksoknariHeaderGridContainerSubpage =
-  rikissaksoknariHeaderGridContainerBase
+export const rikissaksoknariHeaderGridContainerSubpage = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  backgroundBlendMode: 'saturation',
+  backgroundRepeat: 'no-repeat',
+  background: `
+      linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 92.19%),
+      linear-gradient(-93.41deg, rgba(0, 72, 153, 0.4) -4.61%, rgba(0, 72, 153, 0.62) 17.93%, rgba(0, 72, 153, 0.82) 47.83%, rgba(0, 72, 153, 0.94) 71.31%, rgba(0, 72, 153, 0.95) 94.11%, #004899 114.58%)
+      `,
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: 'auto',
+      gridTemplateColumns: '100fr',
+    },
+  }),
+})
+
+export const hsaHeaderGridContainerBase = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: '315px',
+      gridTemplateColumns: '65fr 35fr',
+    },
+  }),
+})
+
+export const hsaHeaderGridContainerWidthSubpage = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: 'auto',
+      gridTemplateColumns: '100fr',
+    },
+  }),
+})
+
+export const hsaHeaderGridContainerWidth = style([
+  hsaHeaderGridContainerBase,
+  themeUtils.responsiveStyle({
+    lg: {
+      background: `url('https://images.ctfassets.net/8k0h54kbe6bj/uc45ywvPOYsIUEQTNfE6s/72fd0f2229407e18c6e2908fb13f51c3/Header_HSA.png') no-repeat right bottom,linear-gradient(90deg, #CCDFFF 0%, #F6F6F6 84.85%)`,
+    },
+  }),
+])
 
 export const rikislogmadurHeaderGridContainerWidthBase = style({
   display: 'grid',
@@ -131,8 +213,19 @@ export const rikislogmadurHeaderGridContainerWidth = style([
   }),
 ])
 
-export const rikislogmadurHeaderGridContainerWidthSubpage =
-  rikislogmadurHeaderGridContainerWidthBase
+export const rikislogmadurHeaderGridContainerWidthSubpage = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  background:
+    'linear-gradient(178.67deg, rgba(0, 61, 133, 0.2) 1.87%, rgba(0, 61, 133, 0.3) 99.6%)',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: 'auto',
+      gridTemplateColumns: '100fr',
+    },
+  }),
+})
 
 export const hveHeaderGridContainer = style({
   display: 'grid',
@@ -143,6 +236,19 @@ export const hveHeaderGridContainer = style({
     lg: {
       gridTemplateRows: '315px',
       gridTemplateColumns: '65fr 35fr',
+    },
+  }),
+})
+
+export const hveHeaderGridContainerSubpage = style({
+  display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
+  borderBottom: '8px solid #F01E28',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: 'auto',
+      gridTemplateColumns: '100fr',
     },
   }),
 })

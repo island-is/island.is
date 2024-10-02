@@ -5,6 +5,10 @@ import { m, parliamentaryMessages } from '../../lib/messages'
 import {
   ActionCard,
   Box,
+  Breadcrumbs,
+  DialogPrompt,
+  Icon,
+  Tag,
   GridColumn,
   GridContainer,
   GridRow,
@@ -44,6 +48,23 @@ export const Constituency = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
+          <Box marginBottom={3}>
+            <Breadcrumbs
+              items={[
+                {
+                  title: formatMessage('Yfirlit'),
+                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
+                },
+                {
+                  title: constituencyName,
+                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryConstituency.replace(
+                    ':constituencyName',
+                    constituencyName,
+                  )}`,
+                },
+              ]}
+            />
+          </Box>
           <IntroHeader
             title={constituencyName}
             intro={
@@ -60,7 +81,7 @@ export const Constituency = () => {
                 marginBottom={3}
                 display="flex"
                 justifyContent="spaceBetween"
-                alignItems="center"
+                alignItems="flexEnd"
               >
                 <Text variant="eyebrow">
                   {formatMessage(m.totalListResults) +
@@ -75,7 +96,11 @@ export const Constituency = () => {
                 {constituencyLists.map((list) => (
                   <ActionCard
                     key={list.id}
-                    eyebrow={constituencyName}
+                    eyebrow={
+                      formatMessage(m.listEndTime) +
+                      ': ' +
+                      new Date(list.endTime).toLocaleDateString()
+                    }
                     heading={list.title.split(' - ')[0]}
                     progressMeter={{
                       currentProgress: list.numberOfSignatures ?? 0,
@@ -93,6 +118,47 @@ export const Constituency = () => {
                           ).replace(':listId', list.id),
                         )
                       },
+                    }}
+                    tag={{
+                      label: 'Cancel collection',
+                      renderTag: () => (
+                        <DialogPrompt
+                          baseId="cancel_collection_dialog"
+                          title={
+                            formatMessage(m.cancelCollectionButton) +
+                            ' - ' +
+                            list.area?.name
+                          }
+                          description={formatMessage(
+                            m.cancelCollectionModalMessage,
+                          )}
+                          ariaLabel="delete"
+                          disclosureElement={
+                            <Tag outlined variant="red">
+                              <Box display="flex" alignItems="center">
+                                <Icon
+                                  icon="trash"
+                                  size="small"
+                                  type="outline"
+                                />
+                              </Box>
+                            </Tag>
+                          }
+                          onConfirm={() => {
+                            //onCancelCollection(list.id)
+                          }}
+                          buttonTextConfirm={formatMessage(
+                            m.cancelCollectionModalConfirmButton,
+                          )}
+                          buttonPropsConfirm={{
+                            variant: 'primary',
+                            colorScheme: 'destructive',
+                          }}
+                          buttonTextCancel={formatMessage(
+                            m.cancelCollectionModalCancelButton,
+                          )}
+                        />
+                      ),
                     }}
                   />
                 ))}

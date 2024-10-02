@@ -79,6 +79,7 @@ import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
+import { MergedCaseExistsGuard } from './guards/mergedCaseExists.guard'
 import {
   courtOfAppealsAssistantTransitionRule,
   courtOfAppealsAssistantUpdateRule,
@@ -549,6 +550,7 @@ export class CaseController {
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(
     prosecutorRule,
@@ -558,7 +560,10 @@ export class CaseController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get('case/:caseId/caseFilesRecord/:policeCaseNumber')
+  @Get([
+    'case/:caseId/caseFilesRecord/:policeCaseNumber',
+    'case/:caseId/mergedCase/:mergedCaseId/caseFilesRecord/:policeCaseNumber',
+  ])
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description:
@@ -705,6 +710,7 @@ export class CaseController {
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(
     prosecutorRule,
@@ -714,7 +720,10 @@ export class CaseController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get('case/:caseId/indictment')
+  @Get([
+    'case/:caseId/indictment',
+    'case/:caseId/mergedCase/:mergedCaseId/indictment',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },

@@ -19,7 +19,7 @@ export const m = defineMessages({
   },
   createNewDelegation: {
     id: 'admin.delegationAdmin:delegationAdminCreateNewDelegation',
-    defaultMessage: 'Stofna nýtt umboð',
+    defaultMessage: 'Skrá nýtt umboð',
   },
   delegationFrom: {
     id: 'admin.delegationAdmin:delegationAdminDelegationFrom',
@@ -79,7 +79,7 @@ export const m = defineMessages({
   },
   referenceId: {
     id: 'admin.delegationAdmin:referenceId',
-    defaultMessage: 'Númer mála í Zendesk',
+    defaultMessage: 'Númer máls í Zendesk',
   },
   errorDefault: {
     id: 'admin.delegationAdmin:errorDefault',
@@ -116,5 +116,35 @@ export const m = defineMessages({
   createDelegationConfirmModalTitle: {
     id: 'admin.delegationAdmin:createDelegationConfirmModalTitle',
     defaultMessage: 'Þú ert að skrá nýtt umboð',
+  },
+  createDelegationSuccessToast: {
+    id: 'admin.delegationAdmin:createDelegationSuccessToast',
+    defaultMessage: 'Umboð var skráð',
+  },
+  nationalIdsMismatchError: {
+    id: 'admin.delegationAdmin:nationalIdsMismatchError',
+    defaultMessage:
+      'Kennitölur á umboði stemma ekki við kennitölur í Zendesk máli',
+  },
+  zendeskCaseNotSolvedError: {
+    id: 'admin.delegationAdmin:zendeskCaseNotSolvedError',
+    defaultMessage: 'Zendesk málið er ekki í stöðunni leyst',
+  },
+  zendeskMissingTagError: {
+    id: 'admin.delegationAdmin:zendeskMissingTagError',
+    defaultMessage: 'Zendesk málið vantar nauðsynlegt tagg',
+  },
+  zendeskCustomFieldsMissingError: {
+    id: 'admin.delegationAdmin:zendeskCustomFieldsMissingError',
+    defaultMessage:
+      'Zendesk málið vantar nauðsynlegar upplýsingar um kennitölur umboðsveitanda og umboðshafa',
+  },
+  sameNationalIdError: {
+    id: 'admin.delegationAdmin:sameNationalIdError',
+    defaultMessage: 'Kennitölur mega ekki vera eins',
+  },
+  validPersonError: {
+    id: 'admin.delegationAdmin:validPersonError',
+    defaultMessage: 'Kennitölur þurfa að vera gildar kennitölur',
   },
 })
