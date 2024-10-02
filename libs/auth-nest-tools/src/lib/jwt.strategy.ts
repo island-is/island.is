@@ -46,12 +46,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (this.config.allowClientNationalId && payload.client_nationalId) {
       payload.nationalId = payload.client_nationalId
     }
+
+    const bodyAuthorization = request.body?.[AUTH_BODY_FIELD_NAME]
+    const authorization =
+      request.headers?.authorization ||
+      (bodyAuthorization && `Bearer ${bodyAuthorization}`) ||
+      ''
+
     return {
       sub: payload.sub,
       nationalId: payload.nationalId,
       scope: this.parseScopes(payload.scope),
       client: payload.client_id,
-      authorization: request.headers.authorization ?? '',
+      authorization,
       delegationType: payload.delegationType,
       actor: actor && {
         nationalId: actor.nationalId,
