@@ -56,7 +56,8 @@
     "url-parse-lax",
     "safer-buffer",
     "ioredis",
-    "@mikro-orm/core"
+    "@mikro-orm/core",
+    "sequelize"
   ],
   "keepNames": true
 }
