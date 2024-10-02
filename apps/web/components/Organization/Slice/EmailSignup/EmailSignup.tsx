@@ -163,7 +163,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
               'submitSuccessMessage',
               activeLocale === 'is'
                 ? 'Þú þarft að fara í tölvupóstinn þinn og samþykkja umsóknina. Takk fyrir'
-                : 'You need to go to your email and accept the application. Thanks for that',
+                : 'You need to go to your email and confirm the subscription. Thank you',
             ) as string,
           })
         } else {
