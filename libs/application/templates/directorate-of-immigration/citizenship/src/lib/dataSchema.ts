@@ -233,14 +233,28 @@ const CriminalRecordSchema = z.object({
   attachment: z.array(FileDocumentSchema).optional(),
 })
 
-const SupportingDocumentsSchema = z.object({
-  birthCertificate: z.array(FileDocumentSchema).optional(),
-  subsistenceCertificate: z.array(FileDocumentSchema).optional(),
-  subsistenceCertificateForTown: z.array(FileDocumentSchema).optional(),
-  certificateOfLegalResidenceHistory: z.array(FileDocumentSchema).optional(),
-  icelandicTestCertificate: z.array(FileDocumentSchema).optional(),
-  criminalRecord: z.array(CriminalRecordSchema).optional(),
-})
+const SupportingDocumentsSchema = z
+  .object({
+    birthCertificateRequired: z.string().min(1),
+    birthCertificate: z.array(FileDocumentSchema).optional(),
+    subsistenceCertificate: z.array(FileDocumentSchema).min(1),
+    subsistenceCertificateForTown: z.array(FileDocumentSchema).min(1),
+    certificateOfLegalResidenceHistory: z.array(FileDocumentSchema).min(1),
+    icelandicTestCertificate: z.array(FileDocumentSchema).min(1),
+    criminalRecord: z.array(CriminalRecordSchema).optional(),
+  })
+  .refine(
+    ({ birthCertificateRequired, birthCertificate }) => {
+      return (
+        birthCertificateRequired === 'false' ||
+        (birthCertificate && birthCertificate.length > 0)
+      )
+    },
+    {
+      path: ['birthCertificate'],
+      params: error.fileUploadRequired,
+    },
+  )
 
 const ChildrenSupportingDocumentsSchema = z.object({
   nationalId: z.string().min(1),
