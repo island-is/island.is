@@ -44,8 +44,9 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
         children: [
           buildDescriptionField({
             id: `${Routes.CHILDSUPPORTINGDOCUMENTS}[${index}].title`,
-            title: supportingDocuments.labels.otherDocuments.title,
+            description: supportingDocuments.labels.otherDocuments.title,
             titleVariant: 'h5',
+            title: '',
           }),
           buildCustomField(
             {
@@ -82,7 +83,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
                 index,
               )
 
-              return !!age && age >= MIN_AGE_WRITTEN_CONSENT
+              return !!age && age >= MIN_AGE_WRITTEN_CONSENT ? 'true' : 'false'
             },
           }),
           buildFileUploadField({
@@ -129,7 +130,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
                 '',
               ) as string
 
-              return hasOtherParent || !!customAddedParent
+              return hasOtherParent || !!customAddedParent ? 'true' : 'false'
             },
           }),
           buildFileUploadField({
@@ -183,7 +184,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
               const hasOtherParent =
                 thisChild && !!thisChild.otherParent ? true : false
 
-              return hasOtherParent
+              return hasOtherParent ? 'true' : 'false'
             },
           }),
           buildFileUploadField({
