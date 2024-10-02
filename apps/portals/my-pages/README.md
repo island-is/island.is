@@ -33,11 +33,11 @@ Start by reading about the [portal module system](../../libs/portals/core/README
 
 ### Adding a module to the service portal
 
-To add a new module to the portals-my-pages, import and add it to the list defined in [modules.ts](./src/store/modules.ts):
+To add a new module to portals-my-pages, import and add it to the list defined in [modules.ts](./src/store/modules.ts):
 
 ```tsx
 // other imports...
-import { myNewModule } from '@island.is/portals-my-pages/my-new-module'
+import { myNewModule } from '@island.is/service-portal/my-new-module'
 
 export const modules: PortalModule[] = [
   // other modules...
