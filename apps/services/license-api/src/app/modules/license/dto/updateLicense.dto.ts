@@ -30,6 +30,7 @@ export class UpdateLicenseRequest {
   @IsString()
   readonly requestId?: string
 }
+
 export class UpdateLicenseResponse {
   @ApiProperty()
   @IsBoolean()
