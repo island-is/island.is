@@ -2,7 +2,7 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
+import { Accordion, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -38,6 +38,7 @@ const IndictmentOverview = () => {
   const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
+  const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNavigationTo = useCallback(
@@ -101,13 +102,18 @@ const IndictmentOverview = () => {
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
         )}
-        {workingCase.mergedCases &&
-          workingCase.mergedCases.length > 0 &&
-          workingCase.mergedCases.map((mergedCase) => (
-            <Box marginBottom={5} key={mergedCase.id}>
-              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
-            </Box>
-          ))}
+        {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
+          <Accordion>
+            {workingCase.mergedCases.map((mergedCase) => (
+              <Box marginBottom={5} key={mergedCase.id}>
+                <ConnectedCaseFilesAccordionItem
+                  connectedCaseParentId={workingCase.id}
+                  connectedCase={mergedCase}
+                />
+              </Box>
+            ))}
+          </Accordion>
+        )}
         {workingCase.caseFiles && (
           <Box component="section" marginBottom={10}>
             <IndictmentCaseFilesList workingCase={workingCase} />
@@ -117,7 +123,10 @@ const IndictmentOverview = () => {
           <Box component="section" marginBottom={5}>
             {
               <SubpoenaType
-                defendants={workingCase.defendants}
+                subpoenaItems={workingCase.defendants.map((defendant) => ({
+                  defendant,
+                  disabled: isArraignmentScheduled,
+                }))}
                 workingCase={workingCase}
                 setWorkingCase={setWorkingCase}
                 updateDefendantState={updateDefendantState}

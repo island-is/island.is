@@ -72,6 +72,7 @@ export const delegationTypes = [
   AuthDelegationType.LegalGuardian,
   AuthDelegationType.ProcurationHolder,
   AuthDelegationType.PersonalRepresentative,
+  AuthDelegationType.GeneralMandate,
 ]
 
 export const ScopeGroups: ScopeGroupSetupOptions[] = [

@@ -30,6 +30,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:delegation-type-legal-guardian',
     defaultMessage: 'Forsjá',
   },
+  delegationTypeGeneralMandate: {
+    id: 'sp.access-control-delegations:delegation-type-general-mandate',
+    defaultMessage: 'Allsherjarumboð',
+  },
   delegationTypeProcurationHolder: {
     id: 'sp.access-control-delegations:delegation-type-procuration-holder',
     defaultMessage: 'Prókúra',

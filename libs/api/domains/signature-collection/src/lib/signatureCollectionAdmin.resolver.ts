@@ -31,9 +31,13 @@ import { SignatureCollectionNationalIdInput } from './dto/nationalId.input'
 import { SignatureCollectionSignatureIdInput } from './dto/signatureId.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
-import { SignatureCollectionCanSignInput } from './dto/canSign.input'
+import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
 import { ReasonKey } from '@island.is/clients/signature-collection'
 import { CanSignInfo } from './models/canSignInfo.model'
+import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
+import { SignatureCollectionAreaInput } from './dto'
+import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
+import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -53,7 +57,7 @@ export class SignatureCollectionAdminResolver {
   async signatureCollectionAdminCanSignInfo(
     @CurrentUser()
     user: User,
-    @Args('input') input: SignatureCollectionCanSignInput,
+    @Args('input') input: SignatureCollectionCanSignFromPaperInput,
   ): Promise<CanSignInfo> {
     const canSignInfo = await this.signatureCollectionService.getCanSignInfo(
       user,
@@ -196,6 +200,15 @@ export class SignatureCollectionAdminResolver {
 
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
+  async signatureCollectionAdminRemoveList(
+    @CurrentUser() user: User,
+    @Args('input') { listId }: SignatureCollectionListIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.removeList(listId, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
   async signatureCollectionAdminUnsign(
     @CurrentUser() user: User,
     @Args('input') { signatureId }: SignatureCollectionSignatureIdInput,
@@ -240,5 +253,26 @@ export class SignatureCollectionAdminResolver {
     @Args('input') input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSignature[]> {
     return this.signatureCollectionService.compareLists(input, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAdminUpdatePaperSignaturePageNumber(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionSignatureUpdateInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.updateSignaturePageNumber(
+      user,
+      input,
+    )
+  }
+
+  @Query(() => SignatureCollectionAreaSummaryReport)
+  @Audit()
+  async signatureCollectionAreaSummaryReport(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionAreaSummaryReportInput,
+  ): Promise<SignatureCollectionAreaSummaryReport> {
+    return this.signatureCollectionService.getAreaSummaryReport(input, user)
   }
 }

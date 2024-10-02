@@ -15,6 +15,7 @@ import {
   MAXIMUM_REGULAR_SIGNATURE_COUNT,
   ONE,
 } from '../../lib/constants'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -25,6 +26,8 @@ export const AddRegularSignature = ({ applicationId }: Props) => {
   const { updateApplication, application, isLoading } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const onAddInstitution = () => {
     const { signature, currentAnswers } = getRegularAnswers(
@@ -37,11 +40,15 @@ export const AddRegularSignature = ({ applicationId }: Props) => {
         DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
       )?.pop()
 
+      const updatedSignature = [...signature, newSignature]
+
       const updatedAnswers = set(
         currentAnswers,
         InputFields.signature.regular,
-        [...signature, newSignature],
+        updatedSignature,
       )
+
+      setValue(InputFields.signature.regular, updatedSignature)
 
       updateApplication(updatedAnswers)
     }

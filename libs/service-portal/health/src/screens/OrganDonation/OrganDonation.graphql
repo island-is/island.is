@@ -33,6 +33,12 @@ query getOrgansList($locale: String) {
   }
 }
 
-mutation updateOrganDonationInfo($input: HealthDirectorateOrganDonorInput!) {
-  healthDirectorateOrganDonationUpdateDonorStatus(input: $input)
+mutation updateOrganDonationInfo(
+  $input: HealthDirectorateOrganDonorInput!
+  $locale: String
+) {
+  healthDirectorateOrganDonationUpdateDonorStatus(
+    input: $input
+    locale: $locale
+  )
 }

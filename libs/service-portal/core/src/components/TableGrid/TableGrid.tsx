@@ -4,7 +4,7 @@ import { tableStyles } from '../../utils/utils'
 
 interface TableItem {
   title: string
-  value: string
+  value: string | React.ReactNode
   detail?: string
 }
 
@@ -46,7 +46,7 @@ export const TableGrid: FC<React.PropsWithChildren<Props>> = ({
                     colSpan={2}
                     style={tableStyles}
                   >
-                    <Columns collapseBelow="lg" space={2}>
+                    <Columns alignY="center" collapseBelow="lg" space={2}>
                       <Column>
                         <Text
                           title={rowitem.detail}
@@ -58,7 +58,15 @@ export const TableGrid: FC<React.PropsWithChildren<Props>> = ({
                         </Text>
                       </Column>
                       <Column>
-                        <Text variant="medium" title={rowitem.detail}>
+                        <Text
+                          as={
+                            typeof rowitem.value === 'string'
+                              ? undefined
+                              : 'span'
+                          }
+                          variant="medium"
+                          title={rowitem.detail}
+                        >
                           {rowitem.value}
                         </Text>
                       </Column>

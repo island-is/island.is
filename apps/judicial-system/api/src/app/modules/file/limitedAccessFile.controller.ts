@@ -6,6 +6,7 @@ import {
   Header,
   Inject,
   Param,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -19,7 +20,7 @@ import {
   CurrentHttpUser,
   JwtInjectBearerAuthGuard,
 } from '@island.is/judicial-system/auth'
-import type { User } from '@island.is/judicial-system/types'
+import type { SubpoenaType, User } from '@island.is/judicial-system/types'
 
 import { FileService } from './file.service'
 
@@ -52,10 +53,14 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get('caseFilesRecord/:policeCaseNumber')
+  @Get([
+    'caseFilesRecord/:policeCaseNumber',
+    'mergedCase/:mergedCaseId/caseFilesRecord/:policeCaseNumber',
+  ])
   @Header('Content-Type', 'application/pdf')
   async getCaseFilesRecordPdf(
     @Param('id') id: string,
+    @Param('mergedCaseId') mergedCaseId: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
@@ -63,11 +68,15 @@ export class LimitedAccessFileController {
   ): Promise<Response> {
     this.logger.debug(`Getting the case files for case ${id} as a pdf document`)
 
+    const mergedCaseInjection = mergedCaseId
+      ? `mergedCase/${mergedCaseId}/`
+      : ''
+
     return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_CASE_FILES_PDF,
       id,
-      `limitedAccess/caseFilesRecord/${policeCaseNumber}`,
+      `limitedAccess/${mergedCaseInjection}caseFilesRecord/${policeCaseNumber}`,
       req,
       res,
       'pdf',
@@ -141,21 +150,51 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get('indictment')
+  @Get(['indictment', 'mergedCase/:mergedCaseId/indictment'])
   @Header('Content-Type', 'application/pdf')
   async getIndictmentPdf(
     @Param('id') id: string,
+    @Param('mergedCaseId') mergedCaseId: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<Response> {
     this.logger.debug(`Getting the indictment for case ${id} as a pdf document`)
 
+    const mergedCaseInjection = mergedCaseId
+      ? `mergedCase/${mergedCaseId}/`
+      : ''
+
     return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_INDICTMENT_PDF,
       id,
-      'limitedAccess/indictment',
+      `limitedAccess/${mergedCaseInjection}indictment`,
+      req,
+      res,
+      'pdf',
+    )
+  }
+
+  @Get('subpoena/:defendantId/:subpoenaId')
+  @Header('Content-Type', 'application/pdf')
+  getSubpoenaPdf(
+    @Param('id') id: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting subpoena ${subpoenaId} for defendant ${defendantId} of case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_SUBPOENA_PDF,
+      id,
+      `limitedAccess/defendant/${defendantId}/subpoena/${subpoenaId}`,
       req,
       res,
       'pdf',

@@ -1,4 +1,5 @@
 import formatISO from 'date-fns/formatISO'
+import { Base64 } from 'js-base64'
 import { Sequelize } from 'sequelize-typescript'
 import { ConfidentialClientApplication } from '@azure/msal-node'
 
@@ -840,7 +841,12 @@ export class CourtService {
   ): Promise<unknown> {
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - skjal`
-      const content = JSON.stringify({ category, name, dateSent, url })
+      const content = JSON.stringify({
+        category,
+        name,
+        dateSent,
+        url: url && Base64.encode(url),
+      })
 
       return this.sendToRobot(
         subject,
