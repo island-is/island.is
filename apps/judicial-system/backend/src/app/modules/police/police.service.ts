@@ -35,6 +35,7 @@ import { Case } from '../case'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { Subpoena, SubpoenaService } from '../subpoena'
+import { UpdateSubpoenaDto } from '../subpoena/dto/updateSubpoena.dto'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -134,7 +135,7 @@ export class PoliceService {
     defenderNationalId: z.string().nullish(),
     prosecutedConfirmedSubpoenaThroughIslandis: z.boolean().nullish(),
     servedBy: z.string().nullish(),
-    servedAt: z.date().nullish(),
+    servedAt: z.string().nullish(),
     delivered: z.boolean().nullish(),
     deliveredOnPaper: z.boolean().nullish(),
     deliveredToLawyer: z.boolean().nullish(),
@@ -343,15 +344,14 @@ export class PoliceService {
         if (res.ok) {
           let subpoenaResponse = await res.json()
 
+          //TODO: Remove when RLS has deployed new version without double encoding
           if (typeof subpoenaResponse === 'string') {
             subpoenaResponse = JSON.parse(subpoenaResponse)
           }
 
           const response: z.infer<typeof this.subpoenaStructure> =
             subpoenaResponse
-
           this.subpoenaStructure.parse(response)
-          console.log('!!!!!!!!!!!!!!!!!!!', subpoenaResponse)
 
           const subpoenaToUpdate = await this.subpoenaService.findBySubpoenaId(
             subpoenaId,
@@ -375,7 +375,7 @@ export class PoliceService {
                 ? ServiceStatus.FAILED
                 : // TODO: handle expired
                   undefined,
-            },
+            } as UpdateSubpoenaDto,
           )
 
           return updatedSubpoena
