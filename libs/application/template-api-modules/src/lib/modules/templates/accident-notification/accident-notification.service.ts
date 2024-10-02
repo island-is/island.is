@@ -28,7 +28,7 @@ import {
 } from './attachments/attachment.utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
-import { applicationToAccidentReport } from './accodent-notification-v2.utils'
+import { applicationToAccidentReport } from './accident-notification-v2.utils'
 import { AccidentreportsApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 

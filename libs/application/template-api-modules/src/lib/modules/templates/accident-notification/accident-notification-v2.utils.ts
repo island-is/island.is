@@ -43,24 +43,22 @@ export const applicationToAccidentReport = (
   }
 }
 
+const reportingForMap = {
+  [WhoIsTheNotificationForEnum.ME]:
+    MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_1,
+  [WhoIsTheNotificationForEnum.JURIDICALPERSON]:
+    MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_2,
+  [WhoIsTheNotificationForEnum.POWEROFATTORNEY]:
+    MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_3,
+  [WhoIsTheNotificationForEnum.CHILDINCUSTODY]:
+    MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_4,
+}
+
 const whoIsTheNotificationForToDTO = (who: WhoIsTheNotificationForEnum) => {
-  if (WhoIsTheNotificationForEnum.ME === who) {
-    return MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_1
-  }
-
-  if (WhoIsTheNotificationForEnum.JURIDICALPERSON === who) {
-    return MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_2
-  }
-
-  if (WhoIsTheNotificationForEnum.POWEROFATTORNEY === who) {
-    return MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_3
-  }
-
-  if (WhoIsTheNotificationForEnum.CHILDINCUSTODY === who) {
-    return MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_4
-  }
-
-  return MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_1
+  return (
+    reportingForMap[who] ||
+    MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_1
+  )
 }
 
 /*
@@ -69,6 +67,27 @@ const whoIsTheNotificationForToDTO = (who: WhoIsTheNotificationForEnum) => {
  * type 6 can have the subtypes 1. Almenn vinna á landi, 2. Vinna sjómanna, 3. Atvinnumennska í íþróttum, 4. Vinna við landbúnað
  * type 9 can have the subtypes 5. Starfsnám, 6. Verknám við háskóla, 7. Iðnám í löggildum iðngreinum
  */
+const accidentTypeMap = {
+  [AccidentTypeEnum.SPORTS]: { type: 4 },
+  [AccidentTypeEnum.WORK]: { type: 6 },
+  [AccidentTypeEnum.HOMEACTIVITIES]: { type: 7 },
+  [AccidentTypeEnum.RESCUEWORK]: { type: 8 },
+  [AccidentTypeEnum.STUDIES]: { type: 9 },
+}
+
+const workAccidentSubtypeMap = {
+  [WorkAccidentTypeEnum.GENERAL]: 1,
+  [WorkAccidentTypeEnum.FISHERMAN]: 2,
+  [WorkAccidentTypeEnum.PROFESSIONALATHLETE]: 3,
+  [WorkAccidentTypeEnum.AGRICULTURE]: 4,
+}
+
+const studiesAccidentSubtypeMap = {
+  [StudiesAccidentTypeEnum.INTERNSHIP]: 5,
+  [StudiesAccidentTypeEnum.APPRENTICESHIP]: 6,
+  [StudiesAccidentTypeEnum.VOCATIONALEDUCATION]: 7,
+}
+
 const accidentTypeToDTO = (
   answers: AccidentNotificationAnswers,
 ): { type: number; subtype?: number } => {
@@ -77,64 +96,97 @@ const accidentTypeToDTO = (
     'accidentType.answer',
   ) as AccidentTypeEnum
 
-  if (AccidentTypeEnum.SPORTS === accidentType) {
-    return { type: 4 }
-  }
+  const baseType = accidentTypeMap[accidentType] || { type: 6 }
 
-  if (AccidentTypeEnum.WORK === accidentType) {
+  if (accidentType === AccidentTypeEnum.WORK) {
     const workAccidentType = getValueViaPath(
       answers,
       'workAccident.type',
     ) as WorkAccidentTypeEnum
-
-    let subtype = 1
-
-    if (WorkAccidentTypeEnum.FISHERMAN === workAccidentType) {
-      subtype = 2
-    }
-
-    if (WorkAccidentTypeEnum.PROFESSIONALATHLETE === workAccidentType) {
-      subtype = 3
-    }
-
-    if (WorkAccidentTypeEnum.AGRICULTURE === workAccidentType) {
-      subtype = 4
-    }
-
-    return { type: 6, subtype }
+    const subtype = workAccidentSubtypeMap[workAccidentType] || 1
+    return { type: baseType.type, subtype }
   }
 
-  if (AccidentTypeEnum.HOMEACTIVITIES === accidentType) {
-    return { type: 7 }
-  }
-
-  if (AccidentTypeEnum.RESCUEWORK === accidentType) {
-    return { type: 8 }
-  }
-
-  if (AccidentTypeEnum.STUDIES === accidentType) {
+  if (accidentType === AccidentTypeEnum.STUDIES) {
     const studiesAccidentType = getValueViaPath(
       answers,
       'studiesAccident.type',
     ) as StudiesAccidentTypeEnum
-    let subtype
-    if (StudiesAccidentTypeEnum.INTERNSHIP === studiesAccidentType) {
-      subtype = 5
-    }
-
-    if (StudiesAccidentTypeEnum.APPRENTICESHIP === studiesAccidentType) {
-      subtype = 6
-    }
-
-    if (StudiesAccidentTypeEnum.VOCATIONALEDUCATION === studiesAccidentType) {
-      subtype = 7
-    }
-
-    return { type: 9, subtype }
+    const subtype = studiesAccidentSubtypeMap[studiesAccidentType]
+    return { type: baseType.type, subtype }
   }
 
-  return { type: 6 }
+  return baseType
 }
+
+// const accidentTypeToDTO = (
+//   answers: AccidentNotificationAnswers,
+// ): { type: number; subtype?: number } => {
+//   const accidentType = getValueViaPath(
+//     answers,
+//     'accidentType.answer',
+//   ) as AccidentTypeEnum
+
+//   const baseType = accidentTypeMap[accidentType] || { type: 6 }
+
+//   if (AccidentTypeEnum.SPORTS === accidentType) {
+//     return { type: 4 }
+//   }
+
+//   if (AccidentTypeEnum.WORK === accidentType) {
+//     const workAccidentType = getValueViaPath(
+//       answers,
+//       'workAccident.type',
+//     ) as WorkAccidentTypeEnum
+
+//     let subtype = 1
+
+//     if (WorkAccidentTypeEnum.FISHERMAN === workAccidentType) {
+//       subtype = 2
+//     }
+
+//     if (WorkAccidentTypeEnum.PROFESSIONALATHLETE === workAccidentType) {
+//       subtype = 3
+//     }
+
+//     if (WorkAccidentTypeEnum.AGRICULTURE === workAccidentType) {
+//       subtype = 4
+//     }
+
+//     return { type: 6, subtype }
+//   }
+
+//   if (AccidentTypeEnum.HOMEACTIVITIES === accidentType) {
+//     return { type: 7 }
+//   }
+
+//   if (AccidentTypeEnum.RESCUEWORK === accidentType) {
+//     return { type: 8 }
+//   }
+
+//   if (AccidentTypeEnum.STUDIES === accidentType) {
+//     const studiesAccidentType = getValueViaPath(
+//       answers,
+//       'studiesAccident.type',
+//     ) as StudiesAccidentTypeEnum
+//     let subtype
+//     if (StudiesAccidentTypeEnum.INTERNSHIP === studiesAccidentType) {
+//       subtype = 5
+//     }
+
+//     if (StudiesAccidentTypeEnum.APPRENTICESHIP === studiesAccidentType) {
+//       subtype = 6
+//     }
+
+//     if (StudiesAccidentTypeEnum.VOCATIONALEDUCATION === studiesAccidentType) {
+//       subtype = 7
+//     }
+
+//     return { type: 9, subtype }
+//   }
+
+//   return baseType
+// }
 
 const locationToDTO = (answers: AccidentNotificationAnswers) => {
   const accidentLocation = getValueViaPath(
@@ -250,13 +302,13 @@ const getAccident = (
   const accidentLocation = locationToDTO(answers)
 
   return {
-    type: null ?? accidentType.type,
-    subtype: null ?? accidentType.subtype,
+    type: accidentType.type ?? null,
+    subtype: accidentType.subtype ?? null,
     datetime: accidentDetails.dateOfAccident
       ? new Date(accidentDetails.dateOfAccident)
       : new Date(),
     description: accidentDetails.descriptionOfAccident ?? '',
-    fatal: fatal === 'yes' ? true : false,
+    fatal: fatal === 'yes',
     location: accidentLocation,
     locationDescription: accidentDetails.descriptionOfAccident ?? '',
     symptoms: accidentDetails.accidentSymptoms ?? '',
@@ -290,9 +342,9 @@ const getAtHome = (answers: AccidentNotificationAnswers) => {
 const getAtWork = (answers: AccidentNotificationAnswers) => {
   const workMachine = getValueViaPath(answers, 'workMachine') as WorkMachineV2
 
-  return workMachine && workMachine.descriptionOfMachine
+  return workMachine?.descriptionOfMachine
     ? {
-        machineDescription: workMachine?.descriptionOfMachine,
+        machineDescription: workMachine.descriptionOfMachine,
       }
     : undefined
 }
