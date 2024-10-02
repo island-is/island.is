@@ -25,7 +25,7 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
   return {
     name: createField('name', sdk),
     title: createField('title', sdk),
-    image: createField('mynd', sdk),
+    mynd: createField('mynd', sdk),
     imageOnSelect: createField('imageOnSelect', sdk),
     filterTags: createField('filterTags', sdk),
     email: createField('email', sdk),
@@ -58,6 +58,9 @@ export const TeamMemberEditor = () => {
     fetchTeamList()
   }, [cma.entry, sdk.entry])
 
+  const teamListIsAccordionVariant =
+    teamList?.fields?.variant?.[sdk.locales.default] === 'accordion'
+
   return (
     <Box
       paddingLeft="spacingS"
@@ -84,21 +87,24 @@ export const TeamMemberEditor = () => {
         localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
       />
+
       <ContentfulField
         displayName="Image"
-        fieldID="image"
+        fieldID="mynd"
         localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
         widgetId="assetLinkEditor"
       />
+
       <ContentfulField
-        displayName="Image on select"
+        displayName="Image on hover"
         fieldID="imageOnSelect"
         localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
         widgetId="assetLinkEditor"
+        helpText="Leave empty unless there is a .gif that displays the person pronouncing their name in sign language"
       />
-      {teamList?.fields?.variant?.[sdk.locales.default] === 'accordion' && (
+      {teamListIsAccordionVariant && (
         <Box>
           <ContentfulField
             displayName="Email"
