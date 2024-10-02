@@ -242,7 +242,7 @@ export const AccidentNotificationSchema = z.object({
   }),
   workMachineRadio: z.nativeEnum(ChoiceEnum),
   workMachine: z.object({
-    desriptionOfMachine: z.string().refine((x) => x.trim().length > 0, {
+    descriptionOfMachine: z.string().refine((x) => x.trim().length > 0, {
       params: error.invalidValue,
     }),
   }),

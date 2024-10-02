@@ -11,14 +11,12 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
 import { MMSApi } from '@island.is/clients/mms'
-import { DistrictCommissionersLicensesService } from '@island.is/clients/district-commissioners-licenses'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
 @Controller('occupational-licenses')
 export class OccupationalLicensesController {
   constructor(
-    private readonly dcApi: DistrictCommissionersLicensesService,
     private readonly mmsApi: MMSApi,
     private readonly auditService: AuditService,
   ) {}
@@ -55,10 +53,10 @@ export class OccupationalLicensesController {
         'Content-Disposition',
         `inline; filename=${user.nationalId}-starfsleyfi-${licenceId}.pdf`,
       )
-      res.header('Content-Type: application/pdf')
-      res.header('Pragma: no-cache')
-      res.header('Cache-Control: no-cache')
-      res.header('Cache-Control: nmax-age=0')
+      res.header('Content-Type', 'application/pdf')
+      res.header('Pragma', 'no-cache')
+      res.header('Cache-Control', 'no-cache')
+      res.header('Cache-Control', 'nmax-age=0')
       return res.status(200).end(buffer)
     }
     return res.end()
