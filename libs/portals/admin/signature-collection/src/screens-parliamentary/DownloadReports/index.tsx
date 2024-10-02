@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { SignatureCollectionArea } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
+import { usePDF } from '@react-pdf/renderer'
+import MyPdfDocument from './MyPdfDocument'
 
 export const DownloadReports = ({
   areas,
@@ -13,6 +15,14 @@ export const DownloadReports = ({
   const { formatMessage } = useLocale()
   const [modalDownloadReportsIsOpen, setModalDownloadReportsIsOpen] =
     useState(false)
+
+  const [document] = usePDF({
+    document: <MyPdfDocument report={{}} />,
+  })
+
+  if (document.error) {
+    console.warn(document.error)
+  }
 
   return (
     <Box>
@@ -47,7 +57,7 @@ export const DownloadReports = ({
                   icon: 'download',
                   iconType: 'outline',
                   onClick: () => {
-                    console.log('download')
+                    window.open(document.url ?? '', '_blank')
                   },
                 }}
               />
