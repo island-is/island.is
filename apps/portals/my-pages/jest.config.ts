@@ -11,7 +11,7 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '<rootDir>/coverage/apps/service-portal',
+  coverageDirectory: '<rootDir>/coverage/apps/portals/my-pages',
   globals: {},
-  displayName: 'service-portal',
+  displayName: 'portals-my-pages',
 }

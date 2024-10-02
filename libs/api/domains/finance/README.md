@@ -26,7 +26,7 @@ Finance API should now be available to use within island.is
 Example of usage can be found in: http://localhost:4200/minarsidur/fjarmal
 
 Service portal needs to be running.
-`yarn start service-portal`
+`yarn start portals-my-pages`
 
 # Mock
 

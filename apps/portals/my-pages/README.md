@@ -1,8 +1,8 @@
-# Service Portal
+# My Pages (Service Portal)
 
 ## About
 
-The service portal is the user personal pages where it will be able to find all the information relative to itself, family, finances, applications and so on.
+My pages is the user personal pages where it will be able to find all the information relative to itself and companies, family, finances, applications and so on.
 
 ## URLs
 
@@ -24,7 +24,7 @@ sh ./scripts/run-xroad-proxy.sh
 You can then proceed and start [the GraphQL API](../api/README.md#getting-started) and the service portal:
 
 ```bash
-yarn start service-portal
+yarn start portals-my-pages
 ```
 
 ## Docs
@@ -33,11 +33,11 @@ Start by reading about the [portal module system](../../libs/portals/core/README
 
 ### Adding a module to the service portal
 
-To add a new module to the service-portal, import and add it to the list defined in [modules.ts](./src/store/modules.ts):
+To add a new module to the portals-my-pages, import and add it to the list defined in [modules.ts](./src/store/modules.ts):
 
 ```tsx
 // other imports...
-import { myNewModule } from '@island.is/service-portal/my-new-module'
+import { myNewModule } from '@island.is/portals-my-pages/my-new-module'
 
 export const modules: PortalModule[] = [
   // other modules...
