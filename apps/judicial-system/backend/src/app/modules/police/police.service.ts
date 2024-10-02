@@ -134,6 +134,7 @@ export class PoliceService {
     defenderNationalId: z.string().nullish(),
     prosecutedConfirmedSubpoenaThroughIslandis: z.boolean().nullish(),
     servedBy: z.string().nullish(),
+    servedAt: z.date().nullish(),
     delivered: z.boolean().nullish(),
     deliveredOnPaper: z.boolean().nullish(),
     deliveredToLawyer: z.boolean().nullish(),
@@ -350,6 +351,7 @@ export class PoliceService {
             subpoenaResponse
 
           this.subpoenaStructure.parse(response)
+          console.log('!!!!!!!!!!!!!!!!!!!', subpoenaResponse)
 
           const subpoenaToUpdate = await this.subpoenaService.findBySubpoenaId(
             subpoenaId,
@@ -361,6 +363,7 @@ export class PoliceService {
               comment: response.comment ?? undefined,
               servedBy: response.servedBy ?? undefined,
               defenderNationalId: response.defenderNationalId ?? undefined,
+              serviceDate: response.servedAt ?? undefined,
               serviceStatus: response.deliveredToLawyer
                 ? ServiceStatus.DEFENDER
                 : response.prosecutedConfirmedSubpoenaThroughIslandis
