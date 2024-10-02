@@ -175,8 +175,7 @@ describe('FileService', () => {
 
     expect(awsService.uploadFile).toHaveBeenCalledWith(
       Buffer.from('buffer'),
-      { bucket,
-      key: fileName },
+      { bucket, key: fileName },
       {
         ContentEncoding: 'base64',
         ContentDisposition: 'inline',
@@ -184,7 +183,10 @@ describe('FileService', () => {
       },
     )
 
-    expect(awsService.getPresignedUrl).toHaveBeenCalledWith({bucket: bucket, key: fileName})
+    expect(awsService.getPresignedUrl).toHaveBeenCalledWith({
+      bucket: bucket,
+      key: fileName,
+    })
 
     expect(response).toEqual('url')
   })
@@ -197,8 +199,8 @@ describe('FileService', () => {
     )
 
     expect(awsService.getFileContent).toHaveBeenCalledWith(
-      { bucket,
-      key: `children-residence-change/${application.id}.pdf` }, 'binary'
+      { bucket, key: `children-residence-change/${application.id}.pdf` },
+      'binary',
     )
 
     expect(signingService.requestSignature).toHaveBeenCalledWith(
@@ -234,8 +236,8 @@ describe('FileService', () => {
     await expect(act).rejects.toThrowError(NotFoundException)
 
     expect(awsService.getFileContent).toHaveBeenCalledWith(
-      { bucket: bucket,
-      key: `children-residence-change/${applicationId}.pdf` }, 'binary'
+      { bucket: bucket, key: `children-residence-change/${applicationId}.pdf` },
+      'binary',
     )
 
     expect(signingService.requestSignature).not.toHaveBeenCalled()
@@ -269,7 +271,10 @@ describe('FileService', () => {
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )
 
-    expect(awsService.getPresignedUrl).toHaveBeenCalledWith({bucket, key: fileName})
+    expect(awsService.getPresignedUrl).toHaveBeenCalledWith({
+      bucket,
+      key: fileName,
+    })
     expect(result).toEqual('url')
   })
 
