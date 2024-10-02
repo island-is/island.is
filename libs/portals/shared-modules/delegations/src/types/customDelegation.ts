@@ -1,4 +1,4 @@
-import { AuthDelegationsIncomingQuery } from '../components/delegations/incoming/DelegationIncomingModal/DelegationIncomingModal.generated'
+import { AuthDelegationsIncomingQuery } from '../components/delegations/incoming/DelegationIncoming.generated'
 import { AuthDelegationQuery } from '../screens/AccessOutgoing/AccessOutgoing.generated'
 
 export type AuthCustomDelegationIncoming = Extract<

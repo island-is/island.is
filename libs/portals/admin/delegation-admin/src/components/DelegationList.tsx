@@ -20,12 +20,11 @@ const DelegationList = ({ delegationsList, direction }: DelegationProps) => {
         {delegationsList.map((delegation) => {
           return (
             <AccessCard
-              canModify={!!delegation.referenceId} // only allow deletion of paper delegations
-              direction={direction}
               key={delegation.id}
               delegation={delegation}
-              isAdminView={true}
-              onDelete={async () => {
+              isAdminView
+              variant={direction}
+              onDelete={!!delegation.referenceId && (async () => {
                 const { data } = await deleteCustomDelegationAdminMutation({
                   variables: {
                     id: delegation.id as string,
@@ -34,7 +33,7 @@ const DelegationList = ({ delegationsList, direction }: DelegationProps) => {
                 if (data) {
                   revalidate()
                 }
-              }}
+              })}
             />
           )
         })}

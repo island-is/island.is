@@ -11,10 +11,10 @@ import { m } from '../../../lib/messages'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal/AccessDeleteModal'
 import { AccessCard } from '../../access/AccessCard'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
-import { DelegationIncomingModal } from './DelegationIncomingModal/DelegationIncomingModal'
-import { useAuthDelegationsIncomingQuery } from './DelegationIncomingModal/DelegationIncomingModal.generated'
 import { AuthCustomDelegationIncoming } from '../../../types/customDelegation'
 import { DelegationPaths } from '../../../lib/paths'
+import { DelegationViewModal } from '../DelegationViewModal'
+import { useAuthDelegationsIncomingQuery } from './DelegationIncoming.generated'
 
 export const DelegationsIncoming = () => {
   const { formatMessage, lang = 'is' } = useLocale()
@@ -58,8 +58,11 @@ export const DelegationsIncoming = () => {
       ) : (
         <Stack space={3}>
           {delegations.map(
-            (delegation) =>
-              delegation.from && (
+            (delegation) => {
+              const isCustom = delegation.type === AuthDelegationType.Custom
+              const isGeneralMandate = delegation.type === AuthDelegationType.GeneralMandate
+
+               return delegation.from && (
                 <AccessCard
                   key={
                     delegation.type === AuthDelegationType.Custom
@@ -67,22 +70,20 @@ export const DelegationsIncoming = () => {
                       : `${delegation.type}-${delegation.from.nationalId}`
                   }
                   delegation={delegation}
-                  onDelete={(delegation) => {
+                  onDelete={isCustom && ((delegation) => delegation.type === AuthDelegationType.Custom && (() => {
                     setDelegationDelete(
                       delegation as AuthCustomDelegationIncoming,
                     )
-                  }}
-                  onView={(delegation) => {
+                  }))}
+                  onView={(isCustom || isGeneralMandate) && ((delegation) => {
                     setDelegationView(
                       delegation as AuthCustomDelegationIncoming,
                     )
-                  }}
-                  direction="incoming"
+                  })}
                   variant="incoming"
-                  href={`${DelegationPaths.Delegations}/${delegation.id}`}
                 />
-              ),
-          )}
+              )
+            })}
         </Stack>
       )}
       <AccessDeleteModal
@@ -100,10 +101,11 @@ export const DelegationsIncoming = () => {
         isVisible={!!delegationDelete}
         delegation={delegationDelete as AuthCustomDelegationIncoming}
       />
-      <DelegationIncomingModal
+      <DelegationViewModal
         onClose={() => setDelegationView(null)}
         isVisible={!!delegationView}
         delegation={delegationView as AuthCustomDelegationIncoming}
+        direction={'incoming'}
       />
     </Box>
   )

@@ -24,7 +24,17 @@ query AuthDelegationsOutgoing($input: AuthDelegationsInput!, $lang: String) {
   authDelegations(input: $input) {
     id
     type
+    validTo
+    referenceId
     to {
+      nationalId
+      name
+    }
+    from {
+      nationalId
+      name
+    }
+    createdBy {
       nationalId
       name
     }
