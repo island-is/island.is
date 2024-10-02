@@ -13,7 +13,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { type Lawyer } from '@island.is/judicial-system/types'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
@@ -118,10 +118,16 @@ const ServiceAnnouncement: FC<ServiceAnnouncement> = (props) => {
 
   return !defendantName ? null : subpoenaStatusError ? (
     <Box marginBottom={2}>
-      <AlertMessage type="error" message="ERROR" />
+      <AlertMessage
+        type="error"
+        title={formatMessage(errors.getSubpoenaStatusTitle)}
+        message={formatMessage(errors.getSubpoenaStatus)}
+      />
     </Box>
   ) : subpoenaStatusLoading ? (
-    <LoadingDots />
+    <Box display="flex" justifyContent="center" paddingY={5}>
+      <LoadingDots />
+    </Box>
   ) : (
     <Box marginBottom={2}>
       <AlertMessage
