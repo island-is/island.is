@@ -350,8 +350,7 @@ export class PoliceService {
           }
 
           const response: z.infer<typeof this.subpoenaStructure> =
-            subpoenaResponse
-          this.subpoenaStructure.parse(response)
+            this.subpoenaStructure.parse(subpoenaResponse)
 
           const subpoenaToUpdate = await this.subpoenaService.findBySubpoenaId(
             subpoenaId,
