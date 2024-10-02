@@ -13,5 +13,5 @@ export const isRepresentativeOfCompanyOrInstitute = (formValue: FormValue) => {
 export const isInjuredAndRepresentativeOfCompanyOrInstitute = (
   formValue: FormValue,
 ) => {
-  return formValue.isRepresentativeOfCompanyOrInstitue?.toString() === YES
+  return formValue.isRepresentativeOfCompanyOrInstitute?.toString() === YES
 }
