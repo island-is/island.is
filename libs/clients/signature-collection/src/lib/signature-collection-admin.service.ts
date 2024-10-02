@@ -343,7 +343,7 @@ export class SignatureCollectionAdminClientService {
         this.adminApi,
         auth,
       ).adminMedmaelasofnunIDSvaediInfoSvaediIDGet({
-        iD: parseInt(collectionId),
+        iD: parseInt(collectionId, 10),
         svaediID: parseInt(areaId),
       })
       return mapAreaSummaryReport(res)
