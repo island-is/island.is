@@ -46,7 +46,7 @@ export const pathToAsset = (file: string) => {
  * @param attachments - The attachments names and base64 Content
  * @returns The application Xml correctly formatted for SÍ application
  */
-export const applictionAnswersToXml = (
+export const applicationAnswersToXml = (
   answers: AccidentNotificationAnswers,
   attachments: AccidentNotificationAttachment[],
 ): string => {
@@ -254,7 +254,7 @@ const work = (
         slysvidvinnu: {
           lysingavinnuvel: getValueViaPath(
             answers,
-            'workMachine.desriptionOfMachine',
+            'workMachine.descriptionOfMachine',
           ) as string,
         },
       }

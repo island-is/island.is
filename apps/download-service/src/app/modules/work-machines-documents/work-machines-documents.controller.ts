@@ -1,17 +1,8 @@
-import {
-  Body,
-  Controller,
-  Header,
-  Post,
-  Res,
-  Param,
-  UseGuards,
-} from '@nestjs/common'
+import type { User } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
+import { Controller, Header, Param, Post, Res, UseGuards } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
-import { ApiScope } from '@island.is/auth/scopes'
-import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
 
 import {
   CurrentUser,
@@ -19,9 +10,8 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { AuditService } from '@island.is/nest/audit'
-import { GetWorkMachineCollectionDocumentDto } from './dto/getWorkMachineCollectionDocument.dto'
 import { WorkMachinesClientService } from '@island.is/clients/work-machines'
+import { AuditService } from '@island.is/nest/audit'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.vehicles)
@@ -41,15 +31,9 @@ export class WorkMachinesController {
   async getWorkMachinesCollection(
     @Param('fileType') fileType: 'csv' | 'excel',
     @CurrentUser() user: User,
-    @Body() resource: GetWorkMachineCollectionDocumentDto,
     @Res() res: Response,
   ) {
-    const authUser: User = {
-      ...user,
-      authorization: `Bearer ${resource.__accessToken}`,
-    }
-
-    const documentResponse = await this.docService.getDocuments(authUser, {
+    const documentResponse = await this.docService.getDocuments(user, {
       fileType,
     })
 
@@ -71,9 +55,9 @@ export class WorkMachinesController {
         }`,
       )
       res.header('Content-Type: application/octet-stream')
-      res.header('Pragma: no-cache')
-      res.header('Cache-Control: no-cache')
-      res.header('Cache-Control: nmax-age=0')
+      res.header('Pragma', 'no-cache')
+      res.header('Cache-Control', 'no-cache')
+      res.header('Cache-Control', 'nmax-age=0')
       return res.status(200).end(buffer)
     }
     return res.end()

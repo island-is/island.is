@@ -15,7 +15,7 @@ import {
 } from 'react-native-navigation'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import logo from '../../assets/logo/logo-64w.png'
-import illustrationSrc from '../../assets/illustrations/digital-services-m1.png'
+import illustrationSrc from '../../assets/illustrations/digital-services-m1-dots.png'
 import { openNativeBrowser } from '../../lib/rn-island'
 import { preferencesStore } from '../../stores/preferences-store'
 import { useRegisterPasskey } from '../../lib/passkeys/useRegisterPasskey'
@@ -29,6 +29,22 @@ const Text = styled.View`
   text-align: center;
   margin-bottom: ${({ theme }) => theme.spacing[5]}px;
   margin-top: ${({ theme }) => theme.spacing[5]}px;
+`
+
+const Host = styled.View`
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+`
+
+const ButtonWrapper = styled.View`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-vertical: ${({ theme }) => theme.spacing[4]}px;
+`
+
+const Title = styled(Typography)`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const LoadingOverlay = styled.View`
@@ -83,32 +99,19 @@ export const PasskeyScreen: NavigationFunctionComponent<{
         style={{ marginHorizontal: 16 }}
       />
       <SafeAreaView style={{ flex: 1 }}>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            flex: 1,
-          }}
-        >
+        <Host>
           <Image
             source={logo}
             resizeMode="contain"
             style={{ width: 45, height: 45 }}
           />
           <Text>
-            <Typography
-              variant={'heading2'}
-              style={{
-                paddingHorizontal: theme.spacing[2],
-                marginBottom: theme.spacing[2],
-              }}
-              textAlign="center"
-            >
+            <Title variant={'heading2'} textAlign="center">
               <FormattedMessage
                 id="passkeys.headingTitle"
                 defaultMessage="Innskrá með Ísland.is appinu"
               />
-            </Typography>
+            </Title>
             <Typography textAlign="center">
               <FormattedMessage
                 id={
@@ -126,16 +129,11 @@ export const PasskeyScreen: NavigationFunctionComponent<{
           </Text>
           <Image
             source={illustrationSrc}
-            style={{ width: 195, height: 223 }}
+            style={{ width: 210, height: 240 }}
             resizeMode="contain"
           />
-        </View>
-        <View
-          style={{
-            paddingHorizontal: theme.spacing[2],
-            paddingVertical: theme.spacing[4],
-          }}
-        >
+        </Host>
+        <ButtonWrapper>
           <Button
             title={intl.formatMessage({
               id: 'passkeys.createButton',
@@ -218,7 +216,7 @@ export const PasskeyScreen: NavigationFunctionComponent<{
               url && openBrowser(url, parentComponentId)
             }}
           />
-        </View>
+        </ButtonWrapper>
       </SafeAreaView>
       {isLoading && (
         <LoadingOverlay>

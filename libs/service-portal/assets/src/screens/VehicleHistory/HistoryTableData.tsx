@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import { Locale } from '@island.is/shared/types'
 import { Text, Table as T } from '@island.is/island-ui/core'
 import { VehiclesVehicle } from '@island.is/api/schema'
-import { getDateLocale } from '../../utils/constants'
+import { getDateLocale } from '@island.is/service-portal/core'
 
 interface Props {
   vehicle: VehiclesVehicle
