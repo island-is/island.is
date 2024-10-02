@@ -250,6 +250,7 @@ export const is = {
   'profile.assets': 'Fasteignir',
   'profile.finance': 'Fjármál',
   'profile.airDiscount': 'Loftbrú',
+  'profile.health': 'Heilsa',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
