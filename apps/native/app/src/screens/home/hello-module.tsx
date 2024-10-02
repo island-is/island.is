@@ -31,8 +31,9 @@ export const HelloModule = React.memo(() => {
   const cacheDirectory = `${FileSystem.cacheDirectory}homeScreenImages`
 
   // Need to add extension to the title due to an issue in react native https://github.com/facebook/react-native/issues/42234
+  const fileExtension = image?.getFrontpage?.imageMobile?.url?.slice(-4)
   const titleWithExtension = image?.getFrontpage?.imageMobile?.title
-    ? `${image?.getFrontpage?.imageMobile?.title}.jpg`
+    ? `${image?.getFrontpage?.imageMobile?.title}${fileExtension}`
     : undefined
 
   const handleImage = async () => {
