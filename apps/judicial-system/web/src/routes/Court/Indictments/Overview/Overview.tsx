@@ -103,6 +103,9 @@ interface ServiceAnnouncement {
 const ServiceAnnouncement: FC<ServiceAnnouncement> = (props) => {
   const { subpoena, defendantName } = props
 
+  const { subpoenaStatus, subpoenaStatusLoading, subpoenaStatusError } =
+    useSubpoena(subpoena.caseId, subpoena.subpoenaId)
+
   const { formatMessage } = useIntl()
 
   const lawyer = useGetLawyer(
@@ -113,7 +116,13 @@ const ServiceAnnouncement: FC<ServiceAnnouncement> = (props) => {
   const title = mapServiceStatusTitle(subpoena.serviceStatus)
   const messages = mapServiceStatusMessages(subpoena, formatMessage, lawyer)
 
-  return !defendantName ? null : (
+  return !defendantName ? null : subpoenaStatusError ? (
+    <Box marginBottom={2}>
+      <AlertMessage type="error" message="ERROR" />
+    </Box>
+  ) : subpoenaStatusLoading ? (
+    <LoadingDots />
+  ) : (
     <Box marginBottom={2}>
       <AlertMessage
         title={`${formatMessage(title)} - ${defendantName}`}
@@ -149,8 +158,7 @@ const IndictmentOverview = () => {
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
-  const { subpoenaStatus, subpoenaStatusLoading, subpoenaStatusError } =
-    useSubpoena()
+
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNavigationTo = useCallback(
@@ -188,22 +196,14 @@ const IndictmentOverview = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {subpoenaStatusError ? (
-          <Box marginBottom={2}>
-            <AlertMessage type="error" message="ERROR" />
-          </Box>
-        ) : subpoenaStatusLoading ? (
-          <LoadingDots />
-        ) : (
-          workingCase.defendants?.map((defendant) =>
-            defendant.subpoenas?.map((subpoena) => (
-              <ServiceAnnouncement
-                key={`${subpoena.id}-${subpoena.created}`}
-                subpoena={subpoena}
-                defendantName={defendant.name}
-              />
-            )),
-          )
+        {workingCase.defendants?.map((defendant) =>
+          defendant.subpoenas?.map((subpoena) => (
+            <ServiceAnnouncement
+              key={`${subpoena.id}-${subpoena.created}`}
+              subpoena={subpoena}
+              defendantName={defendant.name}
+            />
+          )),
         )}
         {workingCase.court &&
           latestDate?.date &&
