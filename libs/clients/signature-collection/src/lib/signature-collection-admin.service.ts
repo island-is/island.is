@@ -344,7 +344,7 @@ export class SignatureCollectionAdminClientService {
         auth,
       ).adminMedmaelasofnunIDSvaediInfoSvaediIDGet({
         iD: parseInt(collectionId, 10),
-        svaediID: parseInt(areaId),
+        svaediID: parseInt(areaId, 10),
       })
       return mapAreaSummaryReport(res)
     } catch {
