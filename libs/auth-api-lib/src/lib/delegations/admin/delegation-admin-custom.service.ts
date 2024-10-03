@@ -106,7 +106,7 @@ export class DelegationAdminCustomService {
     } catch (e) {
       this.logger.error(
         `Failed to send delegation notification to delegation representative`,
-        e,
+        { error: e.message },
       )
     }
 
@@ -124,7 +124,7 @@ export class DelegationAdminCustomService {
     } catch (e) {
       this.logger.error(
         `Failed to send delegation notification to delegation provider`,
-        e,
+        { error: e.message },
       )
     }
   }
