@@ -1,25 +1,26 @@
+```md
 # Content Search Indexer
 
-This library groups together importers from multiple projects to import data into elasticsearch used by the content search engine.
+This library consolidates importers from multiple projects to facilitate data import into Elasticsearch for use by the content search engine.
 
-# Create an importer
+## Creating an Importer
 
-## Quick start
+### Quick Start
 
-1. Create an importer nestjs service for your project and export it with a nestjs module
-2. Import and add your nestjs module to the code in `indexing.module.ts`
-3. Import and add your nestjs service to the code in `indexing.service.ts`
+1. Develop an importer NestJS service for your project and incorporate it into a NestJS module.
+2. Integrate your NestJS module with the code in `indexing.module.ts`.
+3. Integrate your NestJS service with the code in `indexing.service.ts`.
 
-Your data should now be imported when you call the `/sync` or `/re-sync` endpoint
+Upon completion, your data will be imported when invoking the `/sync` or `/re-sync` endpoint.
 
-### Overview
+#### Overview
 
-- Types are exported from the `@island.is/content-search-indexer/types` library to ease implementation (see example below).
-- An importer service must export at least the `doSync` function (see example below).
-- `SyncOptions` is passed to the importer service as a parameter to the `doSync` function (see **Importing data** section for details ).
-- `doSync` must resolve to `SyncResponse` or `null` when called (see **Importing data** section for details ).
-- Optionally an importer can export a `postSync` function that is called after the importer has executed it's `doSync` function (see **Post sync** section for details).
-- The `postSync` function is passed the `postSyncOptions` returned by `doSync` in it's `SyncResponse` (see **Post sync** section for details).
+- Types are provided by the `@island.is/content-search-indexer/types` library to streamline the implementation process (refer to the example below).
+- An importer service must at least provide the `doSync` function (refer to the example below).
+- `SyncOptions` are provided as parameters to the `doSync` function (refer to **Importing Data** for details).
+- `doSync` should return a `SyncResponse` or `null` (refer to **Importing Data** for details).
+- Optionally, an importer can implement a `postSync` function, executed subsequent to the `doSync` function (refer to **Post Sync** for details).
+- The `postSync` function receives `postSyncOptions` returned by `doSync` in its `SyncResponse` (refer to **Post Sync** for details).
 
 Example:
 
@@ -32,17 +33,17 @@ import {
 } from '@island.is/content-search-indexer/types'
 
 export class MyCustomImporterService implements ContentSearchImporter {
-  doSync(options: SyncOptions): Promise<SyncResponse | null> {
-    // ... do external request here and map your data
+  async doSync(options: SyncOptions): Promise<SyncResponse | null> {
+    // ... perform an external request here and map your data
 
-    // you can opt out of a sync request by having your importer return null
+    // Returning null indicates opting out of a sync request.
     if (!needToSync) {
       return null
     }
 
     return {
       add: [], // <-- includes data to be imported of type MappedData[]
-      remove: [], // <-- includes an array of elasticsearch ids (as strings) to be removed
+      remove: [], // <-- includes an array of Elasticsearch IDs (as strings) to be removed
     }
   }
 }
@@ -58,32 +59,26 @@ import { MyCustomImporterService } from './myCustomImporter.service.ts'
 export class MyCustomImporterModule {}
 ```
 
-## Importing data
+## Importing Data
 
-The importer must return data of type `MappedData` in `SyncResponse.add`.
-You importer should support three types of imports (SyncOptions.syncType):
+The importer must return `MappedData` type data in `SyncResponse.add`. Your importer should support three import types (SyncOptions.syncType):
 
-- **full**: Is triggered by a call to the `/re-sync` endpoint.
-  This type of sync should import all indexable data since the beginning of time.
-  In production this type of sync should only be called manually and only if the index is out of sync or contains stale data.
-  The indexer removes all documents form the index not returned in this type of sync.
-- **fromLast**: Is triggered by a call to the `/sync` endpoint.
-  This type of sync should import new/updated data since last sync.
-- **initialize**: Is triggered by the deployment of a indexer container in the cluster.
-  This type of sync should validate if the importer contains any changes, and run a full sync if it does, this is to ensure the data in the index is up to date when it is being deployed.
+- **full**: Triggered by a `/re-sync` endpoint call.
+  This sync type should import all indexable data from the inception. Typically, in production, this sync type is invoked manually to rectify out-of-sync or stale data within the index. The indexer removes all documents not returned in this sync type from the index.
+- **fromLast**: Triggered by a `/sync` endpoint call.
+  This sync type should import new or updated data since the last sync.
+- **initialize**: Triggered upon the deployment of an indexer container.
+  This sync type should verify if any changes exist and perform a full sync if necessary, ensuring index data remains current during deployment.
 
-The locale is passed with **SyncOptions.locale** you importer should return an empty `SyncResponse` if a locale in the search engine is not supported.
+Locale details are provided via **SyncOptions.locale**. Your importer should return an empty `SyncResponse` if a locale is unsupported by the search engine.
 
-The name of the elastic index is passed with **SyncOptions.elasticIndex** in case data from the index is needed during sync.
+The name of the Elasticsearch index is communicated through **SyncOptions.elasticIndex** if data from the index is needed during syncing.
 
-## Post sync (optional)
+## Post Sync (Optional)
 
-`postSync` is a function called by the indexer after `doSync` and after all data has been imported into elastic.
-This function can serve as a cleanup function e.g. to release locks or maintain last sync tokens.
-To use you export a function called `postSync` from your importer, it then gets passed the `postSyncOptions` you returned from `doSync` as part of `SyncResponse`.
+`postSync` is a function executed by the indexer following `doSync` and after successfully importing all data into Elasticsearch. This function is suitable for cleanup activities, such as releasing locks or maintaining last sync tokens. To implement, export a `postSync` function from your importer; it will receive `postSyncOptions` from the `SyncResponse` returned by `doSync`.
 
-## Error handling
+## Error Handling
 
-Your importer should be robust, but not so that it hides critical errors e.g.
-`Missing title in one entry`, should probably not throw an error and hence stop all importers while `Your importer can't connect to it's data source` probably should throw an error and hence stop all importers.
-The importer is used when populating new versions of the indexes when deploying new versions of our apps hence we don't want the importer to succeed when it shouldn't.
+Ensure your importer is resilient but avoids concealing critical errors. For instance, minor issues like `Missing title in one entry` are preferable to not throw errors, whereas critical issues like `Cannot connect to data source` should propagate errors to halt all importers. The importer operates when new index versions are populated during deployments, thus it should fail under critical error conditions.
+```
