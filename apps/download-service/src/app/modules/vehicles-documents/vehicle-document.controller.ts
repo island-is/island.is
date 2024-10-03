@@ -1,17 +1,9 @@
-import {
-  Body,
-  Controller,
-  Header,
-  Post,
-  Res,
-  Param,
-  UseGuards,
-} from '@nestjs/common'
+import type { User } from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
+import { Controller, Header, Param, Post, Res, UseGuards } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
-import { ApiScope } from '@island.is/auth/scopes'
-import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
 
 import {
   CurrentUser,
@@ -19,9 +11,8 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { AuditService } from '@island.is/nest/audit'
-import { GetVehicleHistoryDocumentDto } from './dto/getVehicleHistoryDocument.dto'
 import { PdfApi } from '@island.is/clients/vehicles'
+import { AuditService } from '@island.is/nest/audit'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.vehicles)
@@ -41,16 +32,10 @@ export class VehicleController {
   async getVehicleHistoryPdf(
     @Param('permno') permno: string,
     @CurrentUser() user: User,
-    @Body() resource: GetVehicleHistoryDocumentDto,
     @Res() res: Response,
   ) {
-    const authUser: User = {
-      ...user,
-      authorization: `Bearer ${resource.__accessToken}`,
-    }
-
     const documentResponse = await this.vehiclePDFService
-      .withMiddleware(new AuthMiddleware(authUser))
+      .withMiddleware(new AuthMiddleware(user))
       .vehicleReportPdfGet({ permno: permno })
 
     if (documentResponse) {
@@ -86,16 +71,10 @@ export class VehicleController {
   async getVehicleOwnership(
     @Param('ssn') ssn: string,
     @CurrentUser() user: User,
-    @Body() resource: GetVehicleHistoryDocumentDto,
     @Res() res: Response,
   ) {
-    const authUser: User = {
-      ...user,
-      authorization: `Bearer ${resource.__accessToken}`,
-    }
-
     const documentResponse = await this.vehiclePDFService
-      .withMiddleware(new AuthMiddleware(authUser))
+      .withMiddleware(new AuthMiddleware(user))
       .ownershipReportPdfGet({ ssn: ssn })
 
     if (documentResponse) {
@@ -113,10 +92,10 @@ export class VehicleController {
         'Content-Disposition',
         `inline; filename=${user.nationalId}-eignaferill.pdf`,
       )
-      res.header('Content-Type: application/pdf')
-      res.header('Pragma: no-cache')
-      res.header('Cache-Control: no-cache')
-      res.header('Cache-Control: nmax-age=0')
+      res.header('Content-Type', 'application/pdf')
+      res.header('Pragma', 'no-cache')
+      res.header('Cache-Control', 'no-cache')
+      res.header('Cache-Control', 'nmax-age=0')
       return res.status(200).end(buffer)
     }
     return res.end()
