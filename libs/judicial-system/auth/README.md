@@ -15,5 +15,5 @@ To execute the unit tests for this library, use the following command in your te
 nx test judicial-system-auth
 ```
 
-This command utilizes [Jest](https://jestjs.io), a delightful JavaScript testing framework, to run the test suite, ensuring the library's functionality is both reliable and robust.
+This command utilizes [Jest](https://jestjs.io), a delightful JavaScript testing framework, to run the test suite. This ensures that the library's functionality is reliable and robust.
 ```

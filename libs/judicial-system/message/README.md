@@ -1,14 +1,14 @@
 ```markdown
 # Judicial System Message Library
 
-This library is developed using [Nx](https://nx.dev), a smart and extensible build framework.
+This library is developed using [Nx](https://nx.dev), a smart and extensible build framework for monorepos, to enhance project setup and development workflow.
 
 ## Prerequisites
 
 Before running unit tests or any other commands, ensure you have all dependencies installed and your environment configured properly:
 
-1. Execute `npm install` or `yarn install` to install dependencies.
-2. Ensure that your environment is correctly set up to use Nx and Jest.
+1. Run `npm install` or `yarn install` to install all necessary dependencies.
+2. Ensure that your environment is correctly set up to use Nx and Jest by verifying their installations.
 
 **Note:** Failure to meet these prerequisites could result in unexpected behavior or test failures.
 

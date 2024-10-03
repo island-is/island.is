@@ -28,7 +28,7 @@ import { JudicialType, UtilityFunction } from 'judicial-system-types';
 To execute the unit tests for the `judicial-system-types` library using [Jest](https://jestjs.io), run the following command:
 
 ```bash
-nx test judicial-system-types
+npx nx test judicial-system-types
 ```
 
 This command runs all the unit tests in the library and provides results, ensuring the types and utilities function as expected.
