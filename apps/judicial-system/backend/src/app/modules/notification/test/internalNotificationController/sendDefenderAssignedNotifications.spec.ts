@@ -80,7 +80,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   describe('when sending defender assigned notifications', () => {
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
+      type: NotificationType.ADVOCATE_ASSIGNED,
     }
     const caseId = uuid()
     const defendant = {
@@ -128,7 +128,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   describe('when sending defender data is missing', () => {
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
+      type: NotificationType.ADVOCATE_ASSIGNED,
     }
     const caseId = uuid()
     const theCase = {
@@ -152,7 +152,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   describe('record notification', () => {
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
+      type: NotificationType.ADVOCATE_ASSIGNED,
     }
     const caseId = uuid()
     const defendant = {
@@ -190,7 +190,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   describe('returns that the notification was sent', () => {
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
+      type: NotificationType.ADVOCATE_ASSIGNED,
     }
     const caseId = uuid()
     const theCase = {
@@ -220,7 +220,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   describe('only send notification once to defender', () => {
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
+      type: NotificationType.ADVOCATE_ASSIGNED,
     }
     const caseId = uuid()
     const defendant = {
@@ -265,7 +265,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   describe('should send email to every defender', () => {
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
+      type: NotificationType.ADVOCATE_ASSIGNED,
     }
     const caseId = uuid()
     const defender1 = { defenderEmail: 'some-email@island.is' }
@@ -294,7 +294,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   describe('should only send one email to each defender', () => {
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
+      type: NotificationType.ADVOCATE_ASSIGNED,
     }
     const caseId = uuid()
     const defender1 = {
@@ -348,7 +348,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   describe('when sending assigned defender notifications in a restriction case', () => {
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
+      type: NotificationType.ADVOCATE_ASSIGNED,
     }
     const caseId = uuid()
 
@@ -395,7 +395,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   describe('when sending assigned defender without national id notifications in a restriction case', () => {
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
+      type: NotificationType.ADVOCATE_ASSIGNED,
     }
     const caseId = uuid()
 
@@ -441,7 +441,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   describe('when sending notifications in an investigation case', () => {
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
+      type: NotificationType.ADVOCATE_ASSIGNED,
     }
     const caseId = uuid()
 

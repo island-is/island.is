@@ -1518,7 +1518,7 @@ export class InternalNotificationService extends BaseNotificationService {
   }
   //#endregion
 
-  //#region DEFENDER_ASSIGNED notifications */
+  //#region ADVOCATE_ASSIGNED notifications */
   private shouldSendDefenderAssignedNotification(
     theCase: Case,
     defenderEmail?: string,
@@ -1528,7 +1528,7 @@ export class InternalNotificationService extends BaseNotificationService {
     }
     if (isIndictmentCase(theCase.type)) {
       const hasSentNotificationBefore = this.hasReceivedNotification(
-        NotificationType.DEFENDER_ASSIGNED,
+        NotificationType.ADVOCATE_ASSIGNED,
         defenderEmail,
         theCase.notifications,
       )
@@ -1550,7 +1550,7 @@ export class InternalNotificationService extends BaseNotificationService {
         [
           NotificationType.READY_FOR_COURT,
           NotificationType.COURT_DATE,
-          NotificationType.DEFENDER_ASSIGNED,
+          NotificationType.ADVOCATE_ASSIGNED,
         ],
         theCase.defenderEmail,
         theCase.notifications,
@@ -1636,7 +1636,7 @@ export class InternalNotificationService extends BaseNotificationService {
 
     return this.recordNotification(
       theCase.id,
-      NotificationType.DEFENDER_ASSIGNED,
+      NotificationType.ADVOCATE_ASSIGNED,
       recipients,
     )
   }
@@ -2528,7 +2528,7 @@ export class InternalNotificationService extends BaseNotificationService {
           return this.sendModifiedNotifications(theCase, user)
         case NotificationType.REVOKED:
           return this.sendRevokedNotifications(theCase)
-        case NotificationType.DEFENDER_ASSIGNED:
+        case NotificationType.ADVOCATE_ASSIGNED:
           return this.sendDefenderAssignedNotifications(theCase)
         case NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT:
           return this.sendDefendantsNotUpdatedAtCourtNotifications(theCase)
