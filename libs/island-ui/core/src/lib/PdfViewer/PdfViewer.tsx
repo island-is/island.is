@@ -8,7 +8,11 @@ import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import * as styles from './PdfViewer.css'
 import cn from 'classnames'
-import 'pdfjs-dist/build/pdf.worker.min.mjs'
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/legacy/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString()
 
 const pdfError = 'Villa kom upp við að birta skjal, reyndu aftur síðar.'
 

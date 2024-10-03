@@ -24,6 +24,7 @@ module.exports = {
     // PDF viewer external css can be excluded from tests, otherwise will cause an error.
     '^react-pdf/dist/Page/(.*)$': 'jest-transform-stub',
   },
+  transformIgnorePatterns: ['<rootDir>/node_modules/(?!pdfjs-dist)'],
   /* TODO: Update to latest Jest snapshotFormat
    * By default Nx has kept the older style of Jest Snapshot formats
    * to prevent breaking of any existing tests with snapshots.
