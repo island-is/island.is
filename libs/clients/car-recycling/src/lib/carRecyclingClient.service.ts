@@ -72,7 +72,7 @@ export class CarRecyclingClientService {
     mileage: number,
     vin: string,
     make: string,
-    firstRegistrationDate: Date,
+    firstRegistrationDate: Date | null,
     color: string,
   ) {
     try {
@@ -91,12 +91,12 @@ export class CarRecyclingClientService {
       })
 
       if (!response || !response.ok) {
-        throw new Error(`Failed to creating vehicle ${permno.slice(-3)}`)
+        throw new Error(`Failed to create vehicle ${permno.slice(-3)}`)
       }
 
       return await response.json()
     } catch (e) {
-      throw new Error(`Failed to creating vehicle ${permno.slice(-3)}`)
+      throw new Error(`Failed to create vehicle ${permno.slice(-3)}`)
     }
   }
 

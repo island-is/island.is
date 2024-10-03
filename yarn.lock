@@ -13255,6 +13255,7 @@ __metadata:
     babel-loader: ^8.3.0
     babel-plugin-formatjs: 10.3.9
     babel-plugin-module-resolver: 5.0.2
+    compare-versions: 6.1.1
     configcat-js: 7.0.0
     dynamic-color: 0.3.0
     expo: 51.0.25
@@ -28570,6 +28571,13 @@ __metadata:
   version: 1.0.1
   resolution: "commondir@npm:1.0.1"
   checksum: 59715f2fc456a73f68826285718503340b9f0dd89bfffc42749906c5cf3d4277ef11ef1cca0350d0e79204f00f1f6d83851ececc9095dc88512a697ac0b9bdcb
+  languageName: node
+  linkType: hard
+
+"compare-versions@npm:6.1.1":
+  version: 6.1.1
+  resolution: "compare-versions@npm:6.1.1"
+  checksum: 73fe6c4f52d22efe28f0a3be10df2afd704e10b3593360cd963e86b33a7a263c263b41a1361b69c30a0fe68bfa70fef90860c1cf2ef41502629d4402890fcd57
   languageName: node
   linkType: hard
 
