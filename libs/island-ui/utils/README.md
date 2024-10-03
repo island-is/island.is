@@ -2,6 +2,12 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test island-ui-utils` to execute the unit tests via [Jest](https://jestjs.io).
+To run the unit tests for this project, use the following command:
+
+```bash
+nx test island-ui-utils
+```
+
+This will execute the tests using [Jest](https://jestjs.io).

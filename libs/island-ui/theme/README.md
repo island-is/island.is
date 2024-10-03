@@ -1,7 +1,15 @@
+```markdown
 # island-ui-theme
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `ng test island-ui-theme` to execute the unit tests via [Jest](https://jestjs.io).
+To run the unit tests for the island-ui-theme library, execute the following command:
+
+```bash
+ng test island-ui-theme
+```
+
+This will run the tests using [Jest](https://jestjs.io).
+```
