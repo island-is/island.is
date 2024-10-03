@@ -9,10 +9,17 @@ import 'react-pdf/dist/Page/AnnotationLayer.css'
 import * as styles from './PdfViewer.css'
 import cn from 'classnames'
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/legacy/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString()
+if (typeof window !== 'undefined') {
+  // @ts-expect-error - dynamic import
+  import('pdfjs-dist/legacy/build/pdf.worker.min.mjs')
+    .then((workerSrc) => {
+      pdfjs.GlobalWorkerOptions.workerSrc = workerSrc
+    })
+    .catch(() => {
+      pdfjs.GlobalWorkerOptions.workerSrc =
+        'pdfjs-dist/legacy/build/pdf.worker.min.mjs' // Fallback if dynamic import fails
+    })
+}
 
 const pdfError = 'Villa kom upp við að birta skjal, reyndu aftur síðar.'
 
