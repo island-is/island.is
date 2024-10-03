@@ -1,7 +1,11 @@
-# file-storage
+# File Storage Library
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `ng test file-storage` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests with [Jest](https://jestjs.io), run the following command:
+
+```bash
+ng test file-storage
+```
