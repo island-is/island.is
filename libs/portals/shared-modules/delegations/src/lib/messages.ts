@@ -233,7 +233,7 @@ export const m = defineMessages({
   },
   noValidToDate: {
     id: 'sp.access-control-delegations:no-valid-to-date',
-    defaultMessage: 'Gildis tími óendanlegur',
+    defaultMessage: 'Gildistími óendanlegur',
   },
   referenceId: {
     id: 'sp.access-control-delegations:reference-id',

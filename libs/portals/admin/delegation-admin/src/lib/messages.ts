@@ -63,7 +63,7 @@ export const m = defineMessages({
   },
   noEndDate: {
     id: 'admin.delegationAdmin:noEndDate',
-    defaultMessage: 'Gildis tími óendanlegur',
+    defaultMessage: 'Gildistími óendanlegur',
   },
   validTo: {
     id: 'admin.delegationAdmin:validTo',
