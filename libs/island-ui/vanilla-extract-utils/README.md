@@ -5,7 +5,9 @@ This module provides utility functions built on top of `@vanilla-extract/css`. T
 
 ## responsiveStyleMap
 
-The `responsiveStyleMap` utility enhances Vanilla Extract's `style` function by incorporating breakpoint-specific style variations. Below is an example demonstrating its usage:
+The `responsiveStyleMap` utility enhances Vanilla Extract's `style` function by incorporating breakpoint-specific style variations. This allows developers to specify different style values based on screen size.
+
+### Example Usage:
 
 ```typescript
 import { responsiveStyleMap } from '@island.is/island-ui/vanilla-extract-utils';
@@ -16,9 +18,11 @@ export const container = responsiveStyleMap({
 });
 ```
 
+In the example above, `height` will be set to `80` for extra-small screens and `112` for medium screens.
+
 ## Running Unit Tests
 
-To run unit tests using [Jest](https://jestjs.io), use the following command:
+To run unit tests using [Jest](https://jestjs.io), execute the following command:
 
 ```bash
 nx test island-ui-vanilla-extract-utils
