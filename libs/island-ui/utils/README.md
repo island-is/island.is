@@ -1,13 +1,18 @@
-# island-ui-utils
+# Island UI Utils
 
-This library was generated with [Nx](https://nx.dev).
+Island UI Utils is a utility library designed to complement the Island UI component suite. It provides a set of helper functions to enhance and streamline your development experience.
 
 ## Running Unit Tests
 
-To run the unit tests for this project, use the following command:
+Unit tests are essential for ensuring the reliability and stability of your code. The `island-ui-utils` library leverages [Jest](https://jestjs.io) for its testing framework. To execute the unit tests for this library, run the following command:
 
 ```bash
 nx test island-ui-utils
 ```
 
-This will execute the tests using [Jest](https://jestjs.io).
+Running this command will initiate the test suite, allowing you to verify that all functionalities of the library are performing as expected.
+
+## Additional Resources
+
+- For more information on Nx and its capabilities, visit the official [Nx website](https://nx.dev).
+- To learn more about Jest, explore their [documentation](https://jestjs.io/docs/getting-started).
