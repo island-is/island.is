@@ -1,24 +1,25 @@
+```markdown
 # Web
 
 ## Quickstart
 
-Ensure docker is running, then run the following when running for the first time:
+Ensure Docker is running, then execute the following command for the initial setup:
 
 ```bash
 yarn dev-init web
 ```
 
-To start the app:
+To start the application:
 
 ```bash
 yarn dev web
 ```
 
-These commands are just shorthands for the setup described below.
+These commands simplify the setup described below.
 
 ## About
 
-The web consolidates content from multiple sources and displays it in a user friendly way.
+The web consolidates content from multiple sources and displays it in a user-friendly manner.
 
 ## URLs
 
@@ -26,77 +27,72 @@ The web consolidates content from multiple sources and displays it in a user fri
 - [Staging](https://beta.staging01.devland.is)
 - [Production](https://island.is)
 
-## Getting started
+## Getting Started
 
-First off: Configure which API to fetch data from.
+First, configure the API to fetch data from.
 
 ### Mock API (no server)
 
-Add `API_MOCKS=true` to your `.env`, or `export API_MOCKS=true` to your `.env.secret` file.
+Add `API_MOCKS=true` to your `.env`, or `export API_MOCKS=true` to your `.env.secret`. Modify mock data in `libs/api/mocks`.
 
-You can tweak the mock data in `libs/api/mocks`.
+### Local API Server
 
-### Local API server
+The web depends on `cms` and `content-search` domains of the API, which require Elasticsearch. Choose your approach based on your task:
 
-The web depends on the `cms` and `content-search` domains of the API these in turn depend on Elasticsearch.
-Hence we have to have Elasticsearch running on our machine for these domains to function as expected.
-The recommended approach to running Elasticsearch on your machine depends on what you want to work on:
+- **Working on `cms`/`content-search`:** Run Elasticsearch locally. Find instructions under [search-indexer dev-services](https://docs.devland.is/apps/services/search-indexer/dev-services).
+- **Accessing real data:** Use the Elasticsearch proxy server to access the dev environment's Elasticsearch instance. This uses fewer resources.
 
-If you want to work on the `cms` or `content-search` domains such as add models or alter Elasticsearch queries it's recommended you run Elasticsearch locally you can find further instructions on how to achieve this under [search-indexer dev-services section.](https://docs.devland.is/apps/services/search-indexer/dev-services)
+To access the Elasticsearch instance from the dev environment:
 
-If you just want to run the API to have access to real data you can run the Elasticsearch proxy server, this gives you access to the elasticsearch instance of the dev environment (this is prefered since the proxy uses less resources than the local instance of Elasticsearch).
-
-To access elasticsearch instance from dev environment:
-
-1. Login here https://island-is.awsapps.com/start#/ (Contact devops if you need access)
-2. Copy env variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (image arrows 1,2,3)
-3. Paste env variables into terminal
-4. Run `./scripts/run-es-proxy.sh` from island.is root
-5. You have success if you see `Forwarding from 0.0.0.0:9200 -> 9200` in terminal
+1. Login at [this AWS page](https://island-is.awsapps.com/start#/). Contact DevOps for access.
+2. Copy env variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (image arrows 1,2,3).
+3. Paste env variables into your terminal.
+4. Run `./scripts/run-es-proxy.sh` from the island.is root.
+5. Success is indicated by `Forwarding from 0.0.0.0:9200 -> 9200` in the terminal.
 
 Caveats:
 
-- **You need to have docker/podman installed and running**
-- **You have to refresh your AWS env variables every 8 hours**
+- **Docker/Podman must be installed and running.**
+- **AWS env variables need refreshing every 8 hours.**
+
+Start the API with:
 
 ```bash
 yarn start api
 ```
 
-You must have env variables for the `cms` and `content-search` domains for the website to work as expected.
+Ensure env variables for `cms` and `content-search` are set:
 
-These are:
+- `CONTENTFUL_HOST=`
+- `CONTENTFUL_ACCESS_TOKEN=`
+- `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN=`
+- `ELASTIC_NODE=http://localhost:9200/`
 
-- `CONTENTFUL_HOST=` - Get from Contentful (depends on whether you use prod or preview tokens)
-- `CONTENTFUL_ACCESS_TOKEN=` - Get from Contentful or by running `yarn get-secrets api`
-- `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN=` - Get from Contentful (only used when generating models from Contentful in API)
-  `ELASTIC_NODE=http://localhost:9200/`
+### Start the Web Server
 
-### Start the web server
-
-You can start the web server by running:
+Run:
 
 ```bash
 yarn start web
 ```
 
-This starts a server on `localhost:4200`
+This starts a server on `localhost:4200`.
 
-### To update translation namespaces in Contentful
+### Update Translation Namespaces in Contentful
 
 ```bash
 yarn nx extract-strings web
 ```
 
-Currently, in this project, only the `Custom Page` content type utilizes the `Translation Namespace` content type for translations
+Currently, only the `Custom Page` content type uses the `Translation Namespace` content type for translations.
 
 ## Further Documentation
 
-[Subpages](./docs/subpages.md) - Information on Layouts and Components used when
-creating subpages for the web.
+[Subpages](./docs/subpages.md) - Information on Layouts and Components for subpage creation.
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Stefna](https://github.com/orgs/island-is/teams/stefna/members)
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
+```

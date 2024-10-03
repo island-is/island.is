@@ -12,9 +12,9 @@ TODO
 
 ## Backend
 
-### Initial setup
+### Initial Setup
 
-First, make sure you have docker, then run:
+Ensure Docker is installed, then run:
 
 ```bash
 yarn dev-services judicial-system-backend
@@ -24,7 +24,7 @@ yarn dev-services judicial-system-backend
 yarn dev-services judicial-system-message-handler
 ```
 
-Then run the migrations and seed the database:
+Run migrations and seed the database:
 
 ```bash
 yarn nx run judicial-system-backend:migrate
@@ -34,193 +34,148 @@ yarn nx run judicial-system-backend:migrate
 yarn nx run judicial-system-backend:seed
 ```
 
-### Running locally
+### Running Locally
 
-You can serve this service locally by running:
+Start the backend service:
 
 ```bash
 yarn start judicial-system-backend
 ```
 
-To enable SMS notifications to an on-call judge provide a password for the SMS service and court mobile numbers:
+To enable SMS notifications for an on-call judge:
 
 ```bash
 NOVA_PASSWORD=<SMS password> COURTS_MOBILE_NUMBERS='{ <court-id>: mobileNumbers: <judge mobile number> }' yarn start judicial-system-backend
 ```
 
-Similarly, you can enable electronic signatures of judge rulings by providing a Dokobit access token: `DOKOBIT_ACCESS_TOKEN=<Dokobit access token>`
+Enable electronic signatures with a Dokobit access token: `DOKOBIT_ACCESS_TOKEN=<token>`
 
-In local development you can preview emails with ethereal nodemailer previews by following the urls in the logs.
-Alternatively, you can enable email sending via AWS SES turn off email test account and provide an email region:
+For email previews, check URLs in logs. To send emails via AWS SES, authenticate against AWS:
 
 ```bash
 EMAIL_USE_TEST_ACCOUNT=false EMAIL_REGION=eu-west-1 yarn start judicial-system-backend
 ```
 
-You need to be authenticated against AWS for this to work.
+For prison notifications, provide email addresses: `PRISON_EMAIL=<email> PRISON_ADMIN_EMAIL=<email>`
 
-To enable prison and prison administration email notifications provide email addresses: `PRISON_EMAIL=<prison email> PRISON_ADMIN_EMAIL=<prison administration email>`
+Enable AWS S3 writing and court system communication via xRoad by configuring `environment.ts`.
 
-To enable writing to AWS S3 you need to be authenticated against AWS.
+Fetch latest texts from Contentful using `CONTENTFUL_ACCESS_TOKEN`.
 
-Finally, you can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtClientOptions` sections in `environment.ts`.
-
-To get latest texts from Contentful you need to provide an appropriate value for the environment variable `CONTENTFUL_ACCESS_TOKEN`.
-
-### Unit tests
+### Unit Tests
 
 ```bash
 yarn test judicial-system-backend
 ```
 
-### OpenApi and Swagger
+### OpenAPI and Swagger
 
-Visit
+Visit `localhost:3344/api/swagger`
+
+### Database Changes
+
+Migrations must be created manually.
+
+#### Generate an empty migration file:
 
 ```bash
-localhost:3344/api/swagger
-```
-
-### Database changes
-
-Migrations need to be created by hand.
-
-#### Generate a empty migration file you can simply run:
-
-```
 npx sequelize-cli migration:generate --name update-case
 ```
 
-this will generate a migration file with empty exports for up (Altering commands) and down (Reverting commands).
+Run migrations locally:
 
-To run the migrations on the local database run:
-
-```
-# for UP migrations
+```bash
+# Apply migrations
 yarn nx run judicial-system-backend:migrate
-# for DOWN migrations
+# Revert migrations
 yarn nx run judicial-system-backend:migrate/undo
 ```
 
 ## API
 
-### Running locally
+### Running Locally
 
-You can serve this service locally by running:
+Start the API service:
 
 ```bash
 yarn start judicial-system-api
 ```
 
-To get latest texts from Contentful you need to provide an appropriate value for the environment variable `CONTENTFUL_ACCESS_TOKEN`.
+Fetch latest texts from Contentful using `CONTENTFUL_ACCESS_TOKEN`.
 
-### Graphql playground
+### GraphQL Playground
 
-Visit
-
-```text
-localhost:3333/api/graphql
-```
+Visit `localhost:3333/api/graphql`
 
 ## Web
 
-A platform for the exchange of data, information, formal decisions and notifications between parties in the Icelandic judicial system.
+A platform for data exchange within the Icelandic judicial system.
 
-### Start the application locally
+### Start Locally
 
-Start the backend locally. Instructions on how to do that can be found [in the backend project](projects/judicial-system/backend.md).
+Ensure the backend is running.
 
-Start the application
+Start the application:
 
 ```bash
 yarn start judicial-system-web
 ```
 
-Then the project should be running on https://localhost:4200/.
+The project runs at https://localhost:4200/.
 
-To be able to fetch a list of lawyers you need to provide a value for the environment variable `LAWYERS_ICELAND_API_KEY`
+Provide `LAWYERS_ICELAND_API_KEY` to fetch lawyers.
 
-{% hint style="info" %}
-To skip authentication at innskraning.island.is navigate to `/api/auth/login?nationalId=<national_id>` in the web project where `<national_id>` is the national id of a known user.
-Known users:
+Navigate directly to `/api/auth/login?nationalId=<national_id>` to bypass authentication.
 
-- Áki Ákærandi
-  - NationalId: 0000000009
-  - Role: Prosecutor
-- Dalli Dómritari
-  - NationalId: 0000001119
-  - Role: Registrar
-- Dóra Dómari
-  - NationalId: 0000002229
-  - Role: Judge
-    {% endhint %}
+### Testing Strategy
 
-### Testing strategy
+Uses unit tests and e2e tests with Jest, React Testing Library, and Playwright.
 
-This project uses two types of automated tests, unit tests and e2e tests. We use [Jest](https://jestjs.io/) to write unit tests against code like utility functions. If we need to test custom components in isolation, we use [React testing library](https://testing-library.com/docs/react-testing-library/intro/). Finally, to test entire screens in our project we use [Playwright](https://playwright.dev/).
+#### Running Tests
 
-#### Running the tests
-
-##### Unit tests
+##### Unit Tests
 
 ```bash
 yarn test judicial-system-web
 ```
 
-##### e2e tests
+##### E2E Tests
 
-The e2e test can be run within VSCode, from the "Testing" panel.
+Run within VSCode from the "Testing" panel.
 
 ## Message Extraction from Contentful
 
-Running `yarn nx extract-strings judicial-system-{namespace}` in the root folder `/island.is` will extract messages from the project and create or update a Namespace entry in Contentful.
-Make sure you have the env `CONTENTFUL_ENVIRONMENT=test` to update the strings against `dev` and `staging` and `CONTENTFUL_ENVIRONMENT=master` to update against `prod`.
+Run `yarn nx extract-strings judicial-system-{namespace}` to create/update a Contentful Namespace.
 
-### Example for namespaces in web:
+Set `CONTENTFUL_ENVIRONMENT=test` or `CONTENTFUL_ENVIRONMENT=master` based on environment.
 
-```
+### Example for Web Namespaces:
+
+```bash
 yarn nx extract-strings judicial-system-web
 ```
 
-will update namespaces:
+Updates for backend use:
 
-- judicial.system.core
-- judicial.system.restriction_cases
-- judicial.system.investigation_cases
-
-### For backend:
-
-```
+```bash
 yarn nx extract-strings judicial-system-backend
 ```
 
-will update namespaces:
+## Testing Authentication Locally
 
-- judicial.system.backend
-
-## To test authentication locally
-
-Install <https://github.com/cameronhunter/local-ssl-proxy>:
+Install [local-ssl-proxy](https://github.com/cameronhunter/local-ssl-proxy):
 
 - `npm install -g local-ssl-proxy`
-
-- change defaultcookie in apps/judicial-system/api/src/app/modules/auth/auth.controller.ts:
-
-  const defaultCookieOptions: CookieOptions = {
-  secure: true,
-  }
-
-- add .env to web project and change PORT to 4202
-- start project
-- `local-ssl-proxy --source 4200 --target 4202`
+- Modify `auth.controller.ts` for secure cookies.
+- Add .env in web project and set `PORT=4202`
+- Start the project
+- Run `local-ssl-proxy --source 4200 --target 4202`
 
 ## XRD API
 
-This service is for access from xRoad.
+### Running Locally
 
-### Running locally
-
-You can serve this service locally by running:
+Start the service:
 
 ```bash
 yarn start judicial-system-xrd-api
@@ -228,11 +183,9 @@ yarn start judicial-system-xrd-api
 
 ## Robot API
 
-This service is for access through xRoad.
+### Running Locally
 
-### Running locally
-
-You can serve this service locally by running:
+Start the service:
 
 ```bash
 yarn start judicial-system-robot-api
@@ -240,11 +193,9 @@ yarn start judicial-system-robot-api
 
 ## Digital Mailbox API
 
-This service is for access through xRoad.
+### Running Locally
 
-### Running locally
-
-You can serve this service locally by running:
+Start the service:
 
 ```bash
 yarn start judicial-system-digital-mailbox-api
@@ -252,11 +203,9 @@ yarn start judicial-system-digital-mailbox-api
 
 ## Scheduler
 
-This service is for running scheduled tasks. Currently, archiving old cases is the only task.
+### Running Locally
 
-### Running locally
-
-You can serve this service locally by running:
+Start the service:
 
 ```bash
 yarn start judicial-system-scheduler
@@ -264,58 +213,34 @@ yarn start judicial-system-scheduler
 
 ## Message Handler
 
-This service handles messages posted by other services for downstream processing.
+### Initial Setup
 
-### Initial setup
-
-First, make sure you have docker, then run:
+Ensure Docker is installed, then run:
 
 ```bash
 yarn dev-services judicial-system-message-handler
 ```
 
-### Running locally
+### Running Locally
 
-You can serve this service locally by running:
+Start the service:
 
 ```bash
 yarn start judicial-system-message-handler
 ```
 
-## Feature flags
+## Feature Flags
 
-If you want to hide some UI element in certain environments you can use a feature flag. Lets say you want to hide the `SECRET_FEATURE` in STAGING and PROD but still be able to see it on DEV. Start by adding it to `Feature` in `/libs/judicial-system/types/src/lib/feature.ts`
+Hide UI elements in specific environments with feature flags. Add `SECRET_FEATURE` to `Feature` in `/libs/judicial-system/types/src/lib/feature.ts` and update Helm charts.
 
-```
-export enum Feature {
-  NONE = 'NONE', // must be at least one
-  SECRET_FEATURE = 'SECRET_FEATURE',
-}
-```
+Run:
 
-Then you need to update the Helm charts. Add `SECRET_FEATURE` to `HIDDEN_FEATURES` in `./apps/judicial-system/api/infra/judicial-system-api.ts`.
-
-Then run the script
-
-```
+```bash
 yarn charts
 ```
 
-You can now use the `FeatureContext` to hide `SECRET_FEATURE` in the UI.
+Use `FeatureContext` to conditionally display features in the UI.
 
-```
-  const Component = () => {
-    const { features } = useContext(FeatureContext)
-
-    return (
-      if (features.includes(Feature.SECRET_FEATURE)) {
-        <p>This will only show on DEV, not STAGING or PROD</p>
-      }
-    )
-  }
-
-```
-
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri/members)

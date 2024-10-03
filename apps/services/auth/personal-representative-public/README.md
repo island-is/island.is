@@ -6,7 +6,7 @@ This service provides third-party service providers with information about perso
 
 ## Context
 
-The Personal Representative Public API allows service providers, not using Digital Iceland’s login, to access information about personal representatives and their clients. This enables representatives to access services on behalf of clients per their contract and connection.
+The Personal Representative Public API enables service providers, without using Digital Iceland's login, to access information about personal representatives and their clients. This allows representatives to access services on behalf of clients per their contract and connection.
 
 Service providers must use secure logins and query only for logged-in users.
 
@@ -40,7 +40,7 @@ The API is accessible only through X-Road security servers to machine clients wi
 
 ### X-Road Setup
 
-For more, see [X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements).
+For more details, see [X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements).
 
 X-Road setup URLs:
 
@@ -50,7 +50,7 @@ X-Road setup URLs:
 
 ### OpenAPI URL
 
-OpenAPI documentation and demo:
+Explore the OpenAPI documentation:
 
 - [Swagger](https://personal-representative-public-xrd.dev01.devland.is/swagger)
 
@@ -58,7 +58,9 @@ OpenAPI documentation and demo:
 
 ### Initial Setup
 
-Using the same service library and database as auth-api, begin by ensuring Docker is installed, then run:
+Using the same service library and database as auth-api:
+
+Ensure Docker is installed, then run:
 
 ```bash
 yarn dev-services services-auth-ids-api
@@ -76,7 +78,7 @@ Serve the service locally:
 yarn start services-auth-personal-representative-public
 ```
 
-API specs accessible at:
+API specs available at:
 
 ```
 http://localhost:3378

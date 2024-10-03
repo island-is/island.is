@@ -1,51 +1,49 @@
-## fastlane documentation
+## Fastlane Documentation
 
-# Installation
+### Installation
 
-Make sure you have the latest version of the Xcode command line tools installed:
+Ensure the latest Xcode command line tools are installed:
 
-```sh
+```bash
 xcode-select --install
 ```
 
-For _fastlane_ installation instructions, see [Installing _fastlane_](https://docs.fastlane.tools/#installing-fastlane)
+For _fastlane_ installation, visit [Installing _fastlane_](https://docs.fastlane.tools/#installing-fastlane).
 
-# Available Actions
+### Available Actions
 
-## Android
+#### Android
 
-### android play_store_upload
+- **Play Store Upload**
 
-```sh
-[bundle exec] fastlane android play_store_upload
-```
+  Upload a new AAB to the Google Play store.
 
-Upload a new AAB to the Google Play store
+  ```bash
+  [bundle exec] fastlane android play_store_upload
+  ```
 
-### android promote
+- **Promote**
 
-```sh
-[bundle exec] fastlane android promote
-```
+  ```bash
+  [bundle exec] fastlane android promote
+  ```
 
-### android increment_version
+- **Increment Version**
 
-```sh
-[bundle exec] fastlane android increment_version
-```
+  ```bash
+  [bundle exec] fastlane android increment_version
+  ```
 
-### android beta
+- **Beta**
 
-```sh
-[bundle exec] fastlane android beta
-```
+  Submit a new Beta build.
 
-Submit a new Beta Build
+  ```bash
+  [bundle exec] fastlane android beta
+  ```
 
 ---
 
-This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
+This README.md is auto-generated and will update every time [_fastlane_](https://fastlane.tools) is run.
 
-More information about _fastlane_ can be found on [fastlane.tools](https://fastlane.tools).
-
-The documentation of _fastlane_ can be found on [docs.fastlane.tools](https://docs.fastlane.tools).
+Find more information at [fastlane.tools](https://fastlane.tools) and _fastlane_ documentation at [docs.fastlane.tools](https://docs.fastlane.tools).

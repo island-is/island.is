@@ -1,24 +1,35 @@
+```markdown
 # Contentful Apps
 
-This Next.js project is intended to host Contentful Apps that we use to extend and customize the functionality of Contentful.
+This Next.js project hosts Contentful Apps for extending and customizing Contentful.
 
-To start the Contentful Apps Next.js server locally run the following command:
-`yarn start contentful-apps`
+## Starting the Server Locally
 
-Each app defines it's own page inside this project.
+To start the Next.js server locally, run:
+```bash
+yarn start contentful-apps
+```
 
-To create a Contentful app you can mostly follow Contentful documentation, here's an example app guide: https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/
+Each app defines its own page within this project.
 
-The only change is that we aren't using the `create-contentful-app` script to bootstrap our Contentful app but instead you can simply add a new page inside the `/pages` folder.
+## Creating a Contentful App
 
-To test out your application you can change over to an unused environment in Contentful, install the App there and try it out locally by running the Next.js server locally and setting the url to: `http://localhost:4200/page-that-contains-your-app`
+To create a Contentful app, follow [Contentful documentation](https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/). Note that we do not use the `create-contentful-app` script. Instead, add a new page in the `/pages` folder.
 
-Once the app has been tested and developed locally then you can create a pull request and the Next.js server will be redeployed with your app.
+## Testing Your App
 
-We are both hosting the contentful-apps server on dev and prod. Ideally we like to use the prod urls inside of Contentful for the most stable user experience (dev tends to have more downtime than prod) but you can set it to the dev url in case you are testing things out.
+To test your app:
+1. Switch to an unused Contentful environment.
+2. Install the App and run the Next.js server locally.
+3. Set the URL to `http://localhost:4200/page-that-contains-your-app`.
 
-## Translation namespace app
+After testing locally, create a pull request. The Next.js server will redeploy with your app.
 
-The Translation namespace content type utilizes the contentful app located here: `/apps/contentful-apps/pages/fields/translation-namespace-json-field.tsx`.
+We host the contentful-apps server in both dev and prod environments. Use prod URLs inside Contentful for stability, but switch to dev if testing.
 
-It is responsible of translations for namespaces for your application. It works in pair with the [localization](/libs/localization/README.md) library.
+## Translation Namespace App
+
+The Translation Namespace content type uses the Contentful app located at `/apps/contentful-apps/pages/fields/translation-namespace-json-field.tsx`.
+
+This app manages translations for application namespaces, in conjunction with the [localization library](/libs/localization/README.md).
+```

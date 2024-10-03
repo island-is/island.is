@@ -2,31 +2,35 @@
 
 ## Quickstart
 
-Ensure docker is running, then run the following when running for the first time:
+Ensure Docker is running. For initial setup, run:
 
+For API:
 ```bash
 yarn dev-init application-system-api
-or
+```
+
+For Application Form:
+```bash
 yarn dev-init application-system-form
 ```
 
-depending on whether you're working on the API or an application form.
-
 To start the app:
 
+For API:
 ```bash
 yarn dev application-system-api
-or
+```
+
+For Application Form:
+```bash
 yarn dev application-system-form
 ```
 
-depending on whether you're working on the API or an application form.
+These commands simplify the process described below.
 
-These commands are just shorthands for the setup described below.
+## Overview
 
-## About
-
-This project forms the base for all business applications belonging to island.is.
+This project underpins all business applications associated with island.is.
 
 ## URLs
 
@@ -36,57 +40,57 @@ This project forms the base for all business applications belonging to island.is
 
 ## API
 
-### Initial setup
+### Initial Setup
 
-First, make sure you have docker, then run:
+Ensure Docker is running, then execute:
 
 ```bash
 yarn dev-services application-system-api
 ```
 
-Then run the migrations:
+Run migrations:
 
 ```bash
 yarn nx run application-system-api:migrate
 ```
 
-### Running locally
+### Local Execution
 
-You can serve this service locally by running:
+Serve locally with:
 
 ```bash
 yarn start application-system-api
 ```
 
-### Graphql
+### GraphQL
 
-Make sure you are serving the graphql client as well in order for you to make graphql calls to this service:
+Serve the GraphQL client concurrently to make calls:
 
 ```bash
 yarn start api
 ```
 
-### OpenApi and Swagger
+### OpenAPI and Swagger
 
-When making changes to the module code, run
+After code changes, generate the OpenAPI and Swagger code:
 
 ```bash
 yarn nx codegen/backend-schema application-system-api
 ```
 
-to generate the code needed for openapi and swagger. Then you can visit
+Access Swagger at:
 
 ```bash
 localhost:3333/swagger
 ```
 
-In order to generate a typed fetch client run
+Generate a typed fetch client with:
 
 ```bash
 yarn nx codegen/backend-client api-domains-application
 ```
 
-In order to update the graphql schema as well, run
+Update the GraphQL schema with:
 
 ```bash
 yarn nx codegen/backend-schema api
@@ -94,50 +98,41 @@ yarn nx codegen/backend-schema api
 
 ## Form
 
-This app contains the frontend app for the application system
+This app includes the frontend for the application system.
 
-### Running locally
+### Local Execution
 
-You can serve this app locally by running:
+Serve locally with:
 
 ```bash
 yarn start application-system-form
 ```
 
-The only backend apps this app depends on are the graphql api and the application-system-api. Therefore, make sure you run those as well:
+Ensure backend services are running:
 
 ```bash
 yarn start application-system-api
-```
-
-(see `apps/application-system/api/README.md` if you run into any problems here)
-
-and
-
-```bash
 yarn start api
 ```
 
-### Adding a new template
+### Adding a New Template
 
-- [Follow the Reference Template](https://github.com/island-is/island.is/tree/main/libs/application/templates/reference-template)
+- [Reference Template](https://github.com/island-is/island.is/tree/main/libs/application/templates/reference-template)
 
-After following the Reference Template, repeat the steps from [OpenAPI and Swagger](https://github.com/island-is/island.is/tree/main/apps/application-system#openapi-and-swagger) or run `yarn codegen`.
+Follow the steps from the [OpenAPI and Swagger](https://github.com/island-is/island.is/tree/main/apps/application-system#openapi-and-swagger) or run `yarn codegen`.
 
-### Adding a payment step
+### Payment Step
 
-If your application requires that the user pay a fee as part of the application process,
-that can be implemented by following the
-[adding a payment step](../../handbook/misc/application-payment-guide.md) guide
+For payment integration, follow the [application payment guide](../../handbook/misc/application-payment-guide.md).
 
 ### Testing
 
-It is as simple as:
+Run tests with:
 
 ```bash
 yarn nx test application-system-form
 ```
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Norda](https://github.com/orgs/island-is/teams/norda-applications/members)

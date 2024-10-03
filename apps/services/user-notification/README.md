@@ -9,19 +9,19 @@ This service queues notifications, stores them in a database, and sends push not
 ```mermaid
 sequenceDiagram
     autonumber
-    Institution->>Advania: adds new message in mailbox
-    Advania->>User-Notification-Service: xroad: sends message notification
-    User-Notification-Service->>AWS SQS: adds processed notification to queue
+    Institution->>Advania: Adds new message in mailbox
+    Advania->>User-Notification-Service: Sends message notification via xroad
+    User-Notification-Service->>AWS SQS: Queues processed notification
     loop
-    User-Notification-Worker->>AWS SQS: requests 10 notifications
-    AWS SQS->>User-Notification-Worker: responds with 0-10 notifications
+    User-Notification-Worker->>AWS SQS: Requests 10 notifications
+    AWS SQS->>User-Notification-Worker: Responds with 0-10 notifications
     end
-    User-Notification-Worker->>Database: saves notification
-    User-Notification-Worker->>User-Profile-Service: requests notification settings
-    User-Profile-Service->>User-Notification-Worker: returns user settings and tokens
-    User-Notification-Worker->>Firebase Cloud Messaging: sends notification
-    Firebase Cloud Messaging->>island.is app: sends push notification
-    User-Notification-Worker->>User email: sends e-mail
+    User-Notification-Worker->>Database: Saves notification
+    User-Notification-Worker->>User-Profile-Service: Requests notification settings
+    User-Profile-Service->>User-Notification-Worker: Returns user settings and tokens
+    User-Notification-Worker->>Firebase Cloud Messaging: Sends notification
+    Firebase Cloud Messaging->>island.is app: Sends push notification
+    User-Notification-Worker->>User email: Sends email
 ```
 
 ## Running the Project
@@ -34,7 +34,7 @@ Sign into AWS:
 aws sso login
 ```
 
-Get secrets:
+Retrieve secrets:
 
 ```sh
 yarn get-secrets user-notification
@@ -54,7 +54,7 @@ yarn dev services-user-notification
 
 ### User Notification Worker
 
-This worker processes queue messages, saves them to the database, and sends them via push and email. Start a worker:
+Processes queue messages, saves to the database, and sends via push and email. Start a worker:
 
 ```sh
 yarn nx run services-user-notification:worker
@@ -62,7 +62,7 @@ yarn nx run services-user-notification:worker
 
 ### User Notification Cleanup Worker
 
-This worker deletes old messages from the database. Start a cleanup worker:
+Deletes old messages from the database. Start a cleanup worker:
 
 ```sh
 yarn nx run services-user-notification:cleanup

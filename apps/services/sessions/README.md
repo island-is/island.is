@@ -1,10 +1,10 @@
 # Sessions
 
-REST API to store and list user sessions from our Identity Server.
+REST API for managing user sessions from the Identity Server.
 
 ## Quickstart
 
-Start the service locally:
+To start the service locally:
 
 ```bash
 yarn dev-init services-sessions
@@ -15,13 +15,13 @@ yarn start services-sessions
 
 ### Local Environment Setup
 
-This service requires a PostgreSQL database and a Redis cluster. Ensure Docker is installed:
+This service needs a PostgreSQL database and a Redis cluster. Ensure Docker is installed:
 
 ```bash
 yarn dev-services services-sessions
 ```
 
-Run the database migrations:
+Run database migrations:
 
 ```bash
 yarn nx run services-sessions:migrate
@@ -29,7 +29,7 @@ yarn nx run services-sessions:migrate
 
 ### API
 
-Serve the service API locally:
+To serve the service API locally:
 
 ```bash
 yarn start services-sessions
@@ -43,7 +43,7 @@ http://localhost:3333/swagger
 
 ### Worker
 
-Start the worker locally:
+To start the worker locally:
 
 ```bash
 PORT=3343 yarn nx run services-sessions:worker
@@ -55,7 +55,7 @@ Refer to our [documentation](https://docs.devland.is) before contributing.
 
 ### Add Database Migration
 
-To update the database, create a new migration file:
+To create a database migration:
 
 ```bash
 yarn nx run services-sessions:migration-create -- --name <migration-name>

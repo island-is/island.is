@@ -2,78 +2,73 @@
 
 ## About
 
-The aim of the consultation portal is to increase transparency and the possibility for the public and interested parties to participate in policy-making, regulations and decision-making by public bodies.
+The Consultation Portal aims to enhance transparency and public participation in policy-making, regulations, and decision-making by public bodies.
 
-In the consultation portal, you can find plans for legislation, drafts of bills and regulations, documents on strategic planning (eg draft policies) and more. You can submit a comment or suggestion, and it is also possible to subscribe to automatic monitoring of information, whether by subject area, organization or specific issue.
-
-To be able to submit a comment or suggestion and subscribe to automatic monitoring, the user needs to use his "electronic ID" credentials.
+The portal includes legislative plans, draft bills, regulations, strategic planning documents, and more. Users can comment, suggest, and subscribe to updates by topic, organization, or issue using their electronic ID.
 
 ## URLs
 
-The frontend can be accessed through the following urls, the backend is hosted externally but maintained by Advania.
+The frontend URLs for access are below, while the backend is hosted externally by Advania.
 
 - [Dev](https://beta.dev01.devland.is/samradsgatt)
 - [Production](https://island.is/samradsgatt)
 
-## Getting started
+## Getting Started
 
 ### Development
 
-1. Fetch the environment variables for both the frontend and the api. [This guide](https://docs.devland.is/repository/aws-secrets#usage-to-fetch-secrets) shows how you can fetch secrets for the first time.
+1. Fetch environment variables for the frontend and API. Refer to [this guide](https://docs.devland.is/repository/aws-secrets#usage-to-fetch-secrets) for retrieving secrets initially.
 
-```bash
+    ```bash
     yarn get-secrets consultation-portal
-```
-
-```bash
     yarn get-secrets api
-```
+    ```
 
-2. The project uses next-auth authentication and in order to run the project you either need to export the NEXTAUTH_URL or add it to a .env file in the project.
+2. Export the `NEXTAUTH_URL` or add it to a `.env` file for NextAuth authentication.
 
-```bash
+    ```bash
     export NEXTAUTH_URL=http://localhost:4200/samradsgatt/api/auth
-```
+    ```
 
-3. Run yarn to install the necessary packages for the project.
+3. Install necessary packages.
 
-```bash
+    ```bash
     yarn
-```
+    ```
 
-4. Run codegen to auto generate API schemas and clients.
+4. Auto-generate API schemas and clients.
 
-```bash
+    ```bash
     yarn codegen
-```
+    ```
 
-5. Run the api that fetches data from the backend and feeds the frontend.
+5. Launch the backend API.
 
-```bash
+    ```bash
     yarn start api
-```
+    ```
 
-6. Run the frontend in a seperate terminal from the backend
+6. In a separate terminal, start the frontend.
 
-```bash
+    ```bash
     yarn start consultation-portal
-```
+    ```
 
-7. Navigate to [localhost:4200/samradsgatt](http://localhost:4200/samradsgatt)
+7. Open [localhost:4200/samradsgatt](http://localhost:4200/samradsgatt).
 
-8. Navigate to the [graphql playground](http://localhost:4200/api/graphql)
+8. Access the [GraphQL playground](http://localhost:4200/api/graphql).
 
-9. Note that in order to use the upload feature you need to export the aws credentials.
+9. Export AWS credentials for the upload feature.
 
-Login here https://island-is.awsapps.com/start#/ (Contact devops if you need access)
-Copy env variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (image arrows 1,2,3)
-Paste env variables into terminal
+   - Login [here](https://island-is.awsapps.com/start#/). Contact DevOps for access.
+   - Copy environment variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (see image arrows 1, 2, 3).
+   - Paste variables into the terminal.
 
-## Project owner
+## Project Owner
 
 - [Stjórnarráðið](https://www.stjornarradid.is)
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Advania](https://www.advania.is)
 - [Gladvania-in-wonderland](https://github.com/orgs/island-is/teams/gladvania-in-wonderland)

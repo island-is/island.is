@@ -10,56 +10,55 @@ bundle install
 npx pod-install
 ```
 
-### 2a. Building for iOS
+## 2a. Building for iOS
 
 ```bash
 yarn run ios
 ```
 
-### 2b. Building for Android
+## 2b. Building for Android
 
-Follow documentation for setting up android [here](https://reactnative.dev/docs/environment-setup?platform=android&guide=native).
+1. Follow [Android setup documentation](https://reactnative.dev/docs/environment-setup?platform=android&guide=native).
+2. Open the project in Android Studio.
+3. Ensure `local.properties` and `google-services.json` are added:
 
-Open the project in android studio and then local.properties should be created, if you want to skip that, make sure to:
+   - `local.properties` in `/apps/native/app/android`
+   - `google-services.json` in `/apps/native/app/android/app`
 
-Add `local.properties` file to `/apps/native/app/android`
+4. Open an Android emulator or connect a device.
 
-Add `google-services.json` file to `/apps/native/app/android/app`
+Run the following in `/apps/native/app/android`:
 
-Open up an android emulator or connect a physical device
-
-in `/apps/native/app/android` run the following commands:
-
-```ts
-// Build the project
+```bash
+# Build the project
 ./gradlew assembleDebug
 ```
 
-If using an **emulator** do the following:
+### For an Emulator:
 
-```ts
-// Move to device
-adb install ./app/build/outputs/apk/dev/debug/app-dev-debug.apk*
+```bash
+# Install APK on emulator
+adb install ./app/build/outputs/apk/dev/debug/app-dev-debug.apk
 ```
 
-If using a **physical device** do the following:
+### For a Physical Device:
 
-```ts
-// List devices and their ids
+```bash
+# List devices
 adb devices
 
-// Use deviceId from previous command to move to physical device
-adb -s <deviceId> install  ./app/build/outputs/apk/dev/debug/app-dev-debug.apk*
+# Install APK on device
+adb -s <deviceId> install ./app/build/outputs/apk/dev/debug/app-dev-debug.apk
 ```
 
-For both emulators and physical devices:
+### For Both:
 
-```ts
-// fix port for device
+```bash
+# Forward port
 adb reverse tcp:8081 tcp:8081
 ```
 
-and finally
+Finally:
 
 ```bash
 yarn start
@@ -71,9 +70,9 @@ or
 yarn run android
 ```
 
-### 3. Start development server
+## 3. Start Development Server
 
-```
+```bash
 yarn start
 ```
 
@@ -85,9 +84,9 @@ yarn start
 yarn run beta
 ```
 
-### After release
+### After Release
 
-Make sure to increment the version of the app by running `yarn run version:increment` and commit the changes.
+Increment the app version and commit:
 
 ```bash
 yarn run version:increment
@@ -95,12 +94,12 @@ git add .
 git commit -m "feat(native/app): release v1.0.0"
 ```
 
-## NX commands
+## NX Commands
 
-NX command example to proxy arguments to `package.json` scripts
+Example of running NX commands:
 
 ```bash
-nx run native-app:script --name=<some-script-from-package.json>
+nx run native-app:script --name=<script-name>
 ```
 
 ```bash
@@ -109,8 +108,4 @@ nx run native-app:codegen/frontend-client
 
 ## NOTES
 
-- ci jobs
-  - codegen
-  - lint
-  - build
-  - test
+- CI Jobs: codegen, lint, build, test

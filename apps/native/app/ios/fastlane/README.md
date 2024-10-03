@@ -1,43 +1,43 @@
-## fastlane documentation
+## Fastlane Documentation
 
-# Installation
+### Installation
 
-Make sure you have the latest version of the Xcode command line tools installed:
+Ensure you have the latest Xcode command line tools installed:
 
-```sh
+```bash
 xcode-select --install
 ```
 
-For _fastlane_ installation instructions, see [Installing _fastlane_](https://docs.fastlane.tools/#installing-fastlane)
+For detailed _fastlane_ installation instructions, refer to the [Installing _fastlane_](https://docs.fastlane.tools/#installing-fastlane).
 
-# Available Actions
+### Available Actions
 
-## iOS
+#### iOS
 
-### ios increment_version
+- **Increment Version**
 
-```sh
-[bundle exec] fastlane ios increment_version
-```
+  ```bash
+  [bundle exec] fastlane ios increment_version
+  ```
 
-Push a new beta build to TestFlight
+  Push a new beta build to TestFlight.
 
-### ios beta
+- **Beta**
 
-```sh
-[bundle exec] fastlane ios beta
-```
+  ```bash
+  [bundle exec] fastlane ios beta
+  ```
 
-### ios promote
+- **Promote**
 
-```sh
-[bundle exec] fastlane ios promote
-```
+  ```bash
+  [bundle exec] fastlane ios promote
+  ```
 
 ---
 
-This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
+This README.md is auto-generated and will be refreshed every time [_fastlane_](https://fastlane.tools) is executed.
 
-More information about _fastlane_ can be found on [fastlane.tools](https://fastlane.tools).
+For more about _fastlane_, visit [fastlane.tools](https://fastlane.tools).
 
-The documentation of _fastlane_ can be found on [docs.fastlane.tools](https://docs.fastlane.tools).
+Refer to [docs.fastlane.tools](https://docs.fastlane.tools) for _fastlane_ documentation.
