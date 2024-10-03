@@ -21,7 +21,7 @@ There are certain precondition to be eligible for a discount. They are:
 The API is used by airlines to verify the discount code validity and get basic
 booking info about the user.
 
-The airlines that have access to this api are `Icelandair`, `Ernir` and
+The airlines that have access to this API are `Icelandair`, `Ernir` and
 `Norlandair`. Historically some flights were booked for `Norlandair` through
 `Icelandair`, those flights are marked with the `Icelandair` airline but have a
 cooperation field with `Norlandair`.
@@ -66,59 +66,51 @@ To get started developing this project, go ahead and:
 
 1. Fetch the environment secrets:
 
-```bash
-yarn get-secrets air-discount-scheme-api
-yarn get-secrets air-discount-scheme-backend
-yarn get-secrets air-discount-scheme-web
-```
+   ```bash
+   yarn get-secrets air-discount-scheme-api
+   yarn get-secrets air-discount-scheme-backend
+   yarn get-secrets air-discount-scheme-web
+   ```
 
 2. Start the resources with docker compose and migrate/seed the database:
 
-```bash
-docker compose -f apps/air-discount-scheme/backend/docker-compose.yml up
-```
-
-```bash
-yarn nx run air-discount-scheme-backend:migrate
-
-yarn nx run air-discount-scheme-backend:seed
-```
+   ```bash
+   docker compose -f apps/air-discount-scheme/backend/docker-compose.yml up
+   yarn nx run air-discount-scheme-backend:migrate
+   yarn nx run air-discount-scheme-backend:seed
+   ```
 
 3. Start the front end:
 
-```bash
-yarn start air-discount-scheme-web
-```
+   ```bash
+   yarn start air-discount-scheme-web
+   ```
 
-4. Start the graphql api:
+4. Start the GraphQL API:
 
-```bash
-yarn start air-discount-scheme-api
-```
+   ```bash
+   yarn start air-discount-scheme-api
+   ```
 
-5. Start the backend api:
+5. Start the backend API:
 
-```bash
-yarn start air-discount-scheme-backend
-```
+   ```bash
+   yarn start air-discount-scheme-backend
+   ```
 
 6. Check Contentful and AWS
 
-Login here <https://island-is.awsapps.com/start#/> (Contact devops if you need access)
+Login here <https://island-is.awsapps.com/start#/> (Contact DevOps if you need access)
 Copy env variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (image arrows 1,2,3)
 Paste env variables into terminal
 Run `./scripts/run-es-proxy.sh` from island.is root
 You have success if you see `Forwarding from 0.0.0.0:9200 -> 9200` in terminal
 
-Navigate to [localhost:4200](http://localhost:4200) for the website or
-[localhost:4248/api/swagger/](http://localhost:4248/api/swagger/) for the
-airline api.
+Navigate to [the website](http://localhost:4200) or [the Swagger UI](http://localhost:4248/api/swagger/) for the airline API.
 
 ### Admin
 
-To access the Admin UI, you'll need to add your Icelandic National ID to the
-comma separated environment variable `DEVELOPERS` (.env.secret) and restart the
-`api`.
+To access the Admin UI, you'll need to add your Icelandic National ID to the comma separated environment variable `DEVELOPERS` (`.env.secret`) and restart the API.
 
 ```bash
 export DEVELOPERS=1234567890
@@ -130,9 +122,9 @@ Because of the short timeline this assignment had, there were few shortcuts
 taken that can be improved upon:
 
 - The authentication is pretty primitive, the IDP is still in development at
-  the time of this writing so we needed to use static api keys.
-- The deployment pipeline is outside of the islandis main pipeline.
-- The graphql api is separate of the main graphql api of islandis.
+  the time of this writing so we needed to use static API keys.
+- The deployment pipeline is outside of the `islandis` main pipeline.
+- The GraphQL API is separate of the main GraphQL API of `islandis`.
 
 ## Project owner
 

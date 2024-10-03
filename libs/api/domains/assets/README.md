@@ -1,42 +1,43 @@
-# Real estate assets api
+# Real estate assets API
 
-This service utilises the FasteignirApi
+This service utilises the `FasteignirApi`
 
-# How to use
+## How to use
 
-Start the api
-`yarn start api`
+Start the API:
+
+```bash
+yarn start api
+```
 
 X-road needs to be running
 
 ```bash
 ./scripts/run-xroad-proxy.sh
-```
-
-or
-
-```bash
+# or
 kubectl -n socat port-forward svc/socat-xroad 8081:80
 ```
 
-AssetsXRoadService should now be available to use.
+`AssetsXRoadService` should now be available to use.
 
-# UI
+## UI
 
-Example of usage can be found in: <http://localhost:4200/minarsidur/fasteignir>
+Example of usage can be found in your [local Service Portal](http://localhost:4200/minarsidur/fasteignir).
+To start the Service portal:
 
-Service portal needs to be running.
-`yarn start service-portal`
+```bash
+yarn start service-portal
+```
 
-# Mock
+## Mocking
 
-The data for assets api has been fully mocked, for mock usage and testing purposes try the API_MOCKS.
+The data for assets API has been fully mocked, for mock usage and testing purposes try the API_MOCKS.
 
-Add `API_MOCKS=true` to your `.env` file and make sure it is available in your webpack browser bundles ([Next.JS example](../../../apps/web/next.config.js)).
+Add `API_MOCKS=true` to your `.env` file and make sure it is available in your webpack browser bundles ([Next.js example](../../../apps/web/next.config.js)).
 
-# API Domains Assets
+## API Domains Assets
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx.js](https://nx.dev).
 
 ## Running unit tests
 

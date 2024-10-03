@@ -1,6 +1,6 @@
 # Application API Files
 
-This library handles file management for the Application system api.
+This library handles file management for the Application system API.
 
 ## Environment variables
 
@@ -23,11 +23,11 @@ For this module to run the following variables are set.
 
 ## Usage
 
-For s3 bucket communication you need to have an active AWS session to the development cluster
+For S3 bucket communication you need to have an active AWS session to the development cluster
 
 ## Import into your module
 
-#### app.module.ts
+### app.module.ts
 
 ```typescript
 import { ConfigModule } from '@island.is/nest/config'

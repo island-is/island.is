@@ -1,6 +1,10 @@
 # Criminal Record Application
 
-This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib application/templates/criminal-record)
+This library was generated with [Nx.js](https://nx.dev):
+
+```bash
+yarn generate @nrwl/node:lib application/templates/criminal-record
+```
 
 ## Setup
 
@@ -34,23 +38,11 @@ You can serve this app locally by running:
 
 ```bash
 yarn start api
-```
-
-and
-
-```bash
+# and
 yarn start application-system-api
-```
-
-and
-
-```bash
+# and
 yarn start application-system-form
-```
-
-and
-
-```bash
+# and
 yarn start services-user-profile
 ```
 
@@ -61,5 +53,5 @@ Run `nx test application-templates-criminal-record` to execute the unit tests vi
 ## Code owners and maintainers
 
 - [Unnur Sól - @unnursol](https://github.com/unnursolingimars)
-- [Jón Bjarni]()
+- Jón Bjarni
 - [Jóhanna Agnes - @johannaagma](https://github.com/johannaagma)

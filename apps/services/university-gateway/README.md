@@ -2,15 +2,15 @@
 
 ## About
 
-This service manages university program availability, and connects applications between island.is application-system and university DB
+This service manages university program availability, and connects applications between Ísland.is application-system and university DB
 
-## Quickstart
+## Quick start
 
 Ensure docker is running, then run the following when running for the first time:
 
 Simply run these two commands:
 
-```
+```bash
 yarn dev-init services-university-gateway
 yarn dev services-university-gateway
 ```
@@ -32,12 +32,11 @@ yarn nx run services-university-gateway:seed
 
 ## Start the API service
 
+Start the service and open the [Swagger UI](http://localhost:3380/api/swagger):
+
 ```bash
 yarn start services-university-gateway
 ```
-
-Open url:
-localhost:3380/api/swagger
 
 ## Regenerate the OpenAPI file
 

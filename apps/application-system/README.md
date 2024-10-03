@@ -1,26 +1,22 @@
 # Application System
 
-## Quickstart
+## Quick start
 
 Ensure docker is running, then run the following when running for the first time:
 
 ```bash
 yarn dev-init application-system-api
-or
+# or
 yarn dev-init application-system-form
 ```
-
-depending on whether you're working on the API or an application form.
 
 To start the app:
 
 ```bash
 yarn dev application-system-api
-or
+# or
 yarn dev application-system-form
 ```
-
-depending on whether you're working on the API or an application form.
 
 These commands are just shorthands for the setup described below.
 
@@ -50,7 +46,7 @@ Then run the migrations:
 yarn nx run application-system-api:migrate
 ```
 
-### Running locally
+### Running the API locally
 
 You can serve this service locally by running:
 
@@ -58,35 +54,29 @@ You can serve this service locally by running:
 yarn start application-system-api
 ```
 
-### Graphql
+### GraphQL
 
-Make sure you are serving the graphql client as well in order for you to make graphql calls to this service:
+Make sure you are serving the GraphQL client as well in order for you to make GraphQL calls to this service:
 
 ```bash
 yarn start api
 ```
 
-### OpenApi and Swagger
+### OpenAPI and Swagger
 
-When making changes to the module code, run
+When making changes to the module code, run the following to generate the code needed for OpenAPI and Swagger.
 
 ```bash
 yarn nx codegen/backend-schema application-system-api
 ```
 
-to generate the code needed for openapi and swagger. Then you can visit
-
-```bash
-localhost:3333/swagger
-```
-
-In order to generate a typed fetch client run
+Then you can visit [the Swagger UI](http://localhost:3333/swagger). In order to generate a typed fetch client run
 
 ```bash
 yarn nx codegen/backend-client api-domains-application
 ```
 
-In order to update the graphql schema as well, run
+In order to update the GraphQL schema as well, run
 
 ```bash
 yarn nx codegen/backend-schema api
@@ -96,7 +86,7 @@ yarn nx codegen/backend-schema api
 
 This app contains the frontend app for the application system
 
-### Running locally
+### Running the form locally
 
 You can serve this app locally by running:
 
@@ -104,31 +94,25 @@ You can serve this app locally by running:
 yarn start application-system-form
 ```
 
-The only backend apps this app depends on are the graphql api and the application-system-api. Therefore, make sure you run those as well:
+The only backend apps this app depends on are the GraphQL API and the `application-system-api`. Therefore, make sure you run those as well:
 
 ```bash
 yarn start application-system-api
-```
-
-(see `apps/application-system/api/README.md` if you run into any problems here)
-
-and
-
-```bash
 yarn start api
 ```
+
+See `apps/application-system/api/README.md` if you run into any problems here.
 
 ### Adding a new template
 
 - [Follow the Reference Template](https://github.com/island-is/island.is/tree/main/libs/application/templates/reference-template)
 
-After following the Reference Template, repeat the steps from [OpenAPI and Swagger](https://github.com/island-is/island.is/tree/main/apps/application-system#openapi-and-swagger) or run `yarn codegen`.
+After following the Reference Template, repeat the steps from [OpenAPI and Swagger](https://github.com/island-is/island.is/tree/main/apps/application-system#OpenAPI-and-swagger) or run `yarn codegen`.
 
 ### Adding a payment step
 
 If your application requires that the user pay a fee as part of the application process,
-that can be implemented by following the
-[adding a payment step](../../handbook/misc/application-payment-guide.md) guide
+that can be implemented by following the [adding a payment step](https://docs.devland.is/misc/application-payment-guide) guide.
 
 ### Testing
 

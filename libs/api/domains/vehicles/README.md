@@ -1,42 +1,45 @@
 # API Domains Vehicles
 
-This service utilises the VehicleSearchApi
+This service utilises the `VehicleSearchApi`.
 
-# How to use
+## How to use
 
-Start the api
-`yarn start api`
+Start the API:
 
-X-road needs to be running
+```bash
+yarn start api
+```
+
+X-road needs to be running:
 
 ```bash
 ./scripts/run-xroad-proxy.sh
-```
-
-or
-
-```bash
+# or
 kubectl -n socat port-forward svc/socat-xroad 8081:80
 ```
 
-VehiclesApiProvider should now be available to use.
+`VehiclesApiProvider` should now be available to use.
 
 ## Running unit tests
 
 Run `nx test api-domains-vehicles` to execute the unit tests via [Jest](https://jestjs.io).
 
-# UI
+## UI
 
-Example of usage can be found in: <http://localhost:4200/minarsidur/okutaeki>
+Example of usage can be found your [local vehicle portal](http://localhost:4200/minarsidur/okutaeki).
 
-Service portal needs to be running.
-`yarn start service-portal`
+Service portal needs to be running:
+
+```bash
+yarn start service-portal
+```
 
 ## Data explained
 
 ### Vehicle detail model explained
 
-_modelname -> dataname - explanation if needed_
+```text
+_modelname -> dataname - explanation if needed
 
 **MainInfo**
 
@@ -221,3 +224,4 @@ city -> operators[current].city
 startDate -> operators[current].startdate
 
 endDate -> operators[current].enddate
+```

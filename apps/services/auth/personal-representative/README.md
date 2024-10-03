@@ -19,7 +19,7 @@ The API allows for maintenance of right types, personal representative types (cu
 | 1122334459                  | 1223455569             | health-data, personal-data, limited-financial-data |
 | 1020304059                  | 0203050569             | limited-health-data                                |
 
-### JSON expample of connection
+### JSON example of connection
 
 ```json
 {
@@ -42,7 +42,7 @@ For the foreseeable future the only system with access would be the Personal Rep
 
 ### Scope
 
-```
+```text
 @island.is/auth/personal-representative-admin
 ```
 
@@ -50,17 +50,15 @@ For the foreseeable future the only system with access would be the Personal Rep
 
 [X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements)
 
-#### Urls for X-Road setup are as follows
+#### URLs for X-Road setup are as follows
 
-- Dev: [https://personal-representative-xrd.internal.dev01.devland.is/swagger-json](https://personal-representative-xrd.internal.dev01.devland.is/swagger-json)
-- Staging: [https://personal-representative-xrd.internal.staging01.devland.is/swagger-json](https://personal-representative-xrd.internal.staging01.devland.is/swagger-json)
-- Production: [https://personal-representative-xrd.internal.innskra.island.is/swagger-json](https://personal-representative-xrd.internal.innskra.island.is/swagger-json)
+- [Development](https://personal-representative-xrd.internal.dev01.devland.is/swagger-json)
+- [Staging](https://personal-representative-xrd.internal.staging01.devland.is/swagger-json)
+- [Production](https://personal-representative-xrd.internal.innskra.island.is/swagger-json)
 
-### OpenAPI URL ##
+### OpenAPI URL
 
-OpenAPI documentation and demoing at
-
-- [https://personal-representative-xrd.dev01.devland.is/swagger](https://personal-representative-xrd.dev01.devland.is/swagger)
+OpenAPI documentation and demoing is available [here](https://personal-representative-xrd.dev01.devland.is/swagger).
 
 ### Service provider usage
 
@@ -68,7 +66,7 @@ Digital service providers do not get access to the service API.
 
 They can use the connection information through two ways.
 
-- Setting up X-Road and use the [PublicAPI](https://docs.devland.is/apps/services/auth/personal-representative-public)
+- Setting up X-Road and use the [public API](https://docs.devland.is/apps/services/auth/personal-representative-public)
 - Use [Digital Iceland’s](https://www.notion.so/Identity-Server-Integration-afde614a247e4b9da4731b2ace1115cd) new login option and setting it up for Personal Representative usage.
   - This requires mapping rights to scope for service provider's client
 
@@ -95,11 +93,7 @@ You can serve this service locally by running:
 yarn start services-auth-personal-representative
 ```
 
-Api open api specs will now be accessible at
-
-```bash
-http://localhost:3376
-```
+The OpenAPI [Swagger UI](http://localhost:3376) is now available.
 
 ### Testing
 
