@@ -8,7 +8,8 @@ Island UI is a component library designed to offer a consistent UI/UX experience
 To execute the unit tests for the Island UI Core, follow these steps:
 
 1. Open your terminal.
-2. Run the following command:
+2. Navigate to the root directory of your project if necessary.
+3. Run the following command:
 
    ```bash
    nx test island-ui-core

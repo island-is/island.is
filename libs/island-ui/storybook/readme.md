@@ -1,7 +1,7 @@
 ```markdown
 # island-ui-storybook
 
-`island-ui-storybook` is a library that was generated with [Nx](https://nx.dev), a smart and extensible build framework. It is utilized for building and testing UI components effectively.
+`island-ui-storybook` is a library generated with [Nx](https://nx.dev), a smart and extensible build framework. It is utilized for building and testing UI components effectively.
 
 ## Running Unit Tests
 

@@ -33,7 +33,7 @@ yarn start island-ui-storybook
 
 - Some components require importing React using `import * as React from 'react'` to ensure correct rendering of props, interfaces, and types within Storybook. This is a temporary workaround for resolving component props when using the `FC` interface and displaying them in documentation.
 
-- By default, Storybook uses `react-docgen` for generating prop documentation. (For more details, see [here](https://github.com/storybookjs/storybook/blob/master/addons/docs/react/README.md#typescript-props-with-react-docgen)). A [pull request](https://github.com/reactjs/react-docgen/pull/352) has been open for some time to address issues with imported interfaces and types, and it has not yet been merged. Currently, if an interface is imported from a deeply nested file, it will display as `any` instead of the correct type.
+- By default, Storybook uses `react-docgen` for generating prop documentation. For more details, see [React Docgen Documentation](https://github.com/storybookjs/storybook/blob/master/addons/docs/react/README.md#typescript-props-with-react-docgen). A [pull request](https://github.com/reactjs/react-docgen/pull/352) has been open for some time to address issues with imported interfaces and types, and it has not yet been merged. Currently, if an interface is imported from a deeply nested file, it will display as `any` instead of the correct type.
 
 ## Theme
 

@@ -15,4 +15,4 @@ Running this command will initiate the test suite, allowing you to verify that a
 ## Additional Resources
 
 - For more information on Nx and its capabilities, visit the official [Nx website](https://nx.dev).
-- To learn more about Jest, explore their [documentation](https://jestjs.io/docs/getting-started).
+- To learn more about Jest, explore the [Jest documentation](https://jestjs.io/docs/getting-started).
