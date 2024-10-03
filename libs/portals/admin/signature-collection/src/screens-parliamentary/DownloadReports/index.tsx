@@ -2,13 +2,15 @@ import { useLocale } from '@island.is/localization'
 import { ActionCard, Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
-import { SignatureCollectionArea } from '@island.is/api/schema'
+import {
+  SignatureCollectionArea,
+  SignatureCollectionAreaSummaryReport,
+} from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import { usePDF } from '@react-pdf/renderer'
 import MyPdfDocument from './MyPdfDocument'
 import { SignatureCollectionAreaSummaryReportDocument } from './MyPdfDocument/areaSummary.generated'
 import { useLazyQuery } from '@apollo/client'
-import { useDebounce } from 'react-use'
 
 export const DownloadReports = ({
   areas,
@@ -27,26 +29,27 @@ export const DownloadReports = ({
 
   const [document, updateDocument] = usePDF({
     document: (
-      <MyPdfDocument report={data?.signatureCollectionAreaSummaryReport} />
+      <MyPdfDocument
+        report={
+          data?.signatureCollectionAreaSummaryReport as SignatureCollectionAreaSummaryReport
+        }
+      />
     ),
   })
 
-  // Used debounce to make sure the document is ready before it is opened
-  useDebounce(
-    () => {
-      if (!document.loading && document.url) {
-        window.open(document.url, '_blank')
-      }
-    },
-    200,
-    [data],
-  )
-
+  // Update document with after correct data is fetched
   useEffect(() => {
     if (data?.signatureCollectionAreaSummaryReport) {
       updateDocument()
     }
-  }, [data, updateDocument])
+  }, [data])
+
+  // Open the document in a new tab when it has been generated
+  useEffect(() => {
+    if (!document.loading && document.url) {
+      window.open(document.url, '_blank')
+    }
+  }, [document.loading, document.url])
 
   return (
     <Box>

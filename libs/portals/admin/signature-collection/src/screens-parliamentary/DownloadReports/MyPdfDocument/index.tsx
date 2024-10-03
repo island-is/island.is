@@ -54,7 +54,7 @@ const MyPdfDocument = ({
               <View style={styles.dividerLineBox}>
                 <View style={styles.dividerLine} />
               </View>
-              <Text style={styles.text}>Engar upplýsingar til að birta</Text>
+              <Text style={styles.header}>Engar upplýsingar til að birta</Text>
             </Page>
           )}
     </Document>

@@ -292,7 +292,7 @@ export const m = defineMessages({
   },
   downloadButton: {
     id: 'admin-portal.signature-collection:downloadButton',
-    defaultMessage: 'Hlaða niður',
+    defaultMessage: 'Sækja skýrslu',
     description: '',
   },
   searchInListPlaceholder: {
