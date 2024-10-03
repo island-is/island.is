@@ -1,47 +1,46 @@
-```markdown
-# Utility Scripts
+# Utility scripts
 
-A collection of bash scripts to run various utilities.
+A collection of bash scripts to run utilities.
 
-## Cypress Tests
+TODO: chapter for each script
 
-Run required proxy services. Supports both `docker` and `podman`.
+## Cypress tests
 
-### Run Test Proxies
+Run required proxy services. Supports `podman`.
 
 ```bash
 ./scripts/run-test-proxies.sh [--builder BUILDER; default="docker"]
 ```
 
-### Stop Test Proxies
+Stop proxies
 
 ```bash
-./scripts/stop-test-proxies.sh [--builder BUILDER; default="docker"]
+./scripts/stop-test-proxies.sh [BUILDER; default="docker"]
 ```
 
-## Dependency Cruiser
+## Dependency cruiser
 
-Generate a visual graph of module import resolution to aid debugging in large monorepos:
+A visual graph of module import resolution can help with debugging, especially in a large monorepo. The following script will output a `dot` file that can be rendered to svg (with GraphViz) and then to `html` to be opened in any browser.
 
 ```bash
-# Replace 'firefox' with your preferred browser
+# replace firefox with a browser of your choice
 yarn cruise -p apps/services/sessions && firefox depgraph.html
 ```
 
-This command relies on [dependency-cruiser](https://www.npmjs.com/package/dependency-cruiser). Customize configuration by creating a `.dependency-cruiser.local.js` file in the repository root.
+This uses [dependency-cruiser](https://www.npmjs.com/package/dependency-cruiser) behind the scenes. Feel free to add `.dependency-cruiser.local.js` in the repo root to merge your custom config with the default.
 
-## HMR Benchmark
+## HMR benchmark
 
-Benchmark startup and hot-reload time of NX `serve` targets, useful for evaluating NestJS services performance.
+The following command can be used to benchmark the startup and hot-reload time of any NX `serve` targets. The default message is the service ready output for NestJS services.
+
+Run `yarn hmr-benchmark --help` for available options
 
 ```bash
-yarn hmr-benchmark --help
-yarn hmr-benchmark --app <service name> --message <expected startup message> --logfile [default: workspace root]
+yarn hmr-benchmark --app <service name> --message <the output message to watch> --logfile [default: workspace root]
 ```
 
 Example:
 
 ```bash
 yarn hmr-benchmark --app services-sessions --message 'Nest application successfully started'
-```
 ```

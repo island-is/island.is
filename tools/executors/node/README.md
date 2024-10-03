@@ -1,11 +1,13 @@
-## Custom node:build executor
+# Custom node:build executor
 
-Runs `@nrwl/node:webpack` in local development and `@anatine/esbuildnx:build` for production builds. This approach is necessary as `esbuildnx` is used for production builds, but its watch logic is currently unreliable.
+Runs @nrwl/node:webpack in local dev and @anatine/esbuildnx:build for production builds.
 
-### Development
+We do this because we need esbuildnx for production builds but its watch logic is broken and hurts DX.
 
-To develop and build `impl.js`, run the following command:
+## Development
 
-```bash
+To develop and build impl.js, you can run this command:
+
+```
 yarn tsc -p tools/executors/node/tsconfig.json --watch
 ```
