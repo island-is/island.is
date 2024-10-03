@@ -106,10 +106,10 @@ export const getAddAttachmentSentDocumentHashList = (
 }
 
 export const getReportId = (application: ApplicationWithAttachments) => {
-  const answers = application.answers as AccidentNotificationAnswers
+  const externalData = application.externalData
   return getValueViaPath(
-    answers,
-    'externalData.submitApplication.data.documentId',
+    externalData,
+    'submitApplication.data.documentId',
   ) as number
 }
 
