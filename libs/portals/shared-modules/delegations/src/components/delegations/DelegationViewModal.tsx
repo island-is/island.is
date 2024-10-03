@@ -10,7 +10,8 @@ import { AccessListContainer } from '../access/AccessList/AccessListContainer/Ac
 import { useAuthScopeTreeLazyQuery } from '../access/AccessList/AccessListContainer/AccessListContainer.generated'
 import {
   AuthCustomDelegation,
-  AuthCustomDelegationIncoming, AuthCustomDelegationOutgoing,
+  AuthCustomDelegationIncoming,
+  AuthCustomDelegationOutgoing,
 } from '../../types/customDelegation'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
@@ -135,7 +136,7 @@ export const DelegationViewModal = ({
               <IdentityCard
                 label={formatMessage(m.validTo)}
                 title={
-                  (delegation?.validTo && isValid(delegation.validTo))
+                  delegation?.validTo && isValid(delegation.validTo)
                     ? format(new Date(delegation?.validTo), 'dd.MM.yyyy')
                     : formatMessage(m.noValidToDate)
                 }
