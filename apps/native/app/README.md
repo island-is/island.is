@@ -4,13 +4,19 @@ This is the native app Ísland.is for iOS and Android.
 
 ## 1. Installation
 
+To get started with the Ísland.is app, you need to install some dependencies. Run the following commands in your terminal:
+
 ```bash
 yarn install
 bundle install
 npx pod-install
 ```
 
+## 2. Building the App
+
 ### 2a. Building for iOS
+
+To build the app for iOS, use the command:
 
 ```bash
 yarn run ios
@@ -18,48 +24,47 @@ yarn run ios
 
 ### 2b. Building for Android
 
-Follow documentation for setting up android [here](https://reactnative.dev/docs/environment-setup?platform=android&guide=native).
+To set up your environment for Android, follow the [official documentation](https://reactnative.dev/docs/environment-setup?platform=android&guide=native).
 
-Open the project in android studio and then local.properties should be created, if you want to skip that, make sure to:
+1. Open the project in Android Studio, which will generate the `local.properties` file. Alternatively, you can manually add a `local.properties` file to `/apps/native/app/android`.
 
-Add `local.properties` file to `/apps/native/app/android`
+2. Add the `google-services.json` file to `/apps/native/app/android/app`.
 
-Add `google-services.json` file to `/apps/native/app/android/app`
+3. Open an Android emulator or connect a physical device.
 
-Open up an android emulator or connect a physical device
+4. Navigate to `/apps/native/app/android` in your terminal and run the following command to build the project:
 
-in `/apps/native/app/android` run the following commands:
+   ```bash
+   ./gradlew assembleDebug
+   ```
 
-```ts
-// Build the project
-./gradlew assembleDebug
-```
+5. To install the app on an **emulator**, run:
 
-If using an **emulator** do the following:
+   ```bash
+   adb install ./app/build/outputs/apk/dev/debug/app-dev-debug.apk*
+   ```
 
-```ts
-// Move to device
-adb install ./app/build/outputs/apk/dev/debug/app-dev-debug.apk*
-```
+6. To install the app on a **physical device**:
 
-If using a **physical device** do the following:
+   a. List devices and their IDs:
 
-```ts
-// List devices and their ids
-adb devices
+   ```bash
+   adb devices
+   ```
 
-// Use deviceId from previous command to move to physical device
-adb -s <deviceId> install  ./app/build/outputs/apk/dev/debug/app-dev-debug.apk*
-```
+   b. Use the `deviceId` from the previous command to install on the physical device:
 
-For both emulators and physical devices:
+   ```bash
+   adb -s <deviceId> install ./app/build/outputs/apk/dev/debug/app-dev-debug.apk*
+   ```
 
-```ts
-// fix port for device
-adb reverse tcp:8081 tcp:8081
-```
+7. For both emulators and physical devices, run:
 
-and finally
+   ```bash
+   adb reverse tcp:8081 tcp:8081
+   ```
+
+Finally, to start the application:
 
 ```bash
 yarn start
@@ -71,9 +76,11 @@ or
 yarn run android
 ```
 
-### 3. Start development server
+## 3. Start Development Server
 
-```
+Start the development server with:
+
+```bash
 yarn start
 ```
 
@@ -81,35 +88,44 @@ yarn start
 
 ### Publishing a Beta
 
+To publish a beta version of the app, run:
+
 ```bash
 yarn run beta
 ```
 
-### After release
+### After Release
 
-Make sure to increment the version of the app by running `yarn run version:increment` and commit the changes.
+After releasing a version, increment the app version using:
 
 ```bash
 yarn run version:increment
+```
+
+Then commit the changes:
+
+```bash
 git add .
 git commit -m "feat(native/app): release v1.0.0"
 ```
 
-## NX commands
+## NX Commands
 
-NX command example to proxy arguments to `package.json` scripts
+Use NX commands to proxy arguments to `package.json` scripts:
 
 ```bash
 nx run native-app:script --name=<some-script-from-package.json>
 ```
 
+For example, to run frontend code generation:
+
 ```bash
 nx run native-app:codegen/frontend-client
 ```
 
-## NOTES
+## Notes
 
-- ci jobs
+- CI Jobs:
   - codegen
   - lint
   - build

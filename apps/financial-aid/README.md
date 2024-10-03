@@ -1,83 +1,92 @@
+```markdown
 # Financial Aid System for Samband Sveitarfélaga
 
 This is the financial aid system created for Samband Sveitarfélaga by Kolibri.
 
-The system is one api, one backend and two clients called Ósk and Veita.
+The system consists of one API, one backend, and two clients called Ósk and Veita.
 
 ## Initial Setup
 
-First, make sure you have docker, then run:
+Ensure Docker is installed, then execute:
 
 - `yarn dev-services financial-aid-backend`
 
-Run migrations and seed:
+Run migrations and seed the database:
 
 - `yarn nx run financial-aid-backend:migrate`
 - `yarn nx run financial-aid-backend:seed`
 
-### Running locally
+### Running Locally
 
-Run backend:
+Start the backend:
 
 - `yarn start financial-aid-backend`
 
-Run api:
+Start the API:
 
 - `yarn start financial-aid-api`
 
-Run Veita client:
+Start the Veita client:
 
 - `yarn start financial-aid-web-veita`
 
-Run Ósk:
+To start Ósk (note: Ósk is deprecated):
 
 - `yarn start financial-aid-web-osk`
-  NOTE web-osk is not in use anymore
-  The application ósk is in the application system
-  For documentation look here <https://github.com/island-is/island.is/blob/cde4392eda5b82877dd2f79fd1854f6f4fb2a09e/apps/application-system/README.md?plain=1#L3>
+  
+  **Note:** The "Ósk" application is located in the application system. Reference the documentation here: [Application System Documentation](https://github.com/island-is/island.is/blob/cde4392eda5b82877dd2f79fd1854f6f4fb2a09e/apps/application-system/README.md?plain=1#L3)
 
-Go to localhost:4200.
+Visit [localhost:4200](http://localhost:4200).
 
-## To test authentication locally
+## Testing Authentication Locally
 
-To sign in you'll need to configure these environment variables:
+To sign in, set the following environment variables:
 
 - `NEXTAUTH_URL=http://localhost:4200`
 - `IDENTITY_SERVER_DOMAIN=identity-server.dev01.devland.is`
-- `IDENTITY_SERVER_SECRET=` - get a client secret for the `@samband.is/financial-aid` client.
+- `IDENTITY_SERVER_SECRET` - Obtain a client secret for the `@samband.is/financial-aid` client.
 
-You can sign in to Veita using Gervimaður Færeyjar (0102399).
+Use Gervimaður Færeyjar (0102399) to sign in to Veita.
 
-If you need https, you can install <https://github.com/cameronhunter/local-ssl-proxy>:
+For HTTPS support, install [local-ssl-proxy](https://github.com/cameronhunter/local-ssl-proxy):
 
 - `npm install -g local-ssl-proxy`
 
-- change defaultcookie in financial-aid/api/src/app/modules/auth/auth.controller.ts:
+Modify the `defaultCookieOptions` in `financial-aid/api/src/app/modules/auth/auth.controller.ts`:
 
+  ```typescript
   const defaultCookieOptions: CookieOptions = {
-  secure: true,
-  }
+    secure: true,
+  };
+  ```
 
-- add .env to web project and change port to 4202
-- start project
+Create a `.env` file in the web project and change the port to 4202. Start the project and run:
+
 - `local-ssl-proxy --source 4200 --target 4202`
 
-### File upload locally
+### File Upload Locally
 
-To test/develop file upload locally you will need to set the secrets: `process.env.CLOUDFRONT_PUBLIC_KEY_ID` and `process.env.CLOUDFRONT_PRIVATE_KEY` in your .env file.
+To test or develop file uploads locally, set the secrets `process.env.CLOUDFRONT_PUBLIC_KEY_ID` and `process.env.CLOUDFRONT_PRIVATE_KEY` in your `.env` file.
 
-Then you need to turn off web safety, we use the following command: `open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security`, to turn web safety back on you need to restart Chrome.
-
-## How to connect to X-Road
-
-To use national registry service you need to run:
+Disable web security in Chrome with the following command:
 
 ```bash
-  .api/scripts/run-xroad-proxy.sh
+open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security
 ```
 
-and make sure the environment variables `XROAD_BASE_PATH_WITH_ENV`, `XROAD_TJODSKRA_MEMBER_CODE`, `XROAD_TJODSKRA_API_PATH` and `XROAD_CLIENT_ID` are available.
+Restart Chrome to re-enable web security.
 
-## Code owners and maintainers
+## Connecting to X-Road
+
+To use the national registry service, execute:
+
+```bash
+.api/scripts/run-xroad-proxy.sh
+```
+
+Ensure these environment variables are set: `XROAD_BASE_PATH_WITH_ENV`, `XROAD_TJODSKRA_MEMBER_CODE`, `XROAD_TJODSKRA_API_PATH`, and `XROAD_CLIENT_ID`.
+
+## Code Owners and Maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri-robin-hood)
+```
