@@ -1,10 +1,9 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { IntlShape, MessageDescriptor, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
   Accordion,
-  AlertBanner,
   AlertMessage,
   Box,
   LoadingDots,
