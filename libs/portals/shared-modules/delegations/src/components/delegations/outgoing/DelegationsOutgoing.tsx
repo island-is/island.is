@@ -122,34 +122,34 @@ export const DelegationsOutgoing = () => {
                       key={delegation.id}
                       delegation={delegation}
                       onDelete={
-                        !isGeneralMandate &&
-                        ((delegation) => {
+                        !isGeneralMandate ?
+                        (delegation) => {
                           setDelegation(
                             delegation as AuthCustomDelegationOutgoing,
                           )
-                        })
+                        } : undefined
                       }
                       onEdit={
-                        !isGeneralMandate &&
-                        ((delegation) =>
+                        !isGeneralMandate ?
+                        (delegation) =>
                           navigate(
                             `${DelegationPaths.Delegations}/${delegation.id}`,
-                          ))
+                          ) : undefined
                       }
                       onRenew={
-                        !isGeneralMandate &&
+                        !isGeneralMandate ?
                         ((delegation) =>
                           navigate(
                             `${DelegationPaths.Delegations}/${delegation.id}`,
-                          ))
+                          )) : undefined
                       }
                       onView={
-                        isGeneralMandate &&
-                        ((delegation) => {
+                        isGeneralMandate ?
+                        (delegation) => {
                           setDelegationView(
                             delegation as AuthCustomDelegationIncoming,
                           )
-                        })
+                        } : undefined
                       }
                       variant="outgoing"
                     />

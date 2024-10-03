@@ -10,14 +10,15 @@ import { AccessListContainer } from '../access/AccessList/AccessListContainer/Ac
 import { useAuthScopeTreeLazyQuery } from '../access/AccessList/AccessListContainer/AccessListContainer.generated'
 import {
   AuthCustomDelegation,
-  AuthCustomDelegationIncoming,
+  AuthCustomDelegationIncoming, AuthCustomDelegationOutgoing,
 } from '../../types/customDelegation'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { AuthDelegationType } from '@island.is/api/schema'
+import isValid from 'date-fns/isValid'
 
-type DelegationIncomingModalProps = {
-  delegation?: AuthCustomDelegationIncoming
+type DelegationViewModalProps = {
+  delegation?: AuthCustomDelegation
   direction?: 'incoming' | 'outgoing'
 } & Pick<ModalProps, 'onClose' | 'isVisible'>
 
@@ -26,7 +27,7 @@ export const DelegationViewModal = ({
   direction = 'incoming',
   onClose,
   ...rest
-}: DelegationIncomingModalProps) => {
+}: DelegationViewModalProps) => {
   const { formatMessage, lang } = useLocale()
   const { userInfo } = useAuth()
   const isOutgoing = direction === 'outgoing'
@@ -134,7 +135,7 @@ export const DelegationViewModal = ({
               <IdentityCard
                 label={formatMessage(m.validTo)}
                 title={
-                  delegation?.validTo
+                  (delegation?.validTo && isValid(delegation.validTo))
                     ? format(new Date(delegation?.validTo), 'dd.MM.yyyy')
                     : formatMessage(m.noValidToDate)
                 }
@@ -149,7 +150,7 @@ export const DelegationViewModal = ({
           </>
         )}
       </Box>
-      {delegation?.type !== 'GeneralMandate' && (
+      {delegation?.type !== AuthDelegationType.GeneralMandate && (
         <AccessListContainer
           delegation={delegation}
           scopes={delegation?.scopes}

@@ -37,7 +37,7 @@ const getTags = (delegation: AuthCustomDelegation) =>
   sortBy(
     uniqBy(
       delegation.scopes?.map((scope) => ({
-        name: scope?.apiScope ? getTagName(scope?.apiScope) : scope.displayName,
+        name: scope?.apiScope ? getTagName(scope?.apiScope as AuthApiScope) : scope.displayName,
         isExpired: isDateExpired(scope.validTo),
       })),
       'name',
@@ -48,10 +48,10 @@ const getTags = (delegation: AuthCustomDelegation) =>
 interface AccessCardProps {
   delegation: AuthCustomDelegation
 
-  onDelete?: ((delegation: AuthCustomDelegation) => void) | false
-  onEdit?: ((delegation: AuthCustomDelegation) => void) | false
-  onView?: ((delegation: AuthCustomDelegation) => void) | false
-  onRenew?: ((delegation: AuthCustomDelegation) => void) | false
+  onDelete?: ((delegation: AuthCustomDelegation) => void)
+  onEdit?: ((delegation: AuthCustomDelegation) => void)
+  onView?: ((delegation: AuthCustomDelegation) => void)
+  onRenew?: ((delegation: AuthCustomDelegation) => void)
 
   variant?: 'outgoing' | 'incoming'
 

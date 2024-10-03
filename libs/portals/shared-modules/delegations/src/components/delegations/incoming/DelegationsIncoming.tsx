@@ -12,7 +12,6 @@ import { AccessDeleteModal } from '../../access/AccessDeleteModal/AccessDeleteMo
 import { AccessCard } from '../../access/AccessCard'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
 import { AuthCustomDelegationIncoming } from '../../../types/customDelegation'
-import { DelegationPaths } from '../../../lib/paths'
 import { DelegationViewModal } from '../DelegationViewModal'
 import { useAuthDelegationsIncomingQuery } from './DelegationIncoming.generated'
 
@@ -72,22 +71,22 @@ export const DelegationsIncoming = () => {
                   }
                   delegation={delegation}
                   onDelete={
-                    isCustom &&
-                    ((delegation) =>
+                    isCustom ?
+                    (delegation) =>
                       delegation.type === AuthDelegationType.Custom &&
                       (() => {
                         setDelegationDelete(
                           delegation as AuthCustomDelegationIncoming,
                         )
-                      }))
+                      }) : undefined
                   }
                   onView={
-                    (isCustom || isGeneralMandate) &&
-                    ((delegation) => {
+                    (isCustom || isGeneralMandate) ?
+                    (delegation) => {
                       setDelegationView(
                         delegation as AuthCustomDelegationIncoming,
                       )
-                    })
+                    } : undefined
                   }
                   variant="incoming"
                 />
