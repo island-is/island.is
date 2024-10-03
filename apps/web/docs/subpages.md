@@ -7,7 +7,7 @@ This document provides an overview and general guidelines for setting up and add
 
 A `SubpageLayout` (`@island.is/web/screens/Layouts/Layouts`) is available in the web app. This layout has a required `main` prop and an optional `details` prop. It is primarily used to organize content if needed. Both props accept ReactNodes, making the main and details sections fully customizable.
 
-Typically, the main content section should introduce the content displayed in the details section. 
+Typically, the main content section should introduce the content displayed in the details section.
 
 For landing pages, this layout should be used with an empty `details` prop.
 

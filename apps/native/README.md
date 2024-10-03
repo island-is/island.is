@@ -4,6 +4,7 @@
 This documentation provides an overview of the features and processes related to Mobile Apps within our platform.
 
 ## Table of Contents
+
 1. Introduction
 2. Features
 3. Getting Started
@@ -57,15 +58,19 @@ If you encounter issues with the Mobile Apps, consider the following solutions:
 Here are some frequently asked questions about Mobile Apps:
 
 1. **How do I reset my password?**
+
    - Navigate to the login screen, select "Forgot Password," and follow the instructions.
 
 2. **How do I update the app?**
+
    - Visit your app store, search for the app, and select "Update" if available.
 
 3. **Why am I not receiving notifications?**
+
    - Check your device settings to ensure notifications are enabled for the app.
 
 4. **How do I enable offline access?**
+
    - Go to the app settings and ensure "Offline Access" is enabled.
 
 5. **Can I use the app on multiple devices?**

@@ -207,7 +207,7 @@ Install <https://github.com/cameronhunter/local-ssl-proxy>:
 
   ```typescript
   const defaultCookieOptions: CookieOptions = {
-  secure: true,
+    secure: true,
   }
   ```
 
@@ -309,9 +309,7 @@ const Component = () => {
   const { features } = useContext(FeatureContext)
 
   if (features.includes(Feature.SECRET_FEATURE)) {
-    return (
-      <p>This will only show on DEV, not STAGING or PROD</p>
-    )
+    return <p>This will only show on DEV, not STAGING or PROD</p>
   }
 }
 ```

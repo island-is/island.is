@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Sessions
 
 REST API to store and list user sessions from our Identity Server.
@@ -11,6 +11,7 @@ To start the service locally, run the following commands:
 yarn dev-init services-sessions
 yarn start services-sessions
 ```
+````
 
 ## Getting Started
 
@@ -66,4 +67,7 @@ yarn nx run services-sessions:migration-create -- --name <migration-name>
 
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
 - [Fuglar](https://github.com/orgs/island-is/teams/fuglar/members)
+
+```
+
 ```

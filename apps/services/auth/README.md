@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Authentication Services
 
 The following services provide APIs for our Authentication Platform. They utilize a shared database and are hosted separately from all other island.is services.
@@ -11,6 +11,7 @@ flowchart TD
     xroad --> personal-representative --> database
     xroad --> personal-representative-public --> database
 ```
+````
 
 ## Services Overview
 
@@ -19,4 +20,7 @@ flowchart TD
 - **[Auth Public API](./public-api/README.md)** - Allows authorized clients to query available delegations. Utilized by the service portal to manage delegations.
 - **[Personal Representative](./personal-representative)** - Used by the Ministry of Social Affairs to manage personal representatives.
 - **[Personal Representative Public](./personal-representative-public)** - Enables external clients to query information about personal representatives.
+
+```
+
 ```

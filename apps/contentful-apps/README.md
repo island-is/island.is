@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Contentful Apps
 
 This Next.js project is designed to host Contentful Apps, which extend and customize Contentful's functionality.
@@ -10,6 +10,7 @@ To start the Contentful Apps Next.js server locally, run the following command:
 ```bash
 yarn start contentful-apps
 ```
+````
 
 Each app defines its own page within this project.
 
@@ -38,4 +39,7 @@ We host the contentful-apps server on both development and production environmen
 The Translation namespace content type uses the Contentful app located here: `/apps/contentful-apps/pages/fields/translation-namespace-json-field.tsx`.
 
 It manages translations for namespaces in your application. This app works in conjunction with the [localization](/libs/localization/README.md) library.
+
+```
+
 ```

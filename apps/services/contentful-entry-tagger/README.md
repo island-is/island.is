@@ -8,9 +8,10 @@ The Contentful Entry Tagger service automatically assigns a tag to newly created
 ## Getting Started
 
 To launch the service, execute the following command:
-
 ```
+
 yarn start services-contentful-entry-tagger
+
 ```
 
 This command initializes a server hosted at `localhost:3333`.

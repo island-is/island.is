@@ -13,17 +13,19 @@ The following sections detail the services available, their functions, and instr
 
 ### 1. User Authentication Service
 
-**Description**: 
+**Description**:
 The User Authentication Service is responsible for managing user login and registration processes. It provides secure access management via token generation and validation.
 
 **Usage**:
-- **Login**: 
+
+- **Login**:
+
   - Endpoint: `/api/auth/login`
   - Method: POST
-  - Parameters: 
+  - Parameters:
     - `username` (string): The username of the user.
     - `password` (string): The password of the user.
-  - Response: 
+  - Response:
     - On success: JSON object with user details and authentication token.
     - On failure: Error message with status code.
 
@@ -44,7 +46,9 @@ The User Authentication Service is responsible for managing user login and regis
 The Data Storage Service manages the saving, retrieving, and deleting of user data. It ensures secure and efficient data handling and is scalable to accommodate large datasets.
 
 **Usage**:
+
 - **Save Data**:
+
   - Endpoint: `/api/data/save`
   - Method: POST
   - Parameters:
@@ -54,6 +58,7 @@ The Data Storage Service manages the saving, retrieving, and deleting of user da
     - On failure: Error message with status code.
 
 - **Fetch Data**:
+
   - Endpoint: `/api/data/fetch`
   - Method: GET
   - Parameters: None
@@ -73,5 +78,4 @@ The Data Storage Service manages the saving, retrieving, and deleting of user da
 ## Contact
 
 For further information, assistance, or to report an issue, please contact the support team at support@example.com.
-
 ```

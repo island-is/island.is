@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Search Indexer Migration
 
 The migration directory contains multiple entry files that are executed in series within separate `initContainers` in the cluster. The migration files serve several tasks:
@@ -32,6 +32,7 @@ Execute the migration with the following command:
 ```bash
 yarn nx run services-search-indexer:migrate
 ```
+````
 
 This process updates the ES indexes to the latest version specified by the `content-search-index-manager` library. It also imports all Kibana saved objects located in the `./config/kibana` directory.
 
@@ -44,4 +45,7 @@ yarn nx run services-search-indexer:migrate --sync-kibana
 ```
 
 A sync retrieves saved objects from a locally running Kibana instance and updates your local Kibana files. It searches for the objects' IDs in the `./config/kibana` directory on your instance and updates them accordingly. Be sure to perform `migrate` before running `sync-kibana`.
+
+```
+
 ```

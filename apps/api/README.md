@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # API Documentation
 
 ## Quickstart
@@ -8,6 +8,7 @@ Before you begin, ensure Docker is running on your machine. For the first-time s
 ```bash
 yarn dev-init api
 ```
+````
 
 Subsequently, to start the application, run:
 
@@ -135,4 +136,7 @@ If your domain needs to introduce fields within the GraphQL schema, ensure to ex
 - [Norda](https://github.com/orgs/island-is/teams/norda/members): `libs/api/domains/documents`, `libs/api/domains/national-registry`
 - [Stefna](https://github.com/orgs/island-is/teams/stefna/members): `libs/api/domains/content-search`
 - [Advania](https://github.com/orgs/island-is/teams/advania/members): `libs/api/domains/api-catalogue`
+
+```
+
 ```

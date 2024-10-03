@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # License API
 
 ## Overview
@@ -16,8 +16,10 @@ A RESTful API that facilitates the updating of digital licenses for authenticate
    ```bash
    yarn dev-init license-api
    ```
+````
 
 3. Start the application:
+
    ```bash
    yarn dev license-api
    ```
@@ -33,4 +35,7 @@ A RESTful API that facilitates the updating of digital licenses for authenticate
 ## Code Owners and Maintainers
 
 - **Hugsmiðjan**: [View Members](https://github.com/orgs/island-is/teams/hugsmidjan/members)
+
+```
+
 ```

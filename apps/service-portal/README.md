@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Service Portal
 
 ## About
@@ -7,7 +7,7 @@ The service portal is the user's personal page where they can find all informati
 
 ## URLs
 
-- [Development](<http://localhost:4200>)
+- [Development](http://localhost:4200)
 - [Dev](https://beta.dev01.devland.is/minarsidur)
 - [Staging](https://beta.staging01.devland.is/minarsidur)
 - [Production](https://island.is/minarsidur)
@@ -21,6 +21,7 @@ You might also need to set up the X-Road service.
 ```bash
 sh ./scripts/run-xroad-proxy.sh
 ```
+````
 
 Then, start [the GraphQL API](../api/README.md#getting-started) and the service portal:
 
@@ -86,4 +87,7 @@ A Sentry project is available [here](https://sentry.io/organizations/island_is/i
 
 - [Hugsmiðjan](https://github.com/orgs/island-is/teams/hugsmidjan)
 - [Norda](https://github.com/orgs/island-is/teams/norda/members)
+
+```
+
 ```

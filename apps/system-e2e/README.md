@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # System Testing
 
 Welcome to testing. For your convenience, each section has a TL;DR, so you can quickly get started.
@@ -28,10 +28,11 @@ For local development and testing, start your app. Generally, the first-time set
 3. `yarn dev <app>`
 
 {% hint style="example" %}
+
 1. `yarn get-secrets application-system-form`
 2. `yarn dev-init application-system-form`
 3. `yarn dev application-system-form`
-{% endhint %}
+   {% endhint %}
 
 However, not all projects support this or have incomplete setups. If this fails, check its `README.md` and follow the instructions. If that fails, contact the QA team to remedy the documentation and improve the initial setup.
 
@@ -44,6 +45,7 @@ The first time you run Playwright, you'll need to set up its runtime environment
 - Using a path pattern (regex): `yarn system-e2e '<pattern>'`
 
 {% hint style="example" %}
+
 - smoke: `yarn system-e2e 'application-system-form/smoke'`
 - acceptance: `yarn system-e2e 'service-portal/acceptance'`
 - both: `yarn system-e2e 'system-e2e/.*/web'`
@@ -83,10 +85,11 @@ web/                      (app name)
 └── acceptance/
     └── search.spec.ts
 ```
+````
 
 ## 🗃️ Spec Files
 
-A spec file should have only one description (`test.describe`) of what part of an app is being tested. Therein can be one or more test cases (`test`) with descriptions of each scenario. Setup and teardown can be done in `test.beforeAll`, `test.beforeEach`, `test.afterAll`, and `test.afterEach`. 
+A spec file should have only one description (`test.describe`) of what part of an app is being tested. Therein can be one or more test cases (`test`) with descriptions of each scenario. Setup and teardown can be done in `test.beforeAll`, `test.beforeEach`, `test.afterAll`, and `test.afterEach`.
 
 Example:
 
@@ -205,4 +208,7 @@ This is an infrastructure issue. If it appears in your dev tests, contact DevOps
 ## ⌛ Tests are Timing Out
 
 This may indicate local network issues or application performance problems. It can sometimes be mitigated by increasing the timeout with `page.goto('/my-url', { timeout: Timeout.medium })`.
+
+```
+
 ```

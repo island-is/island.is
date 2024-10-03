@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # User Profile
 
 ## About
@@ -13,6 +13,7 @@ To get started quickly, execute the following commands:
 yarn dev-init services-user-profile
 yarn dev services-user-profile
 ```
+````
 
 These commands are shortcuts for the detailed steps listed below.
 
@@ -54,4 +55,7 @@ yarn start services-user-profile
 
 - [Norda](https://github.com/orgs/island-is/teams/norda/members)
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)
+
+```
+
 ```

@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Financial Aid System for Samband Sveitarfélaga
 
 This is the financial aid system created for Samband Sveitarfélaga by Kolibri.
@@ -33,7 +33,7 @@ Start the Veita client:
 To start Ósk (note: Ósk is deprecated):
 
 - `yarn start financial-aid-web-osk`
-  
+
   **Note:** The "Ósk" application is located in the application system. Reference the documentation here: [Application System Documentation](https://github.com/island-is/island.is/blob/cde4392eda5b82877dd2f79fd1854f6f4fb2a09e/apps/application-system/README.md?plain=1#L3)
 
 Visit [localhost:4200](http://localhost:4200).
@@ -54,11 +54,12 @@ For HTTPS support, install [local-ssl-proxy](https://github.com/cameronhunter/lo
 
 Modify the `defaultCookieOptions` in `financial-aid/api/src/app/modules/auth/auth.controller.ts`:
 
-  ```typescript
-  const defaultCookieOptions: CookieOptions = {
-    secure: true,
-  };
-  ```
+```typescript
+const defaultCookieOptions: CookieOptions = {
+  secure: true,
+}
+```
+````
 
 Create a `.env` file in the web project and change the port to 4202. Start the project and run:
 
@@ -89,4 +90,7 @@ Ensure these environment variables are set: `XROAD_BASE_PATH_WITH_ENV`, `XROAD_T
 ## Code Owners and Maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri-robin-hood)
+
+```
+
 ```

@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # X-Road Collector
 
 ## Overview
@@ -22,6 +22,7 @@ To start the X-Road Collector, execute the following command:
 ```bash
 yarn start services-xroad-collector
 ```
+````
 
 For detailed information, refer to the [API Catalogue Services] documentation.
 
@@ -29,5 +30,8 @@ For detailed information, refer to the [API Catalogue Services] documentation.
 
 - Maintained by: [Advania](https://github.com/orgs/island-is/teams/advania/members)
 
-[API Catalogue Services]: ../../../libs/api-catalogue/services/README.md
+[api catalogue services]: ../../../libs/api-catalogue/services/README.md
+
+```
+
 ```
