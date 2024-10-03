@@ -3,12 +3,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  Pass,
+  PassData,
   PassDataInput,
-  RevokePassData,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
-import {
+  PassRevocationData,
   PassVerificationData,
   Result,
   VerifyInputData,
@@ -21,6 +18,7 @@ import {
   nationalIdIndex,
 } from '../drivingLicenseMapper'
 import { DrivingDigitalLicenseClientConfig } from '../drivingLicenseClient.config'
+import { SmartSolutionsApi } from '@island.is/clients/smartsolutions'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'driving-license-service'
@@ -34,14 +32,14 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
     private drivingLicenseApi: DrivingLicenseApi,
     protected smartApi: SmartSolutionsApi,
   ) {
-    super(logger, smartApi)
+    super()
   }
 
   pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<Pass | undefined>> {
+  ): Promise<Result<PassData | undefined>> {
     const inputFieldValues = inputData.inputFieldValues ?? []
     //small check that nationalId doesnt' already exist
     if (
@@ -63,7 +61,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
   async pullUpdate(
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<Pass | undefined>> {
+  ): Promise<Result<PassData | undefined>> {
     let data
     try {
       data = await Promise.all([
@@ -129,7 +127,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
       ? {
           imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
         }
-      : null
+      : undefined
 
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
@@ -144,7 +142,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
   revoke(
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<RevokePassData>> {
+  ): Promise<Result<PassRevocationData>> {
     const passTemplateId = this.config.passTemplateId
     const payload: PassDataInput = {
       inputFieldValues: [mapNationalId(nationalId)],

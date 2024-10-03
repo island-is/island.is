@@ -130,6 +130,46 @@ export type PassVerificationData = {
   }
 }
 
+export type PassData = {
+  distributionUrl: string
+  deliveryPageUrl: string
+  distributionQRCode: string
+  id: string
+  expirationDate?: Date
+  whenCreated?: Date
+  whenModified?: Date
+}
+
+export type PassRevocationData = {
+  success: boolean
+}
+
+export type PassDataInput = {
+  expirationDate?: string
+  expirationDateWithoutTime?: string
+  expirationTime?: string
+  passTemplateId?: string
+  id?: string
+  inputFieldValues?: Array<{
+    id?: string
+    identifier?: string
+    passInputFieldId?: string
+    value?: string
+  }>
+  thumbnail?: {
+    description?: string
+    filename?: string
+    height?: number
+    id?: string
+    imageBase64String?: string
+    originalUrl?: string
+    title?: string
+    url?: string
+    width?: number
+  }
+  validFrom?: string
+}
+
 export type Result<ResultType, ErrorType = ServiceError> =
   | {
       ok: true

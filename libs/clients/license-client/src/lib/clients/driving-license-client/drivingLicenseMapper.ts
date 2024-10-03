@@ -69,9 +69,7 @@ const formatRights = (
 
 export const nationalIdIndex = 'kennitala'
 
-export const mapNationalId = (
-  nationalId: string,
-): PassInputFieldValueDataInput => {
+export const mapNationalId = (nationalId: string) => {
   return {
     identifier: nationalIdIndex,
     value: nationalId ? formatSsn(nationalId) : '',
