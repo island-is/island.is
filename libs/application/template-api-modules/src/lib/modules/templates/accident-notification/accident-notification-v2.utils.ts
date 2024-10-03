@@ -267,6 +267,10 @@ const getAtHome = (answers: AccidentNotificationAnswers) => {
     'homeAccident',
   ) as HomeAccidentV2
 
+  if (!homeAccident) {
+    return undefined
+  }
+
   return (
     homeAccident && {
       address: homeAccident.address ?? '',
@@ -280,7 +284,7 @@ const getAtHome = (answers: AccidentNotificationAnswers) => {
 const getAtWork = (answers: AccidentNotificationAnswers) => {
   const workMachine = getValueViaPath(answers, 'workMachine') as WorkMachineV2
 
-  if (!workMachine?.descriptionOfMachine) {
+  if (!workMachine || !workMachine?.descriptionOfMachine) {
     return undefined
   }
 
@@ -294,15 +298,17 @@ const getAtSailorWork = (answers: AccidentNotificationAnswers) => {
     'fishingShipInfo',
   ) as FishingShipInfoV2
 
-  return (
-    shipLocation && {
-      shipLocation: shipLocation,
-      shipName: fishingShipInfo.shipName ?? '',
-      shipDesignation: fishingShipInfo.shipCharacters ?? '',
-      shipHomePort: fishingShipInfo.homePort ?? '',
-      shipRegistryNumber: fishingShipInfo.shipRegisterNumber ?? '',
-    }
-  )
+  if (!shipLocation || !fishingShipInfo) {
+    return undefined
+  }
+
+  return {
+    shipLocation: shipLocation,
+    shipName: fishingShipInfo.shipName ?? '',
+    shipDesignation: fishingShipInfo.shipCharacters ?? '',
+    shipHomePort: fishingShipInfo.homePort ?? '',
+    shipRegistryNumber: fishingShipInfo.shipRegisterNumber ?? '',
+  }
 }
 
 const getEmployer = (
