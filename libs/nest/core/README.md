@@ -1,7 +1,9 @@
+```markdown
 # Nest Core
 
-This library contains reusable NestJS code to be used in other Nest apps.
+This library provides reusable NestJS components that can be used in other Nest applications.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test nest-core` to execute the unit tests via [Jest](https://jestjs.io).
+To run the unit tests, execute the command `nx test nest-core`. This will initiate the tests using [Jest](https://jestjs.io).
+```

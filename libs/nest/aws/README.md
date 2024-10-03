@@ -1,7 +1,15 @@
-# Nest Aws
+```markdown
+# Nest AWS
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test nest-aws` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, run the following command:
+
+```
+nx test nest-aws
+```
+
+This will execute the unit tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
+```

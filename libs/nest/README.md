@@ -2,28 +2,28 @@
 """
 Nest Modules
 
-This module demonstrates the nested module pattern in Python.
+This module demonstrates the nested module pattern in Python by defining functions and classes
+that return specific greeting messages from different levels of the module hierarchy.
 """
 
 def hello_from_main():
     """
-    A simple function to demonstrate the primary module's greeting.
+    Return a greeting message from the main module.
 
     Returns:
         str: A greeting message from the main module.
     """
     return "Hello from the main module!"
 
-
 class OuterModule:
     """
-    A class representing an outer module which contains a nested module.
+    Represents an outer module which contains an inner module and provides specific functionality.
     """
 
     @staticmethod
     def hello_from_outer():
         """
-        A simple function to demonstrate the outer module's greeting.
+        Return a greeting message from the outer module.
 
         Returns:
             str: A greeting message from the outer module.
@@ -32,13 +32,13 @@ class OuterModule:
 
     class InnerModule:
         """
-        A class representing an inner module within the outer module.
+        Represents an inner module within the outer module, demonstrating a nested class structure.
         """
 
         @staticmethod
         def hello_from_inner():
             """
-            A simple function to demonstrate the inner module's greeting.
+            Return a greeting message from the inner module.
 
             Returns:
                 str: A greeting message from the inner module.

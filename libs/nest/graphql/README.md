@@ -1,8 +1,9 @@
+```markdown
 # Nest GraphQL Utilities
 
 This library exports the following utilities:
 
-### `@CacheControl(options)`
+## `@CacheControl(options)`
 
 This decorator can be used to set the cache control directive in your GraphQL resolvers.
 
@@ -34,13 +35,13 @@ export class Article {
 }
 ```
 
-Please read Apollo's documentation on [server-side caching](https://www.apollographql.com/docs/apollo-server/performance/caching/) to understand how caching works.
+For more information, please refer to Apollo's documentation on [server-side caching](https://www.apollographql.com/docs/apollo-server/performance/caching/).
 
-### `@CacheField(returnType, options)`
+## `@CacheField(returnType, options)`
 
-This decorator extends Nest's Field decorator to also configure the CacheControl directive. It defaults to `inheritMaxAge: true` if no cacheControl configuration is provided. This is super useful for non-scalar fields as these fields will otherwise break caching in parent resolvers.
+This decorator extends Nest's Field decorator to also configure the CacheControl directive. It defaults to `inheritMaxAge: true` if no cacheControl configuration is provided. This is particularly useful for non-scalar fields as these fields can otherwise disrupt caching in parent resolvers.
 
-The above example can thus be shortened to this:
+The example above can be abbreviated as follows:
 
 ```typescript
 @ObjectType()
@@ -48,17 +49,18 @@ export class Article {
   @CacheField(() => Image)
   image: Image
 
-  @CacheControl(() => ArticleAnalytics, { cacheControl: { maxAge: 3600 } })
+  @CacheField(() => ArticleAnalytics, { cacheControl: { maxAge: 3600 } })
   analytics: ArticleAnalytics
 }
 ```
 
-### 🚀 How to Verify Caching Setup
+## 🚀 How to Verify Caching Setup
 
 **Check Cache-Control Headers**: When making a GraphQL query, inspect the HTTP response headers to ensure that the `Cache-Control` header is present. This header dictates how and for how long the response should be cached.
 
-Please read Apollo's documentation on [server-side caching](https://www.apollographql.com/docs/apollo-server/performance/caching/) to understand how caching works.
+For more details, please see Apollo's documentation on [server-side caching](https://www.apollographql.com/docs/apollo-server/performance/caching/).
 
-## Running unit tests
+## Running Unit Tests
 
 Run `nx test nest-graphql` to execute the unit tests via [Jest](https://jestjs.io).
+```

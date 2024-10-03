@@ -1,23 +1,24 @@
+```markdown
 # Nest Audit Module
 
-This library provides a NestJS module to handle audit logging in our backend services.
+This library provides a NestJS module to handle audit logging in backend services.
 
-## Audit entries
+## Audit Entries
 
-We should audit all authenticated endpoints representing user actions. We should also audit authenticated endpoints handling sensitive user data, and data that we own. In the future, we'll trust other government organisations to correctly audit delegated requests to data they own.
+Audit all authenticated endpoints representing user actions, especially those handling sensitive user data and data that your organization owns. In the future, other government organizations will be trusted to audit delegated requests to data they own correctly.
 
-There are a few different ways to log an action depending on what you're doing, but in the end an audit entry consists of these fields:
+An audit entry consists of the following fields:
 
-- `user` - Information about the authenticated user, as provided by the [IdsAuth guard and @CurrentUser param decorator](../../auth-nest-tools).
-- `namespace` - A namespace for the action, to prevent conflicts between different audit logs from different APIs. Formatted like this: `@domain.is/subNamespace`
-- `action` - The action performed by the user. Should be camelCase and start with a verb.
-- `resources` - **Optional**: One or more resource ids affected by the action.
-- `meta` - **Optional**: An object of extra information specific to the action.
-- `alsoLog` - **Optional**: Logs the audit entry to the console. Useful for Datadog logs for example.
+- `user`: Information about the authenticated user, as provided by the [IdsAuth guard and @CurrentUser param decorator](../../auth-nest-tools).
+- `namespace`: A namespace for the action, to prevent conflicts between different audit logs from different APIs. Formatted as `@domain.is/subNamespace`.
+- `action`: The action performed by the user. Should be camelCase and start with a verb.
+- `resources`: **Optional**: One or more resource IDs affected by the action.
+- `meta`: **Optional**: An object containing extra information specific to the action.
+- `alsoLog`: **Optional**: Logs the audit entry to the console. Useful for Datadog logs, for example.
 
 ## Setup
 
-Import the audit module in your root module like this:
+Import the audit module in your root module as follows:
 
 ```typescript
 @Module({
@@ -32,16 +33,16 @@ Import the audit module in your root module like this:
 export class AppModule {}
 ```
 
-The `groupName` and `serviceName` affect which Cloudwatch Logs group and stream (respectively) the audit logs are stored in. When `NODE_ENV !== 'production'`, you can skip these options in which case audit entries are logged with our [Logger module](../../logging) to the console.
+The `groupName` and `serviceName` determine which CloudWatch Logs group and stream (respectively) the audit logs are stored in. When `NODE_ENV !== 'production'`, you can omit these options, in which case audit entries are logged with our [Logger module](../../logging) to the console.
 
-The optional `defaultNamespace` option provides a default namespace for every audit entry logged. It can still be overridden as needed.
+The `defaultNamespace` option provides a default namespace for every audit entry logged but can be overridden if needed.
 
-### Manual audit
+### Manual Audit
 
-Make sure to inject the AuditService and CurrentUser:
+Inject the AuditService and CurrentUser as follows:
 
 ```typescript
-import { AuditService } from '@island.is/nest/audit'
+import { AuditService } from '@island.is/nest/audit';
 
 @Controller()
 class MyController {
@@ -57,20 +58,20 @@ class MyController {
 }
 ```
 
-Then you can create audit records like this:
+Create audit records as follows:
 
 ```typescript
-// uses the default namespace: '@island.is/apiName',
+// Uses the default namespace: '@island.is/apiName',
 this.auditService.audit({
   auth: user,
   action: 'findAll',
-})
+});
 ```
 
-You can set custom namespace, resources and metadata like this:
+Set a custom namespace, resources, and metadata as follows:
 
 ```typescript
-const stuff = await this.stuffService.getStuff()
+const stuff = await this.stuffService.getStuff();
 this.auditService.audit({
   auth: user,
   namespace: '@island.is/overridden',
@@ -78,10 +79,10 @@ this.auditService.audit({
   resources: stuff.map((s) => s.id),
   meta: { count: stuff.length },
   alsoLog: true,
-})
+});
 ```
 
-If you are auditing an async action, you can wrap it like this:
+For auditing an async action, wrap it like this:
 
 ```typescript
 return this.auditService.auditPromise(
@@ -93,15 +94,15 @@ return this.auditService.auditPromise(
     meta: (stuff) => ({ count: stuff.length }),
   },
   this.stuffService.getStuff(),
-)
+);
 ```
 
-### Controller/Resolver audit
+### Controller/Resolver Audit
 
-For simple controllers/resolvers, you can enable audit with decorators like this:
+For simple controllers/resolvers, enable audit with decorators as follows:
 
 ```typescript
-import { Audit } from '@island.is/nest/audit'
+import { Audit } from '@island.is/nest/audit';
 
 @Controller()
 class MyController {
@@ -111,10 +112,10 @@ class MyController {
 }
 ```
 
-By default, it will use the defaultNamespace, and the handler name as the action. You can override all the audit entry fields at both the controller level and the handler level:
+By default, the defaultNamespace will be used, and the handler name will be the action. Override audit entry fields at both the controller and the handler level:
 
 ```typescript
-import { Audit } from '@island.is/nest/audit'
+import { Audit } from '@island.is/nest/audit';
 
 @Controller()
 @Audit({ namespace: '@island.is/overridden' })
@@ -128,15 +129,16 @@ class MyController {
     meta: (stuff) => ({ count: stuff.length }),
   })
   async findAll() {
-    return this.stuffService.getStuff()
+    return this.stuffService.getStuff();
   }
 }
 ```
 
 {% hint style="info" %}
-If you want to include request arguments as `meta`, you should use the `AuditService` methods instead.
+To include request arguments as `meta`, use the `AuditService` methods.
 {% endhint %}
 
-## Running unit tests
+## Running Unit Tests
 
 Run `nx test nest-audit` to execute the unit tests via [Jest](https://jestjs.io).
+```
