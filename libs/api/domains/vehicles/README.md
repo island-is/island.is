@@ -15,7 +15,9 @@ yarn start api
 ```bash
 ./scripts/run-xroad-proxy.sh
 ```
+
 OR
+
 ```bash
 kubectl -n socat port-forward svc/socat-xroad 8081:80
 ```
@@ -31,6 +33,7 @@ Execute `nx test api-domains-vehicles` to run unit tests with [Jest](https://jes
 Usage example: [Localhost Vehicle Page](http://localhost:4200/minarsidur/okutaeki).
 
 Ensure the service portal is running:
+
 ```bash
 yarn start service-portal
 ```
@@ -40,6 +43,7 @@ yarn start service-portal
 ### Vehicle Detail Model
 
 **MainInfo**
+
 - `model` -> `make`
 - `subModel` -> `vehcom` + `speccom`
 - `regno` -> Registration number
@@ -53,10 +57,12 @@ yarn start service-portal
 - `trailerWithoutBrakesWeight` -> Unbrake trailer weight
 
 **Axle**
+
 - `axleMaxWeight` -> See `service.ts` line 104
 - `wheelAxle` -> See `service.ts` line 107
 
 **Tyres**
+
 - `axle1` -> Tyre info for axle 1
 - `axle2` -> Tyre info for axle 2
 - `axle3` -> Tyre info for axle 3
@@ -64,6 +70,7 @@ yarn start service-portal
 - `axle5` -> Tyre info for axle 5
 
 **BasicInfo**
+
 - `model` -> Type
 - `regno` -> Registration number
 - `subModel` -> Type & subtype
@@ -76,6 +83,7 @@ yarn start service-portal
 - `importStatus` -> Import status
 
 **RegistrationInfo**
+
 - `firstRegistrationDate` -> First registration date
 - `preRegistrationDate` -> Pre-registration date
 - `newRegistrationDate` -> New registration date
@@ -92,6 +100,7 @@ yarn start service-portal
 - `standingPassengers` -> Standing passengers
 
 **CurrentOwnerInfo**
+
 - `owner` -> Owner's name
 - `nationalId` -> Owner’s ID
 - `address` -> Owner's address
@@ -100,6 +109,7 @@ yarn start service-portal
 - `dateOfPurchase` -> Purchase date
 
 **InspectionInfo**
+
 - `type` -> Inspection type
 - `date` -> Inspection date
 - `result` -> Inspection result
@@ -111,6 +121,7 @@ yarn start service-portal
 - `inspectionFine` -> Inspection fine
 
 **TechnicalInfo**
+
 - `engine` -> Engine details
 - `totalWeight` -> Total weight
 - `cubicCapacity` -> Capacity
@@ -127,12 +138,14 @@ yarn start service-portal
 - `tyres` -> Tyre details
 
 **Owners**
+
 - `nationalId` -> Owner’s ID
 - `name` -> Owner's name
 - `address` -> Owner's full address
 - `dateOfPurchase` -> Purchase date
 
 **Operator**
+
 - `nationalId` -> Operator’s ID
 - `name` -> Operator's name
 - `address` -> Operator's address

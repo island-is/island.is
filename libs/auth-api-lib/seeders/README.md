@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Migrating Data in the IDS
 
 Define clients and scopes for production using seed migrations in the `seeders/data` folder. These are primarily for "island.is" clients and scopes for dev, staging, and prod environments. Other organizations should use the self-service interface to manage their data.
@@ -37,7 +37,10 @@ export const up = createClient({
     procuringHolders: true,
   },
   redirectUris: {
-    dev: ['http://localhost:4444/some/path', 'https://beta.dev01.devland.is/some/path'],
+    dev: [
+      'http://localhost:4444/some/path',
+      'https://beta.dev01.devland.is/some/path',
+    ],
     staging: ['https://beta.staging01.devland.is/some/path'],
     prod: ['https://island.is/some/path'],
   },
@@ -48,6 +51,7 @@ export const up = createClient({
   },
 })
 ```
+````
 
 Arguments:
 
@@ -135,4 +139,7 @@ Ensure the filename order aligns with dependencies within a release.
 Helpers handle and log database errors mainly related to unique index conflicts. This allows seeding and IDS admin-defined data coexistence. Migrations add new rows/relations but do not update existing data.
 
 For instance, if client X is specified with scopes A and B, and X with A already exists in `dev`, the migration adds scope B. Client X might still be created in `staging` and `prod` if absent.
+
+```
+
 ```

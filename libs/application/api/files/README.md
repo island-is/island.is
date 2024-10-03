@@ -30,22 +30,18 @@ For S3 bucket communication, an active AWS session to the development cluster is
 Update `app.module.ts` as follows:
 
 ```typescript
-import { ConfigModule } from '@island.is/nest/config';
-import { ApplicationFilesModule } from '@island.is/application/api/files';
-import { signingModuleConfig } from '@island.is/dokobit-signing';
-import { ApplicationFilesConfig } from '@island.is/application/api/files';
-import { FileStorageConfig } from '@island.is/file-storage';
+import { ConfigModule } from '@island.is/nest/config'
+import { ApplicationFilesModule } from '@island.is/application/api/files'
+import { signingModuleConfig } from '@island.is/dokobit-signing'
+import { ApplicationFilesConfig } from '@island.is/application/api/files'
+import { FileStorageConfig } from '@island.is/file-storage'
 
 @Module({
   imports: [
     ApplicationFilesModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        signingModuleConfig,
-        FileStorageConfig,
-        ApplicationFilesConfig,
-      ],
+      load: [signingModuleConfig, FileStorageConfig, ApplicationFilesConfig],
     }),
   ],
 })

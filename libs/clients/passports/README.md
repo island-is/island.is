@@ -43,12 +43,13 @@ yarn nx run clients-passports:codegen/backend-client
 4. **Access the Service with Authentication:**
 
    ```typescript
-   const passportResponse = await this.getPassportsWithAuth(auth)
-     .identityDocumentGetIdentityDocument({
-       personId: '1234567890',
-     });
+   const passportResponse = await this.getPassportsWithAuth(
+     auth,
+   ).identityDocumentGetIdentityDocument({
+     personId: '1234567890',
+   })
 
-   console.log('passportResponse', passportResponse);
+   console.log('passportResponse', passportResponse)
    ```
 
 ## Running Unit Tests

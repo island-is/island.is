@@ -70,8 +70,8 @@ imports: [
 #### module-name.service.ts
 
 ```typescript
-import { DrivingLicenseApi } from '@island.is/clients/driving-license';
-import { Injectable, Inject } from '@nestjs/common';
+import { DrivingLicenseApi } from '@island.is/clients/driving-license'
+import { Injectable, Inject } from '@nestjs/common'
 
 @Injectable()
 export class SomeService {
@@ -81,7 +81,7 @@ export class SomeService {
   ) {}
 
   async someMethod() {
-    return this.drivingLicenseApi.getTeachers();
+    return this.drivingLicenseApi.getTeachers()
   }
 }
 ```

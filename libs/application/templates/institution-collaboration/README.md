@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Institution Collaboration
 
 This application allows institutions to request collaboration from Stafrænt Ísland for new projects.
@@ -35,9 +35,13 @@ Fetch development secrets with:
 ```bash
 yarn get-secrets api
 ```
+````
 
 ## Code Owners and Maintainers
 
 - [Fuglar](https://github.com/orgs/island-is/teams/fuglar)
 - [Norda](https://github.com/orgs/island-is/teams/norda)
+
+```
+
 ```

@@ -54,7 +54,7 @@ imports: [
 #### Example: `module-name.service.ts`
 
 ```typescript
-import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book';
+import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book'
 
 @Injectable()
 export class SomeService {
@@ -64,8 +64,8 @@ export class SomeService {
   ) {}
 
   async someMethod() {
-    const api = await this.drivingLicenseBookClientApiFactory.create();
-    return api.apiStudentGetLicenseBookListSsnGet({ ssn: nationalId });
+    const api = await this.drivingLicenseBookClientApiFactory.create()
+    return api.apiStudentGetLicenseBookListSsnGet({ ssn: nationalId })
   }
 }
 ```

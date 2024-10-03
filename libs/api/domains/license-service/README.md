@@ -54,10 +54,12 @@ The service can create digital licenses via a _Pk pass_ using the [SmartSolution
 Conditions for generating a digital license:
 
 - **Drivers License**:
+
   - Valid RLS API result with non-null `mynd`.
   - Image date ≥ 1997-08-15.
 
 - **Firearm License**:
+
   - Must be valid (not expired).
 
 - **Adr License**:

@@ -7,8 +7,8 @@ This library implements the [Problem Details for HTTP APIs](https://datatracker.
 Import `ProblemModule` in your root NestJS module:
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { ProblemModule } from '@island.is/nest/problem';
+import { Module } from '@nestjs/common'
+import { ProblemModule } from '@island.is/nest/problem'
 
 @Module({
   imports: [ProblemModule],
@@ -31,13 +31,13 @@ Consider modeling expected problems [in the GraphQL schema](https://engineering.
 To manually return a problem response, throw `ProblemError` or its subclasses:
 
 ```typescript
-import { ProblemError } from '@island.is/nest/problem';
-import { ProblemType } from '@island.is/shared/problem';
+import { ProblemError } from '@island.is/nest/problem'
+import { ProblemType } from '@island.is/shared/problem'
 
 throw new ProblemError({
   type: ProblemType.HTTP_NOT_FOUND,
   title: 'Not found',
-});
+})
 ```
 
 Available subclasses include:
@@ -49,21 +49,21 @@ Available subclasses include:
 To create a new problem type, [define one](../../shared/problem/README.md#custom-problem) and use it as follows:
 
 ```typescript
-import { ProblemError } from '@island.is/nest/problem';
-import { ProblemType } from '@island.is/shared/problem';
+import { ProblemError } from '@island.is/nest/problem'
+import { ProblemType } from '@island.is/shared/problem'
 
 throw new ProblemError({
   type: ProblemType.NEW_PROBLEM,
   title: 'Some new problem occurred',
   extraAttribute: 'example',
-});
+})
 ```
 
 Or create a custom subclass:
 
 ```typescript
-import { ProblemType } from '@island.is/shared/problem';
-import { ProblemError } from './ProblemError';
+import { ProblemType } from '@island.is/shared/problem'
+import { ProblemError } from './ProblemError'
 
 export class NewProblem extends ProblemError {
   constructor(extraAttribute: string) {
@@ -72,12 +72,12 @@ export class NewProblem extends ProblemError {
       title: 'Some new problem',
       status: 400,
       extraAttribute,
-    });
+    })
   }
 }
 
 // Later use:
-throw new NewProblem('extra');
+throw new NewProblem('extra')
 ```
 
 ## No Content response
@@ -91,13 +91,13 @@ export class DelegationService {
       where: {
         id: delegationId,
       },
-    });
+    })
 
     if (!delegation) {
-      throw new NoContentException();
+      throw new NoContentException()
     }
 
-    return delegation;
+    return delegation
   }
 }
 ```

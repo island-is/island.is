@@ -31,6 +31,7 @@ Additional steps are necessary for local setup.
 - [AWS Secrets](../../../../handbook/repository/aws-secrets.md) must be configured.
 
 Obtain environment variables by running:
+
 ```bash
 yarn get-secrets service-portal
 ```
@@ -38,6 +39,7 @@ yarn get-secrets service-portal
 **Kubeconfig:**
 
 Export AWS variables:
+
 ```bash
 aws eks update-kubeconfig --name dev-cluster01
 ```
@@ -51,6 +53,7 @@ RSK_API_PASSWORD
 ```
 
 To retrieve environment variables:
+
 ```bash
 yarn get-secrets service-portal
 ```

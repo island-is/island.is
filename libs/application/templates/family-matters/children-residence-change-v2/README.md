@@ -21,6 +21,7 @@ Follow these steps to run this template locally:
 **Steps**
 
 1. Fetch development secrets for the project:
+
    - Execute: `yarn get-secrets service-portal`
 
 2. Get kubeconfig:

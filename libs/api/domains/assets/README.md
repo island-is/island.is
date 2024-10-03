@@ -5,6 +5,7 @@ This service utilizes the Fasteignir API.
 ## How to Use
 
 Start the API:
+
 ```bash
 yarn start api
 ```
@@ -28,6 +29,7 @@ Once running, the `AssetsXRoadService` will be available.
 Usage example: [Local Host Link](http://localhost:4200/minarsidur/fasteignir)
 
 Ensure the service portal is running:
+
 ```bash
 yarn start service-portal
 ```
@@ -48,6 +50,7 @@ This library was generated with [Nx](https://nx.dev).
 ### Running Unit Tests
 
 Execute the unit tests with [Jest](https://jestjs.io) using:
+
 ```bash
 nx test api-domains-assets
 ```

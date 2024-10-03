@@ -87,9 +87,9 @@ Emails are sent to applicants and assignees. Templates are stored in the API mod
 Refer to [application-system](../../../../apps/application-system/README.md) for setup instructions. Run:
 
 - `application-system-api`
-    - Use: `yarn get-secrets application-system-api`
+  - Use: `yarn get-secrets application-system-api`
 - `api`
-    - Use: `yarn get-secrets api`
+  - Use: `yarn get-secrets api`
 - `application-system-form`
 
 Access at [http://localhost:4200/umsoknir/faedingarorlof](http://localhost:4200/umsoknir/faedingarorlof).

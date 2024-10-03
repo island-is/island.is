@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Mocking
 
 This library provides helpers to set up API mocking in Node.js and browser projects.
@@ -47,6 +47,7 @@ if (process.env.NODE_ENV !== 'production' && process.env.API_MOCKS) {
   startMocking([createGraphqlHandler({ schema, resolvers })])
 }
 ```
+````
 
 Generate the schema and types from the real API using [GraphQL Code Generator](https://graphql-code-generator.com/):
 
@@ -133,9 +134,7 @@ if (process.env.NODE_ENV !== 'production' && process.env.API_MOCKS) {
   startMocking([
     rest.post('/login', (req, res, ctx) => {
       const { username } = req.body
-      return res(
-        ctx.json({ username, firstName: 'John' }),
-      )
+      return res(ctx.json({ username, firstName: 'John' }))
     }),
     createGraphqlHandler({ resolvers, schema }),
   ])
@@ -242,7 +241,7 @@ Creates an object factory for strongly typed objects.
 
 #### Arguments
 
-- `initializer` - matches `Type` shape. Properties can have static or dynamic values. 
+- `initializer` - matches `Type` shape. Properties can have static or dynamic values.
 
 Supports traits for custom object creation:
 
@@ -316,7 +315,9 @@ factory({
 
 ```typescript
 import { simpleFactory } from '@island.is/shared/mocking'
-const slice = simpleFactory(() => Math.random() > 0.5 ? contentSlice() : imageSlice())
+const slice = simpleFactory(() =>
+  Math.random() > 0.5 ? contentSlice() : imageSlice(),
+)
 ```
 
 - `faker` - Re-exported [faker](https://github.com/Marak/faker.js) for creating fake mock data.
@@ -332,4 +333,7 @@ To remove unused code, mark the `package.json` with:
   "sideEffects": ["mocks/index.ts"]
 }
 ```
+
+```
+
 ```

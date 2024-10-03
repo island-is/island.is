@@ -64,8 +64,8 @@ Marks email and phone fields as `EMPTY` when posted with empty values:
 
 ```json
 {
-	"emailStatus": "DataStatus.EMPTY",
-	"mobileStatus": "DataStatus.EMPTY"
+  "emailStatus": "DataStatus.EMPTY",
+  "mobileStatus": "DataStatus.EMPTY"
 }
 ```
 

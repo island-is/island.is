@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Health Insurance
 
 Application for health insurance when returning to Iceland after living abroad.
@@ -6,9 +6,11 @@ Application for health insurance when returning to Iceland after living abroad.
 ## Running Unit Tests
 
 Execute the unit tests via [Jest](https://jestjs.io) with:
+
 ```bash
 nx test application-templates-health-insurance
 ```
+````
 
 ## Setup
 
@@ -58,6 +60,7 @@ This service is optional; there is a fallback for development.
 ### Translations from Contentful
 
 Fetch development secrets with:
+
 ```bash
 yarn get-secrets api
 ```
@@ -65,4 +68,7 @@ yarn get-secrets api
 ## Code Owners and Maintainers
 
 - [Deloitte](https://github.com/orgs/island-is/teams/deloitte)
+
+```
+
 ```
