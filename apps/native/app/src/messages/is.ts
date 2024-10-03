@@ -595,4 +595,11 @@ export const is = {
   'passkeys.skipButton': 'Sleppa',
   'passkeys.errorRegistering': 'Villa',
   'passkeys.errorRegisteringMessage': 'Tókst ekki að búa til aðgangslykil',
+
+  // update app
+  'updateApp.title': 'Uppfæra app',
+  'updateApp.description':
+    'Þú ert að fara að nota gamla útgáfu af Ísland.is appinu. Vinsamlegast uppfærðu appið til að halda áfram.',
+  'updateApp.button': 'Uppfæra',
+  'updateApp.buttonSkip': 'Sleppa',
 }
