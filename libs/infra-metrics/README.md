@@ -1,7 +1,17 @@
+```markdown
 # Infra Metrics
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test infra-metrics` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, you can use the Nx command-line interface. 
+
+Run the following command:
+
+```bash
+nx test infra-metrics
+```
+
+This command utilizes [Jest](https://jestjs.io) to run the tests.
+```
