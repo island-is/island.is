@@ -1,71 +1,71 @@
-## Endorsements API
+# Endorsements API
 
-### About
+## About
 
 This service manages endorsement lists within island.is.
 
-### Quickstart
+## Quickstart
 
-Run the following:
+Run these commands:
 
-```
+```bash
 yarn dev-init services-endorsements-api
 yarn dev services-endorsements-api
 ```
 
-### Initial Setup
+## Initial setup
 
-#### Prerequisites
+### Prerequisites
 
-To run the API locally, ensure you:
+To run the API locally, ensure you have:
 
-- Have [Docker](https://www.docker.com/products/docker-desktop) running.
-- Fulfill prerequisites from:
-  - [Getting Started](https://docs.devland.is/)
-  - [AWS Secrets](https://docs.devland.is/repository/)
+- [Docker](https://www.docker.com/products/docker-desktop) running
+- Completed all prerequisites from:
+  - [Getting started section at docs.devland.is](https://docs.devland.is/)
+  - [AWS secrets section at docs.devland.is](https://docs.devland.is/repository/)
 
-#### Optional
+### Optional
 
-- Set up a local test email server [here](https://docs.devland.is/libs/email-service).
+- Set up a local test email server as per [instructions](https://docs.devland.is/libs/email-service)
 
-### Initialize the Application
+### Initialize the application
 
 ```bash
 yarn dev-init services-endorsements-api
 ```
 
-### Run Locally
+## Run locally
 
-Sign into AWS:
+Sign into AWS
 
 ```bash
 aws sso login
 ```
 
-Start the application:
+Then run the application:
 
 ```bash
 yarn dev services-endorsements-api
 ```
 
-Access the project:
+Visit localhost when ready:
 
-```bash
+```url
 http://localhost:4246/swagger
 ```
 
-Re-initialize after code changes to regenerate Swagger, OpenAPI, etc.:
+After code changes, re-initialize the app for code autogeneration:
 
 ```bash
 yarn dev-init services-endorsements-api
 ```
 
-### Run Tests
+## Run tests
 
 ```bash
 yarn test services-endorsements-api --skip-nx-cache
 ```
 
-### Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)

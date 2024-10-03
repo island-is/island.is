@@ -1,14 +1,14 @@
-Personal Representative Public
+# Personal Representative Public
 
 ## About
 
-This service provides third-party service providers with information about personal representatives and their rights.
+This service provides third-party service providers with information about personal representatives and their delegated rights.
 
 ## Context
 
-The Public API for the Personal Representative Database allows service providers, not using Digital Iceland's login service, to access information about personal representatives and their clients. This enables personal representatives to access services on behalf of clients based on granted rights.
+The Personal Representative Public API allows service providers, not using Digital Iceland’s login, to access information about personal representatives and their clients. This enables representatives to access services on behalf of clients per their contract and connection.
 
-Service providers must use secure logins and can only query for data related to logged-in users.
+Service providers must use secure logins and query only for logged-in users.
 
 ### Example of Connections
 
@@ -30,7 +30,7 @@ Service providers must use secure logins and can only query for data related to 
 
 ## Access
 
-The API is accessible via X-Road security servers to machine clients with a specific scope.
+The API is accessible only through X-Road security servers to machine clients with a specific scope.
 
 ### Scope
 
@@ -40,7 +40,7 @@ The API is accessible via X-Road security servers to machine clients with a spec
 
 ### X-Road Setup
 
-Information about X-Road: [X-Road documentation](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements)
+For more, see [X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements).
 
 X-Road setup URLs:
 
@@ -50,7 +50,7 @@ X-Road setup URLs:
 
 ### OpenAPI URL
 
-OpenAPI documentation and testing:
+OpenAPI documentation and demo:
 
 - [Swagger](https://personal-representative-public-xrd.dev01.devland.is/swagger)
 
@@ -58,13 +58,13 @@ OpenAPI documentation and testing:
 
 ### Initial Setup
 
-Using the same service library and database as auth-api. Ensure Docker is installed, then run:
+Using the same service library and database as auth-api, begin by ensuring Docker is installed, then run:
 
 ```bash
 yarn dev-services services-auth-ids-api
 ```
 
-Run database migrations:
+Run the migrations:
 
 ```bash
 yarn nx run services-auth-ids-api:migrate
@@ -76,7 +76,7 @@ Serve the service locally:
 yarn start services-auth-personal-representative-public
 ```
 
-API OpenAPI specs available at:
+API specs accessible at:
 
 ```
 http://localhost:3378
@@ -92,8 +92,6 @@ yarn test services-auth-personal-representative-public
 
 ### Getting Started
 
-Start the service:
-
 ```bash
 yarn start services-auth-personal-representative-public
 ```
@@ -104,4 +102,4 @@ yarn start services-auth-personal-representative-public
 
 ### Code Owners and Maintainers
 
-- [Programm Team](https://github.com/orgs/island-is/teams/programm/members)
+- [Programm](https://github.com/orgs/island-is/teams/programm/members)

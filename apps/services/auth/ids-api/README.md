@@ -1,10 +1,6 @@
 ## About
 
-Backend API for the island.is authentication server.
-
-## Project Structure
-
-The API interfaces solely with the authentication server, sharing services and database resources with the [auth-admin-api](https://docs.devland.is/apps/services/auth/admin-api).
+The IDS API serves as the backend API for the island.is authentication server, sharing services and a database with the authentication administration user interface ([auth-admin-api](https://docs.devland.is/apps/services/auth/admin-api)).
 
 ## URLs
 
@@ -14,13 +10,13 @@ The API interfaces solely with the authentication server, sharing services and d
 
 ## Getting Started
 
-Connect to either the AWS dev database or a local database container.
+To run the API, connect to either the AWS dev database or a local database container.
+
+**Important:** Use a local database container for database migrations.
 
 ### Using Local Database
 
-**Important:** For database migrations, use a local database container.
-
-Ensure `sequelize.config.js` environment variables are set or cleared:
+Configure environment variables or clear them:
 
 ```bash
 export DB_USER=dev_db
@@ -44,11 +40,11 @@ yarn nx run services-auth-ids-api:seed
 
 ### Using DEV Database
 
-Use `scripts/run-db-proxy.sh` for AWS DEV database connection. Setup variables first:
+Set necessary environment variables:
 
 ```bash
 export DB_USER=servicesauth
-export DB_PASS=<AWS Param Store: '/k8s/services-auth/api/DB_PASSWORD'>
+export DB_PASS=<DB_PASSWORD from AWS Param Store>
 export DB_NAME=servicesauth
 export DB_PORT=5432
 ```

@@ -1,10 +1,10 @@
-# User Profile
+## User Profile
 
-## About
+### About
 
-This service provides and stores user profile information, including contact info and preferred locale using the user's National Registration ID. It also handles email and mobile verification. The user-profile table isn't prepopulated with everyone in Iceland, so profiles can be created through various onboarding flows using the `findOrCreateUserProfile` method found throughout the project's code.
+A service responsible for providing and storing User profile information. It uses the user's National Registration ID to store contact details and preferred locale. It also handles email and mobile phone verification. The user profile table is not prepopulated with everyone in Iceland; hence, profiles can be created through various onboarding flows. The method `findOrCreateUserProfile` appears in multiple parts of the code.
 
-## Quickstart
+### Quickstart
 
 Run these commands:
 
@@ -13,41 +13,41 @@ yarn dev-init services-user-profile
 yarn dev services-user-profile
 ```
 
-These are aliases for the commands listed in the Initial Setup section.
+These are aliases for the setup commands below.
 
 ### Initial Setup
 
-Ensure Docker is installed, then execute:
+Ensure you have Docker, then execute:
 
 ```bash
 yarn dev-services services-user-profile
 ```
 
-Run migrations:
+Next, run migrations:
 
 ```bash
 yarn nx run services-user-profile:migrate
 ```
 
-Serve the service locally:
+To serve the service locally, use:
 
 ```bash
 yarn start services-user-profile
 ```
 
-Access the API OpenAPI specs at:
+API OpenAPI specs are available at:
 
-```bash
+```
 http://localhost:3366/
 ```
 
-## Getting Started
+### Getting Started
 
 ```bash
 yarn start services-user-profile
 ```
 
-## Code Owners and Maintainers
+### Code Owners and Maintainers
 
 - [Norda](https://github.com/orgs/island-is/teams/norda/members)
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)

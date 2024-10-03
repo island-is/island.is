@@ -1,26 +1,26 @@
 ## Development
 
-1. Ensure Docker is installed, then execute:
+1. Install Docker if not already installed, then execute:
 
-```bash
-yarn dev-services regulations-admin-backend
-```
+   ```bash
+   yarn dev-services regulations-admin-backend
+   ```
 
-2. Reset the database (skip on first install):
+2. Clean the database (skip on first install):
 
-```bash
-cd apps/services/regulations-admin-backend
-npx sequelize db:migrate:undo:all
-```
+   ```bash
+   cd apps/services/regulations-admin-backend
+   npx sequelize db:migrate:undo:all
+   ```
 
-3. Run migration and seeding:
+3. Run migrations and seed the database:
 
-```bash
-yarn dev-init regulations-admin-backend
-```
+   ```bash
+   yarn dev-init regulations-admin-backend
+   ```
 
 4. Start the backend service:
 
-```bash
-yarn start regulations-admin-backend
-```
+   ```bash
+   yarn start regulations-admin-backend
+   ```

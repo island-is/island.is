@@ -2,49 +2,49 @@
 
 ## About
 
-This service handles queuing, storing, and sending notifications via push and email.
+This service queues notifications, stores them in a database, and sends push notifications and emails.
 
 ## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
     autonumber
-    Institution->>Advania:adds new message to mailbox
-    Advania->>User-Notification-Service:xroad:sends message notification
-    User-Notification-Service->>AWS SQS:adds processed notification to queue
+    Institution->>Advania: adds new message in mailbox
+    Advania->>User-Notification-Service: xroad: sends message notification
+    User-Notification-Service->>AWS SQS: adds processed notification to queue
     loop
-    User-Notification-Worker->>AWS SQS:requests 10 notifications
-    AWS SQS->>User-Notification-Worker:responds with 0-10 notifications
+    User-Notification-Worker->>AWS SQS: requests 10 notifications
+    AWS SQS->>User-Notification-Worker: responds with 0-10 notifications
     end
-    User-Notification-Worker->>Database:saves notification
-    User-Notification-Worker->>User-Profile-Service:requests notification settings
-    User-Profile-Service->>User-Notification-Worker:returns user settings and tokens
-    User-Notification-Worker->>Firebase Cloud Messaging:sends notification
-    Firebase Cloud Messaging->>island.is app:sends push notification
-    User-Notification-Worker->>User email:sends email
+    User-Notification-Worker->>Database: saves notification
+    User-Notification-Worker->>User-Profile-Service: requests notification settings
+    User-Profile-Service->>User-Notification-Worker: returns user settings and tokens
+    User-Notification-Worker->>Firebase Cloud Messaging: sends notification
+    Firebase Cloud Messaging->>island.is app: sends push notification
+    User-Notification-Worker->>User email: sends e-mail
 ```
 
 ## Running the Project
 
 ### Initial Setup
 
-1. Sign into AWS:
+Sign into AWS:
 
-   ```sh
-   aws sso login
-   ```
+```sh
+aws sso login
+```
 
-2. Retrieve secrets:
+Get secrets:
 
-   ```sh
-   yarn get-secrets user-notification
-   ```
+```sh
+yarn get-secrets user-notification
+```
 
-3. Initialize dependencies:
+Initialize dependencies:
 
-   ```sh
-   yarn dev-init services-user-notification
-   ```
+```sh
+yarn dev-init services-user-notification
+```
 
 ### Start User Notification Service
 
@@ -54,7 +54,7 @@ yarn dev services-user-notification
 
 ### User Notification Worker
 
-The worker processes messages, saves them in the database, and sends them via push and email. Start it with:
+This worker processes queue messages, saves them to the database, and sends them via push and email. Start a worker:
 
 ```sh
 yarn nx run services-user-notification:worker
@@ -62,7 +62,7 @@ yarn nx run services-user-notification:worker
 
 ### User Notification Cleanup Worker
 
-This worker removes old messages from the database. Start it with:
+This worker deletes old messages from the database. Start a cleanup worker:
 
 ```sh
 yarn nx run services-user-notification:cleanup
