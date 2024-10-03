@@ -1,7 +1,15 @@
+```markdown
 # service-portal-finance
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev), a powerful build system for JavaScript and TypeScript applications.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test service-portal-finance` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, use the following command:
+
+```bash
+nx test service-portal-finance
+```
+
+This will run the unit tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
+```

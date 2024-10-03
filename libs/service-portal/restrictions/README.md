@@ -1,7 +1,13 @@
-# Service portal restrictions
+```markdown
+# Service Portal Restrictions
 
-This module enables user to activate and deactivate restrictions on logins with electronic IDs on the phone in login and delegation system.
+This module allows users to activate and deactivate restrictions for logins using electronic IDs on a phone within the login and delegation system.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test service-portal-restrictions` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+
+```bash
+nx test service-portal-restrictions
+```
+```

@@ -1,7 +1,13 @@
+```markdown
 # service-portal-law-and-order
 
-This library was generated with [Nx](https://nx.dev).
+This library is generated with [Nx](https://nx.dev), a smart, extensible build framework.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test service-portal-law-and-order` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+
+```bash
+nx test service-portal-law-and-order
+```
+```

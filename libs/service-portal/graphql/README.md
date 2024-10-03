@@ -1,7 +1,15 @@
-# service-portal-graphql
+```markdown
+# Service Portal GraphQL
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `ng test service-portal-graphql` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests, use the following command:
+
+```bash
+ng test service-portal-graphql
+```
+
+The tests will be run using [Jest](https://jestjs.io).
+```

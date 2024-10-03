@@ -1,7 +1,15 @@
+```markdown
 # service-portal-constants
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev), a smart, extensible build framework for Monorepos.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test service-portal-constants` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests, run the following command, which utilizes the [Jest](https://jestjs.io) test framework:
+
+```bash
+nx test service-portal-constants
+```
+
+This will run all unit tests within the `service-portal-constants` library.
+```

@@ -1,7 +1,15 @@
+```markdown
 # Service Portal Air Discount
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev), a smart and extensible build framework.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test service-portal-air-discount` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for the Service Portal Air Discount library, use the following command:
+
+```bash
+nx test service-portal-air-discount
+```
+
+This command utilizes [Jest](https://jestjs.io), a delightful JavaScript testing framework, to run the tests. Make sure your development environment is set up to use Jest before executing the tests.
+```

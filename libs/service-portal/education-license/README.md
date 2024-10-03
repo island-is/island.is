@@ -1,7 +1,13 @@
 # Service Portal Education License
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev), a smart and extensible build framework.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test service-portal-education-license` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, run the following command:
+
+```bash
+nx test service-portal-education-license
+```
+
+This will execute the tests via [Jest](https://jestjs.io), a delightful JavaScript testing framework.

@@ -1,7 +1,15 @@
-# service-portal-health
+```markdown
+# Service Portal Health Library
 
-This library was generated with [Nx](https://nx.dev).
+This library is a component of the service portal, generated using [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test service-portal-health` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for the Service Portal Health library, use the following command:
+
+```bash
+nx test service-portal-health
+```
+
+The tests will be run using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
+```

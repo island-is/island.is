@@ -1,7 +1,13 @@
+```markdown
 # Service Portal Education Career
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated using [Nx](https://nx.dev), a set of extensible dev tools for monorepo setups.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test service-portal-education-career` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library using [Jest](https://jestjs.io), run the following command:
+
+```bash
+nx test service-portal-education-career
+```
+```

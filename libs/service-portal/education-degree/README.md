@@ -1,7 +1,13 @@
+```markdown
 # Service Portal Education Degree
 
-This library was generated with [Nx](https://nx.dev).
+This project is generated using [Nx](https://nx.dev), a smart, fast, and extensible build system.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test service-portal-education-degree` to execute the unit tests via [Jest](https://jestjs.io).
+To execute unit tests for the `service-portal-education-degree` library, use the following command with [Jest](https://jestjs.io):
+
+```bash
+nx test service-portal-education-degree
+```
+```

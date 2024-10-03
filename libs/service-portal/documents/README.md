@@ -1,7 +1,15 @@
+```markdown
 # service-portal-documents
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test service-portal-documents` to execute the unit tests via [Jest](https://jestjs.io).
+To run the unit tests for the `service-portal-documents` library, use the following command:
+
+```bash
+nx test service-portal-documents
+```
+
+This command executes the unit tests using [Jest](https://jestjs.io).
+```
