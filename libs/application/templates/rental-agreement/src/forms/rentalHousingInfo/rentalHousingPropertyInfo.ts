@@ -214,7 +214,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
             },
           ],
           condition: (answers) =>
-            answers.propertyMarketType === 'specialGroups',
+            answers.registerPropertyCategoryClass === 'specialGroups',
         }),
       ],
     }),
