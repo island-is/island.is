@@ -5,11 +5,11 @@
 
 ## Running Unit Tests
 
-To execute the unit tests, use the following command:
+To execute the unit tests, use the following command in your terminal:
 
-```sh
+```bash
 ng test skilavottord-const
 ```
 
-The tests are run via [Jest](https://jestjs.io).
+The tests are executed using [Jest](https://jestjs.io).
 ```
