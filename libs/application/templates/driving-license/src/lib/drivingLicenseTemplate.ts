@@ -34,6 +34,7 @@ import {
   B_FULL_RENEWAL_65,
   ApiActions,
   Pickup,
+  CHARGE_ITEM_CODES,
 } from './constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -54,22 +55,18 @@ const getCodes = (application: Application) => {
 
   const codes: string[] = []
 
-  const chargeItemCode =
-    applicationFor === 'B-full'
-      ? 'AY110'
-      : applicationFor === BE
-      ? 'AY115'
-      : applicationFor === B_FULL_RENEWAL_65
-      ? 'AY113'
-      : 'AY114'
+  const targetCode =
+    typeof applicationFor === 'string'
+      ? CHARGE_ITEM_CODES[applicationFor]
+      : CHARGE_ITEM_CODES.B_FULL
 
-  codes.push(chargeItemCode)
+  codes.push(targetCode)
 
   if (pickup === Pickup.POST) {
-    codes.push('AY145')
+    codes.push(CHARGE_ITEM_CODES.DELIVERY_FEE)
   }
 
-  if (!chargeItemCode) {
+  if (!targetCode) {
     throw new Error('No selected charge item code')
   }
 

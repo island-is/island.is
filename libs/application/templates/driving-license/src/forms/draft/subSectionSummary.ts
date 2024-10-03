@@ -13,7 +13,14 @@ import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
-import { B_FULL_RENEWAL_65, B_TEMP, BE, Pickup, YES } from '../../lib/constants'
+import {
+  B_FULL_RENEWAL_65,
+  B_TEMP,
+  BE,
+  CHARGE_ITEM_CODES,
+  Pickup,
+  YES,
+} from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
@@ -166,19 +173,16 @@ export const subSectionSummary = buildSubSection({
             }[]
 
             const targetCode =
-              application.answers.applicationFor === B_TEMP
-                ? 'AY114'
-                : application.answers.applicationFor === BE
-                ? 'AY115'
-                : application.answers.applicationFor === B_FULL_RENEWAL_65
-                ? 'AY113'
-                : 'AY110'
+              typeof application.answers.applicationFor === 'string'
+                ? CHARGE_ITEM_CODES[application.answers.applicationFor]
+                : CHARGE_ITEM_CODES.B_FULL
 
             let pickupItem = null
 
             if (application.answers.pickup === Pickup.POST) {
               pickupItem = items.find(
-                ({ chargeItemCode }) => chargeItemCode === 'AY145',
+                ({ chargeItemCode }) =>
+                  chargeItemCode === CHARGE_ITEM_CODES.DELIVERY_FEE,
               )
             }
 
