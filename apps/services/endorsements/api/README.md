@@ -6,66 +6,70 @@ This service manages endorsement lists within island.is.
 
 ## Quickstart
 
-Simply run these two commands:
+Start the service by executing the following commands:
 
-```
+```bash
 yarn dev-init services-endorsements-api
 yarn dev services-endorsements-api
 ```
 
-## Initial setup
+## Initial Setup
 
 ### Prerequisites
 
-To run the API locally make sure you:
+To run the API locally, ensure you have the following:
 
-- Have [Docker](https://www.docker.com/products/docker-desktop) running
-- Fulfill all prerequisites listed in:
-- - [Getting started section at docs.devland.is](https://docs.devland.is/)
-- - [AWS secrets section at docs.devland.is](https://docs.devland.is/repository/)
+- [Docker](https://www.docker.com/products/docker-desktop) up and running.
+- Complete the prerequisites listed in the following sections:
+  - [Getting Started at docs.devland.is](https://docs.devland.is/)
+  - [AWS Secrets at docs.devland.is](https://docs.devland.is/repository/)
 
 ### Optional
 
-- Have a local test email server according to these [instructions](https://docs.devland.is/libs/email-service)
+- Set up a local test email server following [these instructions](https://docs.devland.is/libs/email-service).
 
-### Initialize the application
+### Initialize the Application
+
+To initialize the application, run:
 
 ```bash
 yarn dev-init services-endorsements-api
 ```
 
-## Run locally
+## Running Locally
 
-Sign into AWS
+Sign into AWS:
 
 ```bash
 aws sso login
 ```
 
-Then run application using this command
+Then, start the application with:
 
 ```bash
 yarn dev services-endorsements-api
 ```
 
-And go to localhost once project is ready and started
+Once the project is ready and running, access it at:
 
 ```bash
 http://localhost:4246/swagger
 ```
 
-After making changes to the module code, re-initialize app to autogenerate code for swagger, openapi, fetch client etc.
+After making code changes, re-initialize the app to auto-generate code for Swagger, OpenAPI, fetch client, and other components:
 
 ```bash
 yarn dev-init services-endorsements-api
 ```
 
-## Run tests
+## Running Tests
+
+Execute the tests with the following command:
 
 ```bash
 yarn test services-endorsements-api --skip-nx-cache
 ```
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)

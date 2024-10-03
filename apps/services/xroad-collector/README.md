@@ -1,32 +1,33 @@
+```markdown
 # X-Road Collector
 
-## About
+## Overview
 
-Scheduler that uses the module from [api-catalogue-services] to collect
-information about web services registered in the X-Road environment.
+The X-Road Collector is a scheduler designed to gather information about web services registered in the X-Road environment. It utilizes modules from the [API Catalogue Services] to perform its tasks.
 
-Scheduler configuration can be found in the helm chart settings.
+The configuration for the scheduler is accessible within the Helm chart settings.
 
-## URLs
+## Deployment URLs
 
-- Dev: N/A
-- Staging: N/A
-- Production: N/A
+- Development: Not Available
+- Staging: Not Available
+- Production: Not Available
 
-## Getting started
+## Getting Started
 
-{% hint style="info" %}
-Prerequisite: Make sure that the environment variables described in [api-catalogue-services] exists before running the xroad-collector
-{% endhint %}
+> **Note**: Ensure that the environment variables specified in [API Catalogue Services] are set up before running the X-Road Collector.
 
-To run use
+To start the X-Road Collector, execute the following command:
 
 ```bash
 yarn start services-xroad-collector
 ```
 
-[api-catalogue-services]: ../../../libs/api-catalogue/services/README.md
+For detailed information, refer to the [API Catalogue Services] documentation.
 
-## Code owners and maintainers
+## Code Ownership and Maintenance
 
-- [Advania](https://github.com/orgs/island-is/teams/advania/members)
+- Maintained by: [Advania](https://github.com/orgs/island-is/teams/advania/members)
+
+[API Catalogue Services]: ../../../libs/api-catalogue/services/README.md
+```

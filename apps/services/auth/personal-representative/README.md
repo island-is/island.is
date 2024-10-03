@@ -2,24 +2,24 @@
 
 ## About
 
-A service that is responsible for storing and maintaining personal representatives and their rights to act on behalf of the represented person
+A service responsible for storing and maintaining personal representatives and their rights to act on behalf of the represented person.
 
 ## Context
 
-The purpose of the Personal Representative Database and the Service API is to allow the protection of rights agency of the Ministry of Social Affairs to define rights for personal representatives and maintain a list of personal representative connections along with rights list.
+The purpose of the Personal Representative Database and the Service API is to allow the protection of rights agency of the Ministry of Social Affairs to define rights for personal representatives and maintain a list of connections between personal representatives and represented persons along with their associated rights list.
 
-This allows for digital services to give access to the personal representative on behalf of their clients according to the rights list in their connection.
+This allows digital services to provide access to the personal representative on behalf of their clients, according to the rights list in their connection.
 
-The API allows for maintenance of right types, personal representative types (currently only one type) and as stated before the connections between a personal representative and the represented person.
+The API allows for the maintenance of right types, personal representative types (currently only one type), and the connections between a personal representative and the represented person.
 
-### Example of connections
+### Example of Connections
 
 | **Personal representative** | **Represented person** | **Rights**                                         |
 | --------------------------- | ---------------------- | -------------------------------------------------- |
 | 1122334459                  | 1223455569             | health-data, personal-data, limited-financial-data |
 | 1020304059                  | 0203050569             | limited-health-data                                |
 
-### JSON expample of connection
+### JSON Example of Connection
 
 ```json
 {
@@ -36,89 +36,90 @@ The API allows for maintenance of right types, personal representative types (cu
 
 ## Access
 
-The ServiceAPI is only accessible through X-Road security servers and only to machine clients with specific scope
+The Service API is only accessible through X-Road security servers and only to machine clients with a specific scope.
 
-For the foreseeable future the only system with access would be the Personal Representative Contract System serviced by Spektra for the protection of rights agency
+For the foreseeable future, the only system with access would be the Personal Representative Contract System serviced by Spektra for the protection of rights agency.
 
 ### Scope
 
-```
+```plaintext
 @island.is/auth/personal-representative-admin
 ```
 
-### X-Road setup
+### X-Road Setup
 
-[X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements)
+Refer to [X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements)
 
-#### Urls for X-Road setup are as follows
+#### URLs for X-Road setup
 
 - Dev: [https://personal-representative-xrd.internal.dev01.devland.is/swagger-json](https://personal-representative-xrd.internal.dev01.devland.is/swagger-json)
 - Staging: [https://personal-representative-xrd.internal.staging01.devland.is/swagger-json](https://personal-representative-xrd.internal.staging01.devland.is/swagger-json)
 - Production: [https://personal-representative-xrd.internal.innskra.island.is/swagger-json](https://personal-representative-xrd.internal.innskra.island.is/swagger-json)
 
-### OpenAPI URL ##
+### OpenAPI URL
 
-OpenAPI documentation and demoing at
+OpenAPI documentation and demo:
 
 - [https://personal-representative-xrd.dev01.devland.is/swagger](https://personal-representative-xrd.dev01.devland.is/swagger)
 
-### Service provider usage
+### Service Provider Usage
 
-Digital service providers do not get access to the service API.
+Digital service providers do not have direct access to the service API.
 
-They can use the connection information through two ways.
+They can use the connection information through:
 
-- Setting up X-Road and use the [PublicAPI](https://docs.devland.is/apps/services/auth/personal-representative-public)
-- Use [Digital Iceland’s](https://www.notion.so/Identity-Server-Integration-afde614a247e4b9da4731b2ace1115cd) new login option and setting it up for Personal Representative usage.
-  - This requires mapping rights to scope for service provider's client
+- Setting up X-Road and accessing the [PublicAPI](https://docs.devland.is/apps/services/auth/personal-representative-public)
+- Using [Digital Iceland’s](https://www.notion.so/Identity-Server-Integration-afde614a247e4b9da4731b2ace1115cd) new login option and configuring it for Personal Representative usage.
+  - This requires mapping rights to scope for the service provider's client.
 
 ## Development
 
-### Initial setup
+### Initial Setup
 
-We are using the same service library and database as auth-api and therefore this step by step represents that
-First, make sure you have docker, then run:
+We are using the same service library and database as `auth-api`, and therefore, this step-by-step guide follows that setup.
+
+First, ensure you have Docker installed, then run:
 
 ```bash
 yarn dev-services services-auth-ids-api
 ```
 
-Then run the migrations:
+Run the migrations:
 
 ```bash
 yarn nx run services-auth-ids-api:migrate
 ```
 
-You can serve this service locally by running:
+Serve the service locally by running:
 
 ```bash
 yarn start services-auth-personal-representative
 ```
 
-Api open api specs will now be accessible at
+The API specs will be accessible at:
 
-```bash
+```plaintext
 http://localhost:3376
 ```
 
 ### Testing
 
-You can run tests for this service locally by running:
+Run tests for this service locally by executing:
 
 ```bash
 yarn test services-auth-personal-representative
 ```
 
-### Getting started
+### Getting Started
 
 ```bash
 yarn start services-auth-personal-representative
 ```
 
-### Project owner
+### Project Owner
 
 - Réttindagæsla velferðarráðuneytisins
 
-### Code owners and maintainers
+### Code Owners and Maintainers
 
 - [Programm](https://github.com/orgs/island-is/teams/programm/members)
