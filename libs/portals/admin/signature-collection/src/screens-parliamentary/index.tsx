@@ -7,7 +7,6 @@ import {
   Stack,
   Box,
   Breadcrumbs,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
@@ -73,7 +72,10 @@ const ParliamentaryRoot = () => {
                 backgroundColor="blue"
               />
             </Box>
-            <DownloadReports areas={collection.areas} />
+            <DownloadReports
+              areas={collection.areas}
+              collectionId={collection?.id}
+            />
           </Box>
           <Stack space={3}>
             {collection?.areas.map((area) => (
