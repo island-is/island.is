@@ -1,15 +1,15 @@
 ```markdown
-# island-ui-theme
+# Island UI Theme
 
-This library was generated with [Nx](https://nx.dev). It provides a customizable UI theme that can be used across different applications to ensure consistency in design. 
+The Island UI Theme library was generated with [Nx](https://nx.dev). It offers a customizable UI theme to maintain design consistency across various applications.
 
 ## Running Unit Tests
 
-To run the unit tests for the island-ui-theme library, execute the following command:
+To execute unit tests for the Island UI Theme library, use the following command:
 
 ```bash
-ng test island-ui-theme
+nx test island-ui-theme
 ```
 
-This command will run the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework. Make sure you have all the necessary dependencies installed before running the tests.
+This command runs the tests with [Jest](https://jestjs.io), a popular JavaScript testing framework. Ensure all required dependencies are installed prior to running the tests.
 ```

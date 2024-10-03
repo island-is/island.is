@@ -5,11 +5,14 @@ Island UI is a component library designed to offer a consistent UI/UX experience
 
 ## Running Unit Tests
 
-To execute the unit tests for the Island UI Core, run the following command in your terminal:
+To execute the unit tests for the Island UI Core, follow these steps:
 
-```bash
-nx test island-ui-core
-```
+1. Open your terminal.
+2. Run the following command:
+
+   ```bash
+   nx test island-ui-core
+   ```
 
 This command will execute the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework designed to ensure the reliability of your codebase.
 ```

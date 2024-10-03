@@ -4,7 +4,7 @@ Island UI Utils is a utility library designed to complement the Island UI compon
 
 ## Running Unit Tests
 
-Unit tests are essential for ensuring the reliability and stability of your code. The `island-ui-utils` library leverages [Jest](https://jestjs.io) for its testing framework. To execute the unit tests for this library, run the following command:
+Unit tests are essential for ensuring the reliability and stability of your code. The `island-ui-utils` library uses [Jest](https://jestjs.io) as its testing framework. To execute the unit tests for this library, run the following command:
 
 ```bash
 nx test island-ui-utils
