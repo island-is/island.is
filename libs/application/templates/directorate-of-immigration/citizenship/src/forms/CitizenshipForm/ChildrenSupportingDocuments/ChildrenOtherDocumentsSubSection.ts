@@ -74,7 +74,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
               supportingDocuments.labels.otherDocuments.buttonText,
           }),
           buildHiddenInput({
-            id: `${Routes.SUPPORTINGDOCUMENTS}.writtenConsentFromChildRequired`,
+            id: `${Routes.CHILDSUPPORTINGDOCUMENTS}.writtenConsentFromChildRequired`,
             defaultValue: (application: Application) => {
               const age = getSelectedIndividualAge(
                 application.externalData,
@@ -109,7 +109,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
             },
           }),
           buildHiddenInput({
-            id: `${Routes.SUPPORTINGDOCUMENTS}.writtenConsentFromOtherParentRequired`,
+            id: `${Routes.CHILDSUPPORTINGDOCUMENTS}.writtenConsentFromOtherParentRequired`,
             defaultValue: (application: Application) => {
               const answers = application.answers as Citizenship
               const selectedInCustody = getSelectedCustodyChildren(
@@ -170,7 +170,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
             },
           }),
           buildHiddenInput({
-            id: `${Routes.SUPPORTINGDOCUMENTS}.custodyDocumentsRequired`,
+            id: `${Routes.CHILDSUPPORTINGDOCUMENTS}.custodyDocumentsRequired`,
             defaultValue: (application: Application) => {
               const answers = application.answers as Citizenship
               const selectedInCustody = getSelectedCustodyChildren(
