@@ -4,30 +4,30 @@ This library was generated with [Nx](https://nx.dev).
 
 ### Setup
 
-First you need to enter the AWS environment variables (get from https://island-is.awsapps.com/start) to be able to upload documents while running locally
+Set AWS environment variables (from https://island-is.awsapps.com/start) for local document upload:
 
-`export AWS_ACCESS_KEY_ID="<access_key_id>"`
+```bash
+export AWS_ACCESS_KEY_ID="<access_key_id>"
+export AWS_SECRET_ACCESS_KEY="<secret_access_key>"
+export AWS_SESSION_TOKEN="<session_token>"
+```
 
-`export AWS_SECRET_ACCESS_KEY="<secret_access_key>"`
+### Running Locally
 
-`export AWS_SESSION_TOKEN="<session_token>"`
-
-### Running locally
-
-start dev services:
+Start development services:
 
 ```bash
 yarn nx run application-system-api:dev-services
 yarn nx run application-system-api:migrate
 ```
 
-and both proxies
+Set up proxies:
 
 ```bash
 kubectl -n socat port-forward svc/socat-xroad 8081:80
 ```
 
-then run the application system
+Run the application system:
 
 ```bash
 yarn start application-system-form
@@ -35,22 +35,20 @@ yarn start api
 yarn start application-system-api
 ```
 
-and visit `http://localhost:4242/umsoknir/skilarsreikninga`
+Visit: `http://localhost:4242/umsoknir/skilarsreikninga`
 
 ## Test Users
 
-**Gervimaður Færeyjar** `01012399`
+**Gervimaður Færeyjar**: `01012399`
 
-### Company representation:
+### Company Representation
 
-Act as a political party: **65°ARCTIC ehf.**
+- As a political party: **65°ARCTIC ehf.**
+- As a Cemetery: **Blámi-fjárfestingafélag ehf.**
 
-Act as a Cemetery: **Blámi-fjárfestingafélag ehf.**
+### Registering Board Members and Examiners
 
-### Registering Boardmembers and Examiners
+Use Gervimenn locally and on dev:
 
-Locally and on dev use Gervimenn f.x.
-
-**0101302989 Gervimaður Ameríka**
-
-**0101302129 Gervimaður Noregur**
+- **0101302989 Gervimaður Ameríka**
+- **0101302129 Gervimaður Noregur**

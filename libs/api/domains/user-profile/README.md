@@ -2,38 +2,34 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-user-profile` to execute the unit tests via [Jest](https://jestjs.io).
+Execute unit tests with:
 
-## Development
+```bash
+nx test api-domains-user-profile
+```
 
-To run this in development, you will need to start the service.
+## Development Setup
+
+To run the service in development:
 
 ```bash
 yarn start services-user-profile
 ```
 
-To locally develop the islyklar service, you will need the islyklar.p12 file. The file is not part of the parameter store, so you will need to get it from the code-owners of this service.
-_Islyklar file is not a requirement to run the user-profile._
+To develop the islyklar service locally, secure the `islyklar.p12` file from the code-owners. It's not necessary for running user-profile.
 
-## Islyklar and Userprofile
+## Islyklar and Userprofile Integration
 
-With the addition of the islyklar service, the userprofile service will be a little different.
-
-The islyklar service is meant to be a temporary solution while we have not migrated the user data from the previous island.is web. So for now a decision was made to merge the islyklar data with the userprofile data for us to get the user information from the old web.
-
-`getUserProfile` will return information from the userProfile db as well as the islyklar db.
+The islyklar service merges its data with the userprofile to access user info from the previous island.is web. Thus, `getUserProfile` retrieves information from both databases.
 
 ## `getUserProfile`
 
-Even if userProfileApiWithAuth does not exist.
-Islykill data might exist for the user, so we need to get that, with default values in the userprofile data.
+Fetches user data from userProfile and islyklar databases. It handles cases where only one or neither source is available.
 
 ```mermaid
-
 graph TD
-
 START(getUserProfile) --> GET[Get User Profile & Islyklar data]
 GET -- Error --> E[throw Error]
 GET --> HAS_IL{Has islyklar only?}
@@ -48,36 +44,36 @@ HAS_NO --> RET_NULL[Return null]
 
 ## `getUserProfileLocale`
 
-`getUserProfile` is served to return the userprofile along with islyklar data from the current logged in user. `getUserProfileLocale` can be used to _only_ fetch the User profile locale. It will only call the userprofile controller `getActorLocale` of the current logged in user, but if the user is logged in as a delegated user, it will fetch the actor's locale instead of the delegated user.
+Fetches only the locale of the user profile. If logged in as a delegated user, it retrieves the actor's locale.
 
 ## `getIslykillProfile`
 
-Returns default values for the userProfile while fetching the islyklar data. Used when a `userProfileApiWithAuth` returns 404 so the user will get no userProfileApi data but will get their islyklar data.
+Provides default userProfile values and fetches islyklar data if `userProfileApiWithAuth` returns 404.
 
 ## `createUserProfile`
 
-Creates a userprofile using `userProfileControllerCreate` and creates (`createIslykillSettings`) OR updates (`updateIslykillSettings`) the islyklar data depending on if the user has islyklar data or not.
+Creates a user profile using `userProfileControllerCreate` and manages islyklar data with `createIslykillSettings` or `updateIslykillSettings`.
 
 ## `updateUserProfile`
 
-Updates a userprofile using `userProfileControllerUpdate` and creates (`createIslykillSettings`) OR updates (`updateIslykillSettings`) the islyklar data depending on if the user has islyklar data or not.
+Updates a user profile with `userProfileControllerUpdate` and similarly manages islyklar data.
 
 ## `deleteIslykillValue`
 
-The user can post empty values to the email and telephone fields. If they choose to do so, we will mark the `DataStatus` as `EMPTY`. DataStatus explained in the next step.
+Marks email and phone fields as `EMPTY` when posted with empty values:
 
-```
+```json
 {
-	emailStatus:  DataStatus.EMPTY,
-	mobileStatus:  DataStatus.EMPTY,
+	"emailStatus": "DataStatus.EMPTY",
+	"mobileStatus": "DataStatus.EMPTY"
 }
 ```
 
 ## `createSmsVerification` & `createEmailVerification`
 
-When creating or updating the user information we need to keep hold of the validity of the information from the user. The user will get an email or text message to verify the information given.
+Send verification via SMS or email to confirm user-provided information. DataStatus indicators:
 
-- The default value of a DataStatus is `NOT_DEFINED`.
-- The empty state is `EMPTY`. This is used for example to prompt the user and tell them that it's important that they save their email, even though it's not a requirement.
-- The verified state is `VERIFIED`. We know the email is correct, the user has verified.
-- The very uncommon state of an email present, but not verified is `NOT_VERIFIED`. This can indicate the user migrating in with an email from the islyklar service, and we have not been able to verify it.
+- `NOT_DEFINED`: Default value.
+- `EMPTY`: Prompts user to save contact info, not mandatory.
+- `VERIFIED`: User has confirmed contact info.
+- `NOT_VERIFIED`: Info exists but is unverified, typically from islyklar migration.

@@ -1,54 +1,52 @@
-# Application Templates Household supplement
+# Application Templates Household Supplement
 
 ## Description
 
-This application template allows applicants to apply for household supplement.
+This template allows applicants to apply for a household supplement.
 
-![](../core/assets/tr-applications-flow-chart.png)
+![Flowchart](../core/assets/tr-applications-flow-chart.png)
 
 ### States
 
 #### Prerequisites
 
-This state is a temporary state that all new applications will be created in. It has a short lifespan and is unlisted.
-
-The purpose of this state is to be a guard into the actual application. There the applicant reads general information on the processing and data collection for applications at TR. There is an external data step which fetches data from Þjóðskrá and TR. If the applicant is not a pensioner (old age, disability or rehabilitation), has a spouse that does not belong to an institution for the elderly or do not have a registered domicile in Iceland they cannot advance to the next step and make an application.
+A temporary state for new applications with a short lifespan and is unlisted. It serves as an entry guard, providing general information on processing and data collection. Data is fetched from Þjóðskrá and TR. If the applicant is not a pensioner or lacks certain conditions, they cannot progress.
 
 #### Draft
 
-Valid applicant will be able to advance to this state where they can start the actual application and fill in all the relevant data.
+Eligible applicants can start the application, filling in necessary data.
 
-#### Tryggingastofnun submitted
+#### Tryggingastofnun Submitted
 
-When applicant has sent in the application to TR the application is in this state. Here the application can be edited.
+The application is sent to TR and can still be edited.
 
-#### Tryggingastofnun in review
+#### Tryggingastofnun in Review
 
-For application to be in this state, TR need to make a state change when they start to review the application. Here the application can not be edited.
+TR changes the state when reviewing the application. The application cannot be edited in this state.
 
-#### Additional document required
+#### Additional Document Required
 
-If TR needs additional documents to finish processing the application they can make a state change so the applicant can add their missing documents.
+If TR needs more documents, they switch the state to allow applicants to provide the missing materials.
 
 #### Approved
 
-Application have been approved by TR.
+The application is approved by TR.
 
 #### Rejected
 
-Application have been rejected by TR.
+The application is rejected by TR.
 
-### Localisation
+### Localization
 
-All localisation can be found on Contentful.
+All localization is on Contentful.
 
-- [Household supplement application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/hs.application)
-- [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
+- [Household Supplement Application Translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/hs.application)
+- [Application System Translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
-When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../../localization/README.md#message-extraction).
+When creating new text strings in the `messages.ts` file, update Contentful. See [message extraction](../../../../localization/README.md#message-extraction).
 
 ## Setup
 
-See [application-system](../../../../../apps/application-system/README.md) setup on how to get started.
+Refer to the [application-system](../../../../../apps/application-system/README.md) setup guide.
 
-Once you have everything running you can navigate to [http://localhost:4242/umsoknir/heimilisuppbot](http://localhost:4242/umsoknir/heimilisuppbot) and start developing.
+Once running, navigate to [http://localhost:4242/umsoknir/heimilisuppbot](http://localhost:4242/umsoknir/heimilisuppbot) to start developing.

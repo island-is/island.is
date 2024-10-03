@@ -2,23 +2,31 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-fiskistofa` to execute the unit tests via [Jest](https://jestjs.io).
+Execute unit tests using [Jest](https://jestjs.io):
 
-## Running lint
+```sh
+nx test clients-fiskistofa
+```
 
-Run `nx lint clients-fiskistofa` to execute the lint via [ESLint](https://eslint.org/).
+## Running Lint
+
+Execute lint checks using [ESLint](https://eslint.org/):
+
+```sh
+nx lint clients-fiskistofa
+```
 
 ## Usage
 
-### Updating the open api definition (clientConfig.json)
+### Update OpenAPI Definition (clientConfig.json)
 
 ```sh
 yarn nx run clients-fiskistofa:update-openapi-document
 ```
 
-### Regenerating the client:
+### Regenerate Client
 
 ```sh
 yarn nx run clients-fiskistofa:codegen/backend-client

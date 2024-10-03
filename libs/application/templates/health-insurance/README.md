@@ -1,58 +1,68 @@
+```markdown
 # Health Insurance
 
-Application for health insurance when moving back to Iceland after living abroad.
+Application for health insurance when returning to Iceland after living abroad.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-health-insurance` to execute the unit tests via [Jest](https://jestjs.io).
+Execute the unit tests via [Jest](https://jestjs.io) with:
+```bash
+nx test application-templates-health-insurance
+```
 
 ## Setup
 
-To start the application system, follow the instructions in the handbook [here](https://docs.devland.is/apps/application-system).
+To start the application system, follow the handbook instructions [here](https://docs.devland.is/apps/application-system).
 
-## Additional setup
-
-There are additional steps required to run this template locally
+## Additional Setup
 
 ### Prerequisites
 
-- You have `kubectl` installed
-  - `brew install kubectl`
-- You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured
+- Install `kubectl`
+  ```bash
+  brew install kubectl
+  ```
+- Configure [AWS Secrets](../../../../handbook/repository/aws-secrets.md)
 
-#### Get kubeconfig
+#### Get Kubeconfig
 
-- Export aws variables `aws eks update-kubeconfig --name dev-cluster01`
+- Export AWS variables:
+  ```bash
+  aws eks update-kubeconfig --name dev-cluster01
+  ```
 
 ### Health Insurance Providers
 
-1. Fetch development secrets for the project
+1. Fetch development secrets for the project (TODO).
 
-- TODO
-
-2. Socat XRoad
-
-- Run `kubectl -n socat port-forward svc/socat-xroad 8080:80`
-- Keep this process running while running the project
+2. Socat XRoad:
+   - Run:
+     ```bash
+     kubectl -n socat port-forward svc/socat-xroad 8080:80
+     ```
+   - Keep this running while using the project.
 
 ### National Registry Provider
 
-1. Fetch development secrets for the project
+- Fetch development secrets with:
+  ```bash
+  yarn get-secrets service-portal
+  ```
 
-- Run `yarn get-secrets service-portal`
+### User Profile Provider (Optional)
 
-### User Profile Provider (optional)
+- Start the user profile service by following instructions [here](https://docs.devland.is/apps/services/user-profile).
 
-- Follow the instructions to start the user profule service in the handbook [here](https://docs.devland.is/apps/services/user-profile).
-
-This service is optional as there is a fallback for dev
+This service is optional; there is a fallback for development.
 
 ### Translations from Contentful
 
-Fetch development secrets
+Fetch development secrets with:
+```bash
+yarn get-secrets api
+```
 
-- Run `yarn get-secrets api`
-
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Deloitte](https://github.com/orgs/island-is/teams/deloitte)
+```

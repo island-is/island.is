@@ -1,65 +1,62 @@
+```markdown
 # Mortgage Certificate Application
 
-This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib application/templates/mortgage-certificate)
+This library was created with [Nx](https://nx.dev).
 
 ## Setup
 
 Run these two proxy clients for Þjóðskrá connection.
 
-Proxy the X-Road socat service (v2):
+### X-Road Socat Service (v2)
 
-First you need to enter the AWS environment variables (get from https://island-is.awsapps.com/start)
+Set AWS environment variables (obtain them from https://island-is.awsapps.com/start):
 
-`export AWS_ACCESS_KEY_ID="<access_key_id>"`
+```bash
+export AWS_ACCESS_KEY_ID="<access_key_id>"
+export AWS_SECRET_ACCESS_KEY="<secret_access_key>"
+export AWS_SESSION_TOKEN="<session_token>"
+```
 
-`export AWS_SECRET_ACCESS_KEY="<secret_access_key>"`
+Then run:
 
-`export AWS_SESSION_TOKEN="<session_token>"`
+```bash
+./scripts/run-xroad-proxy.sh
+```
 
-Then:
+### X-Road Socat Service (v1)
 
-`./scripts/run-xroad-proxy.sh`
+Execute the following (may be required only once):
 
-Proxy the X-Road socat service (v1):
+```bash
+aws eks update-kubeconfig --name dev-cluster01 --profile <profile-name> --region eu-west-1
+```
 
-First you need to run this (maybe only once?):
+### Fetch Secrets
 
-`aws eks update-kubeconfig --name dev-cluster01 --profile <profile-name> --region eu-west-1`
+Retrieve all necessary secrets.
 
-Fetch all necessary secrets
+## Running Locally
 
-### Running locally
-
-You can serve this app locally by running:
+Serve the app locally with:
 
 ```bash
 yarn start api
-```
-
-and
-
-```bash
 yarn start application-system-api
-```
-
-and
-
-```bash
 yarn start application-system-form
-```
-
-and
-
-```bash
 yarn start services-user-profile
 ```
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-mortgage-certificate` to execute the unit tests via [Jest](https://jestjs.io).
+Execute the unit tests using Jest with:
 
-## Code owners and maintainers
+```bash
+nx test application-templates-mortgage-certificate
+```
+
+## Code Owners and Maintainers
 
 - [Unnur Sól - @unnursol](https://github.com/unnursolingimars)
-- [Jón Bjarni]()
+- Jón Bjarni
 - [Jóhanna Agnes - @johannaagma](https://github.com/johannaagma)
+```

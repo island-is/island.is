@@ -1,39 +1,31 @@
+```markdown
 # Migrating Data in the IDS
 
-You can define clients and scopes for production using seed migrations in the `seeders/data` folder.
+Define clients and scopes for production using seed migrations in the `seeders/data` folder. These are primarily for "island.is" clients and scopes for dev, staging, and prod environments. Other organizations should use the self-service interface to manage their data.
 
-These are generally "island.is" clients and scopes that need to be deployed to our dev, staging and prod environments. Other organisations can get access to a self-service interface and should manage their data through that.
+Avoid creating machine clients through seed migrations due to manual client secret management requirements.
 
-Note that even though it is possible to create machine clients using this method we do not recommend doing so as the client secret will need to be manually added to a parameter storage.
+## Defining Seed Migrations
 
-## Defining seed migrations
+Create a TypeScript module named after your new client or scope, prefixed with `client-` or `scope-` (e.g., `scope-finance.ts`). File names are crucial since Sequelize uses them to deduplicate migrations. Migrations run only once per environment and follow alphabetical order.
 
-First, create a TypeScript module with a file name describing your new client or scope, prefixed with `client-` or `scope-` respectively. E.g. `scope-finance.ts`.
+Ensure connected data, if applicable, is correctly ordered; for instance, create the client first, then the scope.
 
-The filename is important in that Sequelize uses the filename to deduplicate seed migrations. Each seed migration runs only once in each environment. This means you should avoid renaming migrations after they've run in some environments.
+Do not import modules from outside the `seeders/data` folder.
 
-Seed migrations run in alphabetized order based on file names, which means that `client-*.ts` migrations are run before `scope-*.ts` migrations.
+### Creating Clients
 
-If you're creating data that is connected and migrated in the same release, make sure that one (e.g. the client) is created first and then connect them when creating the other one (e.g. the `addToClients` option on the scope).
-
-It is not possible to import any modules from outside the `seeders/data` folder since everything in this folder is transpiled manually into the dist folder during build.
-
-### Creating clients
-
-We provide a helper called `createClient` to seed a client in all environments:
+Use `createClient` to seed clients across all environments:
 
 ```typescript
 // client-test.ts
 import { createClient } from './helpers'
 
 export const up = createClient({
-  // Required:
   clientId: '@island.is/test',
   clientType: 'machine',
   displayName: 'Test client',
   description: 'Talar við test API',
-
-  // Optional:
   contactNationalId: '1111111111',
   contactEmail: 'hello@test.is',
   grantTypes: ['client_credentials'],
@@ -45,10 +37,7 @@ export const up = createClient({
     procuringHolders: true,
   },
   redirectUris: {
-    dev: [
-      'http://localhost:4444/some/path',
-      'https://beta.dev01.devland.is/some/path',
-    ],
+    dev: ['http://localhost:4444/some/path', 'https://beta.dev01.devland.is/some/path'],
     staging: ['https://beta.staging01.devland.is/some/path'],
     prod: ['https://island.is/some/path'],
   },
@@ -60,37 +49,34 @@ export const up = createClient({
 })
 ```
 
-Notes about the arguments:
+Arguments:
 
-- `clientId` should be prefixed with the organisation domain, eg `@island.is`.
-- `clientType` should be `spa` for front-end web apps, `web` for websites that have a cookie based authentication through a backend, `native` for mobile apps and `machine` for backend clients.
-- `displayName` will be shown to the user when they are authenticating to this client.
-- `description` should describe the purpose of the client. Not shown to the user.
-- `contactNationalId` and `contactEmail` default to Digital Iceland and it's technical contact.
-- `grantTypes` specifies which token grant flows the client can use. Defaults to `['client_credentials']` for `machine` clients, `['authorization_code']` for `spa`, `web` and `native` clients.
-- `allowedScopes` lists the identity and/or api scopes this client can request. Machine clients should not request any identity scopes but `spa`, `web` and `native` clients usually request the `openid` and `profile` scopes. All clients can request api scopes.
-- `supportDelegations` toggles whether users can authenticate to this client with delegations (legal guardians, procuring holders and custom delegations).
-- `delegations` specifies which types of delegations are allowed by the client.
-- `redirectUri` should specify the list of allowed redirect uris for each environment. Required for any client using the `authorization_code` grant type.
-- `postLogoutRedirectUri` is where the user should be redirected to after logging out. If no url is specified the user will be redirected to island.is frontpage
+- `clientId`: Prefix with the organization's domain, e.g., `@island.is`.
+- `clientType`: Use `spa` for front-end web apps, `web` for sites with backend cookie-based auth, `native` for mobile apps, `machine` for backend clients.
+- `displayName`: Shown during user authentication.
+- `description`: Describes client purpose; not shown to users.
+- `contactNationalId`, `contactEmail`: Default to Digital Iceland's contact.
+- `grantTypes`: Token grant flows. Defaults vary by `clientType`.
+- `allowedScopes`: Identity and/or API scopes the client can request. Machine clients shouldn't request identity scopes.
+- `supportDelegations`: Defines if users can authenticate with delegations.
+- `delegations`: Specifies delegation types permitted.
+- `redirectUris`: Lists allowed URIs for `authorization_code` grant type.
+- `postLogoutRedirectUri`: Redirect after logout. Defaults to island.is front page.
 
-The module export must be named `up` so Sequelize picks it up. You don't need to define `down` exports. All migrations should be one directional and backwards compatible and never need a rollback.
+Exports must be named `up` for Sequelize recognition. No `down` export is needed; migrations are one-directional.
 
-### Creating scopes
+### Creating Scopes
 
-There's another helper called `createScope` to seed a scope in all environments:
+Use `createScope` to seed scopes:
 
 ```typescript
 // scope-test.ts
 import { createScope } from './helpers'
 
 export const up = createScope({
-  // Required:
   name: '@island.is/test',
   displayName: 'Test scope',
   description: 'Good description for the scope',
-
-  // Optional:
   delegation: {
     custom: true,
     legalGuardians: true,
@@ -102,21 +88,21 @@ export const up = createScope({
 })
 ```
 
-Notes about the arguments:
+Arguments:
 
-- `name` should be prefixed with the organisation domain, eg `@island.is`.
-- `displayName` is the name of the scope, shown to users if custom delegations are supported.
-- `description` is a description of what the scope gives access to, also shown to users if custom delegations are supported.
-- `delegation` allows you to configure if the scope should be automatically granted to legal guardians and procuring holders, or if it should support custom delegations. Defaults to no delegation support.
-- `accessControlled: true` makes this a special scope that normal users don't have access to. It is possible to give users access to this scope in the IDS admin. This is a simple tool to manage access to admin clients and resources.
-- `addToResource` Deprecated, we no longer recommend assigning scopes to a resource or audience. Specifies which resource this scope belongs to. Defaults to `@island.is`.
-- `addToClients` adds this scope as `allowedScopes` for the specified clients.
+- `name`: Prefixed with the organization's domain, e.g., `@island.is`.
+- `displayName`: Scope name, shown to users if custom delegations are supported.
+- `description`: Describes access granted; shown if delegations are supported.
+- `delegation`: Configure automatic granting for legal guardians, procuring holders, or custom delegations.
+- `accessControlled`: Special scope limiting normal user access.
+- `addToResource`: Deprecated. Previously specified scope's resource.
+- `addToClients`: Adds scope as `allowedScopes` for clients.
 
-### Using compose.
+### Using Compose
 
-Each seed migration can define multiple clients and scopes using `compose`:
+Define multiple clients and scopes with `compose`:
 
-```ts
+```typescript
 import { compose, createClient, createScope } from './helpers'
 
 export const up = compose(
@@ -142,14 +128,11 @@ export const up = compose(
 )
 ```
 
-Please keep in mind the order of filenames if there are dependencies between seed migrations in the same release.
+Ensure the filename order aligns with dependencies within a release.
 
-## Error handling and create/update logic
+## Error Handling and Create/Update Logic
 
-These helpers will generally catch and log database errors that correspond to unique index conflicts.
+Helpers handle and log database errors mainly related to unique index conflicts. This allows seeding and IDS admin-defined data coexistence. Migrations add new rows/relations but do not update existing data.
 
-This means that it's generally safe to define the same data in a seed migration as well as in the IDS admin. The migration will ignore any data that already exists.
-
-It works on a row by row basis. The migration will not update any existing data, but it will add new rows/relations when they don't exist.
-
-> Let's say you specify a client X in a seed migration that is allowed to use scopes A and B. If client X is already defined in `dev` with scope A when the migration runs, it will only add scope B as an allowed scope for client X. The seed migration may still create client X on `staging` and `prod` if it doesn't exist already.
+For instance, if client X is specified with scopes A and B, and X with A already exists in `dev`, the migration adds scope B. Client X might still be created in `staging` and `prod` if absent.
+```

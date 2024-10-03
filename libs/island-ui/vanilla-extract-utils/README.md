@@ -1,10 +1,10 @@
 # Vanilla Extract Utils
 
-Contains utils that depend on `@vanilla-extract/css` and can thus only be imported from `*.css.ts` files.
+Utilities dependent on `@vanilla-extract/css`, to be used exclusively in `*.css.ts` files.
 
 ### `responsiveStyleMap`
 
-Wraps Vanilla Extract's `style` function where each style can contain breakpoints:
+Enhances Vanilla Extract's `style` function to support responsive design, allowing styles with breakpoints:
 
 ```typescript
 import { responsiveStyleMap } from '@island.is/island-ui/vanilla-extract-utils'
@@ -15,6 +15,6 @@ export const container = responsiveStyleMap({
 })
 ```
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test island-ui-vanilla-extract-utils` to execute the unit tests via [Jest](https://jestjs.io).
+Execute `nx test island-ui-vanilla-extract-utils` to run unit tests using [Jest](https://jestjs.io).

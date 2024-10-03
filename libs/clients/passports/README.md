@@ -2,9 +2,9 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## How to use
+## How to Use
 
-### Generate the client:
+### Generate the Client
 
 ```sh
 yarn nx run clients-passports:codegen/backend-client
@@ -12,49 +12,45 @@ yarn nx run clients-passports:codegen/backend-client
 
 ### Usage
 
-- Import the `PassportsClientModule` within the service of choice.
+1. **Import the `PassportsClientModule` in your service:**
 
-```
-import { PassportsClientModule } from '@island.is/clients/passports'
+   ```typescript
+   import { PassportsClientModule } from '@island.is/clients/passports';
 
-@Module({
-    ...,
-        imports: [PassportsClientModule],
-    ...,
-})
-```
+   @Module({
+       imports: [PassportsClientModule],
+   })
+   ```
 
-- Pass in the IdentityDocumentApi
+2. **Inject the `IdentityDocumentApi`:**
 
-```
-import { IdentityDocumentApi } from '@island.is/clients/passports'
+   ```typescript
+   import { IdentityDocumentApi } from '@island.is/clients/passports';
 
-constructor(
-    private passportsApi: IdentityDocumentApi,
-)
-```
+   constructor(
+       private passportsApi: IdentityDocumentApi,
+   ) {}
+   ```
 
-- Use with auth middleware
+3. **Use with Auth Middleware:**
 
-```
-  private getPassportsWithAuth(auth: Auth) {
-    return this.passportsApi.withMiddleware(new AuthMiddleware(auth))
-  }
-```
+   ```typescript
+   private getPassportsWithAuth(auth: Auth) {
+     return this.passportsApi.withMiddleware(new AuthMiddleware(auth));
+   }
+   ```
 
-- Now you can access the service with authentication
+4. **Access the Service with Authentication:**
 
-```
-const passportResponse = await this.getPassportsWithAuth(
-        auth,
-        )
-        .identityDocumentGetIdentityDocument({
-            personId: '1234567890',
-        })
+   ```typescript
+   const passportResponse = await this.getPassportsWithAuth(auth)
+     .identityDocumentGetIdentityDocument({
+       personId: '1234567890',
+     });
 
-console.log('passportResponse', passportResponse)
-```
+   console.log('passportResponse', passportResponse);
+   ```
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-passports` to execute the unit tests via [Jest](https://jestjs.io).
+Execute `nx test clients-passports` to run unit tests via [Jest](https://jestjs.io).

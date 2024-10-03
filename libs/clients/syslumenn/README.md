@@ -1,28 +1,32 @@
 # Syslumenn Client
 
-## About
+## Overview
 
-This library implements a client to use Syslumenn's API
-
-The client is generated from a copy of the openApi document provided by Syslumenn.
+This library provides a client for interfacing with the Syslumenn API. The client is generated from the Syslumenn's OpenAPI specification.
 
 ## Usage
 
-### Updating the open api definition (clientConfig.json)
+### Update OpenAPI Definition
 
-```sh
+To update the OpenAPI definition (`clientConfig.json`), run:
+
+```bash
 yarn nx run clients-syslumenn:update-openapi-document
 ```
 
-### Regenerating the client:
+### Regenerate the Client
 
-```sh
+To regenerate the client, execute:
+
+```bash
 yarn nx run clients-syslumenn:codegen/backend-client
 ```
 
-### Import into other NestJS modules
+### Integration with NestJS
 
-## Code owners and maintainers
+Import the client into your NestJS modules as needed.
+
+## Code Owners and Maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)
 - [Stefna](https://github.com/orgs/island-is/teams/stefna/members)

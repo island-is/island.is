@@ -1,19 +1,19 @@
-# Local setup of development database
+# Local Setup of Development Database
 
-## 1. If first install/empty db skip this step, otherwise clear all definitions
+## 1. Clear All Definitions (Skip if First Install/Empty DB)
 
-```
+```bash
 npx sequelize db:migrate:undo:all
 ```
 
-## 2. Migrate table definitions
+## 2. Migrate Table Definitions
 
-```
+```bash
 npx sequelize db:migrate
 ```
 
-## 3. Run local seed data
+## 3. Run Local Seed Data
 
-```
+```bash
 yarn nx run services-auth-ids-api:seed
 ```

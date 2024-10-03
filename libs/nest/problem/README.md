@@ -1,14 +1,14 @@
 # Nest Problem Module
 
-This library includes a Nest Module that implements the [Problem Details for HTTP APIs](https://datatracker.ietf.org/doc/html/rfc7807) spec.
+This library implements the [Problem Details for HTTP APIs](https://datatracker.ietf.org/doc/html/rfc7807) spec in a NestJS module.
 
 ## Usage
 
-Import ProblemModule in your root NestJS module.
+Import `ProblemModule` in your root NestJS module:
 
 ```typescript
-import { Module } from '@nestjs/common'
-import { ProblemModule } from '@island.is/nest/problem'
+import { Module } from '@nestjs/common';
+import { ProblemModule } from '@island.is/nest/problem';
 
 @Module({
   imports: [ProblemModule],
@@ -16,62 +16,54 @@ import { ProblemModule } from '@island.is/nest/problem'
 export class AppModule {}
 ```
 
-It will automatically filter all thrown errors and convert them to Problem Responses.
+It filters all thrown errors and converts them to Problem Responses.
 
 ## GraphQL
 
-For unhandled errors thrown in a GraphQL context, this module will enrich them with a "problem" extension.
+For unhandled errors in GraphQL, the module enriches them with a "problem" extension. If the error already has a `problem` attribute, it will be used.
 
-If the error already has a `problem` attribute, then that will be used.
+Note: Our [Enhanced Fetch](../../clients/middlewares/README.md) client parses problem responses and includes a problem attribute in errors, forwarding issues from REST services to the UI.
 
-{% hint style="info" %}
-Our [Enhanced Fetch](../../clients/middlewares/README.md) client automatically parses problem responses and includes a problem attribute in thrown errors. This means that problems from our REST services are automatically forwarded to the UI.
-{% endhint %}
-
-{% hint style="info" %}
-For expected problems, consider following GraphQL best practices and model them [in the GraphQL schema](https://engineering.zalando.com/posts/2021/04/modeling-errors-in-graphql.html).
-{% endhint %}
+Consider modeling expected problems [in the GraphQL schema](https://engineering.zalando.com/posts/2021/04/modeling-errors-in-graphql.html).
 
 ## Manual problem responses
 
-The easiest way to manually return a problem response is to throw `ProblemError` or one of its subclasses like this:
+To manually return a problem response, throw `ProblemError` or its subclasses:
 
 ```typescript
-import { ProblemError } from '@island.is/nest/problem'
-import { ProblemType } from '@island.is/shared/problem'
+import { ProblemError } from '@island.is/nest/problem';
+import { ProblemType } from '@island.is/shared/problem';
 
 throw new ProblemError({
   type: ProblemType.HTTP_NOT_FOUND,
   title: 'Not found',
-})
+});
 ```
 
-The following sub-classes are available for your convenience:
+Available subclasses include:
 
-- new ValidationFailed(fields) - accepts a record of validation issues.
+- `ValidationFailed(fields)`: Accepts validation issues.
 
 ## Custom problems
 
-If none of the existing problem types suits your needs, consider [creating a new one](../../shared/problem/README.md#custom-problem).
-
-When you've defined the problem type, you can return it like this:
+To create a new problem type, [define one](../../shared/problem/README.md#custom-problem) and use it as follows:
 
 ```typescript
-import { ProblemError } from '@island.is/nest/problem'
-import { ProblemType } from '@island.is/shared/problem'
+import { ProblemError } from '@island.is/nest/problem';
+import { ProblemType } from '@island.is/shared/problem';
 
 throw new ProblemError({
   type: ProblemType.NEW_PROBLEM,
   title: 'Some new problem occurred',
   extraAttribute: 'example',
-})
+});
 ```
 
-Optionally, you can create a ProblemError subclass like this:
+Or create a custom subclass:
 
 ```typescript
-import { ProblemType } from '@island.is/shared/problem'
-import { ProblemError } from './ProblemError'
+import { ProblemType } from '@island.is/shared/problem';
+import { ProblemError } from './ProblemError';
 
 export class NewProblem extends ProblemError {
   constructor(extraAttribute: string) {
@@ -80,42 +72,38 @@ export class NewProblem extends ProblemError {
       title: 'Some new problem',
       status: 400,
       extraAttribute,
-    })
+    });
   }
 }
 
-// Later:
-throw new NewProblem('extra')
+// Later use:
+throw new NewProblem('extra');
 ```
 
 ## No Content response
 
-The API Design Guide describes how REST endpoints using resource IDs, i.e. /delegation/:delegationId, should use 204 No Content response instead of 404 Not Found response when no resource is found.
+Use the `NoContentException` class to trigger a 204 No Content response:
 
-This module includes a `NoContentException` class can be thrown to trigger a 204 No Content response:
-
-```
+```typescript
 export class DelegationService {
   async findOne(delegationId: string) {
     const delegation = await this.delegationModel.findOne({
       where: {
         id: delegationId,
       },
-    })
+    });
 
     if (!delegation) {
-      throw new NoContentException()
+      throw new NoContentException();
     }
 
-    return delegation
+    return delegation;
   }
 }
 ```
 
-{% hint style="warning" %}
-Make sure you have included the `ProblemModule` in your root module. See [usage](#usage)
-{% endhint %}
+Ensure the `ProblemModule` is included in your root module. See [usage](#usage).
 
 ## Running unit tests
 
-Run `nx test nest-problem` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test nest-problem` to execute tests via [Jest](https://jestjs.io).

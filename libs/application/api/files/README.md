@@ -1,56 +1,57 @@
 # Application API Files
 
-This library handles file management for the Application system api.
+This library manages file operations for the Application system API.
 
-## Environment variables
+## Environment Variables
 
-For this module to run the following variables are set.
+Ensure the following environment variables are set:
 
-### Application system files:
+### Application System Files
 
-`APPLICATION_ATTACHMENT_BUCKET` has a fallback locally \
-`FILE_SERVICE_PRESIGN_BUCKET` has a fallback locally \
-`REDIS_URL_NODE_01` has a fallback locally
+- `APPLICATION_ATTACHMENT_BUCKET` (fallback available locally)
+- `FILE_SERVICE_PRESIGN_BUCKET` (fallback available locally)
+- `REDIS_URL_NODE_01` (fallback available locally)
 
-### Signing:
+### Signing
 
-`DOKOBIT_URL` has a fallback locally \
-`DOKOBIT_ACCESS_TOKEN` needs to be set for local development
+- `DOKOBIT_URL` (fallback available locally)
+- `DOKOBIT_ACCESS_TOKEN` (must be set for local development)
 
-### File upload module:
+### File Upload Module
 
-`FILE_STORAGE_UPLOAD_BUCKET` has a fallback locally
+- `FILE_STORAGE_UPLOAD_BUCKET` (fallback available locally)
 
 ## Usage
 
-For s3 bucket communication you need to have an active AWS session to the development cluster
+For S3 bucket communication, an active AWS session to the development cluster is required.
 
-## Import into your module
+## Import into Your Module
 
-#### app.module.ts
+Update `app.module.ts` as follows:
 
 ```typescript
-import { ConfigModule } from '@island.is/nest/config'
-import { ApplicationFilesModule } from '@island.is/application/api/files'
-import { signingModuleConfig } from '@island.is/dokobit-signing',
-import { ApplicationFilesConfig } from '@island.is/application/api/files'
-import { FileStorageConfig } from '@island.is/file-storage'
+import { ConfigModule } from '@island.is/nest/config';
+import { ApplicationFilesModule } from '@island.is/application/api/files';
+import { signingModuleConfig } from '@island.is/dokobit-signing';
+import { ApplicationFilesConfig } from '@island.is/application/api/files';
+import { FileStorageConfig } from '@island.is/file-storage';
 
 @Module({
   imports: [
-      ApplicationFilesModule,
-      ConfigModule.forRoot({
-        isGlobal:true,
-        load:[
+    ApplicationFilesModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [
         signingModuleConfig,
         FileStorageConfig,
-        ApplicationFilesConfig
-        ]
-      })
-    ],
+        ApplicationFilesConfig,
+      ],
+    }),
+  ],
 })
+export class AppModule {}
 ```
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-api-files` to execute the unit tests via [Jest](https://jestjs.io).
+Execute `nx test application-api-files` to run the unit tests using [Jest](https://jestjs.io).

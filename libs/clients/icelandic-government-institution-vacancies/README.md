@@ -1,18 +1,26 @@
-# Clients Icelandic Government Institution Vacancies
+## Clients Icelandic Government Institution Vacancies
 
-This library was generated with [Nx](https://nx.dev).
+This library was created with [Nx](https://nx.dev).
 
-## Running unit tests
+### Running Unit Tests
 
-Run `nx test clients-icelandic-government-institution-vacancies` to execute the unit tests via [Jest](https://jestjs.io).
+Execute the following command to run unit tests using [Jest](https://jestjs.io):
 
-### Updating the open api definition (clientConfig.yaml)
+```sh
+nx test clients-icelandic-government-institution-vacancies
+```
+
+### Updating OpenAPI Definition (clientConfig.yaml)
+
+Use this command to update the OpenAPI definition:
 
 ```sh
 yarn nx run clients-icelandic-government-institution-vacancies:update-openapi-document
 ```
 
-### Regenerating the client:
+### Regenerating the Client
+
+To regenerate the client, run:
 
 ```sh
 yarn nx run clients-icelandic-government-institution-vacancies:codegen/backend-client

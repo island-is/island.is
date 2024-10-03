@@ -1,19 +1,13 @@
+```markdown
 # Parental Leave Application Template
 
 ## Description
 
-This application template allows applicants to apply for parental leave. For further reading about application templates, have a look at [the reference template](../reference-template/README.md).
-
-- It contains all the steps for parents and employers required to collect and confirm all information
-- It handles communications with external APIs to filter out valid applicants as well as sending complete applications to Vinnumálastofnun
-
-Below you'll find a flow chart for the application:
-
-![](./assets/parental-leave-flow-chart.png)
+This template allows applicants to apply for parental leave and ensures all steps for parents and employers are completed. It communicates with external APIs to validate applicants and submits applications to Vinnumálastofnun.
 
 ### Glossary
 
-| Word             | Description                   |
+| Term             | Description                   |
 | ---------------- | ----------------------------- |
 | Primary parent   | The mother carrying the child |
 | Secondary parent | The other parent              |
@@ -21,176 +15,97 @@ Below you'll find a flow chart for the application:
 
 ### States
 
-This section assumes that you are familiar with [states](../../core/README.md#states).
-
 #### Prerequisites
 
-This state is a temporary state that all new applications will be created in. It has a short lifespan and is unlisted.
-
-The purpose of this state is to be a guard into the actual application. There is an external data step which fetches data from VMST and Þjóðskrá to check if the applicant is expecting a child. If no child is found we ask the applicant if they are applying for parental-leave / parental-grant due to adoption, foster care or father-without-mother. If they are not they cannot advance to the next step and make an application.
-
-Applicants choose which application type ( parental-leave, parental-grant or parental-grant-students ) they are applying for. How many children will give birth.
+A temporary, unlisted state for new applications. An external data step checks if the applicant is expecting a child. If not, they must specify if they are applying due to adoption, foster care, or as a father-without-mother.
 
 #### Draft
 
-Valid applicants will be able to advance to this state where they can start the actual application and fill in all the relevant data.
+Valid applicants proceed here to fill in relevant application data.
 
-#### Other parent approval
+#### Other Parent Approval
 
-When the primary parent requests transferal of rights, then the other secondary parent will need to approve of the transfer. The other parent will receive an email with a link to approve of this request.
+Secondary parent approval is needed if the primary parent requests a transfer of rights. The secondary parent receives an email to approve the request.
 
-#### Other parent requires action
+#### Other Parent Requires Action
 
-When the primary parent requests transferal of rights and the other parent does not approve the transfer and asks the primary parent for edits. The primary parent's application updates to ask them to edit their application.
+If the secondary parent requests edits instead of approving the transfer, the primary parent must update the application.
 
-#### Employer waiting to assign
+#### Employer Waiting to Assign
 
-If the applicant is employed by an employer(s) (not self employed, getting benefits or applying for a parental-leave grant), then they are asked to provide an email address which a confirmation email will be sent to. When the employer receives the email they can click a link which automatically assigns them to the application and advances it to the next state. If the applicant has multiple employers we go back to this state after an employer has approved the request until there are no more employers.
+Applicants provide employer email addresses for confirmation. Employers approve one at a time. This step repeats if multiple employers are listed.
 
-#### Employer approval
+#### Employer Approval
 
-Here the employer will have a chance to review the periods selected by the applicant as well as pension fund and union.
+Employers review selected periods, pension fund, and union information, and either approve or request changes.
 
-The employer(s) can then approve or request changes, one employer at a time since just one assignee can be at one state at a time.
+#### Employer Requires Action
 
-#### Employer requires action
+Employers may request applicant edits, requiring the applicant to update their application.
 
-When the employer requests edits on changes that have been sent to him for approval. The application updates for the applicant to edit his changes.
+#### VMST Approval
 
-#### VMST approval
+Applications sent to VMST for approval.
 
-Applications that have been sent to VMST.
+#### VMST Requires Action
 
-#### VMST requires action
+VMST may request changes; applicants must update their application.
 
-When Vinnumálastofnun requests edits on changes that have been sent to them for approval. The application updates for the applicant to edit his changes.
+#### Edit or Add Periods
 
-#### Edit or add periods
+Applicants can change or add periods/employers. Document upload is needed if changing a previous employer.
 
-Applicants make changes in periods or employers and/or add more periods or employers to their application. If an applicant changes a previous employer, they will get a file upload field where they have to upload a document confirming they have left their previous place of employment.
+#### Additional States
 
-#### Employer waiting to assign for edits
+- **Residence Grant No Birthdate:** Can't apply if no birthdate given.
+- **Residence Grant:** Application eligible if under 6 months postpartum.
+- **Employer Approval Edits:** Employers review and approve edits.
+- **Employer Requires Action on Edits:** Employers request edits.
+- **VMST Approve Edits:** Edited applications sent to VMST.
+- **VMST Requires Action on Edits:** VMST requests changes.
+- **Additional Document Required:** VMST requests extra documents.
+- **Approve:** Applications approved by VMST.
+- **Close:** Rights expired or leave time finished.
 
-When the applicant has made changes to their application and is employed by an employer(s) (not self employed, getting benefits or applying for a parental-leave grant), then then the employer they registered in their original application receives the email they can click a link which automatically assigns them to the application and advances it to the next state. If the applicant has multiple employers, or added an employer when he made his last changes, we go back to this state after an employer has approved the request until there are no more employers left to approve.
+### API Integration
 
-#### Residence grant no birthdate
+User interactions occur through a GraphQL API integrated with others. To communicate with VMST, requests must go through X-Road. Local proxy for VMST testing requires setup.
 
-Applicant tries to apply for residence grant but havn't given birth to the child, so they cannot apply.
+### Localization
 
-#### Residence grant
+Translations available on Contentful:
 
-If the applicant has given birth and it has been less than 6 months they can apply for residence grant.
-
-#### Employer approval edits
-
-Employers review new periods selected/added by applicants then approve or request changes.
-
-#### Employer requires action on edits
-
-When employers request changes to edits that the applicant has made. The applicant can discard edits or change their edits.
-
-#### VMST approve edits
-
-Application that has been edited (edit perios or applied for residence grant) have been sent to VMST again.
-
-#### VMST requires action on edits
-
-When VMST request changes to edits that the applicant has made. The applicant can discard edits or change their edits.
-
-#### Additional document required
-
-VMST asks for additional documents while processing the application.
-
-#### Approve
-
-Applicantions have been approved by VMST.
-
-#### Close
-
-Applicants finished all his/her rights or parental-leave time is expired.
-
-### Parental leave template API module
-
-For async actions that require server side logic we have the template api modules. The module for this application contains email templates as well as external actions like `sendApplication`.
-
-Have a look at [the parental leave template API module](../../template-api-modules/src/lib/modules/templates/parental-leave/parental-leave.module.ts) for further information on these actions, and [template API module README](../../template-api-modules/README.md) to get up to speed on template api modules.
-
-### API and X-Road
-
-All user interactions go through our GraphQL API (`api`) which is integrated with with other APIs.
-
-To communicate with VMST a request has to go through [X-Road](../../../../handbook/technical-overview/x-road/straumurinn-usage-and-operation.md). Both in development and on production environments.
-
-To connect to VMST test API you'll want to start the [local proxy](../../../../README.md#running-proxy-against-development-service) (also see [AWS secrets](../../../../handbook/repository/aws-secrets.md#getting-started)).
-
-See [directorate of labour graphql API module](../../../api/domains/directorate-of-labour/src/lib/directorate-of-labour.module.ts) for examples of VMST communication.
-
-### Localisation
-
-All localisation can be found on Contentful.
-
-- [Parental leave application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/pl.application)
-- [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
-
-{% hint style="warning" %}
-When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../localization/README.md#message-extraction).
-{% endhint %}
+- [Parental Leave Application](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/pl.application)
+- [Application System](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
 ### Emails
 
-As previously mentioned, the application sends out emails to applicants and assignees. The email templates are stored in the parental leave api template module.
-
-When developing locally you’ll see preview links for would-be emails where you can see how they would be rendered and click links.
+Emails are sent to applicants and assignees. Templates are stored in the API module. Local development shows previews of email templates.
 
 ## Setup
 
-See [application-system](../../../../apps/application-system/README.md) setup on how to get started.
-
-To run the application system you'll need to run three apps:
+Refer to [application-system](../../../../apps/application-system/README.md) for setup instructions. Run:
 
 - `application-system-api`
-  - Fetch secrets using: `yarn get-secrets application-system-api`
+    - Use: `yarn get-secrets application-system-api`
 - `api`
-  - Fetch secrets using: `yarn get-secrets api`
+    - Use: `yarn get-secrets api`
 - `application-system-form`
 
-Once you have everything running you can navigate to [http://localhost:4200/umsoknir/faedingarorlof](http://localhost:4200/umsoknir/faedingarorlof) and start developing.
+Access at [http://localhost:4200/umsoknir/faedingarorlof](http://localhost:4200/umsoknir/faedingarorlof).
 
-### Local database
+### Local Database
 
-By setting up the application-system you'll have created a local postgres database on a docker image, if you haven't already you should setup a tool to interact with your database. For example [pgAdmin](https://www.pgadmin.org/download/).
+A local PostgreSQL database is created via Docker. Tools like pgAdmin can be used for database interaction.
 
-You’ll find the relevant connection information in [the docker compose file](../../../../apps/application-system/api/docker-compose.base.yml).
+## Error Investigation
 
-## Investigating errors
+Use `Datadog` for backend and `Sentry` for client error logging.
 
-When investigating errors on our enviornments we have two logging services. `Datadog` for backend services and `Sentry` for the client.
+## Future Work
 
-### Datadog
-
-- env: `dev` | `staging` | `prod`
-- service: `api` | `application-system-api`
-
-### Sentry
-
-- Can select `dev` / `staging` / `prod` from the environment dropdown
-- Can filter by url with id to find a single application experiencing errors
-  - `url:https://island.is/umsoknir/:id`
-
-## Future work
-
-### Screens for users that are no longer assignees
-
-When the application is opened/refreshed by a user that was an assignee but no longer is, we might want to show them something - we get their national registry id so we could see if it is the other parent visting or the employer, even though they are not an assignee anymore and show them something relevant like "The application is no longer in a state you can interact with". This is too specific for the application system to know and handle, although the application system should show some message to a user visiting an application that is not an assignee.
-
-### Localisation in emails
-
-Emails are currently hardcoded, need to pass in localisation functions to be able to use translation strings. Also need to sync with service-portal to know what locale the user prefers.
-
-### Other parent asks for personal allowance
-
-Other parent should be able to ask the primary parent for personal allowance. Now only primary parent can ask the other parent for personal allowance.
-
-### Non-custodial parent
-
-If primary parent doesn't give non-custodial parent consent that they is allowed right of access during the parental leave (grant) they should not be able to apply for parental leave (grant).
+- Screens for users who are no longer assignees.
+- Localisation in emails.
+- Allow secondary parent to request personal allowance.
+- Restrict non-custodial parents lacking consent from applying.
+```

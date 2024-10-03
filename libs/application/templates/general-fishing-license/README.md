@@ -1,18 +1,20 @@
+```markdown
 # Application Templates General Fishing License
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-general-fishing-license` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test application-templates-general-fishing-license` to execute unit tests using [Jest](https://jestjs.io).
 
 ## Test Users
 
-### As an individual:
+### Individual
 
-**Gervimaður Ameríka** `0102989`
+- **Gervimaður Ameríka:** `0102989`
 
-### Company representation:
+### Company Representation
 
-**Gervimaður Noregur** `0102129`\
-Act as company **icelandic offshore**
+- **Gervimaður Noregur:** `0102129`  
+  Act as company **icelandic offshore**
+```

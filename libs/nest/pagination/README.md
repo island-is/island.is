@@ -1,80 +1,54 @@
-# Nest Sequelize Cursor Pagination
+Based on this https://github.com/Kaltsoon/sequelize-cursor-pagination with inspiration from here: https://medium.com/swlh/how-to-implement-cursor-pagination-like-a-pro-513140b65f32
 
-Based on this https://github.com/Kaltsoon/sequelize-cursor-pagination with inspiration from here https://medium.com/swlh/how-to-implement-cursor-pagination-like-a-pro-513140b65f32
+## Example Usage
 
-## Example usage
-
-### create a PaginatedExampleModelDto
+### Create PaginatedExampleModelDto
 
 ```javascript
-import { PageInfoDto } from '@island.is/nest/pagination'
-import { ExampleModelList } from '../exampleModelList.model'
+import { PageInfoDto } from '@island.is/nest/pagination';
+import { ExampleModelList } from '../exampleModelList.model';
 
 export class PaginatedExampleModelListDto {
-  totalCount!: number
-  data!: ExampleModelList[]
-  pageInfo!: PageInfoDto
+  totalCount!: number;
+  data!: ExampleModelList[];
+  pageInfo!: PageInfoDto;
 }
 ```
 
-### in your module controller
+### In Your Module Controller
 
 ```javascript
-import { PaginationDto } from '@island.is/nest/pagination'
+import { PaginationDto } from '@island.is/nest/pagination';
 
- async findMany(
-    @Query() query: PaginationDto,
-  ): Promise<PaginatedExampleModelDto> {
-    return await this.moduleService.findMany(query)
-  }
+async findMany(@Query() query: PaginationDto): Promise<PaginatedExampleModelDto> {
+  return await this.moduleService.findMany(query);
+}
 ```
 
-### in your module service
+### In Your Module Service
 
 ```javascript
-import { paginate } from '@island.is/nest/pagination'
+import { paginate } from '@island.is/nest/pagination';
 
 async findMany({ listId }: string, query: any) {
-    // setup config and or defaults
-    return await paginate({
-      Model: this.ModelName,
-      limit: query.limit || 10,
-      after: query.after,
-      before: query.before,
-      primaryKeyField: 'counter',
-      orderOption: [['counter', 'DESC']],
-      where: { ListId: listId }, // insert sequelize where clause
-    })
-  }
+  return await paginate({
+    Model: this.ModelName,
+    limit: query.limit || 10,
+    after: query.after,
+    before: query.before,
+    primaryKeyField: 'counter',
+    orderOption: [['counter', 'DESC']],
+    where: { ListId: listId },
+  });
+}
 ```
 
-### Example response body
+### Example Response Body
 
-```javascript
+```json
 {
   "totalCount": 100,
   "data": [
-    {
-      "id": "480784bc-b25d-4a60-8e94-d17036e0fd83",
-      "title": "rerum magni",
-      "description": "Omnis velit earum voluptatum.",
-      "created": "2021-10-06T14:43:19.243Z",
-      "modified": "2021-10-06T14:43:19.243Z"
-    },
-    {
-      "id": "480784bc-b25d-4a60-8e94-d17036e0fd83",
-      "title": "rerum magni",
-      "description": "Omnis velit earum voluptatum.",
-      "created": "2021-10-06T14:43:19.243Z",
-      "modified": "2021-10-06T14:43:19.243Z"
-    },
-    {
-      "id": "480784bc-b25d-4a60-8e94-d17036e0fd83",
-      "title": "rerum magni",
-      "description": "Omnis velit earum voluptatum.",
-      "created": "2021-10-06T14:43:19.243Z",
-      "modified": "2021-10-06T14:43:19.243Z"
-    },
     {
       "id": "480784bc-b25d-4a60-8e94-d17036e0fd83",
       "title": "rerum magni",
@@ -92,30 +66,28 @@ async findMany({ listId }: string, query: any) {
 }
 ```
 
-## Loop through dataset
+## Loop Through Dataset
 
-next set of results
+Next set of results:
 
 ```javascript
 http://localhost/path?after={pageInfo.endCursor}
 ```
 
-previous set of results
+Previous set of results:
 
 ```javascript
 http://localhost/path?before={pageInfo.startCursor}
 ```
 
-## Paginated GraphQL responses
+## Paginated GraphQL Responses
 
-This library contains a helper function to generate a typed paginated GraphQL response.
+This library includes a helper function for creating a typed paginated GraphQL response.
 
 ```javascript
-import { ObjectType } from '@nestjs/graphql'
-
-import { PaginatedResponse } from '@island.is/nest/pagination'
-
-import { YourModel } from '../models/your.model'
+import { ObjectType } from '@nestjs/graphql';
+import { PaginatedResponse } from '@island.is/nest/pagination';
+import { YourModel } from '../models/your.model';
 
 @ObjectType('DomainPrefixPaginatedYourModelResponse')
 export class PaginatedYourModelResponse extends PaginatedResponse(YourModel) {}

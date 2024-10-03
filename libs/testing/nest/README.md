@@ -1,24 +1,18 @@
 # Testing Nest
 
-This library is supposed to help developers setup a nest.js application for
-testing purposes. The test server can work for unit-tests and/or
-integration/functional tests by applying different hooks, like the
-`useDatabase` hook.
+This library helps developers set up a Nest.js application for testing. The test server can be used for unit or integration/functional tests by applying different hooks, such as the `useDatabase` hook.
 
-## Test server
+## Test Server
 
 ### Usage
 
-`testServer` needs the project's `AppModule` to be passed as an argument in
-order to build the Nest.js Application graph. From thereon you can build your
-test nest server any way you want to hooks and overriders.
+`testServer` requires the project's `AppModule` to build the Nest.js Application graph. Configure your test server with desired hooks and overrides.
 
 ```typescript
 const app: TestApp = await testServer({ appModule: AppModule })
 ```
 
-The testServer can be setup anywhere, i.e. inside beforeAll, beforeEach, inside
-the test, etc. Just remember to cleanUp the application afterwards by calling
+Set up `testServer` in `beforeAll`, `beforeEach`, or within a test. Remember to clean up by calling:
 
 ```typescript
 await app.cleanUp()
@@ -26,9 +20,7 @@ await app.cleanUp()
 
 ### Examples
 
-In these examples we're going to assume that a 3rd party API is used which
-needs mocking. This API is called `NationalRegistryApi`; and we're thus
-creating a mock:
+Assume we need to mock a 3rd party API: `NationalRegistryApi`. Create a mock:
 
 ```typescript
 class MockNationalRegistryApi {
@@ -38,14 +30,11 @@ class MockNationalRegistryApi {
 }
 ```
 
-We'll be using One-Time setup by creating the testServer inside jest's
-beforeAll setup block, and cleaning it up in the afterAll teardown block.
+Use One-Time setup with Jest's `beforeAll` and teardown with `afterAll`.
 
-#### Unit test
+#### Unit Test
 
-For this test we want to override any extra dependencies that our
-function/class is depending on in order to unit test it. These should be mocked
-in `override`:
+Override dependencies that need mocking in `override`:
 
 ```typescript
 import { TestApp, testServer } from '@island.is/testing/nest'
@@ -68,10 +57,9 @@ describe('Example unit test', () => {
   })
 ```
 
-#### Functional (integration) test
+#### Functional (Integration) Test
 
-For this test we want to hook up authentication with a currentUser and an
-`sqlite` database in order to fully interact with the services:
+Hook up authentication with `currentUser` and an `sqlite` database:
 
 ```typescript
 import { TestApp, testServer } from '@island.is/testing/nest'
@@ -103,14 +91,11 @@ describe('Example functional test', () => {
 
 ## Hooks
 
-As you can see in the Functional (integration) test above, we are using two
-predefined hooks that we hook up to our test server. You can take a look at all
-the predefined hooks in `libs/testing/nest/src/lib/hooks`.
+In the functional (integration) test, two predefined hooks are used. View all predefined hooks at `libs/testing/nest/src/lib/hooks`.
 
 ### Examples
 
-If you want to write a new hook (either custom or to be used by others) it
-needs to follow this pattern:
+To write a new hook, follow this pattern:
 
 ```typescript
 const myNewHook = (options) => {
@@ -119,9 +104,9 @@ const myNewHook = (options) => {
       return builder.override* // perform the overrides
     },
     extend: (app) => {
-      // extend the app with e.g. database/redis etc.
+      // extend the app with resources like a database or Redis
       const redis = app.resolve(Redis)
-      // in order to cleanup the resources, you'll have to return a cleanup function:
+      // return a cleanup function
       return () => {
         return redis.close()
       }
@@ -130,9 +115,6 @@ const myNewHook = (options) => {
 }
 ```
 
-## Test fixtures
+## Test Fixtures
 
-As you can see in the Functional (integration) test above, we are using a
-CurrentUser test fixture from `@island.is/testing/fixtures`. The library
-contains many more that can benefit you in creating random test data. Please
-checkout `libs/testing/fixtures` to view available fixtures.
+In the functional (integration) test, a `CurrentUser` test fixture from `@island.is/testing/fixtures` is used. The library contains more fixtures for creating random test data. Refer to `libs/testing/fixtures` for available fixtures.

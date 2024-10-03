@@ -1,9 +1,11 @@
+```markdown
 # clients-workpoint-arborg
 
-This library was generated with [Nx](https://nx.dev).
+This library was created using [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-workpoint-arborg` to execute the unit tests via [Jest](https://jestjs.io).
+To run unit tests, execute: `nx test clients-workpoint-arborg` via [Jest](https://jestjs.io).
 
-https://github.com/OpenAPITools/openapi-generator/issues/6332#issuecomment-707817192
+For more context on related issues, refer to this discussion: [OpenAPITools](https://github.com/OpenAPITools/openapi-generator/issues/6332#issuecomment-707817192).
+```

@@ -1,38 +1,43 @@
+```markdown
 # Institution Collaboration
 
-This application helps institutions to request Stafrænt Ísland to collaborate on a new application.
+This application allows institutions to request collaboration from Stafrænt Ísland for new projects.
 
-## Application flow:
+## Application Flow
 
-- Application has 2 states, DRAFT & APPROVED
-- When applicant submits his application the state automatically changes to APPROVED.
-  - Stafrænt Ísland's contact personnel recevies the application in email, and manually reviews it.
-  - The applicant receives a copy of the application in email but is also able to revisit the application and view the summary page at any time.
+- Two states: DRAFT & APPROVED
+- Upon submission, the state changes to APPROVED.
+  - Stafrænt Ísland personnel receive the application via email for review.
+  - Applicants receive a copy via email and can access the summary page anytime.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-institution-collaboration` to execute the unit tests via [Jest](https://jestjs.io).
+Execute `nx test application-templates-institution-collaboration` to run unit tests using [Jest](https://jestjs.io).
 
 ## Setup
 
-To start the application system, follow the instructions in the handbook [here](../../../../apps/application-system/README.md).
+Follow the handbook instructions [here](../../../../apps/application-system/README.md) to start the application system.
 
-### Additional Environment variables
+### Environment Variables
 
-- You need to set few additional in order to submitting the application locally:
-- Recipient email name: `INSTITUTION_APPLICATION_RECIPIENT_NAME=`Recipient Name
-- Recipient email address: `INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS=`example@dev.is
-- Application sender email name: `EMAIL_FROM_NAME=`Sender Name
-- Application sender email address: `EMAIL_FROM=`example@dev.is
-- Upload bucket for attachments: `FILE_STORAGE_UPLOAD_BUCKET=`bucket-name
+To submit applications locally, set these variables:
+
+- `INSTITUTION_APPLICATION_RECIPIENT_NAME=` Recipient Name
+- `INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS=` example@dev.is
+- `EMAIL_FROM_NAME=` Sender Name
+- `EMAIL_FROM=` example@dev.is
+- `FILE_STORAGE_UPLOAD_BUCKET=` bucket-name
 
 ### Translations from Contentful
 
-Fetch development secrets
+Fetch development secrets with:
 
-- Run `yarn get-secrets api`
+```bash
+yarn get-secrets api
+```
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Fuglar](https://github.com/orgs/island-is/teams/fuglar)
 - [Norda](https://github.com/orgs/island-is/teams/norda)
+```

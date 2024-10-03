@@ -1,10 +1,10 @@
-# General Petitions
+## General Petitions
 
-This application allows individuals to create general petitions
+This application enables users to create general petitions.
 
-## Setup
+### Setup
 
-To setup the docker environment run (this only needs to be run once):
+To initialize the docker environment (one-time setup):
 
 ```bash
 yarn dev-init application-templates-general-petition
@@ -16,36 +16,45 @@ To start all required services:
 yarn dev application-templates-general-petition
 ```
 
-This template runs within the application system, make sure your setup fulfills requirements set by the [Application System](https://docs.devland.is/apps/application-system)
+Ensure your setup meets the [Application System requirements](https://docs.devland.is/apps/application-system).
 
-### Additional setup
+#### Additional Setup
 
-There are additional steps required to run this template locally
+Additional steps are necessary for local setup.
 
-### National Registry Provider
+#### National Registry Provider
 
-Prerequisites
+**Prerequisites:**
 
-- You have `kubectl` installed
+- `kubectl` must be installed:
   - `brew install kubectl`
-- You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured
+- [AWS Secrets](../../../../handbook/repository/aws-secrets.md) must be configured.
 
-- A good way to get environment variables is to run `yarn get-secrets service-portal`
+Obtain environment variables by running:
+```bash
+yarn get-secrets service-portal
+```
 
-2. Get kubeconfig
+**Kubeconfig:**
 
-- Export aws variables `aws eks update-kubeconfig --name dev-cluster01`
+Export AWS variables:
+```bash
+aws eks update-kubeconfig --name dev-cluster01
+```
 
-### Current user companies provider
+#### Current User Companies Provider
 
-Make sure the following environment variable is set
+Ensure the following environment variable is set:
 
 ```bash
 RSK_API_PASSWORD
 ```
 
-- A good way to get environment variables is to run `yarn get-secrets service-portal`
+To retrieve environment variables:
+```bash
+yarn get-secrets service-portal
+```
 
-## Code owners and maintainers
+### Code Owners and Maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni)

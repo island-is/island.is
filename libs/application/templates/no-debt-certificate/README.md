@@ -1,67 +1,58 @@
 # No Debt Certificate Application
 
-This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib application/templates/no-debt-certificate)
+This library was generated with [Nx](https://nx.dev).
 
 ## Setup
 
 Run these two proxy clients for Þjóðskrá connection.
 
-Proxy the X-Road socat service (v2):
+### X-Road Proxy v2 Setup
 
-First you need to enter the AWS environment variables (get from https://island-is.awsapps.com/start)
+1. Set AWS environment variables (obtain from AWS):
 
-`export AWS_ACCESS_KEY_ID="<access_key_id>"`
+   ```bash
+   export AWS_ACCESS_KEY_ID="<access_key_id>"
+   export AWS_SECRET_ACCESS_KEY="<secret_access_key>"
+   export AWS_SESSION_TOKEN="<session_token>"
+   ```
 
-`export AWS_SECRET_ACCESS_KEY="<secret_access_key>"`
+2. Start the proxy:
 
-`export AWS_SESSION_TOKEN="<session_token>"`
+   ```bash
+   ./scripts/run-xroad-proxy.sh
+   ```
 
-Then:
+### X-Road Proxy v1 Setup
 
-`./scripts/run-xroad-proxy.sh`
+1. Configure the Kubernetes context (may be needed only once):
 
-Proxy the X-Road socat service (v1):
+   ```bash
+   aws eks update-kubeconfig --name dev-cluster01 --profile <profile-name> --region eu-west-1
+   ```
 
-First you need to run this (maybe only once?):
+2. Fetch all necessary secrets.
 
-`aws eks update-kubeconfig --name dev-cluster01 --profile <profile-name> --region eu-west-1`
+### Running Locally
 
-Then:
-
-Fetch all necessary secrets
-
-### Running locally
-
-You can serve this app locally by running:
+To serve the app locally, run the following commands:
 
 ```bash
 yarn start api
-```
-
-and
-
-```bash
 yarn start application-system-api
-```
-
-and
-
-```bash
 yarn start application-system-form
-```
-
-and
-
-```bash
 yarn start services-user-profile
 ```
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-no-debt-certificate` to execute the unit tests via [Jest](https://jestjs.io).
+Execute unit tests with [Jest](https://jestjs.io) using:
 
-## Code owners and maintainers
+```bash
+nx test application-templates-no-debt-certificate
+```
+
+## Code Owners and Maintainers
 
 - [Unnur Sól - @unnursol](https://github.com/unnursolingimars)
-- [Jón Bjarni]()
+- Jón Bjarni
 - [Jóhanna Agnes - @johannaagma](https://github.com/johannaagma)

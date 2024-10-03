@@ -2,44 +2,37 @@
 
 ## About
 
-This library implements a client to use Ríkislögreglustjóri's
-Driver's license API v1 and v2 through x-road
-
-The client is generated from a copy of the openApi document provided in x-road.
+This library provides a client for Ríkislögreglustjóri's Driver's License API v1 and v2 via X-Road. The client is generated from an OpenAPI document copy available on X-Road.
 
 ## Quickstart
 
-you need to have the xroad proxy running locally
+Ensure the X-Road proxy is running locally:
 
 ```sh
- ./scripts/run-xroad-proxy.sh
+./scripts/run-xroad-proxy.sh
 ```
 
-Run the following and start developing:
+Start developing with:
 
 ```sh
 yarn nx run clients-driving-license:dev
 ```
 
-This command bundles updating the api definition and regenerating the client.
-
-and make sure the environment variables `DRIVING_LICENSE_SECRET`, `XROAD_DRIVING_LICENSE_PATH`, `XROAD_DRIVING_LICENSE_V2_PATH`, `XROAD_BASE_PATH` and `XROAD_CLIENT_ID` are available.
+This updates the API definition and regenerates the client. Ensure the environment variables `DRIVING_LICENSE_SECRET`, `XROAD_DRIVING_LICENSE_PATH`, `XROAD_DRIVING_LICENSE_V2_PATH`, `XROAD_BASE_PATH`, and `XROAD_CLIENT_ID` are set.
 
 ## Usage
 
-### Updating the open api definition (clientConfig.json)
+### Update the OpenAPI Definition (clientConfig.json)
+
+To update the definition for a specific API version:
 
 ```sh
 yarn nx run clients-driving-license:update-openapi-document --apiVersion=v1
-```
-
-or
-
-```sh
+# or
 yarn nx run clients-driving-license:update-openapi-document --apiVersion=v2
 ```
 
-### Regenerating the client:
+### Regenerate the client:
 
 ```sh
 yarn nx run clients-driving-license:codegen/backend-client
@@ -50,35 +43,35 @@ yarn nx run clients-driving-license:codegen/backend-client
 #### app.module.ts
 
 ```typescript
-import { ConfigModule } from '@island.is/nest/config'
-import { DrivingLicenseApiModule, DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
+import { ConfigModule } from '@island.is/nest/config';
+import { DrivingLicenseApiModule, DrivingLicenseApiConfig } from '@island.is/clients/driving-license';
 
 @Module({
   imports: [
-      DrivingLicenseApiModule,
-      ConfigModule.forRoot({
-        isGlobal:true,
-        load:[DrivingLicenseApiConfig]
-      })
-    ],
+    DrivingLicenseApiModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [DrivingLicenseApiConfig],
+    }),
+  ],
 })
 ```
 
 #### module-name.module.ts
 
 ```typescript
-import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
+import { DrivingLicenseApiModule } from '@island.is/clients/driving-license';
 
-  imports: [
-    DrivingLicenseApiModule
-  ],
+imports: [
+  DrivingLicenseApiModule
+],
 ```
 
 #### module-name.service.ts
 
 ```typescript
-import { DrivingLicenseApi } from '@island.is/clients/driving-license'
-
+import { DrivingLicenseApi } from '@island.is/clients/driving-license';
+import { Injectable, Inject } from '@nestjs/common';
 
 @Injectable()
 export class SomeService {
@@ -87,11 +80,12 @@ export class SomeService {
     private readonly drivingLicenseApi: DrivingLicenseApi,
   ) {}
 
-  async someMethod()
-      return this.drivingLicenseApi.getTeachers()
-
+  async someMethod() {
+    return this.drivingLicenseApi.getTeachers();
+  }
+}
 ```
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)

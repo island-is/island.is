@@ -1,13 +1,18 @@
-# RSK Clients
+# RSK Clients Documentation
 
-Currently there are clients for two APIs from Skatturinn:
+This document outlines the available clients for APIs provided by Skatturinn.
 
-## Two clients for https://thjonusta-s.rsk.is/api
+## Clients for Skatturinn API
 
-- V1 is soap service from Skatturinn
+### https://thjonusta-s.rsk.is/api
 
-- V2 is x road connected service from Skatturinn
+Skatturinn offers two versions of this API:
 
-## One client for https://juno.skattur.is
+- **V1**: A SOAP service from Skatturinn.
+- **V2**: An X-Road connected service from Skatturinn.
 
-- Company registry client
+## Client for Company Registry
+
+### https://juno.skattur.is
+
+- A client for accessing the company registry.

@@ -1,20 +1,22 @@
 # Administration of Occupational Safety and Health Client
 
-## About
+## Overview
 
-This library implements a client to use Administration of Occupational Safety and Health's API
+This library provides a client to interact with the Administration of Occupational Safety and Health's API. The client is generated from the OpenAPI document provided by the Administration of Occupational Safety and Health.
 
-The client is generated from a copy of the openApi document provided by Administration of Occupational Safety and Health.
+## Instructions
 
-## Usage
+### Update OpenAPI Definition
 
-### Updating the open api definition (clientConfig.json)
+To update the OpenAPI definition (`clientConfig.json`):
 
 ```sh
 yarn nx run clients-administration-of-occupational-safety-and-health:update-openapi-document
 ```
 
-### Regenerating the client:
+### Regenerate Client
+
+To regenerate the client:
 
 ```sh
 yarn nx run clients-administration-of-occupational-safety-and-health:codegen/backend-client

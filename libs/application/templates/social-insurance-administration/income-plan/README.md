@@ -1,50 +1,44 @@
-# Application Templates Income Plan
-
 ## Description
 
-This application template allows for submitting an income plan following an application.
-
-![](./assets/income-plan-flow-chart.png)
+This application template facilitates the submission of an income plan post-application.
 
 ### States
 
 #### Prerequisites
 
-This state is a temporary state that all new income plans will be created in. It has a short lifespan and is unlisted.
-
-The purpose of this state is to be a guard into the actual income plan. There is an external data step which fetches data from Þjóðskrá and TR. The applicant cannot advance if they have a previous income plan that has been in progress at TR for fewer than 10 days.
+This temporary state is where all new income plans are initially created. It is unlisted and has a short lifespan. It acts as a gatekeeper to the actual income plan, fetching data from Þjóðskrá and TR. Applicants cannot proceed if a previous income plan has been in progress at TR for less than 10 days.
 
 #### Draft
 
-Valid applicants will be able to advance to this state where they can start to review their pre-filled income plan and make changes. If they already have an income plan at TR, they can make changes to it and see a temporary calculation before sending in the updated income plan.
+Eligible applicants can review and modify their pre-filled income plan in this state. If an income plan is already at TR, they can adjust it and view a temporary calculation before submitting updates.
 
-#### Tryggingastofnun submitted
+#### Tryggingastofnun Submitted
 
-When an applicant has sent in the income plan to TR, the application is in this state. Here, the income plan can be edited.
+Once the applicant submits the income plan to TR, it enters this state. Here, editing is possible.
 
-#### Tryggingastofnun in review
+#### Tryggingastofnun in Review
 
-For the income plan to be in this state, TR needs to make a state change when they start reviewing the income plan. Here, the application cannot be edited.
+TR changes the state to this when reviewing begins. No edits can be made in this state.
 
 #### Approved (Processed)
 
 The income plan has been processed by TR.
 
-### Localisation
+### Localization
 
-All localization can be found on Contentful.
+Localization details are available on Contentful.
 
 - [Income plan translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ip.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
-When creating new text strings in the messages.ts file for the application, be sure to update Contentful. See [message extraction](../../../../localization/README.md#message-extraction).
+When adding new text strings in the `messages.ts` file, update them in Contentful. Refer to [message extraction](../../../../localization/README.md#message-extraction).
 
 ## Setup
 
-See [application-system](../../../../../apps/application-system/README.md) setup on how to get started.
+Refer to [application-system](../../../../../apps/application-system/README.md) for initial setup instructions.
 
-Once you have everything running, you can navigate to [http://localhost:4242/umsoknir/tekjuaaetlun](http://localhost:4242/umsoknir/tekjuaaetlun) and start developing.
+After setup, visit [http://localhost:4242/umsoknir/tekjuaaetlun](http://localhost:4242/umsoknir/tekjuaaetlun) to start development.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-social-insurance-administration-income-plan` to execute the unit tests via [Jest](https://jestjs.io).
+Execute `nx test application-templates-social-insurance-administration-income-plan` to run unit tests via [Jest](https://jestjs.io).
