@@ -19,40 +19,40 @@ The frontend URLs for access are below, while the backend is hosted externally b
 
 1. Fetch environment variables for the frontend and API. Refer to [this guide](https://docs.devland.is/repository/aws-secrets#usage-to-fetch-secrets) for retrieving secrets initially.
 
-    ```bash
-    yarn get-secrets consultation-portal
-    yarn get-secrets api
-    ```
+   ```bash
+   yarn get-secrets consultation-portal
+   yarn get-secrets api
+   ```
 
 2. Export the `NEXTAUTH_URL` or add it to a `.env` file for NextAuth authentication.
 
-    ```bash
-    export NEXTAUTH_URL=http://localhost:4200/samradsgatt/api/auth
-    ```
+   ```bash
+   export NEXTAUTH_URL=http://localhost:4200/samradsgatt/api/auth
+   ```
 
 3. Install necessary packages.
 
-    ```bash
-    yarn
-    ```
+   ```bash
+   yarn
+   ```
 
 4. Auto-generate API schemas and clients.
 
-    ```bash
-    yarn codegen
-    ```
+   ```bash
+   yarn codegen
+   ```
 
 5. Launch the backend API.
 
-    ```bash
-    yarn start api
-    ```
+   ```bash
+   yarn start api
+   ```
 
 6. In a separate terminal, start the frontend.
 
-    ```bash
-    yarn start consultation-portal
-    ```
+   ```bash
+   yarn start consultation-portal
+   ```
 
 7. Open [localhost:4200/samradsgatt](http://localhost:4200/samradsgatt).
 

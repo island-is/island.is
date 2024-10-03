@@ -5,11 +5,13 @@
 Ensure Docker is running. For initial setup, run:
 
 For API:
+
 ```bash
 yarn dev-init application-system-api
 ```
 
 For Application Form:
+
 ```bash
 yarn dev-init application-system-form
 ```
@@ -17,11 +19,13 @@ yarn dev-init application-system-form
 To start the app:
 
 For API:
+
 ```bash
 yarn dev application-system-api
 ```
 
 For Application Form:
+
 ```bash
 yarn dev application-system-form
 ```

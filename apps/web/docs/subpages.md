@@ -52,9 +52,9 @@ To add a new content type:
 4. Generate GraphQL schemas and clients:
 
    1. `yarn nx run api:contentful-types`
-   
+
    2. `yarn nx run api-schema:codegen/frontend-client --skip-nx-cache`
-   
+
    3. `yarn nx run web:codegen/frontend-client --skip-nx-cache`
 
 5. If types are missing, try `yarn codegen`.

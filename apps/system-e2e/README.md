@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # System Testing
 
 Welcome to testing. Each section includes a TL;DR for quick guidance.
@@ -76,6 +76,7 @@ web/                      (app name)
 └── acceptance/
     └── search.spec.ts
 ```
+````
 
 ## 🗃️ Spec files
 
@@ -153,4 +154,7 @@ This could be a network or performance issue. Increase timeouts if necessary:
 ```javascript
 page.goto('/my-url', { timeout: Timeout.medium })
 ```
+
+```
+
 ```
