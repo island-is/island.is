@@ -1,11 +1,25 @@
+```markdown
 # API Domains Disability License
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev), a smart and extensible build framework.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-disability-license` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, use the following command:
 
-## Running lint
+```bash
+nx test api-domains-disability-license
+```
 
-Run `nx lint api-domains-disability-license` to execute the lint via [ESLint](https://eslint.org/).
+We use [Jest](https://jestjs.io) as our testing framework.
+
+## Running Lint
+
+To perform a lint check of the code in this library, use the following command:
+
+```bash
+nx lint api-domains-disability-license
+```
+
+We use [ESLint](https://eslint.org/) for linting to ensure code quality and consistency.
+```

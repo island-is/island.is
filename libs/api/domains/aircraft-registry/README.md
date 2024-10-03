@@ -1,7 +1,15 @@
+```markdown
 # API Domains Aircraft Registry
 
-This library was generated with [Nx](https://nx.dev).
+This library is part of the Nx workspace for managing various domains. It specifically deals with the Aircraft Registry.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-aircraft-registry` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, use the following Nx command:
+
+```bash
+nx test api-domains-aircraft-registry
+```
+
+This will run the tests using the [Jest](https://jestjs.io) testing framework.
+```

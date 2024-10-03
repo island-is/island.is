@@ -1,11 +1,21 @@
+```markdown
 # Consultation Portal
 
-This service utilizes the ConsultationPortalApi
+The Consultation Portal is a service that utilizes the `ConsultationPortalApi` to manage consultations. This API provides endpoints and functionalities to interact with the consultation data.
 
-# How to use
+## Usage Instructions
 
-Auto generate API schemas and clients
-`yarn codegen`
+### Auto-generate API Schemas and Clients
+To auto-generate the necessary API schemas and client code, run the following command:
 
-Start the api
-`yarn start api`
+```bash
+yarn codegen
+```
+
+### Start the API
+To start the API server, execute the command:
+
+```bash
+yarn start api
+```
+```

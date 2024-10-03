@@ -1,11 +1,23 @@
-# Air Discount Scheme Api
+```markdown
+# Air Discount Scheme API
 
-This service utilizes the AirDiscountSchemeApi
+The Air Discount Scheme API service provides functionalities to interact with the Air Discount Scheme.
 
-# How to use
+## How to Use
 
-Initialize the project with:
-`yarn nx run api-domains-air-discount-scheme:dev-init`
+### Initialization
 
-Start the project in development mode with:
-`yarn nx run api-domains-air-discount-scheme:dev`
+To initialize the project, run the following command:
+
+```bash
+yarn nx run api-domains-air-discount-scheme:dev-init
+```
+
+### Start Development Mode
+
+To start the project in development mode, use the command below:
+
+```bash
+yarn nx run api-domains-air-discount-scheme:dev
+```
+```
