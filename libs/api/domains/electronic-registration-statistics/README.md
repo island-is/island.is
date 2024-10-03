@@ -1,28 +1,28 @@
 # API Domains Electronic Registrations
 
-This library was generated with [Nx.js](https://nx.dev).
+This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests for the client
+## Running unit tests
 
 Run `nx test clients-electronic-registration-statistics` to execute the unit tests via [Jest](https://jestjs.io).
 
-## Running lint for the client
+## Running lint
 
 Run `nx lint clients-electronic-registration-statistics` to execute the lint via [ESLint](https://eslint.org/).
 
 ## Usage
 
-### Updating the open API definition (`clientConfig.json`)
+### Updating the open api definition (clientConfig.json)
 
-```bash
+```sh
 yarn nx run clients-electronic-registration-statistics:update-openapi-document
 ```
 
-## Running unit tests for the API
+## Running unit tests
 
 Run `nx test api-domains-electronic-registration-statistics` to execute the unit tests via [Jest](https://jestjs.io).
 
-## Running lint for the API
+## Running lint
 
 Run `nx lint api-domains-electronic-registration-statistics` to execute the lint via [ESLint](https://eslint.org/).
 

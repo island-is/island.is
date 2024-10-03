@@ -1,6 +1,6 @@
 # Services
 
-This library was generated with [NX](https://nx.dev).
+This library was generated with [Nx](https://nx.dev).
 
 The library uses the [X-Road Service Metadata] and
 [X-Road Service Metadata for REST] to collect information
@@ -12,24 +12,24 @@ Run `ng test api-catalogue-services` to execute the unit tests via [Jest](https:
 
 ## Usage
 
-This library export `ApiCatalogueServiceModule` which depends on two
+This library export ApiCatalogueServiceModule which depends on two
 environment variables to exist to configure connection to X-Road Security Server.
 
-The variables are available from AWS Parameter Store under the `/k8s/xroad-collector/` path.
+The variables are available from AWS Parameter Store under the /k8s/xroad-collector/ path.
 The variable are named:
 
-- `XROAD_BASE_PATH`
-- `XROAD_CLIENT_ID`
+- XROAD_BASE_PATH
+- XROAD_CLIENT_ID
 
 ## Developing
 
-### Code generation
+### Codegen
 
-We use code generation to generate clients from the OpenAPI documents for the
+We use codegen to generate clients from the OpenAPI documents for the
 two REST services X-Road provides for this metadata. In `project.json`
 we have setup a `codegen` command:
 
-```bash
+```
 # Generates clients
 yarn nx run services-xroad-collector:codegen/frontend-client
 ```
@@ -40,29 +40,30 @@ There are two options while developing this service against
 X-Road Security Server. Either run a standalone Security Server using
 [Docker](https://hub.docker.com/r/niis/xroad-security-server-standalone):
 
-```bash
-# Publish the container ports (4000, 443 and 80) to `localhost` (`loopback` address)
+```
+# Publish the container ports (4000, 443 and 80) to localhost (loopback address)
 # using the latest docker image available. See docker hub for specific tags for specific version.
 docker run -p 4000:4000 -p 80:80 -p 443:443 --name ss niis/xroad-security-server-standalone
 ```
 
-Developer can now access the [Security Server Admin UI](`https://localhost:4000`)
+Developer can now access Security Server AdminUI on `https://localhost:4000`
 to register custom services and clients for testing.
 
-To connect to Digital Iceland's X-Road development environment using Kubernetes port-forwarding:
+or connect to Stafrænt Ísland X-Road Dev environment using kubernetes
+port-forwarding:
 
-```bash
-# Pre-requisite: AWS authentication environment variables added to the current shell
-# Get Kubernetes namespaces from the dev cluster using AWS
+```
+# Pre-requisite: AWS authentication env params added to the current shell
+# Get kubernetes namespaces from the dev cluster using AWS
 aws eks update-kubeconfig --name dev-cluster01 --region eu-west-1
 
-# Port forward to the Kubernetes cluster
+# Port forward to the kubernetes cluster
 kubectl -n socat port-forward svc/socat-xroad 8080:80
 ```
 
 Then to test the commands using `curl` in cli you can do:
 
-```bash
+```
 # List clients
 curl -H "Accept: application/json" http://localhost/listClients
 
@@ -70,7 +71,7 @@ curl -H "Accept: application/json" http://localhost/listClients
 curl -H "Accept: application/json" http://localhost:8080/listClients
 ```
 
-```bash
+```
 # List services for specific client
 curl -H "Accept: application/json" -H "X-Road-Client: CS/ORG/1111/TestService" http://localhost/r1/CS/ORG/1111/TestService/listMethods
 
@@ -78,9 +79,9 @@ curl -H "Accept: application/json" -H "X-Road-Client: CS/ORG/1111/TestService" h
 curl -H "Accept: application/json" -H "X-Road-Client: IS-DEV/GOV/10000/island-is-client" http://localhost:8080/r1/IS-DEV/GOV/10000/island-is-protected/listMethods
 ```
 
-```bash
-# When using standalone X-Road Security Server and after adding `petstore` to the
-# `TestService` using the Admin UI
+```
+# When using standalone X-Road Security Server and after adding petstore to the
+# TestService using the AdminUI
 curl -H "Accept: application/json" -H "X-Road-Client: CS/ORG/1111/TestService" http://localhost/r1/CS/ORG/1111/TestService/getOpenAPI?serviceCode=petstore
 
 # or when using IS-DEV X-Road environment

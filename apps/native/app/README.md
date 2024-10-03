@@ -22,48 +22,58 @@ Follow documentation for setting up android [here](https://reactnative.dev/docs/
 
 Open the project in android studio and then local.properties should be created, if you want to skip that, make sure to:
 
-- Add `local.properties` file to `/apps/native/app/android`
-- Add `google-services.json` file to `/apps/native/app/android/app`
+Add `local.properties` file to `/apps/native/app/android`
 
-Then open up an android emulator or connect a physical device in `/apps/native/app/android` run the following commands:
+Add `google-services.json` file to `/apps/native/app/android/app`
 
-```bash
-# Build the project
+Open up an android emulator or connect a physical device
+
+in `/apps/native/app/android` run the following commands:
+
+```ts
+// Build the project
 ./gradlew assembleDebug
 ```
 
 If using an **emulator** do the following:
 
-```bash
-# Move to device
+```ts
+// Move to device
 adb install ./app/build/outputs/apk/dev/debug/app-dev-debug.apk*
 ```
 
 If using a **physical device** do the following:
 
-```bash
-# List devices and their ids
+```ts
+// List devices and their ids
 adb devices
 
-# Use deviceId from previous command to move to physical device
+// Use deviceId from previous command to move to physical device
 adb -s <deviceId> install  ./app/build/outputs/apk/dev/debug/app-dev-debug.apk*
 ```
 
 For both emulators and physical devices:
 
-```bash
-# Fix port for device
+```ts
+// fix port for device
 adb reverse tcp:8081 tcp:8081
+```
 
-# Then run
+and finally
+
+```bash
 yarn start
-# or
+```
+
+or
+
+```bash
 yarn run android
 ```
 
 ### 3. Start development server
 
-```bash
+```
 yarn start
 ```
 
@@ -99,7 +109,7 @@ nx run native-app:codegen/frontend-client
 
 ## NOTES
 
-- CI jobs
+- ci jobs
   - codegen
   - lint
   - build

@@ -10,7 +10,7 @@ To be able to submit a comment or suggestion and subscribe to automatic monitori
 
 ## URLs
 
-The frontend can be accessed through the following URLs, the backend is hosted externally but maintained by Advania.
+The frontend can be accessed through the following urls, the backend is hosted externally but maintained by Advania.
 
 - [Dev](https://beta.dev01.devland.is/samradsgatt)
 - [Production](https://island.is/samradsgatt)
@@ -19,52 +19,55 @@ The frontend can be accessed through the following URLs, the backend is hosted e
 
 ### Development
 
-1. Fetch the environment variables for both the frontend and the API. [This guide](https://docs.devland.is/repository/aws-secrets#usage-to-fetch-secrets) shows how you can fetch secrets for the first time.
+1. Fetch the environment variables for both the frontend and the api. [This guide](https://docs.devland.is/repository/aws-secrets#usage-to-fetch-secrets) shows how you can fetch secrets for the first time.
 
-   ```bash
-       yarn get-secrets consultation-portal
-       yarn get-secrets api
-   ```
+```bash
+    yarn get-secrets consultation-portal
+```
 
-2. The project uses `next-auth` authentication and in order to run the project you either need to export the `NEXTAUTH_URL` or add it to a `.env` file in the project.
+```bash
+    yarn get-secrets api
+```
 
-   ```bash
-       export NEXTAUTH_URL=http://localhost:4200/samradsgatt/api/auth
-   ```
+2. The project uses next-auth authentication and in order to run the project you either need to export the NEXTAUTH_URL or add it to a .env file in the project.
+
+```bash
+    export NEXTAUTH_URL=http://localhost:4200/samradsgatt/api/auth
+```
 
 3. Run yarn to install the necessary packages for the project.
 
-   ```bash
-       yarn
-   ```
+```bash
+    yarn
+```
 
-4. Run code generation to auto generate API schemas and clients.
+4. Run codegen to auto generate API schemas and clients.
 
-   ```bash
-       yarn codegen
-   ```
+```bash
+    yarn codegen
+```
 
-5. Run the API that fetches data from the backend and feeds the frontend.
+5. Run the api that fetches data from the backend and feeds the frontend.
 
-   ```bash
-       yarn start api
-   ```
+```bash
+    yarn start api
+```
 
-6. Run the frontend in a separate terminal from the backend
+6. Run the frontend in a seperate terminal from the backend
 
-   ```bash
-       yarn start consultation-portal
-   ```
+```bash
+    yarn start consultation-portal
+```
 
-7. Navigate to [to the consultation portal](http://localhost:4200/samradsgatt)
+7. Navigate to [localhost:4200/samradsgatt](http://localhost:4200/samradsgatt)
 
-8. Navigate to the [GraphQL playground](http://localhost:4200/api/graphql)
+8. Navigate to the [graphql playground](http://localhost:4200/api/graphql)
 
-9. Note that in order to use the upload feature you need to export the AWS credentials.
+9. Note that in order to use the upload feature you need to export the aws credentials.
 
-Login here <https://island-is.awsapps.com/start#/> (Contact DevOps if you need access)
-Copy environment variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (image arrows 1,2,3)
-Paste environment variables into terminal
+Login here <https://island-is.awsapps.com/start#/> (Contact devops if you need access)
+Copy env variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (image arrows 1,2,3)
+Paste env variables into terminal
 
 ## Project owner
 

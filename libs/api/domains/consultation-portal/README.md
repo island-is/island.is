@@ -1,12 +1,11 @@
 # Consultation Portal
 
-This service utilizes the `ConsultationPortalApi`
+This service utilizes the ConsultationPortalApi
 
-## How to use
+# How to use
 
-Auto generate API schemas and clients, and start the API:
+Auto generate API schemas and clients
+`yarn codegen`
 
-```bash
-yarn codegen
-yarn start api
-```
+Start the api
+`yarn start api`

@@ -1,8 +1,8 @@
-# Air Discount Scheme API
+# Air Discount Scheme Api
 
-This service utilizes the `AirDiscountSchemeApi`.
+This service utilizes the AirDiscountSchemeApi
 
-## How to use
+# How to use
 
 Initialize the project with:
 `yarn nx run api-domains-air-discount-scheme:dev-init`

@@ -32,11 +32,11 @@ The service providers are required to use secure logins and only query by logged
 
 ## Access
 
-The public API is only accessible through X-Road security servers and only to machine clients with specific scope
+The PublicAPI is only accessible through X-Road security servers and only to machine clients with specific scope
 
 ### Scope
 
-```text
+```
 @island.is/auth/personal-representative-public
 ```
 
@@ -44,22 +44,24 @@ The public API is only accessible through X-Road security servers and only to ma
 
 [X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements)
 
-URLs for X-Road setup are as follows
+Urls for X-Road setup are as follows
 
-- [Development](https://personal-representative-public-xrd.internal.dev01.devland.is/swagger-json)
-- [Staging](https://personal-representative-public-xrd.internal.staging01.devland.is/swagger-json)
-- [Production](https://personal-representative-public-xrd.internal.innskra.island.is/swagger-json)
+- Dev: [https://personal-representative-public-xrd.internal.dev01.devland.is/swagger-json](https://personal-representative-public-xrd.internal.dev01.devland.is/swagger-json)
+- Staging: [https://personal-representative-public-xrd.internal.staging01.devland.is/swagger-json](https://personal-representative-public-xrd.internal.staging01.devland.is/swagger-json)
+- Production: [https://personal-representative-public-xrd.internal.innskra.island.is/swagger-json](https://personal-representative-public-xrd.internal.innskra.island.is/swagger-json)
 
 ### OpenAPI URL
 
-OpenAPI documentation and demoing [here](https://personal-representative-public-xrd.dev01.devland.is/swagger)
+OpenAPI documentation and demoing at
+
+- [https://personal-representative-public-xrd.dev01.devland.is/swagger](https://personal-representative-public-xrd.dev01.devland.is/swagger)
 
 ## Development
 
 ### Initial setup
 
-We are using the same service library and database as `auth-api` and therefore this step by step represents that
-First, make sure you have Docker, then run:
+We are using the same service library and database as auth-api and therefore this step by step represents that
+First, make sure you have docker, then run:
 
 ```bash
 yarn dev-services services-auth-ids-api
@@ -77,7 +79,11 @@ You can serve this service locally by running:
 yarn start services-auth-personal-representative-public
 ```
 
-Now you can access the [Swagger UI](http://localhost:3378)
+Api open api specs will now be accessible at
+
+```bash
+http://localhost:3378
+```
 
 ### Testing
 
