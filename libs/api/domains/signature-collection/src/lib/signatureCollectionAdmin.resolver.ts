@@ -287,4 +287,13 @@ export class SignatureCollectionAdminResolver {
   ): Promise<SignatureCollectionAreaSummaryReport> {
     return this.signatureCollectionService.getAreaSummaryReport(input, user)
   }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionLockList(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionListIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.lockList(input, user)
+  }
 }
