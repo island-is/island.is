@@ -1,49 +1,56 @@
+```markdown
 # Reference Template
 
-This library is a reference how all application template libraries can be.
+This library serves as a reference for how all application template libraries should be structured.
 
 ## Requirements
 
-There are multiple requirements needed for a new template to be usable by the application system:
+To integrate a new template within the application system, please adhere to the following steps:
 
-1. Run `yarn generate @nrwl/react:library application/templates/NAME_OF_APPLICATION` to generate a new library.
-2. The default export of this library has to be an object that extends the `ApplicationTemplate` interface
-3. Add a unique application type to `application/types/src/lib/ApplicationTypes.ts`
-4. Add to `application/template-loader/src/lib/templateLoaders.ts` so that library knows how to import this new application template.
-5. If the template includes custom fields only used by this application, export a submodule `getFields` (see `application/templates/parental-leave`):
-6. Add to `application/types/src/lib/institutionMapper.ts`
+1. Generate a new library by executing:
+   ```bash
+   yarn generate @nrwl/react:library application/templates/NAME_OF_APPLICATION
+   ```
+2. Ensure the default export of this library is an object extending the `ApplicationTemplate` interface.
+3. Introduce a unique application type in `application/types/src/lib/ApplicationTypes.ts`.
+4. Update `application/template-loader/src/lib/templateLoaders.ts` to ensure the library recognizes how to import the newly created application template.
+5. If the template includes custom fields that are exclusive to this application, ensure the export of a submodule `getFields`. Refer to `application/templates/parental-leave` as an example.
+6. Update `application/types/src/lib/institutionMapper.ts`:
 
-```ts
-import ParentalLeaveTemplate from './lib/ParentalLeaveTemplate'
+   ```ts
+   import ParentalLeaveTemplate from './lib/ParentalLeaveTemplate'
 
-export const getFields = () => import('./fields/')
+   export const getFields = () => import('./fields/')
 
-export default ParentalLeaveTemplate
-```
+   export default ParentalLeaveTemplate
+   ```
 
 ## Capabilities
 
-Each application template is an extension of the `ApplicationTemplate` interface. It can include as many custom fields as desired, and as many forms as well. All code for this application flow resides within the same library.
+Each application template is an extension of the `ApplicationTemplate` interface. It allows for the inclusion of any number of custom fields and forms. All code related to the application flow resides within the same library.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `ng test application-templates-reference-template` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests using [Jest](https://jestjs.io), run:
+```bash
+ng test application-templates-reference-template
+```
 
-## Custom API functionality
+## Custom API Functionality
 
-Should your template require custom API actions, like calling an external API or sending an email you should head over to `libs/application/template-api-modules/README.md`
+If your template requires custom API functionalities, such as calling an external API or sending an email, please refer to `libs/application/template-api-modules/README.md`.
 
-## Applications that support delegations
+## Applications Supporting Delegations
 
-Applications do not support user delegations by default, however it is simple to add this feature to your application type.
+By default, applications do not support user delegations, but this feature can be added easily.
 
-When an application supports user delegations of a specific type then a user with actor delegations of the corresponding delegation type will be prompted to choose what user they are applying for before creating a new application. They can choose to switch to a subject from their actor delegations and the subject will be the applicant for a new application and the actor's national id will be stored in the applicantActors field on the application.
+For applications supporting specific delegation types, a user with actor delegations for these types will be prompted to select the user for whom they are applying before initiating a new application. Users can switch to a subject from their actor delegations, making the subject the applicant for the new application, while the actor's national ID will be saved in the `applicantActors` field.
 
-If a user should open up a drafted application where the applicant is a user they have correct delegation for the user will be prompted to switch to the correct subject.
+If a user accesses a drafted application where the applicant is a user they have delegation rights for, they'll be prompted to adopt the subject role. 
 
-If another user with the correct delegation rights for the applicant should update the application they will be added to the applicantActors list.
+If another user with proper delegation rights updates the application, they will be added to the `applicantActors` list.
 
-Should your template require user delegation support you will need to configure the types of delegations that the application should support to the template:
+To enable user delegation support, configure the delegation types your application should accommodate:
 
 ```ts
 import { DelegationType } from '@island.is/auth-api-lib'
@@ -54,15 +61,15 @@ const ExampleApplicationTemplate: ApplicationTemplate<
   ExampleTemplateEvent
 > = {
   ...
-  // In this example we configure the legal guardian delegation type as an allowed delegation type for the example application
+  // Legal guardian delegation type configured as permissible for the example application
   allowedDelegations: [{ type: DelegationType.LegalGuardian }],
   ...
 }
-
 ```
 
-To access the list of national ids for applicantActors that have come in contact with the application:
+To access the list of national IDs of `applicantActors` that have come in contact with the application, use:
 
 ```ts
 const applicantActors = application.applicantActors
+```
 ```

@@ -1,7 +1,15 @@
-# application-templates-energy-funds
+```markdown
+# Application Templates Energy Funds
 
-This library was generated with [Nx](https://nx.dev).
+This library is part of the Nx workspace and deals with energy funds application templates.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-energy-funds` to execute the unit tests via [Jest](https://jestjs.io).
+To execute unit tests for this library, use the following command:
+
+```bash
+nx test application-templates-energy-funds
+```
+
+This will run the tests using [Jest](https://jestjs.io).
+```

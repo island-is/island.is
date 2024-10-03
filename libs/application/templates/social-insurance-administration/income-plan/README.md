@@ -1,50 +1,52 @@
+```markdown
 # Application Templates Income Plan
 
 ## Description
 
-This application template allows for submitting an income plan following an application.
+This application template enables users to submit an income plan post-application.
 
-![](./assets/income-plan-flow-chart.png)
+![Income Plan Flow Chart](./assets/income-plan-flow-chart.png)
 
 ### States
 
 #### Prerequisites
 
-This state is a temporary state that all new income plans will be created in. It has a short lifespan and is unlisted.
+This is a transitory state in which all new income plans are initially created. It is short-lived and unlisted.
 
-The purpose of this state is to be a guard into the actual income plan. There is an external data step which fetches data from Þjóðskrá and TR. The applicant cannot advance if they have a previous income plan that has been in progress at TR for fewer than 10 days.
+The role of this state is to act as a gatekeeper to the actual income plan process. During this state, an external data step fetches data from Þjóðskrá and TR. Applicants cannot proceed if they have an existing income plan that has been in progress at TR for fewer than 10 days.
 
 #### Draft
 
-Valid applicants will be able to advance to this state where they can start to review their pre-filled income plan and make changes. If they already have an income plan at TR, they can make changes to it and see a temporary calculation before sending in the updated income plan.
+Eligible applicants can progress to this state, where they can review their pre-filled income plan and make necessary changes. If an income plan already exists at TR, they can modify it and view a temporary calculation before submitting the updated income plan.
 
-#### Tryggingastofnun submitted
+#### Tryggingastofnun Submitted
 
-When an applicant has sent in the income plan to TR, the application is in this state. Here, the income plan can be edited.
+When an applicant submits the income plan to TR, the application moves to this state. At this point, the income plan can still be edited.
 
-#### Tryggingastofnun in review
+#### Tryggingastofnun In Review
 
-For the income plan to be in this state, TR needs to make a state change when they start reviewing the income plan. Here, the application cannot be edited.
+For the income plan to enter this state, TR must initiate a state change when they begin reviewing the plan. Once in this state, the application cannot be edited.
 
 #### Approved (Processed)
 
-The income plan has been processed by TR.
+The income plan has been processed and approved by TR.
 
-### Localisation
+### Localization
 
-All localization can be found on Contentful.
+All localization details can be found on Contentful.
 
-- [Income plan translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ip.application)
-- [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
+- [Income Plan Translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ip.application)
+- [Application System Translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
-When creating new text strings in the messages.ts file for the application, be sure to update Contentful. See [message extraction](../../../../localization/README.md#message-extraction).
+When creating new text strings in the `messages.ts` file for the application, ensure they are updated in Contentful. Refer to [Message Extraction](../../../../localization/README.md#message-extraction).
 
 ## Setup
 
-See [application-system](../../../../../apps/application-system/README.md) setup on how to get started.
+Refer to the [Application System Setup](../../../../../apps/application-system/README.md) guide to get started.
 
-Once you have everything running, you can navigate to [http://localhost:4242/umsoknir/tekjuaaetlun](http://localhost:4242/umsoknir/tekjuaaetlun) and start developing.
+Once you have the system running, visit [http://localhost:4242/umsoknir/tekjuaaetlun](http://localhost:4242/umsoknir/tekjuaaetlun) to begin development.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-social-insurance-administration-income-plan` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test application-templates-social-insurance-administration-income-plan` to execute unit tests using [Jest](https://jestjs.io).
+```

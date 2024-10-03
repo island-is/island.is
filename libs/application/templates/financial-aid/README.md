@@ -1,7 +1,13 @@
+```markdown
 # Application Templates Financial Aid
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-financial-aid` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+
+```
+nx test application-templates-financial-aid
+```
+```

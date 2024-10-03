@@ -1,19 +1,29 @@
-# New Primary School - Directorate of Education and School Services (DESS) / (Umsókn um nýjan skóla - MMS)
+```markdown
+# New Primary School Application - Directorate of Education and School Services (DESS)
 
-## About
+## Overview
 
-This application template allows applicants to apply for a new primary school
+This template provides a standardized application form for individuals or organizations looking to apply for the establishment of a new primary school.
 
-## URLs
+## Application Portal
 
-/umsoknir/nyr-grunnskoli/
+To apply for a new primary school, please visit the following URL:
 
-## Integrations
+- `/umsoknir/nyr-grunnskoli/` 
 
-- [Þjóðskrá](https://skra.is): To get the applicants information
+## External Integrations
 
-Run `nx test application-templates-new-primary-school` to execute the unit tests via [Jest](https://jestjs.io).
+- [Þjóðskrá](https://skra.is): Utilized to retrieve applicant information seamlessly.
 
-## Code owners and maintainers
+## Running Tests
 
-- [Deloitte](http://www.deloitte.is)
+To execute unit tests for the application template, use the following command, which leverages [Jest](https://jestjs.io) for testing:
+
+```shell
+nx test application-templates-new-primary-school
+```
+
+## Code Owners and Maintenance
+
+- Managed by [Deloitte](http://www.deloitte.is)
+```

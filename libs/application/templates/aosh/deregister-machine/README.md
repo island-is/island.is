@@ -1,7 +1,15 @@
-# application-templates-aosh-deregister-machine
+```markdown
+# Application Templates AOSH Deregister Machine
 
-This library was generated with [Nx](https://nx.dev).
+This library is generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-aosh-deregister-machine` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, run the following command using [Jest](https://jestjs.io):
+
+```
+nx test application-templates-aosh-deregister-machine
+```
+
+This will initiate the unit tests for the `application-templates-aosh-deregister-machine` module.
+```

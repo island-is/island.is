@@ -1,7 +1,17 @@
-# application-templates-aosh-transfer-of-machine-ownership
+```markdown
+# Application Templates - AOSH Transfer of Machine Ownership
 
-This library was generated with [Nx](https://nx.dev).
+This library is a template for managing the transfer of machine ownership within the AOSH system. It was generated with [Nx](https://nx.dev), a toolkit for monorepo development.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-aosh-transfer-of-machine-ownership` to execute the unit tests via [Jest](https://jestjs.io).
+To run the unit tests for this library, use the following command:
+
+```bash
+nx test application-templates-aosh-transfer-of-machine-ownership
+```
+
+This command executes the unit tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
+
+Make sure you have all the necessary dependencies installed and the appropriate environment configured before running the tests.
+```

@@ -1,13 +1,24 @@
+```markdown
 # Application Templates Public Debt Payment Plan
 
-This library was generated with [Nx](https://nx.dev).
+This library is part of a project generated with [Nx](https://nx.dev), a smart, extensible build framework.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-public-debt-payment-plan` to execute the unit tests via [Jest](https://jestjs.io).
+To run unit tests, execute the following command:
+
+```sh
+nx test application-templates-public-debt-payment-plan
+```
+
+This command will run the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
 
 ## Test Users
 
-### As an individual
+Below is the information for test users:
 
-**Gervimaður Afríka** `0103019`
+### As an Individual
+
+- **Name:** Gervimaður Afríka
+- **User ID:** `0103019`
+```

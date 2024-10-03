@@ -9,18 +9,18 @@ The following environment variables are expected for the module to operate corre
 
 ### Application System Files
 
-- `APPLICATION_ATTACHMENT_BUCKET`: Has a fallback for local environments.
-- `FILE_SERVICE_PRESIGN_BUCKET`: Has a fallback for local environments.
-- `REDIS_URL_NODE_01`: Has a fallback for local environments.
+- `APPLICATION_ATTACHMENT_BUCKET`: Defaults to local settings if not set.
+- `FILE_SERVICE_PRESIGN_BUCKET`: Defaults to local settings if not set.
+- `REDIS_URL_NODE_01`: Defaults to local settings if not set.
 
 ### Signing
 
-- `DOKOBIT_URL`: Has a fallback for local environments.
-- `DOKOBIT_ACCESS_TOKEN`: Must be set for local development.
+- `DOKOBIT_URL`: Defaults to local settings if not set.
+- `DOKOBIT_ACCESS_TOKEN`: Must be explicitly set for local development.
 
 ### File Upload Module
 
-- `FILE_STORAGE_UPLOAD_BUCKET`: Has a fallback for local environments.
+- `FILE_STORAGE_UPLOAD_BUCKET`: Defaults to local settings if not set.
 
 ## Usage
 
@@ -50,6 +50,7 @@ import { FileStorageConfig } from '@island.is/file-storage';
     }),
   ],
 })
+export class AppModule {}
 ```
 
 ## Running Unit Tests

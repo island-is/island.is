@@ -1,65 +1,60 @@
-# Criminal Record Application
+## Criminal Record Application
 
-This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib application/templates/criminal-record)
+This library was generated with [Nx](https://nx.dev). Use the following command to generate it using Yarn:
+
+```
+yarn generate @nrwl/node:lib application/templates/criminal-record
+```
 
 ## Setup
 
-Run these two proxy clients for Þjóðskrá connection.
+Before setting up the Þjóðskrá connection, ensure you have the following AWS environment variables. These can be acquired from the AWS Management Console: <https://island-is.awsapps.com/start>.
 
-Proxy the X-Road socat service (v2):
+```bash
+export AWS_ACCESS_KEY_ID="<access_key_id>"
+export AWS_SECRET_ACCESS_KEY="<secret_access_key>"
+export AWS_SESSION_TOKEN="<session_token>"
+```
 
-First you need to enter the AWS environment variables (get from <https://island-is.awsapps.com/start>)
+### Proxy X-Road Socat Service (v2)
 
-`export AWS_ACCESS_KEY_ID="<access_key_id>"`
+To set up the proxy for the X-Road socat service (v2), execute:
 
-`export AWS_SECRET_ACCESS_KEY="<secret_access_key>"`
+```bash
+./scripts/run-xroad-proxy.sh
+```
 
-`export AWS_SESSION_TOKEN="<session_token>"`
+### Proxy X-Road Socat Service (v1)
 
-Then:
+Before running the v1 proxy, update the Kubernetes configuration. This step might only be necessary once:
 
-`./scripts/run-xroad-proxy.sh`
+```bash
+aws eks update-kubeconfig --name dev-cluster01 --profile <profile-name> --region eu-west-1
+```
 
-Proxy the X-Road socat service (v1):
+Lastly, fetch all necessary secrets.
 
-First you need to run this (maybe only once?):
+## Running the Application Locally
 
-`aws eks update-kubeconfig --name dev-cluster01 --profile <profile-name> --region eu-west-1`
-
-Fetch all necessary secrets
-
-### Running locally
-
-You can serve this app locally by running:
+To serve the application locally, execute the following commands in separate terminal windows:
 
 ```bash
 yarn start api
-```
-
-and
-
-```bash
 yarn start application-system-api
-```
-
-and
-
-```bash
 yarn start application-system-form
-```
-
-and
-
-```bash
 yarn start services-user-profile
 ```
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-criminal-record` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests using [Jest](https://jestjs.io), run the following command:
 
-## Code owners and maintainers
+```bash
+nx test application-templates-criminal-record
+```
 
-- [Unnur Sól - @unnursol](https://github.com/unnursolingimars)
-- [Jón Bjarni]()
-- [Jóhanna Agnes - @johannaagma](https://github.com/johannaagma)
+## Code Owners and Maintainers
+
+- [Unnur Sól](https://github.com/unnursolingimars) - @unnursol
+- Jón Bjarni
+- [Jóhanna Agnes](https://github.com/johannaagma) - @johannaagma

@@ -1,7 +1,15 @@
-# Application Templates Data Protection Complaint
+```markdown
+# Application Templates - Data Protection Complaint
 
-This library was generated with [Nx](https://nx.dev).
+This library is a part of the [Nx](https://nx.dev) workspace.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-data-protection-complaint` to execute the unit tests via [Jest](https://jestjs.io).
+To run the unit tests for this library, use the following command:
+
+```bash
+nx test application-templates-data-protection-complaint
+```
+
+This command will execute the unit tests using [Jest](https://jestjs.io).
+```

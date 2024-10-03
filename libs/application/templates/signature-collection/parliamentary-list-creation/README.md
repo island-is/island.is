@@ -1,7 +1,17 @@
+```markdown
 # application-templates-parliamentary-list-creation
 
-This library was generated with [Nx](https://nx.dev).
+This library is part of the larger project structure managed by [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-parliamentary-list-creation` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, use the following command:
+
+```bash
+nx test application-templates-parliamentary-list-creation
+```
+
+The unit tests are powered by [Jest](https://jestjs.io), a delightful testing framework for JavaScript.
+
+Ensure that you have all necessary dependencies and configurations set up correctly in your Nx workspace to run these tests seamlessly.
+```

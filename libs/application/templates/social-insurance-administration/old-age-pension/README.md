@@ -1,54 +1,56 @@
-# Application Templates Old age pension
+```markdown
+# Application Templates: Old Age Pension
 
 ## Description
 
-This application template allows applicants to apply for old age pension.
+This application template enables applicants to apply for an old age pension.
 
-![](../core/assets/tr-applications-flow-chart.png)
+![Application Flow Chart](../core/assets/tr-applications-flow-chart.png)
 
 ### States
 
 #### Prerequisites
 
-This state is a temporary state that all new applications will be created in. It has a short lifespan and is unlisted.
+This is a preliminary state where all new applications are initially created. It has a short lifespan and is unlisted.
 
-The purpose of this state is to be a guard into the actual application. There the applicant chooses type of old age pension (old age pension, half old age pension and sailor's old age pension) and reads general information on the processing and data collection for applications at TR. There is an external data step which fetches data from Þjóðskrá and TR. And lastly there is a question step about if applicant has applied from all their pension funds. If they are already a old-age pensioner, have an application in progress or doesn't have applied for all their pension funds they cannot advance to the next step and make an application.
+The objective of this state is to prepare the applicant for the actual application process. Here, the applicant selects the type of old age pension (full old age pension, half old age pension, or sailor's old age pension) and reviews general information on the processing and data collection by TR. An external data step is included to fetch data from Þjóðskrá and TR. Finally, there is a question step to determine if the applicant has applied from all their pension funds. If they are already an old-age pensioner, have an application in progress, or have not applied for all their pension funds, they cannot advance to the next step and complete an application.
 
 #### Draft
 
-Valid applicant will be able to advance to this state where they can start the actual application and fill in all the relevant data.
+Eligible applicants can proceed to this state to begin the actual application process and provide all necessary information.
 
-#### Tryggingastofnun submitted
+#### Tryggingastofnun Submitted
 
-When applicant has sent in the application to TR the application is in this state. Here the application can be edited.
+Once applicants submit their application to TR, it enters this state. Here, the application can still be edited.
 
-#### Tryggingastofnun in review
+#### Tryggingastofnun In Review
 
-For application to be in this state, TR need to make a state change when they start to review the application. Here the application can not be edited.
+When TR begins reviewing the application, they change its state to this. In this state, the application cannot be edited.
 
-#### Additional document required
+#### Additional Document Required
 
-If TR needs additional documents to finish processing the application they can make a state change so the applicant can add their missing documents.
+If TR needs extra documents to complete the application processing, they can change the state to allow the applicant to add any missing documents.
 
 #### Approved
 
-Application have been approved by TR.
+The application is approved by TR.
 
 #### Rejected
 
-Application have been rejected by TR.
+The application is rejected by TR.
 
 ### Localisation
 
-All localisation can be found on Contentful.
+All localisation can be accessed on Contentful.
 
-- [Old age pension application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/oap.application)
-- [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
+- [Old Age Pension Application Translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/oap.application)
+- [Application System Translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
-When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../../localization/README.md#message-extraction).
+Ensure that any new text strings in the `messages.ts` file for the application are updated in Contentful. Refer to [message extraction](../../../../localization/README.md#message-extraction) for guidance.
 
 ## Setup
 
-See [application-system](../../../../../apps/application-system/README.md) setup on how to get started.
+Refer to the [application system setup](../../../../../apps/application-system/README.md) documentation to get started.
 
-Once you have everything running you can navigate to [http://localhost:4242/umsoknir/ellilifeyrir](http://localhost:4242/umsoknir/ellilifeyrir) and start developing.
+Once setup, navigate to [http://localhost:4242/umsoknir/ellilifeyrir](http://localhost:4242/umsoknir/ellilifeyrir) to begin development.
+```

@@ -1,7 +1,23 @@
-# application-templates-transport-authority-transfer-of-vehicle-ownership
+```markdown
+# Application Templates: Transport Authority - Transfer of Vehicle Ownership
 
-This library was generated with [Nx](https://nx.dev).
+This library facilitates the creation and management of application templates specifically designed for the transfer of vehicle ownership under the transport authority standards.
 
-## Running unit tests
+## Prerequisites
 
-Run `nx test application-templates-transport-authority-transfer-of-vehicle-ownership` to execute the unit tests via [Jest](https://jestjs.io).
+Make sure you have Nx installed globally to run the library commands. If not, install it using:
+
+```bash
+npm install -g nx
+```
+
+## Running Unit Tests
+
+To execute the unit tests for this library, use the following command:
+
+```bash
+nx test application-templates-transport-authority-transfer-of-vehicle-ownership
+```
+
+Unit tests are powered by the [Jest](https://jestjs.io) testing framework. Ensure that all dependencies are installed and up-to-date before running the tests.
+```

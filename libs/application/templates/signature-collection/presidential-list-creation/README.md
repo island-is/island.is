@@ -1,7 +1,14 @@
-# application-templates-presidential-list-creation
+```markdown
+# Application Templates: Presidential List Creation
 
-This library was generated with [Nx](https://nx.dev).
+This library is a part of the larger application ecosystem powered by [Nx](https://nx.dev), designed to facilitate the creation of presidential lists.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-presidential-list-creation` to execute the unit tests via [Jest](https://jestjs.io).
+To ensure the functionality and reliability of this library, you can execute unit tests using [Jest](https://jestjs.io). Run the following command:
+
+```bash
+nx test application-templates-presidential-list-creation
+```
+This command will initiate the test suite and provide feedback on the library's unit test coverage.
+```

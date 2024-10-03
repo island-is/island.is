@@ -1,11 +1,13 @@
+```markdown
 # Application Template Loader
 
-The sole purpose of this library is to lazily load application templates, data providers, forms, and fields. This ensures that bundle sizes are small, and only the currently viewed application template, form, and fields are part of the js bundle.
+The primary goal of this library is to lazily load application templates, data providers, forms, and fields. This approach helps reduce bundle sizes by ensuring that only the currently viewed application templates, forms, and fields are included in the JavaScript bundle.
 
-## Adding a new template
+## Adding a New Template
 
-If you are building a new application template from scratch, add its type and import loader into `src/lib/templateLoaders.ts`. Then it can be used in the backend and frontend apps.
+To create a new application template from scratch, add its type and import loader to `src/lib/templateLoaders.ts`. Once added, it can be utilized in both the backend and frontend applications.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `ng test application-template-loader` to execute the unit tests via [Jest](https://jestjs.io).
+Execute unit tests by running `ng test application-template-loader` using [Jest](https://jestjs.io).
+```

@@ -7,9 +7,9 @@ This library was generated with [Nx](https://nx.dev).
 
 To execute the unit tests for the Application API Core, use the following command:
 
-```shell
+```bash
 nx test application-api-core
 ```
 
-The tests will be run using the [Jest](https://jestjs.io) testing framework.
+The tests will be executed using the [Jest](https://jestjs.io) testing framework.
 ```

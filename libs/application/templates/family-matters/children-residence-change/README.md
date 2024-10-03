@@ -1,37 +1,49 @@
+```markdown
 # Children Residence Change Template
 
-This is an application template for children residence change created for the County Magistrate of Iceland by Kolibri.
+This document outlines the setup and usage for the Children Residence Change application template, designed for the County Magistrate of Iceland by Kolibri.
 
 ## Setup
 
-Application System setup: [Setup](https://docs.devland.is/apps/application-system)
+For information on setting up the application system, please refer to the following link: [Application System Setup](https://docs.devland.is/apps/application-system).
 
-### Additional setup
+### Additional Setup
 
-There are additional steps required to run this template locally
+Additional setup steps are required to run this template locally.
 
 #### National Registry Provider
 
-Prerequisites
+**Prerequisites:**
 
-- You have `kubectl` installed
-  - `brew install kubectl`
-- You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured
+- Ensure you have `kubectl` installed. You can install it using Homebrew:
+  ```
+  brew install kubectl
+  ```
+- Configure [AWS Secrets](../../../../handbook/repository/aws-secrets.md).
 
-1. Fetch development secrets for the project
+**Steps:**
 
-- Run `yarn get-secrets service-portal`
+1. **Fetch Development Secrets for the Project:**
 
-2. Get kubeconfig
+   Execute the following command:
+   ```
+   yarn get-secrets service-portal
+   ```
 
-- Export aws variables `aws eks update-kubeconfig --name dev-cluster01`
+2. **Get Kubeconfig:**
 
-- Keep this process running while running the project
+   - Export AWS variables using the following command:
+     ```
+     aws eks update-kubeconfig --name dev-cluster01
+     ```
 
-### Test user
+   - Keep this process running while maintaining the project setup.
 
-For testing on local, dev and staging use the Gervimaður Evrópa login: 0102719
+### Test User
 
-## Code owners and maintainers
+For testing in local, development, or staging environments, use the Gervimaður Evrópa login: `0102719`.
 
-- [Kolibri](https://github.com/orgs/island-is/teams/kolibri-modern-family)
+## Code Owners and Maintainers
+
+- For any issues, contact the [Kolibri Modern Family Team](https://github.com/orgs/island-is/teams/kolibri-modern-family).
+```

@@ -1,7 +1,15 @@
-# application-templates-aosh-street-registration
+```markdown
+# Application Templates: AOSH Street Registration
 
-This library was generated with [Nx](https://nx.dev).
+This library is part of the application templates for AOSH street registration. It was generated using the [Nx](https://nx.dev) framework.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-aosh-street-registration` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests, run the following command:
+
+```bash
+nx test application-templates-aosh-street-registration
+```
+
+This command uses [Jest](https://jestjs.io), a JavaScript testing framework, to run the tests.
+```

@@ -1,7 +1,15 @@
-# application-templates-healthcare-license-certificate
+```markdown
+# Application Templates Healthcare License Certificate
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev). It provides application templates specifically designed for managing healthcare licenses and certificates.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-healthcare-license-certificate` to execute the unit tests via [Jest](https://jestjs.io).
+To run the unit tests for this library, use the following command:
+
+```
+nx test application-templates-healthcare-license-certificate
+```
+
+This will execute the unit tests using [Jest](https://jestjs.io).
+```

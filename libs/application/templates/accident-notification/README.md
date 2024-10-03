@@ -1,7 +1,20 @@
-# Application Templates Accident Notification
+```markdown
+# Application Templates: Accident Notification
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-accident-notification` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests, run the following command:
+
+```
+nx test application-templates-accident-notification
+```
+
+The tests are executed using [Jest](https://jestjs.io).
+
+## Additional Resources
+
+- For more information about Nx, visit the [Nx Documentation](https://nx.dev).
+- For more information about Jest, visit the [Jest Documentation](https://jestjs.io/docs/getting-started).
+```

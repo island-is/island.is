@@ -1,54 +1,56 @@
-# Application Templates Household supplement
+```markdown
+# Application Templates: Household Supplement
 
 ## Description
 
-This application template allows applicants to apply for household supplement.
+This application template allows applicants to apply for a household supplement.
 
-![](../core/assets/tr-applications-flow-chart.png)
+![Application Flow Chart](../core/assets/tr-applications-flow-chart.png)
 
 ### States
 
 #### Prerequisites
 
-This state is a temporary state that all new applications will be created in. It has a short lifespan and is unlisted.
+This is a temporary state where all new applications are initiated. It has a short lifespan and is unlisted.
 
-The purpose of this state is to be a guard into the actual application. There the applicant reads general information on the processing and data collection for applications at TR. There is an external data step which fetches data from Þjóðskrá and TR. If the applicant is not a pensioner (old age, disability or rehabilitation), has a spouse that does not belong to an institution for the elderly or do not have a registered domicile in Iceland they cannot advance to the next step and make an application.
+The purpose of this state is to serve as a preliminary check before entering the actual application process. Here, the applicant reads general information about data collection and processing by TR (Tryggingastofnun). An external data step fetches data from Þjóðskrá (the National Registry of Iceland) and TR. If the applicant is not a pensioner (old age, disability, or rehabilitation), has a spouse not belonging to an institution for the elderly, or does not have a registered domicile in Iceland, they cannot proceed to the next step.
 
 #### Draft
 
-Valid applicant will be able to advance to this state where they can start the actual application and fill in all the relevant data.
+Valid applicants can advance to this state, where they can start the actual application and fill in all the relevant data.
 
-#### Tryggingastofnun submitted
+#### Tryggingastofnun Submitted
 
-When applicant has sent in the application to TR the application is in this state. Here the application can be edited.
+When the applicant submits the application to TR, it enters this state. The application can be edited here.
 
-#### Tryggingastofnun in review
+#### Tryggingastofnun In Review
 
-For application to be in this state, TR need to make a state change when they start to review the application. Here the application can not be edited.
+For an application to enter this state, a state change is made by TR when they begin reviewing the application. At this point, the application cannot be edited.
 
-#### Additional document required
+#### Additional Document Required
 
-If TR needs additional documents to finish processing the application they can make a state change so the applicant can add their missing documents.
+If TR requires additional documents to complete the application processing, they can change the state, allowing the applicant to provide the missing documents.
 
 #### Approved
 
-Application have been approved by TR.
+The application has been approved by TR.
 
 #### Rejected
 
-Application have been rejected by TR.
+The application has been rejected by TR.
 
-### Localisation
+### Localization
 
-All localisation can be found on Contentful.
+All localization can be found on Contentful.
 
-- [Household supplement application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/hs.application)
-- [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
+- [Household Supplement Application Translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/hs.application)
+- [Application System Translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
-When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../../localization/README.md#message-extraction).
+When creating new text strings in the `messages.ts` file for the application, update Contentful accordingly. See [Message Extraction](../../../../localization/README.md#message-extraction) for more details.
 
 ## Setup
 
-See [application-system](../../../../../apps/application-system/README.md) setup on how to get started.
+Refer to the [Application System Setup](../../../../../apps/application-system/README.md) document for instructions on getting started.
 
-Once you have everything running you can navigate to [http://localhost:4242/umsoknir/heimilisuppbot](http://localhost:4242/umsoknir/heimilisuppbot) and start developing.
+Once set up, navigate to [http://localhost:4242/umsoknir/heimilisuppbot](http://localhost:4242/umsoknir/heimilisuppbot) to start developing.
+```

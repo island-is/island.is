@@ -1,7 +1,15 @@
-# Application Templates Funding Government Projects
+```markdown
+# Application Templates for Funding Government Projects
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev), a tool that provides a set of extensible DevTools for monorepos, enabling you to build full-stack applications using modern frameworks.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-funding-government-projects` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for the `application-templates-funding-government-projects` library, run the following command:
+
+```
+nx test application-templates-funding-government-projects
+```
+
+This will utilize [Jest](https://jestjs.io), a delightful JavaScript Testing Framework with a focus on simplicity.
+```

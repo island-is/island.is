@@ -1,9 +1,11 @@
-# Applications used for Signature Collection (medmaelasofnun)
+# Applications for Signature Collection
 
-Application folder containing two processes used for Signature Collection
+This folder contains two main applications used for signature collection in different contexts:
 
-- Presidential List Creation
-- Presidential List Signing
+1. **Presidential Signature Collection**
+   - **List Creation**: Process for creating a list intended for presidential signature collection.
+   - **List Signing**: Process for collecting and managing signatures for the presidential list.
 
-- Parliamentary List Creation
-- Parliamentary List Signing
+2. **Parliamentary Signature Collection**
+   - **List Creation**: Process for creating a list intended for parliamentary signature collection.
+   - **List Signing**: Process for collecting and managing signatures for the parliamentary list.

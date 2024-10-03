@@ -1,7 +1,15 @@
-# financial-statement-cemetery
+```markdown
+# Financial Statement Cemetery
 
-This application turns in financial statements for cemeteries to the The Icelandic National Audit Office (Ríkisendurskoðun, inao for short).
+The "Financial Statement Cemetery" application is designed to submit financial statements of cemeteries to the Icelandic National Audit Office, known in Icelandic as Ríkisendurskoðun (abbreviated as INAO).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test financial-statement-cemetery` to execute the unit tests via [Jest](https://jestjs.io).
+To run the unit tests for this application, execute the following command:
+
+```bash
+nx test financial-statement-cemetery
+```
+
+This command uses [Jest](https://jestjs.io) as the testing framework.
+```

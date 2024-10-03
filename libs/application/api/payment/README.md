@@ -11,5 +11,5 @@ To execute the unit tests for the `application-api-payment` library, use the fol
 nx test application-api-payment
 ```
 
-This command utilizes [Jest](https://jestjs.io), a delightful JavaScript testing framework, to run the tests. Ensure all tests pass successfully before deploying any changes.
+This command utilizes [Jest](https://jestjs.io), a delightful JavaScript testing framework, to run the tests. Ensure all tests pass successfully before deploying any changes to maintain code reliability.
 ```
