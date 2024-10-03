@@ -1,9 +1,7 @@
-```markdown
-# Application Templates AOSH Request for Inspection
+# application-templates-aosh-request-for-inspection
 
-This library is generated with [Nx](https://nx.dev). It provides templates for requesting inspections, following the AOSH standards.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, use the command `nx test application-templates-aosh-request-for-inspection`. This will run the tests using [Jest](https://jestjs.io) as the testing framework.
-```
+Run `nx test application-templates-aosh-request-for-inspection` to execute the unit tests via [Jest](https://jestjs.io).

@@ -2,48 +2,30 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+Run `nx test clients-electronic-registration-statistics` to execute the unit tests via [Jest](https://jestjs.io).
 
-```sh
-nx test clients-electronic-registration-statistics
-```
+## Running lint
 
-## Running Lint
-
-To perform linting using [ESLint](https://eslint.org/), execute the following command:
-
-```sh
-nx lint clients-electronic-registration-statistics
-```
+Run `nx lint clients-electronic-registration-statistics` to execute the lint via [ESLint](https://eslint.org/).
 
 ## Usage
 
-### Updating the OpenAPI Definition
-
-To update the OpenAPI definition (clientConfig.json), run the following command:
+### Updating the open api definition (clientConfig.json)
 
 ```sh
 yarn nx run clients-electronic-registration-statistics:update-openapi-document
 ```
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+Run `nx test api-domains-electronic-registration-statistics` to execute the unit tests via [Jest](https://jestjs.io).
 
-```sh
-nx test api-domains-electronic-registration-statistics
-```
+## Running lint
 
-## Running Lint
+Run `nx lint api-domains-electronic-registration-statistics` to execute the lint via [ESLint](https://eslint.org/).
 
-To perform linting using [ESLint](https://eslint.org/), execute the following command:
-
-```sh
-nx lint api-domains-electronic-registration-statistics
-```
-
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Stefna](https://github.com/orgs/island-is/teams/stefna/members)

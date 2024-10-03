@@ -2,64 +2,55 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Setup
+### Setup
 
-To upload documents while running locally, you need to set the AWS environment variables. Retrieve these from [AWS IAM Identity Center](https://island-is.awsapps.com/start).
+First you need to enter the AWS environment variables (get from https://island-is.awsapps.com/start) to be able to upload documents while running locally
 
-- Set the AWS Access Key ID:
+`export AWS_ACCESS_KEY_ID="<access_key_id>"`
 
-  ```bash
-  export AWS_ACCESS_KEY_ID="<access_key_id>"
-  ```
+`export AWS_SECRET_ACCESS_KEY="<secret_access_key>"`
 
-- Set the AWS Secret Access Key:
+`export AWS_SESSION_TOKEN="<session_token>"`
 
-  ```bash
-  export AWS_SECRET_ACCESS_KEY="<secret_access_key>"
-  ```
+### Running locally
 
-- Set the AWS Session Token:
-  ```bash
-  export AWS_SESSION_TOKEN="<session_token>"
-  ```
+start dev services:
 
-## Running Locally
+```bash
+yarn nx run application-system-api:dev-services
+yarn nx run application-system-api:migrate
+```
 
-1. Start development services:
+and both proxies
 
-   ```bash
-   yarn nx run application-system-api:dev-services
-   yarn nx run application-system-api:migrate
-   ```
+```bash
+kubectl -n socat port-forward svc/socat-xroad 8081:80
+```
 
-2. Start both proxies by running:
+then run the application system
 
-   ```bash
-   kubectl -n socat port-forward svc/socat-xroad 8081:80
-   ```
+```bash
+yarn start application-system-form
+yarn start api
+yarn start application-system-api
+```
 
-3. Launch the application system:
-
-   ```bash
-   yarn start application-system-form
-   yarn start api
-   yarn start application-system-api
-   ```
-
-4. Access the application at [http://localhost:4242/umsoknir/skilarsreikninga](http://localhost:4242/umsoknir/skilarsreikninga).
+and visit `http://localhost:4242/umsoknir/skilarsreikninga`
 
 ## Test Users
 
-- **Gervimaður Færeyjar**: `01012399`
+**Gervimaður Færeyjar** `01012399`
 
-### Company Representation
+### Company representation:
 
-- Acting as a political party: **65°ARCTIC ehf.**
-- Acting as a Cemetery: **Blámi-fjárfestingafélag ehf.**
+Act as a political party: **65°ARCTIC ehf.**
 
-### Registering Board Members and Examiners
+Act as a Cemetery: **Blámi-fjárfestingafélag ehf.**
 
-For local and development environments, use Gervimenn such as:
+### Registering Boardmembers and Examiners
 
-- **0101302989 Gervimaður Ameríka**
-- **0101302129 Gervimaður Noregur**
+Locally and on dev use Gervimenn f.x.
+
+**0101302989 Gervimaður Ameríka**
+
+**0101302129 Gervimaður Noregur**

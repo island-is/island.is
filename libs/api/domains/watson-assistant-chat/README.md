@@ -1,19 +1,11 @@
 # api-domains-watson-assistant-chat
 
-This library was generated using [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io):
+Run `nx test api-domains-watson-assistant-chat` to execute the unit tests via [Jest](https://jestjs.io).
 
-```bash
-nx test api-domains-watson-assistant-chat
-```
+## Running lint
 
-## Running Lint
-
-To execute the linting process using [ESLint](https://eslint.org/):
-
-```bash
-nx lint api-domains-watson-assistant-chat
-```
+Run `nx lint api-domains-watson-assistant-chat` to execute the lint via [ESLint](https://eslint.org/).

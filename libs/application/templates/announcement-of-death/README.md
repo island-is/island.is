@@ -1,37 +1,33 @@
-````markdown
+# Application Templates Announcement of Death
+
 ## Application Sequence Diagram
 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Heklugátt as Heklugátt
-    participant Sýsla as Sýsla
-    participant PósthólfIsland as Pósthólf island.is
-    participant AppSystem as ApplicationSystem
-    participant UserProfile as UserProfile
-    participant Samgöngustofa as Samgöngustofa
-    participant Þjóðskrá as Þjóðskrá
+    participant Heklugátt
+    participant Sýsla
+    participant Pósthólf island.is
+    participant ApplicationSystem
+    participant UserProfile
+    participant Samgöngustofa
+    participant Þjóðskrá
 
-    Heklugátt->>Sýsla: Notice is sent
-    Sýsla->>PósthólfIsland: Message sent to inbox
-    PósthólfIsland->>AppSystem: Application started
+    Heklugátt->>Sýsla: notice sent
+    Sýsla->>Pósthólf island.is: message sent to inbox
+    Pósthólf island.is->>ApplicationSystem: application started
 
-    AppSystem->>+Sýsla: meta.onEntry triggers for initial state
-    Sýsla-->>-AppSystem: Data persists to application in ApplicationController::Create
+    ApplicationSystem->>+Sýsla: meta.onEntry triggers for initial state
+    Sýsla-->>-ApplicationSystem: data persists to application in ApplicationController::Create
 
-    AppSystem->>+UserProfile: Request user data
-    UserProfile-->>-AppSystem: Response
+    ApplicationSystem->>+UserProfile: request user data
+    UserProfile-->>-ApplicationSystem: response
 
-    AppSystem->>+Samgöngustofa: Request vehicle data
-    Samgöngustofa-->>-AppSystem: Response
+    ApplicationSystem->>+Samgöngustofa: request vehicle data
+    Samgöngustofa-->>-ApplicationSystem: response
 
-    AppSystem->>+Þjóðskrá: Request personal data
-    Þjóðskrá-->>-AppSystem: Response
+    ApplicationSystem->>+Þjóðskrá: request personal data
+    Þjóðskrá-->>-ApplicationSystem: response
 
-    AppSystem--)Sýsla: Application finalised and delivered
-```
-````
-
-```
-
+    ApplicationSystem-)Sýsla: application finalised and delivered
 ```

@@ -1,19 +1,7 @@
-````markdown
 # api-domains-documents
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this project, use the following command:
-
-```bash
-ng test api-domains-documents
-```
-````
-
-This will run the tests using [Jest](https://jestjs.io).
-
-```
-
-```
+Run `ng test api-domains-documents` to execute the unit tests via [Jest](https://jestjs.io).

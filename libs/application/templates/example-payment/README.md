@@ -1,23 +1,14 @@
-````markdown
 # Application Templates Example Payment
 
-This is a demo application intended to serve as a reference for developers working on applications within the application system. It is designed to provide testing grounds for handling payments in their respective applications.
+This is a demo application intended to act as a reference for developers working on
+applications in the application system to refer to and use as testing grounds when working
+with payments in their respective applications.
 
-There are several components involved when managing payments. We provide a comprehensive guide on implementing payments in applications: [Application Payment Guide](/handbook/misc/application-payment-guide.md).
+There's a few moving parts when handling payments, and we do have a guide on how to implement
+payments in applications over here: [Application payment guide](/handbook/misc/application-payment-guide.md)
 
-This demo serves as the essential link for developers by providing an example they can refer to, experiment with, and compare against.
+So this serves as the missing link so people have an example to look at and try out and compare.
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, run the following command:
-
-```bash
-nx test application-templates-example-payment
-```
-````
-
-This command utilizes [Jest](https://jestjs.io) for testing.
-
-```
-
-```
+Run `nx test application-templates-example-payment` to execute the unit tests via [Jest](https://jestjs.io).

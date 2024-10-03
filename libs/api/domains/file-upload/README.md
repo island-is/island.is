@@ -1,19 +1,7 @@
-````markdown
 # api-domains-file-upload
 
-This library, `api-domains-file-upload`, was generated using [Nx](https://nx.dev), a smart and extensible build framework.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, run the following command:
-
-```bash
-ng test api-domains-file-upload
-```
-````
-
-This will run the tests using [Jest](https://jestjs.io), a delightful JavaScript Testing Framework.
-
-```
-
-```
+Run `ng test api-domains-file-upload` to execute the unit tests via [Jest](https://jestjs.io).

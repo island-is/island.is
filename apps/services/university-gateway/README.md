@@ -2,47 +2,44 @@
 
 ## About
 
-This service manages university program availability and connects applications between the island.is application system and the university database.
+This service manages university program availability, and connects applications between island.is application-system and university DB
 
 ## Quickstart
 
-Ensure Docker is running. When executing for the first time, run the following commands:
+Ensure docker is running, then run the following when running for the first time:
 
-```bash
+Simply run these two commands:
+
+```
 yarn dev-init services-university-gateway
 yarn dev services-university-gateway
 ```
 
-### API Service and Backend
+### API service and backend
 
-#### Initial Setup
-
-To set up the project initially, execute:
+## Initial setup
 
 ```bash
 yarn dev-services services-university-gateway
 ```
 
-To run migrations and seed scripts, use:
+To run the migrations and seed scripts:
 
 ```bash
 yarn nx run services-university-gateway:migrate
 yarn nx run services-university-gateway:seed
 ```
 
-#### Start the API Service
-
-To start the API service, run:
+## Start the API service
 
 ```bash
 yarn start services-university-gateway
 ```
 
-Access the API documentation at http://localhost:3380/api/swagger
+Open url:
+localhost:3380/api/swagger
 
-#### Regenerate the OpenAPI File
-
-To regenerate the OpenAPI file, execute:
+## Regenerate the OpenAPI file
 
 ```bash
 yarn nx run services-university-gateway:codegen/backend-schema
@@ -50,11 +47,11 @@ yarn nx run services-university-gateway:codegen/backend-schema
 
 ### Worker
 
-The worker service runs scheduled tasks, such as fetching programs and courses from university APIs and adding data to our database.
+This service is for running scheduled tasks. Currently, fetching programs and courses from university APIs and adding data to out database.
 
-#### Running Locally
+## Running locally
 
-To start the worker locally, run:
+You can start the worker locally by running:
 
 ```bash
 yarn nx run services-university-gateway:worker

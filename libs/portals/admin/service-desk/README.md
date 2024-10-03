@@ -1,16 +1,7 @@
-```markdown
-# Portals Admin Service Desk
+# portals-admin-service-desk
 
-This library provides functionalities related to the Portals Admin Service Desk and was generated using [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, run the following command:
-```
-
-nx test portals-admin-service-desk
-
-```
-
-This will utilize [Jest](https://jestjs.io) as the test runner.
-```
+Run `nx test portals-admin-service-desk` to execute the unit tests via [Jest](https://jestjs.io).

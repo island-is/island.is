@@ -1,17 +1,7 @@
-````markdown
-# Communications Module
+# communications
 
-This module provides an endpoint to route information to the service desk.
+Endpoint to route information to service desk
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for the Communications module using [Jest](https://jestjs.io), use the following command in your terminal:
-
-```bash
-yarn test api-domains-communications
-```
-````
-
-```
-
-```
+Run `yarn test api-domains-communications` to execute the unit tests via [Jest](https://jestjs.io).

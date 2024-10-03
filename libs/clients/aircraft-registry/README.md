@@ -1,33 +1,19 @@
-````markdown
 # Clients Aircraft Registry
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+Run `nx test clients-aircraft-registry` to execute the unit tests via [Jest](https://jestjs.io).
 
-```sh
-nx test clients-aircraft-registry
-```
-````
-
-## Updating the OpenAPI Definition
-
-To update the OpenAPI definition (`clientConfig.json`), run:
+### Updating the open api definition (clientConfig.json)
 
 ```sh
 yarn nx run clients-aircraft-registry:update-openapi-document
 ```
 
-## Regenerating the Client
-
-To regenerate the client, run the following command:
+### Regenerating the client:
 
 ```sh
 yarn nx run clients-aircraft-registry:codegen/backend-client
-```
-
-```
-
 ```

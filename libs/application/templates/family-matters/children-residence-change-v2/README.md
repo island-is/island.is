@@ -1,39 +1,37 @@
-```markdown
 # Children Residence Change Template
 
-This application template is designed for the children residence change process for the County Magistrate of Iceland, created by Kolibri.
+This is an application template for children residence change created for the County Magistrate of Iceland by Kolibri.
 
 ## Setup
 
-For a comprehensive guide on setting up the Application System, refer to: [Setup Documentation](https://docs.devland.is/apps/application-system)
+Application System setup: [Setup](https://docs.devland.is/apps/application-system)
 
-### Additional Setup
+### Additional setup
 
-To run this template locally, follow these additional steps:
+There are additional steps required to run this template locally
 
 #### National Registry Provider
 
-**Prerequisites:**
+Prerequisites
 
-- Ensure `kubectl` is installed:
-  - Use the command: `brew install kubectl`
-- Configure your [AWS Secrets](../../../../handbook/repository/aws-secrets.md)
+- You have `kubectl` installed
+  - `brew install kubectl`
+- You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured
 
-**Steps:**
+1. Fetch development secrets for the project
 
-1. Fetch development secrets for the project:
+- Run `yarn get-secrets service-portal`
 
-   - Execute: `yarn get-secrets service-portal`
+2. Get kubeconfig
 
-2. Configure Kubernetes:
-   - Export AWS variables using: `aws eks update-kubeconfig --name dev-cluster01`
-   - Maintain an active session while running the project locally.
+- Export aws variables `aws eks update-kubeconfig --name dev-cluster01`
 
-### Test User
+- Keep this process running while running the project
 
-For local, development, and staging testing, use the Gervimaður Evrópa login credentials: 0102719
+### Test user
 
-## Code Owners and Maintainers
+For testing on local, dev and staging use the Gervimaður Evrópa login: 0102719
 
-- [Kolibri Team](https://github.com/orgs/island-is/teams/kolibri-modern-family)
-```
+## Code owners and maintainers
+
+- [Kolibri](https://github.com/orgs/island-is/teams/kolibri-modern-family)

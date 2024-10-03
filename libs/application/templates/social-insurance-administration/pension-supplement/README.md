@@ -1,56 +1,54 @@
-```markdown
-# Application Templates Pension Supplement
+# Application Templates Pension supplement
 
 ## Description
 
-This application template facilitates applicants in applying for pension supplements.
+This application template allows applicants to apply for pension supplement.
 
-![Application Flow Chart](../core/assets/tr-applications-flow-chart.png)
+![](../core/assets/tr-applications-flow-chart.png)
 
 ### States
 
 #### Prerequisites
 
-This is a temporary state where all new applications are initialized. It has a short lifespan and is not listed. The purpose of this state is to act as a gateway into the actual application process.
+This state is a temporary state that all new applications will be created in. It has a short lifespan and is unlisted.
 
-Here, the applicant reviews general information on application processing and data collection at TR. An external data step fetches data from Þjóðskrá and TR. If the applicant is neither a pensioner (old age, disability, or rehabilitation), nor has a registered domicile in Iceland, or if they exceed the income criteria, they cannot proceed to the next step and submit an application.
+The purpose of this state is to be a guard into the actual application. There the applicant reads general information on the processing and data collection for applications at TR. There is an external data step which fetches data from Þjóðskrá and TR. If the applicant is not a pensioner (old age, disability or rehabilitation), does not have a registered domicile in Iceland or they are above the income criteria they cannot advance to the next step and make an application.
 
 #### Draft
 
-Eligible applicants will be able to move to this state to begin the actual application process, filling in all the required data.
+Valid applicant will be able to advance to this state where they can start the actual application and fill in all the relevant data.
 
-#### Tryggingastofnun Submitted
+#### Tryggingastofnun submitted
 
-Once the applicant has submitted the application to TR, it enters this state. The application can still be edited here.
+When applicant has sent in the application to TR the application is in this state. Here the application can be edited.
 
-#### Tryggingastofnun In Review
+#### Tryggingastofnun in review
 
-For the application to enter this state, TR needs to initiate a state change when they begin reviewing the application. In this state, the application cannot be edited.
+For application to be in this state, TR need to make a state change when they start to review the application. Here the application can not be edited.
 
-#### Additional Documents Required
+#### Additional document required
 
-If TR requires additional documents to complete the application processing, they can change the state to allow the applicant to upload the missing documents.
+If TR needs additional documents to finish processing the application they can make a state change so the applicant can add their missing documents.
 
 #### Approved
 
-The application has been approved by TR.
+Application have been approved by TR.
 
 #### Rejected
 
-The application has been rejected by TR.
+Application have been rejected by TR.
 
-### Localization
+### Localisation
 
-All localization can be found on Contentful:
+All localisation can be found on Contentful.
 
-- [Pension Supplement Application Translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ul.application)
-- [Application System Translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
+- [Pension supplement application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ul.application)
+- [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
-When creating new text strings in the `messages.ts` file for the application, be sure to update Contentful. See [message extraction](../../../localization/README.md#message-extraction) for guidance.
+When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../localization/README.md#message-extraction).
 
 ## Setup
 
-Refer to the [application-system](../../../../apps/application-system/README.md) setup guide to get started.
+See [application-system](../../../../apps/application-system/README.md) setup on how to get started.
 
-Once everything is running, you can navigate to [http://localhost:4242/umsoknir/uppbot-a-lifeyri](http://localhost:4242/umsoknir/uppbot-a-lifeyri) to start development.
-```
+Once you have everything running you can navigate to [http://localhost:4242/umsoknir/uppbot-a-lifeyri](http://localhost:4242/umsoknir/uppbot-a-lifeyri) and start developing.

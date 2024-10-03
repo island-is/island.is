@@ -1,11 +1,10 @@
-````markdown
 # Nest Problem Module
 
 This library includes a Nest Module that implements the [Problem Details for HTTP APIs](https://datatracker.ietf.org/doc/html/rfc7807) spec.
 
 ## Usage
 
-Import `ProblemModule` in your root NestJS module.
+Import ProblemModule in your root NestJS module.
 
 ```typescript
 import { Module } from '@nestjs/common'
@@ -16,25 +15,26 @@ import { ProblemModule } from '@island.is/nest/problem'
 })
 export class AppModule {}
 ```
-````
 
 It will automatically filter all thrown errors and convert them to Problem Responses.
 
 ## GraphQL
 
-For unhandled errors thrown in a GraphQL context, this module will enrich them with a `problem` extension.
+For unhandled errors thrown in a GraphQL context, this module will enrich them with a "problem" extension.
 
 If the error already has a `problem` attribute, then that will be used.
 
-> **info**  
-> Our [Enhanced Fetch](../../clients/middlewares/README.md) client automatically parses problem responses and includes a problem attribute in thrown errors. This means that problems from our REST services are automatically forwarded to the UI.
+{% hint style="info" %}
+Our [Enhanced Fetch](../../clients/middlewares/README.md) client automatically parses problem responses and includes a problem attribute in thrown errors. This means that problems from our REST services are automatically forwarded to the UI.
+{% endhint %}
 
-> **info**  
-> For expected problems, consider following GraphQL best practices and model them [in the GraphQL schema](https://engineering.zalando.com/posts/2021/04/modeling-errors-in-graphql.html).
+{% hint style="info" %}
+For expected problems, consider following GraphQL best practices and model them [in the GraphQL schema](https://engineering.zalando.com/posts/2021/04/modeling-errors-in-graphql.html).
+{% endhint %}
 
-## Manual Problem Responses
+## Manual problem responses
 
-The easiest way to manually return a problem response is to throw `ProblemError` or one of its subclasses:
+The easiest way to manually return a problem response is to throw `ProblemError` or one of its subclasses like this:
 
 ```typescript
 import { ProblemError } from '@island.is/nest/problem'
@@ -46,11 +46,11 @@ throw new ProblemError({
 })
 ```
 
-The following subclasses are available for your convenience:
+The following sub-classes are available for your convenience:
 
-- `new ValidationFailed(fields)` - accepts a record of validation issues.
+- new ValidationFailed(fields) - accepts a record of validation issues.
 
-## Custom Problems
+## Custom problems
 
 If none of the existing problem types suits your needs, consider [creating a new one](../../shared/problem/README.md#custom-problem).
 
@@ -67,7 +67,7 @@ throw new ProblemError({
 })
 ```
 
-Optionally, you can create a `ProblemError` subclass like this:
+Optionally, you can create a ProblemError subclass like this:
 
 ```typescript
 import { ProblemType } from '@island.is/shared/problem'
@@ -88,13 +88,13 @@ export class NewProblem extends ProblemError {
 throw new NewProblem('extra')
 ```
 
-## No Content Response
+## No Content response
 
-The API Design Guide describes how REST endpoints using resource IDs, i.e. `/delegation/:delegationId`, should use a `204 No Content` response instead of a `404 Not Found` response when no resource is found.
+The API Design Guide describes how REST endpoints using resource IDs, i.e. /delegation/:delegationId, should use 204 No Content response instead of 404 Not Found response when no resource is found.
 
-This module includes a `NoContentException` class that can be thrown to trigger a 204 No Content response:
+This module includes a `NoContentException` class can be thrown to trigger a 204 No Content response:
 
-```typescript
+```
 export class DelegationService {
   async findOne(delegationId: string) {
     const delegation = await this.delegationModel.findOne({
@@ -112,13 +112,10 @@ export class DelegationService {
 }
 ```
 
-> **warning**  
-> Make sure you have included the `ProblemModule` in your root module. See [Usage](#usage).
+{% hint style="warning" %}
+Make sure you have included the `ProblemModule` in your root module. See [usage](#usage)
+{% endhint %}
 
-## Running Unit Tests
+## Running unit tests
 
 Run `nx test nest-problem` to execute the unit tests via [Jest](https://jestjs.io).
-
-```
-
-```

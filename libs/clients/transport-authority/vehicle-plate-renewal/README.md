@@ -1,25 +1,11 @@
-````markdown
-# Clients Transport Authority Vehicle Plate Renewal
+# clients-transport-authority-vehicle-plate-renewal
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, run the following command using the Jest testing framework:
+Run `nx test clients-transport-authority-vehicle-plate-renewal` to execute the unit tests via [Jest](https://jestjs.io).
 
-```bash
-nx test clients-transport-authority-vehicle-plate-renewal
-```
-````
+## Running lint
 
-## Running Lint
-
-To run the linter and ensure code quality using ESLint, execute the following command:
-
-```bash
-nx lint clients-transport-authority-vehicle-plate-renewal
-```
-
-```
-
-```
+Run `nx lint clients-transport-authority-vehicle-plate-renewal` to execute the lint via [ESLint](https://eslint.org/).

@@ -1,75 +1,51 @@
-````markdown
 # General Petitions
 
-This application allows individuals to create general petitions.
+This application allows individuals to create general petitions
 
 ## Setup
 
-### Docker Environment Setup
-
-To set up the Docker environment, execute the following command (only needs to be done once):
+To setup the docker environment run (this only needs to be run once):
 
 ```bash
 yarn dev-init application-templates-general-petition
 ```
-````
 
-### Starting Required Services
-
-To start all required services for the application, execute:
+To start all required services:
 
 ```bash
 yarn dev application-templates-general-petition
 ```
 
-Ensure your setup fulfills the requirements specified by the [Application System](https://docs.devland.is/apps/application-system).
+This template runs within the application system, make sure your setup fulfills requirements set by the [Application System](https://docs.devland.is/apps/application-system)
 
-### Additional Setup
+### Additional setup
 
-Additional steps are required to run this template locally:
+There are additional steps required to run this template locally
 
-#### National Registry Provider
+### National Registry Provider
 
-**Prerequisites:**
+Prerequisites
 
-- Install `kubectl`:
-  ```bash
-  brew install kubectl
-  ```
-- Configure [AWS Secrets](../../../../handbook/repository/aws-secrets.md).
+- You have `kubectl` installed
+  - `brew install kubectl`
+- You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured
 
-To retrieve environment variables, a useful command is:
+- A good way to get environment variables is to run `yarn get-secrets service-portal`
 
-```bash
-yarn get-secrets service-portal
-```
+2. Get kubeconfig
 
-**Kubeconfig:**
+- Export aws variables `aws eks update-kubeconfig --name dev-cluster01`
 
-Export AWS variables:
+### Current user companies provider
 
-```bash
-aws eks update-kubeconfig --name dev-cluster01
-```
-
-#### Current User Companies Provider
-
-Ensure the following environment variable is set:
+Make sure the following environment variable is set
 
 ```bash
 RSK_API_PASSWORD
 ```
 
-To retrieve environment variables, a useful command is:
+- A good way to get environment variables is to run `yarn get-secrets service-portal`
 
-```bash
-yarn get-secrets service-portal
-```
-
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni)
-
-```
-
-```

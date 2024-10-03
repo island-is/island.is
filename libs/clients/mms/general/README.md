@@ -1,19 +1,7 @@
-````markdown
 # MMS Client
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To run the unit tests for this library, execute the following command:
-
-```bash
-nx test clients-mms
-```
-````
-
-This will use [Jest](https://jestjs.io) as the testing framework.
-
-```
-
-```
+Run `nx test clients-mms` to execute the unit tests via [Jest](https://jestjs.io).

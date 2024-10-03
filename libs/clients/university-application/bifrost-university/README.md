@@ -1,19 +1,7 @@
-````markdown
 # clients-university-application-bifrost-university
 
-This project is part of the Bifrost University suite of applications and was generated using [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To run the unit tests for this library, execute the following command:
-
-```bash
-nx test clients-university-application-bifrost-university
-```
-````
-
-This will run the tests using [Jest](https://jestjs.io), a JavaScript testing framework.
-
-```
-
-```
+Run `nx test clients-university-application-bifrost-university` to execute the unit tests via [Jest](https://jestjs.io).

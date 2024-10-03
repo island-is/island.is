@@ -1,13 +1,9 @@
-## clients-workpoint-arborg
+# clients-workpoint-arborg
 
-This library was generated using [Nx](https://nx.dev), a set of extensible DevTools for monorepo management.
+This library was generated with [Nx](https://nx.dev).
 
-### Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+Run `nx test clients-workpoint-arborg` to execute the unit tests via [Jest](https://jestjs.io).
 
-```bash
-nx test clients-workpoint-arborg
-```
-
-For more details and ongoing discussions, you can refer to this [GitHub issue](https://github.com/OpenAPITools/openapi-generator/issues/6332#issuecomment-707817192).
+https://github.com/OpenAPITools/openapi-generator/issues/6332#issuecomment-707817192

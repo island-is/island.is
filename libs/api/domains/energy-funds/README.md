@@ -1,19 +1,7 @@
-````markdown
-# API Domains Energy Funds
+# api-domains-energy-funds
 
-This library belongs to the [Nx](https://nx.dev) workspace and is designed to handle operations related to energy funds.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, use the following command:
-
-```bash
-nx test api-domains-energy-funds
-```
-````
-
-This command runs the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
-
-```
-
-```
+Run `nx test api-domains-energy-funds` to execute the unit tests via [Jest](https://jestjs.io).

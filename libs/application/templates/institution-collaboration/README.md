@@ -1,41 +1,38 @@
-```markdown
 # Institution Collaboration
 
-This application assists institutions in requesting collaboration with Stafrænt Ísland for developing a new application.
+This application helps institutions to request Stafrænt Ísland to collaborate on a new application.
 
-## Application Flow
+## Application flow:
 
-- The application has two states: DRAFT and APPROVED.
-- Upon submission by the applicant, the state automatically changes to APPROVED.
-  - Stafrænt Ísland's contact personnel receives the application via email and manually reviews it.
-  - The applicant receives a copy of the application via email but can also revisit the application to view the summary page at any time.
+- Application has 2 states, DRAFT & APPROVED
+- When applicant submits his application the state automatically changes to APPROVED.
+  - Stafrænt Ísland's contact personnel recevies the application in email, and manually reviews it.
+  - The applicant receives a copy of the application in email but is also able to revisit the application and view the summary page at any time.
 
-## Running Unit Tests
+## Running unit tests
 
-Execute `nx test application-templates-institution-collaboration` to run the unit tests using [Jest](https://jestjs.io).
+Run `nx test application-templates-institution-collaboration` to execute the unit tests via [Jest](https://jestjs.io).
 
 ## Setup
 
-To start the application system, please follow the instructions in the handbook [here](../../../../apps/application-system/README.md).
+To start the application system, follow the instructions in the handbook [here](../../../../apps/application-system/README.md).
 
-### Additional Environment Variables
+### Additional Environment variables
 
-You need to set a few additional variables to submit the application locally:
-
-- Recipient email name: `INSTITUTION_APPLICATION_RECIPIENT_NAME=Recipient Name`
-- Recipient email address: `INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS=example@dev.is`
-- Application sender email name: `EMAIL_FROM_NAME=Sender Name`
-- Application sender email address: `EMAIL_FROM=example@dev.is`
-- Upload bucket for attachments: `FILE_STORAGE_UPLOAD_BUCKET=bucket-name`
+- You need to set few additional in order to submitting the application locally:
+- Recipient email name: `INSTITUTION_APPLICATION_RECIPIENT_NAME=`Recipient Name
+- Recipient email address: `INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS=`example@dev.is
+- Application sender email name: `EMAIL_FROM_NAME=`Sender Name
+- Application sender email address: `EMAIL_FROM=`example@dev.is
+- Upload bucket for attachments: `FILE_STORAGE_UPLOAD_BUCKET=`bucket-name
 
 ### Translations from Contentful
 
-To fetch development secrets, run:
+Fetch development secrets
 
-- `yarn get-secrets api`
+- Run `yarn get-secrets api`
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Fuglar](https://github.com/orgs/island-is/teams/fuglar)
 - [Norda](https://github.com/orgs/island-is/teams/norda)
-```

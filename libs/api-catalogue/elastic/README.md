@@ -1,43 +1,17 @@
-````markdown
 # Elastic
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+Run `ng test api-catalogue-elastic` to execute the unit tests via [Jest](https://jestjs.io).
 
-```bash
-ng test api-catalogue-elastic
-```
-````
+Local development uses a docker container for elasticsearch.
+The `elastic.yml` sets up a docker container named `es01` and needs to be running.
 
-## Local Development with Elasticsearch
+For the initial setup the command: `docker compose -f .\libs\api-catalogue\elastic\elastic.yml up` initiates the container which can then be managed through Docker.
 
-For local development, an Elasticsearch Docker container is recommended. The setup is defined in `elastic.yml`, which creates a Docker container named `es01`.
+After the `es01` is running it can be initialized with data from `initialData.json` using curl command:
+`curl -H 'Content-Type: application/x-ndjson' -XPOST localhost:9200/_bulk --data-binary '@./libs/api-catalogue/elastic/initialData.txt'`
 
-### Initial Setup
-
-To start the container, run the following command:
-
-```bash
-docker compose -f ./libs/api-catalogue/elastic/elastic.yml up -d
-```
-
-Once the `es01` container is running, you can load initial data from `initialData.txt` with the following `curl` command:
-
-```bash
-curl -H 'Content-Type: application/x-ndjson' -X POST localhost:9200/_bulk --data-binary '@./libs/api-catalogue/elastic/initialData.txt'
-```
-
-### Managing the Index
-
-To delete the index, use the following `curl` command:
-
-```bash
-curl -X DELETE localhost:9200/apicatalogue
-```
-
-```
-
-```
+The curl command: `curl -XDELETE localhost:9200/apicatalogue` can be used to delete the index.

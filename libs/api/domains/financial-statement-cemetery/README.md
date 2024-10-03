@@ -1,19 +1,7 @@
-````markdown
-# API Domains Financial Statement Cemetery
+# api-domains-financial-statement-cemetery
 
-This library is part of the project managed with [Nx](https://nx.dev), an extensible monorepo tool for managing scale and complexity.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, use the following command:
-
-```bash
-nx test api-domains-financial-statement-cemetery
-```
-````
-
-This will run the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
-
-```
-
-```
+Run `nx test api-domains-financial-statement-cemetery` to execute the unit tests via [Jest](https://jestjs.io).

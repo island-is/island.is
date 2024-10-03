@@ -1,16 +1,7 @@
-```markdown
-# Clients - University Application: Agricultural University of Iceland
+# clients-university-application-agricultural-university-of-iceland
 
-This library was generated using [Nx](https://nx.dev), a smart, extensible build system with first-class support for many design patterns.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, run the following command:
-```
-
-nx test clients-university-application-agricultural-university-of-iceland
-
-```
-
-This will execute the unit tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework with a focus on simplicity.
-```
+Run `nx test clients-university-application-agricultural-university-of-iceland` to execute the unit tests via [Jest](https://jestjs.io).

@@ -1,19 +1,7 @@
-````markdown
-# Form-System Library
+# form-system
 
-This library was created using [Nx](https://nx.dev), a smart, fast, and extensible build system.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To run the unit tests, execute the following command:
-
-```bash
-nx test form-system
-```
-````
-
-This will run the unit tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
-
-```
-
-```
+Run `nx test form-system` to execute the unit tests via [Jest](https://jestjs.io).

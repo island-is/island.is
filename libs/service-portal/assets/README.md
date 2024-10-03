@@ -1,17 +1,7 @@
-````markdown
-# Service Portal Assets
+# service-portal-assets
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for the Service Portal Assets library, run the following command using [Nx](https://nx.dev) with [Jest](https://jestjs.io):
-
-```bash
-nx test service-portal-assets
-```
-````
-
-```
-
-```
+Run `nx test service-portal-assets` to execute the unit tests via [Jest](https://jestjs.io).

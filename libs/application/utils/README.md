@@ -1,19 +1,7 @@
-````markdown
-# Application Utils
+# application-utils
 
-This library was generated with [Nx](https://nx.dev), a smart, fast, and extensible build system.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To run the unit tests for the application-utils library, execute the following command:
-
-```bash
-nx test application-utils
-```
-````
-
-This will run the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
-
-```
-
-```
+Run `nx test application-utils` to execute the unit tests via [Jest](https://jestjs.io).

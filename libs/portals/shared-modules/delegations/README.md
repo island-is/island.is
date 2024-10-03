@@ -1,17 +1,7 @@
-````markdown
 # Service Portal Access Control Delegations
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
-
-```bash
-nx test portals-shared-modules-delegations
-```
-````
-
-```
-
-```
+Run `nx test portals-shared-modules-delegations` to execute the unit tests via [Jest](https://jestjs.io).

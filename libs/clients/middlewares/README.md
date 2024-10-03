@@ -1,49 +1,50 @@
-````markdown
 # Enhanced Fetch
 
-Includes middleware logic for our API clients, featuring:
+Includes middleware logic for our API clients. Including:
 
-- Circuit breaker functionality.
+- Circuit breaker.
 - Error handling and logging.
-- Request timeout management.
+- Request timeout.
 
 ## createEnhancedFetch
 
-This function returns a fetch function with enhanced capabilities:
+Returns a fetch function with the following features:
 
-- Circuit breaker logic is incorporated: by default, if more than 50% of at least 10 requests from the last 10 seconds fail, the circuit is opened. This halts future requests to reduce pressure on the remote server. Every 30 seconds, one request is allowed through; if successful, the circuit closes, allowing requests to flow again.
-- Integrates response cache logic based on standard cache-control semantics, with default settings not caching anything.
-- Supports `User` and `Auth` objects by adding an authorization header to requests.
-- Implements request timeout logic, throwing an error if there's no response within 20 seconds, by default.
-- Converts non-200 responses into errors, providing detailed information, including a `problem` property if the response implements the Problem Spec.
-- Logs events related to the circuit breaker and information about failing requests.
-- Option to open the circuit for 400 responses.
-- Allows options to parse and log error response bodies.
+A new library providing an createEnhancedFetch function.
+
+- Includes circuit breaker logic. By default, if more than 50% of at least 10 requests from the last 10 seconds are misbehaving, we'll open the circuit. All future requests will be stopped to lower pressure on the remote server. Every 30 seconds we'll allow one request through. If it's successful, we'll close the circuit and let requests flow through again.
+- Includes response cache logic built on top of standard cache-control semantics. By default nothing is cached.
+- Supports our `User` and `Auth` objects. Adds authorization header to the request.
+- Includes request timeout logic. By default, throws an error if there is no response in 20 seconds.
+- Throws an error for non-200 responses. The error object includes details from the response, including a problem property if the response implements the Problem Spec.
+- Logs circuit breaker events and information about failing requests.
+- Optionally opens the circuit for 400 responses.
+- Optionally parses and logs error response bodies.
 
 ### Options
 
-- `name: string` - Identifies the fetch function, used in logs and Opossum stats.
-- `enableCircuitBreaker?: boolean` - Enables circuit breaker. Defaults to `true`.
-- `timeout?: number | false` - Sets a timeout for requests, logged and thrown as errors, potentially triggering the circuit breaker. Defaults to `10000`ms. Set to false to disable.
-- `logErrorResponseBody?: boolean` - If `true`, non-200 response bodies are logged and included in the error object.
-- `keepAlive?: boolean | number` - Configures keepAlive for requests. Set to `false` to never reuse connections, `true` to reuse connections with a max idle timeout of 10 seconds, or specify a number for a custom timeout. Defaults to `true`.
+- `name: string` - Name of fetch function. Used in logs and opossum stats.
+- `enableCircuitBreaker?: boolean` - Should use circuit breaker for requests. Defaults to `true`.
+- `timeout?: number | false` - Timeout for requests. Logged and thrown as errors. May cause circuit breaker to open. Defaults to `10000`ms. Can be disabled by passing false.
+- `logErrorResponseBody?: boolean` - If `true`, then non-200 response bodies will be consumed and included in the error object and logged as `body`.
+- `keepAlive?: boolean | number` - Configures keepAlive for requests. If `false`, never reuse connections. If `true`, reuse connection with a maximum idle timeout of 10 seconds. By passing a number you can override the idle connection timeout. Defaults to `true`.
 - `clientCertificate?: ClientCertificateOptions` - Configures client certificate for requests.
-- `agentOptions?: AgentOptions` - Overrides agent config for requests (e.g., `rejectUnauthorized` or advanced keep-alive settings).
-- `opossum?: CircuitBreaker.Options` - Provides options for overriding Opossum settings.
+- `agentOptions?: AgentOptions` - Overrides agent configuration for requests (e.g. `rejectUnauthorized` or advanced keep-alive configuration).
+- `opossum?: CircuitBreaker.Options` - Allows overriding Opossum options.
 - `autoAuth?: AutoAuthOptions` - Configure [authorization](#authorization).
 - `cache?: CacheConfig` - Configure [caching](#caching).
 
-The Enhanced Fetch function operates similarly to standard fetch, but for non-200 responses, it throws an error with these properties:
+The EnhancedFetch function works generally the same as standard fetch, except for non-200 responses it throws an error instead with the following properties.
 
 - `error.name: string` - "FetchError"
 - `error.response: Response` - The response object.
-- `error.url: string` - The requested URL.
+- `error.url: string` - The requested url.
 - `error.status: number` - The response status code.
 - `error.statusText: string` - The response status text.
 - `error.headers: Headers` - The headers of the response.
-- `error.response: Response` - The response object; the body is not consumed.
-- `error.problem?: object` - The parsed response body if `content-type` is `application/problem+json`.
-- `error.problem?: object | string` - The response body as JSON or string, based on `logErrorResponseBody`.
+- `error.response: Response` - The response object. Body has not been consumed.
+- `error.problem?: object` - The parsed response body if the response has `content-type: application/problem+json`.
+- `error.problem?: object | string` - The response body if `logErrorResponseBody` was set to `true`. Parsed JSON or string depending on the response content type.
 
 ### Examples
 
@@ -75,27 +76,26 @@ function callApiWithEnhancedFetch() {
   return api.someApi()
 }
 ```
-````
 
 ### Authorization
 
-Enhanced Fetch can be configured to automatically fetch OAuth2 tokens from an IDP. There are three modes:
+You can configure Enhanced Fetch to automatically get OAuth2 tokens from an IDP. There are three modes:
 
-- `token`: Obtains non-user tokens using the [Client Credential Grant](https://datatracker.ietf.org/doc/html/rfc6749#section-1.3.4).
-- `tokenExchange`: Uses a user's existing access token from an `Auth` object for a new token via [Token Exchange](https://datatracker.ietf.org/doc/html/rfc8693).
-- `auto`: Automatically performs a token exchange if an `Auth` object is given, or fetches a non-user token otherwise.
+- `token`: Get non-user tokens using [Client Credential Grant](https://datatracker.ietf.org/doc/html/rfc6749#section-1.3.4).
+- `tokenExchange`: Exchange a user-token from an `Auth` object for a new user-token using [Token Exchange](https://datatracker.ietf.org/doc/html/rfc8693).
+- `auto`: Performs token exchange if an `Auth` object is passed into fetch, otherwise fetches a non-user token.
 
-These options are specified for both modes:
+In both modes you specify these options:
 
-- `issuer: string` - Base URL of the IDP; tokens requested from `${issuer}/connect/token`.
-- `clientId: string` - Client ID for the client credential or token exchange grant.
-- `clientSecret: string` - Client secret for the client credential or token exchange grant.
-- `scope: string[]` - The scopes to request.
-- `tokenEndpoint: string` - (Optional) Overrides the token endpoint URL if it doesn't follow the `${issuer}/connect/token` pattern.
+- `issuer: string` - the base URL of the IDP. We will request a token from `${issuer}/connect/token`.
+- `clientId: string` - the client id to use in the client credential or token exchange grant.
+- `clientSecret: string` - the client secret to use in the client credential or token exchange grant.
+- `scope: string[]` - which scopes to request.
+- `tokenEndpoint: string` - (optional) if the [Token Endpoint](https://datatracker.ietf.org/doc/html/rfc6749#section-3.2) doesn't match the `${issuer}/connect/token` pattern, the token endpoint URL can be overwritten.
 
 #### Token mode
 
-Ideal for cron jobs or workers where no user token is needed — typically deployed for endpoints that don't require user authorization.
+Token mode is ideal for cron jobs or workers where no user token is involved. As such, they usually have scopes which authorize endpoints that don't require any user authorization.
 
 Enhanced Fetch handles the client credential grant and caches the token in-memory until it expires.
 
@@ -113,18 +113,18 @@ const enhancedFetch = createEnhancedFetch({
   },
 })
 
-// Acquires an access token, adding it as an authorization header.
+// Gets an access token and adds as authorization header.
 const response = await enhancedFetch('https://backend/api')
 ```
 
 #### Token exchange mode
 
-Enables token exchange when your system operates on behalf of a user without sufficient authorization from the user's current access token. Common scenarios:
+You can set up token exchange when your system is doing something on behalf of a user which their existing access token is not authorized to do. Here are some use cases:
 
-- Expanding access for a delegation token with limited scope.
-- Granting access for backend services with a signed user token for authorization purposes, unseen by the user token.
+- The user might have a delegation token with limited access, but your API needs to expand their access for a specific purpose.
+- The backend is talking to a service which the user token should not have direct access to, but we still want to send a signed user token for authorization and audit reasons.
 
-To use token exchange, provide an `Auth` object to `enhancedFetch`:
+For token exchange to work, you need to pass an `Auth` object to `enhancedFetch`:
 
 ```ts
 import { caching } from 'cache-manager'
@@ -141,19 +141,21 @@ const enhancedFetch = createEnhancedFetch({
   },
 })
 
-// Token exchange using `currentUser` to acquire a new access token.
+// Performs a token exchange using `currentUser` to get a new access token with the scopes listed above.
 const response = await enhancedFetch('https://backend/api', {
   auth: currentUser,
 })
 ```
 
-Typically, Enhanced Fetch performs a token exchange only if existing authorization lacks required `autoAuth` scopes.
+By default, Enhanced Fetch will perform a token exchange only if the existing authorization is missing some of the scopes specified in `autoAuth`.
 
-Configuration options include:
+This behaviour can be configured along with a couple of other options:
 
-- `alwaysTokenExchange: boolean` - Forcibly perform token exchange even if current authentication includes all specified scopes. Defaults to false.
-- `requestActorToken: boolean` - Obtains a token for the actor and removes active delegation details. Useful when the service requires data specific to the actor or doesn't support island.is delegation tokens. Defaults to false.
-- `useCache: boolean` - Enables private caching for token exchange tokens. Requires configuring [`cacheManager`](#caching). This involves storing user tokens between requests; "Keep it secret. Keep it safe." Defaults to false.
+- `alwaysTokenExchange: boolean` - Request token exchange even though the current authentication has all of the specified scopes. Defaults to false.
+
+- `requestActorToken: boolean` - Request a token for the actor (the real end-user) and removes information about the active delegation. This is useful for services that do not understand island.is delegation tokens or should always return data for the actor rather than the active delegation. Defaults to false.
+
+- `useCache: boolean` - Enables private caching for token exchange tokens. Requires [`cacheManager`](#caching) to be configured. This involves storing user-tokens between requests, so "Keep it secret. Keep it safe." Defaults to false.
 
 ```ts
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -180,7 +182,7 @@ const enhancedFetch = createEnhancedFetch({
 
 ### Caching
 
-Enhanced Fetch has built-in response cache functionality based on standard cache-control semantics. Enable caching by calling `createEnhancedFetch` with a [cache-manager](https://www.npmjs.com/package/cache-manager) Cache instance:
+Enhanced Fetch includes built-in response cache functionality based on standard cache-control semantics. To enable caching, you need to call createEnhancedFetch with a [cache-manager](https://www.npmjs.com/package/cache-manager) Cache instance:
 
 ```ts
 import { caching } from 'cache-manager'
@@ -194,17 +196,17 @@ const enhancedFetch = createEnhancedFetch({
 })
 ```
 
-The above example uses an in-memory cache; generally, use a Redis backend for production.
+The above example uses an in-memory cache, but you should generally configure a redis backend.
 
 {% hint style="info" %}
-Discuss cache configurations with Digital Iceland and the API owner for relevant integration.
+You should discuss with Digital Iceland and the API owner on which cache configuration is appropriate for the API you're integrating.
 {% endhint %}
 
 #### Overriding cache-control
 
-With the setup above, Enhanced Fetch caches server responses having cache-control headers configured for shared cache storage.
+With the above configuration, Enhanced Fetch will only cache server responses if they have a cache-control header configured to allow storage in shared caches.
 
-To override cache-control values statically or dynamically for APIs missing proper caching headers:
+Since many APIs don't configure caching headers properly, you can override the cache-control value, either with a static or a dynamic value.
 
 ```ts
 const enhancedFetch = createEnhancedFetch({
@@ -216,7 +218,7 @@ const enhancedFetch = createEnhancedFetch({
 })
 ```
 
-Use `buildCacheControl` for type-safe cache control configuration:
+You should generally use `buildCacheControl` to configure cache control in a type-safe way:
 
 ```ts
 const enhancedFetch = createEnhancedFetch({
@@ -229,7 +231,7 @@ const enhancedFetch = createEnhancedFetch({
 })
 ```
 
-By default, `overrideCacheControl` affects only GET responses. To cache POST requests:
+By default, `overrideCacheControl` only affects GET responses, since you rarely want to cache POST requests. If you know what you're doing, then you can cache those as well:
 
 ```ts
 const enhancedFetch = createEnhancedFetch({
@@ -243,12 +245,12 @@ const enhancedFetch = createEnhancedFetch({
 ```
 
 {% hint style="info" %}
-Only responses with [specific status codes](https://developer.mozilla.org/en-US/docs/Glossary/cacheable) are cacheable. This excludes "201 Created", "400 Bad Request", "401 Unauthorized", "403 Forbidden", and most 500 responses. Such responses aren't cached even if cache-control values are overridden.
+Only responses with [specific status codes](https://developer.mozilla.org/en-US/docs/Glossary/cacheable) can be cached. Notably, that list excludes "201 Created", "400 Bad Request", "401 Unauthorized", "403 Forbidden" as well as most 500 responses. Those responses won't be cached even if you override the cache-control value.
 {% endhint %}
 
 #### Stale responses
 
-Configure the cache to return stale responses:
+You can configure the cache to return stale responses in specific circumstances:
 
 ```ts
 const enhancedFetch = createEnhancedFetch({
@@ -265,17 +267,17 @@ const enhancedFetch = createEnhancedFetch({
 })
 ```
 
-In this setup, a cache response is returned if:
+In the above example, it will return a response from the cache:
 
-- Less than 5 minutes old.
-- Less than 1 day old, with updates processed in the background for future freshness.
-- Less than 30 days old and the server is offline or returns an error (e.g. "500 Internal Server Error").
+- If it's less than 5 minute old.
+- If it's less than 1 day old. In this case it will immediately update the cache in the background to return fresher data in future requests.
+- If it's less than 30 days old and the server is offline or returns an error response (eg "500 Internal Server Error").
 
 #### Authorized APIs
 
-By default, requests share the cache. Requests with authorization headers need special handling as they're not stored by default.
+The cache is shared for all requests by default. Requests that have an authorization headers need special consideration since those won't be stored by default.
 
-For APIs not using `innskra.island.is` or dispensing non-user-specific data, configure cache-control for shared caching of authorized requests:
+If the API is not using `innskra.island.is` or serving data that is not specific to the authenticated user, then you may configure cache-control to support shared caching for authorized requests:
 
 ```ts
 const registryFetch = createEnhancedFetch({
@@ -291,7 +293,7 @@ const registryFetch = createEnhancedFetch({
 })
 ```
 
-For APIs dispensing user-specific data from `innskra.island.is`, configure a private cache for the user, passing a `User` object (e.g., via [@CurrentUser](../../auth-nest-tools/README.md#using-in-rest-controller)):
+If the API is serving data specific to an authenticated user from `innskra.island.is`, you can configure a private cache for that user. In this case, you need to pass a `User` object (eg from [@CurrentUser](../../auth-nest-tools/README.md#using-in-rest-controller)) to the fetch function:
 
 ```ts
 const privateApiFetch = createEnhancedFetch({
@@ -307,10 +309,10 @@ registryFetch('/applications', { auth: currentUser })
 ```
 
 {% hint style="info" %}
-The private cache is designed for APIs using `innskra.island.is` access tokens with private responses based on the user's `nationalId` claim. If `nationalId` is absent or `auth` is not delivered, a warning is logged and the cache is disabled.
+The private cache is currently only designed for APIs that consume `innskra.island.is` access tokens and create private responses based on the user's `nationalId` claim. If the `nationalId` claim is missing, or you forget to pass the `auth` argument, then a warning is logged and the cache is disabled.
 {% endhint %}
 
-A shared cache is feasible for some requests, private for others:
+It's possible to have a shared cache for some requests and private for others:
 
 ```ts
 const enhancedFetch = createEnhancedFetch({
@@ -323,22 +325,22 @@ const enhancedFetch = createEnhancedFetch({
 })
 ```
 
-In this example, requests to the /pin endpoint aren't shared among users, while others may be.
+In the above example, requests going to the pin endpoint will never be shared between users, while other requests can be cached between users.
 
 #### Caching with sensitive path or query parameters
 
-If an API employs static URL placeholders for sensitive parameters, as per our [API Design Guide](https://docs.devland.is/technical-overview/api-design-guide/rest-request), exercise caution.
+When working with an API that uses static placeholders in the URL for sensitive parameters, as [described in our API Design Guide](https://docs.devland.is/technical-overview/api-design-guide/rest-request), you need to take special care.
 
-Built-in support exists for headers matching key patterns in the API Design Guide: path params with `X-Param`, query params with `X-Query`. In such cases, no additional setup is necessary; caching is managed automatically by the `defaultCacheKey` function.
+We have added a built-in support for headers that match the header key patterns described in the API Design Guide. If path params header keys starts with `X-Param` and query params with `X-Query` then you don't need to do anything. The cache will work as expected, handled automatically by the `defaultCacheKey` function.
 
 ⚠️ **Warning**  
-For APIs deploying different header key patterns, override the `defaultCacheKey` function to handle specific header keys.
+If the API uses another header key pattern than mentioned above, then the `defaultCacheKey` function should be overridden to add the API specific header keys.
 
-##### Overriding the `defaultCacheKey` function for sensitive path and query parameters
+##### Example of overriding the `defaultCacheKey` function for sensitive path and query parameters
 
-For APIs using custom header keys for sensitive parameters, provide a `cacheKey` function to supersede the `defaultCacheKey`, incorporating custom header keys.
+When API endpoint uses custom header keys for sensitive path and query parameters, a `cacheKey` function should be provided to override the `defaultCacheKey` function to include the custom header keys.
 
-Utilize `defaultCacheKey` as a foundation, then append custom header keys:
+You can use the `defaultCacheKey` function as a base cache key, then add the custom header keys to the cache key.
 
 ```ts
 const enhancedFetch = createEnhancedFetch({
@@ -358,8 +360,4 @@ const enhancedFetch = createEnhancedFetch({
 
 ## Running unit tests
 
-Run `yarn test clients-middlewares` to execute unit tests using [Jest](https://jestjs.io).
-
-```
-
-```
+Run `yarn test clients-middlewares` to execute the unit tests via [Jest](https://jestjs.io).

@@ -1,16 +1,7 @@
-```markdown
 # clients-hms-housing-benefits
 
-This library was generated with [Nx](https://nx.dev). It is designed to handle operations related to housing benefits within the HMS system.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, run the following command:
-```
-
-nx test clients-hms-housing-benefits
-
-```
-
-This will use [Jest](https://jestjs.io) to run the tests and provide feedback on the test results.
-```
+Run `nx test clients-hms-housing-benefits` to execute the unit tests via [Jest](https://jestjs.io).

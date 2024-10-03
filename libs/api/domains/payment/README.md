@@ -1,18 +1,7 @@
-```markdown
 # API Domains Payment
 
-This domain implements the Payments endpoints necessary for applications and potentially other systems.
+This domain implements Payments endpoints needed for applications and possibly other systems.
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io):
-
-1. Open your terminal or command prompt.
-2. Run the following command:
-```
-
-nx test api-domains-payment
-
-```
-
-```
+Run `nx test api-domains-payment` to execute the unit tests via [Jest](https://jestjs.io).

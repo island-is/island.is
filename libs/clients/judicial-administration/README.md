@@ -1,19 +1,7 @@
-````markdown
 # Court Bankruptcy Certificate Client
 
-This library was generated with [Nx](https://nx.dev). The generator command used: `yarn generate @nrwl/node:lib clients/judicial-administrationificate`.
+This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib clients/judicial-administrationificate)
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, run the following command:
-
-```bash
-nx test clients-judicial-administration
-```
-````
-
-This will run the tests using [Jest](https://jestjs.io).
-
-```
-
-```
+Run `nx test clients-judicial-administration` to execute the unit tests via [Jest](https://jestjs.io).

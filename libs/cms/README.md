@@ -1,58 +1,62 @@
-## CMS
+# CMS
 
-### About
+## About
 
-This project serves primarily as a wrapper around the [Contentful REST API](https://www.contentful.com/developers/docs/references/content-delivery-api/).
+This is mostly a wrapper around the [contentful rest api](https://www.contentful.com/developers/docs/references/content-delivery-api/).
 
-### Update Content Type in Contentful
+## Update content type into Contentful
 
-When updating a field within a content type in Contentful, you need to regenerate the `contentfulTypes.d.ts` file. Execute the following command and commit your changes:
+When you are updating a field inside a content type in Contentful you will need to re-generate the `contentfulTypes.d.ts` file and commit it with your changes with the following command:
 
 ```bash
 yarn nx run api:contentful-types
 ```
 
-> **Note:**  
-> We keep the `contentfulTypes.d.ts` file in the repository. This ensures that even if Contentful is down, the pipeline won’t fail, and we can still build our application without relying on an external service.
+{% hint style="info" %}
+We keep this file in the repository because in case contentful is down, the whole pipeline would fail and we won’t be able to build island.is. By keeping it in the repo, we ensure we can still build and we don't have to rely on an external service.
+{% endhint %}
 
-The `CONTENTFUL_ENVIRONMENT` environment variable determines which Contentful environment is used for generating types.
+The `CONTENTFUL_ENVIRONMENT` environment variable is used to determine which Contentful environment is used to generate types.
 
-### Generate Models for a New Content Type
+## Generate models for a new content type
 
-When creating a new content type in [Contentful](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types), a script is available for generating models based on the content type's JSON from Contentful.
+When creating a new content type in [contentful](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types), you can run a script that will generate models based on the content type's JSON from contentful.
 
 ```bash
 yarn nx run api:contentType --id contentTypeId
 ```
 
-The script takes the following arguments:
+The script take 3 arguments:
 
 - #### `--id`
 
-  **Type:** _string_ **(required)**
+  _required, string_
 
-  The `contentTypeId` that you want to create types/models for.
+  The "contentTypeId" that you want to create types/models of
 
 - #### `--sys`
 
-  **Type:** _string_ **(optional)**
+  _optional, string_
 
-  **Values:** `id`, `createdAt`, `updatedAt`
+  **values: id, createdAt, updatedAt**
 
-  A comma-separated string of system fields to include in the root model.
+  A string of fields that you want to be added to the root model (separated by a comma)
 
 - #### `--overwrite`
 
-  **Type:** _boolean_ **(optional)**
+  _optional, boolean_
 
-  **Default:** `false`
+  **default: false**
 
-  Set to `true` to overwrite existing models while generating content type types/models.
+  If you want to overwrite the existing models while generating content type types/models
 
-> **Warning:**  
-> You need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN` to run the script locally. Ensure the API is not running simultaneously; wait for the script to finish before restarting the API with `yarn start api`.
+<br />
 
-### Code Owners and Maintainers
+{% hint style="warning" %}
+You will need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN` to run the script locally. Don't run the api at the same time, wait until the script is done to restart the api `yarn start api`.
+{% endhint %}
+
+## Code owners and maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)

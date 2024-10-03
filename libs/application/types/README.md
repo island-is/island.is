@@ -1,17 +1,7 @@
-````markdown
 # Types
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
-
-```bash
-nx test application-types
-```
-````
-
-```
-
-```
+Run `nx test application-types` to execute the unit tests via [Jest](https://jestjs.io).

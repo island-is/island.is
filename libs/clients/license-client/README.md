@@ -1,33 +1,32 @@
-```markdown
 # License Client
 
 This library was generated with [Nx](https://nx.dev).
 
 ## About
 
-This library functions as a license client factory supporting the following license types:
+This library serves as a license client factory for the following clients
 
-- Firearm License
+- Firearm license
 - Machine License
 - ADR License
-- Driver's License
+- Drivers License
 - Disability License
 
-The factory can produce two types of clients. Note: Only the license clients are intended for use within the monorepo. The update clients are designated for external organizations to update digital licenses.
+The factory can return two types of clients, however only the license clients are meant for use inside the monorepo!
+The update clients are for external organizations to query so they can update digital licenses
 
-For usage examples, refer to `api/domains/license-service`.
+For examples of use, see api/domains/license-service
 
 ### License Client
 
-- Facilitates interactions with both the digital license issuer and the organization responsible for issuing the license.
-- Requires IDS (Identity Server) configuration.
+- Provides interactions with both the digital license issuer and the organisation that issues the license itself.
+- Requires IDS config.
 
 ### License Update Client
 
-- Designated for machine clients **only**.
-- Facilitates interactions with the digital license issuer to allow external organizations to update users' digital licenses. Communication with the organization is performed through currently available _ApiKey_ authenticated functions.
+- To be used by machine clients **only**
+- Provides interactions with the digital license issuer to update digital licenses, so external organisations can update user's digital licenses. Also communicates with the organisation through (as of now) _ApiKey_ authenticated functions.
 
-## Running Unit Tests
+## Running unit tests
 
-Use the command `nx test clients-license-client` to run the unit tests with [Jest](https://jestjs.io).
-```
+Run `nx test clients-license-client` to execute the unit tests via [Jest](https://jestjs.io).

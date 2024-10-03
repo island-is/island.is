@@ -1,54 +1,65 @@
-## Mortgage Certificate Application
+# Mortgage Certificate Application
 
 This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib application/templates/mortgage-certificate)
 
 ## Setup
 
-Run the following two proxy clients for the Þjóðskrá connection.
+Run these two proxy clients for Þjóðskrá connection.
 
-### Proxy the X-Road socat service (v2):
+Proxy the X-Road socat service (v2):
 
-First, set the AWS environment variables (retrieve from <https://island-is.awsapps.com/start>):
+First you need to enter the AWS environment variables (get from https://island-is.awsapps.com/start)
 
-```bash
-export AWS_ACCESS_KEY_ID="<access_key_id>"
-export AWS_SECRET_ACCESS_KEY="<secret_access_key>"
-export AWS_SESSION_TOKEN="<session_token>"
-```
+`export AWS_ACCESS_KEY_ID="<access_key_id>"`
 
-Then, execute:
+`export AWS_SECRET_ACCESS_KEY="<secret_access_key>"`
 
-```bash
-./scripts/run-xroad-proxy.sh
-```
+`export AWS_SESSION_TOKEN="<session_token>"`
 
-### Proxy the X-Road socat service (v1):
+Then:
 
-Initially, you may need to run this command (possibly only once):
+`./scripts/run-xroad-proxy.sh`
 
-```bash
-aws eks update-kubeconfig --name dev-cluster01 --profile <profile-name> --region eu-west-1
-```
+Proxy the X-Road socat service (v1):
 
-Make sure to fetch all necessary secrets.
+First you need to run this (maybe only once?):
 
-## Running Locally
+`aws eks update-kubeconfig --name dev-cluster01 --profile <profile-name> --region eu-west-1`
 
-You can serve this app locally by executing the following commands:
+Fetch all necessary secrets
+
+### Running locally
+
+You can serve this app locally by running:
 
 ```bash
 yarn start api
+```
+
+and
+
+```bash
 yarn start application-system-api
+```
+
+and
+
+```bash
 yarn start application-system-form
+```
+
+and
+
+```bash
 yarn start services-user-profile
 ```
 
-## Running Unit Tests
+## Running unit tests
 
-Execute `nx test application-templates-mortgage-certificate` to run unit tests via [Jest](https://jestjs.io).
+Run `nx test application-templates-mortgage-certificate` to execute the unit tests via [Jest](https://jestjs.io).
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Unnur Sól - @unnursol](https://github.com/unnursolingimars)
-- Jón Bjarni (GitHub username not provided)
+- [Jón Bjarni]()
 - [Jóhanna Agnes - @johannaagma](https://github.com/johannaagma)

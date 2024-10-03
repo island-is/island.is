@@ -1,16 +1,15 @@
-````tsx
 # Nest Feature Flags
 
-A Nest module that wraps our low-level [feature flagging library](../../feature-flags/README.md) with useful Nest utilities.
+A Nest module which wraps our low level [feature flagging library](../../feature-flags/README.md) with some handy nest utilities.
 
 ## Setup
 
-To use the `FeatureFlagModule`, you first need to load its configuration in your app module and ensure that `CONFIGCAT_SDK_KEY` is set in your production environment.
+To use the FeatureFlag module you first need to load its configuration in your app module and make sure CONFIGCAT_SDK_KEY is set in your production environment.
 
 ```tsx
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@island.is/nest/config';
-import { FeatureFlagConfig } from '@island.is/nest/feature-flags';
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@island.is/nest/config'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
 @Module({
   imports: [
@@ -21,9 +20,9 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags';
   ],
 })
 export class AppModule {}
-````
+```
 
-You can then import it wherever you need one of its exports:
+Then you can import it anywhere you need one of its exports:
 
 ```tsx
 import { Module } from '@nestjs/common'
@@ -37,7 +36,7 @@ export class SomeModule {}
 
 ## FeatureFlagService
 
-This service wraps `getValue` with support for our server-side [User objects](../../auth-nest-tools/README.md) to check if they have access to a feature.
+The service wraps getValue with support for our server-side [User objects](../../auth-nest-tools/README.md) for checking if they have access to a feature.
 
 ```tsx
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
@@ -53,7 +52,7 @@ export class YourService {
       user,
     )
 
-    if (canDoSomething) {
+    if (canDoIt) {
       return this.doSomething()
     }
   }
@@ -62,7 +61,7 @@ export class YourService {
 
 ## FeatureFlagGuard
 
-If your feature introduces new API endpoints, you can use the `FeatureFlagGuard` to disable them completely:
+If your feature has new API endpoints, you can use the FeatureFlagGuard to disable them completely:
 
 ```tsx
 import { Controller, Get, UseGuards } from '@nestjs/common'
@@ -78,12 +77,12 @@ export class SomeController {
   @Get()
   @FeatureFlag(Features.someFeature)
   getSomething() {
-    // This will only be reached if `someFeature` is enabled, either globally or for the authenticated user.
+    // Will only reach here if someFeature is turned on, either globally or for the authenticated user.
   }
 }
 ```
 
-The guard is compatible with both GraphQL resolvers and REST controllers. You can also apply feature flagging to an entire resolver or controller:
+The guard works both for GraphQL resolvers as well as REST controllers. You can also feature flag an entire resolver or controller:
 
 ```tsx
 import { Controller, Get, UseGuards } from '@nestjs/common'
@@ -99,17 +98,18 @@ import {
 export class SomeController {
   @Get()
   getSomething() {
-    // This will only be reached if `someFeature` is enabled, either globally or for the authenticated user.
+    // Will only reach here if someFeature is turned on, either globally or for the authenticated user.
   }
 }
 ```
 
-> **Warning:**  
-> The `FeatureFlagGuard` **must** be listed after `IdsUserGuard` in the `@UseGuards()` decorator if you want it to support user-specific feature flags.
+{% hint style="warning" %}
+The FeatureFlagGuard MUST be listed after IdsUserGuard in the `@UseGuards()` decorator if you want it to support user-specific feature flags.
+{% endhint %}
 
 ## FeatureFlagClient
 
-If you need access to the low-level client and `getValue` functions, you can inject it as a dependency:
+If you need access to the low level client and getValue functions, you can dependency inject it like this:
 
 ```tsx
 import { Inject } from '@nestjs/common'
@@ -126,10 +126,6 @@ export class YourService {
 }
 ```
 
-## Running Unit Tests
+## Running unit tests
 
-Run `nx test nest-feature-flags` to execute the unit tests using [Jest](https://jestjs.io).
-
-```
-
-```
+Run `nx test nest-feature-flags` to execute the unit tests via [Jest](https://jestjs.io).

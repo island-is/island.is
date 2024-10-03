@@ -1,13 +1,7 @@
-# Air Discount Scheme Constants
+# air-discount-scheme-consts
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library using [Jest](https://jestjs.io), run the following command:
-
-```bash
-ng test air-discount-scheme-consts
-```
-
-This command will initiate the Jest testing framework and execute all predefined unit tests for the `air-discount-scheme-consts` library.
+Run `ng test air-discount-scheme-consts` to execute the unit tests via [Jest](https://jestjs.io).

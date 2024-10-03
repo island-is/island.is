@@ -1,17 +1,7 @@
-````markdown
 # infra-nest-server
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
-
-```bash
-ng test infra-nest-server
-```
-````
-
-```
-
-```
+Run `ng test infra-nest-server` to execute the unit tests via [Jest](https://jestjs.io).

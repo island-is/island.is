@@ -1,19 +1,9 @@
-````markdown
+<!-- gitbook-ignore -->
+
 # application-templates-passport-annulment
 
-This library is a part of the [Nx](https://nx.dev) workspace and is designed for handling passport annulment application templates.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute unit tests for this library, use the following command:
-
-```bash
-ng test application-templates-passport-annulment
-```
-````
-
-This will run the unit tests using [Jest](https://jestjs.io).
-
-```
-
-```
+Run `ng test application-templates-passport-annulment` to execute the unit tests via [Jest](https://jestjs.io).

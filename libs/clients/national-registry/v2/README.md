@@ -1,30 +1,28 @@
-````markdown
 # National Registry V2 Client
 
-This library provides a client for interacting with Þjóðskrá APIs.
+This library implements a client to use Þjóðskrá APIs
 
-For more information about the Þjóðskrá API, please refer to the [API documentation](https://api-dev.skra.is).
+Documentation about [Þjóðskrá api](https://api-dev.skra.is)
 
-## How to Connect to X-Road
+## How to connect to X-Road
 
-To connect, you need to proxy the X-Road socat service. Use one of the following commands:
+To use it you need to have proxy the X-Road socat service:
 
 ```bash
-./scripts/run-xroad-proxy.sh
+  ./scripts/run-xroad-proxy.sh
 ```
-````
 
 or
 
 ```bash
-kubectl -n socat port-forward svc/socat-xroad 8080:80
+  kubectl -n socat port-forward svc/socat-xroad 8080:80
 ```
 
-Ensure the following environment variables are set: `XROAD_BASE_PATH_WITH_ENV`, `XROAD_TJODSKRA_MEMBER_CODE`, `XROAD_TJODSKRA_API_PATH`, and `XROAD_CLIENT_ID`.
+and make sure the environment variables `XROAD_BASE_PATH_WITH_ENV`, `XROAD_TJODSKRA_MEMBER_CODE`, `XROAD_TJODSKRA_API_PATH` and `XROAD_CLIENT_ID` are available.
 
-### Importing into Other NestJS Modules
+### Import into other NestJS modules
 
-To use the service in your NestJS module, follow these steps to import the service and configure it correctly:
+Add the service to your module imports and make sure you have the required configuration:
 
 ```typescript
 import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
@@ -38,13 +36,13 @@ import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
         IdsClientConfig, // recommended
         NationalRegistryClientConfig,
         XRoadConfig,
-      ],
-    }),
+      ]
+    })
   ],
 })
 ```
 
-Once configured, you can access the National Registry Client Service:
+Then you'll have access to the National Registry Client Service:
 
 ```typescript
 import {
@@ -62,10 +60,6 @@ export class SomeService {
 }
 ```
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Kolibri-Modern-Family](https://github.com/orgs/island-is/teams/kolibri-modern-family/members)
-
-```
-
-```

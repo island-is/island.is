@@ -1,19 +1,7 @@
-````markdown
 # Application Testing
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, run the following command:
-
-```bash
-nx test application-testing
-```
-````
-
-This utilizes [Jest](https://jestjs.io) as the testing framework.
-
-```
-
-```
+Run `nx test application-testing` to execute the unit tests via [Jest](https://jestjs.io).

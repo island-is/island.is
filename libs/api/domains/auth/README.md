@@ -1,19 +1,7 @@
-````markdown
-# API Domains Auth Library
+# api-domains-auth
 
-This library was generated with [Nx](https://nx.dev), a robust framework for structuring and managing modern web applications.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, use the following command:
-
-```bash
-nx test api-domains-auth
-```
-````
-
-This command utilizes [Jest](https://jestjs.io), a comprehensive JavaScript testing framework, to run all unit tests associated with the API Domains Auth Library.
-
-```
-
-```
+Run `nx test api-domains-auth` to execute the unit tests via [Jest](https://jestjs.io).

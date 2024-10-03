@@ -1,19 +1,7 @@
-````markdown
-# Clients-Þingi-Ombudsman
+# clients-althingi-ombudsman
 
-This library is generated using [Nx](https://nx.dev) and is tailored for interacting with the Althingi Ombudsman services.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, use the following command:
-
-```bash
-nx test clients-althingi-ombudsman
-```
-````
-
-This runs the tests using the [Jest](https://jestjs.io) testing framework.
-
-```
-
-```
+Run `nx test clients-althingi-ombudsman` to execute the unit tests via [Jest](https://jestjs.io).

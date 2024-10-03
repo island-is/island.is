@@ -1,19 +1,7 @@
-````markdown
-# Application Templates: Health Insurance Declaration
+# application-templates-health-insurance-declaration
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, run the following command:
-
-```bash
-nx test application-templates-health-insurance-declaration
-```
-````
-
-This will run the tests using [Jest](https://jestjs.io).
-
-```
-
-```
+Run `nx test application-templates-health-insurance-declaration` to execute the unit tests via [Jest](https://jestjs.io).

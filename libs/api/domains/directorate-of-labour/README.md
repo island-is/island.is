@@ -1,19 +1,7 @@
-````markdown
-# API Domains - Directorate of Labour
+# api-domains-directorate-of-labour
 
-This library provides functionality related to the Directorate of Labour. It is generated using [Nx](https://nx.dev), a smart, fast, and extensible build system that helps developers manage complex projects.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, use the following command:
-
-```bash
-nx test api-domains-directorate-of-labour
-```
-````
-
-This command will run the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework focused on simplicity.
-
-```
-
-```
+Run `nx test api-domains-directorate-of-labour` to execute the unit tests via [Jest](https://jestjs.io).

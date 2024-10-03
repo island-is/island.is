@@ -1,65 +1,43 @@
-````markdown
-# Real Estate Assets API
+# Real estate assets api
 
-This service utilizes the Fasteignir API.
+This service utilises the FasteignirApi
 
-## How to Use
+# How to use
 
-### Starting the API
+Start the api
+`yarn start api`
 
-To start the API, run the following command:
-
-```bash
-yarn start api
-```
-````
-
-### Setting Up X-Road
-
-Ensure that X-Road is running. You can start it using one of the following methods:
-
-**Using Script**:
+X-road needs to be running
 
 ```bash
 ./scripts/run-xroad-proxy.sh
 ```
 
-**Using Kubernetes**:
+or
 
 ```bash
 kubectl -n socat port-forward svc/socat-xroad 8081:80
 ```
 
-Once X-Road is set up, the `AssetsXRoadService` should now be available for use.
+AssetsXRoadService should now be available to use.
 
-## User Interface (UI)
+# UI
 
-You can access an example of how to use the UI at: [http://localhost:4200/minarsidur/fasteignir](http://localhost:4200/minarsidur/fasteignir).
+Example of usage can be found in: http://localhost:4200/minarsidur/fasteignir
 
-To run the service portal, use:
+Service portal needs to be running.
+`yarn start service-portal`
 
-```bash
-yarn start service-portal
-```
+# Mock
 
-## Mock Data
+The data for assets api has been fully mocked, for mock usage and testing purposes try the API_MOCKS.
 
-The data for the assets API is fully mocked for testing purposes. To use mock data, set the environment variable `API_MOCKS=true`.
+Add `API_MOCKS=true` to your `.env` file and make sure it is available in your webpack browser bundles ([Next.JS example](../../../apps/web/next.config.js)).
 
-Add `API_MOCKS=true` to your `.env` file and ensure it is available in your Webpack browser bundles. For a configuration example, see the [Next.js configuration](../../../apps/web/next.config.js).
+# API Domains Assets
 
-## API Domains: Assets
+This library was generated with [Nx](https://nx.dev).
 
-This library was generated using [Nx](https://nx.dev).
+## Running unit tests
 
-### Running Unit Tests
-
-To execute the unit tests via [Jest](https://jestjs.io), run the following command:
-
-```bash
-nx test api-domains-assets
-```
-
-```
-
-```
+Run `nx test api-domains-assets` to execute the unit tests via [Jest](https://jestjs.io).

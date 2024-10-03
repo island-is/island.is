@@ -1,59 +1,40 @@
-````markdown
 # NOVA SMS
 
-## Overview
+## About
 
-The `nova-sms` library is a service that is derived from Apollo's `RESTDataSource`. This service enables users to send SMS messages on behalf of Island.is using Nova.
+This library defines nova-sms, a service that is derived from Apollo's RESTDataSource.
 
-## Integration with NestJS
+The service allows its users to send sms messages on behalf of Island.is via Nova.
 
-### Using GraphQLModule
+### NestJS GraphQLModule
 
-To integrate with the `GraphQLModule`, add `nova-sms` to your module's data sources (instructions to be provided).
+Add the service to your GraphQLModule datasources:
 
-### Standalone NestJS Usage (Not Recommended)
+To be done.
 
-To use `nova-sms` as a standalone service in a NestJS application, follow these steps:
+### NestJS Standalone - not recommended
 
-#### Step 1: Import `SmsModule`
-
-Add `SmsModule` to the imports array of your module:
+Add `SmsModule` to your Module imports:
 
 ```typescript
-import { Module } from '@nestjs/common'
-import { SmsModule } from 'path-to-sms-module'
-
 @Module({
   imports: [SmsModule],
 })
-export class YourModuleName {}
 ```
-````
 
-#### Step 2: Configure with `smsModuleConfig`
-
-Include `smsModuleConfig` in your application's module imports for configuration:
+Add `smsModuleConfig` to your App Module imports:
 
 ```typescript
-import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
-import smsModuleConfig from 'path-to-sms-module-config'
-
-@Module({
+@Module(
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [smsModuleConfig],
     }),
-  ],
-})
-export class AppModule {}
+  ]
+)
 ```
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri/members)
-
-```
-
-```

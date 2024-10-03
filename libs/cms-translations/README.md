@@ -1,17 +1,7 @@
-````markdown
 # CMS Translations
 
-This module provides functionality for fetching namespace messages from Contentful in the context of translations. It includes utilities to create Intl functions for message formatting with `formatMessage`.
+Translations domain to fetch namespaces' messages from Contentful. Also used to create the Intl function to be able to use along with `formatMessage`.
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this module using [Jest](https://jestjs.io), run the following command:
-
-```bash
-ng test cms-translations
-```
-````
-
-```
-
-```
+Run `ng test cms-translations` to execute the unit tests via [Jest](https://jestjs.io).

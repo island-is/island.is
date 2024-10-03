@@ -2,34 +2,32 @@
 
 ## About
 
-This library provides a client for interacting with Finance APIs.
+This library implements a client to use Finance APIs
 
 ### Import into other NestJS modules
 
-To use the Finance Client in your module, you need to add the service to your module imports as follows:
+Add the service to your module imports:
 
 ```typescript
 import { FinanceClientModule } from '@island.is/clients/finance'
 
 @Module({
-  imports: [FinanceClientModule],
+  imports: [
+    FinanceClientModule
+  ],
 })
-export class YourModule {}
 ```
 
-### Accessing Finance APIs
-
-Once imported, you can access the Finance APIs through the `FinanceClientService`. Here's an example of how to use the service:
+Then you'll have access to Finance APIs:
 
 ```typescript
 import { FinanceClientService } from '@island.is/clients/finance'
-import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class SomeService {
   constructor(private readonly financeService: FinanceClientService) {}
 
-  async getStatus(user: { nationalId: string }): Promise<FinanceStatus> {
+  async getStatus(): Promise<FinanceStatus> {
     const financeStatus = await this.financeService.getFinanceStatus(
       user.nationalId,
       user,
@@ -39,23 +37,19 @@ export class SomeService {
       return financeStatus
     }
 
-    // Handle the case where financeStatus is undefined or null
+    // ....
   }
 }
 ```
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Hugsmiðjan](https://github.com/orgs/island-is/teams/hugsmidjan)
 
-## Additional Information
+## Extra
 
-For response examples, refer to the [mock data examples](/libs/api/mocks/src/domains/finance/index.ts).
+See response [examples](/libs/api/mocks/src/domains/finance/index.ts) in mock data.
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests via [Jest](https://jestjs.io), run the following command:
-
-```bash
-nx test clients-finance
-```
+Run `nx test clients-finance` to execute the unit tests via [Jest](https://jestjs.io).

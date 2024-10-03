@@ -2,18 +2,10 @@
 
 This library contains reusable UI components for the application system that are not form fields.
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests via [Jest](https://jestjs.io), run the following command:
+Run `yarn nx test application-ui-components` to execute the unit tests via [Jest](https://jestjs.io).
 
-```bash
-yarn nx test application-ui-components
-```
+## Running lint
 
-## Running Lint
-
-To lint the application UI components, execute the following command:
-
-```bash
-yarn nx lint application-ui-components
-```
+Run `yarn nx lint application-ui-components` to lint

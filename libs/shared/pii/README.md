@@ -1,16 +1,7 @@
-```markdown
-# Shared PII
+# Shared Pii
 
-This module provides tools for handling personally identifiable information (PII).
+Tools for handling personally identifiable information.
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, run the following command:
-```
-
-nx test shared-pii
-
-```
-
-This will execute the tests using [Jest](https://jestjs.io).
-```
+Run `nx test shared-pii` to execute the unit tests via [Jest](https://jestjs.io).

@@ -1,16 +1,7 @@
-```markdown
 # application-templates-transport-authority-license-plate-renewal
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, use the following Nx command:
-```
-
-nx test application-templates-transport-authority-license-plate-renewal
-
-```
-
-This command runs the tests using [Jest](https://jestjs.io).
-```
+Run `nx test application-templates-transport-authority-license-plate-renewal` to execute the unit tests via [Jest](https://jestjs.io).

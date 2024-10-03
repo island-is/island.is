@@ -1,19 +1,7 @@
-````markdown
 # application-templates-driving-license
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, run the following command:
-
-```bash
-nx test application-templates-driving-license
-```
-````
-
-This will run the tests using [Jest](https://jestjs.io), a delightful JavaScript Testing Framework with a focus on simplicity.
-
-```
-
-```
+Run `nx test application-templates-driving-license` to execute the unit tests via [Jest](https://jestjs.io).

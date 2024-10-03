@@ -2,22 +2,20 @@
 
 ## About
 
-This project is used as a reference for future Next.js projects.
+This project is used as reference for future next.js project.
 
-## URLs
+## Urls
 
-- Development: N/A
+- Dev: N/A
 - Staging: N/A
 - Production: N/A
 
-## Getting Started
-
-To start the application, run the following command:
+## Getting started
 
 ```bash
 yarn start reference-next-app
 ```
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)

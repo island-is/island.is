@@ -1,19 +1,7 @@
-````markdown
-# Clients HMS Loans
+# clients-hms-loans
 
-This library was generated with [Nx](https://nx.dev), a smart and extensible build framework.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To run the unit tests for this library, use the following command:
-
-```bash
-nx test clients-hms-loans
-```
-````
-
-The tests are executed using [Jest](https://jestjs.io), a delightful JavaScript testing framework. Ensure you have Jest set up in your development environment to run the tests successfully.
-
-```
-
-```
+Run `nx test clients-hms-loans` to execute the unit tests via [Jest](https://jestjs.io).

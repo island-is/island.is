@@ -1,35 +1,25 @@
-````markdown
 # CMS Client - Contentful GraphQL Client Library
 
-## Overview
+## About
 
-This library implements the necessary interfaces to interact with Contentful's GraphQL APIs, providing an efficient and streamlined approach for managing content.
+This library implements a GraphQL client code to use Contentful GraphQL APIs.
 
-## Prerequisites
+## GraphQL API endpoint
 
-Ensure that the `CONTENTFUL_ACCESS_TOKEN` environment variable is configured. This token is essential for authenticating requests to the Contentful GraphQL API.
+The `CONTENTFUL_ACCESS_TOKEN` env variable need to be configured.
 
-## Fetching the GraphQL Schema
+## Fetch GraphQL Schema
 
-The GraphQL schema is not automatically updated. To fetch the latest schema from Contentful, execute the following command:
+Schema is not automatically updated - use this command to update
 
 ```sh
 yarn nx run clients-cms:fetch-schema
 ```
-````
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, use [Jest](https://jestjs.io) with the following command:
+Run `nx test cms` to execute the unit tests via [Jest](https://jestjs.io).
 
-```sh
-nx test cms
-```
+## Code owners and maintainers
 
-## Code Owners and Maintainers
-
-- [Júní](https://github.com/orgs/island-is/teams/juni/members) oversees the ownership and maintenance of this library.
-
-```
-
-```
+- [Júní](https://github.com/orgs/island-is/teams/juni/members)

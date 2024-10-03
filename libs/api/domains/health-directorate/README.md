@@ -1,19 +1,7 @@
-````markdown
-# API Domains Health Directorate
+# api-domains-health-directorate
 
-This library was generated using [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, run the following command:
-
-```bash
-nx test api-domains-health-directorate
-```
-````
-
-The tests will be executed using [Jest](https://jestjs.io).
-
-```
-
-```
+Run `nx test api-domains-health-directorate` to execute the unit tests via [Jest](https://jestjs.io).

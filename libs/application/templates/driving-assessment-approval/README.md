@@ -1,5 +1,5 @@
-```markdown
-# Driver's License Approval System
+# Driver's License Approval
 
-This application is submitted by a teacher to indicate that a student has passed a driving assessment. This assessment is required for a "fullnaðarskírteini" (complete driver's license).
-```
+This is an application that a teacher submits indicating that a student
+has passed a driving assessment, required for a "fullnaðarskírteini" (full/complete
+driver's license)

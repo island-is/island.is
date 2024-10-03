@@ -1,29 +1,11 @@
-````markdown
-# Clients Transport Authority Vehicle Printing
+# clients-transport-authority-vehicle-printing
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To run the unit tests for this library, execute the following command:
+Run `nx test clients-transport-authority-vehicle-printing` to execute the unit tests via [Jest](https://jestjs.io).
 
-```sh
-nx test clients-transport-authority-vehicle-printing
-```
-````
+## Running lint
 
-This will run the unit tests using [Jest](https://jestjs.io).
-
-## Running Lint
-
-To perform linting on this library, use the following command:
-
-```sh
-nx lint clients-transport-authority-vehicle-printing
-```
-
-This will lint the code using [ESLint](https://eslint.org/).
-
-```
-
-```
+Run `nx lint clients-transport-authority-vehicle-printing` to execute the lint via [ESLint](https://eslint.org/).

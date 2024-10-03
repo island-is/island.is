@@ -1,13 +1,7 @@
 # delegation-admin
 
-This library is a part of the Nx workspace.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library using [Jest](https://jestjs.io), use the following command:
-
-```bash
-nx test delegation-admin
-```
-
-Make sure you have all the necessary dependencies installed, and that you are in the root directory of your Nx workspace when you run the command.
+Run `nx test delegation-admin` to execute the unit tests via [Jest](https://jestjs.io).

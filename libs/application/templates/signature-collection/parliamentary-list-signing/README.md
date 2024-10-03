@@ -1,19 +1,7 @@
-````markdown
 # application-templates-parliamentary-list-signing
 
-This library provides templates related to parliamentary list signing processes. It was generated using the [Nx](https://nx.dev) framework.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To run the unit tests for this library, execute the following command:
-
-```bash
-nx test application-templates-parliamentary-list-signing
-```
-````
-
-This will run the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
-
-```
-
-```
+Run `nx test application-templates-parliamentary-list-signing` to execute the unit tests via [Jest](https://jestjs.io).

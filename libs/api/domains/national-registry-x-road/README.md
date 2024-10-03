@@ -1,46 +1,33 @@
-````markdown
-# API Domains National Registry X-Road
+# api-domains-national-registry-x-road
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+Run `nx test api-domains-national-registry-x-road` to execute the unit tests via [Jest](https://jestjs.io).
 
-```bash
-nx test api-domains-national-registry-x-road
-```
-````
+## About service
 
-## About the Service
+Documentation about [Þjóðskrá api](https://api-dev.skra.is)
 
-For documentation on the [Þjóðskrá API](https://api-dev.skra.is), some endpoints require a valid JWT token for authentication. The chosen approach was to send the JWT token to Þjóðskrá through wrapped calls in `national-registry-x-road.service.ts`. The forsja endpoint is an example of this implementation.
+Some endpoints from Þjóðskrá need a valid jwt token for authentication. The way chosen was to send the jwt token to Þjóðskrá in wrapped calls in `national-registry-x-road.service.ts`. The forsja endpoint is an example of this.
 
-## How to Connect to X-Road
+## How to connect to X-Road
 
-To use this service, you must proxy the X-Road Socat service. You can do this by executing one of the following commands:
+To use it you need to have proxy the X-Road socat service:
 
 ```bash
-./scripts/run-xroad-proxy.sh
+  ./scripts/run-xroad-proxy.sh
 ```
 
 or
 
 ```bash
-kubectl -n socat port-forward svc/socat-xroad 8080:80
+  kubectl -n socat port-forward svc/socat-xroad 8080:80
 ```
 
-Ensure that the following environment variables are set:
+and make sure the environment variables `XROAD_BASE_PATH_WITH_ENV`, `XROAD_TJODSKRA_MEMBER_CODE`, `XROAD_TJODSKRA_API_PATH` and `XROAD_CLIENT_ID` are available.
 
-- `XROAD_BASE_PATH_WITH_ENV`
-- `XROAD_TJODSKRA_MEMBER_CODE`
-- `XROAD_TJODSKRA_API_PATH`
-- `XROAD_CLIENT_ID`
-
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Kolibri-Modern-Family](https://github.com/orgs/island-is/teams/kolibri-modern-family/members)
-
-```
-
-```

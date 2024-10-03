@@ -1,13 +1,7 @@
 # User Monitoring
 
-This library encapsulates configuration for user monitoring.
+This library is to encapsulate configuration for user monitoring.
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io):
-
-Run the following command:
-
-```bash
-nx test user-monitoring
-```
+Run `nx test user-monitoring` to execute the unit tests via [Jest](https://jestjs.io).

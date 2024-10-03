@@ -1,12 +1,12 @@
 # Document Provider Client
 
-## Overview
+## About
 
-This library provides a client for interacting with DocumentProvider APIs.
+This library implements a client to use DocumentProvider APIs
 
-### Integration with NESTJS Modules
+### Import into other NESTJS modules
 
-To integrate the Document Provider client into a NESTJS module, include the service in your module's imports as follows:
+Add the service to your module imports:
 
 ```typescript
 import { ClientsDocumentProviderModule } from '@island.is/clients/document-provider'
@@ -18,9 +18,8 @@ import { ClientsDocumentProviderModule } from '@island.is/clients/document-provi
     }),
   ],
 })
-export class YourModuleName {}
 ```
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Advania](https://github.com/orgs/island-is/teams/advania-silicon-valley/members)

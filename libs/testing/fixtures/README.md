@@ -1,6 +1,7 @@
 # Testing Fixtures
 
-This library assists developers in setting up fixtures for tests with random data of predefined known objects.
+This library is supposed to help developers hook up fixtures for their tests
+with random data of predefined known objects.
 
 ## Examples
 
@@ -10,11 +11,12 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 const currentUser = createCurrentUser()
 ```
 
-## Creating New Fixtures
+## Creating new fixtures
 
-To ensure reusability across multiple projects, place any new fixtures in `testing/fixtures`. Follow these steps to create effective testing fixtures:
+If the fixtures are to be used by multiple projects, they should live in
+`testing/fixtures`. Follow the following steps in order to create good testing
+fixtures:
 
-1. Utilize `faker` to generate random data for your fixture.
-2. Design the fixture's API to be as user-friendly as possible, for example:
-   - `createCurrentUser()`
-   - `createCurrentUser({nationalId: '1234567890'})`
+1. Use `faker` in order to create random data for your fixture.
+2. Make the API of the fixture as easy to use as possible; e.g.
+   `createCurrentUser()` | `createCurrentUser({nationalId: '1234567890'})`

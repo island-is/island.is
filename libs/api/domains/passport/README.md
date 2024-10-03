@@ -2,18 +2,10 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+Run `nx test api-domains-passport` to execute the unit tests via [Jest](https://jestjs.io).
 
-```
-nx test api-domains-passport
-```
+## Running lint
 
-## Running Linter
-
-To execute the linter using [ESLint](https://eslint.org/), run the following command:
-
-```
-nx lint api-domains-passport
-```
+Run `nx lint api-domains-passport` to execute the lint via [ESLint](https://eslint.org/).

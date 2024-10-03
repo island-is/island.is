@@ -1,23 +1,7 @@
-````markdown
-# API Domains Criminal Record Library
+# API Domains Criminal Record
 
-This library was generated using [Nx](https://nx.dev) as part of the command:
+This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib api/domains/criminal-record)
 
-```bash
-yarn generate @nrwl/node:lib api/domains/criminal-record
-```
-````
+## Running unit tests
 
-## Running Unit Tests
-
-To execute the unit tests for this library, run the following command:
-
-```bash
-nx test api-domains-criminal-record
-```
-
-This command uses [Jest](https://jestjs.io) as the testing framework.
-
-```
-
-```
+Run `nx test api-domains-criminal-record` to execute the unit tests via [Jest](https://jestjs.io).

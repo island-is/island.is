@@ -1,19 +1,7 @@
-````markdown
-# Shared-Connected
+# shared-connected
 
-The `shared-connected` library provides a collection of UI components that are capable of managing their own data fetching processes. These components can be integrated into various platforms, such as Contentful article slices, to enhance functionality and streamline the data integration process.
+This library contains UI components that manage its own data (fetching). Components can for example be imported and used in Contentful article slices.
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for the `shared-connected` components using [Jest](https://jestjs.io), run the following command:
-
-```bash
-nx test shared-connected
-```
-````
-
-This command will launch the testing suite and provide you with a comprehensive report on the test outcomes, helping ensure the reliability and stability of the components.
-
-```
-
-```
+Run `nx test shared-connected` to execute the unit tests via [Jest](https://jestjs.io).

@@ -1,19 +1,7 @@
-````markdown
-# Clients District Commissioners Licenses
+# clients-district-commissioners-licenses
 
-This library was generated using [Nx](https://nx.dev), a set of extensible development tools for monorepos.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for the Clients District Commissioners Licenses library, use the following command:
-
-```bash
-nx test clients-district-commissioners-licenses
-```
-````
-
-This will run the tests using [Jest](https://jestjs.io), a delightful JavaScript Testing Framework with a focus on simplicity.
-
-```
-
-```
+Run `nx test clients-district-commissioners-licenses` to execute the unit tests via [Jest](https://jestjs.io).

@@ -1,21 +1,9 @@
-````markdown
-# Financial Statements for the Icelandic National Audit Office (INAO)
+# Financial Statemens for the Icelandic National Audit Office (INAO)
 
-This endpoint provides access to financial statements for cemeteries, political parties, and individuals involved in personal elections who submit their financial statements to the Icelandic National Audit Office (Ríkisendurskoðun). These entities are exempt from submitting their financial statements to the Icelandic Revenue and Customs (Skatturinn).
+Endpoint to return financial statements for cemeteries, political parties, and individuals in personal elections to the Icelandic National Audit Office (Ríkisendurskoðun). These are organisations/individuals who are exempt from submitting financial statements to the Icelandic Revenue and Customs (Skatturinn).
 
-The endpoint serves as an integration point between an application template used to retrieve these financial statements and an Office365 application hosted in the cloud.
+The purpose of this endpoint is to be a gateway between an application-template that is used to return those financial statements and an Office365 application that is hosted in the cloud.
 
-## Running Unit Tests
+## Running unit tests
 
-To execute unit tests, run the following command:
-
-```bash
-yarn test api-domains-financial-statements-inao
-```
-````
-
-The tests are powered by [Jest](https://jestjs.io), a delightful JavaScript testing framework.
-
-```
-
-```
+Run `yarn test api-domains-financial-statements-inao` to execute the unit tests via [Jest](https://jestjs.io).

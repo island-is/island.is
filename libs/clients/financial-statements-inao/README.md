@@ -1,19 +1,7 @@
-````markdown
-# Clients Financial Statements INA
+# clients-financial-statements-inao
 
-This library is auto-generated with [Nx](https://nx.dev), a smart build system designed to manage large-scale projects with ease.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, run the following command:
-
-```bash
-nx test clients-financial-statements-inao
-```
-````
-
-This utilizes the [Jest Testing Framework](https://jestjs.io) to perform and manage the unit tests efficiently.
-
-```
-
-```
+Run `nx test clients-financial-statements-inao` to execute the unit tests via [Jest](https://jestjs.io).

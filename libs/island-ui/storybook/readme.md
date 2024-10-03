@@ -1,17 +1,7 @@
-````markdown
 # island-ui-storybook
 
-`island-ui-storybook` is a UI component library generated with [Nx](https://nx.dev), a smart and extensible build framework. This library provides tools to efficiently build, test, and document UI components.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this project using [Jest](https://jestjs.io), run the following command in your terminal:
-
-```bash
-nx test island-ui-storybook
-```
-````
-
-```
-
-```
+Run `ng test island-ui-storybook` to execute the unit tests via [Jest](https://jestjs.io).

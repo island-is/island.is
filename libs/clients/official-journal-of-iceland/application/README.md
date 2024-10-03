@@ -1,19 +1,7 @@
-````markdown
-# Clients Official Journal of Iceland Application
+# clients-official-journal-of-iceland-application
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests use:
-
-```bash
-nx test clients-official-journal-of-iceland-application
-```
-````
-
-This will run the unit tests via [Jest](https://jestjs.io).
-
-```
-
-```
+Run `nx test clients-official-journal-of-iceland-application` to execute the unit tests via [Jest](https://jestjs.io).

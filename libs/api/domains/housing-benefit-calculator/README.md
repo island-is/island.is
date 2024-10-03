@@ -1,19 +1,7 @@
-````markdown
-# API Domains Housing Benefit Calculator
+# api-domains-housing-benefit-calculator
 
-This library is part of the Nx workspace and focuses on housing benefit calculation functionalities.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, run the following command:
-
-```bash
-nx test api-domains-housing-benefit-calculator
-```
-````
-
-The tests are executed using [Jest](https://jestjs.io), which is a delightful JavaScript Testing Framework with a focus on simplicity.
-
-```
-
-```
+Run `nx test api-domains-housing-benefit-calculator` to execute the unit tests via [Jest](https://jestjs.io).

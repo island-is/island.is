@@ -1,19 +1,7 @@
-````markdown
-# University Gateway API Domain Library
+# api-domains-university-gateway
 
-The `api-domains-university-gateway` library is a part of the Nx workspace. It serves as a domain-specific library for university gateway-related functionality.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute unit tests for the `api-domains-university-gateway` library, use the following command:
-
-```shell
-nx test api-domains-university-gateway
-```
-````
-
-This command runs the tests using [Jest](https://jestjs.io), a delightful JavaScript Testing Framework.
-
-```
-
-```
+Run `nx test api-domains-university-gateway` to execute the unit tests via [Jest](https://jestjs.io).

@@ -1,21 +1,20 @@
-````markdown
 # Auth Nest Tools
 
-This library provides a reusable module (AuthModule) containing guards to secure REST controllers and GraphQL resolvers.
+This library contains a reusable module (AuthModule) with guards that can be used to protect other REST controllers and GraphQL resolvers.
 
-## Using Guards
+## Using guards
 
-There are several guards available:
+There are a couple of guards available.
 
-- `IdsUserGuard`: Validates that the request includes a valid JWT bearer authorization from our identity server and checks for a `nationalId` claim, representing an authenticated user. JWT information can be accessed using the `CurrentAuth` and `CurrentUser` parameter decorators.
-- `IdsAuthGuard`: Similar to `IdsUserGuard` but does not verify the `nationalId` claim. JWT information can be accessed using the `CurrentAuth` parameter decorator.
-- `ScopesGuard`: Validates that the access token includes the required scopes. These can be configured using the `Scopes` decorator.
+- `IdsUserGuard`: validates that the request has a valid JWT bearer authorization from our identity server and checks that it has a nationalId claim, representing an authenticated user. Information from the JWT can be accessed using the CurrentAuth and CurrentUser parameter decorators.
+- `IdsAuthGuard`: same as `IdsUserGuard` but does not verify the `nationalId` claim. Information from the JWT can be accessed using the CurrentAuth parameter decorator.
+- `ScopesGuard`: checks if the access token has required scopes. These can be configured using the Scopes decorator.
 
-Generally, use `IdsUserGuard` for endpoints that return user resources for authenticated users and `IdsAuthGuard` for endpoints accessible to clients using client credentials. Always use `ScopesGuard` and the `@Scopes` decorator to protect endpoints; without it, the API will authorize all valid access tokens issued by IAS.
+You should generally add `IdsUserGuard` to endpoints that return user resources for the authenticated user and `IdsAuthGuard` for endpoints that need to be available for clients authenticating with client credentials. You should always use `ScopesGuard` and the `@Scopes` decorator to protect endpoints, without it the API would authorise all valid access tokens issued by IAS.
 
 ### Configuration
 
-To import and configure the AuthModule, use the following example:
+Import and configure the AuthModule, example:
 
 ```typescript
 @Module({
@@ -24,22 +23,21 @@ To import and configure the AuthModule, use the following example:
       issuer: 'https://localhost:6001'
     }),
 ```
-````
 
-Here, `issuer` is the IdS URL.
+where `issuer` is the IdS url.
 
-Some older APIs use `audience` for access control. Using `audience` is no longer recommended; instead, use scopes to guard individual methods as shown below. Only use `audience` after consulting the IDS team, and configure it as follows:
+Some older APIs use `audience` for access control.Using `audience` is no longer recommended, instead use scopes to guard individual methods as shown in the sections below. Only use `audience` after consulting with the IDS team, in which case you can do it like this:
 
 ```typescript
 @Module({
   imports: [
     AuthModule.register({
-      issuer: 'https://localhost:6001',
+      issuer: 'https://localhost:6001'
       audience: '@island.is'
     }),
 ```
 
-### Using with a REST Controller
+### Using in REST controller
 
 Decorate the controller with `@UseGuards`:
 
@@ -49,7 +47,7 @@ Decorate the controller with `@UseGuards`:
 export class ClientsController {
 ```
 
-and protect individual methods with `@Scopes`:
+and individual protected methods with `@Scopes`:
 
 ```typescript
   @Scopes('protected_resource/read', 'protected_resource/admin')
@@ -60,11 +58,11 @@ and protect individual methods with `@Scopes`:
   }
 ```
 
-If a method is not decorated with `@Scopes`, then no access control is enforced.
+If no `@Scopes` are applied to a method, then no access control is enforced for that method.
 
-You can obtain information about the logged-in user by adding `@CurrentUser() user: User` as an input parameter to the controller method.
+Information about the logged in user can be obtained by adding `@CurrentUser() user: User` as an input parameter to the controller method.
 
-### Using with a GraphQL Resolver
+### Using in GraphQL resolver
 
 Decorate the resolver with `@UseGuards`:
 
@@ -74,7 +72,7 @@ Decorate the resolver with `@UseGuards`:
 export class UserProfileResolver {
 ```
 
-and protect individual methods with `@Scopes`:
+and individual protected methods with `@Scopes`:
 
 ```typescript
   @Scopes('userProfileScope')
@@ -84,20 +82,18 @@ and protect individual methods with `@Scopes`:
   }
 ```
 
-If a method is not decorated with `@Scopes`, then no access control is enforced.
+If no `@Scopes` are applied to a method, then no access control is enforced for that method.
 
-Obtain information about the logged-in user by adding `@CurrentUser() user: User` as an input parameter to the resolver method.
+Information about the logged in user can be obtained by adding `@CurrentUser() user: User` as an input parameter to the resolver method.
 
-### Opting Out of Auth
+### Opting out of auth
 
-For public endpoints within a subsection of your controller or app, explicitly opt out of auth by decorating the resolver or controller with `@BypassAuth`:
+If a small subsection of your controller or app has public endpoints you can explicitly opt out of auth for those sections.
+
+Decorate the resolver or controller with `@BypassAuth`:
 
 ```typescript
 @BypassAuth()
 @Controller('clients')
 export class ClientsController {
-```
-
-```
-
 ```

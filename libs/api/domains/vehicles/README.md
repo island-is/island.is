@@ -1,16 +1,13 @@
 # API Domains Vehicles
 
-This service utilizes the VehicleSearchApi
+This service utilises the VehicleSearchApi
 
-## How to Use
+# How to use
 
-To start the API, run:
+Start the api
+`yarn start api`
 
-```shell
-yarn start api
-```
-
-Ensure that X-road is running by executing one of the following commands:
+X-road needs to be running
 
 ```bash
 ./scripts/run-xroad-proxy.sh
@@ -22,136 +19,205 @@ or
 kubectl -n socat port-forward svc/socat-xroad 8081:80
 ```
 
-The `VehiclesApiProvider` should now be available for use.
+VehiclesApiProvider should now be available to use.
 
-## Running Unit Tests
+## Running unit tests
 
-Execute `nx test api-domains-vehicles` to run the unit tests via [Jest](https://jestjs.io).
+Run `nx test api-domains-vehicles` to execute the unit tests via [Jest](https://jestjs.io).
 
-## UI
+# UI
 
-An example of usage can be found at: <http://localhost:4200/minarsidur/okutaeki>
+Example of usage can be found in: http://localhost:4200/minarsidur/okutaeki
 
-Ensure the service portal is running by executing:
+Service portal needs to be running.
+`yarn start service-portal`
 
-```shell
-yarn start service-portal
-```
+## Data explained
 
-## Data Explained
+### Vehicle detail model explained
 
-### Vehicle Detail Model Explained
+_modelname -> dataname - explanation if needed_
 
-_structure -> data source - explanation if necessary_
+**MainInfo**
 
-**MainInfo:**
+model -> make
 
-- `model` -> `make`
-- `subModel` -> `vehcom` + `speccom`
-- `regno` -> `regno` - Registration number (Skráningarnúmer)
-- `year` -> `modelyear` | `productyear` | `firstregdate(year)`
-- `co2` -> `technical.co2`
-- `weightedCo2` -> `technical.weightedCo2` - Weighted NEDC
-- `co2Wltp` -> `technical.co2Wltp` - WLTP
-- `weightedCo2Wltp` -> `technical.weightedco2Wltp` - Weighted WLTP
-- `cubicCapacity` -> `technical.capactiy` - Cubic Capacity (Slagrými)
-- `trailerWithBrakesWeight` -> `technical.tMassoftrbr` - Trailer weight with brakes (Hemlaður eftirvagn)
-- `trailerWithoutBrakesWeight` -> `technical.tMassoftrunbr` - Trailer weight without brakes (Óhemlaður eftirvagn)
+subModel -> vehcom + speccom
 
-**Axle:**
+regno -> regno - Skráningarnúmer
 
-- `axleMaxWeight` -> `technical.mass.massdaxle${i}` - Refer to `/api-domains-vehicles.service.ts` l:104
-- `wheelAxle` -> `technical.axle.wheelaxle${i}` - Refer to `/api-domains-vehicles.service.ts` l:107
+year -> modelyear | productyear | firstregdate(year)
 
-**Tyres:**
+co2 -> technical.co2
 
-- `axle1` -> `technical.tyre.tyreaxle1`
-- `axle2` -> `technical.tyre.tyreaxle2`
-- `axle3` -> `technical.tyre.tyreaxle3`
-- `axle4` -> `technical.tyre.tyreaxle4`
-- `axle5` -> `technical.tyre.tyreaxle5`
+weightedCo2 -> technical.weightedCo2 - Weighted NEDC
 
-**BasicInfo:**
+co2Wltp -> technical.co2Wltp - WLTP
 
-- `model` -> `make` - Type (Tegund)
-- `regno` -> `regno` - Registration number (Skráningarnúmer)
-- `subModel` -> `vehcom` + `speccom` - Type & Subtype (Tegund & undirtegund)
-- `permno` -> `permno` - Permanent number (Fastanúmer)
-- `verno` -> `vin` - Factory number (Verksmiðjunúmer)
-- `year` -> `modelyear` | `productyear` | `firstregdate(year)`
-- `country` -> `country`
-- `preregDateYear` -> `preregdate(year)`
-- `formerCountry` -> `formercountry`
-- `importStatus` -> `_import`
+weightedCo2Wltp -> technical.weightedco2Wltp - Weighted WLTP
 
-**RegistrationInfo:**
+cubicCapacity -> technical.capactiy - Slagrými
 
-- `firstRegistrationDate` -> `firstregdate`
-- `preRegistrationDate` -> `preregdate`
-- `newRegistrationDate` -> `newregdate`
-- `specialName` -> `speccom` - Special name (Sérheiti)
-- `vehicleGroup` -> `technical.vehgroup` - Vehicle group (Ökutækisflokkur)
-- `color` -> `color`
-- `reggroup` -> `plates.reggroup` - Registration group (Skráningarflokkur)
-- `reggroupName` -> `data.plates[0].reggroupname` - Registration group name (Skráningarflokkur)
-- `plateLocation` -> `platestoragelocation` - Plate storage location (Geymslustaður plötu)
-- `plateStatus` -> `platestatus`
-- `passengers` -> `technical.pass`
-- `useGroup` -> `usegroup`
-- `driversPassengers` -> `technical.passbydr`
-- `standingPassengers` -> `technical.standingno`
+trailerWithBrakesWeight -> technical.tMassoftrbr - Hemlaður eftirvagn
 
-**CurrentOwnerInfo:**
+trailerWithoutBrakesWeight -> technical.tMassoftrunbr - Óhemlaður eftirvagn
 
-- `owner` -> `owners.fullname`
-- `nationalId` -> `owners.persidno`
-- `address` -> `owners.address`
-- `postalcode` -> `owners.postalcode`
-- `city` -> `owners.city`
-- `dateOfPurchase` -> `owners.purchasedate`
+**Axle**
 
-**InspectionInfo:**
+axleMaxWeight -> technical.mass.massdaxle${i} see \*/api-domains-vehicles.service.ts l:104
 
-- `type` -> `inspections[newest].type`
-- `date` -> `inspections[newest].date`
-- `result` -> `inspections[newest].result`
-- `nextInspectionDate` -> `nextinspectiondate`
-- `lastInspectionDate` -> `inspections[last].date`
-- `insuranceStatus` -> `insurancestatus`
-- `mortgages` -> `fees.hasEncumbrances`
-- `carTax` -> `fees.gjold.bifreidagjald`
-- `inspectionFine` -> `fees.inspectionfine`
+wheelAxle -> technical.axle.wheelaxle${i} see \*/api-domains-vehicles.service.ts l:107
 
-**TechnicalInfo:**
+**Tyres**
 
-- `engine` -> `technical.engine`
-- `totalWeight` -> `technical.mass.massladen`
-- `cubicCapacity` -> `technical.capacity`
-- `capacityWeight` -> `technical.mass.massofcomb` - Combined weight (Þyngd vagnlestar)
-- `length` -> `technical.size.length`
-- `vehicleWeight` -> `technical.mass.massinro`
-- `width` -> `technical.size.width`
-- `trailerWithoutBrakesWeight` -> `technical.mass.tMassoftrunbr`
-- `horsepower` -> `technical.maxNetPower` \* 1.359622 - Metric horsepower (hp(M))
-- `trailerWithBrakesWeight` -> `technical.mass.tMassoftrbr`
-- `carryingCapacity` -> `technical.mass.masscapacity`
-- `axleTotalWeight` -> Sum of `technical.mass.massmaxle1` through `massmaxle5`
-- `axles` -> Axle[] (see above)
-- `tyres` -> Tyres (see above)
+axle1 -> technical.tyre.tyreaxle1
 
-**Owners:**
+axle2 -> technical.tyre.tyreaxle2
 
-- `nationalId` -> `owners.persidno`
-- `name` -> `owners.fullname`
-- `address` -> Concatenation of `owners.address` + `owners.postalcode` + `owners.city`
-- `dateOfPurchase` -> `owners.purchasedate`
+axle3 -> technical.tyre.tyreaxle3
 
-**Operator:**
+axle4 -> technical.tyre.tyreaxle4
 
-- `nationalId` -> `operators[current].persidno`
-- `name` -> `operators[current].name`
-- `address` -> `operators[current].address`
-- `postalcode` -> `operators[current].postalcode`
-- `city` -> `operators[current].city`
-- `startDate` -> `operators[current].startdate`
-- `endDate` -> `operators[current].enddate`
+axle5 -> technical.tyre.tyreaxle5
+
+**BasicInfo**
+
+model -> make - Tegund
+
+regno -> regno - Skráningarnúmer
+
+subModel -> vehcom + speccom - Tegund & undirtegund
+
+permno -> permno - Fastanúmer
+
+verno -> vin - Verksmiðjunúmer
+
+year -> modelyear | productyear | firstregdate(year)
+
+country -> country
+
+preregDateYear -> preregdate(year)
+
+formerCountry -> formercountry
+
+importStatus -> \_import
+
+RegistrationInfo
+
+firstRegistrationDate -> firstregdate
+
+preRegistrationDate -> preregdate
+
+newRegistrationDate -> newregdate
+
+specialName -> speccom - Sérheiti
+
+vehicleGroup -> technical.vehgroup - Ökutækisflokkur
+
+color -> color
+
+reggroup -> plates.reggroup - Skráningarflokkur
+
+reggroupName -> data.plates[0].reggroupname - Skráningarflokkur
+
+plateLocation -> platestoragelocation - Geymslustaður plötu
+
+plateStatus -> platestatus
+
+passengers -> technical.pass
+
+useGroup -> usegroup
+
+driversPassengers -> technical.passbydr
+
+standingPassengers -> technical.standingno
+
+**CurrentOwnerInfo**
+
+owner -> owners.fullname
+
+nationalId -> owners.persidno
+
+address -> owners.address
+
+postalcode -> owners.postalcode
+
+city -> owners.city
+
+dateOfPurchase -> owners.purchasedate
+
+**InspectionInfo**
+
+type -> inspections[newest].type
+
+date -> inspections[newest].date
+
+result -> inspections[newest].result
+
+nextInspectionDate -> nextinspectiondate
+
+lastInspectionDate -> inspections[last].date
+
+insuranceStatus -> insurancestatus
+
+mortages -> fees.hasEncumbrances
+
+carTax -> fees.gjold.bifreidagjald
+
+inspectionFine -> fees.inspectionfine
+
+**TechnicalInfo**
+
+engine -> technical.engine
+
+totalWeight -> technical.mass.massladen
+
+cubicCapacity -> technical.capacity
+
+capacityWeight -> technical.mass.massofcomb - Þyngd vagnlestar
+
+length -> technical.size.length
+
+vehicleWeight -> technical.mass.massinro
+
+width -> technical.size.width
+
+trailerWithoutBrakesWeight -> technical.tMassoftrunbr
+
+horsepower -> technical.maxNetPower -> \* 1.359622 - Metric horsepower (hp(M))
+
+trailerWithBrakesWeight -> technical.mass.tMassoftrbr
+
+carryingCapacity -> technical.mass.masscapacity
+
+axleTotalWeight -> technical.mass.massmaxle1 + massmaxle2 + massmaxle3 + massmaxle4 + massmaxle5
+
+axles?: Axle[] (See above)
+
+tyres?: Tyres (See above)
+
+**Owners**
+
+nationalId -> owners.persidno
+
+name -> owners.fullname
+
+address -> owners.address + owners.postalcode + owners.city
+
+dateOfPurchase -> owners.purchasedate
+
+**Operator**
+
+nationalId -> operators[current].persidno
+
+name -> operators[current].name
+
+address -> operators[current].address
+
+postalcode -> operators[current].postalcode
+
+city -> operators[current].city
+
+startDate -> operators[current].startdate
+
+endDate -> operators[current].enddate

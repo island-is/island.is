@@ -1,20 +1,21 @@
-## Delegation API
+# Delegation API
 
-### Overview
+## About
 
-The Delegation API is an internal API designed for managing delegation within the Delegation System of the Service Portal.
+This is an internal api for delegation management for the Delegation System in the Service Portal.
 
-### Getting Started
+## Getting started
 
-To run the API locally, you have the option of connecting to the AWS development database or running a database container locally. For detailed instructions on setting up the database, please refer to the [Getting Started section in the IDS API documentation](../ids-api/README.md#getting-started).
+To run the API locally, you can either connect to the AWS dev db or run a database container locally.
+For further instructions on how to start the database please see [Getting started in IDS API](../ids-api/README.md#getting-started)
 
-Once the database is operational, you can start the service using the following command:
+When the database is running then start the service:
 
 ```bash
 yarn start services-auth-ids-api
 ```
 
-### Code Owners and Maintainers
+## Code owners and maintainers
 
-- [Aranja Team](https://github.com/orgs/island-is/teams/aranja/members)
-- [Fuglar Team](https://github.com/orgs/island-is/teams/fuglar/members)
+- [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
+- [Fuglar](https://github.com/orgs/island-is/teams/fuglar/members)

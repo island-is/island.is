@@ -2,18 +2,18 @@
 
 ## Usage
 
-To display the list of applications, you need to run the `application-system-api`. Additionally, you can run the `application-system-form` to open the applications in their respective forms.
+To be able to show the list of applications, you will need to run the `application-system-api`. Additionally, you can run the `application-system-form` to open the applications to their respective form.
 
-To do this, first run the API:
+To do so, first run the api
 
 ```bash
 yarn start application-system-api
 ```
 
-Then, run the form:
+and then, run the form
 
 ```bash
 yarn start application-system-form
 ```
 
-You will then be able to access it at `localhost:4242`.
+you will then be able to access it under `localhost:4242`.

@@ -1,41 +1,32 @@
-````markdown
 # API Domains Driving License
 
 ## Quickstart
 
-To begin developing, run the following command:
+Run the following and start developing:
 
 ```bash
 yarn nx run api-domains-driving-license:dev
 ```
-````
 
-This command is currently an alias for the xroad-proxy script detailed below.
+This is currently just an alias for the xroad-proxy script below.
 
-## Connecting to X-Road
+## How to connect to xroad
 
-In order to connect, you need to proxy the X-Road socat service. You can do this by executing:
+To use it you need to have proxy the xroad socat service:
 
 ```bash
 ./scripts/run-xroad-proxy.sh
 ```
 
-or by using Kubernetes:
+or
 
 ```bash
 kubectl -n socat port-forward svc/socat-xroad 8081:80
 ```
 
-Additionally, ensure that the environment variable `DRIVING_LICENSE_SECRET` is set.
+and make sure the environment variable `DRIVING_LICENSE_SECRET` is avaialable.
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, run the following command, which utilizes [Jest](https://jestjs.io):
-
-```bash
-nx test api-domains-driving-license
-```
-
-```
-
-```
+Run `nx test api-domains-driving-license` to execute the unit tests via
+[Jest](https://jestjs.io).

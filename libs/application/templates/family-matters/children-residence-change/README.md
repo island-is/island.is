@@ -1,53 +1,37 @@
-```markdown
 # Children Residence Change Template
 
-This document outlines the setup and usage for the Children Residence Change application template, designed for the County Magistrate of Iceland by Kolibri.
+This is an application template for children residence change created for the County Magistrate of Iceland by Kolibri.
 
 ## Setup
 
-For information on setting up the application system, please refer to the following link: [Application System Setup](https://docs.devland.is/apps/application-system).
+Application System setup: [Setup](https://docs.devland.is/apps/application-system)
 
-### Additional Setup
+### Additional setup
 
-Additional setup steps are required to run this template locally.
+There are additional steps required to run this template locally
 
 #### National Registry Provider
 
-**Prerequisites:**
+Prerequisites
 
-- Ensure you have `kubectl` installed. You can install it using Homebrew:
-```
+- You have `kubectl` installed
+  - `brew install kubectl`
+- You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured
 
-brew install kubectl
+1. Fetch development secrets for the project
 
-```
-- Configure [AWS Secrets](../../../../handbook/repository/aws-secrets.md).
+- Run `yarn get-secrets service-portal`
 
-**Steps:**
+2. Get kubeconfig
 
-1. **Fetch Development Secrets for the Project:**
+- Export aws variables `aws eks update-kubeconfig --name dev-cluster01`
 
- Execute the following command:
-```
+- Keep this process running while running the project
 
-yarn get-secrets service-portal
+### Test user
 
-````
+For testing on local, dev and staging use the Gervimaður Evrópa login: 0102719
 
-2. **Get Kubeconfig:**
+## Code owners and maintainers
 
-- Export AWS variables using the following command:
-  ```
-  aws eks update-kubeconfig --name dev-cluster01
-  ```
-
-- Keep this process running while maintaining the project setup.
-
-### Test User
-
-For testing in local, development, or staging environments, use the Gervimaður Evrópa login: `0102719`.
-
-## Code Owners and Maintainers
-
-- For any issues, contact the [Kolibri Modern Family Team](https://github.com/orgs/island-is/teams/kolibri-modern-family).
-````
+- [Kolibri](https://github.com/orgs/island-is/teams/kolibri-modern-family)

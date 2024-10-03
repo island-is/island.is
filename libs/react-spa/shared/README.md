@@ -1,7 +1,9 @@
 # React Spa Shared
 
-This library is designed for use in React Single Page Applications (SPA). It includes common code such as components, libraries, and utilities that can be shared across multiple React SPA applications.
+This library is intended to be used by a React SPA application. It contains common code that can be used by React SPA applications.
+For example components, libs, utilities, etc.
+Code that will be shared between multiple React SPA applications should be placed in this library.
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, run `nx test react-spa-shared` using [Jest](https://jestjs.io).
+Run `nx test react-spa-shared` to execute the unit tests via [Jest](https://jestjs.io).

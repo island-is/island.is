@@ -1,54 +1,67 @@
 # No Debt Certificate Application
 
-This library was generated with [Nx](https://nx.dev). This guide provides instructions for setting up and running the application.
+This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib application/templates/no-debt-certificate)
 
 ## Setup
 
-Before starting, ensure you have the necessary AWS environment variables set up. These can be obtained from the [AWS Management Console](https://island-is.awsapps.com/start).
+Run these two proxy clients for Þjóðskrá connection.
 
-1. Set AWS environment variables:
+Proxy the X-Road socat service (v2):
 
-   ```bash
-   export AWS_ACCESS_KEY_ID="<access_key_id>"
-   export AWS_SECRET_ACCESS_KEY="<secret_access_key>"
-   export AWS_SESSION_TOKEN="<session_token>"
-   ```
+First you need to enter the AWS environment variables (get from https://island-is.awsapps.com/start)
 
-2. To proxy the X-Road socat service (v2), run:
+`export AWS_ACCESS_KEY_ID="<access_key_id>"`
 
-   ```bash
-   ./scripts/run-xroad-proxy.sh
-   ```
+`export AWS_SECRET_ACCESS_KEY="<secret_access_key>"`
 
-3. To proxy the X-Road socat service (v1), execute the following command to update your kubeconfig (may be necessary only once):
+`export AWS_SESSION_TOKEN="<session_token>"`
 
-   ```bash
-   aws eks update-kubeconfig --name dev-cluster01 --profile <profile-name> --region eu-west-1
-   ```
+Then:
 
-4. Fetch all necessary secrets.
+`./scripts/run-xroad-proxy.sh`
 
-### Running Locally
+Proxy the X-Road socat service (v1):
 
-To serve the application locally, run the following commands:
+First you need to run this (maybe only once?):
+
+`aws eks update-kubeconfig --name dev-cluster01 --profile <profile-name> --region eu-west-1`
+
+Then:
+
+Fetch all necessary secrets
+
+### Running locally
+
+You can serve this app locally by running:
 
 ```bash
 yarn start api
+```
+
+and
+
+```bash
 yarn start application-system-api
+```
+
+and
+
+```bash
 yarn start application-system-form
+```
+
+and
+
+```bash
 yarn start services-user-profile
 ```
 
-## Running Unit Tests
+## Running unit tests
 
-Execute the unit tests using [Jest](https://jestjs.io) by running:
+Run `nx test application-templates-no-debt-certificate` to execute the unit tests via [Jest](https://jestjs.io).
 
-```bash
-nx test application-templates-no-debt-certificate
-```
-
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Unnur Sól - @unnursol](https://github.com/unnursolingimars)
-- Jón Bjarni
+- [Jón Bjarni]()
 - [Jóhanna Agnes - @johannaagma](https://github.com/johannaagma)

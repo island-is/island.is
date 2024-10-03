@@ -1,18 +1,7 @@
-```markdown
-# API Domains Intellectual Properties
+# api-domains-intellectual-properties
 
-This library is part of the Nx workspace, a smart, extensible build framework. For more information, visit the [Nx documentation](https://nx.dev).
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, use the following command:
-```
-
-nx test api-domains-intellectual-properties
-
-```
-
-This will run the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
-
-**Note:** Ensure that you have all necessary dependencies installed and configured properly before running the tests.
-```
+Run `nx test api-domains-intellectual-properties` to execute the unit tests via [Jest](https://jestjs.io).

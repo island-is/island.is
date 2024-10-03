@@ -1,54 +1,54 @@
-```markdown
-# Application Templates: Additional Support for the Elderly
+# Application Templates Additional support for the elderly
 
 ## Description
 
-This application template enables applicants to apply for additional support for the elderly.
+This application template allows applicants to apply for additional support for the elderly.
 
-![Application Flow Chart](../core/assets/tr-applications-flow-chart.png)
+![](../core/assets/tr-applications-flow-chart.png)
 
 ### States
 
 #### Prerequisites
 
-This state is a temporary and unlisted state where all new applications start. It has a short lifespan. The purpose of this state is to provide a preliminary check before the actual application begins. Here, the applicant reviews general information on processing and data collection at TR. An external data step fetches data from Þjóðskrá and TR. If the applicant is under 67, does not have a registered legal domicile in Iceland, or is a pensioner with 90% rights or more in the social security system, they cannot proceed to the next step.
+This state is a temporary state that all new applications will be created in. It has a short lifespan and is unlisted.
+
+The purpose of this state is to be a guard into the actual application. There the applicant reads general information on the processing and data collection for applications at TR. There is an external data step which fetches data from Þjóðskrá and TR. If the applicant has not reached the age of 67, does not have a registered legal domicile in Iceland or is a pensioner with 90% rights or more in the social security system they cannot advance to the next step and make an application.
 
 #### Draft
 
-Valid applicants can advance to this state, where they can begin the actual application process and fill in all the necessary data.
+Valid applicant will be able to advance to this state where they can start the actual application and fill in all the relevant data.
 
-#### Tryggingastofnun Submitted
+#### Tryggingastofnun submitted
 
-When the applicant has submitted the application to TR, the application enters this state. At this stage, the application can still be edited.
+When applicant has sent in the application to TR the application is in this state. Here the application can be edited.
 
-#### Tryggingastofnun In Review
+#### Tryggingastofnun in review
 
-To transition an application to this state, TR must initiate a state change when they start reviewing the application. Once in this state, the application cannot be edited.
+For application to be in this state, TR need to make a state change when they start to review the application. Here the application can not be edited.
 
-#### Additional Document Required
+#### Additional document required
 
-If TR requires additional documents to complete the processing of the application, they can transition the application to this state, allowing the applicant to upload the missing documents.
+If TR needs additional documents to finish processing the application they can make a state change so the applicant can add their missing documents.
 
 #### Approved
 
-The application has been approved by TR.
+Application have been approved by TR.
 
 #### Rejected
 
-The application has been rejected by TR.
+Application have been rejected by TR.
 
-### Localization
+### Localisation
 
-All localization content is managed on Contentful.
+All localisation can be found on Contentful.
 
-- [Additional Support for the Elderly Application Translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/asfte.application)
-- [Application System Translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
+- [Additional support for the elderly application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/asfte.application)
+- [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
-When creating new text strings in the `messages.ts` file for the application, ensure to update Contentful following the [message extraction process](../../../../localization/README.md#message-extraction).
+When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../../localization/README.md#message-extraction).
 
 ## Setup
 
-Refer to the [Application System Setup](../../../../../apps/application-system/README.md) for instructions on getting started.
+See [application-system](../../../../../apps/application-system/README.md) setup on how to get started.
 
-Once set up, navigate to [http://localhost:4242/umsoknir/felagslegur-vidbotarstudningur](http://localhost:4242/umsoknir/felagslegur-vidbotarstudningur) to start developing.
-```
+Once you have everything running you can navigate to [http://localhost:4242/umsoknir/felagslegur-vidbotarstudningur](http://localhost:4242/umsoknir/felagslegur-vidbotarstudningur) and start developing.

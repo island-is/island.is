@@ -2,12 +2,6 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for the Payment Schedule Client, run the following command:
-
-```bash
-nx test clients-payment-schedule
-```
-
-These tests are executed using the [Jest](https://jestjs.io) testing framework.
+Run `nx test clients-payment-schedule` to execute the unit tests via [Jest](https://jestjs.io).

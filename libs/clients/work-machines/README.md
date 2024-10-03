@@ -2,10 +2,6 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library using [Jest](https://jestjs.io), run the following command:
-
-```sh
-nx test clients-work-machines
-```
+Run `nx test clients-work-machines` to execute the unit tests via [Jest](https://jestjs.io).

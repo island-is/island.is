@@ -1,19 +1,7 @@
-````markdown
-# Application Templates - Directorate of Immigration & Citizenship
+# application-templates-directorate-of-immigration-citizenship
 
-This library facilitates the management of application templates for the Directorate of Immigration & Citizenship. It was generated using [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, run:
-
-```bash
-nx test application-templates-directorate-of-immigration-citizenship
-```
-````
-
-This command uses [Jest](https://jestjs.io) as the testing framework.
-
-```
-
-```
+Run `nx test application-templates-directorate-of-immigration-citizenship` to execute the unit tests via [Jest](https://jestjs.io).

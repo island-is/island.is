@@ -1,19 +1,7 @@
-````markdown
-# API Domains Ship Registry
+# api-domains-ship-registry
 
-The `api-domains-ship-registry` library provides functionality related to ship registry management within the larger application ecosystem managed by Nx.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for the ship registry module, run the following command:
-
-```shell
-nx test ship-registry
-```
-````
-
-This command utilizes [Jest](https://jestjs.io) to run the tests, providing a robust framework for creating, running, and structuring your tests with features like test coverage reports.
-
-```
-
-```
+Run `nx test ship-registry` to execute the unit tests via [Jest](https://jestjs.io).

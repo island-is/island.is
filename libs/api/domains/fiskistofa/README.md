@@ -1,25 +1,11 @@
-````markdown
-# API Domains Fiskistofa Library
+# API Domains Fiskistofa
 
-This library is part of the [Nx](https://nx.dev) workspace.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To run the unit tests for this library using [Jest](https://jestjs.io), execute the following command:
+Run `nx test api-domains-fiskistofa` to execute the unit tests via [Jest](https://jestjs.io).
 
-```bash
-nx test api-domains-fiskistofa
-```
-````
+## Running lint
 
-## Linting Code
-
-To lint the code in this library using [ESLint](https://eslint.org/), execute the following command:
-
-```bash
-nx lint api-domains-fiskistofa
-```
-
-```
-
-```
+Run `nx lint api-domains-fiskistofa` to execute the lint via [ESLint](https://eslint.org/).

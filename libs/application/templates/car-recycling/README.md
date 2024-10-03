@@ -1,44 +1,28 @@
-````markdown
-# Car Recycling (Skilavottord - Úrvinnslusjóður)
+# Car recycling (Skilavottord - Úrvinnslusjóður)
 
-## Overview
+## About
 
-This application template facilitates applicants in applying for car recycling at the Recycling Fund.
+This application template allows applicants to apply for car recycling at Recyling fund.
 
-## Application URL
+## URLs
 
-Access the application at: `/umsoknir/skilavottord/`
+/umsoknir/skilavottord/
 
-## Backend Details
+## Backend
 
-The backend is powered by a GraphQL server.
+The backend is a GraphQL server.
 
-### Starting the Backend
+To start the backend:
 
-To start the backend server, execute the following command:
+Run `yarn start skilavottord-ws`
 
-```shell
-yarn start skilavottord-ws
-```
-````
+## Integrations
 
-## Third-Party Integrations
+- [Þjóðskrá](https://skra.is): To get the applicants information
+- [Samgöngustofa](https://island.is/s/samgongustofa): To get information about applicant vehicles
 
-- **Þjóðskrá (National Registry)**: To retrieve applicant information.
-- **Samgöngustofa (Icelandic Transport Authority)**: To obtain details about applicant vehicles.
+Run `nx test application-templates-car-recycling` to execute the unit tests via [Jest](https://jestjs.io).
 
-## Testing
+## Code owners and maintainers
 
-To execute unit tests using [Jest](https://jestjs.io), run the following command:
-
-```shell
-nx test application-templates-car-recycling
-```
-
-## Code Ownership and Maintenance
-
-This project is supported and maintained by: [Deloitte](http://www.deloitte.is)
-
-```
-
-```
+- [Deloitte](http://www.deloitte.is)

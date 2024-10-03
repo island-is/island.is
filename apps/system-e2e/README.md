@@ -1,17 +1,21 @@
-````markdown
 # System Testing
 
-Welcome to testing. For your convenience, each section has a TL;DR, so you can quickly get started.
+Welcome to testing. For your convenience each section has a TL;DR, so you can quickly get started.
 
-## Test Environment
+## Test environment
 
-System smoke tests are run against our live [dev web](https://beta.dev01.devland.is/) on every commit to `main`. This means changes on the dev web will be reflected in the system tests. For example, if you change a user's preferred locale, your test will break if it's not language-agnostic. To address this, we have implemented `disablers.disable*` and `urls.icelandicAndNoPopup`. We plan to phase these out for mocking with Mountebank and test servers.
+System smoke tests are run against our live [dev web](https://beta.dev01.devland.is/), on every commit to `main`.
+This means that changes done on the dev web will be reflected in the system tests.
+E.g. if you change a users preferred locale, your test will break if it's not language-agnostic.
+To combat this we have implemented `disablers.disable*` and `urls.icelandicAndNoPopup`.
+We plan on phasing these out for mocking with Mountebank and test servers.
 
-System acceptance tests run in their own isolated dev environment daily. We haven't yet implemented running these tests regularly, and they require a manual start for now.
+System acceptance tests will be running in their own isolated dev-environment, daily.
+We haven't yet implemented running these tests regularly, and require manual start, for now.
 
-# 🏃 Running Tests
+# 🏃 Running tests
 
-When testing an app/project, you need to first start the app, then test it with Playwright.
+When testing an app/project you need to first start the app, then test it with Playwright.
 
 ## ⚡ TL;DR
 
@@ -19,9 +23,9 @@ When testing an app/project, you need to first start the app, then test it with 
 - Start the application: `yarn dev-init <app> && yarn dev <app>`
 - Test the app: `yarn system-e2e <name-of-your-app>`
 
-## 👨‍🍳 Prepare the App
+## 👨‍🍳 Prepare the app
 
-For local development and testing, start your app. Generally, the first-time setup and running are simply:
+For local development and testing start your app. Generally, first-time setup and running is simply:
 
 1. `yarn get-secrets <app>`
 2. `yarn dev-init <app>`
@@ -32,15 +36,16 @@ For local development and testing, start your app. Generally, the first-time set
 1. `yarn get-secrets application-system-form`
 2. `yarn dev-init application-system-form`
 3. `yarn dev application-system-form`
-   {% endhint %}
 
-However, not all projects support this or have incomplete setups. If this fails, check its `README.md` and follow the instructions. If that fails, contact the QA team to remedy the documentation and improve the initial setup.
+{% endhint %}
+
+However, not all projects support this, or are incomplete in this setup. If this fails, find its `README.md` and follow the instructions given there. If that fails, reach out to the QA team and we’ll remedy the documentation and improve the initial setup.
 
 ## 🤖 Start Playwright
 
-The first time you run Playwright, you'll need to set up its runtime environment with `yarn playwright install`. Then, you can list tests with the `--list` flag or run tests in various ways:
+First time you run Playwright, you'll need to set up its runtime environment with `yarn playwright install`. Then, you can list tests with the `--list` flag or run tests in various ways:
 
-- Using Playwright directly: `yarn playwright test -c apps/system-e2e '<name-of-your-app>/.*/<smoke|acceptance>'`
+- Using playwright directly: `yarn playwright test -c apps/system-e2e '<name-of-your-app>/.*/<smoke|acceptance>'`
 - Specific test file: `yarn system-e2e '<path/to/your/test/file>'`
 - Using a path pattern (regex): `yarn system-e2e '<pattern>'`
 
@@ -49,34 +54,34 @@ The first time you run Playwright, you'll need to set up its runtime environment
 - smoke: `yarn system-e2e 'application-system-form/smoke'`
 - acceptance: `yarn system-e2e 'service-portal/acceptance'`
 - both: `yarn system-e2e 'system-e2e/.*/web'`
-- pattern: `yarn system-e2e 'system-e2e/.*/s?port?'`
+- pattern `yarn system-e2e 'system-e2e/.*/s?port?'`
 
 Note that the pattern is a RegEx string in quotes.
 {% endhint %}
 
 {% hint style="info" %}
-Run `export TEST_ENVIRONMENT=dev` before any command to test against the live [dev web](https://beta.dev01.devland.is/). Note that you'll need Cognito username/password credentials (ask DevOps for access). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective environment.
+Run `export TEST_ENVIRONMENT=dev` before any command to test against the live [dev web](https://beta.dev01.devland.is/). Note that you'll need Cognito username/password credentials for this (ask DevOps for access). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective environment.
 {% endhint %}
 
-# ✍️ Writing Tests
+# ✍️ Writing tests
 
 ## ⚡ TL;DR
 
-Run `yarn playwright codegen <url-to-your-app> --output <path/to/your/app/spec.ts>` and modify the output. Selectors need special attention; they should be transformed to use roles or `data-testid` attributes for stability (see below for how to).
+Run `yarn playwright codegen <url-to-your-app> --output <path/to/your/app/spec.ts>` and modify the output. The selectors need special attention; they should be transformed to use roles or `data-testid` attributes for stability (see below on how to).
 
-## 🤔 What to Test
+## 🤔 What to test
 
-Writing tests for every possible combination is time-consuming and offers diminishing value beyond the most common scenarios. Focus on tests for:
+Writing tests for every possible combination is time-consuming for you and the CI pipeline, with diminishing value beyond the most common cases.
+
+You should therefore aim to write test for:
 
 - Most common usage patterns
 - Usage/patterns that MUST NOT break
 - Problematic cases likely to cause an error/bug
 
-## 🏗️ Test Structure
+## 🏗️ Test structure
 
-Test cases are written in spec files. Tests that do not modify anything (e.g., _create_ an application, _change_ the user's name, etc.), and verify basic functionality are called **smoke tests**. Tests that are more detailed and/or make any changes are called **acceptance tests**. Test cases are organized by app, test type (smoke/acceptance), and feature.
-
-Example folder layout for testing:
+Test cases are written spec files. Tests that do not modify anything (e.g. _create_ an application, _change_ the user’s name, etc.), and verify basic functionality are called **smoke tests**. Tests that are more detailed and/or make any changes at all, are called **acceptance tests**. Test cases are put into folders by what app they are testing, smoke/acceptance test, and each file tests some aspect of an app. Here is an example of the folder layout for testing the search engine and front-page of the `web` project (within the system-e2e app):
 
 ```shell
 web/                      (app name)
@@ -85,15 +90,12 @@ web/                      (app name)
 └── acceptance/
     └── search.spec.ts
 ```
-````
 
-## 🗃️ Spec Files
+## 🗃️ Spec files
 
-A spec file should have only one description (`test.describe`) of what part of an app is being tested. Therein can be one or more test cases (`test`) with descriptions of each scenario. Setup and teardown can be done in `test.beforeAll`, `test.beforeEach`, `test.afterAll`, and `test.afterEach`.
+A spec file should have only one description (`test.describe`) of what part of an app is being tested. Therein can be one or more test cases (`test`) with a description of what scenario each test case is testing. Setup and tear down can be done in `test.beforeAll`, `test.beforeEach`, `test.afterAll`, and `test.afterEach`. You should not _rely_ on `after*` ever running, and you should prepare your environment every time _before_ each test. For example:
 
-Example:
-
-```javascript
+```jsx
 test.describe('Overview part of banking app', () => {
   test.beforeAll(() => {
     // Create/clear database
@@ -108,7 +110,7 @@ test.describe('Overview part of banking app', () => {
 
   test.beforeEach(() => {
     // Log in
-    // Basic state reset, e.g., clear inbox
+    // Basic state reset, e.g. clear inbox
   })
 
   test('should get paid', () => {
@@ -118,31 +120,31 @@ test.describe('Overview part of banking app', () => {
 })
 ```
 
-Each test case (`test`) should test a specific scenario from end-to-end. If your test is complex, consider using `test.step` to break it up for clearer reports. For example, test various routes/cases for an application:
+Each test case (`test`) should test a specific scenario from end-to-end. If your test is getting long and complicated consider breaking it up within a `test` with `test.step`; each step will run in succession and the failure/success report is easier to read. Let’s take the operating licence application as an example; test various routes/cases:
 
 - Hotel permit with food, but no alcohol
 - Hotel permit with food and alcohol
 - Bar with only alcohol
 - Home accommodation (AirBnB style), no food, no alcohol
 
-## 🧰 Using Fixtures
+## 🧰 Using fixtures
 
-Fixtures are objects to use instead of real data when mocking something. Use fixture users to standardize between test cases in a spec. Fixtures for static responses can be used in `page.route` for tailored server responses. Full docs at [Playwright.dev](https://playwright.dev/docs/test-fixtures).
+Fixtures are objects to use instead of real data when mocking something. You can use a fixture user to standardize between test cases in a spec. You can also define fixtures for static responses to use in `page.route` for more control over how you want the server to respond. Full docs at [Playwright.dev](https://playwright.dev/docs/test-fixtures).
 
-Fixtures are located in `src/fixtures/<your-app>.ts`. While primarily relevant for front-end apps, getting the back-end to use specific fixtures is a Work in Progress.
+Fixtures are located in `src/fixtures/<your-app>.ts`. Currently, fixtures and `page.route`s are only relevant in the front-end app. Getting the back-end to use specific fixtures is a Work in Progress (see [PR](https://github.com/island-is/island.is/pull/8862)).
 
-Fixtures can be JSON or typed TypeScript objects.
+Fixtures can be any JSON object (in `.json` files) or – preferably – a typed TypeScript object (in `.ts` files).
 
-## ☕ Mocking Server-Responses
+## ☕ Mocking server-responses
 
-Use `page.route` to catch back-end calls and modify request/response or return custom data.
+If you want to mock a scenario where the back-end returns a specific object/reply, you can use `page.route` to catch the back-end call and either modify the request/response or return something custom.
 
-Example to simulate a GraphQL error:
+For example, if you want to simulate a GraphQL error from user-profile you could add the following to your test case (`test(...)`) or `test.beforeAll`/`test.beforeEach`:
 
-```javascript
+```jsx
 // ...
 test('should handle error gracefully', async ({ page }) => {
-  // Make any call to this URL return a custom error
+  // Make any call to this url return my custom error
   await page.route('/api/graphql?op=userProfile', (route) =>
     route.fulfill({
       status: 403,
@@ -150,22 +152,24 @@ test('should handle error gracefully', async ({ page }) => {
     }),
   )
   await page.locator('role=button[type="submit"]').click()
-  await expect(page.locator('role=error')).toHaveText(
+  expect(page.locator('role=error')).toHaveText(
     'There was an error, continue anyways?',
   )
 })
 ```
 
-Refer to the [official Playwright documentation](https://playwright.dev/docs/api/class-route#route-fulfill) for detailed usage.
+Check out the [official playwright documentation](https://playwright.dev/docs/api/class-route#route-fulfill) on stubbing/intercepting for greater detail and more advanced usage.
 
-## 😬 Tricky Element Searching
+## 😬 Tricky element searching
 
-Some apps load components asynchronously. Use `page.waitFor*` ([docs](https://playwright.dev/docs/api/class-page#page-wait-for-event)) to handle this:
+Some apps, like service-portal and application-system-form, load their components _very_ asynchronously. This can be an issue when targeting some elements, but they do not appear on the first page load, but instead load after the basic page has loaded.
 
-```javascript
-// Wait for at least 3 checkboxes
-await page.waitForSelector(':nth-match("role=checkbox", 3)')
-// Wait for an arbitrary function
+In such cases you can wait for the elements to exist with `page.waitFor*` ([docs](https://playwright.dev/docs/api/class-page#page-wait-for-event)):
+
+```jsx
+// Wait for there to be at least 3 checkboxes
+await page.waitForSelector(':nth-match("role=checkbox", 3')
+// Wait for any arbitrary function
 await page.waitForFunction(async () => {
   const timer = page.locator('role=timer')
   const timeLeft = await counter.textContent()
@@ -175,40 +179,38 @@ await page.waitForFunction(async () => {
 
 ## 🎩 Testing with Mountebank
 
-To mock your API response, use Mountebank.
+If you want to mock your API response, you can do that with mountebank.
 
 ### Setup
 
-To set up your test with Mountebank:
+You will need a few things to set up your test so it can run with mountebank.
 
 - Add a `setup-xroad.mocks.ts` file to your `/acceptance` folder.
-- Replicate the response from the service you are mocking. See examples in `apps/system-e2e/src/tests/islandis/service-portal/acceptance/setup-xroad.mocks.ts`.
-- Activate the mocking process with `await setupXroadMocks()` in your test file, as exemplified in `apps/system-e2e/src/tests/islandis/service-portal/acceptance/assets.spec.ts`.
+- Within `setup-xroad.mocks.ts` you will be replicating the response from the service you are mocking. Examples of this setup can be found in `apps/system-e2e/src/tests/islandis/service-portal/acceptance/setup-xroad.mocks.ts` and `apps/system-e2e/src/tests/islandis/application-system/acceptance/setup-xroad.mocks.ts`
+- Within your test file you will need something to activate the mocking process. That would be `await setupXroadMocks()` placed within `test('', async () => {`. Example within `apps/system-e2e/src/tests/islandis/service-portal/acceptance/assets.spec.ts`
 
-### Running the Test
+### Running the test
 
-To run your tests with Mountebank:
+Now that you are set up. You need to run a couple of commands.
 
-1. Navigate to `/infra`.
-2. Run `yarn cli render-local-env --service=service-portal --service=api`, replace with your target services.
-3. Run the provided Docker command from your terminal, e.g., `docker run -it --rm -p ...`.
-4. Start your services, ensuring their ports match Mountebank’s. For example, `XROAD_BASE_PATH=http://localhost:9388 yarn start api`.
-5. Run the Playwright test.
+- Navigate to `/infra`
+- In your terminal run `yarn cli render-local-env --service=service-portal --service=api` .
+  - This would show you commands how to start the mocking for `service-portal` and `api`. Replace with the services you want to test.
+- In the output you will see a docker output it will look something like this: `docker run -it --rm -p ...` copy that line and run in a new terminal window. Now your Mountebank impostor should be running.
+- Open a new terminal tab within the island.is root.
+- Now start your services, but make sure your services ports have been replaced by the ports provided by Mountebank. In this examples case that would be `XROAD_BASE_PATH=http://localhost:9388 yarn start api`
+- Run the test with Playwright and you should see your mocked data replace the API's data.
 
 # 🙋 Troubleshooting/FAQ
 
 ## 🫀 500: Internal Server Error
 
-This can occur randomly. If the error originates from your app or code, you'll need to debug. Otherwise, it can be ignored for now.
+A 500 error can occur randomly. If the error is coming from your app or code you worked on, you have earned yourself a debug day. If the error is not from your code, ignore it for now. We do not know what’s going on 🤷
 
 ## 💀 Error: ESOCKETTIMEDOUT
 
-This is an infrastructure issue. If it appears in your dev tests, contact DevOps.
+This is an infrastructure issue and should have been resolved. If you see this in your tests on dev, contact devops 👩‍💻
 
-## ⌛ Tests are Timing Out
+## ⌛ Tests are timing out
 
-This may indicate local network issues or application performance problems. It can sometimes be mitigated by increasing the timeout with `page.goto('/my-url', { timeout: Timeout.medium })`.
-
-```
-
-```
+This indicates either a local network issue like bad internet (your problem), or a performance problem in the application code. In some cases this can be remedied by increasing the timeout if a certain site/service is known to be slow with `page.goto('/my-url', { timeout: Timeout.medium })`.

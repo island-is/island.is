@@ -1,19 +1,7 @@
-````markdown
-# Judicial System Constants
+# judicial-system-consts
 
-Welcome to the **Judicial System Constants** library documentation. This library is built using [Nx](https://nx.dev), a smart, efficient, and extensible build system designed to boost productivity in large-scale projects.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To run the unit tests for this library using [Jest](https://jestjs.io), please execute the following command in your terminal:
-
-```bash
-npm run test judicial-system-consts
-```
-````
-
-This command will initiate the testing process to ensure the integrity and reliability of the library's functionalities.
-
-```
-
-```
+Run `ng test judicial-system-consts` to execute the unit tests via [Jest](https://jestjs.io).

@@ -1,36 +1,22 @@
-````markdown
 # Application UI Shell
 
-This library contains the UI components for rendering application forms. It includes built-in support for features such as a multi-step form experience, progress indicators, field rendering, custom field rendering, answer storage, and more.
+This library contains the UI for rendering application forms. It has built in support for a multi-step form experience, progress indicators, field rendering, custom field rendering, storing answers, and more.
 
 ## Technology
 
-This library utilizes [react-hook-form](https://react-hook-form.com/) for form validation and general performance enhancements.
+This library uses [react-hook-form](https://react-hook-form.com/) for providing form validation, and general performance improvements.
 
-## How to Create a New Field
+## How to create a new field
 
-New fields can be categorized as:
+New fields are either:
 
-- **Reusable Fields**: These should be added to the `application-ui-fields` library.
-- **Custom Fields for Specific Applications**: These should be added to the library containing the respective application template and exported under `getFields`.
+- reusable and should be added to the `application-ui-fields` library
+- custom for a specific application. Then it should be added to the library containing said application template and exported under `getFields`.
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+Run `yarn nx test application-ui-shell` to execute the unit tests via [Jest](https://jestjs.io).
 
-```bash
-yarn nx test application-ui-shell
-```
-````
+## Running lint
 
-## Running Lint
-
-To perform linting, use the command below:
-
-```bash
-yarn nx lint application-ui-shell
-```
-
-```
-
-```
+Run `yarn nx lint application-ui-shell` to lint

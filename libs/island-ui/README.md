@@ -1,56 +1,47 @@
-````markdown
 # Island UI
 
 ## About
 
-Island UI is a library within the Ísland.is design system, providing a collection of guides, components, and utilities to streamline the development of new projects.
+This library is part of the Ísland.is design system and is a collection of guides, components and units to help you build new projects faster and easier.
 
-## Environments
+## URLs
 
-- **Development Environment:**  
-  Access at [ui.dev01.devland.is](https://ui.dev01.devland.is)
-- **Staging Environment:**  
-  Access at [ui.staging01.devland.is](https://ui.staging01.devland.is)
-- **Production Environment:**  
-  Access at [ui.dev.land.is](https://ui.dev.land.is)
+- [Dev](https://ui.dev01.devland.is)
+- [Staging](https://ui.staging01.devland.is)
+- [Production](https://ui.devland.is)
 
 ## Core
 
-The library contains components reused across most projects. Explore the complete component list by visiting the UI library through the links in the **Environments** section.
+The lib contains all the components that are reused across most of the projects. You can see the whole list by visiting the UI library with the links above.
 
 ## Fonts
 
-Ísland.is utilizes IBM Plex Sans as its primary font, consistently used across all projects and available within the Island UI library.
+Ísland.is is using IBM Plex Sans as font, it is uses on every project and shared here in the Island UI lib.
 
 ## Storybook
 
-[Storybook](https://storybook.js.org) consolidates all core components, providing interactive documentation for component exploration.
+The [Storybook](https://storybook.js.org) is used to gather all the core components and create an interactive documentation to explore all of it.
 
-To start Storybook locally, execute:
+You can start the storybook locally by running:
 
 ```bash
 yarn start island-ui-storybook
 ```
-````
 
-### Known Issues with Props
+### Props issue
 
-- Some components require importing React with `import * as React from 'react'` for correct rendering of props, interfaces, and types within Storybook. This temporary workaround resolves component props when using the `FC` interface, displaying them in documentation.
+- Some components needs to use `import * as React from 'react'` to be able to renders props, interfaces and types inside the storybook. It's a temporary solution when using the `FC` interface to be able to resolve the component' props and display them in the documentation.
 
-- By default, Storybook uses `react-docgen` for generating prop documentation. For more information, see the [React Docgen Documentation](https://github.com/storybookjs/storybook/blob/main/addons/docs/react/README.md#typescript-props-with-react-docgen). A [pull request](https://github.com/reactjs/react-docgen/pull/352) has been open to address issues with imported interfaces and types, which has not yet been merged. Currently, if an interface is imported from a deeply nested file, it may display as `any` instead of the correct type.
+- Storybook uses by default `react-docgen` to generate props used by components for the documentation, see [here](https://github.com/storybookjs/storybook/blob/master/addons/docs/react/README.md#typescript-props-with-react-docgen). A [PR](https://github.com/reactjs/react-docgen/pull/352) has been open a long time ago to resolve imported interfaces and types but it hasn't been merged yet. At the moment, if an interface is imported from a deep-level file, it will show a `any` instead of the type.
 
 ## Theme
 
-The library includes shared styles applicable to all Ísland.is projects.
+This lib contains all the shared styles that apply to every Ísland.is projects.
 
 ## Utils
 
-The library incorporates utility functions shared across multiple projects, specifically related to the UI library.
+This lib contains utils that are shared across multiple projects and related to the UI library.
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
-- [Island UI Team](https://github.com/orgs/island-is/teams/island-ui/members)
-
-```
-
-```
+- [Island UI](https://github.com/orgs/island-is/teams/island-ui/members)

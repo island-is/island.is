@@ -1,19 +1,7 @@
-````markdown
-# Service Portal Occupational Licenses
+# Service portal occupational licenses
 
-This library is part of the Service Portal, generated with [Nx](https://nx.dev), a set of extensible dev tools for monorepos.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, run the following command:
-
-```bash
-nx test service-portal-occupational-licenses
-```
-````
-
-This will use [Jest](https://jestjs.io) as the test runner.
-
-```
-
-```
+Run `nx test service-portal-occupational-licenses` to execute the unit tests via [Jest](https://jestjs.io).

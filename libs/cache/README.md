@@ -1,19 +1,7 @@
-````markdown
-# Cache Library
+# cache
 
-This library was generated with [Nx](https://nx.dev), a smart, extensible build framework.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for the Cache library, run the following command:
-
-```bash
-ng test cache
-```
-````
-
-This will execute the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
-
-```
-
-```
+Run `ng test cache` to execute the unit tests via [Jest](https://jestjs.io).

@@ -1,19 +1,7 @@
-````markdown
-# Skilavottord Const
+# skilavottord-const
 
-`skilavottord-const` is a library generated with the [Nx](https://nx.dev) framework.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, use the following command in your terminal:
-
-```bash
-ng test skilavottord-const
-```
-````
-
-The tests are executed using [Jest](https://jestjs.io).
-
-```
-
-```
+Run `ng test skilavottord-const` to execute the unit tests via [Jest](https://jestjs.io).

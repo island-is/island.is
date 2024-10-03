@@ -1,17 +1,16 @@
-````typescript
 # Application Template API Modules
 
-When applications in the application system require API business logic, they can invoke template API modules.
+When applications in the application system require API business logic they can invoke template API modules.
 
 Template API modules run within the application system API.
 
-## Getting Started
+## Getting started
 
-### 1. Create a New Directory for the API Module
+### 1. Create a new directory for the API module
 
-To create a new template API module, start by creating a folder inside `src/lib/modules/templates` with the same name as your template.
+To create a new template API module you should start by creating a folder inside `src/lib/modules/templates` with the same name as your template
 
-### 2. Create the Module and a Service
+### 2. Create the module and a service
 
 Your API module consists of a NestJS [module](https://docs.nestjs.com/modules) and a service.
 
@@ -20,17 +19,17 @@ Start by creating `{your_template_name}.module.ts` and `{your_template_name}.ser
 Example of a template API module:
 
 ```typescript
-import { DynamicModule } from '@nestjs/common';
+import { DynamicModule } from '@nestjs/common'
 
 // This is a shared module that gives you access to common methods
-import { SharedTemplateAPIModule } from '../../shared';
+import { SharedTemplateAPIModule } from '../../shared'
 
-// The base config that template API modules are registered with by default
+// The base config that template api modules are registered with by default
 // (configurable inside `template-api.module.ts`)
-import { BaseTemplateAPIModuleConfig } from '../../../types';
+import { BaseTemplateAPIModuleConfig } from '../../../types'
 
 // Here you import your module service
-import { ReferenceTemplateService } from './reference-template.service';
+import { ReferenceTemplateService } from './reference-template.service'
 
 export class ReferenceTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -39,12 +38,13 @@ export class ReferenceTemplateModule {
       imports: [SharedTemplateAPIModule.register(config)],
       providers: [ReferenceTemplateService],
       exports: [ReferenceTemplateService],
-    };
+    }
   }
 }
-````
+```
 
-Create your service class that extends the `BaseTemplateApiService` and provide the application type to the `super` constructor. Example:
+Create your service class that extends the `BaseTemplateApiService` and provide the application type to the `super` constructor. \
+Example:
 
 ```typescript
 import { Injectable } from '@nestjs/common'
@@ -75,11 +75,11 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
 }
 ```
 
-### 3. Register Your New Module
+### 3. Register your new module
 
-To start using your new module, it has to be imported/registered by the central template API module found in `src/lib/modules/template-api.module.ts`. This is the module imported by the application-system-api module.
+To start using your new module it has to be imported/registered by the central template API module found in `src/lib/modules/template-api.module.ts`, this is the module imported by the application-system-api module.
 
-**Export Your New Module and Service**
+**Export your new module and service**
 
 - Open `src/lib/modules/templates/index.ts`
 - Import your module `import { YourModule } from './your-module/your-module.module'`
@@ -99,21 +99,22 @@ export const modules = [/* other modules , */ ReferenceTemplateModule]
 export const services = [/* other services , */ ReferenceTemplateService]
 ```
 
-**If Connecting to a New Client**
+**If connecting to a new client**
 
-If you are connecting to a client that is not being used by any other template APIs, make sure to register the ClientConfig in `apps/application-system/api/src/app/app.module.ts`. Also, make the necessary secrets and environment variables available for the client module in `apps/application-system/api/infra/application-system-api.ts`.
+If you are connecting to a client that is not being used by any other template apis make sure to register the ClientConfig in `apps/application-system/api/src/app/app.module.ts`.
+As well as making the necassery secrets and environment variables available for the client module in `apps/application-system/api/infra/application-system-api.ts`.
 
-### 4. Invoke Your New Module Actions from the Template State Machine
+### 5. Invoke your new module actions from the template state machine
 
 ```typescript
 /* In a constant file */
 enum TEMPLATE_API_ACTIONS {
-  // Has to match the name of action in template API module
+  // Has to match name of action in template API module
   // (will be refactored when state machine is a part of API module)
   sendApplication = 'sendApplication'
 }
 
-/* Inside state machine ... */
+/* inside state machine ... */
 import { defineTemplateApi } from '@island.is/application/types'
 
   stateMachineConfig: {
@@ -124,13 +125,13 @@ import { defineTemplateApi } from '@island.is/application/types'
       approved: {
         meta: {
           // ...
-          // onEntry and onExit support either a single API or a list of APIs.
+          // onEntry and onExit support either a single api or a list of apis.
           onEntry:  defineTemplateApi({
             action: TEMPLATE_API_ACTIONS.sendApplication,
             // (Optional) Should the response/error be persisted to application.externalData
             // Defaults to true
             shouldPersistToExternalData: false,
-            // (Optional) ID that will store the result inside application.externalData
+            // (Optional) Id that will store the result inside application.externalData
             // Defaults to value of apiModuleAction
             externalDataId: 'string',
             // (Optional) Should the state transition be blocked if this action errors out?
@@ -144,17 +145,17 @@ import { defineTemplateApi } from '@island.is/application/types'
   },
 ```
 
-# Add a DataProvider to Your Application
+# Add a dataprovider to your application
 
-This describes how you can add shared and custom DataProviders to your application template.
+This describes how you can add a shared and custom dataproviders to your application Template
 
-## 1. Add Your Action to Your Template API
+## 1. Add your action to your template api
 
-See documentation on how to add a new template API [above](#getting-started).
+See documentation on how to add a new template api [above](#getting-started)
 
-## 2. Set Up Your DataProvider Definitions
+## 2. Set up your dataprovider definitions
 
-Create your definition in your template lib (e.g., `libs/application/templates/your-application/src/dataProviders/index.ts`) and make your definitions available to your template's state.
+Create your definition in your template lib (eg. `libs/application/templates/your-applicatoin/src/dataProviders/index.ts`) and make your definitions available to your Templates' state
 
 ```typescript
 import { defineTemplateApi } from '@island.is/application/types'
@@ -164,7 +165,7 @@ export const ReferenceDataApi = defineTemplateApi({
 })
 ```
 
-### Add Your Provider to the Appropriate Role in a State
+### Add your provider to the appropriate role in a state.
 
 ```diff
 import { ReferenceDataApi } from '../dataProviders'
@@ -193,9 +194,9 @@ import { ReferenceDataApi } from '../dataProviders'
     },
 ```
 
-### Add the DataProvider to Your External Data Form
+### Add the dataprovider to your external data form
 
-Include your provider in `buildDataProviderItem` object.
+Include your provider in buildDataProviderItem object.
 
 ```typescript
 import { ReferenceDataApi } from '../dataProviders' // <---
@@ -216,12 +217,13 @@ import { ReferenceDataApi } from '../dataProviders' // <---
     }),
 ```
 
-## 3. Additional DataProvider Settings
+## 3. Additional dataprovider settings
 
-### Custom Order
+## Custom order
 
-Forces the DataProviders to run sequentially in order. Responses are populated in external data and can be accessed by other providers during execution.
-Each action with the same order number is run in parallel, and actions default to 0 and are run first in parallel.
+Forces the dataproviders to run sequentially in order. Responses are populated in external data and can be accessed by other providers during execution.
+Each action with the same order number is run in parallel and actions.
+Actions default to 0 and are run first in parallel.
 
 ```typescript
 import { defineTemplateApi } from '@island.is/application/types'
@@ -237,9 +239,9 @@ export const runsSecond = defineTemplateApi({
 })
 ```
 
-### Custom Error Messages and Error Handling
+## Custom error messages and error handling
 
-Within your service, you can throw a `TemplateApiError` and provide it with an `ErrorReason` object and a status code.
+Within your service you can throw a TemplateApiError and provide it with an `ErrorReason` object and a status code.
 
 ```typescript
 throw new TemplateApiError(
@@ -251,12 +253,12 @@ throw new TemplateApiError(
 )
 ```
 
-If the service throws an unexpected error, the template runner catches it, logs the error, and throws a new `TemplateApiError` with a default message and a 500 error code.
+If the service throws an unexpected error the template runner catches it logs the error and throws a New TemplateApiError with a default message and a 500 error code.
 
-### Parameters
+## Parameters
 
-You can add a custom parameter that can be passed into your action.
-First, define your API with a parameter type.
+You can add a custom parameter that can be passed into the your action.
+First define your api with a parameter type
 
 ```typescript
 export interface MyParameterType {
@@ -271,7 +273,7 @@ export const ReferenceDataApi = defineTemplateApi<MyParameterType>({
 })
 ```
 
-The `params` object will be passed into the template API function like so:
+The `params` object will be passed into the template api function like so:
 
 ```typescript
 @Injectable()
@@ -292,11 +294,11 @@ export class SomeService extends BaseTemplateApiService {
 }
 ```
 
-## Set Up a Shared DataProvider
+## Set up a shared DataProvider
 
-### 1. Create a Shared Provider Definition
+### 1. Create a shared provider definition
 
-Add your definition to `libs/application/types/src/lib/template-api/shared-api/shared-api-definitions`.
+Add your definition to `libs/application/types/src/lib/template-api/shared-api/shared-api-definitions`
 
 ```typescript
 export interface SharedApiParameters {
@@ -308,12 +310,12 @@ export const NationalRegistryUserApi = defineTemplateApi<SharedApiParameters>({
 })
 ```
 
-### 2. Create a Module and a Service
+### 2. Create a module and a service
 
-[See Step 2](#2-create-the-module-and-a-service) for an identical setup as above excluding:
+[See step 2](#2-Create-the-module-and-a-service) identical setup from above exluding.
 
-- Shared DataProvider modules should be located in `/lib/modules/shared/api` and modules and services exported from `/lib/modules/shared/api/index.ts`
-- The namespace set in the `defineTemplateApi` in Step 1 should be passed into the `super` constructor.
+- Shared data provider modules should be located in `/lib/modules/shared/api` and modules and service exported from `/lib/modules/shared/api/index.ts`
+- The namspace set in the `defineTemplateApi` in step 1 should be passed into the `super` constructor
 
 ```typescript
 @Injectable()
@@ -325,7 +327,7 @@ export class SomeService extends BaseTemplateApiService {
   }
 ```
 
-## Configuring Template APIs
+## Configuring TemplateApis
 
 ```typescript
 export interface MyParameterType {
@@ -337,13 +339,13 @@ export const newApi = defineTemplateApi<MyParameterType>({
   action: 'actionName',
   // (Optional) Sets the order in which this action should run
   order: 2, // Waits until "runsFirst" resolves.
-  // (Optional) ID that will store the result inside application.externalData
+  // (Optional) Id that will store the result inside application.externalData
   // Defaults to value of apiModuleAction
   externalDataId: 'someValue',
-  // (Optional) Used for shared providers that do not belong to an application
+  // (Optional) Used for shared providers that do not belong to an Applicaion
   // This value is passed to the super constructor of the extended BaseTemplateApiService containing the action defined
   namespace: 'SomeNamespace',
-  // (Optional) Parameters passed into the action. The parameters' type is set in the defineTemplateApi function call
+  // (Optional) Parameters passed into the action, The parameters' type is set in the defineTemplateApi function call
   params: {
     //params is now of the type MyParameterType
     id: 1,
@@ -358,7 +360,7 @@ export const newApi = defineTemplateApi<MyParameterType>({
 })
 ```
 
-The API can then be overridden with the configure function with the following optional attributes:
+The api can then be overridden with the configure function with the following optional attributes:
 
 ```typescript
 export const overriddenApi = newApi.configure({
@@ -372,7 +374,7 @@ export const overriddenApi = newApi.configure({
 })
 ```
 
-This can be useful when importing shared APIs and you need your own configuration of the API.
+This can be useful when importing Shared Apis and you need to your own configuration of the api.
 
 ```typescript
 export interface SharedApiParameters {
@@ -381,7 +383,7 @@ export interface SharedApiParameters {
 export const SharedApi = defineTemplateApi<SharedApiParameters>({
   action: 'getData',
   namespace: 'SharedApi',
-}) // the parameter ID is not set yet.
+}) // the parameter Id is not set yet.
 
 /// Your template file
 import { SharedApi } from '@island.is/application/types'
@@ -402,7 +404,7 @@ import { SharedApi } from '@island.is/application/types'
           read: 'all',
           write: 'all',
           api: [
-            // The API is now set to be invoked with ID parameter with the value of 2
+            // The api is now set to be invoked with id parameter with the value of 2
             SharedApi.configure({
               params: {
                 id: 2,
@@ -413,13 +415,15 @@ import { SharedApi } from '@island.is/application/types'
         ...
     ...
     },
+
 ```
 
-## Enabling Payment Mocking
+## Enabling payment mocking
 
-To enable payment mocking on dev and local, you need to add `enableMockPayment: true` to the argument object passed to the `buildExternalDataProvider` function when constructing your `approveExternalData` field.
+To enable payment mocking on dev and local you need to add `enableMockPayment: true` to the arguments object passed to the
+`buildExternalDataProvider` function when constructing your `approveExternalData` field.
 
-A simple example of this can be found in `libs/application/templates/example-payment/src/forms/draft.ts`.
+A simple example of this can be found in `libs/application/templates/example-payment/src/forms/draft.ts`
 
 ```typescript
 buildExternalDataProvider({
@@ -435,10 +439,7 @@ buildExternalDataProvider({
             }),
           ],
         }),
-```
-
-This will cause a checkbox saying "Enable mock payment" to be shown that, if checked, will cause the payment step to be skipped.
 
 ```
 
-```
+This will cause a checkbox saying "Enable mock payment" to be shown that if checked will cause the payment step to be skipped.

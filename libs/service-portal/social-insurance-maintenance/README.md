@@ -1,19 +1,7 @@
-````markdown
-# Service Portal Social Insurance Maintenance
+# service-portal-social-insurance-maintenance
 
-This library is part of a larger project and was generated using [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, use the following command:
-
-```bash
-nx test service-portal-social-insurance-maintenance
-```
-````
-
-This will run the tests using [Jest](https://jestjs.io), a delightful JavaScript Testing Framework.
-
-```
-
-```
+Run `nx test service-portal-social-insurance-maintenance` to execute the unit tests via [Jest](https://jestjs.io).

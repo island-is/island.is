@@ -2,12 +2,6 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, use the command:
-
-```bash
-nx test clients/form-system
-```
-
-This will run the tests using [Jest](https://jestjs.io), a popular JavaScript testing framework.
+Run `nx test clients/form-system` to execute the unit tests via [Jest](https://jestjs.io).

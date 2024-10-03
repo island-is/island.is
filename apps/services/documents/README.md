@@ -1,41 +1,41 @@
+# Documents
+
 ## About
 
-The `services-documents` service is responsible for providing and storing documents and document provider information.
+A service that is responsible for providing and storing documents and document providers info.
 
-### Initial Setup
+### Initial setup
 
-To get started with the `services-documents` service, ensure you have Docker installed. Then, execute the following command to run the development services:
+First, make sure you have docker, then run:
 
 ```bash
 yarn dev-services services-documents
 ```
 
-Next, you need to run the migrations with the command:
+Then run the migrations:
 
 ```bash
 yarn nx run services-documents:migrate
 ```
 
-To serve this service locally, use:
+You can serve this service locally by running:
 
 ```bash
 yarn start services-documents
 ```
 
-Once running, the API's OpenAPI specifications will be accessible at:
+Api open api specs will now be accessible at
 
 ```bash
 http://localhost:3369/swagger/#/default
 ```
 
-## Getting Started
-
-Run the service using the command:
+## Getting started
 
 ```bash
 yarn start services-documents
 ```
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
-- Maintained by [Advania](https://github.com/orgs/island-is/teams/advania/members)
+- [Advania](https://github.com/orgs/island-is/teams/advania/members)

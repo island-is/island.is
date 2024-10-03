@@ -1,17 +1,12 @@
-````markdown
 # Content Search Toolkit
 
-This toolkit provides a collection of utility functions to facilitate querying data from an Elasticsearch content search. It is designed to be a library of generic code that can be reused across different projects.
+Contains useful functions to help with querying data from content search elasticsearch.
+This library should only contain generic code
 
-## Unit Testing Utility Functions
+## Unit testing util functions
 
-To ensure the functionality and reliability of the utility functions provided by this toolkit, you can run unit tests using the following command:
+Run the following command to unit test the util functions:
 
-```bash
+```
 yarn nx test content-search-toolkit
-```
-````
-
-```
-
 ```

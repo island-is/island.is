@@ -1,21 +1,12 @@
-````markdown
 # infra-tracing
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests via [Jest](https://jestjs.io), run the following command:
+Run `ng test infra-tracing` to execute the unit tests via [Jest](https://jestjs.io).
 
-```bash
-ng test infra-tracing
-```
-````
+## Disabling masking
 
-## Disabling Masking
-
-To disable the masking of Personally Identifiable Information (PII) for failed HTTP requests, set the environment variable `DD_PII_MASKING_DISABLED_ON_FAILURE` to `"true"`.
-
-```
-
-```
+To disable masking of PII for failed http requests, set the environment variable
+`DD_PII_MASKING_DISABLED_ON_FAILURE` to `"true"`.

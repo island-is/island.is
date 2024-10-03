@@ -2,104 +2,129 @@
 
 ## About
 
-This app allows users to mark their car for recycling and provides information on where to bring the car. Recycling companies that receive the physical car can log in to deregister it. The recycling fund can then view a list of recycled cars.
+This app is for users to mark their car for recycling and getting info about
+where to leave the car.
+
+Recycling companies that receives the physical car can login to deregister it.
+
+The recycling fund can then see a list of recycled cars.
 
 ## URLs
 
-Refer to the role description further down.
+See role description further down.
 
-### Development Environment
+### Dev
 
-- [Dev - Company Role](https://beta.dev01.devland.is/app/skilavottord/deregister-vehicle)
-- [Dev - Fund Role](https://beta.dev01.devland.is/app/skilavottord/recycled-vehicles)
+- [Dev - role: company](https://beta.dev01.devland.is/app/skilavottord/deregister-vehicle)
+- [Dev - role: fund](https://beta.dev01.devland.is/app/skilavottord/recycled-vehicles)
 
-### Staging Environment
+### Staging
 
-- [Staging - Company Role](https://beta.staging01.devland.is/app/skilavottord/deregister-vehicle)
-- [Staging - Fund Role](https://beta.staging01.devland.is/app/skilavottord/recycled-vehicles)
+- [Staging - role: company](https://beta.staging01.devland.is/app/skilavottord/deregister-vehicle)
+- [Staging - role: fund](https://beta.staging01.devland.is/app/skilavottord/recycled-vehicles)
 
-### Production Environment
+### Prod
 
-- [Prod - Company Role](https://island.is/app/skilavottord/deregister-vehicle)
-- [Prod - Fund Role](https://island.is/app/skilavottord/recycled-vehicles)
+- [Prod - role: company](https://island.is/app/skilavottord/deregister-vehicle)
+- [Prod - role: fund](https://island.is/app/skilavottord/recycled-vehicles)
 
-## Getting Started
+## Getting started
 
 ### Setup
 
-Use the `yarn get-secrets skilavottord-ws` command to fetch environment secret variables. Additionally, add the following environment variable to `.env.secret` in the project's root:
+Please fetch environment secret variables using the
+`yarn get-secrets skilavottord-ws` command.
+
+Additionally add the following environment variables to `.env.secret` in the
+project's root:
 
 ```bash
 export NEXTAUTH_URL=http://localhost:4200/app/skilavottord/api/auth
 ```
 
-### Running the Web Application Locally
+### Web
 
-To start the web application locally, execute:
+To run locally:
 
 ```bash
 yarn start skilavottord-web
 ```
 
-Then navigate to:
+Navigate to:
 
-- [Deregister Vehicle](http://localhost:4200/app/skilavottord/deregister-vehicle)
-- [Recycled Vehicles](http://localhost:4200/app/skilavottord/recycled-vehicles)
+- [localhost:4200/app/skilavottord/deregister-vehicle](http://localhost:4200/app/skilavottord/deregister-vehicle)
+- [localhost:4200/app/skilavottord/recycled-vehicles](http://localhost:4200/app/skilavottord/recycled-vehicles)
 
-### Running the Backend Locally
+### Backend
 
-Ensure you have Docker installed. From the root folder, execute:
+First, make sure you have docker.
+
+Then from the root folder go to
 
 ```bash
 cd apps/skilavottord/ws
 ```
 
-Run Docker Compose:
+and run
 
 ```bash
 docker compose up
 ```
 
-Run the database migrations and seed the database:
+Then run migrations and seed the database:
 
 ```bash
 yarn nx run skilavottord-ws:migrate/undo
+```
+
+```bash
 yarn nx run skilavottord-ws:migrate
+```
+
+```bash
 yarn nx run skilavottord-ws:seed:all
 ```
 
-To start the backend application locally, run:
+To start the application locally run:
 
 ```bash
 yarn start skilavottord-ws
 ```
 
-### GraphQL Playground
+### GraphQL playground
 
-Access the GraphQL playground at [localhost:3333/app/skilavottord/api/graphql](http://localhost:3333/app/skilavottord/api/graphql)
+Visit
+[localhost:3333/app/skilavottord/api/graphql](http://localhost:3333/app/skilavottord/api/graphql)
 
 ## Application
 
-### Company Frontend
+### Company frontend
 
 URL:
 [https://island.is/app/skilavottord/deregister-vehicle](https://island.is/app/skilavottord/deregister-vehicle)
 
-Employees of recycling companies can log in here to deregister vehicles that citizens have marked for recycling.
+If users are registered as an employee of a recycling company, they can log in
+here to deregister vehicles that citizens have marked for recycling.
 
-### Fund Frontend
+### Fund frontend
 
 URL:
 [https://island.is/app/skilavottord/recycled-vehicles](https://island.is/app/skilavottord/recycled-vehicles)
 
-Employees of Fjársýsla ríkisins can log in here to view a list of all vehicles that have completed the recycling process. This page also displays all available recycling companies.
+If users are registered as an employee of Fjársýsla ríkisins, they can log in
+here to see a list of all vehicles that has completed the process of being
+deregistered and recycled.
+
+This page also lists all available recycling companies.
 
 ## Integrations
 
-- [Samgöngustofa](https://www.samgongustofa.is/): Used for fetching vehicle information and deregistering vehicles.
-- [Fjársýsla ríkisins](https://www.fjs.is/): Facilitates payment initiation after vehicle recycling.
+- [Samgöngustofa](https://www.samgongustofa.is/): To fetch vehicle information
+  and to deregister vehicles.
+- [Fjársýsla ríkisins](https://www.fjs.is/): To be able to initiate payment
+  after vehicles have been recycled.
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Deloitte](https://github.com/orgs/island-is/teams/deloitte/members)
 - [Vice Versa](https://github.com/orgs/island-is/teams/vice-versa/members)

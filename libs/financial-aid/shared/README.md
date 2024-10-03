@@ -1,13 +1,7 @@
-# Financial Aid Types Library
+# financial-aid-types
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for the Financial Aid Types library, run the following command:
-
-```bash
-ng test financial-aid-types
-```
-
-This will run the tests using [Jest](https://jestjs.io).
+Run `ng test financial-aid-types` to execute the unit tests via [Jest](https://jestjs.io).

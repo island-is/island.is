@@ -1,17 +1,7 @@
-````markdown
-# API Domains Company Registry
+# API Domains Company registry
 
-This documentation covers the implementation details of the RSK endpoints, which are defined in the RSK client library.
+This domain implements RSK endpoints defined in the RSK client library.
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this domain, use the following command. These tests utilize the [Jest](https://jestjs.io) testing framework:
-
-```shell
-nx test api-domains-rsk
-```
-````
-
-```
-
-```
+Run `nx test api-domains-rsk` to execute the unit tests via [Jest](https://jestjs.io).

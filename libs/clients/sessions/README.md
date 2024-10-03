@@ -1,19 +1,7 @@
-````markdown
 # Clients Sessions
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, use the following command:
-
-```bash
-nx test clients-sessions
-```
-````
-
-The tests will be run via [Jest](https://jestjs.io).
-
-```
-
-```
+Run `nx test clients-sessions` to execute the unit tests via [Jest](https://jestjs.io).

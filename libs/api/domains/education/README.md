@@ -1,19 +1,7 @@
-````markdown
 # API Domains Education
 
-This library was generated using [Nx](https://nx.dev), a smart, fast and extensible build system.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, run the following command:
-
-```bash
-nx test api-domains-education
-```
-````
-
-This will utilize [Jest](https://jestjs.io), a delightful JavaScript testing framework.
-
-```
-
-```
+Run `nx test api-domains-education` to execute the unit tests via [Jest](https://jestjs.io).

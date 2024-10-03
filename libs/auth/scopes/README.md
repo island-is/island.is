@@ -1,7 +1,7 @@
 # Auth Scopes
 
-This library centralizes scope definitions for the repository.
+This library was generated to contain scope definitions in one central place for the repo.
 
-## Creating Scopes in the IDS
+## Creating scopes in the IDS
 
-You can create actual scopes in production using Sequelize migrations. Please refer to [the guide in auth-api-lib](../../auth-api-lib/seeders/README.md).
+It is possible to create the actual scopes in production using Sequelize migrations. Please follow [the guide in auth-api-lib](../../auth-api-lib/seeders/README.md).

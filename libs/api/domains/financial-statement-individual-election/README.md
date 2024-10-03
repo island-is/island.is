@@ -1,19 +1,7 @@
-````markdown
-# API Domains: Financial Statement Individual Election
+# api-domains-financial-statement-individual-election
 
-This library is part of the `Nx` workspace and is specifically generated for managing the domain concerning individual elections related to financial statements.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for the `api-domains-financial-statement-individual-election` library, use the following command:
-
-```sh
-nx test api-domains-financial-statement-individual-election
-```
-````
-
-This will run tests using [Jest](https://jestjs.io), a comprehensive JavaScript testing framework. Ensure Jest is properly configured and available within your development environment for seamless testing.
-
-```
-
-```
+Run `nx test api-domains-financial-statement-individual-election` to execute the unit tests via [Jest](https://jestjs.io).

@@ -1,39 +1,32 @@
-````markdown
 # Vehicles Client
 
-## Overview
+## About
 
-This library provides a client to interact with Samgöngustofa's Mitt Svæði API via X-Road. The client is auto-generated from an OpenAPI document sourced from X-Road.
+This library implements a client to use Samgöngustofa's Mitt svæði API through x-road
+
+The client is generated from a copy of the openApi document provided in x-road.
 
 ## Usage
 
-The `api/domain/vehicles` module utilizes this client to facilitate data exchange.
+The api/domain/vehicles uses this client to deliver data between.
 
-## Update Instructions
-
-### Updating OpenAPI Definition (`clientConfig.json`)
-
-To update the OpenAPI definition, run:
+### Updating the open api definition (clientConfig.json)
 
 ```sh
 yarn nx run clients-vehicles:update-openapi-document
 ```
-````
 
-**Note:** Since this file may contain manual modifications, exercise caution when overwriting.
+Caution:
+It has been modified manually so be careful when overwriting.
 
-### Regenerating the Client
+### Regenerating the client:
 
-To regenerate the client from the `clientConfig.json` file, execute:
+This regenerates the client from clientConfig.json file.
 
 ```sh
 yarn nx run clients-vehicles:codegen/backend-client
 ```
 
-## Contributors
+## Code owners and maintainers
 
-- [Hugsmiðjan](https://github.com/orgs/island-is/teams/hugsmidjan)
-
-```
-
-```
+- [Hugsmiðjan ](https://github.com/orgs/island-is/teams/hugsmidjan)

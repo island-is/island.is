@@ -1,19 +1,8 @@
-````markdown
-# React Components Library
+# React Components
 
-This library offers a collection of reusable React components that can be seamlessly integrated into various React applications, without depending on any specific framework. It was created using [Nx](https://nx.dev).
+This is a library for common React components that can be used in any React application, i.e. not framework specific.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To run the unit tests for this library, use the following command:
-
-```bash
-nx test react-components
-```
-````
-
-This command utilizes [Jest](https://jestjs.io) to execute the tests.
-
-```
-
-```
+Run `nx test react-components` to execute the unit tests via [Jest](https://jestjs.io).

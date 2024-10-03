@@ -1,17 +1,7 @@
-````markdown
 # Application Templates Complaints to Althingi Ombudsman
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
-
-```bash
-nx test application-templates-complaints-to-althingi-ombudsman
-```
-````
-
-```
-
-```
+Run `nx test application-templates-complaints-to-althingi-ombudsman` to execute the unit tests via [Jest](https://jestjs.io).

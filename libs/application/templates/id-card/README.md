@@ -1,19 +1,7 @@
-````markdown
 # application-templates-id-card
 
-This library is generated using [Nx](https://nx.dev), a smart and extensible build framework.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests, use the following command:
-
-```bash
-nx test application-templates-id-card
-```
-````
-
-This will run the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
-
-```
-
-```
+Run `nx test application-templates-id-card` to execute the unit tests via [Jest](https://jestjs.io).

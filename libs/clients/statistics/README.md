@@ -1,19 +1,7 @@
-````markdown
 # clients-statistics
 
-This library was generated with [Nx](https://nx.dev), a powerful toolkit for building scalable applications.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, run the following command:
-
-```sh
-nx test clients-statistics
-```
-````
-
-This will initiate the testing process using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
-
-```
-
-```
+Run `nx test clients-statistics` to execute the unit tests via [Jest](https://jestjs.io).

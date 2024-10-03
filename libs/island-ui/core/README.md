@@ -1,23 +1,7 @@
-````markdown
 # Island UI
 
-Island UI is a component library designed to provide a consistent UI/UX experience for developers. This library was generated using [Nx](https://nx.dev), which is a smart, fast, and extensible build system.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To run the unit tests for the Island UI core components, follow these steps:
-
-1. Open your terminal.
-2. Navigate to the root directory of your project.
-3. Execute the following command:
-
-   ```bash
-   nx test island-ui-core
-   ```
-````
-
-This command will run the tests using [Jest](https://jestjs.io), a comprehensive JavaScript testing framework that helps ensure the reliability of your codebase.
-
-```
-
-```
+Run `nx test island-ui-core` to execute the unit tests via [Jest](https://jestjs.io).

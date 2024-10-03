@@ -1,16 +1,7 @@
-```markdown
-# Application Templates: Transport Authority Digital Tachograph Company Card
+# application-templates-transport-authority-digital-tachograph-company-card
 
-This library was generated with [Nx](https://nx.dev), a smart, extensible build framework.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for the application templates related to the Transport Authority's Digital Tachograph Company Card, run the following command using [Jest](https://jestjs.io):
-```
-
-nx test application-templates-transport-authority-digital-tachograph-company-card
-
-```
-
-This will run all unit tests within the library and provide feedback on test results and coverage.
-```
+Run `nx test application-templates-transport-authority-digital-tachograph-company-card` to execute the unit tests via [Jest](https://jestjs.io).

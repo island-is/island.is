@@ -1,44 +1,33 @@
-````markdown
 # Dokobit Signing
 
 ## About
 
-This library provides `dokobit-signing`, a service that extends Apollo's `RESTDataSource`. The service allows its users to request individuals to sign PDF documents using their mobile electronic IDs via Dokobit.
+This library defines dokobit-signing, a service that is derived from Apollo's RESTDataSource.
+The service allows its users to request individuals to sign PDF documents using their mobile electronic ids via Dokobit.
 
-## Usage
+### Usage
 
-### Module Imports
-
-To use this service, include `SigningModule` in your module imports:
+Add `SigningModule` to your Module imports:
 
 ```typescript
 @Module({
   imports: [SigningModule],
 })
-export class YourModule {}
 ```
-````
 
-### Configuration
-
-Add `signingModuleConfig` to your App Module imports for configuration:
+Add `signingModuleConfig` to your App Module imports:
 
 ```typescript
-@Module({
+@Module(
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [signingModuleConfig],
     }),
-  ],
-})
-export class AppModule {}
-```
+  ]
+)
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri/members)
-
-```
-
 ```

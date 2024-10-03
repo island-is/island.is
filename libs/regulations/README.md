@@ -1,17 +1,11 @@
-```markdown
 # Regulations
 
-This documentation outlines the types, components, and helper utilities designed for managing Regulations (Reglugerðir) across different parts of the monorepo.
+Types, components and helper utilities for working with Regulations (Reglugerðir) across different parts of the monorepo.
 
-Some utilities contained within may have more general application, though they are currently exclusively utilized by Regulations-related sections of the monorepo. These utilities may be relocated to other libraries in the future. Refactoring will be addressed as needed.
+Some of the utilities contained herein may be more generally applicable, for sure, but they're currently exclusively used by Regulations-related parts of the monorepo.
 
-## Running Unit Tests
+Those bits may later move into other libs. Den tid, den refactoring.
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
-```
+## Running unit tests
 
-nx test regulations
-
-```
-
-```
+Run `nx test regulations` to execute the unit tests via [Jest](https://jestjs.io).

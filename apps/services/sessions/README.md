@@ -1,29 +1,27 @@
-````markdown
 # Sessions
 
 REST API to store and list user sessions from our Identity Server.
 
 ## Quickstart
 
-To start the service locally, run the following commands:
+To start the service locally, simply run these two commands:
 
-```bash
+```
 yarn dev-init services-sessions
 yarn start services-sessions
 ```
-````
 
-## Getting Started
+## Getting started
 
-### Local Environment Setup
+### Local env setup
 
-This service requires a PostgreSQL database and a Redis cluster. Ensure you have Docker installed, then start the services:
+This service depends on Postgres database and a redis cluster. So first we need to start it, make sure you have docker:
 
 ```bash
 yarn dev-services services-sessions
 ```
 
-Next, run the database migrations:
+Then run the db migrations:
 
 ```bash
 yarn nx run services-sessions:migrate
@@ -31,21 +29,21 @@ yarn nx run services-sessions:migrate
 
 ### API
 
-You can serve the service API locally by executing:
+You can serve this service api locally by running:
 
 ```bash
 yarn start services-sessions
 ```
 
-Once the service is running, the OpenAPI specifications will be accessible at:
+Api open api specs will now be accessible at
 
-```text
+```bash
 http://localhost:3333/swagger
 ```
 
 ### Worker
 
-Start the worker locally with the following command:
+You can start the worker locally by running:
 
 ```bash
 PORT=3343 yarn nx run services-sessions:worker
@@ -53,21 +51,17 @@ PORT=3343 yarn nx run services-sessions:worker
 
 ## Contribute
 
-Please review our [documentation](https://docs.devland.is) to understand the repository before contributing.
+Please read our [docs](https://docs.devland.is) to learn about the repository before getting started.
 
-### Add Database Migration
+### Add DB migration
 
-To update the database, create a new migration file using the command:
+To make updates to the database you need to create a new migration file. To do this run the following command:
 
 ```bash
 yarn nx run services-sessions:migration-create -- --name <migration-name>
 ```
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
 - [Fuglar](https://github.com/orgs/island-is/teams/fuglar/members)
-
-```
-
-```

@@ -1,33 +1,25 @@
-````markdown
 # Vehicles Mileage Client
 
 This library was generated with [Nx](https://nx.dev).
 
-## Overview
+## About
 
-The Vehicles Mileage Client library provides an interface to interact with Samgöngustofa's Vehicle Mileage Usage API. The client is automatically generated from an OpenAPI document provided in the x-road ecosystem.
+This library implements a client to use Samgöngustofa's Vehicle mileage usage client
 
-## Regenerating the Client
+The client is generated from a copy of the openApi document provided in x-road.
 
-To regenerate the client using the configuration specified in `clientConfig.json`, execute the following command:
+### Regenerating the client:
+
+This regenerates the client from clientConfig.json file.
 
 ```sh
 yarn nx run clients-vehicles-mileage:codegen/backend-client
 ```
-````
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
-- [Hugsmiðjan](https://github.com/orgs/island-is/teams/hugsmidjan)
+- [Hugsmiðjan ](https://github.com/orgs/island-is/teams/hugsmidjan)
 
-## Running Unit Tests
+## Running unit tests
 
-To run the unit tests, execute the following command using [Jest](https://jestjs.io):
-
-```sh
-nx test clients-vehicles-mileage
-```
-
-```
-
-```
+Run `nx test clients-vehicles-mileage` to execute the unit tests via [Jest](https://jestjs.io).

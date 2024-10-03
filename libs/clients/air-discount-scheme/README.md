@@ -1,43 +1,35 @@
-````markdown
 # Air Discount Scheme Client
 
-This client interacts with the Air Discount Scheme Backend. It exposes certain private methods intended for internal or machine client use.
+This client relies on the Air Discount Scheme Backend.
+This client exposes some private methods for said backend and is intended for internal or machine client use.
 
-To generate the client, run the following command:
+To generate the client run
 
 ```bash
 yarn nx run clients-air-discount-scheme:codegen/backend-client
 ```
-````
 
-## Simple Usage
+## Simple usage
 
-In your module, set up the imports as follows:
+Then in your module you can set up the imports
 
 ```ts
-// your.module.ts
+//your.module.ts
 import { AirDiscountSchemeClientModule } from '@island.is/clients/air-discount-scheme'
 
 @Module({
   providers: [YourService],
   imports: [AirDiscountSchemeClientModule],
 })
-export class YourModule {}
 ```
 
-In your service, inject the API:
-
 ```ts
-// your.service.ts
+//your.service.ts
 import { UsersApi as AirDiscountSchemeApi } from '@island.is/clients/air-discount-scheme'
 
 export class YourService {
-  constructor(private readonly airDiscountSchemeApi: AirDiscountSchemeApi) {}
+  constructor(private airDiscountSchemeApi: AirDiscountSchemeApi) {}
 
-  // Define your methods here
+  // your methods here
 }
-```
-
-```
-
 ```

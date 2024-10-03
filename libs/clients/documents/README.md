@@ -2,14 +2,16 @@
 
 ## About
 
-This library implements a client for interacting with Documents APIs.
+This library implements a client to use Documents APIs
 
-### Importing into Other NestJS Modules
+### Import into other NestJS modules
 
-To add this service to your module imports, use the following:
+Add the service to your module imports:
 
 ```typescript
-import { DocumentsClientModule } from '@island.is/clients/documents'
+import {
+  DocumentsClientModule,
+} from '@island.is/clients/documents'
 
 @Module({
   imports: [
@@ -21,25 +23,26 @@ import { DocumentsClientModule } from '@island.is/clients/documents'
     }),
   ],
 })
-export class YourModule {}
+
 ```
 
-You will then have access to DocumentsClient APIs:
+Then you'll have access to DocumentClient APIs:
 
 ```typescript
 import { DocumentClient } from '@island.is/clients/documents'
 
 @Injectable()
 export class SomeService {
-  constructor(
+   constructor(
     @Inject(DocumentClient)
     private readonly documentClient: DocumentClient,
   ) {}
 
-  // ....
+    // ....
+  }
 }
 ```
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
 - [Norda](https://github.com/orgs/island-is/teams/norda/members)

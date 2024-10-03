@@ -2,18 +2,10 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+Run `nx test clients-regulations-admin` to execute the unit tests via [Jest](https://jestjs.io).
 
-```bash
-nx test clients-regulations-admin
-```
+## Generate client
 
-## Generate Client
-
-To generate the backend client, execute the following command:
-
-```bash
-yarn nx run clients-regulations-admin:codegen/backend-client
-```
+Run `yarn nx run clients-regulations-admin:codegen/backend-client`

@@ -1,17 +1,5 @@
-````markdown
 # Service Portal Signature Collection
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for the Service Portal Signature Collection, use the following command:
-
-```bash
-nx test service-portal-signature-collection
-```
-````
-
-The tests are executed using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
-
-```
-
-```
+Run `nx test service-portal-signature-collection` to execute the unit tests via [Jest](https://jestjs.io).

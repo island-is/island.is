@@ -1,7 +1,7 @@
 # Family Matters Applications
 
-This directory contains all family matter applications, developed for the County Magistrate of Iceland by the Kolibri team.
+This is a folder holding all family matter applications. Created for the County Magistrate of Iceland by Kolibri.
 
-## Code Owners and Maintainers
+## Code owners and maintainers
 
-- The Kolibri Modern Family team. Visit their GitHub [here](https://github.com/orgs/island-is/teams/kolibri-modern-family).
+- [Kolibri](https://github.com/orgs/island-is/teams/kolibri-modern-family)

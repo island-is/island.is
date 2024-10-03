@@ -1,19 +1,7 @@
-````markdown
-# API Domains: Form System
+# api/domains/form-system
 
-This library was generated using [Nx](https://nx.dev), a smart and extensible build system.
+This library was generated with [Nx](https://nx.dev).
 
-## Running Unit Tests
+## Running unit tests
 
-To execute the unit tests for this library, use the following command:
-
-```bash
-nx test api/domains/form-system
-```
-````
-
-This will run the tests with [Jest](https://jestjs.io), a delightful JavaScript testing framework.
-
-```
-
-```
+Run `nx test api/domains/form-system` to execute the unit tests via [Jest](https://jestjs.io).
