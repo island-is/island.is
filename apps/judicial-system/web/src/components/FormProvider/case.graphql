@@ -34,6 +34,8 @@ query Case($input: CaseQueryInput!) {
         servedBy
         comment
         defenderNationalId
+        caseId
+        subpoenaId
       }
     }
     defenderName
