@@ -351,4 +351,18 @@ export class SignatureCollectionAdminClientService {
       return {} as AreaSummaryReport
     }
   }
+
+  async lockList(auth: Auth, listId: string): Promise<Success> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelalistiIDLockListPatch({
+        iD: parseInt(listId, 10),
+      })
+      return { success: res.listaLokad ?? false }
+    } catch {
+      return { success: false }
+    }
+  }
 }

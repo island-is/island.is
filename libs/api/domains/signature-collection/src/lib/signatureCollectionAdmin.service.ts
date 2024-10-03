@@ -22,7 +22,10 @@ import { SignatureCollectionSlug } from './models/slug.model'
 import { SignatureCollectionListStatus } from './models/status.model'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
-import { SignatureCollectionAreaInput } from './dto'
+import {
+  SignatureCollectionAreaInput,
+  SignatureCollectionListIdInput,
+} from './dto'
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
 import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
 
@@ -207,6 +210,16 @@ export class SignatureCollectionAdminService {
       user,
       input.collectionId,
       input.areaId,
+    )
+  }
+
+  async lockList(
+    input: SignatureCollectionListIdInput,
+    user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.lockList(
+      user,
+      input.listId,
     )
   }
 }
