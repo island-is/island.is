@@ -23,6 +23,10 @@ import {
   AdminApi,
 } from './apis'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
+import {
+  AreaSummaryReport,
+  mapAreaSummaryReport,
+} from './types/areaSummaryReport.dto'
 
 type Api =
   | AdminListApi
@@ -324,6 +328,62 @@ export class SignatureCollectionAdminClientService {
         blsNr: pageNumber,
       })
       return { success: res.bladsidaNr === pageNumber }
+    } catch {
+      return { success: false }
+    }
+  }
+
+  async getAreaSummaryReport(
+    auth: Auth,
+    collectionId: string,
+    areaId: string,
+  ): Promise<AreaSummaryReport> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelasofnunIDSvaediInfoSvaediIDGet({
+        iD: parseInt(collectionId, 10),
+        svaediID: parseInt(areaId, 10),
+      })
+      return mapAreaSummaryReport(res)
+    } catch {
+      return {} as AreaSummaryReport
+    }
+  }
+
+  async signatureLookup(
+    auth: Auth,
+    collectionId: string,
+    nationalId: string,
+  ): Promise<Signature[]> {
+    const lists = await this.getLists({ collectionId }, auth)
+    try {
+      const res = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelasofnunIDComparePost({
+        iD: parseInt(collectionId, 10),
+        requestBody: [nationalId],
+      })
+      return res.map(mapSignature).map((s) => ({
+        ...s,
+        listTitle: lists.find((l) => l.id === s.listId)?.title,
+      }))
+    } catch {
+      return []
+    }
+  }
+
+  async lockList(auth: Auth, listId: string): Promise<Success> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelalistiIDLockListPatch({
+        iD: parseInt(listId, 10),
+      })
+      return { success: res.listaLokad ?? false }
     } catch {
       return { success: false }
     }
