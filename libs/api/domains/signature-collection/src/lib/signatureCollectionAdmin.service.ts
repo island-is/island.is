@@ -22,8 +22,9 @@ import { SignatureCollectionSlug } from './models/slug.model'
 import { SignatureCollectionListStatus } from './models/status.model'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
-import { SignatureCollectionNationalIdInput } from './dto'
 import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
+import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
+import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
 
 @Injectable()
 export class SignatureCollectionAdminService {
@@ -206,6 +207,17 @@ export class SignatureCollectionAdminService {
       user,
       input.collectionId,
       input.nationalId,
+    )
+  }
+
+  async getAreaSummaryReport(
+    input: SignatureCollectionAreaSummaryReportInput,
+    user: User,
+  ): Promise<SignatureCollectionAreaSummaryReport> {
+    return await this.signatureCollectionClientService.getAreaSummaryReport(
+      user,
+      input.collectionId,
+      input.areaId,
     )
   }
 }
