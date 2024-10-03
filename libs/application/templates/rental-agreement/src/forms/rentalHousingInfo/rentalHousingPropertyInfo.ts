@@ -89,10 +89,10 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
       id: 'registerPropertyInfoSummary',
       title: '',
       condition: (answers) =>
-        answers.propertyNumber !== '' &&
-        answers.propertyUnitId !== '' &&
-        answers.propertyAddress !== '' &&
-        answers.propertySize !== '' &&
+        answers.registerPropertyInfoPropertyId !== '' &&
+        answers.registerPropertyInfoUnitId !== '' &&
+        answers.registerPropertyInfoAddress !== '' &&
+        answers.registerPropertyInfoSize !== '' &&
         answers.propertyNumOfRooms !== '',
       children: [
         buildStaticTableField({
@@ -108,18 +108,20 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           rows({ answers }) {
             return [
               [
-                answers.propertyNumber ? `F${answers.propertyNumber}` : '',
-                answers.propertyAddress
-                  ? `${answers.propertyAddress.toString()}, ${answers.propertyMunicipality.toString()}`
+                answers.registerPropertyInfoPropertyId
+                  ? `F${answers.registerPropertyInfoPropertyId}`
                   : '',
-                answers.propertyUnit
-                  ? `${answers.propertyUnit.toString()}`
+                answers.registerPropertyInfoAddress
+                  ? `${answers.registerPropertyInfoAddress.toString()}, ${answers.registerPropertyInfoMunicipality.toString()}`
                   : '',
-                answers.propertySize
-                  ? `${answers.propertySize.toString()} m²`
+                answers.registerPropertyInfoUnitId
+                  ? `${answers.registerPropertyInfoUnitId.toString()}`
                   : '',
-                answers.propertyNumOfRooms
-                  ? `${answers.propertyNumOfRooms.toString()}`
+                answers.registerPropertyInfoSize
+                  ? `${answers.registerPropertyInfoSize.toString()} m²`
+                  : '',
+                answers.registerPropertyInfoNumOfRooms
+                  ? `${answers.registerPropertyInfoNumOfRooms.toString()}`
                   : '',
               ],
             ]
