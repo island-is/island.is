@@ -19,6 +19,4 @@ export type OutgoingDelegation = Extract<
 export type AuthCustomDelegation =
   | AuthCustomDelegationIncoming
   | AuthCustomDelegationOutgoing
-| OutgoingDelegation
-
-
+  | OutgoingDelegation

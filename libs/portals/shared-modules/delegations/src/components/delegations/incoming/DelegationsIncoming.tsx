@@ -71,22 +71,24 @@ export const DelegationsIncoming = () => {
                   }
                   delegation={delegation}
                   onDelete={
-                    isCustom ?
-                    (delegation) =>
-                      delegation.type === AuthDelegationType.Custom &&
-                      (() => {
-                        setDelegationDelete(
-                          delegation as AuthCustomDelegationIncoming,
-                        )
-                      }) : undefined
+                    isCustom
+                      ? (delegation) =>
+                          delegation.type === AuthDelegationType.Custom &&
+                          (() => {
+                            setDelegationDelete(
+                              delegation as AuthCustomDelegationIncoming,
+                            )
+                          })
+                      : undefined
                   }
                   onView={
-                    (isCustom || isGeneralMandate) ?
-                    (delegation) => {
-                      setDelegationView(
-                        delegation as AuthCustomDelegationIncoming,
-                      )
-                    } : undefined
+                    isCustom || isGeneralMandate
+                      ? (delegation) => {
+                          setDelegationView(
+                            delegation as AuthCustomDelegationIncoming,
+                          )
+                        }
+                      : undefined
                   }
                   variant="incoming"
                 />

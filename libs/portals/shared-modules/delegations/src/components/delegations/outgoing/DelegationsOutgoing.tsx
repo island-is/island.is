@@ -122,34 +122,38 @@ export const DelegationsOutgoing = () => {
                       key={delegation.id}
                       delegation={delegation}
                       onDelete={
-                        !isGeneralMandate ?
-                        (delegation) => {
-                          setDelegation(
-                            delegation as AuthCustomDelegationOutgoing,
-                          )
-                        } : undefined
+                        !isGeneralMandate
+                          ? (delegation) => {
+                              setDelegation(
+                                delegation as AuthCustomDelegationOutgoing,
+                              )
+                            }
+                          : undefined
                       }
                       onEdit={
-                        !isGeneralMandate ?
-                        (delegation) =>
-                          navigate(
-                            `${DelegationPaths.Delegations}/${delegation.id}`,
-                          ) : undefined
+                        !isGeneralMandate
+                          ? (delegation) =>
+                              navigate(
+                                `${DelegationPaths.Delegations}/${delegation.id}`,
+                              )
+                          : undefined
                       }
                       onRenew={
-                        !isGeneralMandate ?
-                        ((delegation) =>
-                          navigate(
-                            `${DelegationPaths.Delegations}/${delegation.id}`,
-                          )) : undefined
+                        !isGeneralMandate
+                          ? (delegation) =>
+                              navigate(
+                                `${DelegationPaths.Delegations}/${delegation.id}`,
+                              )
+                          : undefined
                       }
                       onView={
-                        isGeneralMandate ?
-                        (delegation) => {
-                          setDelegationView(
-                            delegation as AuthCustomDelegationIncoming,
-                          )
-                        } : undefined
+                        isGeneralMandate
+                          ? (delegation) => {
+                              setDelegationView(
+                                delegation as AuthCustomDelegationIncoming,
+                              )
+                            }
+                          : undefined
                       }
                       variant="outgoing"
                     />
