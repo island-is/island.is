@@ -1,7 +1,7 @@
 ```markdown
 # Island UI
 
-Island UI is a component library designed to offer a consistent UI/UX experience for developers. This library was generated using [Nx](https://nx.dev), a smart, fast, and extensible build system.
+Island UI is a component library designed to provide a consistent UI/UX experience for developers. This library was generated using [Nx](https://nx.dev), which is a smart, fast, and extensible build system.
 
 ## Running Unit Tests
 
