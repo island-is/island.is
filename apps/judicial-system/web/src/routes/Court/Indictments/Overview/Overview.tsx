@@ -94,6 +94,14 @@ const mapServiceStatusMessages = (
   }
 }
 
+const renderError = (formatMessage: IntlShape['formatMessage']) => (
+  <AlertMessage
+    type="error"
+    title={formatMessage(errors.getSubpoenaStatusTitle)}
+    message={formatMessage(errors.getSubpoenaStatus)}
+  />
+)
+
 interface ServiceAnnouncement {
   subpoena: Subpoena
   defendantName?: string | null
@@ -112,18 +120,19 @@ const ServiceAnnouncement: FC<ServiceAnnouncement> = (props) => {
     subpoena.serviceStatus === ServiceStatus.DEFENDER,
   )
 
+  // Use data from RLS but fallback to local data
+  const subpoenaServiceStatus = subpoenaStatusError
+    ? subpoena.serviceStatus
+    : subpoenaStatus?.subpoenaStatus?.serviceStatus
+
+  if (!subpoenaServiceStatus && !subpoenaStatusLoading) {
+    return <Box marginBottom={2}>{renderError(formatMessage)}</Box>
+  }
+
   const title = mapServiceStatusTitle(subpoena.serviceStatus)
   const messages = mapServiceStatusMessages(subpoena, formatMessage, lawyer)
 
-  return !defendantName ? null : subpoenaStatusError ? (
-    <Box marginBottom={2}>
-      <AlertMessage
-        type="error"
-        title={formatMessage(errors.getSubpoenaStatusTitle)}
-        message={formatMessage(errors.getSubpoenaStatus)}
-      />
-    </Box>
-  ) : subpoenaStatusLoading ? (
+  return !defendantName ? null : subpoenaStatusLoading ? (
     <Box display="flex" justifyContent="center" paddingY={5}>
       <LoadingDots />
     </Box>
