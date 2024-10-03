@@ -34,8 +34,8 @@ export class TeamMember {
   @Field({ nullable: true })
   phone?: string
 
-  @CacheField(() => Image)
-  image!: Image
+  @CacheField(() => Image, { nullable: true })
+  image!: Image | null
 
   @CacheField(() => Image, { nullable: true })
   imageOnSelect?: Image | null
@@ -89,7 +89,7 @@ export const mapTeamMember = ({ fields, sys }: ITeamMember): TeamMember => {
     id: sys.id,
     name: fields.name ?? '',
     title: fields.title ?? '',
-    image: mapImage(fields.mynd),
+    image: fields.mynd ? mapImage(fields.mynd) : null,
     imageOnSelect: fields.imageOnSelect ? mapImage(fields.imageOnSelect) : null,
     filterTags,
     intro: fields.intro ? mapDocument(fields.intro, `${sys.id}:intro`) : [],

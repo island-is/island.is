@@ -180,6 +180,26 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/update-app', async (passProps) => {
+    Navigation.showModal({
+      stack: {
+        options: {
+          modal: {
+            swipeToDismiss: false,
+          },
+        },
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.UpdateAppScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
   addRoute('/settings', async (passProps) => {
     Navigation.showModal({
       stack: {

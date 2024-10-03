@@ -100,20 +100,16 @@ const UpdateSkilavottordVehicleInfoMutation = gql`
 `
 
 const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
-  const [reloadFlag, setReloadFlag] = useState(false)
+  const [plateCount, setPlateCount] = useState<number>(2)
+
+  const handlePlateCountChange = (value: number) => {
+    setPlateCount(value)
+  }
+
   const [
     vehicleReadyToDeregisteredQueryCompleted,
     setVehicleReadyToDeregisteredQueryCompleted,
   ] = useState(false)
-
-  // Update reloadFlag to trigger the child component to reload
-  const triggerReload = () => {
-    setReloadFlag(true)
-  }
-
-  useEffect(() => {
-    triggerReload()
-  }, [setReloadFlag])
 
   const methods = useForm({
     mode: 'onChange',
@@ -132,19 +128,19 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
 
   const mileageValue = watch('mileage')
   const plateLost = watch('plateLost')
-  const plateCountValue = watch('plateCount')
 
   const { data, loading } = useQuery<Query>(
     SkilavottordVehicleReadyToDeregisteredQuery,
     {
       variables: { permno: id },
-      onCompleted: (data) => {
-        if (data && data.skilavottordVehicleReadyToDeregistered) {
-          setVehicleReadyToDeregisteredQueryCompleted(true)
-        }
-      },
     },
   )
+
+  useEffect(() => {
+    if (data && data.skilavottordVehicleReadyToDeregistered) {
+      setVehicleReadyToDeregisteredQueryCompleted(true)
+    }
+  }, [data])
 
   const vehicle = data?.skilavottordVehicleReadyToDeregistered
 
@@ -164,6 +160,17 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
       : OutInUsage.IN
 
   const useStatus = vehicleTrafficData?.useStatus || '01'
+
+  useEffect(() => {
+    if (vehicleTrafficData) {
+      if (
+        outInStatus === OutInUsage.OUT &&
+        useStatus !== UseStatus.OUT_TICKET
+      ) {
+        setPlateCount(0)
+      }
+    }
+  }, [vehicleTrafficData])
 
   const [
     setRecyclingRequest,
@@ -205,17 +212,11 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
 
   const handleConfirm = () => {
     let newMileage = mileageValue
-    let plateCount = plateCountValue
 
     if (mileageValue !== undefined) {
       newMileage = +mileageValue.trim().replace(/\./g, '')
     } else {
       newMileage = vehicle?.mileage
-    }
-
-    // If vehicle is out of use and not using ticket, set plate count to 0
-    if (outInStatus === OutInUsage.OUT && useStatus !== UseStatus.OUT_TICKET) {
-      plateCount = 0
     }
 
     // Update vehicle table with latests information
@@ -301,7 +302,9 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
                 mileage={vehicle.mileage || 0}
                 outInStatus={outInStatus}
                 useStatus={useStatus || ''}
-                reloadFlag={reloadFlag}
+                plateCount={plateCount}
+                onPlateCountChange={handlePlateCountChange}
+                isLoading={loadingTraffic}
               />
             </FormProvider>
           </Stack>
@@ -344,7 +347,9 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
             </Button>
           </Hidden>
           {vehicle && (
-            <Button onClick={handleConfirm}>{t.buttons.confirm}</Button>
+            <Button onClick={handleConfirm} disabled={loadingTraffic}>
+              {t.buttons.confirm}
+            </Button>
           )}
         </Box>
       </Stack>
