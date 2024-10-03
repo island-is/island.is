@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  HttpStatus,
   Inject,
   Injectable,
 } from '@nestjs/common'
@@ -39,7 +38,8 @@ import {
   NEW_DELEGATION_FROM_TEMPLATE_ID,
   NEW_DELEGATION_TEMPLATE_ID,
 } from '../constants/hnipp'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { NotificationsApi } from '../../user-notification'
 import { Features } from '@island.is/feature-flags'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
