@@ -68,11 +68,15 @@ export const ApplicationsPreview = ({
             />
           }
           progress={
-            type !== 'incomplete'
-              ? undefined
-              : application.actionCard?.draftFinishedSteps ?? 0
+            type === 'incomplete'
+              ? application.actionCard?.draftFinishedSteps ?? 0
+              : undefined
           }
-          progressTotalSteps={application.actionCard?.draftTotalSteps ?? 0}
+          progressTotalSteps={
+            type === 'incomplete'
+              ? application.actionCard?.draftTotalSteps ?? 0
+              : undefined
+          }
           progressMessage={intl.formatMessage(
             {
               id: 'applicationStatusCard.draftProgress',
@@ -83,7 +87,7 @@ export const ApplicationsPreview = ({
             },
           )}
           progressContainerWidth={
-            slider ? screenWidth - theme.spacing[2] * 6 : undefined
+            slider && count > 1 ? screenWidth - theme.spacing[2] * 6 : undefined
           }
           description={
             type !== 'incomplete'

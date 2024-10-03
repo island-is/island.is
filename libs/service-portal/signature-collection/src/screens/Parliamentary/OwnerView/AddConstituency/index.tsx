@@ -1,25 +1,62 @@
 import { useState } from 'react'
-import { Box, Button, Text, Checkbox } from '@island.is/island-ui/core'
+import { Box, Button, Text, Checkbox, toast } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../../lib/messages'
-import { constituencies } from '../../../../lib/constants'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import {
+  SignatureCollection,
+  SignatureCollectionArea,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
+import { addConstituency } from '../../../../hooks/graphql/mutations'
+import { useMutation } from '@apollo/client'
 
 const AddConstituencyModal = ({
   lists,
+  collection,
+  candidateId,
+  refetch,
 }: {
   lists: SignatureCollectionList[]
+  collection: SignatureCollection
+  candidateId: string
+  refetch: () => void
 }) => {
   const { formatMessage } = useLocale()
-  const listTitles = lists.map((l) => l.title)
-  const filteredConstituencies = constituencies.filter(
-    (c) => !listTitles.some((title) => title.includes(c)),
-  )
+  const currentConstituencies = lists.map(
+    (l) => l.area,
+  ) as SignatureCollectionArea[]
+  const filteredConstituencies = collection.areas.filter(
+    (cc) => !currentConstituencies.some((c) => cc.name === c.name),
+  ) as SignatureCollectionArea[]
+
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [selectedConstituencies, setSelectedConstituencies] = useState<
     string[]
   >([])
+
+  const [addNewConstituency, { loading }] = useMutation(addConstituency, {
+    onCompleted: () => {
+      setModalIsOpen(false)
+      refetch()
+      toast.success(formatMessage(m.addConstituencySuccess))
+    },
+    onError: () => {
+      toast.error(formatMessage(m.addConstituencyError))
+    },
+  })
+
+  const onAddConstituency = async () => {
+    addNewConstituency({
+      variables: {
+        inputAdd: {
+          collectionId: collection?.id,
+          areaIds: selectedConstituencies,
+          candidateId: candidateId,
+        },
+      },
+    })
+  }
 
   return (
     <Box>
@@ -50,22 +87,24 @@ const AddConstituencyModal = ({
             {formatMessage(m.addConstituencyDescription)}
           </Text>
           {filteredConstituencies.map((constituency) => (
-            <Box key={constituency} marginBottom={3}>
+            <Box key={constituency.id} marginBottom={3}>
               <Checkbox
                 large
                 backgroundColor="blue"
-                label={constituency}
-                value={constituency}
-                checked={selectedConstituencies.includes(constituency)}
+                label={constituency.name}
+                value={constituency.id}
+                checked={selectedConstituencies.includes(constituency.id)}
                 onChange={(e) => {
                   if (e.target.checked) {
                     setSelectedConstituencies([
                       ...selectedConstituencies,
-                      constituency,
+                      constituency.id,
                     ])
                   } else {
                     setSelectedConstituencies(
-                      selectedConstituencies.filter((c) => c !== constituency),
+                      selectedConstituencies.filter(
+                        (c) => c !== constituency.id,
+                      ),
                     )
                   }
                 }}
@@ -73,7 +112,9 @@ const AddConstituencyModal = ({
             </Box>
           ))}
           <Box display="flex" justifyContent="center" marginTop={7}>
-            <Button>{formatMessage(m.add)}</Button>
+            <Button onClick={() => onAddConstituency()} loading={loading}>
+              {formatMessage(m.add)}
+            </Button>
           </Box>
         </Box>
       </Modal>

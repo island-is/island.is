@@ -5,6 +5,7 @@ import { MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT } from '../../lib/constants'
 import set from 'lodash/set'
 import * as styles from './Signatures.css'
 import { getRegularAnswers } from '../../lib/utils'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -20,6 +21,8 @@ export const RemoveRegularMember = ({
   const { updateApplication, application, isLoading } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const onRemoveMember = () => {
     const { currentAnswers, signature } = getRegularAnswers(application.answers)
@@ -44,6 +47,8 @@ export const RemoveRegularMember = ({
           InputFields.signature.regular,
           updatedRegularSignature,
         )
+
+        setValue(InputFields.signature.regular, updatedRegularSignature)
 
         updateApplication(updatedAnswers)
       }

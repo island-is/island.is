@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { AdminPortalScope, ApiScope, AuthScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
-import { DelegationType } from './types/delegationType'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const customScopeRuleSchema = z.array(
   z.object({
@@ -21,7 +21,7 @@ const customScopeRuleSchema = z.array(
       z
         .string()
         .refine((val) =>
-          Object.values(DelegationType).includes(val as DelegationType),
+          Object.values(AuthDelegationType).includes(val as AuthDelegationType),
         ),
     ),
   }),
@@ -42,39 +42,39 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
     customScopeRules: env.optionalJSON('DELEGATION_CUSTOM_SCOPE_RULES') ?? [
       {
         scopeName: AuthScope.delegations,
-        onlyForDelegationType: [DelegationType.ProcurationHolder],
+        onlyForDelegationType: [AuthDelegationType.ProcurationHolder],
       },
       {
         scopeName: AdminPortalScope.delegations,
-        onlyForDelegationType: [DelegationType.ProcurationHolder],
+        onlyForDelegationType: [AuthDelegationType.ProcurationHolder],
       },
       {
         scopeName: ApiScope.samradsgatt,
         onlyForDelegationType: [
-          DelegationType.ProcurationHolder,
-          DelegationType.Custom,
+          AuthDelegationType.ProcurationHolder,
+          AuthDelegationType.Custom,
         ],
       },
       {
         scopeName: ApiScope.financeSalary,
         onlyForDelegationType: [
-          DelegationType.ProcurationHolder,
-          DelegationType.Custom,
+          AuthDelegationType.ProcurationHolder,
+          AuthDelegationType.Custom,
         ],
       },
       {
         scopeName: ApiScope.company,
         onlyForDelegationType: [
-          DelegationType.ProcurationHolder,
-          DelegationType.Custom,
+          AuthDelegationType.ProcurationHolder,
+          AuthDelegationType.Custom,
         ],
       },
       {
         // This scope is not in use in our repo hence plain string instead of enum.
         scopeName: '@akureyri.is/service-portal',
         onlyForDelegationType: [
-          DelegationType.ProcurationHolder,
-          DelegationType.Custom,
+          AuthDelegationType.ProcurationHolder,
+          AuthDelegationType.Custom,
         ],
       },
       {
@@ -82,16 +82,16 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
         // Todo: add this to the scope migration of the branch
         scopeName: '@island.is/applications/orkusjodur',
         onlyForDelegationType: [
-          DelegationType.ProcurationHolder,
-          DelegationType.Custom,
+          AuthDelegationType.ProcurationHolder,
+          AuthDelegationType.Custom,
         ],
       },
       {
         // This scope is not in use in our repo hence plain string instead of enum.
         scopeName: '@skagafjordur.is/ibuagatt',
         onlyForDelegationType: [
-          DelegationType.ProcurationHolder,
-          DelegationType.Custom,
+          AuthDelegationType.ProcurationHolder,
+          AuthDelegationType.Custom,
         ],
       },
     ],

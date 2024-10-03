@@ -1,0 +1,18 @@
+query SignatureCollectionAreaSummaryReport(
+  $input: SignatureCollectionAreaSummaryReportInput!
+) {
+  signatureCollectionAreaSummaryReport(input: $input) {
+    id
+    name
+    min
+    max
+    lists {
+      candidateName
+      listName
+      partyBallotLetter
+      nrOfSignatures
+      nrOfDigitalSignatures
+      nrOfPaperSignatures
+    }
+  }
+}
