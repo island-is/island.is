@@ -1,7 +1,16 @@
-# air-discount-scheme-types
+```markdown
+# Air Discount Scheme Types
 
-This library was generated with [Nx](https://nx.dev).
+This library is part of the Air Discount Scheme application, generated using the [Nx](https://nx.dev) tool. It is designed to manage and handle various data types related to the Air Discount Scheme.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `ng test air-discount-scheme-types` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, run the following command:
+
+```bash
+ng test air-discount-scheme-types
+```
+
+This command uses [Jest](https://jestjs.io) as the testing framework. Make sure that all necessary dependencies are installed and configured correctly before executing the tests.
+
+```
