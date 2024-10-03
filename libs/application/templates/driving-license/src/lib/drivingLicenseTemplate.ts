@@ -35,6 +35,7 @@ import {
   ApiActions,
   Pickup,
   CHARGE_ITEM_CODES,
+  DELIVERY_FEE,
 } from './constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -58,12 +59,12 @@ const getCodes = (application: Application) => {
   const targetCode =
     typeof applicationFor === 'string'
       ? CHARGE_ITEM_CODES[applicationFor]
-      : CHARGE_ITEM_CODES.B_FULL
+      : CHARGE_ITEM_CODES[B_FULL]
 
   codes.push(targetCode)
 
   if (pickup === Pickup.POST) {
-    codes.push(CHARGE_ITEM_CODES.DELIVERY_FEE)
+    codes.push(CHARGE_ITEM_CODES[DELIVERY_FEE])
   }
 
   if (!targetCode) {

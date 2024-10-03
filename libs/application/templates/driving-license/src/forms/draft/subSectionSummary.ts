@@ -14,10 +14,12 @@ import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
 import {
+  B_FULL,
   B_FULL_RENEWAL_65,
   B_TEMP,
   BE,
   CHARGE_ITEM_CODES,
+  DELIVERY_FEE,
   Pickup,
   YES,
 } from '../../lib/constants'
@@ -175,14 +177,14 @@ export const subSectionSummary = buildSubSection({
             const targetCode =
               typeof application.answers.applicationFor === 'string'
                 ? CHARGE_ITEM_CODES[application.answers.applicationFor]
-                : CHARGE_ITEM_CODES.B_FULL
+                : CHARGE_ITEM_CODES[B_FULL]
 
             let pickupItem = null
 
             if (application.answers.pickup === Pickup.POST) {
               pickupItem = items.find(
                 ({ chargeItemCode }) =>
-                  chargeItemCode === CHARGE_ITEM_CODES.DELIVERY_FEE,
+                  chargeItemCode === CHARGE_ITEM_CODES[DELIVERY_FEE],
               )
             }
 
