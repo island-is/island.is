@@ -1,7 +1,15 @@
-# api-catalogue-types
+```markdown
+# API Catalogue Types
 
-This library was generated with [Nx](https://nx.dev).
+This library is a component of the Nx workspace and manages API catalogue types.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `ng test api-catalogue-types` to execute the unit tests via [Jest](https://jestjs.io).
+To run the unit tests for this library, use the following command:
+
+```bash
+ng test api-catalogue-types
+```
+
+This command will execute the unit tests utilizing [Jest](https://jestjs.io), a delightful JavaScript testing framework focused on simplicity.
+```

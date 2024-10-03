@@ -1,5 +1,8 @@
 ```json
 {
-  "tags": ["lib:api", "scope:api"]
+  "tags": [
+    "lib:api", 
+    "scope:api"
+  ]
 }
 ```

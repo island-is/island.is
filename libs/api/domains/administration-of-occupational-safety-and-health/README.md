@@ -1,13 +1,15 @@
-# api-domains-administration-of-occupational-safety-and-health
+```markdown
+# API Domains Administration of Occupational Safety and Health
 
-This library was generated with [Nx](https://nx.dev).
+This library is a part of the workspace managed with [Nx](https://nx.dev).
 
 ## Running Unit Tests
 
-To execute the unit tests for this library, run the following command:
+To run the unit tests for this library, use the following command:
 
 ```bash
 nx test api-domains-administration-of-occupational-safety-and-health
 ```
 
-This will execute the tests using [Jest](https://jestjs.io).
+This command will execute the tests using the [Jest](https://jestjs.io) testing framework.
+```
