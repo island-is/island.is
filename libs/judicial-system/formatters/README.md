@@ -18,7 +18,7 @@ To run unit tests for the `judicial-system-formatters` library, use the command 
 yarn test judicial-system-formatters
 ```
 
-This command will execute all the unit tests defined for the library, producing a detailed report of the results.
+This command will execute all the unit tests defined for the library, providing a detailed report of the results.
 
 ## Contributing
 

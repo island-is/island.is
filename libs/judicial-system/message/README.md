@@ -5,12 +5,12 @@ This library is developed using [Nx](https://nx.dev), a smart and extensible bui
 
 ## Prerequisites
 
-Before running unit tests or any other commands, ensure you have all dependencies installed and your environment configured properly:
+Before executing unit tests or any other commands, ensure all prerequisites are met:
 
 1. Run `npm install` or `yarn install` to install all necessary dependencies.
-2. Ensure that your environment is correctly set up to use Nx and Jest by verifying their installations.
+2. Verify the installation of Nx and Jest to ensure your environment is correctly set up.
 
-**Note:** Failure to meet these prerequisites could result in unexpected behavior or test failures.
+**Note:** Not meeting these prerequisites might lead to unexpected behavior or test failures.
 
 ## Running Unit Tests
 

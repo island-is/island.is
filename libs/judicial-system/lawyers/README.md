@@ -1,15 +1,15 @@
 ```markdown
 # Judicial System Lawyers
 
-This library is a part of the judicial system framework, developed using [Nx](https://nx.dev). It is designed to streamline operations concerning legal representatives within the judicial domain.
+This library is a component of the Judicial System Framework, developed using [Nx](https://nx.dev). It is designed to streamline processes involving legal representatives within the judicial domain.
 
 ## Running Unit Tests
 
-To run the unit tests for this library, open your terminal and execute the following command:
+To execute the unit tests for this library, open your terminal and run the following command:
 
 ```bash
 nx test judicial-system-lawyers
 ```
 
-The tests utilize [Jest](https://jestjs.io), a delightful JavaScript testing framework, to verify that the components function as intended.
+The tests use [Jest](https://jestjs.io), a JavaScript testing framework, to ensure that the components operate as intended.
 ```

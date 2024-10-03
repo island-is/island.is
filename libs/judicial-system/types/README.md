@@ -1,11 +1,11 @@
 ```markdown
 # Judicial System Types
 
-The `judicial-system-types` library is generated with [Nx](https://nx.dev). This library provides type definitions and utilities related to judicial systems. It assists developers in effectively managing, manipulating, and utilizing judicial system data.
+The `judicial-system-types` library is a collection of type definitions and utilities for managing judicial systems, generated with [Nx](https://nx.dev). It helps developers efficiently handle judicial system data.
 
 ## Installation
 
-Ensure you have the Nx environment set up. Then, add `judicial-system-types` to your project dependencies:
+Ensure the Nx environment is set up. Add `judicial-system-types` to your project dependencies:
 
 ```bash
 # Using npm
@@ -17,7 +17,7 @@ yarn add judicial-system-types
 
 ## Usage
 
-After installation, import the necessary types and utilities from `judicial-system-types` in your project as shown below:
+Once installed, import necessary types and utilities from `judicial-system-types` in your project:
 
 ```typescript
 import { JudicialType, UtilityFunction } from 'judicial-system-types';
@@ -25,11 +25,11 @@ import { JudicialType, UtilityFunction } from 'judicial-system-types';
 
 ## Running Unit Tests
 
-To execute the unit tests for the `judicial-system-types` library using [Jest](https://jestjs.io), run the following command:
+To run unit tests with [Jest](https://jestjs.io) for `judicial-system-types`, use:
 
 ```bash
 npx nx test judicial-system-types
 ```
 
-This command runs all the unit tests in the library and provides results, ensuring the types and utilities function as expected.
+This command executes all unit tests and reports results, ensuring the library's functionality.
 ```
