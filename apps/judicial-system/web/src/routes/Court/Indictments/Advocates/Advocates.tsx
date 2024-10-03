@@ -72,12 +72,9 @@ const Advocates = () => {
         {hasCivilClaimants && (
           <Box component="section" marginBottom={10}>
             <SectionHeading title={formatMessage(strings.civilClaimants)} />
-            {workingCase.civilClaimants?.map((civilClaimant, index) => (
-              <Box component="section" marginBottom={5}>
-                <SelectCivilClaimantAdvocate
-                  civilClaimant={civilClaimant}
-                  key={index}
-                />
+            {workingCase.civilClaimants?.map((civilClaimant) => (
+              <Box component="section" marginBottom={5} key={civilClaimant.id}>
+                <SelectCivilClaimantAdvocate civilClaimant={civilClaimant} />
               </Box>
             ))}
           </Box>
