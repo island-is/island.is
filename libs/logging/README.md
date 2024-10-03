@@ -1,7 +1,15 @@
-# logging
+```markdown
+# Logging Library
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `ng test logging` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for the logging library, use the following command:
+
+```
+ng test logging
+```
+
+This will run the tests using the [Jest](https://jestjs.io) testing framework.
+```
