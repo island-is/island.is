@@ -1,4 +1,3 @@
-import { getValueViaPath } from '@island.is/application/core'
 import {
   AccidentNotificationAnswers,
   ReviewApprovalEnum,
@@ -9,10 +8,7 @@ import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
-import {
-  getApplicationDocumentId,
-  whiteListedErrorCodes,
-} from './accident-notification.utils'
+import { whiteListedErrorCodes } from './accident-notification.utils'
 import type { AccidentNotificationConfig } from './config'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import {
@@ -22,15 +18,20 @@ import {
 import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
 import {
   attachmentStatusToAttachmentRequests,
-  filterOutAlreadySentDocuments,
   getAddAttachmentSentDocumentHashList,
-  getApplicationAttachmentStatus,
+  getNewAttachments,
+  getReportId,
+  getReviewApplicationData,
 } from './attachments/attachment.utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
-import { applicationToAccidentReport } from './accident-notification-v2.utils'
+import {
+  applicationToAccidentReport,
+  mapAttachmentTypeToAccidentReportType,
+} from './accident-notification-v2.utils'
 import { AccidentreportsApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { MinarsidurAPIModelsMethodResponseDTO } from 'libs/clients/icelandic-health-insurance/rights-portal/gen/fetch'
 
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 
@@ -124,81 +125,80 @@ export class AccidentNotificationService extends BaseTemplateApiService {
     }
   }
 
-  async addAdditionalAttachment({ application }: TemplateApiModuleActionProps) {
-    const attachmentStatus = getApplicationAttachmentStatus(application)
-    const requests = attachmentStatusToAttachmentRequests(attachmentStatus)
+  async addAdditionalAttachment({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const reportId = getReportId(application)
 
-    const attachments = await this.attachmentProvider.getFiles(
-      requests,
+    if (!reportId) {
+      throw new Error(
+        'Villa kom upp við vistun á umsókn. Skjalanúmer fannst ekki.',
+      )
+    }
+
+    const newAttachments = await getNewAttachments(
       application,
+      this.attachmentProvider,
     )
 
-    const newAttachments = filterOutAlreadySentDocuments(
-      attachments,
-      application,
-    )
+    let successfulAttachments: Array<MinarsidurAPIModelsMethodResponseDTO> = []
 
-    const documentId = getApplicationDocumentId(application)
+    try {
+      const promises = newAttachments.map((attachment) => {
+        const attachmentType = mapAttachmentTypeToAccidentReportType(
+          attachment.attachmentType,
+        )
+        const contentType = attachment.name.split('.').pop()
 
-    // const promises = newAttachments.map((attachment) =>
-    //   this.sendAttachment(attachment, documentId),
-    // )
+        return this.accidentsReportsApiWithAuth(
+          auth,
+        ).submitAccidentReportAttachment({
+          reportId,
+          minarsidurAPIModelsAccidentReportsAccidentReportAttachmentDTO: {
+            type: attachmentType,
+            document: {
+              fileName: attachment.name,
+              contentType,
+              data: attachment.content,
+            },
+          },
+        })
+      })
 
-    // const successfulAttachments = (await Promise.all(promises)).filter(
-    //   (x) => x !== null,
-    // )
+      successfulAttachments = (await Promise.all(promises)).filter(
+        (x) => x !== null,
+      )
+    } catch (e) {
+      this.logger.error('Error adding additional attachment', e)
+      throw new Error('Villa kom upp við að bæta við viðbótarskjali.')
+    }
 
     return {
       sentDocuments: [
         ...getAddAttachmentSentDocumentHashList(application),
-        // ...successfulAttachments,
+        ...successfulAttachments,
       ],
     }
   }
 
-  /**
-   * Sends the attachment to SÍ and returns the document hash on success and null on failure
-   * @param attachment attachment to send
-   */
-  // private async sendAttachment(
-  //   attachment: AccidentNotificationAttachment,
-  //   documentId: number,
-  // ): Promise<string | null> {
-  //   try {
-  //     // await this.documentApi.documentDocumentAttachment({
-  //     //   documentAttachment: {
-  //     //     attachmentBody: attachment.content,
-  //     //     attachmentType: attachment.attachmentType,
-  //     //     title: attachment.name,
-  //     //   },
-  //     //   ihiDocumentID: documentId,
-  //     // })
-  //     return attachment.hash
-  //   } catch (e) {
-  //     this.logger.error('Error sending document to SÍ', e)
-  //     return null
-  //   }
-  // }
+  async reviewApplication({ application, auth }: TemplateApiModuleActionProps) {
+    const {
+      documentId,
+      isRepresentativeOfCompanyOrInstitute,
+      reviewApproval,
+      reviewComment,
+    } = getReviewApplicationData(application)
 
-  async reviewApplication({ application }: TemplateApiModuleActionProps) {
-    const documentId = getApplicationDocumentId(application)
-
-    const isRepresentativeOfCompanyOrInstitute =
-      utils.isRepresentativeOfCompanyOrInstitute(application.answers)
-    const reviewApproval = getValueViaPath(
-      application.answers,
-      'reviewApproval',
-    ) as ReviewApprovalEnum
-    const reviewComment =
-      getValueViaPath(application.answers, 'reviewComment') || ''
-    // await this.documentApi.documentSendConfirmation({
-    //   ihiDocumentID: documentId,
-    //   confirmationIN: {
-    //     confirmationType:
-    //       reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
-    //     confirmationParty: isRepresentativeOfCompanyOrInstitue ? 1 : 2,
-    //     objection: reviewComment as string,
-    //   },
-    // })
+    await this.accidentsReportsApiWithAuth(
+      auth,
+    ).submitAccidentReportConfirmation({
+      reportId: documentId,
+      minarsidurAPIModelsAccidentReportsAccidentReportConfirmationDTO: {
+        party: isRepresentativeOfCompanyOrInstitute ? 1 : 2,
+        accepted: reviewApproval === ReviewApprovalEnum.APPROVED,
+        comment: reviewComment,
+      },
+    })
   }
 }

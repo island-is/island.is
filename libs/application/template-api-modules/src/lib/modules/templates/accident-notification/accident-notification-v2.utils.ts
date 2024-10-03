@@ -1,4 +1,7 @@
-import { AccidentNotificationAttachment } from './types/attachments'
+import {
+  AccidentNotificationAttachment,
+  AttachmentTypeEnum,
+} from './types/attachments'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   AccidentDetailsV2,
@@ -17,7 +20,10 @@ import {
   WorkAccidentTypeEnum,
   WorkMachineV2,
 } from '@island.is/application/templates/accident-notification'
-import { YesOrNo } from '@island.is/application/types'
+import {
+  ApplicationWithAttachments,
+  YesOrNo,
+} from '@island.is/application/types'
 import {
   MinarsidurAPIModelsAccidentReportsAccidentReportDTO,
   MinarsidurAPIModelsAccidentReportsReporterDTO,
@@ -27,6 +33,7 @@ import {
   MinarsidurAPIModelsAccidentReportsClubDTO,
   MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentDTO,
   MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum,
+  MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentTypeEnum,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 
 export const applicationToAccidentReport = (
@@ -118,75 +125,6 @@ const accidentTypeToDTO = (
 
   return baseType
 }
-
-// const accidentTypeToDTO = (
-//   answers: AccidentNotificationAnswers,
-// ): { type: number; subtype?: number } => {
-//   const accidentType = getValueViaPath(
-//     answers,
-//     'accidentType.answer',
-//   ) as AccidentTypeEnum
-
-//   const baseType = accidentTypeMap[accidentType] || { type: 6 }
-
-//   if (AccidentTypeEnum.SPORTS === accidentType) {
-//     return { type: 4 }
-//   }
-
-//   if (AccidentTypeEnum.WORK === accidentType) {
-//     const workAccidentType = getValueViaPath(
-//       answers,
-//       'workAccident.type',
-//     ) as WorkAccidentTypeEnum
-
-//     let subtype = 1
-
-//     if (WorkAccidentTypeEnum.FISHERMAN === workAccidentType) {
-//       subtype = 2
-//     }
-
-//     if (WorkAccidentTypeEnum.PROFESSIONALATHLETE === workAccidentType) {
-//       subtype = 3
-//     }
-
-//     if (WorkAccidentTypeEnum.AGRICULTURE === workAccidentType) {
-//       subtype = 4
-//     }
-
-//     return { type: 6, subtype }
-//   }
-
-//   if (AccidentTypeEnum.HOMEACTIVITIES === accidentType) {
-//     return { type: 7 }
-//   }
-
-//   if (AccidentTypeEnum.RESCUEWORK === accidentType) {
-//     return { type: 8 }
-//   }
-
-//   if (AccidentTypeEnum.STUDIES === accidentType) {
-//     const studiesAccidentType = getValueViaPath(
-//       answers,
-//       'studiesAccident.type',
-//     ) as StudiesAccidentTypeEnum
-//     let subtype
-//     if (StudiesAccidentTypeEnum.INTERNSHIP === studiesAccidentType) {
-//       subtype = 5
-//     }
-
-//     if (StudiesAccidentTypeEnum.APPRENTICESHIP === studiesAccidentType) {
-//       subtype = 6
-//     }
-
-//     if (StudiesAccidentTypeEnum.VOCATIONALEDUCATION === studiesAccidentType) {
-//       subtype = 7
-//     }
-
-//     return { type: 9, subtype }
-//   }
-
-//   return baseType
-// }
 
 const locationToDTO = (answers: AccidentNotificationAnswers) => {
   const accidentLocation = getValueViaPath(
@@ -342,11 +280,11 @@ const getAtHome = (answers: AccidentNotificationAnswers) => {
 const getAtWork = (answers: AccidentNotificationAnswers) => {
   const workMachine = getValueViaPath(answers, 'workMachine') as WorkMachineV2
 
-  return workMachine?.descriptionOfMachine
-    ? {
-        machineDescription: workMachine.descriptionOfMachine,
-      }
-    : undefined
+  if (!workMachine?.descriptionOfMachine) {
+    return undefined
+  }
+
+  return { machineDescription: workMachine.descriptionOfMachine }
 }
 
 const getAtSailorWork = (answers: AccidentNotificationAnswers) => {
@@ -428,4 +366,21 @@ const getAttachments = (
   })
 
   return mappedFiles
+}
+
+export const mapAttachmentTypeToAccidentReportType = (
+  attachmentType: AttachmentTypeEnum,
+): MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentTypeEnum => {
+  switch (attachmentType) {
+    case AttachmentTypeEnum.INJURY_CERTIFICATE:
+      return MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentTypeEnum.NUMBER_1
+    case AttachmentTypeEnum.POWER_OF_ATTORNEY:
+      return MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentTypeEnum.NUMBER_2
+    case AttachmentTypeEnum.POLICE_REPORT:
+      return MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentTypeEnum.NUMBER_3
+    case AttachmentTypeEnum.ADDITIONAL_FILES:
+      return MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentTypeEnum.NUMBER_4
+    default:
+      throw new Error('Unknown attachment type')
+  }
 }
