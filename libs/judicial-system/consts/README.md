@@ -1,7 +1,7 @@
 ```markdown
 # Judicial System Constants
 
-This library was generated using [Nx](https://nx.dev).
+This library was created using [Nx](https://nx.dev), a smart, fast, and extensible build system.
 
 ## Running Unit Tests
 

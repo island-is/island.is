@@ -11,5 +11,10 @@ To execute the unit tests for the Judicial System Message library using [Jest](h
 nx test judicial-system-message
 ```
 
-Ensure that you have all dependencies installed and that your environment is correctly set up to avoid any test failures.
+**Prerequisites:**
+
+- Ensure all dependencies are installed.
+- Verify that your environment is correctly configured.
+
+Failure to meet these prerequisites could lead to test failures.
 ```

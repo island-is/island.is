@@ -1,7 +1,7 @@
 ```markdown
-# judicial-system-court-client
+# Judicial System Court Client
 
-This library is designed for integration with the Icelandic Court System, known as Auður.
+This library facilitates integration with the Icelandic Court System, known as Auður.
 
 ## Running Unit Tests
 
@@ -16,7 +16,11 @@ nx test judicial-system-court-client
 To generate the client, execute the following command:
 
 ```bash
-./node_modules/.bin/openapi-generator-cli generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/judicial-system/court-client/gen/fetch -i libs/judicial-system/court-client/src/clientConfig.json
+./node_modules/.bin/openapi-generator-cli generate \
+  -g typescript-fetch \
+  --additional-properties=typescriptThreePlus=true \
+  -o libs/judicial-system/court-client/gen/fetch \
+  -i libs/judicial-system/court-client/src/clientConfig.json
 ```
 
 ## Updating the Client
