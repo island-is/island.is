@@ -1,7 +1,9 @@
+```markdown
 # Services Auth Testing
 
-This library was generated with [Nx](https://nx.dev).
+This library is part of the [Nx](https://nx.dev) ecosystem.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test services-auth-testing` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, run `nx test services-auth-testing`. These tests are powered by [Jest](https://jestjs.io). 
+```
