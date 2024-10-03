@@ -132,6 +132,8 @@ export const DocumentLineV3: FC<Props> = ({
     fetchPolicy: 'no-cache',
   })
 
+  //TODO: When merged with V2
+  //refactor queries and move to shared file instead of importing from screens
   const [getDocument, { loading: fileLoading }] =
     useGetDocumentInboxLineV3LazyQuery({
       variables: {
@@ -246,6 +248,11 @@ export const DocumentLineV3: FC<Props> = ({
     }
   }
 
+  const confirmActionCaller = (confirmed: boolean | null) => {
+    confirmAction({
+      variables: { input: { id: documentLine.id, confirmed: confirmed } },
+    })
+  }
   const unread = !documentLine.opened && !localRead.includes(documentLine.id)
   const isBookmarked = bookmarked || bookmarkSuccess
 
@@ -368,22 +375,16 @@ export const DocumentLineV3: FC<Props> = ({
         <ConfirmationModal
           onSubmit={() => {
             setModalVisible(false)
-            confirmAction({
-              variables: { input: { id: documentLine.id, confirmed: true } },
-            })
+            confirmActionCaller(true)
             getDocument()
           }}
           onCancel={() => {
             setModalVisible(false)
-            confirmAction({
-              variables: { input: { id: documentLine.id, confirmed: false } },
-            })
+            confirmActionCaller(false)
           }}
           onClose={() => {
             toggleModal()
-            confirmAction({
-              variables: { input: { id: documentLine.id, confirmed: null } },
-            })
+            confirmActionCaller(null)
           }}
           loading={false}
           modalTitle={modalData?.title || formatMessage(m.acknowledgeTitle)}

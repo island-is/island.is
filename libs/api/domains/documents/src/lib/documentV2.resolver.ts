@@ -105,6 +105,8 @@ export class DocumentResolverV2 {
       resources: input.id,
       meta: { confirmed: input.confirmed },
     })
+
+    return { id: input.id, confirmed: input.confirmed }
   }
 
   @ResolveField('categories', () => [Category])
