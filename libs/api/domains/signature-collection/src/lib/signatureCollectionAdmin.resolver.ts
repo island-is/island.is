@@ -32,10 +32,9 @@ import { SignatureCollectionSignatureIdInput } from './dto/signatureId.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
 import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
-import { ReasonKey } from '@island.is/clients/signature-collection'
 import { CanSignInfo } from './models/canSignInfo.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
-import { SignatureCollectionAreaInput } from './dto'
+import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
 import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
 
@@ -265,6 +264,19 @@ export class SignatureCollectionAdminResolver {
       user,
       input,
     )
+  }
+
+  @Query(() => [SignatureCollectionSignature])
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
+  @Audit()
+  async signatureCollectionSignatureLookup(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionSignatureLookupInput,
+  ): Promise<SignatureCollectionSignature[]> {
+    return this.signatureCollectionService.signatureLookup(user, input)
   }
 
   @Query(() => SignatureCollectionAreaSummaryReport)
