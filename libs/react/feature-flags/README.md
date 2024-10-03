@@ -1,24 +1,22 @@
+```markdown
 # React Feature Flagging Library
 
-This is a high-level feature flagging library for our React apps.
+This is a high-level feature flagging library for React applications.
 
-{% hint style="warning" %}
-Feature flagging is a way to soft launch a "beta ready" feature to a specific
-group of users.
-
-Feature flagging is not a way to hide a feature from the users that is still a
-work in progress.
-{% endhint %}
+> **Warning**
+> Feature flagging is a way to soft-launch a "beta ready" feature to a specific group of users. It is not intended to hide a feature from users while it is still a work in progress.
 
 ## Usage
 
-### Application entrypoint
+### Application Entry Point
+
+First, import the `FeatureFlagProvider`:
 
 ```tsx
 import { FeatureFlagProvider } from '@island.is/feature-flags'
 ```
 
-then wrap your application using
+Wrap your application with the `FeatureFlagProvider` component:
 
 ```tsx
 return (
@@ -28,16 +26,16 @@ return (
 )
 ```
 
-If the FeatureFlagProvider is nested inside [Authenticator](../auth/react/README.md#authenticate), it will derive a default user object from that authentication.
+If the `FeatureFlagProvider` is nested inside the [Authenticator](../auth/react/README.md#authenticate), it will derive a default user object from the authentication context. Alternatively, you may pass a `defaultUser` property to the `FeatureFlagProvider`.
 
-Alternatively, you can pass in a `defaultUser` property to `FeatureFlagProvider`.
+### Feature Flag Consumer
 
-### Feature flag consumer
+To consume feature flags, use the `useFeatureFlagClient` hook:
 
 ```tsx
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
-render() {
+const MyComponent = () => {
   const featureFlagClient = useFeatureFlagClient()
   const [showAwesome, setShowAwesome] = useState(false)
 
@@ -58,7 +56,7 @@ render() {
 }
 ```
 
-For the common use case of checking on a feature flag, there is `useFeatureFlag` hook:
+For common feature flag checks, use the `useFeatureFlag` hook:
 
 ```tsx
 import { useFeatureFlag } from '@island.is/react/feature-flags'
@@ -73,10 +71,11 @@ const MyComponent = () => {
 }
 ```
 
-While loading feature flags (`loading === true`), the value is set to the `defaultValue` argument.
+Note: While feature flags are loading (`loading === true`), the value defaults to the `defaultValue` argument.
 
 The third argument (`user`) of `getValue` is optional and defaults to the `defaultUser` prop in `FeatureFlagProvider` or the authenticated user from `Authenticator`.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test react-feature-flags` to execute the unit tests via [Jest](https://jestjs.io).
+Execute `nx test react-feature-flags` to run the unit tests using [Jest](https://jestjs.io).
+```
