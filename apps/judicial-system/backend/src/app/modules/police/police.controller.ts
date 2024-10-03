@@ -34,7 +34,7 @@ import {
   CaseReadGuard,
   CurrentCase,
 } from '../case'
-import { UpdateSubpoenaDto } from '../subpoena/dto/updateSubpoena.dto'
+import { Subpoena } from '../subpoena'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
@@ -81,14 +81,14 @@ export class PoliceController {
   )
   @Get('subpoenaStatus/:subpoenaId')
   @ApiOkResponse({
-    type: UpdateSubpoenaDto,
+    type: Subpoena,
     description: 'Gets subpoena status',
   })
   getSubpoenaStatus(
-    @Param('caseId') caseId: string,
     @Param('subpoenaId') subpoenaId: string,
-  ): Promise<UpdateSubpoenaDto> {
-    this.logger.debug(`Gets subpoena status in case ${caseId}`)
+    @CurrentCase() theCase: Case,
+  ): Promise<Subpoena> {
+    this.logger.debug(`Gets subpoena status in case ${theCase.id}`)
 
     return this.policeService.getSubpoenaStatus(subpoenaId)
   }
