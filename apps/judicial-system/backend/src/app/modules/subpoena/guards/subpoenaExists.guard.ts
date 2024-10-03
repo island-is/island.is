@@ -24,11 +24,13 @@ export class SubpoenaExistsGuard implements CanActivate {
     const defendant: Defendant = request.defendant
 
     if (!defendant) {
+      // subpoenaId is the external police document id
       request.subpoena = await this.subpoenaService.findBySubpoenaId(subpoenaId)
 
       return true
     }
 
+    // subpoenaId is the internal subpoena id
     const subpoena = defendant.subpoenas?.find(
       (subpoena) => subpoena.id === subpoenaId,
     )
