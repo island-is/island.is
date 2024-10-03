@@ -1,7 +1,13 @@
-# judicial-system-message
+```markdown
+# Judicial System Message
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test judicial-system-message` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for the Judicial System Message library using [Jest](https://jestjs.io), run the following command:
+
+```sh
+nx test judicial-system-message
+```
+```

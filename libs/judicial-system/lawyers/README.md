@@ -1,7 +1,15 @@
-# judicial-system-lawyers
+```markdown
+# Judicial System Lawyers
 
-This library was generated with [Nx](https://nx.dev).
+This library is part of the judicial system and is generated using [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test judicial-system-lawyers` to execute the unit tests via [Jest](https://jestjs.io).
+To run the unit tests for this library, execute the following command:
+
+```bash
+nx test judicial-system-lawyers
+```
+
+This will run the unit tests using [Jest](https://jestjs.io).
+```

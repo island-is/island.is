@@ -1,7 +1,13 @@
-# judicial-system-consts
+```markdown
+# Judicial System Constants
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated using [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `ng test judicial-system-consts` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+
+```bash
+ng test judicial-system-consts
+```
+```

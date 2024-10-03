@@ -1,7 +1,13 @@
-# judicial-system-types
+```markdown
+# Judicial System Types
 
-This library was generated with [Nx](https://nx.dev).
+The `judicial-system-types` library is generated with [Nx](https://nx.dev). This library provides type definitions and utilities related to a judicial system.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test judicial-system-types` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for the `judicial-system-types` library using [Jest](https://jestjs.io), run the following command:
+
+```bash
+nx test judicial-system-types
+```
+```
