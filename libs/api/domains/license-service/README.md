@@ -34,6 +34,7 @@ Mocks are available if enabled. When adding a new license, ensure it is also moc
 
 1. Generate an external client to fetch data from a third party.
 2. Create a client folder in `/license-service/client/`.
+
    - Each client acts as a module for easy injection into the License Service. Required components:
      - A service to provide license data.
      - A mapper to transform raw license data into a generic form.
@@ -55,11 +56,13 @@ The service currently uses the [SmartSolution API](https://smartsolutions.gitboo
 Conditions for generating a digital license:
 
 - **Drivers License**
+
   - There must be a result when the RLS API is called.
   - The result must include a non-null `mynd`.
   - The image date should be 1997-08-15 or newer.
 
 - **Firearm License**
+
   - The license must not be expired.
 
 - **ADR License**

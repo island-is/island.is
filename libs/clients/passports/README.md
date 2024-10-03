@@ -16,46 +16,47 @@ yarn nx run clients-passports:codegen/backend-client
 
 1. **Import the `PassportsClientModule`** within the desired service.
 
-    ```typescript
-    import { PassportsClientModule } from '@island.is/clients/passports';
+   ```typescript
+   import { PassportsClientModule } from '@island.is/clients/passports'
 
-    @Module({
-        imports: [PassportsClientModule],
-    })
-    export class SomeModule {}
-    ```
+   @Module({
+     imports: [PassportsClientModule],
+   })
+   export class SomeModule {}
+   ```
 
 2. **Inject the `IdentityDocumentApi`** into your constructor.
 
-    ```typescript
-    import { IdentityDocumentApi } from '@island.is/clients/passports';
+   ```typescript
+   import { IdentityDocumentApi } from '@island.is/clients/passports'
 
-    @Injectable()
-    export class SomeService {
-        constructor(private passportsApi: IdentityDocumentApi) {}
-    }
-    ```
+   @Injectable()
+   export class SomeService {
+     constructor(private passportsApi: IdentityDocumentApi) {}
+   }
+   ```
 
 3. **Use the API with authentication middleware**.
 
-    ```typescript
-    private getPassportsWithAuth(auth: Auth) {
-        return this.passportsApi.withMiddleware(new AuthMiddleware(auth));
-    }
-    ```
+   ```typescript
+   private getPassportsWithAuth(auth: Auth) {
+       return this.passportsApi.withMiddleware(new AuthMiddleware(auth));
+   }
+   ```
 
 4. **Access the service with authentication**.
 
-    ```typescript
-    async function fetchPassport(auth: Auth) {
-        const passportResponse = await this.getPassportsWithAuth(auth)
-            .identityDocumentGetIdentityDocument({
-                personId: '1234567890',
-            });
+   ```typescript
+   async function fetchPassport(auth: Auth) {
+     const passportResponse = await this.getPassportsWithAuth(
+       auth,
+     ).identityDocumentGetIdentityDocument({
+       personId: '1234567890',
+     })
 
-        console.log('passportResponse', passportResponse);
-    }
-    ```
+     console.log('passportResponse', passportResponse)
+   }
+   ```
 
 ## Running Unit Tests
 

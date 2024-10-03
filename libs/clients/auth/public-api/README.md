@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Auth Public API Client
 
 ## Overview
@@ -20,8 +20,12 @@ import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
   ],
 })
 ```
+````
 
 ## Code Ownership and Maintenance
 
 This project is maintained by the [Core Team](https://github.com/orgs/island-is/teams/core/members).
+
+```
+
 ```

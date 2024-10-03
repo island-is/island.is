@@ -4,7 +4,7 @@ This library was generated with [Nx](https://nx.dev).
 
 ## Overview
 
-The Clients Transport Authority Vehicle Owner Change library is designed to facilitate the process of changing vehicle ownership within a transport authority system. 
+The Clients Transport Authority Vehicle Owner Change library is designed to facilitate the process of changing vehicle ownership within a transport authority system.
 
 ## Getting Started
 
@@ -34,6 +34,6 @@ This will run the linter using [ESLint](https://eslint.org/) to ensure code qual
 
 - [Nx Documentation](https://nx.dev)
 - [Jest Documentation](https://jestjs.io)
-- [ESLint Documentation](https://eslint.org) 
+- [ESLint Documentation](https://eslint.org)
 
 For any further assistance, refer to these documentation links or contact your project administrator.

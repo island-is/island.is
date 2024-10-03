@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Testing Nest
 
 This library helps developers set up a Nest.js application for testing purposes. The test server can work for unit tests and/or integration/functional tests by applying different hooks, like the `useDatabase` hook.
@@ -10,13 +10,14 @@ This library helps developers set up a Nest.js application for testing purposes.
 `testServer` requires the project's `AppModule` to be passed as an argument to build the Nest.js application graph. From there, you can configure your test Nest server using hooks and overrides.
 
 ```typescript
-const app: TestApp = await testServer({ appModule: AppModule });
+const app: TestApp = await testServer({ appModule: AppModule })
 ```
+````
 
 The `testServer` can be set up anywhere, i.e., inside `beforeAll`, `beforeEach`, inside the test, etc. Just remember to clean up the application afterward by calling:
 
 ```typescript
-await app.cleanUp();
+await app.cleanUp()
 ```
 
 ### Examples
@@ -26,7 +27,7 @@ In these examples, we will assume the use of a third-party API called `NationalR
 ```typescript
 class MockNationalRegistryApi {
   getUser() {
-    return '1337';
+    return '1337'
   }
 }
 ```
@@ -119,4 +120,7 @@ const myNewHook = (options) => {
 ## Test Fixtures
 
 As seen in the functional (integration) test above, we use a `CurrentUser` test fixture from `@island.is/testing/fixtures`. The library contains many more fixtures that can help create random test data. Please check `libs/testing/fixtures` to view available fixtures.
+
+```
+
 ```

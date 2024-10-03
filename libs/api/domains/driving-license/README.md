@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # API Domains Driving License
 
 ## Quickstart
@@ -8,6 +8,7 @@ To begin developing, run the following command:
 ```bash
 yarn nx run api-domains-driving-license:dev
 ```
+````
 
 This command is currently an alias for the xroad-proxy script detailed below.
 
@@ -34,4 +35,7 @@ To execute the unit tests, run the following command, which utilizes [Jest](http
 ```bash
 nx test api-domains-driving-license
 ```
+
+```
+
 ```

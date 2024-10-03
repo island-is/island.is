@@ -1,6 +1,6 @@
 # National Registry Clients
 
-- **V1**: This version has been deprecated and is no longer available. 
+- **V1**: This version has been deprecated and is no longer available.
 
 - **V2**: This version provides a service that is connected through the X-Road platform from the national registry. It is designed for secure and efficient data exchange across various governmental and organizational boundaries.
 

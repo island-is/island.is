@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Clients User Notification
 
 This library handles the user notifications for clients.
@@ -10,6 +10,10 @@ To execute the unit tests using [Jest](https://jestjs.io), run the following com
 ```sh
 nx test clients-user-notification
 ```
+````
 
 Ensure that all dependencies are installed and up-to-date before running the tests.
+
+```
+
 ```

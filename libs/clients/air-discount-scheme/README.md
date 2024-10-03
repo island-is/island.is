@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Air Discount Scheme Client
 
 This client interacts with the Air Discount Scheme Backend. It exposes certain private methods intended for internal or machine client use.
@@ -8,6 +8,7 @@ To generate the client, run the following command:
 ```bash
 yarn nx run clients-air-discount-scheme:codegen/backend-client
 ```
+````
 
 ## Simple Usage
 
@@ -36,4 +37,7 @@ export class YourService {
   // Define your methods here
 }
 ```
+
+```
+
 ```

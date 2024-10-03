@@ -9,7 +9,7 @@ This library provides a client for interacting with DocumentProvider APIs.
 To integrate the Document Provider client into a NESTJS module, include the service in your module's imports as follows:
 
 ```typescript
-import { ClientsDocumentProviderModule } from '@island.is/clients/document-provider';
+import { ClientsDocumentProviderModule } from '@island.is/clients/document-provider'
 
 @Module({
   imports: [

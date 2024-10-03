@@ -6,9 +6,10 @@ This library was generated with [Nx](https://nx.dev), a smart, fast, and extensi
 ## Running Unit Tests
 
 To execute unit tests using [Jest](https://jestjs.io), run the following command:
-
 ```
+
 nx test clients-university-application-reykjavik-university
+
 ```
 
 This will run all unit tests defined in the library.
@@ -18,7 +19,9 @@ This will run all unit tests defined in the library.
 To check code quality and style using [ESLint](https://eslint.org/), run the following command:
 
 ```
+
 nx lint clients-university-application-reykjavik-university
+
 ```
 
 This will execute linting on the library files to ensure they follow the configured coding standards.

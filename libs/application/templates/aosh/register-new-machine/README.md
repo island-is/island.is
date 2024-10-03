@@ -13,5 +13,6 @@ nx test application-templates-aosh-register-new-machine
 This will initiate the test suite using [Jest](https://jestjs.io), a delightful JavaScript testing framework with a focus on simplicity.
 
 ### Notes
+
 - Ensure that you have all dependencies installed before running the tests.
 - For more detailed information about the testing process with Nx and Jest, refer to their respective documentation.

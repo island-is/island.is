@@ -1,4 +1,4 @@
-```tsx
+````tsx
 # Nest Feature Flags
 
 A Nest module that wraps our low-level [feature flagging library](../../feature-flags/README.md) with useful Nest utilities.
@@ -21,13 +21,13 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags';
   ],
 })
 export class AppModule {}
-```
+````
 
 You can then import it wherever you need one of its exports:
 
 ```tsx
-import { Module } from '@nestjs/common';
-import { FeatureFlagModule } from '@island.is/nest/feature-flags';
+import { Module } from '@nestjs/common'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
   imports: [FeatureFlagModule],
@@ -40,8 +40,8 @@ export class SomeModule {}
 This service wraps `getValue` with support for our server-side [User objects](../../auth-nest-tools/README.md) to check if they have access to a feature.
 
 ```tsx
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags';
-import { User } from '@island.is/auth-nest-tools';
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { User } from '@island.is/auth-nest-tools'
 
 export class YourService {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
@@ -51,10 +51,10 @@ export class YourService {
       Features.someFeature,
       false,
       user,
-    );
+    )
 
     if (canDoSomething) {
-      return this.doSomething();
+      return this.doSomething()
     }
   }
 }
@@ -65,12 +65,12 @@ export class YourService {
 If your feature introduces new API endpoints, you can use the `FeatureFlagGuard` to disable them completely:
 
 ```tsx
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common'
 import {
   FeatureFlagGuard,
   FeatureFlag,
   Features,
-} from '@island.is/nest/feature-flags';
+} from '@island.is/nest/feature-flags'
 
 @UseGuards(IdsUserGuard, FeatureFlagGuard)
 @Controller('some')
@@ -86,12 +86,12 @@ export class SomeController {
 The guard is compatible with both GraphQL resolvers and REST controllers. You can also apply feature flagging to an entire resolver or controller:
 
 ```tsx
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common'
 import {
   FeatureFlagGuard,
   FeatureFlag,
   Features,
-} from '@island.is/nest/feature-flags';
+} from '@island.is/nest/feature-flags'
 
 @UseGuards(IdsUserGuard, FeatureFlagGuard)
 @FeatureFlag(Features.someFeature)
@@ -112,11 +112,11 @@ export class SomeController {
 If you need access to the low-level client and `getValue` functions, you can inject it as a dependency:
 
 ```tsx
-import { Inject } from '@nestjs/common';
+import { Inject } from '@nestjs/common'
 import {
   FeatureFlagClient,
   FEATURE_FLAG_CLIENT,
-} from '@island.is/nest/feature-flags';
+} from '@island.is/nest/feature-flags'
 
 export class YourService {
   constructor(
@@ -129,4 +129,7 @@ export class YourService {
 ## Running Unit Tests
 
 Run `nx test nest-feature-flags` to execute the unit tests using [Jest](https://jestjs.io).
+
+```
+
 ```

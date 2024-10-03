@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Application Core
 
 This documentation provides an overview of the types and utilities contained in the Application Core library, essential for constructing applications, forms, and schemas within the application system's framework.
@@ -46,6 +46,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
 ```
+````
 
 Example: [ReferenceApplicationTemplate](https://github.com/island-is/island.is/blob/main/libs/application/templates/reference-template/src/lib/ReferenceApplicationTemplate.ts#L84).
 
@@ -178,15 +179,15 @@ Define custom life cycles for states:
 ```typescript
 type StateLifeCycle =
   | {
-      shouldBeListed: boolean;
-      shouldBePruned: false;
-      shouldDeleteChargeIfPaymentFulfilled?: boolean | null;
+      shouldBeListed: boolean
+      shouldBePruned: false
+      shouldDeleteChargeIfPaymentFulfilled?: boolean | null
     }
   | {
-      shouldBeListed: boolean;
-      shouldBePruned: true;
-      whenToPrune: number | ((application: Application) => Date);
-      shouldDeleteChargeIfPaymentFulfilled?: boolean | null;
+      shouldBeListed: boolean
+      shouldBePruned: true
+      whenToPrune: number | ((application: Application) => Date)
+      shouldDeleteChargeIfPaymentFulfilled?: boolean | null
     }
 ```
 
@@ -363,10 +364,10 @@ Form fields may constitute questions requiring user answers or serve cosmetic/in
 
 ```typescript
 export interface NewField extends BaseField {
-  readonly type: FieldTypes.NEW_FIELD;
-  component: FieldComponents.NEW_FIELD;
-  myProp: string;
-  myOtherProp: number;
+  readonly type: FieldTypes.NEW_FIELD
+  component: FieldComponents.NEW_FIELD
+  myProp: string
+  myOtherProp: number
 }
 ```
 
@@ -377,7 +378,7 @@ export interface NewField extends BaseField {
 export const buildNewField = (
   data: Omit<NewField, 'type' | 'component' | 'children'>,
 ): NewField => {
-  const { myProp, myOtherProp } = data;
+  const { myProp, myOtherProp } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
@@ -385,8 +386,8 @@ export const buildNewField = (
     myOtherProp,
     type: FieldTypes.NEW_FIELD,
     component: FieldComponents.NEW_FIELD,
-  };
-};
+  }
+}
 ```
 
 5. Establish a directory with the field's name within `libs/application/ui-fields/src/lib/`, alongside a React component sharing the name with a `.tsx` extension.
@@ -397,12 +398,12 @@ export const buildNewField = (
 
 ```typescript
 interface Props extends FieldBaseProps {
-  field: NewField;
+  field: NewField
 }
 
 export const NewFormField: FC<Props> = ({ application, field }) => {
-  return <Box>Your new component.</Box>;
-};
+  return <Box>Your new component.</Box>
+}
 ```
 
 7. Register your component as an export in the parent `index.ts`.
@@ -430,14 +431,14 @@ Implementing custom error messages for data provider failures allows user feedba
 
 ```typescript
 export class SampleDataProvider extends BasicDataProvider {
-  type = 'SampleDataProvider';
+  type = 'SampleDataProvider'
 
   async provide(_application: Application): Promise<unknown> {
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500))
 
     const data: SampleProviderData = {
       value: 'Hello world',
-    };
+    }
 
     if (!SampleProviderData.value) {
       return Promise.reject({
@@ -446,15 +447,15 @@ export class SampleDataProvider extends BasicDataProvider {
           summary: error.someFailMessage.summary,
         },
         statusCode: 404,
-      });
+      })
     }
 
-    return Promise.resolve(data);
+    return Promise.resolve(data)
   }
 
   onProvideError(error: {
-    reason: ProviderErrorReason;
-    statusCode?: number;
+    reason: ProviderErrorReason
+    statusCode?: number
   }): FailedDataProviderResult {
     return {
       date: new Date(),
@@ -462,7 +463,7 @@ export class SampleDataProvider extends BasicDataProvider {
       reason: error.reason,
       status: 'failure',
       statusCode: error.statusCode,
-    };
+    }
   }
 }
 ```
@@ -479,13 +480,13 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
     application.answers,
     'careerHistory',
     undefined,
-  ) as string | undefined;
+  ) as string | undefined
 
   if (careerHistory === 'no') {
-    return m.nameApplicationNeverWorkedBefore;
+    return m.nameApplicationNeverWorkedBefore
   }
-  return m.name;
-};
+  return m.name
+}
 ```
 
 ```typescript
@@ -547,4 +548,7 @@ buildSection({
   }
 }),
 ```
+
+```
+
 ```

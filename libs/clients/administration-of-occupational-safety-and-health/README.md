@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Administration of Occupational Safety and Health Client
 
 ## Overview
@@ -14,6 +14,7 @@ To update the OpenAPI definition (`clientConfig.json`), execute the following co
 ```sh
 yarn nx run clients-administration-of-occupational-safety-and-health:update-openapi-document
 ```
+````
 
 ### Regenerating the Client
 
@@ -22,4 +23,7 @@ After updating the OpenAPI document, regenerate the client using the command bel
 ```sh
 yarn nx run clients-administration-of-occupational-safety-and-health:codegen/backend-client
 ```
+
+```
+
 ```

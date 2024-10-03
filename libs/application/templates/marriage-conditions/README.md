@@ -2,7 +2,7 @@
 # Application Templates Marriage-Conditions
 
 # This document outlines the various conditions and templates needed for processing marriage applications.
-# Please ensure that you adhere to the recommended steps and guidelines to facilitate the seamless execution 
+# Please ensure that you adhere to the recommended steps and guidelines to facilitate the seamless execution
 # of marriage-related application processes.
 
 ## Instructions for Use
@@ -15,7 +15,7 @@
    - Identity proof
    - Divorce decree, if applicable
    - Death certificate of former spouse, if applicable
-   
+
 3. **Verify Eligibility Criteria**: Verify that both parties meet the legal requirements for marriage.
 
 4. **Witness Signatures**: Attain signatures from the required number of witnesses.
@@ -51,7 +51,7 @@
 - **Witness 1:**
   - Full Name:
   - Contact Details:
-  
+
 - **Witness 2:**
   - Full Name:
   - Contact Details:
@@ -70,7 +70,7 @@
 
 - **Q**: How long does the application process take?
   - **A**: Processing time may vary, but applications are typically processed within 30 days of submission.
-  
+
 - **Q**: Can we track the status of the application?
   - **A**: Yes, application status can be tracked online using the unique tracking number provided at submission.
 

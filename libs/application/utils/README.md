@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Application Utils
 
 This library was generated with [Nx](https://nx.dev), a smart, fast, and extensible build system.
@@ -10,6 +10,10 @@ To run the unit tests for the application-utils library, execute the following c
 ```bash
 nx test application-utils
 ```
+````
 
 This will run the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
+
+```
+
 ```

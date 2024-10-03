@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Portals Admin Documentation
 
 ## Overview
@@ -19,13 +19,17 @@ Portals Admin is a tool designed to manage and maintain various portals deployed
    ```bash
    git clone https://github.com/your-organization/portals-admin.git
    ```
+````
 
 2. **Install Dependencies**
    Navigate to the project directory:
+
    ```bash
    cd portals-admin
    ```
+
    Install the necessary dependencies:
+
    ```bash
    npm install
    ```
@@ -46,6 +50,7 @@ Portals Admin is a tool designed to manage and maintain various portals deployed
 ### Common Commands
 
 - **To launch in development mode** use:
+
   ```bash
   npm run dev
   ```
@@ -65,6 +70,7 @@ Portals Admin is a tool designed to manage and maintain various portals deployed
 ## Troubleshooting
 
 - **Failed to Connect to Database**:
+
   - Ensure that database credentials in your `.env` file are correct.
   - Verify network connectivity to the database server.
 
@@ -88,4 +94,7 @@ Portals Admin is distributed under the MIT License. See `LICENSE` file for more 
 ## Contact
 
 For further assistance or inquiries, contact the support team at support@your-organization.com.
+
+```
+
 ```

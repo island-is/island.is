@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # API Domains: Icelandic Names Registry
 
 This repository focuses on handling Icelandic names data through a structured API. It enables users to access detailed information about Icelandic names registered in the system.
@@ -28,6 +28,7 @@ You need to have the following installed:
    ```bash
    git clone https://github.com/yourusername/api-domains-icelandic-names-registry.git
    ```
+````
 
 2. Navigate to the project directory:
 
@@ -100,4 +101,7 @@ Ensure your code follows our standard coding conventions.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+```
+
 ```

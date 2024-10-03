@@ -68,7 +68,7 @@ class RegistrationSystem:
         if any(inst.license_number == instructor.license_number for inst in self.instructors):
             print(f"Registration failed: License number {instructor.license_number} already exists.")
             return False
-        
+
         self.instructors.append(instructor)
         print(f"Instructor {instructor} registered successfully.")
         return True

@@ -3,6 +3,7 @@
 This folder contains two main applications used for signature collection in different contexts:
 
 1. **Presidential Signature Collection**
+
    - **List Creation**: Process for creating a list intended for presidential signature collection.
    - **List Signing**: Process for collecting and managing signatures for the presidential list.
 

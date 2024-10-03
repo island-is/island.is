@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # University Application Client for Iceland University of the Arts
 
 This library facilitates interactions with the Iceland University of the Arts' application system. It was generated using [Nx](https://nx.dev) to ensure modular architecture and efficient development practices.
@@ -24,6 +24,7 @@ To verify the functionality and integrity of the library, execute unit tests usi
 ```bash
 nx test clients-university-application-iceland-university-of-the-arts
 ```
+````
 
 This command will run all the associated unit tests and provide feedback on the success and failures of each test case.
 
@@ -48,4 +49,7 @@ This project is licensed under the MIT License.
 ---
 
 For further details, visit the [Nx website](https://nx.dev) and the [Jest documentation](https://jestjs.io).
+
+```
+
 ```

@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Inheritance Report
 
 ## Purpose
@@ -45,6 +45,7 @@ Inheritance is a fundamental concept in object-oriented programming that allows 
 BaseClass
 └── DerivedClass
 ```
+````
 
 - **Explanation**: DerivedClass extends BaseClass, inheriting its properties and methods while adding new ones specific to DerivedClass.
 
@@ -74,4 +75,7 @@ ClassB
 Understanding inheritance structures is crucial for maintaining and extending complex codebases. This report highlights the primary inheritance hierarchies and demonstrates how existing classes can be extended effectively through inheritance.
 
 For a more detailed exploration of each class and its methods, refer to the full documentation and codebase comments.
+
+```
+
 ```

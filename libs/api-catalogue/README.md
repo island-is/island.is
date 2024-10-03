@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # API Catalogue
 
 This document provides an overview and description of available APIs, including their endpoints, methods, parameters, and expected responses. Each API entry is organized in a standardized format for clarity and ease of use.
@@ -34,7 +34,7 @@ Retrieves a list of items.
 - **Method**: GET
 - **Endpoint**: `/items`
 - **Description**: Fetches a list of all available items.
-- **Query Parameters**: 
+- **Query Parameters**:
   - `page` (integer, optional): The page number for pagination.
   - `size` (integer, optional): Number of items per page.
 - **Sample Request**:
@@ -44,6 +44,8 @@ Retrieves a list of items.
   Authorization: Bearer <token>
   Content-Type: application/json
   ```
+````
+
 - **Sample Response**:
   ```json
   {
@@ -76,6 +78,7 @@ Creates a new item.
   }
   ```
 - **Sample Request**:
+
   ```http
   POST /items HTTP/1.1
   Host: api.example.com
@@ -87,6 +90,7 @@ Creates a new item.
     "description": "Description of the new item"
   }
   ```
+
 - **Sample Response**:
   ```json
   {
@@ -103,4 +107,7 @@ Creates a new item.
 ---
 
 End of the API Catalogue.
+
+```
+
 ```

@@ -22,6 +22,7 @@ To run this template locally, follow these additional steps:
 **Steps:**
 
 1. Fetch development secrets for the project:
+
    - Execute: `yarn get-secrets service-portal`
 
 2. Configure Kubernetes:

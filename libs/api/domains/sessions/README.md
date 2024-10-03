@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Sessions
 
 This library provides utilities to query user sessions from the [Sessions Service](../../../../apps/services/sessions/README.md).
@@ -22,6 +22,7 @@ query = SessionQuery()
 # Example usage to get sessions
 sessions = query.get_user_sessions(user_id='12345')
 ```
+````
 
 ## Installation
 
@@ -55,4 +56,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Further Reading
 
 For more information, consult the [Sessions Service Documentation](../../../../apps/services/sessions/README.md) to understand how sessions are managed, and how this library can be leveraged within that context.
+
+```
+
 ```

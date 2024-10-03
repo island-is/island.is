@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # General Petitions
 
 This application allows individuals to create general petitions.
@@ -12,6 +12,7 @@ To set up the Docker environment, execute the following command (only needs to b
 ```bash
 yarn dev-init application-templates-general-petition
 ```
+````
 
 ### Starting Required Services
 
@@ -38,6 +39,7 @@ Additional steps are required to run this template locally:
 - Configure [AWS Secrets](../../../../handbook/repository/aws-secrets.md).
 
 To retrieve environment variables, a useful command is:
+
 ```bash
 yarn get-secrets service-portal
 ```
@@ -45,6 +47,7 @@ yarn get-secrets service-portal
 **Kubeconfig:**
 
 Export AWS variables:
+
 ```bash
 aws eks update-kubeconfig --name dev-cluster01
 ```
@@ -58,6 +61,7 @@ RSK_API_PASSWORD
 ```
 
 To retrieve environment variables, a useful command is:
+
 ```bash
 yarn get-secrets service-portal
 ```
@@ -65,4 +69,7 @@ yarn get-secrets service-portal
 ## Code Owners and Maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni)
+
+```
+
 ```

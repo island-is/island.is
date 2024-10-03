@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Application API Files
 
 This library manages file operations within the Application system API.
@@ -31,29 +31,29 @@ To communicate with the S3 bucket, ensure you have an active AWS session connect
 #### app.module.ts
 
 ```typescript
-import { ConfigModule } from '@island.is/nest/config';
-import { ApplicationFilesModule } from '@island.is/application/api/files';
-import { signingModuleConfig } from '@island.is/dokobit-signing';
-import { ApplicationFilesConfig } from '@island.is/application/api/files';
-import { FileStorageConfig } from '@island.is/file-storage';
+import { ConfigModule } from '@island.is/nest/config'
+import { ApplicationFilesModule } from '@island.is/application/api/files'
+import { signingModuleConfig } from '@island.is/dokobit-signing'
+import { ApplicationFilesConfig } from '@island.is/application/api/files'
+import { FileStorageConfig } from '@island.is/file-storage'
 
 @Module({
   imports: [
     ApplicationFilesModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        signingModuleConfig,
-        FileStorageConfig,
-        ApplicationFilesConfig,
-      ],
+      load: [signingModuleConfig, FileStorageConfig, ApplicationFilesConfig],
     }),
   ],
 })
 export class AppModule {}
 ```
+````
 
 ## Running Unit Tests
 
 Execute the unit tests with `nx test application-api-files` using [Jest](https://jestjs.io).
+
+```
+
 ```

@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Auth Admin API Client
 
 This library provides a client for the [Auth Admin API](../../../../apps/services/auth/admin-api/README.md).
@@ -15,8 +15,8 @@ The client reads the following environment variables to configure and export the
 
 These variables are used to configure and export the following API clients:
 
-- `AdminDevApi` 
-- `AdminStagingApi` 
+- `AdminDevApi`
+- `AdminStagingApi`
 - `AdminProdApi`
 
 ## Usage
@@ -24,8 +24,12 @@ These variables are used to configure and export the following API clients:
 The API clients can be used in a service as shown below:
 
 ```typescript
-import { AdminDevApi, AdminStagingApi, AdminProdApi } from '@island.is/auth-admin-api';
-import { Injectable, Inject, Optional } from '@nestjs/common';
+import {
+  AdminDevApi,
+  AdminStagingApi,
+  AdminProdApi,
+} from '@island.is/auth-admin-api'
+import { Injectable, Inject, Optional } from '@nestjs/common'
 
 @Injectable()
 export class MyService {
@@ -46,4 +50,8 @@ export class MyService {
   // Functions using the APIs...
 }
 ```
+````
+
+```
+
 ```

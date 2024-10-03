@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # API Domains Payment Schedule
 
 This library was generated using [Nx](https://nx.dev), a suite of powerful tools for setting up and managing modern web applications.
@@ -10,4 +10,8 @@ To execute the unit tests for the `api-domains-payment-schedule` library using [
 ```bash
 nx test api-domains-payment-schedule
 ```
+````
+
+```
+
 ```

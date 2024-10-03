@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Application Templates: Transport Authority Order Vehicle License Plate
 
 This is a library focused on managing the ordering of vehicle license plates through a transport authority interface.
@@ -14,6 +14,7 @@ To execute the unit tests for this library, run the following command:
 ```bash
 nx test application-templates-transport-authority-order-vehicle-license-plate
 ```
+````
 
 This will trigger the test suite powered by [Jest](https://jestjs.io), a delightful JavaScript Testing Framework with a focus on simplicity.
 
@@ -28,4 +29,7 @@ Ensure that you have Nx installed and properly configured in your development en
 - Use descriptive test names to clearly indicate what each test is validating.
 
 By following these practices, you can maintain high code quality and reliability for your application.
+
+```
+
 ```

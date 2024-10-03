@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Health Insurance Application
 
 Application for health insurance when moving back to Iceland after living abroad.
@@ -10,6 +10,7 @@ To execute the unit tests via [Jest](https://jestjs.io), run:
 ```bash
 nx test application-templates-health-insurance
 ```
+````
 
 ## Setup
 
@@ -37,6 +38,7 @@ Additional steps are required to run this template locally.
 ### Health Insurance Providers
 
 1. Fetch the development secrets for the project.
+
    - TODO
 
 2. Setup Socat XRoad:
@@ -59,6 +61,7 @@ To start the user profile service, follow the instructions in the [handbook](htt
 ### Translations from Contentful
 
 Fetch the development secrets using:
+
 ```bash
 yarn get-secrets api
 ```
@@ -66,4 +69,7 @@ yarn get-secrets api
 ## Code Owners and Maintainers
 
 - [Deloitte](https://github.com/orgs/island-is/teams/deloitte)
+
+```
+
 ```

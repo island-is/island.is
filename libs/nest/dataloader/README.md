@@ -30,16 +30,18 @@ npm install --save nestjs-dataloader
 Start by implementing the `NestDataLoader` interface to define how `DataLoader` loads your objects.
 
 ```typescript
-import * as DataLoader from 'dataloader';
-import { Injectable } from '@nestjs/common';
-import { NestDataLoader } from 'nestjs-dataloader';
+import * as DataLoader from 'dataloader'
+import { Injectable } from '@nestjs/common'
+import { NestDataLoader } from 'nestjs-dataloader'
 
 @Injectable()
 export class AccountLoader implements NestDataLoader<string, Account> {
   constructor(private readonly accountService: AccountService) {}
 
   generateDataLoader(): DataLoader<string, Account> {
-    return new DataLoader<string, Account>(keys => this.accountService.findByIds(keys));
+    return new DataLoader<string, Account>((keys) =>
+      this.accountService.findByIds(keys),
+    )
   }
 }
 ```
@@ -51,9 +53,9 @@ The first generic specifies the type of ID used by the datastore, and the second
 For each `NestDataLoader` created, you need to provide it to your module.
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { DataLoaderInterceptor } from 'nestjs-dataloader';
+import { Module } from '@nestjs/common'
+import { APP_INTERCEPTOR } from '@nestjs/core'
+import { DataLoaderInterceptor } from 'nestjs-dataloader'
 
 @Module({
   providers: [
@@ -73,18 +75,17 @@ export class ResolversModule {}
 With a dataloader created and provided to your module, pass it to a method in your GraphQL resolver.
 
 ```typescript
-import * as DataLoader from 'dataloader';
-import { Loader } from 'nestjs-dataloader';
+import * as DataLoader from 'dataloader'
+import { Loader } from 'nestjs-dataloader'
 
 @Resolver(Account)
 export class AccountResolver {
-
   @Query(() => [Account])
   public getAccounts(
     @Args({ name: 'ids', type: () => [String] }) ids: string[],
-    @Loader(AccountLoader) accountLoader: DataLoader<Account['id'], Account>
+    @Loader(AccountLoader) accountLoader: DataLoader<Account['id'], Account>,
   ): Promise<Account[]> {
-    return accountLoader.loadMany(ids);
+    return accountLoader.loadMany(ids)
   }
 }
 ```

@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # API Domains National Registry X-Road
 
 This library was generated with [Nx](https://nx.dev).
@@ -10,6 +10,7 @@ To execute the unit tests using [Jest](https://jestjs.io), run the following com
 ```bash
 nx test api-domains-national-registry-x-road
 ```
+````
 
 ## About the Service
 
@@ -39,4 +40,7 @@ Ensure that the following environment variables are set:
 ## Code Owners and Maintainers
 
 - [Kolibri-Modern-Family](https://github.com/orgs/island-is/teams/kolibri-modern-family/members)
+
+```
+
 ```

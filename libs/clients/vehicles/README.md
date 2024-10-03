@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Vehicles Client
 
 ## Overview
@@ -18,6 +18,7 @@ To update the OpenAPI definition, run:
 ```sh
 yarn nx run clients-vehicles:update-openapi-document
 ```
+````
 
 **Note:** Since this file may contain manual modifications, exercise caution when overwriting.
 
@@ -32,4 +33,7 @@ yarn nx run clients-vehicles:codegen/backend-client
 ## Contributors
 
 - [Hugsmiðjan](https://github.com/orgs/island-is/teams/hugsmidjan)
+
+```
+
 ```

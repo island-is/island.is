@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Ultraviolet Radiation Client
 
 This generated client interacts with a web service provided by the Icelandic Radiation Safety Authority.
@@ -10,6 +10,7 @@ To update the OpenAPI definition, execute the following command. Remember to rep
 ```sh
 yarn nx run clients-ultraviolet-radiation:update-openapi-document --args="--apiKey=INSERT_API_KEY_HERE"
 ```
+````
 
 ## Regenerating the Client
 
@@ -18,4 +19,7 @@ To regenerate the client code after updating the OpenAPI definition, use the fol
 ```sh
 yarn nx run clients-ultraviolet-radiation:codegen/backend-client
 ```
+
+```
+
 ```

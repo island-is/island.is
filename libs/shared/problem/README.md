@@ -1,4 +1,4 @@
-```typescript
+````typescript
 # Problem Types
 
 This library provides TypeScript enums and types for the [problems](https://datatracker.ietf.org/doc/html/rfc7807) returned by our APIs.
@@ -23,7 +23,7 @@ const problem = findProblemInApolloError(error) // undefined | Problem
 if (problem && problem.type === ProblemType.SOMETHING) {
   // Custom handling logic here
 }
-```
+````
 
 ## Creating a Custom Problem
 
@@ -58,4 +58,7 @@ For more details on returning your custom problem, refer to the [`@island.is/nes
 ## Running Unit Tests
 
 Execute `nx test shared-problem` to run the unit tests using [Jest](https://jestjs.io).
+
+```
+
 ```

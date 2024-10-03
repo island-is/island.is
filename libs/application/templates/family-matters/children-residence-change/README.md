@@ -16,28 +16,32 @@ Additional setup steps are required to run this template locally.
 **Prerequisites:**
 
 - Ensure you have `kubectl` installed. You can install it using Homebrew:
-  ```
-  brew install kubectl
-  ```
+```
+
+brew install kubectl
+
+```
 - Configure [AWS Secrets](../../../../handbook/repository/aws-secrets.md).
 
 **Steps:**
 
 1. **Fetch Development Secrets for the Project:**
 
-   Execute the following command:
-   ```
-   yarn get-secrets service-portal
-   ```
+ Execute the following command:
+```
+
+yarn get-secrets service-portal
+
+````
 
 2. **Get Kubeconfig:**
 
-   - Export AWS variables using the following command:
-     ```
-     aws eks update-kubeconfig --name dev-cluster01
-     ```
+- Export AWS variables using the following command:
+  ```
+  aws eks update-kubeconfig --name dev-cluster01
+  ```
 
-   - Keep this process running while maintaining the project setup.
+- Keep this process running while maintaining the project setup.
 
 ### Test User
 
@@ -46,4 +50,4 @@ For testing in local, development, or staging environments, use the Gervimaður 
 ## Code Owners and Maintainers
 
 - For any issues, contact the [Kolibri Modern Family Team](https://github.com/orgs/island-is/teams/kolibri-modern-family).
-```
+````

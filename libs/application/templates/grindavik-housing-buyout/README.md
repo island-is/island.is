@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Application Templates Grindavik Housing Buyout
 
 This library is a component of the system built using [Nx](https://nx.dev).
@@ -23,6 +23,7 @@ To verify the functionality and reliability of this library, you can run the uni
 ```bash
 nx test application-templates-grindavik-housing-buyout
 ```
+````
 
 This will run all unit tests configured for this library and provide feedback on the results.
 
@@ -38,4 +39,7 @@ This library is distributed under the MIT License. See the `LICENSE` file for mo
 
 - [Nx Documentation](https://nx.dev)
 - [Jest Testing Framework](https://jestjs.io)
+
+```
+
 ```

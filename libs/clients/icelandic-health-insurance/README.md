@@ -9,6 +9,7 @@ This repository contains API clients for interacting with Icelandic health insur
 
 - **Rights Portal API**: Access information about user rights with Sjúkratryggingar, including eligibility and entitlements.
 
---- 
+---
+
 Documentation follows best-practices for formatting and provides a clear overview of API functionalities.
 ```

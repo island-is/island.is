@@ -44,6 +44,7 @@ The consent section comprises several UI components, each dedicated to handling 
 ### Best Practices
 
 When developing or maintaining the consent UI components, adhere to the following best practices:
+
 - **Accessibility**: Ensure all components are accessible to users with disabilities.
 - **Mobile Responsiveness**: Design components to work seamlessly across different devices.
 - **User Privacy**: Implement robust measures to protect user data and privacy.
@@ -52,5 +53,4 @@ When developing or maintaining the consent UI components, adhere to the followin
 ### Conclusion
 
 The consent UI components are an integral part of ensuring that users can manage their data-sharing preferences conveniently and securely. Developers should focus on usability, security, and compliance with relevant data protection regulations.
-
 ```

@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # @island.is/auth/react
 
 Manage authentication in React (non-next) single-page applications.
@@ -36,6 +36,7 @@ configure({
   redirectPathSilent: '/auth/callback-silent',
 })
 ```
+````
 
 ### Authentication
 
@@ -102,4 +103,7 @@ Consider implementing an "updateActive" function to extend the ID session when t
 ## Running Unit Tests
 
 Run `nx test auth-react` to execute unit tests via [Jest](https://jestjs.io).
+
+```
+
 ```

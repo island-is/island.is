@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # CMS Client - Contentful GraphQL Client Library
 
 ## Overview
@@ -16,6 +16,7 @@ The GraphQL schema is not automatically updated. To fetch the latest schema from
 ```sh
 yarn nx run clients-cms:fetch-schema
 ```
+````
 
 ## Running Unit Tests
 
@@ -28,4 +29,7 @@ nx test cms
 ## Code Owners and Maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni/members) oversees the ownership and maintenance of this library.
+
+```
+
 ```

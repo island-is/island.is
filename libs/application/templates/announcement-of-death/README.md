@@ -1,4 +1,4 @@
-```markdown
+````markdown
 ## Application Sequence Diagram
 
 ```mermaid
@@ -30,4 +30,8 @@ sequenceDiagram
 
     AppSystem--)Sýsla: Application finalised and delivered
 ```
+````
+
+```
+
 ```

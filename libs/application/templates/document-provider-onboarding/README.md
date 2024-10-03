@@ -6,18 +6,23 @@ Welcome to the Document Provider Onboarding application. This guide will help yo
 ## Steps to Onboard as a Document Provider
 
 ### Step 1: Application Submission
+
 Submit your application to become a Document Provider. This is the initial step in setting up your access to send document references.
 
 ### Step 2: Verification and Approval
+
 Once your application is received, it will undergo a verification process. After successful verification, you will receive approval to proceed further.
 
 ### Step 3: Integration Setup
+
 Follow the integration guidelines to set up your system for sending document references to the island.is mailbox. Ensure that your integration is aligned with the specified technical requirements.
 
 ### Step 4: Testing
+
 Conduct testing to ensure that documents are being successfully sent and received by the island.is mailbox. This step is crucial to confirm the reliability of the integration.
 
 ### Step 5: Go-Live
+
 After successfully testing the integration, you will be given the green light to start using the system live. From this point, you can send official document references to the island.is mailbox.
 
 ## FAQ and Support

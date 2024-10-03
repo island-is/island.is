@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Identity
 
 This library implements a client that integrates the [National Registry V2 Client](https://docs.devland.is/libs/clients/national-registry) and the [RSK Company Client](https://docs.devland.is/libs/clients/rsk). It returns an Identity object depending on whether the provided nationalId belongs to an individual or a company.
@@ -10,6 +10,7 @@ To use this library, you need to proxy the X-Road socat service:
 ```bash
 ./scripts/run-xroad-proxy.sh
 ```
+````
 
 or
 
@@ -52,15 +53,18 @@ import { IdentityClientModule } from '@island.is/clients/identity';
 With this setup, you'll have access to the Identity Client Service:
 
 ```typescript
-import { Identity, IdentityClientService } from '@island.is/clients/identity';
+import { Identity, IdentityClientService } from '@island.is/clients/identity'
 
 @Injectable()
 export class SomeService {
   constructor(private readonly identityService: IdentityClientService) {}
 
   async getPerson(nationalId: string): Promise<Identity> {
-    return this.identityService.getIdentity(nationalId);
+    return this.identityService.getIdentity(nationalId)
   }
 }
 ```
+
+```
+
 ```

@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Portals Core
 
 This library contains all the core functionality needed to build libraries for service or admin portals.
@@ -14,6 +14,7 @@ Portal libraries are designed to be dynamically loaded into view when a user acc
 As portals expand, it can be challenging to determine if a feature belongs to an existing module or if a new module should be created.
 
 In general:
+
 - Create a module for each specific service within the Island.is organization, under the scope of a specific team.
 - Maintenance and code ownership are typically the responsibility of the assigned team, though not always for larger modules.
 - Modules can define routes outside their direct "domain." For example, a "Health" module might define routes like `/stillingar/heilsa`.
@@ -29,6 +30,7 @@ export interface PortalModule {
   routes: (props: PortalModuleRoutesProps) => PortalRoute[]
 }
 ```
+````
 
 All libraries are implemented by defining an interface loaded into portals on startup. This interface specifies two key aspects:
 
@@ -60,7 +62,7 @@ export type PortalRoute = RouteObject & {
 }
 ```
 
-- **Path:** Specifies where the route should be rendered. 
+- **Path:** Specifies where the route should be rendered.
 - **Element:** Should be a lazy-loaded component rendered when the path is navigated to.
 
 Example of route property implementation:
@@ -138,4 +140,7 @@ const ApplicationList = () => {
 ## Running Unit Tests
 
 Run `nx test portals-core` to execute the unit tests via [Jest](https://jestjs.io).
+
+```
+
 ```

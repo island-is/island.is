@@ -1,4 +1,4 @@
-```typescript
+````typescript
 # Nest Swagger
 
 The purpose of this library is to simplify REST documentation by combining the decorators of `nestjs/swagger` into a single decorator, called `@Documentation`.
@@ -34,7 +34,7 @@ import { Documentation } from '@island.is/nest/swagger'
     }
   },
 })
-```
+````
 
 This usage would add the following decorators (subject to change with code additions):
 
@@ -55,9 +55,11 @@ This usage would add the following decorators (subject to change with code addit
 The following is the interpretation of the object's structure that is passed to the `@Documentation` decorator:
 
 - **description**:
+
   - Yields `@ApiOperation`
 
 - **response**:
+
   - Yields `@HttpCode`
   - Yields `@ApiOkResponse` if **response.status** == 200
   - Yields `@ApiCreatedResponse` if **response.status** == 201
@@ -65,9 +67,11 @@ The following is the interpretation of the object's structure that is passed to 
   - Yields `@ApiNoContentResponse` if **response.status** == 204
 
 - **request.query**:
+
   - Yields `@ApiQuery`
 
 - **request.params**:
+
   - Yields `@ApiParam`
   - Yields `@ApiNotFoundResponse`
 
@@ -81,4 +85,7 @@ The following is the interpretation of the object's structure that is passed to 
 ## Running Unit Tests
 
 Run `yarn test nest-swagger`
+
+```
+
 ```

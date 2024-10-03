@@ -1,11 +1,11 @@
 ```python
 class Estate:
     """
-    A class to represent an estate. The estate includes properties like name, 
-    address, area, value, and owner. It provides methods to update several of these 
+    A class to represent an estate. The estate includes properties like name,
+    address, area, value, and owner. It provides methods to update several of these
     attributes and to calculate the cost per square meter.
     """
-    
+
     def __init__(self, name, address, area, value, owner):
         """
         Initializes a new instance of Estate.

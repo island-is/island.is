@@ -13,7 +13,7 @@ def fetch_data(endpoint, params=None):
 
     Returns:
         dict: Parsed JSON response from the API.
-    
+
     Raises:
         ValueError: If the response is not successful (Status code is not 2xx).
         ConnectionError: If there's an issue connecting to the endpoint.
@@ -46,7 +46,7 @@ def post_data(endpoint, data, headers=None):
     """
     if headers is None:
         headers = {'Content-Type': 'application/json'}
-    
+
     try:
         response = requests.post(endpoint, json=data, headers=headers)
         response.raise_for_status()

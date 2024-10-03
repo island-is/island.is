@@ -27,21 +27,21 @@ import { VMSTModule } from '@island.is/clients/vmst';
 Once imported, you'll have access to the VMST APIs through the client:
 
 ```typescript
-import { UnionApi } from '@island.is/clients/vmst';
+import { UnionApi } from '@island.is/clients/vmst'
 
 @Injectable()
 export class SomeService {
   constructor(private unionApi: UnionApi) {}
 
   async getUnions(): Promise<Union[]> {
-    const { unions } = await this.unionApi.unionGetUnions();
+    const { unions } = await this.unionApi.unionGetUnions()
 
     if (unions) {
-      return unions;
+      return unions
     }
 
     // Handle case where no unions are returned
-    return [];
+    return []
   }
 }
 ```

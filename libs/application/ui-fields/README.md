@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Application UI Fields
 
 This library includes reusable React components for fields in the application system.
@@ -26,13 +26,14 @@ const File = z.object({
   name: z.string(),
   key: z.string(),
   url: z.string(),
-});
+})
 
 const ExampleSchema = z.object({
   fileUpload: z.array(File),
   // other fields
-});
+})
 ```
+````
 
 Optionally, you can set it to be required:
 
@@ -40,7 +41,7 @@ Optionally, you can set it to be required:
 const ExampleSchema = z.object({
   fileUpload: z.array(File).nonempty(),
   // other fields
-});
+})
 ```
 
 2. Add the field to the form using the same key as in the schema:
@@ -59,7 +60,7 @@ buildSection({
     }),
     // other children
   ],
-});
+})
 ```
 
 #### Using with AWS S3 (Locally)
@@ -76,10 +77,10 @@ buildSection({
 Sometimes you might want to use the `FileUploadController` separately from the field, for example, on a review screen. You can import it from `shared`:
 
 ```typescript
-import { FileUploadController } from '@island.is/shared/form-fields';
+import { FileUploadController } from '@island.is/shared/form-fields'
 
 // Usage
-<FileUploadController
+;<FileUploadController
   id={id}
   application={application}
   error={error}
@@ -95,12 +96,12 @@ import { FileUploadController } from '@island.is/shared/form-fields';
 You might want to read out the stored answer of the file upload field. You can use `getValueViaPath` and then `map` through it in your JSX:
 
 ```typescript
-import { getValueViaPath } from '@island.is/application/core';
+import { getValueViaPath } from '@island.is/application/core'
 
 // Usage
-const uploads = getValueViaPath(application.answers, 'fileUpload') as string[];
+const uploads = getValueViaPath(application.answers, 'fileUpload') as string[]
 
-<Box marginY={4}>
+;<Box marginY={4}>
   {uploads.map((upload, index) => (
     <Text key={index}>{upload.name}</Text>
   ))}
@@ -112,4 +113,7 @@ const uploads = getValueViaPath(application.answers, 'fileUpload') as string[];
 1. Disable the Continue button while uploads are occurring, so that the upload promise does not complete when the component is unmounted (i.e., when the user moves on to the next question).
 2. Make the bucket name configurable in `file-storage-service.ts`.
 3. Localize the error strings in `FileUploadController`.
+
+```
+
 ```

@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Car Recycling Client (Úrvinnslusjóður)
 
 ## Overview
@@ -22,6 +22,7 @@ Run the following command to generate the code:
 ```shell
 yarn codegen
 ```
+````
 
 Note: Code generation produces types, queries, and mutations but does not generate data fetching functions. These have been manually implemented to accommodate token exchange requirements.
 
@@ -36,4 +37,7 @@ nx test clients-car-recycling
 ## Code Owners and Maintainers
 
 - [Deloitte](https://github.com/orgs/island-is/teams/deloitte/members)
+
+```
+
 ```

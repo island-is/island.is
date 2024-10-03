@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # National Registry V2 Client
 
 This library provides a client for interacting with Þjóðskrá APIs.
@@ -12,6 +12,7 @@ To connect, you need to proxy the X-Road socat service. Use one of the following
 ```bash
 ./scripts/run-xroad-proxy.sh
 ```
+````
 
 or
 
@@ -64,4 +65,7 @@ export class SomeService {
 ## Code Owners and Maintainers
 
 - [Kolibri-Modern-Family](https://github.com/orgs/island-is/teams/kolibri-modern-family/members)
+
+```
+
 ```

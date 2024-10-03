@@ -15,16 +15,19 @@ This library provides form field components specifically designed for use within
 To use the form fields library, ensure you have installed the necessary dependencies:
 
 1. **react-hook-form**: The primary form handling library.
+```
 
-   ```
-   npm install react-hook-form
-   ```
+npm install react-hook-form
+
+```
 
 2. **island-ui**: The UI component library from which the form fields derive their styling and functionality.
 
-   ```
-   npm install island-ui
-   ```
+```
+
+npm install island-ui
+
+````
 
 ### Usage
 
@@ -36,27 +39,27 @@ import { useForm, Controller } from 'react-hook-form';
 import { TextInput } from 'island-ui';
 
 const MyForm = () => {
-  const { control, handleSubmit } = useForm();
+const { control, handleSubmit } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+const onSubmit = (data) => {
+ console.log(data);
+};
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Controller
-        name="example"
-        control={control}
-        defaultValue=""
-        render={({ field }) => <TextInput {...field} />}
-      />
-      <button type="submit">Submit</button>
-    </form>
-  );
+return (
+ <form onSubmit={handleSubmit(onSubmit)}>
+   <Controller
+     name="example"
+     control={control}
+     defaultValue=""
+     render={({ field }) => <TextInput {...field} />}
+   />
+   <button type="submit">Submit</button>
+ </form>
+);
 };
 
 export default MyForm;
-```
+````
 
 ### Further Resources
 
@@ -74,3 +77,4 @@ This library is released under the MIT License. Please review the LICENSE file f
 ```
 
 Ensure this documentation is included in your project's README or appropriate documentation files for reference. Adjust URLs to point to actual resources as necessary.
+```

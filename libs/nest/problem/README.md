@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Nest Problem Module
 
 This library includes a Nest Module that implements the [Problem Details for HTTP APIs](https://datatracker.ietf.org/doc/html/rfc7807) spec.
@@ -8,14 +8,15 @@ This library includes a Nest Module that implements the [Problem Details for HTT
 Import `ProblemModule` in your root NestJS module.
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { ProblemModule } from '@island.is/nest/problem';
+import { Module } from '@nestjs/common'
+import { ProblemModule } from '@island.is/nest/problem'
 
 @Module({
   imports: [ProblemModule],
 })
 export class AppModule {}
 ```
+````
 
 It will automatically filter all thrown errors and convert them to Problem Responses.
 
@@ -36,13 +37,13 @@ If the error already has a `problem` attribute, then that will be used.
 The easiest way to manually return a problem response is to throw `ProblemError` or one of its subclasses:
 
 ```typescript
-import { ProblemError } from '@island.is/nest/problem';
-import { ProblemType } from '@island.is/shared/problem';
+import { ProblemError } from '@island.is/nest/problem'
+import { ProblemType } from '@island.is/shared/problem'
 
 throw new ProblemError({
   type: ProblemType.HTTP_NOT_FOUND,
   title: 'Not found',
-});
+})
 ```
 
 The following subclasses are available for your convenience:
@@ -56,21 +57,21 @@ If none of the existing problem types suits your needs, consider [creating a new
 When you've defined the problem type, you can return it like this:
 
 ```typescript
-import { ProblemError } from '@island.is/nest/problem';
-import { ProblemType } from '@island.is/shared/problem';
+import { ProblemError } from '@island.is/nest/problem'
+import { ProblemType } from '@island.is/shared/problem'
 
 throw new ProblemError({
   type: ProblemType.NEW_PROBLEM,
   title: 'Some new problem occurred',
   extraAttribute: 'example',
-});
+})
 ```
 
 Optionally, you can create a `ProblemError` subclass like this:
 
 ```typescript
-import { ProblemType } from '@island.is/shared/problem';
-import { ProblemError } from './ProblemError';
+import { ProblemType } from '@island.is/shared/problem'
+import { ProblemError } from './ProblemError'
 
 export class NewProblem extends ProblemError {
   constructor(extraAttribute: string) {
@@ -79,12 +80,12 @@ export class NewProblem extends ProblemError {
       title: 'Some new problem',
       status: 400,
       extraAttribute,
-    });
+    })
   }
 }
 
 // Later:
-throw new NewProblem('extra');
+throw new NewProblem('extra')
 ```
 
 ## No Content Response
@@ -100,13 +101,13 @@ export class DelegationService {
       where: {
         id: delegationId,
       },
-    });
+    })
 
     if (!delegation) {
-      throw new NoContentException();
+      throw new NoContentException()
     }
 
-    return delegation;
+    return delegation
   }
 }
 ```
@@ -117,4 +118,7 @@ export class DelegationService {
 ## Running Unit Tests
 
 Run `nx test nest-problem` to execute the unit tests via [Jest](https://jestjs.io).
+
+```
+
 ```

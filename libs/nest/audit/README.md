@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Nest Audit Module
 
 This library provides a NestJS module to handle audit logging in backend services.
@@ -32,6 +32,7 @@ Import the audit module in your root module as follows:
 })
 export class AppModule {}
 ```
+````
 
 The `groupName` and `serviceName` determine which CloudWatch Logs group and stream (respectively) the audit logs are stored in. When `NODE_ENV !== 'production'`, you can omit these options, in which case audit entries are logged with our [Logger module](../../logging) to the console.
 
@@ -42,7 +43,7 @@ The `defaultNamespace` option provides a default namespace for every audit entry
 Inject the AuditService and CurrentUser as follows:
 
 ```typescript
-import { AuditService } from '@island.is/nest/audit';
+import { AuditService } from '@island.is/nest/audit'
 
 @Controller()
 class MyController {
@@ -65,13 +66,13 @@ Create audit records as follows:
 this.auditService.audit({
   auth: user,
   action: 'findAll',
-});
+})
 ```
 
 Set a custom namespace, resources, and metadata as follows:
 
 ```typescript
-const stuff = await this.stuffService.getStuff();
+const stuff = await this.stuffService.getStuff()
 this.auditService.audit({
   auth: user,
   namespace: '@island.is/overridden',
@@ -79,7 +80,7 @@ this.auditService.audit({
   resources: stuff.map((s) => s.id),
   meta: { count: stuff.length },
   alsoLog: true,
-});
+})
 ```
 
 For auditing an async action, wrap it like this:
@@ -94,7 +95,7 @@ return this.auditService.auditPromise(
     meta: (stuff) => ({ count: stuff.length }),
   },
   this.stuffService.getStuff(),
-);
+)
 ```
 
 ### Controller/Resolver Audit
@@ -102,7 +103,7 @@ return this.auditService.auditPromise(
 For simple controllers/resolvers, enable audit with decorators as follows:
 
 ```typescript
-import { Audit } from '@island.is/nest/audit';
+import { Audit } from '@island.is/nest/audit'
 
 @Controller()
 class MyController {
@@ -115,7 +116,7 @@ class MyController {
 By default, the defaultNamespace will be used, and the handler name will be the action. Override audit entry fields at both the controller and the handler level:
 
 ```typescript
-import { Audit } from '@island.is/nest/audit';
+import { Audit } from '@island.is/nest/audit'
 
 @Controller()
 @Audit({ namespace: '@island.is/overridden' })
@@ -129,7 +130,7 @@ class MyController {
     meta: (stuff) => ({ count: stuff.length }),
   })
   async findAll() {
-    return this.stuffService.getStuff();
+    return this.stuffService.getStuff()
   }
 }
 ```
@@ -141,4 +142,7 @@ To include request arguments as `meta`, use the `AuditService` methods.
 ## Running Unit Tests
 
 Run `nx test nest-audit` to execute the unit tests via [Jest](https://jestjs.io).
+
+```
+
 ```

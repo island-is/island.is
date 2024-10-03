@@ -2,7 +2,7 @@
 """
 Module: Application
 
-This module serves as the main entry point for executing various operations related to handling user data. 
+This module serves as the main entry point for executing various operations related to handling user data.
 The functions provided cover operations like user authentication, data loading, and report generation.
 
 Classes:
@@ -27,7 +27,7 @@ TODO:
 class User:
     """
     A class used to represent a User in the system.
-    
+
     Attributes
     ----------
     username : str
@@ -40,7 +40,7 @@ class User:
     __init__(self, username, password):
         Initializes User with a username and password.
     """
-    
+
     def __init__(self, username, password):
         """
         Initializes a User object with a username and password.
@@ -67,7 +67,7 @@ class Database:
     check_user_in_db(username, password):
         Check if a user exists in the database with the matching credentials.
     """
-    
+
     def check_user_in_db(self, username, password):
         """
         Simulates checking if a user exists in the database with matching credentials.
@@ -99,7 +99,7 @@ class UserNotFoundError(Exception):
     def __init__(self, message="User not found"):
         """
         Constructs the UserNotFoundError with an optional message.
-        
+
         Parameters
         ----------
         message : str, optional

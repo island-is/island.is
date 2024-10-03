@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Services
 
 This library was generated with [Nx](https://nx.dev).
@@ -26,6 +26,7 @@ Code generation is used to create clients from the OpenAPI documents for the two
 # Generates clients
 yarn nx run services-xroad-collector:codegen/frontend-client
 ```
+````
 
 ### X-Road Security Server
 
@@ -86,4 +87,7 @@ curl -H "Accept: application/json" -H "X-Road-Client: IS-DEV/GOV/10000/island-is
 - Central Server's Security Server: <https://niisss01.playground.x-road.global:4000>
 - Service Consumer's Security Server: <https://testcomss01.playground.x-road.global:4000>
 - Service Provider's Security Server: <https://testagess01.playground.x-road.global:4000>
+
+```
+
 ```

@@ -7,11 +7,13 @@ This library was generated with [Nx](https://nx.dev).
 To upload documents while running locally, you need to set the AWS environment variables. Retrieve these from [AWS IAM Identity Center](https://island-is.awsapps.com/start).
 
 - Set the AWS Access Key ID:
+
   ```bash
   export AWS_ACCESS_KEY_ID="<access_key_id>"
   ```
 
 - Set the AWS Secret Access Key:
+
   ```bash
   export AWS_SECRET_ACCESS_KEY="<secret_access_key>"
   ```
@@ -24,17 +26,20 @@ To upload documents while running locally, you need to set the AWS environment v
 ## Running Locally
 
 1. Start development services:
+
    ```bash
    yarn nx run application-system-api:dev-services
    yarn nx run application-system-api:migrate
    ```
 
 2. Start both proxies by running:
+
    ```bash
    kubectl -n socat port-forward svc/socat-xroad 8081:80
    ```
 
 3. Launch the application system:
+
    ```bash
    yarn start application-system-form
    yarn start api

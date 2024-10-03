@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Nest GraphQL Utilities
 
 This library exports the following utilities:
@@ -19,6 +19,7 @@ export class ArticleResolver {
   author() {}
 }
 ```
+````
 
 You can also configure CacheControl on specific fields:
 
@@ -63,4 +64,7 @@ For more details, please see Apollo's documentation on [server-side caching](htt
 ## Running Unit Tests
 
 Run `nx test nest-graphql` to execute the unit tests via [Jest](https://jestjs.io).
+
+```
+
 ```

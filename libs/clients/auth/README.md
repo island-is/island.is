@@ -1,4 +1,4 @@
-```md
+````md
 # Auth Clients
 
 This documentation provides details on working with authentication clients. The following sections will help you understand the setup, configuration, and use of auth clients in your application.
@@ -57,6 +57,7 @@ user_token = auth_client.authenticate(username='user', password='pass')
 # Verify the token
 is_valid = auth_client.verify_token(user_token)
 ```
+````
 
 ## Common Issues and Troubleshooting
 
@@ -75,4 +76,7 @@ is_valid = auth_client.verify_token(user_token)
   Redirect URLs are used by auth providers to send responses back to your application after a user authenticates successfully.
 
 This documentation should serve as a guide to effectively implement and manage auth clients within your application.
+
+```
+
 ```

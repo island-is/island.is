@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Portals Admin Regulations Admin
 
 This library was generated with [Nx](https://nx.dev).
@@ -11,10 +11,14 @@ To set up the development environment, follow these steps after obtaining fresh 
    ```sh
    sh scripts/run-es-proxy.sh
    ```
+````
+
 2. Start the Docker Compose for the backend:
+
    ```sh
    docker compose -f apps/services/regulations-admin-backend/docker-compose.yml up
    ```
+
    For setup details, see [the README.md](../../../services/../../apps/services/regulations-admin-backend/Readme.md).
 
 3. Start the Regulations Admin Backend:
@@ -53,4 +57,7 @@ To execute the unit tests via [Jest](https://jestjs.io), use the following comma
 ```sh
 nx test service-portal-regulations-admin
 ```
+
+```
+
 ```

@@ -1,5 +1,4 @@
 ```markdown
-
 # Shared Translations
 
 This library contains system translations that may be shared across multiple projects and interfaces.

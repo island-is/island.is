@@ -1,4 +1,4 @@
-```javascript
+````javascript
 # Nest Sequelize Cursor Pagination
 
 Based on this <https://github.com/Kaltsoon/sequelize-cursor-pagination> with inspiration from here <https://medium.com/swlh/how-to-implement-cursor-pagination-like-a-pro-513140b65f32>
@@ -17,7 +17,7 @@ export class PaginatedExampleModelListDto {
   data!: ExampleModelList[];
   pageInfo!: PageInfoDto;
 }
-```
+````
 
 ### In Your Module Controller
 
@@ -84,11 +84,13 @@ async findMany({ listId }: string, query: any) {
 ## Loop Through Dataset
 
 Fetch the next set of results:
+
 ```javascript
 http://localhost/path?after={pageInfo.endCursor}
 ```
 
 Fetch the previous set of results:
+
 ```javascript
 http://localhost/path?before={pageInfo.startCursor}
 ```

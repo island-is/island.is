@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Notifications API Domain Documentation
 
 This document details the Notifications API Domain, outlining its components, features, and usage instructions. It serves as a guide for developers implementing or consuming the Notifications API.
@@ -91,6 +91,7 @@ POST /notifications/send
   "type": "push"
 }
 ```
+````
 
 ### Checking Notification Status
 
@@ -115,4 +116,7 @@ For further information or support, please contact [support@example.com](mailto:
 ---
 
 This documentation provides a comprehensive guide to using the Notifications API efficiently. Adhere to the guidelines and best practices to ensure effective implementation in your projects.
+
+```
+
 ```

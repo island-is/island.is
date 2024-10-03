@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Mocks
 
 This module provides mocks for the main GraphQL API.
@@ -12,13 +12,14 @@ This module provides mocks for the main GraphQL API.
    ```bash
    yarn msw init path/to/your/public/
    ```
+````
 
 2. **Import Mocks in Entry File:**
 
    Include the following import statement in your entry file:
 
    ```typescript
-   import '@island.is/api/mocks';
+   import '@island.is/api/mocks'
    ```
 
 3. **Configure Environment Variables:**
@@ -41,4 +42,7 @@ This module provides mocks for the main GraphQL API.
    Note: All mock code should be automatically removed from production bundles.
 
 For more detailed instructions, refer to the documentation in the [shared mocking library](../../shared/mocking/README.md).
+
+```
+
 ```

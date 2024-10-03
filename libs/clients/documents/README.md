@@ -9,9 +9,7 @@ This library implements a client for interacting with Documents APIs.
 To add this service to your module imports, use the following:
 
 ```typescript
-import {
-  DocumentsClientModule,
-} from '@island.is/clients/documents';
+import { DocumentsClientModule } from '@island.is/clients/documents'
 
 @Module({
   imports: [
@@ -29,7 +27,7 @@ export class YourModule {}
 You will then have access to DocumentsClient APIs:
 
 ```typescript
-import { DocumentClient } from '@island.is/clients/documents';
+import { DocumentClient } from '@island.is/clients/documents'
 
 @Injectable()
 export class SomeService {

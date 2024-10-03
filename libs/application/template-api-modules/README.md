@@ -1,4 +1,4 @@
-```typescript
+````typescript
 # Application Template API Modules
 
 When applications in the application system require API business logic, they can invoke template API modules.
@@ -42,35 +42,35 @@ export class ReferenceTemplateModule {
     };
   }
 }
-```
+````
 
 Create your service class that extends the `BaseTemplateApiService` and provide the application type to the `super` constructor. Example:
 
 ```typescript
-import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common'
 
-import { SharedTemplateApiService } from '../../shared';
-import { TemplateApiModuleActionProps } from '../../../types';
+import { SharedTemplateApiService } from '../../shared'
+import { TemplateApiModuleActionProps } from '../../../types'
 
-import { generateApplicationApprovedEmail } from './emailGenerators';
+import { generateApplicationApprovedEmail } from './emailGenerators'
 
 @Injectable()
 export class ReferenceTemplateService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
-    super(ApplicationTypes.EXAMPLE);
+    super(ApplicationTypes.EXAMPLE)
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     // Pretend to be doing stuff for a short while
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000))
 
     // Use the shared service to send an email using a custom email generator
     await this.sharedTemplateAPIService.sendEmail(
       generateApplicationApprovedEmail,
       application,
-    );
+    )
   }
 }
 ```
@@ -91,12 +91,12 @@ Example:
 
 ```typescript
 // Other module imports
-import { ReferenceTemplateModule } from './reference-template/reference-template.module';
+import { ReferenceTemplateModule } from './reference-template/reference-template.module'
 // Other module service imports
-export { ReferenceTemplateService } from './reference-template/reference-template.service';
+export { ReferenceTemplateService } from './reference-template/reference-template.service'
 
-export const modules = [/* other modules , */ ReferenceTemplateModule];
-export const services = [/* other services , */ ReferenceTemplateService];
+export const modules = [/* other modules , */ ReferenceTemplateModule]
+export const services = [/* other services , */ ReferenceTemplateService]
 ```
 
 **If Connecting to a New Client**
@@ -438,4 +438,7 @@ buildExternalDataProvider({
 ```
 
 This will cause a checkbox saying "Enable mock payment" to be shown that, if checked, will cause the payment step to be skipped.
+
+```
+
 ```

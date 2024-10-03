@@ -9,7 +9,10 @@ To execute the unit tests using [Jest](https://jestjs.io):
 
 1. Open your terminal or command prompt.
 2. Run the following command:
-   ```
-   nx test api-domains-payment
-   ```
+```
+
+nx test api-domains-payment
+
+```
+
 ```

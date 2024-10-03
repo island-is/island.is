@@ -11,7 +11,7 @@ This application template facilitates applicants in applying for pension supplem
 
 #### Prerequisites
 
-This is a temporary state where all new applications are initialized. It has a short lifespan and is not listed. The purpose of this state is to act as a gateway into the actual application process. 
+This is a temporary state where all new applications are initialized. It has a short lifespan and is not listed. The purpose of this state is to act as a gateway into the actual application process.
 
 Here, the applicant reviews general information on application processing and data collection at TR. An external data step fetches data from Þjóðskrá and TR. If the applicant is neither a pensioner (old age, disability, or rehabilitation), nor has a registered domicile in Iceland, or if they exceed the income criteria, they cannot proceed to the next step and submit an application.
 

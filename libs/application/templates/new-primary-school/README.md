@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # New Primary School Application - Directorate of Education and School Services (DESS)
 
 ## Overview
@@ -9,7 +9,7 @@ This template provides a standardized application form for individuals or organi
 
 To apply for a new primary school, please visit the following URL:
 
-- `/umsoknir/nyr-grunnskoli/` 
+- `/umsoknir/nyr-grunnskoli/`
 
 ## External Integrations
 
@@ -22,8 +22,12 @@ To execute unit tests for the application template, use the following command, w
 ```shell
 nx test application-templates-new-primary-school
 ```
+````
 
 ## Code Owners and Maintenance
 
 - Managed by [Deloitte](http://www.deloitte.is)
+
+```
+
 ```

@@ -1,9 +1,12 @@
 ## app.module.ts
 
 ```js
-import { Module } from '@nestjs/common'; // Added import for Module
-import { ConfigModule } from '@island.is/nest/config'; 
-import { UserProfileClientModule, UserProfileClientConfig } from '@island.is/clients/user-profile';
+import { Module } from '@nestjs/common' // Added import for Module
+import { ConfigModule } from '@island.is/nest/config'
+import {
+  UserProfileClientModule,
+  UserProfileClientConfig,
+} from '@island.is/clients/user-profile'
 
 @Module({
   imports: [
@@ -20,13 +23,11 @@ export class AppModule {} // Added module export
 ## some-name.module.ts
 
 ```js
-import { Module } from '@nestjs/common'; // Added import for Module
-import { UserProfileClientModule } from '@island.is/clients/user-profile';
+import { Module } from '@nestjs/common' // Added import for Module
+import { UserProfileClientModule } from '@island.is/clients/user-profile'
 
 @Module({
-  imports: [
-    UserProfileClientModule,
-  ],
+  imports: [UserProfileClientModule],
 })
 export class SomeNameModule {} // Added module export
 ```

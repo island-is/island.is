@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Application API Core
 
 This library was generated with [Nx](https://nx.dev).
@@ -10,6 +10,10 @@ To execute the unit tests for the Application API Core, use the following comman
 ```bash
 nx test application-api-core
 ```
+````
 
 The tests will be executed using the [Jest](https://jestjs.io) testing framework.
+
+```
+
 ```

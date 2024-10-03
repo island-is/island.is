@@ -1,7 +1,7 @@
 ```markdown
 # Application Templates AOSH Request for Inspection
 
-This library is generated with [Nx](https://nx.dev). It provides templates for requesting inspections, following the AOSH standards. 
+This library is generated with [Nx](https://nx.dev). It provides templates for requesting inspections, following the AOSH standards.
 
 ## Running Unit Tests
 

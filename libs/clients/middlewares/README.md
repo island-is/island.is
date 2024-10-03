@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Enhanced Fetch
 
 Includes middleware logic for our API clients, featuring:
@@ -75,6 +75,7 @@ function callApiWithEnhancedFetch() {
   return api.someApi()
 }
 ```
+````
 
 ### Authorization
 
@@ -358,4 +359,7 @@ const enhancedFetch = createEnhancedFetch({
 ## Running unit tests
 
 Run `yarn test clients-middlewares` to execute unit tests using [Jest](https://jestjs.io).
+
+```
+
 ```

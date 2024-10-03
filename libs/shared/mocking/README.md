@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Mocking
 
 This library provides helpers to set up API mocking in Node.js and browser projects.
@@ -47,6 +47,7 @@ if (process.env.NODE_ENV !== 'production' && process.env.API_MOCKS) {
   startMocking([createGraphqlHandler({ schema, resolvers })])
 }
 ```
+````
 
 We recommend generating the schema and types from the real API using [GraphQL Code Generator](https://graphql-code-generator.com/). Use the following as a guide:
 
@@ -409,7 +410,6 @@ However, additional code remains such as resolver, handler, store, and factory c
 To optimize:
 
 1. Within the mocking folder, create a `package.json` including `{ "sideEffects": false }`. This removes all code except `startMocking()`.
-   
 2. Isolate `startMocking` in its own file (e.g., `mocks/index.ts`) and specify it as the only file with side effects:
 
 ```json
@@ -417,4 +417,7 @@ To optimize:
   "sideEffects": ["mocks/index.ts"]
 }
 ```
+
+```
+
 ```

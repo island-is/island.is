@@ -1,7 +1,7 @@
 ```plaintext
 # Portals
 
-A portal is a unique concept used to separate and encapsulate functionality or data in software architecture. In general, a portal can be defined as an entry point or gateway that offers access to different resources, data, or functionalities within an application. Portals are often used to structure information, manage access control, and link disparate systems into a unified interface. 
+A portal is a unique concept used to separate and encapsulate functionality or data in software architecture. In general, a portal can be defined as an entry point or gateway that offers access to different resources, data, or functionalities within an application. Portals are often used to structure information, manage access control, and link disparate systems into a unified interface.
 
 ## Types of Portals
 
@@ -27,7 +27,7 @@ Portals can be broadly categorized into the following types:
 Portals offer several key features that enhance their functionality:
 
 - **Single Sign-On (SSO)**: Allows users to log in once and access multiple systems without re-entering credentials.
-  
+
 - **Personalization**: Customizes content delivery based on user interests, preferences, or role within the organization.
 
 - **Access Control**: Manages user access to secure or sensitive data, ensuring only authorized users can view or interact with such information.
@@ -41,9 +41,9 @@ Portals offer several key features that enhance their functionality:
 Portals can be used in various scenarios, such as:
 
 - **Corporate Intranets**: Serve as centralized platforms for internal communication, collaboration, and resource sharing among employees.
-  
+
 - **Higher Education**: Educational institutions use portals to provide students and faculty access to course materials, grades, and administrative resources.
-  
+
 - **Healthcare**: Medical portals help patients access their health records, schedule appointments, and communicate with healthcare providers.
 
 ## Benefits of Using Portals

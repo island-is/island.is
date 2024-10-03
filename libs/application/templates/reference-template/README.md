@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Reference Template
 
 This library serves as a reference for how all application template libraries should be structured.
@@ -11,6 +11,8 @@ To integrate a new template within the application system, please adhere to the 
    ```bash
    yarn generate @nrwl/react:library application/templates/NAME_OF_APPLICATION
    ```
+````
+
 2. Ensure the default export of this library is an object extending the `ApplicationTemplate` interface.
 3. Introduce a unique application type in `application/types/src/lib/ApplicationTypes.ts`.
 4. Update `application/template-loader/src/lib/templateLoaders.ts` to ensure the library recognizes how to import the newly created application template.
@@ -32,6 +34,7 @@ Each application template is an extension of the `ApplicationTemplate` interface
 ## Running Unit Tests
 
 To execute the unit tests using [Jest](https://jestjs.io), run:
+
 ```bash
 ng test application-templates-reference-template
 ```
@@ -46,7 +49,7 @@ By default, applications do not support user delegations, but this feature can b
 
 For applications supporting specific delegation types, a user with actor delegations for these types will be prompted to select the user for whom they are applying before initiating a new application. Users can switch to a subject from their actor delegations, making the subject the applicant for the new application, while the actor's national ID will be saved in the `applicantActors` field.
 
-If a user accesses a drafted application where the applicant is a user they have delegation rights for, they'll be prompted to adopt the subject role. 
+If a user accesses a drafted application where the applicant is a user they have delegation rights for, they'll be prompted to adopt the subject role.
 
 If another user with proper delegation rights updates the application, they will be added to the `applicantActors` list.
 
@@ -72,4 +75,7 @@ To access the list of national IDs of `applicantActors` that have come in contac
 ```ts
 const applicantActors = application.applicantActors
 ```
+
+```
+
 ```

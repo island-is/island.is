@@ -49,7 +49,7 @@ class DrivingSchoolConfirmation:
 
     def display_confirmation(self):
         """
-        Displays the confirmation details to the console. 
+        Displays the confirmation details to the console.
         Shows the student's name, the course name, and the confirmation status.
         """
         status = "confirmed" if self.confirmed else "not confirmed"

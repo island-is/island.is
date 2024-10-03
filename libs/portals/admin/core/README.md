@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Portals Admin Core
 
 Portals Admin Core library provides essential functionalities, components, and utilities for the Portals Admin application.
@@ -10,6 +10,7 @@ To extract messages from this library and synchronize them with Contentful, exec
 ```bash
 yarn nx run portals/admin/core:extract-strings
 ```
+````
 
 ## Running Unit Tests
 
@@ -18,4 +19,7 @@ To run the unit tests for this library using [Jest](https://jestjs.io), use the 
 ```bash
 nx test portals-admin-core
 ```
+
+```
+
 ```

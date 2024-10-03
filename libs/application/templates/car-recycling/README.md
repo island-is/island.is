@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Car Recycling (Skilavottord - Úrvinnslusjóður)
 
 ## Overview
@@ -20,6 +20,7 @@ To start the backend server, execute the following command:
 ```shell
 yarn start skilavottord-ws
 ```
+````
 
 ## Third-Party Integrations
 
@@ -37,4 +38,7 @@ nx test application-templates-car-recycling
 ## Code Ownership and Maintenance
 
 This project is supported and maintained by: [Deloitte](http://www.deloitte.is)
+
+```
+
 ```

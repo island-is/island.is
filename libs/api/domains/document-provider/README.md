@@ -1,4 +1,4 @@
-```markdown
+````markdown
 ## Document Provider API Documentation
 
 This API provides endpoints for document providers to configure settings and retrieve statistics related to the mailbox system. Below is a description of each endpoint, including request format, parameters, and response details.
@@ -20,13 +20,14 @@ This API provides endpoints for document providers to configure settings and ret
 
 ```json
 {
-    "providerId": "provider123",
-    "settings": {
-        "email": "provider@example.com",
-        "notification": true
-    }
+  "providerId": "provider123",
+  "settings": {
+    "email": "provider@example.com",
+    "notification": true
+  }
 }
 ```
+````
 
 ##### Response
 
@@ -37,8 +38,8 @@ This API provides endpoints for document providers to configure settings and ret
 
 ```json
 {
-    "message": "Configuration successful",
-    "providerId": "provider123"
+  "message": "Configuration successful",
+  "providerId": "provider123"
 }
 ```
 
@@ -65,11 +66,11 @@ This API provides endpoints for document providers to configure settings and ret
 
 ```json
 {
-    "providerId": "provider123",
-    "statistics": {
-        "documentsProcessed": 150,
-        "errorsEncountered": 3
-    }
+  "providerId": "provider123",
+  "statistics": {
+    "documentsProcessed": 150,
+    "errorsEncountered": 3
+  }
 }
 ```
 
@@ -80,4 +81,7 @@ This API provides endpoints for document providers to configure settings and ret
 - **Support:** For technical support, contact support@example.com.
 
 This documentation provides all necessary information to integrate and utilize the Document Provider API effectively. Ensure proper authentication and parameter formatting to achieve successful interactions with the API endpoints.
+
+```
+
 ```

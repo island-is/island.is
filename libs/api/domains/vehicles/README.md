@@ -5,6 +5,7 @@ This service utilizes the VehicleSearchApi
 ## How to Use
 
 To start the API, run:
+
 ```shell
 yarn start api
 ```
@@ -32,6 +33,7 @@ Execute `nx test api-domains-vehicles` to run the unit tests via [Jest](https://
 An example of usage can be found at: <http://localhost:4200/minarsidur/okutaeki>
 
 Ensure the service portal is running by executing:
+
 ```shell
 yarn start service-portal
 ```
@@ -130,7 +132,7 @@ _structure -> data source - explanation if necessary_
 - `vehicleWeight` -> `technical.mass.massinro`
 - `width` -> `technical.size.width`
 - `trailerWithoutBrakesWeight` -> `technical.mass.tMassoftrunbr`
-- `horsepower` -> `technical.maxNetPower` * 1.359622 - Metric horsepower (hp(M))
+- `horsepower` -> `technical.maxNetPower` \* 1.359622 - Metric horsepower (hp(M))
 - `trailerWithBrakesWeight` -> `technical.mass.tMassoftrbr`
 - `carryingCapacity` -> `technical.mass.masscapacity`
 - `axleTotalWeight` -> Sum of `technical.mass.massmaxle1` through `massmaxle5`

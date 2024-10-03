@@ -6,6 +6,7 @@
 This application template enables applicants to apply for parental leave. For more information on application templates, refer to [the reference template](../reference-template/README.md).
 
 Key Features:
+
 - Guides parents and employers through the required steps to collect and confirm all necessary information.
 - Manages communication with external APIs to verify applicant eligibility and submit completed applications to Vinnumálastofnun (VMST).
 
@@ -15,11 +16,11 @@ Below is a flow chart illustrating the application process:
 
 ### Glossary
 
-| Term              | Definition                                   |
-| ----------------- | -------------------------------------------- |
-| Primary parent    | The mother carrying the child                |
-| Secondary parent  | The other parent                             |
-| VMST              | Vinnumálastofnun, the Directorate of Labour |
+| Term             | Definition                                  |
+| ---------------- | ------------------------------------------- |
+| Primary parent   | The mother carrying the child               |
+| Secondary parent | The other parent                            |
+| VMST             | Vinnumálastofnun, the Directorate of Labour |
 
 ### States
 

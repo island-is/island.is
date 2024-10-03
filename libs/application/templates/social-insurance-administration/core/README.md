@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Social Insurance Administration Core
 
 This is a core library for Social Insurance Administration applications. It contains shared components, utilities, types, and other common resources used across different applications within the Social Insurance Administration ecosystem.
@@ -6,7 +6,6 @@ This is a core library for Social Insurance Administration applications. It cont
 ## Key Features
 
 - **Shared Components**: Provides reusable UI components to maintain consistency across different applications.
-  
 - **Utilities**: Offers utility functions to handle common operations such as data formatting, validation, and more.
 
 - **Common Types**: Defines shared types and interfaces to ensure type safety and reduce duplication.
@@ -24,6 +23,7 @@ npm install social-insurance-admin-core
 # Using yarn
 yarn add social-insurance-admin-core
 ```
+````
 
 ### Importing Components or Utilities
 
@@ -31,13 +31,13 @@ Once installed, you can import components, utilities, or types in your applicati
 
 ```javascript
 // Importing a React component
-import { ExampleComponent } from 'social-insurance-admin-core';
+import { ExampleComponent } from 'social-insurance-admin-core'
 
 // Importing a utility function
-import { formatData } from 'social-insurance-admin-core';
+import { formatData } from 'social-insurance-admin-core'
 
 // Importing a type
-import { UserType } from 'social-insurance-admin-core';
+import { UserType } from 'social-insurance-admin-core'
 ```
 
 ## Contributing
@@ -58,4 +58,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Support
 
 If you encounter any issues or have any questions, please open an issue in the GitHub repository, and our team will address it as soon as possible.
+
+```
+
 ```

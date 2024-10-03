@@ -2,8 +2,8 @@
 """
 Activities Module
 
-This module contains UI screens and components for the activities section 
-of the service portal. This documentation aims to provide an overview 
+This module contains UI screens and components for the activities section
+of the service portal. This documentation aims to provide an overview
 of the module's components and their functionalities.
 """
 

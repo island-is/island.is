@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Driving License Book Client
 
 ## Overview
@@ -14,6 +14,7 @@ To update the OpenAPI definition, execute:
 ```sh
 yarn nx run clients-driving-license-book:update-openapi-document
 ```
+````
 
 ### Regenerating the Client
 
@@ -30,17 +31,20 @@ yarn nx run clients-driving-license-book:codegen/backend-client
 Example setup for importing the module:
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@island.is/nest/config';
-import { DrivingLicenseBookClientModule, DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book';
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@island.is/nest/config'
+import {
+  DrivingLicenseBookClientModule,
+  DrivingLicenseBookClientConfig,
+} from '@island.is/clients/driving-license-book'
 
 @Module({
   imports: [
     DrivingLicenseBookClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [DrivingLicenseBookClientConfig, XRoadConfig]
-    })
+      load: [DrivingLicenseBookClientConfig, XRoadConfig],
+    }),
   ],
 })
 export class AppModule {}
@@ -51,13 +55,11 @@ export class AppModule {}
 To use the Driving License Book Client in a specific module:
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { DrivingLicenseBookClientModule } from '@island.is/clients/driving-license-book';
+import { Module } from '@nestjs/common'
+import { DrivingLicenseBookClientModule } from '@island.is/clients/driving-license-book'
 
 @Module({
-  imports: [
-    DrivingLicenseBookClientModule
-  ],
+  imports: [DrivingLicenseBookClientModule],
 })
 export class SomeModule {}
 ```
@@ -67,8 +69,8 @@ export class SomeModule {}
 Implementation within a service:
 
 ```typescript
-import { Injectable, Inject } from '@nestjs/common';
-import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book';
+import { Injectable, Inject } from '@nestjs/common'
+import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book'
 
 @Injectable()
 export class SomeService {
@@ -78,8 +80,8 @@ export class SomeService {
   ) {}
 
   async someMethod(): Promise<any> {
-    const api = await this.drivingLicenseBookClientApiFactory.create();
-    return api.apiStudentGetLicenseBookListSsnGet({ ssn: nationalId });
+    const api = await this.drivingLicenseBookClientApiFactory.create()
+    return api.apiStudentGetLicenseBookListSsnGet({ ssn: nationalId })
   }
 }
 ```
@@ -87,4 +89,7 @@ export class SomeService {
 ## Code Owners and Maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)
+
+```
+
 ```

@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Elastic
 
 This library was generated with [Nx](https://nx.dev).
@@ -10,6 +10,7 @@ To execute the unit tests using [Jest](https://jestjs.io), run the following com
 ```bash
 ng test api-catalogue-elastic
 ```
+````
 
 ## Local Development with Elasticsearch
 
@@ -36,4 +37,7 @@ To delete the index, use the following `curl` command:
 ```bash
 curl -X DELETE localhost:9200/apicatalogue
 ```
+
+```
+
 ```

@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Assets Client
 
 The Assets Client library is a component built with [Nx](https://nx.dev), providing functionality for managing assets within an application.
@@ -10,6 +10,7 @@ To run the unit tests for the Assets Client, use the following command. The test
 ```bash
 nx test clients-assets
 ```
+````
 
 ## Running Lint
 
@@ -26,4 +27,7 @@ If you need to update the OpenAPI definition, which is configured in `clientConf
 ```bash
 yarn nx run clients-assets:codegen/backend-client
 ```
+
+```
+
 ```
