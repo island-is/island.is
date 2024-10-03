@@ -69,10 +69,23 @@ const whoIsTheNotificationForToDTO = (who: WhoIsTheNotificationForEnum) => {
 }
 
 /*
- * type can be 4: Íþróttaslys, 6: Vinnuslys, 7: Heimilistrygging, 8: Björgunarmenn, 9: Nemendur við iðnnám
+ * type can be:
+ *  4. Íþróttaslys,
+ *  6. Vinnuslys,
+ *  7. Heimilistrygging,
+ *  8. Björgunarmenn,
+ *  9. Nemendur við iðnnám
  *
- * type 6 can have the subtypes 1. Almenn vinna á landi, 2. Vinna sjómanna, 3. Atvinnumennska í íþróttum, 4. Vinna við landbúnað
- * type 9 can have the subtypes 5. Starfsnám, 6. Verknám við háskóla, 7. Iðnám í löggildum iðngreinum
+ * type 6 can have the subtypes:
+ *  1. Almenn vinna á landi,
+ *  2. Vinna sjómanna,
+ *  3. Atvinnumennska í íþróttum,
+ *  4. Vinna við landbúnað
+ *
+ * type 9 can have the subtypes:
+ *  5. Starfsnám,
+ *  6. Verknám við háskóla,
+ *  7. Iðnám í löggildum iðngreinum
  */
 const accidentTypeMap = {
   [AccidentTypeEnum.SPORTS]: { type: 4 },
