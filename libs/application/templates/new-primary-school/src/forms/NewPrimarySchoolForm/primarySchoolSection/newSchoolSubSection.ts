@@ -5,6 +5,7 @@ import {
   buildSubSection,
   coreErrorMessages,
 } from '@island.is/application/core'
+import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
 import { ReasonForApplicationOptions } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
@@ -12,7 +13,6 @@ import {
   getApplicationExternalData,
 } from '../../../lib/newPrimarySchoolUtils'
 import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
-import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
 
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
@@ -73,7 +73,7 @@ export const newSchoolSubSection = buildSubSection({
                   school.gradeLevels?.includes(childGradeLevel),
                 )
                 ?.map((school) => ({
-                  value: school.name,
+                  value: school.id,
                   label: school.name,
                 })) ?? []
             )

@@ -93,14 +93,9 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     const newPrimarySchoolDTO =
       transformApplicationToNewPrimarySchoolDTO(application)
 
-    console.log('=====> newPrimarySchoolDTO: ', newPrimarySchoolDTO)
-
-    const response = await this.friggClientService.sendApplication(
+    return await this.friggClientService.sendApplication(
       auth,
       newPrimarySchoolDTO,
     )
-    console.log('=====> response: ', response)
-
-    return response
   }
 }

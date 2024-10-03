@@ -211,7 +211,7 @@
         "type": "object",
         "properties": {
           "address": { "type": "string" },
-          "postCode": { "type": "number" }
+          "postCode": { "type": "string" }
         },
         "required": ["address", "postCode"]
       },
@@ -265,13 +265,7 @@
           "movingAbroadCountry": { "type": "string" },
           "newDomicile": { "$ref": "#/components/schemas/AddressDto" }
         },
-        "required": [
-          "defaultOrg",
-          "selectedOrg",
-          "requestingMeeting",
-          "expectedStartDate",
-          "reason"
-        ]
+        "required": ["defaultOrg", "reason"]
       },
       "HealthDto": {
         "type": "object",
@@ -311,15 +305,7 @@
           "social": { "$ref": "#/components/schemas/SocialDto" },
           "language": { "$ref": "#/components/schemas/LanguageDto" }
         },
-        "required": [
-          "type",
-          "user",
-          "agents",
-          "registration",
-          "health",
-          "social",
-          "language"
-        ]
+        "required": ["type", "user"]
       },
       "FormSubmitSuccessModel": {
         "type": "object",
