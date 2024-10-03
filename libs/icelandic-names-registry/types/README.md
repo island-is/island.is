@@ -3,7 +3,7 @@
 
 """
 This module contains data types for representing information from the Icelandic Names Registry.
-The registry includes details of male and female names, and names in historical context. 
+The registry includes details of male and female names, and names in historical context.
 The models provided below can be used to parse and validate the data from the registry.
 """
 

@@ -1,4 +1,4 @@
-```md
+````md
 # Content Search Indexer
 
 This library consolidates importers from multiple projects to facilitate data import into Elasticsearch for use by the content search engine.
@@ -58,6 +58,7 @@ import { MyCustomImporterService } from './myCustomImporter.service.ts'
 })
 export class MyCustomImporterModule {}
 ```
+````
 
 ## Importing Data
 
@@ -81,4 +82,7 @@ The name of the Elasticsearch index is communicated through **SyncOptions.elasti
 ## Error Handling
 
 Ensure your importer is resilient but avoids concealing critical errors. For instance, minor issues like `Missing title in one entry` are preferable to not throw errors, whereas critical issues like `Cannot connect to data source` should propagate errors to halt all importers. The importer operates when new index versions are populated during deployments, thus it should fail under critical error conditions.
+
+```
+
 ```

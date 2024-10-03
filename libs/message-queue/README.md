@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Message Queue
 
 This is a NestJS library for using [Amazon SQS](https://aws.amazon.com/sqs/).
@@ -23,13 +23,14 @@ services:
 networks:
   local:
 ```
+````
 
 ### Import the Queue Module
 
 Import the QueueModule in your NestJS module:
 
 ```typescript
-import { QueueModule } from '@island.is/message-queue';
+import { QueueModule } from '@island.is/message-queue'
 
 // Register the queue in your NestJS module.
 // You can call QueueModule.register multiple times with different names
@@ -65,8 +66,8 @@ export class MyModule {}
 ### Push Messages to the Queue
 
 ```typescript
-import { InjectQueue, QueueService } from '@island.is/message-queue';
-import { SomeMessageType } from './types';
+import { InjectQueue, QueueService } from '@island.is/message-queue'
+import { SomeMessageType } from './types'
 
 @Injectable()
 export class SomeService {
@@ -74,8 +75,8 @@ export class SomeService {
 
   async addToQueue() {
     // msg can be any JSON-serializable object
-    const msg: SomeMessageType = { some: 'data' };
-    const uuid = await this.queue.add(msg);
+    const msg: SomeMessageType = { some: 'data' }
+    const uuid = await this.queue.add(msg)
     // It's up to you if or what you use the uuid for
   }
 }
@@ -84,8 +85,8 @@ export class SomeService {
 ### Consume Messages from the Queue
 
 ```typescript
-import { InjectWorker, WorkerService } from '@island.is/message-queue';
-import { SomeMessageType } from './types';
+import { InjectWorker, WorkerService } from '@island.is/message-queue'
+import { SomeMessageType } from './types'
 
 @Injectable()
 export class SomeWorkerService {
@@ -93,8 +94,8 @@ export class SomeWorkerService {
 
   async run() {
     await this.worker.run(async (message: SomeMessageType) => {
-      console.log('Yay, got message', message);
-    });
+      console.log('Yay, got message', message)
+    })
   }
 }
 ```
@@ -103,13 +104,13 @@ export class SomeWorkerService {
 
 ```typescript
 const worker = async () => {
-  const app = await NestFactory.createApplicationContext(AppModule);
-  app.enableShutdownHooks();
-  await app.get(SomeWorkerService).run();
-};
+  const app = await NestFactory.createApplicationContext(AppModule)
+  app.enableShutdownHooks()
+  await app.get(SomeWorkerService).run()
+}
 
 // You might need a check here to decide whether to run the worker or the main application/web server
-worker();
+worker()
 ```
 
 ## System Flow Sequence Diagram
@@ -135,4 +136,7 @@ sequenceDiagram
 ## Running Unit Tests
 
 Run `yarn test message-queue` to execute the unit tests using [Jest](https://jestjs.io).
+
+```
+
 ```

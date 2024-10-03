@@ -7,6 +7,7 @@ This library encapsulates configuration for user monitoring.
 To execute the unit tests using [Jest](https://jestjs.io):
 
 Run the following command:
+
 ```bash
 nx test user-monitoring
 ```

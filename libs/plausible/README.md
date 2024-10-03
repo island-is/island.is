@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Plausible
 
 This library was generated with [Nx](https://nx.dev).
@@ -10,4 +10,8 @@ To execute the unit tests using [Jest](https://jestjs.io), run the following com
 ```bash
 nx test plausible
 ```
+````
+
+```
+
 ```

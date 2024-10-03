@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Localization
 
 This library provides components to support Internationalization in Next.js and React projects using [Formatjs](https://formatjs.io/).
@@ -20,6 +20,7 @@ function MyApp({ Component, pageProps }) {
 
 export default appWithLocale(MyApp)
 ```
+````
 
 ### Fetch namespaces by wrapping your Pages with the `withLocale` HOC
 
@@ -90,7 +91,7 @@ You can declare a message by:
 - Using the `formatMessage` method from the `useLocale` hook
 
 ```typescript
-const { formatMessage } = useLocale();
+const { formatMessage } = useLocale()
 
 return (
   <div>
@@ -100,7 +101,7 @@ return (
       description: 'A welcome message',
       values: {
         name: userName,
-      }
+      },
     })}
   </div>
 )
@@ -204,10 +205,13 @@ The first time a namespace is encountered, a new Contentful entry is created (ev
 **Notes on the `extract-strings` script's behavior**:
 
 - Adding a new id automatically creates it in Contentful.
-- Removing an id from the project will automatically remove* that id from the Contentful Namespace entry.
+- Removing an id from the project will automatically remove\* that id from the Contentful Namespace entry.
 - `defaultMessage` will be used as the initial "Icelandic" translation.
 - Updating or removing a `defaultMessage` **does not** affect the "Icelandic" translation that was initially based on it.
 - If multiple instances of the same id are found, but with different defaults/descriptions, the script throws an error.
 
 \*) Technically, missing ids are not removed from the Contentful entry but marked as deprecated. If the id is used again, the deprecation flag is removed.
+
+```
+
 ```

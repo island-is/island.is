@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Auth Nest Tools
 
 This library provides a reusable module (AuthModule) containing guards to secure REST controllers and GraphQL resolvers.
@@ -24,6 +24,7 @@ To import and configure the AuthModule, use the following example:
       issuer: 'https://localhost:6001'
     }),
 ```
+````
 
 Here, `issuer` is the IdS URL.
 
@@ -96,4 +97,7 @@ For public endpoints within a subsection of your controller or app, explicitly o
 @Controller('clients')
 export class ClientsController {
 ```
+
+```
+
 ```

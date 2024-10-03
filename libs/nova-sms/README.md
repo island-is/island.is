@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # NOVA SMS
 
 ## Overview
@@ -20,23 +20,24 @@ To use `nova-sms` as a standalone service in a NestJS application, follow these 
 Add `SmsModule` to the imports array of your module:
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { SmsModule } from 'path-to-sms-module';
+import { Module } from '@nestjs/common'
+import { SmsModule } from 'path-to-sms-module'
 
 @Module({
   imports: [SmsModule],
 })
 export class YourModuleName {}
 ```
+````
 
 #### Step 2: Configure with `smsModuleConfig`
 
 Include `smsModuleConfig` in your application's module imports for configuration:
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import smsModuleConfig from 'path-to-sms-module-config';
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import smsModuleConfig from 'path-to-sms-module-config'
 
 @Module({
   imports: [
@@ -52,4 +53,7 @@ export class AppModule {}
 ## Code Owners and Maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri/members)
+
+```
+
 ```

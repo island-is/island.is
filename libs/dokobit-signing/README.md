@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Dokobit Signing
 
 ## About
@@ -17,6 +17,7 @@ To use this service, include `SigningModule` in your module imports:
 })
 export class YourModule {}
 ```
+````
 
 ### Configuration
 
@@ -37,4 +38,7 @@ export class AppModule {}
 ## Code Owners and Maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri/members)
+
+```
+
 ```

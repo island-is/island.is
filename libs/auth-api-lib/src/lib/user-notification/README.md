@@ -5,7 +5,7 @@ import { SystemNotification } from './SystemNotification'
 
 /**
  * Service to handle the creation and management of system notifications.
- * This class replicates the necessary functionality from @island.is/clients/user-notification 
+ * This class replicates the necessary functionality from @island.is/clients/user-notification
  * to avoid circular dependencies.
  */
 export class NotificationService {
@@ -13,10 +13,10 @@ export class NotificationService {
 
   /**
    * Sends a system notification.
-   * 
+   *
    * @param recipientId - The ID of the notification recipient.
    * @param message - The content of the notification message.
-   * 
+   *
    * @returns {Promise<void>} - A promise that resolves when the notification has been successfully sent.
    */
   async sendNotification(recipientId: string, message: string): Promise<void> {
@@ -41,10 +41,13 @@ export class NotificationService {
 export class SystemNotification {
   /**
    * Creates a system notification for a given recipient.
-   * 
+   *
    * @param notification - An object containing recipientId and message of the notification.
    */
-  async create(notification: { recipientId: string; message: string }): Promise<void> {
+  async create(notification: {
+    recipientId: string
+    message: string
+  }): Promise<void> {
     // Placeholder logic for creating a system notification
     console.log('Notification created:', notification)
   }

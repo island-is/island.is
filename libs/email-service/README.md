@@ -165,7 +165,7 @@ const message = {
       },
     ],
   },
-};
+}
 ```
 
 > [Email example](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assignEmployerEmail.ts) for the parental leave application.
