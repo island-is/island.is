@@ -1,22 +1,20 @@
-## Maintainer's Guide for the Configuration DSL
+## Maintainer's Guide for Configuration DSL
 
 ### Purpose
 
-To ensure seamless and error-free connectivity between our code and the execution environment, we created a Domain-Specific Language (DSL) that allows developers to define the expected configuration of services expressively. This DSL is designed to enforce our conventions and principles.
+To streamline code connection to the execution environment, we developed a Domain-Specific Language (DSL) for expressive service configuration. The DSL enforces conventions and principles. It's adaptable for generating various deployment environments, like bash scripts, Docker Compose, or Kubernetes manifests.
 
-We are also experimenting with using the DSL to generate Bash commands for running services locally. The abstraction level of the DSL allows flexibility for generating deployment setups in different environments, such as Docker Compose or raw Kubernetes manifests, without being tied to a specific one.
+### Key Concepts
 
-### Key Abstractions
+Developers mainly use [`ServiceBuilder`](dsl.ts) for service configuration, typically for environment variables and secrets. If a configuration value is missing, use the constant [`MissingSetting`](types/input-types.ts#L10) instead of placeholders. This type helps enforce deployment readiness policies.
 
-Developers primarily interact with a `ServiceBuilder` to define the configuration of their services. Common configurations include setting environment variables and secrets, along with other properties. When a configuration value is missing, it is crucial to use the constant `MissingSetting` instead of an empty string or other placeholder values. This special type enforces our policies for deployment readiness across differing environments.
+`ServiceBuilder`s can depend on other `ServiceBuilder`s, representing runtime dependencies, avoiding circular references. Note that current exceptions, like between `api` and `application-system-api`, are managed with workarounds in the DSL code.
 
-`ServiceBuilder`s can depend on or be required by other `ServiceBuilder`s, representing runtime dependencies between services. The design intentionally prevents circular dependencies. However, currently, there exists a circular dependency between `api` and `application-system-api`. This is managed through specific workarounds; search for "hacks" in the DSL's code for more details.
+A collection of services for a deployment in a particular environment is a "habitat." While subsets may be deployed for features or local setups, full habitats are used for production.
 
-The complete set of services for a specific deployment in a particular environment is referred to as a "habitat." Although we sometimes generate deployments for a subset of the habitat (e.g., feature deployments or local setups), production deployments always involve the entire habitat.
+### Configuration Processing Pipeline
 
-### Configuration Generation Process
-
-The following illustrates the processing of each service:
+Each service is processed as follows:
 
 ```mermaid
 flowchart LR;
@@ -26,4 +24,4 @@ flowchart LR;
   ServiceDefinitionForEnv-->Localrun-->LocalhostOutput
 ```
 
-After processing each service, a combined output is generated for the deployment configuration.
+After processing, a combined output for deployment is generated.

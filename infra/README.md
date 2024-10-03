@@ -1,51 +1,54 @@
 # CLI Tool Documentation
 
-This CLI tool simplifies the management and setup of local environments for development. It provides commands to render environment variables, secrets, and URLs that are essential for configuring services during development.
+This CLI tool simplifies the management and setup of local environments for development. It provides commands to efficiently manage environment variables, secrets, and URLs essential for configuring services during development.
 
 ## Key Features
 
-- **Environment Setup**: Easily render environment variables and secrets needed for your services in various environments.
-- **Ingress URL Management**: Generate and render ingress URLs for your services.
-- **Service Configuration**: Ensure all necessary secrets and environment variables are loaded to correctly configure services.
+- **Environment Setup**: Quickly render necessary environment variables and secrets across different environments.
+- **Ingress URL Management**: Generate and display ingress URLs for your services.
+- **Service Configuration**: Load all required secrets and environment variables for proper service configuration.
 
-## Available Commands
+### Available Commands
 
-While the CLI offers various commands, one of the most powerful and useful for developers is the `run-local-env` command. This command allows developers to render the required environment and start a local development environment with the necessary configuration.
+One of the most powerful and useful commands for developers is `run-local-env`, which renders the required environment and starts a local development environment with the needed configuration.
 
-Here is a summary of all available commands in the CLI:
+Summary of all available commands:
 
-`yarn cli <command>`
+```text
+yarn cli <command>
 
-### Commands
+Commands:
+  yarn cli render-env        Render a chart for environment.
+  yarn cli render-urls       Render ingress URLs for environment.
+  yarn cli render-secrets    Render secrets needed by a service.
+  yarn cli render-env-vars   Render environment variables needed by a service.
+                             Useful for local "dev" environments.
+  yarn cli render-local-env  Render environment variables for local use. 
+                             Intended for "dev" environments.
+  yarn cli run-local-env     Render environment and run the local environment.
+                             For local "dev" environments.
 
-- `yarn cli render-env`: Render a chart for the environment.
-- `yarn cli render-urls`: Render URLs from ingress for the environment.
-- `yarn cli render-secrets`: Render necessary secrets needed by the service.
-- `yarn cli render-env-vars`: Render necessary environment variables needed by the service. Use this when developing locally and loading environment variables for the "dev" environment.
-- `yarn cli render-local-env`: Similar to `render-env-vars`, this command is used for developing locally and loading the environment variables for the "dev" environment.
-- `yarn cli run-local-env`: Render and run the local environment, loading the required environment variables for the "dev" environment.
+Options:
+  --help     Show help                                                 [boolean]
+  --version  Show version number                                       [boolean]
+```
 
-### Options
+### `run-local-env` Command
 
-- `--help`: Show help information. [boolean]
-- `--version`: Show version number. [boolean]
+The `run-local-env` command is essential for developers working in local environments. It renders necessary environment variables and manages service dependencies and configurations.
 
-## `run-local-env` Command
-
-The `run-local-env` command is a key tool for developers working in local environments. It not only renders the required environment variables but also runs the local environment, managing service dependencies and configurations.
-
-### Example Usage
+#### Example Usage
 
 ```bash
 yarn cli run-local-env <services> [options]
 ```
 
-This command automates the configuration setup, ensuring that the correct environment variables and dependencies are loaded for your local development environment.
+This command streamlines the configuration setup, ensuring the correct environment variables and dependencies are loaded for local development.
 
-### Common Options for `run-local-env`
+#### Common Options for `run-local-env`
 
 - `--dependencies`: Specify dependencies to load.
 - `--json`: Output results in JSON format.
-- `--dry`: Run a dry preview without applying changes.
+- `--dry`: Preview run without applying changes.
 - `--no-secrets`: Skip updating secrets.
-- `--proxies`: Enable proxies if required for local development.
+- `--proxies`: Enable proxies if needed for local development.
