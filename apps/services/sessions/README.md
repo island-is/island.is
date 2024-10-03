@@ -4,24 +4,24 @@ REST API to store and list user sessions from our Identity Server.
 
 ## Quickstart
 
-To start the service locally, simply run these two commands:
+To start the service locally, run:
 
-```
+```bash
 yarn dev-init services-sessions
 yarn start services-sessions
 ```
 
-## Getting started
+## Getting Started
 
-### Local env setup
+### Local Environment Setup
 
-This service depends on Postgres database and a redis cluster. So first we need to start it, make sure you have docker:
+This service requires a Postgres database and a Redis cluster. To start them, ensure you have Docker and run:
 
 ```bash
 yarn dev-services services-sessions
 ```
 
-Then run the db migrations:
+Run database migrations:
 
 ```bash
 yarn nx run services-sessions:migrate
@@ -29,21 +29,21 @@ yarn nx run services-sessions:migrate
 
 ### API
 
-You can serve this service api locally by running:
+To serve the API locally, execute:
 
 ```bash
 yarn start services-sessions
 ```
 
-Api open api specs will now be accessible at
+Access the OpenAPI specs at:
 
-```bash
+```
 http://localhost:3333/swagger
 ```
 
 ### Worker
 
-You can start the worker locally by running:
+Start the worker locally with:
 
 ```bash
 PORT=3343 yarn nx run services-sessions:worker
@@ -51,17 +51,17 @@ PORT=3343 yarn nx run services-sessions:worker
 
 ## Contribute
 
-Please read our [docs](https://docs.devland.is) to learn about the repository before getting started.
+Refer to our [documentation](https://docs.devland.is) before contributing to understand the repository.
 
-### Add DB migration
+### Add DB Migration
 
-To make updates to the database you need to create a new migration file. To do this run the following command:
+To update the database, create a new migration file using:
 
 ```bash
 yarn nx run services-sessions:migration-create -- --name <migration-name>
 ```
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
 - [Fuglar](https://github.com/orgs/island-is/teams/fuglar/members)

@@ -2,53 +2,52 @@
 
 ## About
 
-A service that is responsible for providing and storing User profile info. With the users National Registration id stores contact info and preferred locale. Additional responsibility is a verification process of email and mobile phone.
-The user-profile table is not prepopulated with everyone in Iceland, therefore due to multiple onboarding-flows the user-profile can be created under a variety of circumstances, you will see the findOrCreateUserProfile method a variety of places in this project's code.
+This service provides and stores user profile information, including contact info and preferred locale using the user's National Registration ID. It also handles email and mobile verification. The user-profile table isn't prepopulated with everyone in Iceland, so profiles can be created through various onboarding flows using the `findOrCreateUserProfile` method found throughout the project's code.
 
 ## Quickstart
 
-Simply run these two commands:
+Run these commands:
 
-```
+```bash
 yarn dev-init services-user-profile
 yarn dev services-user-profile
 ```
 
-They are a quick alias for running the commands below.
+These are aliases for the commands listed in the Initial Setup section.
 
-### Initial setup
+### Initial Setup
 
-First, make sure you have docker, then run:
+Ensure Docker is installed, then execute:
 
 ```bash
 yarn dev-services services-user-profile
 ```
 
-Then run the migrations:
+Run migrations:
 
 ```bash
 yarn nx run services-user-profile:migrate
 ```
 
-You can serve this service locally by running:
+Serve the service locally:
 
 ```bash
 yarn start services-user-profile
 ```
 
-Api open api specs will now be accessible at
+Access the API OpenAPI specs at:
 
 ```bash
 http://localhost:3366/
 ```
 
-## Getting started
+## Getting Started
 
 ```bash
 yarn start services-user-profile
 ```
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Norda](https://github.com/orgs/island-is/teams/norda/members)
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)
