@@ -9,7 +9,6 @@ import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { AccessListContainer } from '../access/AccessList/AccessListContainer/AccessListContainer'
 import { useAuthScopeTreeLazyQuery } from '../access/AccessList/AccessListContainer/AccessListContainer.generated'
 import {
-  AuthCustomDelegation,
   AuthCustomDelegationIncoming, AuthCustomDelegationOutgoing,
 } from '../../types/customDelegation'
 import { m } from '../../lib/messages'
@@ -18,7 +17,7 @@ import { AuthDelegationType } from '@island.is/api/schema'
 import isValid from 'date-fns/isValid'
 
 type DelegationViewModalProps = {
-  delegation?: AuthCustomDelegation
+  delegation?: AuthCustomDelegationIncoming | AuthCustomDelegationOutgoing
   direction?: 'incoming' | 'outgoing'
 } & Pick<ModalProps, 'onClose' | 'isVisible'>
 
