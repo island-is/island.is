@@ -1,15 +1,29 @@
+```markdown
 # clients-social-insurance-administration
 
 This library was generated with [Nx](https://nx.dev).
 
-There is a backwards compability hack in the types. DO NOT USE unless absolutely necessary
+**Note**: There is a backwards compatibility hack in the types. Please avoid using it unless absolutely necessary.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-social-insurance-administration` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests using [Jest](https://jestjs.io), run the following command:
 
-## Code generation for client types and endpoints
+```bash
+nx test clients-social-insurance-administration
+```
 
-`yarn nx run clients-social-insurance-administration:update-openapi-document`
+## Code Generation for Client Types and Endpoints
 
-`yarn nx run clients-social-insurance-administration:codegen/backend-client`
+To update the OpenAPI document, use the following command:
+
+```bash
+yarn nx run clients-social-insurance-administration:update-openapi-document
+```
+
+To generate backend client code, execute the following command:
+
+```bash
+yarn nx run clients-social-insurance-administration:codegen/backend-client
+```
+```

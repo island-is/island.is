@@ -1,7 +1,13 @@
+```markdown
 # clients-smart-solutions
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-smart-solutions-v2` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, use the following command:
+```bash
+nx test clients-smart-solutions-v2
+```
+These tests are run using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
+```

@@ -1,11 +1,25 @@
 # Clients Rights Portal
 
-This library was generated with [Nx](https://nx.dev).
+## Overview
 
-## Running unit tests
+This library was generated with [Nx](https://nx.dev), a powerful tool for managing modern web applications.
 
-Run `nx test clients-icelandic-health-insurance` to execute the unit tests via [Jest](https://jestjs.io).
+## Running Unit Tests
 
-## Running lint
+To execute the unit tests for this library, use the following command:
 
-Run `nx lint clients-icelandic-health-insurance` to execute the lint via [ESLint](https://eslint.org/).
+```shell
+nx test clients-icelandic-health-insurance
+```
+
+This will run the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
+
+## Running Lint
+
+To perform a lint check on the code, run:
+
+```shell
+nx lint clients-icelandic-health-insurance
+```
+
+This command uses [ESLint](https://eslint.org/), a pluggable linting utility for JavaScript and TypeScript, to analyze your code for potential errors and enforce consistent code style.

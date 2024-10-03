@@ -1,7 +1,11 @@
-# clients-mms-grade - Primary school data
+# clients-mms-grade - Primary School Data
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated using [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-mms-grade` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests via [Jest](https://jestjs.io), run the following command:
+
+```bash
+nx test clients-mms-grade
+```

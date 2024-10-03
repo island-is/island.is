@@ -2,9 +2,11 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## How to use
+## How to Use
 
-### Generate the client
+### Generate the Client
+
+To generate the client, run the following command:
 
 ```sh
 yarn nx run clients-passports:codegen/backend-client
@@ -12,49 +14,53 @@ yarn nx run clients-passports:codegen/backend-client
 
 ### Usage
 
-- Import the `PassportsClientModule` within the service of choice.
+1. **Import the `PassportsClientModule`** within the desired service.
 
-```
-import { PassportsClientModule } from '@island.is/clients/passports'
+    ```typescript
+    import { PassportsClientModule } from '@island.is/clients/passports';
 
-@Module({
-    ...,
+    @Module({
         imports: [PassportsClientModule],
-    ...,
-})
+    })
+    export class SomeModule {}
+    ```
+
+2. **Inject the `IdentityDocumentApi`** into your constructor.
+
+    ```typescript
+    import { IdentityDocumentApi } from '@island.is/clients/passports';
+
+    @Injectable()
+    export class SomeService {
+        constructor(private passportsApi: IdentityDocumentApi) {}
+    }
+    ```
+
+3. **Use the API with authentication middleware**.
+
+    ```typescript
+    private getPassportsWithAuth(auth: Auth) {
+        return this.passportsApi.withMiddleware(new AuthMiddleware(auth));
+    }
+    ```
+
+4. **Access the service with authentication**.
+
+    ```typescript
+    async function fetchPassport(auth: Auth) {
+        const passportResponse = await this.getPassportsWithAuth(auth)
+            .identityDocumentGetIdentityDocument({
+                personId: '1234567890',
+            });
+
+        console.log('passportResponse', passportResponse);
+    }
+    ```
+
+## Running Unit Tests
+
+To execute the unit tests via [Jest](https://jestjs.io), run the following command:
+
+```sh
+nx test clients-passports
 ```
-
-- Pass in the IdentityDocumentApi
-
-```
-import { IdentityDocumentApi } from '@island.is/clients/passports'
-
-constructor(
-    private passportsApi: IdentityDocumentApi,
-)
-```
-
-- Use with auth middleware
-
-```
-  private getPassportsWithAuth(auth: Auth) {
-    return this.passportsApi.withMiddleware(new AuthMiddleware(auth))
-  }
-```
-
-- Now you can access the service with authentication
-
-```
-const passportResponse = await this.getPassportsWithAuth(
-        auth,
-        )
-        .identityDocumentGetIdentityDocument({
-            personId: '1234567890',
-        })
-
-console.log('passportResponse', passportResponse)
-```
-
-## Running unit tests
-
-Run `nx test clients-passports` to execute the unit tests via [Jest](https://jestjs.io).

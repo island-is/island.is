@@ -1,10 +1,18 @@
+```markdown
 # Clients Company Registry
 
-This is a client for Company Registry, providing access to two endpoints:
+The Clients Company Registry allows interaction with two primary endpoints:
 
-- for fetching Company information by national id
-- Company information search.
+- Fetching Company information by national ID.
+- Conducting a Company information search.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-rsk-company-info` to execute the unit tests via [Jest](https://jestjs.io).
+To execute unit tests, run the following command:
+
+```
+nx test clients-rsk-company-info
+```
+
+This will execute the unit tests using [Jest](https://jestjs.io), a delightful JavaScript Testing Framework with a focus on simplicity.
+```

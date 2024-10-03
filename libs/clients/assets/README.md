@@ -1,17 +1,29 @@
+```markdown
 # Assets Client
 
-This library was generated with [Nx](https://nx.dev).
+The Assets Client library is a component built with [Nx](https://nx.dev), providing functionality for managing assets within an application.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-assets` to execute the unit tests via [Jest](https://jestjs.io).
+To run the unit tests for the Assets Client, use the following command. The tests are executed via [Jest](https://jestjs.io):
 
-## Running lint
+```bash
+nx test clients-assets
+```
 
-Run `nx lint clients-assets` to execute the lint via [ESLint](https://eslint.org/).
+## Running Lint
 
-### Updating the open api definition (clientConfig.json)
+To run linting checks for the Assets Client, use the command below. The linting is carried out using [ESLint](https://eslint.org/):
 
-```sh
+```bash
+nx lint clients-assets
+```
+
+## Updating the OpenAPI Definition
+
+If you need to update the OpenAPI definition, which is configured in `clientConfig.json`, execute the following command:
+
+```bash
 yarn nx run clients-assets:codegen/backend-client
+```
 ```

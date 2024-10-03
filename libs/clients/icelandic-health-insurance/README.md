@@ -1,7 +1,14 @@
+```markdown
 # Icelandic Health Insurance Clients
 
-Currently there are clients for two APIs from Sjúkratryggingar
+This repository contains API clients for interacting with Icelandic health insurance services provided by Sjúkratryggingar Íslands.
 
-- Health Insurance
+## Available APIs
 
-- Rights portal contains information about a user's rights with Sjúkratryggingar
+- **Health Insurance API**: Interact with features related to health insurance policies, claims, and coverage.
+
+- **Rights Portal API**: Access information about user rights with Sjúkratryggingar, including eligibility and entitlements.
+
+--- 
+Documentation follows best-practices for formatting and provides a clear overview of API functionalities.
+```

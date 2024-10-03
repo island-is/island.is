@@ -1,13 +1,27 @@
+```markdown
 # clients-signature-collection
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-signature-collection` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests using [Jest](https://jestjs.io), run the following command:
 
-## Updating Client Config and Generated client
+```sh
+nx test clients-signature-collection
+```
 
-Run `yarn nx update-openapi-document clients-signature-collection` to update clientConfig.js
+## Updating Client Configuration and Generating Client
 
-Run `yarn nx codegen/backend-client clients-signature-collection` to generate new client
+To update `clientConfig.js`, execute:
+
+```sh
+yarn nx update-openapi-document clients-signature-collection
+```
+
+To generate a new client, execute:
+
+```sh
+yarn nx codegen/backend-client clients-signature-collection
+```
+```

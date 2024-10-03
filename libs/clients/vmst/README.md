@@ -2,14 +2,14 @@
 
 ## About
 
-This library implements a client to use VMST APIs
+This library implements a client to interact with VMST APIs.
 
-### Import into other NestJS modules
+### Import into Other NestJS Modules
 
-Add the service to your module imports:
+To use the VMST client within your NestJS modules, include the service in your module imports:
 
 ```typescript
-import { VMSTModule } from '@island.is/clients/vmst'
+import { VMSTModule } from '@island.is/clients/vmst';
 
 @Module({
   imports: [
@@ -22,27 +22,32 @@ import { VMSTModule } from '@island.is/clients/vmst'
 })
 ```
 
-Then you'll have access to VMST APIs:
+### Usage
+
+Once imported, you'll have access to the VMST APIs through the client:
 
 ```typescript
-import { UnionApi } from '@island.is/clients/vmst'
+import { UnionApi } from '@island.is/clients/vmst';
 
 @Injectable()
 export class SomeService {
   constructor(private unionApi: UnionApi) {}
 
   async getUnions(): Promise<Union[]> {
-    const { unions } = await this.unionApi.unionGetUnions()
+    const { unions } = await this.unionApi.unionGetUnions();
 
     if (unions) {
-      return unions
+      return unions;
     }
 
-    // ....
+    // Handle case where no unions are returned
+    return [];
   }
 }
 ```
 
-## Code owners and maintainers
+Ensure that you handle cases where the API might not return data as expected.
+
+## Code Owners and Maintainers
 
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)

@@ -1,39 +1,43 @@
-# User Profile Client
-
-This library implements a client to use User Profile APIs
-
 ## app.module.ts
 
 ```js
-import { ConfigModule } from '@island.is/nest/config'
-import { UserProfileClientModule, UserProfileClientConfig } from '@island.is/clients/user-profile'
+import { Module } from '@nestjs/common'; // Added import for Module
+import { ConfigModule } from '@island.is/nest/config'; 
+import { UserProfileClientModule, UserProfileClientConfig } from '@island.is/clients/user-profile';
 
 @Module({
   imports: [
-      UserProfileClientModule,
-      ConfigModule.forRoot({
-        isGlobal:true,
-        load:[UserProfileClientConfig]
-      })
-    ],
+    UserProfileClientModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [UserProfileClientConfig],
+    }),
+  ],
 })
+export class AppModule {} // Added module export
 ```
 
 ## some-name.module.ts
 
 ```js
-import { UserProfileClientModule } from '@island.is/clients/user-profile'
+import { Module } from '@nestjs/common'; // Added import for Module
+import { UserProfileClientModule } from '@island.is/clients/user-profile';
 
+@Module({
   imports: [
-    UserProfileClientModule
+    UserProfileClientModule,
   ],
+})
+export class SomeNameModule {} // Added module export
 ```
 
 ## some-name.service.ts
 
 ```js
-import { UserProfileApi } from '@island.is/clients/user-profile'
-
+import { Injectable, Inject } from '@nestjs/common'; // Added import for Injectable and Inject
+import { UserProfileApi } from '@island.is/clients/user-profile';
+import { CurrentUser } from '@island.is/auth-nest-tools'; // Imported CurrentUser decorator
+import { User } from '@island.is/auth-nest-tools'; // Imported User interface
 
 @Injectable()
 export class SomeService {
@@ -42,11 +46,10 @@ export class SomeService {
     private readonly userProfileApi: UserProfileApi,
   ) {}
 
-  async getStuff(@CurrentUser() user: User)
-      return this.UserProfileApi.userTokenControllerGetDeviceTokens({nationalId:user.nationalId})
-
+  async getStuff(@CurrentUser() user: User) {
+    return this.userProfileApi.userTokenControllerGetDeviceTokens({
+      nationalId: user.nationalId,
+    });
+  }
+}
 ```
-
-## machine client auth
-
-Check out [AutoAuth](https://github.com/island-is/island.is/pull/6057).

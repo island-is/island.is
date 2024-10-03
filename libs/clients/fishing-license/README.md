@@ -1,7 +1,15 @@
+```markdown
 # Clients Fishing License
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-fishing-license` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for the clients-fishing-license library, run the following command:
+
+```bash
+nx test clients-fishing-license
+```
+
+This will run the tests using the [Jest](https://jestjs.io) framework.
+```

@@ -2,6 +2,12 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-municipalities-financial-aid` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, run the following command:
+
+```bash
+nx test clients-municipalities-financial-aid
+```
+
+This will use [Jest](https://jestjs.io) as the testing framework.

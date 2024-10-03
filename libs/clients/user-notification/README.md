@@ -1,7 +1,15 @@
-# clients-user-notification
+```markdown
+# Clients User Notification
 
-This library was generated with [Nx](https://nx.dev).
+This library handles the user notifications for clients.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-user-notification` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+
+```sh
+nx test clients-user-notification
+```
+
+Ensure that all dependencies are installed and up-to-date before running the tests.
+```

@@ -1,7 +1,13 @@
-# The Directorate of Education and School Services (MMS) (Frigg) Client
+```markdown
+# Directorate of Education and School Services (MMS) Client Library
 
-This library was generated with [Nx](https://nx.dev).
+This library, referred to as the MMS (Frigg) Client, is generated using the [Nx](https://nx.dev) framework.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-mms-frigg` to execute the unit tests via [Jest](https://jestjs.io).
+To run unit tests for this library, use the following command:
+```bash
+nx test clients-mms-frigg
+```
+This will execute the unit tests using the [Jest](https://jestjs.io) testing framework.
+```

@@ -1,11 +1,25 @@
+```markdown
 # clients-transport-authority-vehicle-infolocks
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev), a smart and extensible build framework.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-transport-authority-vehicle-infolocks` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, use the following command:
 
-## Running lint
+```bash
+nx test clients-transport-authority-vehicle-infolocks
+```
 
-Run `nx lint clients-transport-authority-vehicle-infolocks` to execute the lint via [ESLint](https://eslint.org/).
+This command utilizes the [Jest](https://jestjs.io) framework for testing.
+
+## Running Lint
+
+To check for linting issues in the library, run:
+
+```bash
+nx lint clients-transport-authority-vehicle-infolocks
+```
+
+This command employs [ESLint](https://eslint.org/) to ensure code quality and consistency.
+```

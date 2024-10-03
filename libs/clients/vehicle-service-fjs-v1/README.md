@@ -2,10 +2,16 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-vehicle-service-fjs-v1` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+```
+nx test clients-vehicle-service-fjs-v1
+```
 
-## Running lint
+## Running Lint
 
-Run `nx lint clients-vehicle-service-fjs-v1` to execute the lint via [ESLint](https://eslint.org/).
+To check the code quality using [ESLint](https://eslint.org/), run:
+```
+nx lint clients-vehicle-service-fjs-v1
+```

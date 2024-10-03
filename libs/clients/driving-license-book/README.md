@@ -1,60 +1,74 @@
+```markdown
 # Driving License Book Client
 
-## About
+## Overview
 
-This library implements a client to use Ökunámsbók's
-Driver's license API through x-road
-
-The client is generated from a copy of the openApi document provided in x-road.
+This library provides a client to interact with Ökunámsbók's Driver's License API via x-road. The client is auto-generated using an OpenAPI document available on x-road.
 
 ## Usage
 
-### Updating the open api definition (clientConfig.json)
+### Updating the OpenAPI Definition (`clientConfig.json`)
+
+To update the OpenAPI definition, execute:
 
 ```sh
 yarn nx run clients-driving-license-book:update-openapi-document
 ```
 
-### Regenerating the client
+### Regenerating the Client
+
+To regenerate the client, execute:
 
 ```sh
 yarn nx run clients-driving-license-book:codegen/backend-client
 ```
 
-### Import into other NestJS modules
+### Importing into Other NestJS Modules
 
-#### app.module.ts
+#### `app.module.ts`
+
+Example setup for importing the module:
 
 ```typescript
-import { ConfigModule } from '@island.is/nest/config'
-import { DrivingLicenseBookClientModule, DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@island.is/nest/config';
+import { DrivingLicenseBookClientModule, DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book';
 
 @Module({
   imports: [
-      DrivingLicenseBookClientModule,
-      ConfigModule.forRoot({
-        isGlobal:true,
-        load:[DrivingLicenseBookClientConfig,XRoadConfig]
-      })
-    ],
+    DrivingLicenseBookClientModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [DrivingLicenseBookClientConfig, XRoadConfig]
+    })
+  ],
 })
+export class AppModule {}
 ```
 
-#### module-name.module.ts
+#### `module-name.module.ts`
+
+To use the Driving License Book Client in a specific module:
 
 ```typescript
-import { DrivingLicenseBookClientModule } from '@island.is/clients/driving-license-book'
+import { Module } from '@nestjs/common';
+import { DrivingLicenseBookClientModule } from '@island.is/clients/driving-license-book';
 
+@Module({
   imports: [
     DrivingLicenseBookClientModule
   ],
+})
+export class SomeModule {}
 ```
 
-#### module-name.service.ts
+#### `module-name.service.ts`
+
+Implementation within a service:
 
 ```typescript
-import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book'
-
+import { Injectable, Inject } from '@nestjs/common';
+import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book';
 
 @Injectable()
 export class SomeService {
@@ -63,12 +77,14 @@ export class SomeService {
     private readonly drivingLicenseBookClientApiFactory: DrivingLicenseBookClientApiFactory,
   ) {}
 
-  async someMethod()
-      const api = await this.drivingLicenseBookClientApiFactory.create()
-      return api.apiStudentGetLicenseBookListSsnGet({ssn:nationalId})
-
+  async someMethod(): Promise<any> {
+    const api = await this.drivingLicenseBookClientApiFactory.create();
+    return api.apiStudentGetLicenseBookListSsnGet({ ssn: nationalId });
+  }
+}
 ```
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)
+```

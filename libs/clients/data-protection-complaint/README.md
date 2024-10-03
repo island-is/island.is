@@ -1,7 +1,15 @@
+```markdown
 # Data Protection Complaint Client
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-data-protection-complaint` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for the Data Protection Complaint Client, use the following command:
+
+```bash
+nx test clients-data-protection-complaint
+```
+
+This will run the tests using [Jest](https://jestjs.io).
+```

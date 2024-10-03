@@ -1,25 +1,39 @@
+```markdown
 # Clients Fiskistofa
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-fiskistofa` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests via [Jest](https://jestjs.io), run the following command:
 
-## Running lint
+```bash
+nx test clients-fiskistofa
+```
 
-Run `nx lint clients-fiskistofa` to execute the lint via [ESLint](https://eslint.org/).
+## Running Lint
+
+To perform linting using [ESLint](https://eslint.org/), run the following command:
+
+```bash
+nx lint clients-fiskistofa
+```
 
 ## Usage
 
-### Updating the open api definition (clientConfig.json)
+### Updating the OpenAPI Definition
 
-```sh
+To update the OpenAPI definition (`clientConfig.json`), run:
+
+```bash
 yarn nx run clients-fiskistofa:update-openapi-document
 ```
 
-### Regenerating the client
+### Regenerating the Client
 
-```sh
+To regenerate the client, use the following command:
+
+```bash
 yarn nx run clients-fiskistofa:codegen/backend-client
+```
 ```

@@ -1,11 +1,26 @@
+```markdown
 # clients-university-application-reykjavik-university
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev), a smart, fast, and extensible build system with first-class support for many frontend frameworks.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-university-application-reykjavik-university` to execute the unit tests via [Jest](https://jestjs.io).
+To execute unit tests using [Jest](https://jestjs.io), run the following command:
 
-## Running lint
+```
+nx test clients-university-application-reykjavik-university
+```
 
-Run `nx lint clients-university-application-reykjavik-university` to execute the lint via [ESLint](https://eslint.org/).
+This will run all unit tests defined in the library.
+
+## Running Lint
+
+To check code quality and style using [ESLint](https://eslint.org/), run the following command:
+
+```
+nx lint clients-university-application-reykjavik-university
+```
+
+This will execute linting on the library files to ensure they follow the configured coding standards.
+
+```

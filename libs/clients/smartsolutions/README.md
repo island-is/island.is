@@ -1,18 +1,19 @@
+```markdown
 # Smart Solutions
 
-A library enabling interaction with various digital licenses.
-This library was generated with [Nx](https://nx.dev).
+A library enabling interaction with various digital licenses. This library was generated with [Nx](https://nx.dev).
 
 ## Usage
 
-To use the module, you have to import it and call the registerAsync function. This enables us to leverage the ConfigModule to inject the proper parameters, depending on the callers configuration.
+To use the module, import it and call the `registerAsync` function. This allows you to leverage the `ConfigModule` to inject the appropriate parameters, depending on the caller's configuration.
 
-The calling module must supply a factory function that provides the configuration object when called. This allows us to both use the module, and create the configuration, dynamically.
+The calling module must provide a factory function that returns the configuration object. This permits both dynamic usage of the module and dynamic creation of the configuration.
 
-## Running unit tests
+## Running Unit Tests
 
 Run `nx test clients-smartsolutions` to execute the unit tests via [Jest](https://jestjs.io).
 
-## Running lint
+## Running Lint
 
-Run `nx lint clients-smartsolutions` to execute the lint via [ESLint](https://eslint.org/).
+Run `nx lint clients-smartsolutions` to execute the linting process via [ESLint](https://eslint.org/).
+```

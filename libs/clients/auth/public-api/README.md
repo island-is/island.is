@@ -1,12 +1,13 @@
+```markdown
 # Auth Public API Client
 
-## About
+## Overview
 
-This library implements a client to use the public auth API.
+This library provides a client for interacting with the public authentication API.
 
-### Import into other NESTJS modules
+## Usage in NestJS Modules
 
-Add the service to your module imports:
+To integrate this service into your module, add it to the module's imports as shown below:
 
 ```typescript
 import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
@@ -14,12 +15,13 @@ import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
 @Module({
   imports: [
     AuthPublicApiClientModule.register({
-      baseApiUrl: AUTH_PUBLIC_API_URL,
+      baseApiUrl: AUTH_PUBLIC_API_URL, // Specify the base URL for the public auth API
     }),
   ],
 })
 ```
 
-## Code owners and maintainers
+## Code Ownership and Maintenance
 
-- [Core](https://github.com/orgs/island-is/teams/core/members)
+This project is maintained by the [Core Team](https://github.com/orgs/island-is/teams/core/members).
+```

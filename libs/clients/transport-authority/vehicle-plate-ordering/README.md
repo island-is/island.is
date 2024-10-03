@@ -1,11 +1,25 @@
-# clients-transport-authority-vehicle-plate-ordering
+```markdown
+# Clients Transport Authority Vehicle Plate Ordering
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-transport-authority-vehicle-plate-ordering` to execute the unit tests via [Jest](https://jestjs.io).
+To run the unit tests for this library, use the following command:
 
-## Running lint
+```bash
+nx test clients-transport-authority-vehicle-plate-ordering
+```
 
-Run `nx lint clients-transport-authority-vehicle-plate-ordering` to execute the lint via [ESLint](https://eslint.org/).
+This will execute the unit tests via [Jest](https://jestjs.io), ensuring your library functions as expected.
+
+## Running Lint
+
+To lint your library code and maintain code quality, run the following command:
+
+```bash
+nx lint clients-transport-authority-vehicle-plate-ordering
+```
+
+This will execute the linting process via [ESLint](https://eslint.org/), ensuring compliance with coding standards and style conventions.
+```

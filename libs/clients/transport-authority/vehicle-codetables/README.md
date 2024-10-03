@@ -1,11 +1,23 @@
 # Clients Transport Authority Vehicle Codetables
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev), a smart and extensible build framework.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-transport-authority-vehicle-codetables` to execute the unit tests via [Jest](https://jestjs.io).
+To execute unit tests for this project, run the following command:
 
-## Running lint
+```bash
+nx test clients-transport-authority-vehicle-codetables
+```
 
-Run `nx lint clients-transport-authority-vehicle-codetables` to execute the lint via [ESLint](https://eslint.org/).
+This uses [Jest](https://jestjs.io), a delightful JavaScript testing framework.
+
+## Running Lint
+
+To perform linting on this project, run the following command:
+
+```bash
+nx lint clients-transport-authority-vehicle-codetables
+```
+
+This uses [ESLint](https://eslint.org/), a tool for identifying and reporting on patterns found in ECMAScript/JavaScript code.

@@ -1,7 +1,13 @@
-# clients-finance-v2
+# Clients Finance v2
 
-This library was generated with [Nx](https://nx.dev).
+`clients-finance-v2` is a library generated with [Nx](https://nx.dev), designed to manage financial operations related to clients.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-finance-v2` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, run:
+
+```bash
+nx test clients-finance-v2
+```
+
+This command utilizes [Jest](https://jestjs.io) as the testing framework to ensure code quality and functionality.

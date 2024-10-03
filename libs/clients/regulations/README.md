@@ -1,7 +1,13 @@
+```markdown
 # Regulations Client
 
-This library serves as a client for endpoints accessible to us from regulations api
+This library serves as a client for endpoints accessible via the regulations API.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test regulations` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+
+```bash
+nx test regulations
+```
+```

@@ -1,29 +1,39 @@
-# Car recycling Client (Úrvinnslusjóður)
+```markdown
+# Car Recycling Client (Úrvinnslusjóður)
 
-## About
+## Overview
 
-This library implements a GraphQL client code to use Car recycling (Skilavottorð) GraphQL APIs.
+This library provides a GraphQL client to interact with the Car Recycling (Skilavottorð) APIs.
 
-## Skilavottord-ws backend URL
+## Skilavottord-ws Backend URL
 
-The `RECYCLING_FUND_GQL_BASE_PATH` config needs to be configured as to Skilavottord GraphQL server URL.
+Ensure the `RECYCLING_FUND_GQL_BASE_PATH` configuration parameter is set to the Skilavottord GraphQL server URL.
 
-## GraphQL client code generation
+## GraphQL Client Code Generation
 
-To be able to generate the GraphQL library to use couple of things is needed to be done before code generation.
+To generate the GraphQL client library, follow these steps:
 
-- Use `graphql-codegen`, config it in `project.json`
-- Implement mutation and queries in a .graphql file
-- Config the `codegen.yaml` to point to GraphQL schema and our .graphql file. In our case we are using the api.graphql schema from the skilavottord-ws backend
+1. Use `graphql-codegen` and configure it in `project.json`.
+2. Implement mutations and queries in a `.graphql` file.
+3. Configure `codegen.yaml` to point to the GraphQL schema and the `.graphql` file. In this case, the `api.graphql` schema from the `skilavottord-ws` backend is used.
 
-Run `yarn codegen`
+Run the following command to generate the code:
 
-The code generation doesn't generate the functions to fetch data the from the backend, only types, the queries and mutations. We implemented the fetch "manually" to be abel to fit in token exhange.
+```shell
+yarn codegen
+```
 
-## Running unit tests
+Note: Code generation produces types, queries, and mutations but does not generate data fetching functions. These have been manually implemented to accommodate token exchange requirements.
 
-Run `nx test clients-car-recycling` to execute the unit tests via [Jest](https://jestjs.io).
+## Running Unit Tests
 
-## Code owners and maintainers
+Execute unit tests using the following command via [Jest](https://jestjs.io):
+
+```shell
+nx test clients-car-recycling
+```
+
+## Code Owners and Maintainers
 
 - [Deloitte](https://github.com/orgs/island-is/teams/deloitte/members)
+```

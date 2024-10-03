@@ -1,11 +1,25 @@
+```markdown
 # Ark Client
 
-This library serves as a client for endpoints accessible to payment ARK
+This library serves as a client for endpoints accessible to the payment ARK system.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-charge-fjs-v2` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, use the following command:
 
-## GET SECRETS
+```shell
+nx test clients-charge-fjs-v2
+```
 
-Run `yarn get-secrets application-system-api` - You need a valid AWS login.
+This will run tests via [Jest](https://jestjs.io).
+
+## Retrieving Secrets
+
+If you need to retrieve secrets for the application, execute the following command:
+
+```shell
+yarn get-secrets application-system-api
+```
+
+**Note:** You must have a valid AWS login to retrieve the secrets.
+```

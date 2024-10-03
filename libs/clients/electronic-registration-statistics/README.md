@@ -1,27 +1,35 @@
-# Clients Electronic Registrations
+## Clients Electronic Registrations
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated using [Nx](https://nx.dev).
 
-This client connects to a server who provides statistics regarding electronic (and paper) registrations.
+This client connects to a server that provides statistics regarding electronic (and paper) registrations.
 
-## Running unit tests
+### Running Unit Tests
 
-Run `nx test clients-electronic-registration-statistics` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+```sh
+nx test clients-electronic-registration-statistics
+```
 
-## Running lint
+### Running Lint
 
-Run `nx lint clients-electronic-registration-statistics` to execute the lint via [ESLint](https://eslint.org/).
+To execute linting using [ESLint](https://eslint.org/), run the following command:
+```sh
+nx lint clients-electronic-registration-statistics
+```
 
 ## Usage
 
-### Updating the open api definition (clientConfig.json)
+### Updating the OpenAPI Definition (clientConfig.json)
 
+To update the OpenAPI definition, run the following command:
 ```sh
 yarn nx run clients-electronic-registration-statistics:update-openapi-document
 ```
 
-### Regenerating the client
+### Regenerating the Client
 
+To regenerate the client, run the following command:
 ```sh
 yarn nx run clients-electronic-registration-statistics:codegen/backend-client
 ```

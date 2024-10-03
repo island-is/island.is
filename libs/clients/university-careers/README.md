@@ -1,7 +1,20 @@
+```markdown
 # clients-university-careers
 
-This library was generated with [Nx](https://nx.dev).
+The `clients-university-careers` library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-university-careers` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for `clients-university-careers`, run the following command:
+
+```bash
+nx test clients-university-careers
+```
+
+Tests will be executed using [Jest](https://jestjs.io).
+
+## Further Reading
+
+- For more information on Nx, visit the [Nx Documentation](https://nx.dev).
+- For details on Jest and its usage, refer to the [Jest Documentation](https://jestjs.io/docs/getting-started).
+```
