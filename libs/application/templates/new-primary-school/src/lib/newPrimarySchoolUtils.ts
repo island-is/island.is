@@ -10,12 +10,12 @@ import {
   Child,
   ChildInformation,
   FriggChildInformation,
+  Membership,
   Parents,
   Person,
   RelativesRow,
   SelectOption,
   SiblingsRow,
-  Membership,
 } from '../types'
 import {
   ReasonForApplicationOptions,
@@ -167,11 +167,6 @@ export const getApplicationExternalData = (
     'nationalRegistry.data.address.city',
   ) as string
 
-  const otherParentName = getValueViaPath(
-    externalData,
-    'children.data.otherParent.fullName',
-  ) as string
-
   const childInformation = getValueViaPath(
     externalData,
     'childInformation.data',
@@ -199,7 +194,6 @@ export const getApplicationExternalData = (
     applicantAddress,
     applicantPostalCode,
     applicantCity,
-    otherParentName,
     childInformation,
     childGradeLevel,
     primaryOrgId,
