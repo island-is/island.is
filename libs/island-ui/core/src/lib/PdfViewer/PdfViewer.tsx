@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, ReactNode } from 'react'
 import { Box } from '../Box/Box'
-import type { Document, Page, Outline, pdfjs } from 'react-pdf'
+import { Document, Page, Outline, pdfjs } from 'react-pdf'
 import { Pagination } from '../Pagination/Pagination'
 import { LoadingDots } from '../LoadingDots/LoadingDots'
 import { AlertMessage } from '../AlertMessage/AlertMessage'
@@ -8,6 +8,11 @@ import 'react-pdf/dist/Page/TextLayer.css'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import * as styles from './PdfViewer.css'
 import cn from 'classnames'
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString()
 
 const pdfError = 'Villa kom upp við að birta skjal, reyndu aftur síðar.'
 
@@ -39,19 +44,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
 }) => {
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
-  const [pdfLib, setPdfLib] = useState<IPdfLib>()
   const [pdfLibError, setPdfLibError] = useState<any>()
-
-  useEffect(() => {
-    import('react-pdf')
-      .then((pdf) => {
-        pdf.pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdf.pdfjs.version}/legacy/build/pdf.worker.min.mjs`
-        setPdfLib(pdf)
-      })
-      .catch((e) => {
-        setPdfLibError(e)
-      })
-  }, [])
 
   const onDocumentLoadSuccess = ({ numPages }: PdfProps) => {
     setNumPages(numPages)
@@ -69,61 +62,58 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
     return errorComponent ?? <AlertMessage type="error" title={pdfError} />
   }
 
-  if (pdfLib) {
-    return (
-      <>
-        <pdfLib.Document
-          file={file}
-          onLoadSuccess={onDocumentLoadSuccess}
-          className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
-          loading={() => loadingView()}
-          error={errorComponent ?? pdfError}
-          externalLinkTarget="_blank"
-        >
-          {showAllPages ? (
-            [...Array(numPages)].map((x, page) => (
-              <pdfLib.Page
-                key={`page_${page + 1}`}
-                pageNumber={page + 1}
-                renderTextLayer={true}
-                renderAnnotationLayer={true}
-                scale={scale}
-              />
-            ))
-          ) : (
-            <pdfLib.Page
+  return (
+    <>
+      <Document
+        file={file}
+        onLoadSuccess={onDocumentLoadSuccess}
+        className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
+        loading={() => loadingView()}
+        onError={(error) => setPdfLibError(error)}
+        error={errorComponent ?? pdfError}
+        externalLinkTarget="_blank"
+      >
+        {showAllPages ? (
+          [...Array(numPages)].map((x, page) => (
+            <Page
+              key={`page_${page + 1}`}
+              pageNumber={page + 1}
               renderTextLayer={true}
               renderAnnotationLayer={true}
-              pageNumber={pageNumber}
               scale={scale}
             />
-          )}
-        </pdfLib.Document>
-
-        <Box
-          marginTop={2}
-          marginBottom={4}
-          className={cn({
-            [`${styles.displayNone}`]: showAllPages || numPages <= 1,
-          })}
-        >
-          <Pagination
-            page={pageNumber}
-            renderLink={(page, className, children) => (
-              <Box
-                cursor="pointer"
-                className={className}
-                onClick={() => setPageNumber(page)}
-              >
-                {children}
-              </Box>
-            )}
-            totalPages={numPages}
+          ))
+        ) : (
+          <Page
+            renderTextLayer={true}
+            renderAnnotationLayer={true}
+            pageNumber={pageNumber}
+            scale={scale}
           />
-        </Box>
-      </>
-    )
-  }
+        )}
+      </Document>
 
-  return loadingView()
+      <Box
+        marginTop={2}
+        marginBottom={4}
+        className={cn({
+          [`${styles.displayNone}`]: showAllPages || numPages <= 1,
+        })}
+      >
+        <Pagination
+          page={pageNumber}
+          renderLink={(page, className, children) => (
+            <Box
+              cursor="pointer"
+              className={className}
+              onClick={() => setPageNumber(page)}
+            >
+              {children}
+            </Box>
+          )}
+          totalPages={numPages}
+        />
+      </Box>
+    </>
+  )
 }
