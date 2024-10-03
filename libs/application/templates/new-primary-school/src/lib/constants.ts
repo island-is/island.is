@@ -18,6 +18,7 @@ export type Events =
 
 export enum ApiModuleActions {
   getChildInformation = 'getChildInformation',
+  sendApplication = 'sendApplication',
 }
 
 export enum Roles {

@@ -1,6 +1,8 @@
+import { useQuery } from '@apollo/client'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   formatGrade,
@@ -8,6 +10,7 @@ import {
   getApplicationExternalData,
   getCurrentSchoolName,
 } from '../../../lib/newPrimarySchoolUtils'
+import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 import { ReviewGroupProps } from './props'
 
 export const School = ({
@@ -23,7 +26,13 @@ export const School = ({
     application.externalData,
   )
 
-  const currentSchool = getCurrentSchoolName(application)
+  const { data } = useQuery<FriggSchoolsByMunicipalityQuery>(
+    friggSchoolsByMunicipalityQuery,
+  )
+
+  const selectedSchoolName = data?.friggSchoolsByMunicipality
+    ?.flatMap((municipality) => municipality.children)
+    .find((school) => school?.id === selectedSchool)?.name
 
   return (
     <ReviewGroup
@@ -44,7 +53,7 @@ export const School = ({
               label={formatMessage(
                 newPrimarySchoolMessages.overview.currentSchool,
               )}
-              value={currentSchool}
+              value={getCurrentSchoolName(application)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -52,7 +61,7 @@ export const School = ({
               label={formatMessage(
                 newPrimarySchoolMessages.overview.selectedSchool,
               )}
-              value={selectedSchool}
+              value={selectedSchoolName}
             />
           </GridColumn>
         </GridRow>

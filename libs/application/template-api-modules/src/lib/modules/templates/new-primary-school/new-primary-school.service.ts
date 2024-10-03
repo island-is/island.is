@@ -11,6 +11,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { transformApplicationToNewPrimarySchoolDTO } from './new-primary-school.utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 @Injectable()
@@ -78,5 +79,15 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     }
 
     return filteredChildren
+  }
+
+  async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
+    const newPrimarySchoolDTO =
+      transformApplicationToNewPrimarySchoolDTO(application)
+
+    return await this.friggClientService.sendApplication(
+      auth,
+      newPrimarySchoolDTO,
+    )
   }
 }
