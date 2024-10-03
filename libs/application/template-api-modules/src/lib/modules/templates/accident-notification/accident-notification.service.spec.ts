@@ -24,8 +24,8 @@ import {
   ApplicationTypes,
 } from '@island.is/application/types'
 
-const nationalId = '1234564321'
-let id = 0
+// const nationalId = '1234564321'
+// let id = 0
 
 const sendMail = () => ({
   messageId: 'some id',

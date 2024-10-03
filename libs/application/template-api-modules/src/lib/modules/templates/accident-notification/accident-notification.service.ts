@@ -31,7 +31,6 @@ import {
 } from './accident-notification-v2.utils'
 import { AccidentreportsApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { MinarsidurAPIModelsMethodResponseDTO } from 'libs/clients/icelandic-health-insurance/rights-portal/gen/fetch'
 
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 
@@ -142,7 +141,7 @@ export class AccidentNotificationService extends BaseTemplateApiService {
       this.attachmentProvider,
     )
 
-    let successfulAttachments: Array<MinarsidurAPIModelsMethodResponseDTO> = []
+    let successfulAttachments = []
 
     try {
       const promises = newAttachments.map((attachment) => {
