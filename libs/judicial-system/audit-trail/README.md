@@ -10,11 +10,12 @@ To ensure code quality and functionality, unit tests are provided. These can be 
 ### Steps to Execute Unit Tests
 
 1. Open your terminal.
-2. Execute the following command to run the tests:
+2. Navigate to the root directory of the project if you are not already there.
+3. Execute the following command to run the tests:
 
    ```sh
    nx test judicial-system-audit-trail
    ```
 
-This command utilizes the Jest test runner to execute all tests associated with the `judicial-system-audit-trail` library, providing feedback and results for any failed tests or detected issues.
+This command utilizes Jest to run all unit tests associated with the `judicial-system-audit-trail` library, offering feedback and results for any failed tests or detected issues.
 ```

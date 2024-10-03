@@ -11,7 +11,7 @@ To execute the unit tests using [Jest](https://jestjs.io), run the following com
 nx test judicial-system-court-client
 ```
 
-## Client Generation
+## Generating the Client
 
 To generate the client, execute the following command:
 
@@ -25,9 +25,9 @@ To generate the client, execute the following command:
 
 ## Updating the Client
 
-To update the client:
+To update the client, follow these steps:
 
 1. Obtain a new OpenAPI JSON description and replace the content of `./src/clientConfig.json`.
-2. Generate the client by running the command provided in the "Client Generation" section.
+2. Generate the client by executing the command provided in the "Generating the Client" section.
 3. Update `./src/lib/courtClient.service.ts` as needed. Note: In the current implementation, the `UploadStream` feature has been manually implemented and excluded from `./src/clientConfig.json`.
 ```

@@ -26,4 +26,4 @@ If you wish to contribute to this project, ensure all tests pass by running the 
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+This project is licensed under the MIT License. See the `LICENSE` file for more details.

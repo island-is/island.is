@@ -5,7 +5,7 @@ The `judicial-system-auth` library is designed to handle authentication tasks wi
 
 ## Overview
 
-This library is built using the [Nx](https://nx.dev) build system, which facilitates efficient and scalable development.
+This library is built using the [Nx](https://nx.dev) build system, providing efficient and scalable development capabilities.
 
 ## Running Unit Tests
 
@@ -15,5 +15,5 @@ To run the unit tests for this library, execute the following command in your te
 nx test judicial-system-auth
 ```
 
-This command uses [Jest](https://jestjs.io) to run the test suite, ensuring that the library's functionality is both correct and reliable.
+This command utilizes [Jest](https://jestjs.io) to run the test suite, ensuring the library's functionality is correct and reliable.
 ```
