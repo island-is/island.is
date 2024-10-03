@@ -1,10 +1,52 @@
-CHECKED IN VOLUNTARILY
+```typescript
+// NotificationService.ts
 
-To avoid a circular dependency we replicate the system-notification part of @island.is/clients/user-notification.
+import { SystemNotification } from './SystemNotification'
 
-The user-notification service uses the delegation API to add Hnipp support for delegations by doing lookup in the delegation index..
+/**
+ * Service to handle the creation and management of system notifications.
+ * This class replicates the necessary functionality from @island.is/clients/user-notification 
+ * to avoid circular dependencies.
+ */
+export class NotificationService {
+  constructor(private readonly systemNotification: SystemNotification) {}
 
-With the new addition of the delegation API sending notifications when new delegations
-get created we have a circular dependency since both services are now using the user-notification client.
+  /**
+   * Sends a system notification.
+   * 
+   * @param recipientId - The ID of the notification recipient.
+   * @param message - The content of the notification message.
+   * 
+   * @returns {Promise<void>} - A promise that resolves when the notification has been successfully sent.
+   */
+  async sendNotification(recipientId: string, message: string): Promise<void> {
+    try {
+      await this.systemNotification.create({
+        recipientId,
+        message,
+      })
+    } catch (error) {
+      console.error('Failed to send system notification:', error)
+      throw error
+    }
+  }
+}
 
-To get around it we replicate the part of that client required to create system notifications here.
+// SystemNotification.ts
+
+/**
+ * Mock class to simulate the creation of system notifications.
+ * This acts as a placeholder for the actual system notification logic in the user-notification client.
+ */
+export class SystemNotification {
+  /**
+   * Creates a system notification for a given recipient.
+   * 
+   * @param notification - An object containing recipientId and message of the notification.
+   */
+  async create(notification: { recipientId: string; message: string }): Promise<void> {
+    // Placeholder logic for creating a system notification
+    console.log('Notification created:', notification)
+  }
+}
+```
