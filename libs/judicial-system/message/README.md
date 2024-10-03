@@ -10,13 +10,13 @@ Before running unit tests or any other commands, ensure you have all dependencie
 1. Execute `npm install` or `yarn install` to install dependencies.
 2. Ensure that your environment is correctly set up to use Nx and Jest.
 
-Failure to meet these prerequisites could result in unexpected behavior or test failures.
+**Note:** Failure to meet these prerequisites could result in unexpected behavior or test failures.
 
 ## Running Unit Tests
 
 To execute the unit tests for the Judicial System Message library using [Jest](https://jestjs.io), run the following command:
 
-```sh
+```bash
 nx test judicial-system-message
 ```
 ```

@@ -1,19 +1,19 @@
 ```markdown
-# Judicial System Auth
+# Judicial System Auth Library
 
-The `judicial-system-auth` library is designed to handle authentication tasks within the judicial system application.
+The `judicial-system-auth` library is designed to manage authentication tasks within the judicial system application.
 
 ## Overview
 
-This library is built using the [Nx](https://nx.dev) build system, providing efficient and scalable development capabilities.
+This library leverages the [Nx](https://nx.dev) build system, providing features for efficient and scalable development.
 
 ## Running Unit Tests
 
-To run the unit tests for this library, execute the following command in your terminal:
+To execute the unit tests for this library, use the following command in your terminal:
 
 ```bash
 nx test judicial-system-auth
 ```
 
-This command utilizes [Jest](https://jestjs.io) to run the test suite, ensuring the library's functionality is correct and reliable.
+This command utilizes [Jest](https://jestjs.io), a delightful JavaScript testing framework, to run the test suite, ensuring the library's functionality is both reliable and robust.
 ```

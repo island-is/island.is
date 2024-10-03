@@ -27,7 +27,7 @@ To generate the client, execute the following command:
 
 To update the client, follow these steps:
 
-1. Obtain a new OpenAPI JSON description and replace the content of `./src/clientConfig.json`.
-2. Generate the client by executing the command provided in the "Generating the Client" section.
-3. Update `./src/lib/courtClient.service.ts` as needed. Note: In the current implementation, the `UploadStream` feature has been manually implemented and excluded from `./src/clientConfig.json`.
+1. Obtain a new OpenAPI JSON description, and replace the content of `./src/clientConfig.json` with this new data.
+2. Run the command from the "Generating the Client" section to regenerate the client.
+3. Manually update `./src/lib/courtClient.service.ts` if necessary. Note: The `UploadStream` feature has been implemented manually and excluded from `./src/clientConfig.json`.
 ```

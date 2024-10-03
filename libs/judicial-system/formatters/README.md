@@ -22,7 +22,7 @@ This will run all unit tests defined for the library and provide a report of the
 
 ## Contributing
 
-If you wish to contribute to this project, ensure all tests pass by running the command described above. Please adhere to any applicable coding standards or guidelines before submitting your changes.
+If you wish to contribute to this project, ensure all tests pass by running the command described above. Please adhere to any applicable coding standards or guidelines before submitting your changes. Contributions should include appropriate test updates when relevant.
 
 ## License
 
