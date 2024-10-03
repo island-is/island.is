@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ConfigService, ConfigType } from '@nestjs/config'
+import { ConfigType } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 import {
   Application,
@@ -10,7 +10,6 @@ import {
   AssignmentEmailTemplateGenerator,
   AssignmentSmsTemplateGenerator,
   AttachmentEmailTemplateGenerator,
-  BaseTemplateApiApplicationService,
   EmailTemplateGenerator,
   SmsTemplateGenerator,
 } from '../../types'
@@ -26,7 +25,6 @@ import { sharedModuleConfig } from './shared.config'
 import { ApplicationService } from '@island.is/application/api/core'
 import jwt from 'jsonwebtoken'
 import { uuid } from 'uuidv4'
-import { TemplateAPIConfig } from '../..'
 import { AwsService } from '@island.is/nest/aws'
 
 @Injectable()
@@ -41,8 +39,6 @@ export class SharedTemplateApiService {
     private readonly smsService: SmsService,
     @Inject(sharedModuleConfig.KEY)
     private config: ConfigType<typeof sharedModuleConfig>,
-    @Inject(ConfigService)
-    private readonly configService: ConfigService<TemplateAPIConfig>,
     private readonly applicationService: ApplicationService,
     private readonly paymentService: PaymentService,
     private readonly awsService: AwsService,
@@ -53,7 +49,7 @@ export class SharedTemplateApiService {
   async createAssignToken(application: Application, expiresIn: number) {
     const token = await this.createToken(
       application,
-      this.config.jwtSecret,
+      this.config.templateApi.jwtSecret,
       expiresIn,
     )
 
@@ -64,7 +60,7 @@ export class SharedTemplateApiService {
     smsTemplateGenerator: SmsTemplateGenerator,
     application: Application,
   ): Promise<any> {
-    const clientLocationOrigin = this.config.clientLocationOrigin
+    const clientLocationOrigin = this.config.templateApi.clientLocationOrigin
 
     const { phoneNumber, message } = smsTemplateGenerator(application, {
       clientLocationOrigin,
@@ -78,7 +74,7 @@ export class SharedTemplateApiService {
     application: Application,
     token: string,
   ): Promise<any> {
-    const clientLocationOrigin = this.config.clientLocationOrigin
+    const clientLocationOrigin = this.config.templateApi.clientLocationOrigin
 
     const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
 
@@ -95,9 +91,9 @@ export class SharedTemplateApiService {
     application: Application,
     locale = 'is',
   ) {
-    const clientLocationOrigin = this.config.clientLocationOrigin
+    const clientLocationOrigin = this.config.templateApi.clientLocationOrigin
 
-    const email = this.config.email
+    const email = this.config.templateApi.email
 
     const template = templateGenerator({
       application,
@@ -117,8 +113,8 @@ export class SharedTemplateApiService {
     token: string,
     locale = 'is',
   ) {
-    const clientLocationOrigin = this.config.clientLocationOrigin
-    const email = this.config.email
+    const clientLocationOrigin = this.config.templateApi.clientLocationOrigin
+    const email = this.config.templateApi.email
 
     const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
 
@@ -144,8 +140,8 @@ export class SharedTemplateApiService {
     recipientEmail: string,
     locale = 'is',
   ) {
-    const clientLocationOrigin = this.config.clientLocationOrigin
-    const email = this.config.email
+    const clientLocationOrigin = this.config.templateApi.clientLocationOrigin
+    const email = this.config.templateApi.email
 
     const template = templateGenerator(
       {
@@ -260,7 +256,7 @@ export class SharedTemplateApiService {
       return Promise.reject('expiration must be positive')
     }
 
-    const bucket = this.config.attachmentBucket
+    const bucket = this.config.templateApi.attachmentBucket
 
     if (bucket == undefined) {
       return Promise.reject('could not find s3 bucket')
@@ -283,7 +279,7 @@ export class SharedTemplateApiService {
       ContentEncoding?: string
     },
   ): Promise<string> {
-    const uploadBucket = this.configService.get('attachmentBucket') as string
+    const uploadBucket = this.config.templateApi.attachmentBucket
     if (!uploadBucket) throw new Error('No attachment bucket configured')
 
     const fileId = uuid()
