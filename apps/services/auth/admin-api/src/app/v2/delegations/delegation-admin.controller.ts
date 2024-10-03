@@ -11,11 +11,13 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 
 import {
+  BypassAuth,
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
   User,
+  ZendeskAuthGuard,
 } from '@island.is/auth-nest-tools'
 import {
   CreatePaperDelegationDto,
@@ -30,9 +32,10 @@ import flatMap from 'lodash/flatMap'
 import { isDefined } from '@island.is/shared/utils'
 
 const namespace = '@island.is/auth/delegation-admin'
+const ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE =
+  process.env.ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE ?? ''
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(DelegationAdminScopes.read)
 @ApiTags('delegation-admin')
 @Controller('delegation-admin')
 @Audit({ namespace })
@@ -42,6 +45,7 @@ export class DelegationAdminController {
     private readonly auditService: AuditService,
   ) {}
 
+  @Scopes(DelegationAdminScopes.read)
   @Get()
   @Documentation({
     response: { status: 200, type: DelegationAdminCustomDto },
@@ -89,6 +93,26 @@ export class DelegationAdminController {
       },
       this.delegationAdminService.createDelegation(user, delegation),
     )
+  }
+
+  @BypassAuth()
+  @UseGuards(ZendeskAuthGuard(ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE))
+  @Post(':zendeskId')
+  @Documentation({
+    response: { status: 201, type: DelegationDTO },
+    request: {
+      params: {
+        zendeskId: {
+          required: true,
+          description: 'The id of the zendesk ticket containing the delegation',
+        },
+      },
+    },
+  })
+  createByZendeskId(
+    @Param('zendeskId') zendeskId: string,
+  ): Promise<DelegationDTO> {
+    return this.delegationAdminService.createDelegationByZendeskId(zendeskId)
   }
 
   @Delete(':delegationId')

@@ -1,4 +1,5 @@
 import request from 'supertest'
+import bodyParser from 'body-parser'
 
 import {
   getRequestMethod,
@@ -11,7 +12,8 @@ import { User } from '@island.is/auth-nest-tools'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { DelegationAdminScopes } from '@island.is/auth/scopes'
-import { SequelizeConfigService } from '@island.is/auth-api-lib'
+import { DelegationDTO, SequelizeConfigService } from '@island.is/auth-api-lib'
+import { DelegationAdminCustomService } from '@island.is/auth-api-lib'
 
 import { AppModule } from '../../../app.module'
 
@@ -132,4 +134,89 @@ describe('withoutAuth and permissions', () => {
       app.cleanUp()
     },
   )
+
+  describe('POST /delegation-admin/:zendeskId', () => {
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+    let delegationAdminService: DelegationAdminCustomService
+
+    beforeEach(async () => {
+      app = await setupAppWithoutAuth({
+        AppModule,
+        SequelizeConfigService,
+        dbType: 'postgres',
+        beforeServerStart: async (app) => {
+          await new Promise((resolve) =>
+            resolve(
+              app.use(
+                bodyParser.json({
+                  verify: (req: any, res, buf) => {
+                    if (buf && buf.length) {
+                      req.rawBody = buf
+                    }
+                  },
+                }),
+              ),
+            ),
+          )
+        },
+      })
+
+      server = request(app.getHttpServer())
+
+      delegationAdminService = app.get(DelegationAdminCustomService)
+
+      jest
+        .spyOn(delegationAdminService, 'createDelegationByZendeskId')
+        .mockImplementation(() => Promise.resolve({} as DelegationDTO))
+    })
+
+    afterEach(() => {
+      app.cleanUp()
+    })
+
+    it('POST /delegation-admin/:zendeskId should return 403 Forbidden when user does not have correct headers for the body', async () => {
+      // Act
+      const res = await getRequestMethod(
+        server,
+        'POST',
+      )('/delegation-admin/123')
+        .send({
+          custom: 'Incorrect body',
+        })
+        .set(
+          'x-zendesk-webhook-signature',
+          '6sUtGV8C8OdoGgCdsV2xRm3XeskZ33Bc5124RiAK4Q4=',
+        )
+        .set('x-zendesk-webhook-signature-timestamp', '2024-10-02T14:21:04Z')
+
+      // Assert
+      expect(res.status).toEqual(403)
+      expect(res.body).toMatchObject({
+        status: 403,
+        type: 'https://httpstatuses.org/403',
+        title: 'Forbidden',
+        detail: 'Forbidden resource',
+      })
+    })
+
+    it('POST /delegation-admin/:zendeskId should return 201 since the correct headers are set for that body', async () => {
+      // Act
+      const res = await getRequestMethod(
+        server,
+        'POST',
+      )('/delegation-admin/123')
+        .send({
+          custom: 'test',
+        })
+        .set(
+          'x-zendesk-webhook-signature',
+          '6sUtGV8C8OdoGgCdsV2xRm3XeskZ33Bc5124RiAK4Q4=',
+        )
+        .set('x-zendesk-webhook-signature-timestamp', '2024-10-02T14:21:04Z')
+
+      // Assert
+      expect(res.status).toEqual(201)
+    })
+  })
 })
