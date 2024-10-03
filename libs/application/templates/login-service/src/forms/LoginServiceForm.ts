@@ -8,6 +8,8 @@ import {
   buildCheckboxField,
   buildCompanySearchField,
   getValueViaPath,
+  buildDescriptionField,
+  buildLinkField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -42,11 +44,11 @@ export const LoginServiceForm: Form = buildForm({
           title: terms.general.pageTitle,
           description: terms.general.pageDescription,
           children: [
-            buildCustomField({
-              id: 'termsAgreement',
-              title: terms.general.pageTitle,
-              doesNotRequireAnswer: true,
-              component: 'TermsOfAgreement',
+            buildLinkField({
+              id: 'termsOfAgreementLink',
+              title: terms.labels.termsAgreementLinkTitle,
+              link: terms.values.termsAgreementUrl,
+              iconProps: { icon: 'open' },
             }),
             buildCheckboxField({
               id: 'termsOfAgreement',
@@ -72,11 +74,10 @@ export const LoginServiceForm: Form = buildForm({
           title: selectCompany.general.pageTitle,
           description: selectCompany.general.pageDescription,
           children: [
-            buildCustomField({
+            buildDescriptionField({
               id: 'selectCompany.nameFieldTitle',
               title: selectCompany.labels.nameDescription,
-              doesNotRequireAnswer: true,
-              component: 'FieldTitle',
+              titleVariant: 'h5',
             }),
             buildCompanySearchField({
               id: 'selectCompany.searchField',
@@ -96,11 +97,10 @@ export const LoginServiceForm: Form = buildForm({
           title: applicant.general.pageTitle,
           description: applicant.general.pageDescription,
           children: [
-            buildCustomField({
+            buildDescriptionField({
               id: 'applicant.nameFieldTitle',
               title: applicant.labels.nameDescription,
-              doesNotRequireAnswer: true,
-              component: 'FieldTitle',
+              titleVariant: 'h5',
             }),
             buildTextField({
               id: 'applicant.name',
@@ -147,18 +147,13 @@ export const LoginServiceForm: Form = buildForm({
                 )
               },
             }),
-            buildCustomField(
-              {
-                id: 'applicant.responsibleParty',
-                title: applicant.labels.responsiblePartyTitle,
-                description: applicant.labels.responsiblePartyDescription,
-                doesNotRequireAnswer: true,
-                component: 'FieldTitle',
-              },
-              {
-                marginTop: [3, 5],
-              },
-            ),
+            buildDescriptionField({
+              id: 'applicant.responsibleParty',
+              title: applicant.labels.responsiblePartyTitle,
+              titleVariant: 'h5',
+              description: applicant.labels.responsiblePartyDescription,
+              marginTop: [3, 5],
+            }),
             buildTextField({
               id: 'applicant.responsiblePartyName',
               title: applicant.labels.responsiblePartyName,

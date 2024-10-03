@@ -31,6 +31,7 @@ import {
   BE,
   B_TEMP,
   B_FULL,
+  B_FULL_RENEWAL_65,
   ApiActions,
 } from './constants'
 import { dataSchema } from './dataSchema'
@@ -83,6 +84,10 @@ const template: ApplicationTemplate<
       ? m.applicationForDrivingLicense.defaultMessage +
         ' - ' +
         m.applicationForFullLicenseTitle.defaultMessage
+      : application.answers.applicationFor === B_FULL_RENEWAL_65
+      ? m.applicationForDrivingLicense.defaultMessage +
+        ' - ' +
+        m.applicationForRenewalLicenseTitle.defaultMessage
       : m.applicationForDrivingLicense.defaultMessage,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
@@ -117,6 +122,8 @@ const template: ApplicationTemplate<
                     ],
                   allowBELicense:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
+                  allow65Renewal:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
                 })
               },
               write: 'all',
@@ -127,13 +134,13 @@ const template: ApplicationTemplate<
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
                 GlassesCheckApi,
+                JurisdictionApi,
                 CurrentLicenseApi.configure({
                   params: {
                     useLegacyVersion: true,
                   },
                 }),
                 DrivingAssessmentApi,
-                JurisdictionApi,
                 QualityPhotoApi,
                 ExistingApplicationApi.configure({
                   params: {

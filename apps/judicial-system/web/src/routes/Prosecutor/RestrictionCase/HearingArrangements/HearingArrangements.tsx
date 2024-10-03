@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -93,8 +93,7 @@ export const HearingArrangements = () => {
     [formatMessage, router, setWorkingCase, transitionCase, workingCase],
   )
 
-  const stepIsValid =
-    isHearingArrangementsStepValidRC(workingCase) || isTransitioningCase
+  const stepIsValid = isHearingArrangementsStepValidRC(workingCase)
 
   return (
     <PageLayout

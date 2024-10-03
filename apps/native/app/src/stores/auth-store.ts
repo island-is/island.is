@@ -75,6 +75,7 @@ const clearPasskey = async (userNationalId?: string) => {
     false,
     userNationalId ? { identifier: userNationalId } : undefined,
   )
+
   if (isPasskeyEnabled) {
     preferencesStore.setState({
       hasCreatedPasskey: false,
@@ -225,6 +226,8 @@ export const authStore = create<AuthStore>((set, get) => ({
       }),
       true,
     )
+    // Reset home screen widgets
+    preferencesStore.getState().resetHomeScreenWidgets()
     return true
   },
 }))

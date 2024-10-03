@@ -74,7 +74,7 @@ export class NotificationsService {
       item.title = cleanString(item.title)
       return item
     } else {
-      this.logger.warn(`No org found for senderid: ${senderId}`)
+      this.logger.warn(`No org found for senderId: ${senderId}`, { senderId })
     }
   }
 

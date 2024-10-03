@@ -251,9 +251,11 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
             (props) => generateRequestReviewEmail(props, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending email about initReview to ${recipientList[i].email}`,
+              `Error sending email about initReview in application: ID: ${application.id}, 
+            role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -265,9 +267,12 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
               generateRequestReviewSms(application, options, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about initReview to ${recipientList[i].phone}`,
+              `Error sending sms about initReview to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -306,9 +311,11 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
               ),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending email about rejectApplication to ${recipientList[i].email}`,
+              `Error sending email about rejectApplication in application: ID: ${application.id}, 
+            role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -324,9 +331,12 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
               ),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about rejectApplication to ${recipientList[i].phone}`,
+              `Error sending sms about rejectApplication to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -421,9 +431,11 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
               generateApplicationSubmittedEmail(props, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending email about submitApplication to ${recipientList[i].email}`,
+              `Error sending email about submitApplication in application: ID: ${application.id}, 
+            role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -435,9 +447,12 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
               generateApplicationSubmittedSms(application, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about submitApplication to ${recipientList[i].phone}`,
+              `Error sending sms about submitApplication to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${recipientList[i].role}`,
+              e,
             )
           })
       }

@@ -14,6 +14,7 @@ import { signatureCollectionNavigation } from '@island.is/portals/admin/signatur
 import { serviceDeskNavigation } from '@island.is/portals/admin/service-desk'
 import { petitionNavigation } from '@island.is/portals/admin/petition'
 import { formSystemNavigation } from '@island.is/form-system'
+import { delegationAdminNav } from 'delegation-admin'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: coreMessages.overview,
@@ -44,7 +45,10 @@ export const TOP_NAVIGATION: PortalNavigationItem = {
     serviceDeskNavigation,
     // Meðmælasöfnun
     signatureCollectionNavigation,
+    // Formakerfi
     formSystemNavigation,
+    // Aðgangsstýring umboð
+    delegationAdminNav,
   ],
 }
 export const BOTTOM_NAVIGATION: PortalNavigationItem = {

@@ -237,7 +237,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
     }
 
     return (
-      <Box marginTop={2}>
+      <Box marginTop={2} marginRight={5}>
         <ProgressMeter
           progress={
             Number(
@@ -297,9 +297,11 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
 
       <Box
         // The left content box
-        alignItems={['stretch', 'center']}
+        alignItems={['stretch', 'center', 'stretch', 'center']}
         display="flex"
-        flexDirection={['column', 'row']}
+        flexDirection={['column', 'row', 'column', 'row']}
+        rowGap={3}
+        columnGap={3}
       >
         {renderAvatar()}
 
@@ -334,11 +336,9 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
 
         <Box
           // The right content box
-          alignItems={['stretch', 'flexEnd']}
+          alignItems={['stretch', 'flexEnd', 'flexStart', 'flexEnd']}
           flexDirection="column"
           flexShrink={0}
-          marginTop={[2, 0]}
-          marginLeft={[0, 3]}
           className={styles.button}
           justifyContent="center"
           display={hasCTAElements ? 'flex' : 'none'}

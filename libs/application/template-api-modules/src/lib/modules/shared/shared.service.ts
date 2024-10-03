@@ -277,4 +277,24 @@ export class SharedTemplateApiService {
     const file = await this.getS3File(application, attachmentKey)
     return new Blob([file.Body as ArrayBuffer], { type: file.ContentType })
   }
+
+  async getAttachmentUrl(key: string, expiration: number): Promise<string> {
+    if (expiration <= 0) {
+      return Promise.reject('expiration must be positive')
+    }
+
+    const bucket = this.configService.get('attachmentBucket') as
+      | string
+      | undefined
+
+    if (bucket == undefined) {
+      return Promise.reject('could not find s3 bucket')
+    }
+
+    return this.s3.getSignedUrlPromise('getObject', {
+      Bucket: bucket,
+      Key: key,
+      Expires: expiration,
+    })
+  }
 }

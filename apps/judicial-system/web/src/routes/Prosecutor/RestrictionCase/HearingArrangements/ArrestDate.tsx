@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
@@ -11,7 +11,7 @@ import {
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   title: string
 }
 

@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
+import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
@@ -147,7 +147,7 @@ export const Cases: FC = () => {
     const casesAwaitingAssignment = filterCases(
       (c) =>
         isIndictmentCase(c.type) &&
-        c.state !== CaseState.WAITING_FOR_CANCELLATION &&
+        (c.state === CaseState.SUBMITTED || c.state === CaseState.RECEIVED) &&
         !c.judge,
     )
 
@@ -192,7 +192,8 @@ export const Cases: FC = () => {
       (c) =>
         !activeCases.includes(c) &&
         !casesAwaitingAssignment.includes(c) &&
-        !casesAwaitingReview.includes(c),
+        !casesAwaitingReview.includes(c) &&
+        !casesAwaitingConfirmation.includes(c),
     )
 
     return [

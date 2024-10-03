@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -15,10 +15,7 @@ import {
   PageLayout,
   RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseFileCategory,
-  EventType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './IndictmentOverview.strings'
@@ -31,10 +28,6 @@ const IndictmentOverview = () => {
   const { onOpen } = useFileList({
     caseId: workingCase.id,
   })
-
-  const indictmentReviewedDate = workingCase.eventLogs?.find(
-    (log) => log.eventType === EventType.INDICTMENT_REVIEWED,
-  )?.created
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -73,17 +66,13 @@ const IndictmentOverview = () => {
           )}
         </Box>
         <Box marginBottom={5}>
-          <InfoCardClosedIndictment
-            displayVerdictViewDate
-            indictmentReviewedDate={indictmentReviewedDate}
-          />
+          <InfoCardClosedIndictment displayVerdictViewDate />
         </Box>
         <Box marginBottom={10}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(strings.verdictTitle)}
           </Text>
           <RenderFiles
-            workingCase={workingCase}
             onOpenFile={onOpen}
             caseFiles={
               workingCase.caseFiles?.filter(

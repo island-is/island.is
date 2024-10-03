@@ -1,4 +1,4 @@
-import { globalStyle, style } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const wrapper = style({
@@ -23,41 +23,12 @@ export const unread = style({
   backgroundColor: theme.color.blueberry100,
 })
 
-export const unopenedWrapper = style({
-  backgroundColor: 'unset',
-  ...themeUtils.responsiveStyle({
-    sm: {
-      backgroundColor: '#FBFBFC',
-    },
-  }),
-})
-
-export const line = style({
-  fontSize: theme.typography.baseFontSize,
-  borderBottom: `1px solid ${theme.color.blue100}`,
-})
-
 export const docLineButton = style({
   overflow: 'hidden',
   cursor: 'pointer',
 })
 
 export const button = style({})
-
-export const unopened = style({
-  fontWeight: theme.typography.semiBold,
-})
-
-export const sender = style({
-  fontWeight: theme.typography.light,
-  fontSize: 14,
-  ...themeUtils.responsiveStyle({
-    md: {
-      fontWeight: theme.typography.regular,
-      fontSize: theme.typography.baseFontSize,
-    },
-  }),
-})
 
 export const image = style({
   width: 28,
@@ -72,10 +43,6 @@ export const fakeBorder = style({
   left: 0,
   top: 0,
   margin: 'auto',
-})
-
-export const icon = style({
-  marginLeft: 6,
 })
 
 export const imageContainer = style({
@@ -124,4 +91,10 @@ export const badge = style({
   width: theme.spacing[1],
   borderRadius: '50%',
   backgroundColor: theme.color.red400,
+})
+
+export const avatar = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
 })

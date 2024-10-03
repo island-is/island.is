@@ -11,6 +11,7 @@ import {
   pruneNonSearchableSliceUnionFields,
 } from './utils'
 import { mapManual } from '../../models/manual.model'
+import { extractChildEntryIds } from './utils'
 
 export const isManual = (entry: Entry<IManualFields>): entry is IManual =>
   entry.sys.contentType.sys.id === 'manual' &&
@@ -73,6 +74,15 @@ export class ManualSyncService implements CmsSyncProvider<IManual> {
             tags.push({
               key: mapped.subgroup.slug,
               type: 'subgroup',
+            })
+          }
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+          for (const id of childEntryIds) {
+            tags.push({
+              key: id,
+              type: 'hasChildEntryWithId',
             })
           }
 

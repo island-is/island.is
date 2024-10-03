@@ -1,4 +1,4 @@
-import { Alert, EmptyList, Skeleton, TopLine } from '@ui'
+import { Alert, EmptyList, GeneralCardSkeleton, TopLine } from '@ui'
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -15,7 +15,7 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import { useTheme } from 'styled-components/native'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
-import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
+import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
@@ -33,7 +33,6 @@ import { getRightButtons } from '../../utils/get-main-root'
 import { isDefined } from '../../utils/is-defined'
 import { testIDs } from '../../utils/test-ids'
 import { WalletItem } from './components/wallet-item'
-import { ButtonRegistry } from '../../utils/component-registry'
 
 type FlatListItem =
   | GenericUserLicense
@@ -54,15 +53,12 @@ const { useNavigationOptions, getNavigationOptions } =
         title: {
           text: intl.formatMessage({ id: 'wallet.screenTitle' }),
         },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
-        leftButtons: [
-          {
-            id: ButtonRegistry.ScanLicenseButton,
-            testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
-            icon: require('../../assets/icons/navbar-scan.png'),
-            color: theme.color.blue400,
-          },
-        ],
+        rightButtons: initialized
+          ? getRightButtons({
+              icons: ['licenseScan'],
+              theme: theme as any,
+            })
+          : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -134,7 +130,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons(),
+    rightButtons: getRightButtons({ icons: ['licenseScan'] }),
     queryResult: [res, resPassport],
     refetching,
   })
@@ -209,24 +205,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     ({ item }: ListRenderItemInfo<FlatListItem>) => {
       if (item.__typename === 'Skeleton') {
         return (
-          <View style={{ paddingHorizontal: 16 }}>
-            <Skeleton
-              active
-              backgroundColor={{
-                dark: theme.shades.dark.shade300,
-                light: theme.color.blue100,
-              }}
-              overlayColor={{
-                dark: theme.shades.dark.shade200,
-                light: theme.color.blue200,
-              }}
-              overlayOpacity={1}
-              height={111}
-              style={{
-                borderRadius: 16,
-                marginBottom: 16,
-              }}
-            />
+          <View style={{ paddingHorizontal: theme.spacing[2] }}>
+            <GeneralCardSkeleton height={104} />
           </View>
         )
       }

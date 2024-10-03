@@ -13,7 +13,7 @@ export class ChildrenResidenceChangeModuleV2 {
       imports: [
         SyslumennClientModule,
         SharedTemplateAPIModule.register(config),
-        SmsModule.register(config.smsOptions),
+        SmsModule,
         NationalRegistryClientModule,
       ],
       providers: [ChildrenResidenceChangeServiceV2],

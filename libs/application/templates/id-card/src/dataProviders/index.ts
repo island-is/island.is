@@ -20,6 +20,8 @@ export const IdentityDocumentApi = defineTemplateApi({
 export const UserInfoApi = UserProfileApi.configure({
   params: {
     catchMock: true,
+    validatePhoneNumber: true,
+    validateEmail: true,
   },
 })
 
@@ -31,7 +33,7 @@ const defaultParams = {
     summary: error.invalidAgeDescription,
   },
   icelandicCitizenship: true,
-  allowPassOnChild: true,
+  allowIfChildHasCitizenship: true,
 }
 
 export const NationalRegistryUser = NationalRegistryUserApi.configure({
@@ -43,6 +45,7 @@ export const NationalRegistryUserParentB = NationalRegistryUserApi.configure({
     ...defaultParams,
     icelandicCitizenship: false,
   },
+  externalDataId: 'nationalRegistryParentB',
 })
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({

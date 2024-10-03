@@ -1,8 +1,8 @@
 import {
   json,
+  ref,
   service,
   ServiceBuilder,
-  ref,
 } from '../../../../../infra/src/dsl/dsl'
 import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
@@ -54,12 +54,20 @@ export const serviceSetup = (services: {
         prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
       },
       COMPANY_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
+      SYSLUMENN_HOST: {
+        dev: 'https://api.syslumenn.is/staging',
+        staging: 'https://api.syslumenn.is/staging',
+        prod: 'https://api.syslumenn.is/api',
+      },
+      SYSLUMENN_TIMEOUT: '3000',
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
       NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+      SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
     })
     .xroad(Base, Client, RskProcuring)
     .readiness('/health/check')
@@ -90,5 +98,10 @@ export const serviceSetup = (services: {
         public: false,
       },
     })
-    .grantNamespaces('nginx-ingress-internal', 'islandis', 'service-portal')
+    .grantNamespaces(
+      'nginx-ingress-internal',
+      'islandis',
+      'service-portal',
+      'user-notification-worker',
+    )
 }

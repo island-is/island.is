@@ -12,11 +12,13 @@ import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-regi
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
+import { CmsConfig } from '@island.is/clients/cms'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
+import { emailModuleConfig } from '@island.is/email-service'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments/environment'
 import { UserNotificationsConfig } from '../config'
-import { CmsConfig } from '@island.is/clients/cms'
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { CmsConfig } from '@island.is/clients/cms'
         IdsClientConfig,
         AuthDelegationApiClientConfig,
         CmsConfig,
+        emailModuleConfig,
+        CompanyRegistryConfig,
       ],
     }),
     NotificationsModule,

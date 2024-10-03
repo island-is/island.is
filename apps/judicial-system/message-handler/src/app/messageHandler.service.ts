@@ -4,7 +4,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import type { CaseMessage } from '@island.is/judicial-system/message'
+import type { Message } from '@island.is/judicial-system/message'
 import {
   messageEndpoint,
   MessageService,
@@ -26,15 +26,22 @@ export class MessageHandlerService implements OnModuleDestroy {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async handleMessage(message: CaseMessage): Promise<boolean> {
+  async handleMessage(message: Message): Promise<boolean> {
     this.logger.debug('Handling message', { msg: message })
 
     const handled = await this.internalDeliveryService.deliver(
-      message.user,
-      message.caseId,
-      `${messageEndpoint[message.type]}${
-        message.elementId ? `/${message.elementId}` : ''
+      `${this.config.backendUrl}/api/internal${
+        message.caseId ? `/case/${message.caseId}` : ''
+      }/${messageEndpoint[message.type]}${
+        message.elementId
+          ? `/${
+              Array.isArray(message.elementId)
+                ? message.elementId.join('/')
+                : message.elementId
+            }`
+          : ''
       }`,
+      message.user,
       message.body,
     )
 
@@ -54,7 +61,7 @@ export class MessageHandlerService implements OnModuleDestroy {
       this.logger.debug('Checking for messages')
 
       await this.messageService
-        .receiveMessagesFromQueue(async (message: CaseMessage) => {
+        .receiveMessagesFromQueue(async (message: Message) => {
           return await this.handleMessage(message)
         })
         .catch(async (error) => {

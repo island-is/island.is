@@ -43,12 +43,12 @@ export const formatValueForPresentation = (
 
       let divider = 1
       let postfix = ''
-      let precision = 0
+      let precision = increasePrecisionBy
 
       if (reduceAndRoundValue && value >= 1e6) {
         divider = 1e6
         postfix = messages[activeLocale].millionPostfix
-        precision = 1 + increasePrecisionBy
+        precision += 1
       } else if (reduceAndRoundValue && value >= 1e4) {
         divider = 1e3
         postfix = messages[activeLocale].thousandPostfix
@@ -60,7 +60,20 @@ export const formatValueForPresentation = (
         v = round(value / divider, precision)
       }
 
-      return `${v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}${postfix}`
+      const thousandSeparator = messages[activeLocale].thousandSeparator ?? '.'
+      const fractionSeparator = messages[activeLocale].fractionSeparator ?? ','
+
+      const [integer, fraction] = v.toString().split('.')
+
+      // Add thousand separator
+      let result = integer.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator)
+
+      // Add fraction separator
+      if (fraction) {
+        result += `${fractionSeparator}${fraction}`
+      }
+
+      return `${result}${postfix}`
     }
   } catch {
     // pass

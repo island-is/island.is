@@ -38,7 +38,11 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
-import { HealthDirectorateClientConfig } from '@island.is/clients/health-directorate'
+import {
+  HealthDirectorateClientConfig,
+  HealthDirectorateVaccinationsClientConfig,
+  HealthDirectorateOrganDonationClientConfig,
+} from '@island.is/clients/health-directorate'
 import {
   AgriculturalUniversityOfIcelandCareerClientConfig,
   BifrostUniversityCareerClientConfig,
@@ -52,6 +56,8 @@ import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
+import { smsModuleConfig } from '@island.is/nova-sms'
+import { emailModuleConfig } from '@island.is/email-service'
 
 @Module({
   imports: [
@@ -93,6 +99,8 @@ import { FriggClientConfig } from '@island.is/clients/mms/frigg'
         InnaClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
+        HealthDirectorateVaccinationsClientConfig,
+        HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateClientConfig,
         AgriculturalUniversityOfIcelandCareerClientConfig,
         BifrostUniversityCareerClientConfig,
@@ -105,6 +113,8 @@ import { FriggClientConfig } from '@island.is/clients/mms/frigg'
         HealthInsuranceV2ClientConfig,
         VmstClientConfig,
         FriggClientConfig,
+        smsModuleConfig,
+        emailModuleConfig,
       ],
     }),
   ],

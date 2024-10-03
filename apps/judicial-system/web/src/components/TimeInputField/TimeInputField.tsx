@@ -1,12 +1,12 @@
-import React, { FC, PropsWithChildren } from 'react'
+import { ChangeEvent, FC, FocusEvent, PropsWithChildren } from 'react'
 import InputMask from 'react-input-mask'
 
 interface Props {
   disabled?: boolean
   value?: string
-  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
-  onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onBlur?: (event: FocusEvent<HTMLInputElement>) => void
+  onFocus?: (event: FocusEvent<HTMLInputElement>) => void
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
 const TimeInputField: FC<PropsWithChildren<Props>> = ({
