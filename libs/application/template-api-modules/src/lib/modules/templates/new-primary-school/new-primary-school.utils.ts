@@ -80,6 +80,18 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         }))
       : []),
   ]
+
+  let noIcelandic: boolean
+  if (otherLanguagesSpokenDaily === YES) {
+    if (nativeLanguage === 'is' || otherLanguages?.includes('is')) {
+      noIcelandic = false
+    } else {
+      noIcelandic = icelandicNotSpokenAroundChild?.includes(YES)
+    }
+  } else {
+    noIcelandic = nativeLanguage !== 'is'
+  }
+
   const newPrimarySchoolDTO: FormDto = {
     type: FormDtoTypeEnum.Registration,
     user: {
@@ -132,12 +144,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           },
           language: {
             nativeLanguage: nativeLanguage,
-            noIcelandic:
-              otherLanguagesSpokenDaily === YES
-                ? nativeLanguage === 'is' || otherLanguages?.includes('is')
-                  ? false
-                  : icelandicNotSpokenAroundChild?.includes(YES)
-                : nativeLanguage !== 'is',
+            noIcelandic,
             otherLanguages:
               otherLanguagesSpokenDaily === YES ? otherLanguages : undefined,
           },
