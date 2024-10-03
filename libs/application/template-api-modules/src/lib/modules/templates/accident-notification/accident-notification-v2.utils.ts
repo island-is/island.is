@@ -105,35 +105,45 @@ const studiesAccidentSubtypeMap = {
   [StudiesAccidentTypeEnum.VOCATIONALEDUCATION]: 7,
 }
 
-const accidentTypeToDTO = (
-  answers: AccidentNotificationAnswers,
-): { type: number; subtype?: number } => {
+const getAccidentTypes = (answers: AccidentNotificationAnswers) => {
   const accidentType = getValueViaPath(
     answers,
     'accidentType.answer',
   ) as AccidentTypeEnum
+  const workAccidentType = getValueViaPath(
+    answers,
+    'workAccident.type',
+  ) as WorkAccidentTypeEnum
+  const studiesAccidentType = getValueViaPath(
+    answers,
+    'studiesAccident.type',
+  ) as StudiesAccidentTypeEnum
+
+  return { accidentType, workAccidentType, studiesAccidentType }
+}
+
+const accidentTypeToDTO = (
+  answers: AccidentNotificationAnswers,
+): { type: number; subtype?: number } => {
+  const { accidentType, workAccidentType, studiesAccidentType } =
+    getAccidentTypes(answers)
 
   const baseType = accidentTypeMap[accidentType] || { type: 6 }
 
-  if (accidentType === AccidentTypeEnum.WORK) {
-    const workAccidentType = getValueViaPath(
-      answers,
-      'workAccident.type',
-    ) as WorkAccidentTypeEnum
-    const subtype = workAccidentSubtypeMap[workAccidentType] || 1
-    return { type: baseType.type, subtype }
+  switch (accidentType) {
+    case AccidentTypeEnum.WORK:
+      return {
+        type: baseType.type,
+        subtype: workAccidentSubtypeMap[workAccidentType] || 1,
+      }
+    case AccidentTypeEnum.STUDIES:
+      return {
+        type: baseType.type,
+        subtype: studiesAccidentSubtypeMap[studiesAccidentType],
+      }
+    default:
+      return baseType
   }
-
-  if (accidentType === AccidentTypeEnum.STUDIES) {
-    const studiesAccidentType = getValueViaPath(
-      answers,
-      'studiesAccident.type',
-    ) as StudiesAccidentTypeEnum
-    const subtype = studiesAccidentSubtypeMap[studiesAccidentType]
-    return { type: baseType.type, subtype }
-  }
-
-  return baseType
 }
 
 const locationToDTO = (answers: AccidentNotificationAnswers) => {
