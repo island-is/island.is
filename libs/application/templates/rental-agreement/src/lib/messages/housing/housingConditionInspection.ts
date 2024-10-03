@@ -14,7 +14,7 @@ export const housingConditionInspection = defineMessages({
   pageDescription: {
     id: 'ra.application:housingConditionInspection.pageDescription',
     defaultMessage:
-      'Hér skal skrá ástand húsnæðisins við upphaf leigutíma. Hægt er að bæta við myndum og athugasemdum.',
+      'Leigusamningur þarf lögum samkvæmt að innihalda ástandsúttekt á húsnæðinu. Sú úttekt þarf að fara fram við samningsgerðina. Gott er að skoða húsnæðið gaumgæfilega og taka myndir af ástandi. [Sjá nánar hér](https://island.is/skraning-leigusamnings-i-leiguskra#astandsuttekt-og-brunauttekt).',
     description: 'Housing condition inspection page description',
   },
   inspectorTitle: {

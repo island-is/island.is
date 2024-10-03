@@ -1,6 +1,6 @@
 export * from './dataSchema'
 export * from './prerequisites'
-export * from './housing/registerHousingProperty'
+export * from './housing/registerProperty'
 export * from './housing/landlordDetails'
 export * from './housing/tenantDetails'
 export * from './housing/specialProvisions'
