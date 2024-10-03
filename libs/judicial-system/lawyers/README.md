@@ -5,11 +5,11 @@ This library is part of the judicial system and is generated using [Nx](https://
 
 ## Running Unit Tests
 
-To run the unit tests for this library, execute the following command:
+To execute the unit tests for this library, use the following command:
 
 ```bash
 nx test judicial-system-lawyers
 ```
 
-This will run the unit tests using [Jest](https://jestjs.io).
+This command will run the unit tests utilizing [Jest](https://jestjs.io), a delightful JavaScript Testing Framework.
 ```

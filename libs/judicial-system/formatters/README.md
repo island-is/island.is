@@ -20,7 +20,7 @@ yarn test judicial-system-formatters
 
 This will run all unit tests defined for the library and provide a report of the test results.
 
-## Contributions
+## Contributing
 
 If you wish to contribute to this project, please ensure all tests pass by running the above command and adhere to any applicable coding standards or guidelines.
 
