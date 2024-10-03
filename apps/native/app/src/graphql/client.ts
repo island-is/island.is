@@ -20,6 +20,7 @@ import { environmentStore } from '../stores/environment-store'
 import { createMMKVStorage } from '../stores/mmkv'
 import { offlineStore } from '../stores/offline-store'
 import { MainBottomTabs } from '../utils/component-registry'
+import { getCustomUserAgent } from '../utils/user-agent'
 
 const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
 
@@ -134,6 +135,7 @@ const authLink = setContext(async (_, { headers }) => ({
     'X-Cognito-Token': `Bearer ${
       environmentStore.getState().cognito?.accessToken
     }`,
+    'User-Agent': getCustomUserAgent(),
     cookie: [authStore.getState().cookies]
       .filter((x) => String(x) !== '')
       .join('; '),
