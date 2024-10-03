@@ -1,9 +1,10 @@
+```markdown
 # Localization
 
-This library provides components to support Internationalization in nextjs and react projects using [Formatjs](https://formatjs.io/).
+This library provides components to support Internationalization in Next.js and React projects using [Formatjs](https://formatjs.io/).
 
 {% hint style="warning" %}
-You will need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN` environnement variable to run the extract script. You can create it [here in contentful](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types).
+You will need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN` environment variable to run the extract script. You can create it [here in Contentful](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types).
 {% endhint %}
 
 ## Usage in Next.js
@@ -41,7 +42,7 @@ const Home = () => {
 export default withLocale(['global', 'yourNamespace'])(Home)
 ```
 
-## Usage in a React application
+## Usage in a React Application
 
 ### Wrap your Application with the `<LocaleProvider>`
 
@@ -61,7 +62,7 @@ const App = () => {
 
 ```typescript
 const Home = () => {
-  const { loadingMessages } = useNamespaces(['gloable', 'yourNamespace'])
+  const { loadingMessages } = useNamespaces(['global', 'yourNamespace'])
   const { formatMessage } = useLocale()
 
   if (loadingMessages) return <p>Loading..</p>
@@ -82,11 +83,11 @@ export default Home
 
 ## Message Declaration
 
-To declare a message you have to provide a unique `id`. The `defaultMessage` and `description` fields are optional, but recommended.
+To declare a message, you must provide a unique `id`. The `defaultMessage` and `description` fields are optional but recommended.
 
 You can declare a message by:
 
-- Using `formatMessage` method from the `useLocale` hook
+- Using the `formatMessage` method from the `useLocale` hook
 
 ```typescript
 const { formatMessage } = useLocale();
@@ -97,15 +98,15 @@ return (
       id: 'global:welcome',
       defaultMessage: 'Hello {name}',
       description: 'A welcome message',
-      values={{
-          name: userName,
-      }}
+      values: {
+        name: userName,
+      }
     })}
   </div>
 )
 ```
 
-- Using React API `<FormattedMessage />`
+- Using the React API `<FormattedMessage />`
 
 ```typescript
 import { FormattedMessage } from 'react-intl'
@@ -156,16 +157,16 @@ const MyComponent = () => {
 }
 ```
 
-## Markdown support
+## Markdown Support
 
-We are supporting both TextField and Markdown for the translations. If you want to define markdown messages, you will need to add a `#markdown` to the end of the string's id. That will show the Markdown editor within Contentful.
+We support both TextField and Markdown for translations. To define markdown messages, add `#markdown` to the end of the string's id. This will display the Markdown editor within Contentful.
 
 {% hint style="warning" %}
-We only allow headings from H2 to H4. The rest will be converted as paragraph in Contentful.
+We only allow headings from H2 to H4. The rest will be converted to paragraphs in Contentful.
 {% endhint %}
 
 {% hint style="warning" %}
-There is only one way to do line breaks for the markdown messages. It has to be an escape line break character defined two times `\\n\\n`. This only required when doing `defineMessage` -> Contentful. After running the `extract-strings` script and publishing the changes on Contentful, you will get normal line breaks `\n` back from the GraphQL API and will be able to pass it down to `markdown-to-jsx`.
+There is only one way to do line breaks for markdown messages. It must be an escape line break character defined two times `\\n\\n`. This is only required when using `defineMessage` -> Contentful. After running the `extract-strings` script and publishing the changes on Contentful, you will get normal line breaks `\n` back from the GraphQL API and be able to pass them down to `markdown-to-jsx`.
 {% endhint %}
 
 ```typescript
@@ -198,14 +199,15 @@ Add the `extract-strings` script to the project's `project.json`.
 
 Running `yarn nx run <your-project>:extract-strings` will extract messages from the project and create or update a Namespace entry in Contentful.
 
-The first time a namespace is encountered a new Contentful entry is created (even if you manually created one with that name already) and you will need to find and "publish" it Contentful before the client can query that entry.
+The first time a namespace is encountered, a new Contentful entry is created (even if you manually created one with that name already), and you will need to find and "publish" it in Contentful before the client can query that entry.
 
 **Notes on the `extract-strings` script's behavior**:
 
 - Adding a new id automatically creates it in Contentful.
-- Removing an id from the project will automatically remove\* that id from the Contentful Namespace entry.
+- Removing an id from the project will automatically remove* that id from the Contentful Namespace entry.
 - `defaultMessage` will be used as the initial "Icelandic" translation.
 - Updating or removing a `defaultMessage` **does not** affect the "Icelandic" translation that was initially based on it.
-- If multiple instances of the same id are found, but with different defaults/description, the script throws an error.
+- If multiple instances of the same id are found, but with different defaults/descriptions, the script throws an error.
 
 \*) Technically, missing ids are not removed from the Contentful entry but marked as deprecated. If the id is used again, the deprecation flag is removed.
+```
