@@ -254,11 +254,7 @@ const Processing: FC = () => {
   )
 
   useEffect(() => {
-    if (!personData || !personData.items) {
-      return
-    }
-
-    if (personData.items.length === 0) {
+    if (!personData || !personData.items || personData.items.length === 0) {
       setNationalIdNotFound(true)
       return
     }
