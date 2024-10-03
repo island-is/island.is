@@ -25,6 +25,7 @@ import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.i
 import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
 import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
+import { SignatureCollectionListIdInput } from './dto'
 
 @Injectable()
 export class SignatureCollectionAdminService {
@@ -218,6 +219,16 @@ export class SignatureCollectionAdminService {
       user,
       input.collectionId,
       input.areaId,
+    )
+  }
+
+  async lockList(
+    input: SignatureCollectionListIdInput,
+    user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.lockList(
+      user,
+      input.listId,
     )
   }
 }
