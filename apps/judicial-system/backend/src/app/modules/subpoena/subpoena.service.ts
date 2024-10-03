@@ -2,7 +2,12 @@ import { Base64 } from 'js-base64'
 import { Includeable, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
-import { forwardRef, Inject, Injectable } from '@nestjs/common'
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
@@ -52,6 +57,22 @@ export class SubpoenaService {
     )
   }
 
+  async setHash(id: string, hash: string): Promise<void> {
+    const [numberOfAffectedRows] = await this.subpoenaModel.update(
+      { hash },
+      { where: { id } },
+    )
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena hash for subpoena ${id}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(`Could not update subpoena ${id}`)
+    }
+  }
+
   async update(
     subpoena: Subpoena,
     update: UpdateSubpoenaDto,
@@ -99,6 +120,7 @@ export class SubpoenaService {
     }
 
     const updatedSubpoena = await this.findBySubpoenaId(subpoena.subpoenaId)
+
     return updatedSubpoena
   }
 
@@ -113,7 +135,7 @@ export class SubpoenaService {
     })
 
     if (!subpoena) {
-      throw new Error(`Subpoena with id ${subpoenaId} not found`)
+      throw new Error(`Subpoena with subpoena id ${subpoenaId} not found`)
     }
 
     return subpoena

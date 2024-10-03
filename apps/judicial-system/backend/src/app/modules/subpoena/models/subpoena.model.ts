@@ -90,4 +90,8 @@ export class Subpoena extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   @ApiProperty({ type: String })
   location!: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  hash?: string
 }
