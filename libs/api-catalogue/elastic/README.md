@@ -20,13 +20,13 @@ For local development, an Elasticsearch Docker container is recommended. The set
 To start the container, run the following command:
 
 ```bash
-docker compose -f ./libs/api-catalogue/elastic/elastic.yml up
+docker compose -f ./libs/api-catalogue/elastic/elastic.yml up -d
 ```
 
 Once the `es01` container is running, you can load initial data from `initialData.txt` with the following `curl` command:
 
 ```bash
-curl -H 'Content-Type: application/x-ndjson' -XPOST localhost:9200/_bulk --data-binary '@./libs/api-catalogue/elastic/initialData.txt'
+curl -H 'Content-Type: application/x-ndjson' -X POST localhost:9200/_bulk --data-binary '@./libs/api-catalogue/elastic/initialData.txt'
 ```
 
 ### Managing the Index
@@ -34,6 +34,6 @@ curl -H 'Content-Type: application/x-ndjson' -XPOST localhost:9200/_bulk --data-
 To delete the index, use the following `curl` command:
 
 ```bash
-curl -XDELETE localhost:9200/apicatalogue
+curl -X DELETE localhost:9200/apicatalogue
 ```
 ```

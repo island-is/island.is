@@ -1,39 +1,48 @@
+```markdown
 # API Domains Finance
 
-This api utilises the [financeService](/libs/clients/finance/src/lib/FinanceClientService.ts)
+This API utilizes the [FinanceClientService](/libs/clients/finance/src/lib/FinanceClientService.ts).
 
-# How to use
+## How to Use
 
-Start the api
-`yarn start api`
+1. **Start the API**:  
+   Run the following command:
+   ```bash
+   yarn start api
+   ```
 
-X-road needs to be running
+2. **Ensure X-Road is Running**:  
+   You can start it using one of the following methods:
+   - Run the script:
+     ```bash
+     ./scripts/run-xroad-proxy.sh
+     ```
+   - Or use Kubernetes port forwarding:
+     ```bash
+     kubectl -n socat port-forward svc/socat-xroad 8081:80
+     ```
 
+   Once running, the Finance API will be available for use within `island.is`.
+
+## UI
+
+An example of usage can be found at: <http://localhost:4200/minarsidur/fjarmal>. Ensure the Service Portal is running by executing:
 ```bash
-./scripts/run-xroad-proxy.sh
+yarn start service-portal
 ```
 
-or
+## Mock
 
+The data for the Finance API has been mocked for usage and testing purposes with `API_MOCKS`. 
+
+To enable mock usage:
+1. Add `API_MOCKS=true` to your `.env` file.
+2. Ensure it is accessible in your Webpack browser bundles (see [Next.js example](../../../apps/web/next.config.js)).
+
+## Running Unit Tests
+
+Execute the unit tests with Jest by running:
 ```bash
-kubectl -n socat port-forward svc/socat-xroad 8081:80
+nx test api-domains-finance
 ```
-
-Finance API should now be available to use within island.is
-
-# UI
-
-Example of usage can be found in: <http://localhost:4200/minarsidur/fjarmal>
-
-Service portal needs to be running.
-`yarn start service-portal`
-
-# Mock
-
-The data for finance api has been mocked, for mock usage and testing purposes try the API_MOCKS.
-
-Add `API_MOCKS=true` to your `.env` file and make sure it is available in your webpack browser bundles ([Next.JS example](../../../apps/web/next.config.js)).
-
-## Running unit tests
-
-Run `nx test api-domains-finance` to execute the unit tests via [Jest](https://jestjs.io).
+```

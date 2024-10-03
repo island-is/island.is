@@ -1,7 +1,15 @@
+```markdown
 # api-domains-national-registry
 
-This library was generated with [Nx](https://nx.dev).
+This library is part of the monorepo managed with [Nx](https://nx.dev) and pertains to the National Registry domain.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-national-registry` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests, use the following command:
+
+```bash
+nx test api-domains-national-registry
+```
+
+This will run the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
+```

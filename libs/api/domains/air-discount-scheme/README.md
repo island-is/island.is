@@ -13,7 +13,7 @@ To initialize the project, execute the following command:
 yarn nx run api-domains-air-discount-scheme:dev-init
 ```
 
-### Start in Development Mode
+### Running in Development Mode
 
 To start the project in development mode, run the following command:
 

@@ -1,7 +1,15 @@
-# api-domains-hms-loans
+```markdown
+# API Domains HMS Loans
 
-This library was generated with [Nx](https://nx.dev).
+This library is part of the larger Nx workspace and is focused on handling operations related to HMS loans.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-hms-loans` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, use the following command:
+
+```bash
+nx test api-domains-hms-loans
+```
+
+This will run the tests using the [Jest](https://jestjs.io) testing framework.
+```

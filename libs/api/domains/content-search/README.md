@@ -1,16 +1,16 @@
 ```markdown
-# api-domains-content-search
+# API Domains Content Search
 
-This module exposes endpoints for querying searchable data in an Elasticsearch content search.
+This documentation provides details on the module that exposes endpoints for querying searchable data using Elasticsearch in a content search context.
 
 ## Making Data Searchable
 
-When a client makes a search request, we return a response of type `SearchResult`. 
+When a client initiates a search request, a response of type `SearchResult` is returned. The `SearchResult` has the following characteristics:
 
-- `SearchResult` organizes results, aggregations, and metrics into a single response.
-- `SearchResult.items` is a union type used to resolve various search result types.
-- You must add your document type to this union as a NestJS model under the types array.
-- Add a `typename` field to your mapped data, allowing the type to resolve correctly in (`src/lib/models/searchResult.model.ts`).
-  
-Note: All mapping for the search response is performed during import.
+- `SearchResult` consolidates results, aggregations, and metrics into a unified response structure.
+- `SearchResult.items` is defined as a union type to handle various types of search results seamlessly.
+- You are required to incorporate your document type into this union as a NestJS model within the types array.
+- Ensure you add a `typename` field to your mapped data, which facilitates the correct type resolution in `src/lib/models/searchResult.model.ts`.
+
+**Note**: The mapping for the search response is executed during the import process.
 ```

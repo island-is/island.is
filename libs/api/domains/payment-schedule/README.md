@@ -1,7 +1,13 @@
+```markdown
 # API Domains Payment Schedule
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated using [Nx](https://nx.dev), a suite of powerful tools for setting up and managing modern web applications.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-payment-schedule` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for the `api-domains-payment-schedule` library using [Jest](https://jestjs.io), run the following command:
+
+```bash
+nx test api-domains-payment-schedule
+```
+```

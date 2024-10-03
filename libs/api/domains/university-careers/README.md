@@ -1,7 +1,15 @@
-# api-domains-university-careers
+```markdown
+# API Domains: University Careers
 
-This library was generated with [Nx](https://nx.dev).
+This library is part of the [Nx](https://nx.dev) workspace and pertains to university career domains within the API.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-university-careers` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, run the following command:
+
+```bash
+nx test api-domains-university-careers
+```
+
+This will utilize [Jest](https://jestjs.io) as the testing framework.
+```

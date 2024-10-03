@@ -59,7 +59,7 @@ This API provides endpoints for document providers to configure settings and ret
 ##### Response
 
 - **Status Code:** 200 OK
-- **Content:** Statistics data, including metrics like the number of documents processed.
+- **Content:** Statistics data, including metrics like the number of documents processed and errors encountered.
 
 ##### Example Response
 
@@ -75,7 +75,7 @@ This API provides endpoints for document providers to configure settings and ret
 
 ### General Information
 
-- **Authentication:** Ensure requests are authenticated via the token header.
+- **Authentication:** Ensure requests are authenticated via the `Authorization` header containing a bearer token.
 - **Errors:** Standard HTTP error codes are used: 400 for bad requests, 401 for unauthorized access, 500 for server errors, etc.
 - **Support:** For technical support, contact support@example.com.
 

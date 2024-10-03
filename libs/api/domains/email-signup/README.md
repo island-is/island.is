@@ -1,11 +1,25 @@
+```markdown
 # Mailchimp Module
 
-Module for mailing list signup endpoints.
+This module provides endpoints for mailing list signups.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `yarn nx test api-domains-email-signup` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests, run the following command:
 
-## Running lint
+```bash
+yarn nx test api-domains-email-signup
+```
 
-Run `yarn nx lint api-domains-email-signup` to execute the lint via [ESLint](https://eslint.org/).
+The tests are run using [Jest](https://jestjs.io).
+
+## Running Lint
+
+To execute linting, run the following command:
+
+```bash
+yarn nx lint api-domains-email-signup
+```
+
+Linting is performed using [ESLint](https://eslint.org/).
+```

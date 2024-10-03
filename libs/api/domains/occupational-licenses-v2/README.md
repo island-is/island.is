@@ -1,7 +1,15 @@
+```markdown
 # api-domains-occupational-licenses-v2
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-occupational-licenses-v2` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests, run the following command:
+
+```bash
+nx test api-domains-occupational-licenses-v2
+```
+
+This will execute the unit tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
+```

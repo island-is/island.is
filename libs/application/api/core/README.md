@@ -1,7 +1,15 @@
+```markdown
 # Application API Core
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-api-core` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for the Application API Core, use the following command:
+
+```shell
+nx test application-api-core
+```
+
+The tests will be run using the [Jest](https://jestjs.io) testing framework.
+```

@@ -30,7 +30,7 @@ Once X-Road is set up, the `AssetsXRoadService` should now be available for use.
 
 ## User Interface (UI)
 
-An example of how to use the UI can be found at: [http://localhost:4200/minarsidur/fasteignir](http://localhost:4200/minarsidur/fasteignir).
+You can access an example of how to use the UI at: [http://localhost:4200/minarsidur/fasteignir](http://localhost:4200/minarsidur/fasteignir).
 
 To run the service portal, use:
 ```bash
@@ -41,7 +41,7 @@ yarn start service-portal
 
 The data for the assets API is fully mocked for testing purposes. To use mock data, set the environment variable `API_MOCKS=true`.
 
-Add `API_MOCKS=true` to your `.env` file and ensure it is available in your Webpack browser bundles. For example, see the [Next.js configuration](../../../apps/web/next.config.js).
+Add `API_MOCKS=true` to your `.env` file and ensure it is available in your Webpack browser bundles. For a configuration example, see the [Next.js configuration](../../../apps/web/next.config.js).
 
 ## API Domains: Assets
 

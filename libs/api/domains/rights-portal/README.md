@@ -1,11 +1,27 @@
+```markdown
 # api-domains-rights-portal
 
-This library was generated with [Nx](https://nx.dev).
+This library is part of the Nx workspace and is designed to manage domain rights-related operations.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-rights-portal` to execute the unit tests via [Jest](https://jestjs.io).
+To execute unit tests for this library, use the following command:
 
-## Running lint
+```bash
+nx test api-domains-rights-portal
+```
 
-Run `nx lint api-domains-rights-portal` to execute the lint via [ESLint](https://eslint.org/).
+This command utilizes [Jest](https://jestjs.io) for running the tests.
+
+## Running Lint
+
+To perform linting checks on this library, use the command:
+
+```bash
+nx lint api-domains-rights-portal
+```
+
+The linting is performed using [ESLint](https://eslint.org/).
+
+Ensure that you have set up the necessary configurations for Jest and ESLint in your Nx workspace to run these commands successfully.
+```

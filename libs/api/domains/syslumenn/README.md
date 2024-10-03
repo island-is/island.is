@@ -1,7 +1,15 @@
+```markdown
 # api-domains-syslumenn
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-syslumenn` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests, run:
+
+```shell
+nx test api-domains-syslumenn
+```
+
+The tests will be executed using [Jest](https://jestjs.io).
+```

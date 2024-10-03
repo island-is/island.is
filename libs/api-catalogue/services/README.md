@@ -3,7 +3,7 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-The library utilizes the [X-Road Service Metadata](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-meta_x-road_service_metadata_protocol.md#openapi-definition) and [X-Road Service Metadata for REST](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-mrest_x-road_service_metadata_protocol_for_rest.md#annex-a-service-descriptions-for-rest-metadata-services) to gather information about services registered in the X-Road environment.
+The library utilizes the [X-Road Service Metadata](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-meta_x-road_service_metadata_protocol.md#openapi-definition) and [X-Road Service Metadata for REST](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-mrest_x-road_service_metadata_protocol_for_rest.md#annex-a-service-descriptions-for-rest-metadata-services) protocols to gather information about services registered in the X-Road environment.
 
 ## Running Unit Tests
 
@@ -20,7 +20,7 @@ This library exports `ApiCatalogueServiceModule`, which requires two environment
 
 ### Code Generation
 
-Code generation is employed to create clients from the OpenAPI documents for the two REST services provided by X-Road for this metadata. Use the `codegen` command in `project.json`:
+Code generation is used to create clients from the OpenAPI documents for the two REST services provided by X-Road for this metadata. Use the `codegen` command in `project.json`:
 
 ```bash
 # Generates clients
@@ -54,7 +54,7 @@ kubectl -n socat port-forward svc/socat-xroad 8080:80
 
 #### Testing Commands
 
-You can test the setup using `curl` in the CLI:
+Test the setup using `curl` in the CLI:
 
 ```bash
 # List clients

@@ -1,22 +1,29 @@
-# API Domains Driving License
+```markdown
+# API Domains: Driving License
 
-## How to connect to xroad
+## How to Connect to X-Road
 
-To use it you need to have proxy the xroad socat service:
+To connect to the X-Road service, you need to proxy the X-Road Socat service. You can do this by executing one of the following commands:
 
-```bash
-  ./scripts/run-xroad-proxy.sh
-```
-
-or
+### Using a Script
 
 ```bash
-  kubectl -n socat port-forward svc/socat-xroad 8081:80
+./scripts/run-xroad-proxy.sh
 ```
 
-and make sure the environment variable DRIVING_LICENSE_SECRET is avaialable.
+### Using Kubernetes
 
-## Running unit tests
+```bash
+kubectl -n socat port-forward svc/socat-xroad 8081:80
+```
 
-Run `nx test api-domains-driving-license-book` to execute the unit tests via
-[Jest](https://jestjs.io).
+Make sure that the environment variable `DRIVING_LICENSE_SECRET` is properly set.
+
+## Running Unit Tests
+
+To execute the unit tests using [Jest](https://jestjs.io), run the following command:
+
+```bash
+nx test api-domains-driving-license-book
+```
+```

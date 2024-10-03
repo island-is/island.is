@@ -1,23 +1,44 @@
+```markdown
 # Mocks
 
-Provides mocks for the main GraphQL api.
+This module provides mocks for the main GraphQL API.
 
-## Usage in new project
+## Usage in a New Project
 
-Add the mock service worker to your public folder by running:
+1. **Initialize Mock Service Worker:**
 
-```bash
-yarn msw init path/to/your/public/
+   Add the mock service worker to your public folder by executing the following command:
+
+   ```bash
+   yarn msw init path/to/your/public/
+   ```
+
+2. **Import Mocks in Entry File:**
+
+   Include the following import statement in your entry file:
+
+   ```typescript
+   import '@island.is/api/mocks';
+   ```
+
+3. **Configure Environment Variables:**
+
+   Add the following line to your `.env` file to enable API mocks:
+
+   ```
+   API_MOCKS=true
+   ```
+
+   Ensure that this environment variable is accessible in your Webpack browser bundles. For example, see the configuration in a [Next.js project](../../../apps/web/next.config.js).
+
+4. **Enable Mocks:**
+
+   Mocks will be enabled when the environment variables are set to:
+
+   - `process.env.NODE_ENV !== 'production'`
+   - `process.env.API_MOCKS === 'true'`
+
+   Note: All mock code should be automatically removed from production bundles.
+
+For more detailed instructions, refer to the documentation in the [shared mocking library](../../shared/mocking/README.md).
 ```
-
-then add this line to your entry file:
-
-```typescript
-import '@island.is/api/mocks'
-```
-
-Add `API_MOCKS=true` to your `.env` file and make sure it is available in your webpack browser bundles ([Next.JS example](../../../apps/web/next.config.js)).
-
-Mocks will be enabled when `process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'`. All mock code should be automatically removed from production bundles.
-
-For more information, check out the documentation in [`libs/shared/mocking`](../../shared/mocking/README.md).

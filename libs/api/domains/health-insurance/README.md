@@ -1,9 +1,15 @@
-# API Domains Health Insurance
+```markdown
+# Health Insurance API Domain
 
-This library was generated with [Nx](https://nx.dev).
+The Health Insurance API Domain library is a component of the Health Insurance Project. It was generated using the [Nx framework](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-health-insurance` to execute the unit tests via [Jest](https://jestjs.io).
+To run unit tests for this library, use the following command:
 
-api for health insurance project.
+```bash
+nx test api-domains-health-insurance
+```
+
+This command executes the unit tests using [Jest](https://jestjs.io).
+```

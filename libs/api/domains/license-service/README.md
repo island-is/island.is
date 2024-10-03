@@ -1,19 +1,17 @@
 # API Domains License Service
 
-A layer that provides a single point of entry for all of a users licenses.
+A layer that provides a single point of entry for all user licenses.
 
-### Licenses
+## Licenses
 
-The license service returns a generic license that consists of the following parts.
+The License Service returns a generic license with the following components:
 
-- License type: A license type comes from an exhaustive list of types.
-  - e.g. DriversLicense, FirearmLicense, MachineLicense etc...
-- Provider: What issuer provides the license.
-  - e.g National police commissioner
-- Fetch: A status object containing all relevant info about the fetch itself.
-- Payload: The actual payload, i.e. the license itself. Might be empty if the user doesn't have a license!
+- **License Type**: A type from an exhaustive list, e.g., `DriversLicense`, `FirearmLicense`, `MachineLicense`, etc.
+- **Provider**: The issuer of the license, e.g., National police commissioner.
+- **Fetch**: A status object with all relevant information about the license fetch process.
+- **Payload**: The actual license data. This might be empty if the user does not possess the license.
 
-**Currently accepted licenses include**:
+**Currently accepted license types include**:
 
 - Driving License
 - Firearm License
@@ -21,53 +19,48 @@ The license service returns a generic license that consists of the following par
 - ADR License
 - Disability License
 
-### Usage
+## Usage
 
-The Api and Xroad services need to be running
+The API and XRoad services need to be running:
 
-- Api
-  `Yarn start api`
-- XRoad
-  `./scripts/run-xroad-proxy.sh`
+- API: `yarn start api`
+- XRoad: `./scripts/run-xroad-proxy.sh`
 
-### Mocking
+## Mocking
 
-Mocks are available if switched on.
-When a new license is added, don't forget to mock it!
+Mocks are available if enabled. When adding a new license, ensure it is also mocked.
 
-### Adding a new license
+## Adding a New License
 
-1. Generate an external client that fetches the data from a 3rd party
-2. Create a client folder in `/license-service/client/` folder
-   - Each individual client is a module, so it can be injected into the license service easily. What you need then is:
-     - A service that provides the license data.
-     - A mapper that transforms and raw specific license data into a generic form.
-     - A configuration definition for the service. - All secrets should be kept in the AWS parameter store. Do not use environment files!
-     - (optional) Type definitions if required
-     - Finally, the module definitions, that provides the everything for injection and exports the service.
-3. Add the new license to the relevant types, e.g. `GenericLicenseTypeType``
-4. Inject the new internal client into the LicenseService!
-   - For digital licenses, you also need to provide the config to the CONFIG_PROVIDER factory function if pkpass is available (so it can retrieve the `passTemplateId` from it)
-   - Don't forget to add the new license to the `AVAILABLE_LICENSES` object if it's supposed to be displayed.
+1. Generate an external client to fetch data from a third party.
+2. Create a client folder in `/license-service/client/`.
+   - Each client acts as a module for easy injection into the License Service. Required components:
+     - A service to provide license data.
+     - A mapper to transform raw license data into a generic form.
+     - A configuration definition for the service. Store all secrets in the AWS parameter store. Avoid using environment files!
+     - (Optional) Type definitions, if necessary.
+     - Module definitions to enable injection and export the service.
 
-### Digital Licenses
+3. Add the new license to the relevant types, e.g., `GenericLicenseTypeType`.
+4. Inject the new internal client into the LicenseService.
+   - For digital licenses, add the configuration to the `CONFIG_PROVIDER` factory function if pkpass is available, to retrieve the `passTemplateId`.
+   - Ensure the new license is added to the `AVAILABLE_LICENSES` object if it should be displayed.
 
-The license service offers a service to create a digital license for each applicable license. To do this, it creates a _Pk pass_
+## Digital Licenses
 
-The license service currently uses the [SmartSolution API](https://smartsolutions.gitbook.io/smart-solutions-drivers-license/) to generate a pk pass for all applicable licenses, which is the used to provide a digitized license.
+The License Service provides functionality to create a digital license for applicable licenses by generating a _PK Pass_.
 
-To be able to generate a digital license, some conditions need to be met for each license.
+The service currently uses the [SmartSolution API](https://smartsolutions.gitbook.io/smart-solutions-drivers-license/) to create a PK Pass, enabling the digital license format.
+
+Conditions for generating a digital license:
 
 - **Drivers License**
-
-  - User has a result when RLS API is called
-  - The result has a non-null `mynd` in the result
-  - The date of the image is 1997-08-15 or newer
+  - There must be a result when the RLS API is called.
+  - The result must include a non-null `mynd`.
+  - The image date should be 1997-08-15 or newer.
 
 - **Firearm License**
+  - The license must not be expired.
 
-  - The license must not be expired
-
-- **Adr License**
-
-  - The license must not be expired
+- **ADR License**
+  - The license must not be expired.

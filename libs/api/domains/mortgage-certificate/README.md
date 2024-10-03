@@ -1,7 +1,15 @@
+```markdown
 # API Domains Mortgage Certificate
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev), a smart, extensible build framework.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-mortgage-certificate` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, run the following command:
+
+```bash
+nx test api-domains-mortgage-certificate
+```
+
+This will run the tests using [Jest](https://jestjs.io).
+```

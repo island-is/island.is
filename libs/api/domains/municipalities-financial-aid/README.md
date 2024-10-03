@@ -1,7 +1,15 @@
+```markdown
 # api-domains-municipalities-financial-aid
 
-This library was generated with [Nx](https://nx.dev).
+This library is part of the [Nx](https://nx.dev) workspace.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `ng test api-domains-municipalities-financial-aid` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library, use the following command:
+
+```bash
+ng test api-domains-municipalities-financial-aid
+```
+
+This will run the unit tests using the [Jest](https://jestjs.io) testing framework.
+```

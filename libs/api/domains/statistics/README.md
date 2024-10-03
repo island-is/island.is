@@ -1,7 +1,15 @@
+```markdown
 # api-domains-statistics
 
-This library was generated with [Nx](https://nx.dev).
+This library is a part of the Nx ecosystem, which facilitates the development of large-scale applications. For more information, visit [Nx.dev](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-statistics` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for the `api-domains-statistics` library, use the following command:
+
+```sh
+nx test api-domains-statistics
+```
+
+This command runs the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework with a focus on simplicity.
+```

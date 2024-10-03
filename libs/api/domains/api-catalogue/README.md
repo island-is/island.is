@@ -12,5 +12,4 @@ ng test api-domains-api-catalogue
 ```
 
 This will utilize [Jest](https://jestjs.io), a delightful JavaScript testing framework, to run the tests.
-
 ```

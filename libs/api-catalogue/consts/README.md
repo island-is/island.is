@@ -1,15 +1,15 @@
 ```markdown
-# API Catalogue Consts
+# API Catalogue Constants Library Documentation
 
-`api-catalogue-consts` is a library designed to manage and organize API constants effectively. It was generated using [Nx](https://nx.dev), a smart, extensible build framework.
+The `api-catalogue-consts` library is designed to efficiently manage and organize API constants. This library was generated using [Nx](https://nx.dev), a smart and extensible build framework.
 
 ## Running Unit Tests
 
-To run the unit tests for the `api-catalogue-consts` library, use the following command:
+To execute the unit tests for the `api-catalogue-consts` library, use the following command:
 
 ```bash
 ng test api-catalogue-consts
 ```
 
-This command will execute the unit tests utilizing [Jest](https://jestjs.io), a JavaScript testing framework with a focus on simplicity. Ensure that all dependencies are installed and configured correctly in your project's environment before running the tests.
+This command will run the unit tests using [Jest](https://jestjs.io), a JavaScript testing framework focused on simplicity and efficiency. Before running the tests, ensure that all dependencies are installed and configured correctly within your project's environment.
 ```

@@ -39,7 +39,8 @@ Retrieves a list of items.
   - `size` (integer, optional): Number of items per page.
 - **Sample Request**:
   ```http
-  GET /items?page=1&size=10
+  GET /items?page=1&size=10 HTTP/1.1
+  Host: api.example.com
   Authorization: Bearer <token>
   Content-Type: application/json
   ```
@@ -76,7 +77,8 @@ Creates a new item.
   ```
 - **Sample Request**:
   ```http
-  POST /items
+  POST /items HTTP/1.1
+  Host: api.example.com
   Authorization: Bearer <token>
   Content-Type: application/json
 

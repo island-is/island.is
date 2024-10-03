@@ -1,15 +1,28 @@
+```markdown
 # API Domains Endorsement System
 
-This library routes requests to the endorsement system app.
+This library routes requests to the endorsement system application.
 
-## Generate types and api clients
+## Generate Types and API Clients
 
-This library uses types and api clients from the endorsement system generated via [openapi generator](https://openapi-generator.tech/).  
-To generate api clients and types first run:  
-`yarn nx run services-endorsement-api:codegen/backend-schema` (build fresh openapi schema in endorsement system app)  
-Then run:  
-`yarn nx run api-domains-endorsement-system:codegen/backend-client` (creates clients and types inside this domain)
+This library leverages types and API clients from the endorsement system, which are generated using [OpenAPI Generator](https://openapi-generator.tech/). 
 
-## Running unit tests
+To generate the API clients and types, follow these steps:
 
-Run `ng test api-domains-endorsement-system` to execute the unit tests via [Jest](https://jestjs.io).
+1. Build a fresh OpenAPI schema in the endorsement system app by running:  
+   ```bash
+   yarn nx run services-endorsement-api:codegen/backend-schema
+   ```
+   
+2. Create clients and types within this domain by executing:  
+   ```bash
+   yarn nx run api-domains-endorsement-system:codegen/backend-client
+   ```
+
+## Running Unit Tests
+
+Execute unit tests using [Jest](https://jestjs.io) by running the following command:  
+```bash
+ng test api-domains-endorsement-system
+```
+```

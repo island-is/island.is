@@ -1,7 +1,15 @@
-# api-domains-official-journal-of-iceland-application
+```markdown
+# Official Journal of Iceland Application - API Domains
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated using [Nx](https://nx.dev), a powerful build system with a modern dev experience.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-official-journal-of-iceland-application` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests, run the following command:
+
+```sh
+nx test api-domains-official-journal-of-iceland-application
+```
+
+The tests will be executed using [Jest](https://jestjs.io), a delightful JavaScript Testing Framework.
+```

@@ -1,7 +1,15 @@
+```markdown
 # API Domains Identity
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test api-domains-identity` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for the API Domains Identity, use the following command:
+
+```bash
+nx test api-domains-identity
+```
+
+This will run the tests using [Jest](https://jestjs.io).
+```
