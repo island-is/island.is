@@ -20,10 +20,7 @@ import {
   WorkAccidentTypeEnum,
   WorkMachineV2,
 } from '@island.is/application/templates/accident-notification'
-import {
-  ApplicationWithAttachments,
-  YesOrNo,
-} from '@island.is/application/types'
+import { YesOrNo } from '@island.is/application/types'
 import {
   MinarsidurAPIModelsAccidentReportsAccidentReportDTO,
   MinarsidurAPIModelsAccidentReportsReporterDTO,
@@ -145,21 +142,15 @@ const locationToDTO = (answers: AccidentNotificationAnswers) => {
     'accidentLocation.answer',
   ) as GeneralWorkplaceAccidentLocationEnum
 
-  if (
-    GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE === accidentLocation
-  ) {
-    return 0
-  }
-
-  if (
-    GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE ===
-    accidentLocation
-  ) {
-    return 1
-  }
-
-  if (GeneralWorkplaceAccidentLocationEnum.OTHER === accidentLocation) {
-    return 2
+  switch (accidentLocation) {
+    case GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE:
+      return 0
+    case GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE:
+      return 1
+    case GeneralWorkplaceAccidentLocationEnum.OTHER:
+      return 2
+    default:
+      return 2
   }
 }
 
@@ -169,19 +160,15 @@ const shipLocationToDTO = (answers: AccidentNotificationAnswers) => {
     'accidentLocation.answer',
   ) as FishermanWorkplaceAccidentLocationEnum
 
-  if (FishermanWorkplaceAccidentLocationEnum.ONTHESHIP === accidentLocation) {
-    return 1
-  }
-
-  if (
-    FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE ===
-    accidentLocation
-  ) {
-    return 2
-  }
-
-  if (FishermanWorkplaceAccidentLocationEnum.OTHER === accidentLocation) {
-    return 3
+  switch (accidentLocation) {
+    case FishermanWorkplaceAccidentLocationEnum.ONTHESHIP:
+      return 1
+    case FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE:
+      return 2
+    case FishermanWorkplaceAccidentLocationEnum.OTHER:
+      return 3
+    default:
+      return 3
   }
 }
 
