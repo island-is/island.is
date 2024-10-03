@@ -7,7 +7,7 @@ This module provides utility functions built on top of `@vanilla-extract/css`. T
 
 The `responsiveStyleMap` utility enhances Vanilla Extract's `style` function by incorporating breakpoint-specific style variations. This allows developers to specify different style values based on screen size.
 
-### Example Usage:
+### Example Usage
 
 ```typescript
 import { responsiveStyleMap } from '@island.is/island-ui/vanilla-extract-utils';

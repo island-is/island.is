@@ -8,15 +8,15 @@ Island UI is a library that is part of the Ísland.is design system. It provides
 ## Environments
 
 - **Development Environment:**  
-  [ui.dev01.devland.is](https://ui.dev01.devland.is)
+  Access it at [ui.dev01.devland.is](https://ui.dev01.devland.is)
 - **Staging Environment:**  
-  [ui.staging01.devland.is](https://ui.staging01.devland.is)
+  Access it at [ui.staging01.devland.is](https://ui.staging01.devland.is)
 - **Production Environment:**  
-  [ui.dev.land.is](https://ui.dev.land.is)
+  Access it at [ui.dev.land.is](https://ui.dev.land.is)
 
 ## Core
 
-The library contains components reused across most projects. You can explore the entire list by visiting the UI library through the links provided in the **Environments** section.
+The library contains components reused across most projects. You can explore the entire list of components by visiting the UI library through the links provided in the **Environments** section.
 
 ## Fonts
 
@@ -26,7 +26,7 @@ The library contains components reused across most projects. You can explore the
 
 [Storybook](https://storybook.js.org) is used to consolidate all core components and to provide interactive documentation for component exploration.
 
-To start Storybook locally, execute the following command:
+To start Storybook locally, execute the command:
 
 ```bash
 yarn start island-ui-storybook
@@ -36,7 +36,7 @@ yarn start island-ui-storybook
 
 - Some components require importing React using `import * as React from 'react'` to ensure correct rendering of props, interfaces, and types within Storybook. This is a temporary workaround for resolving component props when using the `FC` interface and displaying them in documentation.
 
-- By default, Storybook uses `react-docgen` for generating prop documentation. For more details, see [React Docgen Documentation](https://github.com/storybookjs/storybook/blob/main/addons/docs/react/README.md#typescript-props-with-react-docgen). A [pull request](https://github.com/reactjs/react-docgen/pull/352) has been open for some time to address issues with imported interfaces and types, and it has not yet been merged. Currently, if an interface is imported from a deeply nested file, it will display as `any` instead of the correct type.
+- By default, Storybook uses `react-docgen` for generating prop documentation. For more details, see the [React Docgen Documentation](https://github.com/storybookjs/storybook/blob/main/addons/docs/react/README.md#typescript-props-with-react-docgen). A [pull request](https://github.com/reactjs/react-docgen/pull/352) has been open for some time to address issues with imported interfaces and types, and it has not yet been merged. Currently, if an interface is imported from a deeply nested file, it will display as `any` instead of the correct type.
 
 ## Theme
 
