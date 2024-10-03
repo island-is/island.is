@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, ReactNode } from 'react'
+import React, { FC, useState, ReactNode } from 'react'
 import { Box } from '../Box/Box'
 import { Document, Page, Outline, pdfjs } from 'react-pdf'
 import { Pagination } from '../Pagination/Pagination'
