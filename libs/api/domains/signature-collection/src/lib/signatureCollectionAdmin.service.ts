@@ -22,7 +22,7 @@ import { SignatureCollectionSlug } from './models/slug.model'
 import { SignatureCollectionListStatus } from './models/status.model'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
-import { SignatureCollectionAreaInput } from './dto'
+import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
 import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
 
@@ -196,6 +196,17 @@ export class SignatureCollectionAdminService {
       user,
       input.signatureId,
       input.pageNumber,
+    )
+  }
+
+  async signatureLookup(
+    user: User,
+    input: SignatureCollectionSignatureLookupInput,
+  ): Promise<SignatureCollectionSignature[]> {
+    return await this.signatureCollectionClientService.signatureLookup(
+      user,
+      input.collectionId,
+      input.nationalId,
     )
   }
 
