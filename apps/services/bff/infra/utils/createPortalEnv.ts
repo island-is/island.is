@@ -1,4 +1,8 @@
-import { adminPortalScopes, servicePortalScopes } from '@island.is/auth/scopes'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import {
+  adminPortalScopes,
+  servicePortalScopes,
+} from '../../../../../libs/auth/scopes/src/index'
 import { json } from '../../../../../infra/src/dsl/dsl'
 import { DEFAULT_CACHE_USER_PROFILE_TTL_MS } from '../../src/app/constants/time'
 
