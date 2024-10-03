@@ -92,7 +92,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           'clearApplicationIfReasonForApplication',
           'clearPlaceOfResidence',
           'clearLanguages',
-          'clearAllergiesAndIntolerances',
         ],
         meta: {
           name: States.DRAFT,
