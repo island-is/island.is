@@ -1,4 +1,4 @@
-## About
+# About
 
 The IDS API serves as the backend API for the island.is authentication server, sharing services and a database with the authentication administration user interface ([auth-admin-api](https://docs.devland.is/apps/services/auth/admin-api)).
 

@@ -1,12 +1,12 @@
-## Mocking REST Endpoints with Recorded Data
+# Mocking REST Endpoints with Recorded Data
 
 This guide explains how to alter or replace responses from a REST endpoint using Mockoon.
 
-### Proxying XROAD
+## Proxying XROAD
 
 Local services default to port `8081`, and the mock server listens here. Forward XROAD traffic using port `8082` with `yarn proxies xroad --p 8082`. Alternatively, if using kubectl and socat, change `8081:80` to `8082:80`.
 
-### Mockoon-CLI
+## Mockoon-CLI
 
 To proxy and mock using existing data:
 
@@ -15,11 +15,11 @@ To proxy and mock using existing data:
 
 For detailed guidance, visit [Mockoon CLI documentation](https://mockoon.com/cli/).
 
-### Current Mocks
+## Current Mocks
 
 Mock data for applications should be stored in the respective application's `mockData` directory. Add new mock data as needed.
 
-### Q&A
+## Q&A
 
 **What if I need to call a non-mocked endpoint?**
 
