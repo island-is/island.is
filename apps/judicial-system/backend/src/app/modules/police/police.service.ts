@@ -342,15 +342,10 @@ export class PoliceService {
     )
       .then(async (res: Response) => {
         if (res.ok) {
-          let subpoenaResponse = await res.json()
-
-          //TODO: Remove when RLS has deployed new version without double encoding
-          if (typeof subpoenaResponse === 'string') {
-            subpoenaResponse = JSON.parse(subpoenaResponse)
-          }
-
           const response: z.infer<typeof this.subpoenaStructure> =
-            this.subpoenaStructure.parse(subpoenaResponse)
+            await res.json()
+
+          this.subpoenaStructure.parse(response)
 
           const subpoenaToUpdate = await this.subpoenaService.findBySubpoenaId(
             subpoenaId,
