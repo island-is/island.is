@@ -5,7 +5,7 @@ The `judicial-system-types` library is generated with [Nx](https://nx.dev). This
 
 ## Installation
 
-Ensure you have the Nx environment set up. Then, include `judicial-system-types` in your project dependencies.
+Ensure you have the Nx environment set up. Then, add `judicial-system-types` to your project dependencies.
 
 ## Usage
 

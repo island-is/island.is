@@ -29,5 +29,5 @@ To update the client:
 
 1. Obtain a new OpenAPI JSON description and replace the content of `./src/clientConfig.json`.
 2. Generate the client by running the command provided in the "Client Generation" section.
-3. Update `./src/lib/courtClient.service.ts` as needed. Note that in the current implementation, `UploadStream` has been removed from `./src/clientConfig.json` and implemented manually.
+3. Update `./src/lib/courtClient.service.ts` as needed. Note: In the current implementation, the `UploadStream` feature has been manually implemented and excluded from `./src/clientConfig.json`.
 ```

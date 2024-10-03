@@ -1,6 +1,6 @@
 ## Overview
 
-`judicial-system-formatters` is a library designed to assist with formatting tasks within a judicial system. It was generated using [Nx](https://nx.dev), a smart and extensible build framework.
+`judicial-system-formatters` is a library designed to assist with formatting tasks within a judicial system. It was generated using [Nx](https://nx.dev), a powerful and extensible build framework.
 
 ## Installation
 
@@ -22,7 +22,7 @@ This will run all unit tests defined for the library and provide a report of the
 
 ## Contributing
 
-If you wish to contribute to this project, ensure all tests pass by running the aforementioned command. Please adhere to any applicable coding standards or guidelines.
+If you wish to contribute to this project, ensure all tests pass by running the command described above. Please adhere to any applicable coding standards or guidelines before submitting your changes.
 
 ## License
 
