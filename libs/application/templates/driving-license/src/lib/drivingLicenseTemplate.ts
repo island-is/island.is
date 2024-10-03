@@ -56,10 +56,14 @@ const getCodes = (application: Application) => {
 
   const codes: string[] = []
 
+  const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
+
   const targetCode =
     typeof applicationFor === 'string'
       ? CHARGE_ITEM_CODES[applicationFor]
-      : CHARGE_ITEM_CODES[B_FULL]
+        ? CHARGE_ITEM_CODES[applicationFor]
+        : DEFAULT_ITEM_CODE
+      : DEFAULT_ITEM_CODE
 
   codes.push(targetCode)
 

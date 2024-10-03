@@ -174,10 +174,14 @@ export const subSectionSummary = buildSubSection({
               chargeItemCode: string
             }[]
 
+            const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
+
             const targetCode =
               typeof application.answers.applicationFor === 'string'
                 ? CHARGE_ITEM_CODES[application.answers.applicationFor]
-                : CHARGE_ITEM_CODES[B_FULL]
+                  ? CHARGE_ITEM_CODES[application.answers.applicationFor]
+                  : DEFAULT_ITEM_CODE
+                : DEFAULT_ITEM_CODE
 
             let pickupItem = null
 
