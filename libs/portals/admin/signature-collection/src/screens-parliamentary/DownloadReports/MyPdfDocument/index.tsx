@@ -18,7 +18,7 @@ const MyPdfDocument = ({
 }) => {
   return (
     <Document>
-      {report && report.lists?.length
+      {report?.lists?.length
         ? report.lists.map((list) => (
             <Page style={styles.body} key={list.listName}>
               <View>
