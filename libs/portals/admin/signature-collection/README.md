@@ -1,7 +1,15 @@
+```markdown
 # portals-admin-signature-collection
 
-This library was generated with [Nx](https://nx.dev).
+The `portals-admin-signature-collection` library is an Nx-generated library. It provides functionalities related to admin signature collection in portal applications.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test portals-admin-signature-collection` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for the `portals-admin-signature-collection`, use the following command:
+
+```bash
+nx test portals-admin-signature-collection
+```
+
+This command will run the tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework with a focus on simplicity.
+```

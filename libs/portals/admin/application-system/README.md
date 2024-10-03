@@ -1,7 +1,15 @@
+```markdown
 # Portals Admin Application System
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test portals-admin-application-system` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests, run the following command:
+
+```bash
+nx test portals-admin-application-system
+```
+
+This will run the tests using [Jest](https://jestjs.io).
+```

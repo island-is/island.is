@@ -1,17 +1,17 @@
 # Document Provider
 
-## About
+## Overview
 
-This module is a management portal for Document Providers, where they can:
+This module serves as a management portal specifically designed for Document Providers. Within this portal, providers can:
 
-- See statistics for their documents.
-- Manage document's categories and types.
-- Manage settings, such as set the endpoint to their API where documents are provided.
+- Access and review statistics pertaining to their documents.
+- Manage the categories and types associated with their documents.
+- Configure various settings, including specifying the API endpoint where documents are served.
 
 ### Document Providers
 
-Document Providers are those who can send document references to the mailbox on island.is and provide the document on their servers when asked for. Documents are never stored on island.is' servers.
+Document Providers are entities responsible for sending document references to the mailbox on island.is. They ensure the provision of documents from their servers upon request. Importantly, documents are not stored on island.is' servers.
 
-## Work in progress
+## Work in Progress
 
-Eventually this module should live under institutions service portal. Since the development of the institutions service portal hasn't stared yet, we have put it under the navigation bar in "Mínar síður" and only few people will have access to it. The access will done with hard-coded nationalID's in the meantime.
+This module is intended to eventually be part of the institutions service portal. However, since the development of the institutions service portal has not yet commenced, the module is temporarily placed under the navigation bar in "Mínar síður." Access to this section is restricted to a select group of users, managed through hard-coded national IDs as an interim solution.

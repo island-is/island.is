@@ -1,5 +1,8 @@
+```markdown
 # Icelandic Names Registry
 
 ## About
 
-This module is a management portal for the Icelandic names registry DB
+This module serves as a management portal for the Icelandic Names Registry database (DB).
+
+```

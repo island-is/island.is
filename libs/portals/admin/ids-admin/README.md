@@ -2,6 +2,10 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test portals-admin-ids-admin` to execute the unit tests via [Jest](https://jestjs.io).
+To execute the unit tests for this library using [Jest](https://jestjs.io), run the following command:
+
+```bash
+nx test portals-admin-ids-admin
+```

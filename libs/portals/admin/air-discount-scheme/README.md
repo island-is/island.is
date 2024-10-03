@@ -1,7 +1,15 @@
+```markdown
 # Portals Admin Air Discount Scheme
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev), a smart, extensible build framework.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test portals-admin-air-discount-scheme` to execute the unit tests via [Jest](https://jestjs.io).
+To execute unit tests for this project, run the following command:
+
+```bash
+nx test portals-admin-air-discount-scheme
+```
+
+This will execute the unit tests using [Jest](https://jestjs.io), a delightful JavaScript testing framework.
+```
