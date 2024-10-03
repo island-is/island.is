@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # Personal Representative
 
 ## About
@@ -32,6 +32,7 @@ The API allows for managing right types, personal representative types (currentl
   "rightCodes": ["health-data", "finance-data"]
 }
 ```
+````
 
 ## Access
 
@@ -119,4 +120,7 @@ yarn start services-auth-personal-representative
 ### Code Owners and Maintainers
 
 - [Programm](https://github.com/orgs/island-is/teams/programm/members)
+
+```
+
 ```

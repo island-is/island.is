@@ -23,7 +23,7 @@ Commands:
   yarn cli render-secrets    Render secrets needed by a service.
   yarn cli render-env-vars   Render environment variables needed by a service.
                              Useful for local "dev" environments.
-  yarn cli render-local-env  Render environment variables for local use. 
+  yarn cli render-local-env  Render environment variables for local use.
                              Intended for "dev" environments.
   yarn cli run-local-env     Render environment and run the local environment.
                              For local "dev" environments.
