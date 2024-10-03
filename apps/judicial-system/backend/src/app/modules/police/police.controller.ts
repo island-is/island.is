@@ -87,10 +87,11 @@ export class PoliceController {
   getSubpoenaStatus(
     @Param('subpoenaId') subpoenaId: string,
     @CurrentCase() theCase: Case,
+    @CurrentHttpUser() user: User,
   ): Promise<Subpoena> {
     this.logger.debug(`Gets subpoena status in case ${theCase.id}`)
 
-    return this.policeService.getSubpoenaStatus(subpoenaId)
+    return this.policeService.getSubpoenaStatus(subpoenaId, user)
   }
 
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)

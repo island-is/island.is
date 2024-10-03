@@ -336,7 +336,7 @@ export class PoliceService {
       })
   }
 
-  async getSubpoenaStatus(subpoenaId: string): Promise<Subpoena> {
+  async getSubpoenaStatus(subpoenaId: string, user: User): Promise<Subpoena> {
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
     )
@@ -389,18 +389,34 @@ export class PoliceService {
         })
       })
       .catch((reason) => {
-        // TODO: Handle this
-        throw reason
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
 
-        // this.eventService.postErrorEvent(
-        //   'Failed to get subpoena',
-        //   {
-        //     subpoenaId,
-        //     actor: user.name,
-        //     institution: user.institution?.name,
-        //   },
-        //   reason,
-        // )
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Subpoena ${subpoenaId} does not exist`,
+            detail: reason.message,
+          })
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get police case info',
+          {
+            subpoenaId,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          reason,
+        )
+
+        throw new BadGatewayException({
+          ...reason,
+          message: `Failed to get subpoena ${subpoenaId}`,
+          detail: reason.message,
+        })
       })
   }
 
