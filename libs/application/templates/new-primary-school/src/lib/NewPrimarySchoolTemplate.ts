@@ -20,11 +20,7 @@ import {
 import { Features } from '@island.is/feature-flags'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
-import {
-  ChildrenApi,
-  GetKeyOptionsTypesApi,
-  OptionsApi,
-} from '../dataProviders'
+import { ChildrenApi } from '../dataProviders'
 import {
   ApiModuleActions,
   Events,
@@ -83,13 +79,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [
-                NationalRegistryUserApi,
-                UserProfileApi,
-                GetKeyOptionsTypesApi,
-                OptionsApi,
-                ChildrenApi,
-              ],
+              api: [NationalRegistryUserApi, UserProfileApi, ChildrenApi],
             },
           ],
         },

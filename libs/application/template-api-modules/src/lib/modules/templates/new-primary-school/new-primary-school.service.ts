@@ -23,14 +23,6 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     super(ApplicationTypes.NEW_PRIMARY_SCHOOL)
   }
 
-  async getKeyOptionsTypes({ auth }: TemplateApiModuleActionProps) {
-    return await this.friggClientService.getKeyOptionsTypes(auth)
-  }
-
-  async getAllKeyOptions({ auth }: TemplateApiModuleActionProps) {
-    return await this.friggClientService.getAllKeyOptions(auth, undefined)
-  }
-
   async getChildInformation({
     auth,
     application,

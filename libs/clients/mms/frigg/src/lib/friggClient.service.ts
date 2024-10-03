@@ -23,10 +23,6 @@ export class FriggClientService {
     })
   }
 
-  async getKeyOptionsTypes(user: User): Promise<string[]> {
-    return await this.friggApiWithAuth(user).getKeyOptionsTypes()
-  }
-
   async getAllSchoolsByMunicipality(user: User): Promise<OrganizationModel[]> {
     return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality()
   }
