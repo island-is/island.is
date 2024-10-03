@@ -22,7 +22,10 @@ import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import { DocumentsPaths } from '../../lib/paths'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
-import { useGetDocumentInboxLineV3LazyQuery } from '../../screens/Overview/Overview.generated'
+import {
+  useDocumentConfirmActionsLazyQuery,
+  useGetDocumentInboxLineV3LazyQuery,
+} from '../../screens/Overview/Overview.generated'
 import { messages } from '../../utils/messages'
 import { FavAndStashV3 } from '../FavAndStash/FavAndStashV3'
 import UrgentTag from '../UrgentTag/UrgentTag'
@@ -125,6 +128,9 @@ export const DocumentLineV3: FC<Props> = ({
       behavior: 'smooth',
     })
   }
+  const [confirmAction] = useDocumentConfirmActionsLazyQuery({
+    fetchPolicy: 'no-cache',
+  })
 
   const [getDocument, { loading: fileLoading }] =
     useGetDocumentInboxLineV3LazyQuery({
@@ -177,6 +183,7 @@ export const DocumentLineV3: FC<Props> = ({
           includeDocument: false,
         },
       },
+
       fetchPolicy: 'no-cache',
       onCompleted: (data) => {
         const actions: DocumentV2Action | undefined | null =
@@ -361,10 +368,23 @@ export const DocumentLineV3: FC<Props> = ({
         <ConfirmationModal
           onSubmit={() => {
             setModalVisible(false)
+            confirmAction({
+              variables: { input: { id: documentLine.id, confirmed: true } },
+            })
             getDocument()
           }}
-          onCancel={() => setModalVisible(false)}
-          onClose={toggleModal}
+          onCancel={() => {
+            setModalVisible(false)
+            confirmAction({
+              variables: { input: { id: documentLine.id, confirmed: false } },
+            })
+          }}
+          onClose={() => {
+            toggleModal()
+            confirmAction({
+              variables: { input: { id: documentLine.id, confirmed: null } },
+            })
+          }}
           loading={false}
           modalTitle={modalData?.title || formatMessage(m.acknowledgeTitle)}
           modalText={
