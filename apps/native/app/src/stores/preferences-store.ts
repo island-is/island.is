@@ -32,6 +32,7 @@ export interface PreferencesStore extends State {
   vehiclesWidgetEnabled: boolean
   airDiscountWidgetEnabled: boolean
   widgetsInitialised: boolean
+  skippedSoftUpdate: boolean
   lastUsedPasskey: number
   notificationsNewDocuments: boolean
   notificationsAppUpdates: boolean
@@ -71,6 +72,7 @@ const defaultPreferences = {
   vehiclesWidgetEnabled: true,
   airDiscountWidgetEnabled: true,
   widgetsInitialised: false,
+  skippedSoftUpdate: false,
   lastUsedPasskey: 0,
   notificationsNewDocuments: true,
   notificationsAppUpdates: true,
