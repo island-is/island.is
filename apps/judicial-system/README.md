@@ -1,9 +1,5 @@
 # Judicial System
 
-## About
-
-TODO
-
 ## URLs
 
 - [Dev](https://judicial-system.dev01.devland.is)
@@ -244,3 +240,4 @@ Use `FeatureContext` to conditionally display features in the UI.
 ## Code Owners and Maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri/members)
+

@@ -1,6 +1,8 @@
-### Key Modifications (File Content Update)
+# User Notification Service
 
-1. **Replication of Components**: 
+## Key Modifications (File Content Update)
+
+1. **Replication of Components**:
    - Copied essential components from `@island.is/clients/user-notification` directly into this service, focusing solely on system notification functionality relevant to delegations.
 
 2. **Direct Notification Handling**:
@@ -8,3 +10,4 @@
 
 3. **Independence from External Client**:
    - Embedded the logic for sending notifications directly within this service, eliminating the need for external dependencies that could cause circular references.
+

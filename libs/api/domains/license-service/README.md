@@ -2,7 +2,7 @@
 
 A centralized system for managing user licenses.
 
-### Licenses
+## Licenses
 
 The license service returns a generic license including:
 
@@ -19,18 +19,18 @@ The license service returns a generic license including:
 - ADR License
 - Disability License
 
-### Usage
+## Usage
 
 Ensure the following services are running:
 
 - API: `yarn start api`
 - XRoad: `./scripts/run-xroad-proxy.sh`
 
-### Mocking
+## Mocking
 
 Enable mocks as needed. Mock newly added licenses.
 
-### Adding a New License
+## Adding a New License
 
 1. Create an external client to fetch data.
 2. Create a client folder in `/license-service/client/`:
@@ -45,7 +45,7 @@ Enable mocks as needed. Mock newly added licenses.
    - Configure CONFIG_PROVIDER for `passTemplateId` for digital licenses.
    - Add to `AVAILABLE_LICENSES` if display is required.
 
-### Digital Licenses
+## Digital Licenses
 
 The service generates digital licenses using the _Pk pass_ through the [SmartSolution API](https://smartsolutions.gitbook.io/smart-solutions-drivers-license/).
 
@@ -60,3 +60,4 @@ Conditions for generating a digital license:
 
 - **ADR License**:
   - Must be valid (not expired).
+

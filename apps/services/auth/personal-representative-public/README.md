@@ -34,7 +34,7 @@ The API is accessible only via X-Road security servers to machine clients with t
 
 ### Scope
 
-```
+```text
 @island.is/auth/personal-representative-public
 ```
 
@@ -78,11 +78,7 @@ Serve the service locally:
 yarn start services-auth-personal-representative-public
 ```
 
-API specs available at:
-
-```
-http://localhost:3378
-```
+You can now access the [Swagger UI]( http://localhost:3378).
 
 ### Testing
 
@@ -105,3 +101,4 @@ yarn start services-auth-personal-representative-public
 ### Code Owners and Maintainers
 
 - [Programm](https://github.com/orgs/island-is/teams/programm/members)
+

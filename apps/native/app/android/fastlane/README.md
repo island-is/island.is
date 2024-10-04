@@ -1,6 +1,6 @@
-## Fastlane Documentation
+# Fastlane Documentation
 
-### Installation
+## Installation
 
 Ensure Xcode command line tools are installed:
 
@@ -10,9 +10,9 @@ xcode-select --install
 
 For _fastlane_ installation, visit the [Installing _fastlane_ guide](https://docs.fastlane.tools/#installing-fastlane).
 
-### Available Actions
+## Available Actions
 
-#### Android
+### Android
 
 - **Play Store Upload**
 
@@ -51,3 +51,4 @@ For _fastlane_ installation, visit the [Installing _fastlane_ guide](https://doc
 This README.md is auto-generated and updates every time [_fastlane_](https://fastlane.tools) is run.
 
 Find more information at [fastlane.tools](https://fastlane.tools) and consult the _fastlane_ documentation at [docs.fastlane.tools](https://docs.fastlane.tools).
+

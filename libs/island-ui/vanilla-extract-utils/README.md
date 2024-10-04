@@ -2,7 +2,7 @@
 
 Utilities dependent on `@vanilla-extract/css`, intended for `*.css.ts` files.
 
-### `responsiveStyleMap`
+## `responsiveStyleMap`
 
 Extends Vanilla Extract's `style` function to support responsive designs with breakpoints:
 
@@ -18,3 +18,4 @@ export const container = responsiveStyleMap({
 ## Running Unit Tests
 
 Run `nx test island-ui-vanilla-extract-utils` to execute unit tests via [Jest](https://jestjs.io).
+

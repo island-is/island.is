@@ -5,11 +5,13 @@
 Ensure Docker is running. For initial setup, run:
 
 For API:
+
 ```bash
 yarn dev-init application-system-api
 ```
 
 For Application Form:
+
 ```bash
 yarn dev-init application-system-form
 ```
@@ -17,11 +19,13 @@ yarn dev-init application-system-form
 To start the app:
 
 For API:
+
 ```bash
 yarn dev application-system-api
 ```
 
 For Application Form:
+
 ```bash
 yarn dev application-system-form
 ```
@@ -54,7 +58,7 @@ Run migrations:
 yarn nx run application-system-api:migrate
 ```
 
-### Local Execution
+### Local Execution (API)
 
 Serve locally with:
 
@@ -78,12 +82,7 @@ After code changes, generate the OpenAPI and Swagger code:
 yarn nx codegen/backend-schema application-system-api
 ```
 
-Access Swagger at:
-
-```
-localhost:3333/swagger
-```
-
+You can now access the [Swagger UI](localhost:3333/swagger).
 Generate a typed fetch client with:
 
 ```bash
@@ -100,7 +99,7 @@ yarn nx codegen/backend-schema api
 
 This app includes the frontend for the application system.
 
-### Local Execution
+### Local Execution (Form)
 
 Serve locally with:
 
@@ -123,7 +122,7 @@ Follow the steps from the [OpenAPI and Swagger](https://github.com/island-is/isl
 
 ### Payment Step
 
-For payment integration, follow the [application payment guide](../../handbook/misc/application-payment-guide.md).
+For payment integration, follow the [application payment guide](https://docs.devland.is/misc/application-payment-guide).
 
 ### Testing
 
@@ -136,3 +135,4 @@ yarn nx test application-system-form
 ## Code Owners and Maintainers
 
 - [Norda](https://github.com/orgs/island-is/teams/norda-applications/members)
+

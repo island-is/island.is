@@ -1,10 +1,10 @@
 # Elasticsearch Search Dev Server
 
-### Dependencies
+## Dependencies
 
 Ensure `docker` and `docker compose` are installed, with Docker allocated 4GB+ RAM.
 
-### Start the Server
+## Start the Server
 
 ```bash
 yarn dev-services services-search-indexer
@@ -12,7 +12,7 @@ yarn dev-services services-search-indexer
 
 Wait ~30 seconds. Access Elasticsearch at `localhost:9200` and Kibana at `localhost:5601`.
 
-### Import Data
+## Import Data
 
 **Contentful access is required.**
 
@@ -29,13 +29,13 @@ yarn nx run services-search-indexer:build
 yarn nx run services-search-indexer:migrate
 ```
 
-### Additional Information
+## Additional Information
 
-#### Dictionaries
+### Dictionaries
 
 Icelandic dictionaries are in the Elasticsearch Docker container under `analyzers/`. Add necessary plugins to the Dockerfile for development.
 
-#### Local Errors
+### Local Errors
 
 If you encounter `TOO_MANY_REQUESTS/12/disk usage exceeded flood-stage watermark, index has read-only-allow-delete block`, execute:
 
@@ -48,3 +48,4 @@ curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_all/_setti
 ```
 
 Source: [Stack Overflow](https://stackoverflow.com/questions/63880017/elasticsearch-docker-flood-stage-disk-watermark-95-exceeded#answer-63881121)
+

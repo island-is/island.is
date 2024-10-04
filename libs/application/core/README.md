@@ -1,4 +1,3 @@
-```markdown
 # Application Core
 
 ## About
@@ -10,8 +9,8 @@ Provides types and utilities for building applications, forms, and schemas found
 Contains:
 
 - `applicant` info
-- `typeId` 
-- `answers` 
+- `typeId`
+- `answers`
 - `externalData`
 - `state`
 - Additional details
@@ -238,4 +237,4 @@ Customize progress with `draftPageNumber`.
 ## Code Owners and Maintainers
 
 - [Norda](https://github.com/orgs/island-is/teams/norda-applications/members)
-```
+

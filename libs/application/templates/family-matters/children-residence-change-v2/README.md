@@ -10,14 +10,14 @@ Refer to the [Application System setup](https://docs.devland.is/apps/application
 
 To run this template locally, follow the steps below:
 
-#### National Registry Provider
+### National Registry Provider
 
-**Prerequisites**
+#### Prerequisites
 
 - Install `kubectl`. Use Homebrew: `brew install kubectl`
-- Configure [AWS Secrets](../../../../handbook/repository/aws-secrets.md)
+- Configure [AWS Secrets](https://docs.devland.is/development/aws-secrets)
 
-**Steps**
+#### Steps
 
 1. Fetch development secrets for the project:
    - Run: `yarn get-secrets service-portal`
@@ -33,3 +33,4 @@ Use the Gervimaður Evrópa login `0102719` for local, dev, and staging environm
 ## Code Owners and Maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri-modern-family)
+

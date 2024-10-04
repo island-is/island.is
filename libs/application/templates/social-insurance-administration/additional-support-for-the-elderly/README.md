@@ -1,3 +1,5 @@
+# Additional Support for the Elderly
+
 ## Description
 
 This application template allows applicants to apply for additional elderly support.
@@ -48,3 +50,4 @@ Update Contentful with new text strings in `messages.ts`. See [message extractio
 Refer to the [application-system setup](../../../../../apps/application-system/README.md) for setup guidance.
 
 Navigate to [http://localhost:4242/umsoknir/felagslegur-vidbotarstudningur](http://localhost:4242/umsoknir/felagslegur-vidbotarstudningur) for development access.
+

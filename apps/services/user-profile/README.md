@@ -1,10 +1,10 @@
-## User Profile
+# User Profile
 
-### Overview
+## Overview
 
 This service manages user profile information using the National Registration ID to store contact details and locale preferences. It handles email and mobile verification. Profiles are created through onboarding processes and are not prepopulated for all Iceland residents. The `findOrCreateUserProfile` function is frequently used across the codebase.
 
-### Quickstart
+## Quickstart
 
 Run the following commands:
 
@@ -15,7 +15,7 @@ yarn dev services-user-profile
 
 These commands align with the setup instructions below.
 
-### Initial Setup
+## Initial Setup
 
 Ensure Docker is installed, then initiate:
 
@@ -35,13 +35,9 @@ Start the service locally using:
 yarn start services-user-profile
 ```
 
-Access the API's OpenAPI specifications at:
+You can now access the [Swagger UI](localhost:3366/api/swagger).
 
-```
-http://localhost:3366/
-```
-
-### Getting Started
+## Getting Started
 
 Launch the service with:
 
@@ -49,7 +45,8 @@ Launch the service with:
 yarn start services-user-profile
 ```
 
-### Code Owners and Maintainers
+## Code Owners and Maintainers
 
 - [Norda](https://github.com/orgs/island-is/teams/norda/members)
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)
+

@@ -1,3 +1,5 @@
+# Problem Library
+
 ## Problem Types
 
 This library provides TypeScript enums and types for handling [RFC 7807 problems](https://datatracker.ietf.org/doc/html/rfc7807) returned by APIs.
@@ -44,10 +46,11 @@ Use the `type` attribute to identify problems. For additional business logic or 
 
 3. Update the [Problem](src/Problem.ts) union type.
 
-4. Document in [docs](../../../handbook/reference/problems/README.md) to match the problem type URL.
+4. Document in [docs](https://docs.devland.is/reference/problems) to match the problem type URL.
 
 See [`@island.is/nest/problem`](../../nest/problem/README.md#custom-problems) docs for returning custom problems.
 
 ### Running Unit Tests
 
 Use `nx test shared-problem` to run unit tests with [Jest](https://jestjs.io).
+

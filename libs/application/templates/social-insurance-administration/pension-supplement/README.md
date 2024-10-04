@@ -1,3 +1,5 @@
+# Pension Supplement
+
 ## Application Templates Pension Supplement
 
 ### Description
@@ -33,6 +35,7 @@ When creating new text strings in `messages.ts`, update Contentful using the [me
 
 ### Setup
 
-Refer to the [application-system setup](../../../../apps/application-system/README.md) for installation instructions.
+Refer to the [application-system setup](../../../../../apps/application-system/README.md) for installation instructions.
 
 After setup, visit [http://localhost:4242/umsoknir/uppbot-a-lifeyri](http://localhost:4242/umsoknir/uppbot-a-lifeyri) to start development.
+

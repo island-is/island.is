@@ -1,4 +1,3 @@
-```markdown
 # License Client
 
 This library was generated with [Nx](https://nx.dev).
@@ -32,8 +31,9 @@ For usage examples, refer to `api/domains/license-service`.
 
 ## Running Unit Tests
 
-Run unit tests with [Jest](https://jestjs.io) using: 
+Run unit tests with [Jest](https://jestjs.io) using:
+
 ```bash
 nx test clients-license-client
 ```
-```
+

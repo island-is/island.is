@@ -1,8 +1,8 @@
-## General Petitions
+# General Petitions
 
 This application enables users to create general petitions.
 
-### Setup
+## Setup
 
 To initialize the Docker environment (one-time setup):
 
@@ -18,17 +18,17 @@ yarn dev application-templates-general-petition
 
 Ensure your setup meets the [Application System requirements](https://docs.devland.is/apps/application-system).
 
-#### Additional Setup
+### Additional Setup
 
 Further steps are required for local setup.
 
-#### National Registry Provider
+### National Registry Provider
 
 **Prerequisites:**
 
 - Install `kubectl`:
   - `brew install kubectl`
-- [AWS Secrets](../../../../handbook/repository/aws-secrets.md) should be configured.
+- [AWS Secrets](https://docs.devland.is/development/aws-secrets) should be configured.
 
 To obtain environment variables, run:
 
@@ -44,7 +44,7 @@ Update the kubeconfig:
 aws eks update-kubeconfig --name dev-cluster01
 ```
 
-#### Current User Companies Provider
+### Current User Companies Provider
 
 Ensure the following environment variable is set:
 
@@ -58,6 +58,7 @@ To retrieve environment variables:
 yarn get-secrets service-portal
 ```
 
-### Code Owners and Maintainers
+## Code Owners and Maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni)
+

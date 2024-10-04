@@ -2,7 +2,7 @@
 
 This library exports the following utilities:
 
-### `@CacheControl(options)`
+## `@CacheControl(options)`
 
 Decorator for setting cache control directives in GraphQL resolvers.
 
@@ -36,7 +36,7 @@ export class Article {
 
 Refer to Apollo's [caching documentation](https://www.apollographql.com/docs/apollo-server/performance/caching/) for more information.
 
-### `@CacheField(returnType, options)`
+## `@CacheField(returnType, options)`
 
 Extends Nest's Field decorator with CacheControl. Defaults to `inheritMaxAge: true`. Useful for non-scalar fields to maintain caching in parent resolvers.
 
@@ -53,7 +53,7 @@ export class Article {
 }
 ```
 
-### 🚀 Verifying Caching Setup
+## 🚀 Verifying Caching Setup
 
 **Check Cache-Control Headers**: Inspect HTTP response headers for `Cache-Control` after a GraphQL query to ensure correct caching.
 
@@ -62,3 +62,4 @@ Refer to Apollo's [caching documentation](https://www.apollographql.com/docs/apo
 ## Running Unit Tests
 
 Run `nx test nest-graphql` to execute unit tests using [Jest](https://jestjs.io).
+

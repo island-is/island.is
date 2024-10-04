@@ -1,4 +1,3 @@
-```markdown
 # API Domains Vehicles
 
 This service uses the `VehicleSearchApi`.
@@ -29,7 +28,7 @@ VehiclesApiProvider should be ready for use.
 
 Execute `nx test api-domains-vehicles` to run unit tests with [Jest](https://jestjs.io).
 
-# UI
+## UI
 
 Example: [Localhost Vehicle Page](http://localhost:4200/minarsidur/okutaeki).
 
@@ -43,7 +42,7 @@ yarn start service-portal
 
 ### Vehicle Detail Model
 
-**MainInfo**
+#### MainInfo
 
 - `model` -> `make`
 - `subModel` -> `vehcom` + `speccom`
@@ -57,12 +56,12 @@ yarn start service-portal
 - `trailerWithBrakesWeight` -> Brake trailer weight
 - `trailerWithoutBrakesWeight` -> Unbrake trailer weight
 
-**Axle**
+#### Axle
 
 - `axleMaxWeight` -> See `service.ts` line 104
 - `wheelAxle` -> See `service.ts` line 107
 
-**Tyres**
+#### Tyres
 
 - `axle1` -> Tyre info for axle 1
 - `axle2` -> Tyre info for axle 2
@@ -70,7 +69,7 @@ yarn start service-portal
 - `axle4` -> Tyre info for axle 4
 - `axle5` -> Tyre info for axle 5
 
-**BasicInfo**
+#### BasicInfo
 
 - `model` -> Type
 - `regno` -> Registration number
@@ -83,7 +82,7 @@ yarn start service-portal
 - `formerCountry` -> Former country
 - `importStatus` -> Import status
 
-**RegistrationInfo**
+#### RegistrationInfo
 
 - `firstRegistrationDate` -> First registration date
 - `preRegistrationDate` -> Pre-registration date
@@ -100,7 +99,7 @@ yarn start service-portal
 - `driversPassengers` -> Drivers + passengers
 - `standingPassengers` -> Standing passengers
 
-**CurrentOwnerInfo**
+#### CurrentOwnerInfo
 
 - `owner` -> Owner's name
 - `nationalId` -> Owner’s ID
@@ -109,7 +108,7 @@ yarn start service-portal
 - `city` -> City
 - `dateOfPurchase` -> Purchase date
 
-**InspectionInfo**
+#### InspectionInfo
 
 - `type` -> Inspection type
 - `date` -> Inspection date
@@ -121,7 +120,7 @@ yarn start service-portal
 - `carTax` -> Vehicle tax
 - `inspectionFine` -> Inspection fine
 
-**TechnicalInfo**
+#### TechnicalInfo
 
 - `engine` -> Engine details
 - `totalWeight` -> Total weight
@@ -138,14 +137,14 @@ yarn start service-portal
 - `axles` -> Axle details
 - `tyres` -> Tyre details
 
-**Owners**
+#### Owners
 
 - `nationalId` -> Owner’s ID
 - `name` -> Owner's name
 - `address` -> Owner's full address
 - `dateOfPurchase` -> Purchase date
 
-**Operator**
+#### Operator
 
 - `nationalId` -> Operator’s ID
 - `name` -> Operator's name
@@ -154,4 +153,4 @@ yarn start service-portal
 - `city` -> City
 - `startDate` -> Start date
 - `endDate` -> End date
-```
+

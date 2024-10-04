@@ -54,5 +54,6 @@ yarn nx test application-templates-criminal-record
 ## Code Owners and Maintainers
 
 - [Unnur Sól - @unnursol](https://github.com/unnursolingimars)
-- [Jón Bjarni]()
+- Jón Bjarni
 - [Jóhanna Agnes - @johannaagma](https://github.com/johannaagma)
+

@@ -1,3 +1,5 @@
+# Income Plan
+
 ## Description
 
 This application template enables the submission of an income plan post-application.
@@ -42,3 +44,4 @@ Visit [http://localhost:4242/umsoknir/tekjuaaetlun](http://localhost:4242/umsokn
 ## Running Unit Tests
 
 Run `nx test application-templates-social-insurance-administration-income-plan` for unit tests using [Jest](https://jestjs.io).
+

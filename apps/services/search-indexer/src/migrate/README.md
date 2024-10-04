@@ -22,9 +22,9 @@ Files in the migration folder are built into multiple entry files and executed i
 
 Run the migration script locally to manage your `dev-service` instance of Elasticsearch. **Note: The script presumes Elasticsearch contains dictionary files and may not function with standard instances.**
 
-### Quick Start
+## Quick Start
 
-#### Migrate
+### Migrate
 
 Execute migration with:
 
@@ -34,7 +34,7 @@ yarn nx run services-search-indexer:migrate
 
 This updates ES indexes to the latest version as per the `content-search-index-manager` library and imports all Kibana saved objects from the `./config/kibana` folder.
 
-#### Sync Kibana
+### Sync Kibana
 
 Execute a Kibana sync with:
 
@@ -43,3 +43,4 @@ yarn nx run services-search-indexer:migrate --sync-kibana
 ```
 
 This retrieves saved objects from a local Kibana instance and updates local Kibana files, using IDs in the `./config/kibana` folder. Ensure `migrate` runs before `sync-kibana`.
+

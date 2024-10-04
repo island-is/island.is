@@ -38,11 +38,7 @@ Start with:
 yarn start services-university-gateway
 ```
 
-Access API documentation at:
-
-```
-localhost:3380/api/swagger
-```
+You can now access the [Swagger UI](localhost:3380/api/swagger).
 
 ### Regenerate the OpenAPI File
 
@@ -63,3 +59,4 @@ Start the worker with:
 ```bash
 yarn nx run services-university-gateway:worker
 ```
+
