@@ -6,7 +6,7 @@ This library was generated with [Nx](https://nx.dev).
 
 Execute:
 
-```sh
+```bash
 nx test clients-electronic-registration-statistics
 ```
 
@@ -16,7 +16,7 @@ for unit tests using [Jest](https://jestjs.io).
 
 Execute:
 
-```sh
+```bash
 nx lint clients-electronic-registration-statistics
 ```
 
@@ -28,7 +28,7 @@ for linting with [ESLint](https://eslint.org/).
 
 Execute:
 
-```sh
+```bash
 yarn nx run clients-electronic-registration-statistics:update-openapi-document
 ```
 
@@ -40,7 +40,7 @@ yarn nx run clients-electronic-registration-statistics:update-openapi-document
 
 Execute:
 
-```sh
+```bash
 nx test api-domains-electronic-registration-statistics
 ```
 
@@ -50,7 +50,7 @@ for unit tests via [Jest](https://jestjs.io).
 
 Execute:
 
-```sh
+```bash
 nx lint api-domains-electronic-registration-statistics
 ```
 

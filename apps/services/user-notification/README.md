@@ -30,25 +30,25 @@ sequenceDiagram
 
 Sign into AWS:
 
-```sh
+```bash
 aws sso login
 ```
 
 Retrieve secrets:
 
-```sh
+```bash
 yarn get-secrets user-notification
 ```
 
 Initialize dependencies:
 
-```sh
+```bash
 yarn dev-init services-user-notification
 ```
 
 ### Start User Notification Service
 
-```sh
+```bash
 yarn dev services-user-notification
 ```
 
@@ -56,7 +56,7 @@ yarn dev services-user-notification
 
 Processes queue messages, saves to the database, and sends via push and email. Start a worker:
 
-```sh
+```bash
 yarn nx run services-user-notification:worker
 ```
 
@@ -64,6 +64,6 @@ yarn nx run services-user-notification:worker
 
 Deletes old messages from the database. Start a cleanup worker:
 
-```sh
+```bash
 yarn nx run services-user-notification:cleanup
 ```

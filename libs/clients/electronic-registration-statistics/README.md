@@ -6,7 +6,7 @@ This library was generated using [Nx](https://nx.dev). It connects to a server t
 
 Execute unit tests with [Jest](https://jestjs.io) by running:
 
-```sh
+```bash
 nx test clients-electronic-registration-statistics
 ```
 
@@ -14,7 +14,7 @@ nx test clients-electronic-registration-statistics
 
 Execute linting using [ESLint](https://eslint.org) by running:
 
-```sh
+```bash
 nx lint clients-electronic-registration-statistics
 ```
 
@@ -24,7 +24,7 @@ nx lint clients-electronic-registration-statistics
 
 To update the OpenAPI definition (clientConfig.json), run:
 
-```sh
+```bash
 yarn nx run clients-electronic-registration-statistics:update-openapi-document
 ```
 
@@ -32,6 +32,6 @@ yarn nx run clients-electronic-registration-statistics:update-openapi-document
 
 To regenerate the client, run:
 
-```sh
+```bash
 yarn nx run clients-electronic-registration-statistics:codegen/backend-client
 ```

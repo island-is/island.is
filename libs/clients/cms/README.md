@@ -12,7 +12,7 @@ The `CONTENTFUL_ACCESS_TOKEN` env variable need to be configured.
 
 Schema is not automatically updated - use this command to update
 
-```sh
+```bash
 yarn nx run clients-cms:fetch-schema
 ```
 

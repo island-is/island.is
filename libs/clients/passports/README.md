@@ -6,7 +6,7 @@ This library was generated with [Nx](https://nx.dev).
 
 ### Generate the Client
 
-```sh
+```bash
 yarn nx run clients-passports:codegen/backend-client
 ```
 

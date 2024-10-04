@@ -6,7 +6,7 @@ This library was generated with [Nx](https://nx.dev).
 
 Execute unit tests using [Jest](https://jestjs.io) with the following command:
 
-```sh
+```bash
 nx test ship-registry
 ```
 
@@ -14,7 +14,7 @@ nx test ship-registry
 
 To update the OpenAPI definition (`clientConfig.json`), run:
 
-```sh
+```bash
 yarn nx run ship-registry:update-openapi-document
 ```
 
@@ -22,6 +22,6 @@ yarn nx run ship-registry:update-openapi-document
 
 To regenerate the client, execute:
 
-```sh
+```bash
 yarn nx run ship-registry:schemas/external-openapi-generator
 ```

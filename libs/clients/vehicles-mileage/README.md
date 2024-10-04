@@ -10,7 +10,7 @@ This library provides a client for Samgöngustofa's Vehicle Mileage Service. It 
 
 To regenerate the client from the `clientConfig.json` file, use:
 
-```sh
+```bash
 yarn nx run clients-vehicles-mileage:codegen/backend-client
 ```
 
@@ -22,6 +22,6 @@ yarn nx run clients-vehicles-mileage:codegen/backend-client
 
 Execute unit tests using [Jest](https://jestjs.io) with:
 
-```sh
+```bash
 nx test clients-vehicles-mileage
 ```

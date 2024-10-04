@@ -6,7 +6,7 @@ This library was created with [Nx](https://nx.dev).
 
 Execute the following command to run unit tests using [Jest](https://jestjs.io):
 
-```sh
+```bash
 nx test clients-icelandic-government-institution-vacancies
 ```
 
@@ -14,7 +14,7 @@ nx test clients-icelandic-government-institution-vacancies
 
 Use this command to update the OpenAPI definition:
 
-```sh
+```bash
 yarn nx run clients-icelandic-government-institution-vacancies:update-openapi-document
 ```
 
@@ -22,6 +22,6 @@ yarn nx run clients-icelandic-government-institution-vacancies:update-openapi-do
 
 To regenerate the client, run:
 
-```sh
+```bash
 yarn nx run clients-icelandic-government-institution-vacancies:codegen/backend-client
 ```

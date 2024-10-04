@@ -6,7 +6,7 @@ This library was generated with [Nx](https://nx.dev).
 
 Execute unit tests using [Jest](https://jestjs.io):
 
-```sh
+```bash
 nx test clients-fiskistofa
 ```
 
@@ -14,7 +14,7 @@ nx test clients-fiskistofa
 
 Execute lint checks using [ESLint](https://eslint.org/):
 
-```sh
+```bash
 nx lint clients-fiskistofa
 ```
 
@@ -22,12 +22,12 @@ nx lint clients-fiskistofa
 
 ### Update OpenAPI Definition (clientConfig.json)
 
-```sh
+```bash
 yarn nx run clients-fiskistofa:update-openapi-document
 ```
 
 ### Regenerate Client
 
-```sh
+```bash
 yarn nx run clients-fiskistofa:codegen/backend-client
 ```

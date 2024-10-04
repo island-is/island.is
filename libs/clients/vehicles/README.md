@@ -10,7 +10,7 @@ The `api/domain/vehicles` utilizes this client for data transfer.
 
 ### Update OpenAPI Definition (clientConfig.json)
 
-```sh
+```bash
 yarn nx run clients-vehicles:update-openapi-document
 ```
 
@@ -20,7 +20,7 @@ Note: The file has manual modifications, be cautious when overwriting.
 
 Regenerate the client from the `clientConfig.json` file.
 
-```sh
+```bash
 yarn nx run clients-vehicles:codegen/backend-client
 ```
 

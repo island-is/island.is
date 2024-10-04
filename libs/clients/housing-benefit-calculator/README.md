@@ -6,7 +6,7 @@ This library was generated using [Nx](https://nx.dev).
 
 Execute unit tests via [Jest](https://jestjs.io) with:
 
-```sh
+```bash
 nx test clients-housing-benefit-calculator
 ```
 
@@ -14,7 +14,7 @@ nx test clients-housing-benefit-calculator
 
 Update the `clientConfig.json` OpenAPI definition with:
 
-```sh
+```bash
 yarn nx run clients-housing-benefit-calculator:update-openapi-document
 ```
 
@@ -22,6 +22,6 @@ yarn nx run clients-housing-benefit-calculator:update-openapi-document
 
 Regenerate the client using:
 
-```sh
+```bash
 yarn nx run clients-housing-benefit-calculator:codegen/backend-client
 ```

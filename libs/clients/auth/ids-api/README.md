@@ -14,6 +14,6 @@ When developing locally you would normally communicate with the IDS endpoints on
 
 To regenerate the client from the [OpenAPI](./src/clientConfig.yaml) specification, run
 
-```sh
+```bash
 yarn nx run clients-auth-ids-api:codegen/backend-client
 ```

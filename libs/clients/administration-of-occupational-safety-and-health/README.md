@@ -10,7 +10,7 @@ This library provides a client to interact with the Administration of Occupation
 
 To update the OpenAPI definition (`clientConfig.json`):
 
-```sh
+```bash
 yarn nx run clients-administration-of-occupational-safety-and-health:update-openapi-document
 ```
 
@@ -18,6 +18,6 @@ yarn nx run clients-administration-of-occupational-safety-and-health:update-open
 
 To regenerate the client:
 
-```sh
+```bash
 yarn nx run clients-administration-of-occupational-safety-and-health:codegen/backend-client
 ```

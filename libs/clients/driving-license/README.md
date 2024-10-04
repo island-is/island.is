@@ -8,13 +8,13 @@ This library provides a client for Ríkislögreglustjóri's Driver's License API
 
 Ensure the X-Road proxy is running locally:
 
-```sh
+```bash
 ./scripts/run-xroad-proxy.sh
 ```
 
 Start developing with:
 
-```sh
+```bash
 yarn nx run clients-driving-license:dev
 ```
 
@@ -26,7 +26,7 @@ This updates the API definition and regenerates the client. Ensure the environme
 
 To update the definition for a specific API version:
 
-```sh
+```bash
 yarn nx run clients-driving-license:update-openapi-document --apiVersion=v1
 # or
 yarn nx run clients-driving-license:update-openapi-document --apiVersion=v2
@@ -34,7 +34,7 @@ yarn nx run clients-driving-license:update-openapi-document --apiVersion=v2
 
 ### Regenerate the client:
 
-```sh
+```bash
 yarn nx run clients-driving-license:codegen/backend-client
 ```
 

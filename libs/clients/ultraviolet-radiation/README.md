@@ -6,7 +6,7 @@ This client interacts with the web service provided by the Icelandic Radiation S
 
 To update the OpenAPI definition, run the following command:
 
-```sh
+```bash
 yarn nx run clients-ultraviolet-radiation:update-openapi-document --args="--apiKey=INSERT_API_KEY_HERE"
 ```
 
@@ -14,6 +14,6 @@ yarn nx run clients-ultraviolet-radiation:update-openapi-document --args="--apiK
 
 To regenerate the client, execute:
 
-```sh
+```bash
 yarn nx run clients-ultraviolet-radiation:codegen/backend-client
 ```

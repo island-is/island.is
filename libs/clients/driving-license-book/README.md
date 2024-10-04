@@ -10,7 +10,7 @@ This library provides a client to access Ökunámsbók's Driver's License API vi
 
 To update the OpenAPI definition (`clientConfig.json`):
 
-```sh
+```bash
 yarn nx run clients-driving-license-book:update-openapi-document
 ```
 
@@ -18,7 +18,7 @@ yarn nx run clients-driving-license-book:update-openapi-document
 
 To regenerate the client:
 
-```sh
+```bash
 yarn nx run clients-driving-license-book:codegen/backend-client
 ```
 
