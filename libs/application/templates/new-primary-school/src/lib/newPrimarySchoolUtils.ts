@@ -349,6 +349,10 @@ export const getCurrentSchoolName = (application: Application) => {
     application.externalData,
   )
 
+  if (!primaryOrgId || !childMemberships) {
+    return undefined
+  }
+
   // Find the school name since we only have primary org id
   return childMemberships
     .map((membership) => membership.organization)
