@@ -16,9 +16,9 @@ export class UpdateSubpoenaDto {
   readonly servedBy?: string
 
   @IsOptional()
-  @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly serviceDate?: Date
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly serviceDate?: string
 
   @IsOptional()
   @IsString()
