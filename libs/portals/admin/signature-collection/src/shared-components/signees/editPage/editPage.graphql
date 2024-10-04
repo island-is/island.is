@@ -1,0 +1,7 @@
+mutation SignatureCollectionAdminUpdatePaperSignaturePageNumber(
+  $input: SignatureCollectionSignatureUpdateInput!
+) {
+  signatureCollectionAdminUpdatePaperSignaturePageNumber(input: $input) {
+    success
+  }
+}

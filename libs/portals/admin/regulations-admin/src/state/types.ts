@@ -47,6 +47,7 @@ export type AppendixDraftForm = {
   title: DraftField<PlainText, 'text'>
   text: HtmlDraftField
 
+  diff?: HtmlDraftField
   /**
    * Appendixes may be revoked by `RegulationChange`s.
    *

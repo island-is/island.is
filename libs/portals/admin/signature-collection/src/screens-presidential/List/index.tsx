@@ -12,7 +12,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import PaperUpload from './components/paperUpload'
-import ListInfo from './components/listInfoAlert'
+import ListInfo from '../../shared-components/listInfoAlert'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { format as formatNationalId } from 'kennitala'
@@ -62,7 +62,6 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-
               <ListInfo
                 message={
                   listStatus === ListStatus.Extendable

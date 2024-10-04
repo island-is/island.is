@@ -2,14 +2,13 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Mileage reading API developed in .Net6.0 - Release-5 : 20231122.2",
+    "description": "Mileage reading API developed in .Net8.0 - Release-6 : 20231122.2",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
     },
     "version": "1.0"
   },
-  "servers": [{ "url": "/vehicle/mileagereading" }],
   "paths": {
     "/authenticate": {
       "post": {
@@ -55,7 +54,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/User" }
@@ -177,6 +176,14 @@
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
           }
         }
       },
@@ -236,13 +243,11 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Success",
+          "201": {
+            "description": "OK",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PutMileageReadingModel"
-                }
+                "schema": { "$ref": "#/components/schemas/MileageReadingDto" }
               }
             }
           },
@@ -291,13 +296,29 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": { "$ref": "#/components/schemas/MileageReadingDto" }
                 }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -329,12 +350,27 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": { "schema": { "type": "string" } }
             }
           },
-          "204": { "description": "No Content" }
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
         }
       }
     },
@@ -363,9 +399,25 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": { "schema": { "type": "boolean" } }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
             }
           }
         }
@@ -396,9 +448,289 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": { "schema": { "type": "boolean" } }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requestbulkmileagereading": {
+      "post": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostBulkMileageReadingModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostBulkMileageReadingModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostBulkMileageReadingModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostBulkMileageReadingModel"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostBulkMileageReadingModel"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostBulkMileageReadingModel"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostBulkMileageReadingModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkMileageReadingRequestResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkMileageReadingRequestResultDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getbulkmileagereadingrequests": {
+      "get": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          { "name": "persidno", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BulkMileageReadingRequestDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getbulkmileagereadingrequestdetails/{guid}": {
+      "get": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BulkMileageReadingRequestDetailDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getbulkmileagereadingrequeststatus/{guid}": {
+      "get": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkMileageReadingStatusDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
             }
           }
         }
@@ -415,6 +747,160 @@
           "password": { "minLength": 1, "type": "string" }
         },
         "additionalProperties": false
+      },
+      "BulkMileageReadingRequestDetailDto": {
+        "type": "object",
+        "properties": {
+          "guid": { "type": "string", "description": "Guid", "nullable": true },
+          "permno": {
+            "type": "string",
+            "description": "Vehicle permanent number",
+            "nullable": true
+          },
+          "mileage": {
+            "type": "integer",
+            "description": "Mileage",
+            "format": "int32",
+            "nullable": true
+          },
+          "returnCode": {
+            "type": "string",
+            "description": "Return code",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BulkMileageReadingRequestDetailErrors"
+            },
+            "description": "List of errors if any",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Dto for bulk mileage reading request details"
+      },
+      "BulkMileageReadingRequestDetailErrors": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "description": "Error code",
+            "nullable": true
+          },
+          "errorText": {
+            "type": "string",
+            "description": "Error text",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Class for errors on mileage reading in bulk"
+      },
+      "BulkMileageReadingRequestDto": {
+        "type": "object",
+        "properties": {
+          "guid": { "type": "string", "description": "Guid", "nullable": true },
+          "reportingPersidno": {
+            "type": "string",
+            "description": "Reporting person social security number",
+            "nullable": true
+          },
+          "reportingPersidnoName": {
+            "type": "string",
+            "description": "Reporting person name",
+            "nullable": true
+          },
+          "originCode": {
+            "type": "string",
+            "description": "Origin code",
+            "nullable": true
+          },
+          "originName": {
+            "type": "string",
+            "description": "Origin name",
+            "nullable": true
+          },
+          "dateInserted": {
+            "type": "string",
+            "description": "When was bulk request inserted",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dateStarted": {
+            "type": "string",
+            "description": "When did bulk request start working",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dateFinished": {
+            "type": "string",
+            "description": "When dd bulk request finish",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Dto for bulk mileage reading requests"
+      },
+      "BulkMileageReadingRequestResultDto": {
+        "type": "object",
+        "properties": {
+          "guid": {
+            "type": "string",
+            "description": "Guid to check for status and results",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Error message if any",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Dto for bulk mileage reading request"
+      },
+      "BulkMileageReadingStatusDto": {
+        "type": "object",
+        "properties": {
+          "guid": {
+            "type": "string",
+            "description": "Guid of request",
+            "nullable": true
+          },
+          "totalVehicles": {
+            "type": "integer",
+            "description": "Total vehicles in the request",
+            "format": "int32",
+            "nullable": true
+          },
+          "done": {
+            "type": "integer",
+            "description": "Total done",
+            "format": "int32",
+            "nullable": true
+          },
+          "remaining": {
+            "type": "integer",
+            "description": "Remaining vehicles",
+            "format": "int32",
+            "nullable": true
+          },
+          "processOk": {
+            "type": "integer",
+            "description": "How many readings were ok",
+            "format": "int32",
+            "nullable": true
+          },
+          "processWithErrors": {
+            "type": "integer",
+            "description": "How many readings with errors/warnings/locks",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Dto for status of bulk mileage reading request"
       },
       "MileageReadingDto": {
         "type": "object",
@@ -449,10 +935,56 @@
             "type": "string",
             "description": "Operation (I,U,D)",
             "nullable": true
+          },
+          "reportingPersidno": {
+            "type": "string",
+            "description": "If user registering this mileage is not owner/operator, the owner/operator social security number should be in here",
+            "nullable": true
+          },
+          "transactionDate": {
+            "type": "string",
+            "description": "Date of transaction",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "Mileage data transfer object"
+      },
+      "MileageReadingModel": {
+        "type": "object",
+        "properties": {
+          "permno": {
+            "type": "string",
+            "description": "Vehicle permno",
+            "nullable": true
+          },
+          "mileage": {
+            "type": "integer",
+            "description": "Milegae",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One mileage entity"
+      },
+      "PostBulkMileageReadingModel": {
+        "type": "object",
+        "properties": {
+          "originCode": {
+            "type": "string",
+            "description": "Origin code of reading",
+            "nullable": true
+          },
+          "mileageData": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MileageReadingModel" },
+            "description": "Mileage reading data",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Bulk mileage reading model"
       },
       "PostMileageReadingModel": {
         "required": ["mileage", "originCode", "permno"],
@@ -490,6 +1022,14 @@
             "description": "Operation (I,U,D), is always I for Insert",
             "nullable": true,
             "readOnly": true
+          },
+          "reportingPersidno": {
+            "maxLength": 10,
+            "minLength": 10,
+            "pattern": "[0-7]\\d[01]\\d{3}[-]*\\d{3}[09]",
+            "type": "string",
+            "description": "If user registering this mileage is not owner/operator, the owner/operator social security number should be in here",
+            "nullable": true
           }
         },
         "additionalProperties": false,

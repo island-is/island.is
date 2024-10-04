@@ -168,6 +168,17 @@ export const machine = {
         defaultMessage: 'Farmskrárnúmer',
         description: `Basic machine information cargo file number label`,
       },
+      alertTitle: {
+        id: 'aosh.rnm.application:machine.labels.basicMachineInformation.alertTitle',
+        defaultMessage: 'CE merking',
+        description: `Basic machine information alert title`,
+      },
+      alertMessage: {
+        id: 'aosh.rnm.application:machine.labels.basicMachineInformation.alertMessage',
+        defaultMessage:
+          'Ef tæki er ekki CE merkt þarf að skila inn samræmisyfirlýsingu og fleiri viðbótargögnum.',
+        description: `Basic machine information alert message`,
+      },
     }),
     technicalMachineInformation: defineMessages({
       sectionTitle: {
