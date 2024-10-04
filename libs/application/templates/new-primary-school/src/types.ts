@@ -90,6 +90,14 @@ export type MembershipOrganization = {
   type: MembershipOrganizationType
 }
 
+export type AddressModel = {
+  id: string
+  street: string
+  municipality?: string // Is set as object in MMS data
+  zip: string
+  country?: string // Is set as object in MMS data
+}
+
 export type FriggChildInformation = {
   id: string
   name: string
@@ -101,11 +109,6 @@ export type FriggChildInformation = {
   memberships: Membership[]
   primaryOrgId: object
   preferredName: object | null
-  address?: {
-    id: string
-    street: string
-    municipality?: object
-    zip: string
-    country?: object
-  }
+  domicile: AddressModel
+  residence: AddressModel
 }

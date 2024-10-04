@@ -12,6 +12,7 @@ import {
 } from '../../../lib/newPrimarySchoolUtils'
 import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 import { ReviewGroupProps } from './props'
+import { useMemo } from 'react'
 
 export const School = ({
   application,
@@ -29,10 +30,11 @@ export const School = ({
   const { data } = useQuery<FriggSchoolsByMunicipalityQuery>(
     friggSchoolsByMunicipalityQuery,
   )
-
-  const selectedSchoolName = data?.friggSchoolsByMunicipality
-    ?.flatMap((municipality) => municipality.children)
-    .find((school) => school?.id === selectedSchool)?.name
+  const selectedSchoolName = useMemo(() => {
+    return data?.friggSchoolsByMunicipality
+      ?.flatMap((municipality) => municipality.children)
+      .find((school) => school?.id === selectedSchool)?.name
+  }, [data, selectedSchool])
 
   return (
     <ReviewGroup
@@ -61,7 +63,7 @@ export const School = ({
               label={formatMessage(
                 newPrimarySchoolMessages.overview.selectedSchool,
               )}
-              value={selectedSchoolName}
+              value={selectedSchoolName || ''}
             />
           </GridColumn>
         </GridRow>
