@@ -6,17 +6,17 @@ This library includes reusable React components for application system fields.
 
 1. Define a unique `type` in `FieldTypes` enum in `application/core/src/types/Fields.ts`.
 2. Create an interface extending `Question` or `BaseField`.
-3. Add it to the `Field` type in `application-core`.
+3. Include it in the `Field` type in `application-core`.
 
 ## Running Unit Tests
 
-Run `nx test application-ui-fields` to execute unit tests via [Jest](https://jestjs.io).
+Execute `nx test application-ui-fields` to run unit tests using [Jest](https://jestjs.io).
 
 ---
 
 ## FileUploadFormField
 
-The file upload form field allows file uploads in your application.
+The file upload form field supports file uploads in your application.
 
 ### Use in Application
 
@@ -32,7 +32,7 @@ const File = z.object({
 const ExampleSchema = z.object({
   fileUpload: z.array(File),
   ...
-}
+})
 ```
 
 **Make Required:**
@@ -41,7 +41,7 @@ const ExampleSchema = z.object({
 const ExampleSchema = z.object({
   fileUpload: z.array(File).nonempty(),
   ...
-}
+})
 ```
 
 2. **Add to Form:**
@@ -52,7 +52,7 @@ buildSection({
   title: m.someSection,
   children: [
     buildFileUploadField({
-      id: 'fileUpload', // Match the schema key
+      id: 'fileUpload', // Match schema key
       title: 'Upload files',
       introduction: '',
       uploadDescription: 'Documents must be: .pdf or .docx.',
@@ -68,7 +68,7 @@ buildSection({
 1. Create a `testing-islandis` test bucket.
 2. Install aws-cli.
 3. Configure [AWS Secrets](../../../handbook/repository/aws-secrets.md).
-4. Run locally and test file upload; expect a 204 response if successful.
+4. Run locally and test file upload; a 204 response indicates success.
 
 #### Using FileUploadController Independently
 

@@ -32,7 +32,7 @@ yarn nx run clients-driving-license:update-openapi-document --apiVersion=v1
 yarn nx run clients-driving-license:update-openapi-document --apiVersion=v2
 ```
 
-### Regenerate the client:
+### Regenerate the client
 
 ```bash
 yarn nx run clients-driving-license:codegen/backend-client

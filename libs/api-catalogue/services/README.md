@@ -88,9 +88,9 @@ curl -H "Accept: application/json" -H "X-Road-Client: IS-DEV/GOV/10000/island-is
 
 [NIIS X-Road Playground] access:
 
-- Central Server: https://niisss01.playground.x-road.global:4000
-- Service Consumer: https://testcomss01.playground.x-road.global:4000
-- Service Provider: https://testagess01.playground.x-road.global:4000
+- Central Server: <https://niisss01.playground.x-road.global:4000>
+- Service Consumer: <https://testcomss01.playground.x-road.global:4000>
+- Service Provider: <https://testagess01.playground.x-road.global:4000>
 
 [x-road service metadata]: https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-meta_x-road_service_metadata_protocol.md#openapi-definition
 [x-road service metadata for rest]: https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-mrest_x-road_service_metadata_protocol_for_rest.md#annex-a-service-descriptions-for-rest-metadata-services

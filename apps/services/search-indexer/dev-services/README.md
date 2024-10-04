@@ -10,7 +10,7 @@ Ensure `docker` and `docker compose` are installed, with Docker allocated 4GB+ R
 yarn dev-services services-search-indexer
 ```
 
-Wait ~30 seconds. Elasticsearch: `localhost:9200`, Kibana: `localhost:5601`.
+Wait ~30 seconds. Access Elasticsearch at `localhost:9200` and Kibana at `localhost:5601`.
 
 ### Import Data
 
@@ -22,7 +22,7 @@ Set environment variables:
 - `CONTENTFUL_ACCESS_TOKEN=` (obtain from Contentful or via `yarn get-secrets api`)
 - `ELASTIC_NODE=http://localhost:9200/`
 
-Run to create indices and import data:
+Create indices and import data:
 
 ```bash
 yarn nx run services-search-indexer:build
@@ -33,11 +33,11 @@ yarn nx run services-search-indexer:migrate
 
 #### Dictionaries
 
-Icelandic dictionaries are in the Elasticsearch Docker container under `analyzers/`. For development only. Add required plugins to the Dockerfile.
+Icelandic dictionaries are in the Elasticsearch Docker container under `analyzers/`. Add necessary plugins to the Dockerfile for development.
 
 #### Local Errors
 
-For the error `TOO_MANY_REQUESTS/12/disk usage exceeded flood-stage watermark, index has read-only-allow-delete block`, use:
+If you encounter `TOO_MANY_REQUESTS/12/disk usage exceeded flood-stage watermark, index has read-only-allow-delete block`, execute:
 
 ```bash
 curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_cluster/settings -d '{ "transient": { "cluster.routing.allocation.disk.threshold_enabled": false } }'

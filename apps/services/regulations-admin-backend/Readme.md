@@ -1,6 +1,6 @@
 ## Development
 
-1. **Install Docker** if not already installed, then execute:
+1. **Install Docker** if not installed, then execute:
 
    ```bash
    yarn dev-services regulations-admin-backend

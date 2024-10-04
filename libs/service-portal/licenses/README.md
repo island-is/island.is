@@ -1,8 +1,8 @@
 # Service Portal Licenses
 
-This modal displays various licenses.
+This module displays various licenses.
 
-To run this modal, ensure x-road services are active.
+Ensure x-road services are active to run this module.
 
 ```bash
 sh ./scripts/run-xroad-proxy.sh
@@ -10,8 +10,8 @@ sh ./scripts/run-xroad-proxy.sh
 
 ### Driving License
 
-The driving license is displayed if the user has one. It shows details such as the issue date, expiration date, and license categories. Users can generate a QR code to quickly set up the license on their smartphone.
+The driving license section appears if the user holds a valid license. It shows details like issue date, expiration date, and categories. Users can generate a QR code for easy smartphone setup.
 
 ## Running Unit Tests
 
-Run `nx test service-portal-licenses` to execute unit tests via [Jest](https://jestjs.io).
+Execute `nx test service-portal-licenses` to run unit tests using [Jest](https://jestjs.io).

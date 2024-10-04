@@ -1,36 +1,34 @@
 # Children Residence Change Template
 
-This application template is designed for children residence change requests for the County Magistrate of Iceland by Kolibri.
+This application template is for children residence change requests submitted to the County Magistrate of Iceland by Kolibri.
 
 ## Setup
 
-Follow the [Application System setup](https://docs.devland.is/apps/application-system) for installation.
+Refer to the [Application System setup](https://docs.devland.is/apps/application-system) for installation instructions.
 
 ### Additional Setup
 
-Follow these steps to run this template locally:
+To run this template locally, follow the steps below:
 
 #### National Registry Provider
 
 **Prerequisites**
 
-- Ensure `kubectl` is installed.
-  - You can install it via Homebrew: `brew install kubectl`
+- Install `kubectl`. Use Homebrew: `brew install kubectl`
 - Configure [AWS Secrets](../../../../handbook/repository/aws-secrets.md)
 
 **Steps**
 
 1. Fetch development secrets for the project:
+   - Run: `yarn get-secrets service-portal`
 
-   - Execute: `yarn get-secrets service-portal`
-
-2. Get kubeconfig:
+2. Obtain kubeconfig:
    - Export AWS variables: `aws eks update-kubeconfig --name dev-cluster01`
-   - Keep this process running while working on the project.
+   - Keep this process running during project work.
 
 ### Test User
 
-For local, dev, and staging testing, use the Gervimaður Evrópa login: `0102719`.
+Use the Gervimaður Evrópa login `0102719` for local, dev, and staging environments.
 
 ## Code Owners and Maintainers
 

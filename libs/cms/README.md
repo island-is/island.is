@@ -24,7 +24,7 @@ To generate models for a new content type in Contentful, run the following scrip
 yarn nx run api:contentType --id contentTypeId
 ```
 
-### Script Arguments:
+### Script Arguments
 
 - **`--id`** (required): The "contentTypeId" for which to create types/models.
 - **`--sys`** (optional): Fields to add to the root model (comma-separated). Options: id, createdAt, updatedAt.

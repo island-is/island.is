@@ -5,13 +5,11 @@
 Ensure Docker is running. For initial setup, run:
 
 For API:
-
 ```bash
 yarn dev-init application-system-api
 ```
 
 For Application Form:
-
 ```bash
 yarn dev-init application-system-form
 ```
@@ -19,22 +17,20 @@ yarn dev-init application-system-form
 To start the app:
 
 For API:
-
 ```bash
 yarn dev application-system-api
 ```
 
 For Application Form:
-
 ```bash
 yarn dev application-system-form
 ```
 
-These commands simplify the process described below.
+These commands streamline the process detailed below.
 
 ## Overview
 
-This project underpins all business applications associated with island.is.
+This project supports all business applications related to island.is.
 
 ## URLs
 
@@ -68,7 +64,7 @@ yarn start application-system-api
 
 ### GraphQL
 
-Serve the GraphQL client concurrently to make calls:
+Serve the GraphQL client concurrently to enable queries:
 
 ```bash
 yarn start api
@@ -84,7 +80,7 @@ yarn nx codegen/backend-schema application-system-api
 
 Access Swagger at:
 
-```bash
+```
 localhost:3333/swagger
 ```
 

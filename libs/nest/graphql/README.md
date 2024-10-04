@@ -26,19 +26,19 @@ Configure CacheControl on specific fields:
 export class Article {
   @Field(() => Image)
   @CacheControl({ inheritMaxAge: true })
-  image: Image
+  image: Image;
 
   @Field(() => ArticleAnalytics)
   @CacheControl({ maxAge: 3600 })
-  analytics: ArticleAnalytics
+  analytics: ArticleAnalytics;
 }
 ```
 
-Refer to Apollo's [server-side caching documentation](https://www.apollographql.com/docs/apollo-server/performance/caching/) for more information.
+Refer to Apollo's [caching documentation](https://www.apollographql.com/docs/apollo-server/performance/caching/) for more information.
 
 ### `@CacheField(returnType, options)`
 
-Extends Nest's Field decorator, configuring CacheControl. Defaults to `inheritMaxAge: true`. Useful for non-scalar fields to maintain caching in parent resolvers.
+Extends Nest's Field decorator with CacheControl. Defaults to `inheritMaxAge: true`. Useful for non-scalar fields to maintain caching in parent resolvers.
 
 Example:
 
@@ -46,10 +46,10 @@ Example:
 @ObjectType()
 export class Article {
   @CacheField(() => Image)
-  image: Image
+  image: Image;
 
   @CacheControl(() => ArticleAnalytics, { cacheControl: { maxAge: 3600 } })
-  analytics: ArticleAnalytics
+  analytics: ArticleAnalytics;
 }
 ```
 
@@ -57,8 +57,8 @@ export class Article {
 
 **Check Cache-Control Headers**: Inspect HTTP response headers for `Cache-Control` after a GraphQL query to ensure correct caching.
 
-Refer to Apollo's [server-side caching documentation](https://www.apollographql.com/docs/apollo-server/performance/caching/) for more information.
+Refer to Apollo's [caching documentation](https://www.apollographql.com/docs/apollo-server/performance/caching/) for more information.
 
-## Running unit tests
+## Running Unit Tests
 
 Run `nx test nest-graphql` to execute unit tests using [Jest](https://jestjs.io).

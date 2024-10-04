@@ -2,11 +2,11 @@
 
 ## Overview
 
-This service manages university program availability and connects the island.is application system with the university database.
+This service manages university program availability, linking the island.is application system with the university database.
 
 ## Quickstart
 
-Ensure Docker is running. For the initial setup, execute:
+Ensure Docker is running. For setup, execute:
 
 ```bash
 yarn dev-init services-university-gateway
@@ -23,7 +23,7 @@ To initialize services, run:
 yarn dev-services services-university-gateway
 ```
 
-Execute migrations and seed scripts:
+Run migrations and seed scripts:
 
 ```bash
 yarn nx run services-university-gateway:migrate

@@ -4,29 +4,25 @@ This library was generated with [Nx](https://nx.dev).
 
 ## Running Unit Tests
 
-Execute:
+To run unit tests with [Jest](https://jestjs.io), execute:
 
 ```bash
 yarn nx test clients-electronic-registration-statistics
 ```
 
-for unit tests using [Jest](https://jestjs.io).
-
 ## Running Lint
 
-Execute:
+To lint the code with [ESLint](https://eslint.org/), execute:
 
 ```bash
 yarn nx lint clients-electronic-registration-statistics
 ```
 
-for linting with [ESLint](https://eslint.org/).
-
 ## Usage
 
-### Update Open API Definition (clientConfig.json)
+### Update Open API Definition
 
-Execute:
+To update the Open API Definition (`clientConfig.json`), execute:
 
 ```bash
 yarn nx run clients-electronic-registration-statistics:update-openapi-document
@@ -38,20 +34,16 @@ yarn nx run clients-electronic-registration-statistics:update-openapi-document
 
 ## Running Unit Tests
 
-Execute:
+To run unit tests with [Jest](https://jestjs.io), execute:
 
 ```bash
 yarn nx test api-domains-electronic-registration-statistics
 ```
 
-for unit tests via [Jest](https://jestjs.io).
-
 ## Running Lint
 
-Execute:
+To lint the code with [ESLint](https://eslint.org/), execute:
 
 ```bash
 yarn nx lint api-domains-electronic-registration-statistics
 ```
-
-for linting with [ESLint](https://eslint.org/).

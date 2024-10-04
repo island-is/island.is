@@ -1,6 +1,7 @@
+```markdown
 # API Domains Vehicles
 
-This service utilizes the VehicleSearchApi.
+This service uses the `VehicleSearchApi`.
 
 ## How to Use
 
@@ -22,7 +23,7 @@ OR
 kubectl -n socat port-forward svc/socat-xroad 8081:80
 ```
 
-VehiclesApiProvider should now be ready for use.
+VehiclesApiProvider should be ready for use.
 
 ## Running Unit Tests
 
@@ -30,7 +31,7 @@ Execute `nx test api-domains-vehicles` to run unit tests with [Jest](https://jes
 
 # UI
 
-Usage example: [Localhost Vehicle Page](http://localhost:4200/minarsidur/okutaeki).
+Example: [Localhost Vehicle Page](http://localhost:4200/minarsidur/okutaeki).
 
 Ensure the service portal is running:
 
@@ -47,7 +48,7 @@ yarn start service-portal
 - `model` -> `make`
 - `subModel` -> `vehcom` + `speccom`
 - `regno` -> Registration number
-- `year` -> `modelyear` or `productyear` or `firstregdate(year)`
+- `year` -> `modelyear`, `productyear`, or `firstregdate(year)`
 - `co2` -> `technical.co2`
 - `weightedCo2` -> Weighted NEDC
 - `co2Wltp` -> WLTP
@@ -153,3 +154,4 @@ yarn start service-portal
 - `city` -> City
 - `startDate` -> Start date
 - `endDate` -> End date
+```

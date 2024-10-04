@@ -4,7 +4,7 @@ This document outlines the available clients for APIs provided by Skatturinn.
 
 ## Clients for Skatturinn API
 
-### https://thjonusta-s.rsk.is/api
+### <https://thjonusta-s.rsk.is/api>
 
 Skatturinn offers two versions of this API:
 
@@ -13,6 +13,6 @@ Skatturinn offers two versions of this API:
 
 ## Client for Company Registry
 
-### https://juno.skattur.is
+### <https://juno.skattur.is>
 
 - A client for accessing the company registry.

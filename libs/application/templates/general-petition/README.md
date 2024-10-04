@@ -4,7 +4,7 @@ This application enables users to create general petitions.
 
 ### Setup
 
-To initialize the docker environment (one-time setup):
+To initialize the Docker environment (one-time setup):
 
 ```bash
 yarn dev-init application-templates-general-petition
@@ -20,17 +20,17 @@ Ensure your setup meets the [Application System requirements](https://docs.devla
 
 #### Additional Setup
 
-Additional steps are necessary for local setup.
+Further steps are required for local setup.
 
 #### National Registry Provider
 
 **Prerequisites:**
 
-- `kubectl` must be installed:
+- Install `kubectl`:
   - `brew install kubectl`
-- [AWS Secrets](../../../../handbook/repository/aws-secrets.md) must be configured.
+- [AWS Secrets](../../../../handbook/repository/aws-secrets.md) should be configured.
 
-Obtain environment variables by running:
+To obtain environment variables, run:
 
 ```bash
 yarn get-secrets service-portal
@@ -38,7 +38,7 @@ yarn get-secrets service-portal
 
 **Kubeconfig:**
 
-Export AWS variables:
+Update the kubeconfig:
 
 ```bash
 aws eks update-kubeconfig --name dev-cluster01

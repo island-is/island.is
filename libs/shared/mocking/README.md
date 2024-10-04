@@ -1,6 +1,6 @@
 # Mocking
 
-This library provides helpers to set up API mocking in Node.js and browser projects.
+This library provides helpers for setting up API mocking in Node.js and browser projects.
 
 ## Quick Start
 
@@ -36,8 +36,7 @@ const resolvers = createResolvers<Resolvers>({
     articles: (_obj, args) => {
       const page = args.page || 0
       const perPage = args.perPage || 10
-      const start = page * perPage
-      return store.articles.slice(start, start + perPage)
+      return store.articles.slice(page * perPage, (page * perPage) + perPage)
     },
   },
 })
@@ -66,7 +65,7 @@ export default buildSchema(`
   }
 
   type Query {
-    articles(page: Number, perPage: Number): Article[]!
+    articles(page: Number, perPage: Number): [Article]!
   }
 `)
 ```
@@ -96,7 +95,7 @@ export interface Resolvers {
   Query?: {
     articles?: (
       obj: any,
-      input: { page?: number; perPage?: number },
+      input: { page?: number; perPage?: number }
     ) => Article[]
   }
 }
@@ -106,19 +105,17 @@ export interface Resolvers {
 
 ### `startMocking(requestHandlers)`
 
-Starts Mock Service Worker (MSW) with specified handlers.
+Initializes Mock Service Worker (MSW) with specified handlers.
 
-Add `mockServiceWorker.js` to your public folder using `yarn msw init path/to/your/public/`. Automatically works in Node.js.
+Add `mockServiceWorker.js` to your public folder using `yarn msw init path/to/your/public/`. Automatically supported in Node.js.
 
 #### Arguments
 
-- `requestHandlers: Array<msw.RequestHandler>` - list of mocked request handlers.
+- `requestHandlers: Array<msw.RequestHandler>` - Array of mocked request handlers.
 
 #### Returns
 
-`msw.SetupWorkerApi | msw.SetupServerApi`
-
-Use to add or override handlers with `mocking.use(...requestHandlers)` or reset with `mocking.resetHandlers()`.
+`msw.SetupWorkerApi | msw.SetupServerApi` - Utilities for managing handlers.
 
 #### Usage
 
@@ -141,17 +138,17 @@ if (process.env.NODE_ENV !== 'production' && process.env.API_MOCKS) {
 
 ### `createGraphqlHandler(options: Options)`
 
-Creates an MSW handler for graphql requests using a schema and resolvers.
+Creates an MSW handler for GraphQL requests using a schema and resolvers.
 
 #### Arguments
 
-- `Options#mask?: string | RegExp` - URLs to handle. Defaults to `'*/api/graphql'`.
-- `resolvers: Resolvers` - GraphQL resolvers from `createResolvers`.
+- `Options#mask?: string | RegExp` - URL patterns to handle. Default is `'*/api/graphql'`.
+- `resolvers: Resolvers` - GraphQL resolvers defined via `createResolvers`.
 - `schema: GraphQLSchema` - GraphQL schema for the mock API.
 
 #### Returns
 
-`msw.RequestHandler` - pass to `startMocking()`.
+`msw.RequestHandler` - Add to `startMocking()`.
 
 #### Example
 
@@ -171,18 +168,18 @@ createGraphqlHandler({
 
 ### `createResolvers(baseResolvers)`
 
-Wraps mocked GraphQL resolvers.
+Creates a wrapper for mocked GraphQL resolvers.
 
 #### Arguments
 
-- `baseResolvers: Resolvers` - initial mocked resolvers.
+- `baseResolvers: Resolvers` - Initial mocked resolvers.
 
 #### Returns
 
-Methods to manage resolvers:
+Methods for managing resolvers:
 
-- `#add(resolvers: Resolvers)` - adds/overrides mocked resolvers.
-- `#reset()` - resets resolvers to initial state.
+- `#add(resolvers: Resolvers)` - Adds or overrides mocked resolvers.
+- `#reset()` - Resets resolvers to initial state.
 
 #### Usage
 
@@ -206,15 +203,15 @@ const resolvers = createResolvers<Resolvers>({
 
 ### `createStore<Data>(initializer)`
 
-Creates a store with mocked data used by handlers, resolvers, and tests.
+Creates a store with mocked data for handlers, resolvers, and tests.
 
 #### Arguments
 
-- `initializer: () => Data` - function to create mock data.
+- `initializer: () => Data` - Function to generate mock data.
 
 #### Returns
 
-Proxy object with store data and `$reset()` to reset the store.
+Proxy object with store data and `$reset()` for restoring the initial state.
 
 #### Usage
 
@@ -239,9 +236,9 @@ Creates an object factory for strongly typed objects.
 
 #### Arguments
 
-- `initializer` - matches `Type` shape. Properties can have static or dynamic values.
+- `initializer` - Matches `Type` shape. Supports static or dynamic values.
 
-Supports traits for custom object creation:
+Supports traits for customized object creation:
 
 ```typescript
 factory({
@@ -256,7 +253,7 @@ factory({
 
 #### Returns
 
-Factory object with methods to create single or multiple objects.
+Factory object with methods for generating objects.
 
 #### Usage
 
@@ -290,7 +287,7 @@ const primaryArticle = article('withAuthor', {
 
 ### Other Helpers
 
-- `title` - Returns a title-like string using `faker.lorem.words()`.
+- `title` - Returns a title string using `faker.lorem.words()`.
 
 ```typescript
 import { factory, title } from '@island.is/shared/mocking'
@@ -309,7 +306,7 @@ factory({
 })
 ```
 
-- `simpleFactory(initializerFn)` - Wraps a factory function with a `#list` helper.
+- `simpleFactory(initializerFn)` - Factory function with a `#list` helper.
 
 ```typescript
 import { simpleFactory } from '@island.is/shared/mocking'
@@ -318,11 +315,11 @@ const slice = simpleFactory(() =>
 )
 ```
 
-- `faker` - Re-exported [faker](https://github.com/Marak/faker.js) for creating fake mock data.
+- `faker` - Re-export of [faker](https://github.com/marak/Faker.js) for creating mock data.
 
 ## Remove Mocking Code from Production Builds
 
-Ensure `startMocking` is only called when `process.env.API_MOCKS === 'true'`.
+Ensure `startMocking` executes only when `process.env.API_MOCKS === 'true'`.
 
 To remove unused code, mark the `package.json` with:
 
@@ -330,8 +327,4 @@ To remove unused code, mark the `package.json` with:
 {
   "sideEffects": ["mocks/index.ts"]
 }
-```
-
-```
-
 ```

@@ -1,18 +1,18 @@
 # Testing Nest
 
-This library helps developers set up a Nest.js application for testing. The test server can be used for unit or integration/functional tests by applying different hooks, such as the `useDatabase` hook.
+This library aids in setting up a Nest.js application for testing, supporting unit or integration/functional tests with various hooks, like `useDatabase`.
 
 ## Test Server
 
 ### Usage
 
-`testServer` requires the project's `AppModule` to build the Nest.js Application graph. Configure your test server with desired hooks and overrides.
+`testServer` needs the project's `AppModule` to configure the Nest.js application graph. Set up your test server with desired hooks and overrides:
 
 ```typescript
 const app: TestApp = await testServer({ appModule: AppModule })
 ```
 
-Set up `testServer` in `beforeAll`, `beforeEach`, or within a test. Remember to clean up by calling:
+Initialize `testServer` in `beforeAll`, `beforeEach`, or within a test. Clean up with:
 
 ```typescript
 await app.cleanUp()
@@ -20,7 +20,7 @@ await app.cleanUp()
 
 ### Examples
 
-Assume we need to mock a 3rd party API: `NationalRegistryApi`. Create a mock:
+To mock a 3rd party API, e.g., `NationalRegistryApi`, create a mock class:
 
 ```typescript
 class MockNationalRegistryApi {
@@ -30,11 +30,11 @@ class MockNationalRegistryApi {
 }
 ```
 
-Use One-Time setup with Jest's `beforeAll` and teardown with `afterAll`.
+Use Jest's `beforeAll` for setup and `afterAll` for teardown.
 
 #### Unit Test
 
-Override dependencies that need mocking in `override`:
+Override necessary dependencies:
 
 ```typescript
 import { TestApp, testServer } from '@island.is/testing/nest'
@@ -55,11 +55,12 @@ describe('Example unit test', () => {
   afterAll(async () => {
     await app.cleanUp()
   })
+})
 ```
 
 #### Functional (Integration) Test
 
-Hook up authentication with `currentUser` and an `sqlite` database:
+Integrate authentication with `currentUser` and an `sqlite` database:
 
 ```typescript
 import { TestApp, testServer } from '@island.is/testing/nest'
@@ -87,15 +88,16 @@ describe('Example functional test', () => {
   afterAll(async () => {
     await app.cleanUp()
   })
+})
 ```
 
 ## Hooks
 
-In the functional (integration) test, two predefined hooks are used. View all predefined hooks at `libs/testing/nest/src/lib/hooks`.
+In the integration test, two predefined hooks are shown. Explore all hooks in `libs/testing/nest/src/lib/hooks`.
 
-### Examples
+### Example
 
-To write a new hook, follow this pattern:
+To create a new hook, use this structure:
 
 ```typescript
 const myNewHook = (options) => {
@@ -104,7 +106,7 @@ const myNewHook = (options) => {
       return builder.override* // perform the overrides
     },
     extend: (app) => {
-      // extend the app with resources like a database or Redis
+      // extend app resources like a database or Redis
       const redis = app.resolve(Redis)
       // return a cleanup function
       return () => {
@@ -117,4 +119,4 @@ const myNewHook = (options) => {
 
 ## Test Fixtures
 
-In the functional (integration) test, a `CurrentUser` test fixture from `@island.is/testing/fixtures` is used. The library contains more fixtures for creating random test data. Refer to `libs/testing/fixtures` for available fixtures.
+In the integration test, a `CurrentUser` fixture from `@island.is/testing/fixtures` is used. The library offers more fixtures for random test data. See `libs/testing/fixtures` for details.

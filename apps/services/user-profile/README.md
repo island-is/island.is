@@ -2,40 +2,40 @@
 
 ### Overview
 
-This service manages and stores user profile information, utilizing the user's National Registration ID for storing contact details and preferred locale settings. It also manages email and mobile phone verification. User profiles are not prepopulated for all Iceland residents; instead, they can be created through various onboarding processes. The function `findOrCreateUserProfile` is utilized throughout the codebase.
+This service manages user profile information using the National Registration ID to store contact details and locale preferences. It handles email and mobile verification. Profiles are created through onboarding processes and are not prepopulated for all Iceland residents. The `findOrCreateUserProfile` function is frequently used across the codebase.
 
 ### Quickstart
 
-Execute the following commands:
+Run the following commands:
 
 ```bash
 yarn dev-init services-user-profile
 yarn dev services-user-profile
 ```
 
-These commands match the setup procedures outlined below.
+These commands align with the setup instructions below.
 
 ### Initial Setup
 
-Ensure Docker is installed, then run:
+Ensure Docker is installed, then initiate:
 
 ```bash
 yarn dev-services services-user-profile
 ```
 
-Afterward, apply migrations with:
+Apply database migrations with:
 
 ```bash
 yarn nx run services-user-profile:migrate
 ```
 
-To start the service locally, execute:
+Start the service locally using:
 
 ```bash
 yarn start services-user-profile
 ```
 
-The API's OpenAPI specifications can be accessed at:
+Access the API's OpenAPI specifications at:
 
 ```
 http://localhost:3366/
@@ -43,7 +43,7 @@ http://localhost:3366/
 
 ### Getting Started
 
-To start the service, use:
+Launch the service with:
 
 ```bash
 yarn start services-user-profile

@@ -6,7 +6,7 @@ This service manages personal representatives and their authority to act for rep
 
 ## Context
 
-The database and API enable the Ministry of Social Affairs to define rights for personal representatives and manage their connections with those they represent. The API facilitates managing right types, personal representative types (currently only one type), and the links between a representative and the represented person.
+The database and API enable the Ministry of Social Affairs to define rights for personal representatives and manage their connections with represented individuals. The API manages right types, representative types (currently only one type), and links between a representative and a represented person.
 
 ### Connection Examples
 
@@ -56,7 +56,7 @@ Refer to [X-Road Information](https://docs.devland.is/technical-overview/x-road/
 
 ### Service Provider Usage
 
-Service providers won't access the API directly. They may:
+Service providers won't directly access the API. They may:
 
 - Set up X-Road with [PublicAPI](https://docs.devland.is/apps/services/auth/personal-representative-public)
 - Use [Digital Iceland's](https://www.notion.so/Identity-Server-Integration-afde614a247e4b9da4731b2ace1115cd) login option for Personal Representative use, mapping rights to scope.
@@ -77,7 +77,7 @@ Run migrations:
 yarn nx run services-auth-ids-api:migrate
 ```
 
-To serve locally:
+Serve locally:
 
 ```bash
 yarn start services-auth-personal-representative
@@ -112,7 +112,3 @@ yarn start services-auth-personal-representative
 ### Code Owners and Maintainers
 
 - [Programm](https://github.com/orgs/island-is/teams/programm/members)
-
-```
-
-```

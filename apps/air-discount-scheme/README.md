@@ -2,9 +2,9 @@
 
 ## About
 
-Generates discount codes for booking eligible domestic flights. Eligibility criteria:
+Generates discount codes for eligible domestic flight bookings. Eligibility:
 
-- Legal domicile in specific towns outside the capital. Postal codes from Þjóðskrá are used for validation.
+- Legal domicile in specified towns outside the capital. Validated using Þjóðskrá postal codes.
 
 ## URLs
 
@@ -14,7 +14,7 @@ Generates discount codes for booking eligible domestic flights. Eligibility crit
 
 ## API
 
-The API allows airlines to verify discount code validity and access basic user booking info. Authorized airlines: `Icelandair`, `Ernir`, and `Norlandair`. Flights historically booked through `Icelandair` for `Norlandair` are marked with `Icelandair` but have a cooperation field with `Norlandair`.
+Airlines can verify discount codes and access basic booking info. Authorized airlines: `Icelandair`, `Ernir`, `Norlandair`. Flights booked through `Icelandair` for `Norlandair` are marked with `Icelandair`, with a cooperation field for `Norlandair`.
 
 [Swagger API](https://loftbru.dev01.devland.is/api/swagger)
 
@@ -24,7 +24,7 @@ yarn start air-discount-scheme-api
 
 ## Backend
 
-The admin interface provides an overview of registered bookings, primarily for Vegagerðin.
+The admin interface offers an overview of registered bookings, mainly for Vegagerðin.
 
 [Admin](https://loftbru.dev01.devland.is/admin)
 
@@ -34,7 +34,7 @@ yarn start air-discount-scheme-backend
 
 ## Web
 
-The user interface includes initiative details, legal terms, and a tool for obtaining discount codes.
+Includes initiative details, legal terms, and a tool for obtaining discount codes.
 
 [Dev](https://loftbru.dev01.devland.is)
 
@@ -44,11 +44,11 @@ yarn start air-discount-scheme-web
 
 ## Integrations
 
-- [Þjóðskrá](https://skra.is): Used to verify legal domicile, provide airlines with basic personal info, and retrieve discount codes for related children.
+- [Þjóðskrá](https://skra.is): Validates legal domicile and provides airlines with personal info and discount codes for related children.
 
 ## Development
 
-To start developing:
+To start development:
 
 1. Fetch environment secrets:
 
@@ -62,9 +62,6 @@ yarn get-secrets air-discount-scheme-web
 
 ```bash
 docker compose -f apps/air-discount-scheme/backend/docker-compose.yml up
-```
-
-```bash
 yarn nx run air-discount-scheme-backend:migrate
 yarn nx run air-discount-scheme-backend:seed
 ```
@@ -89,7 +86,7 @@ yarn start air-discount-scheme-backend
 
 6. Verify Contentful and AWS:
 
-Log in at <https://island-is.awsapps.com/start#/> (Contact devops for access). Copy environment variables as described in [the documentation](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting), then paste into terminal. Execute `./scripts/run-es-proxy.sh` from the island.is root directory. Success is indicated by `Forwarding from 0.0.0.0:9200 -> 9200` in terminal output.
+Log in at <https://island-is.awsapps.com/start#/> (Contact devops for access). Copy environment variables as described in [the documentation](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting), then paste into terminal. Execute `./scripts/run-es-proxy.sh` from island.is root directory. Success is indicated by `Forwarding from 0.0.0.0:9200 -> 9200`.
 
 Visit [localhost:4200](http://localhost:4200) for the website or [localhost:4248/api/swagger/](http://localhost:4248/api/swagger/) for the airline API.
 
@@ -103,11 +100,11 @@ export DEVELOPERS=1234567890
 
 ## Shortcuts
 
-Due to time constraints, certain shortcuts were necessary:
+Due to time constraints, certain shortcuts were taken:
 
-- Authentication is basic; using static API keys as IDP was under development.
-- The deployment pipeline is separate from the main island.is pipeline.
-- The GraphQL API is independent of island.is's main GraphQL API.
+- Basic authentication with static API keys; IDP was in development.
+- Separate deployment pipeline from the main island.is pipeline.
+- Independent GraphQL API from island.is's main API.
 
 ## Project Owner
 

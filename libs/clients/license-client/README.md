@@ -1,10 +1,11 @@
+```markdown
 # License Client
 
 This library was generated with [Nx](https://nx.dev).
 
-## About
+## Overview
 
-This library acts as a license client factory for these clients:
+The library functions as a license client factory for:
 
 - Firearm License
 - Machine License
@@ -12,20 +13,27 @@ This library acts as a license client factory for these clients:
 - Driver's License
 - Disability License
 
-The factory can return two types of clients, but only license clients are intended for internal use. Update clients are for external organizations to query for digital license updates.
+The factory provides two types of clients:
 
-Refer to `api/domains/license-service` for usage examples.
+- **License Clients**: For internal use.
+- **Update Clients**: For external organizations to query license updates.
+
+For usage examples, refer to `api/domains/license-service`.
 
 ### License Client
 
-- Allows interaction with the digital license issuer and the license-issuing organization.
+- Interacts with the digital license issuer and the organization.
 - Requires IDS configuration.
 
 ### License Update Client
 
-- Exclusively for machine clients.
-- Facilitates digital license updates by external organizations via the digital license issuer, using _ApiKey_ authentication for communication with the organization.
+- For machine clients only.
+- Uses _ApiKey_ authentication for external organizations to update licenses via the digital license issuer.
 
 ## Running Unit Tests
 
-Execute unit tests via [Jest](https://jestjs.io) by running `nx test clients-license-client`.
+Run unit tests with [Jest](https://jestjs.io) using: 
+```bash
+nx test clients-license-client
+```
+```

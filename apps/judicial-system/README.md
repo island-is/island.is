@@ -76,7 +76,7 @@ Visit `localhost:3344/api/swagger`
 
 Migrations must be created manually.
 
-#### Generate an empty migration file:
+#### Generate an empty migration file
 
 ```bash
 npx sequelize-cli migration:generate --name update-case
@@ -121,7 +121,7 @@ Start the application:
 yarn start judicial-system-web
 ```
 
-The project runs at https://localhost:4200/.
+The project runs at <https://localhost:4200/>.
 
 Provide `LAWYERS_ICELAND_API_KEY` to fetch lawyers.
 
@@ -149,7 +149,7 @@ Run `yarn nx extract-strings judicial-system-{namespace}` to create/update a Con
 
 Set `CONTENTFUL_ENVIRONMENT=test` or `CONTENTFUL_ENVIRONMENT=master` based on environment.
 
-### Example for Web Namespaces:
+### Example for Web Namespaces
 
 ```bash
 yarn nx extract-strings judicial-system-web

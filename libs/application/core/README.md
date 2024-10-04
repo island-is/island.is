@@ -1,40 +1,41 @@
+```markdown
 # Application Core
 
 ## About
 
-This library provides types and utilities for building applications, forms, and schemas, serving as the foundation for the entire application system.
+Provides types and utilities for building applications, forms, and schemas foundational to the application system.
 
 ## Application
 
-Defines a stored application instance, containing:
+Contains:
 
-- `applicant` information
-- `typeId` of the application
-- `answers` to application questions
-- `externalData` attached
-- `state` of the application
+- `applicant` info
+- `typeId` 
+- `answers` 
+- `externalData`
+- `state`
 - Additional details
 
 ## Data Providers
 
-Applications often require storing immutable external data, fetched from sources like x-road. This data aids in pre-filling fields or for validation purposes.
+Store immutable external data from sources like x-road for pre-filling or validation.
 
 ## Application Template
 
-The `ApplicationTemplate` interface underpins the system. Each self-service application relies on a template extending this interface, featuring:
+`ApplicationTemplate` interface underpins the system. Templates extend this interface, featuring:
 
 - Unique `type`
-- `dataSchema` for quick validation
-- `answerValidators` for custom server-side checks
-- `stateMachineConfig` for defining the application flow and user role interactions
+- `dataSchema` for validation
+- `answerValidators` for server-side checks
+- `stateMachineConfig` for flow and role interactions
 
 ### Translations
 
-Define "translatable" messages using the `translationNamespaces` field, supporting multiple namespaces from Contentful. Initial loading fetches and caches data for 15 minutes.
+Define "translatable" messages. Load and cache for 15 minutes.
 
 #### Configuration
 
-Add translation namespaces to your template:
+Add translation namespaces:
 
 ```diff
 const ReferenceApplicationTemplate: ApplicationTemplate<
@@ -50,7 +51,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 
 #### States
 
-States can have their own `title` and `description`, enhancing user understanding within service portals.
+States have `title` and `description`:
 
 ```diff
 [States.draft]: {
@@ -65,7 +66,7 @@ States can have their own `title` and `description`, enhancing user understandin
 
 ### Header Information
 
-Show institution and application name in headers by setting the `institution` field in the template, accepting strings or "translatable" objects.
+Set `institution` for headers:
 
 ```diff
 const ReferenceApplicationTemplate: ApplicationTemplate<
@@ -82,14 +83,14 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 
 ### Feature Flags
 
-To use a feature flag:
+To use:
 
 1. Request ConfigCat access.
-2. Create a feature flag (default "On" in Dev, "Off" in Production/Staging).
-3. Add "applicationSystemFlag" label to the flag.
-4. Ensure `CONFIGCAT_SDK_KEY` is in `.env.secret`.
-5. Add your flag to the `@island.is/feature-flags`.
-6. Include the feature flag in the application template.
+2. Create a flag (“On” in Dev, “Off” in Prod/Staging).
+3. Label it “applicationSystemFlag”.
+4. Ensure `CONFIGCAT_SDK_KEY` in `.env.secret`.
+5. Add to `@island.is/feature-flags`.
+6. Include in template.
 
 ```diff
 const ReferenceApplicationTemplate: ApplicationTemplate<
@@ -107,7 +108,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 
 #### DataSchema
 
-Use Zod for schema validation. Pass custom error messages using the `params` field.
+Use Zod for validation:
 
 ```typescript
 .refine((n) => n && !kennitala.isValid(n), {
@@ -117,27 +118,27 @@ Use Zod for schema validation. Pass custom error messages using the `params` fie
 
 #### AnswerValidators
 
-Provide custom validation when Zod schema is insufficient. Validators execute on the server during answer updates.
+Use for custom server-side validation.
 
 ### Application Type
 
-Each application template has a unique type. Add enum values to the `ApplicationTypes` when creating new templates.
+Add enum values to `ApplicationTypes` for new templates.
 
 ### Data Schema
 
-Maintain consistent validation with `dataSchema` using [Zod](https://github.com/vriad/zod). Define the schema for each question requiring validation and error messages.
+Use `dataSchema` for validation with [Zod](https://github.com/vriad/zod).
 
 ### State Machine
 
-Utilize `application-core` types and interfaces for state machines, built upon [xstate](https://xstate.js.org/docs/).
+Use `application-core` types, leveraging [xstate](https://xstate.js.org/docs/).
 
 ### States
 
-Define application states as needed, representing system points in time. More complex examples can be referenced from different templates.
+Define as needed, representing system time points.
 
 #### Status
 
-Application statuses include:
+Statuses include:
 
 - `notstarted`
 - `draft`
@@ -159,7 +160,7 @@ export enum ApplicationStatus {
 
 #### Life Cycle
 
-Define state life cycles, affecting listing visibility and database pruning.
+Define listing visibility and database pruning:
 
 ```typescript
 type StateLifeCycle =
@@ -178,62 +179,63 @@ type StateLifeCycle =
 
 ### Roles
 
-Roles define `read` and `write` permissions. Each role specifies a `formLoader` for appropriate form rendering based on the application state. Actions are tied to state machine events allowing state transitions.
+Define `read`/`write` permissions; roles specify `formLoader` for state-based rendering.
 
 ### Pending Action
 
-Specify a "pendingAction" for each state, appearing in the application history with a user prompt. Customize content based on role and application answers.
+Specify `pendingAction` for state, customizable by role and application answers.
 
 ### Application History
 
-Display event-triggered history logs for each state. Logs are stored and can be updated post-definition.
+Log event-triggered history for each state.
 
 ### Delete Application
 
-Enable users to delete applications by setting `delete: true` for a role in a state.
+Set `delete: true` for role in a state to enable deletions.
 
 ## Form
 
-Describes form flow with a structured JSON object used by `application-ui-shell`.
+Describes flow via JSON for `application-ui-shell`.
 
 ### Fields
 
-Fields can be questions or informative. They include predefined components (e.g., TextField, CheckboxField) or custom implementations. Validation through `dataSchema` relies on field `id`.
+Questions/information with predefined/custom components; validate with `dataSchema`.
 
 ### Creating a New Field Component
 
-1. Add the field name to `FieldTypes` and `FieldComponents` in `fields.ts`.
-2. Create an interface extending `BaseField` with custom props.
-3. Add the field to the `Field` type.
-4. Create a function in `fieldBuilders.ts` to build the new field.
-5. Create a React component for the field.
-6. Export the new component in `index.ts`.
-7. Implement the new field in forms.
+1. Add name to `FieldTypes`/`FieldComponents`.
+2. Extend `BaseField`.
+3. Add to `Field` type.
+4. Create builder in `fieldBuilders.ts`.
+5. Create React component.
+6. Export in `index.ts`.
+7. Implement in forms.
 
 ### Conditions
 
-Apply conditions to fields for showing/hiding based on user input or predefined logic.
+Show/hide fields based on logic.
 
 ### Sections and SubSections
 
-Organize form flow cosmetically into chapters, improving user navigation experience.
+Organize form flow into chapters for navigation.
 
 ### Multi-fields and External Data Providers
 
-Group and manage fields, or integrate immutable external data via `DataProviders`.
+Group fields, integrate data with `DataProviders`.
 
 ### Custom Errors for Data Providers
 
-Display errors for data provider failures with custom messages using provider implementations.
+Display errors with provider-specific messages.
 
 ### Dynamic Application Names
 
-Supply a function for the `name` variable to dynamically generate application names based on user input.
+Use `name` function for dynamic naming.
 
 ### Draft Status Bar
 
-Customize draft progress using `draftPageNumber` to reflect application specifics in the status bar.
+Customize progress with `draftPageNumber`.
 
 ## Code Owners and Maintainers
 
 - [Norda](https://github.com/orgs/island-is/teams/norda-applications/members)
+```

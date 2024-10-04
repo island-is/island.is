@@ -4,15 +4,15 @@ This library was created with [Nx](https://nx.dev).
 
 ### Running Unit Tests
 
-Execute the following command to run unit tests using [Jest](https://jestjs.io):
+Run unit tests with [Jest](https://jestjs.io) using:
 
 ```bash
 yarn nx test clients-icelandic-government-institution-vacancies
 ```
 
-### Updating OpenAPI Definition (clientConfig.yaml)
+### Updating OpenAPI Definition
 
-Use this command to update the OpenAPI definition:
+Update the OpenAPI definition with:
 
 ```bash
 yarn nx run clients-icelandic-government-institution-vacancies:update-openapi-document
@@ -20,7 +20,7 @@ yarn nx run clients-icelandic-government-institution-vacancies:update-openapi-do
 
 ### Regenerating the Client
 
-To regenerate the client, run:
+Regenerate the client using:
 
 ```bash
 yarn nx run clients-icelandic-government-institution-vacancies:codegen/backend-client

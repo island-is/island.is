@@ -2,13 +2,13 @@
 
 ### Installation
 
-Ensure you have the latest Xcode command line tools installed:
+Ensure you have the latest Xcode command line tools:
 
 ```bash
 xcode-select --install
 ```
 
-For detailed _fastlane_ installation instructions, refer to the [Installing _fastlane_](https://docs.fastlane.tools/#installing-fastlane).
+For detailed _fastlane_ installation instructions, visit the [Installing _fastlane_](https://docs.fastlane.tools/#installing-fastlane).
 
 ### Available Actions
 
@@ -36,7 +36,7 @@ For detailed _fastlane_ installation instructions, refer to the [Installing _fas
 
 ---
 
-This README.md is auto-generated and will be refreshed every time [_fastlane_](https://fastlane.tools) is executed.
+This README.md is auto-generated and refreshed whenever [_fastlane_](https://fastlane.tools) is run.
 
 For more about _fastlane_, visit [fastlane.tools](https://fastlane.tools).
 

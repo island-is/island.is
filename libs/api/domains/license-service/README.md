@@ -1,17 +1,15 @@
 # API Domains License Service
 
-A centralized entry point for managing user licenses.
+A centralized system for managing user licenses.
 
 ### Licenses
 
-The license service returns a generic license consisting of:
+The license service returns a generic license including:
 
-- **License Type**: From a predefined list.
-  - e.g., DriversLicense, FirearmLicense, etc.
-- **Provider**: The issuer of the license.
-  - e.g., National police commissioner
-- **Fetch**: Status object with fetch details.
-- **Payload**: Actual license data, may be empty if no license exists.
+- **License Type**: Predefined categories, e.g., DriversLicense, FirearmLicense.
+- **Provider**: Issuer, e.g., National police commissioner.
+- **Fetch**: Status object with details.
+- **Payload**: License data; can be empty.
 
 **Accepted Licenses**:
 
@@ -23,44 +21,42 @@ The license service returns a generic license consisting of:
 
 ### Usage
 
-Ensure API and XRoad services are running:
+Ensure the following services are running:
 
-- API: `Yarn start api`
+- API: `yarn start api`
 - XRoad: `./scripts/run-xroad-proxy.sh`
 
 ### Mocking
 
-Enable mocks when needed. Mock new licenses when added.
+Enable mocks as needed. Mock newly added licenses.
 
 ### Adding a New License
 
-1. Generate an external client to fetch data from a third party.
+1. Create an external client to fetch data.
 2. Create a client folder in `/license-service/client/`:
-   - Each client is a module for easy injection:
-     - A service for license data.
-     - A mapper for data transformation.
-     - Configuration; keep secrets in AWS parameter store.
+   - Module for injection, consisting of:
+     - License data service.
+     - Data mapper.
+     - Configuration; store secrets in AWS parameter store.
      - (Optional) Type definitions.
-     - Module definitions for injections and exports.
-3. Add new license to relevant types, e.g., `GenericLicenseTypeType`.
-4. Inject new client into LicenseService:
-   - For digital licenses, configure the CONFIG_PROVIDER for `passTemplateId`.
+     - Module definitions for injections/exports.
+3. Update types, e.g., `GenericLicenseTypeType`.
+4. Inject the new client into LicenseService:
+   - Configure CONFIG_PROVIDER for `passTemplateId` for digital licenses.
    - Add to `AVAILABLE_LICENSES` if display is required.
 
 ### Digital Licenses
 
-The service can create digital licenses via a _Pk pass_ using the [SmartSolution API](https://smartsolutions.gitbook.io/smart-solutions-drivers-license/).
+The service generates digital licenses using the _Pk pass_ through the [SmartSolution API](https://smartsolutions.gitbook.io/smart-solutions-drivers-license/).
 
 Conditions for generating a digital license:
 
 - **Drivers License**:
-
   - Valid RLS API result with non-null `mynd`.
   - Image date ≥ 1997-08-15.
-
+  
 - **Firearm License**:
-
   - Must be valid (not expired).
 
-- **Adr License**:
+- **ADR License**:
   - Must be valid (not expired).

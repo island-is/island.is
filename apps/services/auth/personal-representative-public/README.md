@@ -2,13 +2,13 @@
 
 ## About
 
-This service provides third-party service providers with information about personal representatives and their delegated rights.
+Access information on personal representatives and their delegated rights for third-party service providers.
 
 ## Context
 
-The Personal Representative Public API enables service providers, without using Digital Iceland's login, to access information about personal representatives and their clients. This allows representatives to access services on behalf of clients per their contract and connection.
+The Personal Representative Public API allows service providers to access info about personal representatives and their clients without Digital Iceland's login, enabling representatives to access services per their contracts.
 
-Service providers must use secure logins and query only for logged-in users.
+Service providers should use secure logins and query info only for logged-in users.
 
 ### Example of Connections
 
@@ -30,7 +30,7 @@ Service providers must use secure logins and query only for logged-in users.
 
 ## Access
 
-The API is accessible only through X-Road security servers to machine clients with a specific scope.
+The API is accessible only via X-Road security servers to machine clients with the specific scope.
 
 ### Scope
 
@@ -40,7 +40,7 @@ The API is accessible only through X-Road security servers to machine clients wi
 
 ### X-Road Setup
 
-For more details, see [X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements).
+More details: [X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements).
 
 X-Road setup URLs:
 
@@ -50,7 +50,7 @@ X-Road setup URLs:
 
 ### OpenAPI URL
 
-Explore the OpenAPI documentation:
+Explore OpenAPI documentation:
 
 - [Swagger](https://personal-representative-public-xrd.dev01.devland.is/swagger)
 
@@ -58,15 +58,15 @@ Explore the OpenAPI documentation:
 
 ### Initial Setup
 
-Using the same service library and database as auth-api:
+Requires the service library and database from auth-api.
 
-Ensure Docker is installed, then run:
+Ensure Docker is installed, then execute:
 
 ```bash
 yarn dev-services services-auth-ids-api
 ```
 
-Run the migrations:
+Run migrations:
 
 ```bash
 yarn nx run services-auth-ids-api:migrate
@@ -86,7 +86,7 @@ http://localhost:3378
 
 ### Testing
 
-Run tests locally:
+Run local tests:
 
 ```bash
 yarn test services-auth-personal-representative-public

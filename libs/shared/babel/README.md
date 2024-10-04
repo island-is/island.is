@@ -1,33 +1,23 @@
 ## Babel
 
-Shared Babel presets.
+Shared Babel presets for optimized importing.
 
 ### @island.is/shared/babel/web
 
-Configures `babel-plugin-transform-imports` to use deep imports instead of importing from index files.
+This preset configures `babel-plugin-transform-imports` to use deep imports instead of index imports for better code-splitting.
 
 ### Deep Imports
 
-Consider a web app that code-splits per page (like NextJS). If PageA uses SectionA and PageB uses SectionB, both components from a UI library, it results in:
+When a web app code-splits per page (e.g., NextJS), using deep imports can enhance performance. Consider:
 
-PageA imports:
-
-- UI (from index)
-
-PageB imports:
-
-- UI (from index)
-
-This results in each page containing code irrelevant to it, as imported from `index.ts`. Tree-shaking doesn't eliminate code unused across the app.
-
-For developer experience (DX) and isolation, importing from `index.ts` is ideal. For optimal code-splitting, import directly from module definitions, resulting in:
-
-PageA imports:
+**PageA** imports:
 
 - SectionA
 
-PageB imports:
+**PageB** imports:
 
 - SectionB
 
-Configure `babel-plugin-transform-imports` to modify import statements using `exportFinder` to locate each module's defining export.
+Without deep imports, both pages might import the entire UI library from `index.ts`, leading to unnecessary code inclusion across pages. Tree-shaking cannot always remove this unused code.
+
+Although importing from `index.ts` is better for developer experience, direct module imports are optimal for code-splitting. The preset uses `babel-plugin-transform-imports` to dynamically rewrite import statements. It employs `exportFinder` to identify each module's defining export, enabling more efficient code-splitting.
