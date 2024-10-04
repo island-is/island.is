@@ -130,8 +130,8 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     nationalRegistryInformationSubTitle: {
       id: 'dess.nps.application:prerequisites.national.registry.subtitle',
-      defaultMessage: 'Upplýsingar um þig.',
-      description: 'Information about you.',
+      defaultMessage: 'Upplýsingar um þig, maka og börn.',
+      description: 'Information about you, spouse and children.',
     },
     userProfileInformationTitle: {
       id: 'dess.nps.application:prerequisites.userprofile.title',
