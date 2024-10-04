@@ -73,10 +73,10 @@ export const Draft: Form = buildForm({
               provider: SyslumadurPaymentCatalogApi,
               title: '',
             }),
-            buildDataProviderItem({
-              provider: DeliveryAddressApi,
-              title: '',
-            }),
+            // buildDataProviderItem({
+            //   provider: DeliveryAddressApi,
+            //   title: '',
+            // }),
           ],
         }),
       ],
@@ -162,26 +162,26 @@ export const Draft: Form = buildForm({
               title: m.dropLocation,
               titleVariant: 'h3',
               space: 2,
-              description: m.dropLocationDescription,
+              description: "Þjóðskrá", //m.dropLocationDescription,
               marginBottom: 'gutter',
             }),
-            buildSelectField({
-              id: 'service.dropLocation',
-              title: m.dropLocation,
-              placeholder: m.dropLocationPlaceholder.defaultMessage,
-              options: ({
-                externalData: {
-                  deliveryAddress: { data },
-                },
-              }) => {
-                return (data as DistrictCommissionerAgencies[])?.map(
-                  ({ key, name }) => ({
-                    value: key,
-                    label: name,
-                  }),
-                )
-              },
-            }),
+            // buildSelectField({
+            //   id: 'service.dropLocation',
+            //   title: m.dropLocation,
+            //   placeholder: m.dropLocationPlaceholder.defaultMessage,
+            //   options: ({
+            //     externalData: {
+            //       deliveryAddress: { data },
+            //     },
+            //   }) => {
+            //     return (data as DistrictCommissionerAgencies[])?.map(
+            //       ({ key, name }) => ({
+            //         value: key,
+            //         label: name,
+            //       }),
+            //     )
+            //   },
+            // }),
           ],
         }),
       ],

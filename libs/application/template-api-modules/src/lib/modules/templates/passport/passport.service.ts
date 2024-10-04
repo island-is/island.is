@@ -180,7 +180,7 @@ export class PassportService extends BaseTemplateApiService {
           guid: application.id,
           appliedForPersonId: auth.nationalId,
           priority: service.type === 'regular' ? 0 : 1,
-          deliveryName: service.dropLocation,
+          deliveryName: undefined, // intensioanlly undefined deprecated
           contactInfo: {
             phoneAtHome: personalInfo.phoneNumber,
             phoneAtWork: personalInfo.phoneNumber,
@@ -190,12 +190,13 @@ export class PassportService extends BaseTemplateApiService {
           type: PASSPORT_TYPE,
           subType: PASSPORT_SUBTYPE,
         })
+        console.log('result for self', result)
       } else {
         result = await this.passportApi.preregisterChildIdentityDocument(auth, {
           guid: application.id,
           appliedForPersonId: childsPersonalInfo.nationalId,
           priority: service.type === 'regular' ? 0 : 1,
-          deliveryName: service.dropLocation,
+          deliveryName: undefined, // intensionally undefined deprecated
           approvalA: {
             personId: childsPersonalInfo.guardian1.nationalId.replace('-', ''),
             name: childsPersonalInfo.guardian1.name,
@@ -215,6 +216,7 @@ export class PassportService extends BaseTemplateApiService {
           type: PASSPORT_TYPE,
           subType: PASSPORT_SUBTYPE,
         })
+        console.log('result for child', result)
       }
 
       if (!result || !result.success) {
