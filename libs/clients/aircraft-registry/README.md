@@ -7,7 +7,7 @@ This library was generated with [Nx](https://nx.dev).
 Execute the unit tests with [Jest](https://jestjs.io) using:
 
 ```bash
-nx test clients-aircraft-registry
+yarn nx test clients-aircraft-registry
 ```
 
 ## Update OpenAPI Definition

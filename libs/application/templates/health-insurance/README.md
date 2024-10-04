@@ -7,7 +7,7 @@ Application for health insurance when returning to Iceland after living abroad.
 Execute the unit tests via [Jest](https://jestjs.io) with:
 
 ```bash
-nx test application-templates-health-insurance
+yarn nx test application-templates-health-insurance
 ```
 
 ## Setup

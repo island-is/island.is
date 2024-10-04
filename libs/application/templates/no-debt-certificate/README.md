@@ -48,7 +48,7 @@ yarn start services-user-profile
 Execute unit tests with [Jest](https://jestjs.io) using:
 
 ```bash
-nx test application-templates-no-debt-certificate
+yarn nx test application-templates-no-debt-certificate
 ```
 
 ## Code Owners and Maintainers

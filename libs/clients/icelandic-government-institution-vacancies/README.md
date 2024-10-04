@@ -7,7 +7,7 @@ This library was created with [Nx](https://nx.dev).
 Execute the following command to run unit tests using [Jest](https://jestjs.io):
 
 ```bash
-nx test clients-icelandic-government-institution-vacancies
+yarn nx test clients-icelandic-government-institution-vacancies
 ```
 
 ### Updating OpenAPI Definition (clientConfig.yaml)

@@ -23,5 +23,5 @@ yarn nx run clients-vehicles-mileage:codegen/backend-client
 Execute unit tests using [Jest](https://jestjs.io) with:
 
 ```bash
-nx test clients-vehicles-mileage
+yarn nx test clients-vehicles-mileage
 ```

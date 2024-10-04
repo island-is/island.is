@@ -50,7 +50,7 @@ yarn start services-user-profile
 Execute the unit tests using Jest with:
 
 ```bash
-nx test application-templates-mortgage-certificate
+yarn nx test application-templates-mortgage-certificate
 ```
 
 ## Code Owners and Maintainers

@@ -34,14 +34,14 @@ Run the following in `/apps/native/app/android`:
 ./gradlew assembleDebug
 ```
 
-### For an Emulator:
+### For an Emulator
 
 ```bash
 # Install APK on emulator
 adb install ./app/build/outputs/apk/dev/debug/app-dev-debug.apk
 ```
 
-### For a Physical Device:
+### For a Physical Device
 
 ```bash
 # List devices
@@ -51,7 +51,7 @@ adb devices
 adb -s <deviceId> install ./app/build/outputs/apk/dev/debug/app-dev-debug.apk
 ```
 
-### For Both:
+### For Both
 
 ```bash
 # Forward port
@@ -99,11 +99,11 @@ git commit -m "feat(native/app): release v1.0.0"
 Example of running NX commands:
 
 ```bash
-nx run native-app:script --name=<script-name>
+yarn nx run native-app:script --name=<script-name>
 ```
 
 ```bash
-nx run native-app:codegen/frontend-client
+yarn nx run native-app:codegen/frontend-client
 ```
 
 ## NOTES

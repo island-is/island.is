@@ -7,7 +7,7 @@ This library was generated using [Nx](https://nx.dev).
 Execute unit tests via [Jest](https://jestjs.io) with:
 
 ```bash
-nx test clients-housing-benefit-calculator
+yarn nx test clients-housing-benefit-calculator
 ```
 
 ## Updating OpenAPI Definition

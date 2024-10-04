@@ -7,7 +7,7 @@ This library was generated using [Nx](https://nx.dev). It connects to a server t
 Execute unit tests with [Jest](https://jestjs.io) by running:
 
 ```bash
-nx test clients-electronic-registration-statistics
+yarn nx test clients-electronic-registration-statistics
 ```
 
 ## Running Lint
@@ -15,7 +15,7 @@ nx test clients-electronic-registration-statistics
 Execute linting using [ESLint](https://eslint.org) by running:
 
 ```bash
-nx lint clients-electronic-registration-statistics
+yarn nx lint clients-electronic-registration-statistics
 ```
 
 ## Usage

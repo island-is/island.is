@@ -52,5 +52,5 @@ This library was generated with [Nx](https://nx.dev).
 Execute the unit tests with [Jest](https://jestjs.io) using:
 
 ```bash
-nx test api-domains-assets
+yarn nx test api-domains-assets
 ```

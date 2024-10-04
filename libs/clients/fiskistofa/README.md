@@ -7,7 +7,7 @@ This library was generated with [Nx](https://nx.dev).
 Execute unit tests using [Jest](https://jestjs.io):
 
 ```bash
-nx test clients-fiskistofa
+yarn nx test clients-fiskistofa
 ```
 
 ## Running Lint
@@ -15,7 +15,7 @@ nx test clients-fiskistofa
 Execute lint checks using [ESLint](https://eslint.org/):
 
 ```bash
-nx lint clients-fiskistofa
+yarn nx lint clients-fiskistofa
 ```
 
 ## Usage

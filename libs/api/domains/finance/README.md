@@ -43,7 +43,7 @@ Finance API data can be mocked. For usage, set `API_MOCKS=true` in your `.env` f
 Execute unit tests with:
 
 ```bash
-nx test api-domains-finance
+yarn nx test api-domains-finance
 ```
 
 Uses [Jest](https://jestjs.io).

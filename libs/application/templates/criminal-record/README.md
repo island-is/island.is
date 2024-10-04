@@ -48,7 +48,7 @@ yarn start services-user-profile
 Execute unit tests via [Jest](https://jestjs.io) with:
 
 ```bash
-nx test application-templates-criminal-record
+yarn nx test application-templates-criminal-record
 ```
 
 ## Code Owners and Maintainers

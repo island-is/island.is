@@ -7,7 +7,7 @@ This library was generated with [Nx](https://nx.dev).
 Execute unit tests using [Jest](https://jestjs.io) with the following command:
 
 ```bash
-nx test ship-registry
+yarn nx test ship-registry
 ```
 
 ## Updating OpenAPI Definition

@@ -7,7 +7,7 @@ This library was generated with [Nx](https://nx.dev).
 Execute unit tests with:
 
 ```bash
-nx test api-domains-user-profile
+yarn nx test api-domains-user-profile
 ```
 
 ## Development Setup
