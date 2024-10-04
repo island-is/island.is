@@ -4,11 +4,14 @@ import { ApplicationEligibility, RequirementKey } from '../../types/schema'
 import { useQuery, gql } from '@apollo/client'
 import {
   B_FULL,
+  B_FULL_RENEWAL_65,
   BE,
+  codesExtendedLicenseCategories,
   codesRequiringHealthCertificate,
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
   otherLicenseCategories,
+  remarksCannotRenew65,
   YES,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
@@ -111,13 +114,14 @@ export const useEligibility = (
     }
   }
 
+  const eligibility =
+    data.drivingLicenseApplicationEligibility === undefined
+      ? []
+      : (data.drivingLicenseApplicationEligibility as ApplicationEligibility)
+          .requirements
+
   //TODO: Remove when RLS/SGS supports health certificate in BE license
   if (application.answers.applicationFor === BE) {
-    const eligibility =
-      data.drivingLicenseApplicationEligibility === undefined
-        ? []
-        : (data.drivingLicenseApplicationEligibility as ApplicationEligibility)
-            .requirements
     return {
       loading: loading,
       eligibility: {
@@ -139,6 +143,66 @@ export const useEligibility = (
             requirementMet: hasQualityPhoto,
           },
         ],
+      },
+    }
+  }
+
+  if (application.answers.applicationFor === B_FULL_RENEWAL_65) {
+    const licenseB = currentLicense?.categories?.find(
+      (license) => license.nr === 'B',
+    )
+
+    const drivingLicenseIssued = licenseB?.issued
+
+    let hasExtendedDrivingLicense = false
+
+    if (drivingLicenseIssued) {
+      const relevantCategories = currentLicense?.categories?.filter((x) =>
+        codesExtendedLicenseCategories.includes(x.nr),
+      )
+
+      if (relevantCategories?.length) {
+        // if the user has any categories that indicate an extended driving license
+        hasExtendedDrivingLicense = true
+
+        // if any of the issued dates are exactly the same, they were most likely
+        // created 1993 (or around that time) and are not considered extended
+        // drivers licenses in that case
+        hasExtendedDrivingLicense = !relevantCategories.some(
+          (x) => x.issued === drivingLicenseIssued,
+        )
+      }
+    }
+
+    const hasAnyInvalidRemarks = currentLicense?.remarks?.some((remark) =>
+      remarksCannotRenew65.includes(remark.code),
+    )
+
+    const requirements = [
+      ...eligibility,
+      {
+        key: RequirementKey.HasNoPhoto,
+        requirementMet: hasQualityPhoto,
+      },
+    ]
+
+    if (hasExtendedDrivingLicense) {
+      requirements.push({
+        key: RequirementKey.NoExtendedDrivingLicense,
+        requirementMet: false,
+      })
+    }
+
+    return {
+      loading: loading,
+      eligibility: {
+        isEligible: loading
+          ? undefined
+          : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
+            hasQualityPhoto &&
+            !hasExtendedDrivingLicense &&
+            !hasAnyInvalidRemarks,
+        requirements,
       },
     }
   }
