@@ -182,7 +182,7 @@ export const DelegationsOutgoing = () => {
       <DelegationViewModal
         onClose={() => setDelegationView(null)}
         isVisible={!!delegationView}
-        delegation={delegationView as AuthCustomDelegationIncoming}
+        delegation={delegationView || undefined}
         direction={'outgoing'}
       />
     </>

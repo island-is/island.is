@@ -57,7 +57,7 @@ export const DelegationViewModal = ({
 
   return (
     <Modal
-      id={`delegation-incoming-view-modal-${delegation?.id}`}
+      id={`delegation-${direction}-view-modal-${delegation?.id}`}
       eyebrow={formatMessage(m.accessControl)}
       title={formatMessage(m.accessControlAccess)}
       label={formatMessage(m.accessControlAccess)}
