@@ -159,7 +159,7 @@ describe('withoutAuth and permissions', () => {
 
       jest
         .spyOn(delegationAdminService, 'createDelegationByZendeskId')
-        .mockImplementation(() => Promise.resolve({} as DelegationDTO))
+        .mockImplementation(() => Promise.resolve())
     })
 
     afterEach(() => {
