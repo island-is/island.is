@@ -613,6 +613,7 @@ export class PoliceService {
     workingCase: Case,
     defendant: Defendant,
     subpoena: string,
+    indictment: string,
     user: User,
   ): Promise<CreateSubpoenaResponse> {
     const { courtCaseNumber, dateLogs, prosecutor, policeCaseNumbers, court } =
@@ -641,7 +642,7 @@ export class PoliceService {
           agent: this.agent,
           body: JSON.stringify({
             documentName: documentName,
-            documentBase64: subpoena,
+            documentsBase64: [subpoena, indictment],
             courtRegistrationDate: arraignmentInfo?.date,
             prosecutorSsn: prosecutor?.nationalId,
             prosecutedSsn: normalizedNationalId,
@@ -651,16 +652,17 @@ export class PoliceService {
             lokeCaseNumber: policeCaseNumbers?.[0],
             courtCaseNumber: courtCaseNumber,
             fileTypeCode: 'BRTNG',
+            rvgCaseId: workingCase.id,
           }),
         } as RequestInit,
       )
 
-      if (!res.ok) {
-        throw await res.json()
+      if (res.ok) {
+        const subpoenaResponse = await res.json()
+        return { subpoenaId: subpoenaResponse.id }
       }
 
-      const subpoenaId = await res.json()
-      return { subpoenaId }
+      throw await res.text()
     } catch (error) {
       this.logger.error(`Failed create subpoena for case ${workingCase.id}`, {
         error,
