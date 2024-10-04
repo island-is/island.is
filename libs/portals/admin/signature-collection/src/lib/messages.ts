@@ -434,7 +434,7 @@ export const m = defineMessages({
     description: '',
   },
   lockListError: {
-    id: 'admin-portal.signature-collection:toggleReviewError',
+    id: 'admin-portal.signature-collection:lockListError',
     defaultMessage: 'Ekki tókst að læsa söfnun',
     description: '',
   },
