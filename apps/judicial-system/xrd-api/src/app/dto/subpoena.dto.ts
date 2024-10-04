@@ -21,6 +21,11 @@ export class UpdateSubpoenaDto {
   servedBy?: string
 
   @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String, required: false })
+  servedAt?: string
+
+  @IsOptional()
   @IsEnum(DefenderChoice)
   @ApiProperty({ enum: DefenderChoice, required: false })
   defenderChoice?: DefenderChoice
@@ -49,9 +54,4 @@ export class UpdateSubpoenaDto {
   @IsBoolean()
   @ApiProperty({ type: Boolean, required: false })
   deliveredToLawyer?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiProperty({ type: Boolean, required: false })
-  deliveryInvalidated?: boolean
 }
