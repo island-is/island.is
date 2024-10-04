@@ -1,25 +1,27 @@
+import { ConfigService } from '@nestjs/config'
 import { Test } from '@nestjs/testing'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { createCurrentUser } from '@island.is/testing/fixtures'
+
+import { MortgageCertificateService } from '@island.is/api/domains/mortgage-certificate'
+import { createApplication } from '@island.is/application/testing'
 import {
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/types'
-import { SharedTemplateApiService } from '../../shared'
-import { MortgageCertificateSubmissionService } from './mortgage-certificate-submission.service'
+import {
+  SyslumennClientModule,
+  SyslumennService,
+} from '@island.is/clients/syslumenn'
 import {
   AdapterService,
-  EmailService,
   emailModuleConfig,
+  EmailService,
 } from '@island.is/email-service'
-import {
-  SyslumennService,
-  SyslumennClientModule,
-} from '@island.is/clients/syslumenn'
-import { MortgageCertificateService } from '@island.is/api/domains/mortgage-certificate'
-import { ConfigService } from '@nestjs/config'
-import { defineConfig, ConfigModule } from '@island.is/nest/config'
-import { createApplication } from '@island.is/application/testing'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule, defineConfig, XRoadConfig } from '@island.is/nest/config'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+
+import { SharedTemplateApiService } from '../../shared'
+import { MortgageCertificateSubmissionService } from './mortgage-certificate-submission.service'
 
 const config = defineConfig({
   name: 'SyslumennApi',
@@ -42,7 +44,7 @@ describe('MortgageCertificateSubmissionService', () => {
         SyslumennClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [config, emailModuleConfig],
+          load: [config, emailModuleConfig, XRoadConfig],
         }),
       ],
       providers: [
