@@ -845,7 +845,7 @@ const Auctions: Screen<AuctionsProps> = ({
 
                   {/* Real Estate link */}
                   {auction.lotId && auction.lotType === LOT_TYPES.REAL_ESTATE && (
-                    <Text>
+                    <Text paddingTop={2} paddingBottom={1}>
                       {n('auctionRealEstateNumberPrefix', 'Fasteign nr. ')}
                       {auction.lotId}
                     </Text>
