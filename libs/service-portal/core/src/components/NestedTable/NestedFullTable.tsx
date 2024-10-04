@@ -19,7 +19,7 @@ export const NestedFullTable = ({
 }: Props) => {
   return (
     <Box className={styles.wrapper} background="white">
-      {!loading && data.length && (
+      {!loading && !!data.length && (
         <T.Table>
           <T.Head>
             <T.Row>
