@@ -368,7 +368,7 @@ jobs:
         uses: DavidAnson/markdownlint-cli2-action@v17
         with:
           globs: |
-            '**/*.md'
+            **/*.md
 
   build:
     needs:
