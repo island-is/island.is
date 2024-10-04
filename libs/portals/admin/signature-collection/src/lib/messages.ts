@@ -77,7 +77,7 @@ export const m = defineMessages({
   },
   filter: {
     id: 'admin-portal.signature-collection:filter',
-    defaultMessage: 'Opna síu',
+    defaultMessage: 'Sía',
     description: '',
   },
   filterBy: {
@@ -110,9 +110,14 @@ export const m = defineMessages({
     defaultMessage: 'Hreinsa allar síur',
     description: '',
   },
+  typeOfSignee: {
+    id: 'admin-portal.signature-collection:typeOfSignee',
+    defaultMessage: 'Tegund meðmæla',
+    description: '',
+  },
   createCollection: {
     id: 'admin-portal.signature-collection:createCollection',
-    defaultMessage: 'Stofna söfnun',
+    defaultMessage: 'Stofna nýja meðmælasöfnun',
     description: '',
   },
   createCollectionSuccess: {
@@ -128,7 +133,7 @@ export const m = defineMessages({
   createCollectionModalDescription: {
     id: 'admin-portal.signature-collection:createCollectionModalDescription',
     defaultMessage:
-      'Til þess að stofna meðmælasöfnun þarf að slá inn kennitölu frambjóðs.',
+      'Til þess að stofna meðmælasöfnun þarf að slá inn kennitölu framboðs.',
     description: '',
   },
   candidateNationalId: {
@@ -149,6 +154,11 @@ export const m = defineMessages({
   listEndTime: {
     id: 'admin-portal.signature-collection:listEndTime',
     defaultMessage: 'Lokadagur',
+    description: '',
+  },
+  editListEndTime: {
+    id: 'admin-portal.signature-collection:editListEndTime',
+    defaultMessage: 'Breyta',
     description: '',
   },
   collectionTitle: {
@@ -245,13 +255,13 @@ export const m = defineMessages({
   singleListIntro: {
     id: 'admin-portal.signature-collection:singleListIntro',
     defaultMessage:
-      'Hér birtast nöfn meðmælenda frambjóðandans. Hægt er að framlengja tímafrest söfnunarinnar og bæta við meðmælum af blaði.',
+      'Hér birtast nöfn meðmælenda framboðs. Hægt er að framlengja tímafrest söfnunarinnar og bæta við meðmælum af blaði.',
     description: '',
   },
   singleListIntroManage: {
     id: 'admin-portal.signature-collection:singleListIntroManage',
     defaultMessage:
-      'Hér birtast nöfn meðmælenda frambjóðandans. Hægt er að leita að meðmælendum eftir nafni eða kennitölu.',
+      'Hér birtast nöfn meðmælenda framboðs. Hægt er að leita að meðmælendum eftir nafni eða kennitölu.',
     description: '',
   },
   collectors: {
@@ -300,9 +310,14 @@ export const m = defineMessages({
     defaultMessage: 'Leita eftir nafni eða kennitölu',
     description: '',
   },
+  searchNationalIdPlaceholder: {
+    id: 'admin-portal.signature-collection:searchNationalIdPlaceholder',
+    defaultMessage: 'Leita eftir kennitölu',
+    description: '',
+  },
   sortBy: {
     id: 'admin-portal.signature-collection:sortBy',
-    defaultMessage: 'Raða eftir',
+    defaultMessage: 'Raða',
     description: '',
   },
   sortAlphabeticallyAsc: {

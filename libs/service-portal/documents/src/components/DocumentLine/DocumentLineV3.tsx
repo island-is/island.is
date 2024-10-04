@@ -22,7 +22,10 @@ import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import { DocumentsPaths } from '../../lib/paths'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
-import { useGetDocumentInboxLineV3LazyQuery } from '../../screens/Overview/Overview.generated'
+import {
+  useDocumentConfirmActionsLazyQuery,
+  useGetDocumentInboxLineV3LazyQuery,
+} from '../../screens/Overview/Overview.generated'
 import { messages } from '../../utils/messages'
 import { FavAndStashV3 } from '../FavAndStash/FavAndStashV3'
 import UrgentTag from '../UrgentTag/UrgentTag'
@@ -125,7 +128,12 @@ export const DocumentLineV3: FC<Props> = ({
       behavior: 'smooth',
     })
   }
+  const [confirmAction] = useDocumentConfirmActionsLazyQuery({
+    fetchPolicy: 'no-cache',
+  })
 
+  //TODO: When merged with V2
+  //refactor queries and move to shared file instead of importing from screens
   const [getDocument, { loading: fileLoading }] =
     useGetDocumentInboxLineV3LazyQuery({
       variables: {
@@ -177,6 +185,7 @@ export const DocumentLineV3: FC<Props> = ({
           includeDocument: false,
         },
       },
+
       fetchPolicy: 'no-cache',
       onCompleted: (data) => {
         const actions: DocumentV2Action | undefined | null =
@@ -239,6 +248,11 @@ export const DocumentLineV3: FC<Props> = ({
     }
   }
 
+  const confirmActionCaller = (confirmed: boolean | null) => {
+    confirmAction({
+      variables: { input: { id: documentLine.id, confirmed: confirmed } },
+    })
+  }
   const unread = !documentLine.opened && !localRead.includes(documentLine.id)
   const isBookmarked = bookmarked || bookmarkSuccess
 
@@ -361,10 +375,17 @@ export const DocumentLineV3: FC<Props> = ({
         <ConfirmationModal
           onSubmit={() => {
             setModalVisible(false)
+            confirmActionCaller(true)
             getDocument()
           }}
-          onCancel={() => setModalVisible(false)}
-          onClose={toggleModal}
+          onCancel={() => {
+            setModalVisible(false)
+            confirmActionCaller(false)
+          }}
+          onClose={() => {
+            toggleModal()
+            confirmActionCaller(null)
+          }}
           loading={false}
           modalTitle={modalData?.title || formatMessage(m.acknowledgeTitle)}
           modalText={
