@@ -106,6 +106,7 @@ export const DocumentLineV3: FC<Props> = ({
   const displayPdf = (
     content?: DocumentV2Content,
     actions?: Array<DocumentV2Action>,
+    alertMessageData?: DocumentV2Action,
   ) => {
     setActiveDocument({
       document: {
@@ -121,7 +122,7 @@ export const DocumentLineV3: FC<Props> = ({
       img,
       categoryId: documentLine.categoryId ?? undefined,
       actions: actions,
-      alert: documentLine.alert ?? undefined,
+      alert: alertMessageData ?? undefined,
     })
     window.scrollTo({
       top: 0,
@@ -155,8 +156,9 @@ export const DocumentLineV3: FC<Props> = ({
         } else {
           const docContent = data?.documentV2?.content
           const actions = data?.documentV2?.actions ?? undefined
+          const alert = data?.documentV2?.alert ?? undefined
           if (docContent) {
-            displayPdf(docContent, actions)
+            displayPdf(docContent, actions, alert)
             setDocumentDisplayError(undefined)
             setLocalRead([...localRead, documentLine.id])
           } else {
