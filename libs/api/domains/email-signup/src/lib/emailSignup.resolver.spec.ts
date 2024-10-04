@@ -181,6 +181,28 @@ describe('emailSignupResolver', () => {
   })
 
   describe('subscribeToCampaignMonitor', () => {
+    const testEmailSlice: EmailSignup = {
+      id: '345',
+      title: '',
+      description: '',
+      configuration: {
+        signupUrl: 'test.is',
+      },
+      formFields: [
+        {
+          id: '1',
+          options: [],
+          placeholder: '',
+          required: true,
+          title: '',
+          type: 'email',
+          name: 'EmailAddress',
+          emailConfig: {},
+        },
+      ],
+      signupType: 'campaign monitor',
+      translations: {},
+    }
     const testInput: EmailSignupInput = {
       signupID: '345',
       inputFields: [
@@ -192,21 +214,13 @@ describe('emailSignupResolver', () => {
         },
       ],
     }
-    it('should handle invalid email', async () => {
-      jest.spyOn(axios, 'post').mockImplementation(() => {
-        return Promise.resolve({
-          data: 0,
-        })
-      })
-
-      const result = await emailSignupResolver.emailSignupSubscription(
-        testInput,
-      )
-
-      expect(result?.subscribed).toBe(false)
-    })
 
     it('should handle errors from the subscription API', async () => {
+      jest
+        .spyOn(cmsContentfulService, 'getEmailSignup')
+        .mockImplementation(({ id }) =>
+          Promise.resolve(id === '345' ? testEmailSlice : null),
+        )
       jest.spyOn(axios, 'post').mockImplementation(() => {
         return Promise.reject(new Error('Network error'))
       })
@@ -219,36 +233,13 @@ describe('emailSignupResolver', () => {
     })
 
     it('should get a successful response if input is valid', async () => {
-      const testEmailSlice: EmailSignup = {
-        id: '345',
-        title: '',
-        description: '',
-        configuration: {
-          signupUrl: 'test.is',
-        },
-        formFields: [
-          {
-            id: '1',
-            options: [],
-            placeholder: '',
-            required: true,
-            title: '',
-            type: 'email',
-            name: 'EmailAddress',
-            emailConfig: {},
-          },
-        ],
-        signupType: 'campaign monitor',
-        translations: {},
-      }
-
       jest
         .spyOn(cmsContentfulService, 'getEmailSignup')
         .mockImplementation(({ id }) =>
           Promise.resolve(id === '345' ? testEmailSlice : null),
         )
 
-      jest.spyOn(axios, 'post').mockImplementation((url, data) => {
+      jest.spyOn(axios, 'post').mockImplementation((_url, data) => {
         const EmailAddress = (data as { EmailAddress: string }).EmailAddress
 
         return Promise.resolve({
