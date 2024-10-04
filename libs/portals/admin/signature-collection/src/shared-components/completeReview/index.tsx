@@ -6,7 +6,7 @@ import { useToggleListReviewMutation } from './toggleListReview.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { ListStatus } from '../../lib/utils'
-import { useSignatureCollectionLockListMutation } from './lockList.generated'
+import LockList from './lockList'
 
 const ActionReviewComplete = ({
   listId,
@@ -19,24 +19,11 @@ const ActionReviewComplete = ({
   const { revalidate } = useRevalidator()
 
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
-  const [modalLockListIsOpen, setModalLockListIsOpen] = useState(false)
+  const listReviewed = listStatus && listStatus === ListStatus.Reviewed
+  const modalText = listReviewed
+    ? formatMessage(m.confirmListReviewedToggleBack)
+    : formatMessage(m.confirmListReviewed)
 
-  const [lockList, { loading: loadingLockList }] =
-    useSignatureCollectionLockListMutation({
-      variables: {
-        input: {
-          listId,
-        },
-      },
-      onCompleted: () => {
-        setModalLockListIsOpen(false)
-        revalidate()
-        toast.success(formatMessage(m.lockListSuccess))
-      },
-      onError: () => {
-        toast.error(formatMessage(m.lockListError))
-      },
-    })
   const [toggleListReview, { loading }] = useToggleListReviewMutation({
     variables: {
       input: {
@@ -53,50 +40,10 @@ const ActionReviewComplete = ({
     },
   })
 
-  const listReviewed = listStatus && listStatus === ListStatus.Reviewed
-  const modalText = listReviewed
-    ? formatMessage(m.confirmListReviewedToggleBack)
-    : formatMessage(m.confirmListReviewed)
-
   return (
     <Box marginTop={20}>
       <Box display="flex" justifyContent="spaceBetween">
-        {/* Læsa söfnun */}
-        <Button
-          iconType="outline"
-          variant="ghost"
-          icon="lockClosed"
-          colorScheme="destructive"
-          onClick={() => setModalLockListIsOpen(true)}
-        >
-          {formatMessage(m.lockList)}
-        </Button>
-        <Modal
-          id="toggleLockList"
-          isVisible={modalLockListIsOpen}
-          title={formatMessage(m.lockList)}
-          onClose={() => setModalLockListIsOpen(false)}
-          label={''}
-          closeButtonLabel={''}
-        >
-          <Box marginTop={5}>
-            <Text>{formatMessage(m.lockList)}</Text>
-            <Box display="flex" justifyContent="flexEnd" marginTop={5}>
-              <Button
-                iconType="outline"
-                variant="ghost"
-                onClick={() => lockList()}
-                loading={loadingLockList}
-                icon="lockClosed"
-                colorScheme="destructive"
-              >
-                {formatMessage(m.lockList)}
-              </Button>
-            </Box>
-          </Box>
-        </Modal>
-
-        {/* Úrvinnslu lokið */}
+        <LockList listId={listId} listStatus={listStatus} />
         <Button
           iconType="outline"
           variant="ghost"
