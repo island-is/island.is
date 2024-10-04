@@ -1,4 +1,3 @@
-```markdown
 # Application Templates Public Debt Payment Plan
 
 This library was generated with [Nx](https://nx.dev).
@@ -9,7 +8,6 @@ Execute `nx test application-templates-public-debt-payment-plan` to run unit tes
 
 ## Test Users
 
-### As an Individual:
+### As an Individual
 
 - **Gervimaður Afríka**: `0103019`
-```

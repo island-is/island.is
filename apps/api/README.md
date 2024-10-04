@@ -16,6 +16,34 @@ yarn dev api
 
 This project is a unified API for island.is products, built as a thin GraphQL layer on top of data/services from government organizations and island.is microservices. Each unit is wrapped in a domain.
 
+Here is a diagram of the project structure:
+
+```mermaid
+graph TD
+ subgraph Island.is
+  subgraph API
+   app["GraphQL server<br><br>/apps/api<br>Authentication<br>Metrics"]
+   domain["RSK domain<br><br>/libs/api/domains/rsk<br>GraphQL Schema<br>GraphQL Resolvers<br>Services"]
+   domain2["Applications domain<br><br>/libs/api/domains/applications<br>GraphQL Schema<br>GraphQL Resolvers<br>Services"]
+
+   app-->|Combines GraphQL|domain & domain2
+   domain2 --> |Calls services|domain
+  end
+  x-road["X-Road Security Server"]
+  microservice["Applications Microservice<br><br>/apps/services/applications"]
+  database["PostgreSQL Database"]
+  domain2 --> microservice --> database
+ end
+ subgraph RSK
+  x-road2["X-Road Security Server"]
+  rsk-service["RSK Webservice"]
+ end
+
+ domain --> x-road
+ x-road --> x-road2
+ x-road2 --> rsk-service
+```
+
 ## URLs
 
 - Staging: [https://beta.staging01.devland.is/api](https://beta.staging01.devland.is/api)

@@ -1,4 +1,3 @@
-````markdown
 # Institution Collaboration
 
 This application allows institutions to request collaboration from Stafrænt Ísland for new projects.
@@ -23,9 +22,9 @@ Follow the handbook instructions [here](../../../../apps/application-system/READ
 To submit applications locally, set these variables:
 
 - `INSTITUTION_APPLICATION_RECIPIENT_NAME=` Recipient Name
-- `INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS=` example@dev.is
+- `INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS=` <example@dev.is>
 - `EMAIL_FROM_NAME=` Sender Name
-- `EMAIL_FROM=` example@dev.is
+- `EMAIL_FROM=` <example@dev.is>
 - `FILE_STORAGE_UPLOAD_BUCKET=` bucket-name
 
 ### Translations from Contentful
@@ -35,13 +34,8 @@ Fetch development secrets with:
 ```bash
 yarn get-secrets api
 ```
-````
 
 ## Code Owners and Maintainers
 
 - [Fuglar](https://github.com/orgs/island-is/teams/fuglar)
 - [Norda](https://github.com/orgs/island-is/teams/norda)
-
-```
-
-```

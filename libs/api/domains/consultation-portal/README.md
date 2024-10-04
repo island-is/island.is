@@ -1,4 +1,3 @@
-````markdown
 # Consultation Portal
 
 This service utilizes the `ConsultationPortalApi`.
@@ -12,7 +11,6 @@ This service utilizes the `ConsultationPortalApi`.
    ```bash
    yarn codegen
    ```
-````
 
 2. **Start the API:**
 
@@ -21,7 +19,3 @@ This service utilizes the `ConsultationPortalApi`.
    ```bash
    yarn start api
    ```
-
-```
-
-```

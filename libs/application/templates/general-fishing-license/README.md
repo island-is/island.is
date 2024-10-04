@@ -1,4 +1,3 @@
-```markdown
 # Application Templates General Fishing License
 
 This library was generated with [Nx](https://nx.dev).
@@ -17,4 +16,3 @@ Run `nx test application-templates-general-fishing-license` to execute unit test
 
 - **Gervimaður Noregur:** `0102129`  
   Act as company **icelandic offshore**
-```

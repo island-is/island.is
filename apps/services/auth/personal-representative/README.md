@@ -1,4 +1,3 @@
-````markdown
 # Personal Representative
 
 ## Overview
@@ -30,7 +29,6 @@ The database and API enable the Ministry of Social Affairs to define rights for 
   "rightCodes": ["health-data", "finance-data"]
 }
 ```
-````
 
 ## Access
 

@@ -1,4 +1,3 @@
-````markdown
 # Application Template API Modules
 
 Applications needing API business logic can invoke template API modules, which run within the application system API.
@@ -32,7 +31,6 @@ export class ReferenceTemplateModule {
   }
 }
 ```
-````
 
 Example service class:
 
@@ -331,7 +329,3 @@ buildExternalDataProvider({
 ```
 
 This adds a checkbox to skip the payment step.
-
-```
-
-```

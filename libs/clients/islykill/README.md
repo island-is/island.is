@@ -1,4 +1,3 @@
-```markdown
 # Islykill Client
 
 ## Overview
@@ -9,4 +8,3 @@ This library provides a client interface for interacting with the Islyklar API s
 ## Code Owners and Maintainers
 
 - [Hugmiðjan](https://github.com/orgs/island-is/teams/hugsmidjan/members)
-```

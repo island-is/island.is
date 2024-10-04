@@ -1,4 +1,3 @@
-```markdown
 # Parental Leave Application Template
 
 ## Description
@@ -108,4 +107,3 @@ Use `Datadog` for backend and `Sentry` for client error logging.
 - Localisation in emails.
 - Allow secondary parent to request personal allowance.
 - Restrict non-custodial parents lacking consent from applying.
-```

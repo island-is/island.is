@@ -1,4 +1,3 @@
-````markdown
 # Web
 
 ## Quickstart
@@ -8,7 +7,6 @@ Ensure Docker is running, then execute the following command for the initial set
 ```bash
 yarn dev-init web
 ```
-````
 
 To start the application:
 
@@ -96,7 +94,3 @@ Currently, only the `Custom Page` content type uses the `Translation Namespace` 
 - [Stefna](https://github.com/orgs/island-is/teams/stefna/members)
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
-
-```
-
-```

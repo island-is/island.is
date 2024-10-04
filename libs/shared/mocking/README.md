@@ -1,4 +1,3 @@
-````markdown
 # Mocking
 
 This library provides helpers to set up API mocking in Node.js and browser projects.
@@ -47,11 +46,10 @@ if (process.env.NODE_ENV !== 'production' && process.env.API_MOCKS) {
   startMocking([createGraphqlHandler({ schema, resolvers })])
 }
 ```
-````
 
 Generate the schema and types from the real API using [GraphQL Code Generator](https://graphql-code-generator.com/):
 
-**schema.ts**
+### schema.ts
 
 ```typescript
 import { buildSchema } from 'graphql'
@@ -73,7 +71,7 @@ export default buildSchema(`
 `)
 ```
 
-**types.ts**
+### types.ts
 
 ```typescript
 export interface User {

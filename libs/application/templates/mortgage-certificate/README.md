@@ -1,4 +1,3 @@
-````markdown
 # Mortgage Certificate Application
 
 This library was created with [Nx](https://nx.dev).
@@ -9,14 +8,13 @@ Run these two proxy clients for Þjóðskrá connection.
 
 ### X-Road Socat Service (v2)
 
-Set AWS environment variables (obtain them from https://island-is.awsapps.com/start):
+Set AWS environment variables (obtain them from <https://island-is.awsapps.com/start>):
 
 ```bash
 export AWS_ACCESS_KEY_ID="<access_key_id>"
 export AWS_SECRET_ACCESS_KEY="<secret_access_key>"
 export AWS_SESSION_TOKEN="<session_token>"
 ```
-````
 
 Then run:
 
@@ -60,7 +58,3 @@ nx test application-templates-mortgage-certificate
 - [Unnur Sól - @unnursol](https://github.com/unnursolingimars)
 - Jón Bjarni
 - [Jóhanna Agnes - @johannaagma](https://github.com/johannaagma)
-
-```
-
-```
