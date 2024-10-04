@@ -58,14 +58,32 @@ class MockContentfulRepository {
 }
 
 const mockConfig = {
-  jwtSecret: 'supersecret',
   clientLocationOrigin: 'http://localhost:4242',
-  email: {
-    sender: 'Devland.is',
-    address: 'development@island.is',
-  },
   baseApiUrl: 'http://localhost:4444',
   attachmentBucket: 'attachmentBucket',
+  templateApi: {
+    clientLocationOrigin: 'http://localhost:4242/umsoknir',
+    email: {
+      sender: 'Devland.is',
+      address: 'development@island.is',
+    },
+    jwtSecret: 'supersecret',
+    xRoadBasePathWithEnv: '',
+    baseApiUrl: 'http://localhost:4444',
+    presignBucket: '',
+    attachmentBucket: 'island-is-dev-storage-application-system',
+    generalPetition: {
+      endorsementApiBasePath: 'http://localhost:4246',
+    },
+    userProfile: {
+      serviceBasePath: 'http://localhost:3366',
+    },
+    islykill: {
+      cert: '',
+      passphrase: '',
+      basePath: '',
+    },
+  },
 }
 
 let server: request.SuperTest<request.Test>
