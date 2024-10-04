@@ -47,6 +47,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     usePutSingleVehicleMileageMutation({
       onError: () => {
         setPostError(formatMessage(m.errorTitle))
+        setPostSuccess(false)
       },
       onCompleted: () => {
         setPostError(null)
@@ -58,10 +59,11 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     usePostSingleVehicleMileageMutation({
       onError: () => {
         setPostError(formatMessage(m.errorTitle))
+        setPostSuccess(false)
       },
       onCompleted: () => {
         setPostError(null)
-        setPostSuccess(false)
+        setPostSuccess(true)
       },
     })
 
