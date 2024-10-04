@@ -192,6 +192,32 @@ describe('emailSignupResolver', () => {
         },
       ],
     }
+    it('should handle invalid email', async () => {
+      jest.spyOn(axios, 'post').mockImplementation(() => {
+        return Promise.resolve({
+          data: 0,
+        })
+      })
+
+      const result = await emailSignupResolver.emailSignupSubscription(
+        testInput,
+      )
+
+      expect(result?.subscribed).toBe(false)
+    })
+
+    it('should handle errors from the subscription API', async () => {
+      jest.spyOn(axios, 'post').mockImplementation(() => {
+        return Promise.reject(new Error('Network error'))
+      })
+
+      const result = await emailSignupResolver.emailSignupSubscription(
+        testInput,
+      )
+
+      expect(result?.subscribed).toBe(false)
+    })
+
     it('should get a successful response if input is valid', async () => {
       const testEmailSlice: EmailSignup = {
         id: '345',
