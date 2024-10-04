@@ -205,32 +205,43 @@ export const m = defineMessages({
 
   /* Hætta við söfnun modal */
   cancelCollectionButton: {
-    id: 'dmin-portal.signature-collection:cancelCollectionButton',
+    id: 'admin-portal.signature-collection:cancelCollectionButton',
     defaultMessage: 'Eyða lista',
     description: '',
   },
   cancelCollectionModalMessage: {
-    id: 'dmin-portal.signature-collection:cancelCollectionModalMessage',
+    id: 'admin-portal.signature-collection:cancelCollectionModalMessage',
     defaultMessage: 'Þú ert að fara að eyða þessum lista. Ertu viss?',
     description: '',
   },
+  cancelCollectionModalMessageLastList: {
+    id: 'admin-portal.signature-collection:cancelCollectionModalMessageLastList#markdown',
+    defaultMessage:
+      'Þú ert að fara að eyða síðasta lista framboðsins. Athugaðu að með því að eyða síðasta lista framboðsins verður framboðinu einnig eytt. Ertu viss um að þú viljir eyða lista og framboði?',
+    description: '',
+  },
   cancelCollectionModalConfirmButton: {
-    id: 'dmin-portal.signature-collection:modalConfirmButton',
+    id: 'admin-portal.signature-collection:modalConfirmButton',
     defaultMessage: 'Já, eyða lista',
     description: '',
   },
+  cancelCollectionAndCandidateModalConfirmButton: {
+    id: 'admin-portal.signature-collection:modalConfirmButton',
+    defaultMessage: 'Já, eyða bæði lista og framboði',
+    description: '',
+  },
   cancelCollectionModalCancelButton: {
-    id: 'dmin-portal.signature-collection:cancelCollectionModalCancelButton',
+    id: 'admin-portal.signature-collection:cancelCollectionModalCancelButton',
     defaultMessage: 'Nei, hætta við',
     description: '',
   },
   cancelCollectionModalToastError: {
-    id: 'dmin-portal.signature-collection:modalToastError',
+    id: 'admin-portal.signature-collection:modalToastError',
     defaultMessage: 'Ekki tókst að eyða lista',
     description: '',
   },
   cancelCollectionModalToastSuccess: {
-    id: 'dmin-portal.signature-collection:cancelCollectionModalToastSuccess',
+    id: 'admin-portal.signature-collection:cancelCollectionModalToastSuccess',
     defaultMessage: 'Tókst að eyða lista',
     description: '',
   },
@@ -291,7 +302,7 @@ export const m = defineMessages({
   },
   downloadButton: {
     id: 'admin-portal.signature-collection:downloadButton',
-    defaultMessage: 'Hlaða niður',
+    defaultMessage: 'Sækja skýrslu',
     description: '',
   },
   searchInListPlaceholder: {

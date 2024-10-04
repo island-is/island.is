@@ -14,14 +14,23 @@ import {
   GridRow,
   Stack,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
-import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
+import {
+  useLoaderData,
+  useNavigate,
+  useParams,
+  useRevalidator,
+} from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import CreateCollection from '../../shared-components/createCollection'
 import format from 'date-fns/format'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import { useSignatureCollectionAdminRemoveListMutation } from './removeList.generated'
+import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
+import { SignatureCollectionList } from '@island.is/api/schema'
 
 export const Constituency = ({
   allowedToProcess,
@@ -30,6 +39,7 @@ export const Constituency = ({
 }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const { revalidate } = useRevalidator()
 
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
   const { constituencyName } = useParams() as { constituencyName: string }
@@ -37,6 +47,27 @@ export const Constituency = ({
   const constituencyLists = allLists.filter(
     (list) => list.area.name === constituencyName,
   )
+
+  const countCandidatesLists = (allLists: SignatureCollectionList[]) => {
+    return allLists?.reduce((acc: any, list: SignatureCollectionList) => {
+      acc[list.candidate.id] = (acc[list.candidate.id] || 0) + 1
+      return acc
+    }, {})
+  }
+
+  const candidatesListCount = countCandidatesLists(allLists)
+
+  const [removeList] = useSignatureCollectionAdminRemoveListMutation({
+    onCompleted: () => {
+      toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
+      revalidate()
+    },
+    onError: () => {
+      toast.error(formatMessage(m.cancelCollectionModalToastError))
+    },
+  })
+
+  const [removeCandidate] = useSignatureCollectionAdminRemoveCandidateMutation()
 
   return (
     <GridContainer>
@@ -135,9 +166,15 @@ export const Constituency = ({
                                   ' - ' +
                                   list.area?.name
                                 }
-                                description={formatMessage(
-                                  m.cancelCollectionModalMessage,
-                                )}
+                                description={
+                                  candidatesListCount[list.candidate.id] === 1
+                                    ? formatMessage(
+                                        m.cancelCollectionModalMessageLastList,
+                                      )
+                                    : formatMessage(
+                                        m.cancelCollectionModalMessage,
+                                      )
+                                }
                                 ariaLabel="delete"
                                 disclosureElement={
                                   <Tag outlined variant="red">
@@ -151,11 +188,35 @@ export const Constituency = ({
                                   </Tag>
                                 }
                                 onConfirm={() => {
-                                  //onCancelCollection(list.id)
+                                  removeList({
+                                    variables: {
+                                      input: {
+                                        listId: list.id,
+                                      },
+                                    },
+                                  })
+
+                                  if (
+                                    candidatesListCount[list.candidate.id] === 1
+                                  ) {
+                                    removeCandidate({
+                                      variables: {
+                                        input: {
+                                          candidateId: list.candidate.id,
+                                        },
+                                      },
+                                    })
+                                  }
                                 }}
-                                buttonTextConfirm={formatMessage(
-                                  m.cancelCollectionModalConfirmButton,
-                                )}
+                                buttonTextConfirm={
+                                  candidatesListCount[list.candidate.id] === 1
+                                    ? formatMessage(
+                                        m.cancelCollectionAndCandidateModalConfirmButton,
+                                      )
+                                    : formatMessage(
+                                        m.cancelCollectionModalConfirmButton,
+                                      )
+                                }
                                 buttonPropsConfirm={{
                                   variant: 'primary',
                                   colorScheme: 'destructive',

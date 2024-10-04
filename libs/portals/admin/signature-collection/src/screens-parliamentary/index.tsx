@@ -82,7 +82,10 @@ const ParliamentaryRoot = ({
                 backgroundColor="blue"
               />
             </Box>
-            <DownloadReports areas={collection.areas} />
+            <DownloadReports
+              areas={collection.areas}
+              collectionId={collection?.id}
+            />
           </Box>
           <Stack space={3}>
             {collection?.areas.map((area) => (
