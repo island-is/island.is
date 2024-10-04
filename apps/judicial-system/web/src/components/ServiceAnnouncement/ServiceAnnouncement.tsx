@@ -73,12 +73,12 @@ const renderError = (formatMessage: IntlShape['formatMessage']) => (
   />
 )
 
-interface ServiceAnnouncement {
+interface ServiceAnnouncementProps {
   subpoena: Subpoena
   defendantName?: string | null
 }
 
-const ServiceAnnouncement: FC<ServiceAnnouncement> = (props) => {
+const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   const { subpoena: localSubpoena, defendantName } = props
 
   const [subpoena, setSubpoena] = useState<Subpoena>()
