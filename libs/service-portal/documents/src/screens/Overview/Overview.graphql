@@ -105,6 +105,13 @@ query GetDocumentInboxLineV2($input: DocumentInput!) {
   }
 }
 
+query DocumentConfirmActions($input: DocumentConfirmActionsInput!) {
+  documentV2ConfirmActions(input: $input) {
+    id
+    confirmed
+  }
+}
+
 mutation MailActionV2($input: DocumentsV2MailActionInput!) {
   postMailActionV2(input: $input) {
     success
