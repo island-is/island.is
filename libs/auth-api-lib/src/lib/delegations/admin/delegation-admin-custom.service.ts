@@ -295,7 +295,7 @@ export class DelegationAdminCustomService {
     // Index delegations for the toNationalId
     void this.indexDelegations(delegation.toNationalId, user)
 
-    await this.notifyDelegationCreated({
+    void this.notifyDelegationCreated({
       user,
       delegation: newDelegation,
       fromName: fromDisplayName,
