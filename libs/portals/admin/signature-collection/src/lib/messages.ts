@@ -312,7 +312,12 @@ export const m = defineMessages({
   },
   searchNationalIdPlaceholder: {
     id: 'admin-portal.signature-collection:searchNationalIdPlaceholder',
-    defaultMessage: 'Leita eftir kennitölu',
+    defaultMessage: 'Leita eftir kennitölu meðmælanda',
+    description: '',
+  },
+  noSigneeFoundOverviewText: {
+    id: 'admin-portal.signature-collection:noSigneeFoundOverviewText',
+    defaultMessage: 'Enginn meðmælandi fannst',
     description: '',
   },
   sortBy: {
@@ -353,6 +358,41 @@ export const m = defineMessages({
   signeeNationalId: {
     id: 'admin-portal.signature-collection:signeeNationalId',
     defaultMessage: 'Kennitala',
+    description: '',
+  },
+  signeeListSigned: {
+    id: 'admin-portal.signature-collection:signeeListSigned',
+    defaultMessage: 'Listi',
+    description: '',
+  },
+  signeeListSignedType: {
+    id: 'admin-portal.signature-collection:signeeListSignedType',
+    defaultMessage: 'Tegund',
+    description: '',
+  },
+  signeeListSignedStatus: {
+    id: 'admin-portal.signature-collection:signeeListSignedStatus',
+    defaultMessage: 'Staða',
+    description: '',
+  },
+  signeeListSignedDigital: {
+    id: 'admin-portal.signature-collection:signeeListSignedDigital',
+    defaultMessage: 'Rafrænt',
+    description: '',
+  },
+  signeeListSignedPaper: {
+    id: 'admin-portal.signature-collection:signeeListSignedPaper',
+    defaultMessage: 'Af blaði',
+    description: '',
+  },
+  signeeSignatureValid: {
+    id: 'admin-portal.signature-collection:signeeSigntaureValid',
+    defaultMessage: 'Gild',
+    description: '',
+  },
+  signeeSignatureInvalid: {
+    id: 'admin-portal.signature-collection:signeeSigntaureInvalid',
+    defaultMessage: 'Ógild',
     description: '',
   },
   signeeAddress: {

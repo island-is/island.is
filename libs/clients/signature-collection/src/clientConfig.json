@@ -177,7 +177,8 @@
     "/Admin/Medmaelalisti/{ID}/ToggleList": {
       "patch": {
         "tags": ["Admin"],
-        "summary": "Toggle fyrir úrvinnslu lokið virkni í stjórnborði",
+        "summary": "Merkir að úrvinnslu sé lokið á ákveðnum meðmælalista.",
+        "description": "Merkir að úrvinnslu sé lokið á ákveðnum meðmælalista þ.e. að lista hafi verið skilað inn og öll skrifleg meðmæli lesin inn.\r\nHægt að opna aftur fyrir úrvinnslu.",
         "parameters": [
           {
             "name": "ID",
@@ -257,16 +258,20 @@
     "/Admin/Medmaelalisti/{ID}/ExtendTime": {
       "patch": {
         "tags": ["Admin"],
+        "summary": "Framlengir gefinn meðmælalista",
+        "description": "Aðeins hægt að framkvæma eftir að meðmælasöfnun hefur verið merkt úrvinnslu lokið.",
         "parameters": [
           {
             "name": "ID",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "newEndDate",
             "in": "query",
+            "description": "Ný lokadagsetning",
             "schema": { "type": "string", "format": "date-time" }
           }
         ],
@@ -294,15 +299,18 @@
     "/Admin/Medmaelalisti/{ID}/Compare": {
       "post": {
         "tags": ["Admin"],
+        "summary": "Skilar meðmælum sem tilheyra gefnum kennitölum sem finnast á gefnum meðmælalista",
         "parameters": [
           {
             "name": "ID",
             "in": "path",
+            "description": "ID meðmælalista",
             "required": true,
             "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "requestBody": {
+          "description": "Listi af kennitölum",
           "content": {
             "application/json": {
               "schema": { "type": "array", "items": { "type": "string" } }
@@ -409,10 +417,13 @@
     "/Admin/Medmaelasofnun/{ID}/ToggleSofnun": {
       "patch": {
         "tags": ["Admin"],
+        "summary": "Merkir að allri úrvinnslu fyrri fasa meðmælasöfnunar sé lokið.",
+        "description": "Merkir að allri úrvinnslu fyrri fasa meðmælasöfnunar sé lokið.\r\nEkki hægt að framkvæma nema ef allir meðmælalistar söfnunarinnar hafi verið merktir úrvinnslu lokið.\r\nEftir að aðgerð hefur verið framkvæmd opnast fyrir framlengingarfasa.\r\nEinkvæm aðgerð.",
         "parameters": [
           {
             "name": "ID",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": { "type": "integer", "format": "int32" }
           }
@@ -439,15 +450,18 @@
     "/Admin/Medmaelasofnun/{ID}/Compare": {
       "post": {
         "tags": ["Admin"],
+        "summary": "Skilar meðmælum sem tilheyra gefnum kennitölum sem finnast á gefinni meðmælasöfnun",
         "parameters": [
           {
             "name": "ID",
             "in": "path",
+            "description": "ID meðmælasöfnunar",
             "required": true,
             "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "requestBody": {
+          "description": "Listi af kennitölum",
           "content": {
             "application/json": {
               "schema": { "type": "array", "items": { "type": "string" } }
