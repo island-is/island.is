@@ -15,6 +15,7 @@ import {
   VedbondTegundAndlags,
   VirkLeyfiGetRequest,
 } from '../../gen/fetch'
+import { ApiConfiguration } from './apiConfiguration'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import {
   AlcoholLicence,
@@ -81,25 +82,14 @@ const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 @Injectable()
 export class SyslumennService {
   constructor(
+    @Inject(ApiConfiguration.provide)
+    private apiConfig: Configuration,
     @Inject(SyslumennClientConfig.KEY)
     private clientConfig: ConfigType<typeof SyslumennClientConfig>,
   ) {}
 
   private async createApi() {
-    const api = new SyslumennApi(
-      new Configuration({
-        fetchApi: createEnhancedFetch({
-          name: 'clients-syslumenn',
-          organizationSlug: 'syslumenn',
-          ...this.clientConfig.fetch,
-        }),
-        basePath: this.clientConfig.url,
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }),
-    )
+    const api = new SyslumennApi(this.apiConfig)
 
     const config = {
       notandi: this.clientConfig.username,

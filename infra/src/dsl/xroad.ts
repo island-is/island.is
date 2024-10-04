@@ -293,6 +293,15 @@ export const DistrictCommissionersLicenses = new XroadConf({
     },
   },
 })
+export const DistrictCommissionersWorkSystem = new XroadConf({
+  env: {
+    XROAD_DISTRICT_COMMISSIONERS_LICENSES_PATH: {
+      dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/StarfsKerfi',
+      staging: 'IS-TEST/GOV/10016/Syslumenn-Protected/StarfsKerfi',
+      prod: 'IS/GOV/5512201410/Syslumenn-Protected/StarfsKerfi',
+    },
+  },
+})
 
 export const Firearm = new XroadConf({
   env: {
