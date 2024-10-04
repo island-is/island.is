@@ -108,6 +108,8 @@ const ServiceAnnouncement: FC<ServiceAnnouncement> = (props) => {
         servedBy: subpoenaStatus?.subpoenaStatus?.servedBy,
         serviceStatus: subpoenaStatus?.subpoenaStatus?.serviceStatus,
         serviceDate: subpoenaStatus?.subpoenaStatus?.serviceDate,
+        comment: subpoenaStatus?.subpoenaStatus?.comment,
+        defenderNationalId: subpoenaStatus?.subpoenaStatus?.defenderNationalId,
       })
     }
   }, [localSubpoena, subpoenaStatus, subpoenaStatusError])
