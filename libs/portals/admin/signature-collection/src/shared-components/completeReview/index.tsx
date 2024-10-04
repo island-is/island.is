@@ -6,6 +6,7 @@ import { useToggleListReviewMutation } from './toggleListReview.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { ListStatus } from '../../lib/utils'
+import { useSignatureCollectionLockListMutation } from './lockList.generated'
 
 const ActionReviewComplete = ({
   listId,
@@ -15,43 +16,91 @@ const ActionReviewComplete = ({
   listStatus: string
 }) => {
   const { formatMessage } = useLocale()
-  const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
-  const [toggleListReviewMutation, { loading }] = useToggleListReviewMutation()
   const { revalidate } = useRevalidator()
+
+  const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
+  const [modalLockListIsOpen, setModalLockListIsOpen] = useState(false)
+
+  const [lockList, { loading: loadingLockList }] =
+    useSignatureCollectionLockListMutation({
+      variables: {
+        input: {
+          listId,
+        },
+      },
+      onCompleted: () => {
+        setModalLockListIsOpen(false)
+        revalidate()
+        toast.success(formatMessage(m.lockListSuccess))
+      },
+      onError: () => {
+        toast.error(formatMessage(m.lockListError))
+      },
+    })
+  const [toggleListReview, { loading }] = useToggleListReviewMutation({
+    variables: {
+      input: {
+        listId,
+      },
+    },
+    onCompleted: () => {
+      setModalSubmitReviewIsOpen(false)
+      revalidate()
+      toast.success(formatMessage(m.toggleReviewSuccess))
+    },
+    onError: () => {
+      toast.error(formatMessage(m.toggleReviewError))
+    },
+  })
+
   const listReviewed = listStatus && listStatus === ListStatus.Reviewed
   const modalText = listReviewed
     ? formatMessage(m.confirmListReviewedToggleBack)
     : formatMessage(m.confirmListReviewed)
 
-  const toggleReview = async () => {
-    try {
-      const res = await toggleListReviewMutation({
-        variables: {
-          input: {
-            listId,
-          },
-        },
-      })
-      if (res.data?.signatureCollectionAdminToggleListReview.success) {
-        toast.success(formatMessage(m.toggleReviewSuccess))
-        setModalSubmitReviewIsOpen(false)
-        revalidate()
-      } else {
-        toast.error(formatMessage(m.toggleReviewError))
-      }
-    } catch (e) {
-      toast.error(e.message)
-    }
-  }
-
   return (
     <Box marginTop={20}>
-      <Box display="flex" justifyContent="flexEnd">
+      <Box display="flex" justifyContent="spaceBetween">
+        {/* Læsa söfnun */}
         <Button
           iconType="outline"
           variant="ghost"
-          icon={listReviewed ? 'lockOpened' : 'lockClosed'}
-          colorScheme={listReviewed ? 'default' : 'destructive'}
+          icon="lockClosed"
+          colorScheme="destructive"
+          onClick={() => setModalLockListIsOpen(true)}
+        >
+          {formatMessage(m.lockList)}
+        </Button>
+        <Modal
+          id="toggleLockList"
+          isVisible={modalLockListIsOpen}
+          title={formatMessage(m.lockList)}
+          onClose={() => setModalLockListIsOpen(false)}
+          label={''}
+          closeButtonLabel={''}
+        >
+          <Box marginTop={5}>
+            <Text>{formatMessage(m.lockList)}</Text>
+            <Box display="flex" justifyContent="flexEnd" marginTop={5}>
+              <Button
+                iconType="outline"
+                variant="ghost"
+                onClick={() => lockList()}
+                loading={loadingLockList}
+                icon="lockClosed"
+                colorScheme="destructive"
+              >
+                {formatMessage(m.lockList)}
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
+
+        {/* Úrvinnslu lokið */}
+        <Button
+          iconType="outline"
+          variant="ghost"
+          icon={listReviewed ? 'reload' : 'checkmark'}
           onClick={() => setModalSubmitReviewIsOpen(true)}
         >
           {modalText}
@@ -75,10 +124,9 @@ const ActionReviewComplete = ({
             <Button
               iconType="outline"
               variant="ghost"
-              onClick={() => toggleReview()}
+              onClick={() => toggleListReview()}
               loading={loading}
-              icon={listReviewed ? 'lockOpened' : 'lockClosed'}
-              colorScheme={listReviewed ? 'default' : 'destructive'}
+              icon={listReviewed ? 'reload' : 'checkmark'}
             >
               {modalText}
             </Button>

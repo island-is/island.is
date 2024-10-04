@@ -382,7 +382,7 @@ export const m = defineMessages({
   },
   confirmListReviewedToggleBack: {
     id: 'admin-portal.signature-collection:confirmListReviewedToggleBack',
-    defaultMessage: 'Aflæsa úrvinnslu',
+    defaultMessage: 'Opna fyrir úrvinnslu',
     description: '',
   },
   listReviewedModalDescription: {
@@ -423,9 +423,24 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu lokið',
     description: '',
   },
+  lockList: {
+    id: 'admin-portal.signature-collection:lockList',
+    defaultMessage: 'Læsa söfnun',
+    description: '',
+  },
+  lockListSuccess: {
+    id: 'admin-portal.signature-collection:lockListSuccess',
+    defaultMessage: 'Tókst að læsa söfnun',
+    description: '',
+  },
+  lockListError: {
+    id: 'admin-portal.signature-collection:toggleReviewError',
+    defaultMessage: 'Ekki tókst að læsa söfnun',
+    description: '',
+  },
   toggleReviewError: {
     id: 'admin-portal.signature-collection:toggleReviewError',
-    defaultMessage: 'Ekki tókst loka úrvinnslu',
+    defaultMessage: 'Ekki tókst að loka úrvinnslu',
     description: '',
   },
   toggleCollectionProcessSuccess: {
