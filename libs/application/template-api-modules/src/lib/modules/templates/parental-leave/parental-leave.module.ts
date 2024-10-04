@@ -23,7 +23,7 @@ export class ParentalLeaveModule {
         SmsModule,
         ApplicationApiCoreModule,
         NationalRegistryClientModule,
-        AwsModule
+        AwsModule,
       ],
       providers: [
         ChildrenService,
