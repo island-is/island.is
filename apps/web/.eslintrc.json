@@ -1,6 +1,6 @@
 {
   "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*"],
+  "ignorePatterns": ["!**/*", "**/*.mjs"],
   "rules": {
     "@nx/enforce-module-boundaries": [
       "error",
