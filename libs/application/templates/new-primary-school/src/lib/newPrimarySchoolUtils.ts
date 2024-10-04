@@ -317,19 +317,23 @@ export const getSelectedOptionLabel = (
 
 export const formatGrade = (gradeLevel: string, lang: Locale) => {
   let grade = gradeLevel
-  if (gradeLevel[0] === '0') {
-    grade = gradeLevel[1]
+  if (gradeLevel.startsWith('0')) {
+    grade = gradeLevel.substring(1)
   }
-  switch (grade) {
-    case '1':
-      return lang === 'en' ? `${grade}st` : grade
-    case '2':
-      return lang === 'en' ? `${grade}nd` : grade
-    case '3':
-      return lang === 'en' ? `${grade}rd` : grade
-    default:
-      return lang === 'en' ? `${grade}th` : grade
+
+  if (lang === 'en') {
+    switch (grade) {
+      case '1':
+        return `${grade}st`
+      case '2':
+        return `${grade}nd`
+      case '3':
+        return `${grade}rd`
+      default:
+        return `${grade}th`
+    }
   }
+  return grade
 }
 
 export const getCurrentSchoolName = (application: Application) => {
