@@ -1,3 +1,6 @@
+/* eslint-disable */
+//prettier-ignore
+
 /**
  * @licstart The following is the entire license notice for the
  * JavaScript code in this page
