@@ -1,5 +1,7 @@
 # Income Plan
 
+# Application Template Income Plan
+
 ## Description
 
 This application template enables the submission of an income plan post-application.
