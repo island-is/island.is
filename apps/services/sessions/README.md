@@ -35,11 +35,7 @@ To serve the service API locally:
 yarn start services-sessions
 ```
 
-Access API OpenAPI specs at:
-
-```plaintext
-http://localhost:3333/swagger
-```
+You can now access the [Access API OpenAPI UI](http://localhost:3333/swagger).
 
 ### Worker
 

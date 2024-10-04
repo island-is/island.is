@@ -4,7 +4,7 @@ This library implements a client to use User Profile APIs
 
 ## app.module.ts
 
-```js
+```typescript
 import { ConfigModule } from '@island.is/nest/config'
 import { UserProfileClientModule, UserProfileClientConfig } from '@island.is/clients/user-profile'
 
@@ -21,7 +21,7 @@ import { UserProfileClientModule, UserProfileClientConfig } from '@island.is/cli
 
 ## some-name.module.ts
 
-```js
+```typescript
 import { UserProfileClientModule } from '@island.is/clients/user-profile'
 
   imports: [
@@ -31,7 +31,7 @@ import { UserProfileClientModule } from '@island.is/clients/user-profile'
 
 ## some-name.service.ts
 
-```js
+```typescript
 import { UserProfileApi } from '@island.is/clients/user-profile'
 
 

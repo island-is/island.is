@@ -14,13 +14,13 @@ work in progress.
 
 ### Application entrypoint
 
-```tsx
+```typescript
 import { FeatureFlagProvider } from '@island.is/feature-flags'
 ```
 
 then wrap your application using
 
-```tsx
+```typescript
 return (
   <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
     <App />
@@ -34,7 +34,7 @@ Alternatively, you can pass in a `defaultUser` property to `FeatureFlagProvider`
 
 ### Feature flag consumer
 
-```tsx
+```typescript
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 render() {
@@ -60,7 +60,7 @@ render() {
 
 For the common use case of checking on a feature flag, there is `useFeatureFlag` hook:
 
-```tsx
+```typescript
 import { useFeatureFlag } from '@island.is/react/feature-flags'
 
 const MyComponent = () => {

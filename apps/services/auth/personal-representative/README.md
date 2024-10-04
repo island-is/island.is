@@ -36,7 +36,7 @@ The API is accessible via X-Road security servers to clients with specific scope
 
 ### Scope
 
-```plaintext
+```text
 @island.is/auth/personal-representative-admin
 ```
 
@@ -85,7 +85,7 @@ yarn start services-auth-personal-representative
 
 Open API specs are available at:
 
-```plaintext
+```text
 http://localhost:3376
 ```
 

@@ -53,7 +53,7 @@ export interface CacheConfig {
    * Defaults to `true`. If you set this to `false`, you need to pass a `User` object
    * as an authentication to enhancedFetch:
    *
-   * ```ts
+   * ```typescript
    * const fetch = createEnhancedFetch({ cache: { cacheManager, shared: false } })
    * fetch('/private-data', { auth: currentUser })
    * ```
@@ -68,7 +68,7 @@ export interface CacheConfig {
    *
    * You should generally use the `buildCacheControl` utility for this:
    *
-   * ```ts
+   * ```typescript
    * const fetch = createEnhancedFetch({
    *   cache: {
    *     cacheManager,

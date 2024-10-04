@@ -1,23 +1,25 @@
-Based on this https://github.com/Kaltsoon/sequelize-cursor-pagination with inspiration from here: https://medium.com/swlh/how-to-implement-cursor-pagination-like-a-pro-513140b65f32
+# Nest Pagination
+
+Based on this <https://github.com/Kaltsoon/sequelize-cursor-pagination> with inspiration from here: <https://medium.com/swlh/how-to-implement-cursor-pagination-like-a-pro-513140b65f32>
 
 ## Example Usage
 
 ### Create PaginatedExampleModelDto
 
-```javascript
-import { PageInfoDto } from '@island.is/nest/pagination';
-import { ExampleModelList } from '../exampleModelList.model';
+```typescript
+import { PageInfoDto } from '@island.is/nest/pagination'
+import { ExampleModelList } from '../exampleModelList.model'
 
 export class PaginatedExampleModelListDto {
-  totalCount!: number;
-  data!: ExampleModelList[];
-  pageInfo!: PageInfoDto;
+  totalCount!: number
+  data!: ExampleModelList[]
+  pageInfo!: PageInfoDto
 }
 ```
 
 ### In Your Module Controller
 
-```javascript
+```typescript
 import { PaginationDto } from '@island.is/nest/pagination';
 
 async findMany(@Query() query: PaginationDto): Promise<PaginatedExampleModelDto> {
@@ -27,7 +29,7 @@ async findMany(@Query() query: PaginationDto): Promise<PaginatedExampleModelDto>
 
 ### In Your Module Service
 
-```javascript
+```typescript
 import { paginate } from '@island.is/nest/pagination';
 
 async findMany({ listId }: string, query: any) {
@@ -70,13 +72,13 @@ async findMany({ listId }: string, query: any) {
 
 Next set of results:
 
-```javascript
+```typescript
 http://localhost/path?after={pageInfo.endCursor}
 ```
 
 Previous set of results:
 
-```javascript
+```typescript
 http://localhost/path?before={pageInfo.startCursor}
 ```
 
@@ -84,7 +86,7 @@ http://localhost/path?before={pageInfo.startCursor}
 
 This library includes a helper function for creating a typed paginated GraphQL response.
 
-```javascript
+```typescript
 import { ObjectType } from '@nestjs/graphql'
 import { PaginatedResponse } from '@island.is/nest/pagination'
 import { YourModel } from '../models/your.model'

@@ -48,12 +48,7 @@ Then start the application:
 yarn dev services-endorsements-api
 ```
 
-Access Swagger UI at:
-
-```url
-http://localhost:4246/swagger
-```
-
+You can now access the [Access Swagger UI](http://localhost:4246/swagger).
 After making code changes, re-initialize for code autogeneration:
 
 ```bash

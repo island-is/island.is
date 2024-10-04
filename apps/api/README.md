@@ -1,3 +1,5 @@
+# API
+
 ## Quickstart
 
 Ensure Docker is running. For initial setup, execute:

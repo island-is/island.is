@@ -78,7 +78,7 @@ web/                      (app name)
 
 Each spec should have one `test.describe` for the app part. Use `test` for scenarios, `test.beforeAll`, and `test.afterAll` for setup/teardown. Ensure each test can run independently with `beforeEach`:
 
-```javascript
+```typescript
 test.describe('Overview of banking app', () => {
   test.beforeAll(() => {
     // Set up database
@@ -100,7 +100,7 @@ Fixtures standardize mocked data, found in `src/fixtures/<app>.ts`. Use JSON or 
 
 Use `page.route` to mock server responses. Example for simulating an error:
 
-```javascript
+```typescript
 await page.route('/api/graphql?op=userProfile', (route) =>
   route.fulfill({
     status: 403,
@@ -115,7 +115,7 @@ Refer to [Playwright docs](https://playwright.dev/docs/api/class-route#route-ful
 
 Handle asynchronous elements with `page.waitFor*`:
 
-```javascript
+```typescript
 await page.waitForSelector(':nth-match("role=checkbox", 3)')
 ```
 
@@ -147,6 +147,6 @@ If it persists, contact DevOps.
 
 This could be a network or performance issue. Increase timeouts if necessary:
 
-```javascript
+```typescript
 page.goto('/my-url', { timeout: Timeout.medium })
 ```
