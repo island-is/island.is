@@ -124,7 +124,7 @@ export const personalOverview = buildMultiField({
     buildKeyValueField({
       label: m.dropLocation,
       width: 'half',
-      value: "Þjóðskrá",
+      value: 'Þjóðskrá',
     }),
   ],
 })

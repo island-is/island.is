@@ -21,9 +21,7 @@ import {
   UserInfoApi,
   NationalRegistryUser,
 } from '../dataProviders'
-import {
-  Services,
-} from '../lib/constants'
+import { Services } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'
@@ -153,7 +151,7 @@ export const Draft: Form = buildForm({
               title: m.dropLocation,
               titleVariant: 'h3',
               space: 2,
-              description: "Þjóðskrá",
+              description: 'Þjóðskrá',
               marginBottom: 'gutter',
             }),
           ],
