@@ -41,8 +41,19 @@ export const externalData = {
     },
     announcementDescription: {
       id: 'aosh.wan.application:externalData.dataProvider.announcementDescription',
-      defaultMessage:
-        'Vinsamlega athugaðu að þú ert innskráð/ur sem einstaklingur. Atvinnurekanda ber skylda til að sjá til þess að vinnuslys sé tilkynnt til Vinnueftirlitsins þegar slys verður vegna eða við vinnu á vinnustað hans og starfsmaður verður óvinnufær í einn eða fleiri daga, umfram þann dag sem slysið varð. Einstaklingar eiga ekki að tilkynna eigin slys inn til Vinnueftirlitsins eina undantekningin á þessari reglu eru einstaklingar sem reka eigin starfsemi á sinni eigin kennitölu. Ef þú ert að skrá þessa tilkynningu fyrir hönd fyrirtækis þá væri æskilegra að þú værir innskráður á vefinn með auðkenni viðkomandi fyrirtækis eða með umboð frá fyrirtækinu til að skrá vinnuslys fyrir hönd þess. Þú getur hins vegar skráð kennitölu fyrirtækisins hér fyrir neðan og sent þessa tilkynningu til Vinnueftirlitsins en athugaðu að þú munt ekki hafa aðgang að neinum upplýsingum um aðrar tilkynningar fyrirtækisins.',
+      defaultMessage: `Vinsamlega athugaðu að þú ert innskráð/ur sem einstaklingur. 
+        Atvinnurekanda ber skylda til að sjá til þess að vinnuslys sé tilkynnt til 
+        Vinnueftirlitsins þegar slys verður vegna eða við vinnu á vinnustað hans 
+        og starfsmaður verður óvinnufær í einn eða fleiri daga, umfram þann dag 
+        sem slysið varð. Einstaklingar eiga ekki að tilkynna eigin slys inn til 
+        Vinnueftirlitsins eina undantekningin á þessari reglu eru einstaklingar 
+        sem reka eigin starfsemi á sinni eigin kennitölu. 
+        \n Ef þú ert að skrá þessa tilkynningu fyrir hönd fyrirtækis þá væri æskilegra 
+        að þú værir innskráður á vefinn með auðkenni viðkomandi fyrirtækis eða með umboð 
+        frá fyrirtækinu til að skrá vinnuslys fyrir hönd þess. Þú getur hins vegar skráð 
+        kennitölu fyrirtækisins hér fyrir neðan og sent þessa tilkynningu til 
+        Vinnueftirlitsins en athugaðu að þú munt ekki hafa aðgang að neinum upplýsingum 
+        um aðrar tilkynningar fyrirtækisins.`,
       description: 'Announcement description following prerequisites',
     },
   }),

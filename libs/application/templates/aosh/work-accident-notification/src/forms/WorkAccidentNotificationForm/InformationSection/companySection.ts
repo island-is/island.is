@@ -50,14 +50,30 @@ export const companySection = buildSubSection({
           title: information.labels.company.name,
           backgroundColor: 'white',
           width: 'half',
-          defaultValue: (application: Application) => '',
+          defaultValue: (application: Application) => {
+            const name = getValueViaPath(
+              application.externalData,
+              'identity.data.name',
+              undefined,
+            ) as string | undefined
+
+            return name
+          },
         }),
         buildTextField({
           id: 'companyInformation.address',
           title: information.labels.company.address,
           backgroundColor: 'white',
           width: 'half',
-          defaultValue: (application: Application) => '',
+          defaultValue: (application: Application) => {
+            const streetAddress = getValueViaPath(
+              application.externalData,
+              'identity.data.address.streetAddress',
+              undefined,
+            ) as string | undefined
+
+            return streetAddress
+          },
         }),
         buildSelectField({
           id: 'companyInformation.postnumber',
@@ -76,6 +92,15 @@ export const companySection = buildSubSection({
                 label: `${code} - ${name}`,
                 value: code || '',
               }))
+          },
+          defaultValue: (application: Application) => {
+            const postalCode = getValueViaPath(
+              application.externalData,
+              'identity.data.address.postalCode',
+              undefined,
+            ) as string | undefined
+
+            return postalCode
           },
         }),
         buildSelectField({
