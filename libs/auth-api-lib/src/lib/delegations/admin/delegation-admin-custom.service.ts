@@ -153,7 +153,7 @@ export class DelegationAdminCustomService {
     }
   }
 
-  async createDelegationByZendeskId(zendeskId: string): Promise<DelegationDTO> {
+  async createDelegationByZendeskId(zendeskId: string): Promise<void> {
     const zendeskCase = await this.zendeskService.getTicket(zendeskId)
 
     const { fromReferenceId, toReferenceId, validTo, createdByNationalId } =
@@ -168,15 +168,13 @@ export class DelegationAdminCustomService {
 
     this.verifyZendeskTicket(zendeskCase, fromReferenceId, toReferenceId)
 
-    const newDelegation = await this.insertDelegation({
+    await this.insertDelegation({
       fromNationalId: fromReferenceId,
       toNationalId: toReferenceId,
       referenceId: zendeskId,
       validTo: this.formatZendeskDate(validTo),
       createdBy: createdByNationalId,
     })
-
-    return newDelegation.toDTO(AuthDelegationType.GeneralMandate)
   }
 
   async createDelegation(
@@ -351,6 +349,13 @@ export class DelegationAdminCustomService {
     }
 
     const [day, month, year] = date.split('.').map(Number)
+
+    if (!day || !month || !year || isNaN(day) || isNaN(month) || isNaN(year)) {
+      throw new BadRequestException({
+        message: 'Invalid date format in Zendesk ticket',
+        error: ErrorCodes.INVALID_DATE_FORMAT,
+      })
+    }
 
     return new Date(year, month - 1, day)
   }

@@ -4,7 +4,13 @@ import * as crypto from 'crypto'
 
 const SIGNING_SECRET_ALGORITHM = 'sha256'
 
-export function ZendeskAuthGuard(signingSecret: string): Type<CanActivate> {
+export function ZendeskAuthGuard(
+  signingSecret: string | undefined,
+): Type<CanActivate> {
+  if (!signingSecret) {
+    throw new Error('Signing secret must be set')
+  }
+
   @Injectable()
   class ZendeskAuthGuardMixin implements CanActivate {
     canActivate(context: ExecutionContext): boolean {
@@ -20,13 +26,16 @@ export function ZendeskAuthGuard(signingSecret: string): Type<CanActivate> {
 
       return this.isValidSignature(signature, body, timestamp)
     }
-
+    
     isValidSignature(
       signature: string,
       body: string,
       timestamp: string,
     ): boolean {
-      const hmac = crypto.createHmac(SIGNING_SECRET_ALGORITHM, signingSecret)
+      const hmac = crypto.createHmac(
+        SIGNING_SECRET_ALGORITHM,
+        signingSecret as string,
+      )
       const sig = hmac.update(timestamp + body).digest('base64')
 
       return Buffer.compare(Buffer.from(signature), Buffer.from(sig)) === 0

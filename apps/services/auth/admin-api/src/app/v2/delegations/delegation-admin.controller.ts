@@ -33,8 +33,15 @@ import { DelegationAdminScopes } from '@island.is/auth/scopes'
 import { isDefined } from '@island.is/shared/utils'
 
 const namespace = '@island.is/auth/delegation-admin'
+
 const ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE =
-  process.env.ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE ?? ''
+  process.env.ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE
+
+if (!ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE) {
+  throw new Error(
+    'Environment variable ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE must be set',
+  )
+}
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegation-admin')
@@ -100,12 +107,12 @@ export class DelegationAdminController {
   @UseGuards(ZendeskAuthGuard(ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE))
   @Post('/zendesk')
   @Documentation({
-    response: { status: 200, type: DelegationDTO },
+    response: { status: 200 },
   })
-  createByZendeskId(
+  async createByZendeskId(
     @Body() { id }: ZendeskWebhookInputDto,
-  ): Promise<DelegationDTO> {
-    return this.delegationAdminService.createDelegationByZendeskId(id)
+  ): Promise<void> {
+    await this.delegationAdminService.createDelegationByZendeskId(id)
   }
 
   @Delete(':delegationId')
