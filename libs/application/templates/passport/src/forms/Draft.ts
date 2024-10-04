@@ -21,9 +21,7 @@ import {
   UserInfoApi,
   NationalRegistryUser,
 } from '../dataProviders'
-import {
-  Services,
-} from '../lib/constants'
+import { Services } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'

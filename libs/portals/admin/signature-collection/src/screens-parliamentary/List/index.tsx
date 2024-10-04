@@ -8,7 +8,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import { m } from '../../lib/messages'
+import { m, parliamentaryMessages } from '../../lib/messages'
 import { useLoaderData } from 'react-router-dom'
 import { ListStatus, SignatureCollectionList } from '@island.is/api/schema'
 import { PaperSignees } from './paperSignees'
@@ -16,9 +16,11 @@ import { SignatureCollectionPaths } from '../../lib/paths'
 import ActionExtendDeadline from '../../shared-components/extendDeadline'
 import Signees from '../../shared-components/signees'
 import ActionReviewComplete from '../../shared-components/completeReview'
+import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ListInfo from '../../shared-components/listInfoAlert'
 
-const List = () => {
+const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
   const { list, listStatus } = useLoaderData() as {
     list: SignatureCollectionList
@@ -46,7 +48,9 @@ const List = () => {
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage('Yfirlit'),
+                  title: formatMessage(
+                    parliamentaryMessages.signatureListsTitle,
+                  ),
                   href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
                 },
                 {
@@ -56,14 +60,22 @@ const List = () => {
                     list.area.name,
                   )}`,
                 },
-                { title: formatMessage(m.viewList) },
+                { title: list.candidate.name },
               ]}
             />
           </Box>
           <IntroHeader
             title={list?.title}
+            intro={
+              allowedToProcess
+                ? formatMessage(m.singleListIntro)
+                : formatMessage(m.singleListIntroManage)
+            }
             imgPosition="right"
             imgHiddenBelow="sm"
+            img={
+              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            }
           />
           <ListInfo
             message={
@@ -82,7 +94,7 @@ const List = () => {
           <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
           <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
           <PaperSignees listId={list.id} />
-          <ActionReviewComplete listId={list.id} />
+          <ActionReviewComplete listId={list.id} listStatus={listStatus} />
         </GridColumn>
       </GridRow>
     </GridContainer>
