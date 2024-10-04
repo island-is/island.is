@@ -30,6 +30,8 @@ import { DocumentMailAction } from './models/v2/mailAction.model.'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
 import type { Locale } from '@island.is/shared/types'
+import { DocumentConfirmActionsInput } from './models/v2/confirmActions.input'
+import { DocumentConfirmActions } from './models/v2/confirmActions.model'
 
 const LOG_CATEGORY = 'documents-resolver'
 
@@ -85,6 +87,26 @@ export class DocumentResolverV2 {
     @CurrentUser() user: User,
   ): Promise<PaginatedDocuments> {
     return this.documentServiceV2.listDocuments(user.nationalId, input)
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Query(() => DocumentConfirmActions, {
+    nullable: true,
+    name: 'documentV2ConfirmActions',
+  })
+  async confirmActions(
+    @Args('input') input: DocumentConfirmActionsInput,
+    @CurrentUser() user: User,
+  ) {
+    this.auditService.audit({
+      auth: user,
+      namespace: '@island.is/api/document-v2',
+      action: 'confirmModal',
+      resources: input.id,
+      meta: { confirmed: input.confirmed },
+    })
+
+    return { id: input.id, confirmed: input.confirmed }
   }
 
   @ResolveField('categories', () => [Category])
