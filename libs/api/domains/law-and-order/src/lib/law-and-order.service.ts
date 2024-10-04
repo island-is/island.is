@@ -126,7 +126,7 @@ export class LawAndOrderService {
     const subpoena: SubpoenaResponse | undefined | null =
       await this.api.getSubpoena(id, user, locale)
 
-    const defenderChoice = subpoena?.defenderInfo.defenderChoice
+    const defenderChoice = subpoena?.defenderInfo?.defenderChoice
     const message = defenderChoice
       ? formatMessage(
           DefenseChoices[subpoena?.defenderInfo.defenderChoice].message,
