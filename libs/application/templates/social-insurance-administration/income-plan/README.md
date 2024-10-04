@@ -8,7 +8,7 @@ This application template enables the submission of an income plan post-applicat
 
 #### Prerequisites
 
-All new income plans are initially in this brief, unlisted state, fetching data from Þjóðskrá and TR. Applicants must wait 10 days if a previous income plan is active at TR.
+This temporary state is where all new income plans are initially created. It is unlisted and has a short lifespan. It acts as a gatekeeper to the actual income plan, fetching data from Þjóðskrá and TR. Applicants cannot proceed if a previous income plan has been in progress at TR for less than 10 days or if they do not have an active application at TR that requires an income plan.
 
 #### Draft
 
