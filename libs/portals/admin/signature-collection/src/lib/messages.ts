@@ -127,12 +127,13 @@ export const m = defineMessages({
   },
   createCollectionModalDescription: {
     id: 'admin-portal.signature-collection:createCollectionModalDescription',
-    defaultMessage: 'Sláðu inn kennitölu frambjóðanda',
+    defaultMessage:
+      'Til þess að stofna meðmælasöfnun þarf að slá inn kennitölu frambjóðs.',
     description: '',
   },
   candidateNationalId: {
     id: 'admin-portal.signature-collection:candidateNationalId',
-    defaultMessage: 'Kennitala frambjóðanda',
+    defaultMessage: 'Kennitala framboðs',
     description: '',
   },
   candidateNationalIdNotFound: {
@@ -142,7 +143,7 @@ export const m = defineMessages({
   },
   candidateName: {
     id: 'admin-portal.signature-collection:candidateName',
-    defaultMessage: 'Nafn frambjóðanda',
+    defaultMessage: 'Nafn framboðs',
     description: '',
   },
   listEndTime: {
@@ -194,32 +195,43 @@ export const m = defineMessages({
 
   /* Hætta við söfnun modal */
   cancelCollectionButton: {
-    id: 'dmin-portal.signature-collection:cancelCollectionButton',
+    id: 'admin-portal.signature-collection:cancelCollectionButton',
     defaultMessage: 'Eyða lista',
     description: '',
   },
   cancelCollectionModalMessage: {
-    id: 'dmin-portal.signature-collection:cancelCollectionModalMessage',
+    id: 'admin-portal.signature-collection:cancelCollectionModalMessage',
     defaultMessage: 'Þú ert að fara að eyða þessum lista. Ertu viss?',
     description: '',
   },
+  cancelCollectionModalMessageLastList: {
+    id: 'admin-portal.signature-collection:cancelCollectionModalMessageLastList#markdown',
+    defaultMessage:
+      'Þú ert að fara að eyða síðasta lista framboðsins. Athugaðu að með því að eyða síðasta lista framboðsins verður framboðinu einnig eytt. Ertu viss um að þú viljir eyða lista og framboði?',
+    description: '',
+  },
   cancelCollectionModalConfirmButton: {
-    id: 'dmin-portal.signature-collection:modalConfirmButton',
+    id: 'admin-portal.signature-collection:modalConfirmButton',
     defaultMessage: 'Já, eyða lista',
     description: '',
   },
+  cancelCollectionAndCandidateModalConfirmButton: {
+    id: 'admin-portal.signature-collection:modalConfirmButton',
+    defaultMessage: 'Já, eyða bæði lista og framboði',
+    description: '',
+  },
   cancelCollectionModalCancelButton: {
-    id: 'dmin-portal.signature-collection:cancelCollectionModalCancelButton',
+    id: 'admin-portal.signature-collection:cancelCollectionModalCancelButton',
     defaultMessage: 'Nei, hætta við',
     description: '',
   },
   cancelCollectionModalToastError: {
-    id: 'dmin-portal.signature-collection:modalToastError',
+    id: 'admin-portal.signature-collection:modalToastError',
     defaultMessage: 'Ekki tókst að eyða lista',
     description: '',
   },
   cancelCollectionModalToastSuccess: {
-    id: 'dmin-portal.signature-collection:cancelCollectionModalToastSuccess',
+    id: 'admin-portal.signature-collection:cancelCollectionModalToastSuccess',
     defaultMessage: 'Tókst að eyða lista',
     description: '',
   },
@@ -275,17 +287,17 @@ export const m = defineMessages({
   downloadReportsDescription: {
     id: 'admin-portal.signature-collection:downloadReportsDescription',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus nec odio ultricies ultricies. Nullam nec purus nec odio ultricies ultricies.',
+      'Hlaðið niður yfirlitsskýrslum yfir stöðu safnana í hverju kjördæmi fyrir sig eftir yfirferð.',
     description: '',
   },
   downloadButton: {
     id: 'admin-portal.signature-collection:downloadButton',
-    defaultMessage: 'Hlaða niður',
+    defaultMessage: 'Sækja skýrslu',
     description: '',
   },
   searchInListPlaceholder: {
     id: 'admin-portal.signature-collection:searchInListPlaceholder',
-    defaultMessage: 'Leitaðu að nafni eða kennitölu',
+    defaultMessage: 'Leita eftir nafni eða kennitölu',
     description: '',
   },
   sortBy: {
@@ -639,7 +651,7 @@ export const parliamentaryMessages = defineMessages({
   signatureListsIntro: {
     id: 'admin-portal.signature-collection-parliamentary:signatureListsIntro',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed etiam, ut inquit, in vita et in voluptate locum ponamus, isdem et in dolore et in odio.',
+      'Hér er yfirlit yfir kjördæmin sex. Ýttu á viðeigandi kjördæmi til að sjá meðmælendalista í því kjördæmi.',
     description: '',
   },
   compareListsButton: {
