@@ -362,9 +362,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
           enable-cache: 'node_modules,generated-files'
-      - name: Linting
+      - name: Nx linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
-      - name: Markdownlint
+      - name: Markdown linting
         uses: DavidAnson/markdownlint-cli2-action@17
         with:
           globs: |
