@@ -398,7 +398,7 @@ export class PoliceService {
         }
 
         this.eventService.postErrorEvent(
-          'Failed to get police case info',
+          'Failed to get subpoena',
           {
             subpoenaId,
             actor: user.name,

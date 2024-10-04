@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { IntlShape, MessageDescriptor, useIntl } from 'react-intl'
 
 import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
@@ -11,6 +11,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useGetLawyer, useSubpoena } from '../../utils/hooks'
+import { SubpoenaStatusQuery } from '../../utils/hooks/useSubpoena/getSubpoenaStatus.generated'
 import { strings } from './ServiceAnnouncement.strings'
 
 const mapServiceStatusTitle = (
@@ -72,37 +73,50 @@ const renderError = (formatMessage: IntlShape['formatMessage']) => (
   />
 )
 
-interface ServiceAnnouncement {
+interface ServiceAnnouncementProps {
   subpoena: Subpoena
   defendantName?: string | null
 }
 
-const ServiceAnnouncement: FC<ServiceAnnouncement> = (props) => {
-  const { subpoena, defendantName } = props
+const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
+  const { subpoena: localSubpoena, defendantName } = props
+
+  const [subpoena, setSubpoena] = useState<Subpoena>()
 
   const { subpoenaStatus, subpoenaStatusLoading, subpoenaStatusError } =
-    useSubpoena(subpoena.caseId, subpoena.subpoenaId)
+    useSubpoena(localSubpoena.caseId, localSubpoena.subpoenaId)
 
   const { formatMessage } = useIntl()
 
   const lawyer = useGetLawyer(
-    subpoena.defenderNationalId,
-    subpoena.serviceStatus === ServiceStatus.DEFENDER,
+    subpoena?.defenderNationalId,
+    subpoena?.serviceStatus === ServiceStatus.DEFENDER,
   )
 
+  const title = mapServiceStatusTitle(subpoena?.serviceStatus)
+  const messages = subpoena
+    ? mapServiceStatusMessages(subpoena, formatMessage, lawyer)
+    : []
+
   // Use data from RLS but fallback to local data
-  const subpoenaServiceStatus = subpoenaStatusError
-    ? subpoena.serviceStatus
-    : subpoenaStatus?.subpoenaStatus?.serviceStatus
+  useEffect(() => {
+    if (subpoenaStatusError) {
+      setSubpoena(localSubpoena)
+    } else {
+      setSubpoena({
+        ...localSubpoena,
+        servedBy: subpoenaStatus?.subpoenaStatus?.servedBy,
+        serviceStatus: subpoenaStatus?.subpoenaStatus?.serviceStatus,
+        serviceDate: subpoenaStatus?.subpoenaStatus?.serviceDate,
+        comment: subpoenaStatus?.subpoenaStatus?.comment,
+        defenderNationalId: subpoenaStatus?.subpoenaStatus?.defenderNationalId,
+      })
+    }
+  }, [localSubpoena, subpoenaStatus, subpoenaStatusError])
 
-  if (!subpoenaServiceStatus && !subpoenaStatusLoading) {
-    return <Box marginBottom={2}>{renderError(formatMessage)}</Box>
-  }
-
-  const title = mapServiceStatusTitle(subpoena.serviceStatus)
-  const messages = mapServiceStatusMessages(subpoena, formatMessage, lawyer)
-
-  return !defendantName ? null : subpoenaStatusLoading ? (
+  return !defendantName ? null : !subpoena && !subpoenaStatusLoading ? (
+    <Box marginBottom={2}>{renderError(formatMessage)}</Box>
+  ) : subpoenaStatusLoading ? (
     <Box display="flex" justifyContent="center" paddingY={5}>
       <LoadingDots />
     </Box>
@@ -113,15 +127,15 @@ const ServiceAnnouncement: FC<ServiceAnnouncement> = (props) => {
         message={
           <Box>
             {messages.map((msg) => (
-              <Text variant="small" key={`${msg}-${subpoena.created}`}>
+              <Text variant="small" key={`${msg}-${localSubpoena.created}`}>
                 {msg}
               </Text>
             ))}
           </Box>
         }
         type={
-          subpoena.serviceStatus === ServiceStatus.FAILED ||
-          subpoena.serviceStatus === ServiceStatus.EXPIRED
+          subpoena?.serviceStatus === ServiceStatus.FAILED ||
+          subpoena?.serviceStatus === ServiceStatus.EXPIRED
             ? 'warning'
             : 'success'
         }

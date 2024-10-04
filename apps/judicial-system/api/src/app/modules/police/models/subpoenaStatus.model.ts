@@ -15,4 +15,7 @@ export class SubpoenaStatus {
 
   @Field(() => String, { nullable: true })
   readonly serviceDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly defenderNationalId?: string
 }
