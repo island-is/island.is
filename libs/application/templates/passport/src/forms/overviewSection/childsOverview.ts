@@ -236,7 +236,7 @@ export const childsOverview = buildMultiField({
     buildKeyValueField({
       label: m.dropLocation,
       width: 'half',
-      value: 'Þjóðskrá',
+      value: m.dropLocationTitleFixedValue,
     }),
   ],
 })

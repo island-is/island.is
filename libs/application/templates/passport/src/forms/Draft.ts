@@ -153,9 +153,10 @@ export const Draft: Form = buildForm({
               title: m.dropLocation,
               titleVariant: 'h3',
               space: 2,
-              description: "Þjóðskrá",
+              description: m.dropLocationTitleFixedValue,
               marginBottom: 'gutter',
             }),
+
           ],
         }),
       ],
