@@ -26,11 +26,11 @@ Configure CacheControl on specific fields:
 export class Article {
   @Field(() => Image)
   @CacheControl({ inheritMaxAge: true })
-  image: Image;
+  image: Image
 
   @Field(() => ArticleAnalytics)
   @CacheControl({ maxAge: 3600 })
-  analytics: ArticleAnalytics;
+  analytics: ArticleAnalytics
 }
 ```
 
@@ -46,10 +46,10 @@ Example:
 @ObjectType()
 export class Article {
   @CacheField(() => Image)
-  image: Image;
+  image: Image
 
   @CacheControl(() => ArticleAnalytics, { cacheControl: { maxAge: 3600 } })
-  analytics: ArticleAnalytics;
+  analytics: ArticleAnalytics
 }
 ```
 
@@ -62,4 +62,3 @@ Refer to Apollo's [caching documentation](https://www.apollographql.com/docs/apo
 ## Running Unit Tests
 
 Run `nx test nest-graphql` to execute unit tests using [Jest](https://jestjs.io).
-

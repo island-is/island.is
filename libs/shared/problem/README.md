@@ -53,4 +53,3 @@ See [`@island.is/nest/problem`](../../nest/problem/README.md#custom-problems) do
 ### Running Unit Tests
 
 Use `nx test shared-problem` to run unit tests with [Jest](https://jestjs.io).
-

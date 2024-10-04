@@ -51,4 +51,3 @@ For _fastlane_ installation, visit the [Installing _fastlane_ guide](https://doc
 This README.md is auto-generated and updates every time [_fastlane_](https://fastlane.tools) is run.
 
 Find more information at [fastlane.tools](https://fastlane.tools) and consult the _fastlane_ documentation at [docs.fastlane.tools](https://docs.fastlane.tools).
-

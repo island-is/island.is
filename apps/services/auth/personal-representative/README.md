@@ -112,4 +112,3 @@ yarn start services-auth-personal-representative
 ### Code Owners and Maintainers
 
 - [Programm](https://github.com/orgs/island-is/teams/programm/members)
-

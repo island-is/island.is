@@ -135,4 +135,3 @@ yarn nx test application-system-form
 ## Code Owners and Maintainers
 
 - [Norda](https://github.com/orgs/island-is/teams/norda-applications/members)
-

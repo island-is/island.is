@@ -59,4 +59,3 @@ Start the worker with:
 ```bash
 yarn nx run services-university-gateway:worker
 ```
-

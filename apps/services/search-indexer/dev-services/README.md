@@ -48,4 +48,3 @@ curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_all/_setti
 ```
 
 Source: [Stack Overflow](https://stackoverflow.com/questions/63880017/elasticsearch-docker-flood-stage-disk-watermark-95-exceeded#answer-63881121)
-

@@ -15,4 +15,3 @@ The driving license section appears if the user holds a valid license. It shows 
 ## Running Unit Tests
 
 Execute `nx test service-portal-licenses` to run unit tests using [Jest](https://jestjs.io).
-

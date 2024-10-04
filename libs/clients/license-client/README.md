@@ -36,4 +36,3 @@ Run unit tests with [Jest](https://jestjs.io) using:
 ```bash
 nx test clients-license-client
 ```
-

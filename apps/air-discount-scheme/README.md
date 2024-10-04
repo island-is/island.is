@@ -52,41 +52,41 @@ To start development:
 
 1. Fetch environment secrets:
 
-    ```bash
-    yarn get-secrets air-discount-scheme-api
-    yarn get-secrets air-discount-scheme-backend
-    yarn get-secrets air-discount-scheme-web
-    ```
+   ```bash
+   yarn get-secrets air-discount-scheme-api
+   yarn get-secrets air-discount-scheme-backend
+   yarn get-secrets air-discount-scheme-web
+   ```
 
 2. Start resources with Docker Compose and migrate/seed the database:
 
-    ```bash
-    docker compose -f apps/air-discount-scheme/backend/docker-compose.yml up
-    yarn nx run air-discount-scheme-backend:migrate
-    yarn nx run air-discount-scheme-backend:seed
-    ```
+   ```bash
+   docker compose -f apps/air-discount-scheme/backend/docker-compose.yml up
+   yarn nx run air-discount-scheme-backend:migrate
+   yarn nx run air-discount-scheme-backend:seed
+   ```
 
 3. Start the front end:
 
-    ```bash
-    yarn start air-discount-scheme-web
-    ```
+   ```bash
+   yarn start air-discount-scheme-web
+   ```
 
 4. Start the GraphQL API:
 
-    ```bash
-    yarn start air-discount-scheme-api
-    ```
+   ```bash
+   yarn start air-discount-scheme-api
+   ```
 
 5. Start the backend API:
 
-    ```bash
-    yarn start air-discount-scheme-backend
-    ```
+   ```bash
+   yarn start air-discount-scheme-backend
+   ```
 
 6. Verify Contentful and AWS:
 
-    Log in at <https://island-is.awsapps.com/start#/> (Contact devops for access). Copy environment variables as described in [the documentation](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting), then paste into terminal. Execute `./scripts/run-es-proxy.sh` from island.is root directory. Success is indicated by `Forwarding from 0.0.0.0:9200 -> 9200`.
+   Log in at <https://island-is.awsapps.com/start#/> (Contact devops for access). Copy environment variables as described in [the documentation](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting), then paste into terminal. Execute `./scripts/run-es-proxy.sh` from island.is root directory. Success is indicated by `Forwarding from 0.0.0.0:9200 -> 9200`.
 
 Visit [localhost:4200](http://localhost:4200) for the website or [localhost:4248/api/swagger/](http://localhost:4248/api/swagger/) for the airline API.
 
@@ -115,4 +115,3 @@ Due to time constraints, certain shortcuts were taken:
 - [Brian - @barabrian](https://github.com/barabrian)
 - [Davíð Guðni - @dabbeg](https://github.com/dabbeg)
 - [Darri Steinn - @darrikonn](https://github.com/darrikonn)
-

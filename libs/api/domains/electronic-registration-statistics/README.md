@@ -47,4 +47,3 @@ To lint the code with [ESLint](https://eslint.org/), execute:
 ```bash
 yarn nx lint api-domains-electronic-registration-statistics
 ```
-

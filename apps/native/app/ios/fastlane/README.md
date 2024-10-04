@@ -41,4 +41,3 @@ This README.md is auto-generated and refreshed whenever [_fastlane_](https://fas
 For more about _fastlane_, visit [fastlane.tools](https://fastlane.tools).
 
 Refer to [docs.fastlane.tools](https://docs.fastlane.tools) for _fastlane_ documentation.
-

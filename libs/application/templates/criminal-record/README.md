@@ -56,4 +56,3 @@ yarn nx test application-templates-criminal-record
 - [Unnur Sól - @unnursol](https://github.com/unnursolingimars)
 - Jón Bjarni
 - [Jóhanna Agnes - @johannaagma](https://github.com/johannaagma)
-

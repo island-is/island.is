@@ -52,4 +52,3 @@ Use the following Gervimenn for testing locally and on dev:
 
 - **0101302989 Gervimaður Ameríka**
 - **0101302129 Gervimaður Noregur**
-

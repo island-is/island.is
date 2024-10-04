@@ -49,4 +49,3 @@ yarn start services-user-profile
 
 - [Norda](https://github.com/orgs/island-is/teams/norda/members)
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)
-

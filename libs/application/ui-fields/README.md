@@ -22,46 +22,46 @@ The file upload form field supports file uploads in your application.
 
 1. **Add to Schema:**
 
-    ```typescript
-    const File = z.object({
-      name: z.string(),
-      key: z.string(),
-      url: z.string(),
-    })
+   ```typescript
+   const File = z.object({
+     name: z.string(),
+     key: z.string(),
+     url: z.string(),
+   })
 
-    const ExampleSchema = z.object({
-      fileUpload: z.array(File),
-      ...
-    })
-    ```
+   const ExampleSchema = z.object({
+     fileUpload: z.array(File),
+     ...
+   })
+   ```
 
-    **Make Required:**
+   **Make Required:**
 
-    ```typescript
-    const ExampleSchema = z.object({
-      fileUpload: z.array(File).nonempty(),
-      ...
-    })
-    ```
+   ```typescript
+   const ExampleSchema = z.object({
+     fileUpload: z.array(File).nonempty(),
+     ...
+   })
+   ```
 
 2. **Add to Form:**
 
-    ```typescript
-    buildSection({
-      id: 'someSection',
-      title: m.someSection,
-      children: [
-        buildFileUploadField({
-          id: 'fileUpload', // Match schema key
-          title: 'Upload files',
-          introduction: '',
-          uploadDescription: 'Documents must be: .pdf or .docx.',
-          ...
-        }),
-        ...
-      ]
-    })
-    ```
+   ```typescript
+   buildSection({
+     id: 'someSection',
+     title: m.someSection,
+     children: [
+       buildFileUploadField({
+         id: 'fileUpload', // Match schema key
+         title: 'Upload files',
+         introduction: '',
+         uploadDescription: 'Documents must be: .pdf or .docx.',
+         ...
+       }),
+       ...
+     ]
+   })
+   ```
 
 #### Using with AWS S3 Locally
 
@@ -115,4 +115,3 @@ const uploads = getValueViaPath(application.answers, 'fileUpload') as any[]
 1. Disable "Continue" button during uploads to ensure promise completion.
 2. Make bucket name configurable in `file-storage-service.ts`.
 3. Localize error strings in `FileUploadController`.
-

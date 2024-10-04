@@ -153,4 +153,3 @@ yarn start service-portal
 - `city` -> City
 - `startDate` -> Start date
 - `endDate` -> End date
-

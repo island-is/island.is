@@ -20,6 +20,7 @@ To run this template locally, follow the steps below:
 #### Steps
 
 1. Fetch development secrets for the project:
+
    - Run: `yarn get-secrets service-portal`
 
 2. Obtain kubeconfig:
@@ -33,4 +34,3 @@ Use the Gervimaður Evrópa login `0102719` for local, dev, and staging environm
 ## Code Owners and Maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri-modern-family)
-

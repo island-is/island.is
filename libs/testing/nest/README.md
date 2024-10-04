@@ -120,4 +120,3 @@ const myNewHook = (options) => {
 ## Test Fixtures
 
 In the integration test, a `CurrentUser` fixture from `@island.is/testing/fixtures` is used. The library offers more fixtures for random test data. See `libs/testing/fixtures` for details.
-

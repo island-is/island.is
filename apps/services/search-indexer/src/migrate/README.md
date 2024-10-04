@@ -43,4 +43,3 @@ yarn nx run services-search-indexer:migrate --sync-kibana
 ```
 
 This retrieves saved objects from a local Kibana instance and updates local Kibana files, using IDs in the `./config/kibana` folder. Ensure `migrate` runs before `sync-kibana`.
-

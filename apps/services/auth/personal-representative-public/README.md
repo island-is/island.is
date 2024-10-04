@@ -78,7 +78,7 @@ Serve the service locally:
 yarn start services-auth-personal-representative-public
 ```
 
-You can now access the [Swagger UI]( http://localhost:3378).
+You can now access the [Swagger UI](http://localhost:3378).
 
 ### Testing
 
@@ -101,4 +101,3 @@ yarn start services-auth-personal-representative-public
 ### Code Owners and Maintainers
 
 - [Programm](https://github.com/orgs/island-is/teams/programm/members)
-

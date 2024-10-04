@@ -21,6 +21,7 @@ To run this template locally, follow these steps:
 - Configure [AWS Secrets](https://docs.devland.is/development/aws-secrets).
 
 1. **Fetch Development Secrets**
+
    - Run:
 
      ```bash
@@ -28,6 +29,7 @@ To run this template locally, follow these steps:
      ```
 
 2. **Configure Kubeconfig**
+
    - Export AWS variables and update kubeconfig:
 
      ```bash
@@ -43,4 +45,3 @@ For testing in local, development, and staging environments, use: Gervimaður Ev
 ## Code Owners and Maintainers
 
 - Managed by [Kolibri](https://github.com/orgs/island-is/teams/kolibri-modern-family).
-

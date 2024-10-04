@@ -25,4 +25,3 @@ Regenerate the client using:
 ```bash
 yarn nx run clients-icelandic-government-institution-vacancies:codegen/backend-client
 ```
-

@@ -26,4 +26,3 @@
    ```bash
    yarn start regulations-admin-backend
    ```
-

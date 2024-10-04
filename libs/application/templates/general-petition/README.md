@@ -61,4 +61,3 @@ yarn get-secrets service-portal
 ## Code Owners and Maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni)
-

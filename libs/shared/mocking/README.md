@@ -36,7 +36,7 @@ const resolvers = createResolvers<Resolvers>({
     articles: (_obj, args) => {
       const page = args.page || 0
       const perPage = args.perPage || 10
-      return store.articles.slice(page * perPage, (page * perPage) + perPage)
+      return store.articles.slice(page * perPage, page * perPage + perPage)
     },
   },
 })
@@ -95,7 +95,7 @@ export interface Resolvers {
   Query?: {
     articles?: (
       obj: any,
-      input: { page?: number; perPage?: number }
+      input: { page?: number; perPage?: number },
     ) => Article[]
   }
 }
@@ -328,4 +328,3 @@ To remove unused code, mark the `package.json` with:
   "sideEffects": ["mocks/index.ts"]
 }
 ```
-

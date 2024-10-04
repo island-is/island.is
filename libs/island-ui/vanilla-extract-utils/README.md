@@ -18,4 +18,3 @@ export const container = responsiveStyleMap({
 ## Running Unit Tests
 
 Run `nx test island-ui-vanilla-extract-utils` to execute unit tests via [Jest](https://jestjs.io).
-
