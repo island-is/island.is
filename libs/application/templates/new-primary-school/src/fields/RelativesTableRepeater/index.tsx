@@ -82,10 +82,12 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         table: {
           format: {
             phoneNumber: (value) =>
-              formatPhoneNumber(removeCountryCode(value ?? '')),
-            nationalId: (value) => formatKennitala(value),
+              value ? formatPhoneNumber(removeCountryCode(value)) : '',
+            nationalId: (value) => (value ? formatKennitala(value) : ''),
             relation: (value) =>
-              getSelectedOptionLabel(relationFriggOptions, value) ?? '',
+              value
+                ? getSelectedOptionLabel(relationFriggOptions, value) ?? ''
+                : '',
           },
           header: [
             newPrimarySchoolMessages.shared.fullName,

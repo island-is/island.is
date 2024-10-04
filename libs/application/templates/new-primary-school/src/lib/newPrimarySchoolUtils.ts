@@ -175,7 +175,6 @@ export const getApplicationExternalData = (
   const childInformation = getValueViaPath(
     externalData,
     'childInformation.data',
-    undefined,
   ) as FriggChildInformation
 
   const childGradeLevel = getValueViaPath(
