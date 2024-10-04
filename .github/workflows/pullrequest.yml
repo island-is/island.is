@@ -364,6 +364,11 @@ jobs:
           enable-cache: 'node_modules,generated-files'
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
+      - name: Markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@17
+        with:
+          globs: |
+            '**/*.md'
 
   build:
     needs:
