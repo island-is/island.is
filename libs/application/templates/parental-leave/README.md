@@ -106,4 +106,3 @@ Use `Datadog` for backend and `Sentry` for client error logging.
 - Screens for users who are no longer assignees.
 - Localisation in emails.
 - Allow secondary parent to request personal allowance.
-- Restrict non-custodial parents lacking consent from applying.
