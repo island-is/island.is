@@ -1629,12 +1629,14 @@ export class InternalNotificationService extends BaseNotificationService {
             spokespersonIsLawyer,
             spokespersonName,
             spokespersonNationalId,
+            hasSpokesperson,
           } = civilClaimant
 
-          const shouldSend = this.shouldSendAdvocateAssignedNotification(
-            theCase,
-            spokespersonEmail,
-          )
+          const shouldSend =
+            this.shouldSendAdvocateAssignedNotification(
+              theCase,
+              spokespersonEmail,
+            ) && hasSpokesperson
 
           if (shouldSend === true) {
             this.sendAdvocateAssignedNotification(
