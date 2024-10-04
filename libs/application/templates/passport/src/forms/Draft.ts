@@ -162,26 +162,9 @@ export const Draft: Form = buildForm({
               title: m.dropLocation,
               titleVariant: 'h3',
               space: 2,
-              description: "Þjóðskrá", //m.dropLocationDescription,
+              description: "Þjóðskrá",
               marginBottom: 'gutter',
             }),
-            // buildSelectField({
-            //   id: 'service.dropLocation',
-            //   title: m.dropLocation,
-            //   placeholder: m.dropLocationPlaceholder.defaultMessage,
-            //   options: ({
-            //     externalData: {
-            //       deliveryAddress: { data },
-            //     },
-            //   }) => {
-            //     return (data as DistrictCommissionerAgencies[])?.map(
-            //       ({ key, name }) => ({
-            //         value: key,
-            //         label: name,
-            //       }),
-            //     )
-            //   },
-            // }),
           ],
         }),
       ],

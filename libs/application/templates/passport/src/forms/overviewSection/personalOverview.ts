@@ -125,17 +125,6 @@ export const personalOverview = buildMultiField({
       label: m.dropLocation,
       width: 'half',
       value: "Þjóðskrá",
-      // value: ({
-      //   externalData: {
-      //     deliveryAddress: { data },
-      //   },
-      //   answers,
-      // }) => {
-      //   const district = (data as DistrictCommissionerAgencies[]).find(
-      //     (d) => d.key === (answers.service as Service).dropLocation,
-      //   )
-      //   return `${district?.name}`
-      // },
     }),
   ],
 })

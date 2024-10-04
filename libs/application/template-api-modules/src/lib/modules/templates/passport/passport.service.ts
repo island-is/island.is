@@ -190,7 +190,6 @@ export class PassportService extends BaseTemplateApiService {
           type: PASSPORT_TYPE,
           subType: PASSPORT_SUBTYPE,
         })
-        console.log('result for self', result)
       } else {
         result = await this.passportApi.preregisterChildIdentityDocument(auth, {
           guid: application.id,
@@ -216,7 +215,6 @@ export class PassportService extends BaseTemplateApiService {
           type: PASSPORT_TYPE,
           subType: PASSPORT_SUBTYPE,
         })
-        console.log('result for child', result)
       }
 
       if (!result || !result.success) {
