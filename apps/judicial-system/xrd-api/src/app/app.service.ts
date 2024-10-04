@@ -96,7 +96,18 @@ export class AppService {
     subpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
-    let update = { ...updateSubpoena }
+    //TODO: Remove this mix
+    const {
+      deliveredOnPaper,
+      prosecutedConfirmedSubpoenaThroughIslandis,
+      delivered,
+      deliveredToLawyer,
+      deliveryInvalidated,
+      servedBy,
+      ...update
+    } = updateSubpoena
+
+    let updatesToSend = { registeredBy: servedBy, ...update }
 
     if (
       update.defenderChoice === DefenderChoice.CHOOSE &&
@@ -112,8 +123,8 @@ export class AppService {
         const chosenLawyer = await this.lawyersService.getLawyer(
           update.defenderNationalId,
         )
-        update = {
-          ...update,
+        updatesToSend = {
+          ...updatesToSend,
           ...{
             defenderName: chosenLawyer.Name,
             defenderEmail: chosenLawyer.Email,
@@ -134,7 +145,7 @@ export class AppService {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.backend.accessToken}`,
           },
-          body: JSON.stringify(update),
+          body: JSON.stringify(updatesToSend),
         },
       )
 
