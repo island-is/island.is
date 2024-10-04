@@ -16,6 +16,7 @@ import { DelegationDTO, SequelizeConfigService } from '@island.is/auth-api-lib'
 import { DelegationAdminCustomService } from '@island.is/auth-api-lib'
 
 import { AppModule } from '../../../app.module'
+import { includeRawBodyMiddleware } from '@island.is/infra-nest-server'
 
 describe('withoutAuth and permissions', () => {
   async function formatUrl(app: TestApp, endpoint: string, user?: User) {
@@ -147,17 +148,7 @@ describe('withoutAuth and permissions', () => {
         dbType: 'postgres',
         beforeServerStart: async (app) => {
           await new Promise((resolve) =>
-            resolve(
-              app.use(
-                bodyParser.json({
-                  verify: (req: any, res, buf) => {
-                    if (buf && buf.length) {
-                      req.rawBody = buf
-                    }
-                  },
-                }),
-              ),
-            ),
+            resolve(app.use(includeRawBodyMiddleware())),
           )
         },
       })
@@ -175,14 +166,14 @@ describe('withoutAuth and permissions', () => {
       app.cleanUp()
     })
 
-    it('POST /delegation-admin/:zendeskId should return 403 Forbidden when user does not have correct headers for the body', async () => {
+    it('POST /delegation-admin/zendesk should return 403 Forbidden when request signature is invalid.', async () => {
       // Act
       const res = await getRequestMethod(
         server,
         'POST',
-      )('/delegation-admin/123')
+      )('/delegation-admin/zendesk')
         .send({
-          custom: 'Incorrect body',
+          id: 'Incorrect body',
         })
         .set(
           'x-zendesk-webhook-signature',
@@ -200,23 +191,23 @@ describe('withoutAuth and permissions', () => {
       })
     })
 
-    it('POST /delegation-admin/:zendeskId should return 201 since the correct headers are set for that body', async () => {
+    it('POST /delegation-admin/zendesk should return 201 when signature is valid', async () => {
       // Act
       const res = await getRequestMethod(
         server,
         'POST',
-      )('/delegation-admin/123')
+      )('/delegation-admin/zendesk')
         .send({
-          custom: 'test',
+          id: 'test',
         })
         .set(
           'x-zendesk-webhook-signature',
-          '6sUtGV8C8OdoGgCdsV2xRm3XeskZ33Bc5124RiAK4Q4=',
+          'ntgS06VGgd4z73lHjIpC2sk9azhRNi4u1xkXF/KPKTs=',
         )
         .set('x-zendesk-webhook-signature-timestamp', '2024-10-02T14:21:04Z')
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
     })
   })
 })
