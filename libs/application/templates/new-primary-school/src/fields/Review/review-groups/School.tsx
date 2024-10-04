@@ -1,6 +1,12 @@
 import { useQuery } from '@apollo/client'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
-import { GridColumn, GridRow, Stack, Text } from '@island.is/island-ui/core'
+import {
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
@@ -27,7 +33,7 @@ export const School = ({
     application.externalData,
   )
 
-  const { data } = useQuery<FriggSchoolsByMunicipalityQuery>(
+  const { data, loading } = useQuery<FriggSchoolsByMunicipalityQuery>(
     friggSchoolsByMunicipalityQuery,
   )
   const selectedSchoolName = useMemo(() => {
@@ -49,43 +55,50 @@ export const School = ({
             </Text>
           </GridColumn>
         </GridRow>
-        <GridRow rowGap={2}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(
-                newPrimarySchoolMessages.overview.currentSchool,
-              )}
-              value={getCurrentSchoolName(application)}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(
-                newPrimarySchoolMessages.overview.selectedSchool,
-              )}
-              value={selectedSchoolName || ''}
-            />
-          </GridColumn>
-        </GridRow>
-        <GridRow rowGap={2}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(newPrimarySchoolMessages.overview.grade)}
-              value={formatMessage(
-                newPrimarySchoolMessages.overview.currentGrade,
-                {
-                  grade: formatGrade(childGradeLevel, lang),
-                },
-              )}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(newPrimarySchoolMessages.shared.date)}
-              value={formatDate(startDate)}
-            />
-          </GridColumn>
-        </GridRow>
+
+        {loading ? (
+          <SkeletonLoader height={40} width="100%" borderRadius="large" />
+        ) : (
+          <>
+            <GridRow rowGap={2}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.overview.currentSchool,
+                  )}
+                  value={getCurrentSchoolName(application)}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.overview.selectedSchool,
+                  )}
+                  value={selectedSchoolName || ''}
+                />
+              </GridColumn>
+            </GridRow>
+            <GridRow rowGap={2}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(newPrimarySchoolMessages.overview.grade)}
+                  value={formatMessage(
+                    newPrimarySchoolMessages.overview.currentGrade,
+                    {
+                      grade: formatGrade(childGradeLevel, lang),
+                    },
+                  )}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(newPrimarySchoolMessages.shared.date)}
+                  value={formatDate(startDate)}
+                />
+              </GridColumn>
+            </GridRow>
+          </>
+        )}
       </Stack>
     </ReviewGroup>
   )
