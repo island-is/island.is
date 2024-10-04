@@ -21,8 +21,8 @@ export const SyslumennClientConfig = defineConfig({
       fetch: {
         timeout: env.optionalJSON('SYSLUMENN_TIMEOUT') ?? 40000,
       },
-      username: env.required('SYSLUMENN_USERNAME'),
-      password: env.required('SYSLUMENN_PASSWORD'),
+      username: env.required('SYSLUMENN_USERNAME', ''),
+      password: env.required('SYSLUMENN_PASSWORD', ''),
       xRoadServicePath: env.optional(
         'XROAD_DISTRICT_COMMISSIONERS_WORK_SYSTEM_PATH',
         'r1/IS-DEV/GOV/10016/Syslumenn-Protected/StarfsKerfi',
