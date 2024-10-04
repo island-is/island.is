@@ -154,7 +154,6 @@ export const Draft: Form = buildForm({
               description: m.dropLocationTitleFixedValue,
               marginBottom: 'gutter',
             }),
-
           ],
         }),
       ],
