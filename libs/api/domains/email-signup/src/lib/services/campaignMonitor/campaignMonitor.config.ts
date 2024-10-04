@@ -2,7 +2,7 @@ import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
 
 const schema = z.object({
-  vinnueftirlitirdCampaignMonitorApiKey: z.string(),
+  vinnueftirlitidCampaignMonitorApiKey: z.string(),
 })
 
 export const CampaignMonitorSignupConfig = defineConfig({
@@ -10,7 +10,7 @@ export const CampaignMonitorSignupConfig = defineConfig({
   schema,
   load(env) {
     return {
-      vinnueftirlitirdCampaignMonitorApiKey: env.required(
+      vinnueftirlitidCampaignMonitorApiKey: env.required(
         'VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY',
       ),
     }

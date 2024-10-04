@@ -34,7 +34,7 @@ describe('emailSignupResolver', () => {
           provide: CampaignMonitorSignupService,
           useFactory() {
             return new CampaignMonitorSignupService({
-              vinnueftirlitirdCampaignMonitorApiKey: '',
+              vinnueftirlitidCampaignMonitorApiKey: '',
               isConfigured: true,
             })
           },

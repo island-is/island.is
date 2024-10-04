@@ -6,7 +6,7 @@ const schema = z.object({
   fiskistofaZenterPassword: z.string(),
   fiskistofaZenterClientId: z.string(),
   fiskistofaZenterClientPassword: z.string(),
-  vinnueftirlitirdCampaignMonitorApiKey: z.string(),
+  vinnueftirlitidCampaignMonitorApiKey: z.string(),
 })
 
 export const EmailSignupConfig = defineConfig({
@@ -20,7 +20,7 @@ export const EmailSignupConfig = defineConfig({
       fiskistofaZenterClientPassword: env.required(
         'FISKISTOFA_ZENTER_CLIENT_PASSWORD',
       ),
-      vinnueftirlitirdCampaignMonitorApiKey: env.required(
+      vinnueftirlitidCampaignMonitorApiKey: env.required(
         'VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY',
       ),
     }

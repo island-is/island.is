@@ -19,7 +19,7 @@ export class CampaignMonitorSignupService {
   ) {
     const url = (emailSignupModel.configuration?.signupUrl as string) ?? ''
 
-    const API_KEY = this.config.vinnueftirlitirdCampaignMonitorApiKey
+    const API_KEY = this.config.vinnueftirlitidCampaignMonitorApiKey
 
     const authHeader = `Basic ${Buffer.from(API_KEY + ':').toString('base64')}`
 
