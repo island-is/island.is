@@ -96,10 +96,14 @@ export class AppService {
     subpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
-    let defenderInfo = {
-      defenderName: '',
-      defenderEmail: '',
-      defenderPhoneNumber: '',
+    let defenderInfo: {
+      defenderName: string | undefined
+      defenderEmail: string | undefined
+      defenderPhoneNumber: string | undefined
+    } = {
+      defenderName: undefined,
+      defenderEmail: undefined,
+      defenderPhoneNumber: undefined,
     }
 
     if (
@@ -150,9 +154,9 @@ export class AppService {
       serviceDate: updateSubpoena.servedAt,
       defenderChoice: updateSubpoena.defenderChoice,
       defenderNationalId: updateSubpoena.defenderNationalId,
-      defenderName: defenderInfo.defenderName || undefined,
-      defenderEmail: defenderInfo.defenderEmail || undefined,
-      defenderPhoneNumber: defenderInfo.defenderPhoneNumber || undefined,
+      defenderName: defenderInfo.defenderName,
+      defenderEmail: defenderInfo.defenderEmail,
+      defenderPhoneNumber: defenderInfo.defenderPhoneNumber,
     }
 
     try {
