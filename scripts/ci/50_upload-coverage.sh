@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
@@ -16,7 +16,7 @@ if [[ ! -f "$COVERAGE_FILE" ]]; then
   exit 0
 fi
 
-COVERAGE_CONTENT=$(jq "." -cr < $COVERAGE_FILE)
+COVERAGE_CONTENT=$(jq "." -cr <$COVERAGE_FILE)
 if [[ "$COVERAGE_CONTENT" == "{}" ]]; then
   echo "Coverage report is empty"
   exit 0

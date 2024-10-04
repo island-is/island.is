@@ -44,7 +44,6 @@ const Subpoena = () => {
 
   const subpoena = data?.lawAndOrderSubpoena
   const [defenderPopUp, setDefenderPopUp] = useState<boolean>(false)
-
   if (
     subpoena?.data &&
     (!isDefined(subpoena.data.hasBeenServed) ||
@@ -121,7 +120,7 @@ const Subpoena = () => {
                   action: () => {
                     setDefenderPopUp(true)
                   },
-                  disabled: !subpoena.data.canEditDefenderChoice,
+                  disabled: subpoena.data.canEditDefenderChoice === false,
                   tooltip: subpoena.data.canEditDefenderChoice
                     ? undefined
                     : subpoena.data.courtContactInfo ?? '',
@@ -138,7 +137,7 @@ const Subpoena = () => {
             <Text>{formatMessage(messages.subpoenaInfoText2)}</Text>
           </Box>
 
-          {!loading && !subpoena?.data.defenderChoice && (
+          {!loading && subpoena.data.canEditDefenderChoice === null && (
             <DefenderChoices id={id} refetch={refetch} />
           )}
 
