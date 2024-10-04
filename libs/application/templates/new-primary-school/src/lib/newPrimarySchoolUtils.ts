@@ -175,6 +175,7 @@ export const getApplicationExternalData = (
   const childGradeLevel = getValueViaPath(
     externalData,
     'childInformation.data.gradeLevel',
+    '',
   ) as string
 
   const primaryOrgId = getValueViaPath(
