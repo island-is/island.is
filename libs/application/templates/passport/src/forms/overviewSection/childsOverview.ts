@@ -8,7 +8,6 @@ import { Application } from '@island.is/application/types'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import {
   ChildsPersonalInfo,
-  // DistrictCommissionerAgencies,
   Passport,
   Service,
   Services,

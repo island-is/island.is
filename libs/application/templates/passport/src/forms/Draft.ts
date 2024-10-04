@@ -7,9 +7,7 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
-  buildSelectField,
   buildSubmitField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
@@ -19,14 +17,11 @@ import {
   PassportsApi,
 } from '@island.is/application/types'
 import {
-  DeliveryAddressApi,
   SyslumadurPaymentCatalogApi,
   UserInfoApi,
   NationalRegistryUser,
 } from '../dataProviders'
 import {
-  DistrictCommissionerAgencies,
-  Passport,
   Services,
 } from '../lib/constants'
 import { m } from '../lib/messages'
@@ -73,10 +68,6 @@ export const Draft: Form = buildForm({
               provider: SyslumadurPaymentCatalogApi,
               title: '',
             }),
-            // buildDataProviderItem({
-            //   provider: DeliveryAddressApi,
-            //   title: '',
-            // }),
           ],
         }),
       ],
