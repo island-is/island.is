@@ -61,6 +61,10 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
         return true
       }
 
+      if (!child.nationalId) {
+        return false
+      }
+
       const yearOfBirth = kennitala
         .info(child.nationalId)
         .birthday.getFullYear()

@@ -107,8 +107,8 @@ export type FriggChildInformation = {
   nationalId: string
   gradeLevel: string
   memberships: Membership[]
-  primaryOrgId: object
-  preferredName: object | null
+  primaryOrgId: string
+  preferredName: string | null
   domicile: AddressModel
   residence: AddressModel
 }
