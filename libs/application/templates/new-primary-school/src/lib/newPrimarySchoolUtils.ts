@@ -145,31 +145,37 @@ export const getApplicationExternalData = (
   const applicantName = getValueViaPath(
     externalData,
     'nationalRegistry.data.name',
+    '',
   ) as string
 
   const applicantNationalId = getValueViaPath(
     externalData,
     'nationalRegistry.data.nationalId',
+    '',
   ) as string
 
   const applicantAddress = getValueViaPath(
     externalData,
     'nationalRegistry.data.address.streetAddress',
+    '',
   ) as string
 
   const applicantPostalCode = getValueViaPath(
     externalData,
     'nationalRegistry.data.address.postalCode',
+    '',
   ) as string
 
   const applicantCity = getValueViaPath(
     externalData,
     'nationalRegistry.data.address.city',
+    '',
   ) as string
 
   const childInformation = getValueViaPath(
     externalData,
     'childInformation.data',
+    undefined,
   ) as FriggChildInformation
 
   const childGradeLevel = getValueViaPath(
@@ -181,11 +187,13 @@ export const getApplicationExternalData = (
   const primaryOrgId = getValueViaPath(
     externalData,
     'childInformation.data.primaryOrgId',
+    '',
   ) as string
 
   const childMemberships = getValueViaPath(
     externalData,
     'childInformation.data.memberships',
+    [],
   ) as Membership[]
 
   return {
