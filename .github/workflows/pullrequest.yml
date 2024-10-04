@@ -365,7 +365,7 @@ jobs:
       - name: Nx linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
       - name: Markdown linting
-        uses: DavidAnson/markdownlint-cli2-action@17
+        uses: DavidAnson/markdownlint-cli2-action@v17
         with:
           globs: |
             '**/*.md'
