@@ -17,8 +17,14 @@ import { SignatureCollectionPaths } from '../lib/paths'
 import CompareLists from '../shared-components/compareLists'
 import { ListsLoaderReturn } from '../loaders/AllLists.loader'
 import DownloadReports from './DownloadReports'
+import electionsCommitteeLogo from '../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../assets/nationalRegistry.svg'
 
-const ParliamentaryRoot = () => {
+const ParliamentaryRoot = ({
+  allowedToProcess,
+}: {
+  allowedToProcess: boolean
+}) => {
   const { formatMessage } = useLocale()
 
   const navigate = useNavigate()
@@ -45,8 +51,9 @@ const ParliamentaryRoot = () => {
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage('Yfirlit'),
-                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
+                  title: formatMessage(
+                    parliamentaryMessages.signatureListsTitle,
+                  ),
                 },
               ]}
             />
@@ -56,6 +63,9 @@ const ParliamentaryRoot = () => {
             intro={formatMessage(parliamentaryMessages.signatureListsIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
+            img={
+              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            }
           />
           <Box
             width="full"
@@ -68,7 +78,7 @@ const ParliamentaryRoot = () => {
                 name="searchSignee"
                 value={''}
                 onChange={() => console.log('search')}
-                placeholder={formatMessage(m.searchInListPlaceholder)}
+                placeholder={formatMessage(m.searchNationalIdPlaceholder)}
                 backgroundColor="blue"
               />
             </Box>
