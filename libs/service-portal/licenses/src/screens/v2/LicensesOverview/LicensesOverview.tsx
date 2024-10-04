@@ -119,9 +119,77 @@ export const LicensesOverviewV2 = () => {
           licenses.filter((license) => license.isOwnerChildOfUser),
         ),
       },
+      {
+        label: 'Tabbi þrír',
+        content: [
+          {
+            label: 'Subtab eitt',
+            content: generateLicenseStack(
+              licenses.filter((license) => !license.isOwnerChildOfUser),
+            ),
+          },
+          {
+            label: 'Subtab tveir',
+            content: generateLicenseStack(
+              licenses.filter((license) => license.isOwnerChildOfUser),
+            ),
+          },
+        ],
+      },
+      {
+        label: 'Tabbi fjögur',
+        content: generateLicenseStack(
+          licenses.filter((license) => license.isOwnerChildOfUser),
+        ),
+      },
+      {
+        label: 'Tabbi fimm',
+        content: [
+          {
+            label: 'Subtabbi einn',
+            content: generateLicenseStack(
+              licenses.filter((license) => license.isOwnerChildOfUser),
+            ),
+          },
+        ],
+      },
+      {
+        label: 'Tabbi sex',
+        content: [
+          {
+            label: 'Einn',
+            content: generateLicenseStack(
+              licenses.filter((license) => !license.isOwnerChildOfUser),
+            ),
+          },
+          {
+            label: 'Tveir',
+            content: generateLicenseStack(
+              licenses.filter((license) => license.isOwnerChildOfUser),
+            ),
+          },
+        ],
+      },
+      {
+        label: 'Tabbi sjö',
+        content: generateLicenseStack(
+          licenses.filter((license) => !license.isOwnerChildOfUser),
+        ),
+      },
     ],
     [licenses],
   )
+
+  const handleAddTab = () => {
+    if (tabsNumber < tabs.length) {
+      setTabsNumber(tabsNumber + 1)
+    }
+  }
+  const handleRemoveTab = () => {
+    if (tabsNumber > 0) {
+      setTabsNumber(tabsNumber - 1)
+    }
+  }
 
   return (
     <>
@@ -129,7 +197,26 @@ export const LicensesOverviewV2 = () => {
         title={formatMessage(m.title)}
         intro={formatMessage(m.intro)}
         marginBottom={4}
-      />
+      >
+        <Box marginTop={4}>
+          <Inline space={2}>
+            <Button
+              disabled={tabsNumber >= tabs.length}
+              variant="utility"
+              onClick={handleAddTab}
+            >
+              Add tab
+            </Button>
+            <Button
+              disabled={tabsNumber <= 1}
+              variant="utility"
+              onClick={handleRemoveTab}
+            >
+              Remove tab
+            </Button>
+          </Inline>
+        </Box>
+      </IntroHeader>
       {error && !loading && <Problem error={error} noBorder={false} />}{' '}
       {!error && !loading && !errors?.length && !licenses?.length && (
         <Problem
