@@ -109,11 +109,13 @@ export class IndexingService {
         })(),
       ])
 
-      if (nextSyncToken) {
-        postSyncOptions = { ...postSyncOptions, token: nextSyncToken }
-      }
-
       if (postSyncOptions && importer.postSync) {
+        if (nextSyncToken) {
+          postSyncOptions = {
+            ...postSyncOptions,
+            token: nextSyncToken,
+          }
+        }
         logger.info('Importer started post sync', {
           importer: importer.constructor.name,
           index: elasticIndex,
