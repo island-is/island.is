@@ -1,6 +1,5 @@
 import {
   buildDescriptionField,
-  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildRadioField,
   buildSelectField,
