@@ -1,3 +1,3 @@
-import HearingArrangements from '@island.is/judicial-system-web/src/routes/Court/Indictments/Defender/Defender'
+import Advocates from '@island.is/judicial-system-web/src/routes/Court/Indictments/Advocates/Advocates'
 
-export default HearingArrangements
+export default Advocates
