@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common'
 
-import { AwsS3Module, CaseModule, EventModule, SubpoenaModule } from '../index'
+import { AwsS3Module, CaseModule, EventModule } from '../index'
+import { SubpoenaModule } from '../subpoena'
 import { PoliceController } from './police.controller'
 import { PoliceService } from './police.service'
 
