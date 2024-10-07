@@ -84,7 +84,7 @@ export class AliveStatusService {
         aliveNameInfo: identitiesValuesNoError,
       }
     } catch (error) {
-      this.logger.error(`Error getting live status.}`, error)
+      this.logger.error(`Error getting live status.`, error)
 
       // We do not want to fail the whole request if we cannot get the live status.
       // Therefore, we return all nationalIds as alive.
