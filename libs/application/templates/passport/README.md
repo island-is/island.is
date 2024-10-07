@@ -13,7 +13,6 @@ To properly run the application and go through the application process step by s
 - `IDENTITY_SERVER_CLIENT_ID`
 - `IDENTITY_SERVER_CLIENT_SECRET`
 
-
 ## Test Users
 
 You can use the following test users during the application process:
