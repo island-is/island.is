@@ -30,6 +30,7 @@ import {
   lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
+  AdvocateType,
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
@@ -1566,6 +1567,7 @@ export class InternalNotificationService extends BaseNotificationService {
 
   private sendAdvocateAssignedNotification(
     theCase: Case,
+    advocateType: AdvocateType,
     defenderNationalId?: string,
     defenderName?: string,
     defenderEmail?: string,
@@ -1573,6 +1575,7 @@ export class InternalNotificationService extends BaseNotificationService {
     const { subject, body } = formatDefenderAssignedEmailNotification(
       this.formatMessage,
       theCase,
+      advocateType,
       defenderNationalId &&
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
     )
@@ -1610,6 +1613,7 @@ export class InternalNotificationService extends BaseNotificationService {
           promises.push(
             this.sendAdvocateAssignedNotification(
               theCase,
+              AdvocateType.DEFENDER,
               defenderNationalId,
               defenderName,
               defenderEmail,
@@ -1625,16 +1629,21 @@ export class InternalNotificationService extends BaseNotificationService {
             spokespersonIsLawyer,
             spokespersonName,
             spokespersonNationalId,
+            hasSpokesperson,
           } = civilClaimant
 
-          const shouldSend = this.shouldSendAdvocateAssignedNotification(
-            theCase,
-            spokespersonEmail,
-          )
+          const shouldSend =
+            this.shouldSendAdvocateAssignedNotification(
+              theCase,
+              spokespersonEmail,
+            ) && hasSpokesperson
 
           if (shouldSend === true) {
             this.sendAdvocateAssignedNotification(
               theCase,
+              spokespersonIsLawyer
+                ? AdvocateType.LAWYER
+                : AdvocateType.LEGAL_RIGHTS_PROTECTOR,
               spokespersonNationalId,
               spokespersonName,
               spokespersonEmail,

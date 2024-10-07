@@ -14,7 +14,11 @@ import {
   laws,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import type { Gender, UserRole } from '@island.is/judicial-system/types'
+import type {
+  AdvocateType,
+  Gender,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
@@ -667,6 +671,7 @@ export const formatCustodyRestrictions = (
 export const formatDefenderAssignedEmailNotification = (
   formatMessage: FormatMessage,
   theCase: Case,
+  advocateType: AdvocateType,
   overviewUrl?: string,
 ): SubjectAndBody => {
   const subject = formatMessage(notifications.defenderAssignedEmail.subject, {
@@ -675,6 +680,7 @@ export const formatDefenderAssignedEmailNotification = (
 
   const body = formatMessage(notifications.defenderAssignedEmail.body, {
     defenderHasAccessToRVG: Boolean(overviewUrl),
+    advocateType,
     courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
     court: theCase.court?.name ?? '',
     courtName: theCase.court?.name.replace('dómur', 'dómi') ?? '',

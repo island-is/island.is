@@ -615,9 +615,9 @@ export const notifications = {
         'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
     },
     body: {
-      id: 'judicial.system.backend:notifications.defender_assigned_email.body_v3',
+      id: 'judicial.system.backend:notifications.defender_assigned_email.body_v4',
       defaultMessage:
-        '{court} hefur skráð þig verjanda í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
+        '{court} hefur skráð þig {advocateType, select, LAWYER {lögmann einkaréttarkröfuhafa} LEGAL_RIGHTS_PROTECTOR {réttargæslumann einkaréttarkröfuhafa} other {verjanda}} í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
     },
   }),

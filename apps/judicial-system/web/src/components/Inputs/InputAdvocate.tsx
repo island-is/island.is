@@ -12,7 +12,7 @@ import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
-import { type Lawyer } from '@island.is/judicial-system/types'
+import { AdvocateType, type Lawyer } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import {
   ReactSelectOption,
@@ -39,7 +39,7 @@ interface Props {
   onAdvocateNotFound?: (advocateNotFound: boolean) => void
   disabled?: boolean | null
   clientId?: string | null
-  advocateType?: 'defender' | 'spokesperson' | 'legal_rights_protector'
+  advocateType?: AdvocateType
   isCivilClaim?: boolean
 }
 
@@ -319,7 +319,7 @@ const InputAdvocate: FC<Props> = ({
           icon="search"
           options={options}
           label={
-            advocateType === 'legal_rights_protector'
+            advocateType === AdvocateType.LEGAL_RIGHTS_PROTECTOR
               ? formatMessage(strings.spokespersonNameLabel)
               : formatMessage(strings.nameLabel, {
                   sessionArrangements: workingCase.sessionArrangements,
@@ -367,7 +367,7 @@ const InputAdvocate: FC<Props> = ({
           name="defenderEmail"
           autoComplete="off"
           label={
-            advocateType === 'legal_rights_protector'
+            advocateType === AdvocateType.LEGAL_RIGHTS_PROTECTOR
               ? formatMessage(strings.spokespersonEmailLabel)
               : formatMessage(strings.emailLabel, {
                   sessionArrangements: workingCase.sessionArrangements,
@@ -481,7 +481,7 @@ const InputAdvocate: FC<Props> = ({
           name="defenderPhoneNumber"
           autoComplete="off"
           label={
-            advocateType === 'legal_rights_protector'
+            advocateType === AdvocateType.LEGAL_RIGHTS_PROTECTOR
               ? formatMessage(strings.spokespersonPhoneNumberLabel)
               : formatMessage(strings.phoneNumberLabel, {
                   sessionArrangements: workingCase.sessionArrangements,

@@ -125,6 +125,132 @@ describe('InternalNotificationController - Send defender assigned notifications'
     })
   })
 
+  describe('when the case has civil claims and the advocate is a lawyer', () => {
+    const notificationDto: CaseNotificationDto = {
+      user: { id: userId } as User,
+      type: NotificationType.ADVOCATE_ASSIGNED,
+    }
+    const caseId = uuid()
+    const civilClaimant = {
+      hasSpokesperson: true,
+      spokespersonNationalId: '1234567890',
+      spokespersonEmail: 'recipient@gmail.com',
+      spokespersonName: 'John Doe',
+      spokespersonIsLawyer: true,
+    }
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      court,
+      courtCaseNumber: 'S-123/2022',
+      civilClaimants: [civilClaimant],
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notificationDto)
+    })
+
+    it('should send correct email', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
+        from: {
+          name: mockConfig.email.fromName,
+          address: mockConfig.email.fromEmail,
+        },
+        to: [
+          {
+            name: civilClaimant.spokespersonName,
+            address: civilClaimant.spokespersonEmail,
+          },
+        ],
+        replyTo: {
+          name: mockConfig.email.replyToName,
+          address: mockConfig.email.replyToEmail,
+        },
+        attachments: undefined,
+        subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
+        text: expect.anything(), // same as hmtl but stripped hmtl tags
+        html: `Héraðsdómur Reykjavíkur hefur skráð þig lögmann einkaréttarkröfuhafa í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+      })
+    })
+  })
+
+  describe('when the case has civil claims and the advocate is a legal rights protector', () => {
+    const notificationDto: CaseNotificationDto = {
+      user: { id: userId } as User,
+      type: NotificationType.ADVOCATE_ASSIGNED,
+    }
+    const caseId = uuid()
+    const civilClaimant = {
+      hasSpokesperson: true,
+      spokespersonNationalId: '1234567890',
+      spokespersonEmail: 'recipient@gmail.com',
+      spokespersonName: 'John Doe',
+      spokespersonIsLawyer: false,
+    }
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      court,
+      courtCaseNumber: 'S-123/2022',
+      civilClaimants: [civilClaimant],
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notificationDto)
+    })
+
+    it('should send correct email', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
+        from: {
+          name: mockConfig.email.fromName,
+          address: mockConfig.email.fromEmail,
+        },
+        to: [
+          {
+            name: civilClaimant.spokespersonName,
+            address: civilClaimant.spokespersonEmail,
+          },
+        ],
+        replyTo: {
+          name: mockConfig.email.replyToName,
+          address: mockConfig.email.replyToEmail,
+        },
+        attachments: undefined,
+        subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
+        text: expect.anything(), // same as hmtl but stripped hmtl tags
+        html: `Héraðsdómur Reykjavíkur hefur skráð þig réttargæslumann einkaréttarkröfuhafa í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+      })
+    })
+  })
+
+  describe('when the case has civil claims and civil claimant does not have representation', () => {
+    const notificationDto: CaseNotificationDto = {
+      user: { id: userId } as User,
+      type: NotificationType.ADVOCATE_ASSIGNED,
+    }
+    const caseId = uuid()
+    const civilClaimant = {
+      hasSpokesperson: false,
+    }
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      court,
+      courtCaseNumber: 'S-123/2022',
+      civilClaimants: [civilClaimant],
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notificationDto)
+    })
+
+    it('should send correct email', () => {
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
+    })
+  })
+
   describe('when sending defender data is missing', () => {
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
@@ -172,7 +298,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
       await givenWhenThen(caseId, theCase, notificationDto)
     })
 
-    it('should record notfication', () => {
+    it('should record notification', () => {
       expect(mockNotificationModel.create).toHaveBeenCalledTimes(1)
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
