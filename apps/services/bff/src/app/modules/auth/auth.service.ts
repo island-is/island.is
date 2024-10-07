@@ -119,18 +119,26 @@ export class AuthService {
   }
 
   /**
-   * Revoke the refresh token on the identity server, since we have a new session
+   * Revoke the refresh token on the identity server, since we have a new session.
    * We deliberately do not await this operation to make the login flow faster,
    * since this operation is not critical part to await.
    *
    * @param encryptedRefreshToken The encrypted refresh token to revoke
    */
   private revokeRefreshToken(encryptedRefreshToken: string) {
-    const decryptedRefreshToken = this.cryptoService.decrypt(
-      encryptedRefreshToken,
-    )
+    try {
+      const decryptedToken = this.cryptoService.decrypt(encryptedRefreshToken)
 
-    this.idsService.revokeToken(decryptedRefreshToken, 'refresh_token')
+      // Call revokeToken without awaiting and handle potential errors with .catch() to handle unhandled promise rejections.
+      this.idsService
+        .revokeToken(decryptedToken, 'refresh_token')
+        .catch((error) => {
+          this.logger.warn('Failed to revoke refresh token:', error)
+        })
+    } catch (error) {
+      // Catch synchronous decryption errors
+      this.logger.warn('Failed to decrypt refresh token:', error)
+    }
   }
 
   /**
@@ -384,11 +392,16 @@ export class AuthService {
      * - Revoke the refresh token on the identity server
      * - Delete the current login from the cache
      * - Clear the session cookie
-     *
-     * Note! We deliberately do not await this operation to make the logout flow faster.
      */
     res.clearCookie(SESSION_COOKIE_NAME, this.getCookieOptions())
-    this.cacheService.delete(currentLoginCacheKey)
+
+    this.cacheService
+      .delete(currentLoginCacheKey)
+      // catch() to handle unhandled promise rejections
+      .catch((err) => {
+        this.logger.warn(err)
+      })
+    // Note! We deliberately do not await this operation to make the logout flow faster.
     this.revokeRefreshToken(cachedTokenResponse.encryptedRefreshToken)
 
     const searchParams = new URLSearchParams({
