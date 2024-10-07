@@ -8,33 +8,28 @@ import {
   IdentityCard,
   useDynamicShadow,
 } from '@island.is/portals/shared-modules/delegations'
-import { Identity } from '@island.is/api/schema'
+import { AuthCustomDelegation } from '@island.is/api/schema'
 import format from 'date-fns/format'
+import isValid from 'date-fns/isValid'
+import { AuthDelegationType } from '@island.is/shared/types'
 
-type CreateDelegationConfirmModalProps = Pick<
+type DelegationDeleteModalProps = Pick<
   ModalProps,
-  'onClose' | 'isVisible'
+  'id' | 'onClose' | 'isVisible'
 > & {
-  fromIdentity: Identity | null
-  toIdentity: Identity | null
-  data: {
-    fromNationalId: string
-    type: string
-    toNationalId: string
-    referenceId: string
-    validTo?: string | undefined
-  } | null
-  onConfirm(): void
+  loading: boolean
+  delegation?: AuthCustomDelegation
+  onDelete(): void
 }
 
-export const CreateDelegationConfirmModal = ({
-  fromIdentity,
-  toIdentity,
-  data,
+export const DelegationDeleteModal = ({
+  id,
+  loading,
+  delegation,
   onClose,
-  onConfirm,
+  onDelete,
   ...rest
-}: CreateDelegationConfirmModalProps) => {
+}: DelegationDeleteModalProps) => {
   const { formatMessage } = useLocale()
   const { md } = useBreakpoint()
 
@@ -46,9 +41,9 @@ export const CreateDelegationConfirmModal = ({
 
   return (
     <Modal
-      id="access-confirm-modal"
-      label={formatMessage(m.createDelegationConfirmModalTitle)}
-      title={formatMessage(m.createDelegationConfirmModalTitle)}
+      id={id}
+      label={formatMessage(m.deleteDelegationModalTitle)}
+      title={formatMessage(m.deleteDelegationModalTitle)}
       onClose={onClose}
       noPaddingBottom
       scrollType="inside"
@@ -63,24 +58,24 @@ export const CreateDelegationConfirmModal = ({
           rowGap={[3, 3, 3, 0]}
           columnGap={[0, 0, 0, 3]}
         >
-          {fromIdentity?.name && fromIdentity?.nationalId && (
+          {delegation?.from?.name && delegation?.from?.nationalId && (
             <IdentityCard
               label={formatMessage(m.fromNationalId)}
-              title={fromIdentity.name}
-              description={formatNationalId(fromIdentity.nationalId)}
+              title={delegation?.from?.name}
+              description={formatNationalId(delegation?.from?.nationalId)}
               color="blue"
             />
           )}
-          {toIdentity?.name && toIdentity?.nationalId && (
+          {delegation?.to.name && delegation?.to?.nationalId && (
             <IdentityCard
               label={formatMessage(m.toNationalId)}
-              title={toIdentity.name}
-              description={formatNationalId(toIdentity.nationalId)}
+              title={delegation?.to.name}
+              description={formatNationalId(delegation?.to.nationalId)}
               color="purple"
             />
           )}
         </Box>
-        {data?.type && (
+        {delegation?.type && delegation.type === AuthDelegationType.GeneralMandate && (
           <IdentityCard
             label={formatMessage(m.type)}
             title={formatMessage(m.generalMandateLabel)}
@@ -98,15 +93,15 @@ export const CreateDelegationConfirmModal = ({
           <IdentityCard
             label={formatMessage(m.validTo)}
             title={
-              data?.validTo
-                ? format(new Date(data?.validTo), 'dd.MM.yyyy')
+              delegation?.validTo && isValid(delegation.validTo)
+                ? format(new Date(delegation?.validTo), 'dd.MM.yyyy')
                 : formatMessage(m.noEndDate)
             }
           />
-          {data?.referenceId && (
+          {delegation?.referenceId && (
             <IdentityCard
               label={formatMessage(m.referenceId)}
-              title={data?.referenceId}
+              title={delegation?.referenceId}
             />
           )}
         </Box>
@@ -116,11 +111,12 @@ export const CreateDelegationConfirmModal = ({
 
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
+          loading={loading}
           showShadow={showShadow}
+          confirmButtonColorScheme="destructive"
           onCancel={onClose}
-          onConfirm={onConfirm}
-          confirmLabel={formatMessage(coreMessages.codeConfirmation)}
-          confirmIcon="checkmark"
+          onConfirm={onDelete}
+          confirmLabel={formatMessage(coreMessages.buttonDestroy)}
           containerPaddingBottom={[3, 3, 6]}
         />
       </Box>

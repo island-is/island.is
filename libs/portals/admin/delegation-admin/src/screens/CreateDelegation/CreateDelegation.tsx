@@ -44,6 +44,7 @@ import { maskString, unmaskString } from '@island.is/shared/utils'
 import { useAuth } from '@island.is/auth/react'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { FORM_ERRORS } from '../../constants/errors'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
@@ -70,8 +71,8 @@ const CreateDelegationScreen = () => {
 
   const typeOptions = [
     {
-      label: formatMessage(m.typeGeneral),
-      value: 'general', // Todo: change to correct enum value, yet to be created
+      label: formatMessage(m.generalMandateLabel),
+      value: AuthDelegationType.GeneralMandate,
     },
   ]
 
