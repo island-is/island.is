@@ -7,8 +7,8 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { HealthInsuranceAccidentStatusInput } from './dto/accidentStatus.input'
@@ -33,7 +33,7 @@ export class HealthInsuranceAccidentNotificationResolver {
   async accidentStatus(
     @Args('input', { type: () => HealthInsuranceAccidentStatusInput })
     input: HealthInsuranceAccidentStatusInput,
-    @CurrentUser() user: User,
+    @CurrentUser() user: AuthUser,
   ): Promise<AccidentNotificationStatus | null> {
     this.logger.debug(`Getting company information`)
     const accidentStatus =

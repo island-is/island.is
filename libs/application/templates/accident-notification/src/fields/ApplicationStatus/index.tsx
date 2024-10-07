@@ -49,8 +49,6 @@ export const ApplicationStatus = ({
     pollInterval: 300000,
   })
 
-  console.log('Data: ', data)
-
   const answers = application?.answers as FormValue
   const isAssigneeAndUnique = isUniqueAssignee(answers, isAssignee)
 
