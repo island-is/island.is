@@ -659,9 +659,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     alertBannerContent: {
       ...alertBanner,
       showAlertBanner:
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error make web strict
-        alertBanner.showAlertBanner &&
+        alertBanner?.showAlertBanner &&
         (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),
     },
