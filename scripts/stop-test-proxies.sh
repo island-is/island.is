@@ -12,9 +12,8 @@ function stop_proxy() {
 
 builder=${1:-docker}
 
-array=( socat-xroad es-proxy )
+array=(socat-xroad es-proxy)
 
-for proxy in "${array[@]}"
-do
+for proxy in "${array[@]}"; do
   stop_proxy "${proxy}" "${builder}" || true
 done

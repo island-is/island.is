@@ -44,7 +44,7 @@ export const ApplicationsCompletedScreen: NavigationFunctionComponent = ({
           ApplicationResponseDtoStatusEnum.Approved,
         ],
       },
-      locale: locale === 'is-US' ? 'is' : 'en',
+      locale: locale === 'is-IS' ? 'is' : 'en',
     },
   })
 

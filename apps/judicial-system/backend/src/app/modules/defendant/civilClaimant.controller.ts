@@ -19,7 +19,13 @@ import {
   RolesRules,
 } from '@island.is/judicial-system/auth'
 
-import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
+import {
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
+  prosecutorRepresentativeRule,
+  prosecutorRule,
+} from '../../guards'
 import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CivilClaimant } from './models/civilClaimant.model'
@@ -36,7 +42,13 @@ export class CivilClaimantController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Post()
   @ApiCreatedResponse({
     type: CivilClaimant,
@@ -52,7 +64,13 @@ export class CivilClaimantController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Patch(':civilClaimantId')
   @ApiOkResponse({
     type: CivilClaimant,
