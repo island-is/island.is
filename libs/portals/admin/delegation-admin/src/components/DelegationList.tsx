@@ -15,15 +15,15 @@ const DelegationList = ({ delegationsList, direction }: DelegationProps) => {
   const [deleteCustomDelegationAdminMutation, { loading }] =
     useDeleteCustomDelegationAdminMutation()
   const { revalidate } = useRevalidator()
-  const [delegationToDelete, setDelegationToDelete] =   useState<AuthCustomDelegation | null>(null)
+  const [delegationToDelete, setDelegationToDelete] =
+    useState<AuthCustomDelegation | null>(null)
 
   const deleteHandler = async (id: string) => {
-    const { data } =
-      await deleteCustomDelegationAdminMutation({
-        variables: {
-          id,
-        },
-      })
+    const { data } = await deleteCustomDelegationAdminMutation({
+      variables: {
+        id,
+      },
+    })
     if (data) {
       revalidate()
       setDelegationToDelete(null)
@@ -32,25 +32,25 @@ const DelegationList = ({ delegationsList, direction }: DelegationProps) => {
 
   return (
     <>
-    <Box marginTop={2}>
-      <Stack space={3}>
-        {delegationsList.map((delegation) => {
-          return (
-            <AccessCard
-              key={delegation.id}
-              delegation={delegation}
-              isAdminView
-              variant={direction}
-              onDelete={
-                delegation.referenceId
-                  ? () => setDelegationToDelete(delegation)
-                  : undefined
-              }
-            />
-          )
-        })}
-      </Stack>
-    </Box>
+      <Box marginTop={2}>
+        <Stack space={3}>
+          {delegationsList.map((delegation) => {
+            return (
+              <AccessCard
+                key={delegation.id}
+                delegation={delegation}
+                isAdminView
+                variant={direction}
+                onDelete={
+                  delegation.referenceId
+                    ? () => setDelegationToDelete(delegation)
+                    : undefined
+                }
+              />
+            )
+          })}
+        </Stack>
+      </Box>
       <DelegationDeleteModal
         id={`${direction}-delegation-delete-modal`}
         delegation={delegationToDelete as AuthCustomDelegation}

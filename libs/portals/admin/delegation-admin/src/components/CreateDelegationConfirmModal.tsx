@@ -43,7 +43,6 @@ export const CreateDelegationConfirmModal = ({
     isDisabled: !rest.isVisible,
   })
 
-
   return (
     <Modal
       id="access-confirm-modal"

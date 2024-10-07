@@ -38,7 +38,6 @@ export const DelegationDeleteModal = ({
     isDisabled: !rest.isVisible,
   })
 
-
   return (
     <Modal
       id={id}
@@ -75,13 +74,14 @@ export const DelegationDeleteModal = ({
             />
           )}
         </Box>
-        {delegation?.type && delegation.type === AuthDelegationType.GeneralMandate && (
-          <IdentityCard
-            label={formatMessage(m.type)}
-            title={formatMessage(m.generalMandateLabel)}
-            imgSrc="./assets/images/skjaldarmerki.svg"
-          />
-        )}
+        {delegation?.type &&
+          delegation.type === AuthDelegationType.GeneralMandate && (
+            <IdentityCard
+              label={formatMessage(m.type)}
+              title={formatMessage(m.generalMandateLabel)}
+              imgSrc="./assets/images/skjaldarmerki.svg"
+            />
+          )}
 
         <Box
           display="flex"
