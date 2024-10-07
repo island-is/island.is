@@ -63,9 +63,6 @@ describe('LimitedAccessSubpoenaController - Get subpoena pdf', () => {
         theCase,
         defendant,
         subpoena,
-        undefined,
-        undefined,
-        undefined,
       )
       expect(res.end).toHaveBeenCalledWith(pdf)
     })

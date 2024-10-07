@@ -1,4 +1,3 @@
-import React, { FC } from 'react'
 import {
   Box,
   Text,
@@ -10,13 +9,10 @@ import {
   SkeletonLoader,
   ButtonProps as CoreButtonProps,
   Divider,
-  Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { useLocation } from 'react-router-dom'
 import { sharedMessages } from '@island.is/shared/translations'
-
 import * as styles from './InfoLine.css'
 import cn from 'classnames'
 import { LinkButton } from '../LinkButton/LinkButton'
@@ -29,6 +25,7 @@ type ButtonProps =
       label?: MessageDescriptor | string
       skipOutboundTrack?: boolean
       to: string
+      disabled?: boolean
     }
   | {
       type: 'action'
@@ -36,6 +33,8 @@ type ButtonProps =
       label?: MessageDescriptor | string
       variant?: 'text' | 'utility'
       action: () => void
+      disabled?: boolean
+      tooltip?: string
     }
 
 interface Props {
@@ -63,12 +62,12 @@ export const InfoLine = ({
   label,
   content,
   renderContent,
-  labelColumnSpan = ['12/12', '4/12', '6/12', '6/12', '4/12'],
-  valueColumnSpan = ['1/1', '5/12', '6/12', '6/12', '4/12'],
-  buttonColumnSpan = ['1/1', '3/12', '3/12', '3/12', '3/12'],
   loading,
   button,
   tooltip,
+  labelColumnSpan = ['1/1', '5/12', '5/12'],
+  valueColumnSpan = ['1/1', '5/12', '5/12'],
+  buttonColumnSpan = ['1/1', '2/12'],
   paddingY = 2,
   paddingBottom,
   warning,
@@ -87,7 +86,6 @@ export const InfoLine = ({
         position="relative"
         paddingY={paddingY}
         paddingBottom={paddingBottom}
-        paddingRight={4}
         className={cn(className, {
           [styles.printable]: printable,
         })}
@@ -144,16 +142,10 @@ export const InfoLine = ({
             </Box>
           </GridColumn>
           <GridColumn order={4} span={buttonColumnSpan}>
-            {button ? (
+            {button && (
               <Box
                 display="flex"
-                justifyContent={[
-                  'flexStart',
-                  'flexEnd',
-                  'flexStart',
-                  'flexStart',
-                  'flexEnd',
-                ]}
+                justifyContent={['flexStart', 'flexEnd']}
                 alignItems="center"
                 height="full"
                 printHidden
@@ -168,19 +160,26 @@ export const InfoLine = ({
                     }
                     skipOutboundTrack={button.skipOutboundTrack}
                     icon={button.icon}
+                    disabled={button.disabled}
                   />
                 ) : (
-                  <GeneralButton
-                    icon={button.icon}
-                    onClick={button.action}
-                    variant={button.variant ?? 'text'}
-                    iconType="outline"
-                  >
-                    {button.label && formatMessage(button.label)}
-                  </GeneralButton>
+                  <>
+                    <GeneralButton
+                      icon={button.icon}
+                      onClick={button.action}
+                      variant={button.variant ?? 'text'}
+                      iconType="outline"
+                      disabled={button.disabled}
+                    >
+                      {button.label && formatMessage(button.label)}
+                    </GeneralButton>
+                    {button.tooltip && (
+                      <Tooltip placement="top" text={button.tooltip} />
+                    )}
+                  </>
                 )}
               </Box>
-            ) : null}
+            )}
           </GridColumn>
         </GridRow>
       </Box>

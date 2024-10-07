@@ -93,15 +93,16 @@ export const languageSubSection = buildSubSection({
             const { nativeLanguage, otherLanguages } = getApplicationAnswers(
               application.answers,
             )
+            const icelandicSelected =
+              nativeLanguage === 'is' || otherLanguages?.includes('is')
 
             return [
               {
                 label:
                   newPrimarySchoolMessages.differentNeeds
                     .icelandicNotSpokenAroundChild,
-                value: YES,
-                disabled:
-                  nativeLanguage === 'is' || otherLanguages?.includes('is'),
+                value: icelandicSelected ? NO : YES,
+                disabled: icelandicSelected,
               },
             ]
           },
