@@ -42,8 +42,7 @@ export class TemplateApiApplicationService extends BaseTemplateApiApplicationSer
     const s3key = `${application.id}/${attachmentKey}`
     const url = await this.awsService.uploadFile(
       buffer,
-      uploadBucket,
-      s3key,
+      { bucket: uploadBucket, key: s3key },
       uploadParameters,
     )
 

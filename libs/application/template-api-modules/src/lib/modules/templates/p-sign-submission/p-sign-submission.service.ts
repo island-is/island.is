@@ -15,13 +15,12 @@ import {
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 
-import AmazonS3URI from 'amazon-s3-uri'
-import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { AwsService } from '@island.is/nest/aws'
 
 export const QUALITY_PHOTO = `
 query HasQualityPhoto {
@@ -59,14 +58,13 @@ type Delivery = {
 const YES = 'yes'
 @Injectable()
 export class PSignSubmissionService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.P_SIGN)
-    this.s3 = new S3()
   }
 
   async doctorsNote({
@@ -204,16 +202,7 @@ export class PSignSubmissionService extends BaseTemplateApiService {
       }
     )[attachmentKey]
 
-    const { bucket, key } = AmazonS3URI(fileName)
-
-    const uploadBucket = bucket
-    const file = await this.s3
-      .getObject({
-        Bucket: uploadBucket,
-        Key: key,
-      })
-      .promise()
-    const fileContent = file.Body as Buffer
-    return fileContent?.toString('base64') || ''
+    const fileContent = await this.awsService.getFileContent(fileName, 'base64')
+    return fileContent || ''
   }
 }

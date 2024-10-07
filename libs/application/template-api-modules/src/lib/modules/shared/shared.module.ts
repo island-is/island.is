@@ -2,7 +2,7 @@ import { DynamicModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { EmailModule } from '@island.is/email-service'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
-import { AwsModule } from '@island.is/nest/aws'
+import { AwsModule, AwsService } from '@island.is/nest/aws'
 import {
   BaseTemplateAPIModuleConfig,
   BaseTemplateApiApplicationService,

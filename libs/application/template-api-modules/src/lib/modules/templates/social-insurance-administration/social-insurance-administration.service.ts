@@ -26,7 +26,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
-import { S3 } from 'aws-sdk'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
@@ -37,18 +36,18 @@ import {
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
+import { AwsService } from '@island.is/nest/aws'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
 @Injectable()
 export class SocialInsuranceAdministrationService extends BaseTemplateApiService {
-  s3 = new S3()
-
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
+    private readonly awsService: AwsService,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -377,16 +376,19 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getPdf(key: string) {
-    const file = await this.s3
-      .getObject({ Bucket: this.attachmentBucket, Key: key })
-      .promise()
-    const fileContent = file.Body as Buffer
+    const fileContent = await this.awsService.getFileContent(
+      {
+        bucket: this.attachmentBucket,
+        key,
+      },
+      'base64',
+    )
 
     if (!fileContent) {
       throw new Error('File content was undefined')
     }
 
-    return fileContent.toString('base64')
+    return fileContent
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {

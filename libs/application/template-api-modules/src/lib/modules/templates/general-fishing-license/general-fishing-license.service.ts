@@ -14,12 +14,14 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { error } from '@island.is/application/templates/general-fishing-license'
+import { AttachmentS3Service } from '../../shared/services'
 
 @Injectable()
 export class GeneralFishingLicenseService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly attachmentS3Service: AttachmentS3Service,
     private readonly fishingLicenceApi: FishingLicenseService,
     private readonly umsoknirApi: UmsoknirApi,
   ) {
@@ -90,7 +92,7 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
       const attachments = await Promise.all(
         attachmentsRaw?.map(async (a) => {
           const vidhengiBase64 =
-            await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
+            await this.attachmentS3Service.getAttachmentContentAsBase64(
               application,
               a.key,
             )

@@ -12,8 +12,8 @@ import {
   SendMessageCommand,
   SetQueueAttributesCommand,
   Message,
+  QueueAttributeName,
 } from '@aws-sdk/client-sqs'
-import { AbortController } from '@aws-sdk/abort-controller'
 import { type Logger } from '@island.is/logging'
 
 @Injectable()
@@ -81,7 +81,7 @@ export class ClientService {
     const r = await this.client.send(
       new GetQueueAttributesCommand({
         QueueUrl: url,
-        AttributeNames: attributes,
+        AttributeNames: attributes as QueueAttributeName[],
       }),
     )
     return r.Attributes ?? {}

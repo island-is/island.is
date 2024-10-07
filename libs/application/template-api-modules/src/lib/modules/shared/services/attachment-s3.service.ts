@@ -1,9 +1,14 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationWithAttachments as Application } from '@island.is/application/types'
-import { S3 } from 'aws-sdk'
-import AmazonS3URI from 'amazon-s3-uri'
+import { ApplicationWithAttachments } from '@island.is/application/types'
 import { logger } from '@island.is/logging'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import {
+  BaseTemplateApiApplicationService,
+  BaseTemplateAPIModuleConfig,
+} from '../../../types'
+import AmazonS3URI from 'amazon-s3-uri'
+import { AwsService } from '@island.is/nest/aws'
 
 export interface AttachmentData {
   key: string
@@ -14,13 +19,16 @@ export interface AttachmentData {
 
 @Injectable()
 export class AttachmentS3Service {
-  private readonly s3: AWS.S3
-  constructor() {
-    this.s3 = new S3()
-  }
+  constructor(
+    @Inject(AwsService) private awsService: AwsService,
+    @Inject(ConfigService)
+    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
+    @Inject(BaseTemplateApiApplicationService)
+    private readonly applicationService: BaseTemplateApiApplicationService,
+  ) {}
 
   public async getFiles(
-    application: Application,
+    application: ApplicationWithAttachments,
     attachmentAnswerKeys: string[],
   ): Promise<AttachmentData[]> {
     const attachments: AttachmentData[] = []
@@ -43,45 +51,93 @@ export class AttachmentS3Service {
       name: string
     }>,
     answerKey: string,
-    application: Application,
+    application: ApplicationWithAttachments,
   ): Promise<AttachmentData[]> {
     return await Promise.all(
       answers.map(async ({ key, name }) => {
-        const url = (
-          application.attachments as {
-            [key: string]: string
-          }
-        )[key]
-
-        if (!url) {
+        const attachmentName = this.getFilenameFromApplication(application, key)
+        if (!attachmentName) {
           logger.info('Failed to get url from application state')
           return { key: '', fileContent: '', answerKey, fileName: '' }
         }
         const fileContent =
-          (await this.getApplicationFilecontentAsBase64(url)) ?? ''
-
+          (await this.awsService.getFileContent(attachmentName, 'base64')) ?? ''
         return { key, fileContent, answerKey, fileName: name }
       }),
     )
   }
 
-  private async getApplicationFilecontentAsBase64(
-    fileName: string,
-  ): Promise<string | undefined> {
-    const { bucket, key } = AmazonS3URI(fileName)
-    const uploadBucket = bucket
-    try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64')
-    } catch (error) {
-      logger.error(error)
-      return undefined
+  public async getAttachmentContentAsBase64(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+  ): Promise<string> {
+    const { bucket, key } = AmazonS3URI(
+      this.getFilenameFromApplication(application, attachmentKey),
+    )
+    const fileContent = await this.awsService.getFile({ bucket, key })
+    return fileContent?.Body?.transformToString('base64') || ''
+  }
+
+  public async getAttachmentContentAsBlob(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+  ): Promise<Blob> {
+    const { bucket, key } = AmazonS3URI(
+      this.getFilenameFromApplication(application, attachmentKey),
+    )
+    const file = await this.awsService.getFile({ bucket, key })
+    const fileArrayBuffer = await file?.Body?.transformToByteArray()
+    return new Blob([fileArrayBuffer as ArrayBuffer], {
+      type: file?.ContentType,
+    })
+  }
+
+  public async getAttachmentUrl(
+    key: string,
+    expiration: number,
+  ): Promise<string> {
+    if (expiration <= 0) {
+      return Promise.reject('expiration must be positive')
     }
+
+    const bucket = this.configService.get('attachmentBucket') as
+      | string
+      | undefined
+
+    if (bucket == undefined) {
+      return Promise.reject('could not find s3 bucket')
+    }
+
+    return this.awsService.getPresignedUrl({ bucket, key }, expiration)
+  }
+
+  public async addAttachment(
+    application: ApplicationWithAttachments,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string> {
+    return this.applicationService.saveAttachmentToApplicaton(
+      application,
+      fileName,
+      buffer,
+      uploadParameters,
+    )
+  }
+
+  private getFilenameFromApplication(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+  ): string {
+    const fileName = (
+      application.attachments as {
+        [key: string]: string
+      }
+    )[attachmentKey]
+    return fileName
   }
 }

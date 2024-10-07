@@ -13,7 +13,6 @@ import { ClientsDataProtectionComplaintModule } from '@island.is/clients/data-pr
 import { FileStorageModule } from '@island.is/file-storage'
 import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
 import { PdfFileProvider } from './attachments/providers/pdfFileProvider'
-import { AttachmentS3Service } from './attachments/attachment-s3.service'
 
 export class DataProtectionComplaintModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -27,7 +26,6 @@ export class DataProtectionComplaintModule {
       providers: [
         ApplicationAttachmentProvider,
         PdfFileProvider,
-        AttachmentS3Service,
         DataProtectionComplaintService,
       ],
       exports: [DataProtectionComplaintService],

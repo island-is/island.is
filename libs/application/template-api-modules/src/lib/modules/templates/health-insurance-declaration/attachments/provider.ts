@@ -1,6 +1,6 @@
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 import { AttachmentS3Service } from '../../../shared/services'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 export interface DocumentBuildInfo {
   key: string

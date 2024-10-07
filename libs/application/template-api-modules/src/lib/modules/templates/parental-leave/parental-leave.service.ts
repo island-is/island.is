@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { S3 } from 'aws-sdk'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 import cloneDeep from 'lodash/cloneDeep'
@@ -83,6 +82,7 @@ import {
   generateEmployerRejectedApplicationSms,
   generateOtherParentRejectedApplicationSms,
 } from './smsGenerators'
+import { AwsService } from '@island.is/nest/aws'
 
 interface VMSTError {
   type: string
@@ -105,8 +105,6 @@ interface AnswerPeriod {
 
 @Injectable()
 export class ParentalLeaveService extends BaseTemplateApiService {
-  s3 = new S3()
-
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private parentalLeaveApi: ParentalLeaveApi,
@@ -117,6 +115,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
     private readonly childrenService: ChildrenService,
     private readonly nationalRegistryApi: NationalRegistryClientService,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
   }
@@ -387,16 +386,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       )
 
       const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
+      const fileContent = await this.awsService.getFileContent(
+        {
+          bucket: this.attachmentBucket,
+          key: Key,
+        },
+        'base64',
+      )
 
       if (!fileContent) {
         throw new Error('File content was undefined')
       }
 
-      return fileContent.toString('base64')
+      return fileContent
     } catch (e) {
       this.logger.error('Cannot get ' + fileUpload + ' attachment', { e })
       throw new Error('Failed to get the ' + fileUpload + ' attachment')
