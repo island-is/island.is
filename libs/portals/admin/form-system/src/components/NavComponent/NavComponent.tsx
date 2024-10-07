@@ -32,16 +32,18 @@ export const NavComponent = ({
   selectable,
   focusComponent,
 }: Props) => {
-  const { control, selectStatus, controlDispatch } = //TODO: this had updateSettings
+  const { control, selectStatus, controlDispatch, formUpdate } =
     useContext(ControlContext)
   const { activeItem, activeListItem, form } = control
   const activeGuid =
     selectStatus === NavbarSelectStatus.LIST_ITEM
       ? activeListItem?.id ?? ''
       : activeItem?.data?.id ?? ''
-  const connected: boolean = form.dependencies[activeGuid]?.includes(
-    data.id as string,
+
+  const connected = form.dependencies?.some(
+    (dep) => dep?.parentProp === activeGuid && dep?.childProps && dep.childProps.length > 0,
   )
+
   const [editMode] = useState(false)
 
   const { setNodeRef, attributes, listeners, isDragging } = useSortable({
@@ -160,7 +162,7 @@ export const NavComponent = ({
                     payload: {
                       activeId: activeGuid,
                       itemId: data.id as string,
-                      update: updateSettings,
+                      update: formUpdate,
                     },
                   })
                 }

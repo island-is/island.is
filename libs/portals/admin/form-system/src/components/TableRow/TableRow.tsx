@@ -21,11 +21,11 @@ import { useIntl } from 'react-intl'
 import { m } from '../../lib/messages'
 
 interface Props {
-  id?: number | null
+  id?: string | null
   name?: string
   created?: Date
   lastModified?: Date
-  org?: number | null
+  org?: string | null
   state?: number
   options?: string
   isHeader: boolean
@@ -113,7 +113,7 @@ export const TableRow = ({
           </Box>
         </Column>
         <Column span="2/12">
-          <ColumnText text={LicenseProviderEnum[org ? org : 1]} />
+          <ColumnText text={org ?? ''} />
         </Column>
         <Column span="1/12">
           <ColumnText text={ApplicationTemplateStatus[state ? state : 0]} />

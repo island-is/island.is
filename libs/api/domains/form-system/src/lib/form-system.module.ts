@@ -14,6 +14,10 @@ import { ScreensService } from './screens/screens.service'
 import { ScreensResolver } from './screens/screens.resolver'
 import { SectionsService } from './sections/sections.service'
 import { SectionsResolver } from './sections/sections.resolver'
+import { ServicesResolver } from './services/services.resolver'
+import { ServicesService } from './services/services.service'
+import { ApplicantsResolver } from './applicants/applicants.resolver'
+import { ApplicantsService } from './applicants/applicants.service'
 
 @Module({
   providers: [
@@ -31,6 +35,10 @@ import { SectionsResolver } from './sections/sections.resolver'
     ScreensResolver,
     SectionsService,
     SectionsResolver,
+    ServicesResolver,
+    ServicesService,
+    ApplicantsResolver,
+    ApplicantsService,
   ],
   exports: [],
   imports: [FormSystemClientModule],

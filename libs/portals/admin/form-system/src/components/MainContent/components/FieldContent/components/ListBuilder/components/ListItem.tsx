@@ -14,7 +14,7 @@ import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
 import { m } from '../../../../../../../lib/messages'
 import * as styles from './ListItem.css'
-import { translate } from '../../../../../../../lib/utils/translation'
+import { getTranslation } from '../../../../../../../lib/utils/getTranslation'
 
 interface Props {
   listItem: FormSystemListItem
@@ -185,13 +185,13 @@ export const ListItem = ({
                 label: 'Translate',
                 name: 'reader',
                 onClick: async () => {
-                  const translation = await translate(listItem?.label?.is ?? '')
+                  const translation = await getTranslation(listItem?.label?.is ?? '')
                   controlDispatch({
                     type: 'CHANGE_LIST_ITEM',
                     payload: {
                       property: 'label',
                       lang: 'en',
-                      value: translation,
+                      value: translation ?? '',
                       id: listItem.id ?? ''
                     },
                   })
@@ -251,7 +251,7 @@ export const ListItem = ({
                   label: 'Translate',
                   name: 'reader',
                   onClick: async () => {
-                    const translation = await translate(
+                    const translation = await getTranslation(
                       listItem?.description?.is ?? '',
                     )
                     controlDispatch({
@@ -259,7 +259,7 @@ export const ListItem = ({
                       payload: {
                         property: 'description',
                         lang: 'en',
-                        value: translation,
+                        value: translation ?? '',
                         id: listItem.id ?? ''
                       },
                     })

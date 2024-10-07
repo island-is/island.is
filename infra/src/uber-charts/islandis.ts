@@ -101,6 +101,8 @@ const userNotificationService = userNotificationServiceSetup({
   userProfileApi: servicePortalApi,
 })
 
+const formSystemApi = formSystemApiSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -113,6 +115,7 @@ const api = apiSetup({
   authAdminApi,
   universityGatewayApi: universityGatewayService,
   userNotificationService,
+  formSystemService: formSystemApi,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -139,8 +142,6 @@ const userNotificationCleanupWorkerService =
 
 const endorsementSystemCleanUpWorkerService =
   endorsementSystemCleanUpWorkerSetup()
-
-const formSystemApi = formSystemApiSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 

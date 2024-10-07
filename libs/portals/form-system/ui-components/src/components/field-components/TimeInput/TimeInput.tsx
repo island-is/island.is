@@ -22,11 +22,11 @@ export const TimeInput = ({ item }: Props) => {
     const interval = item?.fieldSettings?.timeInterval
 
     switch (interval) {
-      case 1:
+      case '1':
         return [{ label: '00', value: '00' }]
-      case 2:
+      case '2':
         return createOptions(halfList.minuteList)
-      case 3:
+      case '3':
         return createOptions(quarterList.minuteList)
       default:
         return createOptions(minuteList)
@@ -58,7 +58,7 @@ export const TimeInput = ({ item }: Props) => {
           options={chosenMinuteList()}
           size="xs"
           isSearchable
-          isDisabled={item?.fieldSettings?.timeInterval === 1}
+          isDisabled={item?.fieldSettings?.timeInterval === '1'}
         />
       </Column>
     </Row>

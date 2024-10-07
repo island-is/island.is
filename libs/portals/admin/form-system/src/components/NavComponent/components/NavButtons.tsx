@@ -30,11 +30,11 @@ export const NavButtons = () => {
     return false
   }
 
-  const { createScreen, createField, deleteSection, deleteScreen, deleteField } = useFormMutations()
+  const { createScreen, createField, deleteScreen, deleteField } = useFormMutations()
 
   const addItem = async () => {
     if (activeItem.type === 'Section') {
-      const newScreen = await createScreen({
+      const newScreen = await createScreen[0]({
         variables: {
           input: {
             id: activeItem?.data?.id,
@@ -52,7 +52,7 @@ export const NavButtons = () => {
         })
       }
     } else if (activeItem.type === 'Screen') {
-      const newField = await createField({
+      const newField = await createField[0]({
         variables: {
           input: {
             id: activeItem?.data?.id,
@@ -75,7 +75,7 @@ export const NavButtons = () => {
   const remove = async () => {
     const id = activeItem?.data?.id as string
     if (activeItem.type === 'Section') {
-      await deleteScreen({
+      await deleteScreen[0]({
         variables: {
           input: {
             id: id,
@@ -84,7 +84,7 @@ export const NavButtons = () => {
       })
       controlDispatch({ type: 'REMOVE_SECTION', payload: { id: id } })
     } else if (activeItem.type === 'Screen') {
-      await deleteScreen({
+      await deleteScreen[0]({
         variables: {
           input: {
             id: id,
@@ -93,7 +93,7 @@ export const NavButtons = () => {
       })
       controlDispatch({ type: 'REMOVE_SCREEN', payload: { id: id } })
     } else if (activeItem.type === 'Field') {
-      await deleteField({
+      await deleteField[0]({
         variables: {
           input: {
             id: id,

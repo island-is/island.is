@@ -76,7 +76,7 @@ export const Navbar = () => {
   const { createSection } = useFormMutations()
 
   const addSection = async () => {
-    const newSection = await createSection({
+    const newSection = await createSection[0]({
       variables: {
         input: {
           formId: form.id

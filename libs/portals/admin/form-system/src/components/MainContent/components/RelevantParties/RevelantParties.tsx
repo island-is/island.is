@@ -2,9 +2,7 @@ import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { Stack, Checkbox, Box, Text } from '@island.is/island-ui/core'
 import {
-  FormSystemApplicantType,
   FormSystemForm,
-  FormSystemFormApplicantType,
   FormSystemLanguageType,
 } from '@island.is/api/schema'
 import { EFormApplicantTypes } from '../../../../lib/utils/interfaces'
@@ -32,9 +30,7 @@ const applicantTypes = [
 
 export const RelevantParties = () => {
   const {
-    applicantTypes: applicantTypeTemplates,
     control,
-    updateSettings,
     controlDispatch,
   } = useContext(ControlContext)
   const { form } = control
@@ -42,7 +38,7 @@ export const RelevantParties = () => {
   const [formApplicantTypes, setFormApplicantTypes] = useState<
     FormSystemFormApplicantType[]
   >(
-    (form.formApplicantTypes ?? []).filter(
+    (form.applicants ?? []).filter(
       Boolean,
     ) as FormSystemFormApplicantType[],
   )
@@ -130,8 +126,8 @@ export const RelevantParties = () => {
       )
       const newTypes = hasLegalEntity
         ? newFormApplicantTypes.filter(
-            (f) => f.type !== EFormApplicantTypes.logadili,
-          )
+          (f) => f.type !== EFormApplicantTypes.logadili,
+        )
         : newFormApplicantTypes
       const newList = [...formApplicantTypes, ...newTypes]
       saveAndUpdate({ ...form, formApplicantTypes: newList })

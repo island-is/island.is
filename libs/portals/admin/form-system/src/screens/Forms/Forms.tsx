@@ -1,36 +1,29 @@
 import { Box, Button, Text, Inline } from '@island.is/island-ui/core'
-import { useNavigate } from 'react-router-dom'
+import { useLoaderData, useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../lib/paths'
 import { TableRow } from '../../components/TableRow/TableRow'
-import { useFormSystemGetFormsQuery } from './Forms.generated'
-import { useFormSystemCreateFormMutation } from './CreateForm.generated'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { CREATE_FORM } from '@island.is/form-system/graphql'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { m } from '@island.is/form-system/ui'
+import { FormsLoaderResponse } from './Forms.loader'
+import { useMutation } from '@apollo/client'
+import { useIntl } from 'react-intl'
+
+
 
 export const Forms = () => {
   const navigate = useNavigate()
+  const { forms } = useLoaderData() as FormsLoaderResponse
+  const { formatMessage } = useIntl()
+  const [formSystemCreateFormMutation] = useMutation(CREATE_FORM)
 
-  const { data, loading, error } = useFormSystemGetFormsQuery({
-    variables: {
-      input: {
-        organizationId: 1,
-      },
-    },
-  })
-
-  const [formSystemCreateFormMutation] = useFormSystemCreateFormMutation({
-    variables: {
-      input: {
-        organizationId: 1,
-      },
-    },
-  })
-
-  const forms = data?.formSystemGetForms.forms
-  if (!loading && !error) {
+  if (forms) {
     return (
       <div>
         {/* Title and buttons  */}
         <div>
-          <Text variant="h2">Forskriftir</Text>
+          <Text variant="h2">{formatMessage(m.templates)}</Text>
         </div>
         <Box marginTop={5}>
           <Inline space={2}>
@@ -49,10 +42,7 @@ export const Forms = () => {
                 )
               }}
             >
-              Ný forskrift
-            </Button>
-            <Button variant="ghost" size="medium">
-              Hlaða inn forskrift
+              {formatMessage(m.newTemplate)}
             </Button>
           </Inline>
         </Box>
@@ -70,7 +60,7 @@ export const Forms = () => {
                 key={f?.id}
                 id={f?.id}
                 name={f?.name?.is ?? ''}
-                org={f?.organization?.id}
+                org={f?.organizationId}
                 isHeader={false}
                 translated={f?.isTranslated ?? false}
               />

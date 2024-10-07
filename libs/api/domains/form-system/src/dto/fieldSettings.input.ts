@@ -63,4 +63,7 @@ export class FieldSettingsInput {
 
   @Field(() => String, { nullable: true })
   timeInterval?: string
+
+  @Field(() => Boolean, { nullable: true })
+  isLarge?: boolean
 }

@@ -9,6 +9,14 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:template',
     defaultMessage: 'Forskrift',
   },
+  templates: {
+    id: 'portals-admin.form-system:templates',
+    defaultMessage: 'Forskriftir',
+  },
+  newTemplate: {
+    id: 'portals-admin.form-system:new-template',
+    defaultMessage: 'Ný forskrift',
+  },
   organisation: {
     id: 'portals-admin.form-system:organisation',
     defaultMessage: 'Stofnun',

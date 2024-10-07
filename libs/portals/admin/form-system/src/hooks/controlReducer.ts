@@ -642,11 +642,13 @@ export const controlReducer = (
         ...field,
         fieldSettings: {
           ...field.fieldSettings,
-          list: list.filter(l => l !== null && l !== undefined).map((l: FormSystemListItem) =>
-            l.id === id
-              ? { ...l, isSelected: !l.isSelected }
-              : { ...l, isSelected: false },
-          ),
+          list: list
+            .filter((l): l is FormSystemListItem => l !== null && l !== undefined)
+            .map((l: FormSystemListItem) =>
+              l.id === id
+                ? { ...l, isSelected: !l.isSelected }
+                : { ...l, isSelected: false },
+            ),
         },
       }
       updateField[0]({
