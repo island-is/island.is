@@ -119,6 +119,7 @@ const Conclusion: FC = () => {
         courtDate: null,
         postponedIndefinitelyExplanation: null,
         indictmentRulingDecision: null,
+        mergeCaseId: null,
         force: true,
       }
 
@@ -137,11 +138,9 @@ const Conclusion: FC = () => {
           break
         case IndictmentDecision.COMPLETING:
           update.indictmentRulingDecision = selectedDecision
-          update.mergeCaseId =
-            selectedDecision === CaseIndictmentRulingDecision.MERGE
-              ? workingCase.mergeCase?.id
-              : null
-
+          if (selectedDecision === CaseIndictmentRulingDecision.MERGE) {
+            update.mergeCaseId = workingCase.mergeCase?.id
+          }
           break
         case IndictmentDecision.REDISTRIBUTING:
           update.judgeId = null
