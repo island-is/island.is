@@ -145,12 +145,7 @@ import { ParliamentaryListCreationService } from './signature-collection/parliam
 import { ParliamentaryListSigningModule } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.module'
 import { ParliamentaryListSigningService } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.service'
 
-export const dynamicModules = [
-  ParentalLeaveModule,
-  ChildrenResidenceChangeModule,
-  GeneralPetitionModule,
-  SocialInsuranceAdministrationModule,
-]
+export const dynamicModules = [GeneralPetitionModule]
 
 export const modules = [
   ReferenceTemplateModule,
@@ -219,6 +214,9 @@ export const modules = [
   NewPrimarySchoolModule,
   ParliamentaryListCreationModule,
   ParliamentaryListSigningModule,
+  ParentalLeaveModule,
+  ChildrenResidenceChangeModule,
+  SocialInsuranceAdministrationModule,
 ]
 
 export const services = [
