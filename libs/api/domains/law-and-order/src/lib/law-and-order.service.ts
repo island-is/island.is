@@ -124,36 +124,44 @@ export class LawAndOrderService {
   async getSubpoena(user: User, id: string, locale: Locale) {
     const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
 
-    const subpoena: SubpoenaResponse | undefined | null =
-      await this.api.getSubpoena(id, user, locale)
+    const subpoena: SubpoenaResponse | null = await this.api.getSubpoena(
+      id,
+      user,
+      locale,
+    )
 
-    const defenderChoice = subpoena?.defenderInfo?.defenderChoice
+    if (!isDefined(subpoena)) return null
+    const subpoenaData = subpoena.data
+    if (!isDefined(subpoenaData)) return null
+
+    const defenderInfo = subpoena.defenderInfo
+    const defenderChoice = defenderInfo?.defenderChoice
     const message = defenderChoice
       ? formatMessage(DefenseChoices[defenderChoice].message)
       : ''
 
     const data: Subpoena = {
       data: {
-        id: subpoena?.caseId ?? id,
-        hasBeenServed: subpoena?.data?.hasBeenServed,
-        chosenDefender: [message, subpoena?.defenderInfo?.defenderName]
+        id: subpoena.caseId ?? id,
+        hasBeenServed: subpoenaData.hasBeenServed,
+        chosenDefender: [message, defenderInfo?.defenderName]
           .filter(isDefined)
           .join(', '),
         defenderChoice: mapDefenseChoiceForSubpoena(defenderChoice),
         defaultChoice: mapDefenseChoiceForSubpoenaDefaultChoice(
-          subpoena?.data.defaultDefenderChoice,
+          subpoenaData.defaultDefenderChoice,
         ),
-        hasChosen: subpoena?.data.hasChosenDefender,
-        canEditDefenderChoice: subpoena?.defenderInfo?.canEdit,
-        groups: subpoena?.data.groups,
-        courtContactInfo: subpoena?.defenderInfo?.courtContactInfo,
+        hasChosen: subpoenaData.hasChosenDefender,
+        canEditDefenderChoice: defenderInfo?.canEdit,
+        groups: subpoenaData.groups,
+        courtContactInfo: defenderInfo?.courtContactInfo,
       },
       actions: undefined,
       texts: {
-        confirmation: subpoena?.data.alerts?.find(
+        confirmation: subpoenaData.alerts?.find(
           (alert) => alert.type === AlertMessageTypeEnum.Success,
         )?.message,
-        description: subpoena?.data.subtitle,
+        description: subpoenaData.subtitle,
       },
     }
     return data

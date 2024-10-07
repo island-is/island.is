@@ -162,7 +162,7 @@ const Subpoena = () => {
           )}
         </>
       )}
-      {!loading && !error && subpoena?.data?.groups?.length === 0 && (
+      {!loading && !error && subpoena === null && (
         <Problem
           type="no_data"
           noBorder={false}
