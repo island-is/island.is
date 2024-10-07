@@ -409,7 +409,7 @@ export const impactMsgs = defineMessages({
   regExplainer: {
     id: 'ap.regulations-admin:draft-impactedreg-explainer',
     defaultMessage:
-      'ATH: Einungis er hægt að breyta reglugerðum sem minnst er á með skýrum hætti í texta reglugerðarinnar.',
+      'ATH: Sé ætlunin að breyta annarri reglugerð, þarf að minnast á þá reglugerð með skýrum hætti í þessari stofnreglugerð.',
   },
   regExplainer_editLink: {
     id: 'ap.regulations-admin:draft-impactedreg-editlink',
