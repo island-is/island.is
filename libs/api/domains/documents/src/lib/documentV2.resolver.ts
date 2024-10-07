@@ -86,7 +86,7 @@ export class DocumentResolverV2 {
     @Args('input') input: DocumentsInput,
     @CurrentUser() user: User,
   ): Promise<PaginatedDocuments> {
-    return this.documentServiceV2.listDocuments(user.nationalId, input)
+    return this.documentServiceV2.listDocuments(user, input)
   }
 
   @Scopes(DocumentsScope.main)
