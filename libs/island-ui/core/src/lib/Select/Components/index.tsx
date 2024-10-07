@@ -21,16 +21,10 @@ import {
   GroupBase,
   MultiValueProps,
   MultiValueGenericProps,
-  ClearIndicatorProps,
-  Props,
 } from 'react-select'
 
 import { Icon } from '../../IconRC/Icon'
-import {
-  CustomSelectProps,
-  Option as OptionType,
-  OptionTypeNew,
-} from '../Select.types'
+import { Option as OptionType } from '../Select.types'
 import * as styles from '../Select.css'
 
 export const MultiValue = <
@@ -59,18 +53,6 @@ export const MultiValueLabel = <
       <span className={styles.multiValueLabel}>{props.children}</span>
     </components.MultiValueLabel>
   )
-}
-
-export const CustomClearIndicator = (
-  props: ClearIndicatorProps<OptionTypeNew>,
-) => {
-  const { selectProps } = props as { selectProps: CustomSelectProps }
-
-  if (!selectProps.showClear) {
-    return null
-  }
-
-  return <components.ClearIndicator {...props} />
 }
 
 export const Menu = <

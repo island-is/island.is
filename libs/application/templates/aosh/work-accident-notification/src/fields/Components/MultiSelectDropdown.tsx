@@ -36,7 +36,6 @@ export const MultiSelectDropdown: FC<
               // placeholder={group.name}
               closeMenuOnSelect={false}
               hideSelectedOptions={false}
-              hideClearIndicator={true}
               options={options.map((option) => ({
                 value: option.code,
                 label: option.name,
