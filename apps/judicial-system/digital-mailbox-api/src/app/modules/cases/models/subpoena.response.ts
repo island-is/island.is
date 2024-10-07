@@ -97,7 +97,7 @@ export class SubpoenaResponse {
     )
 
     const waivedRight = defendantInfo?.defenderChoice === DefenderChoice.WAIVE
-    const hasDefender = defendantInfo?.defenderName !== undefined
+    const hasDefender = defendantInfo?.defenderName !== null
     const subpoenas = defendantInfo?.subpoenas ?? []
     const hasBeenServed =
       subpoenas.length > 0 &&
@@ -120,11 +120,10 @@ export class SubpoenaResponse {
         title: t.subpoena,
         subtitle: courtNameAndAddress,
         hasBeenServed: hasBeenServed,
-        hasChosenDefender:
+        hasChosenDefender: Boolean(
           defendantInfo?.defenderChoice &&
-          defendantInfo.defenderChoice !== DefenderChoice.DELAY
-            ? true
-            : false,
+            defendantInfo.defenderChoice !== DefenderChoice.DELAY,
+        ),
         defaultDefenderChoice: DefenderChoice.DELAY,
         alerts: [
           ...(hasBeenServed
