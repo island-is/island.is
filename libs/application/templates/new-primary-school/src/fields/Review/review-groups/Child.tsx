@@ -6,9 +6,11 @@ import { format as formatKennitala } from 'kennitala'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getGenderOptionLabel,
+  getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
+import { useFriggOptions } from '../../../hooks/useFriggOptions'
+import { OptionsType } from '../../../lib/constants'
 
 export const Child = ({
   application,
@@ -20,10 +22,12 @@ export const Child = ({
     application.answers,
   )
 
+  const pronounOptions = useFriggOptions(OptionsType.PRONOUN)
+
   return (
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.('childrenMultiField')}
+      editAction={() => goToScreen?.('childInfo')}
     >
       <Stack space={2}>
         <GridRow>
@@ -63,28 +67,32 @@ export const Child = ({
             />
           </GridColumn>
         </GridRow>
-        {(childInfo.gender ||
-          childInfo.chosenName ||
+        {(childInfo.preferredName ||
+          childInfo.pronouns?.length > 0 ||
           differentPlaceOfResidence === YES) && (
           <GridRow rowGap={2}>
-            {childInfo.chosenName && (
+            {childInfo.preferredName && (
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
                     newPrimarySchoolMessages.childrenNParents
-                      .childInfoChosenName,
+                      .childInfoPreferredName,
                   )}
-                  value={childInfo.chosenName}
+                  value={childInfo.preferredName}
                 />
               </GridColumn>
             )}
-            {childInfo.gender && (
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            {childInfo.pronouns?.length > 0 && (
+              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
                 <DataValue
                   label={formatMessage(
-                    newPrimarySchoolMessages.childrenNParents.childInfoGender,
+                    newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
                   )}
-                  value={formatMessage(getGenderOptionLabel(childInfo.gender))}
+                  value={childInfo.pronouns
+                    .map((pronoun) =>
+                      getSelectedOptionLabel(pronounOptions, pronoun),
+                    )
+                    .join(', ')}
                 />
               </GridColumn>
             )}

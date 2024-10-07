@@ -17,9 +17,11 @@ import type { User } from '@island.is/judicial-system/types'
 import { BackendService } from '../backend'
 import { PoliceCaseFilesQueryInput } from './dto/policeCaseFiles.input'
 import { PoliceCaseInfoQueryInput } from './dto/policeCaseInfo.input'
+import { SubpoenaStatusQueryInput } from './dto/subpoenaStatus.input'
 import { UploadPoliceCaseFileInput } from './dto/uploadPoliceCaseFile.input'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
+import { SubpoenaStatus } from './models/subpoenaStatus.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -45,6 +47,26 @@ export class PoliceResolver {
       user.id,
       AuditedAction.GET_POLICE_CASE_FILES,
       backendService.getPoliceCaseFiles(input.caseId),
+      input.caseId,
+    )
+  }
+
+  @Query(() => SubpoenaStatus, { nullable: true })
+  subpoenaStatus(
+    @Args('input', { type: () => SubpoenaStatusQueryInput })
+    input: SubpoenaStatusQueryInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<SubpoenaStatus> {
+    this.logger.debug(
+      `Getting subpoena status for subpoena ${input.subpoenaId} of case ${input.caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_SUBPOENA_STATUS,
+      backendService.getSubpoenaStatus(input.caseId, input.subpoenaId),
       input.caseId,
     )
   }
