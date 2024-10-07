@@ -20,7 +20,6 @@ import {
   isRequestCase,
   isRestrictionCase,
   RequestSharedWithDefender,
-  ServiceRequirement,
   UserRole,
 } from '@island.is/judicial-system/types'
 

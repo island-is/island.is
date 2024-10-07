@@ -11,7 +11,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useGetLawyer, useSubpoena } from '../../utils/hooks'
-import { SubpoenaStatusQuery } from '../../utils/hooks/useSubpoena/getSubpoenaStatus.generated'
 import { strings } from './ServiceAnnouncement.strings'
 
 const mapServiceStatusTitle = (
