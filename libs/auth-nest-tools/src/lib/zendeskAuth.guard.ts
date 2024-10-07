@@ -7,14 +7,10 @@ const SIGNING_SECRET_ALGORITHM = 'sha256'
 
 @Injectable()
 export class ZendeskAuthGuard implements CanActivate {
-  private readonly signingSecret: string
-
-  constructor(signingSecret: string | undefined) {
-    if (!signingSecret) {
-      throw new Error('No signing secret provided')
+  constructor(private secret: string | undefined) {
+    if (!secret) {
+      throw new Error('ZendeskAuthGuard: secret is required')
     }
-
-    this.signingSecret = signingSecret
   }
 
   canActivate(context: ExecutionContext): boolean {
@@ -34,7 +30,10 @@ export class ZendeskAuthGuard implements CanActivate {
     body: string,
     timestamp: string,
   ): boolean {
-    const hmac = crypto.createHmac(SIGNING_SECRET_ALGORITHM, this.signingSecret)
+    const hmac = crypto.createHmac(
+      SIGNING_SECRET_ALGORITHM,
+      this.secret as string,
+    )
     const sig = hmac.update(timestamp + body).digest('base64')
 
     return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(sig))

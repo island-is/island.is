@@ -32,20 +32,9 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 import { DelegationAdminScopes } from '@island.is/auth/scopes'
 import { isDefined } from '@island.is/shared/utils'
 
+import env from '../../../environments/environment'
+
 const namespace = '@island.is/auth/delegation-admin'
-
-const ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE =
-  process.env.ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE
-
-if (!ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE) {
-  throw new Error(
-    'Environment variable ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE must be set',
-  )
-}
-
-const ZendeskAuthGuardInstance = new ZendeskAuthGuard(
-  ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE,
-)
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegation-admin')
@@ -108,7 +97,7 @@ export class DelegationAdminController {
   }
 
   @BypassAuth()
-  @UseGuards(ZendeskAuthGuardInstance)
+  @UseGuards(new ZendeskAuthGuard(env.zendeskGeneralMandateWebhookSecret))
   @Post('/zendesk')
   @Documentation({
     response: { status: 200 },

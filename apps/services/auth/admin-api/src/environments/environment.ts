@@ -12,6 +12,9 @@ const devConfig = {
   port: 6333,
   clientSecretEncryptionKey:
     process.env.CLIENT_SECRET_ENCRYPTION_KEY ?? 'secret',
+  zendeskGeneralMandateWebhookSecret:
+    process.env.ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE ??
+    'dGhpc19zZWNyZXRfaXNfZm9yX3Rlc3Rpbmdfb25seQ==',
 }
 
 const prodConfig = {
@@ -27,6 +30,8 @@ const prodConfig = {
   },
   port: 3333,
   clientSecretEncryptionKey: process.env.CLIENT_SECRET_ENCRYPTION_KEY,
+  zendeskGeneralMandateWebhookSecret:
+    process.env.ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE,
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
