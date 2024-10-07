@@ -26,9 +26,9 @@ export const createAssignToken = (
 
 export const getConfigValue = (
   configService: ConfigService<SharedModuleConfig>,
-  key: keyof BaseTemplateAPIModuleConfig,
+  key: keyof SharedModuleConfig,
 ) => {
-  const value = configService.get('SharedModuleConfig')[key]
+  const value = configService.get(key)
 
   if (value === undefined) {
     throw new Error(

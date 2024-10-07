@@ -10,6 +10,7 @@ import { Message } from '@island.is/email-service'
 
 import type { Locale } from '@island.is/shared/types'
 import { sharedModuleConfig } from '../modules/shared'
+import { ConfigType } from '@nestjs/config'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -38,9 +39,8 @@ export interface BaseTemplateAPIModuleConfig {
   islykill: IslykillApiModuleConfig
 }
 
-export interface SharedModuleConfig {
-  SharedModuleConfig: typeof sharedModuleConfig
-}
+export interface SharedModuleConfig
+  extends ConfigType<typeof sharedModuleConfig> {}
 
 export interface TemplateApiModuleActionProps<Params = unknown> {
   application: ApplicationWithAttachments
