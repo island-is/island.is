@@ -4,18 +4,16 @@ import {
 } from '@island.is/clients/smartsolutions'
 import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.config'
 import { ConfigType } from '@nestjs/config'
+import { SmartSolutionsAdapterModule } from '../../smart-solutions-adapter/smartSolutionsAdapter.module'
 
 export const SmartSolutionsFirearmModule =
-  SmartSolutionsApiClientModule.registerAsync({
+  SmartSolutionsAdapterModule.registerAsync({
     useFactory: (
       config: ConfigType<typeof FirearmDigitalLicenseClientConfig>,
     ) => {
-      const smartConfig: SmartSolutionsConfig = {
-        apiKey: config.apiKey,
-        apiUrl: config.apiUrl,
-        passTemplateId: config.passTemplateId,
+      return {
+        config,
       }
-      return smartConfig
     },
     inject: [FirearmDigitalLicenseClientConfig.KEY],
   })

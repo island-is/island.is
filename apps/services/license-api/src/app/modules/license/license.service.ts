@@ -2,10 +2,10 @@ import {
   BaseLicenseUpdateClient,
   LicenseType,
   LicenseUpdateClientService,
+  PassData,
+  PassDataInput,
 } from '@island.is/clients/license-client'
-import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import {
   BarcodeService,
   TOKEN_EXPIRED_ERROR,
@@ -139,7 +139,7 @@ export class LicenseService {
     nationalId: string,
     payload?: string,
     requestId?: string,
-  ): Promise<Result<Pass | undefined>> {
+  ): Promise<PassData | undefined> {
     let updatePayload: PassDataInput = {
       expirationDate,
     }
@@ -171,14 +171,30 @@ export class LicenseService {
       requestId,
     })
 
-    return await service.pushUpdate(updatePayload, nationalId, requestId)
+    const res = await service.pushUpdate(updatePayload, nationalId, requestId)
+
+    if (res.ok) {
+      return res.data
+    }
+
+    this.logger.error('License update failed', {
+      updateType: 'push',
+      category: LOG_CATEGORY,
+      requestId,
+      error: res.error,
+    })
+
+    throw this.getException(
+      this.getErrorTypeByCode(res.error.code),
+      res.error.message,
+    )
   }
 
   private async pullUpdateLicense(
     service: BaseLicenseUpdateClient,
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<Pass | undefined>> {
+  ): Promise<PassData | undefined> {
     /** PULL - Update electronic license with pulled data from service
      * 1. Fetch data from provider
      * 2. Parse and validate license data
@@ -191,7 +207,23 @@ export class LicenseService {
       requestId,
     })
 
-    return await service.pullUpdate(nationalId, requestId)
+    const res = await service.pullUpdate(nationalId, requestId)
+
+    if (res.ok) {
+      return res.data
+    }
+
+    this.logger.error('License update failed', {
+      updateType: 'pull',
+      category: LOG_CATEGORY,
+      requestId,
+      error: res.error,
+    })
+
+    throw this.getException(
+      this.getErrorTypeByCode(res.error.code),
+      res.error.message,
+    )
   }
 
   async updateLicense(
@@ -209,7 +241,7 @@ export class LicenseService {
       updateType: inputData.licenseUpdateType,
     })
 
-    let updateRes: Result<Pass | undefined>
+    let updateRes: PassData | undefined
     if (inputData.licenseUpdateType === 'push') {
       const { expiryDate, payload } = inputData
 
@@ -236,28 +268,16 @@ export class LicenseService {
       updateRes = await this.pullUpdateLicense(service, nationalId, requestId)
     }
 
-    if (updateRes.ok) {
-      this.logger.info('License update successful', {
-        category: LOG_CATEGORY,
-        requestId,
-        updateType: inputData.licenseUpdateType,
-      })
-      return {
-        updateSuccess: true,
-        data: updateRes.data,
-      }
-    }
-
-    this.logger.error('License update failed', {
+    this.logger.info('License update successful', {
       category: LOG_CATEGORY,
       requestId,
-      error: updateRes.error,
+      updateType: inputData.licenseUpdateType,
     })
 
-    throw this.getException(
-      this.getErrorTypeByCode(updateRes.error.code),
-      updateRes.error.message,
-    )
+    return {
+      updateSuccess: true,
+      data: updateRes,
+    }
   }
 
   async revokeLicense(

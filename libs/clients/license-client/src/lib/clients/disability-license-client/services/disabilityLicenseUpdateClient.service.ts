@@ -20,7 +20,7 @@ export class DisabilityLicenseUpdateClient extends BaseLicenseUpdateClient {
     @Inject(LOGGER_PROVIDER) protected logger: Logger,
     protected smartApi: SmartSolutionsApi,
   ) {
-    super(logger, smartApi)
+    super()
   }
 
   pushUpdate(
