@@ -214,6 +214,19 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
         width
         height
       }
+      alertBanner {
+        showAlertBanner
+        bannerVariant
+        title
+        description
+        linkTitle
+        link {
+          slug
+          type
+        }
+        isDismissable
+        dismissedForDays
+      }
       footerConfig
       footerItems {
         title

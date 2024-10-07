@@ -2915,6 +2915,9 @@ export interface IOrganizationFields {
 
   /** Kennitala */
   kennitala?: string | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
