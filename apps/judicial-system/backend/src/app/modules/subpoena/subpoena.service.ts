@@ -1,4 +1,3 @@
-import { Base } from 'infra/src/dsl/xroad'
 import { Base64 } from 'js-base64'
 import { Includeable, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
