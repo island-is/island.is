@@ -122,7 +122,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
   }
 
   useEffect(() => {
-    const postMileage = async () => {
+    const post = async () => {
       const formValue = await getValueFromForm(vehicle.vehicleId)
       if (formValue) {
         if (
@@ -156,7 +156,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     }
 
     if (mileageData) {
-      postMileage()
+      post()
     }
   }, [mileageData])
 
