@@ -26,6 +26,7 @@ import { VehiclesBulkMileageRegistrationRequestOverview } from '@island.is/servi
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import { isDefined } from '@island.is/shared/utils'
 import { vehicleMessage } from '../../lib/messages'
+import { NetworkStatus } from '@apollo/client'
 
 type UseParams = {
   id: string
@@ -36,25 +37,35 @@ const VehicleBulkMileageJobDetail = () => {
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
 
-  const { data, loading, error, refetch } = useGetJobsStatusQuery({
-    variables: {
-      input: {
-        requestId: id,
+  const { data, loading, error, refetch, networkStatus } =
+    useGetJobsStatusQuery({
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        input: {
+          requestId: id,
+        },
       },
-    },
-  })
+    })
 
   const {
     data: registrationData,
     loading: registrationLoading,
     error: registrationError,
+    refetch: registrationRefresh,
+    networkStatus: registrationNetworkStatus,
   } = useGetJobRegistrationsQuery({
+    notifyOnNetworkStatusChange: true,
     variables: {
       input: {
         guid: id,
       },
     },
   })
+
+  const handleRefresh = () => {
+    refetch()
+    registrationRefresh()
+  }
 
   const jobsStatus: VehiclesBulkMileageRegistrationRequestStatus | undefined =
     data?.vehicleBulkMileageRegistrationRequestStatus ?? undefined
@@ -86,6 +97,11 @@ const VehicleBulkMileageJobDetail = () => {
     downloadFile(`magnskraning_villur`, ['Ökutæki', 'Villur'], data, 'csv')
   }
 
+  const displayRegistrationData =
+    registrations?.requests.length &&
+    !registrationLoading &&
+    !(registrationNetworkStatus === NetworkStatus.refetch)
+
   return (
     <Box>
       <IntroHeader
@@ -101,7 +117,16 @@ const VehicleBulkMileageJobDetail = () => {
         serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       >
         <Box marginTop={'containerGutter'}>
-          <Button variant="utility" icon="reload" onClick={() => refetch()}>
+          <Button
+            variant="utility"
+            icon={
+              loading || networkStatus === NetworkStatus.refetch
+                ? undefined
+                : 'reload'
+            }
+            loading={loading || networkStatus === NetworkStatus.refetch}
+            onClick={handleRefresh}
+          >
             {formatMessage(vehicleMessage.refreshJob)}
           </Button>
         </Box>
@@ -118,6 +143,8 @@ const VehicleBulkMileageJobDetail = () => {
         <Stack space={8}>
           <TableGrid
             title={formatMessage(vehicleMessage.jobStatus)}
+            loading={loading || networkStatus === NetworkStatus.refetch}
+            emptyMessage={vehicleMessage.noJobsFound}
             dataArray={
               data?.vehicleBulkMileageRegistrationRequestStatus
                 ? [
@@ -181,6 +208,7 @@ const VehicleBulkMileageJobDetail = () => {
                 size="default"
                 variant="utility"
                 onClick={handleFileDownload}
+                disabled={!displayRegistrationData}
               >
                 {formatMessage(vehicleMessage.downloadErrors)}
               </Button>
@@ -201,7 +229,7 @@ const VehicleBulkMileageJobDetail = () => {
               </T.Head>
 
               <T.Body>
-                {!!registrations?.requests.length &&
+                {displayRegistrationData &&
                   registrations?.requests.map((j) => (
                     <T.Row key={j.vehicleId}>
                       <T.Data>
@@ -223,10 +251,13 @@ const VehicleBulkMileageJobDetail = () => {
                   ))}
               </T.Body>
             </T.Table>
-            {(!registrations || registrationLoading) && (
+            {!displayRegistrationData && (
               <EmptyTable
                 message={formatMessage(vehicleMessage.noRegistrationsFound)}
-                loading={registrationLoading}
+                loading={
+                  registrationLoading ||
+                  registrationNetworkStatus === NetworkStatus.refetch
+                }
               />
             )}
           </Box>
