@@ -185,7 +185,7 @@ export class DelegationAdminCustomService {
     }
 
     this.verifyTicketCompletion(zendeskCase)
-    
+
     await this.insertDelegation({
       fromNationalId: fromReferenceId,
       toNationalId: toReferenceId,
