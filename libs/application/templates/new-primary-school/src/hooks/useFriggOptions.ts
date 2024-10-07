@@ -14,7 +14,7 @@ export const useFriggOptions = (type?: OptionsType) => {
     },
   })
 
-  return (
+  const options =
     data?.friggOptions?.flatMap(({ options }) =>
       options.flatMap(({ value, key }) => {
         let content = value.find(({ language }) => language === lang)?.content
@@ -24,5 +24,12 @@ export const useFriggOptions = (type?: OptionsType) => {
         return { value: key ?? '', label: content ?? '' }
       }),
     ) ?? []
-  )
+
+  const otherIndex = options.findIndex((option) => option.value === 'other')
+
+  if (otherIndex >= 0) {
+    options.push(options.splice(otherIndex, 1)[0])
+  }
+
+  return options
 }

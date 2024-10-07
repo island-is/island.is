@@ -2,13 +2,17 @@ import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { getCountryByCode } from '@island.is/shared/utils'
-import { ReasonForApplicationOptions } from '../../../lib/constants'
+import {
+  ReasonForApplicationOptions,
+  OptionsType,
+} from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getReasonForApplicationOptionLabel,
+  getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
+import { useFriggOptions } from '../../../hooks/useFriggOptions'
 
 export const ReasonForApplication = ({
   application,
@@ -22,6 +26,8 @@ export const ReasonForApplication = ({
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
   } = getApplicationAnswers(application.answers)
+
+  const relationFriggOptions = useFriggOptions(OptionsType.REASON)
 
   return (
     <ReviewGroup
@@ -37,8 +43,9 @@ export const ReasonForApplication = ({
                 newPrimarySchoolMessages.primarySchool
                   .reasonForApplicationSubSectionTitle,
               )}
-              value={formatMessage(
-                getReasonForApplicationOptionLabel(reasonForApplication),
+              value={getSelectedOptionLabel(
+                relationFriggOptions,
+                reasonForApplication,
               )}
             />
           </GridColumn>
@@ -60,7 +67,7 @@ export const ReasonForApplication = ({
           </GridRow>
         )}
         {reasonForApplication ===
-          ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE && (
+          ReasonForApplicationOptions.MOVING_MUNICIPALITY && (
           <GridRow rowGap={2}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue

@@ -311,51 +311,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu ástæðu',
       description: 'Select reason',
     },
-    transferOfLegalDomicile: {
-      id: 'dess.nps.application:primary.school.transfer.of.legal.domicile',
-      defaultMessage: 'Flutningur lögheimilis',
-      description: 'Transfer of legal domicile',
-    },
-    studyStayForParents: {
-      id: 'dess.nps.application:primary.school.study.stay.for.parents',
-      defaultMessage: 'Námsdvöl foreldra',
-      description: 'Study stay for parents',
-    },
-    parentsParliamentaryMembership: {
-      id: 'dess.nps.application:primary.school.parents.parliamentary.membership',
-      defaultMessage: 'Þingmennska foreldris',
-      description: "Parent's parliamentary membership",
-    },
-    temporaryFoster: {
-      id: 'dess.nps.application:primary.school.temporary.foster',
-      defaultMessage: 'Tímabundið fóstur',
-      description: 'Temporary foster',
-    },
-    expertService: {
-      id: 'dess.nps.application:primary.school.expert.service',
-      defaultMessage: 'Sérfræðiþjónusta',
-      description: 'Expert service',
-    },
-    sickly: {
-      id: 'dess.nps.application:primary.school.sickly',
-      defaultMessage: 'Sjúkralega',
-      description: 'Sickly',
-    },
-    livesInTwoHomes: {
-      id: 'dess.nps.application:primary.school.lives.in.two.homes',
-      defaultMessage: 'Býr á tveimur heimilum',
-      description: 'Lives in two homes',
-    },
-    movingAbroad: {
-      id: 'dess.nps.application:primary.school.moving.abroad',
-      defaultMessage: 'Flutningur erlendis',
-      description: 'Moving abroad',
-    },
-    otherReasons: {
-      id: 'dess.nps.application:primary.school.other.reasons',
-      defaultMessage: 'Aðrar ástæður',
-      description: 'Other reasons',
-    },
     registerNewDomicileAlertMessage: {
       id: 'dess.nps.application:primary.school.register.new.domicile.alert.message',
       defaultMessage: 'Minnum þig á að skrá nýtt lögheimili í Þjóðskrá.',
