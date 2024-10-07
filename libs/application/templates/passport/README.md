@@ -20,5 +20,3 @@ You can use the following test users during the application process:
 
 - **To apply for self**: 0101302989
 - **To apply for child**: 5555555559
-
-Make sure to have the environment variables set correctly before running the tests or using the application templates.
