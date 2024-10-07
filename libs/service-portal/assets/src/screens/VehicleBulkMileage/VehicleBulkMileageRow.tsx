@@ -271,7 +271,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
           headerArray={[
             formatMessage(vehicleMessage.date),
             formatMessage(vehicleMessage.registration),
-            formatMessage(vehicleMessage.annualUsage),
+            //formatMessage(vehicleMessage.annualUsage),
             formatMessage(vehicleMessage.odometer),
           ]}
           loading={loading}
@@ -281,7 +281,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
               (r) => [
                 formatDate(r.date),
                 r.originCode,
-                '-',
+                //'-',
                 displayWithUnit(r.mileage, 'km', true),
               ],
             ) ?? []

@@ -912,6 +912,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:bulk-post-mileage',
     defaultMessage: 'Magnskrá kílómetrastöðu',
   },
+  bulkPostMileageWithFile: {
+    id: 'sp.vehicles:bulk-post-mileage-with-file',
+    defaultMessage: 'Magnskrá með skjali',
+  },
   jobOverview: {
     id: 'sp.vehicles:job-overview',
     defaultMessage: 'Yfirlit skráninga',
