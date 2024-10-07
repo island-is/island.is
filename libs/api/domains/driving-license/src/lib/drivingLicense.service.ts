@@ -359,7 +359,6 @@ export class DrivingLicenseService {
     type: 'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65',
     token: string,
   ) {
-    console.log('type', type)
     if (type === 'B-full-renewal-65') {
       const bla = await this.drivingLicenseApi.getCanApplyForRenewal65({
         token,
