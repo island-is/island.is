@@ -414,9 +414,9 @@ const CreateDelegationScreen = () => {
                   message={
                     // if problem title is object extract code and use it as key
                     FORM_ERRORS[
-                      actionData?.problem
-                        ?.title as keyof typeof FORM_ERRORS
-                      ] ? formatMessage(
+                      actionData?.problem?.title as keyof typeof FORM_ERRORS
+                    ]
+                      ? formatMessage(
                           FORM_ERRORS[
                             actionData?.problem
                               ?.title as keyof typeof FORM_ERRORS
