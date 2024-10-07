@@ -1,4 +1,4 @@
-import { BrowserContext, expect, test, Page } from '@playwright/test'
+import { BrowserContext, expect, test, Page } from '@island.is/testing/e2e'
 import {
   BaseAuthority,
   env,

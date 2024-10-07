@@ -1,4 +1,4 @@
-import { Page, test as base } from '@playwright/test'
+import { Page, test as base } from '@island.is/testing/e2e'
 
 import {
   JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL,

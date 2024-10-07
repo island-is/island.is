@@ -1,4 +1,4 @@
-import { test, BrowserContext, expect } from '@playwright/test'
+import { test, BrowserContext, expect } from '@island.is/testing/e2e'
 
 import { mNotifications } from '@island.is/service-portal/information/messages'
 
