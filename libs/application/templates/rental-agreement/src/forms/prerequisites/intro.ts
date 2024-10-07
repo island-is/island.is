@@ -6,17 +6,19 @@ import {
 
 import * as m from '../../lib/messages'
 
+const messages = m.prerequisites.intro
+
 export const prerequisitesIntro = buildSubSection({
   id: 'prerequisitesIntro',
-  title: m.prerequisites.intro.subSectionTitle,
+  title: messages.subSectionTitle,
   children: [
     buildMultiField({
       id: 'prerequisitesIntro',
-      title: m.prerequisites.intro.pageTitle,
+      title: messages.pageTitle,
       children: [
         buildCustomField({
           id: 'prerequisitesIntroDetails',
-          title: m.prerequisites.intro.pageTitle,
+          title: messages.pageTitle,
           component: 'GeneralInfoForm',
         }),
       ],

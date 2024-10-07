@@ -14,12 +14,12 @@ export const specialProvisions = defineMessages({
   pageDescription: {
     id: 'ra.application:specialProvisions.pageDescription',
     defaultMessage:
-      'Hér má taka fram hvað fylgir húsnæðinu, hvort húsreglur séu til staðar eða önnur ákvæði sem fylgja samningnum. Athugið að þau ákvæði sem eru andstætt húsaleigulögum munu ekki hafa gildi í túlkun leigusamningsins. Sjá nánar hér.',
+      'Hér má taka fram hvað fylgir húsnæðinu, hvort húsreglur séu til staðar eða önnur ákvæði sem fylgja samningnum. Athugið að þau ákvæði sem eru andstætt húsaleigulögum munu ekki hafa gildi í túlkun leigusamningsins. [Sjá nánar hér](https://www.althingi.is/lagas/nuna/1994036.html).',
     description: 'Special provisions page description',
   },
   housingDescriptionTitle: {
     id: 'ra.application:specialProvisions.housingDescriptionTitle',
-    defaultMessage: 'Lýsing á húsnæðinu og því sem með fylgir ',
+    defaultMessage: 'Lýsing á húsnæðinu og því sem með fylgir  ',
     description: 'Special provisions housing description title',
   },
   housingDescriptionTitleTooltip: {
@@ -39,7 +39,7 @@ export const specialProvisions = defineMessages({
   },
   housingRulesDescriptionTitle: {
     id: 'ra.application:specialProvisions.housingRulesDescriptionTitle',
-    defaultMessage: 'Sérákvæði eða húsreglur',
+    defaultMessage: 'Sérákvæði eða húsreglur  ',
     description: 'Special provisions housing rules title',
   },
   housingRulesDescriptionTitleTooltip: {
