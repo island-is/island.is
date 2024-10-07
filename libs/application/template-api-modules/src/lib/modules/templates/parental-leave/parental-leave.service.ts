@@ -55,17 +55,16 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { ConfigService } from '@nestjs/config'
+import { ConfigService, ConfigType } from '@nestjs/config'
 import {
   SharedModuleConfig,
   TemplateApiModuleActionProps,
 } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { SharedTemplateApiService } from '../../shared'
+import { SharedTemplateApiService, sharedModuleConfig } from '../../shared'
 import { getConfigValue } from '../../shared/shared.utils'
 import { ChildrenService } from './children/children.service'
 import {
-  APPLICATION_ATTACHMENT_BUCKET,
   SIX_MONTHS_IN_SECONDS_EXPIRES,
   apiConstants,
   rightsDescriptions,
@@ -110,8 +109,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private parentalLeaveApi: ParentalLeaveApi,
     private applicationInformationAPI: ApplicationInformationApi,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    @Inject(APPLICATION_ATTACHMENT_BUCKET)
-    private readonly attachmentBucket: string,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
     private readonly configService: ConfigService<SharedModuleConfig>,
     private readonly childrenService: ChildrenService,
     private readonly nationalRegistryApi: NationalRegistryClientService,
@@ -386,7 +385,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       const Key = `${application.id}/${filename}`
       const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
+        .getObject({ Bucket: this.config.templateApi.attachmentBucket, Key })
         .promise()
       const fileContent = file.Body as Buffer
 
