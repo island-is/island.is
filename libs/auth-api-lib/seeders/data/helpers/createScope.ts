@@ -1,4 +1,5 @@
 import { QueryInterface } from 'sequelize'
+
 import { DbScope } from './types'
 import { safeBulkInsert } from './safeBulkInsert'
 
@@ -46,6 +47,11 @@ interface ScopeOptions {
    * Configures which claims the scope requires. Defaults to `nationalId`.
    */
   claims?: Array<string>
+
+  /**
+   * Should this scope be added to the actor claim object in the access token. Defaults to false.
+   */
+  alsoForDelegatedUser?: boolean
 }
 
 const getScopeFields = (options: ScopeOptions): DbScope => ({
@@ -54,7 +60,7 @@ const getScopeFields = (options: ScopeOptions): DbScope => ({
   description: options.description,
   grant_to_legal_guardians: options.delegation?.legalGuardians === true,
   grant_to_procuring_holders: options.delegation?.procuringHolders === true,
-  also_for_delegated_user: options.delegation?.custom === true,
+  also_for_delegated_user: options.alsoForDelegatedUser ?? false,
   is_access_controlled: options.accessControlled ?? false,
 
   // The scope name should be prefixed with the organisation domain, eg `@island.is/some-scope:name`.
@@ -69,6 +75,32 @@ const getScopeFields = (options: ScopeOptions): DbScope => ({
   automatic_delegation_grant: false,
 })
 
+export const getDelegationTypes = (delegations?: {
+  custom?: boolean
+  legalGuardians?: boolean
+  procuringHolders?: boolean
+}): Array<string> => {
+  const types = []
+
+  if (!delegations) {
+    return types
+  }
+
+  if (delegations.custom) {
+    types.push('Custom')
+  }
+
+  if (delegations.legalGuardians) {
+    types.push('LegalGuardian')
+  }
+
+  if (delegations.procuringHolders) {
+    types.push('ProcurationHolder')
+  }
+
+  return types
+}
+
 export const createScope =
   (options: ScopeOptions) => async (queryInterface: QueryInterface) => {
     const scope = getScopeFields(options)
@@ -79,6 +111,21 @@ export const createScope =
       [scope],
       () => `creating scope ${scope.name}`,
     )
+
+    const delegationTypes = getDelegationTypes(options.delegation)
+    if (delegationTypes.length) {
+      await safeBulkInsert(
+        queryInterface,
+        'api_scope_delegation_types',
+        delegationTypes.map((type) => ({
+          api_scope_name: scope.name,
+          delegation_type: type,
+        })),
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        ({ delegation_type }) =>
+          `linking scope ${scope.name} to delegation type ${delegation_type}`,
+      )
+    }
 
     const claims = options.claims ?? ['nationalId']
     await safeBulkInsert(

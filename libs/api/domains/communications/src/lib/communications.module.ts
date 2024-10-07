@@ -1,4 +1,4 @@
-import { EmailModule, EmailServiceOptions } from '@island.is/email-service'
+import { EmailModule } from '@island.is/email-service'
 import {
   ZendeskModule,
   ZendeskServiceOptions,
@@ -12,7 +12,7 @@ import { FileStorageModule } from '@island.is/file-storage'
 
 @Module({
   imports: [
-    EmailModule.register(environment.emailOptions as EmailServiceOptions),
+    EmailModule,
     ZendeskModule.register(environment.zendeskOptions as ZendeskServiceOptions),
     CmsModule,
     FileStorageModule,

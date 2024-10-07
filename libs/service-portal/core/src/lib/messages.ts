@@ -139,11 +139,26 @@ export const m = defineMessages({
     id: 'service.portal:amount',
     defaultMessage: 'Upphæð',
   },
+  approved: {
+    id: 'service.portal:approved',
+    defaultMessage: 'Samþykkt',
+  },
+  processed: {
+    id: 'service.portal:processed',
+    defaultMessage: 'Afgreitt',
+  },
+  rejected: {
+    id: 'service.portal:rejected',
+    defaultMessage: 'Hafnað',
+  },
+  unknown: {
+    id: 'service.portal:unknown',
+    defaultMessage: 'Óþekkt',
+  },
   view: {
     id: 'service.portal:view',
     defaultMessage: 'Skoða',
   },
-
   chooseDate: {
     id: 'service.portal:choose-date',
     defaultMessage: 'Veldu dagsetningu',
@@ -290,6 +305,35 @@ export const m = defineMessages({
     id: 'service.portal:vehicles-lookup',
     defaultMessage: 'Uppfletting í ökutækjaskrá',
   },
+  vehiclesBulkMileage: {
+    id: 'service.portal:vehicles-bulk-mileage',
+    defaultMessage: 'Magnskráning kílómetrastöðu',
+  },
+  vehiclesBulkMileageUpload: {
+    id: 'service.portal:vehicles-bulk-mileage-upload',
+    defaultMessage: 'Magnskrá með skjali',
+  },
+  vehiclesBulkMileageUploadDescription: {
+    id: 'service.portal:vehicles-bulk-mileage-upload-description',
+    defaultMessage:
+      'Hér geturu hlaðið upp skjali til að magnskrá kílómetrastöður',
+  },
+  vehiclesBulkMileageJobOverview: {
+    id: 'service.portal:vehicles-bulk-mileage-job-overview',
+    defaultMessage: 'Yfirlit skráninga',
+  },
+  vehiclesBulkMileageJobOverviewDescription: {
+    id: 'service.portal:vehicles-bulk-mileage-job-overview-description',
+    defaultMessage: 'Yfirlit yfir skráða kílómetrastöðu',
+  },
+  vehiclesBulkMileageJobDetail: {
+    id: 'service.portal:vehicles-bulk-mileage-job-detail',
+    defaultMessage: 'Magnskráning',
+  },
+  vehiclesBulkMileageJobRegistration: {
+    id: 'service.portal:vehicles-bulk-mileage-job-registration',
+    defaultMessage: 'Hvaða skráningar eru höndlaðar í þessu verki',
+  },
   vehiclesDrivingLessons: {
     id: 'service.portal:vehicles-driving-lessons',
     defaultMessage: 'Ökunám',
@@ -344,6 +388,15 @@ export const m = defineMessages({
   menu: {
     defaultMessage: 'Valmynd',
     id: 'service.portal:menu',
+  },
+  menuButtonAria: {
+    id: 'service.portal:menu-button-aria',
+    description: 'Lýsing á notendavalmynd fyrir skjálesara',
+    defaultMessage: 'Valmynd fyrir yfirlit',
+  },
+  notificationButtonAria: {
+    id: 'service.portal:notification-button-aria',
+    defaultMessage: 'Valmynd fyrir tilkynningar',
   },
   middleLinksTitle: {
     defaultMessage: 'Þjónustuflokkar',
@@ -503,6 +556,14 @@ export const m = defineMessages({
   signatureCollectionLists: {
     id: 'service.portal:signatureCollectionLists',
     defaultMessage: 'Meðmælasöfnun',
+  },
+  signatureCollectionParliamentaryLists: {
+    id: 'service.portal:signatureCollectionParliamentaryLists',
+    defaultMessage: 'Alþingiskosningar - Meðmælasöfnun',
+  },
+  signatureCollectionPresidentialLists: {
+    id: 'service.portal:signatureCollectionPresidentialLists',
+    defaultMessage: 'Forsetakosningar - Meðmælasöfnun',
   },
   notifications: {
     id: 'service.portal:notifications',
@@ -1052,6 +1113,10 @@ export const m = defineMessages({
     id: 'service.portal:save',
     defaultMessage: 'Vista',
   },
+  saved: {
+    id: 'service.portal:saved',
+    defaultMessage: 'Vistað',
+  },
   register: {
     id: 'service.portal:register',
     defaultMessage: 'Skrá',
@@ -1321,6 +1386,11 @@ export const m = defineMessages({
     id: 'service.portal:mms-tooltip-secondary',
     defaultMessage: 'Menntamálastofnun hefur umsjón með gögnum um menntaskóla.',
   },
+  domsmalaraduneytidTooltip: {
+    id: 'service.portal:dmr-tooltip',
+    defaultMessage:
+      'Dómsmálaráðuneytið hefur umsjón með gögnum um dómsmál og þeim tengt.',
+  },
   occupationalLicenseTooltip: {
     id: 'service.portal:occupational-license-tooltip',
     defaultMessage:
@@ -1430,6 +1500,19 @@ export const m = defineMessages({
     id: 'service.portal:social-insurance-maintenance-description',
     defaultMessage:
       'Einstaklingar geta átt rétt á greiðslum frá Tryggingastofnun (TR) til að bæta afkomu sína og hag. Allar greiðslur frá TR þarf að sækja sérstaklega um.',
+  },
+  incomePlan: {
+    id: 'service.portal:income-plan',
+    defaultMessage: 'Tekjuáætlun',
+  },
+  latestIncomePlan: {
+    id: 'service.portal:latest-income-plan',
+    defaultMessage: 'Yfirlit yfir núverandi tekjuáætlun',
+  },
+  incomePlanDescription: {
+    id: 'service.portal:income-plan-description',
+    defaultMessage:
+      'Ellilífeyrir, örorkulífeyrir, endurhæfingarlífeyrir og tengdar greiðslur eru tekjutengdar og reiknast út frá tekjuáætlun. Þegar sótt er um lífeyri þarf alltaf að skila inn tekjuáætlun. Hér er hægt að skoða gildandi tekjuáætlun.',
   },
   paymentPlan: {
     id: 'service.portal:payment-plan',
@@ -1551,8 +1634,54 @@ export const m = defineMessages({
     defaultMessage:
       'Ef þú telur að þú eigir að vera með skráðann {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
   },
+  lawAndOrder: {
+    id: 'service.portal:law-and-order',
+    defaultMessage: 'Lög og reglur',
+  },
+  lawAndOrderDashboard: {
+    id: 'service.portal:law-and-order-dashboard',
+    defaultMessage: 'Þín mál í dómskerfinu',
+  },
+  lawAndOrderDescription: {
+    id: 'service.portal:law-and-order-description',
+    defaultMessage:
+      'Hér eru upplýsingar og yfirlit yfir mál sem þú átt hjá dómskerfinu.',
+  },
+  courtCases: {
+    id: 'service.portal:court-cases',
+    defaultMessage: 'Dómsmál',
+  },
+  subpoena: {
+    id: 'service.portal:subpoena',
+    defaultMessage: 'Fyrirkall',
+  },
+  urgent: {
+    id: 'service.portal:urgent',
+    defaultMessage: 'Áríðandi',
+  },
+  openErrand: {
+    id: 'service.portal:open-errand',
+    defaultMessage: 'Opna erindi',
+  },
   readMoreAbout: {
     id: 'service.portal:read-more-about',
     defaultMessage: 'Lesa meira um {arg}',
+  },
+  acknowledgeTitle: {
+    id: 'sp.service.portal:acknowledge-title',
+    defaultMessage: 'Staðfesting á móttöku',
+  },
+  acknowledgeText: {
+    id: 'sp.service.portal:acknowledge-text',
+    defaultMessage:
+      'Þú ert að opna erindi frá {arg}. Veljir þú að opna erindið fá viðeigandi aðilar senda staðfestingu á möttöku. Veljir þú að opna ekki erindið munu viðeigandi aðilar leita annarra leiða til að afhenda þér það, t.d. með aðstoð lögreglu.',
+  },
+  acknowledgementCompleted: {
+    id: 'sp.service.portal:acknowledgement-completed',
+    defaultMessage: 'Staðfesting á móttöku tókst',
+  },
+  submit: {
+    id: 'service.portal:submit',
+    defaultMessage: 'Staðfesta',
   },
 })

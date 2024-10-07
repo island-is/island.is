@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { useRouter } from 'next/router'
-import React, { FC, useContext, useEffect } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 
 import {
   Box,
@@ -18,7 +18,7 @@ import {
 
 import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import {
-  CarDetailsBox,
+  CarDetailsBox2,
   NotFound,
   OutlinedError,
   ProcessPageLayout,
@@ -33,8 +33,9 @@ import {
   Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { OutInUsage, UseStatus } from '@island.is/skilavottord-web/utils/consts'
 import { getYear } from '@island.is/skilavottord-web/utils/dateUtils'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 
 const SkilavottordVehicleReadyToDeregisteredQuery = gql`
   query skilavottordVehicleReadyToDeregisteredQuery($permno: String!) {
@@ -42,10 +43,22 @@ const SkilavottordVehicleReadyToDeregisteredQuery = gql`
       vehicleId
       vehicleType
       newregDate
+      vinNumber
+      mileage
       recyclingRequests {
         nameOfRequestor
       }
-      mileage
+    }
+  }
+`
+
+const SkilavottordTrafficQuery = gql`
+  query skilavottordTrafficQuery($permno: String!) {
+    skilavottordTraffic(permno: $permno) {
+      permno
+      outInStatus
+      useStatus
+      useStatusName
     }
   }
 `
@@ -70,19 +83,38 @@ const SkilavottordRecyclingRequestMutation = gql`
   }
 `
 
-const UpdateSkilavottordVehicleMileageMutation = gql`
-  mutation updateSkilavottordVehicleMileage(
+const UpdateSkilavottordVehicleInfoMutation = gql`
+  mutation updateSkilavottordVehicleInfo(
     $permno: String!
     $mileage: Float!
+    $plateCount: Float!
+    $plateLost: Boolean!
   ) {
-    updateSkilavottordVehicleMileage(permno: $permno, mileage: $mileage)
+    updateSkilavottordVehicleInfo(
+      permno: $permno
+      mileage: $mileage
+      plateCount: $plateCount
+      plateLost: $plateLost
+    )
   }
 `
 
 const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
-  const { control, watch } = useForm({
+  const [plateCount, setPlateCount] = useState<number>(2)
+
+  const handlePlateCountChange = (value: number) => {
+    setPlateCount(value)
+  }
+
+  const [
+    vehicleReadyToDeregisteredQueryCompleted,
+    setVehicleReadyToDeregisteredQueryCompleted,
+  ] = useState(false)
+
+  const methods = useForm({
     mode: 'onChange',
   })
+  const { watch } = methods
 
   const { user } = useContext(UserContext)
   const {
@@ -95,6 +127,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
   const { id } = router.query
 
   const mileageValue = watch('mileage')
+  const plateLost = watch('plateLost')
 
   const { data, loading } = useQuery<Query>(
     SkilavottordVehicleReadyToDeregisteredQuery,
@@ -103,7 +136,41 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
     },
   )
 
+  useEffect(() => {
+    if (data && data.skilavottordVehicleReadyToDeregistered) {
+      setVehicleReadyToDeregisteredQueryCompleted(true)
+    }
+  }, [data])
+
   const vehicle = data?.skilavottordVehicleReadyToDeregistered
+
+  const { data: traffic, loading: loadingTraffic } = useQuery<Query>(
+    SkilavottordTrafficQuery,
+    {
+      variables: { permno: id },
+      skip: !vehicleReadyToDeregisteredQueryCompleted,
+    },
+  )
+
+  const vehicleTrafficData = traffic?.skilavottordTraffic
+
+  const outInStatus =
+    vehicleTrafficData?.outInStatus.toLocaleUpperCase() === 'OUT'
+      ? OutInUsage.OUT
+      : OutInUsage.IN
+
+  const useStatus = vehicleTrafficData?.useStatus || '01'
+
+  useEffect(() => {
+    if (vehicleTrafficData) {
+      if (
+        outInStatus === OutInUsage.OUT &&
+        useStatus !== UseStatus.OUT_TICKET
+      ) {
+        setPlateCount(0)
+      }
+    }
+  }, [vehicleTrafficData])
 
   const [
     setRecyclingRequest,
@@ -129,7 +196,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
       error: vehicleMutationError,
       loading: vehicleMutationLoading,
     },
-  ] = useMutation<Mutation>(UpdateSkilavottordVehicleMileageMutation, {
+  ] = useMutation<Mutation>(UpdateSkilavottordVehicleInfoMutation, {
     onError() {
       return vehicleMutationError
     },
@@ -144,28 +211,32 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
   }, [vehicleMutationResponse, router, routes, t.success])
 
   const handleConfirm = () => {
-    if (mileageValue !== undefined) {
-      const newMilage = +mileageValue.trim().replace(/\./g, '')
+    let newMileage = mileageValue
 
-      // If registered mileage is not the same as the one when vehicle is confirmed for de-registration we need to update it
-      if (vehicle?.mileage !== newMilage) {
-        setVehicleRequest({
-          variables: {
-            permno: vehicle?.vehicleId,
-            mileage: newMilage,
-          },
-        })
-      }
+    if (mileageValue !== undefined) {
+      newMileage = +mileageValue.trim().replace(/\./g, '')
+    } else {
+      newMileage = vehicle?.mileage
     }
 
-    setRecyclingRequest({
+    // Update vehicle table with latests information
+    setVehicleRequest({
       variables: {
-        permno: id,
-        requestType: RecyclingRequestTypes.deregistered,
+        permno: vehicle?.vehicleId,
+        mileage: newMileage,
+        plateCount,
+        plateLost: !!plateLost?.length,
       },
+    }).then(() => {
+      // Send recycling request
+      setRecyclingRequest({
+        variables: {
+          permno: id,
+          requestType: RecyclingRequestTypes.deregistered,
+        },
+      })
     })
   }
-
   const handleBack = () => {
     router.replace(routes.select)
   }
@@ -221,22 +292,25 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
           <Stack space={4}>
             <Text variant="h1">{t.titles.success}</Text>
             <Text variant="intro">{t.info.success}</Text>
-            <CarDetailsBox
-              vehicleId={vehicle.vehicleId}
-              vehicleType={vehicle.vehicleType}
-              modelYear={getYear(vehicle.newregDate)}
-              vehicleOwner={
-                vehicle.recyclingRequests &&
-                vehicle.recyclingRequests[0].nameOfRequestor
-              }
-              mileage={vehicle.mileage || 0}
-              control={control}
-              showMileage
-            />
+            <FormProvider {...methods}>
+              <CarDetailsBox2
+                vehicleId={vehicle.vehicleId}
+                vehicleType={vehicle.vehicleType}
+                modelYear={getYear(vehicle.newregDate)}
+                vehicleOwner={vehicle.recyclingRequests?.[0]?.nameOfRequestor}
+                vinNumber={vehicle.vinNumber}
+                mileage={vehicle.mileage || 0}
+                outInStatus={outInStatus}
+                useStatus={useStatus || ''}
+                plateCount={plateCount}
+                onPlateCountChange={handlePlateCountChange}
+                isLoading={loadingTraffic}
+              />
+            </FormProvider>
           </Stack>
         ) : (
           <Box>
-            {loading ? (
+            {loading || loadingTraffic ? (
               <Box textAlign="center">
                 <LoadingDots large />
               </Box>
@@ -273,12 +347,13 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
             </Button>
           </Hidden>
           {vehicle && (
-            <Button onClick={handleConfirm}>{t.buttons.confirm}</Button>
+            <Button onClick={handleConfirm} disabled={loadingTraffic}>
+              {t.buttons.confirm}
+            </Button>
           )}
         </Box>
       </Stack>
     </ProcessPageLayout>
   )
 }
-
 export default Confirm

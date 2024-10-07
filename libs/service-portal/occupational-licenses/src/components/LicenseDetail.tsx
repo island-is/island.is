@@ -2,7 +2,8 @@ import { Stack, Box, Icon, Text, AlertMessage } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   IntroHeader,
-  UserInfoLine,
+  InfoLine,
+  InfoLineStack,
   FootNote,
 } from '@island.is/service-portal/core'
 import { olMessage as om } from '../lib/messages'
@@ -16,6 +17,7 @@ type LicenseDetailProps = {
   serviceProviderTooltip?: string
   isOldEducationLicense?: boolean
   name?: string | null
+  licenseNumber?: string | null
   dateOfBirth?: string | null
   profession?: string | null
   licenseType?: string | null
@@ -33,6 +35,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   isOldEducationLicense,
   buttonGroup,
   name,
+  licenseNumber,
   dateOfBirth,
   profession,
   licenseType,
@@ -43,7 +46,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingTop="p1" borderBottomWidth="standard" borderColor="blue200">
+    <Box>
       <IntroHeader
         title={title ? title : om.occupationalLicense}
         intro={intro ? intro : undefined}
@@ -60,19 +63,25 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
           )}
         />
       )}
-      <Stack dividers space="auto">
+      <InfoLineStack>
         {name && (
-          <UserInfoLine
-            paddingY={3}
+          <InfoLine
             label={formatMessage(om.nameOfIndividual)}
             content={name}
             labelColumnSpan={['6/12']}
             valueColumnSpan={['6/12']}
           />
         )}
+        {licenseNumber && (
+          <InfoLine
+            label={formatMessage(om.licenseNumber)}
+            content={licenseNumber}
+            labelColumnSpan={['6/12']}
+            valueColumnSpan={['6/12']}
+          />
+        )}
         {dateOfBirth && (
-          <UserInfoLine
-            paddingY={3}
+          <InfoLine
             label={formatMessage(om.dateOfBirth)}
             content={dateOfBirth}
             labelColumnSpan={['6/12']}
@@ -80,8 +89,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
           />
         )}
         {profession && (
-          <UserInfoLine
-            paddingY={3}
+          <InfoLine
             label={formatMessage(om.profession)}
             content={profession}
             labelColumnSpan={['6/12']}
@@ -89,8 +97,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
           />
         )}
         {licenseType && (
-          <UserInfoLine
-            paddingY={3}
+          <InfoLine
             label={formatMessage(om.typeofLicense)}
             content={licenseType}
             labelColumnSpan={['6/12']}
@@ -98,8 +105,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
           />
         )}
         {publisher && (
-          <UserInfoLine
-            paddingY={3}
+          <InfoLine
             label={formatMessage(om.publisher)}
             content={publisher}
             labelColumnSpan={['6/12']}
@@ -107,8 +113,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
           />
         )}
         {dateOfIssue && (
-          <UserInfoLine
-            paddingY={3}
+          <InfoLine
             label={formatMessage(om.dateOfIssue)}
             content={dateOfIssue}
             labelColumnSpan={['6/12']}
@@ -116,8 +121,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
           />
         )}
         {!isOldEducationLicense && status && (
-          <UserInfoLine
-            paddingY={3}
+          <InfoLine
             label={formatMessage(om.licenseStatus)}
             content={
               <Box
@@ -162,7 +166,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
             valueColumnSpan={['6/12']}
           />
         )}
-      </Stack>
+      </InfoLineStack>
       <FootNote serviceProviderSlug={serviceProviderSlug} />
     </Box>
   )

@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../lib/types'
-import { B_FULL, NO, YES } from '../../lib/constants'
+import { B_FULL, NO, YES, B_FULL_RENEWAL_65 } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
@@ -20,7 +20,7 @@ export const subSectionQualityPhoto = buildSubSection({
   id: 'photoStep',
   title: m.applicationQualityPhotoTitle,
   condition: isVisible(
-    isApplicationForCondition(B_FULL),
+    isApplicationForCondition([B_FULL, B_FULL_RENEWAL_65]),
     hasNoDrivingLicenseInOtherCountry,
   ),
   children: [
@@ -76,6 +76,11 @@ export const subSectionQualityPhoto = buildSubSection({
           id: 'photodesc',
           title: '',
           description: m.qualityPhotoInstructionBullets,
+        }),
+        buildDescriptionField({
+          id: 'space',
+          title: '',
+          space: 'containerGutter',
         }),
         buildCheckboxField({
           id: 'willBringQualityPhoto',

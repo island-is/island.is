@@ -8,7 +8,10 @@ export const updateAnswers = (
   nationalId: string,
   setValue: (name: string, value: unknown, config?: Object) => void,
 ): Object => {
-  const chosenApplicants = getChosenApplicant(application, nationalId)
+  const chosenApplicants = getChosenApplicant(
+    application.externalData,
+    nationalId,
+  )
   const applicantUserProfile = getValueViaPath(
     application.externalData,
     'userProfile.data',

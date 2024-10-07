@@ -60,3 +60,5 @@ export type DelegationsScreenDataType = {
   authDelegations?: Delegation[]
   templateName?: StaticText
 }
+
+export const MOCKPAYMENT = 'shouldUseMockPayment'

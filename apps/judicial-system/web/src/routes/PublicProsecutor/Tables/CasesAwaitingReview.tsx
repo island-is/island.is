@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -87,7 +87,7 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
                 {
                   cell: (row) => (
-                    <Text>{formatDate(row.indictmentAppealDeadline, 'P')}</Text>
+                    <Text>{formatDate(row.indictmentAppealDeadline)}</Text>
                   ),
                 },
               ]}

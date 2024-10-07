@@ -1,5 +1,10 @@
-import { FC, ReactElement } from 'react'
-import { Box, DropdownMenu, Button } from '@island.is/island-ui/core'
+import { FC, ReactElement, useEffect, useState } from 'react'
+import {
+  Box,
+  DropdownMenu,
+  Button,
+  FocusableBox,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as styles from '../styles.css'
 import { m } from '../../../lib/messages'
@@ -7,17 +12,14 @@ import copyToClipboard from 'copy-to-clipboard'
 import { toast } from 'react-toastify'
 import { usePDF } from '@react-pdf/renderer'
 import MyPdfDocument from './DownloadPdf'
-import {
-  EndorsementList,
-  PaginatedEndorsementResponse,
-} from '@island.is/api/schema'
+import { EndorsementList } from '@island.is/api/schema'
 import cn from 'classnames'
+import { useGetAllPetitionEndorsements } from '../../hooks'
+import { getCSV } from './downloadCSV'
 
 interface Props {
   petition?: EndorsementList
-  petitionSigners: PaginatedEndorsementResponse
   petitionId: string
-  onGetCSV: () => void
   dropdownItems?: {
     href?: string
     onClick?: () => void
@@ -34,22 +36,29 @@ const baseUrl = `${document.location.origin}/undirskriftalistar/`
 
 const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
   petition,
-  petitionSigners,
   petitionId,
-  onGetCSV,
   dropdownItems = [],
 }) => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
 
-  const [document] = usePDF({
+  const [canGetAllEndorsements, setCanGetAllEndorsements] = useState(false)
+  const { allEndorsements } = useGetAllPetitionEndorsements(
+    petitionId,
+    canGetAllEndorsements,
+  )
+
+  const [instance, updateInstance] = usePDF({
     document: (
-      <MyPdfDocument petition={petition} petitionSigners={petitionSigners} />
+      <MyPdfDocument petition={petition} petitionSigners={allEndorsements} />
     ),
   })
-  if (document.error) {
-    console.warn(document.error)
-  }
+
+  useEffect(() => {
+    if (allEndorsements.data?.length > 0) {
+      updateInstance()
+    }
+  }, [allEndorsements])
 
   return (
     <Box display="flex">
@@ -68,56 +77,58 @@ const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
           {formatMessage(m.copyLinkToList)}
         </Button>
       </Box>
-      <DropdownMenu
-        icon="ellipsisVertical"
-        iconType="outline"
-        menuLabel={formatMessage(m.downloadPetitions)}
-        items={[
-          {
-            title: formatMessage(m.downloadPetitions),
-            render: () => {
-              return (
-                <button
-                  key="copyLinkDesktop"
-                  className={cn(styles.hideOnDesktop, styles.menuItem)}
-                  onClick={() => {
-                    const copied = copyToClipboard(baseUrl + petitionId)
-                    if (!copied) {
-                      return toast.error(
-                        formatMessage(m.copyLinkError.defaultMessage),
+      <FocusableBox onClick={() => setCanGetAllEndorsements(true)}>
+        <DropdownMenu
+          icon="ellipsisVertical"
+          iconType="outline"
+          menuLabel={formatMessage(m.downloadPetitions)}
+          items={[
+            {
+              title: formatMessage(m.downloadPetitions),
+              render: () => {
+                return (
+                  <button
+                    key="copyLinkDesktop"
+                    className={cn(styles.hideOnDesktop)}
+                    onClick={() => {
+                      const copied = copyToClipboard(baseUrl + petitionId)
+                      if (!copied) {
+                        return toast.error(
+                          formatMessage(m.copyLinkError.defaultMessage),
+                        )
+                      }
+                      toast.success(
+                        formatMessage(m.copyLinkSuccess.defaultMessage),
                       )
-                    }
-                    toast.success(
-                      formatMessage(m.copyLinkSuccess.defaultMessage),
-                    )
-                  }}
-                >
-                  {formatMessage(m.linkToList)}
-                </button>
-              )
+                    }}
+                  >
+                    {formatMessage(m.linkToList)}
+                  </button>
+                )
+              },
             },
-          },
-          {
-            title: formatMessage(m.asPdf),
-            render: () => (
-              <a
-                key={petitionId}
-                href={document.url ?? ''}
-                download={'Undirskriftalisti.pdf'}
-                className={styles.menuItem}
-              >
-                {formatMessage(m.asPdf)}
-              </a>
-            ),
-          },
-          {
-            onClick: () => onGetCSV(),
-            title: formatMessage(m.asCsv),
-          },
-          ...dropdownItems,
-        ]}
-        title={formatMessage(m.downloadPetitions)}
-      />
+            {
+              title: formatMessage(m.asPdf),
+              render: () => (
+                <a
+                  key={petitionId}
+                  href={instance.url ?? ''}
+                  download={'Undirskriftalisti.pdf'}
+                  className={styles.menuItem}
+                >
+                  {formatMessage(m.asPdf)}
+                </a>
+              ),
+            },
+            {
+              onClick: () => getCSV(allEndorsements),
+              title: formatMessage(m.asCsv),
+            },
+            ...dropdownItems,
+          ]}
+          title={formatMessage(m.downloadPetitions)}
+        />
+      </FocusableBox>
     </Box>
   )
 }

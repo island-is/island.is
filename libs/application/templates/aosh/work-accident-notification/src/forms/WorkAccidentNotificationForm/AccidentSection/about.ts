@@ -33,11 +33,13 @@ export const aboutSection = buildSubSection({
           title: accident.about.date,
           width: 'half',
         }),
-        buildDateField({
-          // TODO Replace me with some Time field
+        buildTextField({
           id: 'accident.time',
           title: accident.about.time,
+          placeholder: accident.about.timePlaceholder,
+          required: true,
           width: 'half',
+          format: '##:##',
         }),
         buildSelectField({
           id: 'accident.didAoshCome',

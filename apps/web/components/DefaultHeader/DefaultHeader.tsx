@@ -31,6 +31,7 @@ export interface DefaultHeaderProps {
   imageObjectFit?: 'contain' | 'cover'
   imageObjectPosition?: 'left' | 'center' | 'right'
   className?: string
+  titleClassName?: string
   logoAltText?: string
   isSubpage?: boolean
 }
@@ -53,6 +54,7 @@ export const DefaultHeader: React.FC<
   imageObjectFit = 'contain',
   imageObjectPosition = 'center',
   className,
+  titleClassName,
   logoAltText,
   titleSectionPaddingLeft,
   isSubpage,
@@ -147,7 +149,7 @@ export const DefaultHeader: React.FC<
                 </Hidden>
               )}
               <Box
-                className={styles.title}
+                className={cn(styles.title, titleClassName)}
                 paddingLeft={
                   !isMobile ? titleSectionPaddingLeft : isSubpage ? 2 : 0
                 }

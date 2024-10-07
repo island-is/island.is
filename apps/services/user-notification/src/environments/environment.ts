@@ -36,18 +36,6 @@ export const environment = {
         },
       }),
   },
-
-  emailOptions: isDevelopment
-    ? {
-        useTestAccount: true,
-        useNodemailerApp: env.USE_NODEMAILER_APP === 'true' ?? false,
-      }
-    : {
-        useTestAccount: false,
-        options: {
-          region: env.EMAIL_REGION ?? 'eu-west-1',
-        },
-      },
 }
 
 export type Config = typeof environment

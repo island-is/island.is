@@ -2,7 +2,6 @@
 import {
   isIndictmentCase,
   isTrafficViolationCase,
-  prosecutorCanSelectDefenderForInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
   CaseAppealRulingDecision,
@@ -200,8 +199,7 @@ export const isDefendantStepValidIC = (
       policeCaseNumbers.length > 0 &&
       workingCase.type === caseType &&
       !someDefendantIsInvalid(workingCase) &&
-      (prosecutorCanSelectDefenderForInvestigationCase(workingCase.type) &&
-      workingCase.defenderName
+      (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
         : true) &&
       validate([
@@ -269,15 +267,36 @@ export const isProcessingStepValidIndictments = (
       return validate([[defendant.defendantPlea, ['empty']]]).isValid
     })
 
+  const hasCivilClaimSelected =
+    workingCase.hasCivilClaims !== null &&
+    workingCase.hasCivilClaims !== undefined
+
+  const allCivilClaimantsAreValid = workingCase.hasCivilClaims
+    ? workingCase.civilClaimants?.every(
+        (civilClaimant) =>
+          civilClaimant.name &&
+          (civilClaimant.noNationalId ||
+            (civilClaimant.nationalId &&
+              civilClaimant.nationalId.replace('-', '').length === 10)),
+      )
+    : true
+
   return Boolean(
-    workingCase.prosecutor && workingCase.court && defendantsAreValid(),
+    workingCase.prosecutor &&
+      workingCase.court &&
+      hasCivilClaimSelected &&
+      allCivilClaimantsAreValid &&
+      defendantsAreValid(),
   )
 }
 
 export const isTrafficViolationStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  return Boolean(workingCase.demands)
+  return Boolean(
+    workingCase.demands &&
+      (!workingCase.hasCivilClaims || workingCase.civilDemands),
+  )
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {

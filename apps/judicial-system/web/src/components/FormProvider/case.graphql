@@ -26,6 +26,10 @@ query Case($input: CaseQueryInput!) {
       verdictViewDate
       verdictAppealDeadline
       subpoenaType
+      subpoenas {
+        id
+        created
+      }
     }
     defenderName
     defenderNationalId
@@ -171,6 +175,7 @@ query Case($input: CaseQueryInput!) {
       userGeneratedFilename
       displayDate
       policeFileId
+      submittedBy
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
@@ -263,7 +268,7 @@ query Case($input: CaseQueryInput!) {
     }
     indictmentAppealDeadline
     indictmentVerdictViewedByAll
-    indictmentVerdictAppealDeadline
+    indictmentVerdictAppealDeadlineExpired
     indictmentDecision
     indictmentReviewDecision
     indictmentCompletedDate
@@ -298,14 +303,35 @@ query Case($input: CaseQueryInput!) {
       caseFiles {
         id
         created
+        modified
         name
+        type
+        category
         state
         key
         size
-        category
+        userGeneratedFilename
+        displayDate
+        submittedBy
       }
       policeCaseNumbers
       indictmentSubtypes
     }
+    civilClaimants {
+      id
+      caseId
+      name
+      nationalId
+      noNationalId
+      hasSpokesperson
+      spokespersonIsLawyer
+      spokespersonNationalId
+      spokespersonName
+      spokespersonEmail
+      spokespersonPhoneNumber
+      caseFilesSharedWithSpokesperson
+    }
+    civilDemands
+    hasCivilClaims
   }
 }

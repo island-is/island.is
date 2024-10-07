@@ -53,6 +53,7 @@ export const Select = <
   isClearable,
   dataTestId,
   filterConfig,
+  isLoading = false,
 }: SelectProps<OptionType<Value>, IsMulti, Group>) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -86,6 +87,7 @@ export const Select = <
         styles={customStyles()}
         classNamePrefix="island-select"
         onChange={onChange}
+        isLoading={isLoading}
         options={options}
         label={label}
         value={value}
@@ -144,6 +146,7 @@ export const Select = <
         ariaError={ariaError}
         noOptionsMessage={() => noOptionsMessage || null}
         id={id}
+        isLoading={isLoading}
         name={name}
         isDisabled={isDisabled}
         styles={customStyles()}

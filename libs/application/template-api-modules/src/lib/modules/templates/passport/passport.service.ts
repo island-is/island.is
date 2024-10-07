@@ -173,8 +173,9 @@ export class PassportService extends BaseTemplateApiService {
 
       const forUser = !!passport.userPassport
       let result
+      const PASSPORT_TYPE = 'P'
+      const PASSPORT_SUBTYPE = 'A'
       if (forUser) {
-        this.logger.info('preregisterIdentityDocument', applicationId)
         result = await this.passportApi.preregisterIdentityDocument(auth, {
           guid: application.id,
           appliedForPersonId: auth.nationalId,
@@ -186,10 +187,10 @@ export class PassportService extends BaseTemplateApiService {
             phoneMobile: personalInfo.phoneNumber,
             email: personalInfo.email,
           },
+          type: PASSPORT_TYPE,
+          subType: PASSPORT_SUBTYPE,
         })
-        this.logger.info('preregisterIdentityDocument result', result)
       } else {
-        this.logger.info('preregisterChildIdentityDocument', applicationId)
         result = await this.passportApi.preregisterChildIdentityDocument(auth, {
           guid: application.id,
           appliedForPersonId: childsPersonalInfo.nationalId,
@@ -211,8 +212,9 @@ export class PassportService extends BaseTemplateApiService {
             phoneMobile: childsPersonalInfo.guardian1.phoneNumber,
             email: childsPersonalInfo.guardian1.email,
           },
+          type: PASSPORT_TYPE,
+          subType: PASSPORT_SUBTYPE,
         })
-        this.logger.info('preregisterChildIdentityDocument result', result)
       }
 
       if (!result || !result.success) {

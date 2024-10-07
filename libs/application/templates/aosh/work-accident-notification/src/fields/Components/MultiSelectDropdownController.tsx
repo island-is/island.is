@@ -107,7 +107,7 @@ export const MultiSelectDropdownController: FC<
 
   useEffect(() => {
     onAnswerChange(answers)
-  }, [answers, onAnswerChange])
+  }, [answers])
 
   return (
     <>

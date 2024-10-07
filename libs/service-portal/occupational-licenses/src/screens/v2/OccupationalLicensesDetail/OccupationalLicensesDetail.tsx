@@ -72,7 +72,6 @@ const OccupationalLicenseDetail = () => {
                   if (!a) {
                     return null
                   }
-
                   if (a.type === OccupationalLicensesV2LinkType.FILE) {
                     return (
                       <Button
@@ -94,7 +93,7 @@ const OccupationalLicenseDetail = () => {
                   return (
                     <LinkButton
                       key={`button-link-${index}`}
-                      variant="button"
+                      variant="utility"
                       to={
                         a.type === OccupationalLicensesV2LinkType.DOCUMENT
                           ? DocumentsPaths.ElectronicDocumentSingle.replace(
@@ -141,7 +140,7 @@ const OccupationalLicenseDetail = () => {
               content={license?.licenseNumber ?? ''}
             />
           )}
-          {(license?.dateOfBirth || loading) && (
+          {license?.dateOfBirth && (
             <UserInfoLine
               loading={loading}
               label={formatMessage(om.dateOfBirth)}

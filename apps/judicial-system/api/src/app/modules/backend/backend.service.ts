@@ -6,12 +6,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
-import {
-  CommentType,
-  DateType,
-  type User,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { DateType, type User, UserRole } from '@island.is/judicial-system/types'
 
 import {
   Case,
@@ -20,7 +15,12 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry } from '../case-list'
-import { Defendant, DeleteDefendantResponse } from '../defendant'
+import {
+  CivilClaimant,
+  Defendant,
+  DeleteCivilClaimantResponse,
+  DeleteDefendantResponse,
+} from '../defendant'
 import { CreateEventLogInput } from '../event-log'
 import {
   CaseFile,
@@ -144,7 +144,6 @@ export class BackendService extends DataSource<{ req: Request }> {
   private caseTransformer<Case>(data: unknown): Case {
     const theCase = data as Case & {
       dateLogs?: { dateType: DateType; date: string }[]
-      explanatoryComments?: { commentType: CommentType; comment: string }[]
     }
 
     return {
@@ -155,11 +154,6 @@ export class BackendService extends DataSource<{ req: Request }> {
       courtDate: theCase.dateLogs?.find(
         (dateLog) => dateLog.dateType === DateType.COURT_DATE,
       ),
-      postponedIndefinitelyExplanation: theCase.explanatoryComments?.find(
-        (comment) =>
-          comment.commentType ===
-          CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
-      )?.comment,
     }
   }
 
@@ -275,8 +269,16 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${id}/file`, createFile)
   }
 
-  getCaseFileSignedUrl(caseId: string, id: string): Promise<SignedUrl> {
-    return this.get(`case/${caseId}/file/${id}/url`)
+  getCaseFileSignedUrl(
+    caseId: string,
+    id: string,
+    mergedCaseId?: string,
+  ): Promise<SignedUrl> {
+    const mergedCaseInjection = mergedCaseId
+      ? `/mergedCase/${mergedCaseId}`
+      : ''
+
+    return this.get(`case/${caseId}${mergedCaseInjection}/file/${id}/url`)
   }
 
   deleteCaseFile(caseId: string, id: string): Promise<DeleteFileResponse> {
@@ -338,6 +340,31 @@ export class BackendService extends DataSource<{ req: Request }> {
     defendantId: string,
   ): Promise<DeleteDefendantResponse> {
     return this.delete(`case/${caseId}/defendant/${defendantId}`)
+  }
+
+  createCivilClaimant(
+    caseId: string,
+    createCivilClaimant: unknown,
+  ): Promise<CivilClaimant> {
+    return this.post(`case/${caseId}/civilClaimant`, createCivilClaimant)
+  }
+
+  updateCivilClaimant(
+    caseId: string,
+    civilClaimantId: string,
+    updateCivilClaimant: unknown,
+  ): Promise<CivilClaimant> {
+    return this.patch(
+      `case/${caseId}/civilClaimant/${civilClaimantId}`,
+      updateCivilClaimant,
+    )
+  }
+
+  deleteCivilClaimant(
+    caseId: string,
+    civilClaimantId: string,
+  ): Promise<DeleteCivilClaimantResponse> {
+    return this.delete(`case/${caseId}/civilClaimant/${civilClaimantId}`)
   }
 
   createIndictmentCount(
@@ -407,8 +434,15 @@ export class BackendService extends DataSource<{ req: Request }> {
   limitedAccessGetCaseFileSignedUrl(
     caseId: string,
     id: string,
+    mergedCaseId?: string,
   ): Promise<SignedUrl> {
-    return this.get(`case/${caseId}/limitedAccess/file/${id}/url`)
+    const mergedCaseInjection = mergedCaseId
+      ? `/mergedCase/${mergedCaseId}`
+      : ''
+
+    return this.get(
+      `case/${caseId}/limitedAccess${mergedCaseInjection}/file/${id}/url`,
+    )
   }
 
   limitedAccessDeleteCaseFile(

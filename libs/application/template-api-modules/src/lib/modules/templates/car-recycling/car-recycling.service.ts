@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { coreErrorMessages } from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
@@ -17,9 +16,8 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '@island.is/application/templates/car-recycling'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
-import { TemplateApiError } from '@island.is/nest/problem'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 
@@ -33,32 +31,6 @@ export class CarRecyclingService extends BaseTemplateApiService {
     super(ApplicationTypes.CAR_RECYCLING)
   }
 
-  private vehiclesApiWithAuth(auth: Auth) {
-    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  async getCurrentVehicles({ auth }: TemplateApiModuleActionProps) {
-    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
-      persidNo: auth.nationalId,
-      showOwned: true,
-      showCoowned: true,
-      showOperated: true,
-    })
-
-    // Validate that user has at least 1 vehicle
-    if (!result || !result.length) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.vehiclesEmptyListDefault,
-          summary: coreErrorMessages.vehiclesEmptyListDefault,
-        },
-        400,
-      )
-    }
-
-    return result
-  }
-
   async createOwner(application: ApplicationWithAttachments, auth: User) {
     const { applicantName } = getApplicationExternalData(
       application.externalData,
@@ -70,9 +42,17 @@ export class CarRecyclingService extends BaseTemplateApiService {
   async createVehicle(auth: User, vehicle: VehicleDto) {
     if (vehicle && vehicle.permno) {
       let mileage = 0
+      let modelYear = null
 
       if (vehicle.mileage) {
         mileage = +vehicle.mileage.trim().replace(/\./g, '')
+      }
+
+      // Support the newRegistrationDate, for now, to keep backwards compatibility
+      if (vehicle.newRegistrationDate) {
+        modelYear = new Date(vehicle.newRegistrationDate)
+      } else if (vehicle.modelYear) {
+        modelYear = new Date(vehicle.modelYear, 0, 1)
       }
 
       return await this.carRecyclingService.createVehicle(
@@ -81,7 +61,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
         mileage,
         vehicle.vin || '',
         vehicle.make || '',
-        vehicle.firstRegistrationDate || new Date(),
+        modelYear,
         vehicle.color || '',
       )
     }

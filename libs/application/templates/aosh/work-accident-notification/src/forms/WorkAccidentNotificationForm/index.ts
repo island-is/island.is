@@ -4,7 +4,7 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Form, FormModes, Section } from '@island.is/application/types'
 import { informationSection } from './InformationSection'
 import { Logo } from '../../assets/Logo'
 
@@ -12,6 +12,14 @@ import { externalData } from '../../lib/messages'
 import { accidentSection } from './AccidentSection'
 import { causeAndConsequencesSection } from './CauseAndConsequencesSection'
 import { employeeSection } from './EmployeeSection'
+import { EmployeeAndAccidentInformationSection } from '../RepeatableSection'
+
+const buildRepeatableSections = (): Section[] => {
+  const sections = [...Array(2)].map((_key, index) => {
+    return EmployeeAndAccidentInformationSection(index)
+  })
+  return sections.flat()
+}
 
 export const WorkAccidentNotificationForm: Form = buildForm({
   id: 'WorkAccidentNotificationFormsDraft',
@@ -55,7 +63,8 @@ export const WorkAccidentNotificationForm: Form = buildForm({
     }),
     informationSection,
     accidentSection,
-    employeeSection,
-    causeAndConsequencesSection,
+    ...buildRepeatableSections(),
+    //employeeSection,
+    //causeAndConsequencesSection,
   ],
 })

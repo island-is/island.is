@@ -1,4 +1,4 @@
-import React, {
+import {
   Dispatch,
   FC,
   SetStateAction,
@@ -14,7 +14,11 @@ import { motion } from 'framer-motion'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatDate,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import {
   core,
   signedVerdictOverview as m,
@@ -64,7 +68,7 @@ export const createCaseModifiedExplanation = (
     date: capitalize(formatDate(now, 'PPPP', true) || ''),
     time: formatDate(now, constants.TIME_FORMAT),
     userName: userName ?? '',
-    userTitle: userTitle ?? '',
+    userTitle: lowercase(userTitle),
     institutionName: institutionName ?? '',
     explanation: nextExplanation,
   })}`

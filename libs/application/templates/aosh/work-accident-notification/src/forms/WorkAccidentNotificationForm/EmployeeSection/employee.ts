@@ -122,10 +122,10 @@ export const employeeSubSection = buildSubSection({
           options: [],
         }),
         buildSelectField({
-          id: 'employee.workHourArrangement',
+          id: 'employee.workhourArrangement',
           width: 'half',
           // required: true,
-          title: employee.employee.workHourArrangement,
+          title: employee.employee.workhourArrangement,
           options: (application) => {
             const workhourArrangements = getValueViaPath(
               application.externalData,

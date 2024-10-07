@@ -68,8 +68,8 @@ export const employee = {
       defaultMessage: 'Starfshlutfall',
       description: 'Employment rate %',
     },
-    workHourArrangement: {
-      id: 'aosh.wan.application:employee.workHourArrangement',
+    workhourArrangement: {
+      id: 'aosh.wan.application:employee.workhourArrangement',
       defaultMessage: 'Tilhögun á vinnutíma',
       description: 'Employees work hour arrangement',
     },

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Control, Controller, useForm } from 'react-hook-form'
+import { useIntl } from 'react-intl'
 import { PropsValue } from 'react-select'
 import { useQuery } from '@apollo/client/react'
 
@@ -13,10 +14,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
-import { ConnectedComponent, Query } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
-import { useI18n } from '@island.is/web/i18n'
+import { Query } from '@island.is/web/graphql/schema'
 import { GET_UMS_COST_OF_LIVING_CALCULATOR } from '@island.is/web/screens/queries/UmsCostOfLivingCalculator'
+
+import { translation as translationStrings } from './translation.strings'
+import * as styles from './UmsCostOfLivingCalculator.css'
 
 interface CalculatedFieldWrapperProps {
   title: string
@@ -58,11 +60,15 @@ const CalculatedFieldWrapper = ({
 }: CalculatedFieldWrapperProps) => {
   return (
     <Stack space={1}>
-      <Text variant="eyebrow" fontWeight="semiBold">
-        {title}
-      </Text>
-      <Box paddingLeft={2}>
-        <Text fontWeight="semiBold">{numberFormatter.format(value ?? 0)}</Text>
+      <Box className={styles.readOnlyValues}>
+        <Text variant="eyebrow" fontWeight="semiBold">
+          {title}
+        </Text>
+        <Box paddingLeft={2}>
+          <Text fontWeight="semiBold">
+            {numberFormatter.format(value ?? 0)}
+          </Text>
+        </Box>
       </Box>
     </Stack>
   )
@@ -78,15 +84,10 @@ interface CostOfLivingInput {
   otherExpenses?: string
 }
 
-interface CostOfLivingCalculatorProps {
-  slice: ConnectedComponent
-}
-
 type DataState = 'loading' | 'loaded' | 'error'
 
-const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
-  const n = useNamespace(slice.json ?? {})
-  const { activeLocale } = useI18n()
+const UmsCostOfLivingCalculator = () => {
+  const { formatMessage } = useIntl()
   const methods = useForm<CostOfLivingInput>({
     defaultValues: { familySize: '1+0' },
   })
@@ -109,196 +110,109 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
   const costOfLivingOptions = useMemo(() => {
     return [
       {
-        label: n(
-          'individualLabel',
-          activeLocale === 'is' ? 'Einstaklingur' : 'Individual',
-        ),
+        label: formatMessage(translationStrings.individualLabel),
         options: [
           {
-            label: n(
-              'individualChildlessLabel',
-              activeLocale === 'is'
-                ? 'Einstaklingur, barnlaus'
-                : 'Individual, childless',
-            ),
+            label: formatMessage(translationStrings.individualChildlessLabel),
             value: '1+0',
           },
           {
-            label: n(
-              'individualOneChildLabel',
-              activeLocale === 'is'
-                ? 'Einstaklingur með 1 barn'
-                : 'Individual with 1 child',
-            ),
+            label: formatMessage(translationStrings.individualOneChildLabel),
             value: '1+1',
           },
           {
-            label: n(
-              'individualTwoChildrenLabel',
-              activeLocale === 'is'
-                ? 'Einstaklingur með 2 börn'
-                : 'Individual with 2 children',
-            ),
+            label: formatMessage(translationStrings.individualTwoChildrenLabel),
             value: '1+2',
           },
           {
-            label: n(
-              'individualThreeChildrenLabel',
-              activeLocale === 'is'
-                ? 'Einstaklingur með 3 börn'
-                : 'Individual with 3 children',
+            label: formatMessage(
+              translationStrings.individualThreeChildrenLabel,
             ),
             value: '1+3',
           },
           {
-            label: n(
-              'individualFourChildrenLabel',
-              activeLocale === 'is'
-                ? 'Einstaklingur með 4 börn'
-                : 'Individual with 4 children',
+            label: formatMessage(
+              translationStrings.individualFourChildrenLabel,
             ),
             value: '1+4',
           },
           {
-            label: n(
-              'individualFiveChildrenLabel',
-              activeLocale === 'is'
-                ? 'Einstaklingur með 5 börn'
-                : 'Individual with 5 children',
+            label: formatMessage(
+              translationStrings.individualFiveChildrenLabel,
             ),
             value: '1+5',
           },
           {
-            label: n(
-              'individualSixChildrenLabel',
-              activeLocale === 'is'
-                ? 'Einstaklingur með 6 börn'
-                : 'Individual with 6 children',
-            ),
+            label: formatMessage(translationStrings.individualSixChildrenLabel),
             value: '1+6',
           },
           {
-            label: n(
-              'individualSevenChildrenLabel',
-              activeLocale === 'is'
-                ? 'Einstaklingur með 7 börn'
-                : 'Individual with 7 children',
+            label: formatMessage(
+              translationStrings.individualSevenChildrenLabel,
             ),
             value: '1+7',
           },
           {
-            label: n(
-              'individualEightChildrenLabel',
-              activeLocale === 'is'
-                ? 'Einstaklingur með 8 börn'
-                : 'Individual with 8 children',
+            label: formatMessage(
+              translationStrings.individualEightChildrenLabel,
             ),
             value: '1+8',
           },
           {
-            label: n(
-              'individualNineChildrenLabel',
-              activeLocale === 'is'
-                ? 'Einstaklingur með 9 börn'
-                : 'Individual with 9 children',
+            label: formatMessage(
+              translationStrings.individualNineChildrenLabel,
             ),
             value: '1+9',
           },
         ],
       },
       {
-        label: n('coupleLabel', activeLocale === 'is' ? 'Hjón' : 'Couple'),
+        label: formatMessage(translationStrings.coupleLabel),
         options: [
           {
-            label: n(
-              'coupleChildlessLable',
-              activeLocale === 'is' ? 'Hjón, barnlaus' : 'Couple, childless',
-            ),
+            label: formatMessage(translationStrings.coupleChildlessLable),
             value: '2+0',
           },
           {
-            label: n(
-              'coupleOneChildLabel',
-              activeLocale === 'is' ? 'Hjón með 1 barn' : 'Couple with 1 child',
-            ),
+            label: formatMessage(translationStrings.coupleOneChildLabel),
             value: '2+1',
           },
           {
-            label: n(
-              'coupleTwoChildrenLable',
-              activeLocale === 'is'
-                ? 'Hjón með 2 börn'
-                : 'Couple with 2 children',
-            ),
+            label: formatMessage(translationStrings.coupleTwoChildrenLable),
             value: '2+2',
           },
           {
-            label: n(
-              'coupleThreeChildrenLable',
-              activeLocale === 'is'
-                ? 'Hjón með 3 börn'
-                : 'Couple with 3 children',
-            ),
+            label: formatMessage(translationStrings.coupleThreeChildrenLable),
             value: '2+3',
           },
           {
-            label: n(
-              'coupleFourChildrenLable',
-              activeLocale === 'is'
-                ? 'Hjón með 4 börn'
-                : 'Couple with 4 children',
-            ),
+            label: formatMessage(translationStrings.coupleFourChildrenLable),
             value: '2+4',
           },
           {
-            label: n(
-              'coupleFiveChildrenLable',
-              activeLocale === 'is'
-                ? 'Hjón með 5 börn'
-                : 'Couple with 5 children',
-            ),
+            label: formatMessage(translationStrings.coupleFiveChildrenLable),
             value: '2+5',
           },
           {
-            label: n(
-              'coupleSixChildrenLable',
-              activeLocale === 'is'
-                ? 'Hjón með 6 barn'
-                : 'Couple with 6 children',
-            ),
+            label: formatMessage(translationStrings.coupleSixChildrenLable),
             value: '2+6',
           },
           {
-            label: n(
-              'coupleSevenChildrenLable',
-              activeLocale === 'is'
-                ? 'Hjón með 7 börn'
-                : 'Couple with 7 children',
-            ),
+            label: formatMessage(translationStrings.coupleSevenChildrenLable),
             value: '2+7',
           },
           {
-            label: n(
-              'coupleEightChildrenLable',
-              activeLocale === 'is'
-                ? 'Hjón með 8 börn'
-                : 'Couple with 8 children',
-            ),
+            label: formatMessage(translationStrings.coupleEightChildrenLable),
             value: '2+8',
           },
           {
-            label: n(
-              'coupleNineChildrenLable',
-              activeLocale === 'is'
-                ? 'Hjón með 9 börn'
-                : 'Couple with 9 children',
-            ),
+            label: formatMessage(translationStrings.coupleNineChildrenLable),
             value: '2+9',
           },
         ],
       },
     ]
-  }, [])
+  }, [formatMessage])
 
   const getSelectedValues = (option: string | undefined) => {
     if (costOfLivingCalculator) {
@@ -370,13 +284,8 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
         )}
         {dataState === 'error' && (
           <AlertMessage
-            title={n('errorTitle', 'Villa')}
-            message={n(
-              'errorMessage',
-              activeLocale === 'is'
-                ? 'Ekki tókst að sækja gögn fyrir framfærslu reiknivél.'
-                : 'Failed to retieve data for cost of living calculator',
-            )}
+            title={formatMessage(translationStrings.errorTitle)}
+            message={formatMessage(translationStrings.errorMessage)}
             type="error"
           />
         )}
@@ -384,10 +293,7 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
           <Stack space={5}>
             <Stack space={2}>
               <Text variant="h2">
-                {n(
-                  'costOfLivingCalculatorTitle',
-                  activeLocale === 'is' ? 'Fjölskyldustærð' : 'Family size',
-                )}
+                {formatMessage(translationStrings.costOfLivingCalculatorTitle)}
               </Text>
               <Controller
                 control={control}
@@ -395,10 +301,7 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
                 defaultValue="1+0"
                 render={({ field: { onChange, value } }) => (
                   <Select
-                    label={n(
-                      'familySizeLabel',
-                      activeLocale === 'is' ? 'Fjölskyldustærð' : 'Family size',
-                    )}
+                    label={formatMessage(translationStrings.familySizeLabel)}
                     options={costOfLivingOptions}
                     value={selectValue(value)}
                     size="sm"
@@ -412,69 +315,35 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
             </Stack>
             <Stack space={3}>
               <Text variant="h3">
-                {n(
-                  'preCalculatedTitle',
-                  activeLocale === 'is'
-                    ? 'Framfærsluviðmið umboðsmanns skuldara'
-                    : 'Subsistence criteria',
-                )}
+                {formatMessage(translationStrings.preCalculatedTitle)}
               </Text>
 
               <CalculatedFieldWrapper
-                title={n(
-                  'foodLabel',
-                  activeLocale === 'is'
-                    ? 'Matur, hreinlætisvörur og heimilisbúnaður'
-                    : 'Food, hygiene products and household equipment',
-                )}
+                title={formatMessage(translationStrings.foodLabel)}
                 value={familySizeData?.food}
               />
               <CalculatedFieldWrapper
-                title={n(
-                  'clothesLabel',
-                  activeLocale === 'is' ? 'Föt og skór' : 'Clothes and shoes',
-                )}
+                title={formatMessage(translationStrings.clothesLabel)}
                 value={familySizeData?.clothes}
               />
               <CalculatedFieldWrapper
-                title={n(
-                  'medicalCostLabel',
-                  activeLocale === 'is'
-                    ? 'Læknis- og lyfjakostnaður'
-                    : 'Medical and pharmaceutical costs',
-                )}
+                title={formatMessage(translationStrings.medicalCostLabel)}
                 value={familySizeData?.medicalCost}
               />
               <CalculatedFieldWrapper
-                title={n(
-                  'hobbyLabel',
-                  activeLocale === 'is' ? 'Tómstundir' : 'Hobby',
-                )}
+                title={formatMessage(translationStrings.hobbyLabel)}
                 value={familySizeData?.hobby}
               />
               <CalculatedFieldWrapper
-                title={n(
-                  'communicationLabel',
-                  activeLocale === 'is'
-                    ? 'Samskiptakostnaður'
-                    : 'Communication expenses',
-                )}
+                title={formatMessage(translationStrings.communicationLabel)}
                 value={familySizeData?.communication}
               />
               <CalculatedFieldWrapper
-                title={n(
-                  'transportLabel',
-                  activeLocale === 'is' ? 'Samgöngur' : 'Transport',
-                )}
+                title={formatMessage(translationStrings.transportLabel)}
                 value={familySizeData?.transport}
               />
               <CalculatedFieldWrapper
-                title={n(
-                  'otherServicesLabel',
-                  activeLocale === 'is'
-                    ? 'Önnur þjónusta fyrir heimili'
-                    : 'Other household expenses',
-                )}
+                title={formatMessage(translationStrings.otherServicesLabel)}
                 value={familySizeData?.otherServices}
               />
             </Stack>
@@ -482,20 +351,10 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
               <Box>
                 <Stack space={2}>
                   <Text variant="h4">
-                    {n(
-                      'calculatorInputsTitle',
-                      activeLocale === 'is'
-                        ? 'Önnur mánaðarleg útgjöld'
-                        : 'Other monthly expenses',
-                    )}
+                    {formatMessage(translationStrings.calculatorInputsTitle)}
                   </Text>
                   <Text>
-                    {n(
-                      'calculatorInputsIntro',
-                      activeLocale === 'is'
-                        ? 'Fyrir önnur útgjöld notar umboðsmaður skuldara ekki viðmið, heldur tekur mið af raunútgjöldum hverrar fjölskyldu'
-                        : 'For other expenses, the debtor`s representative does not use criteria, but takes into account the actual expenses of each family',
-                    )}
+                    {formatMessage(translationStrings.calculatorInputsIntro)}
                   </Text>
                 </Stack>
               </Box>
@@ -504,71 +363,56 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
                   <InputControllerFieldWrapper
                     control={control}
                     nameAndId={'houseRent' as keyof CostOfLivingInput}
-                    label={n(
-                      'houseRentLabel',
-                      activeLocale === 'is' ? 'Húsaleiga' : 'House rent',
-                    )}
+                    label={formatMessage(translationStrings.houseRentLabel)}
                   />
                   <InputControllerFieldWrapper
                     control={control}
                     nameAndId={'electricity' as keyof CostOfLivingInput}
-                    label={n(
-                      'electricityLabel',
-                      activeLocale === 'is'
-                        ? 'Rafmagn, hiti og hússjóður'
-                        : 'Electricity, house heating and housing fund ',
-                    )}
+                    label={formatMessage(translationStrings.electricityLabel)}
                   />
                   <InputControllerFieldWrapper
                     control={control}
                     nameAndId={'propertyTaxes' as keyof CostOfLivingInput}
-                    label={n(
-                      'propertyTaxesLabel',
-                      activeLocale === 'is'
-                        ? 'Fasteigna-/vatns-/frv.gjöld'
-                        : 'Property taxes',
-                    )}
+                    label={formatMessage(translationStrings.propertyTaxesLabel)}
                   />
                   <InputControllerFieldWrapper
                     control={control}
                     nameAndId={'propertyInsurances' as keyof CostOfLivingInput}
-                    label={n(
-                      'propertyInsurancesLabel',
-                      activeLocale === 'is'
-                        ? 'Tryggingar, aðrar en bílatryggingar'
-                        : 'Insurances, other than car insurance',
+                    label={formatMessage(
+                      translationStrings.propertyInsurancesLabel,
                     )}
                   />
                   <InputControllerFieldWrapper
                     control={control}
                     nameAndId={'schoolAndDayCare' as keyof CostOfLivingInput}
-                    label={n(
-                      'schoolAndDayCareLabel',
-                      activeLocale === 'is'
-                        ? 'Skóli og dagvistun'
-                        : 'School and day care',
+                    label={formatMessage(
+                      translationStrings.schoolAndDayCareLabel,
                     )}
                   />
                   <InputControllerFieldWrapper
                     control={control}
                     nameAndId={'otherExpenses' as keyof CostOfLivingInput}
-                    label={n(
-                      'otherExpensesLabel',
-                      activeLocale === 'is'
-                        ? 'Önnur útgjöld'
-                        : 'Other expenses',
-                    )}
+                    label={formatMessage(translationStrings.otherExpensesLabel)}
                   />
                 </Stack>
               </Box>
             </Stack>
-
-            <Text variant="default" fontWeight="semiBold">
-              {n('totalText', activeLocale === 'is' ? 'Samtals' : 'Total')}
-              {': '}
-              {numberFormatter.format(getTotal())}{' '}
-              {n('currencyText', activeLocale === 'is' ? 'krónur' : 'ISK')}
-            </Text>
+            <Stack space={2}>
+              <Text variant="h3" fontWeight="semiBold">
+                {formatMessage(translationStrings.totalText)}
+              </Text>
+              <Box className={styles.total}>
+                <Text variant="eyebrow" fontWeight="semiBold" color="blue400">
+                  {formatMessage(translationStrings.totalText)}
+                </Text>
+                <Box paddingLeft={2} textAlign="right">
+                  <Text fontWeight="semiBold">
+                    {numberFormatter.format(getTotal())}{' '}
+                    {formatMessage(translationStrings.currencyText)}
+                  </Text>
+                </Box>
+              </Box>
+            </Stack>
           </Stack>
         )}
       </Box>
