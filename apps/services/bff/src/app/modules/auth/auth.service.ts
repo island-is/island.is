@@ -60,7 +60,12 @@ export class AuthService {
    * Creates the client base URL with the path appended.
    */
   private createClientBaseUrl() {
-    return `${this.config.clientBaseUrl}${environment.keyPath}`
+    const baseUrl = new URL(this.config.clientBaseUrl)
+    baseUrl.pathname = `${baseUrl.pathname}${environment.keyPath}`
+      // Prevent potential issues with malformed URLs.
+      .replace('//', '/')
+
+    return baseUrl.toString()
   }
 
   /**
