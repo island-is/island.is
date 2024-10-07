@@ -40,7 +40,11 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
   const columnSpan = isMobile ? '8/8' : props.narrow ? '4/8' : '5/8'
 
   if (props.loading) {
-    return <LoadingDots />
+    return (
+      <Box marginBottom={marginBottom ?? 4}>
+        <LoadingDots />
+      </Box>
+    )
   }
   return (
     <GridRow marginBottom={marginBottom ?? 4}>

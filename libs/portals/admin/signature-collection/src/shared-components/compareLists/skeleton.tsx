@@ -18,3 +18,7 @@ export const Skeleton = () => {
     </T.Row>
   )
 }
+
+export const SkeletonSingleRow = () => {
+  return <SkeletonLoader height={90} width="100%" borderRadius="large" />
+}

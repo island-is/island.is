@@ -1,5 +1,3 @@
-import { Base64 } from 'js-base64'
-
 import {
   Body,
   Controller,
@@ -22,12 +20,7 @@ import {
 } from '@island.is/judicial-system/message'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import {
-  CaseExistsGuard,
-  CaseTypeGuard,
-  CurrentCase,
-  PdfService,
-} from '../case'
+import { CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
 import { Case } from '../case/models/case.model'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
@@ -46,7 +39,6 @@ import { SubpoenaService } from './subpoena.service'
 export class InternalSubpoenaController {
   constructor(
     private readonly subpoenaService: SubpoenaService,
-    private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -77,11 +69,12 @@ export class InternalSubpoenaController {
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     DefendantExistsGuard,
+    SubpoenaExistsGuard,
   )
   @Post(
     `case/:caseId/${
       messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA]
-    }/:defendantId`,
+    }/:defendantId/:subpoenaId`,
   )
   @ApiOkResponse({
     type: DeliverResponse,
@@ -90,20 +83,20 @@ export class InternalSubpoenaController {
   async deliverSubpoenaToPolice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
+    @CurrentSubpoena() subpoena: Subpoena,
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering subpoena ${caseId} to police for defendant ${defendantId}`,
+      `Delivering subpoena ${subpoenaId} to police for defendant ${defendantId} of case ${caseId}`,
     )
-
-    const pdf = await this.pdfService.getSubpoenaPdf(theCase, defendant)
 
     return await this.subpoenaService.deliverSubpoenaToPolice(
       theCase,
       defendant,
-      Base64.btoa(pdf.toString('binary')),
+      subpoena,
       deliverDto.user,
     )
   }

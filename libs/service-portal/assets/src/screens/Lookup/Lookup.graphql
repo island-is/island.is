@@ -22,6 +22,9 @@ query GetVehiclesSearch($input: GetVehicleSearchInput!) {
     co
     co2Wltp
     weightedco2Wltp
+    engine
+    operatorNames
+    operatorAnonymityStatus
   }
 }
 

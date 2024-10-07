@@ -302,12 +302,15 @@ export class DelegationsIncomingService {
         if (delegationFound) {
           return true
         } else {
-          this.delegationsIndexService.removeDelegationRecord({
-            fromNationalId,
-            toNationalId: user.nationalId,
-            type: AuthDelegationType.LegalRepresentative,
-            provider: AuthDelegationProvider.DistrictCommissionersRegistry,
-          })
+          void this.delegationsIndexService.removeDelegationRecord(
+            {
+              fromNationalId,
+              toNationalId: user.nationalId,
+              type: AuthDelegationType.LegalRepresentative,
+              provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+            },
+            user,
+          )
         }
       } catch (error) {
         logger.error(
