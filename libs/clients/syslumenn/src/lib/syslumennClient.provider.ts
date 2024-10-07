@@ -19,13 +19,15 @@ export const SyslumennApiProvider: Provider<SyslumennApi> = {
           organizationSlug: 'syslumenn',
           ...config.fetch,
         }),
-        basePath: xRoadConfig
-          ? `${xRoadConfig.xRoadBasePath}/${config.xRoadServicePath}`
-          : config.url,
+        basePath:
+          xRoadConfig && config.xRoadServicePath
+            ? `${xRoadConfig.xRoadBasePath}/${config.xRoadServicePath}`
+            : config.url,
         headers: {
-          ...(xRoadConfig && {
-            'X-Road-Client': xRoadConfig.xRoadClient,
-          }),
+          ...(xRoadConfig &&
+            config.xRoadServicePath && {
+              'X-Road-Client': xRoadConfig.xRoadClient,
+            }),
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
