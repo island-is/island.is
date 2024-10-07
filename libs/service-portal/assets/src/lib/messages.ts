@@ -1037,6 +1037,14 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:refresh-job',
     defaultMessage: 'Uppfæra stöðu',
   },
+  mileagePostSuccess: {
+    id: 'sp.vehicles:mileage-post-success',
+    defaultMessage: 'Kílómetraskráning tókst',
+  },
+  mileagePutSuccess: {
+    id: 'sp.vehicles:mileage-put-success',
+    defaultMessage: 'Uppfærsla á kílómetraskráningu tókst',
+  },
   mileageHistoryFetchFailed: {
     id: 'sp.vehicles:mileage-history-fetch-failed',
     defaultMessage: 'Eitthvað fór úrskeiðis við að sækja fyrri skráningar',
