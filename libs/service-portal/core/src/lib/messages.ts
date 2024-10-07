@@ -5,6 +5,10 @@ export const m = defineMessages({
     id: 'service.portal:reference',
     defaultMessage: 'Tilvísun',
   },
+  goToPage: {
+    id: 'service.portal:go-to-page',
+    defaultMessage: 'Fara á síðu',
+  },
   print: {
     id: 'service.portal:print',
     defaultMessage: 'Prenta',

@@ -88,7 +88,7 @@ const VehicleBulkMileage = () => {
           <Inline space={2}>
             <LinkButton
               to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
-              text={formatMessage(vehicleMessage.bulkPostMileageWithFile)}
+              text={formatMessage(vehicleMessage.bulkPostMileage)}
               icon="upload"
               variant="utility"
             />
@@ -110,6 +110,7 @@ const VehicleBulkMileage = () => {
               totalPages={totalPages}
               renderLink={(page, className, children) => (
                 <button
+                  aria-label={formatMessage(m.goToPage)}
                   onClick={() => {
                     setPage(page)
                   }}

@@ -208,6 +208,7 @@ const VehicleBulkMileageJobDetail = () => {
                 size="default"
                 variant="utility"
                 onClick={handleFileDownload}
+                disabled={!displayRegistrationData}
               >
                 {formatMessage(vehicleMessage.downloadErrors)}
               </Button>
