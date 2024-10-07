@@ -9,14 +9,14 @@ import {
   StaticCheck,
 } from '@island.is/application/types'
 import { getValueViaPath } from './formUtils'
-import { User } from 'user'
+import { User } from '@island.is/shared/types'
 
-function applyStaticConditionalCheck(
+const applyStaticConditionalCheck = (
   formValue: FormValue,
   externalData: ExternalData,
   check: StaticCheck,
   user: User | null,
-): boolean {
+): boolean => {
   const { value, questionId, comparator, externalDataId, userPropId } = check
   let isValid = false
   let valueViaPath
@@ -68,12 +68,12 @@ function applyStaticConditionalCheck(
   return isValid
 }
 
-export function shouldShowFormItem(
+export const shouldShowFormItem = (
   formItem: FormItem,
   formValue: FormValue,
   externalData: ExternalData = {},
   user: User | null,
-): boolean {
+): boolean => {
   const { condition } = formItem
   if (!condition) {
     return true

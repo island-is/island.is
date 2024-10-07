@@ -408,7 +408,7 @@ export const FormOverview: FC<
             </>
           )}
 
-          {answers.isRepresentativeOfCompanyOrInstitue?.toString() !== YES && (
+          {answers.isRepresentativeOfCompanyOrInstitute?.toString() !== YES && (
             <>
               <Text variant="h4" paddingTop={6} paddingBottom={3}>
                 {formatText(
@@ -576,7 +576,7 @@ export const FormOverview: FC<
             <GridColumn span={['9/12', '9/12', '9/12', '10/12']}>
               <ValueLine
                 label={overview.labels.workMachine}
-                value={answers.workMachine.desriptionOfMachine}
+                value={answers.workMachine.descriptionOfMachine}
               />
             </GridColumn>
           )}

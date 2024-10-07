@@ -1,10 +1,4 @@
-import React, {
-  FC,
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { FC, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import getConfig from 'next/config'
 import Link from 'next/link'
@@ -31,6 +25,7 @@ import {
   isAdminUser,
   isCourtOfAppealsUser,
   isDefenceUser,
+  isPrisonSystemUser,
 } from '@island.is/judicial-system/types'
 import { api } from '@island.is/judicial-system-web/src/services'
 
@@ -96,6 +91,8 @@ const HeaderContainer = () => {
       ? constants.USERS_ROUTE
       : isCourtOfAppealsUser(user)
       ? constants.COURT_OF_APPEAL_CASES_ROUTE
+      : isPrisonSystemUser(user)
+      ? constants.PRISON_CASES_ROUTE
       : constants.CASES_ROUTE
 
   const handleLogout = () => {

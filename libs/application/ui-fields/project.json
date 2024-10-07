@@ -3,22 +3,18 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/ui-fields/src",
   "projectType": "library",
+  "tags": ["lib:application-system", "scope:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/application/ui-fields/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/ui-fields/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/ui-fields/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/application/ui-fields"]
     }
-  },
-  "tags": ["lib:application-system", "scope:application-system"]
+  }
 }

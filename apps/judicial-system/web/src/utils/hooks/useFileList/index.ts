@@ -1,5 +1,8 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
 
+import { toast } from '@island.is/island-ui/core'
+import { errors } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
   UserContext,
@@ -11,11 +14,13 @@ import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSigendU
 
 interface Parameters {
   caseId: string
+  connectedCaseParentId?: string
 }
 
-const useFileList = ({ caseId }: Parameters) => {
+const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   const { limitedAccess } = useContext(UserContext)
   const { setWorkingCase } = useContext(FormContext)
+  const { formatMessage } = useIntl()
   const [fileNotFound, setFileNotFound] = useState<boolean>()
 
   const [
@@ -29,6 +34,9 @@ const useFileList = ({ caseId }: Parameters) => {
         window.open(data.getSignedUrl.url, '_blank')
       }
     },
+    onError: () => {
+      toast.error(formatMessage(errors.openDocument))
+    },
   })
 
   const [
@@ -41,6 +49,9 @@ const useFileList = ({ caseId }: Parameters) => {
       if (data?.limitedAccessGetSignedUrl?.url) {
         window.open(data.limitedAccessGetSignedUrl.url, '_blank')
       }
+    },
+    onError: () => {
+      toast.error(formatMessage(errors.openDocument))
     },
   })
 
@@ -90,9 +101,23 @@ const useFileList = ({ caseId }: Parameters) => {
     () => (fileId: string) => {
       const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
 
-      query({ variables: { input: { id: fileId, caseId } } })
+      query({
+        variables: {
+          input: {
+            id: fileId,
+            caseId: connectedCaseParentId ?? caseId,
+            mergedCaseId: connectedCaseParentId && caseId,
+          },
+        },
+      })
     },
-    [caseId, getSignedUrl, limitedAccess, limitedAccessGetSignedUrl],
+    [
+      caseId,
+      connectedCaseParentId,
+      getSignedUrl,
+      limitedAccess,
+      limitedAccessGetSignedUrl,
+    ],
   )
 
   const dismissFileNotFound = () => {

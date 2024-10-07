@@ -2,12 +2,15 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule } from '@island.is/nest/config'
 
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import {
+  SharedAuthModule,
+  sharedAuthModuleConfig,
+} from '@island.is/judicial-system/auth'
 import { MessageService } from '@island.is/judicial-system/message'
 
-import { environment } from '../../../../environments'
-import { CaseService, PdfService } from '../../case'
+import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import { UserService } from '../../user'
 import { DefendantController } from '../defendant.controller'
@@ -19,23 +22,17 @@ jest.mock('@island.is/judicial-system/message')
 jest.mock('../../user/user.service')
 jest.mock('../../court/court.service')
 jest.mock('../../case/case.service')
-jest.mock('../../case/pdf.service')
 
 export const createTestingDefendantModule = async () => {
   const defendantModule = await Test.createTestingModule({
-    imports: [
-      SharedAuthModule.register({
-        jwtSecret: environment.auth.jwtSecret,
-        secretToken: environment.auth.secretToken,
-      }),
-    ],
+    imports: [ConfigModule.forRoot({ load: [sharedAuthModuleConfig] })],
     controllers: [DefendantController, InternalDefendantController],
     providers: [
+      SharedAuthModule,
       MessageService,
       UserService,
       CourtService,
       CaseService,
-      PdfService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -65,8 +62,6 @@ export const createTestingDefendantModule = async () => {
 
   const courtService = defendantModule.get<CourtService>(CourtService)
 
-  const pdfService = defendantModule.get<PdfService>(PdfService)
-
   const defendantModel = await defendantModule.resolve<typeof Defendant>(
     getModelToken(Defendant),
   )
@@ -88,7 +83,6 @@ export const createTestingDefendantModule = async () => {
     messageService,
     userService,
     courtService,
-    pdfService,
     defendantModel,
     defendantService,
     defendantController,

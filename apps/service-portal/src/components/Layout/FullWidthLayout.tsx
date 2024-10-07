@@ -21,6 +21,7 @@ import { DocumentsPaths } from '@island.is/service-portal/documents'
 import { theme } from '@island.is/island-ui/theme'
 import { useAuth } from '@island.is/auth/react'
 import { DocumentsScope } from '@island.is/auth/scopes'
+import { FinancePaths } from '@island.is/service-portal/finance'
 
 interface FullWidthLayoutWrapperProps {
   activeParent?: PortalNavigationItem
@@ -31,6 +32,7 @@ interface FullWidthLayoutWrapperProps {
 type FullWidthLayoutProps = {
   isDashboard: boolean
   isDocuments: boolean
+  isFinance: boolean
 } & FullWidthLayoutWrapperProps
 
 export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
@@ -40,6 +42,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   children,
   isDashboard,
   isDocuments,
+  isFinance,
 }) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
@@ -65,7 +68,9 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
           ? styles.fullWidthSplit
           : undefined
       }
-      paddingTop={isDocuments || isDashboard ? undefined : 9}
+      paddingTop={
+        isDocuments || isDashboard ? undefined : isFinance ? [0, 0, 9] : 9
+      }
       style={{
         marginTop: height,
         minHeight: `calc(100vh - ${theme.headerHeight.large}px`,
@@ -151,12 +156,17 @@ const FullWidthLayoutWrapper: FC<FullWidthLayoutWrapperProps> = (props) => {
     matchPath(route, props.pathname),
   )
 
+  // Finance does not need extra padding in mobile
+  const isFinance = Object.values(FinancePaths).find((route) =>
+    matchPath(route, props.pathname),
+  )
   const isSpecialView = !!isDashboard || !!isDocuments
 
   return (
     <FullWidthLayout
       isDashboard={!!isDashboard}
       isDocuments={!!isDocuments}
+      isFinance={!!isFinance}
       {...props}
     >
       <ModuleAlertBannerSection paddingTop={isSpecialView ? 0 : 2} />

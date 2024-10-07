@@ -12,11 +12,13 @@ import {
   formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  CaseTransition,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 
 import { type Case } from '../case'
 import { DateLog } from '../case/models/dateLog.model'
-import { ExplanatoryComment } from '../case/models/explanatoryComment.model'
 import { eventModuleConfig } from './event.config'
 
 const errorEmojis = [
@@ -37,50 +39,42 @@ const errorEmojis = [
   ':x:',
 ]
 
-const caseEvent = {
+const caseEvent: Record<CaseEvent, string> = {
+  [CaseTransition.ACCEPT]: ':white_check_mark: Samþykkt',
+  [CaseTransition.APPEAL]: ':judge: Kæra',
+  ARCHIVE: ':file_cabinet: Sett í geymslu',
+  [CaseTransition.ASK_FOR_CANCELLATION]: ':interrobang: Beðið um aftuköllun',
+  [CaseTransition.ASK_FOR_CONFIRMATION]: ':question: Beðið um staðfestingu',
+  [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
+  [CaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
+  [CaseTransition.DELETE]: ':fire: Afturkallað',
+  [CaseTransition.DENY_INDICTMENT]: ':no_entry_sign: Ákæru hafnað',
+  [CaseTransition.DISMISS]: ':woman-shrugging: Vísað frá',
   CREATE: ':new: Mál stofnað',
   CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
   EXTEND: ':recycle: Mál framlengt',
-  OPEN: ':unlock: Opnað fyrir dómstól',
-  ASK_FOR_CONFIRMATION: ':question: Beðið um staðfestingu',
-  SUBMIT: ':mailbox_with_mail: Sent',
+  [CaseTransition.OPEN]: ':unlock: Opnað fyrir dómstól',
+  [CaseTransition.RECEIVE]: ':eyes: Móttekið',
+  [CaseTransition.RECEIVE_APPEAL]: ':eyes: Kæra móttekin',
+  [CaseTransition.REJECT]: ':negative_squared_cross_mark: Hafnað',
+  [CaseTransition.REOPEN]: ':construction: Opnað aftur',
+  [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
-  RECEIVE: ':eyes: Móttekið',
-  ACCEPT: ':white_check_mark: Samþykkt',
-  REJECT: ':negative_squared_cross_mark: Hafnað',
-  DISMISS: ':woman-shrugging: Vísað frá',
-  COMPLETE: ':white_check_mark: Lokið',
-  DELETE: ':fire: Afturkallað',
+  [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæru afturkallað',
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
-  ARCHIVE: ':file_cabinet: Sett í geymslu',
-  REOPEN: ':construction: Opnað aftur',
-  APPEAL: ':judge: Kæra',
-  RECEIVE_APPEAL: ':eyes: Kæra móttekin',
-  COMPLETE_APPEAL: ':white_check_mark: Kæru lokið',
-  REOPEN_APPEAL: ':building_construction: Kæra opnuð aftur',
+  [CaseTransition.SUBMIT]: ':mailbox_with_mail: Sent',
+  [CaseTransition.WITHDRAW_APPEAL]:
+    ':leftwards_arrow_with_hook: Kæru afturkallað',
 }
 
-export enum CaseEvent {
-  CREATE = 'CREATE',
-  CREATE_XRD = 'CREATE_XRD',
-  EXTEND = 'EXTEND',
-  OPEN = 'OPEN',
-  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
-  SUBMIT = 'SUBMIT',
-  RESUBMIT = 'RESUBMIT',
-  RECEIVE = 'RECEIVE',
-  ACCEPT = 'ACCEPT',
-  REJECT = 'REJECT',
-  DELETE = 'DELETE',
-  SCHEDULE_COURT_DATE = 'SCHEDULE_COURT_DATE',
-  DISMISS = 'DISMISS',
-  ARCHIVE = 'ARCHIVE',
-  REOPEN = 'REOPEN',
-  APPEAL = 'APPEAL',
-  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
-  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
-  REOPEN_APPEAL = 'REOPEN_APPEAL',
-}
+export type CaseEvent =
+  | CaseTransition
+  | 'ARCHIVE'
+  | 'CREATE'
+  | 'CREATE_XRD'
+  | 'EXTEND'
+  | 'RESUBMIT'
+  | 'SCHEDULE_COURT_DATE'
 
 @Injectable()
 export class EventService {
@@ -91,7 +85,7 @@ export class EventService {
     private readonly logger: Logger,
   ) {}
 
-  postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
+  async postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
     try {
       if (!this.config.url) {
         return
@@ -120,25 +114,21 @@ export class EventService {
         ? `\n>Landsréttur *${theCase.appealCaseNumber}*`
         : ''
       const extraText =
-        event === CaseEvent.SCHEDULE_COURT_DATE
+        event === 'SCHEDULE_COURT_DATE'
           ? `\n>Dómari ${
               theCase.judge?.name ?? 'er ekki skráður'
             }\n>Dómritari ${
               theCase.registrar?.name ?? 'er ekki skráður'
             }\n>Fyrirtaka ${
-              ExplanatoryComment.postponedIndefinitelyExplanation(
-                theCase.explanatoryComments,
-              )
-                ? 'ekki ákveðin'
-                : formatDate(
-                    DateLog.courtDate(theCase.dateLogs)?.date ??
-                      DateLog.arraignmentDate(theCase.dateLogs)?.date,
-                    'Pp',
-                  ) ?? 'er ekki skráð'
+              formatDate(
+                DateLog.courtDate(theCase.dateLogs)?.date ??
+                  DateLog.arraignmentDate(theCase.dateLogs)?.date,
+                'Pp',
+              ) ?? 'er ekki skráð'
             }`
           : ''
 
-      fetch(`${this.config.url}`, {
+      await fetch(`${this.config.url}`, {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
         body: JSON.stringify({
@@ -162,7 +152,7 @@ export class EventService {
     }
   }
 
-  postErrorEvent(
+  async postErrorEvent(
     message: string,
     info: { [key: string]: string | boolean | Date | undefined },
     reason: Error,
@@ -181,7 +171,7 @@ export class EventService {
         }
       }
 
-      fetch(`${this.config.errorUrl}`, {
+      await fetch(`${this.config.errorUrl}`, {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
         body: JSON.stringify({

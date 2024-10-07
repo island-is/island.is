@@ -30,11 +30,12 @@ import {
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 
-import { ExternalDataProviderScreen } from '../types'
+import { ExternalDataProviderScreen, MOCKPAYMENT } from '../types'
 import { verifyExternalData } from '../utils'
 
 import { handleServerError } from '@island.is/application/ui-components'
 import { ProviderErrorReason } from '@island.is/shared/problem'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 const ItemHeader: React.FC<
   React.PropsWithChildren<{
@@ -193,6 +194,7 @@ const FormExternalDataProvider: FC<
     addExternalData(data: ExternalData): void
     setBeforeSubmitCallback: SetBeforeSubmitCallback
     externalData: ExternalData
+    enableMockPayment?: boolean
     externalDataProvider: ExternalDataProviderScreen
     formValue: FormValue
     errors: RecordObject
@@ -202,6 +204,7 @@ const FormExternalDataProvider: FC<
   setBeforeSubmitCallback,
   application,
   applicationId,
+  enableMockPayment = false,
   externalData,
   externalDataProvider,
   formValue,
@@ -351,6 +354,38 @@ const FormExternalDataProvider: FC<
           )
         }}
       />
+      {enableMockPayment &&
+        (isRunningOnEnvironment('dev') || isRunningOnEnvironment('local')) && (
+          <Controller
+            name={MOCKPAYMENT}
+            defaultValue={getValueViaPath(
+              formValue,
+              MOCKPAYMENT as string,
+              false,
+            )}
+            render={({ field: { onChange, value } }) => {
+              return (
+                <Box marginTop={2}>
+                  <Checkbox
+                    large={true}
+                    onChange={(e) => {
+                      const isChecked = e.target.checked
+                      clearErrors(MOCKPAYMENT)
+                      setValue(MOCKPAYMENT as string, isChecked)
+                      onChange(isChecked)
+                    }}
+                    checked={value}
+                    backgroundColor="blue"
+                    dataTestId="enable-mock-payment"
+                    name={MOCKPAYMENT}
+                    label={<Markdown>{'Enable mock payment'}</Markdown>}
+                    value={MOCKPAYMENT}
+                  />
+                </Box>
+              )
+            }}
+          />
+        )}
     </Box>
   )
 }

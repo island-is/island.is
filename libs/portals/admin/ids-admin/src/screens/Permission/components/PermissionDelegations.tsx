@@ -2,6 +2,7 @@ import React from 'react'
 
 import { useLocale } from '@island.is/localization'
 import { Checkbox, Hidden, Stack, Text } from '@island.is/island-ui/core'
+import { AuthDelegationProvider } from '@island.is/shared/types'
 
 import { usePermission } from '../PermissionContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
@@ -11,12 +12,14 @@ import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useDelegationProviders } from '../../../context/DelegationProviders/DelegationProvidersContext'
 import { getDelegationProviderTranslations } from '../../../utils/getDelegationProviderTranslations'
+import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 
 const FIELD_PREFIX = 'field-'
 
 export const PermissionDelegations = () => {
   const { formatMessage } = useLocale()
   const { selectedPermission, permission } = usePermission()
+  const { isSuperAdmin } = useSuperAdmin()
   const {
     isAccessControlled,
     grantToAuthenticatedUser,
@@ -113,7 +116,12 @@ export const PermissionDelegations = () => {
     >
       <Stack space={4}>
         {providers.map((provider) =>
-          !provider ? null : (
+          !provider ||
+          (!isSuperAdmin &&
+            (provider.id ===
+              AuthDelegationProvider.PersonalRepresentativeRegistry ||
+              provider.id ===
+                AuthDelegationProvider.DistrictCommissionersRegistry)) ? null : (
             <Stack space={2} key={provider.id}>
               <div>
                 <Text variant="h5" as="h4" paddingBottom={1}>

@@ -4,6 +4,7 @@
   "sourceRoot": "apps/api/src",
   "projectType": "application",
   "prefix": "api",
+  "tags": ["scope:api"],
   "generators": {},
   "targets": {
     "build": {
@@ -31,16 +32,15 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
-        "lintFilePatterns": ["apps/api/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/api/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/api/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/api"]
     },
@@ -74,7 +74,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/api"
       }
     },
@@ -85,7 +85,8 @@
         "parallel": true
       }
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:api"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

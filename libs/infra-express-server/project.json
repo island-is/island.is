@@ -3,22 +3,18 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/infra-express-server/src",
   "projectType": "library",
+  "tags": ["lib:node", "scope:node"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/infra-express-server/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/infra-express-server/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/infra-express-server/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/infra-express-server"]
     }
-  },
-  "tags": ["lib:node", "scope:node"]
+  }
 }

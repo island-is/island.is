@@ -6,13 +6,7 @@
   "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/transport-authority/digital-tachograph-drivers-card/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -20,8 +14,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/transport-authority/digital-tachograph-drivers-card"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/transport-authority/digital-tachograph-drivers-card/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/transport-authority/digital-tachograph-drivers-card/jest.config.ts"
       }
     },
     "extract-strings": {

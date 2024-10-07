@@ -3,22 +3,18 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/auth-api-lib/src",
   "projectType": "library",
+  "tags": ["lib:auth-api", "scope:auth-api"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/auth-api-lib/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/auth-api-lib/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/auth-api-lib/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/auth-api-lib"]
     }
-  },
-  "tags": ["lib:auth-api", "scope:auth-api"]
+  }
 }

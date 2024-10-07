@@ -6,7 +6,7 @@ export const LicenseResult = createUnionType({
   name: 'OccupationalLicensesV2LicenseResult',
   types: () => [License, LicenseError] as const,
   resolveType(value) {
-    if (value.licenseNumber) {
+    if (value.licenseId) {
       return License
     }
 

@@ -31,6 +31,32 @@ export interface CreateListInput {
   areas?: AreaInput[]
 }
 
+// Should replace CreateListInput once refactored to new ÞÍ endpoints
+export interface AddListsInput {
+  collectionId: string
+  candidateId: string
+  areas?: AreaInput[]
+}
+
+export interface CreateParliamentaryCandidacyInput extends CreateListInput {
+  agents: AgentInput[]
+}
+
+export enum MandateType {
+  Unknown,
+  Owner,
+  Guarantor, // is: Ábyrgðaraðili
+  Administrator, // is: Umsjónaraðili
+}
+
+export interface AgentInput {
+  nationalId: string
+  phoneNumber: string
+  email: string
+  mandateType: MandateType
+  areas: AreaInput[]
+}
+
 export interface BulkUploadUser {
   pageNumber: number
   nationalId: string

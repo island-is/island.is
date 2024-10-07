@@ -3,50 +3,49 @@ import { TestingModuleBuilder } from '@nestjs/testing'
 import { uuid } from 'uuidv4'
 
 import {
-  testServer,
-  useDatabase,
-  useAuth,
-  TestApp,
-} from '@island.is/testing/nest'
-import { createCurrentUser } from '@island.is/testing/fixtures'
-import {
-  NationalRegistryClientService,
-  IndividualDto,
-} from '@island.is/clients/national-registry-v2'
-import {
-  ApiScope,
   ApiScopeGroup,
-  Client,
-  ClientAllowedScope,
   DelegationConfig,
   Domain,
   Language,
   NamesService,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
+import { User } from '@island.is/auth-nest-tools'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
+import {
+  IndividualDto,
+  NationalRegistryClientService,
+} from '@island.is/clients/national-registry-v2'
+import { ConfigType } from '@island.is/nest/config'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import {
+  createApiScopeGroup,
+  CreateClient,
+  createDomain,
+  FixtureFactory,
+} from '@island.is/services/auth/testing'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+import {
+  TestApp,
+  testServer,
+  useAuth,
+  useDatabase,
+} from '@island.is/testing/nest'
 
 import { AppModule } from '../src/app/app.module'
-import { User } from '@island.is/auth-nest-tools'
 import {
   createMockEinstaklingurApi,
-  RskProcuringClientMock,
   FeatureFlagServiceMock,
+  RskProcuringClientMock,
 } from './mocks'
-import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
-import { ConfigType } from '@island.is/nest/config'
-import {
-  createDomain,
-  createApiScopeGroup,
-  createApiScope,
-  CreateClient,
-} from '@island.is/services/auth/testing'
 
 export interface ScopeSetupOptions {
   name: string
   allowExplicitDelegationGrant?: boolean
   order?: number
   groupId?: string
+  supportedDelegationTypes?: AuthDelegationType[]
 }
 
 export interface ScopeGroupSetupOptions {
@@ -68,6 +67,14 @@ interface SetupOptions {
   client?: ClientSetupOptions
 }
 
+export const delegationTypes = [
+  AuthDelegationType.Custom,
+  AuthDelegationType.LegalGuardian,
+  AuthDelegationType.ProcurationHolder,
+  AuthDelegationType.PersonalRepresentative,
+  AuthDelegationType.GeneralMandate,
+]
+
 export const ScopeGroups: ScopeGroupSetupOptions[] = [
   {
     id: uuid(),
@@ -79,31 +86,39 @@ export const Scopes: ScopeSetupOptions[] = [
     // Test user has access to
     name: '@island.is/scope0',
     groupId: ScopeGroups[0].id,
+    supportedDelegationTypes: delegationTypes,
   },
   {
     // Test user does not have access to
     name: '@island.is/scope1',
+    supportedDelegationTypes: delegationTypes,
   },
   {
     // Not allowed for delegations
     name: '@island.is/scope2',
-    allowExplicitDelegationGrant: false,
+    supportedDelegationTypes: delegationTypes.filter(
+      (dt) => dt !== AuthDelegationType.Custom,
+    ),
   },
   {
     // Only allowed for companies, one level deep
     name: '@island.is/scope3',
+    supportedDelegationTypes: delegationTypes,
   },
   {
     // Test user has access to
     name: '@island.is/scope4',
+    supportedDelegationTypes: delegationTypes,
   },
   {
     // Scope for another org
     name: '@otherorg.is/scope5',
+    supportedDelegationTypes: delegationTypes,
   },
   {
     // Only allowed for legal guardian, one level deep
     name: '@island.is/scope6',
+    supportedDelegationTypes: delegationTypes,
   },
 ]
 
@@ -167,13 +182,16 @@ export const setupWithAuth = async ({
     ),
   )
 
+  const factory = new FixtureFactory(app)
+
   // Add scopes in the "system" to use for delegation setup
-  const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
-  await apiScopeModel.bulkCreate(
-    scopes.map((scope) => ({
-      ...createApiScope(scope),
-      domainName: domain.name,
-    })),
+  await Promise.all(
+    scopes.map((scope) =>
+      factory.createApiScope({
+        ...scope,
+        domainName: domain.name,
+      }),
+    ),
   )
 
   // Add language for translations.
@@ -185,20 +203,13 @@ export const setupWithAuth = async ({
   })
 
   if (client) {
-    const clientModel = app.get<typeof Client>(getModelToken(Client))
-    await clientModel.create(client.props)
-
-    if (client.scopes) {
-      const clientAllowedScopesModel = app.get<typeof ClientAllowedScope>(
-        getModelToken(ClientAllowedScope),
-      )
-      await clientAllowedScopesModel.bulkCreate(
-        client.scopes?.map((s) => ({
-          scopeName: s,
-          clientId: client.props.clientId,
-        })),
-      )
-    }
+    await factory.createClient({
+      ...client.props,
+      allowedScopes: client.scopes?.map((s) => ({
+        clientId: client.props.clientId,
+        scopeName: s,
+      })),
+    })
   }
 
   // Mock the name of the authentication user

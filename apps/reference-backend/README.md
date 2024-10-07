@@ -15,7 +15,7 @@ This project is used as reference for future backend project.
 If your service or app needs external services like Postgres, ActiveMQ, etc. you can provision those using:
 
 ```bash
-docker-compose
+docker compose
 ```
 
 Your local dev setup should be in a file named `docker-compose.yml`. If you are using those services as part of an integration or end-to-end tests you need to add them to the ci scripts.

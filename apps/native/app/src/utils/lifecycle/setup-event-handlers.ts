@@ -28,13 +28,6 @@ let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
 export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
   Linking.addEventListener('url', ({ url }) => {
-    console.log('URL', url)
-    Linking.canOpenURL(url).then((supported) => {
-      if (supported) {
-        evaluateUrl(url)
-      }
-    })
-
     // Handle Cognito
     if (/cognito/.test(url)) {
       const [, hash] = url.split('#')
@@ -66,15 +59,6 @@ export function setupEventHandlers() {
     })
   }
 
-  // Get initial url and pass to the opener
-  Linking.getInitialURL()
-    .then((url) => {
-      if (url) {
-        Linking.openURL(url)
-      }
-    })
-    .catch((err) => console.error('An error occurred in getInitialURL: ', err))
-
   Navigation.events().registerBottomTabSelectedListener((e) => {
     uiStore.setState({
       unselectedTab: e.unselectedTabIndex,
@@ -95,7 +79,19 @@ export function setupEventHandlers() {
 
       if (status === 'background' || status === 'inactive') {
         // Add a small delay for those accidental backgrounds in iOS
-        backgroundAppLockTimeout = setTimeout(() => {
+        if (isIos) {
+          backgroundAppLockTimeout = setTimeout(() => {
+            const { lockScreenComponentId, lockScreenActivatedAt } =
+              authStore.getState()
+
+            if (!lockScreenComponentId && !lockScreenActivatedAt) {
+              showAppLockOverlay({ status })
+            } else if (lockScreenComponentId) {
+              Navigation.updateProps(lockScreenComponentId, { status })
+            }
+          }, 100)
+        } else {
+          // set timeout does not work properly on android when app is in background
           const { lockScreenComponentId, lockScreenActivatedAt } =
             authStore.getState()
 
@@ -104,7 +100,7 @@ export function setupEventHandlers() {
           } else if (lockScreenComponentId) {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
-        }, 100)
+        }
       }
 
       if (status === 'active') {
@@ -152,6 +148,8 @@ export function setupEventHandlers() {
           return navigateTo('/license-scanner')
         case ButtonRegistry.OfflineButton:
           return handleOfflineButtonClick()
+        case ButtonRegistry.HomeScreenOptionsButton:
+          return navigateTo('/home-options')
       }
     },
   )

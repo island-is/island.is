@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildDescriptionField,
   buildMultiField,
   buildPhoneField,
@@ -60,6 +61,19 @@ export const PersonalSection = buildSection({
           readOnly: true,
           defaultValue: (application: Application) =>
             application.externalData?.nationalRegistry?.data?.citizenship.name,
+        }),
+        buildAlertMessageField({
+          id: 'userInformation.alert',
+          title: '',
+          alertType: 'info',
+          message: personal.labels.userInformation.alertMessage,
+          links: [
+            {
+              title: personal.labels.userInformation.alertMessageLinkTitle,
+              url: personal.labels.userInformation.alertMessageLink,
+              isExternal: false,
+            },
+          ],
         }),
         buildTextField({
           id: 'userInformation.email',

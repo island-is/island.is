@@ -1,4 +1,3 @@
-import React from 'react'
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -205,9 +204,7 @@ describe('Cases', () => {
       )
 
       expect(
-        await waitFor(
-          () => screen.getAllByTestId('custody-cases-table-row').length,
-        ),
+        await waitFor(() => screen.getAllByTestId('tableRow').length),
       ).toEqual(5)
     })
 
@@ -243,9 +240,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      expect(
-        (await screen.findAllByTestId('custody-cases-table-row')).length,
-      ).toEqual(5)
+      expect((await screen.findAllByTestId('tableRow')).length).toEqual(5)
     })
   })
 
@@ -323,9 +318,9 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      await user.click(await screen.findByTestId('accusedNameSortButton'))
+      await user.click(await screen.findByTestId('defendantsSortButton'))
 
-      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
+      const tableRows = await screen.findAllByTestId('tableRow')
 
       expect(tableRows[0]).toHaveTextContent('D. M. Kil')
       expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
@@ -349,9 +344,9 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      await user.dblClick(await screen.findByTestId('accusedNameSortButton'))
+      await user.dblClick(await screen.findByTestId('defendantsSortButton'))
 
-      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
+      const tableRows = await screen.findAllByTestId('tableRow')
 
       expect(tableRows[0]).toHaveTextContent('D. M. Kil')
       expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
@@ -375,9 +370,9 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      await user.click(await screen.findByTestId('createdAtSortButton'))
+      await user.click(await screen.findByTestId('createdSortButton'))
 
-      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
+      const tableRows = await screen.findAllByTestId('tableRow')
 
       expect(tableRows[0]).toHaveTextContent('Erlingur L Kristinsson')
       expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
@@ -401,9 +396,9 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      await user.dblClick(await screen.findByTestId('createdAtSortButton'))
+      await user.dblClick(await screen.findByTestId('createdSortButton'))
 
-      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
+      const tableRows = await screen.findAllByTestId('tableRow')
 
       expect(tableRows[0]).toHaveTextContent('Erlingur L Kristinsson')
       expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')

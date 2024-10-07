@@ -12,6 +12,7 @@ import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
+import { SyslumennService } from '@island.is/clients/syslumenn'
 import { V2MeApi } from '@island.is/clients/user-profile'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
@@ -21,6 +22,7 @@ import {
 } from '@island.is/services/auth/testing'
 import {
   createCurrentUser,
+  createNationalId,
   createUniqueWords,
 } from '@island.is/testing/fixtures'
 import {
@@ -67,6 +69,8 @@ export const defaultScopes: Scopes = {
   },
 }
 
+export const nonExistingLegalRepresentativeNationalId = createNationalId()
+
 class MockNationalRegistryClientService
   implements Partial<NationalRegistryClientService>
 {
@@ -85,8 +89,11 @@ class MockUserProfile {
   meUserProfileControllerFindUserProfile = jest.fn().mockResolvedValue({})
 }
 
-class MockDelegationsIndexService {
-  indexDelegations = jest.fn().mockImplementation(() => Promise.resolve())
+class MockSyslumennService {
+  checkIfDelegationExists = jest.fn(
+    (_toNationalId: string, fromNationalId: string) =>
+      fromNationalId !== nonExistingLegalRepresentativeNationalId,
+  )
 }
 
 interface SetupOptions {
@@ -129,13 +136,13 @@ export const setupWithAuth = async ({
         .useValue({
           getIndividualRelationships: jest.fn().mockResolvedValue(null),
         })
+        .overrideProvider(SyslumennService)
+        .useClass(MockSyslumennService)
         .overrideProvider(FeatureFlagService)
         .useValue({
           getValue: (feature: Features) =>
             !features || features.includes(feature),
-        })
-        .overrideProvider(DelegationsIndexService)
-        .useClass(MockDelegationsIndexService),
+        }),
     hooks: [
       useAuth({ auth: user }),
       useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
@@ -148,6 +155,12 @@ export const setupWithAuth = async ({
   // Create scopes
   const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
   await apiScopeModel.bulkCreate(Object.values(scopes).map(createApiScope))
+
+  // Mock delegation indexing
+  const delegationIndexService = app.get(DelegationsIndexService)
+  delegationIndexService.indexDelegations = jest
+    .fn()
+    .mockImplementation(() => Promise.resolve())
 
   return app
 }

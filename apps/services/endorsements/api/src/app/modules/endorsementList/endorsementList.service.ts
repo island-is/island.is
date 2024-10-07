@@ -24,6 +24,11 @@ import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 
+import csvStringify from 'csv-stringify/lib/sync'
+
+import { AwsService } from '@island.is/nest/aws'
+import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
+
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
@@ -40,6 +45,7 @@ export class EndorsementListService {
     @Inject(EmailService)
     private emailService: EmailService,
     private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
+    private readonly awsService: AwsService,
   ) {}
 
   hasAdminScope(user: User): boolean {
@@ -67,7 +73,6 @@ export class EndorsementListService {
     }
   }
 
-  // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
     this.logger.info(`Finding endorsement lists`)
     return await paginate({
@@ -76,7 +81,7 @@ export class EndorsementListService {
       after: query.after,
       before: query.before,
       primaryKeyField: 'counter',
-      orderOption: [['counter', 'DESC']],
+      orderOption: [['endorsementCount', 'DESC']],
       where: where,
     })
   }
@@ -100,8 +105,6 @@ export class EndorsementListService {
   }
 
   async findSingleList(listId: string, user?: User, check?: boolean) {
-    // Check variable needed since finAll function in Endorsement controller uses this function twice
-    // on the second call it passes nationalID of user but does not go throught the get list pipe
     const isAdmin = user && check ? this.hasAdminScope(user) : false
     this.logger.info(`Finding single endorsement lists by id "${listId}"`)
     const result = await this.endorsementListModel.findOne({
@@ -232,7 +235,6 @@ export class EndorsementListService {
     this.logger.info(`Creating endorsement list: ${list.title}`)
     const endorsementList = await this.endorsementListModel.create({ ...list })
 
-    console.log('process.env.NODE_ENV', process.env.NODE_ENV)
     if (process.env.NODE_ENV === 'production') {
       await this.emailCreated(endorsementList)
     }
@@ -240,7 +242,6 @@ export class EndorsementListService {
     return endorsementList
   }
 
-  // generic get open lists
   async findOpenListsTaggedGeneralPetition(query: any) {
     const dateOb = new Date()
     try {
@@ -278,9 +279,6 @@ export class EndorsementListService {
   }
 
   async getOwnerInfo(listId: string, owner?: string) {
-    // Is used by both unauthenticated users, authenticated users and admin
-    // Admin needs to access locked lists and can not use the EndorsementListById pipe
-    // Since the endpoint is not authenticated
     this.logger.info(`Finding single endorsement lists by id "${listId}"`)
     if (!owner) {
       const endorsementList = await this.endorsementListModel.findOne({
@@ -365,7 +363,9 @@ export class EndorsementListService {
         doc.text(
           val.created.toLocaleDateString(locale) +
             ' ' +
-            (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint'),
+            (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint') +
+            ' ' +
+            (val.meta.locality ? val.meta.locality : 'Sveitafélag ótilgreint'),
         )
       }
     }
@@ -375,7 +375,9 @@ export class EndorsementListService {
       .fontSize(regular)
       .text(
         'Þetta skjal var framkallað sjálfvirkt þann: ' +
-          new Date().toLocaleDateString(locale),
+          new Date().toLocaleDateString(locale) +
+          ' klukkan ' +
+          new Date().toLocaleTimeString(locale),
       )
     doc.end()
     return await getStream.buffer(doc)
@@ -643,6 +645,121 @@ export class EndorsementListService {
     } catch (error) {
       this.logger.error('Failed to send email', error)
       return { success: false }
+    }
+  }
+  async exportList(
+    listId: string,
+    user: User,
+    fileType: 'pdf' | 'csv',
+  ): Promise<EndorsementListExportUrlResponse> {
+    try {
+      this.logger.info(`Exporting list ${listId} as ${fileType}`, { listId })
+
+      // Validate file type
+      if (!['pdf', 'csv'].includes(fileType)) {
+        throw new BadRequestException(
+          'Invalid file type. Allowed values are "pdf" or "csv".',
+        )
+      }
+
+      // Fetch endorsement list
+      const endorsementList = await this.fetchEndorsementList(listId, user)
+      if (!endorsementList) {
+        throw new NotFoundException(
+          `Endorsement list ${listId} not found or access denied.`,
+        )
+      }
+
+      // Create file buffer
+      const fileBuffer =
+        fileType === 'pdf'
+          ? await this.createPdfBuffer(endorsementList)
+          : this.createCsvBuffer(endorsementList)
+
+      // Upload to S3
+      const filename = `undirskriftalisti-${listId}-${new Date()
+        .toISOString()
+        .replace(/[:.]/g, '-')}.${fileType}`
+      await this.uploadFileToS3(fileBuffer, filename, fileType)
+
+      // Generate presigned URL with 60 minutes expiration
+      const url = await this.awsService.getPresignedUrl(
+        environment.exportsBucketName,
+        filename,
+      )
+      return { url }
+    } catch (error) {
+      this.logger.error(`Failed to export list ${listId}`, { error })
+      throw error
+    }
+  }
+
+  private async fetchEndorsementList(
+    listId: string,
+    user: User,
+  ): Promise<EndorsementList | null> {
+    // Only admin or list owner can access the list
+    const isAdmin = this.hasAdminScope(user)
+    return this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+        ...(isAdmin ? {} : { owner: user.nationalId }),
+      },
+      include: [{ model: Endorsement }],
+    })
+  }
+
+  private createCsvBuffer(endorsementList: EndorsementList): Buffer {
+    const records = (endorsementList.endorsements || []).map((endorsement) => ({
+      Dagsetning: endorsement.created.toLocaleDateString('is-IS'),
+      Nafn: endorsement.meta?.fullName || 'Nafn ótilgreint',
+      Sveitafélag: endorsement.meta?.locality || 'Sveitafélag ótilgreint',
+    }))
+    const csvString = csvStringify(records, { header: true })
+    return Buffer.from(csvString, 'utf-8')
+  }
+
+  private async createPdfBuffer(
+    endorsementList: EndorsementList,
+  ): Promise<Buffer> {
+    try {
+      const ownerName = await this.getOwnerInfo(
+        endorsementList.id,
+        endorsementList.owner,
+      )
+      const pdfBuffer = await this.createDocumentBuffer(
+        endorsementList,
+        ownerName,
+      )
+      return pdfBuffer
+    } catch (error) {
+      this.logger.error(
+        `Failed to create PDF buffer for endorsement list ${endorsementList.id}`,
+        { error },
+      )
+      throw new Error(
+        `Error generating PDF for endorsement list ${endorsementList.id}`,
+      )
+    }
+  }
+
+  private async uploadFileToS3(
+    fileBuffer: Buffer,
+    filename: string,
+    fileType: 'pdf' | 'csv',
+  ): Promise<void> {
+    try {
+      await this.awsService.uploadFile(
+        fileBuffer,
+        environment.exportsBucketName,
+        filename,
+        {
+          ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
+        },
+      )
+    } catch (error) {
+      this.logger.error(`Failed to upload file to S3`, { error, filename })
+      throw new Error('Error uploading file to S3')
     }
   }
 }

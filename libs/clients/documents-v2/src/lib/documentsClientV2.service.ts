@@ -46,6 +46,7 @@ export class DocumentsClientV2Service {
     const inputObject = sanitizeObject({
       ...input,
       kennitala: input.nationalId,
+      page: input.page ?? 1,
       senderKennitala:
         input.senderNationalId && input.senderNationalId.length > 0
           ? input.senderNationalId.join()
@@ -77,14 +78,18 @@ export class DocumentsClientV2Service {
   async getCustomersDocument(
     customerId: string,
     documentId: string,
+    locale?: string,
+    includeDocument?: boolean,
   ): Promise<DocumentDto | null> {
     const document = await this.api.customersDocument({
       kennitala: customerId,
       messageId: documentId,
       authenticationType: 'HIGH',
+      locale: locale,
+      includeDocument: includeDocument,
     })
 
-    const mappedDocument = mapToDocument(document)
+    const mappedDocument = mapToDocument(document, includeDocument)
 
     if (!mappedDocument) {
       this.logger.warn('No document content available for findDocumentById', {

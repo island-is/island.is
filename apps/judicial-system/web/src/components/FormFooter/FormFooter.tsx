@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
@@ -36,7 +36,7 @@ interface Props {
   infoBoxText?: string
 }
 
-const FormFooter: FC<React.PropsWithChildren<Props>> = ({
+const FormFooter: FC<Props> = ({
   previousUrl,
   previousIsDisabled,
   previousButtonText,

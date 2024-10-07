@@ -1,0 +1,44 @@
+query getDonorStatus($locale: String) {
+  healthDirectorateOrganDonation(locale: $locale) {
+    donor {
+      isDonor
+      limitations {
+        hasLimitations
+        limitedOrgansList {
+          id
+          name
+        }
+        comment
+      }
+    }
+  }
+}
+
+query getOrgansList($locale: String) {
+  healthDirectorateOrganDonation(locale: $locale) {
+    donor {
+      isDonor
+      limitations {
+        hasLimitations
+        limitedOrgansList {
+          id
+          name
+        }
+      }
+    }
+    organList {
+      id
+      name
+    }
+  }
+}
+
+mutation updateOrganDonationInfo(
+  $input: HealthDirectorateOrganDonorInput!
+  $locale: String
+) {
+  healthDirectorateOrganDonationUpdateDonorStatus(
+    input: $input
+    locale: $locale
+  )
+}

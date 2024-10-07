@@ -1,5 +1,4 @@
 import { defineMessage } from 'react-intl'
-
 import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -12,11 +11,6 @@ import { isDefined } from '@island.is/shared/utils'
 import { EducationPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 import { useStudentInfoQuery } from './EducationGraduation.generated'
-import {
-  UniversityCareersStudentTrackTranscript,
-  UniversityCareersStudentTrackTranscriptError,
-} from '@island.is/api/schema'
-import { useOrganizations } from '@island.is/service-portal/graphql'
 import { useMemo } from 'react'
 import { mapUniversityToSlug } from '../../utils/mapUniversitySlug'
 
@@ -32,34 +26,17 @@ export const EducationGraduation = () => {
     },
   })
 
-  const { data: organizations } = useOrganizations()
-
-  const tracks: Array<UniversityCareersStudentTrackTranscript> =
-    data?.universityCareersStudentTrackHistory?.trackResults
-      .filter((u) => u.__typename === 'UniversityCareersStudentTrackTranscript')
-      .filter(isDefined)
-      .map((u) => u as UniversityCareersStudentTrackTranscript) ?? []
-
-  const errors: Array<UniversityCareersStudentTrackTranscriptError> =
-    useMemo(() => {
-      return (
-        data?.universityCareersStudentTrackHistory?.trackResults
-          .filter(
-            (u) =>
-              u.__typename === 'UniversityCareersStudentTrackTranscriptError',
-          )
-          .filter(isDefined)
-          .map((u) => u as UniversityCareersStudentTrackTranscriptError) ?? []
-      )
-    }, [data?.universityCareersStudentTrackHistory.trackResults])
+  const errors = data?.universityCareersStudentTrackHistory?.errors
+  const transcripts = data?.universityCareersStudentTrackHistory?.transcripts
 
   const errorString = useMemo(() => {
-    return errors
-      .map((e) => mapUniversityToSlug(e.university))
-      .map((e) => (organizations ?? []).find((o) => o.slug === e)?.title)
-      .filter(isDefined)
-      .join(', ')
-  }, [errors, organizations])
+    if (errors) {
+      return errors
+        .map((e) => e.institution.displayName)
+        .filter(isDefined)
+        .join(', ')
+    }
+  }, [errors])
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -72,7 +49,7 @@ export const EducationGraduation = () => {
           description: 'education graduation intro',
         })}
       />
-      {!!errors.length && !error && !loading && (
+      {!!errors?.length && !error && !loading && (
         <Box marginBottom={2}>
           <AlertMessage
             type="warning"
@@ -85,7 +62,7 @@ export const EducationGraduation = () => {
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {loading && !error && <CardLoader />}
-      {!loading && !error && !tracks?.length && !errors?.length && (
+      {!loading && !error && !transcripts?.length && !errors?.length && (
         <Box marginTop={8}>
           <Problem
             type="no_data"
@@ -97,17 +74,25 @@ export const EducationGraduation = () => {
         </Box>
       )}
       <Stack space={2}>
-        {!!tracks?.length &&
-          tracks?.map((item, index) => {
+        {!!transcripts?.length &&
+          transcripts?.map((item, index) => {
             if (!item.institution.id) {
               return null
             }
             return (
               <ActionCard
                 key={`education-graduation-${index}`}
-                heading={`${item.studyProgram} - ${item.degree}`}
+                heading={
+                  item.studyProgram && item.degree
+                    ? `${item.studyProgram} - ${item.degree}`
+                    : item.institution.displayName ?? undefined
+                }
                 text={item.faculty}
-                subText={item.institution.displayName ?? undefined}
+                subText={
+                  item.studyProgram && item.degree
+                    ? item.institution.displayName ?? undefined
+                    : undefined
+                }
                 cta={{
                   label: defineMessage({
                     id: 'sp.education-graduation:details',

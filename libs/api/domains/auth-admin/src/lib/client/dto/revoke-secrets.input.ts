@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-import { Environment } from 'environment'
+import { Environment } from '@island.is/shared/types'
 
 @InputType('AuthAdminRevokeSecretsInput')
 export class RevokeSecretsInput {

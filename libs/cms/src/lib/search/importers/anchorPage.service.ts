@@ -8,6 +8,7 @@ import { mapAnchorPage } from '../../models/anchorPage.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import {
   createTerms,
+  extractChildEntryIds,
   extractStringsFromObject,
   pruneNonSearchableSliceUnionFields,
 } from './utils'
@@ -36,6 +37,9 @@ export class AnchorPageSyncService implements CmsSyncProvider<IAnchorPage> {
             mapped.content.map(pruneNonSearchableSliceUnionFields),
           )
 
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -47,7 +51,10 @@ export class AnchorPageSyncService implements CmsSyncProvider<IAnchorPage> {
                 : 'webDigitalIcelandService',
             termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, typename: 'AnchorPage' }),
-            tags: [],
+            tags: childEntryIds.map((id) => ({
+              key: id,
+              type: 'hasChildEntryWithId',
+            })),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
           }

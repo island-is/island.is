@@ -36,14 +36,15 @@ jobs:
       - name: Select secret envs to check
         id: select_envs
         run: |
+          set -euo pipefail
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           # ENVS=("dev" "staging")
           ENVS=("dev" "staging")
-          if [[ $GIT_BRANCH =~ ^release\/ ]]; then
+          if [[ "$GIT_BRANCH" =~ ^release\/ ]]; then
             echo "Adding prod environments to test set"
             ENVS+=("prod")
           fi
-          ENVS_JSON=$(printf '%s\n' "${ENVS[@]}" | jq -R . | jq -s . | tr -d '[:space:]')
+          ENVS_JSON="$(printf '%s\n' "${ENVS[@]}" | jq -R . | jq -s . | tr -d '[:space:]')"
           echo "ENVS={\"env\":$ENVS_JSON}" >> "$GITHUB_OUTPUT"
 
   helm-values-validation:
@@ -66,7 +67,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Cache for NodeJS dependencies
         id: node-modules
@@ -74,7 +75,7 @@ jobs:
         uses: ./.github/actions/cache
         with:
           path: infra/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra
+          key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra-2
 
       - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
@@ -94,7 +95,7 @@ jobs:
       - name: Commit any changes to charts
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          yarn --cwd infra charts
+          (cd infra && yarn charts)
           ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts" "dirtybot"
 
   check-secrets:
@@ -134,12 +135,12 @@ jobs:
           prod: arn:aws:iam::251502586493:role/list-ssm-parameters
           dev: arn:aws:iam::013313053092:role/list-ssm-parameters
           staging: arn:aws:iam::261174024191:role/list-ssm-parameters
-        run: echo "ROLE=$${{ matrix.env }}" >> $GITHUB_ENV
+        run: echo "ROLE=$${{ matrix.env }}" >> "$GITHUB_ENV"
       - name: Get local secrets
         working-directory: infra
         run: node -r esbuild-register src/secrets.ts get-all-required-secrets --env=${{ matrix.env }} >> LOCAL_SECRETS
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.DESCRIBE_SSM_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.DESCRIBE_SSM_AWS_SECRET_ACCESS_KEY }}
@@ -155,7 +156,7 @@ jobs:
         working-directory: infra
 
       - name: Configure AWS Credentials for IDS Prod
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.DESCRIBE_SSM_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.DESCRIBE_SSM_AWS_SECRET_ACCESS_KEY }}
@@ -174,8 +175,8 @@ jobs:
         working-directory: infra
         shell: /bin/bash {0}
         run: |
-          missing=$(grep -vxFf CLOUD_SECRETS LOCAL_SECRETS)
-          if [[ "$missing" != "" ]]; then
+          set -euo pipefail
+          if missing="$(grep -vxFf CLOUD_SECRETS LOCAL_SECRETS)"; then
             echo "Required secrets not available in environment ${{ matrix.env }}:"
             while IFS= read -r secret ; do echo $secret; done <<< "$missing"
             exit 1

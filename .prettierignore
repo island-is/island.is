@@ -12,3 +12,6 @@
 **/*.hbs
 .yarn
 /infra/helm/
+/.nx/cache
+/.nx/workspace-data
+apps/web/public/assets/pdf.worker.min.mjs

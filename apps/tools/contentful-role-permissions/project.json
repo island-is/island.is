@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/tools/contentful-role-permissions",
   "projectType": "application",
+  "tags": ["scope:react-next"],
   "targets": {
     "build": {
       "executor": "@nx/next:build",
@@ -48,19 +49,11 @@
         "{workspaceRoot}/coverage/apps/tools/contentful-role-permissions"
       ],
       "options": {
-        "jestConfig": "apps/tools/contentful-role-permissions/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/tools/contentful-role-permissions/jest.config.ts"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "apps/tools/contentful-role-permissions/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     }
-  },
-  "tags": ["scope:react-next"]
+  }
 }
