@@ -67,8 +67,8 @@ class SubpoenaData {
   @ApiProperty({ type: Boolean })
   hasChosenDefender?: boolean
 
-  @ApiProperty({ type: () => String })
-  defaultDefenderChoice?: string
+  @ApiProperty({ enum: DefenderChoice })
+  defaultDefenderChoice?: DefenderChoice
 }
 
 export class SubpoenaResponse {
@@ -99,7 +99,9 @@ export class SubpoenaResponse {
     const waivedRight = defendantInfo?.defenderChoice === DefenderChoice.WAIVE
     const hasDefender = defendantInfo?.defenderName !== undefined
     const subpoenas = defendantInfo?.subpoenas ?? []
-    const hasBeenServed = isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
+    const hasBeenServed =
+      subpoenas.length > 0 &&
+      isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
     const canChangeDefenseChoice = !waivedRight && !hasDefender
 
     const subpoenaDateLog = internalCase.dateLogs?.find(
