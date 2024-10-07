@@ -6,9 +6,10 @@ import { DocumentServiceV2 } from './documentV2.service'
 import { DocumentResolverV1 } from './documentV1.resolver'
 import { DocumentResolverV2 } from './documentV2.resolver'
 import { DocumentService } from './documentV1.service'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
-  imports: [DocumentsClientV2Module, DocumentsClientModule],
+  imports: [DocumentsClientV2Module, DocumentsClientModule, FeatureFlagModule],
   providers: [
     DocumentResolverV2,
     DocumentResolverV1,
