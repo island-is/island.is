@@ -16,7 +16,7 @@ if [[ ! -f "$COVERAGE_FILE" ]]; then
   exit 0
 fi
 
-COVERAGE_CONTENT=$(jq "." -cr <$COVERAGE_FILE)
+COVERAGE_CONTENT=$(jq "." -cr <"$COVERAGE_FILE")
 if [[ "$COVERAGE_CONTENT" == "{}" ]]; then
   echo "Coverage report is empty"
   exit 0
