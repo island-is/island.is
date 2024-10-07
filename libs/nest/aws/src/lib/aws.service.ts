@@ -38,7 +38,9 @@ export class AwsService {
   ): Promise<string | undefined> {
     const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
     const result = await this.getFileResponse(bucket, key)
-    return await result?.Body?.transformToString(encoding)
+    const ret = await result?.Body?.transformToString(encoding)
+    this.logger.error('Content fetch successful? -> ' + ret)
+    return ret
   }
 
   public async uploadFile(
@@ -69,6 +71,7 @@ export class AwsService {
       if (!url)
         throw new Error('No location url found after uploading file to S3')
 
+      this.logger.error('Upload successful? -> ' + url)
       return url
     } catch (error) {
       this.logger.error('Error occurred while uploading file to S3', error)
@@ -90,7 +93,7 @@ export class AwsService {
     const url = await getSignedUrl(this.s3Client, command, {
       expiresIn: expiration,
     })
-
+    this.logger.error('Presigned successful? -> ' + url)
     return url
   }
 
