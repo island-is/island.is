@@ -61,7 +61,7 @@ const CreateDelegationScreen = () => {
   const [isConfirmed, setIsConfirmed] = React.useState(false)
   const [fromNationalId, setFromNationalId] = React.useState('')
   const [toNationalId, setToNationalId] = React.useState('')
-
+  const [loading, setLoading] = React.useState(false)
   const fromInputRef = React.useRef<HTMLInputElement>(null)
   const toInputRef = React.useRef<HTMLInputElement>(null)
   const formRef = React.useRef<HTMLFormElement>(null)
@@ -83,6 +83,8 @@ const CreateDelegationScreen = () => {
         userInfo?.profile.nationalId ?? '',
       )
       successToast()
+      setLoading(false)
+      setShowConfirmModal(false)
       navigate(
         replaceParams({
           href: DelegationAdminPaths.DelegationAdmin,
@@ -106,7 +108,9 @@ const CreateDelegationScreen = () => {
       setIsConfirmed(true)
       setShowConfirmModal(true)
     } else {
+      setLoading(false)
       setIsConfirmed(false)
+      setShowConfirmModal(false)
     }
   }, [actionData])
 
@@ -409,15 +413,16 @@ const CreateDelegationScreen = () => {
                   title=""
                   message={
                     // if problem title is object extract code and use it as key
-                    actionData?.problem?.title
-                      ? formatMessage(
+                    FORM_ERRORS[
+                      actionData?.problem
+                        ?.title as keyof typeof FORM_ERRORS
+                      ] ? formatMessage(
                           FORM_ERRORS[
                             actionData?.problem
                               ?.title as keyof typeof FORM_ERRORS
                           ],
                         )
-                      : actionData?.problem?.detail ||
-                        formatMessage(m.errorDefault)
+                      : formatMessage(m.errorDefault)
                   }
                   type="error"
                 />
@@ -432,13 +437,14 @@ const CreateDelegationScreen = () => {
         toIdentity={toIdentity}
         data={actionData?.data}
         isVisible={showConfirmModal}
+        loading={loading}
         onClose={() => {
           setIsConfirmed(false)
           setShowConfirmModal(false)
         }}
         onConfirm={() => {
           submit(formRef.current)
-          setShowConfirmModal(false)
+          setLoading(true)
         }}
       />
     </Stack>

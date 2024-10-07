@@ -24,6 +24,7 @@ type CreateDelegationConfirmModalProps = Pick<
     referenceId: string
     validTo?: string | undefined
   } | null
+  loading: boolean
   onConfirm(): void
 }
 
@@ -31,6 +32,7 @@ export const CreateDelegationConfirmModal = ({
   fromIdentity,
   toIdentity,
   data,
+  loading,
   onClose,
   onConfirm,
   ...rest
@@ -116,6 +118,7 @@ export const CreateDelegationConfirmModal = ({
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           showShadow={showShadow}
+          loading={loading}
           onCancel={onClose}
           onConfirm={onConfirm}
           confirmLabel={formatMessage(coreMessages.codeConfirmation)}
