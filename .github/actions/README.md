@@ -21,7 +21,7 @@ yarn build
 Running locally can be done by using [local-runner.ts](./local-runner.ts). You will need a GitHub PAT with `repo`
 permissions.
 
-```bash
+```shell
 node -r esbuild-runner/register local-runner.ts
 ```
 

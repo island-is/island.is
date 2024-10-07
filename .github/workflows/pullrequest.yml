@@ -333,28 +333,6 @@ jobs:
           ./scripts/ci/20_check-formatting.sh "write"
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
-  docs:
-    needs:
-      - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: needs.prepare.outputs.LINT_CHUNKS
-    # env:
-    #   AFFECTED_PROJECTS: ${{ matrix.projects }}
-    #   NODE_OPTIONS: --max-old-space-size=4096
-    #   MAX_JOBS: 3
-    # strategy:
-    #   fail-fast: false
-    #   matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
-    steps:
-      - name: Markdown linting
-        uses: DavidAnson/markdownlint-cli2-action@v17
-        with:
-          globs: |
-            **/*.md
-            #node_modules
-
   linting:
     needs:
       - prepare
@@ -384,7 +362,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
           enable-cache: 'node_modules,generated-files'
-      - name: Nx linting
+      - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
   build:
