@@ -40,7 +40,7 @@ export const ApplicationsInProgressScreen: NavigationFunctionComponent = ({
       input: {
         status: [ApplicationResponseDtoStatusEnum.Inprogress],
       },
-      locale: locale === 'is-US' ? 'is' : 'en',
+      locale: locale === 'is-IS' ? 'is' : 'en',
     },
   })
 

@@ -64,9 +64,11 @@ export class DocumentServiceV2 {
       default:
         type = FileType.UNKNOWN
     }
+    // Data for the confirmation modal
     const confirmation = document.actions?.find(
       (action) => action.type === 'confirmation',
     )
+    // Data for the alert box
     const alert = document.actions?.find((action) => action.type === 'alert')
     const actions = document.actions?.filter(
       (action) => action.type !== 'alert' && action.type !== 'confirmation',
@@ -376,7 +378,7 @@ export class DocumentServiceV2 {
         return {
           ...x,
           icon: 'download',
-          data: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${x.data}`, // if type file, we download
+          data: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${id}`,
         }
       }
       if (x.type === 'url') {

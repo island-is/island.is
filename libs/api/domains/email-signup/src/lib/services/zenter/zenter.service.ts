@@ -84,7 +84,7 @@ export class ZenterSignupService {
         Accept: 'text/plain',
       },
     })
-    console.log('response', response.data)
+
     return { subscribed: response.data === 1 }
   }
 }
