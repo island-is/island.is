@@ -1639,14 +1639,16 @@ export class InternalNotificationService extends BaseNotificationService {
             ) && hasSpokesperson
 
           if (shouldSend === true) {
-            this.sendAdvocateAssignedNotification(
-              theCase,
-              spokespersonIsLawyer
-                ? AdvocateType.LAWYER
-                : AdvocateType.LEGAL_RIGHTS_PROTECTOR,
-              spokespersonNationalId,
-              spokespersonName,
-              spokespersonEmail,
+            promises.push(
+              this.sendAdvocateAssignedNotification(
+                theCase,
+                spokespersonIsLawyer
+                  ? AdvocateType.LAWYER
+                  : AdvocateType.LEGAL_RIGHTS_PROTECTOR,
+                spokespersonNationalId,
+                spokespersonName,
+                spokespersonEmail,
+              ),
             )
           }
         }
