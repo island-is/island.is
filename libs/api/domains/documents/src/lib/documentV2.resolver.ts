@@ -58,10 +58,7 @@ export class DocumentResolverV2 {
     locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<DocumentV2 | null> {
-    const ffEnabled = await this.featureFlagService.getValue(
-      Features.isServicePortalDocumentsV3PageEnabled,
-      false,
-    )
+    const ffEnabled = await this.getFeatureFlag()
     try {
       return await this.auditService.auditPromise(
         {
@@ -97,10 +94,7 @@ export class DocumentResolverV2 {
     @Args('input') input: DocumentsInput,
     @CurrentUser() user: User,
   ): Promise<PaginatedDocuments> {
-    const ffEnabled = await this.featureFlagService.getValue(
-      Features.isServicePortalDocumentsV3PageEnabled,
-      false,
-    )
+    const ffEnabled = await this.getFeatureFlag()
     if (ffEnabled)
       return this.documentServiceV2.listDocumentsV3(user.nationalId, input)
     return this.documentServiceV2.listDocuments(user.nationalId, input)
@@ -222,5 +216,12 @@ export class DocumentResolverV2 {
       })
       throw e
     }
+  }
+
+  private async getFeatureFlag(): Promise<boolean> {
+    return await this.featureFlagService.getValue(
+      Features.isServicePortalDocumentsV3PageEnabled,
+      false,
+    )
   }
 }
