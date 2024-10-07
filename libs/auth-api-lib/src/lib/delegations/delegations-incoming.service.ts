@@ -345,22 +345,26 @@ export class DelegationsIncomingService {
       )
       // Delete all deceased delegations from index
       const deletePromises = deceasedDelegations.map((delegation) => {
-        try {
-          this.delegationsIndexService.removeDelegationRecord(
-            {
-              fromNationalId: delegation.fromNationalId,
-              toNationalId: delegation.toNationalId,
-              type: delegation.type,
-              provider: AuthDelegationProvider.DistrictCommissionersRegistry,
-            },
-            user,
-          )
-        } catch (error) {
-          logger.error('Failed to remove delegation record.', error)
-        }
+        this.delegationsIndexService.removeDelegationRecord(
+          {
+            fromNationalId: delegation.fromNationalId,
+            toNationalId: delegation.toNationalId,
+            type: delegation.type,
+            provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+          },
+          user,
+        )
       })
 
-      await Promise.all(deletePromises)
+      const results = await Promise.allSettled(deletePromises)
+      results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          logger.error('Failed to remove delegation record', {
+            error: result.reason,
+            delegation: deceasedDelegations[index],
+          })
+        }
+      })
     }
 
     const merged = records
