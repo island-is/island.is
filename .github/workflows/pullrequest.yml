@@ -353,6 +353,7 @@ jobs:
         with:
           globs: |
             **/*.md
+            #node_modules
 
   linting:
     needs:
