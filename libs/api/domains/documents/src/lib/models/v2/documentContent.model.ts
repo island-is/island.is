@@ -14,8 +14,9 @@ export class DocumentContent {
   @Field(() => FileType)
   type!: FileType
 
-  @Field({
+  @Field(() => String, {
     description: 'Either pdf base64 string, html markup string, or an url',
+    nullable: true,
   })
-  value!: string
+  value?: string | null
 }
