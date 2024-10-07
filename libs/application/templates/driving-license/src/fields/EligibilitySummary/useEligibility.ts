@@ -1,6 +1,10 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { ApplicationEligibility, RequirementKey } from '../../types/schema'
+import {
+  ApplicationEligibility,
+  ApplicationEligibilityRequirement,
+  RequirementKey,
+} from '../../types/schema'
 import { useQuery, gql } from '@apollo/client'
 import {
   B_FULL,
@@ -114,7 +118,7 @@ export const useEligibility = (
     }
   }
 
-  const eligibility =
+  const eligibility: ApplicationEligibilityRequirement[] =
     data.drivingLicenseApplicationEligibility === undefined
       ? []
       : (data.drivingLicenseApplicationEligibility as ApplicationEligibility)
@@ -162,21 +166,19 @@ export const useEligibility = (
       )
 
       if (relevantCategories?.length) {
-        // if the user has any categories that indicate an extended driving license
-        hasExtendedDrivingLicense = true
-
-        // if any of the issued dates are exactly the same, they were most likely
-        // created 1993 (or around that time) and are not considered extended
-        // drivers licenses in that case
+        // check if the user has any categories that indicate an extended driving license.
+        // if any of the issued dates are exactly the same, they were most likely created
+        // in 1993 (or around that time) and are not considered extended drivers licenses.
         hasExtendedDrivingLicense = !relevantCategories.some(
           (x) => x.issued === drivingLicenseIssued,
         )
       }
     }
 
-    const hasAnyInvalidRemarks = currentLicense?.remarks?.some((remark) =>
-      remarksCannotRenew65.includes(remark.code),
-    )
+    const hasAnyInvalidRemarks =
+      currentLicense?.remarks?.some((remark) =>
+        remarksCannotRenew65.includes(remark.code),
+      ) ?? false
 
     const requirements = [
       ...eligibility,
@@ -193,6 +195,7 @@ export const useEligibility = (
       })
     }
 
+    //Add type annotations to the returned object
     return {
       loading: loading,
       eligibility: {
