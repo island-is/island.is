@@ -41,7 +41,7 @@ const ParliamentaryRoot = ({
     variables: {
       input: {
         collectionId: collection?.id,
-        nationalId: searchTerm,
+        nationalId: searchTerm.replace(/[^0-9]/g, ''),
       },
     },
     skip: searchTerm.replace(/[^0-9]/g, '').length !== 10,
