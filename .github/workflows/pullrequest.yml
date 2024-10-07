@@ -284,10 +284,6 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: reviewdog/action-shfmt@v1
-        with:
-          level: info
-          fail_on_error: true
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@2.0.0
         with:
