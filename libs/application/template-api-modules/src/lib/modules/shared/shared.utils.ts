@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 
 import { Application } from '@island.is/application/types'
 
-import { BaseTemplateAPIModuleConfig, SharedModuleConfig } from '../../types'
+import { SharedModuleConfig } from '../../types'
 
 export const createAssignToken = (
   application: Application,
