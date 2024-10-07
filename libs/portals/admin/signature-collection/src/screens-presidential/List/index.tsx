@@ -62,7 +62,6 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-
               <ListInfo
                 message={
                   listStatus === ListStatus.Extendable
