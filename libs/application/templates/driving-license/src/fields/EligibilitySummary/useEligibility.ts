@@ -97,6 +97,23 @@ export const useEligibility = (
     )
   }
 
+  const hasExtendedDrivingLicense = (
+    currentLicense: DrivingLicense | undefined,
+    drivingLicenseIssued: string | undefined,
+  ): boolean => {
+    if (!drivingLicenseIssued) return false
+
+    const relevantCategories = currentLicense?.categories?.filter((x) =>
+      codesExtendedLicenseCategories.includes(x.nr),
+    )
+
+    if (!relevantCategories?.length) return false
+
+    // Check if any category was issued on a different date than the 'B' license
+    // (indicating an extended license)
+    return relevantCategories.some((x) => x.issued !== drivingLicenseIssued)
+  }
+
   if (usingFakeData) {
     return {
       loading: false,
@@ -119,10 +136,7 @@ export const useEligibility = (
   }
 
   const eligibility: ApplicationEligibilityRequirement[] =
-    data.drivingLicenseApplicationEligibility === undefined
-      ? []
-      : (data.drivingLicenseApplicationEligibility as ApplicationEligibility)
-          .requirements
+    data.drivingLicenseApplicationEligibility?.requirements ?? []
 
   //TODO: Remove when RLS/SGS supports health certificate in BE license
   if (application.answers.applicationFor === BE) {
@@ -155,25 +169,12 @@ export const useEligibility = (
     const licenseB = currentLicense?.categories?.find(
       (license) => license.nr === 'B',
     )
-
     const drivingLicenseIssued = licenseB?.issued
 
-    let hasExtendedDrivingLicense = false
-
-    if (drivingLicenseIssued) {
-      const relevantCategories = currentLicense?.categories?.filter((x) =>
-        codesExtendedLicenseCategories.includes(x.nr),
-      )
-
-      if (relevantCategories?.length) {
-        // check if the user has any categories that indicate an extended driving license.
-        // if any of the issued dates are exactly the same, they were most likely created
-        // in 1993 (or around that time) and are not considered extended drivers licenses.
-        hasExtendedDrivingLicense = !relevantCategories.some(
-          (x) => x.issued === drivingLicenseIssued,
-        )
-      }
-    }
+    const hasExtendedLicense = hasExtendedDrivingLicense(
+      currentLicense,
+      drivingLicenseIssued,
+    )
 
     const hasAnyInvalidRemarks =
       currentLicense?.remarks?.some((remark) =>
@@ -186,16 +187,16 @@ export const useEligibility = (
         key: RequirementKey.HasNoPhoto,
         requirementMet: hasQualityPhoto,
       },
+      ...(hasExtendedLicense
+        ? [
+            {
+              key: RequirementKey.NoExtendedDrivingLicense,
+              requirementMet: false,
+            },
+          ]
+        : []),
     ]
 
-    if (hasExtendedDrivingLicense) {
-      requirements.push({
-        key: RequirementKey.NoExtendedDrivingLicense,
-        requirementMet: false,
-      })
-    }
-
-    //Add type annotations to the returned object
     return {
       loading: loading,
       eligibility: {
