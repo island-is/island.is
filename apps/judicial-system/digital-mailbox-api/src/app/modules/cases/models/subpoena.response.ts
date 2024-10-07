@@ -120,9 +120,7 @@ export class SubpoenaResponse {
         hasBeenServed: hasBeenServed,
         hasChosenDefender:
           defendantInfo?.defenderChoice &&
-          defendantInfo.defenderChoice !== DefenderChoice.DELAY
-            ? true
-            : false,
+          defendantInfo.defenderChoice !== DefenderChoice.DELAY,
         defaultDefenderChoice: DefenderChoice.DELAY,
         alerts: [
           ...(hasBeenServed
