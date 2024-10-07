@@ -360,10 +360,6 @@ export class DrivingLicenseService {
     token: string,
   ) {
     if (type === 'B-full-renewal-65') {
-      const bla = await this.drivingLicenseApi.getCanApplyForRenewal65({
-        token,
-      })
-      console.log('bla', bla)
       return this.drivingLicenseApi.getCanApplyForRenewal65({
         token,
       })
