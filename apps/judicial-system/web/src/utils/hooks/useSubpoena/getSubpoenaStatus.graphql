@@ -1,0 +1,9 @@
+query SubpoenaStatus($input: SubpoenaStatusQueryInput!) {
+  subpoenaStatus(input: $input) {
+    serviceStatus
+    servedBy
+    comment
+    serviceDate
+    defenderNationalId
+  }
+}
