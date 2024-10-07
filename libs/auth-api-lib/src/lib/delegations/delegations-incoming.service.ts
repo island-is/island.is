@@ -1,11 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import uniq from 'lodash/uniq'
 
 import { User } from '@island.is/auth-nest-tools'
-import {
-  IndividualDto,
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
 import { SyslumennService } from '@island.is/clients/syslumenn'
 import { logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
@@ -19,6 +16,7 @@ import { ClientDelegationType } from '../clients/models/client-delegation-type.m
 import { Client } from '../clients/models/client.model'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 import { ApiScope } from '../resources/models/api-scope.model'
+import { AliveStatusService, NameInfo } from './alive-status.service'
 import { UNKNOWN_NAME } from './constants/names'
 import { DelegationDTOMapper } from './delegation-dto.mapper'
 import { DelegationProviderService } from './delegation-provider.service'
@@ -66,7 +64,7 @@ export class DelegationsIncomingService {
     private delegationsIncomingWardService: DelegationsIncomingWardService,
     private delegationsIndexService: DelegationsIndexService,
     private delegationProviderService: DelegationProviderService,
-    private nationalRegistryClient: NationalRegistryClientService,
+    private aliveStatusService: AliveStatusService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly syslumennService: SyslumennService,
   ) {}
@@ -335,11 +333,38 @@ export class DelegationsIncomingService {
         clientAllowedApiScopes,
         requireApiScopes,
       )
-    const merged = records.map((d) =>
-      DelegationDTOMapper.recordToMergedDelegationDTO(d),
-    )
 
-    await Promise.all(merged.map((d) => this.updateName(d)))
+    const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
+      await this.aliveStatusService.getStatus(
+        uniq(records.map((d) => d.fromNationalId)),
+      )
+
+    if (deceasedNationalIds.length > 0) {
+      const deceasedDelegations = records.filter((d) =>
+        deceasedNationalIds.includes(d.fromNationalId),
+      )
+      // Delete all deceased delegations from index
+      const deletePromises = deceasedDelegations.map((delegation) =>
+        this.delegationsIndexService.removeDelegationRecord(
+          {
+            fromNationalId: delegation.fromNationalId,
+            toNationalId: delegation.toNationalId,
+            type: delegation.type,
+            provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+          },
+          user,
+        ),
+      )
+
+      await Promise.all(deletePromises)
+    }
+
+    const merged = records
+      .filter((d) => aliveNationalIds.includes(d.fromNationalId))
+      .map((d) => ({
+        ...DelegationDTOMapper.recordToMergedDelegationDTO(d),
+        fromName: this.getNameFromNameInfo(d.fromNationalId, aliveNameInfo),
+      }))
 
     return merged
   }
@@ -381,17 +406,12 @@ export class DelegationsIncomingService {
     })
   }
 
-  private async updateName(
-    mergedDelegation: MergedDelegationDTO,
-  ): Promise<void> {
-    try {
-      const fromIndividual: IndividualDto | null =
-        await this.nationalRegistryClient.getIndividual(
-          mergedDelegation.fromNationalId,
-        )
-      mergedDelegation.fromName = fromIndividual?.name ?? UNKNOWN_NAME
-    } catch (error) {
-      mergedDelegation.fromName = UNKNOWN_NAME
-    }
+  private getNameFromNameInfo(
+    nationalId: string,
+    nameInfo: NameInfo[],
+  ): string {
+    return (
+      nameInfo.find((n) => n.nationalId === nationalId)?.name ?? UNKNOWN_NAME
+    )
   }
 }
