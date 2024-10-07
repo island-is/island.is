@@ -17,7 +17,7 @@ interface Then {
 
 type GivenWhenThen = (caseId: string) => Promise<Then>
 
-describe('NotificationController - Send defender assigned notification', () => {
+describe('NotificationController - Send advocate assigned notification', () => {
   const userId = uuid()
   const user = { id: userId } as User
 
