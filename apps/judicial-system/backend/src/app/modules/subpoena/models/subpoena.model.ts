@@ -11,6 +11,8 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { ServiceStatus } from '@island.is/judicial-system/types'
+
 import { Case } from '../../case/models/case.model'
 import { Defendant } from '../../defendant/models/defendant.model'
 
@@ -57,17 +59,29 @@ export class Subpoena extends Model {
   @ApiPropertyOptional({ type: Case })
   case?: Case
 
-  @Column({ type: DataType.BOOLEAN, allowNull: true })
-  @ApiPropertyOptional({ type: Boolean })
-  acknowledged?: boolean
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(ServiceStatus),
+  })
+  @ApiPropertyOptional({ enum: ServiceStatus })
+  serviceStatus?: ServiceStatus
+
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  serviceDate?: Date
 
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
-  registeredBy?: string
+  servedBy?: string
 
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   comment?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  defenderNationalId?: string
 
   @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty({ type: Date })
