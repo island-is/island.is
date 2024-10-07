@@ -333,6 +333,20 @@ jobs:
           ./scripts/ci/20_check-formatting.sh "write"
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
+  docs:
+    needs:
+      - prepare
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    if: needs.prepare.outputs.LINT_CHUNKS
+    steps:
+      - name: Markdown linting
+        uses: DavidAnson/markdownlint-cli2-action@v17
+        with:
+          globs: |
+            **/*.md
+
   linting:
     needs:
       - prepare
@@ -362,7 +376,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
           enable-cache: 'node_modules,generated-files'
-      - name: Linting
+      - name: Nx linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
   build:
@@ -406,6 +420,7 @@ jobs:
       - prepare
       - linting-workspace
       - tests
+      - docs
       - linting
       - run-shellcheck
       - formatting
@@ -418,6 +433,8 @@ jobs:
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Check e2e success
         run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
+      - name: Check docs success
+        run: '[[ ${{ needs.docs.result }} != "failure" ]] || exit 1'
       - name: Check linting success
         run: '[[ ${{ needs.linting.result }} != "failure" ]] || exit 1'
       - name: Check run-shellcheck success
