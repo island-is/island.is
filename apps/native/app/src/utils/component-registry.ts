@@ -47,13 +47,14 @@ export const ComponentRegistry = {
   FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
   InboxFilterScreen: `${prefix}.screens.InboxFilterScreen`,
   AirDiscountScreen: `${prefix}.screens.AirDiscountScreen`,
+  PasskeyScreen: `${prefix}.screens.PasskeyScreen`,
+  UpdateAppScreen: `${prefix}.screens.UpdateAppScreen`,
 
   // custom navigation icons
   OfflineIcon: `${prefix}.navigation.OfflineIcon`,
 
   // overlays
   OfflineBanner: `${prefix}.overlay.OfflineBanner`,
-  PasskeyScreen: `${prefix}.screens.PasskeyScreen`,
 }
 
 export const ButtonRegistry = {
