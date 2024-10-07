@@ -128,7 +128,7 @@ export const bootstrap = async (
   }
 
   if (options.beforeServerStart) {
-    await options.beforeServerStart(app)
+    options.beforeServerStart(app)
   }
 
   const serverPort = process.env.PORT

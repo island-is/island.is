@@ -166,8 +166,26 @@ export class DelegationAdminCustomService {
       })
     }
 
-    this.verifyZendeskTicket(zendeskCase, fromReferenceId, toReferenceId)
+    if (
+      !kennitala.isPerson(createdByNationalId) ||
+      !kennitala.isPerson(toReferenceId) ||
+      !kennitala.isPerson(fromReferenceId)
+    ) {
+      throw new BadRequestException({
+        message: 'Created by National Id is not valid person national id',
+        error: ErrorCodes.INPUT_VALIDATION_INVALID_PERSON,
+      })
+    }
 
+    if (toReferenceId === fromReferenceId) {
+      throw new BadRequestException({
+        message: 'National Ids cannot be the same',
+        error: ErrorCodes.INPUT_VALIDATION_SAME_NATIONAL_ID,
+      })
+    }
+
+    this.verifyTicketCompletion(zendeskCase)
+    
     await this.insertDelegation({
       fromNationalId: fromReferenceId,
       toNationalId: toReferenceId,
@@ -313,11 +331,7 @@ export class DelegationAdminCustomService {
     })
   }
 
-  private verifyZendeskTicket(
-    ticket: Ticket,
-    fromNationalId: string,
-    toNationalId: string,
-  ) {
+  private verifyTicketCompletion(ticket: Ticket) {
     if (!ticket.tags.includes(DELEGATION_TAG)) {
       throw new BadRequestException({
         message: 'Zendesk case is missing required tag',
@@ -331,6 +345,14 @@ export class DelegationAdminCustomService {
         error: ErrorCodes.ZENDESK_STATUS,
       })
     }
+  }
+
+  private verifyZendeskTicket(
+    ticket: Ticket,
+    fromNationalId: string,
+    toNationalId: string,
+  ) {
+    this.verifyTicketCompletion(ticket)
 
     const { fromReferenceId, toReferenceId } =
       this.getZendeskCustomFields(ticket)

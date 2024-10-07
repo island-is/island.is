@@ -43,6 +43,10 @@ if (!ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE) {
   )
 }
 
+const ZendeskAuthGuardInstance = new ZendeskAuthGuard(
+  ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE,
+)
+
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegation-admin')
 @Controller('delegation-admin')
@@ -104,7 +108,7 @@ export class DelegationAdminController {
   }
 
   @BypassAuth()
-  @UseGuards(ZendeskAuthGuard(ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE))
+  @UseGuards(ZendeskAuthGuardInstance)
   @Post('/zendesk')
   @Documentation({
     response: { status: 200 },

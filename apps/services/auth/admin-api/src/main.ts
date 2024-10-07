@@ -17,7 +17,7 @@ bootstrap({
   healthCheck: {
     database: true,
   },
-  beforeServerStart: async (app) => {
+  beforeServerStart: (app) => {
     app.use(includeRawBodyMiddleware())
   },
 })

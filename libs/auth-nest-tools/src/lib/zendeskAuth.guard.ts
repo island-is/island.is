@@ -1,46 +1,42 @@
-import { Injectable, CanActivate, ExecutionContext, Type } from '@nestjs/common'
-import { Request } from 'express'
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import * as crypto from 'crypto'
+
+import { RawBodyRequest } from './rawBodyRequest.type'
 
 const SIGNING_SECRET_ALGORITHM = 'sha256'
 
-export function ZendeskAuthGuard(
-  signingSecret: string | undefined,
-): Type<CanActivate> {
-  if (!signingSecret) {
-    throw new Error('Signing secret must be set')
+@Injectable()
+export class ZendeskAuthGuard implements CanActivate {
+  private readonly signingSecret: string
+
+  constructor(signingSecret: string | undefined) {
+    if (!signingSecret) {
+      throw new Error('No signing secret provided')
+    }
+
+    this.signingSecret = signingSecret
   }
 
-  @Injectable()
-  class ZendeskAuthGuardMixin implements CanActivate {
-    canActivate(context: ExecutionContext): boolean {
-      const request: Request = context.switchToHttp().getRequest()
+  canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest<RawBodyRequest>()
 
-      const signature = request.headers['x-zendesk-webhook-signature'] as string
-      const timestamp = request.headers[
-        'x-zendesk-webhook-signature-timestamp'
-      ] as string
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      const body = request.rawBody?.toString() ?? ''
+    const signature = request.headers['x-zendesk-webhook-signature'] as string
+    const timestamp = request.headers[
+      'x-zendesk-webhook-signature-timestamp'
+    ] as string
+    const body = request.rawBody?.toString() ?? ''
 
-      return this.isValidSignature(signature, body, timestamp)
-    }
-    
-    isValidSignature(
-      signature: string,
-      body: string,
-      timestamp: string,
-    ): boolean {
-      const hmac = crypto.createHmac(
-        SIGNING_SECRET_ALGORITHM,
-        signingSecret as string,
-      )
-      const sig = hmac.update(timestamp + body).digest('base64')
-
-      return Buffer.compare(Buffer.from(signature), Buffer.from(sig)) === 0
-    }
+    return this.isValidSignature(signature, body, timestamp)
   }
 
-  return ZendeskAuthGuardMixin
+  isValidSignature(
+    signature: string,
+    body: string,
+    timestamp: string,
+  ): boolean {
+    const hmac = crypto.createHmac(SIGNING_SECRET_ALGORITHM, this.signingSecret)
+    const sig = hmac.update(timestamp + body).digest('base64')
+
+    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(sig))
+  }
 }

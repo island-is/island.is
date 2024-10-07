@@ -53,7 +53,7 @@ export type RunServerOptions = {
    * @param app The nest application instance.
    * @returns a promise that resolves when the hook is done.
    */
-  beforeServerStart?: (app: INestApplication) => Promise<void>
+  beforeServerStart?: (app: INestApplication) => void
 
   /**
    * Configures metrics collection and starts metric server. Default: true.
