@@ -11,6 +11,7 @@ import * as m from '../../lib/messages'
 import { SubSection } from '@island.is/application/types'
 import { postalCodes } from '@island.is/shared/utils'
 
+
 const messagesInfo = m.registerProperty.info
 const messagesInfoSummary = m.registerProperty.infoSummary
 const messagesCategory = m.registerProperty.category
@@ -80,7 +81,6 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           variant: 'number',
           width: 'half',
           required: true,
-          max: 99,
         }),
       ],
     }),
