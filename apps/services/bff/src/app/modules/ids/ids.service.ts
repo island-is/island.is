@@ -1,5 +1,3 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 
@@ -7,16 +5,13 @@ import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
 import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
 import { ENHANCED_FETCH_PROVIDER_KEY } from '../enhancedFetch/enhanced-fetch.provider'
-import { ParResponse, TokenResponse } from './ids.types'
+import { ApiResponse, ErrorRes, ParResponse, TokenResponse } from './ids.types'
 
 @Injectable()
 export class IdsService {
   private readonly issuerUrl
 
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
-
     @Inject(BffConfig.KEY)
     private readonly config: ConfigType<typeof BffConfig>,
 
@@ -34,7 +29,7 @@ export class IdsService {
   private async postRequest<T>(
     endpoint: string,
     body: Record<string, string>,
-  ): Promise<T> {
+  ): Promise<ApiResponse<T>> {
     try {
       const response = await this.enhancedFetch(
         `${this.issuerUrl}${endpoint}`,
@@ -50,10 +45,36 @@ export class IdsService {
       const contentType = response.headers.get('content-type') || ''
 
       if (contentType.includes('application/json')) {
-        return response.json() as Promise<T>
+        const data = await response.json()
+
+        if (!response.ok) {
+          // If error response from Ids is not in the expected format, throw the data as is
+          if (!data.error || !data.error_description) {
+            throw data
+          }
+
+          return {
+            type: 'error',
+            data: {
+              error: data.error,
+              error_description: data.error_description,
+            },
+          } as ErrorRes
+        }
+
+        return {
+          type: 'success',
+          data: data as T,
+        }
       }
 
-      return response.text() as Promise<T>
+      // Handle plain text responses
+      const textResponse = await response.text()
+
+      return {
+        type: 'success',
+        data: textResponse,
+      } as ApiResponse<T>
     } catch (error) {
       throw new Error(error)
     }

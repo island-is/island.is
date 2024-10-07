@@ -1,3 +1,11 @@
+export interface ErrorResponse {
+  // Error code, e.g. invalid_grant, invalid_request, ...
+  error: string
+
+  // Human-readable error description,
+  error_description: string
+}
+
 export type ParResponse = {
   // An identifier for the authorization request, instead of sending the parameters that were just pushed
   request_uri: string
@@ -6,7 +14,7 @@ export type ParResponse = {
   expires_in: number
 }
 
-export interface TokenResponse {
+export type TokenResponse = {
   // ID token issued by the authorization server
   id_token: string
 
@@ -25,3 +33,15 @@ export interface TokenResponse {
   // Scopes associated with the access token
   scope: string
 }
+
+export interface SuccessResponse<T> {
+  type: 'success'
+  data: T
+}
+
+export interface ErrorRes {
+  type: 'error'
+  data: ErrorResponse
+}
+
+export type ApiResponse<T> = SuccessResponse<T> | ErrorRes

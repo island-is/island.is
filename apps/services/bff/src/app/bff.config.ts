@@ -3,7 +3,6 @@ import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
 import { isProduction } from '../environment'
 import { removeTrailingSlash } from './utils/remove-trailing-slash'
-import { DEFAULT_CACHE_USER_PROFILE_TTL_MS } from './constants/time'
 
 export const idsSchema = z.strictObject({
   issuer: z.string(),
@@ -54,10 +53,12 @@ const BffConfigSchema = z.object({
    *
    * Note: The TTL should be aligned with the lifespan of the Ids client refresh token.
    *       We also subtract 5 seconds from the TTL to handle latency and clock drift.
-   *
-   * @default  1 hour - 5 seconds = 359995000ms
    */
-  cacheUserProfileTTLms: z.number().default(DEFAULT_CACHE_USER_PROFILE_TTL_MS),
+  cacheUserProfileTTLms: z.number(),
+  /**
+   * Time-to-live (TTL) for caching the login attempts, in milliseconds.
+   */
+  cacheLoginAttemptTTLms: z.number(),
 })
 
 export const BffConfig = defineConfig({
@@ -119,12 +120,10 @@ export const BffConfig = defineConfig({
         ],
       ),
       /**
-       * Time-to-live (TTL) for caching the user profile, in milliseconds.
+       * Time-to-live (TTL) in milliseconds for caching.
        */
-      cacheUserProfileTTLms: env.requiredJSON(
-        'BFF_CACHE_USER_PROFILE_TTL_MS',
-        DEFAULT_CACHE_USER_PROFILE_TTL_MS,
-      ),
+      cacheUserProfileTTLms: env.requiredJSON('BFF_CACHE_USER_PROFILE_TTL_MS'),
+      cacheLoginAttemptTTLms: env.requiredJSON('BFF_LOGIN_ATTEMPT_TTL_MS'),
     }
   },
 })

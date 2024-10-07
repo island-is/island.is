@@ -11,7 +11,8 @@ import { Request, Response } from 'express'
 import fetch from 'node-fetch'
 import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
-import { isExpired } from '../../utils/is-expired'
+
+import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
 import { validateUri } from '../../utils/validate-uri'
 import { AuthService } from '../auth/auth.service'
 import { CachedTokenResponse } from '../auth/auth.types'
@@ -54,13 +55,17 @@ export class ProxyService {
           this.cacheService.createSessionKeyType('current', sid),
         )
 
-      if (isExpired(cachedTokenResponse.accessTokenExp)) {
+      if (hasTimestampExpiredInMS(cachedTokenResponse.accessTokenExp)) {
         const tokenResponse = await this.idsService.refreshToken(
           cachedTokenResponse.encryptedRefreshToken,
         )
 
+        if (tokenResponse.type === 'error') {
+          throw tokenResponse.data
+        }
+
         cachedTokenResponse = await this.authService.updateTokenCache(
-          tokenResponse,
+          tokenResponse.data,
         )
       }
 

@@ -1,18 +1,28 @@
-// eslint-disable-next-line @nx/enforce-module-boundaries
+/* eslint-disable @nx/enforce-module-boundaries */
+import { json } from '../../../../../infra/src/dsl/dsl'
 import {
   adminPortalScopes,
   servicePortalScopes,
 } from '../../../../../libs/auth/scopes/src/index'
-import { json } from '../../../../../infra/src/dsl/dsl'
-import { DEFAULT_CACHE_USER_PROFILE_TTL_MS } from '../../src/app/constants/time'
+import { FIVE_SECONDS_IN_MS } from '../../src/app/constants/time'
+
+const ONE_HOUR_IN_MS = 60 * 60 * 1000
+const ONE_WEEK_IN_MS = ONE_HOUR_IN_MS * 24 * 7
 
 type PortalKeys = 'stjornbord' | 'minarsidur'
 
-const defaultEnvUrls = {
-  local: json(['http://localhost:4200/stjornbord']),
-  dev: json(['https://beta.dev01.devland.is']),
-  staging: json(['https://beta.staging01.devland.is']),
-  prod: json(['https://island.is']),
+const getDefaultEnvUrls = (asArray = false) => {
+  const local = 'http://localhost:4200/stjornbord'
+  const dev = 'https://beta.dev01.devland.is'
+  const staging = 'https://beta.staging01.devland.is'
+  const prod = 'https://island.is'
+
+  return {
+    local: asArray ? json([local]) : local,
+    dev: asArray ? json([dev]) : dev,
+    staging: asArray ? json([staging]) : staging,
+    prod: asArray ? json([prod]) : prod,
+  }
 }
 
 const getScopes = (key: PortalKeys) => {
@@ -48,9 +58,9 @@ export const createPortalEnv = (key: PortalKeys) => {
     },
     BFF_CLIENT_KEY_PATH: `/${key}`,
     BFF_PAR_SUPPORT_ENABLED: 'false',
-    BFF_ALLOWED_REDIRECT_URIS: defaultEnvUrls,
-    BFF_CLIENT_BASE_URL: defaultEnvUrls,
-    BFF_LOGOUT_REDIRECT_URI: defaultEnvUrls,
+    BFF_ALLOWED_REDIRECT_URIS: getDefaultEnvUrls(true),
+    BFF_CLIENT_BASE_URL: getDefaultEnvUrls(),
+    BFF_LOGOUT_REDIRECT_URI: getDefaultEnvUrls(),
     BFF_CALLBACKS_BASE_PATH: {
       local: `http://localhost:3010/${key}/bff/callbacks`,
       dev: `https://beta.dev01.devland.is/${key}/bff/callbacks`,
@@ -69,6 +79,13 @@ export const createPortalEnv = (key: PortalKeys) => {
       staging: json(['https://api.staging01.devland.is']),
       prod: json(['https://api.island.is']),
     },
-    BFF_CACHE_USER_PROFILE_TTL_MS: DEFAULT_CACHE_USER_PROFILE_TTL_MS.toString(),
+    /**
+     * The TTL should be aligned with the lifespan of the Ids client refresh token.
+     * We also subtract 5 seconds from the TTL to handle latency and clock drift.
+     */
+    BFF_CACHE_USER_PROFILE_TTL_MS: (
+      ONE_HOUR_IN_MS - FIVE_SECONDS_IN_MS
+    ).toString(),
+    BFF_LOGIN_ATTEMPT_TTL_MS: ONE_WEEK_IN_MS.toString(),
   }
 }

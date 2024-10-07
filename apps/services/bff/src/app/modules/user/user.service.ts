@@ -4,12 +4,14 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { Request } from 'express'
 
 import { BffUser } from '@island.is/shared/types'
-import { isExpired } from '../../utils/is-expired'
+import { SESSION_COOKIE_NAME } from '../../constants/cookies'
+import { CryptoService } from '../../services/crypto.service'
+
+import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
 import { AuthService } from '../auth/auth.service'
 import { CachedTokenResponse } from '../auth/auth.types'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
-import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 
 @Injectable()
 export class UserService {
@@ -17,6 +19,7 @@ export class UserService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
 
+    private readonly cryptoService: CryptoService,
     private readonly cacheService: CacheService,
     private readonly idsService: IdsService,
     private readonly authService: AuthService,
@@ -48,20 +51,23 @@ export class UserService {
         throw new UnauthorizedException()
       }
 
-      // Check if the access token is expired
-      if (isExpired(cachedTokenResponse.accessTokenExp)) {
-        if (noRefresh) {
-          throw new UnauthorizedException()
-        }
+      const accessTokenHasExpired = hasTimestampExpiredInMS(
+        cachedTokenResponse.accessTokenExp,
+      )
 
+      if (accessTokenHasExpired && !noRefresh) {
         // Get new token data with refresh token
         const tokenResponse = await this.idsService.refreshToken(
           cachedTokenResponse.encryptedRefreshToken,
         )
 
+        if (tokenResponse.type === 'error') {
+          throw tokenResponse.data
+        }
+
         // Update cache with new token data
         const value: CachedTokenResponse =
-          await this.authService.updateTokenCache(tokenResponse)
+          await this.authService.updateTokenCache(tokenResponse.data)
 
         return this.mapToBffUser(value)
       }

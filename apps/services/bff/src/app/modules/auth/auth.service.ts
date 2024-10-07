@@ -10,7 +10,7 @@ import { v4 as uuid } from 'uuid'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
-import { FIVE_SECONDS_IN_MS, ONE_WEEK_IN_MS } from '../../constants/time'
+import { FIVE_SECONDS_IN_MS } from '../../constants/time'
 import { CryptoService } from '../../services/crypto.service'
 import { PKCEService } from '../../services/pkce.service'
 import {
@@ -122,23 +122,16 @@ export class AuthService {
    * Revoke the refresh token on the identity server, since we have a new session.
    * We deliberately do not await this operation to make the login flow faster,
    * since this operation is not critical part to await.
+   * We use .catch() to handle unhandled promise rejections.
    *
    * @param encryptedRefreshToken The encrypted refresh token to revoke
    */
   private revokeRefreshToken(encryptedRefreshToken: string) {
-    try {
-      const decryptedToken = this.cryptoService.decrypt(encryptedRefreshToken)
-
-      // Call revokeToken without awaiting and handle potential errors with .catch() to handle unhandled promise rejections.
-      this.idsService
-        .revokeToken(decryptedToken, 'refresh_token')
-        .catch((error) => {
-          this.logger.warn('Failed to revoke refresh token:', error)
-        })
-    } catch (error) {
-      // Catch synchronous decryption errors
-      this.logger.warn('Failed to decrypt refresh token:', error)
-    }
+    this.idsService
+      .revokeToken(encryptedRefreshToken, 'refresh_token')
+      .catch((error) => {
+        this.logger.warn('Failed to revoke refresh token:', error)
+      })
   }
 
   /**
@@ -187,7 +180,7 @@ export class AuthService {
           codeVerifier,
           targetLinkUri,
         },
-        ttl: ONE_WEEK_IN_MS, // 1 week
+        ttl: this.config.cacheLoginAttemptTTLms,
       })
 
       let searchParams: URLSearchParams
@@ -200,8 +193,12 @@ export class AuthService {
           prompt,
         })
 
+        if (parResponse.type === 'error') {
+          throw parResponse.data
+        }
+
         searchParams = new URLSearchParams({
-          request_uri: parResponse.request_uri,
+          request_uri: parResponse.data.request_uri,
           client_id: this.config.ids.clientId,
         })
       } else {
@@ -281,12 +278,20 @@ export class AuthService {
         codeVerifier: loginAttemptData.codeVerifier,
       })
 
-      const updatedTokenResponse = await this.updateTokenCache(tokenResponse)
+      if (tokenResponse.type === 'error') {
+        throw tokenResponse.data
+      }
+
+      const updatedTokenResponse = await this.updateTokenCache(
+        tokenResponse.data,
+      )
 
       // Clean up the login attempt from the cache since we have a successful login.
-      await this.cacheService.delete(
-        this.cacheService.createSessionKeyType('attempt', query.state),
-      )
+      this.cacheService
+        .delete(this.cacheService.createSessionKeyType('attempt', query.state))
+        .catch((err) => {
+          this.logger.warn(err)
+        })
 
       // Create session cookie with successful login session id
       res.cookie(
@@ -309,13 +314,20 @@ export class AuthService {
 
         const oldSessionData = await this.cacheService.get<CachedTokenResponse>(
           oldSessionCacheKey,
+          // Do not throw an error if the key is not found
+          false,
         )
 
-        // Clean up the old session key from the cache
-        await this.cacheService.delete(oldSessionCacheKey)
+        if (oldSessionData) {
+          // Revoke the old session refresh token
+          this.revokeRefreshToken(oldSessionData.encryptedRefreshToken)
 
-        // Revoke the old session refresh token
-        this.revokeRefreshToken(oldSessionData.encryptedRefreshToken)
+          // Clean up the old session key from the cache.
+          // Use catch() to handle unhandled promise rejections
+          this.cacheService.delete(oldSessionCacheKey).catch((err) => {
+            this.logger.warn(err)
+          })
+        }
       }
 
       return res.redirect(
@@ -397,7 +409,7 @@ export class AuthService {
 
     this.cacheService
       .delete(currentLoginCacheKey)
-      // catch() to handle unhandled promise rejections
+      // handle unhandled promise rejections
       .catch((err) => {
         this.logger.warn(err)
       })
