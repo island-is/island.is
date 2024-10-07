@@ -1,11 +1,12 @@
 import { Test } from '@nestjs/testing'
 
 import {
+  SyslumennApiProvider,
   SyslumennClientModule,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { ConfigModule, defineConfig, XRoadConfig } from '@island.is/nest/config'
+import { ConfigModule, defineConfig } from '@island.is/nest/config'
 import { startMocking } from '@island.is/shared/mocking'
 
 import {
@@ -37,7 +38,10 @@ describe('MortgageCertificateService', () => {
     const module = await Test.createTestingModule({
       imports: [
         SyslumennClientModule,
-        ConfigModule.forRoot({ isGlobal: true, load: [config, XRoadConfig] }),
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [config],
+        }),
       ],
       providers: [
         {
@@ -46,6 +50,7 @@ describe('MortgageCertificateService', () => {
         },
         MortgageCertificateService,
         SyslumennService,
+        SyslumennApiProvider,
       ],
     }).compile()
 

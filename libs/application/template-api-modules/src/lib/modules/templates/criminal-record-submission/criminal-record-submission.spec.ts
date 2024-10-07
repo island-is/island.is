@@ -8,12 +8,13 @@ import {
   ApplicationTypes,
 } from '@island.is/application/types'
 import {
+  SyslumennApiProvider,
   SyslumennClientModule,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
 import { AdapterService } from '@island.is/email-service'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { ConfigModule, defineConfig, XRoadConfig } from '@island.is/nest/config'
+import { ConfigModule, defineConfig } from '@island.is/nest/config'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -38,7 +39,7 @@ describe('CriminalRecordSubmissionService', () => {
     const module = await Test.createTestingModule({
       imports: [
         SyslumennClientModule,
-        ConfigModule.forRoot({ isGlobal: true, load: [config, XRoadConfig] }),
+        ConfigModule.forRoot({ isGlobal: true, load: [config] }),
       ],
       providers: [
         {
@@ -50,6 +51,7 @@ describe('CriminalRecordSubmissionService', () => {
           })),
         },
         SyslumennService,
+        SyslumennApiProvider,
         AdapterService,
         {
           provide: CriminalRecordService,

@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 
-import { ConfigModule, defineConfig, XRoadConfig } from '@island.is/nest/config'
+import { ConfigModule, defineConfig } from '@island.is/nest/config'
 import { startMocking } from '@island.is/shared/mocking'
 
 import { SyslumennClientModule } from '../lib/syslumennClient.module'
@@ -27,6 +27,7 @@ import {
   TEMPORARY_EVENT_LICENCES,
   VHSUCCESS,
 } from './__mock-data__/responses'
+import { SyslumennApiProvider } from './syslumennClient.provider'
 import { SyslumennService } from './syslumennClient.service'
 import { PersonType } from './syslumennClient.types'
 import {
@@ -90,9 +91,9 @@ describe('SyslumennService', () => {
     const module = await Test.createTestingModule({
       imports: [
         SyslumennClientModule,
-        ConfigModule.forRoot({ isGlobal: true, load: [config, XRoadConfig] }),
+        ConfigModule.forRoot({ isGlobal: true, load: [config] }),
       ],
-      providers: [SyslumennService],
+      providers: [SyslumennService, SyslumennApiProvider],
     }).compile()
 
     service = module.get(SyslumennService)
