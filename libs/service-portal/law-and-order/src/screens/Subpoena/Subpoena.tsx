@@ -102,7 +102,7 @@ const Subpoena = () => {
 
       {error && !loading && <Problem error={error} noBorder={false} />}
 
-      {subpoena?.data?.groups && subpoena.data.groups.length > 0 && (
+      {subpoena?.data?.groups?.length && (
         <>
           <InfoLines groups={subpoena.data.groups} loading={loading} />
           {subpoena.data.hasChosen && isDefined(subpoena?.data.defenderChoice) && (
