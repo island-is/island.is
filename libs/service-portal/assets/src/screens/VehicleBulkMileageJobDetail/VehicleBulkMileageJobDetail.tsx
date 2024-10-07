@@ -120,7 +120,7 @@ const VehicleBulkMileageJobDetail = () => {
           <Button
             variant="utility"
             icon={
-              loading || loading || networkStatus === NetworkStatus.refetch
+              loading || networkStatus === NetworkStatus.refetch
                 ? undefined
                 : 'reload'
             }
