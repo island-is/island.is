@@ -1,4 +1,4 @@
-import { libsTestingE2e } from './libs/testing/e2e'
+import { libsTestingE2e } from './e2e'
 
 describe('libsTestingE2e', () => {
   it('should work', () => {
