@@ -18,7 +18,9 @@ const REDIS_NODE_CONFIG = {
   ]),
 }
 
-export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
+export const serviceSetup = (services: {
+  userNotification: ServiceBuilder<'user-notification'>
+}): ServiceBuilder<'services-auth-admin-api'> => {
   return service('services-auth-admin-api')
     .namespace('identity-server-admin')
     .image('services-auth-admin-api')
@@ -53,6 +55,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       },
       XROAD_NATIONAL_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
       XROAD_RSK_PROCURING_REDIS_NODES: REDIS_NODE_CONFIG,
+      USER_NOTIFICATION_API_URL: {
+        dev: ref((h) => `http://${h.svc(services.userNotification)}`),
+        staging: ref((h) => `http://${h.svc(services.userNotification)}`),
+        prod: 'https://user-notification.internal.island.is',
+      },
       COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
         dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
         staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
