@@ -121,9 +121,7 @@ export class AuthService {
    * If the operation fails, we log the error.
    */
   private revokeRefreshToken(token: string) {
-    this.idsService.revokeToken(token, 'refresh_token').catch((error) => {
-      this.logger.error('Failed to revoke refresh token:', error)
-    })
+    this.idsService.revokeToken(token, 'refresh_token')
   }
 
   /**

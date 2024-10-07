@@ -64,7 +64,7 @@ export const createPortalEnv = (key: PortalKeys) => {
       prod: 'https://island.is/api/graphql',
     },
     BFF_ALLOWED_EXTERNAL_API_URLS: {
-      local: json(['https://api.dev01.devland.is']),
+      local: json(['http://localhost:3377/download/v1']),
       dev: json(['https://api.dev01.devland.is']),
       staging: json(['https://api.staging01.devland.is']),
       prod: json(['https://api.island.is']),
