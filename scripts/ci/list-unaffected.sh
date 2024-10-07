@@ -9,8 +9,8 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 UNAFFECTED=""
 
 for TARGET in "$@"; do
-  AFFECTED=$("$DIR"/_nx-affected-targets.sh $TARGET | tr -d '\n')
-  ALL=$(AFFECTED_ALL=7913-${BRANCH} "$DIR"/_nx-affected-targets.sh $TARGET | tr -d '\n')
+  AFFECTED=$("$DIR"/_nx-affected-targets.sh "$TARGET" | tr -d '\n')
+  ALL=$(AFFECTED_ALL=7913-${BRANCH} "$DIR"/_nx-affected-targets.sh "$TARGET" | tr -d '\n')
 
   UNAFFECTED_ADD=$(
     node <<EOM
