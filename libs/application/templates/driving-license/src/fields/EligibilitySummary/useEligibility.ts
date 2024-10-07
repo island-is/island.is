@@ -204,7 +204,7 @@ export const useEligibility = (
           ? undefined
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
             hasQualityPhoto &&
-            !hasExtendedDrivingLicense &&
+            !hasExtendedLicense &&
             !hasAnyInvalidRemarks,
         requirements,
       },
