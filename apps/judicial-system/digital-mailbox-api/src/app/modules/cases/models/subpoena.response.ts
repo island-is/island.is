@@ -6,7 +6,11 @@ import {
   formatDate,
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { DateType, DefenderChoice } from '@island.is/judicial-system/types'
+import {
+  DateType,
+  DefenderChoice,
+  isSuccessfulServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
 import { Groups } from './shared/groups.model'
@@ -59,6 +63,12 @@ class SubpoenaData {
 
   @ApiProperty({ type: Boolean })
   hasBeenServed?: boolean
+
+  @ApiProperty({ type: Boolean })
+  hasChosenDefender?: boolean
+
+  @ApiProperty({ type: () => String })
+  defaultDefenderChoice?: string
 }
 
 export class SubpoenaResponse {
@@ -88,8 +98,8 @@ export class SubpoenaResponse {
 
     const waivedRight = defendantInfo?.defenderChoice === DefenderChoice.WAIVE
     const hasDefender = defendantInfo?.defenderName !== undefined
-    const subpoena = defendantInfo?.subpoenas ?? []
-    const hasBeenServed = subpoena[0]?.acknowledged ?? false
+    const subpoenas = defendantInfo?.subpoenas ?? []
+    const hasBeenServed = isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
     const canChangeDefenseChoice = !waivedRight && !hasDefender
 
     const subpoenaDateLog = internalCase.dateLogs?.find(
@@ -108,6 +118,12 @@ export class SubpoenaResponse {
         title: t.subpoena,
         subtitle: courtNameAndAddress,
         hasBeenServed: hasBeenServed,
+        hasChosenDefender:
+          defendantInfo?.defenderChoice &&
+          defendantInfo.defenderChoice !== DefenderChoice.DELAY
+            ? true
+            : false,
+        defaultDefenderChoice: DefenderChoice.DELAY,
         alerts: [
           ...(hasBeenServed
             ? [
