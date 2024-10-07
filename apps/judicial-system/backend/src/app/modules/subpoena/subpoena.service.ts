@@ -148,16 +148,19 @@ export class SubpoenaService {
     user: User,
   ): Promise<DeliverResponse> {
     try {
-      const pdf = await this.pdfService.getSubpoenaPdf(
+      const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
         theCase,
         defendant,
         subpoena,
       )
 
+      const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
+
       const createdSubpoena = await this.policeService.createSubpoena(
         theCase,
         defendant,
-        Base64.btoa(pdf.toString('binary')),
+        Base64.btoa(subpoenaPdf.toString('binary')),
+        Base64.btoa(indictmentPdf.toString('binary')),
         user,
       )
 

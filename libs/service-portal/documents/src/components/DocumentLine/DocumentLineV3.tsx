@@ -17,12 +17,15 @@ import {
   useNavigate,
   useParams,
 } from 'react-router-dom'
-import { useDocumentList } from '../../hooks/useDocumentListV3'
+import { useDocumentListV3 } from '../../hooks/useDocumentListV3'
 import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import { DocumentsPaths } from '../../lib/paths'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
-import { useGetDocumentInboxLineV3LazyQuery } from '../../screens/Overview/Overview.generated'
+import {
+  useDocumentConfirmActionsLazyQuery,
+  useGetDocumentInboxLineV3LazyQuery,
+} from '../../screens/Overview/Overview.generated'
 import { messages } from '../../utils/messages'
 import { FavAndStashV3 } from '../FavAndStash/FavAndStashV3'
 import UrgentTag from '../UrgentTag/UrgentTag'
@@ -72,7 +75,7 @@ export const DocumentLineV3: FC<Props> = ({
     bookmarkSuccess,
   } = useMailAction()
 
-  const { fetchObject, refetch } = useDocumentList()
+  const { fetchObject, refetch } = useDocumentListV3()
 
   const {
     setActiveDocument,
@@ -103,6 +106,7 @@ export const DocumentLineV3: FC<Props> = ({
   const displayPdf = (
     content?: DocumentV2Content,
     actions?: Array<DocumentV2Action>,
+    alertMessageData?: DocumentV2Action,
   ) => {
     setActiveDocument({
       document: {
@@ -118,14 +122,19 @@ export const DocumentLineV3: FC<Props> = ({
       img,
       categoryId: documentLine.categoryId ?? undefined,
       actions: actions,
-      alert: documentLine.alert ?? undefined,
+      alert: alertMessageData ?? undefined,
     })
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
     })
   }
+  const [confirmAction] = useDocumentConfirmActionsLazyQuery({
+    fetchPolicy: 'no-cache',
+  })
 
+  //TODO: When merged with V2
+  //refactor queries and move to shared file instead of importing from screens
   const [getDocument, { loading: fileLoading }] =
     useGetDocumentInboxLineV3LazyQuery({
       variables: {
@@ -147,8 +156,9 @@ export const DocumentLineV3: FC<Props> = ({
         } else {
           const docContent = data?.documentV2?.content
           const actions = data?.documentV2?.actions ?? undefined
+          const alert = data?.documentV2?.alert ?? undefined
           if (docContent) {
-            displayPdf(docContent, actions)
+            displayPdf(docContent, actions, alert)
             setDocumentDisplayError(undefined)
             setLocalRead([...localRead, documentLine.id])
           } else {
@@ -177,6 +187,7 @@ export const DocumentLineV3: FC<Props> = ({
           includeDocument: false,
         },
       },
+
       fetchPolicy: 'no-cache',
       onCompleted: (data) => {
         const actions: DocumentV2Action | undefined | null =
@@ -239,6 +250,11 @@ export const DocumentLineV3: FC<Props> = ({
     }
   }
 
+  const confirmActionCaller = (confirmed: boolean | null) => {
+    confirmAction({
+      variables: { input: { id: documentLine.id, confirmed: confirmed } },
+    })
+  }
   const unread = !documentLine.opened && !localRead.includes(documentLine.id)
   const isBookmarked = bookmarked || bookmarkSuccess
 
@@ -361,10 +377,17 @@ export const DocumentLineV3: FC<Props> = ({
         <ConfirmationModal
           onSubmit={() => {
             setModalVisible(false)
+            confirmActionCaller(true)
             getDocument()
           }}
-          onCancel={() => setModalVisible(false)}
-          onClose={toggleModal}
+          onCancel={() => {
+            setModalVisible(false)
+            confirmActionCaller(false)
+          }}
+          onClose={() => {
+            toggleModal()
+            confirmActionCaller(null)
+          }}
           loading={false}
           modalTitle={modalData?.title || formatMessage(m.acknowledgeTitle)}
           modalText={
