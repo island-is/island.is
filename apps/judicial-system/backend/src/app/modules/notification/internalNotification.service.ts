@@ -1568,25 +1568,25 @@ export class InternalNotificationService extends BaseNotificationService {
   private sendAdvocateAssignedNotification(
     theCase: Case,
     advocateType: AdvocateType,
-    defenderNationalId?: string,
-    defenderName?: string,
-    defenderEmail?: string,
+    advocateNationalId?: string,
+    advocateName?: string,
+    advocateEmail?: string,
   ): Promise<Recipient> {
     const { subject, body } = formatAdvocateAssignedEmailNotification(
       this.formatMessage,
       theCase,
       advocateType,
-      defenderNationalId &&
+      advocateNationalId &&
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
     )
 
     return this.sendEmail(
       subject,
       body,
-      defenderName,
-      defenderEmail,
+      advocateName,
+      advocateEmail,
       undefined,
-      Boolean(defenderNationalId) === false,
+      Boolean(advocateNationalId) === false,
     )
   }
 
