@@ -28,6 +28,7 @@ import {
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import {
+  ApplicationRights,
   Attachment,
   Employer,
   ParentalLeave,
@@ -371,6 +372,7 @@ export const transformApplicationToParentalLeaveDTO = (
     | 'empdoc'
     | 'empdocper'
     | undefined,
+  applicationRights?: ApplicationRights[],
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -463,6 +465,7 @@ export const transformApplicationToParentalLeaveDTO = (
     type,
     language: language === Languages.EN ? language : undefined, // Only send language if EN
     otherParentBlocked: otherParentRightOfAccess === NO ? true : false,
+    applicationRights,
   }
 }
 
