@@ -129,9 +129,7 @@ export class LawAndOrderService {
 
     const defenderChoice = subpoena?.defenderInfo?.defenderChoice
     const message = defenderChoice
-      ? formatMessage(
-          DefenseChoices[subpoena?.defenderInfo.defenderChoice].message,
-        )
+      ? formatMessage(DefenseChoices[defenderChoice].message)
       : ''
 
     const data: Subpoena = {
