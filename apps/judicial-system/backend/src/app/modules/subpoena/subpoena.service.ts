@@ -8,6 +8,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotImplementedException,
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
@@ -179,9 +180,16 @@ export class SubpoenaService {
 
       return { delivered: true }
     } catch (error) {
-      this.logger.error('Error delivering subpoena to police', error)
-
-      return { delivered: false }
+      if (error instanceof NotImplementedException) {
+        this.logger.info(
+          'Police service create subpoena not implemented',
+          error,
+        )
+        return { delivered: true }
+      } else {
+        this.logger.error('Error delivering subpoena to police', error)
+        return { delivered: false }
+      }
     }
   }
 }
