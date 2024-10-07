@@ -65,7 +65,7 @@ export const DelegationDeleteModal = ({
               color="blue"
             />
           )}
-          {delegation?.to.name && delegation?.to?.nationalId && (
+          {delegation?.to?.name && delegation?.to?.nationalId && (
             <IdentityCard
               label={formatMessage(m.toNationalId)}
               title={delegation?.to.name}
