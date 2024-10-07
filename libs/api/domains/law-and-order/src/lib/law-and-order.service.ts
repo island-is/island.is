@@ -21,6 +21,7 @@ import {
   DefenseChoices,
   mapDefenseChoice,
   mapDefenseChoiceForSubpoena,
+  mapDefenseChoiceForSubpoenaDefaultChoice,
   mapTagTypes,
 } from './helpers/mappers'
 
@@ -140,9 +141,11 @@ export class LawAndOrderService {
         chosenDefender: [message, subpoena?.defenderInfo?.defenderName]
           .filter(isDefined)
           .join(', '),
-        defenderChoice: mapDefenseChoiceForSubpoena(
-          subpoena?.defenderInfo?.defenderChoice,
+        defenderChoice: mapDefenseChoiceForSubpoena(defenderChoice),
+        defaultChoice: mapDefenseChoiceForSubpoenaDefaultChoice(
+          subpoena?.data.defaultDefenderChoice,
         ),
+        hasChosen: subpoena?.data.hasChosenDefender,
         canEditDefenderChoice: subpoena?.defenderInfo?.canEdit,
         groups: subpoena?.data.groups,
         courtContactInfo: subpoena?.defenderInfo?.courtContactInfo,
