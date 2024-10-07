@@ -16,7 +16,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { defender as m } from './Defender.strings'
+import { strings } from './Advocates.strings'
 
 interface Props {
   defendant: Defendant
@@ -80,7 +80,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             dataTestId={`defendantWaivesRightToCounsel-${defendant.id}`}
             name={`defendantWaivesRightToCounsel-${defendant.id}`}
             label={capitalize(
-              formatMessage(m.defendantWaivesRightToCounsel, {
+              formatMessage(strings.defendantWaivesRightToCounsel, {
                 accused: formatMessage(core.indictmentDefendant, { gender }),
               }),
             )}
