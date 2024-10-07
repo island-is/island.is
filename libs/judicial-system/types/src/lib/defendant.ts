@@ -27,3 +27,11 @@ export enum ServiceRequirement {
   NOT_REQUIRED = 'NOT_REQUIRED',
   NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
+
+export enum ServiceStatus {
+  ELECTRONICALLY = 'ELECTRONICALLY', // Via digital mailbox on island.is
+  DEFENDER = 'DEFENDER', // Via a person's defender
+  IN_PERSON = 'IN_PERSON',
+  FAILED = 'FAILED',
+  EXPIRED = 'EXPIRED', // If a subpoena expires
+}
