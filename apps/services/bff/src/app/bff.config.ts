@@ -1,7 +1,6 @@
 import { defineConfig } from '@island.is/nest/config'
 
 import { z } from 'zod'
-import { isProduction } from '../environment'
 import { removeTrailingSlash } from './utils/remove-trailing-slash'
 
 export const idsSchema = z.strictObject({
@@ -68,10 +67,6 @@ export const BffConfig = defineConfig({
     const callbacksBaseRedirectPath = removeTrailingSlash(
       env.required('BFF_CALLBACKS_BASE_PATH'),
     )
-    // Redis nodes are only required in production
-    // In development, we can use a local Redis server or
-    // rely on the default in-memory cache provided by CacheModule
-    const redisNodes = env.optionalJSON('BFF_REDIS_URL_NODES')
 
     return {
       parSupportEnabled: env.optionalJSON('BFF_PAR_SUPPORT_ENABLED') ?? false,
@@ -82,10 +77,13 @@ export const BffConfig = defineConfig({
        */
       graphqlApiEndpoint: env.required('BFF_PROXY_API_ENDPOINT'),
       redis: {
-            name: env.required('BFF_REDIS_NAME', 'unnamed-bff'),
-            nodes: env.requiredJSON('BFF_REDIS_URL_NODES', []),
-            ssl: env.optionalJSON('BFF_REDIS_SSL', false) ?? true,
-          },
+        name: env.required('BFF_REDIS_NAME', 'unnamed-bff'),
+        // Redis nodes are only required in production
+        // In development, we can use a local Redis server or
+        // rely on the default in-memory cache provided by CacheModule
+        nodes: env.requiredJSON('BFF_REDIS_URL_NODES', []),
+        ssl: env.optionalJSON('BFF_REDIS_SSL', false) ?? true,
+      },
       ids: {
         issuer: env.required('IDENTITY_SERVER_ISSUER_URL'),
         clientId: env.required('IDENTITY_SERVER_CLIENT_ID'),
