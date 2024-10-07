@@ -284,7 +284,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: reviewdog/action-shellcheck
+      - uses: reviewdog/action-shellcheck@v1
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
