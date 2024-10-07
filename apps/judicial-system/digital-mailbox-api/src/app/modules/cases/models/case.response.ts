@@ -1,7 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { DateType } from '@island.is/judicial-system/types'
+import {
+  DateType,
+  isSuccessfulServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
 import { Groups } from './shared/groups.model'
@@ -41,7 +44,10 @@ export class CaseResponse {
       caseId: internalCase.id,
       data: {
         caseNumber: `${t.caseNumber} ${internalCase.courtCaseNumber}`,
-        hasBeenServed: subpoenas.length > 0 ? subpoenas[0].acknowledged : false,
+        hasBeenServed:
+          subpoenas.length > 0
+            ? isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
+            : false,
         groups: [
           {
             label: t.defendant,
