@@ -4,10 +4,16 @@ import {
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
+  UserProfileApi,
 } from '@island.is/application/types'
-import { ApplicationStates, Roles, DAY } from './constants'
+import { pruneAfterDays } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
+import { States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
+import {
+  NationalRegistryUserApi,
+  NationalRegistrySpouseApi,
+} from '../dataProviders'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -22,17 +28,14 @@ const RentalAgreementTemplate: ApplicationTemplate<
   dataSchema,
   featureFlag: Features.rentalAgreement,
   stateMachineConfig: {
-    initial: ApplicationStates.PREREQUISITES,
+    initial: States.PREREQUISITES,
     states: {
-      [ApplicationStates.PREREQUISITES]: {
+      [States.PREREQUISITES]: {
         meta: {
-          name: 'Leigusamningur',
+          name: States.PREREQUISITES,
+          progress: 0,
           status: 'draft',
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: DAY,
-          },
+          lifecycle: pruneAfterDays(1),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -46,6 +49,11 @@ const RentalAgreementTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
+              api: [
+                UserProfileApi,
+                NationalRegistryUserApi,
+                NationalRegistrySpouseApi,
+              ],
             },
           ],
         },

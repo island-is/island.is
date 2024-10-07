@@ -3,8 +3,8 @@ import { defineMessages } from 'react-intl'
 export const dataSchema = defineMessages({
   nationalId: {
     id: 'ra.application:dataSchema.national.id',
-    defaultMessage: 'Kennitala þarf að vera gild.',
-    description: 'Error message when the kennitala is invalid.',
+    defaultMessage: 'Kennitala er ekki á réttu formi',
+    description: 'Error message when nationalid is wrong',
   },
   phoneNumber: {
     id: 'ra.application:dataSchema.phoneNumber',

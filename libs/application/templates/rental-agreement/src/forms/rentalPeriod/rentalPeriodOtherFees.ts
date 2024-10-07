@@ -16,7 +16,6 @@ export const RentalPeriodOtherFees = buildSubSection({
           id: 'rentalPeriodOtherFeesInput',
           title: 'Önnur gjöld',
           format: 'text',
-          defaultValue: 'default value',
         }),
       ],
     }),

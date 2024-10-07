@@ -15,7 +15,6 @@ export const RentalPeriodDetails = buildSubSection({
           id: 'rentalPeriodInput',
           title: 'Leigutími',
           format: 'text',
-          defaultValue: 'default value',
         }),
       ],
     }),

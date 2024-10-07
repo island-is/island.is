@@ -16,7 +16,6 @@ export const RentalPeriodAmount = buildSubSection({
           id: 'rentalPeriodAmountInput',
           title: 'Leiguupphæð',
           format: 'text',
-          defaultValue: 'default value',
         }),
       ],
     }),

@@ -10,13 +10,12 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
   children: [
     buildMultiField({
       id: 'rentalPeriodSecurityDepositDetails',
-      title: 'LeiguTrygging',
+      title: 'LeiguTrygging multiFields',
       children: [
         buildTextField({
           id: 'rentalPeriodSecurityDepositInput',
-          title: 'LeiguTrygging',
+          title: 'LeiguTrygging textField',
           format: 'text',
-          defaultValue: 'default value',
         }),
       ],
     }),
