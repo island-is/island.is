@@ -31,8 +31,6 @@ const mockConfig = {
   },
 }
 
-beforeEach(() => {})
-
 describe('objectToXML', () => {
   it('should generate an acceptable xml from an object', () => {
     const objects = {
