@@ -668,7 +668,7 @@ export const formatCustodyRestrictions = (
   })
 }
 
-export const formatDefenderAssignedEmailNotification = (
+export const formatAdvocateAssignedEmailNotification = (
   formatMessage: FormatMessage,
   theCase: Case,
   advocateType: AdvocateType,

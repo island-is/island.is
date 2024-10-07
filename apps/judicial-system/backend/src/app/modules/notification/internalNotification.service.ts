@@ -57,7 +57,7 @@ import {
   formatCourtReadyForCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
   formatCourtRevokedSmsNotification,
-  formatDefenderAssignedEmailNotification,
+  formatAdvocateAssignedEmailNotification,
   formatDefenderCourtDateEmailNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderReadyForCourtEmailNotification,
@@ -1572,7 +1572,7 @@ export class InternalNotificationService extends BaseNotificationService {
     defenderName?: string,
     defenderEmail?: string,
   ): Promise<Recipient> {
-    const { subject, body } = formatDefenderAssignedEmailNotification(
+    const { subject, body } = formatAdvocateAssignedEmailNotification(
       this.formatMessage,
       theCase,
       advocateType,
