@@ -29,6 +29,13 @@ query Case($input: CaseQueryInput!) {
       subpoenas {
         id
         created
+        serviceStatus
+        serviceDate
+        servedBy
+        comment
+        defenderNationalId
+        caseId
+        subpoenaId
       }
     }
     defenderName

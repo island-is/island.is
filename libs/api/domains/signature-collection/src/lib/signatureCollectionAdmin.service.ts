@@ -22,6 +22,10 @@ import { SignatureCollectionSlug } from './models/slug.model'
 import { SignatureCollectionListStatus } from './models/status.model'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
+import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
+import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
+import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
+import { SignatureCollectionListIdInput } from './dto'
 
 @Injectable()
 export class SignatureCollectionAdminService {
@@ -193,6 +197,38 @@ export class SignatureCollectionAdminService {
       user,
       input.signatureId,
       input.pageNumber,
+    )
+  }
+
+  async signatureLookup(
+    user: User,
+    input: SignatureCollectionSignatureLookupInput,
+  ): Promise<SignatureCollectionSignature[]> {
+    return await this.signatureCollectionClientService.signatureLookup(
+      user,
+      input.collectionId,
+      input.nationalId,
+    )
+  }
+
+  async getAreaSummaryReport(
+    input: SignatureCollectionAreaSummaryReportInput,
+    user: User,
+  ): Promise<SignatureCollectionAreaSummaryReport> {
+    return await this.signatureCollectionClientService.getAreaSummaryReport(
+      user,
+      input.collectionId,
+      input.areaId,
+    )
+  }
+
+  async lockList(
+    input: SignatureCollectionListIdInput,
+    user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.lockList(
+      user,
+      input.listId,
     )
   }
 }
