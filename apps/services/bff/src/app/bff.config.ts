@@ -81,19 +81,11 @@ export const BffConfig = defineConfig({
        * Our main GraphQL API endpoint
        */
       graphqlApiEndpoint: env.required('BFF_PROXY_API_ENDPOINT'),
-      redis: isProduction
-        ? {
-            name: env.required('BFF_REDIS_NAME'),
-            nodes: env.requiredJSON('BFF_REDIS_URL_NODES'),
-            ssl: true,
-          }
-        : redisNodes
-        ? {
-            name: env.optional('BFF_REDIS_NAME') ?? 'unnamed-bff',
-            nodes: redisNodes,
-            ssl: false,
-          }
-        : undefined,
+      redis: {
+            name: env.required('BFF_REDIS_NAME', 'unnamed-bff'),
+            nodes: env.requiredJSON('BFF_REDIS_URL_NODES', []),
+            ssl: env.optionalJSON('BFF_REDIS_SSL', false) ?? true,
+          },
       ids: {
         issuer: env.required('IDENTITY_SERVER_ISSUER_URL'),
         clientId: env.required('IDENTITY_SERVER_CLIENT_ID'),
