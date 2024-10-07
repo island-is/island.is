@@ -56,7 +56,7 @@ export class UserService {
 
         // Get new token data with refresh token
         const tokenResponse = await this.idsService.refreshToken(
-          cachedTokenResponse.refresh_token,
+          cachedTokenResponse.encryptedRefreshToken,
         )
 
         // Update cache with new token data

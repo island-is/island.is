@@ -2,7 +2,10 @@ import { IdTokenClaims } from '@island.is/shared/types'
 
 import { TokenResponse } from '../ids/ids.types'
 
-export type CachedTokenResponse = TokenResponse & {
+export type CachedTokenResponse = Omit<
+  TokenResponse,
+  'refresh_token' | 'access_token'
+> & {
   scopes: string[]
 
   /**
@@ -14,4 +17,7 @@ export type CachedTokenResponse = TokenResponse & {
    * Expiration time of the access token
    */
   accessTokenExp: number
+
+  encryptedAccessToken: string
+  encryptedRefreshToken: string
 }

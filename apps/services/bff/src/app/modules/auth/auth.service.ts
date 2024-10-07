@@ -95,8 +95,12 @@ export class AuthService {
       ...tokenResponse,
       // Encrypt the access and refresh tokens before saving them to the cache
       // to prevent unauthorized access to the tokens if cached service is compromised.
-      access_token: this.cryptoService.encrypt(tokenResponse.access_token),
-      refresh_token: this.cryptoService.encrypt(tokenResponse.refresh_token),
+      encryptedAccessToken: this.cryptoService.encrypt(
+        tokenResponse.access_token,
+      ),
+      encryptedRefreshToken: this.cryptoService.encrypt(
+        tokenResponse.refresh_token,
+      ),
       scopes: tokenResponse.scope.split(' '),
       userProfile,
       // Subtract 5 seconds from the token expiration time to account for latency.
@@ -118,10 +122,15 @@ export class AuthService {
    * Revoke the refresh token on the identity server, since we have a new session
    * We deliberately do not await this operation to make the login flow faster,
    * since this operation is not critical part to await.
-   * If the operation fails, we log the error.
+   *
+   * @param encryptedRefreshToken The encrypted refresh token to revoke
    */
-  private revokeRefreshToken(token: string) {
-    this.idsService.revokeToken(token, 'refresh_token')
+  private revokeRefreshToken(encryptedRefreshToken: string) {
+    const decryptedRefreshToken = this.cryptoService.decrypt(
+      encryptedRefreshToken,
+    )
+
+    this.idsService.revokeToken(decryptedRefreshToken, 'refresh_token')
   }
 
   /**
@@ -285,12 +294,20 @@ export class AuthService {
         oldSessionCookie &&
         oldSessionCookie !== updatedTokenResponse.userProfile.sid
       ) {
-        // Clean up the old session key from the cache
-        await this.cacheService.delete(
-          this.cacheService.createSessionKeyType('current', oldSessionCookie),
+        const oldSessionCacheKey = this.cacheService.createSessionKeyType(
+          'current',
+          oldSessionCookie,
         )
 
-        this.revokeRefreshToken(updatedTokenResponse.refresh_token)
+        const oldSessionData = await this.cacheService.get<CachedTokenResponse>(
+          oldSessionCacheKey,
+        )
+
+        // Clean up the old session key from the cache
+        await this.cacheService.delete(oldSessionCacheKey)
+
+        // Revoke the old session refresh token
+        this.revokeRefreshToken(oldSessionData.encryptedRefreshToken)
       }
 
       return res.redirect(
@@ -372,7 +389,7 @@ export class AuthService {
      */
     res.clearCookie(SESSION_COOKIE_NAME, this.getCookieOptions())
     this.cacheService.delete(currentLoginCacheKey)
-    this.revokeRefreshToken(cachedTokenResponse.refresh_token)
+    this.revokeRefreshToken(cachedTokenResponse.encryptedRefreshToken)
 
     const searchParams = new URLSearchParams({
       id_token_hint: cachedTokenResponse.id_token,

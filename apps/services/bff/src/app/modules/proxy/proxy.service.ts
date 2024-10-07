@@ -56,7 +56,7 @@ export class ProxyService {
 
       if (isExpired(cachedTokenResponse.accessTokenExp)) {
         const tokenResponse = await this.idsService.refreshToken(
-          cachedTokenResponse.refresh_token,
+          cachedTokenResponse.encryptedRefreshToken,
         )
 
         cachedTokenResponse = await this.authService.updateTokenCache(
@@ -64,7 +64,9 @@ export class ProxyService {
         )
       }
 
-      return this.cryptoService.decrypt(cachedTokenResponse.access_token)
+      return this.cryptoService.decrypt(
+        cachedTokenResponse.encryptedAccessToken,
+      )
     } catch (error) {
       this.logger.error('Error getting access token:', error)
 
