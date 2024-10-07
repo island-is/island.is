@@ -23,7 +23,7 @@ export const strings = defineMessages({
   },
   serviceStatusUnknown: {
     id: 'judicial.system.core:service_announcement.service_status_unknown',
-    defaultMessage: 'Birtingastaða óþekkt',
+    defaultMessage: 'Birtingarstaða óþekkt',
     description: 'Notaður sem texti þegar ekki er vitað um stöðu birtingar.',
   },
   servedToDefender: {

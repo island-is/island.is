@@ -41,6 +41,7 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
   }
 
   const getVerdictViewTag = (row: CaseListEntry) => {
+    console.log(row)
     const variant = !row.indictmentVerdictViewedByAll
       ? 'red'
       : row.indictmentVerdictAppealDeadlineExpired
