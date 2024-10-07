@@ -291,6 +291,7 @@ jobs:
             node_modules
             apps/native/app/android
           severity: style
+          args: --external-sources
 
   formatting:
     needs:
