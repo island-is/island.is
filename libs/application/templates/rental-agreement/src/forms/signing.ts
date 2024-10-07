@@ -1,7 +1,25 @@
-import { buildSection } from '@island.is/application/core'
+import {
+  buildDescriptionField,
+  buildMultiField,
+  buildSection,
+} from '@island.is/application/core'
+import { Section } from '@island.is/application/types'
 
-export const Signing = buildSection({
+export const Signing: Section = buildSection({
   id: 'signing',
   title: 'Undirritun',
-  children: [],
+  children: [
+    buildMultiField({
+      id: 'signingInfo',
+      title: 'Undirritun',
+      description: 'Vinsamlegast undirritið samninginn',
+      children: [
+        buildDescriptionField({
+          id: 'signingDescription',
+          title: 'Undirritun',
+          description: 'Vinsamlegast undirritið samninginn',
+        }),
+      ],
+    }),
+  ],
 })

@@ -9,6 +9,7 @@ import {
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 import { SubSection } from '@island.is/application/types'
+import { postalCodes } from '@island.is/shared/utils'
 
 const messagesInfo = m.registerProperty.info
 const messagesInfoSummary = m.registerProperty.infoSummary
@@ -27,16 +28,14 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           id: 'registerPropertyInfoAddress',
           title: messagesInfo.addressLabel,
           placeholder: messagesInfo.addressPlaceholder,
-          variant: 'text',
           required: true,
+          maxLength: 50,
         }),
         buildTextField({
           id: 'registerPropertyInfoPropertyId',
           title: messagesInfo.propertyIdLabel,
           placeholder: messagesInfo.propertyIdPlaceholder,
-          variant: 'text',
           width: 'half',
-          minLength: 10,
           maxLength: 10,
           required: true,
         }),
@@ -44,26 +43,26 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           id: 'registerPropertyInfoUnitId',
           title: messagesInfo.propertyUnitIdLabel,
           placeholder: messagesInfo.propertyUnitIdPlaceholder,
-          variant: 'text',
           width: 'half',
-          minLength: 6,
           maxLength: 6,
           required: true,
         }),
-        buildTextField({
+        buildSelectField({
           id: 'registerPropertyInfoPostalCode',
           title: messagesInfo.postalCodeLabel,
           placeholder: messagesInfo.postalCodePlaceholder,
-          variant: 'text',
           width: 'half',
-          maxLength: 3,
           required: true,
+          options: () => {
+            return postalCodes.map((code) => {
+              return { value: `${code}`, label: `${code}` }
+            })
+          },
         }),
         buildTextField({
           id: 'registerPropertyInfoMunicipality',
           title: messagesInfo.municipalityLabel,
           placeholder: messagesInfo.municipalityPlaceholder,
-          variant: 'text',
           width: 'half',
           required: true,
         }),
@@ -71,7 +70,6 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           id: 'registerPropertyInfoSize',
           title: messagesInfo.sizeLabel,
           placeholder: '',
-          variant: 'text',
           width: 'half',
           required: true,
         }),
@@ -183,6 +181,8 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           id: 'registerPropertyCategoryClassGroup',
           title: messagesCategory.classGroupLabel,
           placeholder: messagesCategory.classGroupPlaceholder,
+          condition: (answers) =>
+            answers.registerPropertyCategoryClass === 'specialGroups',
           options: [
             {
               value: 'studentHousing',
@@ -213,8 +213,6 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
               label: messagesCategory.classGroupSelectLabelEmployeeHousing,
             },
           ],
-          condition: (answers) =>
-            answers.registerPropertyCategoryClass === 'specialGroups',
         }),
       ],
     }),

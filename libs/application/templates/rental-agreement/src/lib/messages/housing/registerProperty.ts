@@ -58,7 +58,7 @@ export const registerProperty = {
     },
     postalCodePlaceholder: {
       id: 'ra.application:registerProperty.info.postalCodePlaceholder',
-      defaultMessage: 'Sláðu inn póstnúmer',
+      defaultMessage: 'Veldu póstnúmer',
       description: 'Input placeholder for property postal code',
     },
     municipalityLabel: {
