@@ -12,6 +12,7 @@ import {
   AccidentNotificationStatus,
 } from './graphql/models'
 import { AccidentreportsApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 const mapStatus = (statusId: number) => {
   switch (statusId) {
@@ -60,17 +61,21 @@ export class AccidentNotificationService {
     private logger: Logger,
   ) {}
 
+  private accidentsReportsApiWithAuth(auth: Auth) {
+    return this.accidentReportsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   async getAccidentNotificationStatus(
+    auth: Auth,
     ihiDocumentID: number,
   ): Promise<AccidentNotificationStatus | null> {
     this.logger.log('starting call to get accident', ihiDocumentID)
-    console.log('!!!Hér í getAccidentNotificationStatus!!!', `${ihiDocumentID}`)
 
-    const accidentStatus =
-      await this.accidentReportsApi.getAccidentReportStatus({
-        reportId: ihiDocumentID,
-      })
-    console.log('!!!accidentStatus!!!', accidentStatus)
+    const accidentStatus = await this.accidentsReportsApiWithAuth(
+      auth,
+    ).getAccidentReportStatus({
+      reportId: ihiDocumentID,
+    })
 
     if (!accidentStatus) return null
     return {
