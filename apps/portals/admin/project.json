@@ -109,7 +109,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "node -r esbuild-register src/cli/cli.ts run-local-env --service services-bff-admin-portal"
+          "node -r esbuild-register src/cli/cli.ts run-local-env services-bff-admin-portal"
         ],
         "cwd": "infra"
       }
