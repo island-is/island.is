@@ -132,8 +132,6 @@ const HealthCenterRegistration = () => {
   }, [errorTransfer])
 
   const handleHealthCenterTransfer = async () => {
-    console.log(selectedHealthCenter)
-    console.log(selectedHealthCenterDoctor)
     setLoadingTransfer(true)
     if (selectedHealthCenter && selectedHealthCenter?.id) {
       await transferHealthCenter({

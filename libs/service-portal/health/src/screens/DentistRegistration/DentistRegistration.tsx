@@ -217,7 +217,7 @@ export const DentistRegistration = () => {
                                   onClick: () => {
                                     setErrorTransfering(false)
                                     setModalVisible(false)
-                                    if (selectedDentist && selectedDentist.id) {
+                                    if (selectedDentist?.id) {
                                       registerDentist({
                                         variables: {
                                           input: {
