@@ -243,4 +243,8 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:access-creation-success',
     defaultMessage: 'Umboð stofnað',
   },
+  viewDelegationModalTitle: {
+    id: 'sp.access-control-delegations:view-delegation-modal-title',
+    defaultMessage: 'Upplýsingar um umboð',
+  }
 })

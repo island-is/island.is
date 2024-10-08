@@ -20,12 +20,14 @@ import isValid from 'date-fns/isValid'
 type DelegationViewModalProps = {
   delegation?: AuthCustomDelegationIncoming | AuthCustomDelegationOutgoing
   direction?: 'incoming' | 'outgoing'
+  isAdminView?: boolean
 } & Pick<ModalProps, 'onClose' | 'isVisible'>
 
 export const DelegationViewModal = ({
-  delegation,
+                                      delegation,
   direction = 'incoming',
   onClose,
+  isAdminView,
   ...rest
 }: DelegationViewModalProps) => {
   const { formatMessage, lang } = useLocale()
@@ -58,9 +60,8 @@ export const DelegationViewModal = ({
   return (
     <Modal
       id={`delegation-${direction}-view-modal-${delegation?.id}`}
-      eyebrow={formatMessage(m.accessControl)}
-      title={formatMessage(m.accessControlAccess)}
-      label={formatMessage(m.accessControlAccess)}
+      title={formatMessage(m.viewDelegationModalTitle)}
+      label={formatMessage(m.viewDelegationModalTitle)}
       {...rest}
       onClose={onClose}
       closeButtonLabel={formatMessage(m.closeModal)}
@@ -96,7 +97,7 @@ export const DelegationViewModal = ({
           )}
         </Box>
 
-        {delegation?.domain && (
+        {delegation?.type !== AuthDelegationType.GeneralMandate && delegation?.domain && (
           <IdentityCard
             label={formatMessage(m.domain)}
             title={delegation.domain.displayName}
@@ -118,7 +119,7 @@ export const DelegationViewModal = ({
                 title={formatMessage(m.delegationTypeGeneralMandate)}
                 imgSrc="./assets/images/skjaldarmerki.svg"
               />
-              {delegation?.createdBy && (
+              {isAdminView && delegation?.createdBy && (
                 <IdentityCard
                   label={formatMessage(m.createdBy)}
                   title={delegation.createdBy.name}
@@ -140,7 +141,7 @@ export const DelegationViewModal = ({
                     : formatMessage(m.noValidToDate)
                 }
               />
-              {delegation?.referenceId && (
+              {isAdminView && delegation?.referenceId && (
                 <IdentityCard
                   label={formatMessage(m.referenceId)}
                   title={delegation?.referenceId}

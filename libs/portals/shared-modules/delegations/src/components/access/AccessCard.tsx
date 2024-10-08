@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import format from 'date-fns/format'
 import { VisuallyHidden } from 'reakit/VisuallyHidden'
 import * as kennitala from 'kennitala'
@@ -22,10 +21,10 @@ import sortBy from 'lodash/sortBy'
 import { m } from '../../lib/messages'
 import { AuthApiScope, AuthDelegationType } from '@island.is/api/schema'
 import {
-  AuthCustomDelegation,
   AuthCustomDelegationIncoming,
   AuthCustomDelegationOutgoing,
 } from '../../types/customDelegation'
+import { AuthCustomDelegation } from '@island.is/api/schema'
 
 const isDateExpired = (date?: string | null) =>
   date ? new Date(date) < new Date() : false
@@ -303,7 +302,7 @@ export const AccessCard = ({
                       iconType="outline"
                       size="small"
                       variant="utility"
-                      onClick={() => onRenew?.(delegation)}
+                      onClick={() => onRenew(delegation)}
                     >
                       {formatMessage(coreMessages.buttonRenew)}
                     </Button>

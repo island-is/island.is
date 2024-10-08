@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { SkeletonLoader, Stack, Box } from '@island.is/island-ui/core'
 import sortBy from 'lodash/sortBy'
 import {
+  AuthCustomDelegation,
   AuthDelegationDirection,
   AuthDelegationType,
 } from '@island.is/api/schema'
@@ -69,7 +70,7 @@ export const DelegationsIncoming = () => {
                       ? delegation.id
                       : `${delegation.type}-${delegation.from.nationalId}`
                   }
-                  delegation={delegation}
+                  delegation={delegation as AuthCustomDelegation}
                   onDelete={
                     isCustom
                       ? (delegation) => {
