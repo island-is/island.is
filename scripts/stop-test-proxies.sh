@@ -7,7 +7,7 @@ function stop_proxy() {
   proxy=${1}
   builder=${2}
   echo "Killing ${proxy} ..."
-  ${builder} container rm -f "$(${builder} ps -a -q -f name=${proxy})"
+  ${builder} container rm -f "$(${builder} ps -a -q -f name="${proxy}")"
 }
 
 builder=${1:-docker}
