@@ -1,9 +1,12 @@
 import {
   buildSubSection,
   buildMultiField,
-  buildTextField,
+  buildTableRepeaterField,
+  YES,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatNationalId } from '../../utils/utils'
 
 export const RentalHousingTenantInfo = buildSubSection({
   id: 'rentalHousingTenantInfo',
@@ -14,29 +17,59 @@ export const RentalHousingTenantInfo = buildSubSection({
       title: m.tenantDetails.pageTitle,
       description: m.tenantDetails.pageDescription,
       children: [
-        buildTextField({
-          id: 'rentalHousingTenantNationalId',
-          title: m.tenantDetails.nationalIdLabel,
-          width: 'half',
-          variant: 'number',
-        }),
-        buildTextField({
-          id: 'rentalHousingTenantName',
-          title: m.tenantDetails.nameLabel,
-          width: 'half',
-          variant: 'text',
-        }),
-        buildTextField({
-          id: 'rentalHousingTenantEmail',
-          title: m.tenantDetails.emailLabel,
-          width: 'half',
-          variant: 'email',
-        }),
-        buildTextField({
-          id: 'rentalHousingTenantPhone',
-          title: m.tenantDetails.phoneLabel,
-          width: 'half',
-          variant: 'tel',
+        buildTableRepeaterField({
+          id: 'rentalHousingLandlordInfoTable',
+          title: '',
+          fields: {
+            name: {
+              component: 'input',
+              label: m.tenantDetails.nameInputLabel,
+              width: 'half',
+            },
+            nationalId: {
+              component: 'input',
+              label: m.tenantDetails.nationalIdInputLabel,
+              format: '######-####',
+              width: 'half',
+            },
+            phone: {
+              component: 'input',
+              label: m.tenantDetails.phoneInputLabel,
+              type: 'tel',
+              format: '###-####',
+              width: 'half',
+            },
+            email: {
+              component: 'input',
+              label: m.tenantDetails.emailInputLabel,
+              type: 'email',
+              width: 'half',
+            },
+            isRepresentative: {
+              component: 'checkbox',
+              large: true,
+              displayInTable: false,
+              label: m.tenantDetails.representativeLabel,
+              options: [
+                {
+                  label: m.tenantDetails.representativeLabel,
+                  value: YES,
+                },
+              ],
+            },
+          },
+          table: {
+            format: {
+              phone: (value) => formatPhoneNumber(value),
+              nationalId: (value) => formatNationalId(value),
+            },
+            header: [
+              m.tenantDetails.nameInputLabel,
+              m.tenantDetails.nationalIdHeaderLabel,
+              m.tenantDetails.phoneInputLabel,
+              m.tenantDetails.emailInputLabel,
+            ],
+          },
         }),
       ],
     }),

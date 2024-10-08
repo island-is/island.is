@@ -86,12 +86,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
     buildMultiField({
       id: 'registerPropertyInfoSummary',
       title: '',
-      condition: (answers) =>
-        answers.registerPropertyInfoPropertyId !== '' &&
-        answers.registerPropertyInfoUnitId !== '' &&
-        answers.registerPropertyInfoAddress !== '' &&
-        answers.registerPropertyInfoSize !== '' &&
-        answers.propertyNumOfRooms !== '',
+      condition: (answers) => answers.registerPropertyInfoAddress !== '',
       children: [
         buildStaticTableField({
           title: messagesInfoSummary.pageTitle,
@@ -140,7 +135,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
         buildSelectField({
           id: 'registerPropertyCategoryType',
           title: messagesCategory.typeTitle,
-          description: messagesCategory.pageDescription,
+          description: messagesCategory.typeDescription,
           options: [
             {
               value: 'entireHome',

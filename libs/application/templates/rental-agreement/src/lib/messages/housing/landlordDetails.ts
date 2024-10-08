@@ -17,29 +17,34 @@ export const landlordDetails = defineMessages({
       'Hér skal skrá leigusala húsnæðis. Hægt er að bæta við eins mörgum leigusölum á samninginn eins og óskað er eftir.',
     description: 'Landlord details page description',
   },
-  nationalIdLabel: {
-    id: 'ra.application:landlordDetails.nationalIdLabel',
+  nationalIdInputLabel: {
+    id: 'ra.application:landlordDetails.nationalIdInputLabel',
     defaultMessage: 'Kennitala leigusala',
     description: 'Landlord details national id input label',
   },
-  nationalIdPlaceholder: {
-    id: 'ra.application:landlordDetails.nationalIdPlaceholder',
-    defaultMessage: 'Sláðu inn kennitölu leigusala',
-    description: 'Landlord details national id input placeholder',
+  nationalIdHeaderLabel: {
+    id: 'ra.application:landlordDetails.nationalIdHeaderLabel',
+    defaultMessage: 'Kennitala',
+    description: 'Landlord details national id header label',
   },
-  nameLabel: {
+  nameInputLabel: {
     id: 'ra.application:landlordDetails.nameLabel',
     defaultMessage: 'Fullt nafn',
     description: 'Landlord details name input label',
   },
-  emailLabel: {
+  emailInputLabel: {
     id: 'ra.application:landlordDetails.emailLabel',
     defaultMessage: 'Netfang',
     description: 'Landlord details email input label',
   },
-  phoneLabel: {
+  phoneInputLabel: {
     id: 'ra.application:landlordDetails.phoneLabel',
     defaultMessage: 'Símanúmer',
     description: 'Landlord details phone input label',
+  },
+  representativeLabel: {
+    id: 'ra.application:landlordDetails.representativeLabel',
+    defaultMessage: 'Þessi aðili er umboðsaðili leigusala',
+    description: 'Landlord details representative label',
   },
 })
