@@ -75,6 +75,8 @@ export class NotificationService {
       case NotificationType.DEFENDER_ASSIGNED:
       case NotificationType.APPEAL_JUDGES_ASSIGNED:
       case NotificationType.APPEAL_CASE_FILES_UPDATED:
+      case NotificationType.SERVICE_STATUS_UPDATED:
+      case NotificationType.DEFENDANT_SELECTED_DEFENDER:
         messages = [this.getNotificationMessage(type, user, theCase)]
         break
       default:

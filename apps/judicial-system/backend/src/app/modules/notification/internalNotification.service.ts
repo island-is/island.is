@@ -71,6 +71,7 @@ import {
   formatProsecutorReadyForCourtEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
 } from '../../formatters'
+import { formatDefendantSelectedDefenderEmailNotification } from '../../formatters/formatters'
 import { notifications } from '../../messages'
 import { type Case, DateLog } from '../case'
 import { CourtService } from '../court'
@@ -1640,6 +1641,67 @@ export class InternalNotificationService extends BaseNotificationService {
       recipients,
     )
   }
+
+  private async sendDefendantSelectedDefenderNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    // TODO: Fix this, this is probably not correct
+    const defenants = theCase.defendants
+    const subpoenas = defenants && defenants[0].subpoenas
+    const defenderNationalId = subpoenas && subpoenas[0].defenderNationalId
+
+    const { subject, body } = formatDefendantSelectedDefenderEmailNotification(
+      this.formatMessage,
+      theCase,
+      defenderNationalId &&
+        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
+    )
+
+    const promises: Promise<Recipient>[] = []
+    const judgeName = theCase.judge?.name
+    const judgeEmail = theCase.judge?.email
+    const registrarName = theCase.registrar?.name
+    const registrarEmail = theCase.registrar?.email
+
+    if (judgeName && judgeEmail) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          body,
+          judgeName,
+          judgeEmail,
+          undefined,
+          Boolean(defenderNationalId) === false,
+        ),
+      )
+    }
+
+    if (registrarName && registrarEmail) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          body,
+          registrarName,
+          registrarEmail,
+          undefined,
+          Boolean(defenderNationalId) === false,
+        ),
+      )
+    }
+
+    const recipients = await Promise.all(promises)
+
+    if (recipients.length === 0) {
+      // Nothing to send
+      return { delivered: true }
+    }
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.DEFENDANT_SELECTED_DEFENDER,
+      recipients,
+    )
+  }
   //#endregion
 
   //#region DEFENDANTS_NOT_UPDATED_AT_COURT notifications
@@ -2550,6 +2612,8 @@ export class InternalNotificationService extends BaseNotificationService {
           return this.sendIndictmentDeniedNotifications(theCase)
         case NotificationType.INDICTMENT_RETURNED:
           return this.sendIndictmentReturnedNotifications(theCase)
+        case NotificationType.DEFENDANT_SELECTED_DEFENDER:
+          return this.sendDefendantSelectedDefenderNotifications(theCase)
         default:
           throw new InternalServerErrorException(
             `Invalid notification type ${type}`,
