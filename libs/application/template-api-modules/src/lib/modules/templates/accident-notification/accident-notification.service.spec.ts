@@ -267,8 +267,6 @@ describe('AccidentNotificationService', () => {
         'c28cbc8c78fbe6ee77df1fced5f03ffb6e367458f5f094c4685e41b5b31d06fb',
       ]
 
-      console.log('!!!: ', res, sentDocs)
-
       expect(send).toHaveBeenCalledTimes(2)
       expect(res).toEqual({
         sentDocuments: sentDocs,
