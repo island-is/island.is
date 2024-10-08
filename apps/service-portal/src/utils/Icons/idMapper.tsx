@@ -68,7 +68,7 @@ export const iconIdMapper = (iconType: string) => {
     case 'cardWithCheckmark':
       return 'eNwbxRm5ElG1'
     case 'gavel':
-      return 'eBeguNl2SPh1'
+      return 'eDi3AOmSGXe1'
     default:
       return ''
   }
