@@ -133,7 +133,7 @@ const HealthCenterRegistration = () => {
 
   const handleHealthCenterTransfer = async () => {
     setLoadingTransfer(true)
-    if (selectedHealthCenter && selectedHealthCenter?.id) {
+    if (selectedHealthCenter?.id) {
       await transferHealthCenter({
         variables: {
           input: {
