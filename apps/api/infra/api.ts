@@ -193,12 +193,14 @@ export const serviceSetup = (services: {
         staging: 'https://api-staging.thinglysing.is/business/tolfraedi',
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
-      // ref(
-      //   (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
-      // )
-      FORM_SYSTEM_API_BASE_PATH: ref(
-        (h) => `http://${h.svc(services.formSystemService)}`,
-      ),
+      FORM_SYSTEM_API_BASE_PATH: {
+        dev: 'http://localhost:3434',
+        staging: '',
+        prod: '',
+      },
+      // FORM_SYSTEM_API_BASE_PATH: ref(
+      //   (h) => `http://${h.svc(services.formSystemService)}`,
+      // ),
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
         staging: 'https://samradapi-test.devland.is',

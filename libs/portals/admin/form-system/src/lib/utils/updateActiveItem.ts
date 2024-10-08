@@ -1,4 +1,5 @@
-import { useFormMutations } from '../../hooks/formProviderHooks'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { LazyQueryExecFunction, OperationVariables } from '@apollo/client'
 import { ActiveItem } from './interfaces'
 import {
   FormSystemSection,
@@ -8,17 +9,19 @@ import {
 
 export const updateActiveItemFn = (
   activeItem: ActiveItem,
+  updateSection: LazyQueryExecFunction<any, OperationVariables>,
+  updateScreen: LazyQueryExecFunction<any, OperationVariables>,
+  updateField: LazyQueryExecFunction<any, OperationVariables>,
   currentActiveItem?: ActiveItem,
 ) => {
   const { type } = activeItem
-  const { updateSection, updateScreen, updateField } = useFormMutations()
   try {
     if (type === 'Section') {
       const { id, name, waitingText } =
         currentActiveItem
           ? (currentActiveItem.data as FormSystemSection)
           : (activeItem.data as FormSystemSection)
-      updateSection[0]({
+      updateSection({
         variables: {
           input: {
             stepId: id,
@@ -36,7 +39,7 @@ export const updateActiveItemFn = (
         currentActiveItem
           ? (currentActiveItem.data as FormSystemScreen)
           : (activeItem.data as FormSystemScreen)
-      updateScreen[0]({
+      updateScreen({
         variables: {
           input: {
             id: activeItem?.data?.id,
@@ -61,7 +64,7 @@ export const updateActiveItemFn = (
       } = currentActiveItem
           ? (currentActiveItem.data as FormSystemField)
           : (activeItem.data as FormSystemField)
-      updateField[0]({
+      updateField({
         variables: {
           input: {
             id: id,

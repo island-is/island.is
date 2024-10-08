@@ -12,7 +12,7 @@ export class ApplicantsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private applicantsApi: FormApplicantsApi,
+    private formApplicantsApi: FormApplicantsApi,
   ) { }
 
   // eslint-disable-next-line
@@ -27,7 +27,7 @@ export class ApplicantsService {
   }
 
   private applicantsApiWithAuth(auth: User) {
-    return this.applicantsApi.withMiddleware(new AuthMiddleware(auth))
+    return this.formApplicantsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async createApplicant(

@@ -17,7 +17,7 @@ export const Forms = () => {
   const { forms } = useLoaderData() as FormsLoaderResponse
   const { formatMessage } = useIntl()
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM)
-
+  console.log(forms)
   if (forms) {
     return (
       <div>
@@ -32,7 +32,7 @@ export const Forms = () => {
               size="medium"
               onClick={async () => {
                 const { data } = await formSystemCreateFormMutation({
-                  variables: { input: { organizationId: 1 } },
+                  variables: { input: { organizationId: 'a4b0db68-e169-416a-8ad9-e46b73ce2d39' } },
                 })
                 navigate(
                   FormSystemPaths.Form.replace(

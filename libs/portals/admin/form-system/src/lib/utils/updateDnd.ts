@@ -1,11 +1,15 @@
+import { LazyQueryExecFunction, OperationVariables } from "@apollo/client"
 import { ControlState } from "../../hooks/controlReducer"
-import { useFormMutations } from "../../hooks/formProviderHooks"
 
-export const updateDnd = (control: ControlState) => {
+export const updateDnd = (
+  control: ControlState,
+  updateSectionDisplayOrder: LazyQueryExecFunction<any, OperationVariables>,
+  updateScreenDisplayOrder: LazyQueryExecFunction<any, OperationVariables>,
+  updateFieldDisplayOrder: LazyQueryExecFunction<any, OperationVariables>) => {
   const { type } = control.activeItem
-  const { updateSectionDisplayOrder, updateScreenDisplayOrder, updateFieldDisplayOrder } = useFormMutations()
+
   if (type === 'Section') {
-    updateSectionDisplayOrder[0]({
+    updateSectionDisplayOrder({
       variables: {
         input: {
           updateSectionsDisplayOrderDto: control.form.sections?.map(section => section?.id)
@@ -13,7 +17,7 @@ export const updateDnd = (control: ControlState) => {
       }
     })
   } else if (type === 'Screen') {
-    updateScreenDisplayOrder[0]({
+    updateScreenDisplayOrder({
       variables: {
         input: {
           updateScreensDisplayOrderDto: control.form.screens?.map(screen => {
@@ -26,7 +30,7 @@ export const updateDnd = (control: ControlState) => {
       }
     })
   } else if (type === 'Field') {
-    updateFieldDisplayOrder[0]({
+    updateFieldDisplayOrder({
       variables: {
         input: {
           updateFieldsDisplayOrderDto: control.form.fields?.map(field => {

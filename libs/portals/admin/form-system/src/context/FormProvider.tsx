@@ -8,7 +8,10 @@ import { updateDnd } from "../lib/utils/updateDnd"
 import { defaultStep } from "../lib/utils/defaultStep"
 import { baseSettingsStep } from "../lib/utils/getBaseSettingsSection"
 import { updateActiveItemFn } from "../lib/utils/updateActiveItem"
-import { useFormMutations } from "../hooks/formProviderHooks"
+import { useLazyQuery } from "@apollo/client"
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { UPDATE_FIELD, UPDATE_FIELDS_DISPLAY_ORDER, UPDATE_FORM, UPDATE_SCREEN, UPDATE_SCREEN_DISPLAY_ORDER, UPDATE_SECTION, UPDATE_SECTION_DISPLAY_ORDER } from "@island.is/form-system/graphql"
+
 
 
 export const FormProvider: React.FC<{ children: React.ReactNode, form: FormSystemFormResponse }> = ({ children, form }) => {
@@ -35,41 +38,32 @@ export const FormProvider: React.FC<{ children: React.ReactNode, form: FormSyste
 
   const [control, controlDispatch] = useReducer(controlReducer, initialControl)
 
+  //const { updateForm, updateSectionDisplayOrder, updateScreenDisplayOrder, updateFieldDisplayOrder, updateSection, updateScreen, updateField } = useFormMutations()
+  const [updateSection] = useLazyQuery(UPDATE_SECTION)
+  const [updateScreen] = useLazyQuery(UPDATE_SCREEN)
+  const [updateField] = useLazyQuery(UPDATE_FIELD)
   const updateActiveItem = useCallback((updatedActiveItem?: ActiveItem) =>
-    updateActiveItemFn(control.activeItem, updatedActiveItem), [control])
+    updateActiveItemFn(control.activeItem, updateSection, updateScreen, updateField, updatedActiveItem), [control.activeItem, updateSection, updateScreen, updateField])
 
-
+  const [updateSectionDisplayOrder] = useLazyQuery(UPDATE_SECTION_DISPLAY_ORDER)
+  const [updateScreenDisplayOrder] = useLazyQuery(UPDATE_SCREEN_DISPLAY_ORDER)
+  const [updateFieldDisplayOrder] = useLazyQuery(UPDATE_FIELDS_DISPLAY_ORDER)
   const updateDragAndDrop = useCallback(() =>
-    updateDnd(control), [control])
+    updateDnd(control, updateSectionDisplayOrder, updateScreenDisplayOrder, updateFieldDisplayOrder), [control, updateSectionDisplayOrder, updateScreenDisplayOrder, updateFieldDisplayOrder])
 
-  const { updateForm } = useFormMutations()
-
+  const [updateForm] = useLazyQuery(UPDATE_FORM)
   const formUpdate = (updatedForm?: FormSystemForm) => {
-    if (updatedForm) {
-      updateForm[0]({
-        variables: {
-          input: {
-            id: updatedForm.id,
-            updateFormDto: {
-              ...updatedForm
-            }
+    updateForm({
+      variables: {
+        input: {
+          id: control.form.id,
+          updateFormDto: {
+            ...(updatedForm ? updatedForm : control.form)
           }
         }
-      })
-    } else {
-      updateForm[0]({
-        variables: {
-          input: {
-            id: control.form.id,
-            updateFormDto: {
-              ...control.form
-            }
-          }
-        }
-      })
-    }
+      }
+    })
   }
-
 
   const context: IControlContext = useMemo(() => ({
     control,

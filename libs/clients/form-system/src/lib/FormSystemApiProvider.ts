@@ -11,6 +11,7 @@ import {
   OrganizationsApi,
   ScreensApi,
   SectionsApi,
+  FormApplicantsApi,
 } from '../../gen/fetch'
 
 const provideApi = <T>(
@@ -42,3 +43,4 @@ export const ListItemsApiProvider = provideApi(ListItemsApi)
 export const OrganizationsApiProvider = provideApi(OrganizationsApi)
 export const ScreensApiProvider = provideApi(ScreensApi)
 export const SectionsApiProvider = provideApi(SectionsApi)
+export const FormApplicantProvider = provideApi(FormApplicantsApi)

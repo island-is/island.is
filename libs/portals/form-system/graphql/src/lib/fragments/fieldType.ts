@@ -16,7 +16,6 @@ export const FieldTypeFragment = gql`
     fieldSettings {
       ...FieldSettings
     }
-    isRequired
   }
   ${LanguageFields}
   ${FieldSettingsFragment}

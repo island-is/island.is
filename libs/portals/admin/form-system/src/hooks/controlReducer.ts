@@ -10,9 +10,6 @@ import { UniqueIdentifier } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { removeTypename } from '../lib/utils/removeTypename'
 import { ActiveItem } from '../lib/utils/interfaces'
-import { useFormMutations } from './formProviderHooks'
-
-const { updateListItem, deleteListItem, updateField } = useFormMutations()
 
 type ActiveItemActions =
   | { type: 'SET_ACTIVE_ITEM'; payload: { activeItem: ActiveItem } }
@@ -651,16 +648,17 @@ export const controlReducer = (
             ),
         },
       }
-      updateField[0]({
-        variables: {
-          input: {
-            id: id,
-            updateFieldDto: {
-              updateFieldDto: newField
-            }
-          }
-        }
-      })
+      //TODO
+      // updateField[0]({
+      //   variables: {
+      //     input: {
+      //       id: id,
+      //       updateFieldDto: {
+      //         updateFieldDto: newField
+      //       }
+      //     }
+      //   }
+      // })
       return {
         ...state,
         activeItem: {
@@ -687,14 +685,14 @@ export const controlReducer = (
         },
       }
       update({ type: 'Field', data: newField })
-
-      deleteListItem[0]({
-        variables: {
-          input: {
-            id: id
-          }
-        }
-      })
+      //TODO
+      // deleteListItem[0]({
+      //   variables: {
+      //     input: {
+      //       id: id
+      //     }
+      //   }
+      // })
       return {
         ...state,
         activeItem: {
@@ -760,15 +758,15 @@ export const controlReducer = (
           }),
         },
       }
-
-      updateListItem[0]({
-        variables: {
-          input: {
-            id: id,
-            updateListItemDto: newListItem
-          }
-        }
-      })
+      //TODO
+      // updateListItem[0]({
+      //   variables: {
+      //     input: {
+      //       id: id,
+      //       updateListItemDto: newListItem
+      //     }
+      //   }
+      // })
 
       return {
         ...state,

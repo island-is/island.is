@@ -5,6 +5,7 @@ import { ApplicantFragment } from './applicant'
 import { FieldFragment } from './field'
 import { ScreenFragment } from './screen'
 import { SectionFragment } from './section'
+import { DependencyFragment } from './dependency'
 
 export const FormFragment = gql`
   fragment Form on FormSystemForm {
@@ -25,7 +26,7 @@ export const FormFragment = gql`
       ...LanguageFields
     }
     certificationTypes {
-      ...CertificationType
+      ...CertificateType
     }
     applicants {
       ...Applicant
@@ -39,7 +40,9 @@ export const FormFragment = gql`
     fields {
       ...Field
     }
-    dependencies
+    dependencies {
+      ...Dependency
+    }
   }
   ${LanguageFields}
   ${CertificateTypeFragment}
@@ -47,4 +50,5 @@ export const FormFragment = gql`
   ${SectionFragment}
   ${ScreenFragment}
   ${FieldFragment}
+  ${DependencyFragment}
 `

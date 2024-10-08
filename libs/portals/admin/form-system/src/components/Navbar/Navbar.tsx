@@ -27,7 +27,9 @@ import { removeTypename } from '../../lib/utils/removeTypename'
 import { useIntl } from 'react-intl'
 import { m } from '../../lib/messages'
 import { NavComponent } from '../NavComponent/NavComponent'
-import { useFormMutations } from '../../hooks/formProviderHooks'
+import { useLazyQuery } from '@apollo/client'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { CREATE_SECTION } from '@island.is/form-system/graphql'
 
 type DndAction =
   | 'SECTION_OVER_SECTION'
@@ -73,10 +75,10 @@ export const Navbar = () => {
       },
     }),
   )
-  const { createSection } = useFormMutations()
+  const [createSection] = useLazyQuery(CREATE_SECTION)
 
   const addSection = async () => {
-    const newSection = await createSection[0]({
+    const newSection = await createSection({
       variables: {
         input: {
           formId: form.id

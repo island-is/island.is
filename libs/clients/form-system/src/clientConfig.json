@@ -1296,12 +1296,6 @@
           "buttonText": {
             "$ref": "#/components/schemas/LanguageType"
           },
-          "isRequired": {
-            "type": "boolean"
-          },
-          "isLarge": {
-            "type": "boolean"
-          },
           "hasPropertyInput": {
             "type": "boolean"
           },
@@ -1955,12 +1949,6 @@
           },
           "buttonText": {
             "$ref": "#/components/schemas/LanguageType"
-          },
-          "isRequired": {
-            "type": "boolean"
-          },
-          "isLarge": {
-            "type": "boolean"
           },
           "hasPropertyInput": {
             "type": "boolean"

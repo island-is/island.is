@@ -3,7 +3,7 @@ import { FormApplicantDtoApplicantTypeEnum } from '@island.is/clients/form-syste
 import { LanguageType } from './languageType.model'
 
 registerEnumType(FormApplicantDtoApplicantTypeEnum, {
-  name: 'FormSystemFormApplicantDtoApplicantTypeEnum',
+  name: 'FormSystemApplicantTypeEnum',
 })
 
 @ObjectType('FormSystemApplicant')

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import {
   ApplicationsApiProvider,
   FieldsApiProvider,
+  FormApplicantProvider,
   FormsApiProvider,
   ListItemsApiProvider,
   OrganizationsApiProvider,
@@ -11,6 +12,7 @@ import {
 import {
   ApplicationsApi,
   FieldsApi,
+  FormApplicantsApi,
   FormsApi,
   ListItemsApi,
   OrganizationsApi,
@@ -28,6 +30,7 @@ import {
     OrganizationsApiProvider,
     ScreensApiProvider,
     SectionsApiProvider,
+    FormApplicantProvider
   ],
   exports: [
     ApplicationsApi,
@@ -37,6 +40,7 @@ import {
     OrganizationsApi,
     ScreensApi,
     SectionsApi,
+    FormApplicantsApi
   ],
 })
-export class FormSystemClientModule {}
+export class FormSystemClientModule { }

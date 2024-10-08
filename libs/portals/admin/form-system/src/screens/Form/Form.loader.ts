@@ -7,6 +7,10 @@ export interface FormLoaderResponse {
   formBuilder: FormSystemFormResponse
 }
 
+interface FormLoaderQueryResponse {
+  formSystemGetForm: FormSystemFormResponse
+}
+
 export const formLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ params }): Promise<FormLoaderResponse> => {
     if (!params.formId) {
@@ -14,7 +18,7 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
     }
 
     try {
-      const { data, loading } = await client.query<FormSystemFormResponse>({
+      const { data, loading } = await client.query<FormLoaderQueryResponse>({
         query: GET_FORM,
         variables: {
           input: {
@@ -22,13 +26,13 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
           },
         },
       })
-
+      console.log(data)
       if (!loading && !data) {
         throw new Error('No form data found')
       }
 
       return {
-        formBuilder: data,
+        formBuilder: data.formSystemGetForm,
       }
     } catch (error) {
       throw new Error(`Failed to load form: ${error.message}`)

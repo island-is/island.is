@@ -5,7 +5,10 @@ import { ControlContext } from '../../../context/ControlContext'
 import { removeTypename } from '../../../lib/utils/removeTypename'
 import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
-import { useFormMutations } from '../../../hooks/formProviderHooks'
+import { useLazyQuery } from '@apollo/client'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { CREATE_FIELD, CREATE_SCREEN, DELETE_FIELD, DELETE_SCREEN } from '@island.is/form-system/graphql'
+
 
 export const NavButtons = () => {
   const { control, controlDispatch } = useContext(ControlContext)
@@ -30,7 +33,10 @@ export const NavButtons = () => {
     return false
   }
 
-  const { createScreen, createField, deleteScreen, deleteField } = useFormMutations()
+  const createScreen = useLazyQuery(CREATE_SCREEN)
+  const createField = useLazyQuery(CREATE_FIELD)
+  const deleteScreen = useLazyQuery(DELETE_SCREEN)
+  const deleteField = useLazyQuery(DELETE_FIELD)
 
   const addItem = async () => {
     if (activeItem.type === 'Section') {
