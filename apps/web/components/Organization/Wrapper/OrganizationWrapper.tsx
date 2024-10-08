@@ -1146,6 +1146,7 @@ export const OrganizationWrapper: React.FC<
                         type="button"
                         variant="text"
                         truncate
+                        unfocusable
                       >
                         {backLink.text}
                       </Button>
