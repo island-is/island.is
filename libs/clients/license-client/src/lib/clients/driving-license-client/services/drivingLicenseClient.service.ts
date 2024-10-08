@@ -5,6 +5,11 @@ import {
   RemarkCode,
 } from '@island.is/clients/driving-license'
 import { FetchError } from '@island.is/clients/middlewares'
+import {
+  Pass,
+  PassDataInput,
+  SmartSolutionsApi,
+} from '@island.is/clients/smartsolutions'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
@@ -16,12 +21,10 @@ import {
   PkPassVerificationInputData,
   VerifyPkPassResult,
   Result,
-  PassDataInput,
 } from '../../../licenseClient.type'
 import { DrivingLicenseVerifyExtraData } from '../drivingLicenseClient.type'
 import { createPkPassDataInput } from '../drivingLicenseMapper'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-import { Pass, SmartSolutionsApi } from '@island.is/clients/smartsolutions'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
@@ -150,7 +153,7 @@ export class DrivingLicenseClient
         ? {
             imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
           }
-        : undefined,
+        : null,
     }
 
     return payload

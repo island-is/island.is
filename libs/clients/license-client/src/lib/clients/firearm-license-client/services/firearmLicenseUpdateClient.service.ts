@@ -4,19 +4,21 @@ import { Inject, Injectable } from '@nestjs/common'
 import { OpenFirearmApi } from '@island.is/clients/firearm-license'
 import { sanitize as sanitizeNationalId } from 'kennitala'
 import {
-  PassData,
+  Pass,
   PassDataInput,
-  PassRevocationData,
+  RevokePassData,
+  SmartSolutionsApi,
+} from '@island.is/clients/smartsolutions'
+import {
   PassVerificationData,
   Result,
   VerifyInputData,
 } from '../../../licenseClient.type'
 import { createPkPassDataInput, nationalIdIndex } from '../firearmLicenseMapper'
+import { BaseLicenseUpdateClient } from '../../base/baseLicenseUpdateClient'
 import { mapNationalId } from '../firearmLicenseMapper'
 import type { ConfigType } from '@island.is/nest/config'
 import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.config'
-import { SmartSolutionsApi } from '@island.is/clients/smartsolutions'
-import { BaseLicenseUpdateClient } from '../../base/baseLicenseUpdateClient'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -33,7 +35,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
     super(logger, smartApi)
   }
 
-  async pushUpdate(
+  pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
     requestId?: string,
@@ -60,7 +62,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   async pullUpdate(
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<PassData>> {
+  ): Promise<Result<Pass>> {
     let data
     try {
       data = await Promise.all([
@@ -133,7 +135,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
               .substring(thumbnail.indexOf(',') + 1)
               .trim(),
           }
-        : undefined,
+        : null,
     }
 
     return this.smartApi.updatePkPass(payload, requestId)
@@ -142,7 +144,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   revoke(
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<PassRevocationData>> {
+  ): Promise<Result<RevokePassData>> {
     const passTemplateId = this.config.passTemplateId
     const payload: PassDataInput = {
       inputFieldValues: [mapNationalId(nationalId)],

@@ -3,14 +3,17 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  PassData,
+  Pass,
   PassDataInput,
-  PassRevocationData,
+  RevokePassData,
+  SmartSolutionsApi,
+} from '@island.is/clients/smartsolutions'
+import {
   PassVerificationData,
   Result,
   VerifyInputData,
 } from '../../../licenseClient.type'
-import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
+import { BaseLicenseUpdateClient } from '../../base/baseLicenseUpdateClient'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import {
   createPkPassDataInput,
@@ -18,7 +21,6 @@ import {
   nationalIdIndex,
 } from '../drivingLicenseMapper'
 import { DrivingDigitalLicenseClientConfig } from '../drivingLicenseClient.config'
-import { SmartSolutionsApi } from '@island.is/clients/smartsolutions'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'driving-license-service'
@@ -32,14 +34,14 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
     private drivingLicenseApi: DrivingLicenseApi,
     protected smartApi: SmartSolutionsApi,
   ) {
-    super()
+    super(logger, smartApi)
   }
 
   pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<PassData | undefined>> {
+  ): Promise<Result<Pass | undefined>> {
     const inputFieldValues = inputData.inputFieldValues ?? []
     //small check that nationalId doesnt' already exist
     if (
@@ -61,7 +63,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
   async pullUpdate(
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<PassData | undefined>> {
+  ): Promise<Result<Pass | undefined>> {
     let data
     try {
       data = await Promise.all([
@@ -127,7 +129,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
       ? {
           imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
         }
-      : undefined
+      : null
 
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
@@ -142,7 +144,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
   revoke(
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<PassRevocationData>> {
+  ): Promise<Result<RevokePassData>> {
     const passTemplateId = this.config.passTemplateId
     const payload: PassDataInput = {
       inputFieldValues: [mapNationalId(nationalId)],
