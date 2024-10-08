@@ -2,9 +2,9 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
   graphql: ServiceBuilder<'api'>
-}): ServiceBuilder<'service-portal'> =>
-  service('service-portal')
-    .namespace('service-portal')
+}): ServiceBuilder<'portals-my-pages'> =>
+  service('portals-my-pages')
+    .namespace('portals-my-pages')
     .liveness('/liveness')
     .readiness('/readiness')
     .replicaCount({
