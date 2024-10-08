@@ -11,8 +11,14 @@ export const SyslumennApiProvider: Provider<SyslumennApi> = {
   useFactory: (
     config: ConfigType<typeof SyslumennClientConfig>,
     xRoadConfig?: ConfigType<typeof XRoadConfig>,
-  ) =>
-    new SyslumennApi(
+  ) => {
+    if (config.xRoadServicePath && !xRoadConfig) {
+      throw new Error(
+        'Misconfiguration in SyslumennClient. xRoadServicePath provided without xRoadConfig.',
+      )
+    }
+
+    return new SyslumennApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-syslumenn',
@@ -32,7 +38,8 @@ export const SyslumennApiProvider: Provider<SyslumennApi> = {
           Accept: 'application/json',
         },
       }),
-    ),
+    )
+  },
   inject: [
     SyslumennClientConfig.KEY,
     { token: XRoadConfig.KEY, optional: true },
