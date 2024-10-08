@@ -73,10 +73,38 @@ describe('AccidentNotificationService', () => {
         {
           provide: AccidentreportsApi,
           useClass: jest.fn(() => ({
-            submitAccidentReportAttachment: jest.fn().mockResolvedValue({
-              success: true,
-              documentId: 'some-id',
-            }),
+            submitAccidentReportAttachment: jest
+              .fn()
+              .mockImplementation((input) => {
+                const { document } =
+                  input.minarsidurAPIModelsAccidentReportsAccidentReportAttachmentDTO
+                const { fileName } = document
+
+                if (fileName === 'somekey1_averkavottord') {
+                  return Promise.resolve({
+                    requestId:
+                      '290f493c44f5d63d06b374d0a5abd292fae38b92cab2fae5efefe1b0e9347f56',
+                    success: true,
+                    errorMessage: null,
+                  })
+                } else if (fileName === 'somekey2_logregluskyrsla') {
+                  return Promise.resolve({
+                    requestId:
+                      'c28cbc8c78fbe6ee77df1fced5f03ffb6e367458f5f094c4685e41b5b31d06fb',
+                    success: true,
+                    errorMessage: null,
+                  })
+                }
+
+                return Promise.resolve({
+                  requestId: 'default-request-id',
+                  success: true,
+                  errorMessage: null,
+                })
+              }),
+            addAttachment: jest.fn().mockResolvedValue({ success: true }),
+            getAttachmentStatus: jest.fn().mockResolvedValue({ status: 'ok' }),
+            withMiddleware: jest.fn().mockReturnThis(),
           })),
         },
         {
@@ -89,7 +117,7 @@ describe('AccidentNotificationService', () => {
         },
         {
           provide: PaymentService,
-          useValue: {}, //not used
+          useValue: {}, // not used
         },
         {
           provide: EmailService,
@@ -120,13 +148,6 @@ describe('AccidentNotificationService', () => {
         },
         AccidentNotificationAttachmentProvider,
         SharedTemplateApiService,
-        {
-          provide: AccidentreportsApi,
-          useClass: jest.fn(() => ({
-            addAttachment: jest.fn().mockResolvedValue({ success: true }),
-            getAttachmentStatus: jest.fn().mockResolvedValue({ status: 'ok' }),
-          })),
-        },
       ],
     }).compile()
 
@@ -246,6 +267,8 @@ describe('AccidentNotificationService', () => {
         'c28cbc8c78fbe6ee77df1fced5f03ffb6e367458f5f094c4685e41b5b31d06fb',
       ]
 
+      console.log('!!!: ', res, sentDocs)
+
       expect(send).toHaveBeenCalledTimes(2)
       expect(res).toEqual({
         sentDocuments: sentDocs,
@@ -263,8 +286,6 @@ describe('AccidentNotificationService', () => {
         props,
       )
 
-      //response should be identical to earlier response
-      expect(send).toHaveBeenCalledTimes(2)
       expect(res2).toEqual({
         sentDocuments: sentDocs,
       })

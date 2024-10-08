@@ -149,7 +149,6 @@ export class AccidentNotificationService extends BaseTemplateApiService {
           attachment.attachmentType,
         )
         const contentType = attachment.name.split('.').pop()
-
         return this.accidentsReportsApiWithAuth(
           auth,
         ).submitAccidentReportAttachment({
@@ -176,7 +175,7 @@ export class AccidentNotificationService extends BaseTemplateApiService {
     return {
       sentDocuments: [
         ...getAddAttachmentSentDocumentHashList(application),
-        ...successfulAttachments,
+        ...successfulAttachments.map((attachment) => attachment.requestId),
       ],
     }
   }

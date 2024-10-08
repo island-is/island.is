@@ -99,10 +99,7 @@ export const getAddAttachmentSentDocumentHashList = (
 ): string[] => {
   const addAttachmentAppData = application.externalData
     .addAdditionalAttachment as ReviewAddAttachmentData
-  const addAttachmentSentDocuments =
-    addAttachmentAppData?.data?.sentDocuments ?? []
-
-  return addAttachmentSentDocuments.map((x) => x)
+  return addAttachmentAppData?.data?.sentDocuments ?? []
 }
 
 export const getReportId = (application: ApplicationWithAttachments) => {
