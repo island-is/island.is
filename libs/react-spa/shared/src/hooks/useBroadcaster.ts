@@ -69,6 +69,9 @@ export const useBroadcaster = <T>({
   }
 }
 
+const isTestEnv = process.env.NODE_ENV === 'test'
+
+
 /**
  * Factory function to create a custom hook for managing a BroadcastChannel.
  *
@@ -111,9 +114,21 @@ export const useBroadcaster = <T>({
  * }, [postMessage])
  */
 export const createBroadcasterHook = <Events>(channelName: string) => {
-  const channel = new BroadcastChannel(channelName)
+  let broadcastChannelInstance: BroadcastChannel | null = null
+
+  // Skip BroadcastChannel initialization in test environment since it is not supported by Jest.
+  if (!isTestEnv) {
+    broadcastChannelInstance = new BroadcastChannel(channelName)
+  }
 
   return (onMessage?: (event: MessageEvent<Events>) => void) => {
-    return useBroadcaster<Events>({ channel, onMessage })
+    if (isTestEnv || !broadcastChannelInstance) {
+      return null as unknown as ReturnType<typeof useBroadcaster<Events>>
+    }
+
+    return useBroadcaster<Events>({
+      channel: broadcastChannelInstance,
+      onMessage,
+    })
   }
 }

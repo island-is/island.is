@@ -974,9 +974,6 @@
       ],
       "@island.is/react-spa/bff": ["libs/react-spa/bff/src/index.ts"],
       "@island.is/react-spa/shared": ["libs/react-spa/shared/src/index.ts"],
-      "@island.is/react-spa/shared/mocks": [
-        "libs/react-spa/shared/mocks/index.ts"
-      ],
       "@island.is/react/components": ["libs/react/components/src/index.ts"],
       "@island.is/react/feature-flags": [
         "libs/react/feature-flags/src/index.ts"
