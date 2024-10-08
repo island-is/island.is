@@ -17,6 +17,20 @@ export enum Pickup {
 
 export const otherLicenseCategories = ['C', 'C1', 'CE', 'D', 'D1', 'DE']
 export const codesRequiringHealthCertificate = ['400', '01.06']
+export const codesExtendedLicenseCategories = [
+  'C1',
+  'C1E',
+  'C',
+  'CE',
+  'D1',
+  'D1E',
+  'D',
+  'DE',
+  'Bfar',
+  'Far',
+  'FAR',
+]
+export const remarksCannotRenew65 = ['400', '450', '95']
 
 export type DrivingLicenseApplicationFor =
   | typeof B_FULL
