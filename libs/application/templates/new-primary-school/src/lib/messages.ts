@@ -145,6 +145,18 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'Information about email address and phone number will be retrieved from My Pages at Ísland.is.',
     },
+    childInformationTitle: {
+      id: 'nps.application:prerequisites.child.information.title',
+      defaultMessage: 'Upplýsingar frá MMS',
+      description: 'Information from MMS',
+    },
+    childInformationSubTitle: {
+      id: 'nps.application:prerequisites.child.information.subtitle',
+      defaultMessage:
+        'Upplýsingar frá núverandi skóla barns. Upplýsingar um barn og ólíkar þarfir þess.',
+      description:
+        "Information from the child's current school. Information about a child and its different needs.",
+    },
     checkboxProvider: {
       id: 'nps.application:prerequisites.checkbox.provider',
       defaultMessage:
