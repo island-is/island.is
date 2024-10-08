@@ -55,7 +55,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
 
   useEffect(() => {
     if (closing) {
-      onCloseModal && onCloseModal()
+      onCloseModal?.()
       setClosing(false)
       setStartClosing(false)
     }
@@ -140,7 +140,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
             </Box>
             {iconSrc && (
               <Box marginLeft={6} className={styles.image}>
-                <img src={iconSrc} alt={iconAlt} />
+                <img src={iconSrc} alt={iconAlt || 'Modal icon'} />
               </Box>
             )}
           </Box>
