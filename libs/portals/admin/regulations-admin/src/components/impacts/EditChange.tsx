@@ -240,11 +240,17 @@ export const EditChange = (props: EditChangeProp) => {
       return `<div data-diff="new">${diff}</div>` as HTMLText
     }
 
+    const noChange = dirtyClean(previous) === dirtyClean(current)
+    if (noChange) {
+      // If the appendix has no changes
+      return undefined
+    }
+
     if (diff) {
       // If the appendix has changes
       return diff
     } else {
-      // If the appendix has no changes
+      // If the appendix has no diff
       return undefined
     }
   }

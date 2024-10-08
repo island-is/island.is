@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import {
@@ -16,7 +16,8 @@ import { useLocale } from '@island.is/localization'
 import {
   DocumentsPaths,
   DocumentLine,
-  useDocumentList,
+  DocumentLineV3,
+  useDocumentListV3,
 } from '@island.is/service-portal/documents'
 import {
   LinkResolver,
@@ -36,12 +37,11 @@ import * as styles from './Dashboard.css'
 import cn from 'classnames'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { DocumentsScope } from '@island.is/auth/scopes'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
   const { userInfo } = useAuth()
-  const { filteredDocuments, data, loading } = useDocumentList({
-    defaultPageSize: 8,
-  })
+
   const { data: organizations } = useOrganizations()
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
@@ -50,6 +50,28 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
   const isMobile = width < theme.breakpoints.md
   const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
   const hasDelegationAccess = userInfo?.scopes?.includes(DocumentsScope.main)
+
+  // Versioning feature flag. Remove after feature is live.
+  const [v3Enabled, setV3Enabled] = useState<boolean>()
+
+  const { filteredDocuments, data, loading } = useDocumentListV3({
+    defaultPageSize: 8,
+  })
+
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalDocumentsV3PageEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setV3Enabled(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     PlausiblePageviewDetail(
@@ -219,22 +241,41 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                 ) : filteredDocuments.length > 0 ? (
                   filteredDocuments.map((doc, i) => (
                     <Box key={doc.id}>
-                      <DocumentLine
-                        img={
-                          doc?.sender?.name
-                            ? getOrganizationLogoUrl(
-                                doc?.sender?.name,
-                                organizations,
-                                60,
-                                'none',
-                              )
-                            : undefined
-                        }
-                        documentLine={doc}
-                        active={false}
-                        asFrame
-                        includeTopBorder={i === 0}
-                      />
+                      {v3Enabled ? (
+                        <DocumentLineV3
+                          img={
+                            doc?.sender?.name
+                              ? getOrganizationLogoUrl(
+                                  doc?.sender?.name,
+                                  organizations,
+                                  60,
+                                  'none',
+                                )
+                              : undefined
+                          }
+                          documentLine={doc}
+                          active={false}
+                          asFrame
+                          includeTopBorder={i === 0}
+                        />
+                      ) : (
+                        <DocumentLine
+                          img={
+                            doc?.sender?.name
+                              ? getOrganizationLogoUrl(
+                                  doc?.sender?.name,
+                                  organizations,
+                                  60,
+                                  'none',
+                                )
+                              : undefined
+                          }
+                          documentLine={doc}
+                          active={false}
+                          asFrame
+                          includeTopBorder={i === 0}
+                        />
+                      )}
                     </Box>
                   ))
                 ) : (

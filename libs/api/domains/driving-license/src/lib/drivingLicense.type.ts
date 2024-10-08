@@ -74,6 +74,7 @@ export enum RequirementKey {
   hasHadValidCategoryForFiveYearsOrMore = 'HasHadValidCategoryForFiveYearsOrMore',
   //TODO: Remove when RLS/SGS supports health certificate in BE license
   beRequiresHealthCertificate = 'beRequiresHealthCertificate',
+  noExtendedDrivingLicense = 'NoExtendedDrivingLicense',
 }
 
 export interface ApplicationEligibilityRequirement {
