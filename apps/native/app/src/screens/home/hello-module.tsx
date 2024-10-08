@@ -20,7 +20,7 @@ const ImageWrapper = styled.View`
 
 const getFileExtension = (url: string): string => {
   const extension = url.split('.').pop()
-  return extension ?? ''
+  return extension ? `.${extension}` : ''
 }
 
 export const HelloModule = React.memo(() => {
