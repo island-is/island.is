@@ -239,4 +239,5 @@ export interface LicenseClient<Type extends LicenseType> {
 
 export const LICENSE_CLIENT_FACTORY = 'license-client-factory'
 export const LICENSE_UPDATE_CLIENT_FACTORY = 'license-client-factory'
+export const LICENSE_UPDATE_CLIENT_FACTORY_V2 = 'license-client-factory-v2'
 export const CONFIG_PROVIDER = 'config_provider'

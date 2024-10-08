@@ -1,10 +1,5 @@
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { MODULE_OPTIONS_TOKEN } from './pkPass.module-definition'
-import {
-  PkPassModuleOptions,
-  VerifyPassData,
-  VerifyPkPassDataInput,
-} from './pkPass.types'
+import { VerifyPassData, VerifyPkPassDataInput } from './pkPass.types'
 import { Inject } from '@nestjs/common'
 import { SmartSolutionsApi } from '@island.is/clients/smartsolutions'
 import { SmartSolutionsService } from '@island.is/clients/smart-solutions-v2'
@@ -22,8 +17,6 @@ export class PkPassService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private readonly featureFlagService: FeatureFlagService,
-    @Inject(MODULE_OPTIONS_TOKEN)
-    private readonly options: PkPassModuleOptions,
     private readonly newSmartService: SmartSolutionsService,
     /** DEPRECATED */
     private readonly oldSmartService: SmartSolutionsApi,

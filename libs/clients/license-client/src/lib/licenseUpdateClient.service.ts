@@ -5,10 +5,12 @@ import {
   CONFIG_PROVIDER,
   LicenseType,
   LICENSE_UPDATE_CLIENT_FACTORY,
+  LICENSE_UPDATE_CLIENT_FACTORY_V2,
 } from './licenseClient.type'
 import type { PassTemplateIds, LicenseTypeType } from './licenseClient.type'
-import { BaseLicenseUpdateClient } from './clients/baseLicenseUpdateClient'
 import { LOG_CATEGORY } from '@island.is/clients/smartsolutions'
+import { BaseLicenseUpdateClientV2 } from './clients/base/licenseUpdateClientV2'
+import { BaseLicenseUpdateClient } from './clients/base/baseLicenseUpdateClient'
 
 @Injectable()
 export class LicenseUpdateClientService {
@@ -18,6 +20,11 @@ export class LicenseUpdateClientService {
       type: LicenseType,
       requestId?: string,
     ) => Promise<BaseLicenseUpdateClient | null>,
+    @Inject(LICENSE_UPDATE_CLIENT_FACTORY_V2)
+    private licenseUpdateClientFactoryV2: (
+      type: LicenseType,
+      requestId?: string,
+    ) => Promise<BaseLicenseUpdateClientV2 | null>,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(CONFIG_PROVIDER) private config: PassTemplateIds,
   ) {}
@@ -62,16 +69,26 @@ export class LicenseUpdateClientService {
     return this.config[licenseId]
   }
 
-  getLicenseUpdateClientByType(type: LicenseType, requestId?: string) {
+  getLicenseUpdateClientByType(
+    type: LicenseType,
+    requestId?: string,
+    version?: 'v1' | 'v2',
+  ) {
+    if (version === 'v2') {
+      return this.licenseUpdateClientFactoryV2(type, requestId)
+    }
     return this.licenseUpdateClientFactory(type, requestId)
   }
 
   getLicenseUpdateClientByPassTemplateId(
     passTemplateId: string,
     requestId?: string,
+    version?: 'v1' | 'v2',
   ) {
     const type = this.getTypeByPassTemplateId(passTemplateId, requestId)
 
-    return type ? this.licenseUpdateClientFactory(type) : null
+    return type
+      ? this.getLicenseUpdateClientByType(type, requestId, version)
+      : null
   }
 }
