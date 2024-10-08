@@ -30,7 +30,7 @@ export class UpdateLicenseRequest {
   @IsString()
   readonly requestId?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: LicenseApiVersion })
   @IsOptional()
   @IsEnum(LicenseApiVersion)
   readonly apiVersion?: LicenseApiVersion

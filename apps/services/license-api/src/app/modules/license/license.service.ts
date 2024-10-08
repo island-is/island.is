@@ -23,7 +23,7 @@ export class LicenseService {
     nationalId: string,
     inputData: UpdateLicenseRequest,
   ): Promise<UpdateLicenseResponse> {
-    if (inputData.apiVersion === LicenseApiVersion.v1) {
+    if (inputData.apiVersion === LicenseApiVersion.v2) {
       return this.serviceV2.updateLicense(licenseId, nationalId, inputData)
     }
     return this.serviceV1.updateLicense(licenseId, nationalId, inputData)
