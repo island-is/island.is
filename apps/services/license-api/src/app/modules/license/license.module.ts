@@ -7,9 +7,10 @@ import {
   UserLicensesController,
 } from './license.controller'
 import { LicenseService } from './license.service'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
-  imports: [LicenseUpdateClientModule, LicenseCommonModule],
+  imports: [LicenseUpdateClientModule, LicenseCommonModule, FeatureFlagModule],
   controllers: [LicensesController, UserLicensesController],
   providers: [
     {

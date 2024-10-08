@@ -11,20 +11,18 @@ import {
   findLatestExpirationDate,
 } from './machineLicenseMapper'
 import { FetchError } from '@island.is/clients/middlewares'
-import {
-  Pass,
-  PassDataInput,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
 import { Locale } from '@island.is/shared/types'
 import {
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
+  PassData,
+  PassDataInput,
   PkPassVerificationInputData,
   Result,
   VerifyPkPassResult,
 } from '../../licenseClient.type'
+import { PkPassService } from '../../helpers/pkPassService/pkPass.service'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'machinelicense-service'
@@ -36,7 +34,7 @@ export class MachineLicenseClient
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private machineApi: VinnuvelaApi,
-    private smartApi: SmartSolutionsApi,
+    private passService: PkPassService,
   ) {}
 
   clientSupportsPkPass = true
@@ -150,11 +148,14 @@ export class MachineLicenseClient
     if (!inputValues) return null
     return {
       inputFieldValues: inputValues,
-      expirationDate: findLatestExpirationDate(license.data),
+      expirationDate: findLatestExpirationDate(license.data) ?? undefined,
     }
   }
 
-  async getPkPass(user: User, locale: Locale = 'is'): Promise<Result<Pass>> {
+  async getPkPass(
+    user: User,
+    locale: Locale = 'is',
+  ): Promise<Result<PassData>> {
     const license = await this.fetchLicense(user)
     if (!license.ok || !license.data) {
       this.logger.info(
@@ -194,7 +195,7 @@ export class MachineLicenseClient
       }
     }
 
-    const pass = await this.smartApi.generatePkPass(payload)
+    const pass = await this.passService.generatePkPass(payload)
 
     return pass
   }
@@ -259,7 +260,7 @@ export class MachineLicenseClient
     data: string,
   ): Promise<Result<VerifyPkPassResult<LicenseType.MachineLicense>>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
-    const result = await this.smartApi.verifyPkPass({ code, date })
+    const result = await this.passService.verifyPkPass({ code, date })
 
     if (!result.ok) {
       return result

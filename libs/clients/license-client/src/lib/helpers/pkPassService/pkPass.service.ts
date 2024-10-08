@@ -1,6 +1,3 @@
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { VerifyPassData, VerifyPkPassDataInput } from './pkPass.types'
-import { Inject } from '@nestjs/common'
 import { SmartSolutionsApi } from '@island.is/clients/smartsolutions'
 import { SmartSolutionsService } from '@island.is/clients/smart-solutions-v2'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
@@ -10,12 +7,11 @@ import {
   PassRevocationData,
   Result,
 } from '../../licenseClient.type'
+import { VerifyPassData, VerifyPkPassDataInput } from './pkPass.types'
 import { mapPassData } from './pkPass.mapper'
 
 export class PkPassService {
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
     private readonly featureFlagService: FeatureFlagService,
     private readonly newSmartService: SmartSolutionsService,
     /** DEPRECATED */

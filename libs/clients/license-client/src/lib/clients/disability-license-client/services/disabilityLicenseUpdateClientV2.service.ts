@@ -9,8 +9,8 @@ import {
   Result,
   VerifyInputData,
 } from '../../../licenseClient.type'
-import { PkPassService } from '../../pk-pass-client/pkPass.service'
 import { BaseLicenseUpdateClientV2 } from '../../base/licenseUpdateClientV2'
+import { PkPassService } from '../../../helpers/pkPassService/pkPass.service'
 
 @Injectable()
 export class DisabilityLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {

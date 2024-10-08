@@ -15,7 +15,7 @@ import {
   DisabilityUpdateClientModule,
 } from './clients/disability-license-client'
 import { PassTemplateIdsProvider } from './providers/passTemplateIdsProvider'
-import { BaseLicenseUpdateClient } from './clients/baseLicenseUpdateClient'
+import { BaseLicenseUpdateClient } from './clients/base/baseLicenseUpdateClient'
 import {
   DrivingLicenseUpdateClient,
   DrivingUpdateClientModule,

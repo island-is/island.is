@@ -69,26 +69,30 @@ export class LicenseUpdateClientService {
     return this.config[licenseId]
   }
 
-  getLicenseUpdateClientByType(
-    type: LicenseType,
-    requestId?: string,
-    version?: 'v1' | 'v2',
-  ) {
-    if (version === 'v2') {
-      return this.licenseUpdateClientFactoryV2(type, requestId)
-    }
+  //DEPRECATED
+  getLicenseUpdateClientByType(type: LicenseType, requestId?: string) {
     return this.licenseUpdateClientFactory(type, requestId)
   }
 
+  getLicenseUpdateClientV2ByType(type: LicenseType, requestId?: string) {
+    return this.licenseUpdateClientFactoryV2(type, requestId)
+  }
+
+  //DEPRECATED
   getLicenseUpdateClientByPassTemplateId(
     passTemplateId: string,
     requestId?: string,
-    version?: 'v1' | 'v2',
   ) {
     const type = this.getTypeByPassTemplateId(passTemplateId, requestId)
 
-    return type
-      ? this.getLicenseUpdateClientByType(type, requestId, version)
-      : null
+    return type ? this.getLicenseUpdateClientByType(type, requestId) : null
+  }
+  getLicenseUpdateClientV2ByPassTemplateId(
+    passTemplateId: string,
+    requestId?: string,
+  ) {
+    const type = this.getTypeByPassTemplateId(passTemplateId, requestId)
+
+    return type ? this.getLicenseUpdateClientV2ByType(type, requestId) : null
   }
 }
