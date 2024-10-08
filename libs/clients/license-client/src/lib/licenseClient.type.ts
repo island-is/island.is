@@ -136,8 +136,13 @@ export type PassData = {
   distributionQRCode: string
   id: string
   expirationDate?: Date
-  whenCreated?: Date
-  whenModified?: Date
+  whenCreated: Date
+  whenModified: Date
+  inputFieldValues?: Array<{
+    id: string
+    identifier: string
+    value?: string
+  }>
 }
 
 export type PassRevocationData = {

@@ -1,10 +1,8 @@
 import { Pass, PassTemplate } from '../..'
 
-export type PkPass = Partial<Pass>
-
 export interface VerifyPassData {
   valid: boolean
-  pass?: PkPass
+  pass?: Pass
 }
 
 export interface RevokePassData {
@@ -12,19 +10,19 @@ export interface RevokePassData {
 }
 
 export interface GetPassResponseData {
-  pass: PkPass
+  pass: Pass
 }
 
 export interface VerifyPassResponseData {
-  updateStatusOnPassWithDynamicBarcode?: PkPass
+  updateStatusOnPassWithDynamicBarcode?: Pass
 }
 
 export interface UpsertPassResponseData {
-  upsertPass: PkPass
+  upsertPass: Pass
 }
 
 export interface UpdatePassResponseData {
-  updatePass: PkPass
+  updatePass: Pass
 }
 
 export interface ListTemplatesResponseData {
@@ -46,6 +44,6 @@ export interface DeletePassResponseData {
 
 export interface ListPassesResponseData {
   passes?: {
-    data: Array<PkPass>
+    data: Array<Pass>
   }
 }
