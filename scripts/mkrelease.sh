@@ -21,6 +21,9 @@ set -euo pipefail
 : "${RELEASE_DRY:=${DRY}}"
 
 : "${RELEASE_DD_DASHBOARD_URL:=https://app.datadoghq.eu/dashboard/fzx-xqc-dg7/errors-by-service-dasbboard}"
+: "${RELEASE_SPINNAKER_BASE_URL:=https://spinnaker.shared.devland.is/#}"
+: "${RELEASE_ISLANDIS_SPINNAKER_URL:=${RELEASE_SPINNAKER_BASE_URL}/islandis/executions}"
+: "${RELEASE_IDS_SPINNAKER_URL:=${RELEASE_SPINNAKER_BASE_URL}/identity-server/executions}"
 
 COLOR_RED="\e[31m"
 COLOR_RESET="\e[0m"
@@ -130,7 +133,7 @@ monitor-site() {
   local REPO_NAME="${1}"
   echo -e "Release URL will be available at $(blue "${RELEASE_URL}")"
   echo -n "Waiting for the site to come online "
-  while ! curl -s --fail "${RELEASE_URL}" &>/dev/null; do
+  while ! run curl -s --fail "${RELEASE_URL}" &>/dev/null; do
     sleep "${RELEASE_SLEEP_TIME}"
     echo -n "."
   done && echo " SITE IS UP 👆"
@@ -161,6 +164,15 @@ dispatch-event() {
   run "${cmd[@]}"
 }
 
+spinnaker-deploy() {
+  local SPINNAKER_URL="${1}" SPINNAKER_ENV="${2}"
+  # Capitalize first letter of SPINNAKER_ENV
+  SPINNAKER_ENV="$(echo "${SPINNAKER_ENV:0:1}" | tr '[:lower:]' '[:upper:]')${SPINNAKER_ENV:1}"
+  echo "Now go to ${SPINNAKER_URL}?pipeline=${SPINNAKER_ENV}"
+  echo "Click \"➡  Start Manual Execution\" and fill in the values found in the actions above"
+  continue-approved
+}
+
 ## Pre-release
 # island.is
 create-pre-release "${RELEASE_ISLANDIS_NAME}"
@@ -174,7 +186,7 @@ create-pre-release "${RELEASE_IDS_NAME}"
 monitor-actions "${RELEASE_IDS_NAME}"
 
 ## Staging
-export RELEASE_BRANCH="${RELEASE_BRANCH//pre-/}"
+export RELEASE_BRANCH="${RELEASE_BRANCH//pre-/}" ENV=staging
 # island.is
 promote-pre-release "${RELEASE_ISLANDIS_NAME}"
 monitor-actions "${RELEASE_ISLANDIS_NAME}"
@@ -185,7 +197,16 @@ monitor-actions "${RELEASE_HELM_NAME}"
 promote-pre-release "${RELEASE_IDS_NAME}"
 dispatch-event "${RELEASE_IDS_NAME}" "build.yml" "${RELEASE_BRANCH//pre-/}"
 monitor-actions "${RELEASE_IDS_NAME}"
+# Spinnaker deployment
+spinnaker-deploy "${RELEASE_ISLANDIS_SPINNAKER_URL}" "${ENV}"
 # Request monitoring
-echo "Monitor service errors in DataDog (${RELEASE_DD_DASHBOARD_URL}?tpl_var_env[0]=staging)"
+echo "Monitor service errors in DataDog (${RELEASE_DD_DASHBOARD_URL}?tpl_var_env[0]=${ENV})"
 
-echo "Realease complete!"
+## Prod
+export ENV=prod
+# Spinnaker deployment
+spinnaker-deploy "${RELEASE_ISLANDIS_SPINNAKER_URL}" "${ENV}"
+# Request monitoring
+echo "Monitor service errors in DataDog (${RELEASE_DD_DASHBOARD_URL}?tpl_var_env[0]=${ENV})"
+
+echo -e "\n>\n> 🚀 Realease complete! 🚀\n>\n"
