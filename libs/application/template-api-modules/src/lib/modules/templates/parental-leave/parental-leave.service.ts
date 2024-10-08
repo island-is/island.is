@@ -403,13 +403,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       const newUrl = await this.awsService.uploadFile(
         Buffer.from(fileContent, 'base64'),
         { bucket: this.attachmentBucket, key: newKey },
-        { ContentType: 'application/pdf'}
+        { ContentType: 'application/pdf' },
       )
 
       this.logger.error('Upload success? url: ' + newUrl)
 
       const newContent = await this.awsService.getFileContent(
-        { 
+        {
           bucket: this.attachmentBucket,
           key: newKey,
         },
@@ -418,11 +418,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       this.logger.error('Get new content success? content: ' + newContent)
 
-      const newPresignedUrl = await this.awsService.getPresignedUrl({bucket: this.attachmentBucket, key: newKey})
+      const newPresignedUrl = await this.awsService.getPresignedUrl({
+        bucket: this.attachmentBucket,
+        key: newKey,
+      })
 
-      this.logger.error('Get new presigned url success? content: ' + newPresignedUrl)
+      this.logger.error(
+        'Get new presigned url success? content: ' + newPresignedUrl,
+      )
 
-      await this.awsService.deleteObject({bucket: this.attachmentBucket, key: newKey})
+      await this.awsService.deleteObject({
+        bucket: this.attachmentBucket,
+        key: newKey,
+      })
 
       this.logger.error('if you got here, it was deleted yay!')
 
