@@ -19,7 +19,7 @@ export const overviewSection = buildSection({
         buildCustomField(
           {
             id: 'overviewScreen',
-            title: newPrimarySchoolMessages.overview.overviewTitle,
+            title: '',
             component: 'Review',
           },
           {

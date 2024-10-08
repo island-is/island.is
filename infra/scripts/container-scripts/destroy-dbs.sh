@@ -8,15 +8,14 @@ export PGPASSWORD
 set -x
 FEATURE_NAME=$1
 
-
-psql -tc "SELECT datname FROM pg_database WHERE datname like 'feature_${FEATURE_NAME}_%'" --field-separator ' ' --no-align --quiet \
-| while read -r dbname; do
+psql -tc "SELECT datname FROM pg_database WHERE datname like 'feature_${FEATURE_NAME}_%'" --field-separator ' ' --no-align --quiet |
+  while read -r dbname; do
     psql -c "DROP DATABASE $dbname"
-done
+  done
 
-psql -tc "SELECT rolname FROM pg_roles WHERE rolname like 'feature_${FEATURE_NAME}_%'" --field-separator ' ' --no-align --quiet \
-| while read -r rolname; do
+psql -tc "SELECT rolname FROM pg_roles WHERE rolname like 'feature_${FEATURE_NAME}_%'" --field-separator ' ' --no-align --quiet |
+  while read -r rolname; do
     psql -c "DROP USER $rolname"
-done
+  done
 
 node secrets delete /k8s/feature-"$FEATURE_NAME"-

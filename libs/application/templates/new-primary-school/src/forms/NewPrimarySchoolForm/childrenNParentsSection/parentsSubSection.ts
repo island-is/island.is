@@ -161,7 +161,7 @@ export const parentsSubSection = buildSubSection({
           condition: (answers, externalData) =>
             hasOtherParent(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherParent(application)?.address.streetAddress,
+            getOtherParent(application)?.address.streetName,
         }),
         buildTextField({
           id: 'parents.parent2.address.postalCode',

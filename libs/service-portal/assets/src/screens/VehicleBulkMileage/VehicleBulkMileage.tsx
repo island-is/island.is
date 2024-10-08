@@ -10,7 +10,7 @@ import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'
 import { useEffect, useState } from 'react'
 import VehicleBulkMileageTable from './VehicleBulkMileageTable'
-import { SubmissionState, VehicleType } from './types'
+import { VehicleType } from './types'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useVehiclesListQuery } from './VehicleBulkMileage.generated'
 import { isDefined } from '@island.is/shared/utils'
@@ -27,13 +27,12 @@ const VehicleBulkMileage = () => {
   const [vehicles, setVehicles] = useState<Array<VehicleType>>([])
   const [page, setPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
 
-  const { data, loading, error, fetchMore } = useVehiclesListQuery({
+  const { data, loading, error } = useVehiclesListQuery({
     variables: {
       input: {
         page,
-        pageSize,
+        pageSize: 10,
       },
     },
   })
@@ -50,7 +49,6 @@ const VehicleBulkMileage = () => {
           return {
             vehicleId: v.vehicleId,
             vehicleType: v.type,
-            submissionStatus: 'idle' as const,
             lastMileageRegistration: undefined,
           }
         })
@@ -59,18 +57,6 @@ const VehicleBulkMileage = () => {
       setTotalPages(data?.vehiclesListV3?.totalPages || 1)
     }
   }, [data?.vehiclesListV3])
-
-  const updateVehicleStatus = (status: SubmissionState, vehicleId: string) => {
-    const newVehicles = vehicles.map((v) => {
-      if (v.vehicleId === vehicleId) {
-        return {
-          ...v,
-          submissionStatus: status,
-        }
-      } else return v
-    })
-    setVehicles(newVehicles)
-  }
 
   return (
     <Stack space={2}>
@@ -115,11 +101,7 @@ const VehicleBulkMileage = () => {
           </Inline>
           {error && !loading && <Problem error={error} noBorder={false} />}
           {!error && (
-            <VehicleBulkMileageTable
-              updateVehicleStatus={updateVehicleStatus}
-              loading={loading}
-              vehicles={vehicles}
-            />
+            <VehicleBulkMileageTable loading={loading} vehicles={vehicles} />
           )}
 
           {totalPages > 1 && (
@@ -128,6 +110,7 @@ const VehicleBulkMileage = () => {
               totalPages={totalPages}
               renderLink={(page, className, children) => (
                 <button
+                  aria-label={formatMessage(m.goToPage)}
                   onClick={() => {
                     setPage(page)
                   }}

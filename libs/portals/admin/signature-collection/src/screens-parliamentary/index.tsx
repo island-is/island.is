@@ -7,6 +7,7 @@ import {
   Stack,
   Box,
   Breadcrumbs,
+  Table as T,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -18,12 +19,33 @@ import { SignatureCollectionPaths } from '../lib/paths'
 import CompareLists from '../shared-components/compareLists'
 import { ListsLoaderReturn } from '../loaders/AllLists.loader'
 import DownloadReports from './DownloadReports'
+import electionsCommitteeLogo from '../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../assets/nationalRegistry.svg'
+import { useState } from 'react'
+import { useSignatureCollectionSignatureLookupQuery } from './findSignature.generated'
+import { SkeletonSingleRow } from '../shared-components/compareLists/skeleton'
 
-const ParliamentaryRoot = () => {
+const ParliamentaryRoot = ({
+  allowedToProcess,
+}: {
+  allowedToProcess: boolean
+}) => {
   const { formatMessage } = useLocale()
 
   const navigate = useNavigate()
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const { data, loading } = useSignatureCollectionSignatureLookupQuery({
+    variables: {
+      input: {
+        collectionId: collection?.id,
+        nationalId: searchTerm.replace(/[^0-9]/g, ''),
+      },
+    },
+    skip: searchTerm.replace(/[^0-9]/g, '').length !== 10,
+  })
 
   return (
     <GridContainer>
@@ -46,8 +68,9 @@ const ParliamentaryRoot = () => {
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage('Yfirlit'),
-                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
+                  title: formatMessage(
+                    parliamentaryMessages.signatureListsTitle,
+                  ),
                 },
               ]}
             />
@@ -57,24 +80,104 @@ const ParliamentaryRoot = () => {
             intro={formatMessage(parliamentaryMessages.signatureListsIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
+            img={
+              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            }
           />
           <Box
             width="full"
-            marginBottom={8}
+            marginBottom={6}
             display="flex"
             justifyContent="spaceBetween"
           >
             <Box width="half">
               <FilterInput
                 name="searchSignee"
-                value={''}
-                onChange={() => console.log('search')}
-                placeholder={formatMessage(m.searchInListPlaceholder)}
+                value={searchTerm}
+                onChange={(v) => {
+                  setSearchTerm(v)
+                }}
+                placeholder={formatMessage(m.searchNationalIdPlaceholder)}
                 backgroundColor="blue"
               />
             </Box>
-            <DownloadReports areas={collection.areas} />
+            <DownloadReports
+              areas={collection.areas}
+              collectionId={collection?.id}
+            />
           </Box>
+          {loading && (
+            <Box marginBottom={6}>
+              <SkeletonSingleRow />
+            </Box>
+          )}
+          {data?.signatureCollectionSignatureLookup &&
+            (data?.signatureCollectionSignatureLookup.length > 0 ? (
+              <Box marginBottom={6}>
+                <T.Table>
+                  <T.Head>
+                    <T.Row>
+                      <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
+                      <T.HeadData>
+                        {formatMessage(m.signeeListSigned)}
+                      </T.HeadData>
+                      <T.HeadData>
+                        {formatMessage(m.signeeListSignedType)}
+                      </T.HeadData>
+                      <T.HeadData>
+                        {formatMessage(m.signeeListSignedStatus)}
+                      </T.HeadData>
+                    </T.Row>
+                  </T.Head>
+                  <T.Body>
+                    {data?.signatureCollectionSignatureLookup?.map((s) => (
+                      <T.Row key={s.id}>
+                        <T.Data
+                          span={3}
+                          text={{ variant: 'medium' }}
+                          box={{ background: s.valid ? 'white' : 'red100' }}
+                        >
+                          {s.signee.name}
+                        </T.Data>
+                        <T.Data
+                          span={3}
+                          text={{ variant: 'medium' }}
+                          box={{ background: s.valid ? 'white' : 'red100' }}
+                        >
+                          {s.listTitle}
+                        </T.Data>
+                        <T.Data
+                          span={3}
+                          text={{ variant: 'medium' }}
+                          box={{ background: s.valid ? 'white' : 'red100' }}
+                        >
+                          {formatMessage(
+                            s.isDigital
+                              ? m.signeeListSignedDigital
+                              : m.signeeListSignedPaper,
+                          )}
+                        </T.Data>
+                        <T.Data
+                          span={3}
+                          text={{ variant: 'medium' }}
+                          box={{ background: s.valid ? 'white' : 'red100' }}
+                        >
+                          {formatMessage(
+                            s.valid
+                              ? m.signeeSignatureValid
+                              : m.signeeSignatureInvalid,
+                          )}
+                        </T.Data>
+                      </T.Row>
+                    ))}
+                  </T.Body>
+                </T.Table>
+              </Box>
+            ) : (
+              <Box marginBottom={6}>
+                <Text>{formatMessage(m.noSigneeFoundOverviewText)}</Text>
+              </Box>
+            ))}
           <Stack space={3}>
             {collection?.areas.map((area) => (
               <ActionCard

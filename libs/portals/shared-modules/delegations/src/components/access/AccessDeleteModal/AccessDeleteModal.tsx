@@ -1,21 +1,24 @@
-import { useUserInfo } from '@island.is/react-spa/bff'
+import { useEffect, useState } from 'react'
+
 import { Box, toast, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
-import { useEffect, useState } from 'react'
-import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '@island.is/react/components'
-import { IdentityCard } from '../../IdentityCard/IdentityCard'
-import { AccessListContainer } from '../AccessList/AccessListContainer/AccessListContainer'
-import { useAuthScopeTreeLazyQuery } from '../AccessList/AccessListContainer/AccessListContainer.generated'
-import { useDeleteAuthDelegationMutation } from './AccessDeleteModal.generated'
+import { AuthDelegationType } from '@island.is/shared/types'
+
+import { useDynamicShadow } from '../../../hooks/useDynamicShadow'
+import { m } from '../../../lib/messages'
 import {
   AuthCustomDelegation,
   AuthCustomDelegationOutgoing,
 } from '../../../types/customDelegation'
-import { m } from '../../../lib/messages'
-import { useDynamicShadow } from '../../../hooks/useDynamicShadow'
+import { IdentityCard } from '../../IdentityCard/IdentityCard'
+import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
+import { AccessListContainer } from '../AccessList/AccessListContainer/AccessListContainer'
+import { useAuthScopeTreeLazyQuery } from '../AccessList/AccessListContainer/AccessListContainer.generated'
+import { useDeleteAuthDelegationMutation } from './AccessDeleteModal.generated'
 
 type AccessDeleteModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation?: AuthCustomDelegation
@@ -37,7 +40,7 @@ export const AccessDeleteModal = ({
     useAuthScopeTreeLazyQuery()
 
   useEffect(() => {
-    if (delegation) {
+    if (delegation && delegation.domain?.name) {
       getAuthScopeTree({
         variables: {
           input: {
@@ -132,20 +135,30 @@ export const AccessDeleteModal = ({
             />
           )}
         </Box>
-        {delegation?.domain && (
+        {delegation?.type === AuthDelegationType.GeneralMandate ? (
           <IdentityCard
             label={formatMessage(m.domain)}
-            title={delegation.domain.displayName}
-            imgSrc={delegation.domain.organisationLogoUrl}
+            title={formatMessage(m.delegationTypeGeneralMandate)}
+            imgSrc="./assets/images/skjaldarmerki.svg"
           />
+        ) : (
+          <>
+            {delegation?.domain && (
+              <IdentityCard
+                label={formatMessage(m.domain)}
+                title={delegation?.domain.displayName ?? ''}
+                imgSrc={delegation?.domain.organisationLogoUrl}
+              />
+            )}
+            <AccessListContainer
+              delegation={delegation}
+              scopes={delegation?.scopes}
+              scopeTree={authScopeTree}
+              loading={scopeTreeLoading}
+              listMarginBottom={[0, 0, 10]}
+            />
+          </>
         )}
-        <AccessListContainer
-          delegation={delegation}
-          scopes={delegation?.scopes}
-          scopeTree={authScopeTree}
-          loading={scopeTreeLoading}
-          listMarginBottom={[0, 0, 10]}
-        />
         <div {...pxProps} />
       </Box>
       <Box position="sticky" bottom={0}>

@@ -24,9 +24,9 @@ import {
 } from './VehicleBulkMileageJobDetail.generated'
 import { VehiclesBulkMileageRegistrationRequestOverview } from '@island.is/service-portal/graphql'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { useMemo } from 'react'
 import { isDefined } from '@island.is/shared/utils'
 import { vehicleMessage } from '../../lib/messages'
+import { NetworkStatus } from '@apollo/client'
 
 type UseParams = {
   id: string
@@ -37,25 +37,35 @@ const VehicleBulkMileageJobDetail = () => {
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
 
-  const { data, loading, error, refetch } = useGetJobsStatusQuery({
-    variables: {
-      input: {
-        requestId: id,
+  const { data, loading, error, refetch, networkStatus } =
+    useGetJobsStatusQuery({
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        input: {
+          requestId: id,
+        },
       },
-    },
-  })
+    })
 
   const {
     data: registrationData,
     loading: registrationLoading,
     error: registrationError,
+    refetch: registrationRefresh,
+    networkStatus: registrationNetworkStatus,
   } = useGetJobRegistrationsQuery({
+    notifyOnNetworkStatusChange: true,
     variables: {
       input: {
         guid: id,
       },
     },
   })
+
+  const handleRefresh = () => {
+    refetch()
+    registrationRefresh()
+  }
 
   const jobsStatus: VehiclesBulkMileageRegistrationRequestStatus | undefined =
     data?.vehicleBulkMileageRegistrationRequestStatus ?? undefined
@@ -64,50 +74,6 @@ const VehicleBulkMileageJobDetail = () => {
     | VehiclesBulkMileageRegistrationRequestOverview
     | undefined =
     registrationData?.vehicleBulkMileageRegistrationRequestOverview ?? undefined
-
-  const tableArray = useMemo(() => {
-    if (data?.vehicleBulkMileageRegistrationRequestStatus) {
-      return [
-        [
-          {
-            title: formatMessage(vehicleMessage.totalSubmitted),
-            value: jobsStatus?.jobsSubmitted
-              ? jobsStatus.jobsSubmitted.toString()
-              : '0',
-          },
-          { title: '', value: '' },
-        ],
-        [
-          {
-            title: formatMessage(vehicleMessage.totalFinished),
-            value: jobsStatus?.jobsFinished
-              ? jobsStatus.jobsFinished.toString()
-              : '0',
-          },
-          {
-            title: formatMessage(vehicleMessage.totalRemaining),
-            value: jobsStatus?.jobsRemaining
-              ? jobsStatus.jobsRemaining.toString()
-              : '0',
-          },
-        ],
-        [
-          {
-            title: formatMessage(vehicleMessage.healthyJobs),
-            value: jobsStatus?.jobsValid
-              ? jobsStatus.jobsValid.toString()
-              : '0',
-          },
-          {
-            title: formatMessage(vehicleMessage.unhealthyJobs),
-            value: jobsStatus?.jobsErrored
-              ? jobsStatus.jobsErrored.toString()
-              : '0',
-          },
-        ],
-      ]
-    }
-  }, [data?.vehicleBulkMileageRegistrationRequestStatus])
 
   const handleFileDownload = async () => {
     const requests = registrations?.requests ?? []
@@ -131,6 +97,11 @@ const VehicleBulkMileageJobDetail = () => {
     downloadFile(`magnskraning_villur`, ['Ökutæki', 'Villur'], data, 'csv')
   }
 
+  const displayRegistrationData =
+    registrations?.requests.length &&
+    !registrationLoading &&
+    !(registrationNetworkStatus === NetworkStatus.refetch)
+
   return (
     <Box>
       <IntroHeader
@@ -146,7 +117,16 @@ const VehicleBulkMileageJobDetail = () => {
         serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       >
         <Box marginTop={'containerGutter'}>
-          <Button variant="utility" icon="reload" onClick={() => refetch()}>
+          <Button
+            variant="utility"
+            icon={
+              loading || networkStatus === NetworkStatus.refetch
+                ? undefined
+                : 'reload'
+            }
+            loading={loading || networkStatus === NetworkStatus.refetch}
+            onClick={handleRefresh}
+          >
             {formatMessage(vehicleMessage.refreshJob)}
           </Button>
         </Box>
@@ -163,7 +143,51 @@ const VehicleBulkMileageJobDetail = () => {
         <Stack space={8}>
           <TableGrid
             title={formatMessage(vehicleMessage.jobStatus)}
-            dataArray={tableArray ?? [[]]}
+            loading={loading || networkStatus === NetworkStatus.refetch}
+            emptyMessage={vehicleMessage.noJobsFound}
+            dataArray={
+              data?.vehicleBulkMileageRegistrationRequestStatus
+                ? [
+                    [
+                      {
+                        title: formatMessage(vehicleMessage.totalSubmitted),
+                        value: jobsStatus?.jobsSubmitted
+                          ? jobsStatus.jobsSubmitted.toString()
+                          : '0',
+                      },
+                      { title: '', value: '' },
+                    ],
+                    [
+                      {
+                        title: formatMessage(vehicleMessage.totalFinished),
+                        value: jobsStatus?.jobsFinished
+                          ? jobsStatus.jobsFinished.toString()
+                          : '0',
+                      },
+                      {
+                        title: formatMessage(vehicleMessage.totalRemaining),
+                        value: jobsStatus?.jobsRemaining
+                          ? jobsStatus.jobsRemaining.toString()
+                          : '0',
+                      },
+                    ],
+                    [
+                      {
+                        title: formatMessage(vehicleMessage.healthyJobs),
+                        value: jobsStatus?.jobsValid
+                          ? jobsStatus.jobsValid.toString()
+                          : '0',
+                      },
+                      {
+                        title: formatMessage(vehicleMessage.unhealthyJobs),
+                        value: jobsStatus?.jobsErrored
+                          ? jobsStatus.jobsErrored.toString()
+                          : '0',
+                      },
+                    ],
+                  ]
+                : [[]]
+            }
           />
 
           {registrationError && <Problem error={registrationError} />}
@@ -184,6 +208,7 @@ const VehicleBulkMileageJobDetail = () => {
                 size="default"
                 variant="utility"
                 onClick={handleFileDownload}
+                disabled={!displayRegistrationData}
               >
                 {formatMessage(vehicleMessage.downloadErrors)}
               </Button>
@@ -204,7 +229,7 @@ const VehicleBulkMileageJobDetail = () => {
               </T.Head>
 
               <T.Body>
-                {!!registrations?.requests.length &&
+                {displayRegistrationData &&
                   registrations?.requests.map((j) => (
                     <T.Row key={j.vehicleId}>
                       <T.Data>
@@ -226,10 +251,13 @@ const VehicleBulkMileageJobDetail = () => {
                   ))}
               </T.Body>
             </T.Table>
-            {(!registrations || registrationLoading) && (
+            {!displayRegistrationData && (
               <EmptyTable
                 message={formatMessage(vehicleMessage.noRegistrationsFound)}
-                loading={registrationLoading}
+                loading={
+                  registrationLoading ||
+                  registrationNetworkStatus === NetworkStatus.refetch
+                }
               />
             )}
           </Box>

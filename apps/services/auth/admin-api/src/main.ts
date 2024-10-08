@@ -1,4 +1,7 @@
-import { bootstrap } from '@island.is/infra-nest-server'
+import {
+  bootstrap,
+  includeRawBodyMiddleware,
+} from '@island.is/infra-nest-server'
 
 import { AppModule } from './app/app.module'
 import { environment as env } from './environments'
@@ -13,5 +16,8 @@ bootstrap({
   globalPrefix: 'backend',
   healthCheck: {
     database: true,
+  },
+  beforeServerStart: (app) => {
+    app.use(includeRawBodyMiddleware())
   },
 })
