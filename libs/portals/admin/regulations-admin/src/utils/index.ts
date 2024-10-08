@@ -1,6 +1,6 @@
 import { getHolidays } from 'fridagar'
 import { ISODate, toISODate } from '@island.is/regulations'
-import { startOfDay, addDays } from 'date-fns/esm'
+import { startOfDay, addDays, isBefore } from 'date-fns/esm'
 
 import { StringOption as Option } from '@island.is/island-ui/core'
 
@@ -107,3 +107,42 @@ export const emptyOption = (label?: string, disabled?: boolean): Option => ({
   label: label ? `– ${label} –` : '—',
   disabled,
 })
+
+// ---------------------------------------------------------------------------
+
+// Show warning if gildistökudagur(effectiveDate) is before útgáfudagur(idealPublishDate).
+// Only a warning, it is allowed, rarely used but possible.
+export const hasPublishEffectiveWarning = (
+  effective?: Date,
+  publish?: Date,
+  fastTrack?: boolean,
+): boolean => {
+  // If either date is missing, there is no warning
+  if (!publish) {
+    return false
+  }
+
+  // Show warning if gildistökudagur(effectiveDate) is before útgáfudagur(idealPublishDate)
+  if (effective && isBefore(getNextWorkday(effective), publish)) {
+    return true
+  }
+
+  // Gildistökudagur is before next workday when fastTrack is active.
+  if (
+    effective &&
+    isBefore(getNextWorkday(effective), getNextWorkday(new Date())) &&
+    fastTrack
+  ) {
+    return true
+  }
+
+  // If no effective is set, that means effective fast track (next workday).
+  if (
+    (!effective && fastTrack) ||
+    (!effective && isBefore(getNextWorkday(new Date()), publish))
+  ) {
+    return true
+  }
+
+  return false
+}
