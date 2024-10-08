@@ -38,7 +38,7 @@ export class AwsService {
   ): Promise<string | undefined> {
     const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
     const result = await this.getFileResponse(bucket, key)
-    return  await result?.Body?.transformToString(encoding)
+    return await result?.Body?.transformToString(encoding)
   }
 
   public async uploadFile(
