@@ -8,7 +8,6 @@ import {
   ButtonProps,
   Inline,
 } from '@island.is/island-ui/core'
-import { useDebounce } from 'react-use'
 
 interface Props {
   id: string
@@ -62,15 +61,17 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
     }
   }, [closing, onCloseModal])
 
-  useDebounce(
-    () => {
-      if (startClosing) {
-        setClosing(startClosing)
-      }
-    },
-    500,
-    [startClosing],
-  )
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>
+    if (startClosing) {
+      timeout = setTimeout(() => {
+        setClosing(true)
+      }, 500)
+    }
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [startClosing])
 
   const handleOnVisibilityChange = (isVisible: boolean) => {
     !isVisible && onCloseModal && setStartClosing(true)
