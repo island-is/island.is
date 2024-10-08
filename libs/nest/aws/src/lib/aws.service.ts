@@ -71,7 +71,6 @@ export class AwsService {
       if (!url)
         throw new Error('No location url found after uploading file to S3')
 
-      this.logger.error('Upload successful? -> ' + url)
       return url
     } catch (error) {
       this.logger.error('Error occurred while uploading file to S3', error)
@@ -93,7 +92,7 @@ export class AwsService {
     const url = await getSignedUrl(this.s3Client, command, {
       expiresIn: expiration,
     })
-    this.logger.error('Presigned successful? -> ' + url)
+    
     return url
   }
 

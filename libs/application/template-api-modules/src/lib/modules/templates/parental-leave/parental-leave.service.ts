@@ -1,9 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { AwsService } from '@island.is/nest/aws'
-import addDays from 'date-fns/addDays'
-import format from 'date-fns/format'
-import cloneDeep from 'lodash/cloneDeep'
-
 import { getValueViaPath } from '@island.is/application/core'
 import {
   ADOPTION,
@@ -398,41 +394,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       if (!fileContent) {
         throw new Error('File content was undefined')
       }
-
-      const newKey = `${application.id}/temp/${filename}`
-      const newUrl = await this.awsService.uploadFile(
-        Buffer.from(fileContent, 'base64'),
-        { bucket: this.attachmentBucket, key: newKey },
-        { ContentType: 'application/pdf' },
-      )
-
-      this.logger.error('Upload success? url: ' + newUrl)
-
-      const newContent = await this.awsService.getFileContent(
-        {
-          bucket: this.attachmentBucket,
-          key: newKey,
-        },
-        'base64',
-      )
-
-      this.logger.error('Get new content success? content: ' + newContent)
-
-      const newPresignedUrl = await this.awsService.getPresignedUrl({
-        bucket: this.attachmentBucket,
-        key: newKey,
-      })
-
-      this.logger.error(
-        'Get new presigned url success? content: ' + newPresignedUrl,
-      )
-
-      await this.awsService.deleteObject({
-        bucket: this.attachmentBucket,
-        key: newKey,
-      })
-
-      this.logger.error('done')
 
       return fileContent
     } catch (e) {
