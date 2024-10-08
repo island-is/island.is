@@ -147,4 +147,8 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:validPersonError',
     defaultMessage: 'Kennitölur þurfa að vera gildar kennitölur',
   },
+  invalidDateFormatError: {
+    id: 'admin.delegationAdmin:invalidDateFormatError',
+    defaultMessage: 'Dagsetning er ekki á réttu sniði',
+  },
 })
