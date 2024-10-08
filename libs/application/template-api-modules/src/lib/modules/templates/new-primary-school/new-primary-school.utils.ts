@@ -74,7 +74,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       ? siblings.map((sibling) => ({
           name: sibling.fullName,
           nationalId: sibling.nationalId,
-          // TODO: Siblings relation valmöguleikar eru ekki í key-options endapunktinum => Júní ætlar að bæta því við (Þurfum að passa að þeir valmöguleikar komi ekki upp í dropdown á aðstandenda síðunni)
+          // TODO: Siblings relation options are not in the key-options endpoint => Júní has added "sibling" (We need to make sure that those options do not appear in the dropdown on the relatives page)
+          // TODO: We are waiting for a reply from MMS if this is important information or if we should remove it
           role: sibling.relation,
         }))
       : []),
