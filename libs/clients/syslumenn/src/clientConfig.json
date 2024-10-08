@@ -3474,7 +3474,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {}
+                  "items": {
+                    "type": "object"
+                  }
                 }
               }
             }
@@ -4123,7 +4125,8 @@
       "ProblemDetails": {
         "type": "object",
         "additionalProperties": {
-          "nullable": true
+          "nullable": true,
+          "type": "object"
         },
         "properties": {
           "type": {
@@ -7688,7 +7691,9 @@
           "crew": {
             "type": "array",
             "nullable": true,
-            "items": {}
+            "items": {
+              "type": "object"
+            }
           },
           "owners": {
             "type": "array",
@@ -7700,7 +7705,9 @@
           "passengerPermits": {
             "type": "array",
             "nullable": true,
-            "items": {}
+            "items": {
+              "type": "object"
+            }
           },
           "insurances": {
             "type": "array",
