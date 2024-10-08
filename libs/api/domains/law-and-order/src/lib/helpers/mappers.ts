@@ -1,6 +1,7 @@
 import {
   DefenderInfoDefenderChoiceEnum,
   StateTagColorEnum,
+  SubpoenaDataDefaultDefenderChoiceEnum,
   UpdateSubpoenaDtoDefenderChoiceEnum,
 } from '@island.is/clients/judicial-system-sp'
 import { CourtCaseStateTagColorEnum } from '../../models/courtCases.model'
@@ -39,6 +40,26 @@ export const mapDefenseChoiceForSubpoena = (
     case DefenderInfoDefenderChoiceEnum.DELAY:
       return DefenseChoiceEnum.DELAY
     case DefenderInfoDefenderChoiceEnum.DELEGATE:
+      return DefenseChoiceEnum.DELEGATE
+    default:
+      // Provides a default mapping if the input doesn't match any known value.
+      return DefenseChoiceEnum.DELAY
+  }
+}
+
+// Maps the application's internal representation of defense choices to the judicial system's representation.
+export const mapDefenseChoiceForSubpoenaDefaultChoice = (
+  choice?: SubpoenaDataDefaultDefenderChoiceEnum,
+): DefenseChoiceEnum => {
+  switch (choice) {
+    // Each case maps a local enum value to the corresponding value in the judicial system's enum.
+    case SubpoenaDataDefaultDefenderChoiceEnum.CHOOSE:
+      return DefenseChoiceEnum.CHOOSE
+    case SubpoenaDataDefaultDefenderChoiceEnum.WAIVE:
+      return DefenseChoiceEnum.WAIVE
+    case SubpoenaDataDefaultDefenderChoiceEnum.DELAY:
+      return DefenseChoiceEnum.DELAY
+    case SubpoenaDataDefaultDefenderChoiceEnum.DELEGATE:
       return DefenseChoiceEnum.DELEGATE
     default:
       // Provides a default mapping if the input doesn't match any known value.

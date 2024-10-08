@@ -18,7 +18,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { type Case } from '../case'
-import { CaseString } from '../case/models/caseString.model'
 import { DateLog } from '../case/models/dateLog.model'
 import { eventModuleConfig } from './event.config'
 

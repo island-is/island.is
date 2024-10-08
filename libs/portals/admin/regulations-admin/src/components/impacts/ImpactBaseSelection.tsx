@@ -44,6 +44,9 @@ export const ImpactBaseSelection = ({
   if (loading) {
     return null
   }
+  if (!mentionedOptions.length) {
+    return null
+  }
   return (
     <Select
       size="sm"
