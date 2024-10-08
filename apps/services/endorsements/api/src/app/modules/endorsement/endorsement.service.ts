@@ -160,23 +160,6 @@ export class EndorsementService {
     nationalId,
     showName,
   }: EndorsementInput) {
-    // insert 50 thousand rows into endorsements with unique nationalId and this listId 833450be-882a-48ee-97c6-977ba9df3bfd
-    const listId = '833450be-882a-48ee-97c6-977ba9df3bfd'
-    const endorsements = []
-    for (let i = 7; i < 50000; i++) {
-      let unqiue8lettternatioalid = Math.random().toString(36).substring(2, 10)
-      endorsements.push({
-        endorser: unqiue8lettternatioalid,
-        endorsementListId: listId,
-        meta: {
-          fullName: 'Test',
-          locality: 'Reykjavík',
-          showName: true,
-        },
-      })
-    }
-    await this.endorsementModel.bulkCreate(endorsements)
-
     this.logger.info(`Creating resource with nationalId - ${nationalId}`)
 
     // we don't allow endorsements on closed lists

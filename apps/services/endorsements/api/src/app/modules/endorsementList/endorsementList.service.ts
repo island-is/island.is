@@ -213,7 +213,6 @@ export class EndorsementListService {
   }
 
   async create(list: CreateInput) {
-
     if (!list.openedDate || !list.closedDate) {
       this.logger.warn('Body missing openedDate or closedDate value.')
       throw new BadRequestException([
@@ -310,323 +309,200 @@ export class EndorsementListService {
     }
   }
 
-  // async createDocumentBuffer(endorsementList: any, ownerName: string) {
-  //   // build pdf
-  //   const doc = new PDFDocument()
-  //   const locale = 'is-IS'
-  //   const big = 16
-  //   const regular = 8
-  //   const fontRegular = 'Helvetica'
-  //   const fontBold = 'Helvetica-Bold'
-
-  //   doc
-  //     .fontSize(big)
-  //     .text('Upplýsingar um meðmælendalista')
-  //     .moveDown()
-
-  //     .fontSize(regular)
-  //     .font(fontBold)
-  //     .text('Heiti meðmælendalista: ')
-  //     .font(fontRegular)
-  //     .text(endorsementList.title)
-  //     .moveDown()
-
-  //     .font(fontBold)
-  //     .text('Um meðmælendalista: ')
-  //     .font(fontRegular)
-  //     .text(endorsementList.description)
-  //     .moveDown()
-
-  //     .font(fontBold)
-  //     .text('Ábyrgðarmaður: ')
-  //     .font(fontRegular)
-  //     .text(ownerName)
-  //     .moveDown()
-
-  //     .font(fontBold)
-  //     .text('Gildistímabil lista: ')
-  //     .font(fontRegular)
-  //     .text(
-  //       endorsementList.openedDate.toLocaleDateString(locale) +
-  //         ' - ' +
-  //         endorsementList.closedDate.toLocaleDateString(locale),
-  //     )
-  //     .moveDown()
-
-  //     .font(fontBold)
-  //     .text('Fjöldi skráðir: ')
-  //     .font(fontRegular)
-  //     .text(endorsementList.endorsements.length)
-  //     .moveDown(2)
-
-  //   if (endorsementList.endorsements.length) {
-  //     doc.fontSize(big).text('Yfirlit meðmæla').fontSize(regular).moveDown()
-  //     for (const val of endorsementList.endorsements) {
-  //       doc.text(
-  //         val.created.toLocaleDateString(locale) +
-  //           ' ' +
-  //           (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint') +
-  //           ' ' +
-  //           (val.meta.locality ? val.meta.locality : 'Sveitafélag ótilgreint'),
-  //       )
-  //     }
-  //   }
-  //   doc
-  //     .moveDown()
-
-  //     .fontSize(regular)
-  //     .text(
-  //       'Þetta skjal var framkallað sjálfvirkt þann: ' +
-  //         new Date().toLocaleDateString(locale) +
-  //         ' klukkan ' +
-  //         new Date().toLocaleTimeString(locale),
-  //     )
-  //   doc.end()
-  //   return await getStream.buffer(doc)
-  // }
-
-  // async createDocumentBuffer(
-  //   endorsementList: any,
-  //   ownerName: string,
-  // ): Promise<Buffer> {
-  //   const doc = new PDFDocument({ margin: 60 })
-  //   const locale = 'is-IS'
-  //   const buffers: Buffer[] = []
-  //   doc.on('data', buffers.push.bind(buffers))
-  //   doc.on('end', () =>
-  //     this.logger.info(
-  //       'PDF buffer created successfully for list id ' + endorsementList.id,
-  //       { listId: endorsementList.id },
-  //     ),
-  //   )
-
-  //   const regularFontPath = path.join(
-  //     process.cwd(),
-  //     'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-regular.ttf',
-  //   )
-  //   const boldFontPath = path.join(
-  //     process.cwd(),
-  //     'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-600.ttf',
-  //   )
-  //   const headerImagePath = path.join(
-  //     process.cwd(),
-  //     'apps/services/endorsements/api/src/assets/thjodskra.png',
-  //   )
-  //   const footerImagePath = path.join(
-  //     process.cwd(),
-  //     'apps/services/endorsements/api/src/assets/island.png',
-  //   )
-
-  //   // Register fonts with absolute paths
-  //   doc.registerFont('Regular', regularFontPath)
-  //   doc.registerFont('Bold', boldFontPath)
-
-  //   // Dynamically calculate the height of the header image
-  //   const headerImageHeight = 40 // This can be any height you prefer; here it's 40 for demonstration
-
-  //   // Add header image
-  //   doc.image(headerImagePath, 60, 40, { width: 120 })
-
-  //   // Adjust the Y position for the text to appear below the image dynamically
-  //   let currentYPosition = 40 + headerImageHeight + 20 // 20px extra padding below the image
-
-  //   // Title and petition details
-  //   doc
-  //     .font('Bold')
-  //     .fontSize(24)
-  //     .text('Upplýsingar um undirskriftalista', 60, currentYPosition, {
-  //       align: 'left',
-  //     })
-  //     .moveDown()
-
-  //   // Adjust Y position after title
-  //   currentYPosition = doc.y + 10 // Adjust by adding extra padding if needed
-
-  //   doc
-  //     .font('Bold')
-  //     .fontSize(14)
-  //     .text('Heiti undirskriftalista: ', { continued: true })
-  //   doc
-  //     .font('Regular')
-  //     .text(endorsementList.title, { align: 'left' })
-  //     .moveDown()
-
-  //   doc
-  //     .font('Bold')
-  //     .fontSize(14)
-  //     .text('Um undirskriftalista: ', { continued: true })
-  //   doc
-  //     .font('Regular')
-  //     .text(endorsementList.description, { align: 'left' })
-  //     .moveDown()
-
-  //   // Petition details
-  //   doc.font('Bold').text('Ábyrgðarmaður: ', { continued: true })
-  //   doc.font('Regular').text(ownerName, { align: 'left' })
-
-  //   doc.font('Bold').text('Fjöldi skráðir: ', { continued: true })
-  //   doc
-  //     .font('Regular')
-  //     .text(endorsementList.endorsements.length.toString(), { align: 'left' })
-  //     .moveDown()
-
-  //   // Add endorsement signatures table
-  //   doc.moveDown().font('Bold').fontSize(12)
-  //   const dateX = 60
-  //   const nameX = 160
-  //   const localityX = 360
-
-  //   doc.text('Dags. skráð', dateX, doc.y, { width: 100 })
-  //   doc.text('Nafn', nameX, doc.y, { width: 200 })
-  //   doc.text('Sveitarfélag', localityX, doc.y, { width: 200 })
-
-  //   endorsementList.endorsements.forEach((endorsement: Endorsement) => {
-  //     // Assuming Endorsement is typed
-  //     if (doc.y > doc.page.height - 100) {
-  //       doc.addPage()
-  //       doc.text('Dags. skráð', dateX, doc.y, { width: 100 })
-  //       doc.text('Nafn', nameX, doc.y, { width: 200 })
-  //       doc.text('Sveitarfélag', localityX, doc.y, { width: 200 })
-  //     }
-  //     doc.moveDown()
-  //     const y = doc.y
-  //     doc.font('Regular').fontSize(10)
-  //     doc.text(endorsement.created.toLocaleDateString(locale), dateX, y, {
-  //       width: 100,
-  //     })
-  //     doc.text(endorsement.meta.fullName || 'Nafn ótilgreint', nameX, y, {
-  //       width: 200,
-  //     })
-  //     doc.text(
-  //       endorsement.meta.locality || 'Sveitafélag ótilgreint',
-  //       localityX,
-  //       y,
-  //       { width: 200 },
-  //     )
-  //   })
-
-  //   // Add footer image
-  //   doc.image(footerImagePath, 60, doc.page.height - 80, { width: 120 })
-
-  //   doc.end()
-  //   return await getStream.buffer(doc)
-  // }
-
   async createDocumentBuffer(
     endorsementList: any,
     ownerName: string,
-): Promise<Buffer> {
-    const doc = new PDFDocument({ margin: 60 });
-    const locale = 'is-IS';
-    const buffers: Buffer[] = [];
-    doc.on('data', buffers.push.bind(buffers));
+  ): Promise<Buffer> {
+    const doc = new PDFDocument({ margin: 60 })
+    const locale = 'is-IS'
+    const buffers: Buffer[] = []
+    doc.on('data', buffers.push.bind(buffers))
     doc.on('end', () =>
-        this.logger.info('PDF buffer created successfully for list id ' + endorsementList.id, { listId: endorsementList.id }),
-    );
+      this.logger.info(
+        'PDF buffer created successfully for list id ' + endorsementList.id,
+        { listId: endorsementList.id },
+      ),
+    )
 
-    const regularFontPath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-regular.ttf');
-    const boldFontPath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-600.ttf');
-    const headerImagePath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/thjodskra.png');
-    const footerImagePath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/island.png');
+    const regularFontPath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-regular.ttf',
+    )
+    const boldFontPath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-600.ttf',
+    )
+    const headerImagePath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/thjodskra.png',
+    )
+    const footerImagePath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/island.png',
+    )
 
-    doc.registerFont('Regular', regularFontPath);
-    doc.registerFont('Bold', boldFontPath);
+    doc.registerFont('Regular', regularFontPath)
+    doc.registerFont('Bold', boldFontPath)
 
     // Add header image
-    const headerImageHeight = 40;
-    doc.image(headerImagePath, 60, 40, { width: 120 });
+    const headerImageHeight = 40
+    doc.image(headerImagePath, 60, 40, { width: 120 })
 
-    let currentYPosition = 40 + headerImageHeight + 20;
+    let currentYPosition = 40 + headerImageHeight + 20
 
-  // Title and petition details
-doc.font('Bold').fontSize(24).text('Upplýsingar um undirskriftalista', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 20; // Adjust vertical space
+    // Title and petition details
+    doc
+      .font('Bold')
+      .fontSize(24)
+      .text('Upplýsingar um undirskriftalista', 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 20 // Adjust vertical space
 
-// "Heiti undirskriftalista" label and value
-doc.font('Bold').fontSize(12).text('Heiti undirskriftalista: ', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 5; // Slight spacing between label and value
-doc.font('Regular').fontSize(12).text(endorsementList.title || 'string', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 15; // Adjust space before next label
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Heiti undirskriftalista: ', 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(endorsementList.title || 'string', 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 15
 
-// "Um undirskriftalista" label and value
-doc.font('Bold').fontSize(12).text('Um undirskriftalista: ', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 5;
-doc.font('Regular').fontSize(12).text(endorsementList.description || 'string', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 15;
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Um undirskriftalista: ', 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(endorsementList.description || 'string', 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 15
 
-// "Opin til" label and value
-doc.font('Bold').fontSize(12).text('Opin til: ', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 5;
-doc.font('Regular').fontSize(12).text(endorsementList.closedDate.toLocaleDateString(locale), 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 15;
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Opin til: ', 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(
+        endorsementList.closedDate.toLocaleDateString(locale),
+        60,
+        currentYPosition,
+        { align: 'left' },
+      )
+    currentYPosition = doc.y + 15
 
-// "Fjöldi undirskrifta" label and value
-doc.font('Bold').fontSize(12).text('Fjöldi undirskrifta: ', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 5;
-doc.font('Regular').fontSize(12).text(endorsementList.endorsements.length.toString(), 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 15;
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Fjöldi undirskrifta: ', 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(
+        endorsementList.endorsements.length.toString(),
+        60,
+        currentYPosition,
+        { align: 'left' },
+      )
+    currentYPosition = doc.y + 15
 
-// "Ábyrgðarmaður" label and value
-doc.font('Bold').fontSize(12).text('Ábyrgðarmaður: ', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 5;
-doc.font('Regular').fontSize(12).text(ownerName, 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 15;
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Ábyrgðarmaður: ', 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(ownerName, 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 15
 
-// "Kennitala ábyrgðarmanns" label and value
-doc.font('Bold').fontSize(12).text('Kennitala ábyrgðarmanns: ', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 5;
-doc.font('Regular').fontSize(12).text(endorsementList.owner, 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 30; // Extra space before next section (if any)
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Kennitala ábyrgðarmanns: ', 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(endorsementList.owner, 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 30
 
+    const dateX = 60 // Column X position for 'Dags. skráð'
+    const nameX = 160 // Column X position for 'Nafn'
+    const localityX = 360 // Column X position for 'Sveitarfélag'
 
+    // Table headers drawing function
+    const drawTableHeaders = () => {
+      doc.font('Bold').fontSize(12)
+      doc.text('Dags. skráð', dateX, currentYPosition, {
+        width: 100,
+        align: 'left',
+      })
+      doc.text('Nafn', nameX, currentYPosition, { width: 200, align: 'left' })
+      doc.text('Sveitarfélag', localityX, currentYPosition, {
+        width: 200,
+        align: 'left',
+      })
+      currentYPosition = doc.y + 5 // Adjust space between header and rows
+    }
 
-    // Table for endorsements
-   // Set the same Y-position for all headers
-// const tableHeaderY = currentYPosition + 10; // Start table just below the previous content
+    // Endorsements List (Rows)
+    drawTableHeaders()
+    endorsementList.endorsements.forEach((endorsement: Endorsement) => {
+      if (doc.y + 20 > doc.page.height - 100) {
+        // Add a new page if content is about to overflow
+        doc.addPage()
+        currentYPosition = 60 // Reset Y-position for the new page
+        drawTableHeaders() // Draw table headers at the top of the new page
+      }
 
-const dateX = 60; // Column X position for 'Dags. skráð'
-const nameX = 160; // Column X position for 'Nafn'
-const localityX = 360; // Column X position for 'Sveitarfélag'
+      // Draw the endorsement data
+      doc.font('Regular').fontSize(10)
+      doc.text(
+        endorsement.created.toLocaleDateString(locale),
+        dateX,
+        currentYPosition,
+        { width: 100, align: 'left' },
+      )
+      doc.text(
+        endorsement.meta.fullName || 'Nafn ótilgreint',
+        nameX,
+        currentYPosition,
+        { width: 200, align: 'left' },
+      )
+      doc.text(
+        endorsement.meta.locality || 'Sveitafélag ótilgreint',
+        localityX,
+        currentYPosition,
+        { width: 200, align: 'left' },
+      )
 
-
-// Table headers drawing function
-const drawTableHeaders = () => {
-  doc.font('Bold').fontSize(12);
-  doc.text('Dags. skráð', dateX, currentYPosition, { width: 100, align: 'left' });
-  doc.text('Nafn', nameX, currentYPosition, { width: 200, align: 'left' });
-  doc.text('Sveitarfélag', localityX, currentYPosition, { width: 200, align: 'left' });
-  currentYPosition = doc.y + 5; // Adjust space between header and rows
-};
-
-// Endorsements List (Rows)
-drawTableHeaders();
-endorsementList.endorsements.forEach((endorsement: Endorsement) => {
-  if (doc.y + 20 > doc.page.height - 100) {
-    // Add a new page if content is about to overflow
-    doc.addPage();
-    currentYPosition = 60; // Reset Y-position for the new page
-    drawTableHeaders(); // Draw table headers at the top of the new page
-  }
-
-  // Draw the endorsement data
-  doc.font('Regular').fontSize(10);
-  doc.text(endorsement.created.toLocaleDateString(locale), dateX, currentYPosition, { width: 100, align: 'left' });
-  doc.text(endorsement.meta.fullName || 'Nafn ótilgreint', nameX, currentYPosition, { width: 200, align: 'left' });
-  doc.text(endorsement.meta.locality || 'Sveitafélag ótilgreint', localityX, currentYPosition, { width: 200, align: 'left' });
-
-  currentYPosition = doc.y + 5; // Move down slightly for the next row
-});
-
+      currentYPosition = doc.y + 5 // Move down slightly for the next row
+    })
 
     // Add footer image at the bottom of the page
-    const footerY = doc.page.height - 80;
-    doc.image(footerImagePath, 60, footerY, { width: 120 });
+    const footerY = doc.page.height - 80
+    doc.image(footerImagePath, 60, footerY, { width: 120 })
 
-    doc.end();
-    return await getStream.buffer(doc);
-}
-
-  
+    doc.end()
+    return await getStream.buffer(doc)
+  }
 
   async emailPDF(
     listId: string,
