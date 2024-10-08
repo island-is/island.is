@@ -208,10 +208,10 @@ export function Alert({
           </Icon>
         )}
 
-        {message && (
+        {(message || title) && (
           <Content>
             {title && <Title>{title}</Title>}
-            <Message>{message}</Message>
+            {message && <Message>{message}</Message>}
           </Content>
         )}
 
