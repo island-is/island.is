@@ -712,7 +712,7 @@ export class CourtService {
   ): Promise<unknown> {
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - móttaka`
-      const content = JSON.stringify([{ appealReceivedByCourtDate }])
+      const content = JSON.stringify({ appealReceivedByCourtDate })
 
       return this.sendToRobot(
         subject,
