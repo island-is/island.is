@@ -44,11 +44,16 @@ export const BffProvider = ({
     ) {
       setSessionExpiredScreen(true)
     } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
-      dispatch({
-        type: ActionType.LOGGED_OUT,
-      })
+      // We will wait 1 seconds before we dispatch logout action.
+      // The reason is that IDS will not log the user out immediately.
+      // Note! The bff poller may have triggered logout by that time anyways.
+      setTimeout(() => {
+        dispatch({
+          type: ActionType.LOGGED_OUT,
+        })
 
-      signIn()
+        signIn()
+      }, 1000)
     }
   })
 
