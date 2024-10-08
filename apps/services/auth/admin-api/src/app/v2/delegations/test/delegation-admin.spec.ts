@@ -224,15 +224,25 @@ describe('DelegationAdmin - With authentication', () => {
     const mockZendeskService = (
       toNationalId: string,
       fromNationalId: string,
+      info?: {
+        tags?: string[]
+        status?: TicketStatus
+      },
     ) => {
+      const { tags, status } = {
+        tags: [DELEGATION_TAG],
+        status: TicketStatus.Solved,
+        ...info,
+      }
+
       zendeskServiceApiSpy = jest
         .spyOn(zendeskService, 'getTicket')
         .mockImplementation((ticketId: string) => {
           return new Promise((resolve) =>
             resolve({
               id: ticketId,
-              tags: [DELEGATION_TAG],
-              status: TicketStatus.Solved,
+              tags: tags,
+              status: status,
               custom_fields: [
                 {
                   id: ZENDESK_CUSTOM_FIELDS.DelegationToReferenceId,
@@ -326,6 +336,27 @@ describe('DelegationAdmin - With authentication', () => {
       )('/delegation-admin').send(delegation)
 
       // Assert
+      expect(res.status).toEqual(400)
+    })
+
+    it('POST /delegation-admin should not create delegation with incorrect zendesk ticket status', async () => {
+      // Arrange
+      mockZendeskService(toNationalId, fromNationalId, {
+        status: TicketStatus.Open,
+      })
+
+      const delegation: CreatePaperDelegationDto = {
+        toNationalId,
+        fromNationalId,
+        referenceId: 'ref1',
+      }
+
+      // Act
+      const res = await getRequestMethod(
+        server,
+        'POST',
+      )('/delegation-admin').send(delegation)
+
       expect(res.status).toEqual(400)
     })
   })
