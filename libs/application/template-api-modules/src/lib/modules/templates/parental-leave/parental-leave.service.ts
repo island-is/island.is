@@ -432,7 +432,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         key: newKey,
       })
 
-      this.logger.error('if you got here, it was deleted yay!')
+      this.logger.error('done')
 
       return fileContent
     } catch (e) {
