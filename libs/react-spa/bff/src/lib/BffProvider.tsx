@@ -10,7 +10,6 @@ import { BffBroadcastEvents, useBffBroadcaster } from './bff.hooks'
 import { ActionType, initialState, reducer } from './bff.state'
 import { createBffUrlGenerator, isNewSession } from './bff.utils'
 
-const ONE_HOUR_MS = 1000 * 60 * 60
 const BFF_SERVER_UNAVAILABLE = 'BFF_SERVER_UNAVAILABLE'
 
 type BffProviderProps = {
@@ -173,19 +172,6 @@ export const BffProvider = ({
 
     if (!hasError) {
       checkLogin()
-    }
-  })
-
-  useEffectOnce(() => {
-    const timeout = setTimeout(() => {
-      // After one hour we check if the user is still logged in
-      // and we tell the /user endpoint not to refresh the tokens,
-      // since we are checking for timeout expiration.
-      checkLogin(true)
-    }, ONE_HOUR_MS)
-
-    return () => {
-      clearTimeout(timeout)
     }
   })
 
