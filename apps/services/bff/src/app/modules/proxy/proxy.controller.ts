@@ -9,7 +9,7 @@ import {
 import { Request, Response } from 'express'
 import { qsValidationPipe } from '../../utils/qs-validation-pipe'
 import { ProxyService } from './proxy.service'
-import { ApiQuery } from './queries/api-proxy.query'
+import { ApiDto } from './dto/api-proxy.dto'
 
 @Controller({
   path: 'api',
@@ -23,7 +23,7 @@ export class ProxyController {
     @Req() req: Request,
     @Res() res: Response,
     @Query(qsValidationPipe)
-    query: ApiQuery,
+    query: ApiDto,
   ): Promise<void> {
     return this.proxyService.proxyApiUrlRequest({ req, res, query })
   }

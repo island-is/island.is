@@ -1,7 +1,7 @@
 import { IsOptional, IsString } from 'class-validator'
 
-export class GetUserQuery {
+export class CallbackLogoutDto {
   @IsOptional()
   @IsString()
-  no_refresh?: string
+  logout_token?: string
 }

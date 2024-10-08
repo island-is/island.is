@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator'
 
-export class LogoutQuery {
+export class LogoutDto {
   @IsString()
   sid!: string
 }

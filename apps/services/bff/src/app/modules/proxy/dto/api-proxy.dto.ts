@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator'
 
-export class CallbackLogoutQuery {
+export class ApiDto {
   @IsString()
-  state!: string
+  url!: string
 }

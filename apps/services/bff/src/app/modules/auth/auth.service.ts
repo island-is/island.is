@@ -22,9 +22,10 @@ import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
 import { TokenResponse } from '../ids/ids.types'
 import { CachedTokenResponse } from './auth.types'
-import { CallbackLoginQuery } from './queries/callback-login.query'
-import { LoginQuery } from './queries/login.query'
-import { LogoutQuery } from './queries/logout.query'
+import { CallbackLoginDto } from './dto/callback-login.dto'
+import { CallbackLogoutDto } from './dto/callback-logout.dto'
+import { LoginDto } from './dto/login.dto'
+import { LogoutDto } from './dto/logout.dto'
 
 @Injectable()
 export class AuthService {
@@ -151,7 +152,7 @@ export class AuthService {
     query: { target_link_uri: targetLinkUri, login_hint: loginHint, prompt },
   }: {
     res: Response
-    query: LoginQuery
+    query: LoginDto
   }) {
     // Validate targetLinkUri if it is provided
     if (
@@ -243,7 +244,7 @@ export class AuthService {
   }: {
     req: Request
     res: Response
-    query: CallbackLoginQuery
+    query: CallbackLoginDto
   }) {
     const idsError = query.invalid_request
 
@@ -360,7 +361,7 @@ export class AuthService {
   }: {
     req: Request
     res: Response
-    query: LogoutQuery
+    query: LogoutDto
   }) {
     const sidCookie = req.cookies[SESSION_COOKIE_NAME]
 
@@ -429,5 +430,13 @@ export class AuthService {
     return res.redirect(
       `${this.baseUrl}/connect/endsession?${searchParams.toString()}`,
     )
+  }
+
+  async callbackLogout(req: Request, body: CallbackLogoutDto) {
+    this.logger.warn('callbackBackchannelLogout', JSON.stringify(body, null, 2))
+
+    // TODO validate the token
+    // clear the cache
+    // https://openid.net/specs/openid-connect-backchannel-1_0.html
   }
 }

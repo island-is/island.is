@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator'
 
-export class CallbackLoginQuery {
+export class CallbackLoginDto {
   @IsOptional()
   @IsString()
   code?: string

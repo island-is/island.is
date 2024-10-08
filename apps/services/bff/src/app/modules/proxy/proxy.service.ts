@@ -18,7 +18,7 @@ import { AuthService } from '../auth/auth.service'
 import { CachedTokenResponse } from '../auth/auth.types'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
-import { ApiQuery } from './queries/api-proxy.query'
+import { ApiDto } from './dto/api-proxy.dto'
 
 const droppedResponseHeaders = ['access-control-allow-origin']
 
@@ -179,7 +179,7 @@ export class ProxyService {
   }: {
     req: Request
     res: Response
-    query: ApiQuery
+    query: ApiDto
   }) {
     const { url } = query
 

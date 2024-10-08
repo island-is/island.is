@@ -1,6 +1,8 @@
 import {
+  Body,
   Controller,
   Get,
+  Post,
   Query,
   Req,
   Res,
@@ -9,9 +11,10 @@ import {
 import { Request, Response } from 'express'
 import { qsValidationPipe } from '../../utils/qs-validation-pipe'
 import { AuthService } from './auth.service'
-import { CallbackLoginQuery } from './queries/callback-login.query'
-import { LoginQuery } from './queries/login.query'
-import { LogoutQuery } from './queries/logout.query'
+import { CallbackLoginDto } from './dto/callback-login.dto'
+import { CallbackLogoutDto } from './dto/callback-logout.dto'
+import { LoginDto } from './dto/login.dto'
+import { LogoutDto } from './dto/logout.dto'
 
 @Controller({
   version: [VERSION_NEUTRAL, '1'],
@@ -23,7 +26,7 @@ export class AuthController {
   async login(
     @Res() res: Response,
     @Query(qsValidationPipe)
-    query: LoginQuery,
+    query: LoginDto,
   ): Promise<void> {
     return this.authService.login({ res, query })
   }
@@ -33,7 +36,7 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
     @Query(qsValidationPipe)
-    query: CallbackLoginQuery,
+    query: CallbackLoginDto,
   ): Promise<void> {
     return this.authService.callbackLogin({ req, res, query })
   }
@@ -43,8 +46,24 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
     @Query(qsValidationPipe)
-    query: LogoutQuery,
+    query: LogoutDto,
   ): Promise<void> {
     return this.authService.logout({ req, res, query })
+  }
+
+  @Post('callbacks/logout')
+  async callbackBackchannelLogout(
+    @Req() req: Request,
+    @Body() body: CallbackLogoutDto,
+  ): Promise<void> {
+    console.log('------------------------------------------------------------')
+    console.log('callbackBackchannelLogout', body)
+    console.log('------------------------------------------------------------')
+
+    // TODO validate the token
+    //https://openid.net/specs/openid-connect-backchannel-1_0.html
+    // clear the cache
+
+    return
   }
 }
