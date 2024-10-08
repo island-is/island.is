@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
 import { InfraModule, HealthCheckOptions } from '@island.is/infra-nest-server'
+import bodyParser from 'body-parser'
 
 type CleanUp = () => Promise<void> | undefined
 
@@ -25,6 +26,13 @@ export type TestServerOptions = {
    * Configure health checks for the test server setup
    */
   healthCheck?: boolean | HealthCheckOptions
+
+  /**
+   * Hook to run before server is started.
+   * @param app The nest application instance.
+   * @returns a promise that resolves when the hook is done.
+   */
+  beforeServerStart?: (app: TestApp) => Promise<void> | undefined
 }
 
 export const testServer = async ({
@@ -33,6 +41,7 @@ export const testServer = async ({
   override,
   enableVersioning,
   healthCheck,
+  beforeServerStart,
 }: TestServerOptions): Promise<TestApp> => {
   let builder = Test.createTestingModule({
     imports: [InfraModule.forRoot({ appModule, healthCheck })],
@@ -59,6 +68,10 @@ export const testServer = async ({
 
   if (enableVersioning) {
     app.enableVersioning()
+  }
+
+  if (beforeServerStart) {
+    await beforeServerStart(app)
   }
 
   await app.init()
