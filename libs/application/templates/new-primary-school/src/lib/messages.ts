@@ -527,7 +527,7 @@ export const newPrimarySchoolMessages: MessageDir = {
     parents: {
       id: 'nps.application:overview.parents',
       defaultMessage: 'Foreldri/forsjáraðili',
-      description: 'Parent / guardian',
+      description: 'Parent/guardian',
     },
     nativeLanguage: {
       id: 'nps.application:overview.native.language',
