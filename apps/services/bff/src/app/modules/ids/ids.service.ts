@@ -9,7 +9,7 @@ import { ApiResponse, ErrorRes, ParResponse, TokenResponse } from './ids.types'
 
 @Injectable()
 export class IdsService {
-  private readonly issuerUrl
+  private readonly issuerUrl: string
 
   constructor(
     @Inject(BffConfig.KEY)
@@ -70,6 +70,10 @@ export class IdsService {
 
       // Handle plain text responses
       const textResponse = await response.text()
+
+      if (!response.ok) {
+        throw textResponse
+      }
 
       return {
         type: 'success',
