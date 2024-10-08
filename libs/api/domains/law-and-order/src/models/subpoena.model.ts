@@ -3,14 +3,6 @@ import { Action } from './actions.model'
 import { DefenseChoiceEnum } from './defenseChoiceEnum.model'
 import { Group } from './group.model'
 
-@ObjectType('LawAndOrderSubpoenaAlert')
-export class Alert {
-  @Field({ nullable: true })
-  type?: string
-
-  @Field({ nullable: true })
-  message?: string
-}
 @ObjectType('LawAndOrderSubpoenaTexts')
 export class Text {
   @Field({ nullable: true })
@@ -43,14 +35,17 @@ export class Data {
   @Field({ nullable: true })
   courtContactInfo?: string
 
+  @Field(() => DefenseChoiceEnum)
+  defaultChoice!: DefenseChoiceEnum
+
+  @Field(() => Boolean, { nullable: true })
+  hasChosen?: boolean
+
   @Field(() => DefenseChoiceEnum, { nullable: true })
   defenderChoice?: DefenseChoiceEnum
 
   @Field(() => [Group], { nullable: true })
   groups?: Array<Group>
-
-  @Field(() => [Alert], { nullable: true })
-  alerts?: Array<Alert>
 }
 
 @ObjectType('LawAndOrderSubpoena')
