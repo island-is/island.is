@@ -105,6 +105,13 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
       (chapter) => chapter.id === manualChapter?.id,
     )
 
+    if (index < 0) {
+      return {
+        previousChapterUrl: '',
+        nextChapterUrl: '',
+      }
+    }
+
     const nextChapterSlug = manual.chapters[index + 1]?.slug
 
     if (index === 0) {
@@ -192,52 +199,54 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
             ))}
           </Accordion>
         )}
-        <Box paddingTop={3}>
-          <Inline space={3} alignY="center" justifyContent="spaceBetween">
-            <Box>
-              {previousChapterUrl && (
-                <LinkV2 href={previousChapterUrl}>
-                  <Button
-                    preTextIcon="arrowBack"
-                    preTextIconType="filled"
-                    size="medium"
-                    type="button"
-                    variant="text"
-                    truncate
-                    unfocusable
-                  >
-                    {n(
-                      'manualPreviousChapter',
-                      activeLocale === 'is'
-                        ? 'Fyrri kafli'
-                        : 'Previous chapter',
-                    )}
-                  </Button>
-                </LinkV2>
-              )}
-            </Box>
-            <Box>
-              {nextChapterUrl && (
-                <LinkV2 href={nextChapterUrl}>
-                  <Button
-                    icon="arrowForward"
-                    iconType="filled"
-                    size="medium"
-                    type="button"
-                    variant="text"
-                    truncate
-                    unfocusable
-                  >
-                    {n(
-                      'manualNextChapter',
-                      activeLocale === 'is' ? 'Næsti kafli' : 'Next chapter',
-                    )}
-                  </Button>
-                </LinkV2>
-              )}
-            </Box>
-          </Inline>
-        </Box>
+        {(Boolean(previousChapterUrl) || Boolean(nextChapterUrl)) && (
+          <Box paddingTop={3}>
+            <Inline space={3} alignY="center" justifyContent="spaceBetween">
+              <Box>
+                {previousChapterUrl && (
+                  <LinkV2 href={previousChapterUrl}>
+                    <Button
+                      preTextIcon="arrowBack"
+                      preTextIconType="filled"
+                      size="medium"
+                      type="button"
+                      variant="text"
+                      truncate
+                      unfocusable
+                    >
+                      {n(
+                        'manualPreviousChapter',
+                        activeLocale === 'is'
+                          ? 'Fyrri kafli'
+                          : 'Previous chapter',
+                      )}
+                    </Button>
+                  </LinkV2>
+                )}
+              </Box>
+              <Box>
+                {nextChapterUrl && (
+                  <LinkV2 href={nextChapterUrl}>
+                    <Button
+                      icon="arrowForward"
+                      iconType="filled"
+                      size="medium"
+                      type="button"
+                      variant="text"
+                      truncate
+                      unfocusable
+                    >
+                      {n(
+                        'manualNextChapter',
+                        activeLocale === 'is' ? 'Næsti kafli' : 'Next chapter',
+                      )}
+                    </Button>
+                  </LinkV2>
+                )}
+              </Box>
+            </Inline>
+          </Box>
+        )}
       </Stack>
     </ManualWrapper>
   )
