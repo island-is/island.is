@@ -35,6 +35,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defenderPhoneNumber
       defenderChoice
       verdictViewDate
+      verdictAppealDeadline
       subpoenas {
         id
         created
