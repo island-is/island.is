@@ -398,6 +398,33 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         throw new Error('File content was undefined')
       }
 
+      const newKey = `${application.id}/temp/${filename}`
+      const newUrl = await this.awsService.uploadFile(
+        Buffer.from(fileContent, 'base64'),
+        { bucket: this.attachmentBucket, key: newKey },
+        { ContentType: 'application/pdf'}
+      )
+
+      this.logger.error('Upload success? url: ' + newUrl)
+
+      const newContent = await this.awsService.getFileContent(
+        { 
+          bucket: this.attachmentBucket,
+          key: newKey,
+        },
+        'base64',
+      )
+
+      this.logger.error('Get new content success? content: ' + newContent)
+
+      const newPresignedUrl = await this.awsService.getPresignedUrl({bucket: this.attachmentBucket, key: newKey})
+
+      this.logger.error('Get new presigned url success? content: ' + newPresignedUrl)
+
+      await this.awsService.deleteObject({bucket: this.attachmentBucket, key: newKey})
+
+      this.logger.error('if you got here, it was deleted yay!')
+
       return fileContent
     } catch (e) {
       this.logger.error('Cannot get ' + fileUpload + ' attachment', { e })
