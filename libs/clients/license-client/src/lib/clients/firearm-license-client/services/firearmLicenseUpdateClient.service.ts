@@ -12,11 +12,11 @@ import {
   VerifyInputData,
 } from '../../../licenseClient.type'
 import { createPkPassDataInput, nationalIdIndex } from '../firearmLicenseMapper'
-import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
 import { mapNationalId } from '../firearmLicenseMapper'
 import type { ConfigType } from '@island.is/nest/config'
 import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.config'
 import { SmartSolutionsApi } from '@island.is/clients/smartsolutions'
+import { BaseLicenseUpdateClient } from '../../base/baseLicenseUpdateClient'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -30,14 +30,14 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
     private openFirearmApi: OpenFirearmApi,
     protected smartApi: SmartSolutionsApi,
   ) {
-    super()
+    super(logger, smartApi)
   }
 
   async pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<PassData | undefined>> {
+  ): Promise<Result<Pass | undefined>> {
     const inputFieldValues = inputData.inputFieldValues ?? []
     //small check that nationalId doesnt' already exist
     if (

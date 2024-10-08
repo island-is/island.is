@@ -12,7 +12,7 @@ import {
   Result,
   VerifyInputData,
 } from '../../../licenseClient.type'
-import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
+import { BaseLicenseUpdateClient } from '../../base/baseLicenseUpdateClient'
 
 @Injectable()
 export class DisabilityLicenseUpdateClient extends BaseLicenseUpdateClient {
@@ -20,7 +20,7 @@ export class DisabilityLicenseUpdateClient extends BaseLicenseUpdateClient {
     @Inject(LOGGER_PROVIDER) protected logger: Logger,
     protected smartApi: SmartSolutionsApi,
   ) {
-    super()
+    super(logger, smartApi)
   }
 
   pushUpdate(
