@@ -40,7 +40,7 @@ export const MoreCard = ({ icon, title, onPress }: AssetCardProps) => {
       underlayColor={
         theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
       }
-      style={{ flex: 1 }}
+      style={{ flex: 1, minHeight: 88 }}
       onPress={onPress}
     >
       <Host>
