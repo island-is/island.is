@@ -167,7 +167,7 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
 
       <Stack space={3}>
         {manualChapter && (
-          <Accordion>
+          <Accordion singleExpand={false}>
             {manualChapter.chapterItems.map((item) => (
               <AccordionItem
                 labelUse="h2"
