@@ -1100,17 +1100,23 @@ Auctions.getProps = async ({ apolloClient, locale, req, res }) => {
       ),
   ])
 
+  const usingDefaultHeader: boolean = namespace['usingDefaultHeader'] ?? false
+
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
     syslumennAuctions: getSyslumennAuctions,
     namespace,
     showSearchInHeader: false,
+    themeConfig: !usingDefaultHeader
+      ? {
+          headerButtonColorScheme: 'negative',
+          headerColorScheme: 'white',
+        }
+      : {},
   }
 }
 
 export default withMainLayout(Auctions, {
-  headerButtonColorScheme: 'negative',
-  headerColorScheme: 'white',
   footerVersion: 'organization',
 })
