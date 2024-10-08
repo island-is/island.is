@@ -268,7 +268,7 @@ export const AccessCard = ({
                   iconType="outline"
                   size="small"
                   colorScheme="destructive"
-                  onClick={() => onDelete?.(delegation)}
+                  onClick={() => onDelete(delegation)}
                   nowrap
                 >
                   {formatMessage(coreMessages.buttonDestroy)}
