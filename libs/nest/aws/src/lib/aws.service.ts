@@ -92,7 +92,7 @@ export class AwsService {
     const url = await getSignedUrl(this.s3Client, command, {
       expiresIn: expiration,
     })
-    
+
     return url
   }
 
