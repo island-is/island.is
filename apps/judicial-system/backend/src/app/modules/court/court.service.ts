@@ -582,6 +582,7 @@ export class CourtService {
         subtypes,
         defendants,
         prosecutor,
+        courtName,
       })
 
       return this.sendToRobot(
@@ -657,7 +658,7 @@ export class CourtService {
   ): Promise<unknown> {
     try {
       const subject = `${courtName} - ${courtCaseNumber} - úthlutun`
-      const content = JSON.stringify(assignedRole)
+      const content = JSON.stringify({ ...assignedRole, courtName })
 
       return this.sendToRobot(
         subject,
@@ -689,7 +690,11 @@ export class CourtService {
     noticeText?: string,
   ): Promise<unknown> {
     const subject = `${courtName} - ${courtCaseNumber} - afturköllun`
-    const content = JSON.stringify({ subject: noticeSubject, text: noticeText })
+    const content = JSON.stringify({
+      subject: noticeSubject,
+      text: noticeText,
+      courtName,
+    })
 
     return this.sendToRobot(
       subject,
@@ -704,6 +709,7 @@ export class CourtService {
     caseId: string,
     appealCaseNumber?: string,
     appealReceivedByCourtDate?: Date,
+    courtName?: string,
   ): Promise<unknown> {
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - móttaka`
@@ -714,6 +720,7 @@ export class CourtService {
         content,
         RobotEmailType.APPEAL_CASE_RECEIVED_DATE,
         caseId,
+        courtName,
       )
     } catch (error) {
       this.eventService.postErrorEvent(
@@ -744,6 +751,7 @@ export class CourtService {
     appealJudge2Name?: string,
     appealJudge3NationalId?: string,
     appealJudge3Name?: string,
+    courtName?: string,
   ): Promise<unknown> {
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - aðilar`
@@ -756,6 +764,7 @@ export class CourtService {
         appealJudge2Name,
         appealJudge3NationalId,
         appealJudge3Name,
+        courtName,
       })
 
       return this.sendToRobot(
@@ -795,6 +804,7 @@ export class CourtService {
     isCorrection?: boolean,
     appealRulingDecision?: CaseAppealRulingDecision,
     appealRulingDate?: Date,
+    courtName?: string,
   ): Promise<unknown> {
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - lyktir`
@@ -802,6 +812,7 @@ export class CourtService {
         isCorrection,
         appealRulingDecision,
         appealRulingDate,
+        courtName,
       })
 
       return this.sendToRobot(
