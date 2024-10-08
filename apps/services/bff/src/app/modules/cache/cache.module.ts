@@ -15,11 +15,15 @@ export class CacheModule {
         ? [NestCacheModule.register()]
         : [
             NestCacheModule.registerAsync({
-              useFactory: ({ redis }: ConfigType<typeof BffConfig>) => ({
-                store: redis
-                  ? redisInsStore(createRedisCluster(redis))
-                  : undefined,
-              }),
+              useFactory: ({ redis }: ConfigType<typeof BffConfig>) => {
+                const configHasRedis = redis.nodes.length > 0 && redis.name
+
+                return {
+                  store: configHasRedis
+                    ? redisInsStore(createRedisCluster(redis))
+                    : undefined,
+                }
+              },
               inject: [BffConfig.KEY],
             }),
           ]

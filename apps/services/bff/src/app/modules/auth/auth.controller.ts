@@ -10,7 +10,6 @@ import { Request, Response } from 'express'
 import { qsValidationPipe } from '../../utils/qs-validation-pipe'
 import { AuthService } from './auth.service'
 import { CallbackLoginQuery } from './queries/callback-login.query'
-import { CallbackLogoutQuery } from './queries/callback-logout.query'
 import { LoginQuery } from './queries/login.query'
 import { LogoutQuery } from './queries/logout.query'
 

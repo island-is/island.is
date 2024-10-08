@@ -44,11 +44,16 @@ export const BffProvider = ({
     ) {
       setSessionExpiredScreen(true)
     } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
-      dispatch({
-        type: ActionType.LOGGED_OUT,
-      })
+      // We will wait 5 seconds before we dispatch logout action.
+      // The reason is that IDS will not log the user out immediately.
+      // Note! The bff poller may have triggered logout by that time anyways.
+      setTimeout(() => {
+        dispatch({
+          type: ActionType.LOGGED_OUT,
+        })
 
-      signIn()
+        signIn()
+      }, 5000)
     }
   })
 
@@ -121,17 +126,14 @@ export const BffProvider = ({
       type: ActionType.LOGGING_OUT,
     })
 
+    // Broadcast to all tabs/windows/iframes that the user is logging out
+    postMessage({
+      type: BffBroadcastEvents.LOGOUT,
+    })
+
     window.location.href = bffUrlGenerator('/logout', {
       sid: state.userInfo.profile.sid,
     })
-
-    setTimeout(() => {
-      // We will wait 5 seconds before we post the logout message to other tabs/windows/iframes.
-      // The reason is that IDS will not log the user out immediately.
-      postMessage({
-        type: BffBroadcastEvents.LOGOUT,
-      })
-    }, 5000)
   }, [bffUrlGenerator, postMessage, state.userInfo])
 
   const switchUser = (nationalId?: string) => {

@@ -11,20 +11,6 @@ const ONE_WEEK_IN_MS = ONE_HOUR_IN_MS * 24 * 7
 
 type PortalKeys = 'stjornbord' | 'minarsidur'
 
-const getDefaultEnvUrls = (asArray = false) => {
-  const local = 'http://localhost:4200/stjornbord'
-  const dev = 'https://beta.dev01.devland.is'
-  const staging = 'https://beta.staging01.devland.is'
-  const prod = 'https://island.is'
-
-  return {
-    local: asArray ? json([local]) : local,
-    dev: asArray ? json([dev]) : dev,
-    staging: asArray ? json([staging]) : staging,
-    prod: asArray ? json([prod]) : prod,
-  }
-}
-
 const getScopes = (key: PortalKeys) => {
   switch (key) {
     case 'minarsidur':
@@ -58,9 +44,24 @@ export const createPortalEnv = (key: PortalKeys) => {
     },
     BFF_CLIENT_KEY_PATH: `/${key}`,
     BFF_PAR_SUPPORT_ENABLED: 'false',
-    BFF_ALLOWED_REDIRECT_URIS: getDefaultEnvUrls(true),
-    BFF_CLIENT_BASE_URL: getDefaultEnvUrls(),
-    BFF_LOGOUT_REDIRECT_URI: getDefaultEnvUrls(),
+    BFF_ALLOWED_REDIRECT_URIS: {
+      local: json(['http://localhost:4200/stjornbord']),
+      dev: json(['https://beta.dev01.devland.is']),
+      staging: json(['https://beta.staging01.devland.is']),
+      prod: json(['https://island.is']),
+    },
+    BFF_CLIENT_BASE_URL: {
+      local: 'http://localhost:4200',
+      dev: 'https://beta.dev01.devland.is',
+      staging: 'https://beta.staging01.devland.is',
+      prod: 'https://island.is',
+    },
+    BFF_LOGOUT_REDIRECT_URI: {
+      local: 'http://localhost:4200/stjornbord',
+      dev: 'https://beta.dev01.devland.is',
+      staging: 'https://beta.staging01.devland.is',
+      prod: 'https://island.is',
+    },
     BFF_CALLBACKS_BASE_PATH: {
       local: `http://localhost:3010/${key}/bff/callbacks`,
       dev: `https://beta.dev01.devland.is/${key}/bff/callbacks`,

@@ -11,14 +11,11 @@ export const idsSchema = z.strictObject({
 })
 
 const BffConfigSchema = z.object({
-  redis: z
-    .object({
-      name: z.string(),
-      nodes: z.array(z.string()),
-      ssl: z.boolean(),
-    })
-    // Only required in production
-    .optional(),
+  redis: z.object({
+    name: z.string(),
+    nodes: z.array(z.string()),
+    ssl: z.boolean(),
+  }),
   graphqlApiEndpoint: z.string(),
   /**
    * The URL to redirect to after logging out
