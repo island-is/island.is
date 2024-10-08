@@ -167,7 +167,7 @@ export const newPrimarySchoolMessages: MessageDir = {
     childrenDescription: {
       id: 'nps.application:prerequisites.childrenDescription#markdown',
       defaultMessage: `Samkvæmt uppflettingu í Þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef þú sérð ekki barnið þitt hér, þá bendum við þér að hafa samband við Þjóðskrá. \n\nAthugaðu að einungis er hægt að sækja um fyrir eitt barn í einu. Ef skrá á tvö börn svo sem tvíbura er hægt að fara beint í að skrá annað barn þegar búið er að skrá það fyrra.`,
-      description: `According to the Registers Iceland database you have the following children. If you do not see your child in this process, please contact the Registers Iceland. \n\nPlease note that you can only apply for one child at a time. If you have two children, such as twins, you can proceed to register the second child directly after completing the registration for the first one.`,
+      description: `According to Registers Iceland, you have custody of the following child/children. If you do not see your child here, please contact Registers Iceland. \n\nPlease note that you can only apply for one child at a time. If you want to register two children, such as twins, you can proceed to register the second child directly after completing the registration for the first one.`,
     },
     childrenRadioTitle: {
       id: 'nps.application:prerequisites.childrenRadioTitle',
@@ -241,9 +241,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     parentsDescription: {
       id: 'nps.application:childrenNParents.parents.description',
       defaultMessage:
-        'Upplýsingar um foreldra og forsjáraðila eru sóttar í Þjóðskrá. Athugaðu hvort símanúmer og netföng séu rétt skráð áður en þú heldur áfram.',
+        'Upplýsingar um foreldra/forsjáraðila eru sóttar úr Þjóðskrá og af Mínum síðum á Island.is. Athugaðu hvort símanúer og netföng séu rétt skráð áður en þú heldur áfram.',
       description:
-        'Information about parents and guardians is retrieved from the National Register. Check that phone numbers and email addresses are entered correctly before proceeding.',
+        'Information about parents/guardians is retrieved from Registers Iceland and from My Pages on Ísland.is. Check that phone numbers and email addresses are entered correctly before proceeding.',
     },
 
     // Relatives
@@ -304,7 +304,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage:
         'Barn á alltaf rétt á skólavist í sínum hverfisskóla. Séu ástæður umsóknar aðrar en flutningur lögheimilis getur verið að skólinn sjái sér ekki fært að taka á móti barninu. Það fer eftir aðstæðum í skólanum hverju sinni, svo sem rými.',
       description:
-        'A child always has the right to attend school in his neighborhood school. If the reasons for the application are other than a change of legal residence, the school may not be able to accept the child. It depends on the situation in the school each time, such as space.',
+        'A child always has the right to attend school in his district school. If the reasons for the application are other than a change of legal residence, the school may not be able to accept the child. It depends on the situation in the school each time, such as space.',
     },
     reasonForApplicationPlaceholder: {
       id: 'nps.application:primary.school.reason.for.application.placeholder',
@@ -315,7 +315,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:primary.school.register.new.domicile.alert.message',
       defaultMessage: 'Minnum þig á að skrá nýtt lögheimili í Þjóðskrá.',
       description:
-        'We remind you to register your new domicile in the National Registry.',
+        'We remind you to register your new domicile in Registers Iceland.',
     },
     country: {
       id: 'nps.application:primary.school.country',
@@ -398,7 +398,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage:
         'Við viljum taka vel á móti skólabarninu. Til þess að getað undirbúið komu þess þá biðjum við þig að velja dagsetningu fyrir fyrsta skóladaginn.',
       description:
-        'We want to welcome the schoolchild properly. To be able to prepare for its arrival, please select a date for the first school day.',
+        'We want to welcome the school child properly. To be able to prepare for its arrival, please select a date for the first school day.',
     },
   }),
 
@@ -423,7 +423,7 @@ export const newPrimarySchoolMessages: MessageDir = {
     languageDescription: {
       id: 'nps.application:different.needs.language.description',
       defaultMessage:
-        'Til að hægt sé að koma til móts við þarfir barnsins þarf skólinn að vita hvaða tungumál eru töluð í nærumhverfi þess. Veldu þau tungumál, eitt eða flerir sem töluð eru dagsdaglega á heimilinu í samskiptum við eða í kringum barn.',
+        'Til að hægt sé að koma til móts við þarfir barnsins þarf skólinn að vita hvaða tungumál eru töluð í nærumhverfi þess. Veldu þau tungumál, eitt eða fleiri sem töluð eru dagsdaglega á heimilinu í samskiptum við eða í kringum barn.',
       description:
         "In order to meet the child's needs, the school needs to know which languages ​​are spoken in their immediate environment. Choose the languages, one or more, that are spoken daily at home in communication with or around a child.",
     },
@@ -457,11 +457,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Stuðningur',
       description: 'Support',
     },
-    support: {
-      id: 'nps.application:different.needs.support',
-      defaultMessage: 'Stuðningur',
-      description: 'Support',
-    },
     supportDescription: {
       id: 'nps.application:different.needs.support.description',
       defaultMessage:
@@ -488,7 +483,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage:
         'Ef þú telur að grunnskólinn þurfi nánari upplýsingar um þarfir barnsins getur þú óskað eftir samtali. Skólinn mun setja sig í samband við þig, þegar nær dregur fyrsta skóladegi',
       description:
-        "If you believe that the elementary school needs more information about the child's needs, you can request a meeting. The school will contact you when the first day of school approaches.",
+        "If you believe that the primary school needs more information about the child's needs, you can request a meeting. The school will contact you when the first day of school approaches.",
     },
     requestMeetingDescription: {
       id: 'nps.application:different.needs.request.meeting.info',
@@ -617,7 +612,7 @@ export const errorMessages = defineMessages({
   nationalId: {
     id: 'nps.application:error.national.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
-    description: 'Error message when the kennitala is invalid.',
+    description: 'National id must be valid',
   },
   relativesRequired: {
     id: 'nps.application:error.relatives.required',

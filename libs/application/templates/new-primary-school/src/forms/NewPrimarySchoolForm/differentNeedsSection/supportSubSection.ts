@@ -13,7 +13,7 @@ export const supportSubSection = buildSubSection({
   children: [
     buildMultiField({
       id: 'support',
-      title: newPrimarySchoolMessages.differentNeeds.support,
+      title: newPrimarySchoolMessages.differentNeeds.supportSubSectionTitle,
       description: newPrimarySchoolMessages.differentNeeds.supportDescription,
       children: [
         buildRadioField({
