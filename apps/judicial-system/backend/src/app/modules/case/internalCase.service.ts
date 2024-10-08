@@ -824,7 +824,6 @@ export class InternalCaseService {
         theCase.id,
         theCase.appealCaseNumber,
         theCase.appealReceivedByCourtDate,
-        theCase.court?.name,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
@@ -854,7 +853,6 @@ export class InternalCaseService {
         theCase.appealJudge2?.name,
         theCase.appealJudge3?.nationalId,
         theCase.appealJudge3?.name,
-        theCase.court?.name,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
@@ -890,7 +888,6 @@ export class InternalCaseService {
         Boolean(theCase.appealRulingModifiedHistory),
         theCase.appealRulingDecision,
         appealRulingDate,
-        theCase.court?.name,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
