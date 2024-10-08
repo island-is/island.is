@@ -76,7 +76,9 @@ export const DentistRegistration = () => {
     }
   }, [errorTransfering])
 
-  const canRegister = true
+  const canRegister = status?.rightsPortalDentistStatus?.canRegister
+    ? true
+    : false
 
   const contractType = status?.rightsPortalDentistStatus?.contractType
     ? status.rightsPortalDentistStatus.contractType

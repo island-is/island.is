@@ -50,7 +50,7 @@ const Dentists = () => {
 
   const { dentist, history } = data?.rightsPortalUserDentistRegistration ?? {}
 
-  const canRegister = true
+  const canRegister = dentist?.status?.canRegister ?? false
 
   useEffect(() => {
     if (dentist?.name) {
