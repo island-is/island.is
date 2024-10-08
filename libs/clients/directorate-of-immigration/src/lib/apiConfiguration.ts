@@ -29,6 +29,7 @@ const configFactory = (
     name: 'clients-directorate-of-immigration',
     organizationSlug: 'utlendingastofnun',
     logErrorResponseBody: true,
+    timeout: 1000 * 60,
     autoAuth: idsClientConfig.isConfigured
       ? {
           mode: 'auto',

@@ -1,14 +1,21 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { ApplicationEligibility, RequirementKey } from '../../types/schema'
+import {
+  ApplicationEligibility,
+  ApplicationEligibilityRequirement,
+  RequirementKey,
+} from '../../types/schema'
 import { useQuery, gql } from '@apollo/client'
 import {
   B_FULL,
+  B_FULL_RENEWAL_65,
   BE,
+  codesExtendedLicenseCategories,
   codesRequiringHealthCertificate,
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
   otherLicenseCategories,
+  remarksCannotRenew65,
   YES,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
@@ -90,6 +97,23 @@ export const useEligibility = (
     )
   }
 
+  const hasExtendedDrivingLicense = (
+    currentLicense: DrivingLicense | undefined,
+    drivingLicenseIssued: string | undefined,
+  ): boolean => {
+    if (!drivingLicenseIssued) return false
+
+    const relevantCategories = currentLicense?.categories?.filter((x) =>
+      codesExtendedLicenseCategories.includes(x.nr),
+    )
+
+    if (!relevantCategories?.length) return false
+
+    // Check if any category was issued on a different date than the 'B' license
+    // (indicating an extended license)
+    return relevantCategories.some((x) => x.issued !== drivingLicenseIssued)
+  }
+
   if (usingFakeData) {
     return {
       loading: false,
@@ -111,13 +135,11 @@ export const useEligibility = (
     }
   }
 
+  const eligibility: ApplicationEligibilityRequirement[] =
+    data.drivingLicenseApplicationEligibility?.requirements ?? []
+
   //TODO: Remove when RLS/SGS supports health certificate in BE license
   if (application.answers.applicationFor === BE) {
-    const eligibility =
-      data.drivingLicenseApplicationEligibility === undefined
-        ? []
-        : (data.drivingLicenseApplicationEligibility as ApplicationEligibility)
-            .requirements
     return {
       loading: loading,
       eligibility: {
@@ -139,6 +161,52 @@ export const useEligibility = (
             requirementMet: hasQualityPhoto,
           },
         ],
+      },
+    }
+  }
+
+  if (application.answers.applicationFor === B_FULL_RENEWAL_65) {
+    const licenseB = currentLicense?.categories?.find(
+      (license) => license.nr === 'B',
+    )
+    const drivingLicenseIssued = licenseB?.issued
+
+    const hasExtendedLicense = hasExtendedDrivingLicense(
+      currentLicense,
+      drivingLicenseIssued,
+    )
+
+    const hasAnyInvalidRemarks =
+      currentLicense?.remarks?.some((remark) =>
+        remarksCannotRenew65.includes(remark.code),
+      ) ?? false
+
+    const requirements = [
+      ...eligibility,
+      {
+        key: RequirementKey.HasNoPhoto,
+        requirementMet: hasQualityPhoto,
+      },
+      ...(hasExtendedLicense
+        ? [
+            {
+              key: RequirementKey.NoExtendedDrivingLicense,
+              requirementMet: false,
+            },
+          ]
+        : []),
+    ]
+
+    return {
+      loading: loading,
+      eligibility: {
+        isEligible: loading
+          ? undefined
+          : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
+            hasQualityPhoto &&
+            !hasExtendedLicense &&
+            !hasAnyInvalidRemarks,
+        requirements,
       },
     }
   }

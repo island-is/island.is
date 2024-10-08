@@ -895,9 +895,9 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
 export const Frigg = new XroadConf({
   env: {
     XROAD_MMS_FRIGG_PATH: {
-      dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
-      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-api',
-      prod: 'IS/GOV/10066/MMS-Protected/frigg-api',
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-service',
+      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-service',
+      prod: 'IS/GOV/10066/MMS-Protected/frigg-form-service',
     },
   },
 })
