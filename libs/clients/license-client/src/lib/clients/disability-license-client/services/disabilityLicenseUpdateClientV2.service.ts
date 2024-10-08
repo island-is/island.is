@@ -25,7 +25,7 @@ export class DisabilityLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
     inputData: PassDataInput,
     nationalId: string,
   ): Promise<Result<PassData | undefined>> {
-    return this.passService.updatePkPass(inputData, nationalId)
+    return this.passService.updatePkPass(inputData, nationalId, undefined, 'v2')
   }
 
   async pullUpdate(): Promise<Result<PassData>> {
@@ -69,7 +69,7 @@ export class DisabilityLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
       }
     }
 
-    const verifyRes = await this.passService.verifyPkPass({ code, date })
+    const verifyRes = await this.passService.verifyPkPass({ code, date }, 'v2')
 
     if (!verifyRes.ok) {
       return verifyRes

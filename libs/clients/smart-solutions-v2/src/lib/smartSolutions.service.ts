@@ -42,6 +42,7 @@ export class SmartSolutionsService {
     payload: DynamicBarcodeDataInput,
     requestId?: string,
   ): Promise<Result<VerifyPassData>> {
+    this.logger.debug('IN VERIFY PKPFASS V2')
     const variables: UpdateStatusOnPassWithDynamicBarcodeMutationVariables = {
       dynamicBarcodeData: payload,
     }
@@ -89,6 +90,8 @@ export class SmartSolutionsService {
     payload: PassDataInput,
     requestId?: string,
   ): Promise<Result<Pass>> {
+    this.logger.debug('INUPDATE PKPFASS V2')
+
     if (!payload.passTemplateId) {
       this.logger.warning(
         'Pkpass update failed, missing pass template id from input',
@@ -154,6 +157,8 @@ export class SmartSolutionsService {
     onCreateCallback?: () => Promise<void>,
     requestId?: string,
   ): Promise<Result<Pass>> {
+    this.logger.debug('IN GENERATE PKPFASS V2')
+
     const variables: UpsertPassMutationVariables = {
       inputData: {
         ...payload,
@@ -210,6 +215,8 @@ export class SmartSolutionsService {
     payload: PassDataInput,
     requestId?: string,
   ): Promise<Result<RevokePassData>> {
+    this.logger.debug('IN REVOKE PKPFASS V2')
+
     const variables: DeletePassMutationVariables = {
       passTemplateId,
       values: payload,

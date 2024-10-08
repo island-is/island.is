@@ -54,6 +54,8 @@ export class FirearmLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
         passTemplateId: this.config.passTemplateId,
       },
       requestId,
+      undefined,
+      'v2',
     )
   }
 
@@ -136,7 +138,7 @@ export class FirearmLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
         : undefined,
     }
 
-    return this.passService.updatePkPass(payload, requestId)
+    return this.passService.updatePkPass(payload, requestId, undefined, 'v2')
   }
 
   revoke(
@@ -147,7 +149,13 @@ export class FirearmLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
     const payload: PassDataInput = {
       inputFieldValues: [mapNationalId(nationalId)],
     }
-    return this.passService.revokePkPass(passTemplateId, payload, requestId)
+    return this.passService.revokePkPass(
+      passTemplateId,
+      payload,
+      requestId,
+      undefined,
+      'v2',
+    )
   }
 
   /** We need to verify the pk pass AND the license itself! */
@@ -185,6 +193,7 @@ export class FirearmLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
     const verifyRes = await this.passService.verifyPkPass(
       { code, date },
       requestId,
+      'v2',
     )
 
     if (!verifyRes.ok) {

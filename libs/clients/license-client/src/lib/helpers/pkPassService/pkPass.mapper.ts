@@ -4,7 +4,7 @@ import { PassData } from '../../licenseClient.type'
 
 export const mapPassData = (pass: PassV1 | PassV2): PassData => ({
   ...pass,
-  inputFieldValues: pass?.inputFieldValues.map((i) => ({
+  inputFieldValues: (pass?.inputFieldValues ?? []).map((i) => ({
     id: i.id,
     identifier: i.passInputField.identifier,
     value: i.value ?? undefined,

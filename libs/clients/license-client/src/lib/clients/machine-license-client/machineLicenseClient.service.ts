@@ -195,7 +195,12 @@ export class MachineLicenseClient
       }
     }
 
-    const pass = await this.passService.generatePkPass(payload)
+    const pass = await this.passService.generatePkPass(
+      payload,
+      undefined,
+      undefined,
+      user,
+    )
 
     return pass
   }
@@ -258,9 +263,14 @@ export class MachineLicenseClient
 
   async verifyPkPass(
     data: string,
+    version?: 'v1' | 'v2',
   ): Promise<Result<VerifyPkPassResult<LicenseType.MachineLicense>>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
-    const result = await this.passService.verifyPkPass({ code, date })
+    const result = await this.passService.verifyPkPass(
+      { code, date },
+      undefined,
+      version,
+    )
 
     if (!result.ok) {
       return result

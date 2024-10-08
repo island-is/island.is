@@ -232,8 +232,14 @@ export interface LicenseClient<Type extends LicenseType> {
   ) => Promise<LicensePkPassAvailability>
   getPkPassUrl?: (user: User, locale?: Locale) => Promise<Result<string>>
   getPkPassQRCode?: (user: User, locale?: Locale) => Promise<Result<string>>
-  verifyPkPassDeprecated?: (data: string) => Promise<Result<PkPassVerification>>
-  verifyPkPass?: (data: string) => Promise<Result<VerifyPkPassResult<Type>>>
+  verifyPkPassDeprecated?: (
+    data: string,
+    version?: 'v1' | 'v2',
+  ) => Promise<Result<PkPassVerification>>
+  verifyPkPass?: (
+    data: string,
+    version?: 'v1' | 'v2',
+  ) => Promise<Result<VerifyPkPassResult<Type>>>
   verifyExtraData?: (input: User) => Promise<LicenseVerifyExtraDataResult<Type>>
 }
 

@@ -9,6 +9,11 @@ export enum LicenseUpdateType {
   PULL = 'pull',
 }
 
+export enum LicenseApiVersion {
+  'v1',
+  'v2',
+}
+
 export enum LicenseId {
   FIREARM_LICENSE = 'firearm',
   DISABILITY_LICENSE = 'disability',

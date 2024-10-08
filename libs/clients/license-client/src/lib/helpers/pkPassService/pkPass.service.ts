@@ -9,32 +9,43 @@ import {
 } from '../../licenseClient.type'
 import { VerifyPassData, VerifyPkPassDataInput } from './pkPass.types'
 import { mapPassData } from './pkPass.mapper'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { User } from '@island.is/auth-nest-tools'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @Injectable()
 export class PkPassService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly featureFlagService: FeatureFlagService,
     private readonly newSmartService: SmartSolutionsService,
     /** DEPRECATED */
     private readonly oldSmartService: SmartSolutionsApi,
   ) {}
 
-  async getService(): Promise<SmartSolutionsService | SmartSolutionsApi> {
+  async getService(
+    user?: User,
+    version?: 'v1' | 'v2',
+  ): Promise<SmartSolutionsService | SmartSolutionsApi> {
+    if (!user) {
+      return version === 'v2' ? this.newSmartService : this.oldSmartService
+    }
     const v2Enabled = await this.featureFlagService.getValue(
       Features.licensesV2,
       false,
+      user,
     )
 
     return v2Enabled ? this.newSmartService : this.oldSmartService
   }
 
+  //cant feature flag this, no user object available
   async verifyPkPass(
     payload: VerifyPkPassDataInput,
     requestId?: string,
+    version?: 'v1' | 'v2',
   ): Promise<Result<VerifyPassData>> {
-    const service = await this.getService()
-
+    const service = await this.getService(undefined, version)
     const pass = await service.verifyPkPass(payload, requestId)
 
     if (!pass.ok) {
@@ -53,8 +64,10 @@ export class PkPassService {
   async updatePkPass(
     payload: PassDataInput,
     requestId?: string,
+    user?: User,
+    version?: 'v1' | 'v2',
   ): Promise<Result<PassData>> {
-    const service = await this.getService()
+    const service = await this.getService(user, version)
     const pass = await service.updatePkPass(payload, requestId)
     if (!pass.ok) {
       return pass
@@ -70,8 +83,10 @@ export class PkPassService {
     payload: PassDataInput,
     onCreateCallback?: () => Promise<void>,
     requestId?: string,
+    user?: User,
+    version?: 'v1' | 'v2',
   ): Promise<Result<PassData>> {
-    const service = await this.getService()
+    const service = await this.getService(user, version)
     const pass = await service.generatePkPass(
       payload,
       onCreateCallback,
@@ -92,8 +107,10 @@ export class PkPassService {
     passTemplateId: string,
     payload: PassDataInput,
     requestId?: string,
+    user?: User,
+    version?: 'v1' | 'v2',
   ): Promise<Result<PassRevocationData>> {
-    const service = await this.getService()
+    const service = await this.getService(user, version)
     const pass = await service.revokePkPass(passTemplateId, payload, requestId)
     if (!pass.ok) {
       return pass

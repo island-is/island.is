@@ -11,6 +11,11 @@ export class VerifyLicenseRequest {
   @ApiProperty({ description: 'Optional request id for logging purposes' })
   @IsString()
   readonly requestId?: string
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsEnum(LicenseApiVersion)
+  readonly apiVersion?: LicenseApiVersion
 }
 
 class PassIdentity {
