@@ -44,7 +44,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
   let mockNotificationModel: typeof Notification
   let givenWhenThen: GivenWhenThen
   let notificationDTO: CaseNotificationDto
-  let caseId: string
 
   beforeEach(async () => {
     const {
@@ -59,7 +58,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
       type: NotificationType.ADVOCATE_ASSIGNED,
     }
 
-    caseId = uuid()
     mockEmailService = emailService
     mockConfig = notificationConfig
     mockNotificationModel = notificationModel
@@ -86,6 +84,8 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending defender assigned notifications', () => {
+    const caseId = uuid()
+
     const defendant = {
       defenderNationalId: '1234567890',
       defenderEmail: 'recipient@gmail.com',
@@ -129,6 +129,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when the case has civil claims and the advocate is a lawyer', () => {
+    const caseId = uuid()
     const civilClaimant = {
       hasSpokesperson: true,
       spokespersonNationalId: '1234567890',
@@ -174,6 +175,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when the case has civil claims and the advocate is a legal rights protector', () => {
+    const caseId = uuid()
     const civilClaimant = {
       hasSpokesperson: true,
       spokespersonNationalId: '1234567890',
@@ -219,6 +221,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when the case has civil claims and civil claimant does not have representation', () => {
+    const caseId = uuid()
     const civilClaimant = {
       hasSpokesperson: false,
     }
@@ -240,6 +243,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending defender data is missing', () => {
+    const caseId = uuid()
     const theCase = {
       type: CaseType.INDICTMENT,
     } as Case
@@ -259,6 +263,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('record notification', () => {
+    const caseId = uuid()
     const defendant = {
       defenderEmail: 'recipient@gmail.com',
       defenderNationalId: '1234567890',
@@ -292,6 +297,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('returns that the notification was sent', () => {
+    const caseId = uuid()
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
@@ -317,6 +323,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('only send notification once to defender', () => {
+    const caseId = uuid()
     const defendant = {
       defenderEmail: 'recipient@gmail.com',
       defenderNationalId: '1234567890',
@@ -357,6 +364,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('should send email to every defender', () => {
+    const caseId = uuid()
     const defender1 = { defenderEmail: 'some-email@island.is' }
     const defender2 = { defenderEmail: 'other-email@island.is' }
     const defendants = [defender1, defender2]
@@ -381,6 +389,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('should only send one email to each defender', () => {
+    const caseId = uuid()
     const defender1 = {
       defenderNationalId: '1234567890',
       defenderEmail: 'some-email@island.is',
@@ -430,6 +439,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending assigned defender notifications in a restriction case', () => {
+    const caseId = uuid()
     const theCase = {
       id: caseId,
       type: CaseType.ADMISSION_TO_FACILITY,
@@ -471,6 +481,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending assigned defender without national id notifications in a restriction case', () => {
+    const caseId = uuid()
     const theCase = {
       id: caseId,
       type: CaseType.ADMISSION_TO_FACILITY,
@@ -511,6 +522,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending notifications in an investigation case', () => {
+    const caseId = uuid()
     const theCase = {
       id: caseId,
       type: CaseType.PHONE_TAPPING,
