@@ -213,7 +213,6 @@ export class EndorsementListService {
   }
 
   async create(list: CreateInput) {
-
     if (!list.openedDate || !list.closedDate) {
       this.logger.warn('Body missing openedDate or closedDate value.')
       throw new BadRequestException([
@@ -515,118 +514,207 @@ export class EndorsementListService {
   async createDocumentBuffer(
     endorsementList: any,
     ownerName: string,
-): Promise<Buffer> {
-    const doc = new PDFDocument({ margin: 60 });
-    const locale = 'is-IS';
-    const buffers: Buffer[] = [];
-    doc.on('data', buffers.push.bind(buffers));
+  ): Promise<Buffer> {
+    const doc = new PDFDocument({ margin: 60 })
+    const locale = 'is-IS'
+    const buffers: Buffer[] = []
+    doc.on('data', buffers.push.bind(buffers))
     doc.on('end', () =>
-        this.logger.info('PDF buffer created successfully for list id ' + endorsementList.id, { listId: endorsementList.id }),
-    );
+      this.logger.info(
+        'PDF buffer created successfully for list id ' + endorsementList.id,
+        { listId: endorsementList.id },
+      ),
+    )
 
-    const regularFontPath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-regular.ttf');
-    const boldFontPath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-600.ttf');
-    const headerImagePath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/thjodskra.png');
-    const footerImagePath = path.join(process.cwd(), 'apps/services/endorsements/api/src/assets/island.png');
+    const regularFontPath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-regular.ttf',
+    )
+    const boldFontPath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-600.ttf',
+    )
+    const headerImagePath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/thjodskra.png',
+    )
+    const footerImagePath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/island.png',
+    )
 
-    doc.registerFont('Regular', regularFontPath);
-    doc.registerFont('Bold', boldFontPath);
+    doc.registerFont('Regular', regularFontPath)
+    doc.registerFont('Bold', boldFontPath)
 
     // Add header image
-    const headerImageHeight = 40;
-    doc.image(headerImagePath, 60, 40, { width: 120 });
+    const headerImageHeight = 40
+    doc.image(headerImagePath, 60, 40, { width: 120 })
 
-    let currentYPosition = 40 + headerImageHeight + 20;
+    let currentYPosition = 40 + headerImageHeight + 20
 
-  // Title and petition details
-doc.font('Bold').fontSize(24).text('Upplýsingar um undirskriftalista', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 20; // Adjust vertical space
+    // Title and petition details
+    doc
+      .font('Bold')
+      .fontSize(24)
+      .text('Upplýsingar um undirskriftalista', 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 20 // Adjust vertical space
 
-// "Heiti undirskriftalista" label and value
-doc.font('Bold').fontSize(12).text('Heiti undirskriftalista: ', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 5; // Slight spacing between label and value
-doc.font('Regular').fontSize(12).text(endorsementList.title || 'string', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 15; // Adjust space before next label
+    // "Heiti undirskriftalista" label and value
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Heiti undirskriftalista: ', 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 5 // Slight spacing between label and value
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(endorsementList.title || 'string', 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 15 // Adjust space before next label
 
-// "Um undirskriftalista" label and value
-doc.font('Bold').fontSize(12).text('Um undirskriftalista: ', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 5;
-doc.font('Regular').fontSize(12).text(endorsementList.description || 'string', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 15;
+    // "Um undirskriftalista" label and value
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Um undirskriftalista: ', 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(endorsementList.description || 'string', 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 15
 
-// "Opin til" label and value
-doc.font('Bold').fontSize(12).text('Opin til: ', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 5;
-doc.font('Regular').fontSize(12).text(endorsementList.closedDate.toLocaleDateString(locale), 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 15;
+    // "Opin til" label and value
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Opin til: ', 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(
+        endorsementList.closedDate.toLocaleDateString(locale),
+        60,
+        currentYPosition,
+        { align: 'left' },
+      )
+    currentYPosition = doc.y + 15
 
-// "Fjöldi undirskrifta" label and value
-doc.font('Bold').fontSize(12).text('Fjöldi undirskrifta: ', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 5;
-doc.font('Regular').fontSize(12).text(endorsementList.endorsements.length.toString(), 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 15;
+    // "Fjöldi undirskrifta" label and value
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Fjöldi undirskrifta: ', 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(
+        endorsementList.endorsements.length.toString(),
+        60,
+        currentYPosition,
+        { align: 'left' },
+      )
+    currentYPosition = doc.y + 15
 
-// "Ábyrgðarmaður" label and value
-doc.font('Bold').fontSize(12).text('Ábyrgðarmaður: ', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 5;
-doc.font('Regular').fontSize(12).text(ownerName, 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 15;
+    // "Ábyrgðarmaður" label and value
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Ábyrgðarmaður: ', 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(ownerName, 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 15
 
-// "Kennitala ábyrgðarmanns" label and value
-doc.font('Bold').fontSize(12).text('Kennitala ábyrgðarmanns: ', 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 5;
-doc.font('Regular').fontSize(12).text(endorsementList.owner, 60, currentYPosition, { align: 'left' });
-currentYPosition = doc.y + 30; // Extra space before next section (if any)
-
-
+    // "Kennitala ábyrgðarmanns" label and value
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Kennitala ábyrgðarmanns: ', 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(endorsementList.owner, 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 30 // Extra space before next section (if any)
 
     // Table for endorsements
-   // Set the same Y-position for all headers
-// const tableHeaderY = currentYPosition + 10; // Start table just below the previous content
+    // Set the same Y-position for all headers
+    // const tableHeaderY = currentYPosition + 10; // Start table just below the previous content
 
-const dateX = 60; // Column X position for 'Dags. skráð'
-const nameX = 160; // Column X position for 'Nafn'
-const localityX = 360; // Column X position for 'Sveitarfélag'
+    const dateX = 60 // Column X position for 'Dags. skráð'
+    const nameX = 160 // Column X position for 'Nafn'
+    const localityX = 360 // Column X position for 'Sveitarfélag'
 
+    // Table headers drawing function
+    const drawTableHeaders = () => {
+      doc.font('Bold').fontSize(12)
+      doc.text('Dags. skráð', dateX, currentYPosition, {
+        width: 100,
+        align: 'left',
+      })
+      doc.text('Nafn', nameX, currentYPosition, { width: 200, align: 'left' })
+      doc.text('Sveitarfélag', localityX, currentYPosition, {
+        width: 200,
+        align: 'left',
+      })
+      currentYPosition = doc.y + 5 // Adjust space between header and rows
+    }
 
-// Table headers drawing function
-const drawTableHeaders = () => {
-  doc.font('Bold').fontSize(12);
-  doc.text('Dags. skráð', dateX, currentYPosition, { width: 100, align: 'left' });
-  doc.text('Nafn', nameX, currentYPosition, { width: 200, align: 'left' });
-  doc.text('Sveitarfélag', localityX, currentYPosition, { width: 200, align: 'left' });
-  currentYPosition = doc.y + 5; // Adjust space between header and rows
-};
+    // Endorsements List (Rows)
+    drawTableHeaders()
+    endorsementList.endorsements.forEach((endorsement: Endorsement) => {
+      if (doc.y + 20 > doc.page.height - 100) {
+        // Add a new page if content is about to overflow
+        doc.addPage()
+        currentYPosition = 60 // Reset Y-position for the new page
+        drawTableHeaders() // Draw table headers at the top of the new page
+      }
 
-// Endorsements List (Rows)
-drawTableHeaders();
-endorsementList.endorsements.forEach((endorsement: Endorsement) => {
-  if (doc.y + 20 > doc.page.height - 100) {
-    // Add a new page if content is about to overflow
-    doc.addPage();
-    currentYPosition = 60; // Reset Y-position for the new page
-    drawTableHeaders(); // Draw table headers at the top of the new page
-  }
+      // Draw the endorsement data
+      doc.font('Regular').fontSize(10)
+      doc.text(
+        endorsement.created.toLocaleDateString(locale),
+        dateX,
+        currentYPosition,
+        { width: 100, align: 'left' },
+      )
+      doc.text(
+        endorsement.meta.fullName || 'Nafn ótilgreint',
+        nameX,
+        currentYPosition,
+        { width: 200, align: 'left' },
+      )
+      doc.text(
+        endorsement.meta.locality || 'Sveitafélag ótilgreint',
+        localityX,
+        currentYPosition,
+        { width: 200, align: 'left' },
+      )
 
-  // Draw the endorsement data
-  doc.font('Regular').fontSize(10);
-  doc.text(endorsement.created.toLocaleDateString(locale), dateX, currentYPosition, { width: 100, align: 'left' });
-  doc.text(endorsement.meta.fullName || 'Nafn ótilgreint', nameX, currentYPosition, { width: 200, align: 'left' });
-  doc.text(endorsement.meta.locality || 'Sveitafélag ótilgreint', localityX, currentYPosition, { width: 200, align: 'left' });
-
-  currentYPosition = doc.y + 5; // Move down slightly for the next row
-});
-
+      currentYPosition = doc.y + 5 // Move down slightly for the next row
+    })
 
     // Add footer image at the bottom of the page
-    const footerY = doc.page.height - 80;
-    doc.image(footerImagePath, 60, footerY, { width: 120 });
+    const footerY = doc.page.height - 80
+    doc.image(footerImagePath, 60, footerY, { width: 120 })
 
-    doc.end();
-    return await getStream.buffer(doc);
-}
-
-  
+    doc.end()
+    return await getStream.buffer(doc)
+  }
 
   async emailPDF(
     listId: string,
