@@ -36,7 +36,7 @@ const LOG_CATEGORY = 'license-api'
 @Injectable()
 export class LicenseServiceV2 {
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly clientService: LicenseUpdateClientService,
     private readonly barcodeService: BarcodeService,
   ) {}

@@ -9,7 +9,9 @@ import {
 } from '../../licenseClient.type'
 import { VerifyPassData, VerifyPkPassDataInput } from './pkPass.types'
 import { mapPassData } from './pkPass.mapper'
+import { Injectable } from '@nestjs/common'
 
+@Injectable()
 export class PkPassService {
   constructor(
     private readonly featureFlagService: FeatureFlagService,
