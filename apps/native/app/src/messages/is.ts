@@ -605,4 +605,25 @@ export const is = {
     'Þú ert að fara að nota gamla útgáfu af Ísland.is appinu. Vinsamlegast uppfærðu appið til að halda áfram.',
   'updateApp.button': 'Uppfæra',
   'updateApp.buttonSkip': 'Sleppa',
+
+  // health
+  'health.overview.screenTitle': 'Heilsa',
+  'health.overview.title': 'Heilsan mín',
+  'health.overview.description':
+    'Hér finnur þú þín heilsufarsgögn, heilsugæslu og sjúkratryggingar',
+  'health.overview.healthCenter': 'Heilsugæsla',
+  'health.overview.noHealthCenterRegistered': 'Engin heilsugæsla skráð',
+  'health.overview.physician': 'Heimilislæknir',
+  'health.overview.noPhysicianRegistered': 'Enginn læknir skráður',
+  'health.overview.statusOfRights': 'Réttindastaða',
+  'health.overview.insuredFrom': 'Sjúkratrygging frá',
+  'health.overview.status': 'Staða',
+  'health.overview.notInsured': 'Þú ert ekki með sjúkratryggingu',
+  'health.overview.payments': 'Greiðslur',
+  'health.overview.maxMonthlyPayment': 'Hámarksgreiðslan þín á mánuði',
+  'health.overview.paymentLimit': 'Greiðslumark',
+  'health.overview.paymentCredit': 'Inneign',
+  'health.overview.paymentDebt': 'Skuld',
+  'health.overview.therapy': 'Þjálfun',
+  'health.overview.aidsAndNutrition': 'Hjálpartæki og næring',
 }

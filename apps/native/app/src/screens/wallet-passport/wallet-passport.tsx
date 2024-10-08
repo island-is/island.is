@@ -160,7 +160,6 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
               loading={loading}
               error={!!error}
               size="big"
-              borderDark
             />
           </InputRow>
 

@@ -605,4 +605,25 @@ export const en: TranslatedMessages = {
     'You are about to use an old version of the Island.is app. Please update the app to be able to continue.',
   'updateApp.button': 'Update',
   'updateApp.buttonSkip': 'Skip',
+
+  // health
+  'health.overview.screenTitle': 'Health',
+  'health.overview.title': 'My health',
+  'health.overview.description':
+    'Here you can find your health data, health center and health insurance.',
+  'health.overview.healthCenter': 'Health center',
+  'health.overview.noHealthCenterRegistered': 'No health center registered',
+  'health.overview.physician': 'Physician',
+  'health.overview.noPhysicianRegistered': 'No doctor registered',
+  'health.overview.statusOfRights': 'Status of rights',
+  'health.overview.insuredFrom': 'Insured from',
+  'health.overview.status': 'Status',
+  'health.overview.notInsured': 'You do not have health insurance',
+  'health.overview.payments': 'Payments',
+  'health.overview.maxMonthlyPayment': 'Max monthly payment',
+  'health.overview.paymentLimit': 'Payment Limit',
+  'health.overview.paymentCredit': 'Credit',
+  'health.overview.paymentDebt': 'Debt',
+  'health.overview.therapy': 'Therapy',
+  'health.overview.aidsAndNutrition': 'Aids and nutrition',
 }
