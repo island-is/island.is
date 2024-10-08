@@ -56,11 +56,7 @@ describe('communicationsService', () => {
       imports: [
         LoggingModule,
         EmailModule,
-        ZendeskModule.register({
-          email: 'email',
-          token: 'token',
-          subdomain: 'subdomain',
-        }),
+        ZendeskModule,
         CmsModule,
         FileStorageModule,
         ConfigModule.forRoot({

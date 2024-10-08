@@ -1,23 +1,16 @@
-import { DynamicModule } from '@nestjs/common'
+import { ZendeskService } from './zendesk.service'
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { ZendeskServiceConfigurations } from './zendesk.config'
 
-import {
-  ZendeskService,
-  ZendeskServiceOptions,
-  ZENDESK_OPTIONS,
-} from './zendesk.service'
-
-export class ZendeskModule {
-  static register(options: ZendeskServiceOptions): DynamicModule {
-    return {
-      module: ZendeskModule,
-      providers: [
-        {
-          provide: ZENDESK_OPTIONS,
-          useValue: options,
-        },
-        ZendeskService,
-      ],
-      exports: [ZendeskService],
-    }
-  }
-}
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [ZendeskServiceConfigurations],
+    }),
+  ],
+  providers: [ZendeskService],
+  exports: [ZendeskService],
+})
+export class ZendeskModule {}
