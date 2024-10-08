@@ -1,6 +1,9 @@
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { Box, Stack } from '@island.is/island-ui/core'
-import { AccessCard, DelegationViewModal } from '@island.is/portals/shared-modules/delegations'
+import {
+  AccessCard,
+  DelegationViewModal,
+} from '@island.is/portals/shared-modules/delegations'
 import { useDeleteCustomDelegationAdminMutation } from '../screens/DelegationAdminDetails/DelegationAdmin.generated'
 import { useRevalidator } from 'react-router-dom'
 import React, { useState } from 'react'
@@ -43,7 +46,11 @@ const DelegationList = ({ delegationsList, direction }: DelegationProps) => {
                 delegation={delegation}
                 isAdminView
                 variant={direction}
-                onView={delegation.referenceId ? (d) => setDelegationView(d) : undefined}
+                onView={
+                  delegation.referenceId
+                    ? (d) => setDelegationView(d)
+                    : undefined
+                }
                 onDelete={
                   delegation.referenceId
                     ? () => setDelegationToDelete(delegation)

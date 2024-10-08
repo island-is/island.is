@@ -24,7 +24,7 @@ type DelegationViewModalProps = {
 } & Pick<ModalProps, 'onClose' | 'isVisible'>
 
 export const DelegationViewModal = ({
-                                      delegation,
+  delegation,
   direction = 'incoming',
   onClose,
   isAdminView,
@@ -97,13 +97,14 @@ export const DelegationViewModal = ({
           )}
         </Box>
 
-        {delegation?.type !== AuthDelegationType.GeneralMandate && delegation?.domain && (
-          <IdentityCard
-            label={formatMessage(m.domain)}
-            title={delegation.domain.displayName}
-            imgSrc={delegation.domain.organisationLogoUrl}
-          />
-        )}
+        {delegation?.type !== AuthDelegationType.GeneralMandate &&
+          delegation?.domain && (
+            <IdentityCard
+              label={formatMessage(m.domain)}
+              title={delegation.domain.displayName}
+              imgSrc={delegation.domain.organisationLogoUrl}
+            />
+          )}
 
         {delegation?.type === AuthDelegationType.GeneralMandate && (
           <>

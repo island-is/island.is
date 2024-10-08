@@ -246,5 +246,5 @@ export const m = defineMessages({
   viewDelegationModalTitle: {
     id: 'sp.access-control-delegations:view-delegation-modal-title',
     defaultMessage: 'Upplýsingar um umboð',
-  }
+  },
 })
