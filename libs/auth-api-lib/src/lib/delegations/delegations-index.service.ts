@@ -310,8 +310,8 @@ export class DelegationsIndexService {
     const [updatedDelegation] = await this.auditService.auditPromise(
       {
         auth,
-        action:
-          '@island.is/auth/delegation-index/create-or-update-delegation-record',
+        action: 'create-or-update-delegation-record',
+        namespace: '@island.is/auth/delegation-index',
         resources: delegation.toNationalId,
         alsoLog: true,
         meta: {
@@ -334,7 +334,8 @@ export class DelegationsIndexService {
     await this.auditService.auditPromise(
       {
         auth,
-        action: '@island.is/auth/delegation-index/remove-delegation-record',
+        action: 'remove-delegation-record',
+        namespace: '@island.is/auth/delegation-index',
         resources: delegation.toNationalId,
         alsoLog: true,
         meta: {
@@ -438,7 +439,8 @@ export class DelegationsIndexService {
     // is the common place to audit updates in the index.
     this.auditService.audit({
       auth,
-      action: '@island.is/auth/delegation-index/save-to-index',
+      action: 'save-to-index',
+      namespace: '@island.is/auth/delegation-index',
       alsoLog: true,
       resources: nationalId,
       meta: {

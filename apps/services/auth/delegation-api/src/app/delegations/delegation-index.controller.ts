@@ -88,6 +88,7 @@ export class DelegationIndexController {
       {
         auth: auth,
         action: 'createOrUpdateDelegationIndexItem',
+        namespace,
         resources: delegationIndexId,
         meta: {
           ...parsedDelegationInfo,
@@ -123,6 +124,7 @@ export class DelegationIndexController {
     await this.auditService.auditPromise(
       {
         auth: auth,
+        namespace,
         action: 'removeDelegationIndexItem',
         resources: delegationIndexId,
         meta: {
