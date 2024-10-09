@@ -1,5 +1,4 @@
-import { DynamicModule } from '@nestjs/common'
-import { BaseTemplateAPIModuleConfig } from '../../../../types'
+import { Module } from '@nestjs/common'
 
 import {
   ChargeFjsV2ClientConfig,
@@ -10,20 +9,16 @@ import { XRoadConfig } from '@island.is/nest/config'
 import { PaymentModule } from '@island.is/application/api/payment'
 import { PaymentService } from './payment.service'
 
-export class PaymentApiModule {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: PaymentModule,
-      imports: [
-        ChargeFjsV2ClientModule,
-        PaymentModule,
-        ConfigModule.forRoot({
-          isGlobal: true,
-          load: [XRoadConfig, ChargeFjsV2ClientConfig],
-        }),
-      ],
-      providers: [PaymentService],
-      exports: [PaymentService],
-    }
-  }
-}
+@Module({
+  imports: [
+    ChargeFjsV2ClientModule,
+    PaymentModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [XRoadConfig, ChargeFjsV2ClientConfig],
+    }),
+  ],
+  providers: [PaymentService],
+  exports: [PaymentService],
+})
+export class PaymentApiModule {}

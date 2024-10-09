@@ -14,7 +14,7 @@ import {
 import { Override } from '@island.is/application/templates/family-matters-core/types'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { S3 } from 'aws-sdk'
-import { SharedTemplateApiService } from '../../shared'
+import { SharedTemplateApiService, sharedModuleConfig } from '../../shared'
 import {
   generateApplicationSubmittedEmail,
   generateSyslumennNotificationEmail,
@@ -26,8 +26,7 @@ import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-
-export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
+import { ConfigType } from '@nestjs/config'
 
 type props = Override<
   TemplateApiModuleActionProps,
@@ -40,7 +39,8 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
 
   constructor(
     private readonly syslumennService: SyslumennService,
-    @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly smsService: SmsService,
     private nationalRegistryApi: NationalRegistryClientService,
@@ -55,7 +55,10 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
     const file = await this.s3
-      .getObject({ Bucket: this.presignedBucket, Key: s3FileName })
+      .getObject({
+        Bucket: this.config.templateApi.presignBucket,
+        Key: s3FileName,
+      })
       .promise()
     const fileContent = file.Body as Buffer
 

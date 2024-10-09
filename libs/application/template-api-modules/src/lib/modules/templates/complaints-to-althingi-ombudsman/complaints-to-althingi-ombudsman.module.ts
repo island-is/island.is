@@ -1,6 +1,5 @@
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../shared'
-import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { FileStorageModule } from '@island.is/file-storage'
 import { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman.service'
 import { COMPLAINTS_TO_ALTHINGI_OMBUDSMAN_CONFIG } from './config'
@@ -19,29 +18,25 @@ const applicationSenderName = process.env.EMAIL_FROM_NAME ?? ''
 
 const applicationSenderEmail = process.env.EMAIL_FROM ?? 'development@island.is'
 
-export class ComplaintsToAlthingiOmbudsmanTemplateModule {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: ComplaintsToAlthingiOmbudsmanTemplateModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        FileStorageModule,
-        ClientsAlthingiOmbudsmanModule,
-      ],
-      providers: [
-        {
-          provide: COMPLAINTS_TO_ALTHINGI_OMBUDSMAN_CONFIG,
-          useValue: {
-            applicationRecipientName,
-            applicationRecipientEmail,
-            applicationSenderName,
-            applicationSenderEmail,
-          },
-        },
-        ComplaintsToAlthingiOmbudsmanTemplateService,
-        ApplicationAttachmentProvider,
-      ],
-      exports: [ComplaintsToAlthingiOmbudsmanTemplateService],
-    }
-  }
-}
+@Module({
+  imports: [
+    SharedTemplateAPIModule,
+    FileStorageModule,
+    ClientsAlthingiOmbudsmanModule,
+  ],
+  providers: [
+    {
+      provide: COMPLAINTS_TO_ALTHINGI_OMBUDSMAN_CONFIG,
+      useValue: {
+        applicationRecipientName,
+        applicationRecipientEmail,
+        applicationSenderName,
+        applicationSenderEmail,
+      },
+    },
+    ComplaintsToAlthingiOmbudsmanTemplateService,
+    ApplicationAttachmentProvider,
+  ],
+  exports: [ComplaintsToAlthingiOmbudsmanTemplateService],
+})
+export class ComplaintsToAlthingiOmbudsmanTemplateModule {}
