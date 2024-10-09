@@ -7,20 +7,16 @@ import { generateOutputOne } from './processing/rendering-pipeline'
 import { createPortalEnv } from '../../../apps/services/bff/infra/utils/createPortalEnv'
 import { json } from './dsl'
 
-import {
-  adminPortalScopes,
-  servicePortalScopes,
-} from '../../../libs/auth/scopes/src/index'
+import { adminPortalScopes } from '../../../libs/auth/scopes/src/index'
 
 import { FIVE_SECONDS_IN_MS } from '../../../apps/services/bff/src/app/constants/time'
 const ONE_HOUR_IN_MS = 60 * 60 * 1000
 const ONE_WEEK_IN_MS = ONE_HOUR_IN_MS * 24 * 7
 
-const bffName = "services-bff"
-const bffType = "stjornbord"
-const clientName = "portals-admin"
+const bffName = 'services-bff'
+const bffType = 'stjornbord'
+const clientName = 'portals-admin'
 const serviceName = `${bffName}-${clientName}`
-
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -37,63 +33,60 @@ const Staging: EnvironmentConfig = {
 }
 
 describe('BFF PortalEnv serialization', () => {
-  const sut =
-    service(serviceName)
-      .namespace(clientName)
-      .image(bffName)
-      .redis()
-      .serviceAccount(bffName)
-      .env(createPortalEnv(bffType))
-      .secrets({
-        BFF_TOKEN_SECRET_BASE64:
-          `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
-        IDENTITY_SERVER_CLIENT_SECRET:
-          `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
-      })
-      .command('node')
-      .args('main.js')
-      .readiness('/health/check')
-      .liveness('/liveness')
-      .replicaCount({
-        default: 2,
-        min: 2,
-        max: 3,
-      })
-      .resources({
-        limits: {
-          cpu: '400m',
-          memory: '512Mi',
+  const sut = service(serviceName)
+    .namespace(clientName)
+    .image(bffName)
+    .redis()
+    .serviceAccount(bffName)
+    .env(createPortalEnv(bffType))
+    .secrets({
+      BFF_TOKEN_SECRET_BASE64: `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
+      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
+    })
+    .command('node')
+    .args('main.js')
+    .readiness('/health/check')
+    .liveness('/liveness')
+    .replicaCount({
+      default: 2,
+      min: 2,
+      max: 3,
+    })
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '512Mi',
+      },
+      requests: {
+        cpu: '100m',
+        memory: '256Mi',
+      },
+    })
+    .ingress({
+      primary: {
+        host: {
+          dev: ['beta'],
+          staging: ['beta'],
+          prod: ['', 'www.island.is'],
         },
-        requests: {
-          cpu: '100m',
-          memory: '256Mi',
-        },
-      })
-      .ingress({
-        primary: {
-          host: {
-            dev: ['beta'],
-            staging: ['beta'],
-            prod: ['', 'www.island.is'],
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
-          extraAnnotations: {
-            dev: {
-              'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-              'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-            },
-            staging: {
-              'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-              'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-              'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-            },
-            prod: {
-              'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-              'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-            },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
-          paths: [`/${bffType}/bff`],
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
         },
-      })
+        paths: [`/${bffType}/bff`],
+      },
+    })
   let result: SerializeSuccess<HelmService>
   beforeEach(async () => {
     result = (await generateOutputOne({
@@ -150,7 +143,7 @@ describe('BFF PortalEnv serialization', () => {
       IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${bffType}`,
       IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is',
       // BFF
-      BFF_NAME: "stjornbord",
+      BFF_NAME: 'stjornbord',
       BFF_CLIENT_KEY_PATH: `/${bffType}`,
       BFF_PAR_SUPPORT_ENABLED: 'false',
       BFF_ALLOWED_REDIRECT_URIS: json(['https://beta.dev01.devland.is']),
@@ -166,16 +159,14 @@ describe('BFF PortalEnv serialization', () => {
       NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init',
       SERVERSIDE_FEATURES_ON: '',
       LOG_LEVEL: 'info',
-      REDIS_URL_NODE_01: "b"
+      REDIS_URL_NODE_01: 'b',
     })
   })
 
   it('secrets', () => {
     expect(result.serviceDef[0].secrets).toEqual({
-      BFF_TOKEN_SECRET_BASE64:
-        `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
-      IDENTITY_SERVER_CLIENT_SECRET:
-        `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
+      BFF_TOKEN_SECRET_BASE64: `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
+      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
       CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
     })
   })
