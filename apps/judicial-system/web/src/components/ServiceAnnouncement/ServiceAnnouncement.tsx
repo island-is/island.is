@@ -113,7 +113,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 
   // Use data from RLS but fallback to local data
   useEffect(() => {
-    if (subpoenaStatusError) {
+    if (subpoenaStatusError || localSubpoena.serviceStatus) {
       setSubpoena(localSubpoena)
     } else {
       setSubpoena({
@@ -129,7 +129,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 
   return !subpoena && !subpoenaStatusLoading ? (
     <Box marginBottom={2}>{renderError(formatMessage)}</Box>
-  ) : subpoenaStatusLoading ? (
+  ) : subpoenaStatusLoading && !localSubpoena.serviceStatus ? (
     <Box display="flex" justifyContent="center" paddingY={5}>
       <LoadingDots />
     </Box>
