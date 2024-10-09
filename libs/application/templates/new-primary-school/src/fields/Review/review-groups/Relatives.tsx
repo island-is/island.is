@@ -1,3 +1,4 @@
+import { coreErrorMessages } from '@island.is/application/core'
 import { FieldComponents, FieldTypes } from '@island.is/application/types'
 import {
   Label,
@@ -23,7 +24,6 @@ import {
   getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
-import { coreErrorMessages } from '@island.is/application/core'
 
 export const Relatives = ({
   application,

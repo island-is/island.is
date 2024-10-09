@@ -1,3 +1,4 @@
+import { coreErrorMessages } from '@island.is/application/core'
 import { YES } from '@island.is/application/types'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import {
@@ -17,7 +18,6 @@ import {
   getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
-import { coreErrorMessages } from '@island.is/application/core'
 
 export const Child = ({
   application,

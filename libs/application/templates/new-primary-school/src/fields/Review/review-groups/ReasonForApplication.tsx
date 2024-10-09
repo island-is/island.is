@@ -1,10 +1,10 @@
+import { coreErrorMessages } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import {
   GridColumn,
   GridRow,
   SkeletonLoader,
   Stack,
-  Box,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { getCountryByCode } from '@island.is/shared/utils'
@@ -19,7 +19,6 @@ import {
   getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
-import { coreErrorMessages } from '@island.is/application/core'
 
 export const ReasonForApplication = ({
   application,
