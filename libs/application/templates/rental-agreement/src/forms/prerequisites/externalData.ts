@@ -1,5 +1,4 @@
 import {
-  buildSubSection,
   buildDataProviderItem,
   buildExternalDataProvider,
   buildSection,

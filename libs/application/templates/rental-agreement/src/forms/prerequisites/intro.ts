@@ -2,14 +2,15 @@ import {
   buildCustomField,
   buildMultiField,
   buildSection,
-  buildSubSection,
+  buildSubmitField,
 } from '@island.is/application/core'
+import { DefaultEvents } from '@island.is/application/types'
 
 import * as m from '../../lib/messages'
 
 const messages = m.prerequisites.intro
 
-export const prerequisitesIntro = buildSection({
+export const intro = buildSection({
   id: 'prerequisitesIntro',
   title: messages.subSectionTitle,
   children: [
@@ -21,6 +22,18 @@ export const prerequisitesIntro = buildSection({
           id: 'prerequisitesIntroDetails',
           title: messages.pageTitle,
           component: 'GeneralInfoForm',
+        }),
+        buildSubmitField({
+          id: 'toDraft',
+          title: '',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: 'Hefja umsókn',
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),
