@@ -365,7 +365,8 @@ export class PoliceService {
                 ? ServiceStatus.ELECTRONICALLY
                 : response.deliveredOnPaper || response.delivered === true
                 ? ServiceStatus.IN_PERSON
-                : response.acknowledged === false
+                : response.acknowledged === false &&
+                  response.delivered === false
                 ? ServiceStatus.FAILED
                 : // TODO: handle expired
                   undefined,

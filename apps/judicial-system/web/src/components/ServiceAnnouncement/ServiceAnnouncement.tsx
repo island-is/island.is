@@ -11,12 +11,11 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useGetLawyer, useSubpoena } from '../../utils/hooks'
-import { SubpoenaStatusQuery } from '../../utils/hooks/useSubpoena/getSubpoenaStatus.generated'
 import { strings } from './ServiceAnnouncement.strings'
 
 const mapServiceStatusTitle = (
   serviceStatus?: ServiceStatus | null,
-): MessageDescriptor => {
+): MessageDescriptor | null => {
   switch (serviceStatus) {
     case ServiceStatus.DEFENDER:
     case ServiceStatus.ELECTRONICALLY:
@@ -28,7 +27,7 @@ const mapServiceStatusTitle = (
       return strings.serviceStatusFailed
     // Should not happen
     default:
-      return strings.serviceStatusUnknown
+      return null
   }
 }
 
@@ -40,7 +39,11 @@ const mapServiceStatusMessages = (
   switch (subpoena.serviceStatus) {
     case ServiceStatus.DEFENDER:
       return [
-        `${subpoena.servedBy} - ${formatDate(subpoena.serviceDate, 'Pp')}`,
+        `${subpoena.servedBy ? subpoena.servedBy : ''}${
+          subpoena.serviceDate
+            ? ` - ${formatDate(subpoena.serviceDate, 'Pp')}`
+            : ''
+        }`,
         formatMessage(strings.servedToDefender, {
           lawyerName: lawyer?.name,
           practice: lawyer?.practice,
@@ -49,13 +52,19 @@ const mapServiceStatusMessages = (
     case ServiceStatus.ELECTRONICALLY:
       return [
         formatMessage(strings.servedToElectronically, {
-          date: formatDate(subpoena.serviceDate, 'Pp'),
+          date: subpoena.serviceDate
+            ? formatDate(subpoena.serviceDate, 'Pp')
+            : '',
         }),
       ]
     case ServiceStatus.IN_PERSON:
     case ServiceStatus.FAILED:
       return [
-        `${subpoena.servedBy} - ${formatDate(subpoena.serviceDate, 'Pp')}`,
+        `${subpoena.servedBy ? subpoena.servedBy : ''}${
+          subpoena.serviceDate
+            ? ` - ${formatDate(subpoena.serviceDate, 'Pp')}`
+            : ''
+        }`,
         subpoena.comment,
       ]
     case ServiceStatus.EXPIRED:
@@ -123,7 +132,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   ) : (
     <Box marginBottom={2}>
       <AlertMessage
-        title={`${formatMessage(title)} - ${defendantName}`}
+        title={`${title ? `${formatMessage(title)} - ` : ''}${defendantName}`}
         message={
           <Box>
             {messages.map((msg) => (

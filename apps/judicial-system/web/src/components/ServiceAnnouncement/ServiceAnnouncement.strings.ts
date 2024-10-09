@@ -21,11 +21,6 @@ export const strings = defineMessages({
     defaultMessage: 'Árangurslaus birting',
     description: 'Notaður sem texti þegar birting tókst ekki.',
   },
-  serviceStatusUnknown: {
-    id: 'judicial.system.core:service_announcement.service_status_unknown',
-    defaultMessage: 'Birtingastaða óþekkt',
-    description: 'Notaður sem texti þegar ekki er vitað um stöðu birtingar.',
-  },
   servedToDefender: {
     id: 'judicial.system.core:service_announcement.served_to_defender',
     defaultMessage: 'Birt fyrir verjanda - {lawyerName} {practice}',
