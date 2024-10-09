@@ -23,18 +23,18 @@ export const intro = buildSection({
           title: messages.pageTitle,
           component: 'GeneralInfoForm',
         }),
-        buildSubmitField({
-          id: 'toDraft',
-          title: '',
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: DefaultEvents.SUBMIT,
-              name: 'Hefja umsókn',
-              type: 'primary',
-            },
-          ],
-        }),
+        // buildSubmitField({
+        //   id: 'toDraft',
+        //   title: '',
+        //   refetchApplicationAfterSubmit: true,
+        //   actions: [
+        //     {
+        //       event: DefaultEvents.SUBMIT,
+        //       name: 'Hefja umsókn',
+        //       type: 'primary',
+        //     },
+        //   ],
+        // }),
       ],
     }),
   ],

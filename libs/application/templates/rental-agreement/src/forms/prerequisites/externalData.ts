@@ -2,9 +2,11 @@ import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildSection,
+  buildSubmitField,
 } from '@island.is/application/core'
 import { UserProfileApi, NationalRegistryUserApi } from '../../dataProviders'
 import * as m from '../../lib/messages'
+import { DefaultEvents } from '@island.is/application/types'
 
 export const externalData = buildSection({
   id: 'externalData',
@@ -15,6 +17,18 @@ export const externalData = buildSection({
       title: m.prerequisites.externalData.pageTitle,
       subTitle: m.prerequisites.externalData.subTitle,
       checkboxLabel: m.prerequisites.externalData.checkboxLabel,
+      submitField: buildSubmitField({
+        id: 'toDraft',
+        title: '',
+        refetchApplicationAfterSubmit: true,
+        actions: [
+          {
+            event: DefaultEvents.SUBMIT,
+            name: 'Hefja umsókn',
+            type: 'primary',
+          },
+        ],
+      }),
       dataProviders: [
         buildDataProviderItem({
           provider: UserProfileApi,
