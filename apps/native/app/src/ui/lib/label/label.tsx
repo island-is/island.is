@@ -6,22 +6,21 @@ import infoIcon from '../../assets/alert/info-alert.png'
 import warningIcon from '../../assets/alert/warning.png'
 import { Typography } from '../typography/typography'
 
-type LabelColor = 'default' | 'primary' | 'danger' | 'warning'
+type LabelColor = 'default' | 'primary' | 'danger' | 'warning' | 'urgent'
 type HelperProps = {
   theme: DefaultTheme
   color: LabelColor
-  blackTextColor?: boolean
 }
 
 interface LabelProps {
   color?: LabelColor
   icon?: React.ReactNode | boolean
   children?: React.ReactNode
-  blackTextColor?: boolean
 }
 
 const getBorderColor = ({ theme, color }: HelperProps) => {
   switch (color) {
+    case 'urgent':
     case 'danger':
       return { light: theme.color.red200, dark: theme.shades.dark.shade300 }
     case 'warning':
@@ -35,6 +34,7 @@ const getBorderColor = ({ theme, color }: HelperProps) => {
 
 const getBackgroundColor = ({ theme, color }: HelperProps) => {
   switch (color) {
+    case 'urgent':
     case 'danger':
       return { light: theme.color.red100, dark: 'transparent' }
     case 'warning':
@@ -44,11 +44,10 @@ const getBackgroundColor = ({ theme, color }: HelperProps) => {
   }
 }
 
-const getTextColor = ({ theme, color, blackTextColor }: HelperProps) => {
-  if (blackTextColor) {
-    return { light: theme.color.dark400, dark: theme.color.dark100 }
-  }
+const getTextColor = ({ theme, color }: HelperProps) => {
   switch (color) {
+    case 'urgent':
+      return { light: theme.color.dark400, dark: theme.color.dark100 }
     case 'danger':
       return { light: theme.color.red600, dark: theme.color.red400 }
     case 'primary':
@@ -64,6 +63,7 @@ const getIconByColor = (color: LabelColor) => {
       return infoIcon
     case 'warning':
       return warningIcon
+    case 'urgent':
     case 'danger':
       return dangerIcon
     default:
@@ -88,17 +88,11 @@ const LabelHost = styled.View<{ color: LabelColor }>`
 
 const LabelText = styled(Typography)<{
   color: LabelColor
-  blackTextColor: boolean
 }>`
   color: ${dynamicColor(getTextColor, true)};
 `
 
-export function Label({
-  color = 'default',
-  children,
-  icon,
-  blackTextColor = false,
-}: LabelProps) {
+export function Label({ color = 'default', children, icon }: LabelProps) {
   const iconElement =
     typeof icon === 'boolean' && icon === true ? (
       <Image
@@ -113,11 +107,7 @@ export function Label({
   return (
     <LabelHost color={color}>
       {iconElement}
-      <LabelText
-        variant={'eyebrow'}
-        color={color}
-        blackTextColor={blackTextColor}
-      >
+      <LabelText variant={'eyebrow'} color={color}>
         {children}
       </LabelText>
     </LabelHost>

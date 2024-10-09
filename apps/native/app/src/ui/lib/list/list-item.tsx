@@ -140,7 +140,7 @@ export function ListItem({
               {subtitle}
             </Typography>
             {urgent && (
-              <Label color="danger" icon blackTextColor>
+              <Label color="urgent" icon>
                 {intl.formatMessage({ id: 'inbox.urgent' })}
               </Label>
             )}

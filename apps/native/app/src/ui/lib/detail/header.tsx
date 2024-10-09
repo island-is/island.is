@@ -114,7 +114,7 @@ export function Header({
           </Typography>
         ) : null}
         {label && (
-          <Label color="danger" icon blackTextColor>
+          <Label color="urgent" icon>
             {label}
           </Label>
         )}
