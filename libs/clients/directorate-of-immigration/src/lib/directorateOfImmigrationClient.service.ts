@@ -211,7 +211,7 @@ export class DirectorateOfImmigrationClient {
     // applicant: submit travel document and other supporting attachment
     const attachmentList: {
       attachmentType: AttachmentType
-      fileList: { filename: string; base64: string; countryId?: string }[]
+      fileList: { filename: string; fileUrl: string; countryId?: string }[]
     }[] = [
       {
         attachmentType: AttachmentType.Passport,
@@ -256,7 +256,7 @@ export class DirectorateOfImmigrationClient {
           applicationAttachmentNewModel: {
             attachmentType: file.attachmentType,
             fileName: file.fileList[k].filename,
-            base64Contents: file.fileList[k].base64,
+            base64Contents: file.fileList[k].fileUrl, // TODO update when UTL client is updated
             countryCode: file.fileList[k].countryId,
           },
         })
@@ -328,7 +328,7 @@ export class DirectorateOfImmigrationClient {
         )
       const childAttachmentList: {
         attachmentType: AttachmentType
-        fileList: { filename: string; base64: string }[]
+        fileList: { filename: string; fileUrl: string }[]
       }[] = [
         {
           attachmentType: AttachmentType.Passport,
@@ -362,7 +362,7 @@ export class DirectorateOfImmigrationClient {
             applicationAttachmentNewModel: {
               attachmentType: file.attachmentType,
               fileName: file.fileList[k].filename,
-              base64Contents: file.fileList[k].base64,
+              base64Contents: file.fileList[k].fileUrl, // TODO update when UTL client is updated
             },
           })
         }
