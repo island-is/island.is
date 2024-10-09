@@ -14,7 +14,7 @@ import {
   laws,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import type {
+import {
   AdvocateType,
   Gender,
   UserRole,
@@ -674,19 +674,38 @@ export const formatAdvocateAssignedEmailNotification = (
   advocateType: AdvocateType,
   overviewUrl?: string,
 ): SubjectAndBody => {
-  const subject = formatMessage(notifications.defenderAssignedEmail.subject, {
-    court: capitalize(theCase.court?.name ?? ''),
-  })
+  const subject =
+    advocateType === AdvocateType.DEFENDER
+      ? formatMessage(
+          notifications.defenderAssignedEmail.subjectAccessToCaseFiles,
+          {
+            court: capitalize(theCase.court?.name ?? ''),
+          },
+        )
+      : formatMessage(notifications.defenderAssignedEmail.subjectAccess, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
 
-  const body = formatMessage(notifications.defenderAssignedEmail.body, {
-    defenderHasAccessToRVG: Boolean(overviewUrl),
-    advocateType,
-    courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
-    court: theCase.court?.name ?? '',
-    courtName: theCase.court?.name.replace('dómur', 'dómi') ?? '',
-    linkStart: `<a href="${overviewUrl}">`,
-    linkEnd: '</a>',
-  })
+  const body =
+    advocateType === AdvocateType.DEFENDER
+      ? formatMessage(
+          notifications.defenderAssignedEmail.bodyAccessToCaseFiles,
+          {
+            defenderHasAccessToRVG: Boolean(overviewUrl),
+            courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
+            court: theCase.court?.name ?? '',
+            courtName: theCase.court?.name.replace('dómur', 'dómi') ?? '',
+            linkStart: `<a href="${overviewUrl}">`,
+            linkEnd: '</a>',
+          },
+        )
+      : formatMessage(notifications.defenderAssignedEmail.bodyAccess, {
+          court: theCase.court?.name,
+          advocateType,
+          courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
+          linkStart: `<a href="${overviewUrl}">`,
+          linkEnd: '</a>',
+        })
 
   return { body, subject }
 }
