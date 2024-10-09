@@ -10,8 +10,8 @@ export enum LicenseUpdateType {
 }
 
 export enum LicenseApiVersion {
-  'v1',
-  'v2',
+  v1 = 'v1',
+  v2 = 'v2',
 }
 
 export enum LicenseId {

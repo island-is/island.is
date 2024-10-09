@@ -1,5 +1,6 @@
 import {
   BaseLicenseUpdateClient,
+  BaseLicenseUpdateClientV2,
   LicenseType,
   LicenseUpdateClientService,
 } from '@island.is/clients/license-client'
@@ -41,6 +42,9 @@ import {
   LicenseUpdateType,
   PASS_TEMPLATE_IDS,
 } from '../license.types'
+import { SmartSolutionsService } from '@island.is/clients/smart-solutions-v2'
+import { LicenseServiceV1 } from '../licenseV1.service'
+import { LicenseServiceV2 } from '../licenseV2.service'
 
 const { randomUUID } = new ShortUniqueId({ length: 16 })
 const cacheStore = new Map<string, unknown>()
@@ -223,6 +227,161 @@ export class MockUpdateClient extends BaseLicenseUpdateClient {
   }
 }
 
+@Injectable()
+export class MockUpdateClientV2 extends BaseLicenseUpdateClientV2 {
+  constructor(
+    @Inject(LOGGER_PROVIDER) protected logger: Logger,
+    private readonly clientService: LicenseUpdateClientService,
+  ) {
+    super()
+  }
+
+  pushUpdate = (inputData: PassDataInput, nationalId: string) => {
+    if (nationalId === 'success') {
+      return Promise.resolve<Result<PassData | undefined>>({
+        ok: true,
+        data: undefined,
+      })
+    }
+
+    if (nationalId === '') {
+      return Promise.resolve<Result<PassData | undefined>>({
+        ok: false,
+        error: {
+          code: 5,
+          message: 'some user error',
+        },
+      })
+    }
+    //some other error
+    return Promise.resolve<Result<PassData | undefined>>({
+      ok: false,
+      error: {
+        code: 99,
+        message: 'some service error',
+      },
+    })
+  }
+
+  pullUpdate = (nationalId: string) => {
+    if (nationalId === 'success') {
+      return Promise.resolve<Result<PassData | undefined>>({
+        ok: true,
+        data: undefined,
+      })
+    }
+
+    if (nationalId === '') {
+      return Promise.resolve<Result<PassData | undefined>>({
+        ok: false,
+        error: {
+          code: 5,
+          message: 'some user error',
+        },
+      })
+    }
+    //some other error
+    return Promise.resolve<Result<PassData | undefined>>({
+      ok: false,
+      error: {
+        code: 99,
+        message: 'some service error',
+      },
+    })
+  }
+
+  revoke = (nationalId: string) => {
+    if (nationalId === 'success') {
+      return Promise.resolve<Result<PassRevocationData>>({
+        ok: true,
+        data: {
+          success: true,
+        },
+      })
+    }
+
+    if (nationalId === 'failure') {
+      return Promise.resolve<Result<PassRevocationData>>({
+        ok: true,
+        data: {
+          success: false,
+        },
+      })
+    }
+
+    if (nationalId === '') {
+      return Promise.resolve<Result<PassRevocationData>>({
+        ok: false,
+        error: {
+          code: 5,
+          message: 'some user error',
+        },
+      })
+    }
+    //some other error
+    return Promise.resolve<Result<PassRevocationData>>({
+      ok: false,
+      error: {
+        code: 99,
+        message: 'some service error',
+      },
+    })
+  }
+
+  verify = (inputData: string) => {
+    let parsedInput
+    try {
+      parsedInput = JSON.parse(inputData) as VerifyInputData
+    } catch (ex) {
+      return Promise.resolve<Result<PassVerificationData>>({
+        ok: false,
+        error: {
+          code: 12,
+          message: 'Invalid input data',
+        },
+      })
+    }
+
+    const { code } = parsedInput
+    if (!code) {
+      return Promise.resolve<Result<PassVerificationData>>({
+        ok: false,
+        error: {
+          code: 4,
+          message:
+            'Invalid input data,  either code or date are missing or invalid',
+        },
+      })
+    }
+
+    if (code === 'success') {
+      return Promise.resolve<Result<PassVerificationData>>({
+        ok: true,
+        data: {
+          valid: true,
+        },
+      })
+    }
+
+    if (code === 'failure') {
+      return Promise.resolve<Result<PassVerificationData>>({
+        ok: true,
+        data: {
+          valid: false,
+        },
+      })
+    }
+    //some other error
+    return Promise.resolve<Result<PassVerificationData>>({
+      ok: false,
+      error: {
+        code: 99,
+        message: 'some service error',
+      },
+    })
+  }
+}
+
 describe('LicenseService', () => {
   let licenseService: LicenseService
   let barcodeService: BarcodeService
@@ -237,6 +396,8 @@ describe('LicenseService', () => {
       ],
       providers: [
         LicenseService,
+        LicenseServiceV1,
+        LicenseServiceV2,
         BarcodeService,
         {
           provide: LOGGER_PROVIDER,
@@ -258,6 +419,10 @@ describe('LicenseService', () => {
           useClass: jest.fn(() => ({})),
         },
         {
+          provide: SmartSolutionsService,
+          useClass: jest.fn(() => ({})),
+        },
+        {
           provide: PASS_TEMPLATE_IDS,
           useValue: {
             disability: LicenseId.DISABILITY_LICENSE,
@@ -267,15 +432,21 @@ describe('LicenseService', () => {
         },
         {
           provide: LicenseUpdateClientService,
-          useFactory: (logger, smart) => ({
+          useFactory: (logger, smart, smartv2) => ({
             getLicenseUpdateClientByType:
               async (): Promise<BaseLicenseUpdateClient | null> =>
                 new MockUpdateClient(logger, smart),
             getLicenseUpdateClientByPassTemplateId:
               async (): Promise<BaseLicenseUpdateClient | null> =>
                 new MockUpdateClient(logger, smart),
+            getLicenseUpdateClientV2ByType:
+              async (): Promise<BaseLicenseUpdateClientV2 | null> =>
+                new MockUpdateClientV2(logger, smartv2),
+            getLicenseUpdateClientV2ByPassTemplateId:
+              async (): Promise<BaseLicenseUpdateClientV2 | null> =>
+                new MockUpdateClientV2(logger, smartv2),
           }),
-          inject: [LOGGER_PROVIDER, SmartSolutionsApi],
+          inject: [LOGGER_PROVIDER, SmartSolutionsApi, SmartSolutionsService],
         },
         {
           provide: BarcodeService,
