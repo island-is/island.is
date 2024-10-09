@@ -88,40 +88,32 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
           setDisplayError(true)
           return 'error'
         }
-        setValue(`techInfo[${index}].variableName`, variableName)
-        setValue(
-          `techInfo[${index}].value.nameIs`,
+        const isAnswer =
           type === 'dateTime'
             ? formatDate(answer)
             : typeof answer === 'object'
             ? answer.nameIs
-            : answer,
-        )
-        setValue(
-          `techInfo[${index}].value.nameEn`,
+            : type === 'float'
+            ? parseFloat(answer).toLocaleString()
+            : answer
+        const enAnswer =
           type === 'dateTime'
             ? formatDate(answer)
             : typeof answer === 'object'
             ? answer.nameEn
-            : answer,
-        )
+            : type === 'float'
+            ? parseFloat(answer).toLocaleString()
+            : answer
+        setValue(`techInfo[${index}].variableName`, variableName)
+        setValue(`techInfo[${index}].value.nameIs`, isAnswer)
+        setValue(`techInfo[${index}].value.nameEn`, enAnswer)
         setValue(`techInfo[${index}].label`, label)
         setValue(`techInfo[${index}].labelEn`, labelEn)
         return {
           variableName,
           value: {
-            nameIs:
-              type === 'dateTime'
-                ? formatDate(answer)
-                : typeof answer === 'object'
-                ? answer.nameIs
-                : answer,
-            nameEn:
-              type === 'dateTime'
-                ? formatDate(answer)
-                : typeof answer === 'object'
-                ? answer.nameEn
-                : answer,
+            nameIs: isAnswer,
+            nameEn: enAnswer,
           },
 
           label,
