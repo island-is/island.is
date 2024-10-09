@@ -15,6 +15,7 @@ import {
 import { BaseLicenseUpdateClient } from '../../base/baseLicenseUpdateClient'
 
 @Injectable()
+/** @deprecated */
 export class DisabilityLicenseUpdateClient extends BaseLicenseUpdateClient {
   constructor(
     @Inject(LOGGER_PROVIDER) protected logger: Logger,

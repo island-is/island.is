@@ -26,6 +26,7 @@ import { DrivingDigitalLicenseClientConfig } from '../drivingLicenseClient.confi
 const LOG_CATEGORY = 'driving-license-service'
 
 @Injectable()
+/** @deprecated */
 export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
   constructor(
     @Inject(LOGGER_PROVIDER) protected logger: Logger,

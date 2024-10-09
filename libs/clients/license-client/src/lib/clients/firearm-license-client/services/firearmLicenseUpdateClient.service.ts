@@ -24,6 +24,7 @@ import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.confi
 const LOG_CATEGORY = 'firearmlicense-service'
 
 @Injectable()
+/** @deprecated */
 export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   constructor(
     @Inject(LOGGER_PROVIDER) protected logger: Logger,
