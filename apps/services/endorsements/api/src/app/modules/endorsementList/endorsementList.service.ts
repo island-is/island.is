@@ -341,6 +341,8 @@ export class EndorsementListService {
       'apps/services/endorsements/api/src/assets/island.png',
     )
 
+
+
     doc.registerFont('Regular', regularFontPath)
     doc.registerFont('Bold', boldFontPath)
 
@@ -412,7 +414,7 @@ export class EndorsementListService {
       .font('Regular')
       .fontSize(12)
       .text(
-        endorsementList.endorsements.length.toString(),
+        endorsementList.endorsementCount.toString(),
         60,
         currentYPosition,
         { align: 'left' },
