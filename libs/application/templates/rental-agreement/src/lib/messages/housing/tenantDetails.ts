@@ -8,7 +8,7 @@ export const tenantDetails = defineMessages({
   },
   pageTitle: {
     id: 'ra.application:tenantDetails.pageTitle',
-    defaultMessage: 'Leigjandi',
+    defaultMessage: 'Skrá leigjanda',
     description: 'Tenant Details page title',
   },
   pageDescription: {
@@ -17,29 +17,34 @@ export const tenantDetails = defineMessages({
       'Hér skal skrá leigjendur í húsnæðinu. Hægt er að bæta við eins mörgum leigjendum á samninginn eins og óskað er eftir.',
     description: 'Tenant Details page description',
   },
-  nationalIdLabel: {
+  nationalIdInputLabel: {
     id: 'ra.application:tenantDetails.nationalIdLabel',
     defaultMessage: 'Kennitala leigjanda',
     description: 'Tenant Details national id input label',
   },
-  nationalIdPlaceholder: {
-    id: 'ra.application:tenantDetails.nationalIdPlaceholder',
-    defaultMessage: 'Sláðu inn kennitölu leigjanda',
-    description: 'Tenant Details national id input placeholder',
+  nationalIdHeaderLabel: {
+    id: 'ra.application:tenantDetails.nationalIdHeaderLabel',
+    defaultMessage: 'Kennitala',
+    description: 'Tenant details national id header label',
   },
-  nameLabel: {
+  nameInputLabel: {
     id: 'ra.application:tenantDetails.nameLabel',
     defaultMessage: 'Fullt nafn',
     description: 'Tenant Details name input label',
   },
-  emailLabel: {
+  emailInputLabel: {
     id: 'ra.application:tenantDetails.emailLabel',
     defaultMessage: 'Netfang',
     description: 'Tenant Details email input label',
   },
-  phoneLabel: {
+  phoneInputLabel: {
     id: 'ra.application:tenantDetails.phoneLabel',
     defaultMessage: 'Símanúmer',
     description: 'Tenant Details phone input label',
+  },
+  representativeLabel: {
+    id: 'ra.application:tenantDetails.representativeLabel',
+    defaultMessage: 'Þessi aðili er umboðsaðili leigjanda',
+    description: 'Tenant Details representative label',
   },
 })
