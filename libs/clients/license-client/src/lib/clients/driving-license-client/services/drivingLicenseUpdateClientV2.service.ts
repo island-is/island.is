@@ -19,6 +19,9 @@ import {
 import { DrivingDigitalLicenseClientConfig } from '../drivingLicenseClient.config'
 import { BaseLicenseUpdateClientV2 } from '../../base/licenseUpdateClientV2'
 import { PkPassService } from '../../../helpers/pkPassService/pkPass.service'
+import { VerifyInputDataDto } from '../../disability-license-client/disabilityLicense.types'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'driving-license-service'
@@ -163,9 +166,20 @@ export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
     requestId?: string,
   ): Promise<Result<PassVerificationData>> {
     //need to parse the scanner data
-    let parsedInput
+    let parsedInput: VerifyInputDataDto
     try {
-      parsedInput = JSON.parse(inputData) as VerifyInputData
+      parsedInput = plainToInstance(VerifyInputDataDto, JSON.parse(inputData))
+      const errors = await validate(parsedInput)
+      if (errors.length > 0) {
+        return {
+          ok: false,
+          error: {
+            code: 12,
+            message:
+              'Pkpass verification data input mapping failed, data may be invalid',
+          },
+        }
+      }
     } catch (ex) {
       this.logger.error(
         'Pkpass verification data input mapping failed, data may be invalid',

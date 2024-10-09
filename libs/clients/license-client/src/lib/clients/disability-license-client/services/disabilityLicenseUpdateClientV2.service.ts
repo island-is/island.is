@@ -11,6 +11,9 @@ import {
 } from '../../../licenseClient.type'
 import { BaseLicenseUpdateClientV2 } from '../../base/licenseUpdateClientV2'
 import { PkPassService } from '../../../helpers/pkPassService/pkPass.service'
+import { VerifyInputDataDto } from '../disabilityLicense.types'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
 
 @Injectable()
 export class DisabilityLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
@@ -38,14 +41,30 @@ export class DisabilityLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
     }
   }
 
-  revoke(nationalId: string): Promise<Result<PassRevocationData>> {
-    throw new Error('Method not implemented.')
+  async revoke(nationalId: string): Promise<Result<PassRevocationData>> {
+    return {
+      ok: false,
+      error: {
+        code: 99,
+        message: 'not implemented yet',
+      },
+    }
   }
 
   async verify(inputData: string): Promise<Result<PassVerificationData>> {
-    let parsedInput
+    let parsedInput: VerifyInputDataDto
     try {
-      parsedInput = JSON.parse(inputData) as VerifyInputData
+      parsedInput = plainToInstance(VerifyInputDataDto, JSON.parse(inputData))
+      const errors = await validate(parsedInput)
+      if (errors.length > 0) {
+        return {
+          ok: false,
+          error: {
+            code: 12,
+            message: 'Invalid input data',
+          },
+        }
+      }
     } catch (ex) {
       return {
         ok: false,

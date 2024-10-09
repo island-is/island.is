@@ -17,6 +17,9 @@ import type { ConfigType } from '@island.is/nest/config'
 import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.config'
 import { BaseLicenseUpdateClientV2 } from '../../base/licenseUpdateClientV2'
 import { PkPassService } from '../../../helpers/pkPassService/pkPass.service'
+import { VerifyInputDataDto } from '../../disability-license-client/disabilityLicense.types'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -164,9 +167,19 @@ export class FirearmLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
     requestId?: string,
   ): Promise<Result<PassVerificationData>> {
     //need to parse the scanner data
-    let parsedInput
+    let parsedInput: VerifyInputDataDto
     try {
-      parsedInput = JSON.parse(inputData) as VerifyInputData
+      parsedInput = plainToInstance(VerifyInputDataDto, JSON.parse(inputData))
+      const errors = await validate(parsedInput)
+      if (errors.length > 0) {
+        return {
+          ok: false,
+          error: {
+            code: 12,
+            message: 'Invalid input data',
+          },
+        }
+      }
     } catch (ex) {
       return {
         ok: false,
