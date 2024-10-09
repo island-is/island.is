@@ -84,7 +84,9 @@ describe('AwsService', () => {
 
   it('should return a valid presigned url', async () => {
     const expectedResult = 'https://website.com'
-    const getSignedUrlMock = getSignedUrl as jest.MockedFunction<typeof getSignedUrl>
+    const getSignedUrlMock = getSignedUrl as jest.MockedFunction<
+      typeof getSignedUrl
+    >
     getSignedUrlMock.mockResolvedValue(expectedResult)
 
     const result = await awsService.getPresignedUrl(
