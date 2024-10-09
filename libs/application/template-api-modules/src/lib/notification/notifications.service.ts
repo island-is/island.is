@@ -1,10 +1,7 @@
 import { NotificationsApi } from '@island.is/clients/user-notification'
 import { Injectable } from '@nestjs/common'
-import {
-  NotificationArgs,
-  NotificationConfig,
-  NotificationType,
-} from './notificationTypes'
+import { NotificationArgs } from './notificationTypes'
+import { NotificationConfig, NotificationType } from './notificationsTemplates'
 
 @Injectable()
 export class NotificationsService {
