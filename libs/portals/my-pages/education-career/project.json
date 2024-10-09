@@ -1,0 +1,22 @@
+{
+  "name": "portals-my-pages-education-career",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/my-pages/education-career/src",
+  "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/portals/my-pages/education-career/jest.config.ts"
+      },
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/portals/my-pages/education-career"
+      ]
+    }
+  }
+}

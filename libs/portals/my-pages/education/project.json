@@ -1,0 +1,57 @@
+{
+  "name": "portals-my-pages-education",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/my-pages/education/src",
+  "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/portals/my-pages/education/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/portals/my-pages/education"]
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/my-pages/education/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+      }
+    },
+    "init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn schemas",
+          "yarn nx run services-user-profile:dev-services",
+          "yarn nx run services-search-indexer:dev-services",
+          "npx nx run services-user-profile:migrate"
+        ],
+        "parallel": false
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "kubectl port-forward svc/socat-xroad 8081:80 -n socat &",
+          "yarn start api &",
+          "yarn start services-user-profile &",
+          "yarn start service-portal &"
+        ],
+        "parallel": true
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/my-pages/education/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/portals/my-pages/education/codegen.yml"
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "portals-my-pages-finance",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/my-pages/finance/src",
+  "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/portals/my-pages/finance/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/portals/my-pages/finance"]
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/my-pages/finance/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/my-pages/finance/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/portals/my-pages/finance/codegen.yml"
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+schema:
+  - apps/api/src/api.graphql
+documents:
+  - libs/portals/my-pages/health/src/**/*.graphql
+generates:
+  libs/portals/my-pages/health/src/:
+    preset: 'near-operation-file'
+    presetConfig:
+      baseTypesPath: '~@island.is/api/schema'
+    config:
+      scalars:
+        DateTime: string
+    plugins:
+      - typescript-operations
+      - typescript-react-apollo
+hooks:
+  afterAllFileWrite:
+    - prettier --write
