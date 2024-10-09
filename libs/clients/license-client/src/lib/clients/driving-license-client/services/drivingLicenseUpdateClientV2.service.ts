@@ -26,6 +26,8 @@ import { validate } from 'class-validator'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'driving-license-service'
 
+const apiVersion = 'v2'
+
 @Injectable()
 export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
   constructor(
@@ -59,7 +61,7 @@ export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
       },
       requestId,
       undefined,
-      'v2',
+      apiVersion,
     )
   }
 
@@ -140,7 +142,12 @@ export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
         : undefined,
     }
 
-    return this.passService.updatePkPass(payload, requestId, undefined, 'v2')
+    return this.passService.updatePkPass(
+      payload,
+      requestId,
+      undefined,
+      apiVersion,
+    )
   }
 
   revoke(
@@ -156,7 +163,7 @@ export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
       payload,
       requestId,
       undefined,
-      'v2',
+      apiVersion,
     )
   }
 
@@ -221,7 +228,7 @@ export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
     const verifyRes = await this.passService.verifyPkPass(
       { code, date },
       requestId,
-      'v2',
+      apiVersion,
     )
 
     if (!verifyRes.ok) {
