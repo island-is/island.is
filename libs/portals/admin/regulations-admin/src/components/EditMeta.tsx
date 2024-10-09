@@ -40,7 +40,7 @@ export const EditMeta = () => {
       updateState('idealPublishDate', defaultPublishDate)
       setHasSetDate(true)
     }
-  }, [draft.effectiveDate.value, draft.idealPublishDate.value])
+  }, [draft.effectiveDate.value, draft.idealPublishDate.value, setHasSetDate])
 
   const type = draft.type
   const typeName =
@@ -162,7 +162,7 @@ export const EditMeta = () => {
           <Column width="content">
             <Box marginBottom={3}>
               <AlertMessage
-                message="Valinn gildistökudagur er á undan útgáfudegi. Almennt er miðað við að reglugerð öðlist gildi eftir birtingu."
+                message={t(msg.publishEffectiveWarning)}
                 type="default"
               />
             </Box>
