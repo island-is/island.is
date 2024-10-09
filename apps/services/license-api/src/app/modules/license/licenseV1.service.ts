@@ -17,7 +17,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 import { isJSON, isJWT } from 'class-validator'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 import {
   RevokeLicenseRequest,
   RevokeLicenseResponse,
@@ -70,83 +70,70 @@ export class LicenseServiceV1 {
 
   private generateRequestId = () => uuid()
 
-  private async getClientByLicenseId(
-    licenseId: LicenseId,
+  private async getClient(
+    identifier: LicenseId | string,
+    type: 'licenseId' | 'passTemplateId',
     requestId?: string,
   ): Promise<BaseLicenseUpdateClient> {
-    const type = mapLicenseIdToLicenseType(licenseId)
+    let service: BaseLicenseUpdateClient | null
+    let extraLoggerProperties: any
 
-    this.logger.debug('Retrieving a licence client by license id', {
-      category: LOG_CATEGORY,
-      requestId: requestId,
-      type: type,
-    })
+    if (type === 'licenseId') {
+      const type = mapLicenseIdToLicenseType(identifier as LicenseId)
 
-    if (!type) {
-      this.logger.error(`Invalid license type`, {
+      if (!type) {
+        this.logger.error(`Invalid license type`, {
+          category: LOG_CATEGORY,
+          requestId: requestId,
+          type,
+        })
+        throw new BadRequestException(`Invalid license type`)
+      }
+      this.logger.debug('Retrieving a licence client by license id', {
         category: LOG_CATEGORY,
         requestId: requestId,
         type,
       })
-      throw new InternalServerErrorException(`Invalid license type`)
+
+      extraLoggerProperties = {
+        type: type,
+      }
+
+      service = await this.getLicenseUpdateClientByType(type, requestId)
+    } else {
+      this.logger.debug('Retrieving a licence client by pass template id', {
+        category: LOG_CATEGORY,
+        requestId: requestId,
+        passTemplateId: identifier,
+      })
+
+      extraLoggerProperties = {
+        passTemplateId: identifier,
+      }
+
+      service = await this.getLicenseUpdateClientByPassTemplateId(
+        identifier,
+        requestId,
+      )
     }
-
-    const service = await this.getLicenseUpdateClientByType(
-      type as LicenseType,
-      requestId,
-    )
-
     this.logger.debug('Injecting the proper license client..', {
       category: LOG_CATEGORY,
       requestId: requestId,
-      type: type,
+      ...extraLoggerProperties,
     })
 
     if (!service) {
       this.logger.error(`Client service generation failed`, {
         category: LOG_CATEGORY,
-        type,
+        ...extraLoggerProperties,
       })
       throw new InternalServerErrorException(`Client service generation failed`)
     }
     this.logger.debug('Client injection successful', {
       category: LOG_CATEGORY,
       requestId: requestId,
-      type: type,
+      ...extraLoggerProperties,
     })
-
-    return service
-  }
-
-  private async getClientByPassTemplateId(
-    passTemplateId: string,
-    requestId?: string,
-  ): Promise<BaseLicenseUpdateClient> {
-    this.logger.debug('Retrieving a licence client by pass template id', {
-      category: LOG_CATEGORY,
-      requestId: requestId,
-      passTemplateId,
-    })
-
-    const service = await this.getLicenseUpdateClientByPassTemplateId(
-      passTemplateId,
-      requestId,
-    )
-
-    this.logger.debug('Injecting the proper license client..', {
-      category: LOG_CATEGORY,
-      requestId: requestId,
-      passTemplateId,
-    })
-
-    if (!service) {
-      this.logger.error(`Client service generation failed`, {
-        category: LOG_CATEGORY,
-        requestId: requestId,
-        passTemplateId,
-      })
-      throw new InternalServerErrorException(`Client service generation failed`)
-    }
 
     return service
   }
@@ -219,7 +206,7 @@ export class LicenseServiceV1 {
   ): Promise<UpdateLicenseResponse> {
     const requestId = inputData.requestId ?? this.generateRequestId()
 
-    const service = await this.getClientByLicenseId(licenseId, requestId)
+    const service = await this.getClient(licenseId, 'licenseId', requestId)
 
     this.logger.debug('License update initiated', {
       category: LOG_CATEGORY,
@@ -284,7 +271,7 @@ export class LicenseServiceV1 {
     inputData?: RevokeLicenseRequest,
   ): Promise<RevokeLicenseResponse> {
     const requestId = inputData?.requestId ?? this.generateRequestId()
-    const service = await this.getClientByLicenseId(licenseId, requestId)
+    const service = await this.getClient(licenseId, 'licenseId', requestId)
 
     const revokeRes = await service.revoke(nationalId, requestId)
 
@@ -385,7 +372,11 @@ export class LicenseServiceV1 {
       throw this.getException('BadRequest', 'Missing pass template id')
     }
 
-    const service = await this.getClientByPassTemplateId(passTemplateId)
+    const service = await this.getClient(
+      passTemplateId,
+      'passTemplateId',
+      requestId,
+    )
 
     const verifyRes = await service.verify(inputData.barcodeData, requestId)
 

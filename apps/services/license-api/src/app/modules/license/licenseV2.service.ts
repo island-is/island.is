@@ -19,7 +19,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 import { isJSON, isJWT } from 'class-validator'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 import {
   RevokeLicenseRequest,
   RevokeLicenseResponse,

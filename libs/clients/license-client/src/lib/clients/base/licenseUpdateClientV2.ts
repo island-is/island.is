@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common'
 import {
   PassData,
   PassDataInput,
@@ -7,7 +6,6 @@ import {
   Result,
 } from '../../licenseClient.type'
 
-@Injectable()
 export abstract class BaseLicenseUpdateClientV2 {
   abstract pushUpdate(
     inputData: PassDataInput,
