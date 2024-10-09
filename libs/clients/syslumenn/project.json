@@ -28,7 +28,7 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/syslumenn/gen/fetch -i libs/clients/syslumenn/src/clientConfig.json"
+        "command": "yarn openapi-generator-v2 -o libs/clients/syslumenn/gen/fetch -i libs/clients/syslumenn/src/clientConfig.json"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
