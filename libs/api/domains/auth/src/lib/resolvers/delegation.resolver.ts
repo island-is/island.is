@@ -128,6 +128,17 @@ export class DelegationResolver {
     )
   }
 
+  @ResolveField('createdBy', () => Identity, { nullable: true })
+  async resolveCreatedBy(
+    @Parent() delegation: DelegationDTO,
+  ): Promise<Identity | null> {
+    if (!delegation.createdByNationalId) {
+      return null
+    }
+
+    return this.identityService.getIdentity(delegation.createdByNationalId)
+  }
+
   @ResolveField('validTo', () => Date, { nullable: true })
   resolveValidTo(@Parent() delegation: DelegationDTO): Date | undefined {
     if (!delegation.validTo) {

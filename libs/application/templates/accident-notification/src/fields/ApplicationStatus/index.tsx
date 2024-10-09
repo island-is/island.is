@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client'
 import { AccidentNotificationStatus } from '@island.is/api/schema'
-import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps, FormValue } from '@island.is/application/types'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import {
@@ -11,30 +10,25 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC, useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { AccidentNotificationAnswers } from '../..'
 import { getAccidentStatusQuery } from '../../hooks/useLazyStatusOfNotification'
 import { inReview } from '../../lib/messages'
 import { ReviewApprovalEnum, SubmittedApplicationData } from '../../types'
 import {
   getErrorMessageForMissingDocuments,
-  hasReceivedAllDocuments,
-  isInjuredAndRepresentativeOfCompanyOrInstitute,
-  shouldRequestReview,
   isUniqueAssignee,
 } from '../../utils'
-import { hasReceivedConfirmation } from '../../utils/hasReceivedConfirmation'
 import { StatusStep } from './StatusStep'
-import {
-  AccidentNotificationStatusEnum,
-  ApplicationStatusProps,
-  Steps,
-} from './StatusStep/types'
+import { ApplicationStatusProps } from './StatusStep/types'
+import { getStatusAndApproval, getSteps } from './applicationStatusUtils'
 
-export const ApplicationStatus: FC<
-  React.PropsWithChildren<ApplicationStatusProps & FieldBaseProps>
-> = ({ goToScreen, application, refetch, field }) => {
+export const ApplicationStatus = ({
+  goToScreen,
+  application,
+  refetch,
+  field,
+}: ApplicationStatusProps & FieldBaseProps) => {
   const isAssignee = field?.props?.isAssignee || false
   const subAppData = application.externalData
     .submitApplication as SubmittedApplicationData
@@ -68,16 +62,8 @@ export const ApplicationStatus: FC<
     if (goToScreen) goToScreen(screen)
   }
 
-  const currentAccidentStatus = getValueViaPath(
-    answers,
-    'accidentStatus',
-  ) as AccidentNotificationStatus
-
-  const reviewApproval = getValueViaPath(
-    answers,
-    'reviewApproval',
-    ReviewApprovalEnum.NOTREVIEWED,
-  ) as ReviewApprovalEnum
+  const { currentAccidentStatus, reviewApproval } =
+    getStatusAndApproval(answers)
 
   const hasAccidentStatusChanged = useCallback(
     (
@@ -163,7 +149,7 @@ export const ApplicationStatus: FC<
     }
   }, [data, assignValueToAnswersAndRefetch])
 
-  if (loadingData || loading || !currentAccidentStatus) {
+  if (loadingData || loading) {
     return (
       <>
         <SkeletonLoader height={120} />
@@ -173,113 +159,20 @@ export const ApplicationStatus: FC<
   }
 
   // Todo add sentry log and design
-  if (error) {
+  if (error || !currentAccidentStatus) {
     return (
       <Text>Ekki tókst að sækja stöðu umsóknar, eitthvað fór úrskeiðis.</Text>
     )
   }
 
-  const tagMapperApplicationStatus = {
-    [AccidentNotificationStatusEnum.ACCEPTED]: {
-      variant: 'blue',
-      text: inReview.tags.received,
-    },
-    [AccidentNotificationStatusEnum.REFUSED]: {
-      variant: 'blue',
-      text: inReview.tags.received,
-    },
-    [AccidentNotificationStatusEnum.INPROGRESS]: {
-      variant: 'purple',
-      text: inReview.tags.pending,
-    },
-    [AccidentNotificationStatusEnum.INPROGRESSWAITINGFORDOCUMENT]: {
-      variant: 'purple',
-      text: inReview.tags.pending,
-    },
-  }
-
-  const hasReviewerSubmitted = hasReceivedConfirmation(answers)
-
-  const steps = [
-    {
-      tagText: formatMessage(inReview.tags.received),
-      tagVariant: 'blue',
-      title: formatMessage(inReview.application.title),
-      description: formatMessage(inReview.application.summary),
-      hasActionMessage: false,
-    },
-    {
-      tagText: hasReceivedAllDocuments(answers)
-        ? formatMessage(inReview.tags.received)
-        : formatMessage(inReview.tags.missing),
-      tagVariant: hasReceivedAllDocuments(answers) ? 'blue' : 'rose',
-      title: formatMessage(inReview.documents.title),
-      description: formatMessage(inReview.documents.summary),
-      hasActionMessage: errorMessage.length > 0,
-      action: {
-        cta: () => {
-          changeScreens('addAttachmentScreen')
-        },
-        title: formatMessage(inReview.action.documents.title),
-        description: formatMessage(inReview.action.documents.description),
-        fileNames: errorMessage, // We need to get this from first form
-        actionButtonTitle: formatMessage(
-          inReview.action.documents.actionButtonTitle,
-        ),
-        hasActionButtonIcon: true,
-        showAlways: true,
-      },
-    },
-    // If this was a home activity accident than we don't want the user to see this step
-    {
-      tagText: hasReviewerSubmitted
-        ? formatMessage(inReview.tags.received)
-        : formatMessage(inReview.tags.missing),
-      tagVariant: hasReviewerSubmitted ? 'blue' : 'rose',
-      title: formatMessage(
-        hasReviewerSubmitted
-          ? inReview.representative.titleDone
-          : inReview.representative.title,
-      ),
-      description: formatMessage(
-        hasReviewerSubmitted
-          ? inReview.representative.summaryDone
-          : inReview.representative.summary,
-      ),
-      hasActionMessage: isAssignee && !hasReviewerSubmitted,
-      action:
-        isAssignee && !hasReviewerSubmitted
-          ? {
-              cta: () => changeScreens('inReviewOverviewScreen'),
-              title: formatMessage(inReview.action.representative.title),
-              description: formatMessage(
-                inReview.action.representative.description,
-              ),
-              actionButtonTitle: formatMessage(
-                inReview.action.representative.actionButtonTitle,
-              ),
-            }
-          : undefined,
-      visible: !(
-        !shouldRequestReview(
-          application.answers as AccidentNotificationAnswers,
-        ) || isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
-      ),
-    },
-    {
-      tagText: formatMessage(
-        tagMapperApplicationStatus[currentAccidentStatus.status].text,
-      ),
-      tagVariant:
-        tagMapperApplicationStatus[currentAccidentStatus.status].variant,
-      title: formatMessage(inReview.sjukratrygging.title),
-      description:
-        hasReviewerSubmitted && hasReceivedAllDocuments(answers)
-          ? formatMessage(inReview.sjukratrygging.summaryDone)
-          : formatMessage(inReview.sjukratrygging.summary),
-      hasActionMessage: false,
-    },
-  ] as Steps[]
+  const steps = getSteps(
+    formatMessage,
+    answers,
+    changeScreens,
+    errorMessage,
+    isAssignee,
+    currentAccidentStatus,
+  )
 
   return (
     <Box marginBottom={10}>

@@ -16,6 +16,7 @@ export const ApplicantReview: Form = buildForm({
     inReviewOverviewSection(),
   ],
 })
+
 export const AssigneeReview: Form = buildForm({
   id: 'assigneeReviewForm',
   title: inReview.general.formTitle,

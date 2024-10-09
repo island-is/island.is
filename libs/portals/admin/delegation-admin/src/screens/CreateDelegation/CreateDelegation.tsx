@@ -44,6 +44,7 @@ import { maskString, unmaskString } from '@island.is/shared/utils'
 import { useAuth } from '@island.is/auth/react'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { FORM_ERRORS } from '../../constants/errors'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
@@ -60,7 +61,7 @@ const CreateDelegationScreen = () => {
   const [isConfirmed, setIsConfirmed] = React.useState(false)
   const [fromNationalId, setFromNationalId] = React.useState('')
   const [toNationalId, setToNationalId] = React.useState('')
-
+  const [loading, setLoading] = React.useState(false)
   const fromInputRef = React.useRef<HTMLInputElement>(null)
   const toInputRef = React.useRef<HTMLInputElement>(null)
   const formRef = React.useRef<HTMLFormElement>(null)
@@ -70,8 +71,8 @@ const CreateDelegationScreen = () => {
 
   const typeOptions = [
     {
-      label: formatMessage(m.typeGeneral),
-      value: 'general', // Todo: change to correct enum value, yet to be created
+      label: formatMessage(m.generalMandateLabel),
+      value: AuthDelegationType.GeneralMandate,
     },
   ]
 
@@ -82,6 +83,8 @@ const CreateDelegationScreen = () => {
         userInfo?.profile.nationalId ?? '',
       )
       successToast()
+      setLoading(false)
+      setShowConfirmModal(false)
       navigate(
         replaceParams({
           href: DelegationAdminPaths.DelegationAdmin,
@@ -105,7 +108,9 @@ const CreateDelegationScreen = () => {
       setIsConfirmed(true)
       setShowConfirmModal(true)
     } else {
+      setLoading(false)
       setIsConfirmed(false)
+      setShowConfirmModal(false)
     }
   }, [actionData])
 
@@ -408,15 +413,16 @@ const CreateDelegationScreen = () => {
                   title=""
                   message={
                     // if problem title is object extract code and use it as key
-                    actionData?.problem?.title
+                    FORM_ERRORS[
+                      actionData?.problem?.title as keyof typeof FORM_ERRORS
+                    ]
                       ? formatMessage(
                           FORM_ERRORS[
                             actionData?.problem
                               ?.title as keyof typeof FORM_ERRORS
                           ],
                         )
-                      : actionData?.problem?.detail ||
-                        formatMessage(m.errorDefault)
+                      : formatMessage(m.errorDefault)
                   }
                   type="error"
                 />
@@ -431,13 +437,14 @@ const CreateDelegationScreen = () => {
         toIdentity={toIdentity}
         data={actionData?.data}
         isVisible={showConfirmModal}
+        loading={loading}
         onClose={() => {
           setIsConfirmed(false)
           setShowConfirmModal(false)
         }}
         onConfirm={() => {
           submit(formRef.current)
-          setShowConfirmModal(false)
+          setLoading(true)
         }}
       />
     </Stack>
