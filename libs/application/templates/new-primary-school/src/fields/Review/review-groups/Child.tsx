@@ -83,11 +83,11 @@ export const Child = ({
                 />
               </GridColumn>
             </GridRow>
-            {(childInfo.preferredName ||
+            {(childInfo.preferredName?.trim().length > 0 ||
               childInfo.pronouns?.length > 0 ||
               differentPlaceOfResidence === YES) && (
               <GridRow rowGap={2}>
-                {childInfo.preferredName && (
+                {childInfo.preferredName?.trim().length > 0 && (
                   <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                     <DataValue
                       label={formatMessage(
