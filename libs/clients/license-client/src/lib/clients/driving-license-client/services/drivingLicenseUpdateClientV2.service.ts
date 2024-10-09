@@ -8,7 +8,6 @@ import {
   PassRevocationData,
   PassVerificationData,
   Result,
-  VerifyInputData,
 } from '../../../licenseClient.type'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import {
@@ -49,7 +48,7 @@ export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
     //small check that nationalId doesnt' already exist
     if (
       inputFieldValues &&
-      !inputFieldValues?.some((nt) => nt.identifier === nationalIdIndex)
+      !inputFieldValues?.some((nt) => nt.identifier === 'kennitala')
     ) {
       inputFieldValues.push(mapNationalId(nationalId))
     }
