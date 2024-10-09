@@ -70,72 +70,95 @@ export class LicenseServiceV1 {
 
   private generateRequestId = () => uuid()
 
-  private async getClient(
-    identifier: LicenseId | string,
-    type: 'licenseId' | 'passTemplateId',
+  private getClientByLicenseType = async (
+    licenseId: LicenseId,
     requestId?: string,
-  ): Promise<BaseLicenseUpdateClient> {
-    let service: BaseLicenseUpdateClient | null
-    let extraLoggerProperties: any
+  ) => {
+    const type = mapLicenseIdToLicenseType(licenseId)
 
-    if (type === 'licenseId') {
-      const type = mapLicenseIdToLicenseType(identifier as LicenseId)
-
-      if (!type) {
-        this.logger.error(`Invalid license type`, {
-          category: LOG_CATEGORY,
-          requestId: requestId,
-          type,
-        })
-        throw new BadRequestException(`Invalid license type`)
-      }
-      this.logger.debug('Retrieving a licence client by license id', {
+    if (!type) {
+      this.logger.error(`Invalid license type`, {
         category: LOG_CATEGORY,
         requestId: requestId,
         type,
       })
-
-      extraLoggerProperties = {
-        type: type,
-      }
-
-      service = await this.getLicenseUpdateClientByType(type, requestId)
-    } else {
-      this.logger.debug('Retrieving a licence client by pass template id', {
-        category: LOG_CATEGORY,
-        requestId: requestId,
-        passTemplateId: identifier,
-      })
-
-      extraLoggerProperties = {
-        passTemplateId: identifier,
-      }
-
-      service = await this.getLicenseUpdateClientByPassTemplateId(
-        identifier,
-        requestId,
-      )
+      throw new BadRequestException(`Invalid license type`)
     }
+    this.logger.debug('Retrieving a licence client by license id', {
+      category: LOG_CATEGORY,
+      requestId: requestId,
+      type,
+    })
+
+    const service = await this.getLicenseUpdateClientByType(type, requestId)
+
     this.logger.debug('Injecting the proper license client..', {
       category: LOG_CATEGORY,
       requestId: requestId,
-      ...extraLoggerProperties,
+      type,
     })
 
     if (!service) {
       this.logger.error(`Client service generation failed`, {
         category: LOG_CATEGORY,
-        ...extraLoggerProperties,
+        type,
       })
       throw new InternalServerErrorException(`Client service generation failed`)
     }
     this.logger.debug('Client injection successful', {
       category: LOG_CATEGORY,
       requestId: requestId,
-      ...extraLoggerProperties,
+      type,
     })
 
     return service
+  }
+
+  private getClientByPassTemplateId = async (
+    passTemplateId: string,
+    requestId?: string,
+  ) => {
+    this.logger.debug('Retrieving a licence client by pass template id', {
+      category: LOG_CATEGORY,
+      requestId: requestId,
+      passTemplateId,
+    })
+
+    const service = await this.getLicenseUpdateClientByPassTemplateId(
+      passTemplateId,
+      requestId,
+    )
+
+    this.logger.debug('Injecting the proper license client..', {
+      category: LOG_CATEGORY,
+      requestId: requestId,
+      passTemplateId,
+    })
+
+    if (!service) {
+      this.logger.error(`Client service generation failed`, {
+        category: LOG_CATEGORY,
+        passTemplateId,
+      })
+      throw new InternalServerErrorException(`Client service generation failed`)
+    }
+    this.logger.debug('Client injection successful', {
+      category: LOG_CATEGORY,
+      requestId: requestId,
+      passTemplateId,
+    })
+
+    return service
+  }
+
+  private async getClient(
+    identifier: LicenseId | string,
+    type: 'licenseId' | 'passTemplateId',
+    requestId?: string,
+  ): Promise<BaseLicenseUpdateClient> {
+    return type === 'licenseId'
+      ? this.getClientByLicenseType(identifier as LicenseId, requestId)
+      : this.getClientByPassTemplateId(identifier, requestId)
   }
 
   private async pushUpdateLicense(
