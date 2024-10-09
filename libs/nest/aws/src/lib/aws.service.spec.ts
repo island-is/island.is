@@ -48,10 +48,10 @@ describe('AwsService', () => {
     mockGetObjectCommandWithBodyOnce(expectedResult)
 
     const getObjectResult = await awsService.getFile({ bucket: 'x', key: 'y' })
-    if (!getObjectResult) fail('getObjectResult was undefined')
+    expect(getObjectResult).toBeDefined()
 
     const contentResults = await getObjectResult.Body?.transformToString()
-    if (!contentResults) fail('raw transform result was undefined or empty')
+    expect(contentResults).toBeDefined()
 
     expect(contentResults).toStrictEqual(expectedResult)
   })
@@ -84,8 +84,7 @@ describe('AwsService', () => {
 
   it('should return a valid presigned url', async () => {
     const expectedResult = 'https://website.com'
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const getSignedUrlMock: jest.Mock = getSignedUrl as any
+    const getSignedUrlMock = getSignedUrl as jest.MockedFunction<typeof getSignedUrl>
     getSignedUrlMock.mockResolvedValue(expectedResult)
 
     const result = await awsService.getPresignedUrl(
@@ -97,27 +96,33 @@ describe('AwsService', () => {
   })
 
   it('should return true if the object exists in s3', async () => {
-    const expectedResult = true
     const metadata = { httpStatusCode: 200 }
     s3Mock.on(HeadObjectCommand).resolvesOnce({ $metadata: metadata })
 
     const result = await awsService.fileExists({ bucket: 'x', key: 'y' })
 
-    expect(result).toEqual(expectedResult)
+    expect(result).toEqual(true)
   })
 
   it.each([404, 403, 500])(
     'should return false if the object doesnt exist in s3',
     async (code) => {
-      const expectedResult = false
       const metadata = { httpStatusCode: code }
       s3Mock.on(HeadObjectCommand).resolvesOnce({ $metadata: metadata })
 
       const result = await awsService.fileExists({ bucket: 'x', key: 'y' })
 
-      expect(result).toEqual(expectedResult)
+      expect(result).toEqual(false)
     },
   )
+
+  it('should return false if the object doesnt exist in s3 and the error as no metadata', async () => {
+    s3Mock.on(HeadObjectCommand).resolvesOnce({})
+
+    const result = await awsService.fileExists({ bucket: 'x', key: 'y' })
+
+    expect(result).toEqual(false)
+  })
 
   it.each([200, 204])(
     'should resolve without error if file was deleted in s3',
@@ -141,7 +146,7 @@ describe('AwsService', () => {
 
       expect(loggerMock.error).toBeCalledTimes(1)
       expect(loggerMock.error).toBeCalledWith(
-        'Error occurred while deleteing file from S3',
+        'Error occurred while deleting file from S3',
         Error('Unexpected http response when deleting object from S3'),
       )
     },

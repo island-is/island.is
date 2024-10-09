@@ -38,7 +38,7 @@ export class AwsService {
   ): Promise<string | undefined> {
     const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
     const result = await this.getFileResponse(bucket, key)
-    return  await result?.Body?.transformToString(encoding)
+    return await result?.Body?.transformToString(encoding)
   }
 
   public async uploadFile(
@@ -108,24 +108,15 @@ export class AwsService {
       const exists = results.$metadata.httpStatusCode === 200
       return exists
     } catch (error) {
-      if (error.$metadata?.httpStatusCode === 404) {
-        // doesn't exist and permission policy includes s3:ListBucket
-        return false
-      } else if (error.$metadata?.httpStatusCode === 403) {
-        // doesn't exist, permission policy WITHOUT s3:ListBucket
-        return false
-      } else {
-        // some other error
         this.logger.error(
           'Error occurred while checking if file exists in S3',
           error,
         )
         return false
-      }
     }
   }
 
-  public async deleteObject(BucketKeyPairOrFilename: BucketKeyPair | string) {
+  public async deleteObject(BucketKeyPairOrFilename: BucketKeyPair | string): Promise<boolean> {
     try {
       const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
       const result = await this.s3Client.send(
@@ -141,8 +132,11 @@ export class AwsService {
       ) {
         throw new Error('Unexpected http response when deleting object from S3')
       }
+
+      return true
     } catch (error) {
-      this.logger.error('Error occurred while deleteing file from S3', error)
+      this.logger.error('Error occurred while deleting file from S3', error)
+      return false
     }
   }
 
@@ -150,9 +144,16 @@ export class AwsService {
     bucket: string
     key: string
   } {
-    return typeof BucketKeyPairOrFilename === 'object'
-      ? BucketKeyPairOrFilename
-      : AmazonS3URI(BucketKeyPairOrFilename)
+    if(typeof BucketKeyPairOrFilename === 'object') {
+      return BucketKeyPairOrFilename
+    } else {
+      try {
+        return AmazonS3URI(BucketKeyPairOrFilename)
+      } catch (error) {
+        this.logger.error('Invalid S3 URI provided', error)
+        throw new Error('Invalid S3 URI provided')
+      }
+    }
   }
 
   private async getFileResponse(
