@@ -18,15 +18,21 @@ export class LicenseService {
     private readonly serviceV2: LicenseServiceV2,
   ) {}
 
+  private readonly serviceMap = {
+    [LicenseApiVersion.v1]: this.serviceV1,
+    [LicenseApiVersion.v2]: this.serviceV2,
+  }
+
+  private getService = (apiVersion?: LicenseApiVersion) =>
+    apiVersion ? this.serviceMap[apiVersion] : this.serviceV1
+
   async updateLicense(
     licenseId: LicenseId,
     nationalId: string,
     inputData: UpdateLicenseRequest,
   ): Promise<UpdateLicenseResponse> {
-    if (inputData.apiVersion === LicenseApiVersion.v2) {
-      return this.serviceV2.updateLicense(licenseId, nationalId, inputData)
-    }
-    return this.serviceV1.updateLicense(licenseId, nationalId, inputData)
+    const service = this.getService(inputData.apiVersion)
+    return service.updateLicense(licenseId, nationalId, inputData)
   }
 
   async revokeLicense(
@@ -34,18 +40,14 @@ export class LicenseService {
     nationalId: string,
     inputData?: RevokeLicenseRequest,
   ): Promise<RevokeLicenseResponse> {
-    if (inputData?.apiVersion === LicenseApiVersion.v2) {
-      return this.serviceV2.revokeLicense(licenseId, nationalId, inputData)
-    }
-    return this.serviceV1.revokeLicense(licenseId, nationalId, inputData)
+    const service = this.getService(inputData?.apiVersion)
+    return service.revokeLicense(licenseId, nationalId, inputData)
   }
 
   async verifyLicense(
     inputData: VerifyLicenseRequest,
   ): Promise<VerifyLicenseResponse> {
-    if (inputData?.apiVersion === LicenseApiVersion.v2) {
-      return this.serviceV2.verifyLicense(inputData)
-    }
-    return this.serviceV1.verifyLicense(inputData)
+    const service = this.getService(inputData?.apiVersion)
+    return service.verifyLicense(inputData)
   }
 }
