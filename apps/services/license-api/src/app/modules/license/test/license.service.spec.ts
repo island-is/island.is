@@ -3,6 +3,9 @@ import {
   BaseLicenseUpdateClientV2,
   LicenseType,
   LicenseUpdateClientService,
+  PassData,
+  PassDataInput as PassDataInputV2,
+  PassRevocationData,
 } from '@island.is/clients/license-client'
 import {
   Pass,
@@ -38,6 +41,7 @@ import { BARCODE_EXPIRE_TIME_IN_SEC } from '@island.is/services/license'
 import { VerifyInputData } from '../dto/verifyLicense.input'
 import { LicenseService } from '../license.service'
 import {
+  LicenseApiVersion,
   LicenseId,
   LicenseUpdateType,
   PASS_TEMPLATE_IDS,
@@ -45,10 +49,12 @@ import {
 import { SmartSolutionsService } from '@island.is/clients/smart-solutions-v2'
 import { LicenseServiceV1 } from '../licenseV1.service'
 import { LicenseServiceV2 } from '../licenseV2.service'
+import { PassVerificationData } from 'libs/clients/license-client/src/lib/licenseClient.type'
 
 const { randomUUID } = new ShortUniqueId({ length: 16 })
 const cacheStore = new Map<string, unknown>()
 const licenseIds = Object.values(LicenseId)
+const versions = Object.values(LicenseApiVersion)
 
 const createCacheData = (licenseId: LicenseId): BarcodeData<LicenseType> => ({
   nationalId: faker.datatype.number({ min: 10, max: 10 }).toString(),
@@ -467,232 +473,253 @@ describe('LicenseService', () => {
     barcodeService = moduleRef.get<BarcodeService>(BarcodeService)
   })
 
-  describe.each(licenseIds)('given %s license type id', (licenseId) => {
-    describe('verify', () => {
-      it(`should verify the ${licenseId} license`, async () => {
-        //act
-        const result = await licenseService.verifyLicense({
-          barcodeData: JSON.stringify({
-            passTemplateId: licenseId.toString(),
-            passTemplateName: licenseId.toString(),
-            code: 'success',
-            date: '2022-06-28T15:42:11.665950Z',
-          }),
+  describe.each(versions)('given version %s', (version) => {
+    describe.each(licenseIds)('given %s license type id', (licenseId) => {
+      describe('verify', () => {
+        it(`should verify the ${licenseId} license in api version ${version}`, async () => {
+          //act
+          const result = await licenseService.verifyLicense({
+            barcodeData: JSON.stringify({
+              passTemplateId: licenseId.toString(),
+              passTemplateName: licenseId.toString(),
+              code: 'success',
+              date: '2022-06-28T15:42:11.665950Z',
+              apiVersion: version,
+            }),
+          })
+
+          //assert
+          expect(result).toMatchObject({
+            valid: true,
+          })
         })
 
-        //assert
-        expect(result).toMatchObject({
-          valid: true,
+        it(`should verify barcodeData as token for the ${licenseId} license`, async () => {
+          // Act
+          const code = randomUUID()
+          const data =
+            licenseId === LicenseId.DRIVING_LICENSE
+              ? createCacheData(licenseId)
+              : undefined
+
+          // Create token
+          const token = await barcodeService.createToken({
+            v: '1',
+            t: getLicenseType(licenseId),
+            c: code,
+          })
+
+          if (data) {
+            // Put data in cache
+            await barcodeService.setCache(code, data)
+          }
+
+          const result = await licenseService.verifyLicense({
+            barcodeData: token.token,
+          })
+
+          // Assert
+          // Only driver's license is able to get extra data from the token for now
+          if (licenseId !== LicenseId.DRIVING_LICENSE) {
+            expect(result).toMatchObject({
+              valid: false,
+            })
+          } else {
+            expect(result).toMatchObject({
+              valid: true,
+              passIdentity: {
+                nationalId: data?.nationalId,
+                name: data?.extraData?.name,
+              },
+            })
+          }
         })
-      })
 
-      it(`should verify barcodeData as token for the ${licenseId} license`, async () => {
-        // Act
-        const code = randomUUID()
-        const data =
-          licenseId === LicenseId.DRIVING_LICENSE
-            ? createCacheData(licenseId)
-            : undefined
+        it(`should fail to verify barcodeData token because of token expire time for the ${licenseId} license`, async () => {
+          jest.useFakeTimers({
+            advanceTimers: true,
+          })
 
-        // Create token
-        const token = await barcodeService.createToken({
-          v: '1',
-          t: getLicenseType(licenseId),
-          c: code,
-        })
+          // Act
+          const code = randomUUID()
+          const data = createCacheData(licenseId)
 
-        if (data) {
+          // Create token
+          const token = await barcodeService.createToken({
+            v: '1',
+            t: getLicenseType(licenseId),
+            c: code,
+          })
+
           // Put data in cache
           await barcodeService.setCache(code, data)
-        }
 
-        const result = await licenseService.verifyLicense({
-          barcodeData: token.token,
+          // Let the token expire
+          jest.advanceTimersByTime(BARCODE_EXPIRE_TIME_IN_SEC * 1000)
+
+          // Assert
+          const result = await licenseService.verifyLicense({
+            barcodeData: token.token,
+          })
+
+          expect(result).toEqual({
+            valid: false,
+          })
         })
 
-        // Assert
-        // Only driver's license is able to get extra data from the token for now
-        if (licenseId !== LicenseId.DRIVING_LICENSE) {
+        it(`should fail to verify the ${licenseId}  license in apiversion ${version}`, async () => {
+          //act
+          const result = await licenseService.verifyLicense({
+            barcodeData: JSON.stringify({
+              passTemplateId: licenseId.toString(),
+              passTemplateName: licenseId.toString(),
+              code: 'failure',
+              date: '2022-06-28T15:42:11.665950Z',
+              apiVersion: version,
+            }),
+          })
+
+          //assert
           expect(result).toMatchObject({
             valid: false,
           })
-        } else {
-          expect(result).toMatchObject({
-            valid: true,
-            passIdentity: {
-              nationalId: data?.nationalId,
-              name: data?.extraData?.name,
-            },
-          })
-        }
-      })
-
-      it(`should fail to verify barcodeData token because of token expire time for the ${licenseId} license`, async () => {
-        jest.useFakeTimers({
-          advanceTimers: true,
         })
-
-        // Act
-        const code = randomUUID()
-        const data = createCacheData(licenseId)
-
-        // Create token
-        const token = await barcodeService.createToken({
-          v: '1',
-          t: getLicenseType(licenseId),
-          c: code,
-        })
-
-        // Put data in cache
-        await barcodeService.setCache(code, data)
-
-        // Let the token expire
-        jest.advanceTimersByTime(BARCODE_EXPIRE_TIME_IN_SEC * 1000)
-
-        // Assert
-        const result = await licenseService.verifyLicense({
-          barcodeData: token.token,
-        })
-
-        expect(result).toEqual({
-          valid: false,
-        })
-      })
-
-      it(`should fail to verify the ${licenseId}  license`, async () => {
-        //act
-        const result = await licenseService.verifyLicense({
-          barcodeData: JSON.stringify({
-            passTemplateId: licenseId.toString(),
-            passTemplateName: licenseId.toString(),
-            code: 'failure',
-            date: '2022-06-28T15:42:11.665950Z',
-          }),
-        })
-
-        //assert
-        expect(result).toMatchObject({
-          valid: false,
-        })
-      })
-      it(`should throw user error on bad input when trying to verify the ${licenseId} license`, async () => {
-        //act
-        const result = licenseService.verifyLicense({
-          barcodeData: JSON.stringify({
-            passTemplateId: licenseId.toString(),
-            passTemplateName: licenseId.toString(),
-            code: '',
-            date: '2022-06-28T15:42:11.665950Z',
-          }),
-        })
-
-        //assert
-        await expect(result).rejects.toThrow(
-          new BadRequestException(['Invalid input data']),
-        )
-      })
-
-      it(`should throw 500 error when client return an error with error code > 10 when trying to verify the ${licenseId} license`, async () => {
-        //act
-        const result = licenseService.verifyLicense({
-          barcodeData: JSON.stringify({
-            passTemplateId: licenseId.toString(),
-            passTemplateName: licenseId.toString(),
-            code: 'invalid',
-            date: '2022-06-28T15:42:11.665950Z',
-          }),
-        })
-
-        //assert
-        await expect(result).rejects.toThrow(
-          new InternalServerErrorException(['some service error']),
-        )
-      })
-    })
-    describe('revoke', () => {
-      it(`should to revoke the ${licenseId} license`, async () => {
-        //act
-        const result = await licenseService.revokeLicense(licenseId, 'success')
-
-        //assert
-        expect(result).toMatchObject({
-          revokeSuccess: true,
-        })
-      })
-      it(`should fail to revoke the ${licenseId}  license`, async () => {
-        //act
-        const result = await licenseService.revokeLicense(licenseId, 'failure')
-
-        //assert
-        expect(result).toMatchObject({
-          revokeSuccess: false,
-        })
-      })
-      it(`should throw user error on bad input when trying to revoke the ${licenseId} license`, async () => {
-        //act
-        const result = licenseService.revokeLicense(licenseId, '')
-
-        //assert
-        await expect(result).rejects.toThrow(
-          new BadRequestException(['some user error']),
-        )
-      })
-      it(`should throw server error when trying to revoke the ${licenseId} license with an invalid national id`, async () => {
-        //act
-        const result = licenseService.revokeLicense(licenseId, 'invalid')
-
-        //assert
-        await expect(result).rejects.toThrow(
-          new InternalServerErrorException(['some service error']),
-        )
-      })
-    })
-
-    describe.each(Object.values(LicenseUpdateType))(
-      'update %s',
-      (licenseUpdateType) => {
-        it(`should ${licenseUpdateType}-update the ${licenseId} license`, async () => {
+        it(`should throw user error on bad input when trying to verify the ${licenseId} license using version ${version}`, async () => {
           //act
-          const result = await licenseService.updateLicense(
-            licenseId,
-            'success',
-            {
-              licenseUpdateType,
-              expiryDate: '2022-01-01T00:00:00Z',
-            },
-          )
-
-          //assert
-          expect(result).toMatchObject({
-            updateSuccess: true,
-            data: undefined,
-          })
-        })
-        it(`should throw user error on bad input when trying to ${licenseUpdateType}-update the ${licenseId} `, async () => {
-          //act
-          const result = licenseService.updateLicense(licenseId, '', {
-            licenseUpdateType,
-            expiryDate: '2022-01-01T00:00:00Z',
+          const result = licenseService.verifyLicense({
+            barcodeData: JSON.stringify({
+              passTemplateId: licenseId.toString(),
+              passTemplateName: licenseId.toString(),
+              code: '',
+              date: '2022-06-28T15:42:11.665950Z',
+              apiVersion: version,
+            }),
           })
 
           //assert
-          await expect(result).rejects.toThrowError(
-            new BadRequestException(['some user error']),
+          await expect(result).rejects.toThrow(
+            new BadRequestException(['Invalid input data']),
           )
         })
-        it(`should throw server error when trying to ${licenseUpdateType}-update the ${licenseId} with an invalid national id `, async () => {
+
+        it(`should throw 500 error when client return an error with error code > 10 when trying to verify the ${licenseId} license using version ${version}`, async () => {
           //act
-          const result = licenseService.updateLicense(licenseId, 'invalid', {
-            licenseUpdateType,
-            expiryDate: '2022-01-01T00:00:00Z',
+          const result = licenseService.verifyLicense({
+            barcodeData: JSON.stringify({
+              passTemplateId: licenseId.toString(),
+              passTemplateName: licenseId.toString(),
+              code: 'invalid',
+              date: '2022-06-28T15:42:11.665950Z',
+              apiVersion: version,
+            }),
           })
 
           //assert
-          await expect(result).rejects.toThrowError(
+          await expect(result).rejects.toThrow(
             new InternalServerErrorException(['some service error']),
           )
         })
-      },
-    )
+      })
+      describe('revoke', () => {
+        it(`should to revoke the ${licenseId} license using version ${version}`, async () => {
+          //act
+          const result = await licenseService.revokeLicense(
+            licenseId,
+            'success',
+            { apiVersion: version },
+          )
+
+          //assert
+          expect(result).toMatchObject({
+            revokeSuccess: true,
+          })
+        })
+        it(`should fail to revoke the ${licenseId} license using version ${version}`, async () => {
+          //act
+          const result = await licenseService.revokeLicense(
+            licenseId,
+            'failure',
+            { apiVersion: version },
+          )
+
+          //assert
+          expect(result).toMatchObject({
+            revokeSuccess: false,
+          })
+        })
+        it(`should throw user error on bad input when trying to revoke the ${licenseId} license using version ${version}`, async () => {
+          //act
+          const result = licenseService.revokeLicense(licenseId, '', {
+            apiVersion: version,
+          })
+
+          //assert
+          await expect(result).rejects.toThrow(
+            new BadRequestException(['some user error']),
+          )
+        })
+        it(`should throw server error when trying to revoke the ${licenseId} license with an invalid national id using version ${version}`, async () => {
+          //act
+          const result = licenseService.revokeLicense(licenseId, 'invalid', {
+            apiVersion: version,
+          })
+
+          //assert
+          await expect(result).rejects.toThrow(
+            new InternalServerErrorException(['some service error']),
+          )
+        })
+      })
+
+      describe.each(Object.values(LicenseUpdateType))(
+        'update %s',
+        (licenseUpdateType) => {
+          it(`should ${licenseUpdateType}-update the ${licenseId} license using version ${version}`, async () => {
+            //act
+            const result = await licenseService.updateLicense(
+              licenseId,
+              'success',
+              {
+                licenseUpdateType,
+                expiryDate: '2022-01-01T00:00:00Z',
+                apiVersion: version,
+              },
+            )
+
+            //assert
+            expect(result).toMatchObject({
+              updateSuccess: true,
+              data: undefined,
+            })
+          })
+          it(`should throw user error on bad input when trying to ${licenseUpdateType}-update the ${licenseId} using version ${version} `, async () => {
+            //act
+            const result = licenseService.updateLicense(licenseId, '', {
+              licenseUpdateType,
+              expiryDate: '2022-01-01T00:00:00Z',
+              apiVersion: version,
+            })
+
+            //assert
+            await expect(result).rejects.toThrowError(
+              new BadRequestException(['some user error']),
+            )
+          })
+          it(`should throw server error when trying to ${licenseUpdateType}-update the ${licenseId} with an invalid national id  using version ${version}`, async () => {
+            //act
+            const result = licenseService.updateLicense(licenseId, 'invalid', {
+              licenseUpdateType,
+              expiryDate: '2022-01-01T00:00:00Z',
+              apiVersion: version,
+            })
+
+            //assert
+            await expect(result).rejects.toThrowError(
+              new InternalServerErrorException(['some service error']),
+            )
+          })
+        },
+      )
+    })
   })
 })
