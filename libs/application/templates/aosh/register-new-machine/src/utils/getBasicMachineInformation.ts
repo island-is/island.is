@@ -7,7 +7,7 @@ import { NEW } from '../shared/types'
 export const getBasicMachineInformation = (
   answers: FormValue,
   formatMessage: FormatMessage,
-  lang: string,
+  lang: 'is' | 'en',
 ) => {
   const basicMachineInformation = getValueViaPath(
     answers,

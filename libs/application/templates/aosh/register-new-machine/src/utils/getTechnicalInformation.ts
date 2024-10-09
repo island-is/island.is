@@ -6,7 +6,7 @@ import { information } from '../lib/messages'
 export const getTechnicalInformation = (
   answers: FormValue,
   formatMessage: FormatMessage,
-  lang: string,
+  lang: 'is' | 'en',
 ) => {
   const techInfo = getValueViaPath(answers, 'techInfo', []) as TechInfo[]
 

@@ -21,7 +21,7 @@ export type FormFieldMapperType = {
   displayError: boolean
   watchTechInfoFields: any
   formatMessage: FormatMessage
-  lang: string
+  lang: 'is' | 'en'
 }
 
 export type CategoryType = {

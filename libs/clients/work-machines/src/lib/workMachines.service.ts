@@ -309,10 +309,9 @@ export class WorkMachinesClientService {
     auth: Auth,
     requestParameters: ApiMachineParentCategoriesTypeModelGetRequest,
   ): Promise<MachineParentCategoryDetailsDto[]> {
-    const stuff = await this.machineParentCategoriesApiWithAuth(
+    return await this.machineParentCategoriesApiWithAuth(
       auth,
     ).apiMachineParentCategoriesTypeModelGet(requestParameters)
-    return stuff
   }
 
   async getMachineParentCategories(
