@@ -123,16 +123,18 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
     }
   }, [localSubpoena, subpoenaStatus, subpoenaStatusError])
 
-  return !defendantName ? null : !subpoena && !subpoenaStatusLoading ? (
+  return !subpoena && !subpoenaStatusLoading ? (
     <Box marginBottom={2}>{renderError(formatMessage)}</Box>
   ) : subpoenaStatusLoading ? (
     <Box display="flex" justifyContent="center" paddingY={5}>
       <LoadingDots />
     </Box>
-  ) : (
+  ) : subpoena?.serviceStatus ? (
     <Box marginBottom={2}>
       <AlertMessage
-        title={`${title ? `${formatMessage(title)} - ` : ''}${defendantName}`}
+        title={`${title ? `${formatMessage(title)} - ` : ''}${
+          defendantName ? defendantName : ''
+        }`}
         message={
           <Box>
             {messages.map((msg) => (
@@ -150,7 +152,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
         }
       />
     </Box>
-  )
+  ) : null
 }
 
 export default ServiceAnnouncement
