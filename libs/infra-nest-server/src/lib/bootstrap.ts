@@ -127,6 +127,10 @@ export const bootstrap = async (
     })
   }
 
+  if (options.beforeServerStart) {
+    options.beforeServerStart(app)
+  }
+
   const serverPort = process.env.PORT
     ? parseInt(process.env.PORT, 10)
     : options.port ?? 3333

@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css'
+
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const districtsList = style({
@@ -17,4 +18,9 @@ export const districtsList = style({
       columnCount: 2,
     },
   }),
+})
+
+export const districtsListItem = style({
+  breakInside: 'avoid',
+  display: 'block',
 })

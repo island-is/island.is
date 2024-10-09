@@ -4,14 +4,13 @@ import {
   GroupedDraftImpactForms,
   RegDraftForm,
 } from '../state/types'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
 import compact from 'lodash/compact'
 import flatten from 'lodash/flatten'
 import uniq from 'lodash/uniq'
 import {
   allSameDay,
   extractArticleTitleDisplay,
+  formatDate,
   getTextWithSpaces,
   groupElementsByArticleTitleFromDiv,
   hasAnyChange,
@@ -50,18 +49,6 @@ const formatAffectedAndPlaceAffectedAtEnd = (
     }
 
     return ''
-  }
-
-  const formatDate = (date: Date) => {
-    const newDate = new Date(date)
-    if (newDate) {
-      const formattedDate = format(new Date(date), 'dd. MMMM yyyy', {
-        locale: is,
-      })
-      return formattedDate.replace(/^0+/, '') // Remove leading zeros
-    } else {
-      return ''
-    }
   }
 
   const extractArticleNumber = (str: string): number | null => {

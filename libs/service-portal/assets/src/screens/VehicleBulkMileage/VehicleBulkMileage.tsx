@@ -27,13 +27,12 @@ const VehicleBulkMileage = () => {
   const [vehicles, setVehicles] = useState<Array<VehicleType>>([])
   const [page, setPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
 
-  const { data, loading, error, fetchMore } = useVehiclesListQuery({
+  const { data, loading, error } = useVehiclesListQuery({
     variables: {
       input: {
         page,
-        pageSize,
+        pageSize: 10,
       },
     },
   })
@@ -111,6 +110,7 @@ const VehicleBulkMileage = () => {
               totalPages={totalPages}
               renderLink={(page, className, children) => (
                 <button
+                  aria-label={formatMessage(m.goToPage)}
                   onClick={() => {
                     setPage(page)
                   }}
