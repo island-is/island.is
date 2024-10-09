@@ -130,6 +130,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               icon={externalLinkIcon}
               iconStyle={{ tintColor: theme.color.dark300 }}
               style={{ flex: 1 }}
+              ellipsis
               onPress={() =>
                 openBrowser(
                   `${origin}minarsidur/heilsa/thjalfun/sjukrathjalfun`,
@@ -146,6 +147,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               icon={externalLinkIcon}
               iconStyle={{ tintColor: theme.color.dark300 }}
               style={{ flex: 1 }}
+              ellipsis
               onPress={() =>
                 openBrowser(
                   `${origin}minarsidur/heilsa/hjalpartaeki-og-naering`,
