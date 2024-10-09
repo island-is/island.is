@@ -98,7 +98,8 @@ export const m = defineMessages({
   },
   informationDescription: {
     id: 'mac.application:informationDescription',
-    defaultMessage: 'Beiðni um könnun hjónavígsluskilyrða mun ekki hljóta efnismeðeferð fyrr en hjónaefni hafa bæði veitt rafræna undirskrift. Vinsamlegast gangið því úr skugga um að símanúmer og netföng séu rétt rituð.',
+    defaultMessage:
+      'Beiðni um könnun hjónavígsluskilyrða mun ekki hljóta efnismeðeferð fyrr en hjónaefni hafa bæði veitt rafræna undirskrift. Vinsamlegast gangið því úr skugga um að símanúmer og netföng séu rétt rituð.',
     description: 'Information section title',
   },
   informationSectionTitle: {
