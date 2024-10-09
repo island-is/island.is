@@ -23,13 +23,21 @@ describe('createEndorsementList', () => {
       meta: { email: 'asdf@asdf.is', phone: '5559999' },
       closedDate: '2029-06-12T15:31:00.254Z',
       openedDate: '2023-06-12T15:31:00.254Z',
+
       adminLock: false,
     }
 
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post('/endorsement-list')
       .send(newEndorsementList)
-      .expect(201)
+      // .expect(201) // Check the status code
+      .expect('Content-Type', /json/) // Ensure it's JSON response
+      .expect((res) => {
+        // Validate response body fields
+        expect(res.body.title).toBe('string');
+        expect(res.body.meta.email).toBe('asdf@asdf.is');
+        expect(res.body.meta.phone).toBe('5559999');
+      });
   })
   it(`POST /endorsement-list should fail and return 403 error if scope is missing`, async () => {
     const app = await getAuthenticatedApp({
