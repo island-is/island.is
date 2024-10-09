@@ -11,7 +11,7 @@ interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
-function HealthDeclaration({ field, application }: PropTypes): JSX.Element {
+const HealthDeclaration = ({ field, application }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const props = field.props as { title?: string; label: string }
 

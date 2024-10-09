@@ -29,6 +29,7 @@ import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic
 import {
   EmailSignupModule,
   ZenterSignupConfig,
+  CampaignMonitorSignupConfig,
 } from '@island.is/api/domains/email-signup'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
@@ -188,7 +189,9 @@ import {
 } from '@island.is/clients/university-careers'
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
+import { LawAndOrderModule } from '@island.is/api/domains/law-and-order'
 import { UltravioletRadiationClientConfig } from '@island.is/clients/ultraviolet-radiation'
+import { JudicialSystemSPClientConfig } from '@island.is/clients/judicial-system-sp'
 import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
@@ -328,6 +331,7 @@ const environment = getConfig
     AuthAdminModule,
     HousingBenefitCalculatorModule,
     SignatureCollectionModule,
+    LawAndOrderModule,
     UmbodsmadurSkuldaraModule,
     HealthDirectorateModule,
     ConfigModule.forRoot({
@@ -387,6 +391,7 @@ const environment = getConfig
         DocumentClientConfig,
         DocumentsClientV2Config,
         ZenterSignupConfig,
+        CampaignMonitorSignupConfig,
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
@@ -419,11 +424,12 @@ const environment = getConfig
         LicenseConfig,
         UserProfileClientConfig,
         UltravioletRadiationClientConfig,
+        JudicialSystemSPClientConfig,
         FriggClientConfig,
         GradeClientConfig,
         VmstClientConfig,
-        HealthInsuranceV2ClientConfig,
         CriminalRecordClientConfig,
+        HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
         emailModuleConfig,
       ],

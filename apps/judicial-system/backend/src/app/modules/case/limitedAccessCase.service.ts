@@ -36,7 +36,9 @@ import {
   CaseFile,
   defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
 } from '../file'
+import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
+import { Subpoena } from '../subpoena'
 import { User } from '../user'
 import { Case } from './models/case.model'
 import { CaseString } from './models/caseString.model'
@@ -169,7 +171,23 @@ export const include: Includeable[] = [
   },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
-  { model: Defendant, as: 'defendants' },
+  {
+    model: Defendant,
+    as: 'defendants',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: Subpoena,
+        as: 'subpoenas',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+  { model: IndictmentCount, as: 'indictmentCounts' },
   { model: CivilClaimant, as: 'civilClaimants' },
   {
     model: CaseFile,
@@ -220,10 +238,40 @@ export const include: Includeable[] = [
     where: { stringType: { [Op.in]: stringTypes } },
   },
   { model: Case, as: 'mergeCase', attributes },
+  {
+    model: Case,
+    as: 'mergedCases',
+    where: { state: CaseState.COMPLETED },
+    include: [
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: {
+          state: { [Op.not]: CaseFileState.DELETED },
+          category: {
+            [Op.in]: [
+              CaseFileCategory.INDICTMENT,
+              CaseFileCategory.COURT_RECORD,
+              CaseFileCategory.CRIMINAL_RECORD,
+              CaseFileCategory.COST_BREAKDOWN,
+              CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+              CaseFileCategory.CASE_FILE,
+              CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIM,
+            ],
+          },
+        },
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
 ]
 
 export const order: OrderItem[] = [
-  [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
   [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
   [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
 ]

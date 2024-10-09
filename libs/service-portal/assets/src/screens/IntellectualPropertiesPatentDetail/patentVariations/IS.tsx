@@ -8,7 +8,6 @@ import {
 } from '@island.is/service-portal/core'
 import { IntellectualPropertiesPatentIs } from '@island.is/api/schema'
 import { Divider, Stack, Text } from '@island.is/island-ui/core'
-import { Problem } from '@island.is/react-spa/shared'
 import { ipMessages } from '../../../lib/messages'
 import { useMemo } from 'react'
 import Timeline from '../../../components/Timeline/Timeline'

@@ -120,26 +120,27 @@ export class SignatureCollectionClientService {
         )
       : collectionAreas
 
-    const lists = await this.getApiWithAuth(
-      this.listsApi,
+    const candidacy = await this.getApiWithAuth(
+      this.candidateApi,
       auth,
-    ).medmaelalistarAddListarPost({
-      medmaelalistiRequestDTO: {
+    ).frambodPost({
+      frambodRequestDTO: {
         sofnunID: parseInt(id),
         kennitala: owner.nationalId,
         simi: owner.phone,
         netfang: owner.email,
         medmaelalistar: filteredAreas.map((area) => ({
           svaediID: parseInt(area.id),
-          listiNafn: `${name} - ${area.name}`,
+          listiNafn: `${owner.name} - ${area.name}`,
         })),
       },
     })
-    if (filteredAreas.length !== lists.length) {
-      throw new Error('Not all lists created')
+    return {
+      slug: getSlug(
+        candidacy.id ?? '',
+        candidacy.medmaelasofnun?.kosningTegund ?? '',
+      ),
     }
-    const { slug } = mapList(lists[0])
-    return { slug }
   }
 
   async createParliamentaryCandidacy(
@@ -260,7 +261,7 @@ export class SignatureCollectionClientService {
     const newSignature = await this.getApiWithAuth(
       this.listsApi,
       auth,
-    ).medmaelalistarIDAddMedmaeliPost({
+    ).medmaelalistarIDMedmaeliPost({
       kennitala: auth.nationalId,
       iD: parseInt(listId),
     })
@@ -297,15 +298,18 @@ export class SignatureCollectionClientService {
   }
 
   async unsignList(listId: string, auth: User): Promise<Success> {
+    const { isPresidential } = await this.currentCollection()
     const { signatures } = await this.getSignee(auth)
-    const activeSignature = signatures?.find((signature) => signature.valid)
+    const activeSignature = signatures?.find((signature) =>
+      isPresidential ? signature.valid : signature.listId === listId,
+    )
     if (!signatures || !activeSignature || activeSignature.listId !== listId) {
       return { success: false, reasons: [ReasonKey.SignatureNotFound] }
     }
     const signatureRemoved = await this.getApiWithAuth(
       this.signatureApi,
       auth,
-    ).medmaeliIDRemoveMedmaeliUserPost({
+    ).medmaeliIDDelete({
       iD: parseInt(activeSignature.id),
     })
     return { success: !!signatureRemoved }
@@ -327,10 +331,7 @@ export class SignatureCollectionClientService {
     }
     // For presidentail elections remove all lists for owner, else remove selected lists
     if (isPresidential) {
-      await this.getApiWithAuth(
-        this.candidateApi,
-        auth,
-      ).frambodIDRemoveFrambodUserPost({
+      await this.getApiWithAuth(this.candidateApi, auth).frambodIDDelete({
         iD: parseInt(candidate.id),
       })
       return { success: true }
@@ -372,17 +373,17 @@ export class SignatureCollectionClientService {
         )
         const isExtended = list.endTime > endTime
         const signedThisPeriod = signature.isInitialType === !isExtended
-        const canUnsignDigital = isPresidential ? signature.isDigital : true
         return {
           signedDate: signature.created,
           isDigital: signature.isDigital,
           pageNumber: signature.pageNumber,
           isValid: signature.valid,
-          canUnsign:
-            canUnsignDigital &&
-            signature.valid &&
-            list.active &&
-            signedThisPeriod,
+          canUnsign: isPresidential
+            ? signature.isDigital &&
+              signature.valid &&
+              list.active &&
+              signedThisPeriod
+            : !signature.locked,
           ...list,
         } as SignedList
       }),

@@ -1,5 +1,7 @@
 import isSameDay from 'date-fns/isSameDay'
-import { HTMLText } from '@island.is/regulations'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import { HTMLText, asDiv } from '@island.is/regulations'
 
 export const groupElementsByArticleTitleFromDiv = (
   div: HTMLDivElement,
@@ -86,4 +88,43 @@ export const allSameDay = (objects: AdditionObject[]): boolean => {
   const firstDate = validObjects[0].date!
 
   return validObjects.every((obj) => isSameDay(obj.date!, firstDate))
+}
+
+export const hasAnyChange = (diff: string) => {
+  const testElement = asDiv(diff)
+  const hasDeletion = !!testElement.querySelector('del')
+  const hasInsert = !!testElement.querySelector('ins')
+
+  return hasDeletion || hasInsert
+}
+
+export const updateAppendixWording = (input: string): string => {
+  return input.replace(/fylgiskjal|viðauki/gi, (match) => {
+    if (match[0] === match[0].toUpperCase()) {
+      if (match.toLowerCase() === 'fylgiskjal') {
+        return 'Fylgiskjali'
+      } else if (match.toLowerCase() === 'viðauki') {
+        return 'Viðauka'
+      }
+    } else {
+      if (match.toLowerCase() === 'fylgiskjal') {
+        return 'fylgiskjali'
+      } else if (match.toLowerCase() === 'viðauki') {
+        return 'viðauka'
+      }
+    }
+    return match
+  })
+}
+
+export const formatDate = (date: Date) => {
+  const newDate = new Date(date)
+  if (newDate) {
+    const formattedDate = format(new Date(date), 'dd. MMMM yyyy', {
+      locale: is,
+    })
+    return formattedDate.replace(/^0+/, '') // Remove leading zeros
+  } else {
+    return ''
+  }
 }

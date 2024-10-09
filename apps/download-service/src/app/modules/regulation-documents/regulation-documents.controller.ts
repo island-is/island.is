@@ -1,17 +1,3 @@
-import {
-  Body,
-  Controller,
-  Header,
-  Post,
-  Res,
-  Param,
-  UseGuards,
-} from '@nestjs/common'
-import { ApiOkResponse } from '@nestjs/swagger'
-import { Response } from 'express'
-import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
-import { RegulationsService } from '@island.is/clients/regulations'
-import { AdminPortalScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -19,11 +5,16 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { GetRegulationDraftDocumentDto } from './dto/getRegulationDraftDocument.dto'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { RegulationsService } from '@island.is/clients/regulations'
+import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
 import {
   RegulationDraft,
   RegulationPdfInput,
 } from '@island.is/regulations/admin'
+import { Controller, Header, Param, Post, Res, UseGuards } from '@nestjs/common'
+import { ApiOkResponse } from '@nestjs/swagger'
+import { Response } from 'express'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(
@@ -46,20 +37,15 @@ export class RegulationDocumentsController {
   async getDraftRegulationPdf(
     @Param('regulationId') regulationId: string,
     @CurrentUser() user: User,
-    @Body() resource: GetRegulationDraftDocumentDto,
     @Res() res: Response,
   ) {
     let draftRegulation: RegulationDraft | null = null
-    const authUser: User = {
-      ...user,
-      authorization: `Bearer ${resource.__accessToken}`,
-    }
 
     try {
       draftRegulation =
         await this.regulationsAdminClientService.getDraftRegulation(
           regulationId,
-          authUser,
+          user,
         )
     } catch (e) {
       console.error('unable to get draft regulation', e)
@@ -92,7 +78,7 @@ export class RegulationDocumentsController {
       res.header('Content-Type', documentResponse.data.mimeType)
       res.header('Content-length', buffer.length.toString())
       res.header('Content-Disposition', `inline; filename=${filename}`)
-      res.header('Cache-Control: no-cache')
+      res.header('Cache-Control', 'no-cache')
 
       return res.status(200).end(buffer)
     }

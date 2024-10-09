@@ -596,4 +596,11 @@ export const en: TranslatedMessages = {
   'passkeys.skipButton': 'Skip',
   'passkeys.errorRegistering': 'Error',
   'passkeys.errorRegisteringMessage': 'Could not create a passkey',
+
+  // update app
+  'updateApp.title': 'Update app',
+  'updateApp.description':
+    'You are about to use an old version of the Island.is app. Please update the app to be able to continue.',
+  'updateApp.button': 'Update',
+  'updateApp.buttonSkip': 'Skip',
 }
