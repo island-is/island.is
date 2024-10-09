@@ -6,6 +6,7 @@ import {
   ForeignKey,
   Model,
   Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -27,13 +28,12 @@ export class CivilClaimant extends Model {
   id!: string
 
   @CreatedAt
-  @Column({
-    type: DataType.DATE,
-    defaultValue: DataType.NOW,
-    allowNull: false,
-  })
   @ApiProperty({ type: Date })
   created!: Date
+
+  @UpdatedAt
+  @ApiProperty({ type: Date })
+  modified!: Date
 
   @ForeignKey(() => Case)
   @Column({
