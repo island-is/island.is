@@ -135,9 +135,9 @@ export type PassData = {
   deliveryPageUrl: string
   distributionQRCode: string
   id: string
-  expirationDate?: Date
-  whenCreated: Date
-  whenModified: Date
+  expirationDate?: string
+  whenCreated: string
+  whenModified: string
   inputFieldValues?: Array<{
     id: string
     identifier: string
@@ -232,10 +232,7 @@ export interface LicenseClient<Type extends LicenseType> {
   ) => Promise<LicensePkPassAvailability>
   getPkPassUrl?: (user: User, locale?: Locale) => Promise<Result<string>>
   getPkPassQRCode?: (user: User, locale?: Locale) => Promise<Result<string>>
-  verifyPkPassDeprecated?: (
-    data: string,
-    version?: 'v1' | 'v2',
-  ) => Promise<Result<PkPassVerification>>
+  verifyPkPassDeprecated?: (data: string) => Promise<Result<PkPassVerification>>
   verifyPkPass?: (
     data: string,
     version?: 'v1' | 'v2',

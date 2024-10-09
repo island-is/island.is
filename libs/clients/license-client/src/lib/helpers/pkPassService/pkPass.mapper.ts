@@ -10,8 +10,8 @@ export const mapPassData = (pass: PassV1 | PassV2): PassData => ({
     value: i.value ?? undefined,
   })),
   expirationDate: pass?.expirationDate
-    ? new Date(pass?.expirationDate)
+    ? new Date(pass?.expirationDate).toISOString()
     : undefined,
-  whenCreated: new Date(pass.whenCreated),
-  whenModified: new Date(pass.whenModified),
+  whenCreated: new Date(pass.whenCreated).toISOString(),
+  whenModified: new Date(pass.whenModified).toISOString(),
 })
