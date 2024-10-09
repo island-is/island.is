@@ -4,8 +4,8 @@ import { ServiceStatus } from '@island.is/judicial-system/types'
 
 @ObjectType()
 export class SubpoenaStatus {
-  @Field(() => ServiceStatus)
-  readonly serviceStatus!: ServiceStatus
+  @Field(() => ServiceStatus, { nullable: true })
+  readonly serviceStatus?: ServiceStatus
 
   @Field(() => String, { nullable: true })
   readonly servedBy?: string
