@@ -7,7 +7,7 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
   description: m.lawAndOrderDashboard,
   path: LawAndOrderPaths.Root,
   icon: {
-    icon: 'attach',
+    icon: 'gavel',
   },
   children: [
     {

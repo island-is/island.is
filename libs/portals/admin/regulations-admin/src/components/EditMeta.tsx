@@ -1,4 +1,5 @@
 import {
+  AlertMessage,
   Box,
   Button,
   Checkbox,
@@ -12,12 +13,34 @@ import { useLocale } from '@island.is/localization'
 import { LawChaptersSelect } from './LawChaptersSelect'
 import { useDraftingState } from '../state/useDraftingState'
 import { RegulationDraftTypes } from '../types'
-import { getNextWorkday, getMinPublishDate } from '../utils'
+import {
+  getNextWorkday,
+  getMinPublishDate,
+  hasPublishEffectiveWarning,
+  getWorkdayMinimumDate,
+} from '../utils'
+import { useEffect, useState } from 'react'
 
 export const EditMeta = () => {
   const { formatMessage: t } = useLocale()
   const { draft, actions } = useDraftingState()
+  const [hasSetDate, setHasSetDate] = useState(false)
   const { updateState } = actions
+
+  useEffect(() => {
+    if (
+      !hasSetDate &&
+      !draft.effectiveDate.value &&
+      !draft.idealPublishDate.value
+    ) {
+      // Set default dates if no dates are set
+      const defaultEffectiveDate = getWorkdayMinimumDate(11)
+      const defaultPublishDate = getWorkdayMinimumDate(10)
+      updateState('effectiveDate', defaultEffectiveDate)
+      updateState('idealPublishDate', defaultPublishDate)
+      setHasSetDate(true)
+    }
+  }, [hasSetDate, draft.effectiveDate.value, draft.idealPublishDate.value])
 
   const type = draft.type
   const typeName =
@@ -59,9 +82,10 @@ export const EditMeta = () => {
                 draft.signatureDate.value,
               )}
               selected={draft.idealPublishDate.value}
-              handleChange={(date: Date) =>
+              handleChange={(date: Date) => {
                 updateState('idealPublishDate', date)
-              }
+                setHasSetDate(true)
+              }}
               hasError={
                 draft.idealPublishDate.showError &&
                 !!draft.idealPublishDate.error
@@ -81,6 +105,7 @@ export const EditMeta = () => {
                 checked={draft.fastTrack.value}
                 onChange={() => {
                   updateState('fastTrack', !draft.fastTrack.value)
+                  setHasSetDate(true)
                 }}
               />
             </Box>
@@ -100,9 +125,10 @@ export const EditMeta = () => {
                   ? getNextWorkday(draft.effectiveDate.value)
                   : undefined
               }
-              handleChange={(date: Date) =>
+              handleChange={(date: Date) => {
                 actions.updateState('effectiveDate', date)
-              }
+                setHasSetDate(true)
+              }}
               hasError={
                 draft.effectiveDate.showError && !!draft.effectiveDate.error
               }
@@ -118,6 +144,7 @@ export const EditMeta = () => {
                 preTextIcon="close"
                 onClick={() => {
                   actions.updateState('effectiveDate', undefined)
+                  setHasSetDate(true)
                 }}
               >
                 {t(msg.effectiveDate_default)}
@@ -126,6 +153,22 @@ export const EditMeta = () => {
           </Box>
         </Column>
       </Columns>
+      {hasPublishEffectiveWarning(
+        draft.effectiveDate.value,
+        draft.idealPublishDate.value,
+        draft.fastTrack.value,
+      ) ? (
+        <Columns space={3} collapseBelow="lg">
+          <Column width="content">
+            <Box marginBottom={3}>
+              <AlertMessage
+                message={t(msg.publishEffectiveWarning)}
+                type="default"
+              />
+            </Box>
+          </Column>
+        </Columns>
+      ) : undefined}
 
       <LawChaptersSelect />
     </>
