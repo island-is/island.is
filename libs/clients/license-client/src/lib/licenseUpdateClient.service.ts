@@ -69,7 +69,9 @@ export class LicenseUpdateClientService {
     return this.config[licenseId]
   }
 
-  //DEPRECATED
+  /**
+   * @deprecated Use getLicenseUpdateClientV2ByType instead.
+   */
   getLicenseUpdateClientByType(type: LicenseType, requestId?: string) {
     return this.licenseUpdateClientFactory(type, requestId)
   }
@@ -78,7 +80,9 @@ export class LicenseUpdateClientService {
     return this.licenseUpdateClientFactoryV2(type, requestId)
   }
 
-  //DEPRECATED
+  /**
+   * @deprecated Use getLicenseUpdateClientV2ByPassTemplateId instead.
+   */
   getLicenseUpdateClientByPassTemplateId(
     passTemplateId: string,
     requestId?: string,
