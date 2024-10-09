@@ -147,15 +147,16 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     childInformationTitle: {
       id: 'nps.application:prerequisites.child.information.title',
-      defaultMessage: 'Upplýsingar frá MMS',
-      description: 'Information from MMS',
+      defaultMessage: 'Upplýsingar frá Miðstöð menntunar og skólaþjónustu',
+      description:
+        'Information from the Directorate of Education and School Services',
     },
     childInformationSubTitle: {
       id: 'nps.application:prerequisites.child.information.subtitle',
       defaultMessage:
         'Upplýsingar frá núverandi skóla barns. Upplýsingar um barn og ólíkar þarfir þess.',
       description:
-        "Information from the child's current school. Information about a child and its different needs.",
+        "Information from the child's current school. Information about the child and their different needs.",
     },
     checkboxProvider: {
       id: 'nps.application:prerequisites.checkbox.provider',
@@ -253,7 +254,7 @@ export const newPrimarySchoolMessages: MessageDir = {
     parentsDescription: {
       id: 'nps.application:childrenNParents.parents.description',
       defaultMessage:
-        'Upplýsingar um foreldra/forsjáraðila eru sóttar úr Þjóðskrá og af Mínum síðum á Island.is. Athugaðu hvort símanúer og netföng séu rétt skráð áður en þú heldur áfram.',
+        'Upplýsingar um foreldra/forsjáraðila eru sóttar úr Þjóðskrá og af Mínum síðum á Island.is. Athugaðu hvort símanúmer og netföng séu rétt skráð áður en þú heldur áfram.',
       description:
         'Information about parents/guardians is retrieved from Registers Iceland and from My Pages on Ísland.is. Check that phone numbers and email addresses are entered correctly before proceeding.',
     },
@@ -410,7 +411,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage:
         'Við viljum taka vel á móti skólabarninu. Til þess að getað undirbúið komu þess þá biðjum við þig að velja dagsetningu fyrir fyrsta skóladaginn.',
       description:
-        'We want to welcome the school child properly. To be able to prepare for its arrival, please select a date for the first school day.',
+        'We want to properly welcome your child to the school. To prepare for their arrival, please select a date for the first school day.',
     },
   }),
 
