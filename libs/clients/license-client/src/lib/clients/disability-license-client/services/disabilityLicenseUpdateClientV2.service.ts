@@ -7,13 +7,12 @@ import {
   PassRevocationData,
   PassVerificationData,
   Result,
-  VerifyInputData,
 } from '../../../licenseClient.type'
 import { BaseLicenseUpdateClientV2 } from '../../base/licenseUpdateClientV2'
 import { PkPassService } from '../../../helpers/pkPassService/pkPass.service'
-import { VerifyInputDataDto } from '../disabilityLicense.types'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { VerifyInputDataDto } from '../../base/baseLicenseUpdateClient.types'
 
 @Injectable()
 export class DisabilityLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {

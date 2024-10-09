@@ -16,9 +16,9 @@ import type { ConfigType } from '@island.is/nest/config'
 import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.config'
 import { BaseLicenseUpdateClientV2 } from '../../base/licenseUpdateClientV2'
 import { PkPassService } from '../../../helpers/pkPassService/pkPass.service'
-import { VerifyInputDataDto } from '../../disability-license-client/disabilityLicense.types'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { VerifyInputDataDto } from '../../base/baseLicenseUpdateClient.types'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
