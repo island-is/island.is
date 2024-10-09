@@ -1,6 +1,7 @@
 import AccidentNotificationTemplate from './lib/AccidentNotificationTemplate'
-import { AccidentNotification, OnBehalf } from './lib/dataSchema'
+import { AccidentNotification } from './lib/dataSchema'
 import * as appMessages from './lib/messages'
+import { OnBehalf } from './types'
 import * as appUtils from './utils'
 
 export const getFields = () => import('./fields')
