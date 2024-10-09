@@ -156,8 +156,12 @@ export class DelegationAdminCustomService {
   async createDelegationByZendeskId(zendeskId: string): Promise<void> {
     const zendeskCase = await this.zendeskService.getTicket(zendeskId)
 
-    const { fromReferenceId, toReferenceId, validTo, createdByNationalId } =
-      this.getZendeskCustomFields(zendeskCase)
+    const {
+      fromReferenceId: fromNationalId,
+      toReferenceId: toNationalId,
+      validTo,
+      createdByNationalId,
+    } = this.getZendeskCustomFields(zendeskCase)
 
     if (!createdByNationalId) {
       throw new BadRequestException({
@@ -166,29 +170,20 @@ export class DelegationAdminCustomService {
       })
     }
 
-    if (
-      !kennitala.isPerson(createdByNationalId) ||
-      !kennitala.isPerson(toReferenceId) ||
-      !kennitala.isPerson(fromReferenceId)
-    ) {
+    if (!kennitala.isPerson(createdByNationalId)) {
       throw new BadRequestException({
         message: 'Created by National Id is not valid person national id',
         error: ErrorCodes.INPUT_VALIDATION_INVALID_PERSON,
       })
     }
 
-    if (toReferenceId === fromReferenceId) {
-      throw new BadRequestException({
-        message: 'National Ids cannot be the same',
-        error: ErrorCodes.INPUT_VALIDATION_SAME_NATIONAL_ID,
-      })
-    }
+    this.validatePersonsNationalIds(toNationalId, fromNationalId)
 
     this.verifyTicketCompletion(zendeskCase)
 
     await this.insertDelegation({
-      fromNationalId: fromReferenceId,
-      toNationalId: toReferenceId,
+      fromNationalId,
+      toNationalId,
       referenceId: zendeskId,
       validTo: this.formatZendeskDate(validTo),
       createdBy: createdByNationalId,

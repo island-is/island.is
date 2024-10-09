@@ -136,7 +136,7 @@ describe('withoutAuth and permissions', () => {
     },
   )
 
-  describe('POST /delegation-admin/:zendeskId', () => {
+  describe('POST /delegation-admin/zendesk', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
     let delegationAdminService: DelegationAdminCustomService
@@ -191,7 +191,7 @@ describe('withoutAuth and permissions', () => {
       })
     })
 
-    it('POST /delegation-admin/zendesk should return 201 when signature is valid', async () => {
+    it('POST /delegation-admin/zendesk should return 200 when signature is valid', async () => {
       // Act
       const res = await getRequestMethod(
         server,

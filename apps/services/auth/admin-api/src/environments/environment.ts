@@ -14,6 +14,8 @@ const devConfig = {
     process.env.CLIENT_SECRET_ENCRYPTION_KEY ?? 'secret',
   zendeskGeneralMandateWebhookSecret:
     process.env.ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE ??
+    //The static test signing secret from Zendesk as described in their docs
+    // https://developer.zendesk.com/documentation/webhooks/verifying/#signing-secrets-on-new-webhooks
     'dGhpc19zZWNyZXRfaXNfZm9yX3Rlc3Rpbmdfb25seQ==',
 }
 
