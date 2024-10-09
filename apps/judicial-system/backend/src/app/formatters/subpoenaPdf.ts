@@ -7,11 +7,13 @@ import {
   formatDOB,
   lowercase,
 } from '@island.is/judicial-system/formatters'
-import { DateType, SubpoenaType } from '@island.is/judicial-system/types'
+import { SubpoenaType } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../factories/date.factory'
 import { subpoena as strings } from '../messages'
 import { Case } from '../modules/case'
 import { Defendant } from '../modules/defendant'
+import { Subpoena } from '../modules/subpoena'
 import {
   addConfirmation,
   addEmptyLines,
@@ -20,6 +22,7 @@ import {
   addMediumText,
   addNormalRightAlignedText,
   addNormalText,
+  Confirmation,
   setTitle,
 } from './pdfHelpers'
 
@@ -27,9 +30,11 @@ export const createSubpoena = (
   theCase: Case,
   defendant: Defendant,
   formatMessage: FormatMessage,
+  subpoena?: Subpoena,
   arraignmentDate?: Date,
   location?: string,
   subpoenaType?: SubpoenaType,
+  confirmation?: Confirmation,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -43,15 +48,12 @@ export const createSubpoena = (
   })
 
   const sinc: Buffer[] = []
-  const dateLog = theCase.dateLogs?.find(
-    (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-  )
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
   setTitle(doc, formatMessage(strings.title))
 
-  if (dateLog) {
+  if (confirmation) {
     addEmptyLines(doc, 5)
   }
 
@@ -59,12 +61,12 @@ export const createSubpoena = (
 
   addNormalRightAlignedText(
     doc,
-    `${formatDate(new Date(dateLog?.modified ?? new Date()), 'PPP')}`,
+    `${formatDate(new Date(subpoena?.created ?? nowFactory()), 'PPP')}`,
     'Times-Roman',
   )
 
-  arraignmentDate = arraignmentDate ?? dateLog?.date
-  location = location ?? dateLog?.location
+  arraignmentDate = arraignmentDate ?? subpoena?.arraignmentDate
+  location = location ?? subpoena?.location
   subpoenaType = subpoenaType ?? defendant.subpoenaType
 
   if (theCase.court?.name) {
@@ -154,13 +156,8 @@ export const createSubpoena = (
 
   addFooter(doc)
 
-  if (dateLog) {
-    addConfirmation(doc, {
-      actor: theCase.judge?.name || '',
-      title: theCase.judge?.title,
-      institution: theCase.judge?.institution?.name || '',
-      date: dateLog.created,
-    })
+  if (confirmation) {
+    addConfirmation(doc, confirmation)
   }
 
   doc.end()

@@ -21,12 +21,18 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { Locale } from '@island.is/shared/types'
+import type { ApiResponse } from '@elastic/elasticsearch'
+import type { SearchResponse } from '@island.is/shared/types'
+import type { MappedData } from '@island.is/content-search-indexer/types'
 
 type SyncCollection = ContentfulSyncCollection & {
   nextPageToken?: string
 }
 
 const MAX_REQUEST_COUNT = 10
+
+const MAX_RETRY_COUNT = 3
+const INITIAL_DELAY = 500
 
 // Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -160,6 +166,50 @@ export class ContentfulService {
     return items
   }
 
+  async getContentfulDataPaginated(
+    chunkSize: number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    query: any,
+    skip: number,
+  ) {
+    const items: Entry<unknown>[] = []
+    let response: EntryCollection<unknown> | null = null
+
+    while (response === null && chunkSize > 0) {
+      try {
+        response = await this.limiter.schedule(() =>
+          this.contentfulClient.getEntries({
+            ...query,
+            limit: chunkSize,
+            skip,
+          }),
+        )
+        for (const item of response.items) {
+          items.push(item)
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        if (
+          (error?.message as string)
+            ?.toLowerCase()
+            ?.includes('response size too big')
+        ) {
+          logger.info(
+            `Chunk size too large, dividing it by 2: ${chunkSize} -> ${Math.floor(
+              chunkSize / 2,
+            )}`,
+          )
+          chunkSize = Math.floor(chunkSize / 2)
+        } else {
+          logger.error(error)
+          return { items, total: response?.total }
+        }
+      }
+    }
+
+    return { items, total: response?.total }
+  }
+
   /**
    * Next sync token is returned by Contentful sync API to mark starting point for next sync.
    * We keep this token in elasticsearch per locale.
@@ -228,7 +278,7 @@ export class ContentfulService {
     }
   }
 
-  private async getSyncData(typeOfSync: typeOfSync) {
+  async getSyncData(typeOfSync: typeOfSync) {
     const syncData = await (
       this.contentfulClient.sync as (
         query: unknown,
@@ -294,6 +344,54 @@ export class ContentfulService {
     locale: Locale,
     chunkSize: number,
   ) {
+    const isDeltaUpdate = !('initial' in typeOfSync)
+    const resyncInformationPrefix = 're-sync-data-'
+
+    const resyncNextPageInformation =
+      'nextPageToken' in typeOfSync &&
+      typeOfSync.nextPageToken.startsWith(resyncInformationPrefix)
+        ? typeOfSync.nextPageToken
+        : ''
+
+    if (
+      Boolean(resyncNextPageInformation) ||
+      (!resyncNextPageInformation && !isDeltaUpdate)
+    ) {
+      const info: {
+        skip: number
+      } = resyncNextPageInformation
+        ? JSON.parse(
+            resyncNextPageInformation.split(resyncInformationPrefix)[1],
+          )
+        : {
+            skip: 0,
+          }
+
+      const contentfulData = await this.getContentfulDataPaginated(
+        chunkSize,
+        {
+          include: this.defaultIncludeDepth,
+          'sys.contentType.sys.id[in]': environment.indexableTypes.join(','),
+          locale: this.contentfulLocaleMap[locale],
+        },
+        info.skip,
+      )
+
+      info.skip += contentfulData.items.length
+
+      return {
+        indexableEntries: contentfulData.items,
+        nestedItems: [],
+        deletedEntryIds: [],
+        newNextSyncToken: '',
+        nextPageToken:
+          typeof contentfulData?.total === 'number' &&
+          info.skip < contentfulData.total
+            ? `${resyncInformationPrefix}${JSON.stringify(info)}`
+            : '',
+      }
+    }
+
     // Gets all changes in all locales
     const {
       entries,
@@ -301,10 +399,10 @@ export class ContentfulService {
       nextPageToken,
       deletedEntries,
       assets,
+      deletedAssets,
     } = await this.getSyncData(typeOfSync)
 
     // In case someone in the CMS triggers a sync by setting the translation of an entry to an inactive state we'd like to remove that entry
-    const isDeltaUpdate = !('initial' in typeOfSync)
     const entriesThatHadTheirTranslationTurnedOff = new Set<string>()
 
     if (isDeltaUpdate && locale !== 'is') {
@@ -331,6 +429,9 @@ export class ContentfulService {
       )
       .map((entry) => ({ id: entry.sys.id, isEntry: true }))
       .concat(assets.map((asset) => ({ id: asset.sys.id, isEntry: false })))
+      .concat(
+        deletedAssets.map((asset) => ({ id: asset.sys.id, isEntry: false })),
+      )
 
     logger.info('Sync found entries', {
       entries: entries.length,
@@ -366,6 +467,122 @@ export class ContentfulService {
     }
   }
 
+  private async resolveNestedEntries(
+    ids: string[],
+    elasticIndex: string,
+    locale: ElasticsearchIndexLocale,
+    chunkSize: number,
+    indexableEntries: Entry<unknown>[],
+  ) {
+    const idsCopy = [...ids]
+    let idsChunk = idsCopy.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
+
+    while (idsChunk.length > 0) {
+      const size = 100
+      let page = 1
+
+      const items: string[] = []
+
+      let response: ApiResponse<SearchResponse<MappedData>> | null = null
+      let total = -1
+
+      let delay = INITIAL_DELAY
+      let retries = MAX_RETRY_COUNT
+
+      while (response === null || items.length < total) {
+        try {
+          response = await this.elasticService.findByQuery(elasticIndex, {
+            query: {
+              bool: {
+                should: idsChunk.map((id) => ({
+                  nested: {
+                    path: 'tags',
+                    query: {
+                      bool: {
+                        must: [
+                          {
+                            term: {
+                              'tags.key': id,
+                            },
+                          },
+                          {
+                            term: {
+                              'tags.type': 'hasChildEntryWithId',
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  },
+                })),
+                minimum_should_match: 1,
+              },
+            },
+            size,
+            from: (page - 1) * size,
+          })
+          // Reset variables in case we successfully receive a response
+          delay = INITIAL_DELAY
+          retries = MAX_RETRY_COUNT
+        } catch (error) {
+          if (error?.statusCode === 429 && retries > 0) {
+            logger.info('Retrying nested resolution request...', {
+              retriesLeft: retries - 1,
+              delay,
+            })
+            await new Promise((resolve) => {
+              setTimeout(resolve, delay)
+            })
+            // Keep track of how often and for how long we should wait in case of failure
+            retries -= 1
+            delay *= 2
+            continue
+          } else {
+            throw error
+          }
+        }
+
+        if (response.body.hits.hits.length === 0) {
+          total = response.body.hits.total.value
+          break
+        }
+
+        // In case the total changes during the pagination fetches we only reference the initial total
+        if (total === -1) {
+          total = response.body.hits.total.value
+        }
+
+        for (const hit of response.body.hits.hits) {
+          items.push(hit._id)
+        }
+
+        page += 1
+      }
+
+      // Fetch root entries from Contentful in chunks
+      {
+        const rootEntryIds = items.filter(
+          // Remove duplicates
+          (id) => !indexableEntries.some((entry) => entry.sys.id === id),
+        )
+
+        let chunkIds = rootEntryIds.splice(-chunkSize, chunkSize)
+
+        while (chunkIds.length > 0) {
+          const items = await this.getContentfulData(chunkSize, {
+            include: this.defaultIncludeDepth,
+            'sys.id[in]': chunkIds.join(','),
+            locale: this.contentfulLocaleMap[locale],
+          })
+          indexableEntries.push(...items)
+          chunkIds = rootEntryIds.splice(-chunkSize, chunkSize)
+        }
+      }
+
+      idsChunk = idsCopy.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
+    }
+  }
+
   async getSyncEntries(options: SyncOptions): Promise<SyncerResult> {
     const {
       syncType,
@@ -385,21 +602,15 @@ export class ContentfulService {
 
     logger.info(`Sync chunk size is: ${chunkSize}`)
 
-    const populatedSyncEntriesResult = await this.getPopulatedSyncEntries(
-      typeOfSync,
-      locale,
-      chunkSize,
-    )
-
     const {
       indexableEntries,
       newNextSyncToken,
       deletedEntryIds,
       nextPageToken,
-    } = populatedSyncEntriesResult
-    let { nestedItems } = populatedSyncEntriesResult
+      nestedItems,
+    } = await this.getPopulatedSyncEntries(typeOfSync, locale, chunkSize)
 
-    const isDeltaUpdate = syncType !== 'full'
+    const isDeltaUpdate = syncType === 'fromLast'
 
     let shouldResolveNestedEntries = false
     if (environment.runtimeEnvironment === 'local') {
@@ -413,98 +624,33 @@ export class ContentfulService {
       )
     }
 
+    const nestedItemIds = nestedItems
+      .map(({ id }) => id)
+      .concat(deletedEntryIds)
+
     // In case of delta updates, we need to resolve embedded entries to their root model
-    if (isDeltaUpdate && shouldResolveNestedEntries) {
+    if (
+      isDeltaUpdate &&
+      shouldResolveNestedEntries &&
+      nestedItemIds.length > 0
+    ) {
       logger.info('Finding root entries from nestedEntries')
 
-      const visitedEntryIds = new Set<string>()
+      const previousLength = indexableEntries.length
 
-      for (let i = 0; i < this.defaultIncludeDepth; i += 1) {
-        if (nestedItems.length <= 0) break
+      await this.resolveNestedEntries(
+        nestedItemIds,
+        elasticIndex,
+        locale,
+        chunkSize,
+        indexableEntries, // This array is modified
+      )
 
-        const nextLevelOfNestedEntryIds = new Set<string>()
-
-        const promises: Promise<{
-          entries: Entry<unknown>[]
-          linkedToEntryId: string
-        }>[] = []
-        let counter = 0
-
-        const handleRequests = async () => {
-          const responses = await Promise.all(promises)
-
-          for (const { entries: linkedEntries, linkedToEntryId } of responses) {
-            for (const linkedEntry of linkedEntries) {
-              counter += 1
-
-              const isIndexable = environment.indexableTypes.includes(
-                linkedEntry.sys.contentType.sys.id,
-              )
-
-              if (isIndexable) {
-                const entryAlreadyListed =
-                  indexableEntries.findIndex(
-                    (entry) => entry.sys.id === linkedEntry.sys.id,
-                  ) >= 0
-                if (!entryAlreadyListed) {
-                  indexableEntries.push(linkedEntry)
-                }
-              }
-
-              const isNested = environment.nestedContentTypes.includes(
-                linkedEntry.sys.contentType.sys.id,
-              )
-
-              if (!isNested) {
-                continue
-              }
-
-              const entryBelowHasBeenIndexed =
-                indexableEntries.findIndex(
-                  (entry) => entry.sys.id === linkedToEntryId,
-                ) >= 0
-              if (
-                !entryBelowHasBeenIndexed // No need to traverse further up the tree if what's below has already been indexed
-              ) {
-                nextLevelOfNestedEntryIds.add(linkedEntry.sys.id)
-              }
-            }
-          }
-        }
-
-        for (const item of nestedItems) {
-          if (visitedEntryIds.has(item.id)) {
-            continue
-          }
-          visitedEntryIds.add(item.id)
-
-          promises.push(
-            (async () => ({
-              entries: await this.getContentfulData(chunkSize, {
-                include: this.defaultIncludeDepth,
-                [item.isEntry ? 'links_to_entry' : 'links_to_asset']: item.id,
-                locale: this.contentfulLocaleMap[locale],
-              }),
-              linkedToEntryId: item.id,
-            }))(),
-          )
-
-          if (promises.length > MAX_REQUEST_COUNT) {
-            await handleRequests()
-          }
-        }
-
-        if (promises.length > 0) {
-          await handleRequests()
-        }
-
-        // Next round of the loop will only find linked entries to nested entries
-        nestedItems = Array.from(nextLevelOfNestedEntryIds).map((id) => ({
-          id,
-          isEntry: true,
-        }))
-        logger.info(`Found ${counter} nested entries at depth ${i + 1}`)
-      }
+      logger.info(
+        `Found ${
+          indexableEntries.length - previousLength
+        } root entries from nested entries`,
+      )
     }
 
     return {

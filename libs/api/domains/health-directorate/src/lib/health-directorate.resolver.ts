@@ -60,9 +60,11 @@ export class HealthDirectorateResolver {
   @Audit()
   async updateDonorStatus(
     @Args('input') input: DonorInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<void> {
-    return this.api.updateDonorStatus(user, input)
+    return this.api.updateDonorStatus(user, input, locale)
   }
 
   /* Vaccinations */

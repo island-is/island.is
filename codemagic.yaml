@@ -95,6 +95,13 @@ definitions:
       google_play:
         credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
         track: internal
+    slack_errors: &slack_errors
+      slack:
+        channel: '#team-app-builds'
+        notify:
+          # don't want to spam slack with 4 successful builds. Overridden in dev-app-ios.
+          success: false
+          failure: true
 
 workflows:
   prod-app-ios:
@@ -132,6 +139,7 @@ workflows:
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
     publishing:
       <<: *ios_publishing
+      <<: *slack_errors
 
   dev-app-ios:
     <<: *base
@@ -161,10 +169,10 @@ workflows:
     publishing:
       <<: *ios_publishing
       slack:
-        channel: '#codemagic-test'
+        channel: '#team-app-builds'
         notify:
           success: true
-          failure: false
+          failure: true
 
   prod-app-android:
     <<: *base
@@ -195,7 +203,9 @@ workflows:
       - *build_android
     artifacts: &android_artifacts
       - android/app/build/outputs/**/*.aab
-    publishing: *android_publishing
+    publishing:
+      <<: *android_publishing
+      <<: *slack_errors
 
   dev-app-android:
     <<: *base
@@ -221,4 +231,6 @@ workflows:
       - *codegen
       - *build_android
     artifacts: *android_artifacts
-    publishing: *android_publishing
+    publishing:
+      <<: *android_publishing
+      <<: *slack_errors

@@ -85,14 +85,14 @@ export class FileResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<SignedUrl> {
-    const { caseId, id } = input
+    const { caseId, id, mergedCaseId } = input
 
     this.logger.debug(`Getting a signed url for file ${id} of case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_SIGNED_URL,
-      backendService.getCaseFileSignedUrl(caseId, id),
+      backendService.getCaseFileSignedUrl(caseId, id, mergedCaseId),
       id,
     )
   }

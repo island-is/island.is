@@ -1,0 +1,528 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/liveness": {
+      "get": {
+        "operationId": "InfraController_liveness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Liveness" }
+              }
+            }
+          }
+        },
+        "tags": ["internal"]
+      }
+    },
+    "/version": {
+      "get": {
+        "operationId": "InfraController_version",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Version" }
+              }
+            }
+          }
+        },
+        "tags": ["internal"]
+      }
+    },
+    "/api/cases": {
+      "get": {
+        "operationId": "CaseController_getAllCases",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of accessible indictment cases for authenticated user. If user has no cases it returns an empty list.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/CasesResponse" }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad Request" },
+          "401": {
+            "description": "User is not authorized to perform this action"
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "tags": ["cases"]
+      }
+    },
+    "/api/case/{caseId}": {
+      "get": {
+        "operationId": "CaseController_getCase",
+        "parameters": [
+          {
+            "name": "caseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns indictment case by case id",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CaseResponse" }
+              }
+            }
+          },
+          "400": { "description": "Bad Request" },
+          "401": {
+            "description": "User is not authorized to perform this action"
+          },
+          "404": {
+            "description": "Case for given case id and authenticated user not found"
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "tags": ["cases"]
+      }
+    },
+    "/api/case/{caseId}/subpoena": {
+      "get": {
+        "operationId": "CaseController_getSubpoena",
+        "parameters": [
+          {
+            "name": "caseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns subpoena by case id",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SubpoenaResponse" }
+              }
+            }
+          },
+          "400": { "description": "Bad Request" },
+          "401": {
+            "description": "User is not authorized to perform this action"
+          },
+          "404": {
+            "description": "Subpoena for given case id and authenticated user not found"
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "tags": ["cases"]
+      },
+      "patch": {
+        "operationId": "CaseController_updateSubpoena",
+        "parameters": [
+          {
+            "name": "caseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateSubpoenaDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updates subpoena info",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SubpoenaResponse" }
+              }
+            }
+          },
+          "400": { "description": "Bad Request" },
+          "401": {
+            "description": "User is not authorized to perform this action"
+          },
+          "403": { "description": "User is not allowed to update subpoena" },
+          "404": {
+            "description": "Subpoena for given case id and authenticated user not found"
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "tags": ["cases"]
+      }
+    },
+    "/api/defenders": {
+      "get": {
+        "operationId": "DefenderController_getLawyers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns a list of defenders",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Defender" }
+                }
+              }
+            }
+          },
+          "500": { "description": "Failed to retrieve defenders" }
+        },
+        "tags": ["defenders"]
+      }
+    },
+    "/api/defender/{nationalId}": {
+      "get": {
+        "operationId": "DefenderController_getLawyer",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieves a defender by national id",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Defender" }
+              }
+            }
+          }
+        },
+        "tags": ["defenders"]
+      }
+    },
+    "/health/check": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": { "type": "string" }
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": { "type": "string" }
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "error" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": { "type": "string" }
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": { "type": "string" }
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": { "status": "up" },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "info": {
+    "title": "Judicial System xRoad robot API",
+    "description": "This is the xRoad robot API for the judicial system.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [{ "name": "judicial-system", "description": "" }],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "Liveness": {
+        "type": "object",
+        "properties": { "ok": { "type": "boolean" } },
+        "required": ["ok"]
+      },
+      "Version": {
+        "type": "object",
+        "properties": { "version": { "type": "string" } },
+        "required": ["version"]
+      },
+      "StateTag": {
+        "type": "object",
+        "properties": {
+          "color": {
+            "type": "string",
+            "enum": [
+              "blue",
+              "darkerBlue",
+              "purple",
+              "white",
+              "red",
+              "rose",
+              "blueberry",
+              "dark",
+              "mint",
+              "yellow",
+              "disabled",
+              "warn"
+            ]
+          },
+          "label": { "type": "string" }
+        },
+        "required": ["color", "label"]
+      },
+      "CasesResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "caseNumber": { "type": "string" },
+          "type": { "type": "string" },
+          "state": { "$ref": "#/components/schemas/StateTag" }
+        },
+        "required": ["id", "caseNumber", "type", "state"]
+      },
+      "Items": {
+        "type": "object",
+        "properties": {
+          "label": { "type": "string" },
+          "value": { "type": "string" },
+          "linkType": { "type": "string", "enum": ["email", "tel"] }
+        },
+        "required": ["label", "value", "linkType"]
+      },
+      "Groups": {
+        "type": "object",
+        "properties": {
+          "label": { "type": "string" },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Items" }
+          }
+        },
+        "required": ["label", "items"]
+      },
+      "IndictmentCaseData": {
+        "type": "object",
+        "properties": {
+          "caseNumber": { "type": "string" },
+          "hasBeenServed": { "type": "boolean" },
+          "groups": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Groups" }
+          }
+        },
+        "required": ["caseNumber", "hasBeenServed", "groups"]
+      },
+      "CaseResponse": {
+        "type": "object",
+        "properties": {
+          "caseId": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/IndictmentCaseData" }
+        },
+        "required": ["caseId", "data"]
+      },
+      "AlertMessage": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["error", "info", "success", "warning", "default"]
+          },
+          "message": { "type": "string" }
+        },
+        "required": ["type", "message"]
+      },
+      "SubpoenaData": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "subtitle": { "type": "string" },
+          "groups": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Groups" }
+          },
+          "alerts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AlertMessage" }
+          },
+          "hasBeenServed": { "type": "boolean" },
+          "hasChosenDefender": { "type": "boolean" },
+          "defaultDefenderChoice": {
+            "type": "string",
+            "enum": ["WAIVE", "CHOOSE", "DELAY", "DELEGATE"]
+          }
+        },
+        "required": [
+          "title",
+          "subtitle",
+          "groups",
+          "alerts",
+          "hasBeenServed",
+          "hasChosenDefender",
+          "defaultDefenderChoice"
+        ]
+      },
+      "DefenderInfo": {
+        "type": "object",
+        "properties": {
+          "defenderChoice": {
+            "type": "string",
+            "enum": ["WAIVE", "CHOOSE", "DELAY", "DELEGATE"]
+          },
+          "defenderName": { "type": "string" },
+          "canEdit": { "type": "boolean" },
+          "courtContactInfo": { "type": "string" }
+        },
+        "required": [
+          "defenderChoice",
+          "defenderName",
+          "canEdit",
+          "courtContactInfo"
+        ]
+      },
+      "SubpoenaResponse": {
+        "type": "object",
+        "properties": {
+          "caseId": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/SubpoenaData" },
+          "defenderInfo": { "$ref": "#/components/schemas/DefenderInfo" }
+        },
+        "required": ["caseId", "data", "defenderInfo"]
+      },
+      "UpdateSubpoenaDto": {
+        "type": "object",
+        "properties": {
+          "defenderChoice": {
+            "type": "string",
+            "enum": ["WAIVE", "CHOOSE", "DELAY", "DELEGATE"]
+          },
+          "defenderNationalId": { "type": "string" }
+        },
+        "required": ["defenderChoice"]
+      },
+      "Defender": {
+        "type": "object",
+        "properties": {
+          "nationalId": { "type": "string" },
+          "name": { "type": "string" },
+          "practice": { "type": "string" }
+        },
+        "required": ["nationalId", "name", "practice"]
+      }
+    }
+  }
+}

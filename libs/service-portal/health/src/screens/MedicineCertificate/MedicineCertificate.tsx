@@ -15,6 +15,7 @@ import {
 import { messages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
+import { ExtraDoctors } from '../../components/ExtraDoctors'
 
 type UseParams = {
   type: string
@@ -102,6 +103,15 @@ export const MedicineCertificate = () => {
                 paddingY={3}
                 label={formatMessage(messages.medicineNameOfDoctor)}
                 content={certificate.doctor}
+                labelColumnSpan={['6/12']}
+                valueColumnSpan={['6/12']}
+              />
+            )}
+            {certificate.methylDoctors && certificate.methylDoctors.length && (
+              <UserInfoLine
+                paddingY={3}
+                label={formatMessage(messages.medicineNameOfDocExtra)}
+                content={<ExtraDoctors doctors={certificate.methylDoctors} />}
                 labelColumnSpan={['6/12']}
                 valueColumnSpan={['6/12']}
               />

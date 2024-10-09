@@ -1,11 +1,23 @@
 import { asDiv, HTMLText } from '@island.is/regulations'
-import { GroupedDraftImpactForms, RegDraftForm } from '../state/types'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
+import {
+  AppendixDraftForm,
+  GroupedDraftImpactForms,
+  RegDraftForm,
+} from '../state/types'
 import compact from 'lodash/compact'
 import flatten from 'lodash/flatten'
 import uniq from 'lodash/uniq'
-import { groupElementsByArticleTitleFromDiv } from './groupByArticleTitle'
+import {
+  allSameDay,
+  extractArticleTitleDisplay,
+  formatDate,
+  getTextWithSpaces,
+  groupElementsByArticleTitleFromDiv,
+  hasAnyChange,
+  isGildisTaka,
+  removeRegPrefix,
+  updateAppendixWording,
+} from './formatAmendingUtils'
 import { getDeletionOrAddition } from './getDeletionOrAddition'
 
 // ----------------------------------------------------------------------
@@ -13,24 +25,12 @@ const PREFIX = 'Reglugerð um '
 const PREFIX_AMENDING = 'breytingu á reglugerð nr. '
 const PREFIX_REPEALING = 'brottfellingu á reglugerð nr. '
 
-const removeRegPrefix = (title: string) => {
-  if (/^Reglugerð/.test(title)) {
-    return title.replace(/^Reglugerð/, '')
-  }
-  return title
-}
-
-const isGildisTaka = (str: string) => {
-  return /(öðlast|tekur).*gildi|sett.*með.*(?:heimild|stoð)/.test(
-    (str || '').toLowerCase(),
-  )
-}
-
 const formatAffectedAndPlaceAffectedAtEnd = (
   groups: {
     formattedRegBody: HTMLText[]
     date?: Date | undefined
   }[],
+  hideAffected?: boolean,
 ) => {
   function formatArray(arr: string[]): string {
     if (arr.length === 1) {
@@ -49,18 +49,6 @@ const formatAffectedAndPlaceAffectedAtEnd = (
     }
 
     return ''
-  }
-
-  const formatDate = (date: Date) => {
-    const newDate = new Date(date)
-    if (newDate) {
-      const formattedDate = format(new Date(date), 'dd. MMMM yyyy', {
-        locale: is,
-      })
-      return formattedDate.replace(/^0+/, '') // Remove leading zeros
-    } else {
-      return ''
-    }
   }
 
   const extractArticleNumber = (str: string): number | null => {
@@ -115,7 +103,10 @@ const formatAffectedAndPlaceAffectedAtEnd = (
   })
 
   const uniqueGildistaka = uniq(gildsTakaKeepArray)
-  const joinedAffected = updatedImpactAffectArray.join('. ')
+  let joinedAffected = updatedImpactAffectArray.join('. ')
+  if (hideAffected) {
+    joinedAffected = ''
+  }
   const gildistakaReturn = flatten([...uniqueGildistaka, joinedAffected]).join(
     '',
   ) as HTMLText
@@ -175,14 +166,15 @@ export const formatAmendingRegBody = (
   repeal?: boolean,
   diff?: HTMLText | string | undefined,
   regTitle?: string,
+  appendixes?: AppendixDraftForm[],
 ) => {
   const regName = removeRegNamePrefix(name)
   if (repeal) {
-    const title = regTitle ? regTitle.replace(/^reglugerð\s*/i, '') + ' ' : ''
+    const title = regTitle ? regTitle.replace(/^reglugerð\s*/i, '').trim() : ''
     const text = `<p>Reglugerð nr. ${regName} ${title.replace(
       /\.$/,
       '',
-    )}fellur brott.</p>` as HTMLText
+    )} fellur brott.</p>` as HTMLText
     const gildistaka =
       `<p>Reglugerð þessi er sett með heimild í [].</p><p>Reglugerðin öðlast þegar gildi.</p>` as HTMLText
     return [text, gildistaka]
@@ -232,18 +224,8 @@ export const formatAmendingRegBody = (
       if (element.classList.contains('article__title')) {
         const clone = element.cloneNode(true)
 
-        if (clone instanceof Element) {
-          const emElement = clone.querySelector('em')
-          if (emElement) {
-            emElement.parentNode?.removeChild(emElement)
-          }
-
-          const textContent = clone.textContent?.trim() ?? ''
-
-          articleTitle = textContent
-        } else {
-          articleTitle = element.innerText
-        }
+        const textContent = getTextWithSpaces(clone)
+        articleTitle = extractArticleTitleDisplay(textContent)
         testGroup.title = articleTitle
         isArticleTitle = true
         paragraph = 0 // Reset paragraph count for the new article
@@ -385,10 +367,8 @@ export const formatAmendingRegBody = (
     if (testGroup.isDeletion === true) {
       const articleTitleNumber = testGroup.title
 
-      const grMatch = articleTitleNumber.match(/^\d+\. gr\./)
-      const articleTitleDisplay = grMatch ? grMatch[0] : articleTitleNumber
       additionArray.push([
-        `<p>${articleTitleDisplay} ${regNameDisplay} fellur brott.</p>` as HTMLText,
+        `<p>${articleTitleNumber} ${regNameDisplay} fellur brott.</p>` as HTMLText,
       ])
     } else if (testGroup.isAddition === true) {
       let prevArticleTitle = ''
@@ -401,7 +381,8 @@ export const formatAmendingRegBody = (
         ? flatten(testGroup.original)
         : []
 
-      const prevArticleTitleNumber = prevArticleTitle.match(/^\d+\. gr\./)
+      const prevArticleTitleNumber =
+        extractArticleTitleDisplay(prevArticleTitle)
 
       let articleDisplayText = ''
 
@@ -422,6 +403,34 @@ export const formatAmendingRegBody = (
     }
   })
 
+  appendixes?.map((apx, idx) => {
+    if (apx.diff?.value) {
+      const defaultTitle = apx.title.value ?? `Viðauki ${idx + 1}`
+
+      const regNameAddition =
+        regName && regName !== 'self'
+          ? `reglugerð nr. ${regName}`.replace(/\.$/, '')
+          : 'reglugerðina'
+      const regNameChange =
+        regName && regName !== 'self'
+          ? `, reglugerðar nr. ${regName}`.replace(/\.$/, '')
+          : ''
+
+      const testAddTitle = `Við ${regNameAddition} bætist nýr viðauki, ${defaultTitle} sem ${
+        /fylgiskjal/i.test(defaultTitle) ? 'birt' : 'birtur'
+      } er með reglugerð þessari.`
+      const testChangeTitle = `Eftirfarandi breytingar eru gerðar á ${updateAppendixWording(
+        defaultTitle,
+      )}${regNameChange}:`
+
+      if (apx.diff?.value.includes('<div data-diff="new">')) {
+        additionArray.push([`<p>${testAddTitle}</p>` as HTMLText])
+      } else if (hasAnyChange(apx.diff?.value)) {
+        additionArray.push([`<p>${testChangeTitle}</p><p>[]</p>` as HTMLText])
+      }
+    }
+  })
+
   return additionArray.flat()
 }
 
@@ -439,6 +448,7 @@ export const formatAmendingBodyWithArticlePrefix = (
             item.type === 'repeal',
             item.type === 'amend' ? item.diff?.value : undefined,
             item.regTitle,
+            item.type === 'amend' ? item.appendixes : undefined,
           ),
           date: item.date.value,
         }
@@ -449,7 +459,11 @@ export const formatAmendingBodyWithArticlePrefix = (
 
   const additions = flatten(impactAdditionArray)
 
-  const htmlForEditor = formatAffectedAndPlaceAffectedAtEnd(additions)
+  const hideAffected = allSameDay(additions)
+  const htmlForEditor = formatAffectedAndPlaceAffectedAtEnd(
+    additions,
+    hideAffected,
+  )
 
   const returnArray = compact(htmlForEditor)
 

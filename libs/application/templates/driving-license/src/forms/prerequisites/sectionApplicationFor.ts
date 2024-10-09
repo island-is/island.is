@@ -43,7 +43,7 @@ export const sectionApplicationFor = (
                 'currentLicense.data',
               ) ?? { categories: null }
 
-              const age =
+              let age =
                 getValueViaPath<number>(
                   app.externalData,
                   'nationalRegistry.data.age',
@@ -53,6 +53,7 @@ export const sectionApplicationFor = (
                 app.answers,
                 'fakeData',
               )
+
               if (fakeData?.useFakeData === 'yes') {
                 currentLicense = fakeData.currentLicense ?? null
                 categories =
@@ -66,6 +67,8 @@ export const sectionApplicationFor = (
                         { nr: 'BE', validToCode: 9 },
                       ]
                     : []
+
+                age = fakeData?.age
               }
 
               let options = [
@@ -91,9 +94,7 @@ export const sectionApplicationFor = (
                   subLabel:
                     m.applicationForRenewalLicenseDescription.defaultMessage,
                   value: B_FULL_RENEWAL_65,
-                  disabled:
-                    !currentLicense ||
-                    (fakeData && fakeData.age ? fakeData.age < 65 : age < 65),
+                  disabled: !currentLicense || age < 65,
                 })
               }
 

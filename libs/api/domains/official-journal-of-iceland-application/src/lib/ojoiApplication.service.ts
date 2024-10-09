@@ -16,6 +16,8 @@ import { GetApplicationAttachmentInput } from '../models/getApplicationAttachmen
 import { DeleteApplicationAttachmentInput } from '../models/deleteApplicationAttachment.input'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { User } from '@island.is/auth-nest-tools'
+import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.input'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -27,72 +29,92 @@ export class OfficialJournalOfIcelandApplicationService {
     private readonly ojoiApplicationService: OfficialJournalOfIcelandApplicationClientService,
   ) {}
 
-  async getComments(input: GetCommentsInput) {
-    return this.ojoiApplicationService.getComments(input)
+  async getComments(input: GetCommentsInput, user: User) {
+    return this.ojoiApplicationService.getComments(input, user)
   }
 
-  async postComment(input: PostCommentInput) {
-    const success = this.ojoiApplicationService.postComment({
-      id: input.id,
-      postApplicationComment: {
-        comment: input.comment,
+  async postComment(input: PostCommentInput, user: User) {
+    const success = this.ojoiApplicationService.postComment(
+      {
+        id: input.id,
+        postApplicationComment: {
+          comment: input.comment,
+        },
       },
-    })
+      user,
+    )
 
     return {
       success,
     }
   }
 
-  async getPdfUrl(id: string) {
-    return this.ojoiApplicationService.getPdfUrl({
-      id,
-    })
+  async getPdfUrl(id: string, user: User) {
+    return this.ojoiApplicationService.getPdfUrl(
+      {
+        id,
+      },
+      user,
+    )
   }
 
-  async postApplication(input: PostApplicationInput): Promise<boolean> {
-    return this.ojoiApplicationService.postApplication(input)
+  async postApplication(
+    input: PostApplicationInput,
+    user: User,
+  ): Promise<boolean> {
+    return this.ojoiApplicationService.postApplication(input, user)
   }
 
-  async getPrice(id: string) {
-    return this.ojoiApplicationService.getPrice({
-      id,
-    })
+  async getPrice(id: string, user: User) {
+    return this.ojoiApplicationService.getPrice(
+      {
+        id,
+      },
+      user,
+    )
   }
 
   async getPresignedUrl(
     input: GetPresignedUrlInput,
+    user: User,
   ): Promise<GetPresignedUrlResponse> {
     const attachmentType = mapPresignedUrlType(input.attachmentType)
 
-    return this.ojoiApplicationService.getPresignedUrl({
-      id: input.applicationId,
-      type: attachmentType,
-      getPresignedUrlBody: {
-        fileName: input.fileName,
-        fileType: input.fileType,
+    return this.ojoiApplicationService.getPresignedUrl(
+      {
+        id: input.applicationId,
+        type: attachmentType,
+        getPresignedUrlBody: {
+          fileName: input.fileName,
+          fileType: input.fileType,
+        },
       },
-    })
+      user,
+    )
   }
 
   async addApplicationAttachment(
     input: AddApplicationAttachmentInput,
+    user: User,
   ): Promise<AddApplicationAttachmentResponse> {
     try {
       const attachmentType = mapAttachmentType(input.attachmentType)
 
-      this.ojoiApplicationService.addApplicationAttachment({
-        id: input.applicationId,
-        type: attachmentType,
-        postApplicationAttachmentBody: {
-          fileName: input.fileName,
-          originalFileName: input.originalFileName,
-          fileFormat: input.fileFormat,
-          fileExtension: input.fileExtension,
-          fileLocation: input.fileLocation,
-          fileSize: input.fileSize,
+      this.ojoiApplicationService.addApplicationAttachment(
+        {
+          id: input.applicationId,
+          type: attachmentType,
+          postApplicationAttachmentBody: {
+            fileName: input.fileName,
+            originalFileName: input.originalFileName,
+            fileFormat: input.fileFormat,
+            fileExtension: input.fileExtension,
+            fileLocation: input.fileLocation,
+            fileSize: input.fileSize,
+          },
         },
-      })
+        user,
+      )
 
       return {
         success: true,
@@ -109,19 +131,31 @@ export class OfficialJournalOfIcelandApplicationService {
     }
   }
 
-  async getApplicationAttachments(input: GetApplicationAttachmentInput) {
-    return this.ojoiApplicationService.getApplicationAttachments({
-      id: input.applicationId,
-      type: mapGetAttachmentType(input.attachmentType),
-    })
+  async getApplicationAttachments(
+    input: GetApplicationAttachmentInput,
+    user: User,
+  ) {
+    return this.ojoiApplicationService.getApplicationAttachments(
+      {
+        id: input.applicationId,
+        type: mapGetAttachmentType(input.attachmentType),
+      },
+      user,
+    )
   }
 
-  async deleteApplicationAttachment(input: DeleteApplicationAttachmentInput) {
+  async deleteApplicationAttachment(
+    input: DeleteApplicationAttachmentInput,
+    user: User,
+  ) {
     try {
-      await this.ojoiApplicationService.deleteApplicationAttachment({
-        id: input.applicationId,
-        key: input.key,
-      })
+      await this.ojoiApplicationService.deleteApplicationAttachment(
+        {
+          id: input.applicationId,
+          key: input.key,
+        },
+        user,
+      )
 
       return { success: true }
     } catch (error) {
@@ -132,5 +166,14 @@ export class OfficialJournalOfIcelandApplicationService {
       })
       return { success: false }
     }
+  }
+
+  async getUserInvolvedParties(input: GetUserInvolvedPartiesInput, user: User) {
+    return this.ojoiApplicationService.getUserInvolvedParties(
+      {
+        id: input.applicationId,
+      },
+      user,
+    )
   }
 }

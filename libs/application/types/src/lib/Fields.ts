@@ -361,6 +361,7 @@ export interface TextField extends BaseField {
   maxLength?: number
   max?: number
   min?: number
+  step?: string
   placeholder?: FormText
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor
@@ -550,7 +551,10 @@ type Modify<T, R> = Omit<T, keyof R> & R
 export type ActionCardListField = BaseField & {
   readonly type: FieldTypes.ACTION_CARD_LIST
   component: FieldComponents.ACTION_CARD_LIST
-  items: (application: Application) => ApplicationActionCardProps[]
+  items: (
+    application: Application,
+    lang: Locale,
+  ) => ApplicationActionCardProps[]
   space?: BoxProps['paddingTop']
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']

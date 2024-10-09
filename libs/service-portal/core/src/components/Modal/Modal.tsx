@@ -1,14 +1,6 @@
-import React, { FC, ReactElement, useEffect, useState } from 'react'
+import React, { FC, ReactElement } from 'react'
 import * as styles from './Modal.css'
-import {
-  Box,
-  Text,
-  ModalBase,
-  Button,
-  ButtonProps,
-  Inline,
-} from '@island.is/island-ui/core'
-import { useDebounce } from 'react-use'
+import { Box, ModalBase, Button } from '@island.is/island-ui/core'
 
 interface Props {
   id: string
@@ -18,20 +10,6 @@ interface Props {
   initialVisibility?: boolean
   disclosure?: ReactElement
   label?: string
-  title?: string
-  text?: string
-  buttons?: Array<{
-    id: ButtonProps['id']
-    type?: 'ghost' | 'primary' | 'utility'
-    onClick?: () => void
-    text?: string
-    loading?: boolean
-    colorScheme?: 'destructive' | 'negative' | 'default'
-    align?: 'left' | 'right'
-    icon?: ButtonProps['icon']
-  }>
-  iconSrc?: string
-  iconAlt?: string
   /**
    * No styling. All callbacks available.
    */
@@ -46,39 +24,12 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
   disclosure,
   isVisible,
   label,
-  title,
-  text,
-  buttons,
   initialVisibility = true,
   skeleton,
-  iconAlt,
-  iconSrc,
 }) => {
-  const [closing, setClosing] = useState(false)
-  const [startClosing, setStartClosing] = useState(false)
-
-  useEffect(() => {
-    if (closing) {
-      onCloseModal && onCloseModal()
-      setClosing(false)
-      setStartClosing(false)
-    }
-  }, [closing, onCloseModal])
-
-  useDebounce(
-    () => {
-      if (startClosing) {
-        setClosing(startClosing)
-      }
-    },
-    500,
-    [startClosing],
-  )
-
   const handleOnVisibilityChange = (isVisible: boolean) => {
-    !isVisible && onCloseModal && setStartClosing(true)
+    !isVisible && onCloseModal && onCloseModal()
   }
-
   return (
     <ModalBase
       baseId={id}
@@ -97,10 +48,6 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
         ) : (
           <Box
             background="white"
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            rowGap={2}
             paddingY={[3, 6, 12]}
             paddingX={[3, 6, 12, 14]}
           >
@@ -115,45 +62,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                 size="large"
               />
             </Box>
-            <Box width="full">
-              <Box marginBottom={5}>
-                {title && (
-                  <Text variant="h3" marginBottom={'auto'}>
-                    {title}
-                  </Text>
-                )}
-                {text && <Text>{text}</Text>}
-              </Box>
-              {children}
-              {buttons && (
-                <Box display="flex" flexDirection="row" marginTop={2}>
-                  {buttons.map((b, i) => (
-                    <Box
-                      marginLeft={b.align === 'right' ? 'auto' : undefined}
-                      paddingLeft={i !== 0 ? 2 : 0}
-                    >
-                      <Button
-                        key={b.id}
-                        variant={b.type ?? 'primary'}
-                        size="small"
-                        onClick={b.onClick}
-                        loading={b.loading}
-                        colorScheme={b.colorScheme ?? 'default'}
-                        icon={b.icon}
-                        iconType={b.icon ? 'outline' : undefined}
-                      >
-                        {b.text}
-                      </Button>
-                    </Box>
-                  ))}
-                </Box>
-              )}
-            </Box>
-            {iconSrc && (
-              <Box marginLeft={6} className={styles.image}>
-                <img src={iconSrc} alt={iconAlt} />
-              </Box>
-            )}
+            {children}
           </Box>
         )
       }
