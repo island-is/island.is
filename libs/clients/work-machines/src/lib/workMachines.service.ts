@@ -289,11 +289,11 @@ export class WorkMachinesClientService {
   async mustInspectBeforeRegistration(auth: Auth) {
     return await this.machineStreetApiWithAuth(
       auth,
-    ).apiMachineStreetRegistrationMustInspectBeforeRegistrationGet()
+    ).apiMachineStreetRegistrationMustInspectBeforeRegistrationGet({})
   }
 
   async getMachineTypes(auth: Auth): Promise<MachineTypeDto[]> {
-    return await this.machineTypesApiWithAuth(auth).apiMachineTypesGet()
+    return await this.machineTypesApiWithAuth(auth).apiMachineTypesGet({})
   }
 
   async getMachineModels(
@@ -308,11 +308,11 @@ export class WorkMachinesClientService {
   async getMachineParentCategoriesTypeModel(
     auth: Auth,
     requestParameters: ApiMachineParentCategoriesTypeModelGetRequest,
-  ): Promise<MachineParentCategoryDetailsDto> {
-    console.log(requestParameters.model, requestParameters.type)
-    return await this.machineParentCategoriesApiWithAuth(
+  ): Promise<MachineParentCategoryDetailsDto[]> {
+    const stuff = await this.machineParentCategoriesApiWithAuth(
       auth,
     ).apiMachineParentCategoriesTypeModelGet(requestParameters)
+    return stuff
   }
 
   async getMachineParentCategories(
@@ -320,7 +320,7 @@ export class WorkMachinesClientService {
   ): Promise<MachineParentCategoryDto[]> {
     return await this.machineParentCategoriesApiWithAuth(
       auth,
-    ).apiMachineParentCategoriesGet()
+    ).apiMachineParentCategoriesGet({})
   }
 
   async getMachineSubCategories(

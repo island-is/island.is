@@ -186,7 +186,7 @@ export class WorkMachinesService {
   async getMachineParentCategoriesTypeModelGet(
     auth: User,
     input: GetMachineParentCategoryByTypeAndModelInput,
-  ): Promise<MachineParentCategoryDetailsDto> {
+  ): Promise<MachineParentCategoryDetailsDto[]> {
     return this.machineService.getMachineParentCategoriesTypeModel(auth, {
       type: input.type,
       model: input.model,
