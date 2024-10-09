@@ -2,11 +2,12 @@ import {
   buildSubSection,
   buildDataProviderItem,
   buildExternalDataProvider,
+  buildSection,
 } from '@island.is/application/core'
 import { UserProfileApi, NationalRegistryUserApi } from '../../dataProviders'
 import * as m from '../../lib/messages'
 
-export const externalData = buildSubSection({
+export const externalData = buildSection({
   id: 'externalData',
   title: m.prerequisites.externalData.sectionTitle,
   children: [

@@ -40,8 +40,8 @@ const RentalAgreementTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/form').then((module) =>
-                  Promise.resolve(module.RentalAgreementForm),
+                import('../forms/prerequisitesForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
@@ -54,6 +54,28 @@ const RentalAgreementTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
               ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: [{ target: States.DRAFT }],
+        },
+      },
+      [States.DRAFT]: {
+        meta: {
+          name: States.DRAFT,
+          status: 'draft',
+          lifecycle: pruneAfterDays(1),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/rentalAgreementForm').then((module) =>
+                  Promise.resolve(module.RentalAgreementForm),
+                ),
+              write: 'all',
+              read: 'all',
+              delete: true,
             },
           ],
         },
