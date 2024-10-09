@@ -1,6 +1,8 @@
 import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
 
+export type SharedModuleConfigType = z.infer<typeof SharedModuleConfig>
+
 const SharedModuleConfig = z.object({
   baseApiUrl: z.string(),
   clientLocationOrigin: z.string(),
