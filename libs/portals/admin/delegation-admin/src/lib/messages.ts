@@ -61,9 +61,13 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:create',
     defaultMessage: 'Skrá umboð',
   },
+  delete: {
+    id: 'admin.delegationAdmin:delete',
+    defaultMessage: 'Eyða umboði',
+  },
   noEndDate: {
     id: 'admin.delegationAdmin:noEndDate',
-    defaultMessage: 'Gildis tími óendanlegur',
+    defaultMessage: 'Gildistími óendanlegur',
   },
   validTo: {
     id: 'admin.delegationAdmin:validTo',
@@ -73,8 +77,8 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:type',
     defaultMessage: 'Aðgangstegund',
   },
-  typeGeneral: {
-    id: 'admin.delegationAdmin:typeGeneral',
+  generalMandateLabel: {
+    id: 'admin.delegationAdmin:generalMandateLabel',
     defaultMessage: 'Allsherjarumboð',
   },
   referenceId: {
@@ -116,6 +120,10 @@ export const m = defineMessages({
   createDelegationConfirmModalTitle: {
     id: 'admin.delegationAdmin:createDelegationConfirmModalTitle',
     defaultMessage: 'Þú ert að skrá nýtt umboð',
+  },
+  deleteDelegationModalTitle: {
+    id: 'admin.delegationAdmin:deleteDelegationModalTitle',
+    defaultMessage: 'Eyða umboði',
   },
   createDelegationSuccessToast: {
     id: 'admin.delegationAdmin:createDelegationSuccessToast',
