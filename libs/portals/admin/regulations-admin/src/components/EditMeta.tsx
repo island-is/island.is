@@ -40,7 +40,7 @@ export const EditMeta = () => {
       updateState('idealPublishDate', defaultPublishDate)
       setHasSetDate(true)
     }
-  }, [draft.effectiveDate.value, draft.idealPublishDate.value, setHasSetDate])
+  }, [hasSetDate, draft.effectiveDate.value, draft.idealPublishDate.value])
 
   const type = draft.type
   const typeName =
