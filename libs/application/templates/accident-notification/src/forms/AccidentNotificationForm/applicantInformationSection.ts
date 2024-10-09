@@ -4,5 +4,12 @@ import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 export const applicantInformationSection = buildSection({
   id: 'informationAboutApplicantSection',
   title: applicantInformation.general.title,
+  condition: (_application, externalData) => {
+    if (externalData.identity) {
+      return false
+    }
+    return true
+  },
+
   children: [applicantInformationMultiField()],
 })
