@@ -43,6 +43,7 @@ export type Icon =
   | 'fileTrayFull'
   | 'fileTrayEmpty'
   | 'filter'
+  | 'gavel'
   | 'heart'
   | 'home'
   | 'homeWithCar'
@@ -138,6 +139,7 @@ export default {
     fileTrayFull: 'FileTrayFull',
     fileTrayEmpty: 'FileTrayEmpty',
     filter: 'Filter',
+    gavel: 'Gavel',
     heart: 'Heart',
     home: 'Home',
     homeWithCar: 'HomeWithCar',
@@ -232,6 +234,7 @@ export default {
     fileTrayFull: 'FileTrayFullOutline',
     fileTrayEmpty: 'FileTrayEmptyOutline',
     filter: 'FilterOutline',
+    gavel: 'GavelOutline',
     heart: 'HeartOutline',
     home: 'HomeOutline',
     homeWithCar: 'HomeWithCarOutline',
