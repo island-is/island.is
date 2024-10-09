@@ -198,7 +198,7 @@ export const EditChange = (props: EditChangeProp) => {
       !regulationLoading &&
       toISODate(minDate) !== toISODate(activeChange.date.value)
     ) {
-      changeDate(getWorkdayMinimumDate(10))
+      changeDate(getWorkdayMinimumDate(11))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minDate, impactsLoading, regulationLoading])
