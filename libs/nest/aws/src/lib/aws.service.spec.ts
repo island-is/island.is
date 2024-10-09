@@ -50,7 +50,7 @@ describe('AwsService', () => {
     const getObjectResult = await awsService.getFile({ bucket: 'x', key: 'y' })
     expect(getObjectResult).toBeDefined()
 
-    const contentResults = await getObjectResult.Body?.transformToString()
+    const contentResults = await getObjectResult?.Body?.transformToString()
     expect(contentResults).toBeDefined()
 
     expect(contentResults).toStrictEqual(expectedResult)
