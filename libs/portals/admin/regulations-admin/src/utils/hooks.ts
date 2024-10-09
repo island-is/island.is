@@ -91,11 +91,11 @@ export const useAffectedRegulations = (
       data,
     )
 
-    options.push({
-      type: selfType,
-      value: 'self',
-      label: selfAffectingText,
-    })
+    // options.push({
+    //   type: selfType,
+    //   value: 'self',
+    //   label: selfAffectingText,
+    // })
 
     return options
   }, [selfType, mentioned, data, notFoundText, selfAffectingText, repealedText])

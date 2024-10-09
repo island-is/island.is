@@ -275,21 +275,7 @@ const Homestay: Screen<HomestayProps> = ({
                 >
                   <Text>
                     {n('homestayRealEstateNumberPrefix', 'Fasteign nr.')}{' '}
-                    <a
-                      href={(
-                        n(
-                          'realEstateRegistryLinkTemplate',
-                          'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
-                        ) as string
-                      ).replace(
-                        '{{ID}}',
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore make web strict
-                        homestay.propertyId,
-                      )}
-                    >
-                      {homestay.propertyId}
-                    </a>
+                    {homestay.propertyId}
                   </Text>
                 </LinkContext.Provider>
                 <Text>
@@ -386,17 +372,23 @@ Homestay.getProps = async ({ apolloClient, locale, req }) => {
     throw new CustomNextError(404, 'Organization subpage not found')
   }
 
+  const usingDefaultHeader: boolean = namespace['usingDefaultHeader'] ?? false
+
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
     homestays: getHomestays,
     namespace,
     showSearchInHeader: false,
+    themeConfig: !usingDefaultHeader
+      ? {
+          headerButtonColorScheme: 'negative',
+          headerColorScheme: 'white',
+        }
+      : {},
   }
 }
 
 export default withMainLayout(Homestay, {
-  headerButtonColorScheme: 'negative',
-  headerColorScheme: 'white',
   footerVersion: 'organization',
 })

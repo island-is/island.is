@@ -105,7 +105,7 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
-    BLOCKED_API_INTEGRATION: 'COURT,POLICE_CASE'
+    BLOCKED_API_INTEGRATION: 'COURT,POLICE_CASE,CREATE_SUBPOENA'
     CLIENT_URL: 'https://judicial-system.staging01.devland.is'
     CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'cdn.contentful.com'
