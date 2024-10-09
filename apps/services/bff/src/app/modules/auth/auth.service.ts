@@ -1,11 +1,19 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { CookieOptions, Request, Response } from 'express'
+import jwksClient from 'jwks-rsa'
 import { jwtDecode } from 'jwt-decode'
 
 import { IdTokenClaims } from '@island.is/shared/types'
+import { decode, verify, Algorithm } from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
@@ -20,7 +28,7 @@ import {
 import { validateUri } from '../../utils/validate-uri'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
-import { TokenResponse } from '../ids/ids.types'
+import { LogoutTokenPayload, TokenResponse } from '../ids/ids.types'
 import { CachedTokenResponse } from './auth.types'
 import { CallbackLoginDto } from './dto/callback-login.dto'
 import { CallbackLogoutDto } from './dto/callback-logout.dto'
@@ -387,12 +395,11 @@ export class AuthService {
       query.sid,
     )
 
-    const cachedTokenResponse =
-      await this.cacheService.get<CachedTokenResponse>(
-        currentLoginCacheKey,
-        // Do not throw an error if the key is not found
-        false,
-      )
+    const cachedTokenResponse = await this.cacheService.get<CachedTokenResponse>(
+      currentLoginCacheKey,
+      // Do not throw an error if the key is not found
+      false,
+    )
 
     if (!cachedTokenResponse) {
       this.logger.error(
@@ -432,11 +439,98 @@ export class AuthService {
     )
   }
 
-  async callbackLogout(req: Request, body: CallbackLogoutDto) {
-    this.logger.warn('callbackBackchannelLogout', JSON.stringify(body, null, 2))
+  async validateLogoutToken(logoutToken: string): Promise<LogoutTokenPayload> {
+    try {
+      const secretClient = jwksClient({
+        cache: true,
+        rateLimit: true,
+        jwksUri: `${this.config.ids.issuer}/.well-known/openid-configuration/jwks`,
+      })
 
-    // TODO validate the token
-    // clear the cache
-    // https://openid.net/specs/openid-connect-backchannel-1_0.html
+      // Decode the token without verifying the signature
+      const decodedToken = decode(logoutToken, { complete: true })
+      const kid = decodedToken?.header?.kid
+
+      if (!kid) {
+        throw new Error('Invalid token header. No kid found in header.')
+      }
+
+      const signingKeys = await secretClient.getSigningKeys()
+
+      // Find the the correct signing key matching the headers kid
+      const signingKey = signingKeys.find((sk) => sk.kid === kid)
+
+      if (!signingKey) {
+        throw new Error(`No matching key found for kid "${kid}"`)
+      }
+
+      const publicKey = signingKey.getPublicKey()
+
+      // Verify the signature
+      const payload = verify(logoutToken, publicKey, {
+        algorithms: [signingKey.alg as Algorithm],
+        issuer: this.config.ids.issuer,
+      }) as LogoutTokenPayload
+
+      if (!payload.sid) {
+        throw new Error('No sid in the token')
+      }
+
+      return payload
+    } catch (error) {
+      this.logger.error('Error validating logout token: ', error)
+
+      throw new UnauthorizedException()
+    }
+  }
+
+  async callbackLogout(body: CallbackLogoutDto) {
+    // TODO: Remove this log statement when done testing on feature deploy
+    this.logger.warn('callbackBackchannelLogout', JSON.stringify(body, null, 2))
+    const logoutToken = body.logout_token
+
+    if (!logoutToken) {
+      const errorMessage = 'No param "logout_token" provided!'
+      this.logger.error(errorMessage)
+
+      throw new BadRequestException(errorMessage)
+    }
+
+    try {
+      // Validate the logout token and extract payload
+      const payload = await this.validateLogoutToken(logoutToken)
+
+      // Create cache key and retrieve cached token response
+      const cacheKey = this.cacheService.createSessionKeyType(
+        'current',
+        payload.sid,
+      )
+      const cachedTokenResponse = await this.cacheService.get<CachedTokenResponse>(
+        cacheKey,
+        false, // Do not throw an error if the key is not found
+      )
+
+      // Revoke refresh token and delete cache entry
+      if (cachedTokenResponse) {
+        this.revokeRefreshToken(cachedTokenResponse.encryptedRefreshToken)
+      }
+
+      await this.cacheService.delete(cacheKey)
+
+      return {
+        status: 'success',
+        message: 'Logout successful and cache cleared.',
+      }
+    } catch (error) {
+      // Check if error is an UnauthorizedException and just throw it,
+      // since it is already being logged in the validateLogoutToken method.
+      if (error instanceof UnauthorizedException) {
+        throw error
+      }
+
+      this.logger.error('Callback backchannel logout failed: ', error)
+
+      throw new InternalServerErrorException()
+    }
   }
 }
