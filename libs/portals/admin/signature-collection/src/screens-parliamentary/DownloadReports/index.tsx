@@ -22,13 +22,14 @@ export const DownloadReports = ({
   const { formatMessage } = useLocale()
   const [modalDownloadReportsIsOpen, setModalDownloadReportsIsOpen] =
     useState(false)
+  const [pdfState, setPdfState] = useState({ areaId: '', pdfUrl: '' })
 
   const [runGetSummaryReport, { data }] = useLazyQuery(
     SignatureCollectionAreaSummaryReportDocument,
   )
 
   const [document, updateDocument] = usePDF({
-    document: (
+    document: data && (
       <MyPdfDocument
         report={
           data?.signatureCollectionAreaSummaryReport as SignatureCollectionAreaSummaryReport
@@ -37,19 +38,38 @@ export const DownloadReports = ({
     ),
   })
 
-  // Update document with after correct data is fetched
+  const handleDownloadClick = (area: string) => {
+    // Fetch the report if it has not been fetched yet
+    if (area !== pdfState.areaId) {
+      runGetSummaryReport({
+        variables: {
+          input: {
+            areaId: area,
+            collectionId: collectionId,
+          },
+        },
+      })
+      setPdfState({ ...pdfState, areaId: area })
+    } else {
+      // Open the document in a new tab if it has already been fetched
+      window.open(document?.url?.toString(), '_blank')
+    }
+  }
+
+  // Update pdf document after correct data is fetched
   useEffect(() => {
-    if (data?.signatureCollectionAreaSummaryReport) {
+    if (data?.signatureCollectionAreaSummaryReport?.id === pdfState.areaId) {
       updateDocument()
     }
-  }, [data])
+  }, [data, pdfState, updateDocument])
 
   // Open the document in a new tab when it has been generated
   useEffect(() => {
-    if (!document.loading && document.url) {
+    if (document.url && document.url !== pdfState.pdfUrl) {
       window.open(document.url, '_blank')
+      setPdfState({ ...pdfState, pdfUrl: document?.url ?? '' })
     }
-  }, [document.loading, document.url])
+  }, [document.url, pdfState])
 
   return (
     <Box>
@@ -86,16 +106,7 @@ export const DownloadReports = ({
                   variant: 'text',
                   icon: 'download',
                   iconType: 'outline',
-                  onClick: () => {
-                    runGetSummaryReport({
-                      variables: {
-                        input: {
-                          areaId: area.id,
-                          collectionId: collectionId,
-                        },
-                      },
-                    })
-                  },
+                  onClick: () => handleDownloadClick(area.id),
                 }}
               />
             ))}

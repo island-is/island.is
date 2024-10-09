@@ -7,6 +7,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotImplementedException,
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
@@ -148,16 +149,19 @@ export class SubpoenaService {
     user: User,
   ): Promise<DeliverResponse> {
     try {
-      const pdf = await this.pdfService.getSubpoenaPdf(
+      const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
         theCase,
         defendant,
         subpoena,
       )
 
+      const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
+
       const createdSubpoena = await this.policeService.createSubpoena(
         theCase,
         defendant,
-        Base64.btoa(pdf.toString('binary')),
+        Base64.btoa(subpoenaPdf.toString('binary')),
+        Base64.btoa(indictmentPdf.toString('binary')),
         user,
       )
 
@@ -175,9 +179,16 @@ export class SubpoenaService {
 
       return { delivered: true }
     } catch (error) {
-      this.logger.error('Error delivering subpoena to police', error)
-
-      return { delivered: false }
+      if (error instanceof NotImplementedException) {
+        this.logger.info(
+          'Failed to deliver subpoena to police due to lack of implementation',
+          error,
+        )
+        return { delivered: true }
+      } else {
+        this.logger.error('Error delivering subpoena to police', error)
+        return { delivered: false }
+      }
     }
   }
 }
