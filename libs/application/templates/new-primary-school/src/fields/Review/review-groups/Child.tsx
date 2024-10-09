@@ -17,6 +17,7 @@ import {
   getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
+import { coreErrorMessages } from '@island.is/application/core'
 
 export const Child = ({
   application,
@@ -28,9 +29,11 @@ export const Child = ({
     application.answers,
   )
 
-  const { options: pronounOptions, loading } = useFriggOptions(
-    OptionsType.PRONOUN,
-  )
+  const {
+    options: pronounOptions,
+    loading,
+    error,
+  } = useFriggOptions(OptionsType.PRONOUN)
 
   return (
     <ReviewGroup
@@ -110,6 +113,11 @@ export const Child = ({
                           getSelectedOptionLabel(pronounOptions, pronoun),
                         )
                         .join(', ')}
+                      error={
+                        error
+                          ? formatMessage(coreErrorMessages.failedDataProvider)
+                          : undefined
+                      }
                     />
                   </GridColumn>
                 )}

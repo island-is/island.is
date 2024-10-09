@@ -4,6 +4,7 @@ import {
   GridRow,
   SkeletonLoader,
   Stack,
+  Box,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { getCountryByCode } from '@island.is/shared/utils'
@@ -18,6 +19,7 @@ import {
   getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
+import { coreErrorMessages } from '@island.is/application/core'
 
 export const ReasonForApplication = ({
   application,
@@ -32,9 +34,11 @@ export const ReasonForApplication = ({
     reasonForApplicationPostalCode,
   } = getApplicationAnswers(application.answers)
 
-  const { options: relationFriggOptions, loading } = useFriggOptions(
-    OptionsType.REASON,
-  )
+  const {
+    options: relationFriggOptions,
+    loading,
+    error,
+  } = useFriggOptions(OptionsType.REASON)
 
   return (
     <ReviewGroup
@@ -53,10 +57,17 @@ export const ReasonForApplication = ({
                   newPrimarySchoolMessages.primarySchool
                     .reasonForApplicationSubSectionTitle,
                 )}
-                value={getSelectedOptionLabel(
-                  relationFriggOptions,
-                  reasonForApplication,
-                )}
+                value={
+                  getSelectedOptionLabel(
+                    relationFriggOptions,
+                    reasonForApplication,
+                  ) || ''
+                }
+                error={
+                  error
+                    ? formatMessage(coreErrorMessages.failedDataProvider)
+                    : undefined
+                }
               />
             </GridColumn>
           </GridRow>

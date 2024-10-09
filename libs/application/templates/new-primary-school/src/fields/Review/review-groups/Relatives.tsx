@@ -11,6 +11,7 @@ import {
   GridColumn,
   GridRow,
   SkeletonLoader,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'
@@ -22,6 +23,7 @@ import {
   getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
+import { coreErrorMessages } from '@island.is/application/core'
 
 export const Relatives = ({
   application,
@@ -31,9 +33,11 @@ export const Relatives = ({
   const { formatMessage } = useLocale()
   const { relatives } = getApplicationAnswers(application.answers)
 
-  const { options: relationFriggOptions, loading } = useFriggOptions(
-    OptionsType.RELATION,
-  )
+  const {
+    options: relationFriggOptions,
+    loading,
+    error,
+  } = useFriggOptions(OptionsType.RELATION)
 
   const rows = relatives.map((r) => {
     return [
@@ -80,6 +84,11 @@ export const Relatives = ({
                   }}
                 />
               </Box>
+            )}
+            {error && (
+              <Text marginTop={1} variant="eyebrow" color="red600">
+                {formatMessage(coreErrorMessages.failedDataProvider)}
+              </Text>
             )}
           </GridColumn>
         </GridRow>
