@@ -8,6 +8,7 @@ import {
   Checkbox,
   Icon,
   Text,
+  InputError,
 } from '@island.is/island-ui/core'
 import { Markdown } from '@island.is/shared/components'
 import {
@@ -327,30 +328,32 @@ const FormExternalDataProvider: FC<
         rules={{ required: true }}
         render={({ field: { onChange, value } }) => {
           return (
-            <Checkbox
-              large={true}
-              onChange={(e) => {
-                const isChecked = e.target.checked
-                clearErrors(id)
-                setValue(id as string, isChecked)
-                onChange(isChecked)
-                activateBeforeSubmitCallback(isChecked)
-              }}
-              checked={value}
-              hasError={error !== undefined}
-              errorMessage={id ? (errors[id] as string) : undefined}
-              backgroundColor="blue"
-              dataTestId="agree-to-data-providers"
-              name={`${id}`}
-              label={
-                <Markdown>
-                  {checkboxLabel
-                    ? formatMessage(checkboxLabel)
-                    : formatMessage(coreMessages.externalDataAgreement)}
-                </Markdown>
-              }
-              value={id}
-            />
+            <>
+              <Checkbox
+                large={true}
+                onChange={(e) => {
+                  const isChecked = e.target.checked
+                  clearErrors(id)
+                  setValue(id as string, isChecked)
+                  onChange(isChecked)
+                  activateBeforeSubmitCallback(isChecked)
+                }}
+                checked={value}
+                hasError={error !== undefined}
+                backgroundColor="blue"
+                dataTestId="agree-to-data-providers"
+                name={`${id}`}
+                label={
+                  <Markdown>
+                    {checkboxLabel
+                      ? formatMessage(checkboxLabel)
+                      : formatMessage(coreMessages.externalDataAgreement)}
+                  </Markdown>
+                }
+                value={id}
+              />
+              {error && <InputError errorMessage={error} />}
+            </>
           )
         }}
       />
