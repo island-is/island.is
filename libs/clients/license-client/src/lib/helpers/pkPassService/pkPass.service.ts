@@ -19,7 +19,7 @@ export class PkPassService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly featureFlagService: FeatureFlagService,
     private readonly newSmartService: SmartSolutionsService,
-    /** DEPRECATED */
+    /** @deprecated */
     private readonly oldSmartService: SmartSolutionsApi,
   ) {}
 

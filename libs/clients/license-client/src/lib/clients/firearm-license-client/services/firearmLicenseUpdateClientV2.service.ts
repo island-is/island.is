@@ -9,7 +9,6 @@ import {
   PassRevocationData,
   PassVerificationData,
   Result,
-  VerifyInputData,
 } from '../../../licenseClient.type'
 import { createPkPassDataInput, nationalIdIndex } from '../firearmLicenseMapper'
 import { mapNationalId } from '../firearmLicenseMapper'

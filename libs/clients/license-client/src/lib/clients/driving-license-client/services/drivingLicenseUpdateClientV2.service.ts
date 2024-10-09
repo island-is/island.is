@@ -229,7 +229,7 @@ export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
     }
 
     if (!verifyRes.data.valid) {
-      this.logger.debug('PkPass is valid', {
+      this.logger.debug('PkPass is invalid', {
         requestId,
         category: LOG_CATEGORY,
       })
