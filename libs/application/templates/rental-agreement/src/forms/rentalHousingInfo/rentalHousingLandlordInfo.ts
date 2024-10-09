@@ -8,7 +8,6 @@ import { formatPhoneNumber } from '@island.is/application/ui-components'
 
 import * as m from '../../lib/messages'
 import { formatNationalId } from '../../utils/utils'
-import { name } from 'libs/island-ui/core/src/lib/FormStepper/SubSectionItem/SubSectionItem.css'
 
 export const RentalHousingLandlordInfo = buildSubSection({
   id: 'rentalHousingLandlordInfo',

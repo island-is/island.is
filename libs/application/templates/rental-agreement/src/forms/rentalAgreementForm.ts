@@ -1,11 +1,9 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 
-import { Prerequisites } from './Prerequisites'
 import { RentalHousingInfo } from './RentalHousingInfo'
 import { RentalPeriod } from './rentalPeriod'
 import { Summary } from './summary'
-import { Signing } from './signing'
 
 import * as m from '../lib/messages'
 
@@ -15,5 +13,5 @@ export const RentalAgreementForm: Form = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [Prerequisites, RentalHousingInfo, RentalPeriod, Summary, Signing],
+  children: [RentalHousingInfo, RentalPeriod, Summary],
 })
