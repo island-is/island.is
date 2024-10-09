@@ -62,6 +62,13 @@ const PdfWrapper = styled.View`
   flex: 1;
   background-color: ${dynamicColor('background')};
 `
+
+const DocumentWrapper = styled.View<{ hasMarginTop?: boolean }>`
+  flex: 1;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  margin-top: ${({ theme, hasMarginTop }) =>
+    hasMarginTop ? theme.spacing[2] : 0}px;
+`
 const regexForBr = /<br\s*\/>/gi
 
 // Styles for html documents
@@ -223,7 +230,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   const client = useApolloClient()
   const intl = useIntl()
-  const theme = useTheme()
   const htmlStyles = useHtmlStyles()
   const { locale } = usePreferencesStore()
   const { openBrowser } = useBrowser()
@@ -235,6 +241,34 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [loaded, setLoaded] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
   const [refetching, setRefetching] = useState(false)
+
+  const refetchDocumentContent = async () => {
+    setRefetching(true)
+    try {
+      const result = await docRes.refetch({
+        input: { id: docId, includeDocument: true },
+      })
+      if (result.data?.documentV2?.alert) {
+        setShowConfirmedAlert(true)
+      }
+    } finally {
+      setRefetching(false)
+    }
+  }
+
+  const showConfirmationAlert = (confirmation: DocumentV2Action) => {
+    RNAlert.alert(confirmation.title ?? '', confirmation.data ?? '', [
+      {
+        text: intl.formatMessage({ id: 'inbox.markAllAsReadPromptCancel' }),
+        style: 'cancel',
+        onPress: () => Navigation.pop(componentId),
+      },
+      {
+        text: intl.formatMessage({ id: 'inbox.openDocument' }),
+        onPress: refetchDocumentContent,
+      },
+    ])
+  }
 
   // Check if we have the document in the cache
   const doc = useFragment_experimental<DocumentV2>({
@@ -248,11 +282,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   // We want to make sure we don't include the document content if isUrgent is undefined/null since then we don't have
   // the info from the server and don't want to make any assumptions about it just yet
-  const shouldIncludeDocument = !(
-    isUrgent === true ||
-    isUrgent === undefined ||
-    isUrgent === null
-  )
+  const shouldIncludeDocument = isUrgent === false
 
   // Fetch the document to get the content information
   const docRes = useGetDocumentQuery({
@@ -267,49 +297,11 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     fetchPolicy: 'no-cache',
     onCompleted: async (data) => {
       const confirmation = data.documentV2?.confirmation
-      if (confirmation && !refetching && !showConfirmedAlert) {
-        RNAlert.alert(confirmation.title ?? '', confirmation.data ?? '', [
-          {
-            text: intl.formatMessage({
-              id: 'inbox.markAllAsReadPromptCancel',
-            }),
-            style: 'cancel',
-            onPress: () => {
-              Navigation.pop(componentId)
-            },
-          },
-          {
-            text: intl.formatMessage({
-              id: 'inbox.openDocument',
-            }),
-            onPress: async () => {
-              setRefetching(true)
-              try {
-                const result = await docRes.refetch({
-                  input: { id: docId, includeDocument: true },
-                })
-                if (result.data?.documentV2?.alert) {
-                  setShowConfirmedAlert(true)
-                }
-              } finally {
-                setRefetching(false)
-              }
-            },
-          },
-        ])
+      if (confirmation && !refetching) {
+        showConfirmationAlert(confirmation)
       } else if (!confirmation && !refetching) {
         // If the user has already confirmed accepting the document we fetch the content
-        setRefetching(true)
-        try {
-          const result = await docRes.refetch({
-            input: { id: docId, includeDocument: true },
-          })
-          if (result.data?.documentV2?.alert) {
-            setShowConfirmedAlert(true)
-          }
-        } finally {
-          setRefetching(false)
-        }
+        refetchDocumentContent()
       }
     },
   })
@@ -321,6 +313,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   const hasActions = !!Document.actions?.length
   const hasConfirmation = !!Document.confirmation
+  const hasAlert =
+    !!Document.alert && (Document.alert?.title || Document.alert?.data)
+  const showAlert = showConfirmedAlert || (hasAlert && !hasConfirmation)
 
   const loading = docRes.loading || !accessToken
   const fileTypeLoaded = !!Document?.content?.type
@@ -331,8 +326,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     Document?.content?.type.toLocaleLowerCase() === 'html' &&
     Document.content?.value !== ''
 
-  const onShare = () =>
-    shareFile({ document: Document as DocumentV2, hasPdf, pdfUrl })
+  const onShare = () => shareFile({ document: Document as DocumentV2, pdfUrl })
 
   useConnectivityIndicator({
     componentId,
@@ -435,13 +429,15 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           label={isUrgent ? intl.formatMessage({ id: 'inbox.urgent' }) : ''}
         />
       </Host>
-      {(showConfirmedAlert || (hasActions && !hasConfirmation)) && (
+      {showAlert && (
         <ActionsWrapper>
           {showConfirmedAlert && (
             <Alert
               type="success"
               hasBorder
-              message={Document.alert?.title ?? undefined}
+              message={
+                Document.alert?.title ?? Document.alert?.data ?? undefined
+              }
             />
           )}
           {hasActions &&
@@ -454,13 +450,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         </ActionsWrapper>
       )}
       <Border />
-      <View
-        style={{
-          flex: 1,
-          marginHorizontal: theme.spacing[2],
-          marginTop: hasActions || showConfirmedAlert ? theme.spacing[2] : 0,
-        }}
-      >
+      <DocumentWrapper>
         <Animated.View
           style={{
             flex: 1,
@@ -537,7 +527,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             )}
           </View>
         )}
-      </View>
+      </DocumentWrapper>
     </>
   )
 }
