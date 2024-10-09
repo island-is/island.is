@@ -2,14 +2,14 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildMultiField,
-  buildSubSection,
+  buildSection,
 } from '@island.is/application/core'
 
 import * as m from '../../lib/messages'
 
 const messages = m.prerequisites.intro
 
-export const prerequisitesIntro = buildSubSection({
+export const intro = buildSection({
   id: 'prerequisitesIntro',
   title: messages.subSectionTitle,
   children: [
