@@ -57,9 +57,14 @@ export const missingFiles = {
     },
   }),
   confirmation: defineMessages({
+    sectionTitle: {
+      id: 'fa.application:section.missingFiles.confirmation.sectionTitle',
+      defaultMessage: 'Yfirlit',
+      description: 'Title of the confirmation page',
+    },
     title: {
       id: 'fa.application:section.missingFiles.confirmation.title',
-      defaultMessage: 'Senda inn gögn',
+      defaultMessage: 'Yfirlit',
       description: 'Title of the confirmation page',
     },
     subtitle: {
@@ -81,6 +86,19 @@ export const missingFiles = {
       id: 'fa.application:section.missingFiles.confirmation.file',
       defaultMessage: 'Skjal',
       description: 'Text for the file title',
+    },
+    openServicePortalMessageText: {
+      id: 'application.system:openServicePortal.messageText',
+      defaultMessage:
+        'Upplýsingar í mínum síðum og í appi hefur þú aðgang að margvíslegum upplýsingum s.s stafrænt pósthólf, þínar upplýsingar, fjármál, umsóknir, menntun, fasteignir, ökutæki, skírteini, starfsleyfi ofl.',
+      description:
+        'Text for form builder component left side of button to go to the service portal',
+    },
+    openServicePortalButtonTitle: {
+      id: 'application.system:openServicePortal.buttonTitle',
+      defaultMessage: 'Áfram',
+      description:
+        'Button text for form builder component, go to service portal',
     },
   }),
 }

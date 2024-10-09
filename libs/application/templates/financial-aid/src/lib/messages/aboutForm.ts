@@ -13,7 +13,7 @@ export const aboutForm = {
       description: 'About form page title',
     },
     description: {
-      id: 'fa.application:section.aboutForm.general.description',
+      id: 'fa.application:section.aboutForm.general.description#markdown',
       defaultMessage:
         'Þú ert að sækja um fjárhagsaðstoð hjá þínu sveitarfélagi fyrir {currentMonth} mánuð. Áður en þú heldur áfram er gott að hafa eftirfarandi í huga:',
       description: 'About form page description',

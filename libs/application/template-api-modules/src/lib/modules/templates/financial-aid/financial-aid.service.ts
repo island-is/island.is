@@ -151,13 +151,17 @@ export class FinancialAidService extends BaseTemplateApiService {
       )
     }
 
-    const files = formatFiles(answers.taxReturnFiles, FileType.TAXRETURN)
-      .concat(formatFiles(answers.incomeFiles, FileType.INCOME))
-      .concat(formatFiles(answers.spouseIncomeFiles, FileType.SPOUSEFILES))
-      .concat(formatFiles(answers.spouseTaxReturnFiles, FileType.SPOUSEFILES))
+    const files = formatFiles(answers?.taxReturnFiles ?? [], FileType.TAXRETURN)
+      .concat(formatFiles(answers.incomeFiles ?? [], FileType.INCOME))
+      .concat(
+        formatFiles(answers.spouseIncomeFiles ?? [], FileType.SPOUSEFILES),
+      )
+      .concat(
+        formatFiles(answers.spouseTaxReturnFiles ?? [], FileType.SPOUSEFILES),
+      )
       .concat(formatFiles(spouseTaxFiles(), FileType.SPOUSEFILES))
       .concat(formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
-      .concat(formatFiles(answers.childrenFiles, FileType.CHILDRENFILES))
+      .concat(formatFiles(answers.childrenFiles ?? [], FileType.CHILDRENFILES))
 
     const newApplication = {
       name: externalData.nationalRegistry.data.fullName,
@@ -168,12 +172,12 @@ export class FinancialAidService extends BaseTemplateApiService {
       homeCircumstancesCustom: answers.homeCircumstances.custom,
       student: Boolean(answers.student.isStudent === ApproveOptions.Yes),
       studentCustom: answers.student.custom,
-      hasIncome: Boolean(answers.income === ApproveOptions.Yes),
+      hasIncome: Boolean(answers.income.type === ApproveOptions.Yes),
       usePersonalTaxCredit: Boolean(
-        answers.personalTaxCredit === ApproveOptions.Yes,
+        answers.personalTaxCredit.type === ApproveOptions.Yes,
       ),
-      bankNumber: answers.bankInfo.bankNumber,
-      ledger: answers.bankInfo.ledger,
+      bankNumber: answers.bankInfo.accountNumber,
+      ledger: answers.bankInfo.accountNumber,
       accountNumber: answers.bankInfo.accountNumber,
       employment: answers.employment.type,
       employmentCustom: answers.employment.custom,

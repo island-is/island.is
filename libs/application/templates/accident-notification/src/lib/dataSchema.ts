@@ -20,7 +20,6 @@ import {
 } from '../types'
 import { isValid24HFormatTime } from '../utils'
 import { error } from './messages/error'
-import { time } from 'console'
 
 export enum OnBehalf {
   MYSELF = 'myself',
