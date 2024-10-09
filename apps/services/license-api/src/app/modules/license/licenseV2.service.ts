@@ -307,10 +307,10 @@ export class LicenseServiceV2 {
       requestId,
       error: revokeRes.error,
     })
-    throw this.getException(
-      this.getErrorTypeByCode(revokeRes.error.code),
-      revokeRes.error.message,
-    )
+    throw this.getException(this.getErrorTypeByCode(revokeRes.error.code), {
+      error: revokeRes.error,
+      requestId,
+    })
   }
 
   async getDataFromToken(
