@@ -8,17 +8,24 @@ import { Modal, ModalProps } from '@island.is/react/components'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { AccessListContainer } from '../access/AccessList/AccessListContainer/AccessListContainer'
 import { useAuthScopeTreeLazyQuery } from '../access/AccessList/AccessListContainer/AccessListContainer.generated'
-import {
-  AuthCustomDelegationIncoming,
-  AuthCustomDelegationOutgoing,
-} from '../../types/customDelegation'
+
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
-import { AuthDelegationType } from '@island.is/api/schema'
+import { AuthDelegationScope, AuthDelegationType } from '@island.is/api/schema'
 import isValid from 'date-fns/isValid'
 
 type DelegationViewModalProps = {
-  delegation?: AuthCustomDelegationIncoming | AuthCustomDelegationOutgoing
+  delegation?: {
+    id?: string | null
+    from?: { name: string; nationalId: string }
+    to?: { name: string; nationalId: string }
+    domain?: { name: string; displayName: string; organisationLogoUrl?: string | null }
+    validTo?: string | null
+    referenceId?: string | null
+    createdBy?: { name: string; nationalId: string } | null
+    scopes?: Pick<AuthDelegationScope,'id' | 'name' | 'validTo' | 'displayName'>[]
+    type: AuthDelegationType
+  }
   direction?: 'incoming' | 'outgoing'
   isAdminView?: boolean
 } & Pick<ModalProps, 'onClose' | 'isVisible'>
