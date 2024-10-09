@@ -9,7 +9,7 @@ export const pageSize = 10
 
 type UseDocumentListProps = { defaultPageSize?: number }
 
-export const useDocumentList = (props?: UseDocumentListProps) => {
+export const useDocumentListV3 = (props?: UseDocumentListProps) => {
   const {
     filterValue,
     page,
