@@ -1,20 +1,23 @@
-// DELETEME
 import { ServiceBuilder, service } from '../../../../infra/src/dsl/dsl'
 import { createPortalEnv } from './utils/createPortalEnv'
+const bffName = "services-bff"
+const clientName = "portals-admin"
+const serviceName = `${bffName}-${clientName}`
 
-export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
-  service('services-bff-admin-portal')
-    .namespace('services-bff')
-    .image('services-bff')
+export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
+  service(serviceName)
+    .namespace(clientName)
+    .image(bffName)
     .redis()
+    .serviceAccount(bffName)
     .env(createPortalEnv('stjornbord'))
     .secrets({
       // The secret should be a valid 32-byte base64 key.
       // Generate key example: `openssl rand -base64 32`
       BFF_TOKEN_SECRET_BASE64:
-        '/k8s/services-bff/admin-portal/BFF_TOKEN_SECRET_BASE64',
+        `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
       IDENTITY_SERVER_CLIENT_SECRET:
-        '/k8s/services-bff/admin-portal/IDENTITY_SERVER_CLIENT_SECRET',
+        `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
     })
     .readiness('/health/check')
     .liveness('/liveness')
