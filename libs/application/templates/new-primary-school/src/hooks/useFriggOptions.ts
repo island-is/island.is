@@ -6,7 +6,7 @@ import { FriggOptionsQuery } from '../types/schema'
 
 export const useFriggOptions = (type?: OptionsType) => {
   const { lang } = useLocale()
-  const { data } = useQuery<FriggOptionsQuery>(friggOptionsQuery, {
+  const { data, loading } = useQuery<FriggOptionsQuery>(friggOptionsQuery, {
     variables: {
       type: {
         type,
@@ -31,5 +31,5 @@ export const useFriggOptions = (type?: OptionsType) => {
     options.push(options.splice(otherIndex, 1)[0])
   }
 
-  return options
+  return { options, loading }
 }

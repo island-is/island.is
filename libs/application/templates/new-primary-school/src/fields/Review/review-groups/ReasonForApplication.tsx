@@ -1,10 +1,16 @@
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
-import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import {
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+  Stack,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { getCountryByCode } from '@island.is/shared/utils'
+import { useFriggOptions } from '../../../hooks/useFriggOptions'
 import {
-  ReasonForApplicationOptions,
   OptionsType,
+  ReasonForApplicationOptions,
 } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
@@ -12,7 +18,6 @@ import {
   getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
-import { useFriggOptions } from '../../../hooks/useFriggOptions'
 
 export const ReasonForApplication = ({
   application,
@@ -27,7 +32,9 @@ export const ReasonForApplication = ({
     reasonForApplicationPostalCode,
   } = getApplicationAnswers(application.answers)
 
-  const relationFriggOptions = useFriggOptions(OptionsType.REASON)
+  const { options: relationFriggOptions, loading } = useFriggOptions(
+    OptionsType.REASON,
+  )
 
   return (
     <ReviewGroup
@@ -35,57 +42,62 @@ export const ReasonForApplication = ({
       editAction={() => goToScreen?.('reasonForApplication')}
       isLast
     >
-      <Stack space={2}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-            <DataValue
-              label={formatMessage(
-                newPrimarySchoolMessages.primarySchool
-                  .reasonForApplicationSubSectionTitle,
-              )}
-              value={getSelectedOptionLabel(
-                relationFriggOptions,
-                reasonForApplication,
-              )}
-            />
-          </GridColumn>
-        </GridRow>
-        {reasonForApplication === ReasonForApplicationOptions.MOVING_ABROAD && (
+      {loading ? (
+        <SkeletonLoader height={40} width="80%" borderRadius="large" />
+      ) : (
+        <Stack space={2}>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
               <DataValue
                 label={formatMessage(
-                  newPrimarySchoolMessages.primarySchool.country,
+                  newPrimarySchoolMessages.primarySchool
+                    .reasonForApplicationSubSectionTitle,
                 )}
-                value={
-                  lang === 'is'
-                    ? getCountryByCode(reasonForApplicationCountry)?.name_is
-                    : getCountryByCode(reasonForApplicationCountry)?.name
-                }
+                value={getSelectedOptionLabel(
+                  relationFriggOptions,
+                  reasonForApplication,
+                )}
               />
             </GridColumn>
           </GridRow>
-        )}
-        {reasonForApplication ===
-          ReasonForApplicationOptions.MOVING_MUNICIPALITY && (
-          <GridRow rowGap={2}>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(newPrimarySchoolMessages.shared.address)}
-                value={reasonForApplicationStreetAddress}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(
-                  newPrimarySchoolMessages.shared.postalCode,
-                )}
-                value={reasonForApplicationPostalCode}
-              />
-            </GridColumn>
-          </GridRow>
-        )}
-      </Stack>
+          {reasonForApplication ===
+            ReasonForApplicationOptions.MOVING_ABROAD && (
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+                <DataValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.primarySchool.country,
+                  )}
+                  value={
+                    lang === 'is'
+                      ? getCountryByCode(reasonForApplicationCountry)?.name_is
+                      : getCountryByCode(reasonForApplicationCountry)?.name
+                  }
+                />
+              </GridColumn>
+            </GridRow>
+          )}
+          {reasonForApplication ===
+            ReasonForApplicationOptions.MOVING_MUNICIPALITY && (
+            <GridRow rowGap={2}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(newPrimarySchoolMessages.shared.address)}
+                  value={reasonForApplicationStreetAddress}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.shared.postalCode,
+                  )}
+                  value={reasonForApplicationPostalCode}
+                />
+              </GridColumn>
+            </GridRow>
+          )}
+        </Stack>
+      )}
     </ReviewGroup>
   )
 }
