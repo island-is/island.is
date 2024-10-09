@@ -115,6 +115,7 @@ export class ApplicationService {
       to: input.to,
     })
   }
+
   async create(input: CreateApplicationInput, auth: Auth) {
     return this.applicationApiWithAuth(auth).applicationControllerCreate({
       createApplicationDto: input,
