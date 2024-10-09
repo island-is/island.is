@@ -20,5 +20,5 @@ export const ShipRegistryApi = defineTemplateApi({
 })
 
 export const IdentityApi = IdsApi.configure({
-  externalDataId: 'identityRegistry',
+  externalDataId: 'identity',
 })

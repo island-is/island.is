@@ -33,10 +33,15 @@ export const applicantInformationMultiField = (
         title: applicantInformation.labels.name,
         backgroundColor: 'white',
         disabled: true,
-        defaultValue: (application: ApplicantInformationInterface) =>
-          application.externalData?.nationalRegistry?.data?.fullName ??
-          application.externalData?.identityRegistry?.data?.name ??
-          '',
+        defaultValue: (application: ApplicantInformationInterface) => {
+          console.log(application)
+
+          return (
+            application.externalData?.nationalRegistry?.data?.fullName ??
+            application.externalData?.identity?.data?.name ??
+            ''
+          )
+        },
       }),
       buildTextField({
         id: 'applicant.nationalId',
@@ -47,7 +52,7 @@ export const applicantInformationMultiField = (
         disabled: true,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.nationalId ??
-          application.externalData?.identityRegistry?.data?.nationalId ??
+          application.externalData?.identity?.data?.nationalId ??
           '',
       }),
       buildTextField({
@@ -59,8 +64,7 @@ export const applicantInformationMultiField = (
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.address
             ?.streetAddress ??
-          application.externalData?.identityRegistry?.data?.address
-            ?.streetAddress ??
+          application.externalData?.identity?.data?.address?.streetAddress ??
           '',
       }),
       buildTextField({
@@ -74,8 +78,7 @@ export const applicantInformationMultiField = (
           return (
             application.externalData?.nationalRegistry?.data?.address
               ?.postalCode ??
-            application.externalData?.identityRegistry?.data?.address
-              ?.postalCode ??
+            application.externalData?.identity?.data?.address?.postalCode ??
             ''
           )
         },
@@ -88,7 +91,7 @@ export const applicantInformationMultiField = (
         disabled: true,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.address?.city ??
-          application.externalData?.identityRegistry?.data?.address?.city ??
+          application.externalData?.identity?.data?.address?.city ??
           '',
       }),
       buildTextField({
