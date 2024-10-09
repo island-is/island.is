@@ -19,11 +19,18 @@ type DelegationViewModalProps = {
     id?: string | null
     from?: { name: string; nationalId: string }
     to?: { name: string; nationalId: string }
-    domain?: { name: string; displayName: string; organisationLogoUrl?: string | null }
+    domain?: {
+      name: string
+      displayName: string
+      organisationLogoUrl?: string | null
+    }
     validTo?: string | null
     referenceId?: string | null
     createdBy?: { name: string; nationalId: string } | null
-    scopes?: Pick<AuthDelegationScope,'id' | 'name' | 'validTo' | 'displayName'>[]
+    scopes?: Pick<
+      AuthDelegationScope,
+      'id' | 'name' | 'validTo' | 'displayName'
+    >[]
     type: AuthDelegationType
   }
   direction?: 'incoming' | 'outgoing'
