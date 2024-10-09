@@ -284,8 +284,6 @@ export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
     }
 
     const licenseNationalId = license.socialSecurityNumber
-    const name = license.name ?? ''
-    const picture = license.photo?.image ?? ''
 
     if (!licenseNationalId || !name || !picture) {
       this.logger.error('Missing data. NationalId, name or photo missing', {
@@ -307,8 +305,8 @@ export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
         valid: licenseNationalId === nationalId,
         passIdentity: {
           nationalId: licenseNationalId,
-          name,
-          picture,
+          name: license.name ?? '',
+          picture: license.photo?.image ?? '',
         },
       },
     }
