@@ -124,22 +124,18 @@ export const ApplicationOverview: FC<
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.ceremonyDate)}</Text>
                 <Text>
-                  {format(
-                    new Date(ceremony.date),
-                    'dd. MMMM, yyyy',
-                    { locale: is },
-                  ).toLowerCase()}
+                  {format(new Date(ceremony.date), 'dd. MMMM, yyyy', {
+                    locale: is,
+                  }).toLowerCase()}
                 </Text>
               </Box>
             </Box>
             <Box display="flex">
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.ceremonyPlace)}</Text>
-                {ceremony.place.ceremonyPlace ===
-                CeremonyPlaces.office ? (
+                {ceremony.place.ceremonyPlace === CeremonyPlaces.office ? (
                   <Text>{ceremony.place.office}</Text>
-                ) : ceremony.place.ceremonyPlace ===
-                  CeremonyPlaces.society ? (
+                ) : ceremony.place.ceremonyPlace === CeremonyPlaces.society ? (
                   <Text>{ceremony.place.society}</Text>
                 ) : (
                   <Text>{formatMessage(m.ceremonyPlaceNone)}</Text>
@@ -151,17 +147,13 @@ export const ApplicationOverview: FC<
           <>
             <Text variant="h4">{formatMessage(m.ceremonyPeriod)}</Text>
             <Text variant="default">
-              {format(
-                new Date(ceremony.period.dateFrom),
-                'dd. MMMM, yyyy',
-                { locale: is },
-              ).toLowerCase() +
+              {format(new Date(ceremony.period.dateFrom), 'dd. MMMM, yyyy', {
+                locale: is,
+              }).toLowerCase() +
                 ' - ' +
-                format(
-                  new Date(ceremony.period.dateTo),
-                  'dd. MMMM, yyyy',
-                  { locale: is },
-                ).toLowerCase()}
+                format(new Date(ceremony.period.dateTo), 'dd. MMMM, yyyy', {
+                  locale: is,
+                }).toLowerCase()}
             </Text>
           </>
         )}

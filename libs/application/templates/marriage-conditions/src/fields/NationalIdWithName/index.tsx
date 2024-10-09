@@ -32,9 +32,7 @@ export const NationalIdWithName: FC<
   const nameField = `${id}.name`
   const nationalIdField = `${id}.nationalId`
   const [nationalIdInput, setNationalIdInput] = useState('')
-  const [name, setName] = useState(
-    getValueViaPath(answers, nameField) ?? '',
-  )
+  const [name, setName] = useState(getValueViaPath(answers, nameField) ?? '')
   const nameFieldErrors = getErrorViaPath(errors, nameField)
   const nationalIdFieldErrors = getErrorViaPath(errors, nationalIdField)
 
@@ -86,7 +84,7 @@ export const NationalIdWithName: FC<
               id === 'spouse.person' &&
               nationalIdInput === application.applicant
                 ? formatMessage(m.nationalIdDuplicateError)
-                : nationalId.info(nationalIdInput).age < 18 
+                : nationalId.info(nationalIdInput).age < 18
                 ? formatMessage(m.nationalIdWitnessUnderageError)
                 : nationalIdFieldErrors
             }

@@ -500,8 +500,7 @@ export const m = defineMessages({
   },
   nationalIdWitnessUnderageError: {
     id: 'mac.application:nationalIdWitnessUnderageError',
-    defaultMessage:
-      'Svaramaður þarf að hafa náð 18 ára aldri',
+    defaultMessage: 'Svaramaður þarf að hafa náð 18 ára aldri',
     description: '',
   },
   /* History logs */

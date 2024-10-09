@@ -293,7 +293,9 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     width: 'half',
                     minDate: new Date(),
                     // max date is set to 12 weeks from now
-                    maxDate: new Date(new Date().setDate(new Date().getDate() + (12 * 7))),
+                    maxDate: new Date(
+                      new Date().setDate(new Date().getDate() + 12 * 7),
+                    ),
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
