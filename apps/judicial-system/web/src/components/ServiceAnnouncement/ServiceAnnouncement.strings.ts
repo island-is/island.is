@@ -23,7 +23,7 @@ export const strings = defineMessages({
   },
   serviceStatusUnknown: {
     id: 'judicial.system.core:service_announcement.service_status_unknown',
-    defaultMessage: 'Fyrirkall er í birtingarferli',
+    defaultMessage: 'Ákæra er í birtingarferli',
     description: 'Notaður sem texti þegar ekki er vitað um stöðu birtingar.',
   },
   servedToDefender: {
@@ -38,7 +38,7 @@ export const strings = defineMessages({
   },
   subpoenaCreated: {
     id: 'judicial.system.core:service_announcement.subpoena_created',
-    defaultMessage: 'Fyrirkall fór í birtingu {date}',
+    defaultMessage: 'Ákæra fór í birtingu {date}',
     description: 'Notaður sem texti þegar birti var í pósthólfi.',
   },
 })
