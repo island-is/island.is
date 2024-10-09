@@ -6,17 +6,11 @@ import { DocumentV2 } from '../../../graphql/types/schema'
 
 interface ShareFileProps {
   document: DocumentV2
-  hasPdf: boolean
   pdfUrl?: string
 }
 
-export const shareFile = ({ document, hasPdf, pdfUrl }: ShareFileProps) => {
-  if (
-    !document ||
-    !document.subject ||
-    !document.sender ||
-    (hasPdf && !pdfUrl)
-  ) {
+export const shareFile = ({ document, pdfUrl }: ShareFileProps) => {
+  if (!document || !document.subject || !document.sender) {
     return
   }
 
@@ -28,7 +22,7 @@ export const shareFile = ({ document, hasPdf, pdfUrl }: ShareFileProps) => {
     title: document.subject,
     subject: document.subject,
     message: `${document.sender.name} \n ${document.subject}`,
-    type: hasPdf ? 'application/pdf' : undefined,
-    url: hasPdf ? `file://${pdfUrl}` : document.downloadUrl!,
+    type: pdfUrl ? 'application/pdf' : undefined,
+    url: pdfUrl ? `file://${pdfUrl}` : document.downloadUrl!,
   })
 }

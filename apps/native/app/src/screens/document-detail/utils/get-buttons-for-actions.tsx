@@ -36,12 +36,15 @@ export const getButtonsForActions = (
   componentId: string,
   actions?: DocumentV2Action[] | null,
 ) => {
-  if (!actions || !actions.length) {
+  if (!actions?.length) {
     return
   }
   const buttons = actions.map((action) => {
     const icon = getIcons(action.icon ?? '')
-    if (action.type === 'url' && action.data && action.title) {
+    const isFile = action.type === 'file'
+    const isUrl = action.type === 'url'
+
+    if ((isFile || isUrl) && action.data && action.title) {
       return (
         <Action key={`${action.title}-${action.type}`}>
           <Button
@@ -49,7 +52,9 @@ export const getButtonsForActions = (
             isOutlined
             title={action.title}
             icon={icon}
-            onPress={() => openBrowser(action.data ?? '', componentId)}
+            onPress={() =>
+              isUrl ? openBrowser(action.data ?? '', componentId) : onShare()
+            }
             style={{
               paddingTop: 9,
               paddingBottom: 9,
@@ -58,23 +63,7 @@ export const getButtonsForActions = (
         </Action>
       )
     }
-    if (action.type === 'file' && action.data && action.title) {
-      return (
-        <Action key={`${action.title}-${action.type}`}>
-          <Button
-            isUtilityButton
-            isOutlined
-            title={action.title}
-            icon={icon}
-            onPress={onShare}
-            style={{
-              paddingTop: 9,
-              paddingBottom: 9,
-            }}
-          />
-        </Action>
-      )
-    }
+
     return []
   })
 

@@ -72,7 +72,7 @@ export function Header({
   message,
   isLoading,
   hasBorder = true,
-  label = '',
+  label,
 }: HeaderProps) {
   return (
     <Host hasBorder={hasBorder}>
