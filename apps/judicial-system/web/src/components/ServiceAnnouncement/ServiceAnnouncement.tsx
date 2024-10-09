@@ -15,7 +15,7 @@ import { strings } from './ServiceAnnouncement.strings'
 
 const mapServiceStatusTitle = (
   serviceStatus?: ServiceStatus | null,
-): MessageDescriptor | null => {
+): MessageDescriptor => {
   switch (serviceStatus) {
     case ServiceStatus.DEFENDER:
     case ServiceStatus.ELECTRONICALLY:
@@ -27,7 +27,7 @@ const mapServiceStatusTitle = (
       return strings.serviceStatusFailed
     // Should not happen
     default:
-      return null
+      return strings.serviceStatusUnknown
   }
 }
 
@@ -70,7 +70,11 @@ const mapServiceStatusMessages = (
     case ServiceStatus.EXPIRED:
       return [formatMessage(strings.serviceStatusExpiredMessage)]
     default:
-      return []
+      return [
+        formatMessage(strings.subpoenaCreated, {
+          date: subpoena.created ? formatDate(subpoena.created, 'Pp') : '',
+        }),
+      ]
   }
 }
 
@@ -129,11 +133,11 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
     <Box display="flex" justifyContent="center" paddingY={5}>
       <LoadingDots />
     </Box>
-  ) : subpoena?.serviceStatus ? (
+  ) : (
     <Box marginBottom={2}>
       <AlertMessage
-        title={`${title ? `${formatMessage(title)} - ` : ''}${
-          defendantName ? defendantName : ''
+        title={`${formatMessage(title)}${
+          defendantName && subpoena?.serviceStatus ? ` - ${defendantName}` : ''
         }`}
         message={
           <Box>
@@ -145,14 +149,16 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
           </Box>
         }
         type={
-          subpoena?.serviceStatus === ServiceStatus.FAILED ||
-          subpoena?.serviceStatus === ServiceStatus.EXPIRED
+          !subpoena?.serviceStatus
+            ? 'info'
+            : subpoena?.serviceStatus === ServiceStatus.FAILED ||
+              subpoena?.serviceStatus === ServiceStatus.EXPIRED
             ? 'warning'
             : 'success'
         }
       />
     </Box>
-  ) : null
+  )
 }
 
 export default ServiceAnnouncement
