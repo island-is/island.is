@@ -359,6 +359,13 @@ export class EndorsementListService {
       .text('Upplýsingar um undirskriftalista', 60, currentYPosition, {
         align: 'left',
       })
+      .fontSize(12)
+      .text(
+        'Þetta skjal var framkallað sjálfvirkt þann: ' +
+          new Date().toLocaleDateString(locale) +
+          ' klukkan ' +
+          new Date().toLocaleTimeString(locale),
+      )
     currentYPosition = doc.y + 20 // Adjust vertical space
 
     doc
@@ -374,6 +381,7 @@ export class EndorsementListService {
       .text(endorsementList.title, 60, currentYPosition, {
         align: 'left',
       })
+      
     currentYPosition = doc.y + 15
 
     doc
@@ -409,6 +417,8 @@ export class EndorsementListService {
       .font('Bold')
       .fontSize(12)
       .text('Fjöldi undirskrifta: ', 60, currentYPosition, { align: 'left' })
+      
+      
     currentYPosition = doc.y + 5
     doc
       .font('Regular')
