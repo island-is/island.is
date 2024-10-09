@@ -13,7 +13,7 @@ There are multiple requirements needed for a new template to be usable by the ap
 5. If the template includes custom fields only used by this application, export a submodule `getFields` (see `application/templates/parental-leave`):
 6. Add to `application/types/src/lib/institutionMapper.ts`
 
-```ts
+```typescript
 import ParentalLeaveTemplate from './lib/ParentalLeaveTemplate'
 
 export const getFields = () => import('./fields/')
@@ -45,7 +45,7 @@ If another user with the correct delegation rights for the applicant should upda
 
 Should your template require user delegation support you will need to configure the types of delegations that the application should support to the template:
 
-```ts
+```typescript
 import { DelegationType } from '@island.is/auth-api-lib'
 
 const ExampleApplicationTemplate: ApplicationTemplate<
@@ -63,6 +63,6 @@ const ExampleApplicationTemplate: ApplicationTemplate<
 
 To access the list of national ids for applicantActors that have come in contact with the application:
 
-```ts
+```typescript
 const applicantActors = application.applicantActors
 ```

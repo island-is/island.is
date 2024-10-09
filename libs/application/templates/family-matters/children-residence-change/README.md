@@ -1,37 +1,47 @@
 # Children Residence Change Template
 
-This is an application template for children residence change created for the County Magistrate of Iceland by Kolibri.
+This template is used for applications for changing a child's residence, developed for the County Magistrate of Iceland by Kolibri.
 
 ## Setup
 
-Application System setup: [Setup](https://docs.devland.is/apps/application-system)
+For detailed setup instructions, refer to the [Application System Setup](https://docs.devland.is/apps/application-system).
 
-### Additional setup
+### Local Setup Instructions
 
-There are additional steps required to run this template locally
+To run this template locally, follow these steps:
 
-#### National Registry Provider
+#### Prerequisites for National Registry Provider
 
-Prerequisites
+- Ensure `kubectl` is installed:
 
-- You have `kubectl` installed
-  - `brew install kubectl`
-- You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured
+  ```bash
+  brew install kubectl
+  ```
 
-1. Fetch development secrets for the project
+- Configure [AWS Secrets](https://docs.devland.is/development/aws-secrets).
 
-- Run `yarn get-secrets service-portal`
+1. **Fetch Development Secrets**
 
-2. Get kubeconfig
+   - Run:
 
-- Export aws variables `aws eks update-kubeconfig --name dev-cluster01`
+     ```bash
+     yarn get-secrets service-portal
+     ```
 
-- Keep this process running while running the project
+2. **Configure Kubeconfig**
 
-### Test user
+   - Export AWS variables and update kubeconfig:
 
-For testing on local, dev and staging use the Gervimaður Evrópa login: 0102719
+     ```bash
+     aws eks update-kubeconfig --name dev-cluster01
+     ```
 
-## Code owners and maintainers
+   - Keep this terminal session active while running the project.
 
-- [Kolibri](https://github.com/orgs/island-is/teams/kolibri-modern-family)
+### Test User Credentials
+
+For testing in local, development, and staging environments, use: Gervimaður Evrópa login: `0102719`.
+
+## Code Owners and Maintainers
+
+- Managed by [Kolibri](https://github.com/orgs/island-is/teams/kolibri-modern-family).

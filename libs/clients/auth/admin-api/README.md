@@ -1,20 +1,16 @@
 # Auth Admin API Client
 
-This library provides a client for the [Auth Admin API](../../../../apps/services/auth/admin-api/README.md).
+This library provides a client for the [Auth Admin API](../../../../apps/services/auth/admin-api/README.md). It supports our [Auth Admin GraphQL Domain](../../../../libs/api/domains/auth-admin/README.md) to interact with the Auth Admin API across dev, staging, and prod environments.
 
-It is used by our [Auth Admin GraphQL Domain](../../../../libs/api/domains/auth-admin/README.md) to communicate with the Auth Admin API cross our dev, staging and prod environments.
+Environment variables used for configuration:
 
-It reads the following environment variables:
+- `AUTH_ADMIN_API_URL_DEV`
+- `AUTH_ADMIN_API_URL_STAGING`
+- `AUTH_ADMIN_API_URL_PROD`
 
-```
-AUTH_ADMIN_API_URL_DEV
-AUTH_ADMIN_API_URL_STAGING
-AUTH_ADMIN_API_URL_PROD
-```
+These configure and export the respective `AdminDevApi`, `AdminStagingApi`, and `AdminProdApi` clients.
 
-to configure and export corresponding `AdminDevApi`, `AdminStagingApi` and `AdminProdApi` api clients.
-
-Which can be used in a service like:
+Example usage in a service:
 
 ```typescript
 import { AdminDevApi } from '@island.is/auth-admin-api'
@@ -33,6 +29,6 @@ export class MyService {
     private readonly adminProdApi?: AdminApi,
   ) {}
 
-  // Functions using the apis...
+  // Functions using the APIs...
 }
 ```

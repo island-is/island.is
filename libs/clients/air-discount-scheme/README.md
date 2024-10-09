@@ -13,7 +13,7 @@ yarn nx run clients-air-discount-scheme:codegen/backend-client
 
 Then in your module you can set up the imports
 
-```ts
+```typescript
 //your.module.ts
 import { AirDiscountSchemeClientModule } from '@island.is/clients/air-discount-scheme'
 
@@ -23,7 +23,7 @@ import { AirDiscountSchemeClientModule } from '@island.is/clients/air-discount-s
 })
 ```
 
-```ts
+```typescript
 //your.service.ts
 import { UsersApi as AirDiscountSchemeApi } from '@island.is/clients/air-discount-scheme'
 

@@ -8,7 +8,7 @@ This client is generated automatically from a openapi-generator
 
 The generator utilizes the clientConfig.json to generate the client.
 
-```sh
+```bash
 yarn openapi-generator -o libs/clients/consultation-portal/gen/fetch -i libs/clients/consultation-portal/src/clientConfig.json
 ```
 

@@ -1,12 +1,11 @@
 # Content Search Toolkit
 
-Contains useful functions to help with querying data from content search elasticsearch.
-This library should only contain generic code
+A toolkit for querying data from content search Elasticsearch, containing only generic code.
 
-## Unit testing util functions
+## Unit Testing Utility Functions
 
-Run the following command to unit test the util functions:
+To run unit tests for utility functions, use the command:
 
-```
+```bash
 yarn nx test content-search-toolkit
 ```

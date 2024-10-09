@@ -1,51 +1,53 @@
-## fastlane documentation
+# Fastlane Documentation
 
-# Installation
+## Installation
 
-Make sure you have the latest version of the Xcode command line tools installed:
+Ensure Xcode command line tools are installed:
 
-```sh
+```bash
 xcode-select --install
 ```
 
-For _fastlane_ installation instructions, see [Installing _fastlane_](https://docs.fastlane.tools/#installing-fastlane)
+For _fastlane_ installation, visit the [Installing _fastlane_ guide](https://docs.fastlane.tools/#installing-fastlane).
 
-# Available Actions
+## Available Actions
 
-## Android
+### Android
 
-### android play_store_upload
+- **Play Store Upload**
 
-```sh
-[bundle exec] fastlane android play_store_upload
-```
+  Upload a new AAB to the Google Play Store.
 
-Upload a new AAB to the Google Play store
+  ```bash
+  [bundle exec] fastlane android play_store_upload
+  ```
 
-### android promote
+- **Promote**
 
-```sh
-[bundle exec] fastlane android promote
-```
+  Promote an Android build to the next release:
 
-### android increment_version
+  ```bash
+  [bundle exec] fastlane android promote
+  ```
 
-```sh
-[bundle exec] fastlane android increment_version
-```
+- **Increment Version**
 
-### android beta
+  Increment the version code:
 
-```sh
-[bundle exec] fastlane android beta
-```
+  ```bash
+  [bundle exec] fastlane android increment_version
+  ```
 
-Submit a new Beta Build
+- **Beta**
+
+  Submit a new beta build:
+
+  ```bash
+  [bundle exec] fastlane android beta
+  ```
 
 ---
 
-This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
+This README.md is auto-generated and updates every time [_fastlane_](https://fastlane.tools) is run.
 
-More information about _fastlane_ can be found on [fastlane.tools](https://fastlane.tools).
-
-The documentation of _fastlane_ can be found on [docs.fastlane.tools](https://docs.fastlane.tools).
+Find more information at [fastlane.tools](https://fastlane.tools) and consult the _fastlane_ documentation at [docs.fastlane.tools](https://docs.fastlane.tools).

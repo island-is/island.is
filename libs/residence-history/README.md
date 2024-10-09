@@ -1,10 +1,7 @@
 # Residence History
 
-This library is responsible for calculating your primary country of residence
-according to the 185 day rule.
+This library determines your primary country of residence based on the 185-day rule. For more details, refer to the [regulations](https://www.reglugerd.is/reglugerdir/eftir-raduneytum/domsmalaraduneyti/nr/1149).
 
-https://www.reglugerd.is/reglugerdir/eftir-raduneytum/domsmalaraduneyti/nr/1149
+## Running Unit Tests
 
-## Running unit tests
-
-Run `nx test residence-history` to execute the unit tests via [Jest](https://jestjs.io).
+Execute `nx test residence-history` to run the unit tests using [Jest](https://jestjs.io).

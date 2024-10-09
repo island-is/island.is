@@ -2,24 +2,22 @@
 
 ## About
 
-A service that is responsible for giving third party service providers information about personal representatives and their rights
+Access information on personal representatives and their delegated rights for third-party service providers.
 
 ## Context
 
-The purpose of the Public API for the Personal Representative Database is to allow Service providers ,that are unable or unwilling to use Digital Iceland’s login service, to get information about personal representatives and their clients to give the personal representative access to services on behalf of the client according to the rights given in the contract and connection.
+The Personal Representative Public API allows service providers to access info about personal representatives and their clients without Digital Iceland's login, enabling representatives to access services per their contracts.
 
-The API allows service providers to get information about possible rights as well as the connections a single personal representative has to clients.
+Service providers should use secure logins and query info only for logged-in users.
 
-The service providers are required to use secure logins and only query by logged in users.
+### Example of Connections
 
-### Example of connections
-
-| **Personal representative** | **Represented person** | **Rights**                                         |
+| **Personal Representative** | **Represented Person** | **Rights**                                         |
 | --------------------------- | ---------------------- | -------------------------------------------------- |
 | 1122334459                  | 1223455569             | health-data, personal-data, limited-financial-data |
 | 1020304059                  | 0203050569             | limited-health-data                                |
 
-### JSON expample of connection
+### JSON Example of Connection
 
 ```json
 {
@@ -32,77 +30,74 @@ The service providers are required to use secure logins and only query by logged
 
 ## Access
 
-The PublicAPI is only accessible through X-Road security servers and only to machine clients with specific scope
+The API is accessible only via X-Road security servers to machine clients with the specific scope.
 
 ### Scope
 
-```
+```text
 @island.is/auth/personal-representative-public
 ```
 
-### X-Road setup
+### X-Road Setup
 
-[X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements)
+More details: [X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements).
 
-Urls for X-Road setup are as follows
+X-Road setup URLs:
 
-- Dev: [https://personal-representative-public-xrd.internal.dev01.devland.is/swagger-json](https://personal-representative-public-xrd.internal.dev01.devland.is/swagger-json)
-- Staging: [https://personal-representative-public-xrd.internal.staging01.devland.is/swagger-json](https://personal-representative-public-xrd.internal.staging01.devland.is/swagger-json)
-- Production: [https://personal-representative-public-xrd.internal.innskra.island.is/swagger-json](https://personal-representative-public-xrd.internal.innskra.island.is/swagger-json)
+- Dev: [Swagger JSON](https://personal-representative-public-xrd.internal.dev01.devland.is/swagger-json)
+- Staging: [Swagger JSON](https://personal-representative-public-xrd.internal.staging01.devland.is/swagger-json)
+- Production: [Swagger JSON](https://personal-representative-public-xrd.internal.innskra.island.is/swagger-json)
 
 ### OpenAPI URL
 
-OpenAPI documentation and demoing at
+Explore OpenAPI documentation:
 
-- [https://personal-representative-public-xrd.dev01.devland.is/swagger](https://personal-representative-public-xrd.dev01.devland.is/swagger)
+- [Swagger](https://personal-representative-public-xrd.dev01.devland.is/swagger)
 
 ## Development
 
-### Initial setup
+### Initial Setup
 
-We are using the same service library and database as auth-api and therefore this step by step represents that
-First, make sure you have docker, then run:
+Requires the service library and database from auth-api.
+
+Ensure Docker is installed, then execute:
 
 ```bash
 yarn dev-services services-auth-ids-api
 ```
 
-Then run the migrations:
+Run migrations:
 
 ```bash
 yarn nx run services-auth-ids-api:migrate
 ```
 
-You can serve this service locally by running:
+Serve the service locally:
 
 ```bash
 yarn start services-auth-personal-representative-public
 ```
 
-Api open api specs will now be accessible at
-
-```bash
-http://localhost:3378
-```
+You can now access the [Swagger UI](http://localhost:3378).
 
 ### Testing
 
-You can run tests for this service locally by running:
+Run local tests:
 
 ```bash
 yarn test services-auth-personal-representative-public
 ```
 
-### Getting started
+### Getting Started
 
 ```bash
 yarn start services-auth-personal-representative-public
 ```
 
-### Project owner
+### Project Owner
 
 - Réttindagæsla velferðarráðuneytisins
 
-### Code owners and maintainers
+### Code Owners and Maintainers
 
 - [Programm](https://github.com/orgs/island-is/teams/programm/members)

@@ -1,57 +1,60 @@
 # University Gateway API
 
-## About
+## Overview
 
-This service manages university program availability, and connects applications between island.is application-system and university DB
+This service manages university program availability, linking the island.is application system with the university database.
 
 ## Quickstart
 
-Ensure docker is running, then run the following when running for the first time:
+Ensure Docker is running. For setup, execute:
 
-Simply run these two commands:
-
-```
+```bash
 yarn dev-init services-university-gateway
 yarn dev services-university-gateway
 ```
 
-### API service and backend
+## API Service and Backend
 
-## Initial setup
+### Initial Setup
+
+To initialize services, run:
 
 ```bash
 yarn dev-services services-university-gateway
 ```
 
-To run the migrations and seed scripts:
+Run migrations and seed scripts:
 
 ```bash
 yarn nx run services-university-gateway:migrate
 yarn nx run services-university-gateway:seed
 ```
 
-## Start the API service
+### Start the API Service
+
+Start with:
 
 ```bash
 yarn start services-university-gateway
 ```
 
-Open url:
-localhost:3380/api/swagger
+You can now access the [Swagger UI](localhost:3380/api/swagger).
 
-## Regenerate the OpenAPI file
+### Regenerate the OpenAPI File
+
+To regenerate the OpenAPI file, use:
 
 ```bash
 yarn nx run services-university-gateway:codegen/backend-schema
 ```
 
-### Worker
+## Worker
 
-This service is for running scheduled tasks. Currently, fetching programs and courses from university APIs and adding data to out database.
+The worker handles scheduled tasks like fetching programs and courses from university APIs and updating the database.
 
-## Running locally
+### Running Locally
 
-You can start the worker locally by running:
+Start the worker with:
 
 ```bash
 yarn nx run services-university-gateway:worker

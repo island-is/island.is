@@ -1,10 +1,10 @@
 # General Petitions
 
-This application allows individuals to create general petitions
+This application enables users to create general petitions.
 
 ## Setup
 
-To setup the docker environment run (this only needs to be run once):
+To initialize the Docker environment (one-time setup):
 
 ```bash
 yarn dev-init application-templates-general-petition
@@ -16,36 +16,48 @@ To start all required services:
 yarn dev application-templates-general-petition
 ```
 
-This template runs within the application system, make sure your setup fulfills requirements set by the [Application System](https://docs.devland.is/apps/application-system)
+Ensure your setup meets the [Application System requirements](https://docs.devland.is/apps/application-system).
 
-### Additional setup
+### Additional Setup
 
-There are additional steps required to run this template locally
+Further steps are required for local setup.
 
 ### National Registry Provider
 
-Prerequisites
+**Prerequisites:**
 
-- You have `kubectl` installed
+- Install `kubectl`:
   - `brew install kubectl`
-- You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured
+- [AWS Secrets](https://docs.devland.is/development/aws-secrets) should be configured.
 
-- A good way to get environment variables is to run `yarn get-secrets service-portal`
+To obtain environment variables, run:
 
-2. Get kubeconfig
+```bash
+yarn get-secrets service-portal
+```
 
-- Export aws variables `aws eks update-kubeconfig --name dev-cluster01`
+**Kubeconfig:**
 
-### Current user companies provider
+Update the kubeconfig:
 
-Make sure the following environment variable is set
+```bash
+aws eks update-kubeconfig --name dev-cluster01
+```
+
+### Current User Companies Provider
+
+Ensure the following environment variable is set:
 
 ```bash
 RSK_API_PASSWORD
 ```
 
-- A good way to get environment variables is to run `yarn get-secrets service-portal`
+To retrieve environment variables:
 
-## Code owners and maintainers
+```bash
+yarn get-secrets service-portal
+```
+
+## Code Owners and Maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni)

@@ -2,18 +2,26 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test ship-registry` to execute the unit tests via [Jest](https://jestjs.io).
+Execute unit tests using [Jest](https://jestjs.io) with the following command:
 
-### Updating the open api definition (clientConfig.json)
+```bash
+yarn nx test ship-registry
+```
 
-```sh
+## Updating OpenAPI Definition
+
+To update the OpenAPI definition (`clientConfig.json`), run:
+
+```bash
 yarn nx run ship-registry:update-openapi-document
 ```
 
-### Regenerating the client:
+## Regenerating the Client
 
-```sh
+To regenerate the client, execute:
+
+```bash
 yarn nx run ship-registry:schemas/external-openapi-generator
 ```

@@ -1,25 +1,21 @@
 # Personal Representative
 
-## About
+## Overview
 
-A service that is responsible for storing and maintaining personal representatives and their rights to act on behalf of the represented person
+This service manages personal representatives and their authority to act for represented individuals.
 
 ## Context
 
-The purpose of the Personal Representative Database and the Service API is to allow the protection of rights agency of the Ministry of Social Affairs to define rights for personal representatives and maintain a list of personal representative connections along with rights list.
+The database and API enable the Ministry of Social Affairs to define rights for personal representatives and manage their connections with represented individuals. The API manages right types, representative types (currently only one type), and links between a representative and a represented person.
 
-This allows for digital services to give access to the personal representative on behalf of their clients according to the rights list in their connection.
+### Connection Examples
 
-The API allows for maintenance of right types, personal representative types (currently only one type) and as stated before the connections between a personal representative and the represented person.
-
-### Example of connections
-
-| **Personal representative** | **Represented person** | **Rights**                                         |
+| **Personal Representative** | **Represented Person** | **Rights**                                         |
 | --------------------------- | ---------------------- | -------------------------------------------------- |
 | 1122334459                  | 1223455569             | health-data, personal-data, limited-financial-data |
 | 1020304059                  | 0203050569             | limited-health-data                                |
 
-### JSON expample of connection
+### JSON Example of Connection
 
 ```json
 {
@@ -36,89 +32,83 @@ The API allows for maintenance of right types, personal representative types (cu
 
 ## Access
 
-The ServiceAPI is only accessible through X-Road security servers and only to machine clients with specific scope
-
-For the foreseeable future the only system with access would be the Personal Representative Contract System serviced by Spektra for the protection of rights agency
+The API is accessible via X-Road security servers to clients with specific scope, currently limited to the Personal Representative Contract System by Spektra.
 
 ### Scope
 
-```
+```text
 @island.is/auth/personal-representative-admin
 ```
 
-### X-Road setup
+### X-Road Information
 
-[X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements)
+Refer to [X-Road Information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements).
 
-#### Urls for X-Road setup are as follows
+#### Setup URLs
 
-- Dev: [https://personal-representative-xrd.internal.dev01.devland.is/swagger-json](https://personal-representative-xrd.internal.dev01.devland.is/swagger-json)
-- Staging: [https://personal-representative-xrd.internal.staging01.devland.is/swagger-json](https://personal-representative-xrd.internal.staging01.devland.is/swagger-json)
-- Production: [https://personal-representative-xrd.internal.innskra.island.is/swagger-json](https://personal-representative-xrd.internal.innskra.island.is/swagger-json)
+- Dev: [Swagger-JSON Dev](https://personal-representative-xrd.internal.dev01.devland.is/swagger-json)
+- Staging: [Swagger-JSON Staging](https://personal-representative-xrd.internal.staging01.devland.is/swagger-json)
+- Production: [Swagger-JSON Production](https://personal-representative-xrd.internal.innskra.island.is/swagger-json)
 
-### OpenAPI URL##
+### OpenAPI Documentation
 
-OpenAPI documentation and demoing at
+- [Swagger Dev](https://personal-representative-xrd.dev01.devland.is/swagger)
 
-- [https://personal-representative-xrd.dev01.devland.is/swagger](https://personal-representative-xrd.dev01.devland.is/swagger)
+### Service Provider Usage
 
-### Service provider usage
+Service providers won't directly access the API. They may:
 
-Digital service providers do not get access to the service API.
-
-They can use the connection information through two ways.
-
-- Setting up X-Road and use the [PublicAPI](https://docs.devland.is/apps/services/auth/personal-representative-public)
-- Use [Digital Iceland’s](https://www.notion.so/Identity-Server-Integration-afde614a247e4b9da4731b2ace1115cd) new login option and setting it up for Personal Representative usage.
-  - This requires mapping rights to scope for service provider's client
+- Set up X-Road with [PublicAPI](https://docs.devland.is/apps/services/auth/personal-representative-public)
+- Use [Digital Iceland's](https://www.notion.so/Identity-Server-Integration-afde614a247e4b9da4731b2ace1115cd) login option for Personal Representative use, mapping rights to scope.
 
 ## Development
 
-### Initial setup
+### Initial Setup
 
-We are using the same service library and database as auth-api and therefore this step by step represents that
-First, make sure you have docker, then run:
+Ensure Docker is installed, then run:
 
 ```bash
 yarn dev-services services-auth-ids-api
 ```
 
-Then run the migrations:
+Run migrations:
 
 ```bash
 yarn nx run services-auth-ids-api:migrate
 ```
 
-You can serve this service locally by running:
+Serve locally:
 
 ```bash
 yarn start services-auth-personal-representative
 ```
 
-Api open api specs will now be accessible at
+Open API specs are available at:
 
-```bash
+```text
 http://localhost:3376
 ```
 
 ### Testing
 
-You can run tests for this service locally by running:
+Run tests locally:
 
 ```bash
 yarn test services-auth-personal-representative
 ```
 
-### Getting started
+### Getting Started
+
+Launch the service:
 
 ```bash
 yarn start services-auth-personal-representative
 ```
 
-### Project owner
+### Project Ownership
 
-- Réttindagæsla velferðarráðuneytisins
+- Ministry of Social Affairs Rights Protection Agency
 
-### Code owners and maintainers
+### Code Owners and Maintainers
 
 - [Programm](https://github.com/orgs/island-is/teams/programm/members)

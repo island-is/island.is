@@ -1,21 +1,27 @@
-<!-- gitbook-ignore -->
-
 # clients-housing-benefit-calculator
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated using [Nx](https://nx.dev).
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test clients-housing-benefit-calculator` to execute the unit tests via [Jest](https://jestjs.io).
+Execute unit tests via [Jest](https://jestjs.io) with:
 
-### Updating the open api definition (clientConfig.json)
+```bash
+yarn nx test clients-housing-benefit-calculator
+```
 
-```sh
+## Updating OpenAPI Definition
+
+Update the `clientConfig.json` OpenAPI definition with:
+
+```bash
 yarn nx run clients-housing-benefit-calculator:update-openapi-document
 ```
 
-### Regenerating the client:
+## Regenerating the Client
 
-```sh
+Regenerate the client using:
+
+```bash
 yarn nx run clients-housing-benefit-calculator:codegen/backend-client
 ```

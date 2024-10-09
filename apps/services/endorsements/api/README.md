@@ -1,71 +1,66 @@
 # Endorsements API
 
-## About
+## Overview
 
 This service manages endorsement lists within island.is.
 
 ## Quickstart
 
-Simply run these two commands:
+Execute:
 
-```
+```bash
 yarn dev-init services-endorsements-api
 yarn dev services-endorsements-api
 ```
 
-## Initial setup
+## Initial Setup
 
 ### Prerequisites
 
-To run the API locally make sure you:
+To run the API locally, ensure:
 
-- Have [Docker](https://www.docker.com/products/docker-desktop) running
-- Fulfill all prerequisites listed in:
-- - [Getting started section at docs.devland.is](https://docs.devland.is/)
-- - [AWS secrets section at docs.devland.is](https://docs.devland.is/repository/)
+- [Docker](https://www.docker.com/products/docker-desktop) is running.
+- Completion of all prerequisites from:
+  - [Getting Started at docs.devland.is](https://docs.devland.is/)
+  - [AWS Secrets at docs.devland.is](https://docs.devland.is/repository/)
 
 ### Optional
 
-- Have a local test email server according to these [instructions](https://docs.devland.is/libs/email-service)
+- Set up a local test email server as per [instructions](https://docs.devland.is/libs/email-service)
 
-### Initialize the application
+### Initialize the Application
 
 ```bash
 yarn dev-init services-endorsements-api
 ```
 
-## Run locally
+## Run Locally
 
-Sign into AWS
+Sign into AWS:
 
 ```bash
 aws sso login
 ```
 
-Then run application using this command
+Then start the application:
 
 ```bash
 yarn dev services-endorsements-api
 ```
 
-And go to localhost once project is ready and started
-
-```bash
-http://localhost:4246/swagger
-```
-
-After making changes to the module code, re-initialize app to autogenerate code for swagger, openapi, fetch client etc.
+You can now access the [Access Swagger UI](http://localhost:4246/swagger).
+After making code changes, re-initialize for code autogeneration:
 
 ```bash
 yarn dev-init services-endorsements-api
 ```
 
-## Run tests
+## Run Tests
 
 ```bash
 yarn test services-endorsements-api --skip-nx-cache
 ```
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)

@@ -1,54 +1,40 @@
-# Application Templates Pension supplement
+# Pension Supplement
 
-## Description
+## Application Templates Pension Supplement
 
-This application template allows applicants to apply for pension supplement.
+### Description
 
-![](../core/assets/tr-applications-flow-chart.png)
+This template enables applicants to apply for a pension supplement.
 
-### States
+![Application Flow Chart](../core/assets/tr-applications-flow-chart.png)
 
-#### Prerequisites
+#### States
 
-This state is a temporary state that all new applications will be created in. It has a short lifespan and is unlisted.
+- **Prerequisites**: Temporary state for initial applications. Applicants verify eligibility via data from Þjóðskrá and TR. They must be pensioners and meet domicile and income criteria.
 
-The purpose of this state is to be a guard into the actual application. There the applicant reads general information on the processing and data collection for applications at TR. There is an external data step which fetches data from Þjóðskrá and TR. If the applicant is not a pensioner (old age, disability or rehabilitation), does not have a registered domicile in Iceland or they are above the income criteria they cannot advance to the next step and make an application.
+- **Draft**: Eligible applicants can complete their application details.
 
-#### Draft
+- **Tryggingastofnun Submitted**: Application sent to TR and is still editable.
 
-Valid applicant will be able to advance to this state where they can start the actual application and fill in all the relevant data.
+- **Tryggingastofnun In Review**: TR reviews the application. Not editable.
 
-#### Tryggingastofnun submitted
+- **Additional Document Required**: TR requests more documents. Application becomes editable again.
 
-When applicant has sent in the application to TR the application is in this state. Here the application can be edited.
+- **Approved**: Application approved by TR.
 
-#### Tryggingastofnun in review
-
-For application to be in this state, TR need to make a state change when they start to review the application. Here the application can not be edited.
-
-#### Additional document required
-
-If TR needs additional documents to finish processing the application they can make a state change so the applicant can add their missing documents.
-
-#### Approved
-
-Application have been approved by TR.
-
-#### Rejected
-
-Application have been rejected by TR.
+- **Rejected**: Application rejected by TR.
 
 ### Localisation
 
-All localisation can be found on Contentful.
+Find all localizations on Contentful:
 
 - [Pension supplement application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ul.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
-When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../localization/README.md#message-extraction).
+When creating new text strings in `messages.ts`, update Contentful using the [message extraction guide](../../../localization/README.md#message-extraction).
 
-## Setup
+### Setup
 
-See [application-system](../../../../apps/application-system/README.md) setup on how to get started.
+Refer to the [application-system setup](../../../../../apps/application-system/README.md) for installation instructions.
 
-Once you have everything running you can navigate to [http://localhost:4242/umsoknir/uppbot-a-lifeyri](http://localhost:4242/umsoknir/uppbot-a-lifeyri) and start developing.
+After setup, visit [http://localhost:4242/umsoknir/uppbot-a-lifeyri](http://localhost:4242/umsoknir/uppbot-a-lifeyri) to start development.

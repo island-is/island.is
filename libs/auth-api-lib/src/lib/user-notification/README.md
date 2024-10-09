@@ -1,10 +1,14 @@
-CHECKED IN VOLUNTARILY
+# User Notification Service
 
-To avoid a circular dependency we replicate the system-notification part of @island.is/clients/user-notification.
+## Key Modifications (File Content Update)
 
-The user-notification service uses the delegation API to add Hnipp support for delegations by doing lookup in the delegation index..
+1. **Replication of Components**:
 
-With the new addition of the delegation API sending notifications when new delegations
-get created we have a circular dependency since both services are now using the user-notification client.
+   - Copied essential components from `@island.is/clients/user-notification` directly into this service, focusing solely on system notification functionality relevant to delegations.
 
-To get around it we replicate the part of that client required to create system notifications here.
+2. **Direct Notification Handling**:
+
+   - Created standalone functions and classes to process and send system notifications for newly created delegations, avoiding reliance on the original user-notification client.
+
+3. **Independence from External Client**:
+   - Embedded the logic for sending notifications directly within this service, eliminating the need for external dependencies that could cause circular references.

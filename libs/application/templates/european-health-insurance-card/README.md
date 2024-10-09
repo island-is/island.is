@@ -1,40 +1,39 @@
 # European Health Insurance Card
 
-Application for the European Health Insurance card when traveling abroad
+Application for the European Health Insurance Card when traveling abroad.
 
 This library was generated with [Nx](https://nx.dev).
 
-## Application flow:
+## Application Flow
 
-- Application has 5 states, PREREQUISITES, DRAFT, COMPLETED, DECLINED & NOAPPLICANTS
-- When applicant submits his application the state automatically changes to COMPLETED.
-  - The applicants receive a plastic ES card to their address and / or a pdf temporary card to their digital mailbox.
-  - If applicants do not have an health insurance, they will be redirected to a Declined state.
-  - If applicants already have an ES card and a PDF they will be redirected to a NOAPPLICANTS state.
+- The application has five states: PREREQUISITES, DRAFT, COMPLETED, DECLINED & NOAPPLICANTS.
+- Upon submission, the state changes to COMPLETED.
+  - Applicants receive either a plastic ES card to their address and/or a PDF temporary card to their digital mailbox.
+  - Applicants without health insurance are redirected to the DECLINED state.
+  - If applicants already possess an ES card and PDF, they are redirected to the NOAPPLICANTS state.
 
-## Running unit tests
+## Running Unit Tests
 
-Run `nx test application-templates-european-health-insurance-card` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test application-templates-european-health-insurance-card` to execute unit tests via [Jest](https://jestjs.io).
 
-### Additional Environment variables
+### Additional Environment Variables
 
-The following environment variable must be set, 'EHIC_XROAD_PROVIDER_ID', to the appropriate X-ROAD path for the EHIC API. It defaults to: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic/',
+Set the environment variable `EHIC_XROAD_PROVIDER_ID` to the required X-ROAD path for the EHIC API. It defaults to `IS-DEV/GOV/10007/SJUKRA-Protected/ehic/`.
 
-### Scope and TokenExchange
+### Scope and Token Exchange
 
-Calls to the EHIC API uses token exchange with a scope named 'europeanHealthInsuranceCard' as defined now as '@sjukra.is/sjukratryggingakort'
+Calls to the EHIC API utilize token exchange with the scope `europeanHealthInsuranceCard`, defined as `@sjukra.is/sjukratryggingakort`.
 
 ## Setup
 
-To start the application system, follow the instructions in the handbook [here](https://docs.devland.is/apps/application-system).
-The application will be accessible under the path https://{host}/umsoknir/evropska-sjukratryggingakortid
+To start the application system, follow the handbook instructions [here](https://docs.devland.is/apps/application-system). The application will be accessible at `https://{host}/umsoknir/evropska-sjukratryggingakortid`.
 
 ### Translations from Contentful
 
-Fetch development secrets
+Fetch development secrets:
 
 - Run `yarn get-secrets api`
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Fuglar](https://github.com/orgs/island-is/teams/fuglar)

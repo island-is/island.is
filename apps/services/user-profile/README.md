@@ -1,54 +1,51 @@
 # User Profile
 
-## About
+## Overview
 
-A service that is responsible for providing and storing User profile info. With the users National Registration id stores contact info and preferred locale. Additional responsibility is a verification process of email and mobile phone.
-The user-profile table is not prepopulated with everyone in Iceland, therefore due to multiple onboarding-flows the user-profile can be created under a variety of circumstances, you will see the findOrCreateUserProfile method a variety of places in this project's code.
+This service manages user profile information using the National Registration ID to store contact details and locale preferences. It handles email and mobile verification. Profiles are created through onboarding processes and are not prepopulated for all Iceland residents. The `findOrCreateUserProfile` function is frequently used across the codebase.
 
 ## Quickstart
 
-Simply run these two commands:
+Run the following commands:
 
-```
+```bash
 yarn dev-init services-user-profile
 yarn dev services-user-profile
 ```
 
-They are a quick alias for running the commands below.
+These commands align with the setup instructions below.
 
-### Initial setup
+## Initial Setup
 
-First, make sure you have docker, then run:
+Ensure Docker is installed, then initiate:
 
 ```bash
 yarn dev-services services-user-profile
 ```
 
-Then run the migrations:
+Apply database migrations with:
 
 ```bash
 yarn nx run services-user-profile:migrate
 ```
 
-You can serve this service locally by running:
+Start the service locally using:
 
 ```bash
 yarn start services-user-profile
 ```
 
-Api open api specs will now be accessible at
+You can now access the [Swagger UI](localhost:3366/api/swagger).
 
-```bash
-http://localhost:3366/
-```
+## Getting Started
 
-## Getting started
+Launch the service with:
 
 ```bash
 yarn start services-user-profile
 ```
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Norda](https://github.com/orgs/island-is/teams/norda/members)
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)

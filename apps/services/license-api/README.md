@@ -1,35 +1,35 @@
 # License API
 
-## About
+## Overview
 
-A RESTful API that enables the updating of digital licenses for authenticated external parties.
+A RESTful API for updating digital licenses, available to authenticated external users.
 
 ## Guards
 
-- `LicenseTypeScopeGuard`: checks that the access token has the required scopes to be able to perform an action on a specific `LicenseId`
+- **LicenseTypeScopeGuard**: Confirms the access token contains required scopes for actions on a specific `LicenseId`.
 
 ## Quickstart
 
-Ensure docker is running, then run the following when running for the first time:
+Ensure Docker is active. For initial setup:
 
 ```bash
 yarn dev-init license-api
 ```
 
-To start the app:
+To launch the application:
 
 ```bash
 yarn dev license-api
 ```
 
-Afterwards, you can view the open api specs at http://localhost:4248/swagger/
+Access API documentation at [http://localhost:4248/swagger/](http://localhost:4248/swagger/).
 
-## Urls
+## Environments
 
-- Dev: N/A
-- Staging: N/A
-- Production: N/A
+- Development: Not Available
+- Staging: Not Available
+- Production: Not Available
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Hugsmiðjan](https://github.com/orgs/island-is/teams/hugsmidjan/members)

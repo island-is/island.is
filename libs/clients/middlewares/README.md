@@ -99,7 +99,7 @@ Token mode is ideal for cron jobs or workers where no user token is involved. As
 
 Enhanced Fetch handles the client credential grant and caches the token in-memory until it expires.
 
-```ts
+```typescript
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
 const enhancedFetch = createEnhancedFetch({
@@ -126,7 +126,7 @@ You can set up token exchange when your system is doing something on behalf of a
 
 For token exchange to work, you need to pass an `Auth` object to `enhancedFetch`:
 
-```ts
+```typescript
 import { caching } from 'cache-manager'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
@@ -157,7 +157,7 @@ This behaviour can be configured along with a couple of other options:
 
 - `useCache: boolean` - Enables private caching for token exchange tokens. Requires [`cacheManager`](#caching) to be configured. This involves storing user-tokens between requests, so "Keep it secret. Keep it safe." Defaults to false.
 
-```ts
+```typescript
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
 const enhancedFetch = createEnhancedFetch({
@@ -184,7 +184,7 @@ const enhancedFetch = createEnhancedFetch({
 
 Enhanced Fetch includes built-in response cache functionality based on standard cache-control semantics. To enable caching, you need to call createEnhancedFetch with a [cache-manager](https://www.npmjs.com/package/cache-manager) Cache instance:
 
-```ts
+```typescript
 import { caching } from 'cache-manager'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
@@ -208,7 +208,7 @@ With the above configuration, Enhanced Fetch will only cache server responses if
 
 Since many APIs don't configure caching headers properly, you can override the cache-control value, either with a static or a dynamic value.
 
-```ts
+```typescript
 const enhancedFetch = createEnhancedFetch({
   name: 'my-fetch',
   cache: {
@@ -220,7 +220,7 @@ const enhancedFetch = createEnhancedFetch({
 
 You should generally use `buildCacheControl` to configure cache control in a type-safe way:
 
-```ts
+```typescript
 const enhancedFetch = createEnhancedFetch({
   name: 'my-fetch',
   cache: {
@@ -233,7 +233,7 @@ const enhancedFetch = createEnhancedFetch({
 
 By default, `overrideCacheControl` only affects GET responses, since you rarely want to cache POST requests. If you know what you're doing, then you can cache those as well:
 
-```ts
+```typescript
 const enhancedFetch = createEnhancedFetch({
   name: 'my-fetch',
   cache: {
@@ -252,7 +252,7 @@ Only responses with [specific status codes](https://developer.mozilla.org/en-US/
 
 You can configure the cache to return stale responses in specific circumstances:
 
-```ts
+```typescript
 const enhancedFetch = createEnhancedFetch({
   name: 'my-fetch',
   cache: {
@@ -279,7 +279,7 @@ The cache is shared for all requests by default. Requests that have an authoriza
 
 If the API is not using `innskra.island.is` or serving data that is not specific to the authenticated user, then you may configure cache-control to support shared caching for authorized requests:
 
-```ts
+```typescript
 const registryFetch = createEnhancedFetch({
   name: 'some-registry',
   cache: {
@@ -295,7 +295,7 @@ const registryFetch = createEnhancedFetch({
 
 If the API is serving data specific to an authenticated user from `innskra.island.is`, you can configure a private cache for that user. In this case, you need to pass a `User` object (eg from [@CurrentUser](../../auth-nest-tools/README.md#using-in-rest-controller)) to the fetch function:
 
-```ts
+```typescript
 const privateApiFetch = createEnhancedFetch({
   name: 'private-api',
   cache: {
@@ -314,7 +314,7 @@ The private cache is currently only designed for APIs that consume `innskra.isla
 
 It's possible to have a shared cache for some requests and private for others:
 
-```ts
+```typescript
 const enhancedFetch = createEnhancedFetch({
   name: 'some-api',
   cache: {
@@ -342,7 +342,7 @@ When API endpoint uses custom header keys for sensitive path and query parameter
 
 You can use the `defaultCacheKey` function as a base cache key, then add the custom header keys to the cache key.
 
-```ts
+```typescript
 const enhancedFetch = createEnhancedFetch({
   name: 'some-api',
   cache: {

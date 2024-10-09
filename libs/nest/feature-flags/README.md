@@ -6,7 +6,7 @@ A Nest module which wraps our low level [feature flagging library](../../feature
 
 To use the FeatureFlag module you first need to load its configuration in your app module and make sure CONFIGCAT_SDK_KEY is set in your production environment.
 
-```tsx
+```typescript
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
@@ -24,7 +24,7 @@ export class AppModule {}
 
 Then you can import it anywhere you need one of its exports:
 
-```tsx
+```typescript
 import { Module } from '@nestjs/common'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
@@ -38,7 +38,7 @@ export class SomeModule {}
 
 The service wraps getValue with support for our server-side [User objects](../../auth-nest-tools/README.md) for checking if they have access to a feature.
 
-```tsx
+```typescript
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { User } from '@island.is/auth-nest-tools'
 
@@ -63,7 +63,7 @@ export class YourService {
 
 If your feature has new API endpoints, you can use the FeatureFlagGuard to disable them completely:
 
-```tsx
+```typescript
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import {
   FeatureFlagGuard,
@@ -84,7 +84,7 @@ export class SomeController {
 
 The guard works both for GraphQL resolvers as well as REST controllers. You can also feature flag an entire resolver or controller:
 
-```tsx
+```typescript
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import {
   FeatureFlagGuard,
@@ -111,7 +111,7 @@ The FeatureFlagGuard MUST be listed after IdsUserGuard in the `@UseGuards()` dec
 
 If you need access to the low level client and getValue functions, you can dependency inject it like this:
 
-```tsx
+```typescript
 import { Inject } from '@nestjs/common'
 import {
   FeatureFlagClient,

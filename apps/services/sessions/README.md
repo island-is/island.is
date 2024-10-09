@@ -1,27 +1,27 @@
 # Sessions
 
-REST API to store and list user sessions from our Identity Server.
+REST API for managing user sessions from the Identity Server.
 
 ## Quickstart
 
-To start the service locally, simply run these two commands:
+To start the service locally:
 
-```
+```bash
 yarn dev-init services-sessions
 yarn start services-sessions
 ```
 
-## Getting started
+## Getting Started
 
-### Local env setup
+### Local Environment Setup
 
-This service depends on Postgres database and a redis cluster. So first we need to start it, make sure you have docker:
+This service needs a PostgreSQL database and a Redis cluster. Ensure Docker is installed:
 
 ```bash
 yarn dev-services services-sessions
 ```
 
-Then run the db migrations:
+Run database migrations:
 
 ```bash
 yarn nx run services-sessions:migrate
@@ -29,21 +29,17 @@ yarn nx run services-sessions:migrate
 
 ### API
 
-You can serve this service api locally by running:
+To serve the service API locally:
 
 ```bash
 yarn start services-sessions
 ```
 
-Api open api specs will now be accessible at
-
-```bash
-http://localhost:3333/swagger
-```
+You can now access the [Access API OpenAPI UI](http://localhost:3333/swagger).
 
 ### Worker
 
-You can start the worker locally by running:
+To start the worker locally:
 
 ```bash
 PORT=3343 yarn nx run services-sessions:worker
@@ -51,17 +47,17 @@ PORT=3343 yarn nx run services-sessions:worker
 
 ## Contribute
 
-Please read our [docs](https://docs.devland.is) to learn about the repository before getting started.
+Refer to our [documentation](https://docs.devland.is) before contributing.
 
-### Add DB migration
+### Add Database Migration
 
-To make updates to the database you need to create a new migration file. To do this run the following command:
+To create a database migration:
 
 ```bash
 yarn nx run services-sessions:migration-create -- --name <migration-name>
 ```
 
-## Code owners and maintainers
+## Code Owners and Maintainers
 
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
 - [Fuglar](https://github.com/orgs/island-is/teams/fuglar/members)
