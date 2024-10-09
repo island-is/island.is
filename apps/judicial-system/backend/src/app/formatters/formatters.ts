@@ -677,19 +677,19 @@ export const formatAdvocateAssignedEmailNotification = (
   const subject =
     advocateType === AdvocateType.DEFENDER
       ? formatMessage(
-          notifications.defenderAssignedEmail.subjectAccessToCaseFiles,
+          notifications.advocateAssignedEmail.subjectAccessToCaseFiles,
           {
             court: capitalize(theCase.court?.name ?? ''),
           },
         )
-      : formatMessage(notifications.defenderAssignedEmail.subjectAccess, {
+      : formatMessage(notifications.advocateAssignedEmail.subjectAccess, {
           courtCaseNumber: theCase.courtCaseNumber,
         })
 
   const body =
     advocateType === AdvocateType.DEFENDER
       ? formatMessage(
-          notifications.defenderAssignedEmail.bodyAccessToCaseFiles,
+          notifications.advocateAssignedEmail.bodyAccessToCaseFiles,
           {
             defenderHasAccessToRVG: Boolean(overviewUrl),
             courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
@@ -699,7 +699,7 @@ export const formatAdvocateAssignedEmailNotification = (
             linkEnd: '</a>',
           },
         )
-      : formatMessage(notifications.defenderAssignedEmail.bodyAccess, {
+      : formatMessage(notifications.advocateAssignedEmail.bodyAccess, {
           court: theCase.court?.name,
           advocateType,
           courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),

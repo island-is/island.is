@@ -607,7 +607,7 @@ export const notifications = {
         'Notaður sem texti í tölvupósti til verjanda vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem úrskurðað var í einangrun.',
     },
   }),
-  defenderAssignedEmail: defineMessages({
+  advocateAssignedEmail: defineMessages({
     subjectAccessToCaseFiles: {
       id: 'judicial.system.backend:notifications.defender_assigned_email.subject_access_to_case_files',
       defaultMessage: '{court} - aðgangur að málsgögnum',
