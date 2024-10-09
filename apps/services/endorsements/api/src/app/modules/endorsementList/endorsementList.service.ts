@@ -371,7 +371,7 @@ export class EndorsementListService {
     doc
       .font('Regular')
       .fontSize(12)
-      .text(endorsementList.title || 'string', 60, currentYPosition, {
+      .text(endorsementList.title, 60, currentYPosition, {
         align: 'left',
       })
     currentYPosition = doc.y + 15
@@ -384,7 +384,7 @@ export class EndorsementListService {
     doc
       .font('Regular')
       .fontSize(12)
-      .text(endorsementList.description || 'string', 60, currentYPosition, {
+      .text(endorsementList.description, 60, currentYPosition, {
         align: 'left',
       })
     currentYPosition = doc.y + 15
