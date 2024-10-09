@@ -23,6 +23,7 @@ export const ApplicationOverview: FC<
   const spouse = answers.spouse as Individual
   const witness1 = answers.witness1 as Individual
   const witness2 = answers.witness2 as Individual
+  const ceremony = answers.ceremony as Ceremony
 
   const InfoSection: FC<React.PropsWithChildren<InfoProps>> = ({ side }) => {
     return (
@@ -117,14 +118,14 @@ export const ApplicationOverview: FC<
         <Text variant="h3" marginBottom={3}>
           {formatMessage(m.ceremony)}
         </Text>
-        {(answers.ceremony as Ceremony).hasDate === YES ? (
+        {ceremony.hasDate === YES ? (
           <Box marginTop={3}>
             <Box display="flex" marginBottom={3}>
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.ceremonyDate)}</Text>
                 <Text>
                   {format(
-                    new Date((answers.ceremony as Ceremony).date),
+                    new Date(ceremony.date),
                     'dd. MMMM, yyyy',
                     { locale: is },
                   ).toLowerCase()}
@@ -134,12 +135,12 @@ export const ApplicationOverview: FC<
             <Box display="flex">
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.ceremonyPlace)}</Text>
-                {(answers.ceremony as Ceremony).place.ceremonyPlace ===
+                {ceremony.place.ceremonyPlace ===
                 CeremonyPlaces.office ? (
-                  <Text>{(answers.ceremony as Ceremony).place.office}</Text>
-                ) : (answers.ceremony as Ceremony).place.ceremonyPlace ===
+                  <Text>{ceremony.place.office}</Text>
+                ) : ceremony.place.ceremonyPlace ===
                   CeremonyPlaces.society ? (
-                  <Text>{(answers.ceremony as Ceremony).place.society}</Text>
+                  <Text>{ceremony.place.society}</Text>
                 ) : (
                   <Text>{formatMessage(m.ceremonyPlaceNone)}</Text>
                 )}
@@ -151,13 +152,13 @@ export const ApplicationOverview: FC<
             <Text variant="h4">{formatMessage(m.ceremonyPeriod)}</Text>
             <Text variant="default">
               {format(
-                new Date((answers.ceremony as Ceremony).period.dateFrom),
+                new Date(ceremony.period.dateFrom),
                 'dd. MMMM, yyyy',
                 { locale: is },
               ).toLowerCase() +
                 ' - ' +
                 format(
-                  new Date((answers.ceremony as Ceremony).period.dateTo),
+                  new Date(ceremony.period.dateTo),
                   'dd. MMMM, yyyy',
                   { locale: is },
                 ).toLowerCase()}
