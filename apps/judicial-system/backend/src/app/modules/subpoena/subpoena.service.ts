@@ -2,7 +2,13 @@ import { Base64 } from 'js-base64'
 import { Includeable, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
-import { forwardRef, Inject, Injectable } from '@nestjs/common'
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotImplementedException,
+} from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
@@ -52,6 +58,22 @@ export class SubpoenaService {
     )
   }
 
+  async setHash(id: string, hash: string): Promise<void> {
+    const [numberOfAffectedRows] = await this.subpoenaModel.update(
+      { hash },
+      { where: { id } },
+    )
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena hash for subpoena ${id}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(`Could not update subpoena ${id}`)
+    }
+  }
+
   async update(
     subpoena: Subpoena,
     update: UpdateSubpoenaDto,
@@ -99,6 +121,7 @@ export class SubpoenaService {
     }
 
     const updatedSubpoena = await this.findBySubpoenaId(subpoena.subpoenaId)
+
     return updatedSubpoena
   }
 
@@ -113,7 +136,7 @@ export class SubpoenaService {
     })
 
     if (!subpoena) {
-      throw new Error(`Subpoena with id ${subpoenaId} not found`)
+      throw new Error(`Subpoena with subpoena id ${subpoenaId} not found`)
     }
 
     return subpoena
@@ -126,16 +149,19 @@ export class SubpoenaService {
     user: User,
   ): Promise<DeliverResponse> {
     try {
-      const pdf = await this.pdfService.getSubpoenaPdf(
+      const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
         theCase,
         defendant,
         subpoena,
       )
 
+      const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
+
       const createdSubpoena = await this.policeService.createSubpoena(
         theCase,
         defendant,
-        Base64.btoa(pdf.toString('binary')),
+        Base64.btoa(subpoenaPdf.toString('binary')),
+        Base64.btoa(indictmentPdf.toString('binary')),
         user,
       )
 
@@ -153,9 +179,16 @@ export class SubpoenaService {
 
       return { delivered: true }
     } catch (error) {
-      this.logger.error('Error delivering subpoena to police', error)
-
-      return { delivered: false }
+      if (error instanceof NotImplementedException) {
+        this.logger.info(
+          'Failed to deliver subpoena to police due to lack of implementation',
+          error,
+        )
+        return { delivered: true }
+      } else {
+        this.logger.error('Error delivering subpoena to police', error)
+        return { delivered: false }
+      }
     }
   }
 }

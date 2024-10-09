@@ -14,6 +14,7 @@ interface SetupOptions {
   user?: User
   dbType?: 'sqlite' | 'postgres'
   override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
+  beforeServerStart?: (app: TestApp) => Promise<void> | undefined
 }
 
 export const setupApp = ({
@@ -40,10 +41,12 @@ export const setupAppWithoutAuth = async ({
   SequelizeConfigService,
   dbType = 'sqlite',
   override = (builder) => builder,
+  beforeServerStart = undefined,
 }: SetupOptions): Promise<TestApp> =>
   testServer({
     appModule: AppModule,
     enableVersioning: true,
     hooks: [useDatabase({ type: dbType, provider: SequelizeConfigService })],
     override: (builder: TestingModuleBuilder) => override(builder),
+    beforeServerStart,
   })

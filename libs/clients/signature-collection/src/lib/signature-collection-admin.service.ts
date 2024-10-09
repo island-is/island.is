@@ -7,7 +7,13 @@ import {
   ReasonKey,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
-import { List, ListStatus, mapList, mapListBase } from './types/list.dto'
+import {
+  getSlug,
+  List,
+  ListStatus,
+  mapList,
+  mapListBase,
+} from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { CandidateLookup } from './types/user.dto'
 import { BulkUpload, mapBulkResponse } from './types/bulkUpload.dto'
@@ -23,6 +29,10 @@ import {
   AdminApi,
 } from './apis'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
+import {
+  AreaSummaryReport,
+  mapAreaSummaryReport,
+} from './types/areaSummaryReport.dto'
 
 type Api =
   | AdminListApi
@@ -66,9 +76,12 @@ export class SignatureCollectionAdminClientService {
       listStatus === ListStatus.Reviewed
     ) {
       const list = await this.getApiWithAuth(
-        this.listsApi,
+        this.adminApi,
         auth,
-      ).medmaelalistarIDToggleListPatch({ iD: parseInt(listId) })
+      ).adminMedmaelalistiIDToggleListPatch({
+        iD: parseInt(listId),
+        shouldToggle: listStatus === ListStatus.InReview,
+      })
       return { success: !!list }
     }
     return { success: false }
@@ -76,9 +89,9 @@ export class SignatureCollectionAdminClientService {
 
   async processCollection(collectionId: string, auth: Auth): Promise<Success> {
     const collection = await this.getApiWithAuth(
-      this.collectionsApi,
+      this.adminApi,
       auth,
-    ).medmaelasofnunIDToggleSofnunPost({
+    ).adminMedmaelasofnunIDToggleSofnunPatch({
       iD: parseInt(collectionId),
     })
     return { success: !!collection }
@@ -122,11 +135,11 @@ export class SignatureCollectionAdminClientService {
         )
       : collectionAreas
 
-    const lists = await this.getApiWithAuth(
-      this.listsApi,
+    const candidacy = await this.getApiWithAuth(
+      this.adminApi,
       auth,
-    ).medmaelalistarAddListarAdminPost({
-      medmaelalistiRequestDTO: {
+    ).adminFrambodPost({
+      frambodRequestDTO: {
         sofnunID: parseInt(id),
         kennitala: owner.nationalId,
         simi: owner.phone,
@@ -137,21 +150,23 @@ export class SignatureCollectionAdminClientService {
         })),
       },
     })
-    if (filteredAreas.length !== lists.length) {
-      throw new Error('Not all lists created')
+    return {
+      slug: getSlug(
+        candidacy.id ?? '',
+        candidacy.medmaelasofnun?.kosningTegund ?? '',
+      ),
     }
-    const { slug } = mapList(lists[0])
-    return { slug }
   }
 
   async unsignListAdmin(signatureId: string, auth: Auth): Promise<Success> {
-    const signature = await this.getApiWithAuth(
-      this.signatureApi,
-      auth,
-    ).medmaeliIDRemoveMedmaeliAdminPost({
-      iD: parseInt(signatureId),
-    })
-    return { success: !!signature }
+    try {
+      await this.getApiWithAuth(this.adminApi, auth).adminMedmaeliIDDelete({
+        iD: parseInt(signatureId),
+      })
+      return { success: true }
+    } catch (error) {
+      return { success: false }
+    }
   }
 
   async candidateLookup(
@@ -161,9 +176,9 @@ export class SignatureCollectionAdminClientService {
     const collection = await this.currentCollection(auth)
     const { id, isPresidential, areas } = collection
     const user = await this.getApiWithAuth(
-      this.collectionsApi,
+      this.adminApi,
       auth,
-    ).medmaelasofnunIDEinsInfoAdminKennitalaGet({
+    ).adminMedmaelasofnunIDEinsInfoKennitalaGet({
       kennitala: nationalId,
       iD: parseInt(id),
     })
@@ -198,9 +213,9 @@ export class SignatureCollectionAdminClientService {
   ): Promise<Signature[]> {
     // Takes a list of nationalIds listId and returns signatures found on list
     const signaturesFound = await this.getApiWithAuth(
-      this.listsApi,
+      this.adminApi,
       auth,
-    ).medmaelalistarIDComparePost({
+    ).adminMedmaelalistiIDComparePost({
       iD: parseInt(listId),
       requestBody: nationalIds,
     })
@@ -214,9 +229,9 @@ export class SignatureCollectionAdminClientService {
   ): Promise<Signature[]> {
     // Takes a list of nationalIds and returns signatures found on any list in current collection
     const signaturesFound = await this.getApiWithAuth(
-      this.collectionsApi,
+      this.adminApi,
       auth,
-    ).medmaelasofnunIDComparePost({
+    ).adminMedmaelasofnunIDComparePost({
       iD: parseInt(collectionId),
       requestBody: nationalIds,
     })
@@ -242,9 +257,9 @@ export class SignatureCollectionAdminClientService {
     auth: Auth,
   ): Promise<Success> {
     const list = await this.getApiWithAuth(
-      this.listsApi,
+      this.adminApi,
       auth,
-    ).medmaelalistarIDExtendTimePatch({
+    ).adminMedmaelalistiIDExtendTimePatch({
       iD: parseInt(listId),
       newEndDate: newEndDate,
     })
@@ -256,9 +271,9 @@ export class SignatureCollectionAdminClientService {
     // Can only toggle list if it is in review or reviewed
     if (success && list.lokadHandvirkt) {
       await this.getApiWithAuth(
-        this.listsApi,
+        this.adminApi,
         auth,
-      ).medmaelalistarIDToggleListPatch({ iD: parseInt(listId) })
+      ).adminMedmaelalistiIDToggleListPatch({ iD: parseInt(listId) })
     }
     return {
       success,
@@ -275,9 +290,9 @@ export class SignatureCollectionAdminClientService {
     }))
 
     const signatures = await this.getApiWithAuth(
-      this.listsApi,
+      this.adminApi,
       auth,
-    ).medmaelalistarIDAddMedmaeliBulkPost({
+    ).adminMedmaelalistiIDMedmaeliBulkPost({
       iD: parseInt(listId),
       medmaeliBulkRequestDTO: { medmaeli },
     })
@@ -288,10 +303,10 @@ export class SignatureCollectionAdminClientService {
   async removeCandidate(candidateId: string, auth: Auth): Promise<Success> {
     try {
       const res = await this.getApiWithAuth(
-        this.candidateApi,
+        this.adminApi,
         auth,
-      ).frambodIDRemoveFrambodAdminPost({ iD: parseInt(candidateId) })
-      return { success: res?.id === parseInt(candidateId) }
+      ).adminFrambodIDDelete({ iD: parseInt(candidateId) })
+      return { success: true }
     } catch (error) {
       return { success: false, reasons: [ReasonKey.DeniedByService] }
     }
@@ -324,6 +339,62 @@ export class SignatureCollectionAdminClientService {
         blsNr: pageNumber,
       })
       return { success: res.bladsidaNr === pageNumber }
+    } catch {
+      return { success: false }
+    }
+  }
+
+  async getAreaSummaryReport(
+    auth: Auth,
+    collectionId: string,
+    areaId: string,
+  ): Promise<AreaSummaryReport> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelasofnunIDSvaediInfoSvaediIDGet({
+        iD: parseInt(collectionId, 10),
+        svaediID: parseInt(areaId, 10),
+      })
+      return mapAreaSummaryReport(res)
+    } catch {
+      return {} as AreaSummaryReport
+    }
+  }
+
+  async signatureLookup(
+    auth: Auth,
+    collectionId: string,
+    nationalId: string,
+  ): Promise<Signature[]> {
+    const lists = await this.getLists({ collectionId }, auth)
+    try {
+      const res = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelasofnunIDComparePost({
+        iD: parseInt(collectionId, 10),
+        requestBody: [nationalId],
+      })
+      return res.map(mapSignature).map((s) => ({
+        ...s,
+        listTitle: lists.find((l) => l.id === s.listId)?.title,
+      }))
+    } catch {
+      return []
+    }
+  }
+
+  async lockList(auth: Auth, listId: string): Promise<Success> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelalistiIDLockListPatch({
+        iD: parseInt(listId, 10),
+      })
+      return { success: res.listaLokad ?? false }
     } catch {
       return { success: false }
     }
