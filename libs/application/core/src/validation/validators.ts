@@ -37,8 +37,7 @@ const populateError = (
     }
     errorObject = set(errorObject, path, message)
   })
-  console.log('currentScreenFields', currentScreenFields)
-  console.log('errorObject', errorObject)
+
   /**
    * If currentScreenFields is provided, only return errors for fields on that screen.
    * This is to avoid bugs in some scenarios (f.x. when going back via the browser back button)
