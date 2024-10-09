@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildDescriptionField,
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
@@ -20,6 +21,11 @@ export const prerequisitesIntro = buildSubSection({
           id: 'prerequisitesIntroDetails',
           title: messages.pageTitle,
           component: 'GeneralInfoForm',
+        }),
+        buildDescriptionField({
+          id: 'prerequisitesIntroDescription',
+          title: '',
+          description: messages.bullets,
         }),
       ],
     }),

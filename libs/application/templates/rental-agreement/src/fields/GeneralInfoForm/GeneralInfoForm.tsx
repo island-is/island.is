@@ -1,4 +1,4 @@
-import { Box, Bullet, BulletList, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { prerequisites } from '../../lib/messages'
 
@@ -7,16 +7,9 @@ const GeneralInfoForm = () => {
 
   return (
     <Box>
-      <Text variant="intro" marginBottom={4}>
+      <Text variant="intro" marginBottom={2}>
         {formatMessage(prerequisites.intro.subTitle)}
       </Text>
-      <BulletList type="ul" space={2}>
-        <Bullet>{formatMessage(prerequisites.intro.descriptionBullet1)}</Bullet>
-        <Bullet>{formatMessage(prerequisites.intro.descriptionBullet2)}</Bullet>
-        <Bullet>{formatMessage(prerequisites.intro.descriptionBullet3)}</Bullet>
-        <Bullet>{formatMessage(prerequisites.intro.descriptionBullet4)}</Bullet>
-        <Bullet>{formatMessage(prerequisites.intro.descriptionBullet5)}</Bullet>
-      </BulletList>
     </Box>
   )
 }

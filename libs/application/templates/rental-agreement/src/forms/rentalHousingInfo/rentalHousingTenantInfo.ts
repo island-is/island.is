@@ -18,8 +18,9 @@ export const RentalHousingTenantInfo = buildSubSection({
       description: m.tenantDetails.pageDescription,
       children: [
         buildTableRepeaterField({
-          id: 'rentalHousingLandlordInfoTable',
+          id: 'rentalHousingTenantInfoTable',
           title: '',
+          marginTop: 1,
           fields: {
             name: {
               component: 'input',

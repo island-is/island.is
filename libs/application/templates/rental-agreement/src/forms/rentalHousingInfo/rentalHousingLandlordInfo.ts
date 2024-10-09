@@ -5,10 +5,8 @@ import {
   YES,
 } from '@island.is/application/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-
-import * as m from '../../lib/messages'
 import { formatNationalId } from '../../utils/utils'
-import { name } from 'libs/island-ui/core/src/lib/FormStepper/SubSectionItem/SubSectionItem.css'
+import * as m from '../../lib/messages'
 
 export const RentalHousingLandlordInfo = buildSubSection({
   id: 'rentalHousingLandlordInfo',
@@ -22,6 +20,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
         buildTableRepeaterField({
           id: 'rentalHousingLandlordInfoTable',
           title: '',
+          marginTop: 1,
           fields: {
             name: {
               component: 'input',
