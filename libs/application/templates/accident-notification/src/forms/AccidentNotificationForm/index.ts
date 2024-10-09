@@ -7,7 +7,6 @@ import { overviewSection } from './overviewSection'
 import { applicantInformationSection } from './applicantInformationSection'
 import { whoIsTheNotificationForSection } from './whoIsTheNotificationForSection'
 import { aboutTheAccidentSection } from './aboutTheAccidentSection'
-import { procureApplicantInformationSection } from './procureApplicantInformationSection'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
@@ -16,7 +15,6 @@ export const AccidentNotificationForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     applicantInformationSection,
-    procureApplicantInformationSection,
     whoIsTheNotificationForSection,
     aboutTheAccidentSection,
     overviewSection,
