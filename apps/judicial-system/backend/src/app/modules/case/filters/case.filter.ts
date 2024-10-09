@@ -309,29 +309,27 @@ const canPrisonAdminUserAccessCase = (
   return true
 }
 
-const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
+const canDefenceUserAccessRequestCase = (
+  theCase: Case,
+  user: User,
+): boolean => {
   // Check case state access
   if (
     ![
       CaseState.SUBMITTED,
-      CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
-      CaseState.COMPLETED,
     ].includes(theCase.state)
   ) {
     return false
   }
 
-  const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
-
   // Check submitted case access
   const canDefenderAccessSubmittedCase =
-    isRequestCase(theCase.type) &&
     theCase.requestSharedWithDefender ===
-      RequestSharedWithDefender.READY_FOR_COURT
+    RequestSharedWithDefender.READY_FOR_COURT
 
   if (
     theCase.state === CaseState.SUBMITTED &&
@@ -341,44 +339,95 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
   }
 
   // Check received case access
-  if (theCase.state === CaseState.RECEIVED) {
-    const canDefenderAccessReceivedCase =
-      isIndictmentCase(theCase.type) ||
-      canDefenderAccessSubmittedCase ||
-      Boolean(arraignmentDate)
+  const canDefenderAccessReceivedCase =
+    canDefenderAccessSubmittedCase ||
+    Boolean(DateLog.arraignmentDate(theCase.dateLogs))
 
-    if (!canDefenderAccessReceivedCase) {
-      return false
-    }
+  if (theCase.state === CaseState.RECEIVED && !canDefenderAccessReceivedCase) {
+    return false
   }
 
   const normalizedAndFormattedNationalId = normalizeAndFormatNationalId(
     user.nationalId,
   )
 
-  // Check case defender access
-  if (isIndictmentCase(theCase.type)) {
-    if (
-      !theCase.defendants?.some(
-        (defendant) =>
-          defendant.defenderNationalId &&
-          normalizedAndFormattedNationalId.includes(
-            defendant.defenderNationalId,
-          ),
-      )
-    ) {
-      return false
-    }
-  } else {
-    if (
-      !theCase.defenderNationalId ||
-      !normalizedAndFormattedNationalId.includes(theCase.defenderNationalId)
-    ) {
-      return false
-    }
+  // Check case defender assignment
+  if (
+    theCase.defenderNationalId &&
+    normalizedAndFormattedNationalId.includes(theCase.defenderNationalId)
+  ) {
+    return true
   }
 
-  return true
+  return false
+}
+
+const canDefenceUserAccessIndictmentCase = (
+  theCase: Case,
+  user: User,
+): boolean => {
+  // Check case state access
+  if (
+    ![
+      CaseState.WAITING_FOR_CANCELLATION,
+      CaseState.RECEIVED,
+      CaseState.COMPLETED,
+    ].includes(theCase.state)
+  ) {
+    return false
+  }
+
+  // Check received case access
+  const canDefenderAccessReceivedCase = Boolean(
+    DateLog.arraignmentDate(theCase.dateLogs),
+  )
+
+  if (theCase.state === CaseState.RECEIVED && !canDefenderAccessReceivedCase) {
+    return false
+  }
+
+  const normalizedAndFormattedNationalId = normalizeAndFormatNationalId(
+    user.nationalId,
+  )
+
+  // Check case defender assignment
+  if (
+    theCase.defendants?.some(
+      (defendant) =>
+        defendant.defenderNationalId &&
+        normalizedAndFormattedNationalId.includes(defendant.defenderNationalId),
+    )
+  ) {
+    return true
+  }
+
+  // Check case spokesperson assignment
+  if (
+    theCase.civilClaimants?.some(
+      (civilClaimant) =>
+        civilClaimant.spokespersonNationalId &&
+        normalizedAndFormattedNationalId.includes(
+          civilClaimant.spokespersonNationalId,
+        ),
+    )
+  ) {
+    return true
+  }
+
+  return false
+}
+
+const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
+  if (isRequestCase(theCase.type)) {
+    return canDefenceUserAccessRequestCase(theCase, user)
+  }
+
+  if (isIndictmentCase(theCase.type)) {
+    return canDefenceUserAccessIndictmentCase(theCase, user)
+  }
+
+  // Other cases are not accessible to defence users
+  return false
 }
 
 export const canUserAccessCase = (
