@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'portals-my-pages',
+  displayName: 'service-portal',
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],

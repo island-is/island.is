@@ -41,7 +41,7 @@
           "kubectl port-forward svc/socat-xroad 8081:80 -n socat &",
           "yarn start api &",
           "yarn start services-user-profile &",
-          "yarn start portals-my-pages &"
+          "yarn start service-portal &"
         ],
         "parallel": true
       }

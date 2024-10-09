@@ -1,5 +1,5 @@
 {
-  "name": "portals-my-pages",
+  "name": "service-portal",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/portals/my-pages/src",
   "projectType": "application",
@@ -62,11 +62,11 @@
     "serve": {
       "executor": "@nx/webpack:dev-server",
       "options": {
-        "buildTarget": "portals-my-pages:build"
+        "buildTarget": "service-portal:build"
       },
       "configurations": {
         "production": {
-          "buildTarget": "portals-my-pages:build:production"
+          "buildTarget": "service-portal:build:production"
         }
       },
       "dependsOn": [
@@ -95,7 +95,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn get-secrets portals-my-pages",
+          "yarn get-secrets service-portal",
           "yarn nx run services-user-profile:dev-init"
         ],
         "parallel": false
@@ -106,7 +106,7 @@
       "options": {
         "commands": [
           "yarn nx run services-user-profile:dev",
-          "yarn start portals-my-pages"
+          "yarn start service-portal"
         ],
         "parallel": true
       }

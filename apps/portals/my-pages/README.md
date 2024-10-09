@@ -24,7 +24,7 @@ sh ./scripts/run-xroad-proxy.sh
 You can then proceed and start [the GraphQL API](../api/README.md#getting-started) and the service portal:
 
 ```bash
-yarn start portals-my-pages
+yarn start service-portal
 ```
 
 ## Docs
@@ -33,7 +33,7 @@ Start by reading about the [portal module system](../../libs/portals/core/README
 
 ### Adding a module to the service portal
 
-To add a new module to portals-my-pages, import and add it to the list defined in [modules.ts](./src/store/modules.ts):
+To add a new module to the service-portal, import and add it to the list defined in [modules.ts](./src/store/modules.ts):
 
 ```tsx
 // other imports...

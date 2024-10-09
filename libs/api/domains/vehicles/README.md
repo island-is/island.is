@@ -30,7 +30,7 @@ Run `nx test api-domains-vehicles` to execute the unit tests via [Jest](https://
 Example of usage can be found in: http://localhost:4200/minarsidur/okutaeki
 
 Service portal needs to be running.
-`yarn start portals-my-pages`
+`yarn start service-portal`
 
 ## Data explained
 
