@@ -23,7 +23,6 @@ import {
   BarcodeService,
   LICENSE_SERVICE_CACHE_MANAGER_PROVIDER,
   LicenseConfig,
-  TOKEN_EXPIRED_ERROR,
 } from '@island.is/services/license'
 import {
   BadRequestException,
@@ -49,7 +48,7 @@ import {
 import { SmartSolutionsService } from '@island.is/clients/smart-solutions-v2'
 import { LicenseServiceV1 } from '../licenseV1.service'
 import { LicenseServiceV2 } from '../licenseV2.service'
-import { PassVerificationData } from 'libs/clients/license-client/src/lib/licenseClient.type'
+import { PassVerificationData } from '@island.is/clients/license-client/src/lib/licenseClient.type'
 
 const { randomUUID } = new ShortUniqueId({ length: 16 })
 const cacheStore = new Map<string, unknown>()
