@@ -7,7 +7,7 @@ import {
   amountFormat,
   formatDate,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { exportPaymentParticipationFile } from '../../utils/FileBreakdown'
 import * as styles from './Payments.css'

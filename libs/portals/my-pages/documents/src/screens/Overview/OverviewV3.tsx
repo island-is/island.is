@@ -14,8 +14,8 @@ import {
   GoBack,
   m,
   useScrollTopOnUpdate,
-} from '@island.is/portals-my-pages/core'
-import { useOrganizations } from '@island.is/portals-my-pages/graphql'
+} from '@island.is/portals/my-pages/core'
+import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import debounce from 'lodash/debounce'
 import { useEffect, useMemo } from 'react'

@@ -2,7 +2,7 @@ import { PortalModule } from '@island.is/portals/core'
 import { LawAndOrderPaths } from './lib/paths'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Navigate } from 'react-router-dom'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
 import { Features } from '@island.is/feature-flags'
 

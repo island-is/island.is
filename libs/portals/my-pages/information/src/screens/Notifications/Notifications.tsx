@@ -14,7 +14,7 @@ import {
   m,
   ISLANDIS_SLUG,
   LinkButton,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 
 import {
   useGetUserNotificationsListQuery,
@@ -23,7 +23,7 @@ import {
 } from './Notifications.generated'
 
 import { mInformationNotifications } from '../../lib/messages'
-import { ActionCard, CardLoader } from '@island.is/portals-my-pages/core'
+import { ActionCard, CardLoader } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { InformationPaths } from '../../lib/paths'
 import { COAT_OF_ARMS, resolveLink } from '../../utils/notificationLinkResolver'

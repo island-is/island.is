@@ -2,10 +2,10 @@ import React, { FC } from 'react'
 import {
   unitsOfUseFragment,
   pagingFragment,
-} from '@island.is/portals-my-pages/graphql'
+} from '@island.is/portals/my-pages/graphql'
 import { useLazyQuery, gql } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { m, TableGrid } from '@island.is/portals-my-pages/core'
+import { m, TableGrid } from '@island.is/portals/my-pages/core'
 import { Query, UnitsOfUseModel, PropertyLocation } from '@island.is/api/schema'
 import { Text, Box, Button } from '@island.is/island-ui/core'
 import { unitsArray } from '../../utils/createUnits'

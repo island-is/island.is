@@ -1,7 +1,7 @@
 import React, { lazy } from 'react'
 import { defineMessage } from 'react-intl'
 import { ApiScope } from '@island.is/auth/scopes'
-import { m } from '@island.is/my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { PortalModule } from '@island.is/portals/core'
 import { AirDiscountPaths } from './lib/paths'
 

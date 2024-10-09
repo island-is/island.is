@@ -1,5 +1,5 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { messages } from '../utils/messages'
 import { DocumentsPaths } from './paths'
 

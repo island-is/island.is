@@ -1,6 +1,6 @@
 import { Box, Button, LoadingDots } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Tooltip, m } from '@island.is/portals-my-pages/core'
+import { Tooltip, m } from '@island.is/portals/my-pages/core'
 import React, { MouseEvent } from 'react'
 import * as styles from './FavAndStash.css'
 

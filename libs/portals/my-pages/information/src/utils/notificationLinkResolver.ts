@@ -1,5 +1,5 @@
 import { NotificationLink } from '@island.is/api/schema'
-import { ServicePortalPaths } from '@island.is/portals-my-pages/core'
+import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
 
 function extractPath(url: string): string {
   try {

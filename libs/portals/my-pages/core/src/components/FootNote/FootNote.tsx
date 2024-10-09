@@ -1,5 +1,5 @@
 import { Box, Hidden, Text } from '@island.is/island-ui/core'
-import { useOrganization } from '@island.is/portals-my-pages/graphql'
+import { useOrganization } from '@island.is/portals/my-pages/graphql'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 

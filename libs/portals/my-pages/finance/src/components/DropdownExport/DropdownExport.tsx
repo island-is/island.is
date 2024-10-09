@@ -1,7 +1,7 @@
 import { ReactElement } from 'react'
 import { Box, DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 
 interface Props {
   onGetCSV: () => void

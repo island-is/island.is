@@ -1,7 +1,7 @@
 import chunk from 'lodash/chunk'
 import isNumber from 'lodash/isNumber'
 import { format as formatKennitala } from 'kennitala'
-import { amountFormat } from '@island.is/portals-my-pages/core'
+import { amountFormat } from '@island.is/portals/my-pages/core'
 import { messages } from '../lib/messages'
 import { FormatMessage } from '@island.is/localization'
 

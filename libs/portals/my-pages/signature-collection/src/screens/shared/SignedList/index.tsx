@@ -1,7 +1,7 @@
 import { ActionCard, Box, Button, Text, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../../lib/messages'
-import { Modal } from '@island.is/portals-my-pages/core'
+import { Modal } from '@island.is/portals/my-pages/core'
 import { useState } from 'react'
 import { useGetSignedList } from '../../../hooks'
 import format from 'date-fns/format'

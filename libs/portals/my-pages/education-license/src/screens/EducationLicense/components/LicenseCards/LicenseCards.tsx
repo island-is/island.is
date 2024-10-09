@@ -5,8 +5,8 @@ import is from 'date-fns/locale/is'
 
 import { Query, Mutation, EducationLicense } from '@island.is/api/schema'
 import { Box, Button, ModalBase, Stack, Text } from '@island.is/island-ui/core'
-import { CardLoader, EmptyState, m } from '@island.is/portals-my-pages/core'
-import { ActionCard } from '@island.is/portals-my-pages/core'
+import { CardLoader, EmptyState, m } from '@island.is/portals/my-pages/core'
+import { ActionCard } from '@island.is/portals/my-pages/core'
 
 import * as styles from './LicenseCards.css'
 import { useLocale, useNamespaces } from '@island.is/localization'

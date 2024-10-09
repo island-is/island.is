@@ -5,7 +5,7 @@ import {
   m as coreMessages,
   StackOrTableBlock,
   StackWithBottomDivider,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { IntellectualPropertiesPatentIs } from '@island.is/api/schema'
 import { Divider, Stack, Text } from '@island.is/island-ui/core'
 import { ipMessages } from '../../../lib/messages'

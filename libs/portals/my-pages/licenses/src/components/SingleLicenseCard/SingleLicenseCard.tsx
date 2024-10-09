@@ -12,7 +12,7 @@ import {
 import { Link } from 'react-router-dom'
 import * as styles from './SingleLicenseCard.css'
 import { m } from '../../lib/messages'
-import { LinkResolver } from '@island.is/portals-my-pages/core'
+import { LinkResolver } from '@island.is/portals/my-pages/core'
 
 export type tag = {
   text?: string

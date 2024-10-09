@@ -19,7 +19,7 @@ import {
   formSubmit,
   formatDate,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { useParams } from 'react-router-dom'
 import {
   mapSlugToContentfulSlug,

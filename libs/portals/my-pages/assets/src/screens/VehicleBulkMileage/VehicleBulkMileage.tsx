@@ -5,7 +5,7 @@ import {
   SAMGONGUSTOFA_SLUG,
   IntroHeader,
   LinkButton,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'
 import { useEffect, useState } from 'react'

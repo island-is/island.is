@@ -1,4 +1,4 @@
-import { numberFormat } from '@island.is/portals-my-pages/core'
+import { numberFormat } from '@island.is/portals/my-pages/core'
 
 export const displayWithUnit = (
   value: string | undefined | null | number,

@@ -14,7 +14,7 @@ import {
   FootNote,
   VINNUEFTIRLITID_SLUG,
   formatDate,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import {
   Box,
   Checkbox,

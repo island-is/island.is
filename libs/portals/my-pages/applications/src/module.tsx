@@ -1,6 +1,6 @@
 import { lazy } from 'react'
 import { ApplicationScope } from '@island.is/auth/scopes'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { PortalModule } from '@island.is/portals/core'
 import { ApplicationsPaths } from './lib/paths'
 

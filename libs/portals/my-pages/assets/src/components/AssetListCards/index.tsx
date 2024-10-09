@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { Box, Button } from '@island.is/island-ui/core'
 import { PropertyOverview } from '@island.is/api/schema'
-import { ActionCard } from '@island.is/portals-my-pages/core'
+import { ActionCard } from '@island.is/portals/my-pages/core'
 import { AssetsPaths } from '../../lib/paths'
 
 interface Props {

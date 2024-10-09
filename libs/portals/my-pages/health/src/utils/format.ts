@@ -1,4 +1,4 @@
-import { amountFormat } from '@island.is/portals-my-pages/core'
+import { amountFormat } from '@island.is/portals/my-pages/core'
 import isNumber from 'lodash/isNumber'
 
 export const formatNumberToString = (item?: number) => {

@@ -12,9 +12,9 @@ import {
   amountFormat,
   formatDate,
   periodFormat,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { useEffect, useMemo, useState } from 'react'
 import sortBy from 'lodash/sortBy'
 import {

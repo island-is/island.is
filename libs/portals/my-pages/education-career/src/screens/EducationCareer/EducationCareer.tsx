@@ -7,7 +7,7 @@ import {
   IntroHeader,
   MENNTAMALASTOFNUN_SLUG,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { CareerCards } from './components/CareerCards'
 
 const EducationCareer = () => {

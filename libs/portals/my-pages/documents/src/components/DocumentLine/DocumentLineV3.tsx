@@ -9,7 +9,7 @@ import {
 } from '@island.is/api/schema'
 import { Box, Icon, LoadingDots, Text, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ConfirmationModal, m } from '@island.is/portals-my-pages/core'
+import { ConfirmationModal, m } from '@island.is/portals/my-pages/core'
 import { dateFormat } from '@island.is/shared/constants'
 import {
   matchPath,

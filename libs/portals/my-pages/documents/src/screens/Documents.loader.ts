@@ -3,7 +3,7 @@ import { gql } from '@apollo/client'
 import { matchPath } from 'react-router'
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { DocumentsPaths } from '../lib/paths'
-import { ServicePortalPaths } from '@island.is/portals-my-pages/core'
+import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
 import { pageSize } from '../hooks/useDocumentList'
 
 export const GET_PAGE_NUMBER_QUERY = gql`

@@ -7,7 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m, amountFormat, formatDate } from '@island.is/portals-my-pages/core'
+import { m, amountFormat, formatDate } from '@island.is/portals/my-pages/core'
 import * as styles from './FinanceLoans.css'
 import { m as messages } from '../../lib/messages'
 import { useGetHmsLoansPaymentHistoryLazyQuery } from '../../screens/FinanceLoans/FinanceLoans.generated'

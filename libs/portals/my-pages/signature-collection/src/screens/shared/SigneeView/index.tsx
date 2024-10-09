@@ -6,7 +6,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { EmptyState } from '@island.is/portals-my-pages/core'
+import { EmptyState } from '@island.is/portals/my-pages/core'
 import { useGetListsForUser, useGetSignedList } from '../../../hooks'
 import { Skeleton } from '../../../skeletons'
 import { useAuth } from '@island.is/auth/react'

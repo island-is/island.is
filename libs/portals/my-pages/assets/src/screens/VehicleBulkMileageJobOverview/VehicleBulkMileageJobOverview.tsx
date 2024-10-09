@@ -7,7 +7,7 @@ import {
   LinkButton,
   EmptyTable,
   formatDateWithTime,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetRequestsStatusQuery } from './VehicleBulkMileageJobOverview.generated'
 import { VehiclesBulkMileageRegistrationJob } from '@island.is/api/schema'

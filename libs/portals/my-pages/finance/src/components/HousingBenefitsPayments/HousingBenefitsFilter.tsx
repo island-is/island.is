@@ -10,7 +10,7 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { HousingBenefitsPayments } from '@island.is/api/schema'
-import { m, Filter, MONTHS } from '@island.is/portals-my-pages/core'
+import { m, Filter, MONTHS } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
 import { exportHousingBenefitFiles } from '../../utils/filesHousingBenefits'
 import {

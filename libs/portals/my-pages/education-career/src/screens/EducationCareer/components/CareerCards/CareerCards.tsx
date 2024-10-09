@@ -3,10 +3,10 @@ import { gql, useQuery } from '@apollo/client'
 
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { Query } from '@island.is/api/schema'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ActionCard } from '@island.is/portals-my-pages/core'
-import { EducationStudentAssessmentPaths } from '@island.is/portals-my-pages/education-student-assessment'
+import { ActionCard } from '@island.is/portals/my-pages/core'
+import { EducationStudentAssessmentPaths } from '@island.is/portals/my-pages/education-student-assessment'
 import { Problem } from '@island.is/react-spa/shared'
 
 const EducationExamFamilyOverviewsQuery = gql`

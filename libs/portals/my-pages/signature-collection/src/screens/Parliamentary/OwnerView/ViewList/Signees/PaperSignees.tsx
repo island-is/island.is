@@ -9,7 +9,7 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useIdentityQuery } from '@island.is/portals-my-pages/graphql'
+import { useIdentityQuery } from '@island.is/portals/my-pages/graphql'
 import * as nationalId from 'kennitala'
 import { useEffect, useState } from 'react'
 import { InputController } from '@island.is/shared/form-fields'

@@ -6,7 +6,7 @@ import {
   EmptyTable,
   ExpandHeader,
   amountFormat,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import { useGetPaymentPlanQuery } from './PaymentGroupTable.generated'
 import { PaymentGroupTableRow } from './PaymentGroupTableRow'

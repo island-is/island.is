@@ -6,7 +6,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { useUserInfo } from '@island.is/auth/react'
-import { Tooltip, m } from '@island.is/portals-my-pages/core'
+import { Tooltip, m } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
 import { ActiveDocumentType2 } from '../../lib/types'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'

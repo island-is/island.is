@@ -6,7 +6,7 @@ import {
   FootNote,
   m as coreMessage,
   ISLAND_SYSLUMENN_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { m } from '../../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
@@ -15,10 +15,10 @@ import {
   useChildrenPassport,
   useUserProfile,
   GenericLicenseType,
-} from '@island.is/portals-my-pages/graphql'
+} from '@island.is/portals/my-pages/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box, Tabs } from '@island.is/island-ui/core'
-import { usePassport } from '@island.is/portals-my-pages/graphql'
+import { usePassport } from '@island.is/portals/my-pages/graphql'
 
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useState, useEffect } from 'react'

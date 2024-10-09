@@ -7,7 +7,7 @@ import {
   SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { messages } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
 import { ApolloError } from '@apollo/client'

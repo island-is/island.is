@@ -16,7 +16,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   APPLICATION_SERVICE_PROVIDER_SLUG,
   IntroHeader,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { Modal } from '@island.is/react/components'
 import { useSubmitting } from '@island.is/react-spa/shared'
 

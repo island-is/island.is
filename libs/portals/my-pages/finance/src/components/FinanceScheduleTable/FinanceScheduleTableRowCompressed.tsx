@@ -1,4 +1,4 @@
-import { formSubmit, amountFormat } from '@island.is/portals-my-pages/core'
+import { formSubmit, amountFormat } from '@island.is/portals/my-pages/core'
 import { PaymentSchedule } from '@island.is/api/schema'
 import { Box, Table as T, Text, Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'

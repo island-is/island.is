@@ -20,7 +20,7 @@ import {
   ExcludesFalse,
   FootNote,
   SAMGONGUSTOFA_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 
 import { vehicleMessage as messages } from '../../lib/messages'
 import chunk from 'lodash/chunk'

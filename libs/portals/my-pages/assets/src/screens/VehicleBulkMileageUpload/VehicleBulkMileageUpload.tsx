@@ -14,7 +14,7 @@ import {
   LinkButton,
   SAMGONGUSTOFA_SLUG,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import {
   MileageRecord,
   parseCsvToMileageRecord,

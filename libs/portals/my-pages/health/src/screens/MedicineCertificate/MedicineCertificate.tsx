@@ -7,7 +7,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { GoBack, UserInfoLine } from '@island.is/portals-my-pages/core'
+import { GoBack, UserInfoLine } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { HealthPaths } from '../../lib/paths'

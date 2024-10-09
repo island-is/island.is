@@ -1,4 +1,4 @@
-import { amountFormat, ExpandRow } from '@island.is/portals-my-pages/core'
+import { amountFormat, ExpandRow } from '@island.is/portals/my-pages/core'
 
 import FinanceStatusDetailTable from '../../components/FinanceStatusDetailTable/FinanceStatusDetailTable'
 import {

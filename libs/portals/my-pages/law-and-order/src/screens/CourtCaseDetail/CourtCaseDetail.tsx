@@ -4,7 +4,7 @@ import {
   IntroHeader,
   LinkButton,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useParams } from 'react-router-dom'

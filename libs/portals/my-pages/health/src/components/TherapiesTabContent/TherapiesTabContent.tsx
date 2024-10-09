@@ -6,7 +6,7 @@ import {
   formatDate,
   LinkButton,
   UserInfoLine,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 
 import { FootNote } from '../FootNote/FootNote'
 import * as styles from './TherapiesTabContent.css'

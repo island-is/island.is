@@ -7,8 +7,8 @@ import {
   formatDate,
   NestedTable,
   displayMonthOrYear,
-} from '@island.is/portals-my-pages/core'
-import { ExpandRow, ExpandHeader } from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
+import { ExpandRow, ExpandHeader } from '@island.is/portals/my-pages/core'
 import { hb, m as messages } from '../../lib/messages'
 import {
   HousingBenefitsPayment,

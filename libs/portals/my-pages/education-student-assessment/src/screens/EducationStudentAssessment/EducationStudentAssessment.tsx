@@ -6,7 +6,7 @@ import { StudentAssessmentTable } from './components/StudentAssessmentTable'
 import {
   FootNote,
   MENNTAMALASTOFNUN_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 
 const EducationStudentAssessment = () => {
   useNamespaces('sp.education-student-assessment')

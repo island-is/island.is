@@ -12,7 +12,7 @@ import {
   Table as T,
   Pagination,
 } from '@island.is/island-ui/core'
-import { UserInfoLine } from '@island.is/portals-my-pages/core'
+import { UserInfoLine } from '@island.is/portals/my-pages/core'
 import { useMemo, useState } from 'react'
 import ExpandableLine from '../ExpandableLine/ExpandableLine'
 

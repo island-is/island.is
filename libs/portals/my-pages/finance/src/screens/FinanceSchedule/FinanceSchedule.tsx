@@ -14,7 +14,7 @@ import {
   m as coreMessage,
   FootNote,
   FJARSYSLAN_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { checkDelegation } from '@island.is/shared/utils'
 
 import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'

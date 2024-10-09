@@ -1,4 +1,4 @@
-export * from './lib/portals-my-pages-core'
+export * from './lib/my-pages-core'
 export * from './lib/navigation/paths'
 export * from './components/ActionCard/ActionCard'
 export * from './components/ActionCard/ActionCardLoader'

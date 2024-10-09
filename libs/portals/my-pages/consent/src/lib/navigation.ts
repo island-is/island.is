@@ -1,5 +1,5 @@
 import type { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 
 import { ConsentPaths } from './paths'
 

@@ -16,10 +16,10 @@ import {
   EmptyState,
   ErrorScreen,
   ExcludesFalse,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import * as styles from './HealthRegistration.css'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import groupBy from 'lodash/groupBy'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { RightsPortalHealthCenter } from '@island.is/api/schema'

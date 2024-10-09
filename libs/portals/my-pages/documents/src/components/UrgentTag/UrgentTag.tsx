@@ -1,6 +1,6 @@
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 
 const UrgentTag = () => {
   const { formatMessage } = useLocale()

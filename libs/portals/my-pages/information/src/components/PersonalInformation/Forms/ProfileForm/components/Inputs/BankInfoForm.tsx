@@ -6,8 +6,8 @@ import {
   InputError,
   LoadingDots,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/portals-my-pages/core'
-import { useUpdateOrCreateUserProfile } from '@island.is/portals-my-pages/graphql'
+import { m } from '@island.is/portals/my-pages/core'
+import { useUpdateOrCreateUserProfile } from '@island.is/portals/my-pages/graphql'
 import { stringifyBankData } from '../../../../../../utils/bankInfoHelper'
 import { msg } from '../../../../../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'

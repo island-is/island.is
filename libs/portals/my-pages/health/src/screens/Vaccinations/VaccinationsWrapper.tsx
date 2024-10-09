@@ -5,7 +5,7 @@ import {
   IntroHeader,
   LinkButton,
   EmptyTable,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { messages as m } from '../../lib/messages'
 import { SECTION_GAP } from '../../utils/constants'
 import { useGetVaccinationsQuery } from './Vaccinations.generated'

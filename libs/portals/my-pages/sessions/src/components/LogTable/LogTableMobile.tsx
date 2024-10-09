@@ -5,7 +5,7 @@ import { SessionsSession } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
 import { Box, Icon, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ExpandHeader, ExpandRow } from '@island.is/portals-my-pages/core'
+import { ExpandHeader, ExpandRow } from '@island.is/portals/my-pages/core'
 import { Country, getCountryByCode } from '@island.is/shared/utils'
 
 import { SessionType } from '../../lib/types/sessionTypes'

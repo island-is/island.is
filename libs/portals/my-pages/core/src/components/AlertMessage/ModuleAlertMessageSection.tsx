@@ -6,7 +6,7 @@ import {
   Link,
   Stack,
 } from '@island.is/island-ui/core'
-import { useAlertBanners } from '@island.is/portals-my-pages/graphql'
+import { useAlertBanners } from '@island.is/portals/my-pages/graphql'
 
 type Props = {
   paddingTop?: BoxProps['paddingTop']

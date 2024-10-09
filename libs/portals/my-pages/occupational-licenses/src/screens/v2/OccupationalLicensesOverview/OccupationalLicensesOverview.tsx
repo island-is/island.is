@@ -6,8 +6,8 @@ import {
   FootNote,
   IntroHeader,
   m,
-} from '@island.is/portals-my-pages/core'
-import { useOrganizations } from '@island.is/portals-my-pages/graphql'
+} from '@island.is/portals/my-pages/core'
+import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import { isDefined } from '@island.is/shared/utils'
 import { useMemo } from 'react'
 import { LicenceActionCard } from '../../../components/LicenceActionCard'

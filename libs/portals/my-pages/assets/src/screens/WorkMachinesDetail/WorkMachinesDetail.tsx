@@ -10,7 +10,7 @@ import {
   m,
   VINNUEFTIRLITID_SLUG,
   InfoLineStack,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { messages, vehicleMessage } from '../../lib/messages'
 import {
   Box,

@@ -18,7 +18,7 @@ import {
   amountFormat,
   formSubmit,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'

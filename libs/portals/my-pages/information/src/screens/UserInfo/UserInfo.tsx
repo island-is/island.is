@@ -13,7 +13,7 @@ import {
   THJODSKRA_SLUG,
   InfoLine,
   InfoLineStack,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/auth/react'
 
 import {

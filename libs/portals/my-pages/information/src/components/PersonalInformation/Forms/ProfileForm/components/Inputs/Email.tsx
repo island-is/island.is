@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { msg } from '../../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Text, LoadingDots } from '@island.is/island-ui/core'
@@ -10,7 +10,7 @@ import {
   useUpdateOrCreateUserProfile,
   useDeleteIslykillValue,
   useUserProfile,
-} from '@island.is/portals-my-pages/graphql'
+} from '@island.is/portals/my-pages/graphql'
 import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 import { ContactNotVerified } from '../ContactNotVerified'

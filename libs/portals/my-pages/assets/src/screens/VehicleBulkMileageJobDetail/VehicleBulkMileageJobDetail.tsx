@@ -14,7 +14,7 @@ import {
   EmptyTable,
   TableGrid,
   downloadFile,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { VehiclesBulkMileageRegistrationRequestStatus } from '@island.is/api/schema'
 import { useParams } from 'react-router-dom'
@@ -22,7 +22,7 @@ import {
   useGetJobRegistrationsQuery,
   useGetJobsStatusQuery,
 } from './VehicleBulkMileageJobDetail.generated'
-import { VehiclesBulkMileageRegistrationRequestOverview } from '@island.is/portals-my-pages/graphql'
+import { VehiclesBulkMileageRegistrationRequestOverview } from '@island.is/portals/my-pages/graphql'
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import { isDefined } from '@island.is/shared/utils'
 import { vehicleMessage } from '../../lib/messages'

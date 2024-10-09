@@ -20,7 +20,7 @@ import {
   m,
   Filter,
   FJARSYSLAN_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { m as messages } from '../../lib/messages'
 
 import DropdownExport from '../../components/DropdownExport/DropdownExport'

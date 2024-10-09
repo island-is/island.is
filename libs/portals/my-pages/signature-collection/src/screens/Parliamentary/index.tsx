@@ -4,7 +4,7 @@ import {
   EmptyState,
   IntroHeader,
   THJODSKRA_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'

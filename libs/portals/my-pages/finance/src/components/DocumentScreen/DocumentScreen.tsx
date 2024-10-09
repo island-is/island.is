@@ -28,7 +28,7 @@ import {
   Filter,
   tableStyles,
   FJARSYSLAN_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { dateFormat } from '@island.is/shared/constants'
 
 import { billsFilter } from '../../utils/simpleFilter'

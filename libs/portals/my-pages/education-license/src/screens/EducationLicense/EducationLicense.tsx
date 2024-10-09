@@ -2,8 +2,8 @@ import { defineMessage } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FootNote, SYSLUMENN_SLUG, m } from '@island.is/portals-my-pages/core'
-import { IntroHeader } from '@island.is/portals-my-pages/core'
+import { FootNote, SYSLUMENN_SLUG, m } from '@island.is/portals/my-pages/core'
+import { IntroHeader } from '@island.is/portals/my-pages/core'
 import { LicenseCards } from './components/LicenseCards'
 
 function EducationLicense() {

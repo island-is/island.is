@@ -1,6 +1,6 @@
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
+import { m } from '@island.is/portals/my-pages/core'
 import * as styles from './DocumentsEmpty.css'
 
 interface Props {

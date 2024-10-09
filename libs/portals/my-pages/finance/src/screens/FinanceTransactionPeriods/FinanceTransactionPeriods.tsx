@@ -4,7 +4,7 @@ import {
   DynamicWrapper,
   FJARSYSLAN_SLUG,
   FootNote,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 
 import { FinanceTransactionPeriodsProvider } from '../../components/FinanceTransactionPeriods/FinanceTransactionPeriodsContext'
 import FinanceTransactionPeriodsFilter from '../../components/FinanceTransactionPeriods/FinanceTransactionPeriodsFilter'

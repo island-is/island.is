@@ -4,7 +4,7 @@ import {
   EmptyState,
   CardLoader,
   formatNationalId,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 
 import { Box } from '@island.is/island-ui/core'
 

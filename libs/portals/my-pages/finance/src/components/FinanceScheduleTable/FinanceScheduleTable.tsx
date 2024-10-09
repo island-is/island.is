@@ -3,10 +3,10 @@ import format from 'date-fns/format'
 import { Table as T, Box, Pagination, Tooltip } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
-import { ExpandHeader, dateParse } from '@island.is/portals-my-pages/core'
+import { ExpandHeader, dateParse } from '@island.is/portals/my-pages/core'
 import FinanceScheduleTableRow from './FinanceScheduleTableRow'
 import { m as messages } from '../../lib/messages'
-import { PaymentSchedule } from '@island.is/portals-my-pages/graphql'
+import { PaymentSchedule } from '@island.is/portals/my-pages/graphql'
 const ITEMS_ON_PAGE = 20
 
 interface Props {

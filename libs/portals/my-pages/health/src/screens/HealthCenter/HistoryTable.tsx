@@ -4,7 +4,7 @@ import {
   DownloadFileButtons,
   formatDate,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { RightsPortalHealthCenterRecord } from '@island.is/api/schema'
 import { exportHealthCenterFile } from '../../utils/FileBreakdown'

@@ -12,7 +12,7 @@ import {
   IntroHeader,
   LinkResolver,
   m as coreMessages,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { messages } from '../..'
 import { useEffect, useState } from 'react'
 import React from 'react'

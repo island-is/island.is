@@ -7,7 +7,7 @@ import {
   SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { healthNavigation } from '../../../lib/navigation'
 
 type Props = {

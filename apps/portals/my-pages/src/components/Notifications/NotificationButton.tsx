@@ -4,14 +4,14 @@ import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
-import { m } from '@island.is/service-portal/core'
+import { m } from '@island.is/portals/my-pages/core'
 import NotificationMenu from './NotificationMenu'
 import { MenuTypes } from '../Header/Header'
 import * as styles from './Notifications.css'
 import {
   useGetUserNotificationsOverviewQuery,
   useMarkAllNotificationsAsSeenMutation,
-} from '@island.is/service-portal/information'
+} from '@island.is/portals/my-pages/information'
 
 interface Props {
   setMenuState: (val: MenuTypes) => void

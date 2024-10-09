@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
-import { Modal, m } from '@island.is/portals-my-pages/core'
+import { Modal, m } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/auth/react'
 import { ActiveDocumentType2 } from '../../lib/types'
 import { downloadFile } from '../../utils/downloadDocumentV2'

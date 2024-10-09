@@ -14,14 +14,14 @@ import {
   StackWithBottomDivider,
   formSubmit,
   LinkButton,
-} from '@island.is/portals-my-pages/core'
-import { DocumentsPaths } from '@island.is/portals-my-pages/documents'
+} from '@island.is/portals/my-pages/core'
+import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { olMessage as om } from '../../../lib/messages'
 import { useGetOccupationalLicenseByIdQuery } from './OccupationalLicensesDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import { OrganizationSlugType } from '@island.is/shared/constants'
-import { useOrganization } from '@island.is/portals-my-pages/graphql'
+import { useOrganization } from '@island.is/portals/my-pages/graphql'
 import {
   OccupationalLicenseV2LicenseType,
   OccupationalLicensesV2LinkType,

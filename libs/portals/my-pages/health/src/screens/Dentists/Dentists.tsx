@@ -5,7 +5,7 @@ import {
   UserInfoLine,
   IntroHeader,
   SJUKRATRYGGINGAR_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { useLocation } from 'react-router-dom'
 import { useGetDentistsQuery } from './Dentists.generated'
 import {

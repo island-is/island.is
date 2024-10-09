@@ -2,7 +2,7 @@ import {
   NationalRegistryAddress,
   NationalRegistryName,
 } from '@island.is/api/schema'
-import { ExcludesFalse } from '@island.is/portals-my-pages/core'
+import { ExcludesFalse } from '@island.is/portals/my-pages/core'
 
 export const formatNameBreaks = (
   user: NationalRegistryName | undefined,

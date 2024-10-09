@@ -1,4 +1,4 @@
-import { downloadFile } from '@island.is/portals-my-pages/core'
+import { downloadFile } from '@island.is/portals/my-pages/core'
 import flatten from 'lodash/flatten'
 import {
   FinanceStatusDataType,

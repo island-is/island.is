@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { useMailActionV2Mutation } from '../screens/Overview/Overview.generated'
 import { MailActions } from '../utils/types'
 import { useDocumentList } from './useDocumentList'

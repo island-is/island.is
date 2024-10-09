@@ -12,7 +12,7 @@ import {
   AlertBanner,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import { LinkResolver, UserInfoLine } from '@island.is/portals-my-pages/core'
+import { LinkResolver, UserInfoLine } from '@island.is/portals/my-pages/core'
 import { defineMessage } from 'react-intl'
 import { formatDate } from '../../../utils/dateUtils'
 import { m } from '../../../lib/messages'
@@ -20,7 +20,7 @@ import {
   IdentityDocumentModelChild,
   useChildrenPassport,
   usePassport,
-} from '@island.is/portals-my-pages/graphql'
+} from '@island.is/portals/my-pages/graphql'
 import * as styles from './PassportDetail.css'
 import { Gender, GenderType } from '../../../types/passport.type'
 import { capitalizeEveryWord } from '../../../utils/capitalize'

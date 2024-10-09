@@ -1,7 +1,7 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { formatNationalId, m } from '@island.is/portals-my-pages/core'
+import { formatNationalId, m } from '@island.is/portals/my-pages/core'
 import React, { FC, useEffect, useState } from 'react'
-import { ActionCard } from '@island.is/portals-my-pages/core'
+import { ActionCard } from '@island.is/portals/my-pages/core'
 import { spmm } from '../../lib/messages'
 import { InformationPaths } from '../../lib/paths'
 

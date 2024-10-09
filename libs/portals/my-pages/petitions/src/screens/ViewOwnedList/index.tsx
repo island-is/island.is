@@ -18,7 +18,7 @@ import PetitionsTable from '../PetitionsTable'
 import { CloseList, OpenList } from '../queries'
 
 import Skeleton from '../Skeletons/Skeleton'
-import { Modal } from '@island.is/portals-my-pages/core'
+import { Modal } from '@island.is/portals/my-pages/core'
 import {
   useGetPetitionEndorsementsPaginated,
   useGetSinglePetition,

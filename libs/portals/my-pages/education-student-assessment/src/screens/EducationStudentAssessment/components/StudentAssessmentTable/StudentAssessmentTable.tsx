@@ -14,7 +14,7 @@ import {
   IntroHeader,
   MENNTAMALASTOFNUN_SLUG,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 

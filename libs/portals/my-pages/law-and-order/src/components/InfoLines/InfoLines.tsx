@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Box, Divider, Link, Stack, Text } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
-import { InfoLine } from '@island.is/portals-my-pages/core'
+import { InfoLine } from '@island.is/portals/my-pages/core'
 import {
   LawAndOrderActionTypeEnum,
   LawAndOrderGroup,

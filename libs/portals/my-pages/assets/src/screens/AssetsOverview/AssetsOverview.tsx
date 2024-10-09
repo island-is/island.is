@@ -2,7 +2,7 @@ import { gql, useQuery } from '@apollo/client'
 import {
   pagingFragment,
   addressFragment,
-} from '@island.is/portals-my-pages/graphql'
+} from '@island.is/portals/my-pages/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box, Button, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -11,7 +11,7 @@ import {
   HMS_SLUG,
   IntroHeader,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 
 import { AssetCardLoader } from '../../components/AssetCardLoader'
 import AssetListCards from '../../components/AssetListCards'

@@ -5,7 +5,7 @@ import {
   IntroHeader,
   CardLoader,
   SJUKRATRYGGINGAR_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { useLocation } from 'react-router-dom'
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
 import {

@@ -5,7 +5,7 @@ import {
   HUGVERKASTOFAN_SLUG,
   IntroHeader,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { Box } from '@island.is/island-ui/core'
 import { ipMessages } from '../../lib/messages'
 import { useGetIntellectualPropertiesQuery } from './IntellectualPropertiesOverview.generated'

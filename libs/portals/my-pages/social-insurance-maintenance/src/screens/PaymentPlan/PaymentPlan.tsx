@@ -8,7 +8,7 @@ import {
   UserInfoLine,
   amountFormat,
   m as coreMessages,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import { useGetPreviousPaymentsQuery } from './PaymentPlan.generated'
 import { PaymentGroupTable } from '../../components'

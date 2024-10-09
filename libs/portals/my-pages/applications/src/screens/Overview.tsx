@@ -6,7 +6,7 @@ import {
   FootNote,
   IntroHeader,
   m as coreMessage,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import {
   Box,
   GridRow,
@@ -17,7 +17,7 @@ import {
 import {
   useApplications,
   useGetOrganizationsQuery,
-} from '@island.is/portals-my-pages/graphql'
+} from '@island.is/portals/my-pages/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useLocation } from 'react-router-dom'
 import { m } from '../lib/messages'

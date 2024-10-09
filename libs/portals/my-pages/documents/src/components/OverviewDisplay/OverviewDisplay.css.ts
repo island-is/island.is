@@ -1,6 +1,6 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
-import { SERVICE_PORTAL_HEADER_HEIGHT_SM as hheight } from '@island.is/portals-my-pages/constants'
+import { SERVICE_PORTAL_HEADER_HEIGHT_SM as hheight } from '@island.is/portals/my-pages/constants'
 
 export const modalBase = style({
   width: '100%',

@@ -5,7 +5,7 @@ import {
   InfoLine,
   InfoLineStack,
   FootNote,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { olMessage as om } from '../lib/messages'
 import { OccupationalLicenseStatus } from '@island.is/api/schema'
 import { OrganizationSlugType } from '@island.is/shared/constants'

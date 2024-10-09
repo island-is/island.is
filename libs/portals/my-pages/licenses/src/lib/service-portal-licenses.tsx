@@ -1,5 +1,5 @@
 import React from 'react'
-import { ServicePortalModuleComponent } from '@island.is/portals-my-pages/core'
+import { ServicePortalModuleComponent } from '@island.is/portals/my-pages/core'
 
 export const ServicePortalLicenses: ServicePortalModuleComponent = () => {
   return (

@@ -1,6 +1,6 @@
 import { Table as T, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { EmptyTable, ExpandHeader } from '@island.is/portals-my-pages/core'
+import { EmptyTable, ExpandHeader } from '@island.is/portals/my-pages/core'
 import { vehicleMessage } from '../../lib/messages'
 import { useMemo } from 'react'
 import { VehicleType } from './types'

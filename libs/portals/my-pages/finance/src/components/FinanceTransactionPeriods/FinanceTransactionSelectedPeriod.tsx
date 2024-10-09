@@ -14,7 +14,7 @@ import {
   m,
   periodFormat,
   NestedTable,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { useGetChargeTypePeriodSubjectQuery } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
 import { SelectedPeriod } from './FinanceTransactionPeriodsTypes'
 import { m as messages } from '../../lib/messages'

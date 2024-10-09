@@ -5,7 +5,7 @@ import {
   m,
   MENNTAMALASTOFNUN_SLUG,
   SortableTable,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import {
   Box,
   GridColumn,

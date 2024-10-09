@@ -14,7 +14,7 @@ import {
   NestedFullTable,
   formatDate,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { vehicleMessage } from '../../lib/messages'
 import { VehicleBulkMileageSaveButton } from './VehicleBulkMileageSaveButton'

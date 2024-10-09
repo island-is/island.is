@@ -1,6 +1,6 @@
 import { Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m as coreMessages } from '@island.is/portals-my-pages/core'
+import { m as coreMessages } from '@island.is/portals/my-pages/core'
 import { useMemo } from 'react'
 import { type SubmissionStatus } from './types'
 

@@ -8,7 +8,7 @@ import {
   m,
   ErrorScreen,
   ISLAND_SYSLUMENN_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { Organization } from '@island.is/shared/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 

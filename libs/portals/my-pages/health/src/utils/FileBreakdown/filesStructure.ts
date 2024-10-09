@@ -2,7 +2,7 @@ import {
   amountFormat,
   downloadFile,
   formatDate,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import {
   aidHeaders,
   dentistHeaders,

@@ -14,11 +14,11 @@ import {
   Features,
   useFeatureFlagClient,
 } from '@island.is/react/feature-flags'
-import { LoadModal, m, parseNumber } from '@island.is/portals-my-pages/core'
+import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
 import {
   useDeleteIslykillValue,
   useUserProfile,
-} from '@island.is/portals-my-pages/graphql'
+} from '@island.is/portals/my-pages/graphql'
 
 import { msg } from '../../../../lib/messages'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'

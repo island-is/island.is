@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FootNote, m } from '@island.is/portals-my-pages/core'
+import { FootNote, m } from '@island.is/portals/my-pages/core'
 
 import HousingBenefitsTable from '../../components/HousingBenefitsPayments/HousingBenefitsTable'
 import { Problem } from '@island.is/react-spa/shared'

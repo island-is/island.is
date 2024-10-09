@@ -10,7 +10,7 @@ import {
   Hidden,
   Text,
 } from '@island.is/island-ui/core'
-import { m, Filter } from '@island.is/portals-my-pages/core'
+import { m, Filter } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { messages } from '../../utils/messages'
 import * as styles from './DocumentsFilter.css'

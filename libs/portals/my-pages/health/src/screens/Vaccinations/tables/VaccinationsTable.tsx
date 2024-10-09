@@ -1,7 +1,7 @@
 import { Box, Table as T, Tag } from '@island.is/island-ui/core'
 import { messages } from '../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ExpandHeader, ExpandRow } from '@island.is/portals-my-pages/core'
+import { ExpandHeader, ExpandRow } from '@island.is/portals/my-pages/core'
 import { VaccinationsDetailTable } from './VaccinationsDetailTable'
 import { DetailHeader, DetailRow } from '../../../utils/types'
 import { Vaccine } from '../dataStructure'

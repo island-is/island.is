@@ -17,7 +17,7 @@ import {
   UserInfoLine,
   amountFormat,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import {

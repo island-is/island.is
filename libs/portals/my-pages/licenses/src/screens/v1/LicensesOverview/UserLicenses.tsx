@@ -5,9 +5,9 @@ import {
   EmptyState,
   CardLoader,
   formatDate,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { m } from '../../../lib/messages'
-import { GenericLicenseType } from '@island.is/portals-my-pages/graphql'
+import { GenericLicenseType } from '@island.is/portals/my-pages/graphql'
 import {
   GenericUserLicense,
   IdentityDocumentModel,

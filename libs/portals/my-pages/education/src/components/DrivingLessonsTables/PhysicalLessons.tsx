@@ -2,8 +2,8 @@ import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { DrivingBookLesson } from '@island.is/api/schema'
-import { vehicleMessage as messages } from '@island.is/portals-my-pages/assets/messages'
-import { formatDate } from '@island.is/portals-my-pages/core'
+import { vehicleMessage as messages } from '@island.is/portals/my-pages/assets/messages'
+import { formatDate } from '@island.is/portals/my-pages/core'
 
 interface PropTypes {
   data: DrivingBookLesson[]

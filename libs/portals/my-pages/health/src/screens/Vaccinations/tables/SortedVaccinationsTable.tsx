@@ -3,7 +3,7 @@ import {
   EmptyTable,
   SortableTable,
   formatDate,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { messages } from '../../../lib/messages'
 import { tagSelector } from '../../../utils/tagSelector'
 import { VaccinationsDetailTable } from './VaccinationsDetailTable'

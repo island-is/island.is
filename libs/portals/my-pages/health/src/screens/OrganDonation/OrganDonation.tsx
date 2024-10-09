@@ -4,7 +4,7 @@ import {
   CardLoader,
   IntroHeader,
   LinkResolver,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { messages as m } from '../../lib/messages'
 import { Button, Box, Text } from '@island.is/island-ui/core'
 import { HealthPaths } from '../../lib/paths'

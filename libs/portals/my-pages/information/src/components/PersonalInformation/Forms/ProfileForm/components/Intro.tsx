@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { Text, Divider, Box } from '@island.is/island-ui/core'
 import { msg } from '../../../../../lib/messages'
 

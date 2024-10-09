@@ -1,7 +1,7 @@
-import { downloadFile } from '@island.is/portals-my-pages/core'
+import { downloadFile } from '@island.is/portals/my-pages/core'
 import { PeriodHeaders } from './dataHeaders'
 import { SelectedPeriod } from '../components/FinanceTransactionPeriods/FinanceTransactionPeriodsTypes'
-import { amountFormat } from '@island.is/portals-my-pages/core'
+import { amountFormat } from '@island.is/portals/my-pages/core'
 
 export const exportPeriodBreakdownFile = async (
   periods: SelectedPeriod[],

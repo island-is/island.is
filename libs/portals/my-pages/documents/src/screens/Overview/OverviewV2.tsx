@@ -10,12 +10,12 @@ import {
   SkeletonLoader,
   Checkbox,
 } from '@island.is/island-ui/core'
-import { useOrganizations } from '@island.is/portals-my-pages/graphql'
+import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import {
   GoBack,
   m,
   useScrollTopOnUpdate,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'

@@ -7,7 +7,7 @@ import {
   UserInfoLine,
   formatDate,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { ipMessages } from '../../lib/messages'
 import {
   Accordion,
@@ -20,7 +20,7 @@ import {
 import Timeline from '../../components/Timeline/Timeline'
 import Image from '../../components/Image/Image'
 import chunk from 'lodash/chunk'
-import { AudioPlayer, VideoPlayer } from '@island.is/portals-my-pages/core'
+import { AudioPlayer, VideoPlayer } from '@island.is/portals/my-pages/core'
 import { TrademarkType } from '@island.is/api/schema'
 import { isDefined } from '@island.is/shared/utils'
 import { useGetIntellectualPropertiesTrademarkByIdQuery } from './IntellectualPropertiesTrademarkDetail.generated'

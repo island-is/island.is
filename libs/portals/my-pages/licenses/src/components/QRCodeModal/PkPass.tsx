@@ -5,7 +5,7 @@ import { hasPassedTimeout } from '../../utils/dateUtils'
 import {
   CREATE_PK_PASS,
   useUserProfile,
-} from '@island.is/portals-my-pages/graphql'
+} from '@island.is/portals/my-pages/graphql'
 import { Locale } from '@island.is/shared/types'
 import { useEffect, useState } from 'react'
 import { m } from '../../lib/messages'

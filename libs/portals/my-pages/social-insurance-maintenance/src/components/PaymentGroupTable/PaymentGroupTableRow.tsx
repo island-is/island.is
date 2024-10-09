@@ -3,10 +3,10 @@ import {
   MONTHS,
   ScrollableMiddleTable,
   amountFormat,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { SocialInsurancePaymentGroup } from '@island.is/api/schema'
 import { FormatMessage } from '@island.is/localization'
-import { m as coreMessages } from '@island.is/portals-my-pages/core'
+import { m as coreMessages } from '@island.is/portals/my-pages/core'
 
 type Props = {
   data: SocialInsurancePaymentGroup

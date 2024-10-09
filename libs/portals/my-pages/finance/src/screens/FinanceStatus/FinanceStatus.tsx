@@ -24,7 +24,7 @@ import {
   FootNote,
   formSubmit,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { checkDelegation } from '@island.is/shared/utils'
 
 import DropdownExport from '../../components/DropdownExport/DropdownExport'

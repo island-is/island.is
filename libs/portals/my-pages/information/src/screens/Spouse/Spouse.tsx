@@ -10,7 +10,7 @@ import {
   m,
   THJODSKRA_SLUG,
   UserInfoLine,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { spmm } from '../../lib/messages'
 import { useNationalRegistrySpouseQuery } from './Spouse.generated'
 import { Problem } from '@island.is/react-spa/shared'

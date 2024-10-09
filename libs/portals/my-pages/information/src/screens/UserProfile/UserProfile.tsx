@@ -1,6 +1,6 @@
-import { ISLANDIS_SLUG, IntroHeader, m } from '@island.is/portals-my-pages/core'
+import { ISLANDIS_SLUG, IntroHeader, m } from '@island.is/portals/my-pages/core'
 import ProfileForm from '../../components/PersonalInformation/Forms/ProfileForm/ProfileForm'
-import { useUserProfile } from '@island.is/portals-my-pages/graphql'
+import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
 import { msg } from '../../lib/messages'

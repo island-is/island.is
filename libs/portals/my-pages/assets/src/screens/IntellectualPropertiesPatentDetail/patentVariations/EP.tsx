@@ -5,7 +5,7 @@ import {
   m as coreMessages,
   StackOrTableBlock,
   StackWithBottomDivider,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { IntellectualPropertiesPatentEp } from '@island.is/api/schema'
 import { Stack, Text, Divider } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'

@@ -11,8 +11,8 @@ import {
   IntroHeader,
   LinkButton,
   m as coreMessages,
-} from '@island.is/portals-my-pages/core'
-import { useUserProfile } from '@island.is/portals-my-pages/graphql'
+} from '@island.is/portals/my-pages/core'
+import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { isDefined } from '@island.is/shared/utils'
 import { useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'

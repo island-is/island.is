@@ -16,7 +16,7 @@ import {
   PaginatedEndorsementResponse as SignedLists,
 } from '../../types/schema'
 import { useGetListsUserSigned, useListsUserOwns } from '../hooks'
-import { ActionCard } from '@island.is/portals-my-pages/core'
+import { ActionCard } from '@island.is/portals/my-pages/core'
 import { formatDate } from '../../lib/utils'
 import { PetitionPaths } from '../../lib/paths'
 

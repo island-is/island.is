@@ -1,6 +1,6 @@
 import { m } from '../lib/messages'
 import { FormatMessage } from '@island.is/localization'
-import { LinkButton } from '@island.is/portals-my-pages/core'
+import { LinkButton } from '@island.is/portals/my-pages/core'
 import { LicensePaths } from '../lib/paths'
 
 interface Category {

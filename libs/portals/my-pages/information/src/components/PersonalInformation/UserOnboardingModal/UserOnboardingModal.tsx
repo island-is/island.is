@@ -3,7 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatPlausiblePathToParams,
   ServicePortalPaths,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import {
   ModalBase,
   GridRow,
@@ -14,7 +14,7 @@ import {
   Columns,
   Column,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { servicePortalCloseOnBoardingModal } from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
 import { OnboardingHeader } from './components/Header'

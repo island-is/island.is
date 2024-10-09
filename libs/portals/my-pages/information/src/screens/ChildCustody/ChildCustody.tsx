@@ -18,7 +18,7 @@ import {
   m,
   THJODSKRA_SLUG,
   UserInfoLine,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { unmaskString } from '@island.is/shared/utils'
 import { useParams } from 'react-router-dom'
 import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'

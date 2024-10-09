@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import FocusLock from 'react-focus-lock'
-import { LoadModal, m } from '@island.is/portals-my-pages/core'
+import { LoadModal, m } from '@island.is/portals/my-pages/core'
 import { Box, Text, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'

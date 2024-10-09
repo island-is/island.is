@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { zIndex } from '@island.is/portals-my-pages/constants'
+import { zIndex } from '@island.is/portals/my-pages/constants'
 
 const hexToRgb = (hex: string) => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)

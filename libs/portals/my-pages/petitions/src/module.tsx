@@ -1,6 +1,6 @@
 import { lazy } from 'react'
 import { Features } from '@island.is/feature-flags'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import { PetitionPaths } from './lib/paths'

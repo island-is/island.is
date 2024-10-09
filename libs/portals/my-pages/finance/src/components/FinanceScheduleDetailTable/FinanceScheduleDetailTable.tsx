@@ -7,7 +7,7 @@ import {
   tableStyles,
   amountFormat,
   dateParse,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { DetailedSchedule } from '@island.is/api/schema'
 import { dateFormat } from '@island.is/shared/constants'
 import format from 'date-fns/format'

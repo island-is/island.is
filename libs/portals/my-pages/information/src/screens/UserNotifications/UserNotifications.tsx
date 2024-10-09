@@ -1,4 +1,4 @@
-import { ISLANDIS_SLUG, IntroHeader, m } from '@island.is/portals-my-pages/core'
+import { ISLANDIS_SLUG, IntroHeader, m } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { mNotifications } from '../../lib/messages'

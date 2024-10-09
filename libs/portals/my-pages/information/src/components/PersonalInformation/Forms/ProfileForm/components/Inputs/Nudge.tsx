@@ -10,8 +10,8 @@ import {
   Icon,
   LoadingDots,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/portals-my-pages/core'
-import { useUpdateOrCreateUserProfile } from '@island.is/portals-my-pages/graphql'
+import { m } from '@island.is/portals/my-pages/core'
+import { useUpdateOrCreateUserProfile } from '@island.is/portals/my-pages/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { FormButton } from '../FormButton'

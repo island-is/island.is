@@ -4,7 +4,7 @@ import {
   pagingFragment,
   appraisalFragment,
   addressFragment,
-} from '@island.is/portals-my-pages/graphql'
+} from '@island.is/portals/my-pages/graphql'
 import { useQuery, useLazyQuery, gql } from '@apollo/client'
 import { Query, PropertyOwner } from '@island.is/api/schema'
 import { useNamespaces, useLocale } from '@island.is/localization'
@@ -14,14 +14,14 @@ import {
   HMS_SLUG,
   IntroHeader,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import AssetGrid from '../../components/AssetGrid'
 import AssetLoader from '../../components/AssetLoader'
 import { ownersArray } from '../../utils/createUnits'
 import { messages } from '../../lib/messages'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
-import { TableGrid, TableUnits } from '@island.is/portals-my-pages/core'
-import { FootNote } from '@island.is/portals-my-pages/core'
+import { TableGrid, TableUnits } from '@island.is/portals/my-pages/core'
+import { FootNote } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 
 export const ownerFragment = gql`

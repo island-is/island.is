@@ -4,7 +4,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { HealthPaths } from './lib/paths'
 import { PortalModule } from '@island.is/portals/core'
 import { messages as hm } from './lib/messages'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { Navigate } from 'react-router-dom'
 
 const HealthOverview = lazy(() =>

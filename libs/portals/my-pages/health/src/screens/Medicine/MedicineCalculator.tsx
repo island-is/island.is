@@ -16,7 +16,7 @@ import {
   CONTENT_GAP_SM,
   SECTION_GAP,
 } from './constants'
-import { amountFormat, m } from '@island.is/portals-my-pages/core'
+import { amountFormat, m } from '@island.is/portals/my-pages/core'
 import { useEffect, useRef, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import {
@@ -33,7 +33,7 @@ import { DrugRow } from './components/DrugRow/DrugRow'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
 import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
-import { EmptyTable } from '@island.is/portals-my-pages/core'
+import { EmptyTable } from '@island.is/portals/my-pages/core'
 import { exportDrugListFile } from '../../utils/FileBreakdown/filesStructure'
 
 const DEFAULT_PAGE_NUMBER = 1

@@ -8,7 +8,7 @@ import {
   Stack,
   useBreakpoint,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import * as styles from './SessionFilter.css'
 import React from 'react'
 import { useLocale } from '@island.is/localization'

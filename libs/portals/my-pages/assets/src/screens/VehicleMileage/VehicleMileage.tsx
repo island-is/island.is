@@ -21,7 +21,7 @@ import {
   SAMGONGUSTOFA_SLUG,
   IntroHeader,
   icelandLocalTime,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 
 import { isReadDateToday } from '../../utils/readDate'
 import { vehicleMessage as messages } from '../../lib/messages'

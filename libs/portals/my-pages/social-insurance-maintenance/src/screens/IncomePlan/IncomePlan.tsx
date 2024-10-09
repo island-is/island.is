@@ -12,7 +12,7 @@ import {
   LinkButton,
   m as coreMessages,
   formatDate,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import { SocialInsuranceMaintenancePaths } from '../../lib/paths'

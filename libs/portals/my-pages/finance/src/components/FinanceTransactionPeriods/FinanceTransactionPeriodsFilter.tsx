@@ -16,7 +16,7 @@ import {
   m,
   Filter,
   DownloadFileButtons,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { exportPeriodBreakdownFile } from '../../utils/filesPeriodBreakdown'
 
 import {

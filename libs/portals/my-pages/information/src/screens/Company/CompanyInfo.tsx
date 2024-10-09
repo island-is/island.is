@@ -11,7 +11,7 @@ import {
   m,
   SKATTURINN_SLUG,
   UserInfoLine,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { dateFormat } from '@island.is/shared/constants'
 import { useUserInfo } from '@island.is/auth/react'
 

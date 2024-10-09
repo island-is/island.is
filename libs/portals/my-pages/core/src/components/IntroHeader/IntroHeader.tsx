@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { IntroHeaderProps } from '@island.is/portals/core'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
-import { useOrganization } from '@island.is/portals-my-pages/graphql'
+import { useOrganization } from '@island.is/portals/my-pages/graphql'
 import { useLocale } from '@island.is/localization'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'

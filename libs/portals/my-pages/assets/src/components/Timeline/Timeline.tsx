@@ -12,7 +12,7 @@ import {
   UseBoxStylesProps,
 } from '@island.is/island-ui/core'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
-import { ProgressBar, useIsMobile } from '@island.is/portals-my-pages/core'
+import { ProgressBar, useIsMobile } from '@island.is/portals/my-pages/core'
 
 interface Props {
   children?: Array<ReactElement>

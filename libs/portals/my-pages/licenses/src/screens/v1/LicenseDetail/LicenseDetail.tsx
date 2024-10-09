@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useUserProfile } from '@island.is/portals-my-pages/graphql'
+import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Box,
@@ -18,7 +18,7 @@ import {
   CardLoader,
   ErrorScreen,
   m as coreMessages,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { m } from '../../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
 import { useParams } from 'react-router-dom'

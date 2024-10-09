@@ -4,7 +4,7 @@ import {
   IntroHeader,
   MENNTAMALASTOFNUN_SLUG,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
 import { EducationPaths } from '../../lib/paths'

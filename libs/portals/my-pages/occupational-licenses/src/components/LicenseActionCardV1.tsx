@@ -1,7 +1,7 @@
 import { FormatMessage, useLocale } from '@island.is/localization'
-import { ActionCard } from '@island.is/portals-my-pages/core'
+import { ActionCard } from '@island.is/portals/my-pages/core'
 import { olMessage as ol } from '../lib/messages'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { OccupationalLicenseStatus } from '@island.is/api/schema'
 import { TagVariant } from '@island.is/island-ui/core'
 

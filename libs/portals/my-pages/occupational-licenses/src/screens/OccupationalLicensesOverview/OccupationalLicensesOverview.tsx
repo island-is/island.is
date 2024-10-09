@@ -5,7 +5,7 @@ import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useEffect, useState } from 'react'
 import OverviewV1 from '../v1/OccupationalLicensesOverview/OccupationalLicensesOverviewV1'
 import OverviewV2 from '../v2/OccupationalLicensesOverview/OccupationalLicensesOverview'
-import { CardLoader } from '@island.is/portals-my-pages/core'
+import { CardLoader } from '@island.is/portals/my-pages/core'
 
 export type VersionType = 'v1' | 'v2' | 'initial'
 

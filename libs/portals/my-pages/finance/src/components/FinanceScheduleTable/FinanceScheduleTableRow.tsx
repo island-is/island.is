@@ -2,14 +2,14 @@ import {
   ExpandRow,
   formSubmit,
   amountFormat,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import FinanceScheduleDetailTable from '../FinanceScheduleDetailTable/FinanceScheduleDetailTable'
 import { DetailedSchedule } from '@island.is/api/schema'
 import { m as messages } from '../../lib/messages'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useGetPaymentScheduleByIdLazyQuery } from './FinanceScheduleTable.generated'
-import { PaymentSchedule } from '@island.is/portals-my-pages/graphql'
+import { PaymentSchedule } from '@island.is/portals/my-pages/graphql'
 
 interface Props {
   paymentSchedule: PaymentSchedule

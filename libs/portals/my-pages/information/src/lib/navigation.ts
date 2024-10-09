@@ -1,7 +1,7 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals-my-pages/core'
-import { PetitionPaths } from '@island.is/portals-my-pages/petitions'
-import { SignatureCollectionPaths } from '@island.is/portals-my-pages/signature-collection'
+import { m } from '@island.is/portals/my-pages/core'
+import { PetitionPaths } from '@island.is/portals/my-pages/petitions'
+import { SignatureCollectionPaths } from '@island.is/portals/my-pages/signature-collection'
 import { InformationPaths } from './paths'
 
 export const informationNavigation: PortalNavigationItem = {

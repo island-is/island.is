@@ -3,7 +3,7 @@ import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { Features } from '@island.is/react/feature-flags'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 
 import { ConsentPaths } from './lib/paths'
 

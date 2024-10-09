@@ -6,13 +6,13 @@ import {
   EmptyState,
   ErrorScreen,
   HEALTH_DIRECTORATE_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
 import { LicenseDetail } from '../../../components/LicenseDetail'
 import { olMessage as om } from '../../../lib/messages'
-import { m } from '@island.is/portals-my-pages/core'
-import { OccupationalLicenseV2LicenseType } from '@island.is/portals-my-pages/graphql'
+import { m } from '@island.is/portals/my-pages/core'
+import { OccupationalLicenseV2LicenseType } from '@island.is/portals/my-pages/graphql'
 
 type UseParams = {
   id: string

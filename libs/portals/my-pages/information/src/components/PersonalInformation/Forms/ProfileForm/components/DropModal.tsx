@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Modal } from '@island.is/portals-my-pages/core'
+import { Modal } from '@island.is/portals/my-pages/core'
 import {
   Text,
   Button,

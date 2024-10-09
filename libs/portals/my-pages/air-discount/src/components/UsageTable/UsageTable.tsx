@@ -3,7 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { AirDiscountSchemeFlightLeg } from '@island.is/api/schema'
 import { messages as m } from '../../lib/messages'
-import { formatDateWithTime } from '@island.is/portals-my-pages/core'
+import { formatDateWithTime } from '@island.is/portals/my-pages/core'
 
 interface PropTypes {
   data: AirDiscountSchemeFlightLeg[]

@@ -7,7 +7,7 @@ import {
   m,
   IntroHeader,
   THJODSKRA_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { defineMessage } from 'react-intl'
 import {
   Box,

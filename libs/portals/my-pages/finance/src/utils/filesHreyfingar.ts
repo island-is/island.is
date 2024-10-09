@@ -1,4 +1,4 @@
-import { downloadFile } from '@island.is/portals-my-pages/core'
+import { downloadFile } from '@island.is/portals/my-pages/core'
 import { CustomerRecordsDetails } from '../screens/FinanceTransactions/FinanceTransactionsData.types'
 import { hreyfingarHeaders } from './dataHeaders'
 const name = 'Hreyfingar'

@@ -2,7 +2,7 @@ import React from 'react'
 import {
   ServicePortalModuleComponent,
   EventCard,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { Box, Columns, Column, Text } from '@island.is/island-ui/core'
 
 const AssetsCards: ServicePortalModuleComponent = () => {

@@ -4,9 +4,9 @@ import {
   StackOrTableBlock,
   UserInfoLine,
   formatDate,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { ipMessages } from '../../../lib/messages'
-import { m as coreMessages } from '@island.is/portals-my-pages/core'
+import { m as coreMessages } from '@island.is/portals/my-pages/core'
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useMemo } from 'react'
 import { IntellectualPropertiesSpc } from '@island.is/api/schema'

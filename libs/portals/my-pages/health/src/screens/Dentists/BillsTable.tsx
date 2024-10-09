@@ -4,7 +4,7 @@ import {
   formatDate,
   amountFormat,
   DownloadFileButtons,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { Box, LoadingDots, Table as T, Text } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import { RightsPortalDentistBill } from '@island.is/api/schema'

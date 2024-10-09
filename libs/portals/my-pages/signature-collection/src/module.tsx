@@ -1,5 +1,5 @@
 import { lazy } from 'react'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from './lib/paths'
 import { ApiScope } from '@island.is/auth/scopes'

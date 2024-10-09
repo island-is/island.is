@@ -9,7 +9,7 @@ import {
   amountFormat,
   formatDate,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { exportNutritionFile } from '../../utils/FileBreakdown'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'

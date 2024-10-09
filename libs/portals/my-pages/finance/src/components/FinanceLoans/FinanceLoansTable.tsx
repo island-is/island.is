@@ -8,12 +8,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { amountFormat, formatDate, m } from '@island.is/portals-my-pages/core'
+import { amountFormat, formatDate, m } from '@island.is/portals/my-pages/core'
 import {
   ExpandRow,
   ExpandHeader,
   downloadLink,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import {
   GetHmsLoansHistoryQuery,
   useGetHmsLoansHistoryPdfLazyQuery,

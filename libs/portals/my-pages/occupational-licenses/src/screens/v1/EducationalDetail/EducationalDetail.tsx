@@ -7,12 +7,12 @@ import {
   ErrorScreen,
   MENNTAMALASTOFNUN_SLUG,
   formSubmit,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
 import { LicenseDetail } from '../../../components/LicenseDetail'
 import { useEffect, useState } from 'react'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { olMessage as om } from '../../../lib/messages'
 
 type UseParams = {

@@ -19,12 +19,12 @@ import {
   FootNote,
   LinkResolver,
   SAMGONGUSTOFA_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 
 import {
   vehicleMessage as messages,
   urls,
-} from '@island.is/portals-my-pages/assets/messages'
+} from '@island.is/portals/my-pages/assets/messages'
 import PhysicalLessons from '../../components/DrivingLessonsTables/PhysicalLessons'
 import DrivingLessonsSchools from '../../components/DrivingLessonsTables/DrivingLessonsSchools'
 import Exams from '../../components/DrivingLessonsTables/Exams'

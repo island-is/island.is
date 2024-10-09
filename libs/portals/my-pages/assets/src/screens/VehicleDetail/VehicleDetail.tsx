@@ -28,7 +28,7 @@ import {
   SAMGONGUSTOFA_SLUG,
   LinkButton,
   getDateLocale,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
 import { vehicleMessage as messages, urls } from '../../lib/messages'

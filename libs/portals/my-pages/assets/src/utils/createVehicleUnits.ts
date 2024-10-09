@@ -4,7 +4,7 @@ import {
   amountFormat,
   ExcludesFalse,
   formatNationalId,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { vehicleMessage as messages } from '../lib/messages'
 import { FormatMessage } from '@island.is/localization'
 

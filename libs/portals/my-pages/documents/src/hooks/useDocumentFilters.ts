@@ -4,7 +4,7 @@ import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
 import isAfter from 'date-fns/isAfter'
 import { defaultFilterValues } from '../utils/types'
 import { DocumentsPaths } from '../lib/paths'
-import { formatPlausiblePathToParams } from '@island.is/portals-my-pages/core'
+import { formatPlausiblePathToParams } from '@island.is/portals/my-pages/core'
 
 export const useDocumentFilters = () => {
   const { setFilterValue, setPage } = useDocumentContext()

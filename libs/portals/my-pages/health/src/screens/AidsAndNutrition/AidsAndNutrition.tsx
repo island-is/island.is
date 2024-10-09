@@ -3,7 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
   SJUKRATRYGGINGAR_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { useGetAidsAndNutritionQuery } from './AidsAndNutrition.generated'
 import { RightsPortalAidOrNutritionType } from '@island.is/api/schema'

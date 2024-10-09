@@ -1,4 +1,4 @@
-import { ExpandRow, formatDate } from '@island.is/portals-my-pages/core'
+import { ExpandRow, formatDate } from '@island.is/portals/my-pages/core'
 import FinanceTransactionPeriodsTableDetail from './FinanceTransactionPeriodsTableDetail'
 import { useGetChargeItemSubjectsByYearLazyQuery } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
 import { cropText } from '../../utils/cropText'

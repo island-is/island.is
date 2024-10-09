@@ -1,7 +1,7 @@
 import { Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { vehicleMessage } from '../../lib/messages'
-import { downloadFile } from '@island.is/portals-my-pages/core'
+import { downloadFile } from '@island.is/portals/my-pages/core'
 import { useState } from 'react'
 
 interface Props {

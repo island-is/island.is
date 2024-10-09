@@ -1,6 +1,6 @@
 import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
-import { m } from '@island.is/portals-my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { PortalModule } from '@island.is/portals/core'
 import { FinancePaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'

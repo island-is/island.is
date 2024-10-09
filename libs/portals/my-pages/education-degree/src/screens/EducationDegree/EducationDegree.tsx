@@ -6,7 +6,7 @@ import {
   FootNote,
   IntroHeader,
   MENNTAMALASTOFNUN_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { DegreeCards } from './components/DegreeCards'
 
 function EducationDegree() {

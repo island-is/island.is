@@ -1,10 +1,10 @@
 import { VehicleListed } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import React, { FC, useEffect, useState } from 'react'
-import { formatDate } from '@island.is/portals-my-pages/core'
+import { formatDate } from '@island.is/portals/my-pages/core'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import { messages, vehicleMessage } from '../lib/messages'
-import { ActionCard } from '@island.is/portals-my-pages/core'
+import { ActionCard } from '@island.is/portals/my-pages/core'
 import { AssetsPaths } from '../lib/paths'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 

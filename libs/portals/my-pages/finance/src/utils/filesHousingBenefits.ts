@@ -1,6 +1,6 @@
-import { downloadFile, formatDate } from '@island.is/portals-my-pages/core'
+import { downloadFile, formatDate } from '@island.is/portals/my-pages/core'
 import { HousingPaymentsHeaders } from './dataHeaders'
-import { amountFormat } from '@island.is/portals-my-pages/core'
+import { amountFormat } from '@island.is/portals/my-pages/core'
 import { HousingBenefitsPayment } from '@island.is/api/schema'
 
 export const exportHousingBenefitFiles = async (

@@ -1,7 +1,7 @@
 import { lazy } from 'react'
 
 import { ApiScope } from '@island.is/auth/scopes'
-import { ServicePortalModule, m } from '@island.is/portals-my-pages/core'
+import { ServicePortalModule, m } from '@island.is/portals/my-pages/core'
 import { EducationDegreePaths } from './lib/paths'
 
 const EducationDegree = lazy(() =>

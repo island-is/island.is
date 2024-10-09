@@ -15,7 +15,7 @@ import {
   formSubmit,
   m,
   tableStyles,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 
 import {
   FinanceStatusDetailsType,

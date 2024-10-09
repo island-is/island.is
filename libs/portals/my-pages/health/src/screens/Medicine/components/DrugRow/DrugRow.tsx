@@ -1,7 +1,7 @@
 import { Table as T, Icon, Hidden } from '@island.is/island-ui/core'
 import { QuantityCounter } from '../QuantityCounter/QuantityCounter'
 import { useState } from 'react'
-import { amountFormat } from '@island.is/portals-my-pages/core'
+import { amountFormat } from '@island.is/portals/my-pages/core'
 import { DrugRowDrug } from '../../MedicineCalculator'
 
 type Props = {

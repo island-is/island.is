@@ -11,7 +11,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import * as styles from './TwoColumnUserInfoLine.css'
-import { Maybe } from '@island.is/portals-my-pages/graphql'
+import { Maybe } from '@island.is/portals/my-pages/graphql'
 import cn from 'classnames'
 
 interface Props {

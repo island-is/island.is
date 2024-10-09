@@ -14,7 +14,7 @@ import {
   IntroHeader,
   m,
   SAMGONGUSTOFA_SLUG,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 
 import { vehicleMessage as messages } from '../../lib/messages'
 import TabContent from './TabContent'

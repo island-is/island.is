@@ -3,7 +3,7 @@ import {
   SERVICE_PORTAL_HEADER_HEIGHT_LG,
   SERVICE_PORTAL_HEADER_HEIGHT_SM,
   zIndex,
-} from '@island.is/service-portal/constants'
+} from '@island.is/portals/my-pages/constants'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const header = style({

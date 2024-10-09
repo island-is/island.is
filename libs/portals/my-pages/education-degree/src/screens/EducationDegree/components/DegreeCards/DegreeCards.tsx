@@ -1,8 +1,8 @@
 import React from 'react'
 
 import { Box } from '@island.is/island-ui/core'
-import { EmptyState, m } from '@island.is/portals-my-pages/core'
-import { ActionCard } from '@island.is/portals-my-pages/core'
+import { EmptyState, m } from '@island.is/portals/my-pages/core'
+import { ActionCard } from '@island.is/portals/my-pages/core'
 
 const educationDegrees = [
   {

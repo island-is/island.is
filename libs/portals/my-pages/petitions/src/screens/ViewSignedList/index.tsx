@@ -30,7 +30,7 @@ import {
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
-import { Modal } from '@island.is/portals-my-pages/core'
+import { Modal } from '@island.is/portals/my-pages/core'
 
 const ViewSignedList = () => {
   useNamespaces('sp.petitions')

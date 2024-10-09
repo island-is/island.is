@@ -1,5 +1,5 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m, DynamicWrapper } from '@island.is/portals-my-pages/core'
+import { m, DynamicWrapper } from '@island.is/portals/my-pages/core'
 
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 

@@ -1,5 +1,5 @@
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
-import { EmptyTable, LinkButton } from '@island.is/portals-my-pages/core'
+import { EmptyTable, LinkButton } from '@island.is/portals/my-pages/core'
 import { useNamespaces } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import { messages as m } from '../../../lib/messages'

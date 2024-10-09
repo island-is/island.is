@@ -4,7 +4,7 @@ import {
   HUGVERKASTOFAN_SLUG,
   IntroHeader,
   m,
-} from '@island.is/portals-my-pages/core'
+} from '@island.is/portals/my-pages/core'
 import { Box, SkeletonLoader, Stack } from '@island.is/island-ui/core'
 import { useGetIntellectualPropertiesPatentByIdQuery } from './IntellectualPropertiesPatentDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'

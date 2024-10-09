@@ -7,7 +7,7 @@ import { useMutation } from '@apollo/client'
 import {
   CREATE_PK_PASS_QR_CODE,
   useUserProfile,
-} from '@island.is/portals-my-pages/graphql'
+} from '@island.is/portals/my-pages/graphql'
 import { m } from '../../lib/messages'
 import QRCodeModal from './QRCodeModal'
 import { hasPassedTimeout } from '../../utils/dateUtils'
