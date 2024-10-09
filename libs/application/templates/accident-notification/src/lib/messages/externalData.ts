@@ -72,6 +72,16 @@ export const externalData = {
         'Upplýsingar um nafn, kennitölu og heimilisfang. Upplýsingar um börn og maka.',
       description: 'Description: National Registry',
     },
+    procureDescription: {
+      id: 'an.application:section.externalData.nationalRegistry.procureDescription',
+      defaultMessage: 'Upplýsingar um nafn, kennitölu og heimilisfang.',
+      description: 'Description: National Registry for procure holder',
+    },
+    subTitle: {
+      id: 'an.application:section.externalData.nationalRegistry.subTitle',
+      defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang',
+      description: 'We will fetch name, national id and address',
+    },
   }),
   accidentProvider: defineMessages({
     title: {
