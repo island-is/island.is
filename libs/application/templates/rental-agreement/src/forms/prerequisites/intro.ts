@@ -2,9 +2,7 @@ import {
   buildCustomField,
   buildMultiField,
   buildSection,
-  buildSubmitField,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
 
 import * as m from '../../lib/messages'
 
@@ -23,18 +21,6 @@ export const intro = buildSection({
           title: messages.pageTitle,
           component: 'GeneralInfoForm',
         }),
-        // buildSubmitField({
-        //   id: 'toDraft',
-        //   title: '',
-        //   refetchApplicationAfterSubmit: true,
-        //   actions: [
-        //     {
-        //       event: DefaultEvents.SUBMIT,
-        //       name: 'Hefja umsókn',
-        //       type: 'primary',
-        //     },
-        //   ],
-        // }),
       ],
     }),
   ],
