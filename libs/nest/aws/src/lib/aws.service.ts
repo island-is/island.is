@@ -108,15 +108,17 @@ export class AwsService {
       const exists = results.$metadata.httpStatusCode === 200
       return exists
     } catch (error) {
-        this.logger.error(
-          'Error occurred while checking if file exists in S3',
-          error,
-        )
-        return false
+      this.logger.error(
+        'Error occurred while checking if file exists in S3',
+        error,
+      )
+      return false
     }
   }
 
-  public async deleteObject(BucketKeyPairOrFilename: BucketKeyPair | string): Promise<boolean> {
+  public async deleteObject(
+    BucketKeyPairOrFilename: BucketKeyPair | string,
+  ): Promise<boolean> {
     try {
       const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
       const result = await this.s3Client.send(
@@ -144,7 +146,7 @@ export class AwsService {
     bucket: string
     key: string
   } {
-    if(typeof BucketKeyPairOrFilename === 'object') {
+    if (typeof BucketKeyPairOrFilename === 'object') {
       return BucketKeyPairOrFilename
     } else {
       try {
