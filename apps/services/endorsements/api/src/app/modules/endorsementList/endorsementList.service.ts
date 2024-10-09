@@ -341,8 +341,6 @@ export class EndorsementListService {
       'apps/services/endorsements/api/src/assets/island.png',
     )
 
-
-
     doc.registerFont('Regular', regularFontPath)
     doc.registerFont('Bold', boldFontPath)
 
@@ -381,7 +379,7 @@ export class EndorsementListService {
       .text(endorsementList.title, 60, currentYPosition, {
         align: 'left',
       })
-      
+
     currentYPosition = doc.y + 15
 
     doc
@@ -417,18 +415,14 @@ export class EndorsementListService {
       .font('Bold')
       .fontSize(12)
       .text('Fjöldi undirskrifta: ', 60, currentYPosition, { align: 'left' })
-      
-      
+
     currentYPosition = doc.y + 5
     doc
       .font('Regular')
       .fontSize(12)
-      .text(
-        endorsementList.endorsementCount.toString(),
-        60,
-        currentYPosition,
-        { align: 'left' },
-      )
+      .text(endorsementList.endorsementCount.toString(), 60, currentYPosition, {
+        align: 'left',
+      })
     currentYPosition = doc.y + 15
 
     doc
