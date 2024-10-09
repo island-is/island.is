@@ -100,7 +100,8 @@ export const MaritalStatusSubSection = buildSubSection({
             return individual?.maritalTitle?.description
           },
         }),
-        // If married:
+        // DEPRECATED: The lastModified field no longer exists in the spouseDetails object as of V3
+        // // If married:
         buildTextField({
           id: 'maritalStatus.dateOfMaritalStatusStr',
           title: information.labels.maritalStatus.marriedStatusDate,
@@ -119,15 +120,16 @@ export const MaritalStatusSubSection = buildSubSection({
             return isMarried
           },
           defaultValue: (application: Application) => {
-            const spouseDetails = getValueViaPath(
-              application.externalData,
-              'spouseDetails.data',
-              undefined,
-            ) as NationalRegistrySpouse | undefined
+            // const spouseDetails = getValueViaPath(
+            //   application.externalData,
+            //   'spouseDetails.data',
+            //   undefined,
+            // ) as NationalRegistrySpouse | undefined
 
-            return spouseDetails?.lastModified
-              ? formatDate(new Date(spouseDetails.lastModified))
-              : ''
+            // return spouseDetails?.lastModified
+            //   ? formatDate(new Date(spouseDetails.lastModified))
+            //   : ''
+            return ''
           },
         }),
         // If cohabitation:
@@ -159,6 +161,7 @@ export const MaritalStatusSubSection = buildSubSection({
             return individual?.maritalTitle?.description
           },
         }),
+        // DEPRECATED: The lastModified field no longer exists in the spouseDetails object as of V3
         // If cohabitation:
         buildTextField({
           id: 'maritalStatus.dateOfMaritalStatusStr',
@@ -179,15 +182,16 @@ export const MaritalStatusSubSection = buildSubSection({
             return isCohabitation
           },
           defaultValue: (application: Application) => {
-            const spouseDetails = getValueViaPath(
-              application.externalData,
-              'spouseDetails.data',
-              undefined,
-            ) as NationalRegistrySpouse | undefined
+            // const spouseDetails = getValueViaPath(
+            //   application.externalData,
+            //   'spouseDetails.data',
+            //   undefined,
+            // ) as NationalRegistrySpouse | undefined
 
-            return spouseDetails?.lastModified
-              ? formatDate(new Date(spouseDetails.lastModified))
-              : ''
+            // return spouseDetails?.lastModified
+            //   ? formatDate(new Date(spouseDetails.lastModified))
+            //   : ''
+            return ''
           },
         }),
         buildTextField({
