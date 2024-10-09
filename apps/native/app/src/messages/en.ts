@@ -345,7 +345,7 @@ export const en: TranslatedMessages = {
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
-  'profile.airDiscount': 'Air discount scheme',
+  'profile.airDiscount': 'Air discount',
   'profile.health': 'Health',
 
   // vehicles
