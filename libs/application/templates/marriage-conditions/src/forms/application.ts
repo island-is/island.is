@@ -146,7 +146,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     id: 'header2',
                     title: m.informationSpouse2,
                     titleVariant: 'h4',
-                    space: 'gutter',
+                    space: 'containerGutter',
                   }),
                   buildAlertMessageField({
                     id: 'alert',
@@ -225,7 +225,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const status = application.externalData.maritalStatus
-                        .data as any
+                        .data as { maritalStatus: string }
                       return status.maritalStatus
                     },
                   }),
@@ -292,6 +292,10 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',
                     minDate: new Date(),
+                    // max date is set to 12 weeks from now
+                    maxDate: new Date(
+                      new Date().setDate(new Date().getDate() + 12 * 7),
+                    ),
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
@@ -406,7 +410,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     id: 'header4',
                     title: m.informationWitness2,
                     titleVariant: 'h4',
-                    space: 'gutter',
+                    space: 'containerGutter',
                   }),
                   buildCustomField({
                     id: 'witness2.person',

@@ -580,6 +580,50 @@ describe('validateAnswers', () => {
         value: expectedMessage,
       })
     })
+
+    it('should not throw error when validation fails but current screen does not include the path', () => {
+      const schema = z.object({
+        anArray: z.array(z.string()).nonempty(),
+        somethingElse: z.number(),
+      })
+      const value = {
+        anArray: [],
+        somethingElse: 4,
+      }
+
+      expect(
+        validateAnswers({
+          dataSchema: schema,
+          answers: value,
+          formatMessage,
+          isFullSchemaValidation: false,
+          currentScreenFields: ['somethingElse'],
+        }),
+      ).toBeUndefined()
+    })
+
+    it('should throw error when validation fails and current screen includes the path', () => {
+      const schema = z.object({
+        anArray: z.array(z.string()).nonempty(),
+        somethingElse: z.number(),
+      })
+      const value = {
+        anArray: [],
+        somethingElse: 4,
+      }
+
+      expect(
+        validateAnswers({
+          dataSchema: schema,
+          answers: value,
+          formatMessage,
+          isFullSchemaValidation: false,
+          currentScreenFields: ['anArray', 'somethingElse'],
+        }),
+      ).toEqual({
+        anArray: defaultError,
+      })
+    })
   })
 })
 
