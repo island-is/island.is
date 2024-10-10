@@ -368,7 +368,7 @@ export class SyslumennService {
         vedbandayfirlitSkeyti: {
           audkenni: id,
           fastanumer: cleanPropertyNumber(assetId),
-          tegundAndlags: assetType as number,
+          tegundAndlags: assetType as VedbondTegundAndlags,
         },
       })
       .catch((e) => {

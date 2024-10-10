@@ -10,7 +10,6 @@ import {
   VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
   TegundAndlags,
-  DanarbuUppl,
   DanarbuUpplRadstofun,
   EignirDanarbus,
   Fasteignasalar,
@@ -313,14 +312,14 @@ export const mapTemporaryEventLicence = (
   location: temporaryEventLicence.stadur?.trim() ?? '',
 })
 
-export function constructUploadDataObject(
+export const constructUploadDataObject = (
   id: string,
   persons: Person[],
   attachments: Attachment[] | undefined,
   extraData: { [key: string]: string },
   uploadDataName: string,
   uploadDataId?: string,
-): SyslMottakaGognPostRequest {
+): SyslMottakaGognPostRequest => {
   return {
     syslSkeyti: {
       audkenni: id,
@@ -352,7 +351,7 @@ export function constructUploadDataObject(
   }
 }
 
-function mapAdvocate(advocateRaw: Malsvari): Advocate {
+const mapAdvocate = (advocateRaw: Malsvari): Advocate => {
   return {
     address: advocateRaw.heimilisfang ?? '',
     email: advocateRaw.netfang ?? '',
@@ -362,7 +361,7 @@ function mapAdvocate(advocateRaw: Malsvari): Advocate {
   }
 }
 
-function mapPersonEnum(e: PersonType) {
+const mapPersonEnum = (e: PersonType) => {
   switch (e) {
     case PersonType.Plaintiff:
       return AdiliTegund.NUMBER_0
@@ -480,7 +479,7 @@ export const mapEstateRegistrant = (
     marriageSettlement: syslaData.kaupmaili ?? false,
     office: syslaData.embaetti ?? '',
     caseNumber: syslaData.malsnumer ?? '',
-    dateOfDeath: syslaData.danardagur ?? new Date(), // Todo: suitable backup for date
+    dateOfDeath: syslaData.danardagur ?? new Date(),
     nameOfDeceased: syslaData.nafnLatins ?? '',
     nationalIdOfDeceased: syslaData.kennitalaLatins ?? '',
     ownBusinessManagement: syslaData.eiginRekstur ?? false,
@@ -592,7 +591,7 @@ export const mapInheritanceTax = (
   return {
     inheritanceTax: inheritance.erfdafjarskattur ?? 0,
     taxExemptionLimit: inheritance.skattfrelsismorkUpphaed ?? 0,
-    validFrom: inheritance.gildirFra ?? new Date(), // TODO: Figure out a suitable fallback for date
+    validFrom: inheritance.gildirFra ?? new Date(),
   }
 }
 
