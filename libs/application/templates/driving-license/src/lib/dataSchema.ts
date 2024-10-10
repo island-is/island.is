@@ -1,5 +1,17 @@
 import { z } from 'zod'
-import { YES, NO, B_FULL_RENEWAL_65, BE, B_TEMP, B_FULL } from './constants'
+import {
+  YES,
+  NO,
+  B_FULL_RENEWAL_65,
+  BE,
+  B_TEMP,
+  B_FULL,
+  B_ADVANCED,
+  AdvancedLicense,
+  ADVANCED_SUB_LICENSES,
+  AdvancedLicenses,
+  AdvancedSubLicenses,
+} from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Pickup } from './types'
 
@@ -36,10 +48,16 @@ export const dataSchema = z.object({
   ]),
   requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum([YES, NO])).nonempty(),
-  applicationFor: z.enum([B_FULL, B_TEMP, BE, B_FULL_RENEWAL_65]),
+  applicationFor: z.enum([B_FULL, B_TEMP, BE, B_FULL_RENEWAL_65, B_ADVANCED]),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   drivingInstructor: z.string().min(1),
+  advancedLicenseSelection: z.string().refine((v) => {
+    return Object.keys(AdvancedLicenses).includes(v)
+  }),
+  advancedLicenseSubSelection: z.string().refine((v) => {
+    return Object.keys(AdvancedSubLicenses).includes(v)
+  }),
   otherCountry: z
     .object({
       drivingLicenseInOtherCountry: z.enum([YES, NO]),

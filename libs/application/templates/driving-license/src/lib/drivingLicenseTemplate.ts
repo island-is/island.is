@@ -138,6 +138,8 @@ const template: ApplicationTemplate<
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
                   allow65Renewal:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
+                  allowAdvanced:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_ADVANCED],
                 })
               },
               write: 'all',
