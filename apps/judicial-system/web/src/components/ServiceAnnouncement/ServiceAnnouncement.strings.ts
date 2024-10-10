@@ -23,7 +23,11 @@ export const strings = defineMessages({
   },
   serviceStatusUnknown: {
     id: 'judicial.system.core:service_announcement.service_status_unknown',
+<<<<<<< HEAD
     defaultMessage: 'Ákæra er í birtingarferli',
+=======
+    defaultMessage: 'Birtingarstaða óþekkt',
+>>>>>>> 23951d9fe5252556ecb27d4caf417cd145dec4f8
     description: 'Notaður sem texti þegar ekki er vitað um stöðu birtingar.',
   },
   servedToDefender: {
