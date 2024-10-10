@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -euo pipefail
+
+for c in kubectx kubectl aws; do
+  if ! command -v "$c" >/dev/null; then
+    echo "$c not installed"
+    return
+  fi
+done
+
+set-kubectx() {
+  : "${AWS_PROFILE:=}"
+  if kubectx | grep -q "${AWS_PROFILE##islandis-}"; then
+    return
+  fi
+  echo "Setting kube context..." >&2
+  kubectx "$(kubectx | grep "$(aws sts get-caller-identity | jq -r '.Account')")"
+  CLUSTER="$(kubectl config current-context | grep -oP '(?<=/).*')"
+  export CLUSTER
+}
+
+set-kubectx
