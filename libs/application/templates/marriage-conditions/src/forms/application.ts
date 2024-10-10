@@ -13,6 +13,8 @@ import {
   buildDateField,
   buildExternalDataProvider,
   buildAlertMessageField,
+  buildNationalIdWithNameField,
+  buildPhoneField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -118,12 +120,11 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       return nationalRegistry.fullName ?? ''
                     },
                   }),
-                  buildTextField({
+                  buildPhoneField({
                     id: 'applicant.phone',
                     title: m.phone,
                     width: 'half',
                     backgroundColor: 'blue',
-                    format: '###-####',
                     defaultValue: (application: Application) => {
                       const data = application.externalData.userProfile
                         .data as UserProfile
@@ -154,21 +155,17 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     alertType: 'info',
                     message: m.informationAlertMessage,
                   }),
-                  buildCustomField({
+                  buildNationalIdWithNameField({
                     id: 'spouse.person',
-                    title: '',
-                    component: 'NationalIdWithName',
+                    title: m.name,
+                    required: true,
+                    minAgePerson: 18,
                   }),
-                  buildTextField({
+                  buildCustomField({
                     id: 'spouse.phone',
                     title: m.phone,
+                    component: 'PhoneWithElectronicId',
                     width: 'half',
-                    backgroundColor: 'blue',
-                    format: '###-####',
-                    defaultValue: (application: Application) => {
-                      const info = application.answers.spouse as Individual
-                      return removeCountryCode(info?.phone ?? '')
-                    },
                   }),
                   buildTextField({
                     id: 'spouse.email',
@@ -383,17 +380,17 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     title: m.informationWitness1,
                     titleVariant: 'h4',
                   }),
-                  buildCustomField({
+                  buildNationalIdWithNameField({
                     id: 'witness1.person',
-                    title: '',
-                    component: 'NationalIdWithName',
+                    title: m.name,
+                    required: true,
+                    minAgePerson: 18,
                   }),
-                  buildTextField({
+                  buildCustomField({
                     id: 'witness1.phone',
                     title: m.phone,
+                    component: 'PhoneWithElectronicId',
                     width: 'half',
-                    backgroundColor: 'blue',
-                    format: '###-####',
                   }),
                   buildTextField({
                     id: 'witness1.email',
@@ -408,17 +405,17 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     titleVariant: 'h4',
                     space: 'gutter',
                   }),
-                  buildCustomField({
+                  buildNationalIdWithNameField({
                     id: 'witness2.person',
-                    title: '',
-                    component: 'NationalIdWithName',
+                    title: m.name,
+                    required: true,
+                    minAgePerson: 18,
                   }),
-                  buildTextField({
+                  buildCustomField({
                     id: 'witness2.phone',
                     title: m.phone,
+                    component: 'PhoneWithElectronicId',
                     width: 'half',
-                    backgroundColor: 'blue',
-                    format: '###-####',
                   }),
                   buildTextField({
                     id: 'witness2.email',
