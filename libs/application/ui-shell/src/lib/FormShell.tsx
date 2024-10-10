@@ -101,37 +101,6 @@ export const FormShell: FC<
     return <ErrorShell errorType="lost" applicationType={application.typeId} />
   }
 
-  const parseSubsections = (
-    children: Array<SectionChildren>,
-    isParentActive: boolean,
-  ) => {
-    const childrenToParse: Array<SectionChildren> = []
-
-    children.forEach((child) => {
-      const childScreen = screens.find((s) => s.id === child.id)
-
-      if (childScreen?.subSectionIndex === -1) {
-        return null
-      }
-
-      childrenToParse.push(child)
-    })
-
-    return childrenToParse.map((child, i) => {
-      const isChildActive =
-        isParentActive && currentScreen.subSectionIndex === i
-      return (
-        <Text
-          variant="medium"
-          fontWeight={isChildActive ? 'semiBold' : 'regular'}
-          key={`formStepperChild-${i}`}
-        >
-          {formatMessage(child.title as MessageDescriptor)}
-        </Text>
-      )
-    })
-  }
-
   return (
     <Box className={styles.root}>
       <Box
