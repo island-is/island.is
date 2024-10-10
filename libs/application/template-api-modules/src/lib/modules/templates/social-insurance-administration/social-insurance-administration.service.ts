@@ -37,6 +37,8 @@ import {
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
+import { sharedModuleConfig } from '../../shared'
+import { ConfigType } from '@nestjs/config'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -47,8 +49,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
-    @Inject(APPLICATION_ATTACHMENT_BUCKET)
-    private readonly attachmentBucket: string,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -378,7 +380,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getPdf(key: string) {
     const file = await this.s3
-      .getObject({ Bucket: this.attachmentBucket, Key: key })
+      .getObject({ Bucket: this.config.templateApi.attachmentBucket, Key: key })
       .promise()
     const fileContent = file.Body as Buffer
 
