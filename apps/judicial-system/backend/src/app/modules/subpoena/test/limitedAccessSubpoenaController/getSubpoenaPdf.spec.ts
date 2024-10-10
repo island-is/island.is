@@ -4,7 +4,7 @@ import { uuid } from 'uuidv4'
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
 import { Case, PdfService } from '../../../case'
-import { Defendant } from '../../../defendant'
+import { Defendant } from '../../../defendant/models/defendant.model'
 import { Subpoena } from '../../models/subpoena.model'
 
 interface Then {
@@ -30,7 +30,6 @@ describe('LimitedAccessSubpoenaController - Get subpoena pdf', () => {
       await createTestingSubpoenaModule()
 
     mockPdfService = pdfService
-
     const getSubpoenaPdfMock = mockPdfService.getSubpoenaPdf as jest.Mock
     getSubpoenaPdfMock.mockResolvedValueOnce(pdf)
 
