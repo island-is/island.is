@@ -25,40 +25,17 @@ export const prerequisites = {
       defaultMessage: 'Þú ert að fara að gera rafrænan húsaleigusamning',
       description: 'Page title for intro',
     },
-    subTitle: {
-      id: 'ra.application:prerequisites.intro.subTitle',
+    text: {
+      id: 'ra.application:prerequisites.intro.text#markdown',
       defaultMessage:
         'Mikilvægt er að hafa í huga að í samningnum þurfa að koma fram öll þau atriði sem aðilar samningsins eru sammála um og skipta máli við skilgreiningar og skýringar á því um hvað samningurinn snýst.',
       description: 'Introductory text about the application',
     },
-    descriptionBullet1: {
-      id: 'ra.application:prerequisites.intro.descriptionBullet1',
+    bullets: {
+      id: 'ra.application:prerequisites.intro.bullets#markdown',
       defaultMessage:
-        'Leigusamningur er skráður í Leiguskrá HMS þegar allir aðilar samningsins hafa undirritað rafrænt',
+        '- Leigusamningur er skráður í Leiguskrá HMS þegar allir aðilar samningsins hafa undirritað rafrænt. \n- Skráning leigusamnings í Leiguskrá HMS er ein forsenda þess að leigjandi geti fengið greiddar húsnæðisbætur. \n- Hægt er að sækja um húsnæðisbætur samhliða skráningu á leigusamningnum og því þinglýsing óþörf. \n- Með rafrænni skráningu eru vottar óþarfi. \n- Staðfesting á brunavörnum og ástandi húsnæðis er hluti af leigusamningnum',
       description: 'First bullet point about the application',
-    },
-    descriptionBullet2: {
-      id: 'ra.application:prerequisites.intro.descriptionBullet2',
-      defaultMessage:
-        'Skráning leigusamnings í Leiguskrá HMS er ein forsenda þess að leigjandi geti fengið greiddar húsnæðisbætur',
-      description: 'Second bullet point about the application',
-    },
-    descriptionBullet3: {
-      id: 'ra.application:prerequisites.intro.descriptionBullet3',
-      defaultMessage:
-        'Hægt er að sækja um húsnæðisbætur samhliða skráningu á leigusamningnum og því þinglýsing óþörf',
-      description: 'Third bullet point about the application',
-    },
-    descriptionBullet4: {
-      id: 'ra.application:prerequisites.intro.descriptionBullet4',
-      defaultMessage: 'Með rafrænni skráningu eru vottar óþarfi',
-      description: 'Fourth bullet point about the application',
-    },
-    descriptionBullet5: {
-      id: 'ra.application:prerequisites.intro.descriptionBullet5',
-      defaultMessage:
-        'Staðfesting á brunavörnum og ástandi húsnæðis er hluti af leigusamningnum',
-      description: 'Fifth bullet point about the application',
     },
   }),
   externalData: defineMessages({

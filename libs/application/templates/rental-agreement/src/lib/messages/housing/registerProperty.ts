@@ -131,7 +131,7 @@ export const registerProperty = {
     pageDescription: {
       id: 'ra.application:registerProperty.category.pageDescription',
       defaultMessage:
-        'Hér þarft þú að velja tegund og flokkun húsnæðis sem á að leigja.',
+        'Hér þarft þú að velja tegund og flokkun leiguhúsnæðisins.',
       description: 'Property category page description',
     },
 

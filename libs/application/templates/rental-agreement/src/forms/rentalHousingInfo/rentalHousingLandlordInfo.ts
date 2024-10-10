@@ -5,9 +5,8 @@ import {
   YES,
 } from '@island.is/application/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-
+import { formatNationalId } from '../../lib/utils'
 import * as m from '../../lib/messages'
-import { formatNationalId } from '../../utils/utils'
 
 export const RentalHousingLandlordInfo = buildSubSection({
   id: 'rentalHousingLandlordInfo',
@@ -21,6 +20,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
         buildTableRepeaterField({
           id: 'rentalHousingLandlordInfoTable',
           title: '',
+          marginTop: 1,
           fields: {
             name: {
               component: 'input',
