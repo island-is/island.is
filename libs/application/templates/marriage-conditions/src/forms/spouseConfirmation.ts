@@ -156,7 +156,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     id: 'header2',
                     title: m.informationSpouse2,
                     titleVariant: 'h4',
-                    space: 'gutter',
+                    space: 'containerGutter',
                   }),
                   buildTextField({
                     id: 'spouse.person.nationalId',

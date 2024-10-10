@@ -26,6 +26,11 @@ export const dataCollection = [
     subTitle: m.dataCollectionMaritalStatusDescription,
   }),
   buildDataProviderItem({
+    //TODO: provider: 
+    title: m.dataCollectionBirthCertificateTitle,
+    subTitle: m.dataCollectionBirthCertificateDescription,
+  }),
+  buildDataProviderItem({
     provider: DistrictsApi,
     title: '',
   }),
