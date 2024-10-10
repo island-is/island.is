@@ -427,9 +427,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
       return Roles.APPLICANT
     }
 
-    if (assignees.includes(id)) {
-      return Roles.ASSIGNEE
-    }
+    if (assignees.includes(id)) return Roles.ASSIGNEE
 
     return undefined
   },
