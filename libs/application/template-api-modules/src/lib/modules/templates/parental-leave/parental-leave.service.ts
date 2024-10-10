@@ -54,17 +54,16 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { ConfigService } from '@nestjs/config'
+import { ConfigService, ConfigType } from '@nestjs/config'
 import {
-  BaseTemplateAPIModuleConfig,
+  SharedModuleConfig,
   TemplateApiModuleActionProps,
 } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { SharedTemplateApiService } from '../../shared'
+import { SharedTemplateApiService, sharedModuleConfig } from '../../shared'
 import { getConfigValue } from '../../shared/shared.utils'
 import { ChildrenService } from './children/children.service'
 import {
-  APPLICATION_ATTACHMENT_BUCKET,
   SIX_MONTHS_IN_SECONDS_EXPIRES,
   apiConstants,
   rightsDescriptions,
@@ -107,9 +106,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private parentalLeaveApi: ParentalLeaveApi,
     private applicationInformationAPI: ApplicationInformationApi,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    @Inject(APPLICATION_ATTACHMENT_BUCKET)
-    private readonly attachmentBucket: string,
-    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
+    private readonly configService: ConfigService<SharedModuleConfig>,
     private readonly childrenService: ChildrenService,
     private readonly nationalRegistryApi: NationalRegistryClientService,
     private readonly awsService: AwsService,
@@ -385,7 +384,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       const Key = `${application.id}/${filename}`
       const fileContent = await this.awsService.getFileContent(
         {
-          bucket: this.attachmentBucket,
+          bucket: this.config.templateApi.attachmentBucket,
           key: Key,
         },
         'base64',
