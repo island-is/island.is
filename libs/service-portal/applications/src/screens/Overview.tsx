@@ -2,9 +2,6 @@ import { useState } from 'react'
 import {
   APPLICATION_SERVICE_PROVIDER_SLUG,
   ActionCardLoader,
-  EmptyState,
-  FootNote,
-  IntroHeader,
   m as coreMessage,
 } from '@island.is/service-portal/core'
 import {
@@ -101,22 +98,6 @@ const Overview = () => {
     focusedApplication?.id,
   )
 
-  const GetIntroductionHeadingOrIntro = (
-    status: ApplicationOverViewStatus,
-    heading = false,
-  ) => {
-    switch (status) {
-      case ApplicationOverViewStatus.completed:
-        return heading ? m.headingFinished : m.introCopyFinished
-      case ApplicationOverViewStatus.inProgress:
-        return heading ? m.headingInProgress : m.introCopyInProgress
-      case ApplicationOverViewStatus.incomplete:
-        return heading ? m.headingIncomplete : m.introCopyIncomplete
-      default:
-        return heading ? m.heading : m.introCopy
-    }
-  }
-
   const getNoApplicationsError = (status: ApplicationOverViewStatus) => {
     switch (status) {
       case ApplicationOverViewStatus.completed:
@@ -141,11 +122,6 @@ const Overview = () => {
 
   return (
     <>
-      <IntroHeader
-        title={GetIntroductionHeadingOrIntro(statusToShow, true)}
-        intro={GetIntroductionHeadingOrIntro(statusToShow)}
-        serviceProviderSlug={APPLICATION_SERVICE_PROVIDER_SLUG}
-      />
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
       {(error || (!loading && !applications)) && (
         <Problem error={error} noBorder={false} />
@@ -245,7 +221,6 @@ const Overview = () => {
           imgSrc="./assets/images/empty.svg"
         />
       )}
-      <FootNote serviceProviderSlug={APPLICATION_SERVICE_PROVIDER_SLUG} />
     </>
   )
 }

@@ -110,44 +110,6 @@ export const AirDiscountOverview = () => {
 
   return (
     <>
-      <Box marginBottom={[3, 4, 5]}>
-        <GridRow>
-          <GridColumn span={['8/8', '8/8']} order={1}>
-            <IntroHeader
-              title={formatMessage(m.introTitle)}
-              serviceProviderSlug={VEGAGERDIN_SLUG}
-              serviceProviderTooltip={formatMessage(
-                coreMessage.airDiscountTooltip,
-              )}
-            >
-              <Text variant="default" paddingTop={2}>
-                {formatMessage(m.introLink, {
-                  link: (str: any) => (
-                    <a
-                      href="https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <Button variant="text">{str}</Button>
-                    </a>
-                  ),
-                })}
-              </Text>
-              <GridColumn
-                span={['12/12', '12/12', '7/8']}
-                order={3}
-                paddingTop={4}
-              >
-                <BulletList>
-                  <Bullet>{formatMessage(m.discountTextFirst)}</Bullet>
-                  <Bullet>{formatMessage(m.discountTextSecond)}</Bullet>
-                </BulletList>
-              </GridColumn>
-            </IntroHeader>
-          </GridColumn>
-        </GridRow>
-      </Box>
-
       {loading && !error && <CardLoader />}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && noRights && (

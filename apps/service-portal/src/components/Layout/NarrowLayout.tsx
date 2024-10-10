@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, isValidElement } from 'react'
 import {
   Box,
   Navigation,
@@ -11,6 +11,8 @@ import {
   ServicePortalNavigationItem,
   ModuleAlertBannerSection,
   GoBack,
+  FootNote,
+  IntroHeader,
 } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { useWindowSize } from 'react-use'
@@ -70,6 +72,24 @@ export const NarrowLayout = ({
     ?.map((item: ServicePortalNavigationItem) => {
       return mapChildren(item)
     })
+
+  const findLowestActiveItem = (
+    item: PortalNavigationItem,
+    parent?: PortalNavigationItem,
+  ): { item: PortalNavigationItem; parent?: PortalNavigationItem } => {
+    const activeChild = item.children?.find((c) => c.active)
+
+    if (!activeChild) {
+      return { item, parent }
+    }
+
+    return findLowestActiveItem(activeChild, item)
+  }
+
+  let lowestActiveItem
+  if (activeParent) {
+    lowestActiveItem = findLowestActiveItem(activeParent)
+  }
 
   return (
     <SidebarLayout
@@ -145,7 +165,31 @@ export const NarrowLayout = ({
           </Box>
         )}
         <ModuleAlertBannerSection />
+        {lowestActiveItem?.item?.displayIntroHeader && (
+          <IntroHeader
+            title={lowestActiveItem.item.heading ?? lowestActiveItem.item.name}
+            intro={
+              lowestActiveItem.item.intro ?? lowestActiveItem?.parent?.intro
+            }
+            introComponent={
+              lowestActiveItem.item.introComponent ??
+              lowestActiveItem?.parent?.introComponent
+            }
+            serviceProviderSlug={
+              lowestActiveItem.item.serviceProvider ??
+              activeParent?.serviceProvider
+            }
+            serviceProviderTooltip={
+              lowestActiveItem.item.serviceProviderTooltip
+                ? formatMessage(lowestActiveItem.item.serviceProviderTooltip)
+                : activeParent?.serviceProviderTooltip
+                ? formatMessage(activeParent.serviceProviderTooltip)
+                : undefined
+            }
+          />
+        )}
         {children}
+        <FootNote serviceProviderSlug={activeParent?.serviceProvider} />
       </Box>
     </SidebarLayout>
   )

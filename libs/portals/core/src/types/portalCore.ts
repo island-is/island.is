@@ -1,6 +1,6 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { FormatMessage } from '@island.is/localization'
-import { FC } from 'react'
+import { FC, ReactElement, ReactNode } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { RouteObject } from 'react-router-dom'
 
@@ -50,6 +50,14 @@ export interface PortalNavigationItem {
    */
   description?: MessageDescriptor
   /**
+   * text for the intro header for module
+   */
+  intro?: MessageDescriptor
+  /**
+   * jsx element for the intro header for module
+   */
+  introComponent?: ReactNode
+  /**
    * Active state for navigation item
    */
   active?: boolean
@@ -63,6 +71,11 @@ export interface PortalNavigationItem {
    * Service provider id used for displaying service provider information in the module.
    */
   serviceProvider?: OrganizationSlugType
+
+  /**
+   * If an intro header is rendered by navigation
+   */
+  displayIntroHeader?: boolean
 
   /**
    * If the service provider logo should be displayed beneath the tab navigation

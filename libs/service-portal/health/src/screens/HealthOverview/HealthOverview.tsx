@@ -90,14 +90,6 @@ export const HealthOverview = () => {
 
   return (
     <Box>
-      <Box marginBottom={CONTENT_GAP_LG}>
-        <IntroHeader
-          title={formatMessage(user.profile.name)}
-          intro={formatMessage(messages.overviewIntro)}
-          serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-          serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-        />
-      </Box>
       {error ? (
         <Problem error={error} noBorder={false} />
       ) : loading ? (

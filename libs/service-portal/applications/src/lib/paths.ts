@@ -1,5 +1,6 @@
 export enum ApplicationsPaths {
   ApplicationRoot = '/umsoknir',
+  ApplicationMyApplications = '/umsoknir/minar-umsoknir',
   ApplicationIncompleteApplications = '/umsoknir/oklaradar-umsoknir',
   ApplicationCompleteApplications = '/umsoknir/klaradar-umsoknir',
   ApplicationInProgressApplications = '/umsoknir/i-vinnslu',

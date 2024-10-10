@@ -63,12 +63,6 @@ const Dentists = () => {
 
   return (
     <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={formatMessage(messages.dentistsTitle)}
-        intro={formatMessage(messages.dentistsDescription)}
-        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-      />
       {error && !loading && <Problem error={error} noBorder={false} />}
 
       {!error && !loading && !dentist && (

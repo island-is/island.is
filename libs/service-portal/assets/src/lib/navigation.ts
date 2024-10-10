@@ -1,31 +1,40 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/service-portal/core'
+import { m as coreMessages } from '@island.is/service-portal/core'
+import { messages } from '../lib/messages'
 import { AssetsPaths } from './paths'
 
 export const assetsNavigation: PortalNavigationItem = {
-  name: m.assets,
+  name: coreMessages.assets,
+  description: coreMessages.realEstateDescription,
+  serviceProvider: 'hms',
+  serviceProviderTooltip: coreMessages.realEstateTooltip,
   path: AssetsPaths.AssetsRoot,
   icon: {
     icon: 'homeWithCar',
   },
   children: [
     {
-      name: m.realEstate,
+      name: coreMessages.realEstate,
+      intro: messages.intro,
+      displayIntroHeader: true,
       path: AssetsPaths.AssetsRealEstate,
       children: [
         {
           name: 'id',
+          heading: messages.realEstate,
+          intro: messages.realEstateDetailIntro,
+          //displayIntroHeader: true,
           navHide: true,
           path: AssetsPaths.AssetsRealEstateDetail,
         },
       ],
     },
     {
-      name: m.vehicles,
+      name: coreMessages.vehicles,
       path: AssetsPaths.AssetsVehicles,
       children: [
         {
-          name: m.myVehicles,
+          name: coreMessages.myVehicles,
           path: AssetsPaths.AssetsMyVehicles,
           breadcrumbHide: true,
           children: [
@@ -36,7 +45,7 @@ export const assetsNavigation: PortalNavigationItem = {
               path: AssetsPaths.AssetsVehiclesDetail,
               children: [
                 {
-                  name: m.vehicleMileage,
+                  name: coreMessages.vehicleMileage,
                   navHide: true,
                   path: AssetsPaths.AssetsVehiclesDetailMileage,
                 },
@@ -45,25 +54,25 @@ export const assetsNavigation: PortalNavigationItem = {
           ],
         },
         {
-          name: m.vehiclesLookup,
+          name: coreMessages.vehiclesLookup,
           path: AssetsPaths.AssetsVehiclesLookup,
         },
         {
-          name: m.vehiclesBulkMileage,
+          name: coreMessages.vehiclesBulkMileage,
           path: AssetsPaths.AssetsVehiclesBulkMileage,
           children: [
             {
-              name: m.vehiclesBulkMileageUpload,
+              name: coreMessages.vehiclesBulkMileageUpload,
               path: AssetsPaths.AssetsVehiclesBulkMileageUpload,
               navHide: true,
             },
             {
-              name: m.vehiclesBulkMileageJobOverview,
+              name: coreMessages.vehiclesBulkMileageJobOverview,
               path: AssetsPaths.AssetsVehiclesBulkMileageJobOverview,
               navHide: true,
               children: [
                 {
-                  name: m.vehiclesBulkMileageJobDetail,
+                  name: coreMessages.vehiclesBulkMileageJobDetail,
                   path: AssetsPaths.AssetsVehiclesBulkMileageJobDetail,
                   navHide: true,
                 },
@@ -72,13 +81,13 @@ export const assetsNavigation: PortalNavigationItem = {
           ],
         },
         {
-          name: m.vehiclesHistory,
+          name: coreMessages.vehiclesHistory,
           path: AssetsPaths.AssetsVehiclesHistory,
         },
       ],
     },
     {
-      name: m.intellectualProperties,
+      name: coreMessages.intellectualProperties,
       path: AssetsPaths.AssetsIntellectualProperties,
       children: [
         {
@@ -99,7 +108,7 @@ export const assetsNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: m.workMachines,
+      name: coreMessages.workMachines,
       path: AssetsPaths.AssetsWorkMachines,
       children: [
         {
@@ -110,5 +119,4 @@ export const assetsNavigation: PortalNavigationItem = {
       ],
     },
   ],
-  description: m.realEstateDescription,
 }
