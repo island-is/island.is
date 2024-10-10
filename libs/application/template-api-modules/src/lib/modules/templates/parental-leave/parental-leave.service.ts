@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { S3 } from 'aws-sdk'
-
+import { AwsService } from '@island.is/nest/aws'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   ADOPTION,
@@ -102,8 +101,6 @@ interface VMSTError {
 
 @Injectable()
 export class ParentalLeaveService extends BaseTemplateApiService {
-  s3 = new S3()
-
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private parentalLeaveApi: ParentalLeaveApi,
@@ -114,6 +111,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly configService: ConfigService<SharedModuleConfig>,
     private readonly childrenService: ChildrenService,
     private readonly nationalRegistryApi: NationalRegistryClientService,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
   }
@@ -384,16 +382,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       )
 
       const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.config.templateApi.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
+      const fileContent = await this.awsService.getFileContent(
+        {
+          bucket: this.config.templateApi.attachmentBucket,
+          key: Key,
+        },
+        'base64',
+      )
 
       if (!fileContent) {
         throw new Error('File content was undefined')
       }
 
-      return fileContent.toString('base64')
+      return fileContent
     } catch (e) {
       this.logger.error('Cannot get ' + fileUpload + ' attachment', { e })
       throw new Error('Failed to get the ' + fileUpload + ' attachment')

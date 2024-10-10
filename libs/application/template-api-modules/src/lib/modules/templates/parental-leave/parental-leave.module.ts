@@ -9,6 +9,7 @@ import {
   NationalRegistryClientModule,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
+import { AwsModule } from '@island.is/nest/aws'
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import {
     SmsModule,
     ApplicationApiCoreModule,
     NationalRegistryClientModule,
+    AwsModule,
   ],
   providers: [
     ChildrenService,
