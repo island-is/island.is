@@ -43,7 +43,6 @@ export class ScreensService {
     screen.name = updateScreenDto.name
     screen.multiset = updateScreenDto.multiset
     screen.callRuleset = updateScreenDto.callRuleset
-    screen.modified = new Date()
 
     await screen.save()
 

@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
@@ -55,6 +53,10 @@ module.exports = {
             defaultValue: true,
           },
           completed_message: {
+            type: Sequelize.JSON,
+            allowNull: true,
+          },
+          dependencies: {
             type: Sequelize.JSON,
             allowNull: true,
           },
