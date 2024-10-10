@@ -6,7 +6,7 @@ import { ResolverContext } from '../types'
 
 // Get all field id's from the provided form node
 const getFormNodeFieldIds = (formNode: FormNode) =>
-  formNode.children?.filter((x) => x.id).map((x) => x.id as string) ?? []
+  formNode?.children?.filter((x) => x.id).map((x) => x.id as string) ?? []
 
 type Resolver = ({
   formValue,

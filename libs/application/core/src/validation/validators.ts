@@ -45,12 +45,11 @@ const populateError = (
    * be able to submit the screen.
    */
   if (currentScreenFields && currentScreenFields.length > 0) {
-    const relevantErrors: Record<string, string> = {}
-    Object.keys(errorObject).forEach((key) => {
-      if (currentScreenFields.includes(key)) {
-        relevantErrors[key] = errorObject[key]
-      }
-    })
+    const relevantErrors = Object.fromEntries(
+      Object.entries(errorObject).filter(([key]) =>
+        currentScreenFields.includes(key),
+      ),
+    )
 
     if (Object.keys(relevantErrors).length === 0) {
       // No errors on the current screen
