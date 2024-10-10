@@ -168,6 +168,7 @@ function buildDockerImage(containerImage, builder, target) {
   const buildCmd = [
     builder,
     'build',
+    '--load',
     `-f ${dirnameSafe}/Dockerfile.proxy`,
     `--target ${target}`,
     `-t ${containerImage}`,
