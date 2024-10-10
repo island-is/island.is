@@ -25,8 +25,8 @@ export const prerequisites = {
       defaultMessage: 'Þú ert að fara að gera rafrænan húsaleigusamning',
       description: 'Page title for intro',
     },
-    subTitle: {
-      id: 'ra.application:prerequisites.intro.subTitle',
+    text: {
+      id: 'ra.application:prerequisites.intro.text#markdown',
       defaultMessage:
         'Mikilvægt er að hafa í huga að í samningnum þurfa að koma fram öll þau atriði sem aðilar samningsins eru sammála um og skipta máli við skilgreiningar og skýringar á því um hvað samningurinn snýst.',
       description: 'Introductory text about the application',

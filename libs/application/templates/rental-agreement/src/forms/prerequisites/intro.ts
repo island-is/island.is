@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildSection,
@@ -14,16 +13,17 @@ export const intro = buildSection({
   title: messages.subSectionTitle,
   children: [
     buildMultiField({
-      id: 'prerequisitesIntro',
+      id: 'prerequisitesIntroTitle',
       title: messages.pageTitle,
       children: [
-        buildCustomField({
-          id: 'prerequisitesIntroDetails',
-          title: messages.pageTitle,
-          component: 'GeneralInfoForm',
+        buildDescriptionField({
+          id: 'prerequisitesIntroText',
+          title: '',
+          description: messages.text,
+          marginBottom: 3,
         }),
         buildDescriptionField({
-          id: 'prerequisitesIntroDescription',
+          id: 'prerequisitesIntroBullets',
           title: '',
           description: messages.bullets,
         }),

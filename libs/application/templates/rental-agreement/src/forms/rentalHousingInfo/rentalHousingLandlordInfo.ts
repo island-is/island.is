@@ -5,7 +5,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { formatNationalId } from '../../utils/utils'
+import { formatNationalId } from '../../lib/utils'
 import * as m from '../../lib/messages'
 
 export const RentalHousingLandlordInfo = buildSubSection({
