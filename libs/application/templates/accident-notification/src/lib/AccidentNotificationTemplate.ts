@@ -421,21 +421,15 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   ): ApplicationRole | undefined {
     const { applicant, applicantActors, assignees } = application
 
-    if (id === application.applicant && application.applicantActors.length) {
-      return Roles.PROCURER
-    }
-
-    if (id === application.applicant && application.assignees.includes(id)) {
-      return Roles.ASSIGNEE
-    }
-
     if (id === applicant) {
       if (applicantActors.length) return Roles.PROCURER
       if (assignees.includes(id)) return Roles.ASSIGNEE
       return Roles.APPLICANT
     }
 
-    if (assignees.includes(id)) return Roles.ASSIGNEE
+    if (assignees.includes(id)) {
+      return Roles.ASSIGNEE
+    }
 
     return undefined
   },
