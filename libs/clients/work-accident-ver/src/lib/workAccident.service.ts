@@ -1,8 +1,10 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  AccidentForCreationResponseDto,
   AccidentsApi,
   CompanySettingsApi,
+  CreateAccidentRequest,
   DataApi,
   DataDto,
 } from '../../gen/fetch'
@@ -26,5 +28,14 @@ export class WorkAccidentClientService {
 
   async getOptionsData(auth: User): Promise<DataDto> {
     return await this.dataApiWithAuth(auth).getData()
+  }
+
+  async createAccident(
+    auth: User,
+    requestParameters: CreateAccidentRequest,
+  ): Promise<AccidentForCreationResponseDto> {
+    return await this.accidentsApiWithAuth(auth).createAccident(
+      requestParameters,
+    )
   }
 }

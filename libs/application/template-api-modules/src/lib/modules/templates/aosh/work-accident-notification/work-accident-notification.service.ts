@@ -5,6 +5,7 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiModuleActionProps } from '../../../../types'
+import { WorkAccidentNotification } from '@island.is/application/templates/aosh/work-accident-notification'
 // import {
 //   employmentStatusOfTheVictim,
 //   lengthOfEmployments,
@@ -74,5 +75,59 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
     // }
 
     return data
+  }
+
+  async submitApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    const answers = application.answers as unknown as WorkAccidentNotification
+
+    await this.workAccidentClientService.createAccident(auth, {
+      accidentForCreationDto: {
+        companySSN: '', // TODO
+        sizeOfEnterprise: 0, // TODO
+        nameOfBranchOrDepartment: '', // TODO
+        address: '', // TODO
+        postcode: '', // TODO
+        workplaceHealthAndSafety: [], // TODO
+        buyersSSN: '', // TODO
+        dateAndTimeOfAccident: new Date(), // TODO
+        aoshCame: true, // TODO
+        policeCame: true, // TODO
+        numberOfVictims: 0, // TODO
+        municipalityWhereAccidentOccured: '', // TODO
+        specificLocationOfAccident: '', // TODO
+        detailedDescriptionOfAccident: '', // TODO
+        workingEnvironment: '', // TODO
+        victims: [
+          {
+            victimsSSN: '',
+            employmentStatusOfVictim: 0,
+            employmentAgencySSN: '',
+            startedEmploymentForCompany: new Date(),
+            lengthOfEmployment: 0,
+            percentageOfFullWorkTime: 0,
+            workhourArrangement: 0,
+            startOfWorkingDay: new Date(),
+            workStation: 0,
+            victimsOccupation: '',
+            absenceDueToAccident: 0,
+            specificPhysicalActivities: [],
+            specificPhysicalActivityMostSevere: '',
+            workDeviations: [],
+            workDeviationMostSevere: '',
+            contactModeOfInjuries: [],
+            contactModeOfInjuryMostSevere: '',
+            partsOfBodyInjured: [],
+            partOfBodyInjuredMostSevere: '',
+            typesOfInjury: [],
+            typeOfInjuryMostSevere: '',
+          },
+        ], // TODO
+        userPhoneNumber: '', // TODO
+        userEmail: '', // TODO
+      },
+    })
   }
 }
