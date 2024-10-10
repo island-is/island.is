@@ -128,7 +128,7 @@ export const OPERATING_LICENSE_SERVICE_RES = [
     afgr_Afgengis_Virkirdagar_Utiveitingar: 'string',
     afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar: 'string',
   },
-] as any[] // This return object has no type, see clientConfig.json
+] as const // This return object has no type, see clientConfig.json
 
 export const ALCOHOL_LICENCES = [
   {
