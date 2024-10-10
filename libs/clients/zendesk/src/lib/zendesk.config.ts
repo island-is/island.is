@@ -7,9 +7,7 @@ const schema = z.object({
   formToken: z.string(),
 })
 
-export const ZendeskServiceConfigurations = defineConfig<
-  z.infer<typeof schema>
->({
+export const ZendeskServiceConfig = defineConfig<z.infer<typeof schema>>({
   name: 'ZendeskServiceConfigurations',
   schema,
   load: (env) => ({

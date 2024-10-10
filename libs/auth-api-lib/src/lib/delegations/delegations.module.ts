@@ -45,9 +45,9 @@ import { NamesService } from './names.service'
     NationalRegistryClientModule,
     RskRelationshipsClientModule,
     CompanyRegistryClientModule,
+    ZendeskModule,
     UserIdentitiesModule,
     FeatureFlagModule,
-    ZendeskModule,
     SequelizeModule.forFeature([
       ApiScope,
       ApiScopeDelegationType,

@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common'
 import axios from 'axios'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { ZendeskServiceConfigurations } from './zendesk.config'
+import { ZendeskServiceConfig } from './zendesk.config'
 import { ConfigType } from '@island.is/nest/config'
 
 export enum TicketStatus {
@@ -45,8 +45,8 @@ export class ZendeskService {
   params: object
 
   constructor(
-    @Inject(ZendeskServiceConfigurations.KEY)
-    private readonly config: ConfigType<typeof ZendeskServiceConfigurations>,
+    @Inject(ZendeskServiceConfig.KEY)
+    private readonly config: ConfigType<typeof ZendeskServiceConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {
