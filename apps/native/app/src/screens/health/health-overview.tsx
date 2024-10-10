@@ -1,5 +1,5 @@
 import { Alert, Button, Heading, Input, InputRow, Typography } from '@ui'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
   Image,
@@ -54,14 +54,21 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const origin = getConfig().apiUrl.replace(/api$/, '')
   const [refetching, setRefetching] = useState(false)
 
+  const now = useMemo(() => new Date().toISOString(), [])
+  const dayOfYesterday = useMemo(() => new Date().getDate() - 1, [])
+  const yesterday = useMemo(
+    () => new Date(new Date().setDate(dayOfYesterday)).toISOString(),
+    [dayOfYesterday],
+  )
+
   const healthInsuranceRes = useGetHealthInsuranceOverviewQuery()
   const healthCenterRes = useGetHealthCenterQuery()
   const paymentStatusRes = useGetPaymentStatusQuery()
   const paymentOverviewRes = useGetPaymentOverviewQuery({
     variables: {
       input: {
-        dateFrom: intl.formatDate(new Date()),
-        dateTo: intl.formatDate(new Date()),
+        dateFrom: yesterday,
+        dateTo: now,
         serviceTypeCode: '',
       },
     },
