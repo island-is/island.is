@@ -138,6 +138,9 @@ export const DelegationViewModal = ({
                 <IdentityCard
                   label={formatMessage(m.createdBy)}
                   title={delegation.createdBy.name}
+                  description={formatNationalId(
+                    delegation.createdBy.nationalId,
+                  )}
                 />
               )}
             </Box>
