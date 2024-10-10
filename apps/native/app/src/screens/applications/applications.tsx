@@ -14,11 +14,11 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useLocale } from '../../hooks/use-locale'
 import { testIDs } from '../../utils/test-ids'
 import { isIos } from '../../utils/devices'
 import { ApplicationsPreview } from './components/applications-preview'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { usePreferencesStore } from '../../stores/preferences-store'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -102,12 +102,9 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const theme = useTheme()
   const [refetching, setRefetching] = useState(false)
   const [hiddenContent, setHiddenContent] = useState(isIos)
-  const { locale } = usePreferencesStore()
-
-  const queryLocale = locale === 'is-IS' ? 'is' : 'en'
 
   const applicationsRes = useListApplicationsQuery({
-    variables: { locale: queryLocale },
+    variables: { locale: useLocale() },
   })
 
   const applications = useMemo(
