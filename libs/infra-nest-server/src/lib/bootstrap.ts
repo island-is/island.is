@@ -50,6 +50,10 @@ export const createApp = async ({
     app.enableVersioning()
   }
 
+  if (options.enableCors) {
+    app.enableCors(options.enableCors)
+  }
+
   // Configure "X-Requested-For" handling.
   // Internal services should trust the X-Forwarded-For header (EXPRESS_TRUST_PROXY=1)
   // Public services (eg API Gateway) should trust our own reverse proxies

@@ -8,7 +8,6 @@ import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
-import { User } from '@island.is/shared/types'
 
 const UserInfoOverview = lazy(() =>
   import('./screens/UserInfoOverview/UserInfoOverview'),
@@ -30,23 +29,23 @@ const UserNotificationsSettings = lazy(() =>
   import('./screens/UserNotifications/UserNotifications'),
 )
 
-const sharedRoutes = (userInfo: User) => [
+const sharedRoutes = (scopes: string[]) => [
   {
     name: m.mySettings,
     path: InformationPaths.SettingsOld,
-    enabled: userInfo.scopes.includes(UserProfileScope.write),
+    enabled: scopes.includes(UserProfileScope.write),
     element: <Navigate to={InformationPaths.Settings} replace />,
   },
   {
     name: m.mySettings,
     path: InformationPaths.Settings,
-    enabled: userInfo.scopes.includes(UserProfileScope.write),
+    enabled: scopes.includes(UserProfileScope.write),
     element: <UserProfileSettings />,
   },
   {
     name: 'Notifications',
     path: InformationPaths.Notifications,
-    enabled: userInfo.scopes.includes(DocumentsScope.main),
+    enabled: scopes.includes(DocumentsScope.main),
     key: 'Notifications',
     element: <Notifications />,
   },
@@ -98,7 +97,7 @@ export const informationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <Spouse />,
     },
-    ...sharedRoutes(userInfo),
+    ...sharedRoutes(userInfo.scopes),
   ],
   companyRoutes: ({ userInfo }) => [
     {
@@ -107,6 +106,6 @@ export const informationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.company),
       element: <CompanyInfo />,
     },
-    ...sharedRoutes(userInfo),
+    ...sharedRoutes(userInfo.scopes),
   ],
 }

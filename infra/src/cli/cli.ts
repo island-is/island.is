@@ -54,7 +54,7 @@ const cli = yargs(process.argv.slice(2))
     },
   )
   .command(
-    'render-local-env',
+    'render-local-env [services..]',
     'Render environment variables needed by service.\nThis is to be used when developing locally and loading of the environment variables for "dev" environment is needed.',
     (yargs) => {
       return yargs
@@ -70,22 +70,19 @@ const cli = yargs(process.argv.slice(2))
           default: false,
           alias: ['nosecrets', 'no-secrets'],
         })
-        .demandCommand(1, 'You must pass at least one service to run!')
     },
     async (argv) => {
-      const services = await renderLocalServices({
+      await renderLocalServices({
         services: argv.services,
         dryRun: argv.dry,
         json: argv.json,
         print: true,
         noUpdateSecrets: argv['no-update-secrets'],
       })
-
-      return
     },
   )
   .command(
-    'run-local-env',
+    'run-local-env [services..]',
     'Render environment and run the local environment.\nThis is to be used when developing locally and loading of the environment variables for "dev" environment is needed.',
     (yargs) => {
       return yargs
@@ -109,9 +106,8 @@ const cli = yargs(process.argv.slice(2))
           type: 'boolean',
           default: false,
         })
-        .demandCommand(1, 'You must pass at least one service to run!')
     },
-    async (argv) =>
+    async (argv) => {
       await runLocalServices(argv.services, argv.dependencies, {
         dryRun: argv.dry,
         json: argv.json,
@@ -119,7 +115,8 @@ const cli = yargs(process.argv.slice(2))
         noUpdateSecrets: argv['no-update-secrets'],
         print: argv.print,
         startProxies: argv.proxies,
-      }),
+      })
+    },
   )
-  .demandCommand(1)
+  .demandCommand(1, 'You must pass at least one service to run!')
   .parse()

@@ -1,6 +1,6 @@
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useAuth } from '@island.is/auth/react'
 import { useRoutes } from '../components/PortalProvider'
 import { PortalNavigationItem } from '../types/portalCore'
 import { filterNavigationTree } from '../utils/filterNavigationTree/filterNavigationTree'
@@ -9,7 +9,7 @@ export const useNavigation = (
   navigation: PortalNavigationItem,
   dynamicRouteArray?: string[],
 ) => {
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const routes = useRoutes()
   const { pathname } = useLocation()
 
