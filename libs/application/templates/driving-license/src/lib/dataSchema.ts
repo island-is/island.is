@@ -7,10 +7,8 @@ import {
   B_TEMP,
   B_FULL,
   B_ADVANCED,
-  AdvancedLicense,
+  ADVANCED_LICENSES,
   ADVANCED_SUB_LICENSES,
-  AdvancedLicenses,
-  AdvancedSubLicenses,
 } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Pickup } from './types'
@@ -52,12 +50,10 @@ export const dataSchema = z.object({
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   drivingInstructor: z.string().min(1),
-  advancedLicenseSelection: z.string().refine((v) => {
-    return Object.keys(AdvancedLicenses).includes(v)
-  }),
-  advancedLicenseSubSelection: z.string().refine((v) => {
-    return Object.keys(AdvancedSubLicenses).includes(v)
-  }),
+  advancedLicense: z.enum([...ADVANCED_LICENSES]).refine((v) => !!v),
+  advancedSubLicense: z
+    .enum([...ADVANCED_SUB_LICENSES, NO])
+    .refine((v) => !!v || v === NO),
   otherCountry: z
     .object({
       drivingLicenseInOtherCountry: z.enum([YES, NO]),

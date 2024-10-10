@@ -45,20 +45,23 @@ export enum AdvancedSubLicenses {
 
 export type AdvancedLicense = keyof typeof AdvancedLicenses
 
-export const ADVANCED_LICENSES: Partial<keyof typeof AdvancedLicenses>[] = [
-  'C1',
-  'D1',
-  'C',
-  'D',
-  'C1E',
-  'D1E',
-  'CE',
-  'DE',
+export const ADVANCED_LICENSES: [string, ...string[]] = [
+  AdvancedLicenses.C1,
+  AdvancedLicenses.D1,
+  AdvancedLicenses.C,
+  AdvancedLicenses.D,
+  AdvancedLicenses.C1E,
+  AdvancedLicenses.D1E,
+  AdvancedLicenses.CE,
+  AdvancedLicenses.DE,
 ]
 
-export const ADVANCED_SUB_LICENSES: Partial<
-  keyof typeof AdvancedSubLicenses
->[] = ['C1A', 'D1A', 'CA', 'DA']
+export const ADVANCED_SUB_LICENSES: [string, ...string[]] = [
+  AdvancedSubLicenses.C1A,
+  AdvancedSubLicenses.D1A,
+  AdvancedSubLicenses.CA,
+  AdvancedSubLicenses.DA,
+]
 
 export const advancedLicenseToSubLicenseMap: Partial<
   Record<Partial<AdvancedLicenses>, Partial<AdvancedSubLicenses>>

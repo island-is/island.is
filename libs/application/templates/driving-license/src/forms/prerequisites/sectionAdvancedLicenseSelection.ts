@@ -5,21 +5,10 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { DrivingLicense } from '../../lib/types'
-import {
-  AdvancedLicense,
-  AdvancedLicenses,
-  B_ADVANCED,
-  B_FULL,
-  B_FULL_RENEWAL_65,
-  B_TEMP,
-  BE,
-  DrivingLicenseFakeData,
-  LicenseTypes,
-} from '../../lib/constants'
+import { AdvancedLicenses, LicenseTypes } from '../../lib/constants'
 
 export const sectionAdvancedLicenseSelection = buildSubSection({
-  id: 'advancedLicenseSelection',
+  id: 'sectionAdvancedLicenseSelection',
   title: m.applicationForAdvancedLicenseTitle,
   condition: (answers) => {
     const applicationFor = getValueViaPath<LicenseTypes>(
@@ -31,14 +20,14 @@ export const sectionAdvancedLicenseSelection = buildSubSection({
   },
   children: [
     buildMultiField({
-      id: 'advancedLicenseSelection',
+      id: 'advancedLicenseSelectionFields',
       title: m.applicationForAdvancedLicenseTitle,
       description: m.applicationForAdvancedLicenseDescription,
       children: [
         buildRadioField({
-          id: 'advancedLicenseSelection',
+          id: 'advancedLicense',
           title: '',
-          backgroundColor: 'white',
+          backgroundColor: 'blue',
           largeButtons: true,
           options: (app) => {
             console.log(app)
