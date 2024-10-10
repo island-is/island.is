@@ -1534,7 +1534,6 @@ namespaces:
     - 'license-api'
     - 'services-sessions'
     - 'services-university-gateway'
-    - 'services-bff'
 portals-admin:
   enabled: true
   env:
@@ -2024,7 +2023,7 @@ service-portal-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/service-portal-api'
     create: true
     name: 'service-portal-api'
-services-bff-admin-portal:
+services-bff-portals-admin:
   enabled: true
   env:
     BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.staging01.devland.is"]'
@@ -2078,9 +2077,11 @@ services-bff-admin-portal:
         - host: 'beta.staging01.devland.is'
           paths:
             - '/stjornbord/bff'
-  namespace: 'services-bff'
+  namespace: 'portals-admin'
   podDisruptionBudget:
     maxUnavailable: 1
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -2094,12 +2095,17 @@ services-bff-admin-portal:
       cpu: '100m'
       memory: '256Mi'
   secrets:
-    BFF_TOKEN_SECRET_BASE64: '/k8s/services-bff/admin-portal/BFF_TOKEN_SECRET_BASE64'
+    BFF_TOKEN_SECRET_BASE64: '/k8s/services-bff/portals-admin/BFF_TOKEN_SECRET_BASE64'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-bff/admin-portal/IDENTITY_SERVER_CLIENT_SECRET'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-bff/portals-admin/IDENTITY_SERVER_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-bff'
+    create: true
+    name: 'services-bff'
 services-documents:
   enabled: true
   env:
