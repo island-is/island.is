@@ -118,7 +118,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           </Heading>
           <Typography>
             <FormattedMessage
-              id="healt.overview.description"
+              id="health.overview.description"
               defaultMessage="Hér finnur þú þín heilsufarsgögn, heilsugæslu og sjúkratryggingar"
             />
           </Typography>
