@@ -1,18 +1,21 @@
 import { Test } from '@nestjs/testing'
-import { MortgageCertificateService } from './mortgageCertificate.service'
+
 import {
-  SyslumennService,
+  SyslumennApiProvider,
   SyslumennClientModule,
+  SyslumennService,
 } from '@island.is/clients/syslumenn'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule, defineConfig } from '@island.is/nest/config'
+import { startMocking } from '@island.is/shared/mocking'
+
 import {
   MOCK_PROPERTY_NUMBER_OK,
   MockIdentityData,
   MockUserProfileData,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
-import { startMocking } from '@island.is/shared/mocking'
-import { defineConfig, ConfigModule } from '@island.is/nest/config'
-import { LOGGER_PROVIDER, logger } from '@island.is/logging'
+import { MortgageCertificateService } from './mortgageCertificate.service'
 
 const config = defineConfig({
   name: 'SyslumennApi',
@@ -35,7 +38,10 @@ describe('MortgageCertificateService', () => {
     const module = await Test.createTestingModule({
       imports: [
         SyslumennClientModule,
-        ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [config],
+        }),
       ],
       providers: [
         {
@@ -44,6 +50,7 @@ describe('MortgageCertificateService', () => {
         },
         MortgageCertificateService,
         SyslumennService,
+        SyslumennApiProvider,
       ],
     }).compile()
 

@@ -2,10 +2,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import startOfDay from 'date-fns/startOfDay'
 
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
 import {
-  Configuration,
   InnsigludSkjol,
   LogradamadurSvar,
   Skilabod,
@@ -78,41 +76,28 @@ import {
 
 import type { ConfigType } from '@island.is/nest/config'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
+
 @Injectable()
 export class SyslumennService {
   constructor(
+    private readonly api: SyslumennApi,
     @Inject(SyslumennClientConfig.KEY)
     private clientConfig: ConfigType<typeof SyslumennClientConfig>,
   ) {}
 
   private async createApi() {
-    const api = new SyslumennApi(
-      new Configuration({
-        fetchApi: createEnhancedFetch({
-          name: 'clients-syslumenn',
-          organizationSlug: 'syslumenn',
-          ...this.clientConfig.fetch,
-        }),
-        basePath: this.clientConfig.url,
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }),
-    )
-
     const config = {
       notandi: this.clientConfig.username,
       lykilord: this.clientConfig.password,
     }
 
-    const { audkenni, accessToken } = await api.innskraningPost({
+    const { audkenni, accessToken } = await this.api.innskraningPost({
       notandi: config,
     })
     if (audkenni && accessToken) {
       return {
         id: audkenni,
-        api: api.withMiddleware(
+        api: this.api.withMiddleware(
           new AuthHeaderMiddleware(`Bearer ${accessToken}`),
         ),
       }

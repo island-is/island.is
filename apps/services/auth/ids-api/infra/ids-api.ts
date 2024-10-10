@@ -2,6 +2,7 @@ import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
+  DistrictCommissionersWorkSystem,
   NationalRegistryAuthB2C,
   RskProcuring,
 } from '../../../../../infra/src/dsl/xroad'
@@ -83,11 +84,6 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         // Origin for Android prod app
         'android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU',
       ]),
-      SYSLUMENN_HOST: {
-        dev: 'https://api.syslumenn.is/staging',
-        staging: 'https://api.syslumenn.is/staging',
-        prod: 'https://api.syslumenn.is/api',
-      },
       SYSLUMENN_TIMEOUT: '3000',
     })
     .secrets({
@@ -101,7 +97,13 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
     })
-    .xroad(Base, Client, RskProcuring, NationalRegistryAuthB2C)
+    .xroad(
+      Base,
+      Client,
+      RskProcuring,
+      NationalRegistryAuthB2C,
+      DistrictCommissionersWorkSystem,
+    )
     .readiness('/health/check')
     .liveness('/liveness')
     .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })

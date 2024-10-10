@@ -1,21 +1,24 @@
+import { ConfigService } from '@nestjs/config'
 import { Test } from '@nestjs/testing'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { createCurrentUser } from '@island.is/testing/fixtures'
+
+import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
+import { createApplication } from '@island.is/application/testing'
 import {
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/types'
+import {
+  SyslumennApiProvider,
+  SyslumennClientModule,
+  SyslumennService,
+} from '@island.is/clients/syslumenn'
+import { AdapterService } from '@island.is/email-service'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule, defineConfig } from '@island.is/nest/config'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+
 import { SharedTemplateApiService } from '../../shared'
 import { CriminalRecordSubmissionService } from './criminal-record-submission.service'
-import { AdapterService } from '@island.is/email-service'
-import {
-  SyslumennService,
-  SyslumennClientModule,
-} from '@island.is/clients/syslumenn'
-import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
-import { ConfigService } from '@nestjs/config'
-import { defineConfig, ConfigModule } from '@island.is/nest/config'
-import { createApplication } from '@island.is/application/testing'
 
 const config = defineConfig({
   name: 'SyslumennApi',
@@ -48,6 +51,7 @@ describe('CriminalRecordSubmissionService', () => {
           })),
         },
         SyslumennService,
+        SyslumennApiProvider,
         AdapterService,
         {
           provide: CriminalRecordService,

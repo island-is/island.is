@@ -1,49 +1,49 @@
 import { Test } from '@nestjs/testing'
-import { SyslumennService } from './syslumennClient.service'
+
+import { ConfigModule, defineConfig } from '@island.is/nest/config'
 import { startMocking } from '@island.is/shared/mocking'
+
+import { SyslumennClientModule } from '../lib/syslumennClient.module'
 import {
-  requestHandlers,
-  MOCK_PROPERTY_NUMBER_OK,
   MOCK_PROPERTY_NUMBER_NO_KMARKING,
   MOCK_PROPERTY_NUMBER_NOT_EXISTS,
+  MOCK_PROPERTY_NUMBER_OK,
+  requestHandlers,
 } from './__mock-data__/requestHandlers'
 import {
-  VHSUCCESS,
+  ALCOHOL_LICENCES,
+  BROKERS,
+  DATA_UPLOAD,
+  DEPARTED_REGISTRY_PERSON_RESPONSE,
+  ESTATE_REGISTRANT_RESPONSE,
+  LAWYERS,
+  MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
   OPERATING_LICENSE,
   OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES,
-  DATA_UPLOAD,
-  REAL_ESTATE_ADDRESS,
-  MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
-  ESTATE_REGISTRANT_RESPONSE,
   OPERATING_LICENSES_CSV,
-  TEMPORARY_EVENT_LICENCES,
-  DEPARTED_REGISTRY_PERSON_RESPONSE,
-} from './__mock-data__/responses'
-import {
-  mapHomestay,
-  mapSyslumennAuction,
-  mapDataUploadResponse,
-  mapPaginatedOperatingLicenses,
-  mapOperatingLicensesCSV,
-  mapEstateRegistrant,
-  mapRealEstateAgent,
-  mapLawyer,
-  mapBroker,
-  mapAlcoholLicence,
-  mapTemporaryEventLicence,
-  mapDepartedToRegistryPerson,
-} from './syslumennClient.utils'
-import {
-  SYSLUMENN_AUCTION,
+  REAL_ESTATE_ADDRESS,
   REAL_ESTATE_AGENTS,
-  LAWYERS,
-  BROKERS,
-  ALCOHOL_LICENCES,
+  SYSLUMENN_AUCTION,
+  TEMPORARY_EVENT_LICENCES,
+  VHSUCCESS,
 } from './__mock-data__/responses'
+import { SyslumennApiProvider } from './syslumennClient.provider'
+import { SyslumennService } from './syslumennClient.service'
 import { PersonType } from './syslumennClient.types'
-import { SyslumennClientModule } from '../lib/syslumennClient.module'
-
-import { defineConfig, ConfigModule } from '@island.is/nest/config'
+import {
+  mapAlcoholLicence,
+  mapBroker,
+  mapDataUploadResponse,
+  mapDepartedToRegistryPerson,
+  mapEstateRegistrant,
+  mapHomestay,
+  mapLawyer,
+  mapOperatingLicensesCSV,
+  mapPaginatedOperatingLicenses,
+  mapRealEstateAgent,
+  mapSyslumennAuction,
+  mapTemporaryEventLicence,
+} from './syslumennClient.utils'
 
 const YEAR = 2021
 const PERSON = [
@@ -93,7 +93,7 @@ describe('SyslumennService', () => {
         SyslumennClientModule,
         ConfigModule.forRoot({ isGlobal: true, load: [config] }),
       ],
-      providers: [SyslumennService],
+      providers: [SyslumennService, SyslumennApiProvider],
     }).compile()
 
     service = module.get(SyslumennService)
