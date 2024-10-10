@@ -1,6 +1,5 @@
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../../shared'
-import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { StreetRegistrationTemplateService } from './street-registration.service'
 import { ConfigModule } from '@nestjs/config'
 import {
@@ -12,21 +11,17 @@ import {
   ChargeFjsV2ClientModule,
 } from '@island.is/clients/charge-fjs-v2'
 
-export class StreetRegistrationTemplateModule {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: StreetRegistrationTemplateModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        WorkMachinesClientModule,
-        ChargeFjsV2ClientModule,
-        ConfigModule.forRoot({
-          isGlobal: true,
-          load: [WorkMachinesClientConfig, ChargeFjsV2ClientConfig],
-        }),
-      ],
-      providers: [StreetRegistrationTemplateService],
-      exports: [StreetRegistrationTemplateService],
-    }
-  }
-}
+@Module({
+  imports: [
+    SharedTemplateAPIModule,
+    WorkMachinesClientModule,
+    ChargeFjsV2ClientModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [WorkMachinesClientConfig, ChargeFjsV2ClientConfig],
+    }),
+  ],
+  providers: [StreetRegistrationTemplateService],
+  exports: [StreetRegistrationTemplateService],
+})
+export class StreetRegistrationTemplateModule {}

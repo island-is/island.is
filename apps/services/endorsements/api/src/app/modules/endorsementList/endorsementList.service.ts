@@ -3,9 +3,10 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
+import { col, Op, Sequelize } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
@@ -74,6 +75,7 @@ export class EndorsementListService {
     }
   }
 
+  // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
     this.logger.info(`Finding endorsement lists`)
     return await paginate({
@@ -82,8 +84,28 @@ export class EndorsementListService {
       after: query.after,
       before: query.before,
       primaryKeyField: 'counter',
-      orderOption: [['endorsementCount', 'DESC']],
+      orderOption: [
+        ['endorsementCounter', 'DESC'],
+        ['counter', 'DESC'],
+      ],
       where: where,
+      attributes: {
+        include: [
+          [
+            Sequelize.fn('COUNT', Sequelize.col('endorsements.id')),
+            'endorsementCounter',
+          ],
+        ],
+      },
+      include: [
+        {
+          model: Endorsement,
+          required: false, // Required false for left outer join so that counts come for 0 as well
+          duplicating: false,
+          attributes: [],
+        },
+      ],
+      group: ['EndorsementList.id'],
     })
   }
 
@@ -106,6 +128,8 @@ export class EndorsementListService {
   }
 
   async findSingleList(listId: string, user?: User, check?: boolean) {
+    // Check variable needed since finAll function in Endorsement controller uses this function twice
+    // on the second call it passes nationalID of user but does not go throught the get list pipe
     const isAdmin = user && check ? this.hasAdminScope(user) : false
     this.logger.info(`Finding single endorsement lists by id "${listId}"`)
     const result = await this.endorsementListModel.findOne({
@@ -236,6 +260,7 @@ export class EndorsementListService {
     this.logger.info(`Creating endorsement list: ${list.title}`)
     const endorsementList = await this.endorsementListModel.create({ ...list })
 
+    console.log('process.env.NODE_ENV', process.env.NODE_ENV)
     if (process.env.NODE_ENV === 'production') {
       await this.emailCreated(endorsementList)
     }
@@ -243,6 +268,7 @@ export class EndorsementListService {
     return endorsementList
   }
 
+  // generic get open lists
   async findOpenListsTaggedGeneralPetition(query: any) {
     const dateOb = new Date()
     try {
@@ -280,6 +306,9 @@ export class EndorsementListService {
   }
 
   async getOwnerInfo(listId: string, owner?: string) {
+    // Is used by both unauthenticated users, authenticated users and admin
+    // Admin needs to access locked lists and can not use the EndorsementListById pipe
+    // Since the endpoint is not authenticated
     this.logger.info(`Finding single endorsement lists by id "${listId}"`)
     if (!owner) {
       const endorsementList = await this.endorsementListModel.findOne({
