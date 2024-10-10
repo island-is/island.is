@@ -77,12 +77,12 @@ export class ClientService {
 
   async getQueueAttributes(
     url: string,
-    attributes: string[],
+    attributes: QueueAttributeName[],
   ): Promise<Record<string, string>> {
     const r = await this.client.send(
       new GetQueueAttributesCommand({
         QueueUrl: url,
-        AttributeNames: attributes as QueueAttributeName[],
+        AttributeNames: attributes,
       }),
     )
     return r.Attributes ?? {}
@@ -133,7 +133,10 @@ export class ClientService {
     url: string,
     attributes: Record<string, string>,
   ): Promise<void> {
-    const current = await this.getQueueAttributes(url, Object.keys(attributes))
+    const current = await this.getQueueAttributes(
+      url, 
+      Object.keys(attributes).filter(a => a in QueueAttributeName) as QueueAttributeName[]
+    )
 
     const areNotEqual = (k: string) => attributes[k] !== current[k]
     if (Object.keys(attributes).some(areNotEqual)) {
