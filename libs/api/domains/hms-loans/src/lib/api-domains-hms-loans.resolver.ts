@@ -26,7 +26,9 @@ export class HmsLoansResolver {
 
   @Query(() => [LoanHistory], { name: 'hmsLoansHistory', nullable: true })
   @Audit()
-  async getHmsLoansHistory(@CurrentUser() user: User) {
+  async getHmsLoansHistory(
+    @CurrentUser() user: User,
+  ): Promise<Array<LoanHistory> | null> {
     return await this.hmsLoansService.getHmsLoansHistory(user)
   }
 
@@ -35,7 +37,9 @@ export class HmsLoansResolver {
     nullable: true,
   })
   @Audit()
-  async getHmsLoansHistoryPdf(@CurrentUser() user: User) {
+  async getHmsLoansHistoryPdf(
+    @CurrentUser() user: User,
+  ): Promise<LoanHistoryPdf | null> {
     return await this.hmsLoansService.getHmsLoansHistoryPdf(user)
   }
 
@@ -47,7 +51,7 @@ export class HmsLoansResolver {
   async getHmsLoansPaymentHistory(
     @CurrentUser() user: User,
     @Args('input') input: GetHmsLoansPaymentHistoryInput,
-  ) {
+  ): Promise<Array<PaymentHistory> | null> {
     return this.hmsLoansService.getHmsLoansPaymentHistory(user, input.loanId)
   }
 }
