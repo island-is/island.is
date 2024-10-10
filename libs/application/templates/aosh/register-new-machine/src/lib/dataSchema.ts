@@ -46,16 +46,45 @@ const BasicInformationSchema = z.object({
 const AboutMachineSchema = z.object({
   type: z.string().optional(),
   model: z.string().optional(),
-  category: z.string().optional(),
-  subcategory: z.string().optional(),
+  category: z
+    .object({
+      nameIs: z.string().optional(),
+      nameEn: z.string().optional(),
+    })
+    .optional(),
+  categories: z
+    .array(
+      z
+        .object({
+          categoryIs: z.string().optional(),
+          categoryEn: z.string().optional(),
+          subcategoryIs: z.string().optional(),
+          subcategoryEn: z.string().optional(),
+          registrationNumberPrefix: z.string().optional(),
+        })
+        .optional(),
+    )
+    .optional(),
+  subcategory: z
+    .object({
+      nameIs: z.string().optional(),
+      nameEn: z.string().optional(),
+    })
+    .optional(),
   registrationNumberPrefix: z.string().optional(),
   fromService: z.boolean().optional(),
 })
 
 const TechInfoSchema = z.object({
-  value: z.string().optional(),
+  value: z
+    .object({
+      nameIs: z.string().optional(),
+      nameEn: z.string().optional(),
+    })
+    .optional(),
   variableName: z.string().optional(),
   label: z.string().optional(),
+  labelEn: z.string().optional(),
 })
 
 export const NewMachineAnswersSchema = z.object({

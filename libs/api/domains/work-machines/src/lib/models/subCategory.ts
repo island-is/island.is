@@ -6,7 +6,13 @@ export class SubCategory {
   name?: string | null
 
   @Field(() => String, { nullable: true })
+  nameEn?: string | null
+
+  @Field(() => String, { nullable: true })
   parentCategoryName?: string | null
+
+  @Field(() => String, { nullable: true })
+  parentCategoryNameEn?: string | null
 
   @Field(() => String, { nullable: true })
   registrationNumberPrefix?: string | null
