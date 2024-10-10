@@ -6,7 +6,6 @@ import {
   Header,
   Inject,
   Param,
-  Query,
   Res,
   UseGuards,
 } from '@nestjs/common'
