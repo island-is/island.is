@@ -35,6 +35,7 @@ import { ResourcesModule } from './resources/resources.module'
 import { TranslationModule } from './translation/translation.module'
 import { UserProfileModule } from './user-profile/user-profile.module'
 import { UsersModule } from './users/users.module'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { UsersModule } from './users/users.module'
         NationalRegistryV3ClientConfig,
         smsModuleConfig,
         SyslumennClientConfig,
+        ZendeskServiceConfig,
       ],
     }),
   ],
