@@ -45,9 +45,13 @@ const populateError = (
    * be able to submit the screen.
    */
   if (currentScreenFields && currentScreenFields.length > 0) {
+    // If we have nested fields, we need to resolve only the top level field
+    const resolvedNestedFields = currentScreenFields.map(
+      (id) => id.split('.')[0],
+    )
     const relevantErrors = Object.fromEntries(
       Object.entries(errorObject).filter(([key]) =>
-        currentScreenFields.includes(key),
+        resolvedNestedFields.includes(key),
       ),
     )
 
