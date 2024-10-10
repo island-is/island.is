@@ -11,17 +11,20 @@ import {
   m,
   ModuleAlertBannerSection,
   TabNavigation,
-} from '@island.is/service-portal/core'
+} from '@island.is/portals/my-pages/core'
 import * as styles from './Layout.css'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { IntroHeader, ServicePortalPaths } from '@island.is/service-portal/core'
+import {
+  IntroHeader,
+  ServicePortalPaths,
+} from '@island.is/portals/my-pages/core'
 import { Link, matchPath, useNavigate } from 'react-router-dom'
-import { DocumentsPaths } from '@island.is/service-portal/documents'
+import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { theme } from '@island.is/island-ui/theme'
 import { useAuth } from '@island.is/auth/react'
 import { DocumentsScope } from '@island.is/auth/scopes'
-import { FinancePaths } from '@island.is/service-portal/finance'
+import { FinancePaths } from '@island.is/portals/my-pages/finance'
 
 interface FullWidthLayoutWrapperProps {
   activeParent?: PortalNavigationItem

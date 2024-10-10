@@ -11,7 +11,7 @@ import {
   ServicePortalNavigationItem,
   ModuleAlertBannerSection,
   GoBack,
-} from '@island.is/service-portal/core'
+} from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
 import { useWindowSize } from 'react-use'
 import SidebarLayout from './SidebarLayout'
