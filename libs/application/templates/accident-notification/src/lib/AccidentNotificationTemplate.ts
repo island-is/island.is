@@ -419,23 +419,18 @@ const AccidentNotificationTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    console.log('!!!Map user to role', id, application)
+    const { applicant, applicantActors, assignees } = application
 
-    if (id === application.applicant && application.applicantActors.length) {
-      return Roles.PROCURER
-    }
-
-    if (id === application.applicant && application.assignees.includes(id)) {
-      return Roles.ASSIGNEE
-    }
-
-    if (id === application.applicant) {
+    if (id === applicant) {
+      if (applicantActors.length) return Roles.PROCURER
+      if (assignees.includes(id)) return Roles.ASSIGNEE
       return Roles.APPLICANT
     }
 
-    if (application.assignees.includes(id)) {
+    if (assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
+
     return undefined
   },
 }
