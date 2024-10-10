@@ -65,7 +65,7 @@ export const mapGenericListItem = ({
       : [],
     slug: fields.slug,
     assetUrl,
-    externalUrl: fields.externalLink?.fields?.url ?? 'https://google.com',
+    externalUrl: fields.externalLink?.fields?.url ?? '',
     filterTags: fields.filterTags ? fields.filterTags.map(mapGenericTag) : [],
   }
 }
