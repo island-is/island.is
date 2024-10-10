@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator'
 
-export class ApiDto {
+export class ApiProxyDto {
   @IsString()
   url!: string
 }

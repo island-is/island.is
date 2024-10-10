@@ -55,15 +55,10 @@ export class AuthController {
   async callbackBackchannelLogout(
     @Req() req: Request,
     @Body() body: CallbackLogoutDto,
-  ): Promise<void> {
-    console.log('------------------------------------------------------------')
-    console.log('callbackBackchannelLogout', body)
-    console.log('------------------------------------------------------------')
-
-    // TODO validate the token
-    //https://openid.net/specs/openid-connect-backchannel-1_0.html
-    // clear the cache
-
-    return
+  ): Promise<{
+    status: string
+    message: string
+  }> {
+    return this.authService.callbackLogout(body)
   }
 }

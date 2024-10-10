@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Post,
   Query,
   Req,
@@ -9,7 +10,7 @@ import {
 import { Request, Response } from 'express'
 import { qsValidationPipe } from '../../utils/qs-validation-pipe'
 import { ProxyService } from './proxy.service'
-import { ApiDto } from './dto/api-proxy.dto'
+import { ApiProxyDto } from './dto/api-proxy.dto'
 
 @Controller({
   path: 'api',
@@ -18,14 +19,14 @@ import { ApiDto } from './dto/api-proxy.dto'
 export class ProxyController {
   constructor(private proxyService: ProxyService) {}
 
-  @Post()
-  async proxyApiUrlRequest(
+  @Get()
+  async forwardGetApiRequest(
     @Req() req: Request,
     @Res() res: Response,
     @Query(qsValidationPipe)
-    query: ApiDto,
+    query: ApiProxyDto,
   ): Promise<void> {
-    return this.proxyService.proxyApiUrlRequest({ req, res, query })
+    return this.proxyService.forwardGetApiRequest({ req, res, query })
   }
 
   @Post('/graphql')

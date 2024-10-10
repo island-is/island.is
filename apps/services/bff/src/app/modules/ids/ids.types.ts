@@ -45,3 +45,26 @@ export interface ErrorRes {
 }
 
 export type ApiResponse<T> = SuccessResponse<T> | ErrorRes
+
+export type LogoutTokenPayload = {
+  // Issuer of the token
+  iss: string
+
+  // Subject of the token
+  sub: string
+
+  // Audience of the token
+  aud: string
+
+  // Time when the token was issued
+  iat: number
+
+  // Time when the token expires
+  exp: number
+
+  // Session ID
+  sid: string
+
+  // Unique identifier for the token.
+  jti: string
+}

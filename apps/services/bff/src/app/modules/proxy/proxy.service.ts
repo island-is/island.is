@@ -18,7 +18,7 @@ import { AuthService } from '../auth/auth.service'
 import { CachedTokenResponse } from '../auth/auth.types'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
-import { ApiDto } from './dto/api-proxy.dto'
+import { ApiProxyDto } from './dto/api-proxy.dto'
 
 const droppedResponseHeaders = ['access-control-allow-origin']
 
@@ -169,17 +169,17 @@ export class ProxyService {
   }
 
   /**
-   * Forwards an incoming HTTP POST request to the specified URL (provided in the query parameter),
+   * Forwards an incoming HTTP GET request to the specified URL (provided in the query string),
    * managing authentication, refreshing tokens if needed, and streaming the response back to the client.
    */
-  async proxyApiUrlRequest({
+  async forwardGetApiRequest({
     req,
     res,
     query,
   }: {
     req: Request
     res: Response
-    query: ApiDto
+    query: ApiProxyDto
   }) {
     const { url } = query
 
