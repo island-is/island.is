@@ -129,6 +129,7 @@ const SubPage: Screen<SubPageProps> = ({
       )
     : ''
 
+  // Organization Title
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const pageTitle = `${
     categoryTitle
