@@ -328,10 +328,11 @@ test.describe('Parental leave', () => {
     // Upload additional document
     createMockPdf()
     const fileChooserPromise = page.waitForEvent('filechooser')
-    await page.getByRole('button', {
-      name: label(parentalLeaveFormMessages.fileUpload.attachmentButton),
-    })
-    .click()
+    await page
+      .getByRole('button', {
+        name: label(parentalLeaveFormMessages.fileUpload.attachmentButton),
+      })
+      .click()
     const filechooser = await fileChooserPromise
     await filechooser.setFiles('./mockPdf.pdf')
     await page.waitForTimeout(1000)
