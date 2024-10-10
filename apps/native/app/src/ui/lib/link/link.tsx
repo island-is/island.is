@@ -1,16 +1,9 @@
 import React, { useCallback } from 'react'
 import { Alert, Linking } from 'react-native'
 import styled from 'styled-components/native'
-import { font } from '../../utils/font'
+import { Typography } from '../typography/typography'
 
 const Host = styled.TouchableOpacity``
-
-const Text = styled.Text`
-  ${font({
-    fontWeight: '300',
-    lineHeight: 24,
-  })}
-`
 
 interface LinkProps {
   url: string
@@ -30,7 +23,7 @@ export function Link({ url, children }: LinkProps) {
 
   return (
     <Host onPress={handlePress}>
-      <Text>{children}</Text>
+      <Typography>{children}</Typography>
     </Host>
   )
 }
