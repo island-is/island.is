@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { CaseModule } from '../case/case.module'
 import { Defendant } from '../defendant/models/defendant.model'
+import { FileModule } from '../file/file.module'
 import { PoliceModule } from '../police/police.module'
 import { Subpoena } from './models/subpoena.model'
 import { InternalSubpoenaController } from './internalSubpoena.controller'
@@ -14,6 +15,7 @@ import { SubpoenaService } from './subpoena.service'
   imports: [
     forwardRef(() => CaseModule),
     forwardRef(() => PoliceModule),
+    forwardRef(() => FileModule),
     SequelizeModule.forFeature([Subpoena, Defendant]),
   ],
   controllers: [
