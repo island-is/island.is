@@ -31,6 +31,9 @@ export class GenericListItem {
   @Field(() => String, { nullable: true })
   assetUrl?: string
 
+  @Field(() => String, { nullable: true })
+  externalUrl?: string
+
   @CacheField(() => [GenericTag], { nullable: true })
   filterTags?: GenericTag[]
 }
@@ -62,6 +65,7 @@ export const mapGenericListItem = ({
       : [],
     slug: fields.slug,
     assetUrl,
+    externalUrl: fields.externalLink?.fields?.url ?? '',
     filterTags: fields.filterTags ? fields.filterTags.map(mapGenericTag) : [],
   }
 }

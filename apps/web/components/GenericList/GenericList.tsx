@@ -16,6 +16,7 @@ import {
   GridContainer,
   GridRow,
   Icon,
+  type IconProps,
   Inline,
   Pagination,
   Stack,
@@ -126,9 +127,15 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
   const pathname = new URL(baseUrl || router.asPath, 'https://island.is')
     .pathname
 
+  let icon: IconProps['icon'] | null = null
+
   let href = item.slug ? `${pathname}/${item.slug}` : undefined
   if (item.assetUrl) {
     href = item.assetUrl
+    icon = 'document'
+  } else if (item.externalUrl) {
+    href = item.externalUrl
+    icon = 'open'
   }
 
   const filterTags = item.filterTags ?? []
@@ -151,12 +158,12 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
                   <Text variant="eyebrow" color="purple400">
                     {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
                   </Text>
-                  {item.assetUrl && (
+                  {icon && (
                     <Icon
                       size="medium"
                       type="outline"
                       color="blue400"
-                      icon="document"
+                      icon={icon}
                     />
                   )}
                 </Inline>
