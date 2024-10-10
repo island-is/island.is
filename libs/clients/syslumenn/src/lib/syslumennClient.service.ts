@@ -695,4 +695,18 @@ export class SyslumennService {
           delegation.gildirTil > startOfDay(new Date())),
     )
   }
+
+  async getElectronicID(
+    nationalId: string,
+    phoneNumber: string,
+  ): Promise<boolean> {
+    const { id, api } = await this.createApi()
+    const res = await api.kannaRafraenSkilrikiGet({
+      audkenni: id,
+      kennitala: nationalId,
+      simi: phoneNumber,
+    })
+    console.log(JSON.stringify(res))
+    return true
+  }
 }

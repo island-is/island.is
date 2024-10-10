@@ -1,4 +1,4 @@
 export { NextSteps } from './Done'
 export { ApplicationOverview } from './ApplicationOverview'
 export { PaymentInfo } from './PaymentInfo'
-export { NationalIdWithName } from './NationalIdWithName'
+export { PhoneWithElectronicId } from './PhoneWithElectronicId'
