@@ -252,6 +252,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         setShowConfirmedAlert(true)
       }
     } finally {
+      markDocumentAsRead()
       setRefetching(false)
     }
   }
@@ -356,11 +357,10 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     setVisible(true)
   })
 
-  useEffect(() => {
+  const markDocumentAsRead = () => {
     if (Document.opened) {
       return
     }
-
     // Let's mark the document as read in the cache and decrease unreadCount if it is not 0
     client.cache.modify({
       id: client.cache.identify({
@@ -383,6 +383,13 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         },
       },
     })
+  }
+
+  useEffect(() => {
+    if (Document.opened || !shouldIncludeDocument) {
+      return
+    }
+    markDocumentAsRead()
   }, [Document.id])
 
   useEffect(() => {
