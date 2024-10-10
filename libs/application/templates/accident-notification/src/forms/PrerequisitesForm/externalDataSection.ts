@@ -9,7 +9,7 @@ import { externalData } from '../../lib/messages'
 import { NationalRegistryUserApi } from '../../dataProviders'
 
 export const externalDataSection = buildSection({
-  id: 'ExternalDataSection',
+  id: 'ExternalDataRegularSection',
   title: externalData.dataProvider.sectionTitle,
   children: [
     buildExternalDataProvider({
