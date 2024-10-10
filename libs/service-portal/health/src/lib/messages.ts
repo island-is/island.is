@@ -198,7 +198,7 @@ export const messages = defineMessages({
     defaultMessage: 'Sæki skjal',
   },
   healthInsuranceConfirmationTransferError: {
-    id: 'sp.health:health-center-registration-transfer-error-title',
+    id: 'sp.health:health-insurance-confirmation-transfer-error',
     defaultMessage:
       'Villa kom upp þegar sótt var staðfesting á sjúkratryggingu',
   },
@@ -280,6 +280,11 @@ export const messages = defineMessages({
   dentistRegisterForbiddenInfo: {
     id: 'sp.health:dentist-register-forbidden',
     defaultMessage: 'Þú hefur ekki réttindi',
+  },
+  dentistRegistrationTransferErrorInfo: {
+    id: 'sp.health:dentist-registration-transfer-error-info',
+    defaultMessage:
+      'Ekki tókst að skipta um tannlækni. Vinsamlegast reyndu aftur síðar.',
   },
   dentistModalTitle: {
     id: 'sp.health:dentist-modal-title',
@@ -691,6 +696,7 @@ export const messages = defineMessages({
     defaultMessage:
       'Ekki tókst að flytja heilsugæslustöð. Vinsamlegast reyndu aftur síðar.',
   },
+
   healthCenterRegistrationTransferSuccessTitle: {
     id: 'sp.health:health-center-registration-transfer-success-title',
     defaultMessage: 'Ný heilsugæsla skráð',
