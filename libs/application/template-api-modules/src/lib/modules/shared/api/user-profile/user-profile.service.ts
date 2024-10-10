@@ -4,7 +4,7 @@ import { IslyklarApi } from '@island.is/clients/islykill'
 import { V2MeApi } from '@island.is/clients/user-profile'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import {
-  BaseTemplateAPIModuleConfig,
+  SharedModuleConfig,
   TemplateApiModuleActionProps,
 } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -30,7 +30,7 @@ export class UserProfileService extends BaseTemplateApiService {
     @Inject(IdsClientConfig.KEY)
     private idsClientConfig: ConfigType<typeof IdsClientConfig>,
     @Inject(ConfigService)
-    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
+    private readonly configService: ConfigService<SharedModuleConfig>,
   ) {
     super('UserProfile')
   }

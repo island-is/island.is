@@ -58,50 +58,6 @@ export class EndorsementService {
     private readonly awsService: AwsService,
   ) {}
 
-  async onModuleInit() {
-    this.logger.info(
-      'Updating endorsement counts for all lists onModuleInit...',
-    )
-    try {
-      await this.updateCountsForAllLists()
-    } catch (error) {
-      this.logger.error(
-        'Error updating endorsement counts for all lists',
-        error,
-      )
-    }
-  }
-
-  async updateCountsForAllLists(): Promise<void> {
-    const allLists = await this.endorsementListModel.findAll()
-    for (const list of allLists) {
-      await this.updateEndorsementCountOnList(list.id)
-    }
-    this.logger.info('All endorsement counts have been updated.')
-  }
-
-  async updateEndorsementCountOnList(listId: string): Promise<void> {
-    const count = await this.endorsementModel.count({
-      where: { endorsementListId: listId },
-    })
-    const [affectedRows, updatedList] = await this.endorsementListModel.update(
-      { endorsementCount: count },
-      {
-        where: { id: listId },
-        returning: true,
-      },
-    )
-    if (affectedRows > 0 && updatedList[0].endorsementCount === count) {
-      this.logger.info(
-        `Successfully updated endorsement count for list "${listId}" to ${count}`,
-      )
-    } else {
-      this.logger.warn(
-        `Failed to update endorsement count for list "${listId}". The count was not updated correctly.`,
-      )
-    }
-  }
-
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
     this.logger.info(`Finding endorsements by list id "${listId}"`)
 
@@ -155,6 +111,7 @@ export class EndorsementService {
     return { hasEndorsed: true }
   }
 
+  // FIXME: Find a way to combine with create bulk endorsements
   async createEndorsementOnList({
     endorsementList,
     nationalId,
@@ -179,20 +136,20 @@ export class EndorsementService {
       },
     }
 
-    try {
-      const createdEndorsement = await this.endorsementModel.create(endorsement)
-      await this.updateEndorsementCountOnList(endorsementList.id)
-      return createdEndorsement
-    } catch (error) {
-      if (error instanceof UniqueConstraintError) {
-        this.logger.warn('Endorsement already exists in list')
-        throw new MethodNotAllowedException([
-          'Endorsement already exists in list',
-        ])
-      } else {
-        throw error
+    return this.endorsementModel.create(endorsement).catch((error) => {
+      // map meaningful sequelize errors to custom errors, else return error
+      switch (error.constructor) {
+        case UniqueConstraintError: {
+          this.logger.warn('Endorsement already exists in list')
+          throw new MethodNotAllowedException([
+            'Endorsement already exists in list',
+          ])
+        }
+        default: {
+          throw error
+        }
       }
-    }
+    })
   }
 
   async deleteFromListByNationalId({
@@ -225,6 +182,5 @@ export class EndorsementService {
       )
       throw new NotFoundException(["This endorsement doesn't exist"])
     }
-    await this.updateEndorsementCountOnList(endorsementList.id)
   }
 }

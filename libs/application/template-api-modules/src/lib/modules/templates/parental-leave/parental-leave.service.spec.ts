@@ -32,16 +32,16 @@ import {
 import { EmailService } from '@island.is/email-service'
 
 import { SharedTemplateApiService } from '../../shared'
-import {
-  BaseTemplateApiApplicationService,
-  TemplateApiModuleActionProps,
-} from '../../../types'
+import { TemplateApiModuleActionProps } from '../../../types'
 import { ParentalLeaveService } from './parental-leave.service'
-import { APPLICATION_ATTACHMENT_BUCKET, apiConstants } from './constants'
+import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { PaymentService } from '@island.is/application/api/payment'
+import { sharedModuleConfig } from '../../shared/shared.config'
+import { ApplicationService } from '@island.is/application/api/core'
+import { AwsService } from '@island.is/nest/aws'
 
 const nationalId = '1234564321'
 let id = 0
@@ -231,14 +231,18 @@ describe('ParentalLeaveService', () => {
           useClass: MockSmsService,
         },
         {
-          provide: BaseTemplateApiApplicationService,
+          provide: sharedModuleConfig.KEY,
+          useValue: {},
+        },
+        {
+          provide: ApplicationService,
+          useValue: {},
+        },
+        {
+          provide: AwsService,
           useValue: {},
         },
         SharedTemplateApiService,
-        {
-          provide: APPLICATION_ATTACHMENT_BUCKET,
-          useValue: 'attachmentBucket',
-        },
       ],
     }).compile()
 
