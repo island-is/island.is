@@ -22,6 +22,10 @@ query AuthDelegationsIncoming($input: AuthDelegationsInput!, $lang: String) {
     id
     type
     validTo
+    to {
+      nationalId
+      name
+    }
     from {
       nationalId
       name
