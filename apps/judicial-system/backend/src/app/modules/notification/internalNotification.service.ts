@@ -1645,16 +1645,10 @@ export class InternalNotificationService extends BaseNotificationService {
   private async sendDefendantSelectedDefenderNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    // TODO: Fix this, this is probably not correct
-    const defenants = theCase.defendants
-    const subpoenas = defenants && defenants[0].subpoenas
-    const defenderNationalId = subpoenas && subpoenas[0].defenderNationalId
-
     const { subject, body } = formatDefendantSelectedDefenderEmailNotification(
       this.formatMessage,
       theCase,
-      defenderNationalId &&
-        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
+      `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
     )
 
     const promises: Promise<Recipient>[] = []
@@ -1665,14 +1659,7 @@ export class InternalNotificationService extends BaseNotificationService {
 
     if (judgeName && judgeEmail) {
       promises.push(
-        this.sendEmail(
-          subject,
-          body,
-          judgeName,
-          judgeEmail,
-          undefined,
-          Boolean(defenderNationalId) === false,
-        ),
+        this.sendEmail(subject, body, judgeName, judgeEmail, undefined, true),
       )
     }
 
@@ -1684,7 +1671,7 @@ export class InternalNotificationService extends BaseNotificationService {
           registrarName,
           registrarEmail,
           undefined,
-          Boolean(defenderNationalId) === false,
+          true,
         ),
       )
     }

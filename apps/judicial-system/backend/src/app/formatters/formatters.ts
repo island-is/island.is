@@ -698,7 +698,6 @@ export const formatDefendantSelectedDefenderEmailNotification = (
   )
 
   const body = formatMessage(notifications.defendantSelectedDefender.body, {
-    hasAccessToRVG: Boolean(overviewUrl),
     courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
     courtName: theCase.court?.name.replace('dómur', 'dómi') ?? '',
     linkStart: `<a href="${overviewUrl}">`,
