@@ -7,8 +7,8 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useLocale } from '../../hooks/use-locale'
 import { ApplicationsList } from './components/applications-list'
-import { usePreferencesStore } from '../../stores/preferences-store'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -33,7 +33,6 @@ export const ApplicationsCompletedScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
   const [refetching, setRefetching] = useState(false)
-  const { locale } = usePreferencesStore()
 
   const applicationsRes = useListApplicationsQuery({
     variables: {
@@ -44,7 +43,7 @@ export const ApplicationsCompletedScreen: NavigationFunctionComponent = ({
           ApplicationResponseDtoStatusEnum.Approved,
         ],
       },
-      locale: locale === 'is-IS' ? 'is' : 'en',
+      locale: useLocale(),
     },
   })
 
