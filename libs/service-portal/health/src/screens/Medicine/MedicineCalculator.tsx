@@ -30,7 +30,7 @@ import {
 } from '@island.is/api/schema'
 import * as styles from './Medicine.css'
 import { DrugRow } from './components/DrugRow/DrugRow'
-import { MedicineWrapper } from './wrapper/MedicineWrapper'
+import { MedicinePaymentParticipationWrapper } from './wrapper/MedicinePaymentParticipationWrapper'
 import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 import { EmptyTable } from '@island.is/service-portal/core'
@@ -164,7 +164,9 @@ export const MedicineCalulator = () => {
     : 0
 
   return (
-    <MedicineWrapper pathname={HealthPaths.HealthMedicineCalculator}>
+    <MedicinePaymentParticipationWrapper
+      pathname={HealthPaths.HealthMedicineCalculator}
+    >
       <Box marginBottom={SECTION_GAP}>
         <Text variant="h5" marginBottom={CONTENT_GAP_SM}>
           {formatMessage(messages.medicineCalculatorIntroTitle)}
@@ -474,7 +476,7 @@ export const MedicineCalulator = () => {
           {formatMessage(messages.medicineCalculatorFooter)}
         </Text>
       </Box>
-    </MedicineWrapper>
+    </MedicinePaymentParticipationWrapper>
   )
 }
 

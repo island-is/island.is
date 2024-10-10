@@ -15,6 +15,7 @@ type SortableData = {
   name: string
   id: string
   tag?: TagVariant
+  lastNode?: React.ReactElement
   children?: React.ReactElement
 } & { [key: string]: string | React.ReactElement }
 
@@ -79,7 +80,7 @@ export const SortableTable = (props: SortableTableProps) => {
   useMemo(() => {
     const headerItems = props.items
       .map((headerItem) => {
-        const { id: headerID, tag, ...restItems } = headerItem
+        const { id: headerID, tag, lastNode, ...restItems } = headerItem
         return Object.keys(restItems)
       })
       .flat()
@@ -149,7 +150,9 @@ export const SortableTable = (props: SortableTableProps) => {
             <T.Row>
               {headerSorted?.map((headItem, i) => (
                 <T.HeadData key={`head-${headItem}`}>
-                  {headerButton(headItem, i)}
+                  <Text variant="medium" fontWeight="semiBold" as={'p'}>
+                    {headerButton(headItem, i)}
+                  </Text>
                 </T.HeadData>
               ))}
             </T.Row>
@@ -157,7 +160,7 @@ export const SortableTable = (props: SortableTableProps) => {
         )}
         <T.Body>
           {items.map((item) => {
-            const { id, name, tag, children, ...itemObject } = item
+            const { id, name, tag, lastNode, children, ...itemObject } = item
             const valueItems = Object.values(itemObject)
 
             return props.expandable ? (
@@ -169,6 +172,8 @@ export const SortableTable = (props: SortableTableProps) => {
                       <Tag variant={tag} outlined={props.tagOutlined}>
                         {valueItem}
                       </Tag>
+                    ) : valueItems.length - 1 === i && lastNode ? (
+                      lastNode
                     ) : (
                       valueItem
                     ),
@@ -181,7 +186,11 @@ export const SortableTable = (props: SortableTableProps) => {
               </ExpandRow>
             ) : (
               <T.Row key={id}>
-                <T.Data>{name}</T.Data>
+                <T.Data>
+                  <Text variant={'medium'} as="span">
+                    {name}
+                  </Text>
+                </T.Data>
                 {valueItems.map((valueItem, i) => {
                   const lastItem = valueItems.length - 1 === i
                   return (
@@ -190,8 +199,12 @@ export const SortableTable = (props: SortableTableProps) => {
                         <Tag variant={tag} outlined={props.tagOutlined}>
                           {valueItem}
                         </Tag>
+                      ) : lastItem && lastNode ? (
+                        lastNode
                       ) : (
-                        valueItem
+                        <Text variant={'medium'} as="span">
+                          {valueItem}
+                        </Text>
                       )}
                     </T.Data>
                   )
