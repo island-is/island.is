@@ -10,7 +10,9 @@ export const MACHINE_CATEGORY = `
   query GetMachineCategory($input: WorkMachinesParentCategoryByTypeAndModelInput!) {
     getMachineParentCategoryByTypeAndModel(input: $input) {
       name
+      nameEn
       subCategoryName
+      subCategoryNameEn
       registrationNumberPrefix
     }
   }
@@ -20,7 +22,9 @@ export const MACHINE_SUB_CATEGORIES = `
   query GetMachineSubCategories($parentCategory: String!) {
     getMachineSubCategories(parentCategory: $parentCategory) {
       name
+      nameEn
       parentCategoryName
+      parentCategoryNameEn
       registrationNumberPrefix
     }
   }
@@ -31,10 +35,14 @@ export const TECHNICAL_INFO_INPUTS = `
     getTechnicalInfoInputs(parentCategory: $parentCategory, subCategory: $subCategory) {
       variableName
       label
+      labelEn
       type
       required
       maxLength
-      values
+      values {
+        name
+        nameEn
+      }
     }
   }
 `
