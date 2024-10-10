@@ -75,7 +75,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             description: m.dataCollectionDescription,
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: dataCollection,
-            enableMockPayment: true,
           }),
         ],
       }),
@@ -448,48 +447,15 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 title: '',
                 component: 'ApplicationOverview',
               }),
-            ],
-          }),
-        ],
-      }),
-      buildSection({
-        id: 'paymentTotal',
-        title: m.payment,
-        children: [
-          buildMultiField({
-            id: 'payment',
-            title: '',
-            children: [
-              buildCustomField(
-                {
-                  id: 'payment',
-                  title: '',
-                  component: 'PaymentInfo',
-                },
-                {
-                  allowFakeData,
-                  // TODO: When/if real data enters the payment catalog, remove this
-                  fakePayments: [
-                    {
-                      priceAmount: 2800,
-                      chargeItemCode: 'AY153',
-                    },
-                    {
-                      priceAmount: 2700,
-                      chargeItemCode: 'AY154',
-                    },
-                  ],
-                },
-              ),
               buildSubmitField({
-                id: 'submitPayment',
+                id: 'submitApplication',
                 title: '',
                 placement: 'footer',
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {
-                    event: DefaultEvents.PAYMENT,
-                    name: m.proceedToPayment,
+                    event: DefaultEvents.SUBMIT,
+                    name: m.submitApplication,
                     type: 'primary',
                   },
                 ],

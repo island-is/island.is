@@ -406,6 +406,12 @@ export const m = defineMessages({
       'Beiðni þín um könnun hjónavígsluskilyrða hefur nú verið send á þinn maka.',
     description: '',
   },
+  nextStepsDescriptionWithSpouseName: {
+    id: 'mac.application:nextStepsDescriptionWithSpouseName#markdown',
+    defaultMessage:
+      'Beiðni þín um könnun hjónavígsluskilyrða hefur nú verið send á **{spouseName}**.',
+    description: '',
+  },
   nextSteps: {
     id: 'mac.application:nextSteps',
     defaultMessage: 'Næstu skref',
