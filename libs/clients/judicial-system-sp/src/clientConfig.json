@@ -459,9 +459,22 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/AlertMessage" }
           },
-          "hasBeenServed": { "type": "boolean" }
+          "hasBeenServed": { "type": "boolean" },
+          "hasChosenDefender": { "type": "boolean" },
+          "defaultDefenderChoice": {
+            "type": "string",
+            "enum": ["WAIVE", "CHOOSE", "DELAY", "DELEGATE"]
+          }
         },
-        "required": ["title", "subtitle", "groups", "alerts", "hasBeenServed"]
+        "required": [
+          "title",
+          "subtitle",
+          "groups",
+          "alerts",
+          "hasBeenServed",
+          "hasChosenDefender",
+          "defaultDefenderChoice"
+        ]
       },
       "DefenderInfo": {
         "type": "object",

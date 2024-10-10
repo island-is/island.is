@@ -354,6 +354,11 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:select-ministry',
     defaultMessage: 'Veldu ráðuneyti',
   },
+  publishEffectiveWarning: {
+    id: 'ap.regulations-admin:publish-effective-warning',
+    defaultMessage:
+      'Valinn gildistökudagur er á undan útgáfudegi. Almennt er miðað við að reglugerð öðlist gildi eftir birtingu.',
+  },
 })
 
 export const impactMsgs = defineMessages({
@@ -409,7 +414,7 @@ export const impactMsgs = defineMessages({
   regExplainer: {
     id: 'ap.regulations-admin:draft-impactedreg-explainer',
     defaultMessage:
-      'ATH: Einungis er hægt að breyta reglugerðum sem minnst er á með skýrum hætti í texta reglugerðarinnar.',
+      'ATH: Sé ætlunin að breyta annarri reglugerð, þarf að minnast á þá reglugerð með skýrum hætti í þessari stofnreglugerð.',
   },
   regExplainer_editLink: {
     id: 'ap.regulations-admin:draft-impactedreg-editlink',

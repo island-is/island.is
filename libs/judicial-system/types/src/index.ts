@@ -6,6 +6,8 @@ export {
   SubpoenaType,
   DefendantPlea,
   ServiceRequirement,
+  ServiceStatus,
+  isSuccessfulServiceStatus,
 } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
 export { NotificationType } from './lib/notification'

@@ -3,12 +3,8 @@ import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import {
-  FoodAllergiesOptions,
-  FoodIntolerancesOptions,
   ReasonForApplicationOptions,
-  RelationOptions,
   SiblingRelationOptions,
-  Gender,
 } from './constants'
 import { errorMessages } from './messages'
 
@@ -28,7 +24,8 @@ export const dataSchema = z.object({
   childNationalId: z.string().min(1),
   childInfo: z
     .object({
-      gender: z.nativeEnum(Gender).optional(),
+      preferredName: z.string().optional(),
+      pronouns: z.array(z.string()).optional(),
       differentPlaceOfResidence: z.enum([YES, NO]),
       placeOfResidence: z
         .object({
@@ -71,7 +68,7 @@ export const dataSchema = z.object({
         nationalId: z.string().refine((n) => kennitala.isValid(n), {
           params: errorMessages.nationalId,
         }),
-        relation: z.nativeEnum(RelationOptions),
+        relation: z.string(),
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
@@ -123,6 +120,7 @@ export const dataSchema = z.object({
     ),
   schools: z.object({
     newSchool: z.object({
+      municipality: z.string(),
       school: z.string(),
     }),
   }),
@@ -156,61 +154,11 @@ export const dataSchema = z.object({
         params: errorMessages.languagesRequired,
       },
     ),
-  allergiesAndIntolerances: z
-    .object({
-      hasFoodAllergies: z.array(z.string()),
-      hasFoodIntolerances: z.array(z.string()),
-      foodAllergies: z.array(z.nativeEnum(FoodAllergiesOptions)).optional(),
-      foodIntolerances: z
-        .array(z.nativeEnum(FoodIntolerancesOptions))
-        .optional(),
-      isUsingEpiPen: z.array(z.string()),
-    })
-    .refine(
-      ({ hasFoodAllergies, foodAllergies }) =>
-        hasFoodAllergies.includes(YES)
-          ? !!foodAllergies && foodAllergies.length > 0
-          : true,
-      {
-        path: ['foodAllergies'],
-        params: errorMessages.foodAllergyRequired,
-      },
-    )
-    .refine(
-      ({ hasFoodIntolerances, foodIntolerances }) =>
-        hasFoodIntolerances.includes(YES)
-          ? !!foodIntolerances && foodIntolerances.length > 0
-          : true,
-      {
-        path: ['foodIntolerances'],
-        params: errorMessages.foodIntoleranceRequired,
-      },
-    ),
   support: z.object({
     developmentalAssessment: z.enum([YES, NO]),
     specialSupport: z.enum([YES, NO]),
     requestMeeting: z.array(z.enum([YES, NO])).optional(),
   }),
-  photography: z
-    .object({
-      photographyConsent: z.enum([YES, NO]),
-      photoSchoolPublication: z.enum([YES, NO]).optional(),
-      photoMediaPublication: z.enum([YES, NO]).optional(),
-    })
-    .refine(
-      ({ photographyConsent, photoSchoolPublication }) =>
-        photographyConsent === YES ? !!photoSchoolPublication : true,
-      {
-        path: ['photoSchoolPublication'],
-      },
-    )
-    .refine(
-      ({ photographyConsent, photoMediaPublication }) =>
-        photographyConsent === YES ? !!photoMediaPublication : true,
-      {
-        path: ['photoMediaPublication'],
-      },
-    ),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

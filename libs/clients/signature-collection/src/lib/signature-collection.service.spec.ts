@@ -7,6 +7,7 @@ import {
   MedmaelalistiDTO,
   MedmaelasofnunExtendedDTO,
   EinstaklingurKosningInfoDTO,
+  FrambodDTO,
 } from '../../gen/fetch'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import { Test, TestingModule } from '@nestjs/testing'
@@ -245,40 +246,30 @@ describe('MyService', () => {
       },
       areas: [{ areaId: '123' }, { areaId: '321' }],
     }
-    const lists: MedmaelalistiDTO[] = [
-      {
+    const candidacy: FrambodDTO = {
+      id: 123,
+      medmaelasofnun: {
         id: 123,
-        medmaelasofnun: {
-          id: 123,
-          kosningNafn: 'Gervikosning',
-          kosningTegund: 'Forsetakosning',
-          sofnunStart: new Date('01.01.1900'),
-          sofnunEnd: new Date('01.01.2199'),
-        },
-        frambod: { id: 123, kennitala: '0101016789', nafn: 'Jónsframboð' },
-        svaedi: {
-          id: 123,
-          nafn: 'Svæði',
-          svaediTegundLysing: 'Lýsing',
-          nr: '1',
-        },
-        dagsetningLokar: new Date('01.01.2199'),
-        listaLokad: false,
-        frambodNafn: 'Jónsframboð',
-        listiNafn: 'Jónslisti',
+        kosningNafn: 'Gervikosning',
+        kosningTegund: 'Forsetakosning',
+        sofnunStart: new Date('01.01.1900'),
+        sofnunEnd: new Date('01.01.2199'),
       },
-    ]
+      kennitala: '0101302399',
+      nafn: 'Jón Jónsson',
+      listabokstafur: 'A',
+    }
 
     jest
       .spyOn(sofnunApi, 'medmaelasofnunGet')
       .mockReturnValue(Promise.resolve(sofnun))
     jest
-      .spyOn(listarApi, 'medmaelalistarAddListarPost')
-      .mockReturnValueOnce(Promise.resolve(lists))
+      .spyOn(frambodApi, 'frambodPost')
+      .mockReturnValueOnce(Promise.resolve(candidacy))
     jest
       .spyOn(service, 'getApiWithAuth')
       .mockReturnValueOnce(sofnunApi)
-      .mockReturnValueOnce(listarApi)
+      .mockReturnValueOnce(frambodApi)
     jest
       .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
       .mockReturnValue(Promise.resolve(sofnunUser))
@@ -306,13 +297,8 @@ describe('MyService', () => {
         api instanceof MedmaelasofnunApi ? sofnunApi : frambodApi,
       )
     jest
-      .spyOn(frambodApi, 'frambodIDRemoveFrambodUserPost')
-      .mockReturnValueOnce(
-        Promise.resolve({
-          kennitala: '0101302399',
-          nafn: 'Jón Jónsson',
-        }),
-      )
+      .spyOn(frambodApi, 'frambodIDDelete')
+      .mockImplementation(() => Promise.resolve())
     // Act
     const notOwner = await service.removeLists(
       { collectionId: '', listIds: [''] },
@@ -361,7 +347,7 @@ describe('MyService', () => {
           ? frambodApi
           : listarApi,
       )
-    jest.spyOn(listarApi, 'medmaelalistarIDAddMedmaeliPost').mockReturnValue(
+    jest.spyOn(listarApi, 'medmaelalistarIDMedmaeliPost').mockReturnValue(
       Promise.resolve({
         kennitala: '0101302399',
         medmaeliTegundNr: 1,
@@ -407,7 +393,7 @@ describe('MyService', () => {
           ],
         }),
       )
-    jest.spyOn(medmaeliApi, 'medmaeliIDRemoveMedmaeliUserPost').mockReturnValue(
+    jest.spyOn(medmaeliApi, 'medmaeliIDDelete').mockReturnValue(
       Promise.resolve({
         kennitala: '0101302399',
       }),

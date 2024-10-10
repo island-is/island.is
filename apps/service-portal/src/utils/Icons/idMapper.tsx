@@ -15,6 +15,7 @@ import People from '../../components/AnimatedIcon/People'
 import Airplane from '../../components/AnimatedIcon/Airplane'
 import Heart from '../../components/AnimatedIcon/Heart'
 import CardWithCheckmark from '../../components/AnimatedIcon/CardWithCheckmark'
+import Gavel from '../../components/AnimatedIcon/Gavel'
 
 export const iconIdMapper = (iconType: string) => {
   switch (iconType) {
@@ -65,7 +66,9 @@ export const iconIdMapper = (iconType: string) => {
       return 'ehtpZ79segF1'
     // Framfærslur
     case 'cardWithCheckmark':
-      return 'eNwbxRm5ElG1'
+      return 'eyzGY9baL4Z1'
+    case 'gavel':
+      return 'eDi3AOmSGXe1'
     default:
       return ''
   }
@@ -124,6 +127,9 @@ export const iconTypeToSVG = (iconType: string) => {
     // Framfærslur
     case 'cardWithCheckmark':
       return <CardWithCheckmark />
+    // Lög og reglur
+    case 'gavel':
+      return <Gavel />
     default:
       return undefined
   }

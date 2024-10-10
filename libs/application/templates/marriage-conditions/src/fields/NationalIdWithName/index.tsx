@@ -7,7 +7,7 @@ import { gql, useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
-import * as kennitala from 'kennitala'
+import * as nationalId from 'kennitala'
 import { m } from '../../lib/messages'
 
 const IdentityQuery = gql`
@@ -23,20 +23,18 @@ export const NationalIdWithName: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ field, application }) => {
   const { id } = field
+  const { answers } = application
   const { formatMessage } = useLocale()
   const {
     setValue,
-
     formState: { errors },
   } = useFormContext()
   const nameField = `${id}.name`
-  const nationaIdField = `${id}.nationalId`
+  const nationalIdField = `${id}.nationalId`
   const [nationalIdInput, setNationalIdInput] = useState('')
-  const [name, setName] = useState(
-    getValueViaPath(application.answers, nameField) ?? '',
-  )
+  const [name, setName] = useState(getValueViaPath(answers, nameField) ?? '')
   const nameFieldErrors = getErrorViaPath(errors, nameField)
-  const nationalIdFieldErrors = getErrorViaPath(errors, nationaIdField)
+  const nationalIdFieldErrors = getErrorViaPath(errors, nationalIdField)
 
   const [getIdentity, { data, loading: queryLoading, error: queryError }] =
     useLazyQuery<Query, { input: IdentityInput }>(IdentityQuery, {
@@ -49,7 +47,8 @@ export const NationalIdWithName: FC<
   useEffect(() => {
     if (
       nationalIdInput.length === 10 &&
-      kennitala.isValid(nationalIdInput) &&
+      nationalId.info(nationalIdInput).age >= 18 &&
+      nationalId.isValid(nationalIdInput) &&
       nationalIdInput !== application.applicant
     ) {
       getIdentity({
@@ -65,11 +64,11 @@ export const NationalIdWithName: FC<
   return (
     <Box>
       <GridRow>
-        <GridColumn span={['1/1', '1/2']} paddingTop={2} paddingBottom={2}>
+        <GridColumn span={['1/1', '1/2']} paddingTop={2}>
           <InputController
-            id={nationaIdField}
+            id={nationalIdField}
             label={formatMessage(m.nationalId)}
-            defaultValue={(application.answers[id] as any)?.nationalId ?? ''}
+            defaultValue={getValueViaPath(answers, 'nationalId')}
             format="######-####"
             required
             backgroundColor="blue"
@@ -85,11 +84,13 @@ export const NationalIdWithName: FC<
               id === 'spouse.person' &&
               nationalIdInput === application.applicant
                 ? formatMessage(m.nationalIdDuplicateError)
+                : nationalId.info(nationalIdInput).age < 18
+                ? formatMessage(m.nationalIdWitnessUnderageError)
                 : nationalIdFieldErrors
             }
           />
         </GridColumn>
-        <GridColumn span={['1/1', '1/2']} paddingTop={2} paddingBottom={2}>
+        <GridColumn span={['1/1', '1/2']} paddingTop={2}>
           <Input
             name={nameField}
             id={nameField}

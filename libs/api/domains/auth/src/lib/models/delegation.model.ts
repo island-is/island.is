@@ -51,6 +51,9 @@ export abstract class Delegation {
   @Field(() => Identity)
   to!: Identity
 
+  @Field(() => Identity, { nullable: true })
+  createdBy?: Identity
+
   @Field(() => AuthDelegationType)
   type!: AuthDelegationType
 
