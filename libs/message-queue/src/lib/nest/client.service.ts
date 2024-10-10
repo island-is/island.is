@@ -134,8 +134,10 @@ export class ClientService {
     attributes: Record<string, string>,
   ): Promise<void> {
     const current = await this.getQueueAttributes(
-      url, 
-      Object.keys(attributes).filter(a => a in QueueAttributeName) as QueueAttributeName[]
+      url,
+      Object.keys(attributes).filter(
+        (a) => a in QueueAttributeName,
+      ) as QueueAttributeName[],
     )
 
     const areNotEqual = (k: string) => attributes[k] !== current[k]
