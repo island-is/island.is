@@ -55,11 +55,6 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
 
   const now = useMemo(() => new Date().toISOString(), [])
-  const dayOfYesterday = useMemo(() => new Date().getDate() - 1, [])
-  const yesterday = useMemo(
-    () => new Date(new Date().setDate(dayOfYesterday)).toISOString(),
-    [dayOfYesterday],
-  )
 
   const healthInsuranceRes = useGetHealthInsuranceOverviewQuery()
   const healthCenterRes = useGetHealthCenterQuery()
@@ -67,7 +62,9 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const paymentOverviewRes = useGetPaymentOverviewQuery({
     variables: {
       input: {
-        dateFrom: yesterday,
+        // The items we are fethcing are static and are not using the dates for calculation,
+        // it is though not allowed to skip them or send and empty string so we send current date for both
+        dateFrom: now,
         dateTo: now,
         serviceTypeCode: '',
       },
