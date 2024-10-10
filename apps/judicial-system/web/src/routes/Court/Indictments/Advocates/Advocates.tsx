@@ -33,7 +33,7 @@ const Advocates = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
-      await sendNotification(workingCase.id, NotificationType.DEFENDER_ASSIGNED)
+      await sendNotification(workingCase.id, NotificationType.ADVOCATE_ASSIGNED)
       router.push(`${destination}/${workingCase.id}`)
     },
     [workingCase.id, sendNotification, router],
