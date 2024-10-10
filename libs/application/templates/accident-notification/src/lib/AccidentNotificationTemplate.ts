@@ -64,7 +64,7 @@ const assignStatePendingAction = (
 }
 
 const reviewStatePendingAction = (
-  application: Application,
+  _application: Application,
   role: string,
 ): PendingAction => {
   if (role === Roles.ASSIGNEE) {
@@ -130,7 +130,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-              api: [NationalRegistryUserApi],
+              api: [NationalRegistryUserApi, IdentityApi],
               delete: true,
             },
             {

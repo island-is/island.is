@@ -19,24 +19,14 @@ export const whoIsTheNotificationForMultiField = buildMultiField({
       id: 'whoIsTheNotificationFor.answer',
       title: '',
       width: 'half',
-      condition: (_answers, externalData) => {
-        if (externalData.identity) {
-          return false
-        }
-        return true
-      },
+      condition: (_answers, externalData) => !externalData.identity,
       options: whoIsTheNotificationForOptions,
     }),
     buildRadioField({
       id: 'whoIsTheNotificationFor.answer',
       title: '',
       width: 'half',
-      condition: (_answers, externalData) => {
-        if (externalData.identity) {
-          return true
-        }
-        return false
-      },
+      condition: (_answers, externalData) => !!externalData.identity,
       options: whoIsTheNotificationForProcureOptions,
     }),
   ],

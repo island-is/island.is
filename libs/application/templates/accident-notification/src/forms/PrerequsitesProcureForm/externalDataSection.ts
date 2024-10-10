@@ -5,7 +5,6 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-
 import { externalData } from '../../lib/messages'
 import { IdentityApi } from '../../dataProviders'
 
