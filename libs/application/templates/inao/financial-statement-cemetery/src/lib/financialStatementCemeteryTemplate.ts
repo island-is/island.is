@@ -28,7 +28,7 @@ import { ApiActions, Events, Roles, States } from '../types/types'
 import { Features } from '@island.is/feature-flags'
 
 const configuration =
-  ApplicationConfigurations[ApplicationTypes.FINANCIAL_STATEMENTS_INAO]
+  ApplicationConfigurations[ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]
 
 const FinancialStatementCemeteryTemplate: ApplicationTemplate<
   ApplicationContext,
