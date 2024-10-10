@@ -1,13 +1,10 @@
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { DirectorateOfImmigrationService } from './directorate-of-immigration.service'
 import { DirectorateOfImmigrationClientModule } from '@island.is/clients/directorate-of-immigration'
-export class DirectorateOfImmigrationModule {
-  static register(): DynamicModule {
-    return {
-      module: DirectorateOfImmigrationModule,
-      imports: [DirectorateOfImmigrationClientModule],
-      providers: [DirectorateOfImmigrationService],
-      exports: [DirectorateOfImmigrationService],
-    }
-  }
-}
+
+@Module({
+  imports: [DirectorateOfImmigrationClientModule],
+  providers: [DirectorateOfImmigrationService],
+  exports: [DirectorateOfImmigrationService],
+})
+export class DirectorateOfImmigrationModule {}

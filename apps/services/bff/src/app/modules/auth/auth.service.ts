@@ -3,9 +3,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { CookieOptions, Request, Response } from 'express'
+import jwksClient from 'jwks-rsa'
 import { jwtDecode } from 'jwt-decode'
 
 import { IdTokenClaims } from '@island.is/shared/types'
+import { decode, verify, Algorithm } from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
@@ -432,7 +434,53 @@ export class AuthService {
     )
   }
 
-  async callbackLogout(req: Request, body: CallbackLogoutDto) {
+  async validateLogoutToken(logoutToken: string): Promise<LogoutTokenPayload> {
+    try {
+      const secretClient = jwksClient({
+        cache: true,
+        rateLimit: true,
+        jwksUri: `${this.config.ids.issuer}/.well-known/openid-configuration/jwks`,
+      })
+
+      // Decode the token without verifying the signature
+      const decodedToken = decode(logoutToken, { complete: true })
+      const kid = decodedToken?.header?.kid
+
+      if (!kid) {
+        throw new Error('Invalid token header. No kid found in header.')
+      }
+
+      const signingKeys = await secretClient.getSigningKeys()
+
+      // Find the the correct signing key matching the headers kid
+      const signingKey = signingKeys.find((sk) => sk.kid === kid)
+
+      if (!signingKey) {
+        throw new Error(`No matching key found for kid "${kid}"`)
+      }
+
+      const publicKey = signingKey.getPublicKey()
+
+      // Verify the signature
+      const payload = verify(logoutToken, publicKey, {
+        algorithms: [signingKey.alg as Algorithm],
+        issuer: this.config.ids.issuer,
+      }) as LogoutTokenPayload
+
+      if (!payload.sid) {
+        throw new Error('No sid in the token')
+      }
+
+      return payload
+    } catch (error) {
+      this.logger.error('Error validating logout token: ', error)
+
+      throw new UnauthorizedException()
+    }
+  }
+
+  async callbackLogout(body: CallbackLogoutDto) {
+    // TODO: Remove this log statement when done testing on feature deploy
     this.logger.warn('callbackBackchannelLogout', JSON.stringify(body, null, 2))
 
     // TODO validate the token

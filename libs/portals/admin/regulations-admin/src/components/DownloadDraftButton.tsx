@@ -49,42 +49,12 @@ export const DownloadDraftButton = ({ draftId, reviewButton }: Props) => {
     const url = data?.getDraftRegulationPdfDownload?.url
 
     if (url && !isFetchingFile) {
-      setIsFetchingFile(true)
-
-      fetch(
+      window.open(
         bffUrlGenerator('/api', {
           url,
         }),
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        },
+        '_blank',
       )
-        .then((response) => {
-          if (response.ok) {
-            // Convert response to blob for download
-            response.blob().then((blob) => {
-              const downloadUrl = URL.createObjectURL(blob)
-              // Open the download URL in a new tab
-              window.open(downloadUrl, '_newtab')
-              // Release the object URL to free up memory
-              URL.revokeObjectURL(downloadUrl)
-            })
-          } else {
-            toast.error(t(editorMsgs.signedDocumentDownloadFreshError))
-          }
-        })
-        .catch((error) => {
-          console.error('Error occurred:', error)
-
-          toast.error(t(editorMsgs.signedDocumentDownloadFreshError))
-        })
-        .finally(() => {
-          setIsFetchingFile(false)
-        })
     } else if (data && !url) {
       toast.error(t(editorMsgs.signedDocumentDownloadFreshError))
     }

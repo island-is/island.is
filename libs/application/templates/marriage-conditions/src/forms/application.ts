@@ -73,6 +73,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             description: m.dataCollectionDescription,
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: dataCollection,
+            enableMockPayment: true,
           }),
         ],
       }),
@@ -87,8 +88,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               buildMultiField({
                 id: 'sides',
                 title: m.informationTitle,
-                description:
-                  'Beiðni um könnun hjónavígsluskilyrða mun ekki hljóta efnismeðeferð fyrr en hjónaefni hafa bæði veitt rafræna undirskrift. Vinsamlegast gangið því úr skugga um að símanúmer og netföng séu rétt rituð.',
+                description: m.informationDescription,
                 children: [
                   buildDescriptionField({
                     id: 'header1',
