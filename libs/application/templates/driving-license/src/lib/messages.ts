@@ -878,6 +878,121 @@ export const m = defineMessages({
     description:
       'Health declaration answers indicate that health certificate is required and BE application does not support health certificate requirement',
   },
+  applicationForAdvancedLicenseTitle: {
+    id: 'dl.application:applicationForAdvancedLicenseTitle',
+    defaultMessage: 'Umsókn um aukin ökuréttindi',
+    description: 'Option title for selecting advanced driving license',
+  },
+  applicationForAdvancedLicenseDescription: {
+    id: 'dl.application:applicationForAdvancedLicenseDescription',
+    defaultMessage: 'Umsókn um aukin ökuréttindi.',
+    description: 'Option description for selecting advanced driving license',
+  },
+  applicationForAdvancedAgeRequired: {
+    id: 'dl.application:applicationForAdvancedAgeFor',
+    defaultMessage: 'Réttindaaldur fyrir %1 er %2 ára',
+    description: 'Required age for %1 is %2 years',
+  },
+  applicationForAdvancedLicenseTitleC1: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleC1',
+    defaultMessage: 'C1 titill',
+    description: 'C1 title',
+  },
+  applicationForAdvancedLicenseLabelC1: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelC1',
+    defaultMessage: 'C1 lýsing',
+    description: 'C1 description',
+  },
+  applicationForAdvancedLicenseLabelC1A: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelC1A',
+    defaultMessage: 'C1A lýsing',
+    description: 'C1A description',
+  },
+  applicationForAdvancedLicenseTitleD1: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleD1',
+    defaultMessage: 'D1 titill',
+    description: 'D1 title',
+  },
+  applicationForAdvancedLicenseLabelD1: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelD1',
+    defaultMessage: 'D1 lýsing',
+    description: 'D1 description',
+  },
+  applicationForAdvancedLicenseLabelD1A: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelD1A',
+    defaultMessage: 'D1A lýsing',
+    description: 'D1A description',
+  },
+  applicationForAdvancedLicenseTitleC: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleC',
+    defaultMessage: 'C titill',
+    description: 'C title',
+  },
+  applicationForAdvancedLicenseLabelC: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelC',
+    defaultMessage: 'C lýsing',
+    description: 'C description',
+  },
+  applicationForAdvancedLicenseLabelCA: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelCA',
+    defaultMessage: 'CA lýsing',
+    description: 'CA description',
+  },
+  applicationForAdvancedLicenseTitleD: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleD',
+    defaultMessage: 'D titill',
+    description: 'D title',
+  },
+  applicationForAdvancedLicenseLabelD: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelD',
+    defaultMessage: 'D lýsing',
+    description: 'D description',
+  },
+  applicationForAdvancedLicenseLabelDA: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelDA',
+    defaultMessage: 'DA lýsing',
+    description: 'DA description',
+  },
+  applicationForAdvancedLicenseTitleC1E: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleC1E',
+    defaultMessage: 'C1E titill',
+    description: 'C1E title',
+  },
+  applicationForAdvancedLicenseLabelC1E: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelC1E',
+    defaultMessage: 'C1E lýsing',
+    description: 'C1E description',
+  },
+  applicationForAdvancedLicenseTitleD1E: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleD1E',
+    defaultMessage: 'D1E titill',
+    description: 'D1E title',
+  },
+  applicationForAdvancedLicenseLabelD1E: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelD1E',
+    defaultMessage: 'D1E lýsing',
+    description: 'D1E description',
+  },
+  applicationForAdvancedLicenseTitleCE: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleCE',
+    defaultMessage: 'CE titill',
+    description: 'CE title',
+  },
+  applicationForAdvancedLicenseLabelCE: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelCE',
+    defaultMessage: 'CE lýsing',
+    description: 'CE description',
+  },
+  applicationForAdvancedLicenseTitleDE: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleDE',
+    defaultMessage: 'DE titill',
+    description: 'DE title',
+  },
+  applicationForAdvancedLicenseLabelDE: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelDE',
+    defaultMessage: 'DE lýsing',
+    description: 'DE description',
+  },
 })
 
 export const requirementsMessages = defineMessages({
