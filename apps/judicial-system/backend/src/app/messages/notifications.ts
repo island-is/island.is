@@ -631,7 +631,7 @@ export const notifications = {
     body: {
       id: 'judicial.system.backend:notifications.defendant_selected_defender.body',
       defaultMessage:
-        'Verjandi hefur verið valinn í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
+        'Verjandi hefur verið valinn í máli {courtCaseNumber}.<br /><br />{hasAccessToRVG, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Nánari upplýsingar um málið má finna hjá {courtName}}}.',
       description:
         'Texti í pósti til dómara og dómritara þegar ákærði hefur valið verjanda á island.is eða í Birtingi.',
     },
