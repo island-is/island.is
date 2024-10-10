@@ -1,31 +1,18 @@
 import {
-  buildCustomField,
-  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { DrivingLicense } from '../../lib/types'
 import {
-  ADVANCED_LICENSES,
-  AdvancedLicense,
   advancedLicenseToSubLicenseMap,
-  AdvancedSubLicenses,
-  B_ADVANCED,
-  B_FULL,
-  B_FULL_RENEWAL_65,
-  B_TEMP,
-  BE,
-  DrivingLicenseFakeData,
   LicenseTypes,
   NO,
-  YES,
 } from '../../lib/constants'
 
 export const sectionAdvancedLicenseSubSelection = buildSubSection({
-  id: 'advancedLicenseSubSelection',
+  id: 'sectionAdvancedLicenseSubSelection',
   title: m.applicationForAdvancedLicenseTitle,
   condition: (answers) => {
     const applicationFor = getValueViaPath<LicenseTypes>(
@@ -33,17 +20,14 @@ export const sectionAdvancedLicenseSubSelection = buildSubSection({
       'applicationFor',
     )
 
-    const advancedLicenseSelection = getValueViaPath<LicenseTypes>(
+    const advancedLicense = getValueViaPath<LicenseTypes>(
       answers,
-      'advancedLicenseSelection',
+      'advancedLicense',
     )
 
-    if (
-      advancedLicenseSelection &&
-      applicationFor === LicenseTypes.B_ADVANCED
-    ) {
+    if (advancedLicense && applicationFor === LicenseTypes.B_ADVANCED) {
       return Object.keys(advancedLicenseToSubLicenseMap).includes(
-        advancedLicenseSelection,
+        advancedLicense,
       )
     }
 
@@ -53,29 +37,27 @@ export const sectionAdvancedLicenseSubSelection = buildSubSection({
     buildMultiField({
       id: 'info',
       title: (application) => {
-        const { advancedLicenseSelection } = application.answers as {
-          advancedLicenseSelection: keyof typeof advancedLicenseToSubLicenseMap
+        const { advancedLicense } = application.answers as {
+          advancedLicense: keyof typeof advancedLicenseToSubLicenseMap
         }
 
-        if (advancedLicenseSelection) {
-          return m[
-            `applicationForAdvancedLicenseApplyFor${advancedLicenseSelection}`
-          ]
+        if (advancedLicense) {
+          return m[`applicationForAdvancedLicenseApplyFor${advancedLicense}`]
         }
 
         return ''
       },
       children: [
         buildRadioField({
-          id: 'advancedSubLicenseSelection',
+          id: 'advancedSubLicense',
           title: (application) => {
-            const { advancedLicenseSelection } = application.answers as {
-              advancedLicenseSelection: keyof typeof advancedLicenseToSubLicenseMap
+            const { advancedLicense } = application.answers as {
+              advancedLicense: keyof typeof advancedLicenseToSubLicenseMap
             }
 
-            if (advancedLicenseSelection) {
+            if (advancedLicense) {
               const key =
-                `applicationForAdvancedLicenseQuestion${advancedLicenseSelection}` as keyof typeof m
+                `applicationForAdvancedLicenseQuestion${advancedLicense}` as keyof typeof m
 
               if (Object.prototype.hasOwnProperty.call(m, key) && m?.[key]) {
                 return m[key]
@@ -85,14 +67,26 @@ export const sectionAdvancedLicenseSubSelection = buildSubSection({
             return ''
           },
           width: 'half',
+          doesNotRequireAnswer: false,
+          required: true,
           options: (application) => {
+            const { advancedLicense } = application.answers as {
+              advancedLicense: keyof typeof advancedLicenseToSubLicenseMap
+            }
+
+            let value: string | undefined = ''
+
+            if (advancedLicense) {
+              value = advancedLicenseToSubLicenseMap[advancedLicense]
+            }
+
             return [
               {
-                value: 'y',
+                value: value ?? '',
                 label: 'Já',
               },
               {
-                value: '',
+                value: NO,
                 label: 'Nei',
               },
             ]
