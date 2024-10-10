@@ -33,15 +33,10 @@ export const applicantInformationMultiField = (
         title: applicantInformation.labels.name,
         backgroundColor: 'white',
         disabled: true,
-        defaultValue: (application: ApplicantInformationInterface) => {
-          console.log(application)
-
-          return (
-            application.externalData?.nationalRegistry?.data?.fullName ??
-            application.externalData?.identity?.data?.name ??
-            ''
-          )
-        },
+        defaultValue: (application: ApplicantInformationInterface) =>
+          application.externalData?.nationalRegistry?.data?.fullName ??
+          application.externalData?.identity?.data?.name ??
+          '',
       }),
       buildTextField({
         id: 'applicant.nationalId',
