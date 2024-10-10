@@ -4,7 +4,7 @@ import { RentalHousingPropertyInfo } from './rentalHousingInfo/rentalHousingProp
 import { RentalHousingLandlordInfo } from './rentalHousingInfo/rentalHousingLandlordInfo'
 import { RentalHousingTenantInfo } from './rentalHousingInfo/rentalHousingTenantInfo'
 import { RentalHousingSpecialProvisions } from './rentalHousingInfo/rentalHousingSpecialProvisions'
-import { RentalHousingConditionInspection } from './rentalHousingInfo/rentalHousingConditionInspection'
+import { RentalHousingCondition } from './rentalHousingInfo/rentalHousingCondition'
 
 export const RentalHousingInfo = buildSection({
   id: 'rentalHousingInfo',
@@ -14,6 +14,6 @@ export const RentalHousingInfo = buildSection({
     RentalHousingLandlordInfo,
     RentalHousingTenantInfo,
     RentalHousingSpecialProvisions,
-    RentalHousingConditionInspection,
+    RentalHousingCondition,
   ],
 })
