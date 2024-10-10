@@ -16,11 +16,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { EstateTypes, YES } from '../../lib/constants'
+import { EstateTypes } from '../../lib/constants'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import { GenericFormField, Application } from '@island.is/application/types'
 import { ErrorValue, EstateMember } from '../../types'
-import { hasYes } from '@island.is/application/core'
+import { hasYes, YES } from '@island.is/application/core'
 import { LookupPerson } from '../LookupPerson'
 import { useEffect } from 'react'
 
@@ -122,7 +122,7 @@ export const AdditionalEstateMember = ({
           </Button>
         </Box>
       </Box>
-      {foreignCitizenship?.length ? (
+      {foreignCitizenship?.[0] === YES ? (
         <GridRow>
           <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
             <InputController
@@ -152,6 +152,7 @@ export const AdditionalEstateMember = ({
                 setValue(dateOfBirthField, d)
               }}
               error={error?.dateOfBirth ?? undefined}
+              required
             />
           </GridColumn>
         </GridRow>

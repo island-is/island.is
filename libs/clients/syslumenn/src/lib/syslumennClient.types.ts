@@ -223,12 +223,13 @@ export type EstateMember = {
   relation: string
   relationWithApplicant?: string
   dateOfBirth?: string
-  noContactInfo?: ('Yes' | 'No')[]
+  noContactInfo?: ('yes' | 'no')[]
   enabled?: boolean
   phone?: string
   email?: string
   advocate?: Advocate
   advocate2?: Advocate
+  foreignCitizenship?: ('yes' | 'no')[]
 }
 
 export type InheritanceEstateMember = EstateMember & {
@@ -278,7 +279,7 @@ interface EstateCommon {
   dateOfDeath: Date
   nameOfDeceased: string
   nationalIdOfDeceased: string
-  knowledgeOfOtherWills: 'Yes' | 'No'
+  knowledgeOfOtherWills: 'yes' | 'no'
 }
 
 export interface EstateInfo extends EstateCommon {

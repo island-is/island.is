@@ -14,9 +14,10 @@ import { m } from '../../lib/messages'
 import * as kennitala from 'kennitala'
 import { Answers, EstateMember } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import {
   CheckboxController,
+  DatePickerController,
   InputController,
   PhoneInputController,
   SelectController,
@@ -24,8 +25,6 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import {
   EstateTypes,
-  NO,
-  YES,
   heirAgeValidation,
   relationWithApplicant,
 } from '../../lib/constants'
@@ -46,7 +45,7 @@ export const EstateMembersRepeater: FC<
 
   const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
-      const hasForeignCitizenship = member?.foreignCitizenship?.[0] === 'yes'
+      const hasForeignCitizenship = member?.foreignCitizenship?.[0] === YES
       const birthDate = member?.dateOfBirth
       const memberAge =
         hasForeignCitizenship && birthDate
@@ -204,29 +203,78 @@ export const EstateMembersRepeater: FC<
               </Box>
             </Box>
             <GridRow>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${id}[${index}].nationalId`}
-                  name={`${id}[${index}].nationalId`}
-                  label={formatMessage(m.inheritanceKtLabel)}
-                  defaultValue={formatNationalId(member.nationalId || '')}
-                  backgroundColor="white"
-                  disabled={!member.enabled}
-                  format={'######-####'}
-                  error={error && error[index] && error[index].nationalId}
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${id}[${index}].name`}
-                  name={`${id}[${index}].name`}
-                  label={formatMessage(m.inheritanceNameLabel)}
-                  readOnly
-                  defaultValue={member.name || ''}
-                  backgroundColor="white"
-                  disabled={!member.enabled}
-                />
-              </GridColumn>
+              {member.foreignCitizenship?.[0] === YES ? (
+                <>
+                  <GridColumn
+                    span={['1/1', '1/2']}
+                    paddingBottom={2}
+                    paddingTop={2}
+                  >
+                    <InputController
+                      key={`${id}[${index}].name`}
+                      id={`${id}[${index}].name`}
+                      name={`${id}[${index}].name`}
+                      backgroundColor="blue"
+                      defaultValue={member.name}
+                      error={error?.name ?? undefined}
+                      label={formatMessage(m.inheritanceNameLabel)}
+                      required
+                      disabled={!member.enabled}
+                      readOnly
+                    />
+                  </GridColumn>
+                  <GridColumn
+                    span={['1/1', '1/2']}
+                    paddingBottom={2}
+                    paddingTop={2}
+                  >
+                    <DatePickerController
+                      label={formatMessage(m.inheritanceDayOfBirthLabel)}
+                      placeholder={formatMessage(m.inheritanceDayOfBirthLabel)}
+                      key={`${id}[${index}].dateOfBirth`}
+                      id={`${id}[${index}].dateOfBirth`}
+                      name={`${id}[${index}].dateOfBirth`}
+                      locale="is"
+                      maxDate={new Date()}
+                      minYear={1900}
+                      maxYear={new Date().getFullYear()}
+                      backgroundColor="blue"
+                      onChange={(d) => {
+                        setValue(`${id}[${index}].dateOfBirth`, d)
+                      }}
+                      error={error && error[index] && error[index].dateOfBirth}
+                      required
+                      disabled={!member.enabled}
+                    />
+                  </GridColumn>
+                </>
+              ) : (
+                <>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].nationalId`}
+                      name={`${id}[${index}].nationalId`}
+                      label={formatMessage(m.inheritanceKtLabel)}
+                      defaultValue={formatNationalId(member.nationalId || '')}
+                      backgroundColor="white"
+                      disabled={!member.enabled}
+                      format={'######-####'}
+                      error={error && error[index] && error[index].nationalId}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].name`}
+                      name={`${id}[${index}].name`}
+                      label={formatMessage(m.inheritanceNameLabel)}
+                      readOnly
+                      defaultValue={'TROLOLOLO'}
+                      backgroundColor="white"
+                      disabled={!member.enabled}
+                    />
+                  </GridColumn>
+                </>
+              )}
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
                   id={`${id}[${index}].relation`}

@@ -16,7 +16,7 @@ import { m } from '../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { Answers, EstateMember, heirAgeValidation } from '../../types'
 import { AdditionalHeir } from './AdditionalHeir'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import {
   InputController,
   PhoneInputController,
@@ -62,7 +62,7 @@ export const HeirsRepeater: FC<
 
   const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
-      const hasForeignCitizenship = member?.foreignCitizenship?.[0] === 'yes'
+      const hasForeignCitizenship = member?.foreignCitizenship?.[0] === YES
       const birthDate = member?.dateOfBirth
       const memberAge =
         hasForeignCitizenship && birthDate

@@ -402,6 +402,11 @@ export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {
     advocate: estateRaw.malsvari ? mapAdvocate(estateRaw.malsvari) : undefined,
     email: estateRaw.netfang ?? '',
     phone: estateRaw.simi ?? '',
+    // We can assume that heir is a foreign citizen if national id is missing or ends with '0000'
+    foreignCitizenship:
+      !estateRaw.kennitala || estateRaw.kennitala.endsWith('0000')
+        ? ['yes']
+        : ['no'],
   }
 }
 
@@ -436,7 +441,7 @@ export const mapEstateRegistrant = (
   return {
     applicantEmail: syslaData.tolvuposturSkreningaradila ?? '',
     applicantPhone: syslaData.simiSkraningaradila ?? '',
-    knowledgeOfOtherWills: syslaData.vitneskjaUmAdraErfdaskra ? 'Yes' : 'No',
+    knowledgeOfOtherWills: syslaData.vitneskjaUmAdraErfdaskra ? 'yes' : 'no',
     districtCommissionerHasWill: syslaData.erfdaskraIVorsluSyslumanns ?? false,
     assets: syslaData.eignir
       ? syslaData.eignir
@@ -534,7 +539,7 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
       ? new Date(syslaData.danardagur)
       : new Date(),
     districtCommissionerHasWill: Boolean(syslaData?.erfdaskra),
-    knowledgeOfOtherWills: syslaData.erfdakraVitneskja ? 'Yes' : 'No',
+    knowledgeOfOtherWills: syslaData.erfdakraVitneskja ? 'yes' : 'no',
     marriageSettlement: syslaData.kaupmali,
     nameOfDeceased: syslaData?.nafn ?? '',
     nationalIdOfDeceased: syslaData?.kennitala ?? '',

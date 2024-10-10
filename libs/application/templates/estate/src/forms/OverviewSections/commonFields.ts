@@ -4,6 +4,7 @@ import {
   buildDividerField,
   buildKeyValueField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { EstateInfo } from '@island.is/clients/syslumenn'
@@ -11,7 +12,7 @@ import { m } from '../../lib/messages'
 import { deceasedInfoFields } from '../Sections/deceasedInfoFields'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { JA, NEI, YES } from '../../lib/constants'
+import { JA, NEI } from '../../lib/constants'
 import format from 'date-fns/format'
 
 export const commonOverviewFields = [

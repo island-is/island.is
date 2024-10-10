@@ -5,9 +5,11 @@ import {
   buildRadioField,
   buildTextField,
   getValueViaPath,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { JA, YES, NEI, NO, EstateTypes } from '../../lib/constants'
+import { JA, NEI, EstateTypes } from '../../lib/constants'
 import { getWillsAndAgreementsDescriptionText } from '../../lib/utils'
 
 export const testamentInfo = buildSection({
