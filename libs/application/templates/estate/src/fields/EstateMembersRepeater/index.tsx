@@ -268,7 +268,7 @@ export const EstateMembersRepeater: FC<
                       name={`${id}[${index}].name`}
                       label={formatMessage(m.inheritanceNameLabel)}
                       readOnly
-                      defaultValue={'TROLOLOLO'}
+                      defaultValue={member.name}
                       backgroundColor="white"
                       disabled={!member.enabled}
                     />
