@@ -15,7 +15,7 @@ export const externalData = {
     bulletOne: {
       id: 'an.application:section.agreementDescription.BulletOne',
       defaultMessage:
-        'Þegar tilkynning um slys er send Sjúkratryggingum Íslands mun stofnunin miðla upplýsingum um afstöðu til bótaskyldu með þeim atvinnurekanda eða íþróttafélagi sem á í hlut. Ástæðan þess er að umræddir aðilar kunna að eiga rétt á endurgreiðslu útlagðs kostnaðar og/eða dagpeningum ef greidd hafa verið laun í veikindaforföllum vegna slyssins. Þessir aðilar fá aldrei afhentar heilsufars- eða sjúkraskrárupplýsingar.',
+        'Þegar tilkynning um slys er send Sjúkratryggingum Íslands mun stofnunin miðla upplýsingum um afstöðu til bótaskyldu með þeim atvinnurekanda eða íþróttafélagi sem á í hlut. Ástæða þess er að umræddir aðilar kunna að eiga rétt á endurgreiðslu útlagðs kostnaðar og/eða dagpeningum ef greidd hafa verið laun í veikindaforföllum vegna slyssins. Þessir aðilar fá aldrei afhentar heilsufars- eða sjúkraskrárupplýsingar.',
       description: 'List item 1 on data gathering information',
     },
     bulletTwo: {
