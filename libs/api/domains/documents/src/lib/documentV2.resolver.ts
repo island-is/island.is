@@ -16,7 +16,11 @@ import {
   Document as DocumentV2,
   PaginatedDocuments,
 } from './models/v2/document.model'
-
+import {
+  FeatureFlagGuard,
+  FeatureFlagService,
+  Features,
+} from '@island.is/nest/feature-flags'
 import { PostRequestPaperInput } from './dto/postRequestPaperInput'
 import { DocumentInput } from './models/v2/document.input'
 import { DocumentServiceV2 } from './documentV2.service'
@@ -35,13 +39,14 @@ import { DocumentConfirmActions } from './models/v2/confirmActions.model'
 
 const LOG_CATEGORY = 'documents-resolver'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver(() => PaginatedDocuments)
 @Audit({ namespace: '@island.is/api/document-v2' })
 export class DocumentResolverV2 {
   constructor(
     private documentServiceV2: DocumentServiceV2,
     private readonly auditService: AuditService,
+    private readonly featureFlagService: FeatureFlagService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -53,6 +58,7 @@ export class DocumentResolverV2 {
     locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<DocumentV2 | null> {
+    const ffEnabled = await this.getFeatureFlag()
     try {
       return await this.auditService.auditPromise(
         {
@@ -62,12 +68,14 @@ export class DocumentResolverV2 {
           resources: input.id,
           meta: { includeDocument: input.includeDocument },
         },
-        this.documentServiceV2.findDocumentById(
-          user.nationalId,
-          input.id,
-          locale,
-          input.includeDocument,
-        ),
+        ffEnabled
+          ? this.documentServiceV2.findDocumentByIdV3(
+              user.nationalId,
+              input.id,
+              locale,
+              input.includeDocument,
+            )
+          : this.documentServiceV2.findDocumentById(user.nationalId, input.id),
       )
     } catch (e) {
       this.logger.info('failed to get single document', {
@@ -82,10 +90,13 @@ export class DocumentResolverV2 {
   @Scopes(DocumentsScope.main)
   @Query(() => PaginatedDocuments, { nullable: true })
   @Audit()
-  documentsV2(
+  async documentsV2(
     @Args('input') input: DocumentsInput,
     @CurrentUser() user: User,
   ): Promise<PaginatedDocuments> {
+    const ffEnabled = await this.getFeatureFlag()
+    if (ffEnabled)
+      return this.documentServiceV2.listDocumentsV3(user.nationalId, input)
     return this.documentServiceV2.listDocuments(user.nationalId, input)
   }
 
@@ -205,5 +216,12 @@ export class DocumentResolverV2 {
       })
       throw e
     }
+  }
+
+  private async getFeatureFlag(): Promise<boolean> {
+    return await this.featureFlagService.getValue(
+      Features.isServicePortalDocumentsV3PageEnabled,
+      false,
+    )
   }
 }

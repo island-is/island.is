@@ -1,4 +1,3 @@
-import { Base } from 'infra/src/dsl/xroad'
 import { Base64 } from 'js-base64'
 import { Includeable, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
@@ -8,6 +7,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotImplementedException,
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
@@ -179,9 +179,16 @@ export class SubpoenaService {
 
       return { delivered: true }
     } catch (error) {
-      this.logger.error('Error delivering subpoena to police', error)
-
-      return { delivered: false }
+      if (error instanceof NotImplementedException) {
+        this.logger.info(
+          'Failed to deliver subpoena to police due to lack of implementation',
+          error,
+        )
+        return { delivered: true }
+      } else {
+        this.logger.error('Error delivering subpoena to police', error)
+        return { delivered: false }
+      }
     }
   }
 }

@@ -17,7 +17,7 @@ import {
   DocumentsPaths,
   DocumentLine,
   DocumentLineV3,
-  useDocumentList,
+  useDocumentListV3,
 } from '@island.is/service-portal/documents'
 import {
   LinkResolver,
@@ -41,9 +41,7 @@ import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
   const { userInfo } = useAuth()
-  const { filteredDocuments, data, loading } = useDocumentList({
-    defaultPageSize: 8,
-  })
+
   const { data: organizations } = useOrganizations()
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
@@ -55,6 +53,10 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
 
   // Versioning feature flag. Remove after feature is live.
   const [v3Enabled, setV3Enabled] = useState<boolean>()
+
+  const { filteredDocuments, data, loading } = useDocumentListV3({
+    defaultPageSize: 8,
+  })
 
   const featureFlagClient = useFeatureFlagClient()
   useEffect(() => {
