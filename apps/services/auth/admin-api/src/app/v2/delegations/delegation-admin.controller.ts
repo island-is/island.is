@@ -99,7 +99,6 @@ export class DelegationAdminController {
   @BypassAuth()
   @UseGuards(new ZendeskAuthGuard(env.zendeskGeneralMandateWebhookSecret))
   @Post('/zendesk')
-  @Audit<{ id: string }>({ resources: (body) => body.id })
   @Documentation({
     response: { status: 200 },
   })
