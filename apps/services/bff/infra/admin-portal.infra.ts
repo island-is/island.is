@@ -1,7 +1,7 @@
 import { ServiceBuilder, service } from '../../../../infra/src/dsl/dsl'
 import { createPortalEnv } from './utils/createPortalEnv'
-const bffName = "services-bff"
-const clientName = "portals-admin"
+const bffName = 'services-bff'
+const clientName = 'portals-admin'
 const serviceName = `${bffName}-${clientName}`
 
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
@@ -14,10 +14,8 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     .secrets({
       // The secret should be a valid 32-byte base64 key.
       // Generate key example: `openssl rand -base64 32`
-      BFF_TOKEN_SECRET_BASE64:
-        `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
-      IDENTITY_SERVER_CLIENT_SECRET:
-        `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
+      BFF_TOKEN_SECRET_BASE64: `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
+      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
     })
     .readiness('/health/check')
     .liveness('/liveness')
