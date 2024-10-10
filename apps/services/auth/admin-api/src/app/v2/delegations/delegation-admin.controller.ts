@@ -106,7 +106,24 @@ export class DelegationAdminController {
   async createByZendeskId(
     @Body() { id }: ZendeskWebhookInputDto,
   ): Promise<void> {
-    await this.delegationAdminService.createDelegationByZendeskId(id)
+    await this.auditService.auditPromise(
+      {
+        system: true,
+        namespace,
+        action: 'createByZendeskId',
+        resources: (res) => {
+          return `id: ${res.id}, toNationalId: ${
+            res.toNationalId ?? 'Unknown'
+          }, fromNationalId: ${
+            res.fromNationalId ?? 'Unknown'
+          }, createdByNationalId: ${res.createdByNationalId ?? 'Unknown'}`
+        },
+        meta: {
+          id,
+        },
+      },
+      this.delegationAdminService.createDelegationByZendeskId(id),
+    )
   }
 
   @Delete(':delegationId')

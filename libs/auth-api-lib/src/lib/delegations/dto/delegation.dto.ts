@@ -46,6 +46,10 @@ export class DelegationDTO {
   toNationalId!: string
 
   @IsString()
+  @ApiPropertyOptional()
+  createdByNationalId?: string
+
+  @IsString()
   @ApiPropertyOptional({ nullable: true, type: String })
   toName?: string | null
 
