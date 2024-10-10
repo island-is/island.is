@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { useState } from 'react'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -6,19 +6,20 @@ import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../../shared'
+
 import { ReviewFieldProps, Status } from '../../types'
-import ChildrenInfoMessage from '../ChildrenInfoMessage/ChildrenInfoMessage'
-import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
+import { ChildrenInfoMessage } from '../ChildrenInfoMessage/ChildrenInfoMessage'
+import { TextWithTooltip } from '../TextWithTooltip/TextWithTooltip'
 
 import { m } from '../../forms/messages'
 import { FileUploadController } from '@island.is/application/ui-components'
+import { FILE_SIZE_LIMIT, NO, StatusTypes, YES } from '../../shared/constants'
 
-const StatusAndChildren: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
+export const StatusAndChildren = ({
   application,
   isEditable,
   field,
-}) => {
+}: ReviewFieldProps) => {
   const { formatMessage } = useLocale()
 
   const [status, setStatus] = useState(
@@ -178,5 +179,3 @@ const StatusAndChildren: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
     </Box>
   )
 }
-
-export default StatusAndChildren

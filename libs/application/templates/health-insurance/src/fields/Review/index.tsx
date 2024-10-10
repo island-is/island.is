@@ -1,17 +1,13 @@
-import React, { FC } from 'react'
 import { formatText } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
-import FormerInsurance from './FormerInsurance'
-import StatusAndChildren from './StatusAndChildren'
-import ContactInfo from './ContactInfo'
+import { FormerInsurance } from './FormerInsurance'
+import { StatusAndChildren } from './StatusAndChildren'
+import { ContactInfo } from './ContactInfo'
 
-const Review: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  field,
-  application,
-}) => {
+export const Review = ({ field, application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
 
   const isEditable = field.id !== 'submittedData'
@@ -53,5 +49,3 @@ const Review: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     </Box>
   )
 }
-
-export default Review

@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
@@ -14,8 +14,7 @@ import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
-import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
-import { YES, NO, FILE_SIZE_LIMIT } from '../../shared'
+import { TextWithTooltip } from '../TextWithTooltip/TextWithTooltip'
 import { m } from '../../forms/messages'
 import {
   FormerInsurance as FormerInsuranceType,
@@ -26,13 +25,14 @@ import {
   extractKeyFromStringObject,
 } from '../../healthInsuranceUtils'
 import { FileUploadController } from '@island.is/application/ui-components'
+import { FILE_SIZE_LIMIT, NO, YES } from '../../shared/constants'
 
-const FormerInsurance: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
+export const FormerInsurance = ({
   application,
   isEditable,
   field,
   error,
-}) => {
+}: ReviewFieldProps) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -251,5 +251,3 @@ const FormerInsurance: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
     </Box>
   )
 }
-
-export default FormerInsurance

@@ -1,8 +1,8 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as z from 'zod'
-import { NO, YES } from '../shared'
+import { YesNo } from '../shared/constants'
 
-export const HealthInsuranceSchema = z.object({
+export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   status: z.object({
     type: z.enum(['employed', 'student', 'pensioner', 'other']),
@@ -10,14 +10,14 @@ export const HealthInsuranceSchema = z.object({
   applicant: applicantInformationSchema(),
   citizenship: z.string().optional(),
   formerInsurance: z.object({
-    registration: z.enum([YES, NO]),
+    registration: z.nativeEnum(YesNo),
     country: z.string().min(1),
     personalId: z.string().min(1),
     institution: z.string().min(1),
     entitlementReason: z.string().optional(),
   }),
-  children: z.enum([YES, NO]),
-  hasAdditionalInfo: z.enum([YES, NO]),
+  children: z.nativeEnum(YesNo),
+  hasAdditionalInfo: z.nativeEnum(YesNo),
   additionalRemarks: z.string().optional(),
   confirmCorrectInfo: z.boolean().refine((v) => v),
 })

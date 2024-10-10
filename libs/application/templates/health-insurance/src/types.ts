@@ -4,7 +4,7 @@ import {
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { UserProfile } from '@island.is/api/schema'
-import { StatusTypes } from './shared'
+import { StatusTypes } from './shared/constants'
 
 export interface Status {
   type: StatusTypes

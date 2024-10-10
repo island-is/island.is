@@ -16,10 +16,9 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
 } from '@island.is/application/types'
-import { API_MODULE } from '../shared'
-import { answerValidators } from './answerValidators'
 import { m } from '../forms/messages'
-import { HealthInsuranceSchema } from './dataSchema'
+import { dataSchema } from './dataSchema'
+import { API_MODULE } from '../shared/constants'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
@@ -45,7 +44,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HEALTH_INSURANCE,
   name: applicationName,
-  dataSchema: HealthInsuranceSchema,
+  dataSchema,
   translationNamespaces: [configuration.translation],
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
@@ -172,7 +171,6 @@ const HealthInsuranceTemplate: ApplicationTemplate<
     }
     return undefined
   },
-  answerValidators,
 }
 
 export default HealthInsuranceTemplate

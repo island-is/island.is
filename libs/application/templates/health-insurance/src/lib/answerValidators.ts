@@ -5,11 +5,11 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { Status, FormerInsurance } from '../types'
-import { NO, YES, StatusTypes } from '../shared'
 import {
   requireConfirmationOfResidency,
   requireWaitingPeriod,
 } from '../healthInsuranceUtils'
+import { NO, StatusTypes, YES } from '../shared/constants'
 
 const STATUS = 'status'
 const FORMER_INSURANCE = 'formerInsurance'

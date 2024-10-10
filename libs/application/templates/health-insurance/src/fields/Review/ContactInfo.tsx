@@ -1,4 +1,3 @@
-import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
@@ -17,9 +16,7 @@ import {
   ReviewFieldProps,
 } from '../../types'
 
-const ContactInfo: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
-  application,
-}) => {
+export const ContactInfo = ({ application }: ReviewFieldProps) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -133,5 +130,3 @@ const ContactInfo: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
     </Box>
   )
 }
-
-export default ContactInfo

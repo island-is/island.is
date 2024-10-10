@@ -1,14 +1,11 @@
-import React, { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Input } from '@island.is/island-ui/core'
 import { ExternalDataNationalRegistry } from '../../types'
 
-const CitizenshipField: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  field,
-  application,
-}) => {
+export const CitizenshipField = ({ field, application }: FieldBaseProps) => {
   const { id } = field
   const citizenship = (
     getValueViaPath(
@@ -37,5 +34,3 @@ const CitizenshipField: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     </Box>
   )
 }
-
-export default CitizenshipField

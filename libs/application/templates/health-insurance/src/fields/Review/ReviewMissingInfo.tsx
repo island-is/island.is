@@ -1,23 +1,22 @@
-import React, { FC } from 'react'
 import { formatText } from '@island.is/application/core'
 import { Box, Bullet, BulletList, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MissingInfoType, ReviewFieldProps } from '../../types'
-import AgentComment from '../AgentComment/AgentComment'
-import MissingInfoRemarks from '../MissingInfoRemarks/MissingInfoRemarks'
+import { AgentComment } from '../AgentComment/AgentComment'
+import { MissingInfoRemarks } from '../MissingInfoRemarks/MissingInfoRemarks'
 import { m } from '../../forms/messages'
 
 interface Props extends ReviewFieldProps {
   missingInfo: MissingInfoType
 }
 
-const ReviewMissingInfo: FC<React.PropsWithChildren<Props>> = ({
+export const ReviewMissingInfo = ({
   application,
   field,
   isEditable,
-  missingInfo = {},
+  missingInfo = { date: '', remarks: '' },
   index: missingInfoIndex,
-}) => {
+}: Props) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -53,5 +52,3 @@ const ReviewMissingInfo: FC<React.PropsWithChildren<Props>> = ({
     </Box>
   )
 }
-
-export default ReviewMissingInfo
