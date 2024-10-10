@@ -34,8 +34,8 @@ describe('InternalSubpoenaController - Deliver subpoena to police', () => {
 
     mockSubpoenaService = subpoenaService
 
-    const deliverSubpoenaToPoliceMock =
-      (mockSubpoenaService.deliverSubpoenaToPolice = jest.fn())
+    const deliverSubpoenaToPoliceMock = jest.fn()
+    mockSubpoenaService.deliverSubpoenaToPolice = deliverSubpoenaToPoliceMock
 
     deliverSubpoenaToPoliceMock.mockResolvedValueOnce(delivered)
 
