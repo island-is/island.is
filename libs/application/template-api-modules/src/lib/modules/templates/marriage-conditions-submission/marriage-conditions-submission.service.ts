@@ -87,7 +87,6 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
   }
 
   async assignSpouse({ application }: TemplateApiModuleActionProps) {
-
     //TODO: this now needs to be moved over to spouse, so to when the application is being submitted
     /*const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth,
