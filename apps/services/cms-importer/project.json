@@ -23,19 +23,11 @@
         "production": {}
       }
     },
-    "serve": {
+    "worker": {
       "executor": "@nx/js:node",
-      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "services-cms-importer:build"
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "services-cms-importer:build:development"
-        },
-        "production": {
-          "buildTarget": "services-cms-importer:build:production"
-        }
+        "buildTarget": "services-cms-importer:build",
+        "args": ["--job", "worker"]
       }
     },
     "lint": {
