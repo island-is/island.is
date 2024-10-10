@@ -251,12 +251,6 @@ export const information = {
         defaultMessage: 'Ökutæki',
         description: 'Vehicle title',
       },
-      description: {
-        id: 'ta.cov.application:information.labels.vehicle.description',
-        defaultMessage:
-          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
-        description: 'Vehicle description',
-      },
       plate: {
         id: 'ta.cov.application:information.labels.vehicle.plate',
         defaultMessage: 'Númer ökutækis',
