@@ -395,11 +395,12 @@ export class AuthService {
       query.sid,
     )
 
-    const cachedTokenResponse = await this.cacheService.get<CachedTokenResponse>(
-      currentLoginCacheKey,
-      // Do not throw an error if the key is not found
-      false,
-    )
+    const cachedTokenResponse =
+      await this.cacheService.get<CachedTokenResponse>(
+        currentLoginCacheKey,
+        // Do not throw an error if the key is not found
+        false,
+      )
 
     if (!cachedTokenResponse) {
       this.logger.error(
@@ -505,10 +506,11 @@ export class AuthService {
         'current',
         payload.sid,
       )
-      const cachedTokenResponse = await this.cacheService.get<CachedTokenResponse>(
-        cacheKey,
-        false, // Do not throw an error if the key is not found
-      )
+      const cachedTokenResponse =
+        await this.cacheService.get<CachedTokenResponse>(
+          cacheKey,
+          false, // Do not throw an error if the key is not found
+        )
 
       // Revoke refresh token and delete cache entry
       if (cachedTokenResponse) {
