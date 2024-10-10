@@ -1606,6 +1606,9 @@ export interface IGenericListItemFields {
 
   /** Asset */
   asset?: Asset | undefined
+
+  /** External Link */
+  externalLink?: ILinkUrl | undefined
 }
 
 /** An item that belongs to a generic list */
