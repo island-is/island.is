@@ -1,4 +1,6 @@
 import isSameDay from 'date-fns/isSameDay'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 import { HTMLText, asDiv } from '@island.is/regulations'
 
 export const groupElementsByArticleTitleFromDiv = (
@@ -113,4 +115,16 @@ export const updateAppendixWording = (input: string): string => {
     }
     return match
   })
+}
+
+export const formatDate = (date: Date) => {
+  const newDate = new Date(date)
+  if (newDate) {
+    const formattedDate = format(new Date(date), 'dd. MMMM yyyy', {
+      locale: is,
+    })
+    return formattedDate.replace(/^0+/, '') // Remove leading zeros
+  } else {
+    return ''
+  }
 }
