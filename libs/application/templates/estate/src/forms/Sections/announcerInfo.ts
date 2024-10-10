@@ -7,8 +7,10 @@ import {
   buildSection,
   buildSelectField,
   buildTextField,
+  NO,
+  YES,
 } from '@island.is/application/core'
-import { JA, YES, NEI, NO } from '../../lib/constants'
+import { JA, NEI } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
 import { EstateTypes } from '../../lib/constants'

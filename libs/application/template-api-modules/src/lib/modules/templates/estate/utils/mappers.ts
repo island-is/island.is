@@ -9,6 +9,7 @@ import { infer as zinfer } from 'zod'
 import { UploadData } from '../types'
 import { filterEmptyObjects } from './filters'
 import { info } from 'kennitala'
+import { NO, YES } from '@island.is/application/core'
 
 type EstateSchema = zinfer<typeof estateSchema>
 type EstateData = EstateSchema['estate']
@@ -30,7 +31,7 @@ const estateMemberMapper = (element: EstateMember) => {
     phone: element.phone ?? '',
     email: element.email ?? '',
     relationWithApplicant: '',
-    noContactInfo: ['No'] as ('Yes' | 'No')[],
+    noContactInfo: [NO] as (typeof YES | typeof NO)[],
     advocate: element.advocate
       ? {
           ...element.advocate,
@@ -40,6 +41,11 @@ const estateMemberMapper = (element: EstateMember) => {
       : info(element?.nationalId).age < 18
       ? { nationalId: '', name: '', phone: '', email: '' }
       : undefined,
+    foreignCitizenship:
+      element.foreignCitizenship ??
+      (!element.nationalId || element.nationalId.endsWith('0000')
+        ? [YES]
+        : [NO]),
   }
 }
 

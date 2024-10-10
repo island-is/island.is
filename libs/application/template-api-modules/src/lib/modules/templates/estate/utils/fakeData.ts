@@ -59,7 +59,7 @@ export const getFakeEstateInfo = (
         share: 100,
       },
     ],
-    knowledgeOfOtherWills: 'Yes',
+    knowledgeOfOtherWills: 'yes',
     ships: [],
     flyers: [],
     guns: [
