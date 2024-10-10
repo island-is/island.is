@@ -50,7 +50,7 @@ const companySchema = z.object({
   addressOfBranch: z.string().optional(),
   name: z.string().optional(),
   nameOfBranch: z.string().optional(),
-  numberOfEmployees: z.string().optional(),
+  numberOfEmployees: z.string(),
   postnumber: z.string().optional(),
   postnumberOfBranch: z.string().optional(),
 })
