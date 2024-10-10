@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
+import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -35,6 +36,7 @@ export class SubpoenaService {
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
     private readonly pdfService: PdfService,
+    private readonly emailService: EmailService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
