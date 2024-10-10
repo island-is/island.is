@@ -700,6 +700,7 @@ export const formatAdvocateAssignedEmailNotification = (
           },
         )
       : formatMessage(notifications.advocateAssignedEmail.bodyAccess, {
+          defenderHasAccessToRVG: Boolean(overviewUrl),
           court: theCase.court?.name,
           advocateType,
           courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
