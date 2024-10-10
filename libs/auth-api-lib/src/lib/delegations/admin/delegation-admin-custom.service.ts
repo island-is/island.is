@@ -153,7 +153,7 @@ export class DelegationAdminCustomService {
     }
   }
 
-  async createDelegationByZendeskId(zendeskId: string): Promise<void> {
+  async createDelegationByZendeskId(zendeskId: string): Promise<DelegationDTO> {
     const zendeskCase = await this.zendeskService.getTicket(zendeskId)
 
     const {
@@ -181,13 +181,15 @@ export class DelegationAdminCustomService {
 
     this.verifyTicketCompletion(zendeskCase)
 
-    await this.insertDelegation({
+    const resp = await this.insertDelegation({
       fromNationalId,
       toNationalId,
       referenceId: zendeskId,
       validTo: this.formatZendeskDate(validTo),
       createdBy: createdByNationalId,
     })
+
+    return resp.toDTO(AuthDelegationType.GeneralMandate)
   }
 
   async createDelegation(
