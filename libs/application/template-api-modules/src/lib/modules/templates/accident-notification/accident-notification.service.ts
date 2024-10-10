@@ -120,6 +120,7 @@ export class AccidentNotificationService extends BaseTemplateApiService {
             .join('\n')}`,
         )
       }
+      this.logger.error('Error submitting accident notification application', e)
       throw new Error('Villa kom upp við vistun á umsókn.')
     }
   }
