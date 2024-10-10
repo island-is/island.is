@@ -1,9 +1,10 @@
 import { DynamicModule } from '@nestjs/common'
 // Imports of custom template API modules
-import { modules, services } from './templates'
+import { modules, services, dynamicModules } from './templates'
 import {
   modules as sharedModules,
   services as sharedServices,
+  dynamicModules as sharedDynamicModules,
 } from './shared/api'
 import { BaseTemplateAPIModuleConfig } from '../types'
 import { TemplateAPIService } from './template-api.service'
@@ -15,9 +16,11 @@ export class TemplateAPIModule {
     return {
       module: TemplateAPIModule,
       imports: [
-        ...Object.values([...modules, ...sharedModules]).map((Module) =>
-          Module.register(config),
+        ...Object.values([...dynamicModules, ...sharedDynamicModules]).map(
+          (Module) => Module.register(config),
         ),
+        ...sharedModules,
+        ...modules,
         LoggingModule,
       ],
       providers: [

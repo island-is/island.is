@@ -11,7 +11,7 @@ export class GeneralPetitionModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: GeneralPetitionModule,
-      imports: [SharedTemplateAPIModule.register(config)],
+      imports: [SharedTemplateAPIModule],
       providers: [
         GeneralPetitionService,
         {
