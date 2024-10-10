@@ -1,0 +1,37 @@
+query GetHealthInsuranceOverview {
+  rightsPortalInsuranceOverview {
+    isInsured
+    explanation
+    from
+    status {
+      display
+      code
+    }
+    maximumPayment
+  }
+}
+
+query GetHealthCenter($input: RightsPortalHealthCenterHistoryInput) {
+  rightsPortalHealthCenterRegistrationHistory(input: $input) {
+    current {
+      healthCenterName
+      doctor
+    }
+  }
+}
+
+query GetPaymentOverview($input: RightsPortalPaymentOverviewInput!) {
+  rightsPortalPaymentOverview(input: $input) {
+    items {
+      credit
+      debt
+    }
+  }
+}
+
+query GetPaymentStatus {
+  rightsPortalCopaymentStatus {
+    maximumPayment
+    maximumMonthlyPayment
+  }
+}

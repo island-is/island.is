@@ -49,6 +49,7 @@ export const ComponentRegistry = {
   AirDiscountScreen: `${prefix}.screens.AirDiscountScreen`,
   PasskeyScreen: `${prefix}.screens.PasskeyScreen`,
   UpdateAppScreen: `${prefix}.screens.UpdateAppScreen`,
+  HealthOverviewScreen: `${prefix}.screens.HealthOverviewScreen`,
 
   // custom navigation icons
   OfflineIcon: `${prefix}.navigation.OfflineIcon`,
