@@ -878,6 +878,104 @@ export const m = defineMessages({
     description:
       'Health declaration answers indicate that health certificate is required and BE application does not support health certificate requirement',
   },
+  applicationForAdvancedLicenseTitle: {
+    id: 'dl.application:applicationForAdvancedLicenseTitle',
+    defaultMessage: 'Umsókn um aukin ökuréttindi',
+    description: 'Option title for selecting advanced driving license',
+  },
+  applicationForAdvancedLicenseDescription: {
+    id: 'dl.application:applicationForAdvancedLicenseDescription',
+    defaultMessage: 'Umsókn um aukin ökuréttindi.',
+    description: 'Option description for selecting advanced driving license',
+  },
+  applicationForAdvancedLicenseApplyForC1: {
+    id: 'dl.application:applicationForAdvancedLicenseApplyForC1',
+    defaultMessage: 'Sækja um C1',
+    description: 'Apply for C1',
+  },
+  applicationForAdvancedLicenseApplyForC1A: {
+    id: 'dl.application:applicationForAdvancedLicenseApplyForC1A',
+    defaultMessage: 'Sækja um C1A',
+    description: 'Apply for C1A',
+  },
+  applicationForAdvancedLicenseApplyForD1: {
+    id: 'dl.application:applicationForAdvancedLicenseApplyForD1',
+    defaultMessage: 'Sækja um D1',
+    description: 'Apply for D1',
+  },
+  applicationForAdvancedLicenseApplyForC: {
+    id: 'dl.application:applicationForAdvancedLicenseApplyForC',
+    defaultMessage: 'Sækja um C',
+    description: 'Apply for C',
+  },
+  applicationForAdvancedLicenseApplyForCA: {
+    id: 'dl.application:applicationForAdvancedLicenseApplyForCA',
+    defaultMessage: 'Sækja um CA',
+    description: 'Apply for CA',
+  },
+  applicationForAdvancedLicenseApplyForD: {
+    id: 'dl.application:applicationForAdvancedLicenseApplyForD',
+    defaultMessage: 'Sækja um D',
+    description: 'Apply for D',
+  },
+  applicationForAdvancedLicenseApplyForDA: {
+    id: 'dl.application:applicationForAdvancedLicenseApplyForDA',
+    defaultMessage: 'Sækja um DA',
+    description: 'Apply for DA',
+  },
+  applicationForAdvancedLicenseApplyForD1A: {
+    id: 'dl.application:applicationForAdvancedLicenseApplyForD1A',
+    defaultMessage: 'Sækja um D1A',
+    description: 'Apply for D1A',
+  },
+  applicationForAdvancedLicenseApplyForC1E: {
+    id: 'dl.application:applicationForAdvancedLicenseApplyForC1E',
+    defaultMessage: 'Sækja um C1E',
+    description: 'Apply for C1E',
+  },
+  applicationForAdvancedLicenseApplyForD1E: {
+    id: 'dl.application:applicationForAdvancedLicenseApplyForD1E',
+    defaultMessage: 'Sækja um D1E',
+    description: 'Apply for D1E',
+  },
+  applicationForAdvancedLicenseApplyForCE: {
+    id: 'dl.application:applicationForAdvancedLicenseApplyForCE',
+    defaultMessage: 'Sækja um CE',
+    description: 'Apply for CE',
+  },
+  applicationForAdvancedLicenseApplyForDE: {
+    id: 'dl.application:applicationForAdvancedLicenseApplyForDE',
+    defaultMessage: 'Sækja um DE',
+    description: 'Apply for DE',
+  },
+  applicationForAdvancedLicenseQuestionC1: {
+    id: 'dl.application:applicationForAdvancedLicenseQuestionC1',
+    defaultMessage:
+      'Ætlar þú að taka réttindin í atvinnuskyni og þiggja greiðslu fyrir akstur?',
+    description:
+      'Question (C1) if planning to take the license for professional purposes and receive payment for driving',
+  },
+  applicationForAdvancedLicenseQuestionD1: {
+    id: 'dl.application:applicationForAdvancedLicenseQuestionD1',
+    defaultMessage:
+      'Ætlar þú að taka réttindin í atvinnuskyni og þiggja greiðslu fyrir akstur?',
+    description:
+      'Question (D1) if planning to take the license for professional purposes and receive payment for driving',
+  },
+  applicationForAdvancedLicenseQuestionC: {
+    id: 'dl.application:applicationForAdvancedLicenseQuestionC',
+    defaultMessage:
+      'Ætlar þú að taka réttindin í atvinnuskyni og þiggja greiðslu fyrir akstur?',
+    description:
+      'Question (C) if planning to take the license for professional purposes and receive payment for driving',
+  },
+  applicationForAdvancedLicenseQuestionD: {
+    id: 'dl.application:applicationForAdvancedLicenseQuestionD',
+    defaultMessage:
+      'Ætlar þú að taka réttindin í atvinnuskyni og þiggja greiðslu fyrir akstur?',
+    description:
+      'Question (D) if planning to take the license for professional purposes and receive payment for driving',
+  },
 })
 
 export const requirementsMessages = defineMessages({

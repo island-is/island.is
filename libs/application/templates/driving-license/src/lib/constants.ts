@@ -8,8 +8,66 @@ export enum ApiActions {
 export const B_FULL = 'B-full'
 export const B_TEMP = 'B-temp'
 export const B_FULL_RENEWAL_65 = 'B-full-renewal-65'
+export const B_ADVANCED = 'B-advanced'
 export const BE = 'BE'
 export const DELIVERY_FEE = 'deliveryFee'
+
+export enum LicenseTypes {
+  'B_FULL' = 'B-full',
+  'B_TEMP' = 'B-temp',
+  'B_FULL_RENEWAL_65' = 'B-full-renewal-65',
+  'BE' = 'BE',
+  'B_ADVANCED' = 'B-advanced',
+}
+
+export enum Pickup {
+  'POST' = 'post',
+  'DISTRICT' = 'district',
+}
+
+export enum AdvancedLicenses {
+  'C1' = 'C1',
+  'D1' = 'D1',
+  'C' = 'C',
+  'D' = 'D',
+  'C1E' = 'C1E',
+  'D1E' = 'D1E',
+  'CE' = 'CE',
+  'DE' = 'DE',
+}
+
+export enum AdvancedSubLicenses {
+  'C1A' = 'C1A',
+  'D1A' = 'D1A',
+  'CA' = 'CA',
+  'DA' = 'DA',
+}
+
+export type AdvancedLicense = keyof typeof AdvancedLicenses
+
+export const ADVANCED_LICENSES: Partial<keyof typeof AdvancedLicenses>[] = [
+  'C1',
+  'D1',
+  'C',
+  'D',
+  'C1E',
+  'D1E',
+  'CE',
+  'DE',
+]
+
+export const ADVANCED_SUB_LICENSES: Partial<
+  keyof typeof AdvancedSubLicenses
+>[] = ['C1A', 'D1A', 'CA', 'DA']
+
+export const advancedLicenseToSubLicenseMap: Partial<
+  Record<Partial<AdvancedLicenses>, Partial<AdvancedSubLicenses>>
+> = {
+  [AdvancedLicenses.C1]: AdvancedSubLicenses.C1A,
+  [AdvancedLicenses.D1]: AdvancedSubLicenses.D1A,
+  [AdvancedLicenses.C]: AdvancedSubLicenses.CA,
+  [AdvancedLicenses.D]: AdvancedSubLicenses.DA,
+}
 
 export const CHARGE_ITEM_CODES: Record<string, string> = {
   [B_TEMP]: 'AY114',
