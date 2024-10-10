@@ -68,7 +68,6 @@ const ATTACHMENTS = [
 
 const VALID_ESTATE_APPLICANT = '0101302399'
 const VALID_DEPARTED_PERSON = '0101302399'
-const INVALID_ESTATE_APPLICANT = '0101303019'
 
 const config = defineConfig({
   name: 'SyslumennApi',
