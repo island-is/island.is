@@ -679,7 +679,7 @@ export class PoliceService {
         'Failed to create subpoena',
         {
           caseId: workingCase.id,
-          defendantId: defendant?.nationalId,
+          defendantId: defendant?.id,
           actor,
         },
         error,
