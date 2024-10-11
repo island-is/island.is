@@ -17,7 +17,7 @@ interface Then {
 
 type GivenWhenThen = (caseId: string) => Promise<Then>
 
-describe('NotificationController - Send defender assigned notification', () => {
+describe('NotificationController - Send advocate assigned notification', () => {
   const userId = uuid()
   const user = { id: userId } as User
 
@@ -39,7 +39,7 @@ describe('NotificationController - Send defender assigned notification', () => {
 
       await notificationController
         .sendCaseNotification(caseId, user, { id: caseId } as Case, {
-          type: NotificationType.DEFENDER_ASSIGNED,
+          type: NotificationType.ADVOCATE_ASSIGNED,
         })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -61,7 +61,7 @@ describe('NotificationController - Send defender assigned notification', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: NotificationType.DEFENDER_ASSIGNED },
+          body: { type: NotificationType.ADVOCATE_ASSIGNED },
         },
       ])
       expect(then.result).toEqual({ notificationSent: true })
