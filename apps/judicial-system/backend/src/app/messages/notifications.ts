@@ -607,17 +607,29 @@ export const notifications = {
         'Notaður sem texti í tölvupósti til verjanda vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem úrskurðað var í einangrun.',
     },
   }),
-  defenderAssignedEmail: defineMessages({
-    subject: {
-      id: 'judicial.system.backend:notifications.defender_assigned_email.subject',
+  advocateAssignedEmail: defineMessages({
+    subjectAccessToCaseFiles: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.subject_access_to_case_files',
       defaultMessage: '{court} - aðgangur að málsgögnum',
       description:
         'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
     },
-    body: {
-      id: 'judicial.system.backend:notifications.defender_assigned_email.body_v3',
+    subjectAccess: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.subject_access',
+      defaultMessage: 'Skráning í máli {courtCaseNumber}',
+      description:
+        'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
+    },
+    bodyAccessToCaseFiles: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.body_access_to_case_files',
       defaultMessage:
         '{court} hefur skráð þig verjanda í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
+      description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
+    },
+    bodyAccess: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.body_access',
+      defaultMessage:
+        '{court} hefur skráð þig {advocateType, select, LAWYER {lögmann einkaréttarkröfuhafa} LEGAL_RIGHTS_PROTECTOR {réttargæslumann einkaréttarkröfuhafa} other {verjanda}} í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast málið hjá {courtName}.}}.',
       description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
     },
   }),
