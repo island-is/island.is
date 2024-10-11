@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
   transform: {

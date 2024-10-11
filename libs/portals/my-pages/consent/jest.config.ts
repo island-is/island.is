@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'portals-my-pages-consent',
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },

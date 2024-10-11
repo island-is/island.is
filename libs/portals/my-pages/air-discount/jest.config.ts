@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'my-pages-air-discount',
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
   transform: {
