@@ -66,7 +66,7 @@ export const HomeOptionsScreen: NavigationFunctionComponent = ({
         <Typography>
           <FormattedMessage
             id="homeOptions.heading.subtitle"
-            defaultMessage="Hér er hægt að stilla hvað birtist á heimaskjá.s"
+            defaultMessage="Hér er hægt að stilla hvað birtist á heimaskjá."
           />
         </Typography>
       </SafeAreaView>
