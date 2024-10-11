@@ -42,6 +42,12 @@ type LawyerFull = {
   InternationConnection: string
 }
 
+export enum AdvocateType {
+  DEFENDER = 'DEFENDER',
+  LAWYER = 'LAWYER',
+  LEGAL_RIGHTS_PROTECTOR = 'LEGAL_RIGHTS_PROTECTOR',
+}
+
 export const mapToLawyer = (lawyer: LawyerFull): Lawyer => {
   return {
     name: lawyer.Name,
