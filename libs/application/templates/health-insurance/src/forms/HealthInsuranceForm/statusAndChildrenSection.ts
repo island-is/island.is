@@ -15,7 +15,7 @@ import {
   NO,
   YES,
 } from '../../utils/constants'
-import { statusTypeOptions } from '../../utils/options'
+import { getYesNoOptions, statusTypeOptions } from '../../utils/options'
 import { Application } from '@island.is/application/types'
 import { ExternalDataNationalRegistry } from '../../utils/types'
 
@@ -77,10 +77,7 @@ export const statusAndChildrenSection = buildSection({
           width: 'half',
           largeButtons: true,
           required: true,
-          options: [
-            { label: m.noOptionLabel, value: NO },
-            { label: m.yesOptionLabel, value: YES },
-          ],
+          options: getYesNoOptions({}),
         }),
         buildAlertMessageField({
           id: 'childrenInfo',
