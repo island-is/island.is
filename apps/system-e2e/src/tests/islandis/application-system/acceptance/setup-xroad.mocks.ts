@@ -5,6 +5,7 @@ import { env } from '../../../../support/urls'
 import { resetMocks, wildcard } from '../../../../support/wire-mocks'
 import { loadParentalLeaveXroadMocks } from './mocks/parentalLeave.mock'
 import { loadSocialInsuranceAdministrationXroadMocks } from './mocks/socialInsuranceAdministration.mock'
+import { loadNationalRegistryXroadMocks } from './mocks/nationalRegistry.mocks'
 
 export const setupXroadMocks = async () => {
   await resetMocks()
@@ -12,6 +13,7 @@ export const setupXroadMocks = async () => {
   /* Xroad mocks */
   await loadParentalLeaveXroadMocks()
   await loadSocialInsuranceAdministrationXroadMocks()
+  await loadNationalRegistryXroadMocks()
 
   const { envs } = getEnvVariables(Base.getEnv(), 'system-e2e', env)
   const xroadBasePath = envs['XROAD_BASE_PATH']
