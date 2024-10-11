@@ -6,7 +6,7 @@ import {
   vehicleMessage,
   messages,
 } from '@island.is/service-portal/assets/messages'
-import { m } from '@island.is/service-portal/core/messages'
+import { m } from '@island.is/portals/my-pages/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
