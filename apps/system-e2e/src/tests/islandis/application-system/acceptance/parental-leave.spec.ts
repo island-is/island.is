@@ -1,7 +1,11 @@
-import { BrowserContext, Page, expect, test } from '@playwright/test'
-import addDays from 'date-fns/addDays'
-import addMonths from 'date-fns/addMonths'
-import formatISO from 'date-fns/formatISO'
+import { BrowserContext, expect, test, Page } from '@playwright/test'
+import {
+  BaseAuthority,
+  env,
+  getEnvironmentBaseUrl,
+  TestEnvironment,
+  urls,
+} from '../../../../support/urls'
 import {
   disableI18n,
   disablePreviousApplications,
@@ -18,13 +22,6 @@ import {
 } from '../../../../support/email-account'
 import { helpers } from '../../../../support/locator-helpers'
 import { session } from '../../../../support/session'
-import {
-  BaseAuthority,
-  TestEnvironment,
-  env,
-  getEnvironmentBaseUrl,
-  urls,
-} from '../../../../support/urls'
 import { setupXroadMocks } from './setup-xroad.mocks'
 
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -41,7 +38,7 @@ const getEmployerEmailAndApprove = async (
   if (!email || typeof email.html !== 'string') {
     throw new Error('Email not found, test incomplete')
   }
-  const employerUrlMatch = email.html.match(/<a href="(http?:.*?)"/)
+  const employerUrlMatch = email.html.match(/>(http?:.*)<\/p>/)
   if (employerUrlMatch?.length != 2)
     throw new Error(
       'Email does not contain the url to approve the parental leave application',
@@ -57,7 +54,7 @@ const getEmployerEmailAndApprove = async (
     })
     .getByRole('textbox')
     // eslint-disable-next-line local-rules/disallow-kennitalas
-    .fill('5402696029')
+    .type('5402696029')
   await proceed()
 
   await page
@@ -82,16 +79,21 @@ test.describe('Parental leave', () => {
   let context: BrowserContext
   let applicant: EmailAccount
   let employer: EmailAccount
+  let applicationID: string
+  let submitApplicationSuccess: boolean
 
-  test.beforeAll(async ({ browser }) => {
+  test.beforeAll(async () => {
+    applicant = await makeEmailAccount('applicant')
+    employer = await makeEmailAccount('employer')
+    submitApplicationSuccess = false
+  })
+  test.beforeEach(async ({ browser }) => {
     context = await session({
       browser: browser,
       homeUrl: `${urls.islandisBaseUrl}/umsoknir/faedingarorlof`,
-      phoneNumber: '0103019',
+      phoneNumber: submitApplicationSuccess ? '0102989' : '0102399',
       idsLoginOn: true,
     })
-    applicant = await makeEmailAccount('applicant')
-    employer = await makeEmailAccount('employer')
   })
   test.afterAll(async () => {
     await context.close()
@@ -164,10 +166,14 @@ test.describe('Parental leave', () => {
     const emailBox = page.getByRole('textbox', {
       name: label(parentalLeaveFormMessages.applicant.email),
     })
+    await emailBox.selectText()
+    await emailBox.type(applicant.email)
 
     const phoneNumber = page.getByRole('textbox', {
       name: label(parentalLeaveFormMessages.applicant.phoneNumber),
     })
+    await phoneNumber.selectText()
+    await phoneNumber.type('6555555')
 
     await page
       .getByRole('region', {
@@ -204,6 +210,8 @@ test.describe('Parental leave', () => {
     const paymentBank = page.getByRole('textbox', {
       name: label(parentalLeaveFormMessages.shared.paymentInformationBank),
     })
+    await paymentBank.selectText()
+    await paymentBank.type('051226054678')
 
     await page.waitForResponse(`${apiUrl}/api/graphql?op=GetPensionFunds`)
     const pensionFund = page.getByRole('combobox', {
@@ -211,6 +219,9 @@ test.describe('Parental leave', () => {
         parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
       )}`,
     })
+    await pensionFund.focus()
+    await page.keyboard.press('ArrowDown')
+    await page.keyboard.press('Enter')
 
     await page.getByTestId('use-union').click()
     await page.waitForResponse(`${apiUrl}/api/graphql?op=GetUnions`)
@@ -272,8 +283,9 @@ test.describe('Parental leave', () => {
       .getByRole('radio', {
         name: label(parentalLeaveFormMessages.shared.noOptionLabel),
       })
-      await phoneNumber.selectText()
-      await phoneNumber.fill('6555555')
+      .nth(1)
+      .click()
+    await proceed()
 
     // Register an employer
     await expect(
@@ -286,8 +298,7 @@ test.describe('Parental leave', () => {
       .getByRole('button', {
         name: label(parentalLeaveFormMessages.employer.addEmployer),
       })
-      await paymentBank.selectText()
-      await paymentBank.fill('051226054678')
+      .click()
 
     await expect(
       page.getByRole('paragraph').filter({
@@ -303,9 +314,8 @@ test.describe('Parental leave', () => {
       .getByRole('button', {
         name: label(parentalLeaveFormMessages.employer.registerEmployer),
       })
-      await pensionFund.focus()
-      await page.keyboard.press('ArrowDown')
-      await page.keyboard.press('Enter')
+      .click()
+    await proceed()
 
     // Additional documentation for application
     await expect(
@@ -420,6 +430,11 @@ test.describe('Parental leave', () => {
   })
 
   test('Other parent should be able to create application', async () => {
+    // Skip this test if primary parent was unable to submit application
+    test.skip(
+      submitApplicationSuccess !== true,
+      'Primary parent unable to submit application',
+    )
     const page = await context.newPage()
     await disablePreviousApplications(page)
     await disableI18n(page)
@@ -460,6 +475,9 @@ test.describe('Parental leave', () => {
     const mockDataApplicationID = page.getByRole('textbox', {
       name: label(parentalLeaveFormMessages.shared.mockDataApplicationID),
     })
+    await mockDataApplicationID.selectText()
+    await mockDataApplicationID.type(applicationID)
+    await proceed()
 
     // Type of application
     await expect(
@@ -497,10 +515,14 @@ test.describe('Parental leave', () => {
     const emailBox = page.getByRole('textbox', {
       name: label(parentalLeaveFormMessages.applicant.email),
     })
+    await emailBox.selectText()
+    await emailBox.type(applicant.email)
 
     const phoneNumber = page.getByRole('textbox', {
       name: label(parentalLeaveFormMessages.applicant.phoneNumber),
     })
+    await phoneNumber.selectText()
+    await phoneNumber.type('6555555')
 
     await page
       .getByRole('region', {
@@ -522,6 +544,8 @@ test.describe('Parental leave', () => {
     const paymentBank = page.getByRole('textbox', {
       name: label(parentalLeaveFormMessages.shared.paymentInformationBank),
     })
+    await paymentBank.selectText()
+    await paymentBank.type('051226054678')
 
     await page.waitForResponse(`${apiUrl}/api/graphql?op=GetPensionFunds`)
     const pensionFund = page.getByRole('combobox', {
@@ -529,13 +553,16 @@ test.describe('Parental leave', () => {
         parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
       )}`,
     })
+    await pensionFund.focus()
+    await page.keyboard.press('ArrowDown')
+    await page.keyboard.press('Enter')
 
-    await test.step('Payment information', async () => {
-      await expect(
-        page.getByRole('heading', {
-          name: 'Er allt eins og það á að vera?',
-        }),
-      ).toBeVisible()
+    await page.getByTestId('use-union').click()
+    await page.waitForResponse(`${apiUrl}/api/graphql?op=GetUnions`)
+    const paymentUnion = page.getByTestId('payments-union')
+    await paymentUnion.focus()
+    await page.keyboard.type('VR')
+    await page.keyboard.press('Enter')
 
     await page.getByTestId('use-private-pension-fund').click()
     const privatePensionFund = page.getByTestId('private-pension-fund')
@@ -581,9 +608,9 @@ test.describe('Parental leave', () => {
       .getByRole('radio', {
         name: label(parentalLeaveFormMessages.shared.noOptionLabel),
       })
-      await pensionFund.focus()
-      await page.keyboard.press('ArrowDown')
-      await page.keyboard.press('Enter')
+      .nth(1)
+      .click()
+    await proceed()
 
     // Register an employer
     await expect(
