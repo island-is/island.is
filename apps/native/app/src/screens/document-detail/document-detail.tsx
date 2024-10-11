@@ -66,8 +66,7 @@ const PdfWrapper = styled.View`
 const DocumentWrapper = styled.View<{ hasMarginTop?: boolean }>`
   flex: 1;
   margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
-  margin-top: ${({ theme, hasMarginTop }) =>
-    hasMarginTop ? theme.spacing[2] : 0}px;
+  padding-top: ${({ theme }) => theme.spacing[2]}px;
 `
 const regexForBr = /<br\s*\/>/gi
 
@@ -254,6 +253,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     } finally {
       markDocumentAsRead()
       setRefetching(false)
+      setLoaded(true)
     }
   }
 
@@ -300,7 +300,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       const confirmation = data.documentV2?.confirmation
       if (confirmation && !refetching) {
         showConfirmationAlert(confirmation)
-      } else if (!confirmation && !refetching) {
+      } else if (!confirmation && !refetching && !shouldIncludeDocument) {
         // If the user has already confirmed accepting the document we fetch the content
         refetchDocumentContent()
       }
@@ -316,7 +316,10 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const hasConfirmation = !!Document.confirmation
   const hasAlert =
     !!Document.alert && (Document.alert?.title || Document.alert?.data)
-  const showAlert = showConfirmedAlert || (hasAlert && !hasConfirmation)
+  const showAlert =
+    showConfirmedAlert ||
+    (hasAlert && !hasConfirmation) ||
+    (hasActions && !showConfirmationAlert)
 
   const loading = docRes.loading || !accessToken
   const fileTypeLoaded = !!Document?.content?.type
@@ -457,7 +460,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         </ActionsWrapper>
       )}
       <Border />
-      <DocumentWrapper>
+      <DocumentWrapper hasMarginTop={true}>
         <Animated.View
           style={{
             flex: 1,
@@ -485,20 +488,27 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               />
             ) : hasPdf ? (
               <PdfWrapper>
-                {visible && accessToken && (
-                  <PdfViewer
-                    url={`data:application/pdf;base64,${Document.content?.value}`}
-                    body={`documentId=${Document.id}&__accessToken=${accessToken}`}
-                    onLoaded={(filePath: any) => {
-                      setPdfUrl(filePath)
-                      setLoaded(true)
-                    }}
-                    onError={() => {
-                      setLoaded(true)
-                      setError(true)
-                    }}
-                  />
-                )}
+                {visible &&
+                  accessToken &&
+                  (shouldIncludeDocument ||
+                    (!shouldIncludeDocument && showAlert)) && (
+                    <PdfViewer
+                      url={`data:application/pdf;base64,${Document.content?.value}`}
+                      body={`documentId=${Document.id}&__accessToken=${accessToken}`}
+                      onLoaded={(filePath: any) => {
+                        setPdfUrl(filePath)
+                        // Make sure to not set document as loaded until actions have been fetched
+                        // To prevent top of first page not being shown
+                        if (shouldIncludeDocument) {
+                          setLoaded(true)
+                        }
+                      }}
+                      onError={() => {
+                        setLoaded(true)
+                        setError(true)
+                      }}
+                    />
+                  )}
               </PdfWrapper>
             ) : (
               <WebView
