@@ -115,7 +115,7 @@ export class DelegationAdminController {
             res.toNationalId ?? 'Unknown'
           }, fromNationalId: ${
             res.fromNationalId ?? 'Unknown'
-          }, createdByNationalId: ${res.createdBy ?? 'Unknown'}`
+          }, createdByNationalId: ${res.createdByNationalId ?? 'Unknown'}`
         },
         meta: {
           id,
