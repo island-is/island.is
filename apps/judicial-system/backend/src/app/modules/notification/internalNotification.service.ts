@@ -51,13 +51,13 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
+  formatAdvocateAssignedEmailNotification,
   formatCourtHeadsUpSmsNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
   formatCourtOfAppealJudgeAssignedEmailNotification,
   formatCourtReadyForCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
   formatCourtRevokedSmsNotification,
-  formatAdvocateAssignedEmailNotification,
   formatDefenderCourtDateEmailNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderReadyForCourtEmailNotification,
