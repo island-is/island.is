@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
@@ -35,6 +36,7 @@ import {
   CurrentCase,
   LimitedAccessCaseExistsGuard,
 } from '../case'
+import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
@@ -47,12 +49,7 @@ import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { FileService } from './file.service'
 
-@UseGuards(
-  JwtAuthGuard,
-  RolesGuard,
-  LimitedAccessCaseExistsGuard,
-  CaseCompletedGuard,
-)
+@UseGuards(JwtAuthGuard, RolesGuard, LimitedAccessCaseExistsGuard)
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('files')
 export class LimitedAccessFileController {
@@ -62,7 +59,11 @@ export class LimitedAccessFileController {
   ) {}
 
   @UseGuards(
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseWriteGuard,
   )
   @RolesRules(defenderRule)
@@ -82,7 +83,11 @@ export class LimitedAccessFileController {
   }
 
   @UseGuards(
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseWriteGuard,
     LimitedAccessWriteCaseFileGuard,
   )
@@ -92,7 +97,7 @@ export class LimitedAccessFileController {
     type: CaseFile,
     description: 'Creates a new case file',
   })
-  async createCaseFile(
+  createCaseFile(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
@@ -103,9 +108,14 @@ export class LimitedAccessFileController {
     return this.fileService.createCaseFile(theCase, createFile, user)
   }
 
-  @UseGuards(CaseReadGuard, CaseFileExistsGuard, LimitedAccessViewCaseFileGuard)
+  @UseGuards(
+    CaseReadGuard,
+    MergedCaseExistsGuard,
+    CaseFileExistsGuard,
+    LimitedAccessViewCaseFileGuard,
+  )
   @RolesRules(prisonSystemStaffRule, defenderRule)
-  @Get('file/:fileId/url')
+  @Get(['file/:fileId/url', 'mergedCase/:mergedCaseId/file/:fileId/url'])
   @ApiOkResponse({
     type: SignedUrl,
     description: 'Gets a signed url for a case file',
@@ -126,6 +136,7 @@ export class LimitedAccessFileController {
   @UseGuards(
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
+    CaseCompletedGuard,
     CaseFileExistsGuard,
     LimitedAccessWriteCaseFileGuard,
   )
@@ -137,11 +148,12 @@ export class LimitedAccessFileController {
   })
   deleteCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<DeleteFileResponse> {
     this.logger.debug(`Deleting file ${fileId} of case ${caseId}`)
 
-    return this.fileService.deleteCaseFile(caseFile)
+    return this.fileService.deleteCaseFile(theCase, caseFile)
   }
 }

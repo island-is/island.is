@@ -37,6 +37,7 @@ import {
   prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../guards'
 import {
   Case,
@@ -48,6 +49,7 @@ import {
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
+import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
@@ -127,12 +129,14 @@ export class FileController {
     RolesGuard,
     CaseExistsGuard,
     CaseReadGuard,
+    MergedCaseExistsGuard,
     CaseFileExistsGuard,
     ViewCaseFileGuard,
   )
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
@@ -141,7 +145,7 @@ export class FileController {
     courtOfAppealsAssistantRule,
     prisonSystemStaffRule,
   )
-  @Get('file/:fileId/url')
+  @Get(['file/:fileId/url', 'mergedCase/:mergedCaseId/file/:fileId/url'])
   @ApiOkResponse({
     type: SignedUrl,
     description: 'Gets a signed url for a case file',
@@ -177,12 +181,13 @@ export class FileController {
   })
   deleteCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<DeleteFileResponse> {
     this.logger.debug(`Deleting file ${fileId} of case ${caseId}`)
 
-    return this.fileService.deleteCaseFile(caseFile)
+    return this.fileService.deleteCaseFile(theCase, caseFile)
   }
 
   @UseGuards(
@@ -208,7 +213,7 @@ export class FileController {
   ): Promise<UploadFileToCourtResponse> {
     this.logger.debug(`Uploading file ${fileId} of case ${caseId} to court`)
 
-    return this.fileService.uploadCaseFileToCourt(caseFile, theCase, user)
+    return this.fileService.uploadCaseFileToCourt(theCase, caseFile, user)
   }
 
   @UseGuards(

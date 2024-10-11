@@ -433,6 +433,8 @@ components:
           type: string
         firstPeriodStart:
           type: string
+        days:
+          type: string
     ApplicationRights:
       type: object
       additionalProperties: false
@@ -578,6 +580,10 @@ components:
           type: string
         otherParentBlocked:
           type: boolean
+        applicationRights:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationRights'
     PaymentInfo:
       type: object
       additionalProperties: false
@@ -669,6 +675,9 @@ components:
           type: string
           minLength: 1
         nationalRegistryId:
+          type: string
+          minLength: 1
+        approverNationalRegistryId:
           type: string
           minLength: 1
     Attachment:

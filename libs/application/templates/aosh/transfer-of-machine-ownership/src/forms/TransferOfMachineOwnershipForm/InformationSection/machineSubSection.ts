@@ -4,6 +4,7 @@ import {
   buildTextField,
   buildDateField,
   buildSubSection,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { getSelectedMachine } from '../../../utils/getSelectedMachine'
@@ -114,6 +115,16 @@ export const machineSubSection = buildSubSection({
             return minDate
           },
           defaultValue: new Date().toISOString().substring(0, 10),
+        }),
+        buildHiddenInput({
+          id: 'machine.paymentRequiredForOwnerChange',
+          defaultValue: (application: Application) => {
+            const machine = getSelectedMachine(
+              application.externalData,
+              application.answers,
+            ) as Machine
+            return machine?.paymentRequiredForOwnerChange
+          },
         }),
       ],
     }),

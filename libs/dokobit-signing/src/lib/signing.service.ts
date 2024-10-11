@@ -166,7 +166,14 @@ export class SigningService extends DataSource {
     // At the same time, the mobile user gets a long time to complete the signature
     // We need to try longer than the mobile signature timeout, but not too long
     // Later, we may decide to return after one call and let the caller handle retries
-    for (let i = 1; i < 120; i++) {
+    for (
+      let i = 1;
+      i < this.config.pollDurationSeconds / this.config.pollIntervalSeconds;
+      i++
+    ) {
+      // Wait a second
+      await this.delay(this.config.pollIntervalSeconds * 1000)
+
       const res = await fetch(
         `${this.config.url}/mobile/sign/status/${documentToken}.json?access_token=${this.config.accessToken}`,
       )
@@ -184,9 +191,6 @@ export class SigningService extends DataSource {
           resStatus.message,
         )
       }
-
-      // Wait a second
-      await this.delay(1000)
     }
 
     throw new DokobitError(

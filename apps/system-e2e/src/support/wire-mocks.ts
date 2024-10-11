@@ -4,6 +4,7 @@ import {
   HttpMethod,
   Imposter,
   Mountebank,
+  Operator,
   Proxy,
   ProxyMode,
   Response,
@@ -24,6 +25,7 @@ import {
   ServiceDefinitionForEnv,
   ValueSource,
 } from '../../../../infra/src/dsl/types/input-types'
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { Envs } from '../../../../infra/src/environments'
 import { env, TestEnvironment } from './urls'
 
@@ -140,18 +142,25 @@ export const addXroadMock = async <Conf extends XroadSectionConfig>(
   const prefix = path.startsWith('r1/') ? '/' : '/r1/'
   const env =
     options.prefixType === 'base-path-with-env'
-      ? `IS-DEV/${options.orgType ?? 'GOV'}/${
-          envs[options.serviceMemberCode as string] ??
-          String(options.serviceMemberCode)
-        }`
+      ? `IS-DEV/${options.orgType ?? 'GOV'}/${options.serviceMemberCode}`
       : ''
   const stubResponses = Array.isArray(options.response)
     ? options.response
     : [options.response]
+
+  const [apiPath, query] = options.apiPath.split('?')
+  const queries = query
+    ? Array.from(new URLSearchParams(query)).map(([key, value]) => ({
+        [key]: value,
+      }))
+    : undefined
+
   const stub = new Stub().withPredicate(
-    new EqualPredicate()
-      .withPath(`${prefix}${env}${path}${options.apiPath}`)
-      .withMethod(method),
+    new FlexiPredicate()
+      .withOperator(Operator.deepEquals)
+      .withPath(`${prefix}${env}${path}${apiPath}`)
+      .withMethod(method)
+      .withQuery(queries),
   )
   for (const response of stubResponses) {
     stub.withResponse(response)

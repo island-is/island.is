@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Select, Text } from '@island.is/island-ui/core'
@@ -13,7 +13,7 @@ import {
 
 type CourtSelectOption = ReactSelectOption & { court: Institution }
 
-const SelectCourt: React.FC = () => {
+const SelectCourt: FC = () => {
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
   const { districtCourts } = useInstitution()

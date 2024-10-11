@@ -3,14 +3,10 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/marriage-conditions/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/marriage-conditions/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "extract-strings": {
       "executor": "nx:run-commands",
@@ -23,7 +19,15 @@
       "options": {
         "command": "graphql-codegen --config libs/application/templates/marriage-conditions/codegen.yml"
       }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/application/templates/marriage-conditions/jest.config.ts"
+      },
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/marriage-conditions"
+      ]
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }

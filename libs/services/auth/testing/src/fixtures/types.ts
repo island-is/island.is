@@ -8,7 +8,9 @@ import {
   ClientGrantType,
   DelegationDTO,
   DelegationIndex,
+  DelegationProviderModel,
   DelegationScopeDTO,
+  DelegationTypeModel,
   IdentityResource,
   PersonalRepresentativeRightTypeDTO,
   PersonalRepresentativeTypeDTO,
@@ -33,8 +35,11 @@ export type CreateCustomDelegationScope = Optional<
   'validFrom' | 'validTo'
 >
 export type CreateCustomDelegation = Optional<
-  Pick<DelegationDTO, 'toNationalId' | 'fromNationalId' | 'fromName'>,
-  'toNationalId' | 'fromNationalId' | 'fromName'
+  Pick<
+    DelegationDTO,
+    'toNationalId' | 'fromNationalId' | 'fromName' | 'referenceId'
+  >,
+  'toNationalId' | 'fromNationalId' | 'fromName' | 'referenceId'
 > & {
   domainName: string
   scopes?: CreateCustomDelegationScope[]
@@ -105,4 +110,14 @@ export type CreateClaim = Optional<
     'subjectId' | 'type' | 'valueType' | 'value' | 'issuer' | 'originalIssuer'
   >,
   'subjectId' | 'type' | 'valueType' | 'value' | 'issuer' | 'originalIssuer'
+>
+
+export type CreateDelegationProvider = Optional<
+  Pick<DelegationProviderModel, 'id' | 'name' | 'description'>,
+  'id' | 'name' | 'description'
+>
+
+export type CreateDelegationType = Optional<
+  Pick<DelegationTypeModel, 'id' | 'name' | 'description' | 'providerId'>,
+  'id' | 'name' | 'description' | 'providerId'
 >

@@ -1,10 +1,11 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+
 import {
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { NamespaceMessages } from '@island.is/web/hooks/useNamespace'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 
 export type UiTextGetter = {
   <Payload extends NamespaceMessages>(
@@ -34,4 +35,4 @@ export const getUiTexts: UiTextGetter = <Payload extends NamespaceMessages>(
       variables: { input: { namespace, lang } },
     })
     .then((res) => JSON.parse(res.data?.getNamespace?.fields || '') as Payload)
-    .catch((e) => defaults || ({} as Partial<Payload>))
+    .catch(() => defaults || ({} as Partial<Payload>))

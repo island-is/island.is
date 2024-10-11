@@ -9,16 +9,17 @@
 //
 //      yarn ts-node
 
-const tsconfig = require('../tsconfig.base.json')
+const tsconfigBase = require('../tsconfig.base.json')
+const tsconfigShared = require('../tsconfig.shared.json')
 
 require('ts-node').register({
   compilerOptions: {
-    ...tsconfig.compilerOptions,
+    ...tsconfigShared.compilerOptions,
     module: 'commonjs',
   },
   transpileOnly: true,
 })
 require('tsconfig-paths').register({
-  baseUrl: tsconfig.compilerOptions.baseUrl,
-  paths: tsconfig.compilerOptions.paths,
+  baseUrl: tsconfigShared.compilerOptions.baseUrl,
+  paths: tsconfigBase.compilerOptions.paths,
 })

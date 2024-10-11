@@ -1,9 +1,9 @@
 import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { settings } from '../../../../../infra/src/dsl/settings'
 import {
   Base,
   Client,
   NationalRegistry,
+  NationalRegistryB2C,
 } from '../../../../../infra/src/dsl/xroad'
 
 export const serviceSetup =
@@ -34,16 +34,19 @@ export const serviceSetup =
           prod: 'https://innskra.island.is',
         },
         IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement',
+        ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME: {
+          dev: 'island-is-dev-exports-endorsement-system',
+          staging: 'island-is-staging-exports-endorsement-system',
+          prod: 'island-is-prod-exports-endorsement-system',
+        },
       })
       .secrets({
         IDENTITY_SERVER_CLIENT_SECRET:
           '/k8s/endorsement-system-api/IDS-shared-secret',
-        SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL',
-        SOFFIA_SOAP_URL: '/k8s/endorsement-system-api/SOFFIA_SOAP_URL',
-        SOFFIA_USER: settings.SOFFIA_USER,
-        SOFFIA_PASS: settings.SOFFIA_PASS,
+        NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+          '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       })
       .grantNamespaces('islandis', 'application-system')
-      .xroad(Base, Client, NationalRegistry)
+      .xroad(Base, Client, NationalRegistry, NationalRegistryB2C)
       .liveness('/liveness')
       .readiness('/liveness')

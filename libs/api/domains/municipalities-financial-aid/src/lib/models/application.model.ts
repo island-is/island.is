@@ -8,6 +8,7 @@ import {
 } from '@island.is/clients/municipalities-financial-aid'
 import {
   AmountModel,
+  ApplicationChildrenModel,
   ApplicationEventModel,
   ApplicationFileModel,
   DirectTaxPaymentModel,
@@ -89,6 +90,9 @@ export class ApplicationModel {
 
   @Field(() => [ApplicationEventModel], { nullable: true })
   readonly applicationEvents?: ApplicationEventModel[]
+
+  @Field(() => [ApplicationChildrenModel], { nullable: true })
+  readonly children?: ApplicationChildrenModel[]
 
   @Field(() => AmountModel, { nullable: true })
   readonly amount?: AmountModel | null

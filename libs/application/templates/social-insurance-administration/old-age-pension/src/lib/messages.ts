@@ -131,29 +131,6 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
   }),
 
-  applicant: defineMessages({
-    applicantInfoName: {
-      id: 'oap.application:applicant.info.name',
-      defaultMessage: 'Fullt nafn',
-      description: 'Full name',
-    },
-    applicantInfoAddress: {
-      id: 'oap.application:applicant.info.address',
-      defaultMessage: 'Póstfang',
-      description: 'Postal address',
-    },
-    applicantInfoPostalcode: {
-      id: 'oap.application:applicant.info.postalcode',
-      defaultMessage: 'Póstnúmer',
-      description: 'Postal code',
-    },
-    applicantInfoMunicipality: {
-      id: 'oap.application:applicant.info.municipality',
-      defaultMessage: 'Sveitarfélag',
-      description: 'Municipality',
-    },
-  }),
-
   onePaymentPerYear: defineMessages({
     onePaymentPerYearTitle: {
       id: 'oap.application:one.payment.per.year.title',
@@ -210,11 +187,6 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   review: defineMessages({
-    address: {
-      id: 'oap.application:review.address',
-      defaultMessage: 'Heimili',
-      description: 'Address',
-    },
     fishermen: {
       id: 'oap.application:review.fishermen',
       defaultMessage: 'Ellilífeyri sjómanna',

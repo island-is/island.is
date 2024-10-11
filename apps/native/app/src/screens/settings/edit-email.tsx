@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/client'
 import { Button, NavigationBarSheet, TextField, Typography } from '@ui'
 import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
@@ -6,7 +7,6 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
-import { client } from '../../graphql/client'
 import {
   CreateEmailVerificationDocument,
   CreateEmailVerificationMutation,
@@ -20,6 +20,7 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { navigateTo } from '../../lib/deep-linking'
 import { testIDs } from '../../utils/test-ids'
+
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
@@ -31,6 +32,7 @@ export const EditEmailScreen: NavigationFunctionComponent<{
   email?: string
 }> = ({ componentId, email }) => {
   useNavigationOptions(componentId)
+  const client = useApolloClient()
   const intl = useIntl()
   const userProfile = useGetProfileQuery()
   const [loading, setLoading] = React.useState(false)
@@ -98,7 +100,6 @@ export const EditEmailScreen: NavigationFunctionComponent<{
                   })
                   if (res.data) {
                     Navigation.dismissModal(componentId)
-                    console.log(res.data, 'Uppfærði tómt netfang')
                   } else {
                     throw new Error('Failed to delete email')
                   }

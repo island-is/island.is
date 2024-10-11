@@ -4,4 +4,7 @@ import { Field, InputType } from '@nestjs/graphql'
 export class DrivingLicenseBookStudentInput {
   @Field()
   nationalId!: string
+
+  @Field(() => String, { nullable: true })
+  licenseCategory?: 'B' | 'BE'
 }

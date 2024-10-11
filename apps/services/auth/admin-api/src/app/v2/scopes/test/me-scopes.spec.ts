@@ -9,9 +9,16 @@ import {
   ApiScopeUserClaim,
   SequelizeConfigService,
   TranslatedValueDto,
+  ApiScopeDelegationType,
+  AdminPatchScopeDto,
+  ApiScope,
+  SUPER_USER_DELEGATION_TYPES,
 } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
-import { AuthDelegationType } from '@island.is/shared/types'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import {
   createCurrentUser,
@@ -104,6 +111,34 @@ const createTestData = async ({
       ),
     )
   }
+
+  await Promise.all(
+    [
+      [AuthDelegationType.Custom, AuthDelegationProvider.Custom],
+      [AuthDelegationType.GeneralMandate, AuthDelegationProvider.Custom],
+      [
+        AuthDelegationType.ProcurationHolder,
+        AuthDelegationProvider.CompanyRegistry,
+      ],
+      [
+        AuthDelegationType.PersonalRepresentative,
+        AuthDelegationProvider.PersonalRepresentativeRegistry,
+      ],
+      [
+        AuthDelegationType.LegalGuardian,
+        AuthDelegationProvider.NationalRegistry,
+      ],
+      [
+        AuthDelegationType.LegalRepresentative,
+        AuthDelegationProvider.DistrictCommissionersRegistry,
+      ],
+    ].map(async ([delegationType, provider]) =>
+      fixtureFactory.createDelegationType({
+        id: delegationType,
+        providerId: provider,
+      }),
+    ),
+  )
 }
 
 interface GetTestCase {
@@ -240,6 +275,7 @@ const createInput = {
 const expectedCreateOutput = {
   ...mockedCreateApiScope,
   ...createInput,
+  supportedDelegationTypes: [],
 }
 
 const createTestCases: Record<string, CreateTestCase> = {
@@ -268,7 +304,7 @@ const createTestCases: Record<string, CreateTestCase> = {
       input: {
         ...createInput,
         grantToAuthenticatedUser: true,
-        grantToLegalGuardians: true,
+        supportedDelegationTypes: [AuthDelegationType.LegalGuardian],
       },
       expected: {
         status: 200,
@@ -276,6 +312,7 @@ const createTestCases: Record<string, CreateTestCase> = {
           ...expectedCreateOutput,
           grantToAuthenticatedUser: true,
           grantToLegalGuardians: true,
+          supportedDelegationTypes: [AuthDelegationType.LegalGuardian],
         },
       },
     },
@@ -342,6 +379,8 @@ interface PatchTestCase {
     allowExplicitDelegationGrant?: boolean
     grantToPersonalRepresentatives?: boolean
     isAccessControlled?: boolean
+    addedDelegationTypes?: AuthDelegationType[]
+    removedDelegationTypes?: AuthDelegationType[]
   }
   expected: {
     status: number
@@ -380,9 +419,6 @@ const inputPatch = {
     },
   ],
   grantToAuthenticatedUser: true,
-  grantToLegalGuardians: true,
-  grantToProcuringHolders: true,
-  allowExplicitDelegationGrant: true,
   isAccessControlled: true,
 }
 
@@ -393,30 +429,18 @@ const patchExpectedOutput = {
   emphasize: false,
   enabled: true,
   grantToPersonalRepresentatives: false,
+  grantToLegalGuardians: false,
+  grantToProcuringHolders: false,
+  allowExplicitDelegationGrant: false,
   name: `${TENANT_ID}/scope1`,
   order: 0,
   required: false,
   showInDiscoveryDocument: true,
+  supportedDelegationTypes: [],
   ...inputPatch,
 }
 
 const patchTestCases: Record<string, PatchTestCase> = {
-  'should not update scope since user is not a super user and input contains super user fields':
-    {
-      user: currentUser,
-      tenantId: TENANT_ID,
-      scopeName: mockedPatchApiScope.name,
-      input: inputPatch,
-      expected: {
-        status: 403,
-        body: {
-          detail: 'User does not have access to update admin controlled fields',
-          status: 403,
-          title: 'Forbidden',
-          type: 'https://httpstatuses.org/403',
-        },
-      },
-    },
   'should update scope even though user is not a super user since there are no super admin fields':
     {
       user: currentUser,
@@ -435,6 +459,7 @@ const patchTestCases: Record<string, PatchTestCase> = {
           grantToProcuringHolders: false,
           allowExplicitDelegationGrant: false,
           isAccessControlled: false,
+          supportedDelegationTypes: [],
         },
       },
     },
@@ -445,7 +470,9 @@ const patchTestCases: Record<string, PatchTestCase> = {
     input: inputPatch,
     expected: {
       status: 200,
-      body: patchExpectedOutput,
+      body: {
+        ...patchExpectedOutput,
+      },
     },
   },
   'should return a bad request because of invalid input': {
@@ -492,6 +519,44 @@ const patchTestCases: Record<string, PatchTestCase> = {
     },
   },
 }
+
+const expected403Response = {
+  status: 403,
+  body: {
+    title: 'Forbidden',
+    status: 403,
+    detail: 'User does not have access to update admin controlled fields',
+    type: 'https://httpstatuses.org/403',
+  },
+}
+
+SUPER_USER_DELEGATION_TYPES.map((delegationType) => {
+  const delegationTypeName = AuthDelegationType[delegationType]
+
+  patchTestCases[
+    `should return a forbidden exception when adding super user delegation type: ${delegationTypeName}`
+  ] = {
+    user: currentUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedPatchApiScope.name,
+    input: {
+      addedDelegationTypes: [delegationType],
+    },
+    expected: expected403Response,
+  }
+
+  patchTestCases[
+    `should return a forbidden exception when removing super user delegation type: ${delegationTypeName}`
+  ] = {
+    user: currentUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedPatchApiScope.name,
+    input: {
+      removedDelegationTypes: [delegationType],
+    },
+    expected: expected403Response,
+  }
+})
 
 describe('MeScopesController', () => {
   describe('with auth', () => {
@@ -596,6 +661,7 @@ describe('MeScopesController', () => {
       const testCase = createTestCases[testCaseName]
       let app: TestApp
       let server: request.SuperTest<request.Test>
+      let apiScopeDelegationTypeModel: typeof ApiScopeDelegationType
 
       beforeAll(async () => {
         app = await setupApp({
@@ -605,6 +671,9 @@ describe('MeScopesController', () => {
           dbType: 'postgres',
         })
         server = request(app.getHttpServer())
+        apiScopeDelegationTypeModel = await app.get(
+          getModelToken(ApiScopeDelegationType),
+        )
 
         await createTestData({
           app,
@@ -655,6 +724,17 @@ describe('MeScopesController', () => {
           const dbApiScopeUserClaim = await apiScopeUserClaim.findByPk(
             response.body.name,
           )
+          const apiScopeDelegationTypes =
+            await apiScopeDelegationTypeModel.findAll({
+              where: {
+                apiScopeName: response.body.name,
+              },
+            })
+
+          expect(apiScopeDelegationTypes).toHaveLength(
+            (testCase.expected.body.supportedDelegationTypes as string[])
+              .length,
+          )
 
           expect(dbApiScopeUserClaim).toMatchObject({
             apiScopeName: testCase.expected.body.name,
@@ -672,6 +752,7 @@ describe('MeScopesController', () => {
       const testCase = patchTestCases[testCaseName]
       let app: TestApp
       let server: request.SuperTest<request.Test>
+      let apiScopeDelegationTypeModel: typeof ApiScopeDelegationType
 
       beforeAll(async () => {
         app = await setupApp({
@@ -681,6 +762,10 @@ describe('MeScopesController', () => {
           dbType: 'postgres',
         })
         server = request(app.getHttpServer())
+
+        apiScopeDelegationTypeModel = await app.get(
+          getModelToken(ApiScopeDelegationType),
+        )
 
         await createTestData({
           app,
@@ -702,6 +787,385 @@ describe('MeScopesController', () => {
         // Assert response
         expect(response.status).toEqual(testCase.expected.status)
         expect(response.body).toEqual(testCase.expected.body)
+
+        // Assert - db record
+        if (testCase.expected.body.supportedDelegationTypes) {
+          const apiScopeDelegationTypes =
+            await apiScopeDelegationTypeModel.findAll({
+              where: {
+                apiScopeName: testCase.scopeName,
+              },
+            })
+
+          expect(apiScopeDelegationTypes).toHaveLength(
+            (testCase.expected.body.supportedDelegationTypes as string[])
+              .length,
+          )
+        }
+      })
+    })
+  })
+
+  describe('PATCH: /v2/me/tenants/:tenantId/scopes/:scopeName as super user', () => {
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+    let apiScopeDelegationTypeModel: typeof ApiScopeDelegationType
+    let fixtureFactory: FixtureFactory
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: superUser,
+        dbType: 'postgres',
+      })
+      server = request(app.getHttpServer())
+      fixtureFactory = new FixtureFactory(app)
+
+      apiScopeDelegationTypeModel = await app.get(
+        getModelToken(ApiScopeDelegationType),
+      )
+
+      await createTestData({
+        app,
+        tenantId: TENANT_ID,
+        tenantOwnerNationalId: superUser.nationalId,
+      })
+    })
+
+    const patchAndAssert = async ({
+      input,
+      expected,
+    }: {
+      input: AdminPatchScopeDto
+      expected: Partial<AdminScopeDTO>
+    }) => {
+      const response = await server
+        .patch(
+          `/v2/me/tenants/${TENANT_ID}/scopes/${encodeURIComponent(
+            mockedPatchApiScope.name,
+          )}`,
+        )
+        .send(input)
+
+      expect(response.status).toEqual(200)
+      expect(response.body).toMatchObject({
+        ...expected,
+        supportedDelegationTypes: expect.arrayContaining(
+          expected?.supportedDelegationTypes || [],
+        ),
+      })
+      const apiScopeDelegationTypes = await apiScopeDelegationTypeModel.findAll(
+        {
+          where: {
+            apiScopeName: mockedPatchApiScope.name,
+          },
+        },
+      )
+
+      expect(apiScopeDelegationTypes).toHaveLength(
+        expected.supportedDelegationTypes?.length || 0,
+      )
+    }
+
+    it('should be able to add supported delegation types to api scope with array property', async () => {
+      await patchAndAssert({
+        input: {
+          addedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.LegalRepresentative,
+          ],
+        },
+        expected: {
+          grantToPersonalRepresentatives: true,
+          grantToLegalGuardians: true,
+          grantToProcuringHolders: true,
+          allowExplicitDelegationGrant: true,
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            // Add general mandate since it is directly connected to Custom delegation type
+            AuthDelegationType.GeneralMandate,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.LegalRepresentative,
+          ],
+        },
+      })
+    })
+
+    it('should be able to remove supported delegation types to api scope with array property', async () => {
+      await patchAndAssert({
+        input: {
+          addedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.LegalRepresentative,
+          ],
+        },
+        expected: {
+          grantToPersonalRepresentatives: true,
+          grantToLegalGuardians: true,
+          grantToProcuringHolders: true,
+          allowExplicitDelegationGrant: true,
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            // Add general mandate since it is directly connected to Custom delegation type
+            AuthDelegationType.GeneralMandate,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.LegalRepresentative,
+          ],
+        },
+      })
+
+      await patchAndAssert({
+        input: {
+          removedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.LegalRepresentative,
+          ],
+        },
+        expected: {
+          grantToPersonalRepresentatives: false,
+          grantToLegalGuardians: false,
+          grantToProcuringHolders: false,
+          allowExplicitDelegationGrant: false,
+          supportedDelegationTypes: [],
+        },
+      })
+    })
+
+    it('should only update requested delegation setting fields', async () => {
+      // Arrange
+      // Create new subject under testing test data to control initial state of delegation settings.
+      const sutScope = await fixtureFactory.createApiScope({
+        domainName: TENANT_ID,
+        allowExplicitDelegationGrant: true,
+        supportedDelegationTypes: [AuthDelegationType.Custom],
+      })
+
+      // Act - Update partially delegation setting
+      const response = await server
+        .patch(
+          `/v2/me/tenants/${TENANT_ID}/scopes/${encodeURIComponent(
+            sutScope.name,
+          )}`,
+        )
+        .send({
+          addedDelegationTypes: [AuthDelegationType.ProcurationHolder],
+        })
+
+      // Assert that we only updated requested delegation setting fields
+      expect(response.status).toEqual(200)
+      expect(response.body).toMatchObject({
+        ...sutScope.toDTO(),
+        displayName: [
+          {
+            locale: 'is',
+            value: sutScope.displayName,
+          },
+        ],
+        description: [
+          {
+            locale: 'is',
+            value: sutScope.description,
+          },
+        ],
+        grantToProcuringHolders: true,
+        supportedDelegationTypes: expect.arrayContaining([
+          AuthDelegationType.Custom,
+          AuthDelegationType.ProcurationHolder,
+        ]),
+      } as AdminScopeDTO)
+      const apiScopeDelegationTypes = await apiScopeDelegationTypeModel.findAll(
+        {
+          where: {
+            apiScopeName: sutScope.name,
+          },
+        },
+      )
+
+      expect(apiScopeDelegationTypes).toHaveLength(2)
+    })
+  })
+
+  describe('POST: /v2/me/tenants/:tenantId/scopes as super user', () => {
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+    let apiScopeDelegationTypeModel: typeof ApiScopeDelegationType
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: superUser,
+        dbType: 'postgres',
+      })
+      server = request(app.getHttpServer())
+
+      apiScopeDelegationTypeModel = await app.get(
+        getModelToken(ApiScopeDelegationType),
+      )
+
+      await createTestData({
+        app,
+        tenantId: TENANT_ID,
+        tenantOwnerNationalId: superUser.nationalId,
+      })
+    })
+
+    const createAndAssert = async ({
+      input,
+      expected,
+    }: {
+      input: AdminCreateScopeDto
+      expected: Partial<AdminScopeDTO>
+    }) => {
+      const response = await server
+        .post(`/v2/me/tenants/${TENANT_ID}/scopes`)
+        .send(input)
+
+      expect(response.status).toEqual(200)
+      expect(response.body).toMatchObject({
+        ...expected,
+        supportedDelegationTypes: expect.arrayContaining(
+          expected?.supportedDelegationTypes || [],
+        ),
+      })
+
+      const apiScopeDelegationTypes = await apiScopeDelegationTypeModel.findAll(
+        {
+          where: {
+            apiScopeName: response.body.name,
+          },
+        },
+      )
+
+      expect(apiScopeDelegationTypes).toHaveLength(
+        expected.supportedDelegationTypes?.length || 0,
+      )
+    }
+
+    it('should be able to create api scope using supportedDelegationTypes property', async () => {
+      await createAndAssert({
+        input: {
+          ...createInput,
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.PersonalRepresentative,
+          ],
+        },
+        expected: {
+          grantToPersonalRepresentatives: true,
+          grantToLegalGuardians: true,
+          grantToProcuringHolders: true,
+          allowExplicitDelegationGrant: true,
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            // Add general mandate since it is directly connected to Custom delegation type
+            AuthDelegationType.GeneralMandate,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.PersonalRepresentative,
+          ],
+        },
+      })
+    })
+  })
+
+  describe('POST: /v2/me/tenants/:tenantId/scopes as normal user', () => {
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+    let apiScopeDelegationTypeModel: typeof ApiScopeDelegationType
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: currentUser,
+        dbType: 'postgres',
+      })
+      server = request(app.getHttpServer())
+
+      apiScopeDelegationTypeModel = await app.get(
+        getModelToken(ApiScopeDelegationType),
+      )
+
+      await createTestData({
+        app,
+        tenantId: TENANT_ID,
+        tenantOwnerNationalId: currentUser.nationalId,
+      })
+    })
+
+    const createAndAssert = async ({
+      input,
+      expected,
+    }: {
+      input: AdminCreateScopeDto
+      expected: Partial<AdminScopeDTO>
+    }) => {
+      const response = await server
+        .post(`/v2/me/tenants/${TENANT_ID}/scopes`)
+        .send(input)
+
+      expect(response.status).toEqual(200)
+      expect(response.body).toMatchObject({
+        ...expected,
+        supportedDelegationTypes: expect.arrayContaining(
+          expected?.supportedDelegationTypes || [],
+        ),
+      })
+
+      const apiScopeDelegationTypes = await apiScopeDelegationTypeModel.findAll(
+        {
+          where: {
+            apiScopeName: response.body.name,
+          },
+        },
+      )
+
+      expect(apiScopeDelegationTypes).toHaveLength(
+        expected.supportedDelegationTypes?.length || 0,
+      )
+    }
+
+    it('should be able to create api scope using supportedDelegationTypes property without personal representative since user is not super admin', async () => {
+      await createAndAssert({
+        input: {
+          ...createInput,
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.PersonalRepresentative,
+          ],
+        },
+        expected: {
+          grantToPersonalRepresentatives: false,
+          grantToLegalGuardians: true,
+          grantToProcuringHolders: true,
+          allowExplicitDelegationGrant: true,
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            // Add general mandate since it is directly connected to Custom delegation type
+            AuthDelegationType.GeneralMandate,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.ProcurationHolder,
+          ],
+        },
       })
     })
   })

@@ -7,6 +7,7 @@ import {
 } from '@island.is/auth-api-lib'
 
 import { DelegationsController } from './delegations.controller'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Module({
   imports: [
@@ -15,6 +16,11 @@ import { DelegationsController } from './delegations.controller'
     PersonalRepresentativeModule,
   ],
   controllers: [DelegationsController],
-  providers: [],
+  providers: [
+    {
+      provide: LOGGER_PROVIDER,
+      useValue: logger,
+    },
+  ],
 })
 export class DelegationsModule {}

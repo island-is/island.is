@@ -13,7 +13,7 @@ import addYears from 'date-fns/addYears'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInYears from 'date-fns/differenceInYears'
 import { CustomPage } from '@island.is/cms'
-import { PensionCalculationResponse } from './models/pensionCalculation.model'
+import { PensionCalculationResponse } from './models/pension/pensionCalculation.model'
 
 const basePensionTypeMapping: Record<BasePensionType, number> = {
   [BasePensionType.Retirement]: 1, // Ellilífeyrir
@@ -52,11 +52,12 @@ export const mapPensionCalculationInput = (
     typeof input.birthMonth === 'number' &&
     typeof input.birthYear === 'number'
   ) {
-    const birthdate = new Date(input.birthYear, input.birthMonth)
-
     const defaultPensionAge =
       (pageData?.configJson?.['defaultPensionAge'] as number) ?? 67
-    const defaultPensionDate = addYears(birthdate, defaultPensionAge)
+    const defaultPensionDate = addYears(
+      new Date(input.birthYear, input.birthMonth + 1),
+      defaultPensionAge,
+    )
 
     const startDate =
       typeof input.startMonth === 'number' &&

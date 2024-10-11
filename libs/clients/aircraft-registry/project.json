@@ -2,20 +2,16 @@
   "name": "aircraft-registry",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/aircraft-registry/src",
+  "tags": ["scope:client", "lib:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/clients/aircraft-registry/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/aircraft-registry"],
       "options": {
-        "jestConfig": "libs/clients/aircraft-registry/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/aircraft-registry/jest.config.ts"
       }
     },
     "update-openapi-document": {
@@ -37,6 +33,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["scope:client", "lib:client"]
+  }
 }

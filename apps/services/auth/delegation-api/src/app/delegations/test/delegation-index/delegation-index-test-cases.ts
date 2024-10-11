@@ -1,5 +1,6 @@
-import { createNationalId } from '@island.is/testing/fixtures'
 import { createClient } from '@island.is/services/auth/testing'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { createNationalId } from '@island.is/testing/fixtures'
 
 import { clientId, TestCase } from './delegations-index-types'
 
@@ -17,6 +18,7 @@ export const indexingTestCases: Record<string, TestCase> = {
     createClient({
       clientId: clientId,
       supportsCustomDelegation: true,
+      supportedDelegationTypes: [AuthDelegationType.Custom],
     }),
     {
       fromCustom: [adult1, adult2],
@@ -28,6 +30,7 @@ export const indexingTestCases: Record<string, TestCase> = {
     createClient({
       clientId: clientId,
       supportsLegalGuardians: true,
+      supportedDelegationTypes: [AuthDelegationType.LegalGuardian],
     }),
     {
       fromChildren: [child2, child1],
@@ -38,6 +41,7 @@ export const indexingTestCases: Record<string, TestCase> = {
     createClient({
       clientId: clientId,
       supportsLegalGuardians: true,
+      supportedDelegationTypes: [AuthDelegationType.LegalGuardian],
     }),
     {
       fromChildren: [adult1], // more than 18 years old
@@ -49,6 +53,7 @@ export const indexingTestCases: Record<string, TestCase> = {
     createClient({
       clientId: clientId,
       supportsProcuringHolders: true,
+      supportedDelegationTypes: [AuthDelegationType.ProcurationHolder],
     }),
     {
       fromCompanies: [company1, company2],
@@ -60,6 +65,7 @@ export const indexingTestCases: Record<string, TestCase> = {
     createClient({
       clientId: clientId,
       supportsPersonalRepresentatives: true,
+      supportedDelegationTypes: [AuthDelegationType.PersonalRepresentative],
     }),
     {
       fromRepresentative: [
@@ -72,9 +78,22 @@ export const indexingTestCases: Record<string, TestCase> = {
     createClient({
       clientId: clientId,
       supportsCustomDelegation: true,
+      supportedDelegationTypes: [AuthDelegationType.Custom],
     }),
     {
       fromCustom: [adult1],
+      expectedFrom: [adult1],
+    },
+  ),
+  customTwoDomains: new TestCase(
+    createClient({
+      clientId: clientId,
+      supportsCustomDelegation: true,
+      supportedDelegationTypes: [AuthDelegationType.Custom],
+    }),
+    {
+      fromCustom: [adult1],
+      fromCustomOtherDomain: [adult1],
       expectedFrom: [adult1],
     },
   ),

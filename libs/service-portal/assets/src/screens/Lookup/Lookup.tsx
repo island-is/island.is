@@ -17,7 +17,6 @@ import {
   m,
   TableGrid,
   formatDate,
-  ErrorScreen,
   ExcludesFalse,
   FootNote,
   SAMGONGUSTOFA_SLUG,
@@ -31,6 +30,8 @@ import {
   useGetVehiclesSearchLazyQuery,
 } from './Lookup.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import LookupOperator from '../../components/LookupOperator'
+import { OperatorAnonymityStatus } from '@island.is/api/schema'
 
 const Lookup = () => {
   useNamespaces('sp.vehicles')
@@ -78,14 +79,16 @@ const Lookup = () => {
     mass,
     massLaden,
     vehicleStatus,
-    co,
     co2Wltp,
     weightedco2Wltp,
+    operatorNames,
+    engine,
+    operatorAnonymityStatus,
   } = vehicleSearch.data?.vehiclesSearch || {}
 
   const noInfo =
     vehicleSearch?.data?.vehiclesSearch === null ||
-    typeof vehicleSearch?.data?.vehiclesSearch === undefined
+    typeof vehicleSearch?.data?.vehiclesSearch === 'undefined'
 
   const noSearchData =
     searchLimitData?.data?.vehiclesSearchLimit === undefined ||
@@ -114,6 +117,8 @@ const Lookup = () => {
 
   const limit = searchLimitData?.data?.vehiclesSearchLimit || 0
   const limitExceeded = limit === 0
+  const operatorNamesArray =
+    operatorNames && operatorNames?.length > 0 ? operatorNames : []
 
   return (
     <>
@@ -320,6 +325,22 @@ const Lookup = () => {
                   title: formatMessage(messages.weightedWLTPCo2),
                   value: String(weightedco2Wltp),
                 },
+                engine && {
+                  title: formatMessage(messages.engineType),
+                  value: engine,
+                },
+                operatorAnonymityStatus === OperatorAnonymityStatus.ALL ||
+                operatorNamesArray.length > 0
+                  ? {
+                      title: formatMessage(messages.operator),
+                      value: (
+                        <LookupOperator
+                          names={operatorNamesArray}
+                          operatorAnonymityStatus={operatorAnonymityStatus}
+                        />
+                      ),
+                    }
+                  : undefined,
               ].filter(Boolean as unknown as ExcludesFalse),
               2,
             )}

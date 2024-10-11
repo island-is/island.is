@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -15,7 +15,7 @@ interface Props {
   description: string
 }
 
-const RequestRulingSignatureModal: React.FC<React.PropsWithChildren<Props>> = ({
+const RequestRulingSignatureModal: FC<Props> = ({
   onYes,
   onNo,
   description,

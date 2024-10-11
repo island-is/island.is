@@ -10,9 +10,14 @@ import { AdvertModal } from '../fields/AdvertModal'
 
 export const AdvertScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
+  const [modalVisible, setModalVisability] = useState(false)
 
-  const [modalToggle, setModalToggle] = useState(false)
-  const [selectedAdvertId, setSelectedAdvertId] = useState<string | null>(null)
+  const generateTimestamp = () => new Date().toISOString()
+
+  /**
+   * This state here is for force rerendering of the HTML editor when a value is received from the modal
+   */
+  const [timestamp, setTimestamp] = useState(generateTimestamp())
 
   return (
     <FormScreen
@@ -23,18 +28,19 @@ export const AdvertScreen = (props: OJOIFieldBaseProps) => {
           variant="utility"
           iconType="outline"
           icon="copy"
-          onClick={() => setModalToggle((prev) => !prev)}
+          onClick={() => setModalVisability((prev) => !prev)}
         >
           {f(advert.buttons.copyOldAdvert)}
         </Button>
       }
     >
-      <Advert {...props} selectedAdvertId={selectedAdvertId} />
+      <Advert {...props} timeStamp={timestamp} />
       <Signatures {...props} />
       <AdvertModal
-        setSelectedAdvertId={setSelectedAdvertId}
-        visible={modalToggle}
-        setVisibility={setModalToggle}
+        applicationId={props.application.id}
+        visible={modalVisible}
+        setVisible={setModalVisability}
+        onConfirmChange={() => setTimestamp(generateTimestamp())}
       />
     </FormScreen>
   )

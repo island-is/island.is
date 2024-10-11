@@ -1,10 +1,13 @@
-import { Grant } from './models/grants.model'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectModel } from '@nestjs/sequelize'
+import { Op, WhereOptions } from 'sequelize'
+
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { GrantDto } from './dto/grant.dto'
-import { WhereOptions } from 'sequelize'
+import { Grant } from './models/grants.model'
+
+import type { Logger } from '@island.is/logging'
 
 @Injectable()
 export class GrantsService {
@@ -128,5 +131,15 @@ export class GrantsService {
     }
 
     return existing.update({ ...grant })
+  }
+
+  async deleteExpired(): Promise<number> {
+    return this.grantModel.destroy({
+      where: {
+        expiration: {
+          [Op.lt]: new Date(),
+        },
+      },
+    })
   }
 }

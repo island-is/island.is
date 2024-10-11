@@ -15,13 +15,15 @@ import {
   UserProfile,
 } from '../../types/schema'
 import { m } from '../../lib/messages'
-import { B_TEMP } from '../../shared/constants'
-import { isApplicationForCondition } from '../../lib/utils'
+import { B_TEMP, BE, B_FULL_RENEWAL_65 } from '../../lib/constants'
 
 export const subSectionTempInfo = buildSubSection({
   id: 'infoStep',
   title: m.informationApplicant,
-  condition: isApplicationForCondition(B_TEMP),
+  condition: (answers) =>
+    answers.applicationFor === B_TEMP ||
+    answers.applicationFor === BE ||
+    answers.applicationFor === B_FULL_RENEWAL_65,
   children: [
     buildMultiField({
       id: 'info',
@@ -31,13 +33,24 @@ export const subSectionTempInfo = buildSubSection({
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
           value: m.applicationForTempLicenseTitle,
+          condition: (answers) => answers.applicationFor === B_TEMP,
+        }),
+        buildKeyValueField({
+          label: m.drivingLicenseTypeRequested,
+          value: m.applicationForBELicenseTitle,
+          condition: (answers) => answers.applicationFor === BE,
+        }),
+        buildKeyValueField({
+          label: m.drivingLicenseTypeRequested,
+          value: m.applicationForRenewalLicenseDescription,
+          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
         }),
         buildDividerField({
           title: '',
           color: 'dark400',
         }),
         buildKeyValueField({
-          label: m.informationApplicant,
+          label: m.informationFullName,
           value: ({ externalData: { nationalRegistry } }) =>
             (nationalRegistry.data as NationalRegistryUser).fullName,
           width: 'half',
@@ -76,19 +89,18 @@ export const subSectionTempInfo = buildSubSection({
             return data.email
           },
         }),
-        buildDividerField({
-          title: '',
-        }),
         buildDescriptionField({
           id: 'drivingInstructorTitle',
           title: m.drivingInstructor,
           titleVariant: 'h4',
           description: m.chooseDrivingInstructor,
+          condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
         }),
         buildSelectField({
           id: 'drivingInstructor',
           title: m.drivingInstructor,
           required: true,
+          condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
           options: ({
             externalData: {
               teachers: { data },
@@ -96,7 +108,7 @@ export const subSectionTempInfo = buildSubSection({
           }) => {
             return (data as TeacherV4[]).map(({ name, nationalId }) => ({
               value: nationalId,
-              label: name,
+              label: `${name} (${nationalId.substring(0, 6)})`,
             }))
           },
         }),

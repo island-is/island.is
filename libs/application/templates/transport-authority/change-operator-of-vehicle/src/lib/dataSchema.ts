@@ -1,5 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { VehicleMileage } from '../shared'
+import { error } from './messages'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -29,11 +31,7 @@ const RemovableUserSchemaBase = z
     ({ nationalId, wasRemoved }) => {
       return (
         wasRemoved === 'true' ||
-        (nationalId &&
-          nationalId.length > 0 &&
-          kennitala.isValid(nationalId) &&
-          (kennitala.isCompany(nationalId) ||
-            kennitala.info(nationalId).age >= 18))
+        (nationalId && nationalId.length > 0 && kennitala.isValid(nationalId))
       )
     },
     { path: ['nationalId'] },
@@ -100,15 +98,18 @@ export const ChangeOperatorOfVehicleSchema = z.object({
   vehicleMileage: z
     .object({
       isRequired: z.boolean().optional(),
+      mileageReading: z.string().optional(),
       value: z.string().optional(),
     })
     .refine(
-      (x) => {
+      (x: VehicleMileage) => {
         if (x.isRequired) {
           return (
-            x.value !== undefined &&
-            x.value !== '' &&
-            parseInt(x.value?.split(' ')[0]) > 0
+            (x.value !== undefined &&
+              x.value !== '' &&
+              parseInt(x.value?.split(' ')[0]) > 0 &&
+              x.mileageReading === undefined) ||
+            Number(x.value) >= Number(x.mileageReading)
           )
         } else {
           return (
@@ -120,6 +121,7 @@ export const ChangeOperatorOfVehicleSchema = z.object({
       },
       {
         path: ['value'],
+        message: error.invalidMileage.defaultMessage,
       },
     ),
   operators: z.array(OperatorInformationSchema),

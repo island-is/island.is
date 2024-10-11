@@ -8,6 +8,7 @@ import { sectionPayment } from './applicationSections/sectionPayment'
 import { m } from '../lib/messages'
 import { sectionFakeData } from './applicationSections/sectionFakeData'
 import { sectionReasonForApplication } from './applicationSections/sectionReasonForApplication'
+import { sectionDigitalLicenseInfo } from './applicationSections/sectionDigitalLicenseInfo'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -28,6 +29,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
       sectionReasonForApplication,
       sectionInformation,
       sectionDelivery,
+      sectionDigitalLicenseInfo,
       sectionOverview,
       sectionPayment,
     ],

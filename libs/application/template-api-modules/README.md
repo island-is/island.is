@@ -19,28 +19,20 @@ Start by creating `{your_template_name}.module.ts` and `{your_template_name}.ser
 Example of a template API module:
 
 ```typescript
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 
 // This is a shared module that gives you access to common methods
 import { SharedTemplateAPIModule } from '../../shared'
 
-// The base config that template api modules are registered with by default
-// (configurable inside `template-api.module.ts`)
-import { BaseTemplateAPIModuleConfig } from '../../../types'
-
 // Here you import your module service
 import { ReferenceTemplateService } from './reference-template.service'
 
-export class ReferenceTemplateModule {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: ReferenceTemplateModule,
-      imports: [SharedTemplateAPIModule.register(config)],
-      providers: [ReferenceTemplateService],
-      exports: [ReferenceTemplateService],
-    }
-  }
-}
+@Module({
+  imports: [SharedTemplateAPIModule],
+  providers: [ReferenceTemplateService],
+  exports: [ReferenceTemplateService],
+})
+export class ReferenceTemplateModule {}
 ```
 
 Create your service class that extends the `BaseTemplateApiService` and provide the application type to the `super` constructor. \
@@ -417,3 +409,29 @@ import { SharedApi } from '@island.is/application/types'
     },
 
 ```
+
+## Enabling payment mocking
+
+To enable payment mocking on dev and local you need to add `enableMockPayment: true` to the arguments object passed to the
+`buildExternalDataProvider` function when constructing your `approveExternalData` field.
+
+A simple example of this can be found in `libs/application/templates/example-payment/src/forms/draft.ts`
+
+```typescript
+buildExternalDataProvider({
+          title: m.draft.externalDataTitle,
+          id: 'approveExternalData',
+          subTitle: m.draft.externalDataTitle,
+          checkboxLabel: m.draft.externalDataTitle,
+          enableMockPayment: true,
+          dataProviders: [
+            buildDataProviderItem({
+              provider: PaymentCatalogApi,
+              title: m.draft.feeInfo,
+            }),
+          ],
+        }),
+
+```
+
+This will cause a checkbox saying "Enable mock payment" to be shown that if checked will cause the payment step to be skipped.

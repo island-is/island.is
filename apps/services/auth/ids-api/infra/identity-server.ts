@@ -60,7 +60,7 @@ export const serviceSetup = (services: {
       PersistenceSettings__BaseAddress: ref(
         (h) => `http://${h.svc(services.authIdsApi)}`,
       ),
-      PersistenceSettings__SessionsBaseAddress: {
+      SessionsApiSettings__BaseAddress: {
         dev: 'http://web-services-sessions.services-sessions.svc.cluster.local',
         staging:
           'http://web-services-sessions.services-sessions.svc.cluster.local',

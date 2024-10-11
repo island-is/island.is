@@ -12,19 +12,20 @@ registerEnumType(CaseFileState, { name: 'CaseFileState' })
 export class CaseFile {
   @Field(() => ID)
   readonly id!: string
-  @Field({ nullable: true })
+
+  @Field(() => String, { nullable: true })
   readonly created?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly modified?: string
 
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   readonly caseId?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly name?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly type?: string
 
   @Field(() => CaseFileCategory, { nullable: true })
@@ -33,16 +34,16 @@ export class CaseFile {
   @Field(() => CaseFileState, { nullable: true })
   readonly state?: CaseFileState
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly key?: string
 
   @Field(() => Int, { nullable: true })
   readonly size?: number
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly policeCaseNumber?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly userGeneratedFilename?: string
 
   @Field(() => Int, { nullable: true })
@@ -51,9 +52,12 @@ export class CaseFile {
   @Field(() => Int, { nullable: true })
   readonly orderWithinChapter?: number
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly displayDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly policeFileId?: string
+
+  @Field(() => String, { nullable: true })
+  readonly submittedBy?: string
 }

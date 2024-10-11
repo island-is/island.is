@@ -11,12 +11,15 @@ import {
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
+import { Case } from '../models/case.model'
+import { DateLog } from '../models/dateLog.model'
+
 @Injectable()
 export class RequestSharedWithDefenderGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
-    const theCase = request.case
+    const theCase: Case = request.case
 
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')
@@ -30,7 +33,7 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
     if (
       theCase.requestSharedWithDefender ===
         RequestSharedWithDefender.COURT_DATE &&
-      Boolean(theCase.courtDate)
+      Boolean(DateLog.arraignmentDate(theCase.dateLogs))
     ) {
       return true
     }

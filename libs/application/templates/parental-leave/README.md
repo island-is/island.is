@@ -67,7 +67,7 @@ When Vinnumálastofnun requests edits on changes that have been sent to them for
 
 #### Edit or add periods
 
-Applicants make changes in periods or/and add more periods in their application.
+Applicants make changes in periods or employers and/or add more periods or employers to their application. If an applicant changes a previous employer, they will get a file upload field where they have to upload a document confirming they have left their previous place of employment.
 
 #### Employer waiting to assign for edits
 
@@ -160,7 +160,7 @@ Once you have everything running you can navigate to [http://localhost:4200/umso
 
 By setting up the application-system you'll have created a local postgres database on a docker image, if you haven't already you should setup a tool to interact with your database. For example [pgAdmin](https://www.pgadmin.org/download/).
 
-You’ll find the relevant connection information in [the docker-compose file](../../../../apps/application-system/api/docker-compose.base.yml).
+You’ll find the relevant connection information in [the docker compose file](../../../../apps/application-system/api/docker-compose.base.yml).
 
 ## Investigating errors
 

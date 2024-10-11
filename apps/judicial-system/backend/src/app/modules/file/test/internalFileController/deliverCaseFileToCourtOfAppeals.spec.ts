@@ -1,6 +1,6 @@
 import { uuid } from 'uuidv4'
 
-import { ConfigType } from '@nestjs/config'
+import { type ConfigType } from '@island.is/nest/config'
 
 import {
   CaseFileCategory,
@@ -98,14 +98,20 @@ describe('InternalFileController - Deliver case file to court of appeals', () =>
     })
 
     it('should return success', () => {
-      expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(key)
+      expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(
+        theCase.type,
+        key,
+      )
       expect(mockAwsS3Service.getSignedUrl).toHaveBeenCalledWith(
+        theCase.type,
         key,
         mockFileConfig.robotS3TimeToLiveGet,
+        true,
       )
       expect(mockCourtService.updateAppealCaseWithFile).toHaveBeenCalledWith(
         user,
         caseId,
+        caseFileId,
         appealCaseNumber,
         category,
         name,

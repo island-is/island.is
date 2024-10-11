@@ -14,6 +14,7 @@ export interface FilterInputProps {
     event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
   backgroundColor?: ResponsiveProp<InputBackgroundColor>
+  loading?: boolean
 }
 
 const icon: InputIcon = { name: 'search', type: 'outline' }
@@ -29,6 +30,7 @@ export const FilterInput: React.FC<
   onChange,
   onKeyDown,
   backgroundColor = ['blue', 'blue', 'white'],
+  loading,
 }) => {
   return (
     <Input
@@ -42,6 +44,7 @@ export const FilterInput: React.FC<
       onKeyDown={onKeyDown}
       buttons={button && [{ ...icon, ...button }]}
       {...(button ? {} : { icon })}
+      loading={loading}
     />
   )
 }

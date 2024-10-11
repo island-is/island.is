@@ -19,4 +19,10 @@ export class HousingBenefitsPaymentsInput {
 
   @Field({ nullable: true })
   month?: string
+
+  @Field({
+    defaultValue: false,
+    description: "False display's all. True display payments only",
+  })
+  payments!: boolean
 }

@@ -7,8 +7,11 @@ import { DrivingLicensePayloadMapper } from '../mappers/drivingLicenseMapper'
 import { PCardPayloadMapper } from '../mappers/pCardMapper'
 import { EHICCardPayloadMapper } from '../mappers/ehicCardMapper'
 import { HuntingLicensePayloadMapper } from '../mappers/huntingLicenseMapper'
+import { PassportMapper } from '../mappers/passportMapper'
+import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 @Module({
+  imports: [CmsTranslationsModule],
   providers: [
     AdrLicensePayloadMapper,
     FirearmLicensePayloadMapper,
@@ -18,6 +21,7 @@ import { HuntingLicensePayloadMapper } from '../mappers/huntingLicenseMapper'
     HuntingLicensePayloadMapper,
     PCardPayloadMapper,
     EHICCardPayloadMapper,
+    PassportMapper,
   ],
   exports: [
     AdrLicensePayloadMapper,
@@ -28,6 +32,7 @@ import { HuntingLicensePayloadMapper } from '../mappers/huntingLicenseMapper'
     HuntingLicensePayloadMapper,
     PCardPayloadMapper,
     EHICCardPayloadMapper,
+    PassportMapper,
   ],
 })
 export class LicenseMapperModule {}

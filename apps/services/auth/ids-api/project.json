@@ -4,12 +4,12 @@
   "sourceRoot": "apps/services/auth/ids-api/src",
   "projectType": "application",
   "prefix": "ids-api",
+  "tags": ["scope:auth-api"],
   "generators": {},
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/apps/services/auth/ids-api",
         "commands": [
           "nx esbuild services-auth-ids-api",
           "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
@@ -72,26 +72,34 @@
         "buildTarget": "services-auth-ids-api:esbuild"
       }
     },
-    "lint": {
-      "executor": "@nx/linter:eslint",
+    "cleanup": {
+      "executor": "@nx/js:node",
       "options": {
-        "lintFilePatterns": ["apps/services/auth/ids-api/**/*.{ts,tsx,js,jsx}"]
+        "buildTarget": "services-auth-ids-api:esbuild",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/auth/ids-api/cleanup"
+        },
+        "args": ["--job", "cleanup"]
       }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/services/auth/ids-api/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/ids-api"]
     },
-    "docker-express": {},
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/services/auth/ids-api"
       }
     },
@@ -114,6 +122,13 @@
       "options": {
         "command": "sequelize-cli migration:generate",
         "cwd": "libs/auth-api-lib"
+      }
+    },
+    "migrate/undo": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sequelize-cli db:migrate:undo",
+        "cwd": "{workspaceRoot}/libs/auth-api-lib"
       }
     },
     "seed": {
@@ -161,6 +176,5 @@
         "parallel": true
       }
     }
-  },
-  "tags": ["scope:auth-api"]
+  }
 }

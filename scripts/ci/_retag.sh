@@ -2,7 +2,7 @@
 
 echo "Image to check: $IMAGE"
 
-set -euo pipefail
+set -euox pipefail
 
 # This is a script to re-tag a Docker image without pulling or pushing the image but rather add the new
 # docker tag to it directly in the registry.

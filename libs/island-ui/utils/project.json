@@ -3,22 +3,18 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/island-ui/utils/src",
   "projectType": "library",
+  "tags": ["lib:react", "scope:react"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/island-ui/utils/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/island-ui/utils/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/island-ui/utils/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/island-ui/utils"]
     }
-  },
-  "tags": ["lib:react", "scope:react"]
+  }
 }

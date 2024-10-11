@@ -6,13 +6,13 @@ export class UserProfile {
   nationalId?: string
 
   @Field(() => String, { nullable: true })
-  mobilePhoneNumber?: string
+  mobilePhoneNumber?: string | null
 
   @Field(() => String, { nullable: true })
   locale?: string
 
   @Field(() => String, { nullable: true })
-  email?: string
+  email?: string | null
 
   @Field(() => Boolean)
   emailVerified!: boolean
@@ -23,13 +23,20 @@ export class UserProfile {
   @Field(() => Boolean)
   documentNotifications!: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  needsNudge?: boolean | null
+
   @Field(() => String, { nullable: true })
   emailStatus?: string
 
   @Field(() => String, { nullable: true })
   mobileStatus?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => Date, {
+    nullable: true,
+    deprecationReason:
+      'needsNudge should be used to determine if profile needs nudge. v2 doesnt provide the modified value.',
+  })
   modified?: Date
 
   @Field(() => Boolean, { nullable: true })
@@ -39,7 +46,7 @@ export class UserProfile {
   @Field(() => Boolean, {
     nullable: true,
     deprecationReason:
-      'Deprecated due to new field "EmailNotification" from UserProfile V2',
+      'Deprecated due to new field EmailNotification from UserProfile V2',
   })
   canNudge?: boolean
 

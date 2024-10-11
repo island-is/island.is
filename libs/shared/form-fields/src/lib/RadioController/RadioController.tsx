@@ -38,6 +38,7 @@ interface Props {
   smallScreenSplit?: '1/1' | '1/2' | '1/3' | '1/4' | '1/5'
   backgroundColor?: InputBackgroundColor
   onSelect?: (s: string) => void
+  hasIllustration?: boolean
 }
 
 export const RadioController: FC<React.PropsWithChildren<Props>> = ({
@@ -52,6 +53,7 @@ export const RadioController: FC<React.PropsWithChildren<Props>> = ({
   backgroundColor = 'blue',
   split = '1/1',
   smallScreenSplit = '1/1',
+  hasIllustration = false,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -89,6 +91,7 @@ export const RadioController: FC<React.PropsWithChildren<Props>> = ({
                 hasError={error !== undefined}
                 backgroundColor={backgroundColor}
                 illustration={option.illustration}
+                hasIllustration={hasIllustration}
               />
             </GridColumn>
           ))}

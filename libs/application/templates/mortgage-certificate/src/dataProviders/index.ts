@@ -3,11 +3,7 @@ import {
   PaymentCatalogApi,
 } from '@island.is/application/types'
 
-export {
-  IdentityApi,
-  UserProfileApi,
-  NationalRegistryRealEstateApi,
-} from '@island.is/application/types'
+export { IdentityApi, UserProfileApi } from '@island.is/application/types'
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {

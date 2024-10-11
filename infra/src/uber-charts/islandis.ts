@@ -10,11 +10,8 @@ import {
 } from '../../../apps/application-system/api/infra/application-system-api'
 import { serviceSetup as appSystemFormSetup } from '../../../apps/application-system/form/infra/application-system-form'
 
-import {
-  serviceSetup as servicePortalApiSetup,
-  workerSetup as servicePortalUserProfileWorker,
-} from '../../../apps/services/user-profile/infra/service-portal-api'
-import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
+import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
+import { serviceSetup as servicePortalSetup } from '../../../apps/portals/my-pages/infra/portals-my-pages'
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
 import { serviceSetup as consultationPortalSetup } from '../../../apps/consultation-portal/infra/samradsgatt'
@@ -56,6 +53,7 @@ import {
 import {
   serviceSetup as sessionsServiceSetup,
   workerSetup as sessionsWorkerSetup,
+  cleanupSetup as sessionsCleanupWorkerSetup,
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
@@ -69,15 +67,16 @@ const skilavottordWs = skilavottordWsSetup()
 const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 
 const documentsService = serviceDocumentsSetup()
+const servicePortalApi = servicePortalApiSetup()
+
 const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
   skilavottordWs,
+  servicePortalApi,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
-const servicePortalApi = servicePortalApiSetup()
-const servicePortalWorker = servicePortalUserProfileWorker()
 const adminPortal = adminPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
@@ -88,11 +87,16 @@ const rabBackend = rabBackendSetup()
 
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
+const sessionsCleanupWorker = sessionsCleanupWorkerSetup()
 
 const authAdminApi = authAdminApiSetup()
 
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
+
+const userNotificationService = userNotificationServiceSetup({
+  userProfileApi: servicePortalApi,
+})
 
 const api = apiSetup({
   appSystemApi,
@@ -105,6 +109,7 @@ const api = apiSetup({
   sessionsApi: sessionsService,
   authAdminApi,
   universityGatewayApi: universityGatewayService,
+  userNotificationService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -123,10 +128,6 @@ const storybook = storybookSetup({})
 const downloadService = downloadServiceSetup({
   regulationsAdminBackend: rabBackend,
 })
-
-const userNotificationService = userNotificationServiceSetup({
-  userProfileApi: servicePortalApi,
-})
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
@@ -143,7 +144,6 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
-    servicePortalWorker,
     adminPortal,
     api,
     consultationPortal,
@@ -168,16 +168,17 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    sessionsCleanupWorker,
     universityGatewayService,
     universityGatewayWorker,
     contentfulApps,
+    contentfulEntryTagger,
   ],
   staging: [
     appSystemApi,
     appSystemForm,
     servicePortal,
     servicePortalApi,
-    servicePortalWorker,
     adminPortal,
     api,
     consultationPortal,
@@ -202,6 +203,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    sessionsCleanupWorker,
     universityGatewayService,
     universityGatewayWorker,
   ],
@@ -210,7 +212,6 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
-    servicePortalWorker,
     adminPortal,
     consultationPortal,
     api,
@@ -238,6 +239,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    sessionsCleanupWorker,
     contentfulApps,
     universityGatewayService,
     universityGatewayWorker,
@@ -255,4 +257,5 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
+  githubActionsCache,
 ]

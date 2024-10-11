@@ -99,12 +99,12 @@ export const messages = defineMessages({
     id: 'sp.health:monthly-payment-short',
     defaultMessage: 'Greitt í mán.',
   },
-  paymentParticationExplination: {
+  paymentParticationExplanation: {
     id: 'sp.health:payment-partication-info',
     defaultMessage:
       'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði {basePayment} kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
   },
-  paymentParticationExplinationFooter: {
+  paymentParticationExplanationFooter: {
     id: 'sp.health:payment-partication-info-footer',
     defaultMessage:
       'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig heilbrigðisþjónusta sem veitt er hjá sjálfstætt starfandi læknum, sjúkraþjálfurum, iðjuþjálfum, talmeinafræðingum og sálfræðingum sem Sjúkratryggingar Íslands hafa samið við. Enn fremur greiðslur fyrir meðferð húðsjúkdóma, sem veitt er af öðrum heilbrigðisstarfsmönnum en læknum, samkvæmt samningum við Sjúkratryggingar Íslands.',
@@ -159,6 +159,10 @@ export const messages = defineMessages({
     id: 'sp.health:internal-service-error-title',
     defaultMessage: 'Ekki tókst að sækja gögn frá Sjúkratryggingum',
   },
+  ehic: {
+    id: 'sp.health:ehic',
+    defaultMessage: 'Evrópska sjúkratryggingakortið',
+  },
   healthInternalServiceErrorInfo: {
     id: 'sp.health:internal-service-error-info',
     defaultMessage:
@@ -195,11 +199,16 @@ export const messages = defineMessages({
   },
   healthInsuranceConfirmationTransferError: {
     id: 'sp.health:health-center-registration-transfer-error-title',
-    defaultMessage: 'Villa hefur komið upp',
+    defaultMessage:
+      'Villa kom upp þegar sótt var staðfesting á sjúkratryggingu',
   },
   noHealthInsurance: {
     id: 'sp.health:no-health-insurance',
     defaultMessage: 'Þú ert ekki með sjúkratryggingu',
+  },
+  noHealthInsuranceMessage: {
+    id: 'sp.health:no-health-insurance-message',
+    defaultMessage: 'Síðasta trygging: {arg}',
   },
   paymentTarget: {
     id: 'sp.health:payment-target',
@@ -662,7 +671,7 @@ export const messages = defineMessages({
   healthCenterRegistrationModalInfo: {
     id: 'sp.health:health-center-registration-modal-info',
     defaultMessage:
-      'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjáfstætt starfandi heimilislækni.',
+      'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjálfstætt starfandi heimilislækni.',
   },
   healthTooltip: {
     id: 'sp.health:health-tooltip',
@@ -919,6 +928,10 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-valid-to',
     defaultMessage: 'Gildir til',
   },
+  validityPeriod: {
+    id: 'sp.health:validity-period',
+    defaultMessage: 'Gildistími',
+  },
   medicineValidFrom: {
     id: 'sp.health:medicine-valid-from',
     defaultMessage: 'Gildir frá',
@@ -926,5 +939,204 @@ export const messages = defineMessages({
   medicineNameOfDoctor: {
     id: 'sp.health:medicine-name-of-doctor',
     defaultMessage: 'Heiti læknis',
+  },
+  medicineNameOfDocExtra: {
+    id: 'sp.health:medicine-name-of-doc-extra',
+    defaultMessage: 'Aukalæknar skráðir á skírteini',
+  },
+  medicineCalculatorAddToPurchaseLabel: {
+    id: 'sp.health:medicine-calculator-add-to-purchase-label',
+    defaultMessage: 'Bæta {arg} við lyfjakaupalista',
+  },
+  organDonation: {
+    id: 'sp.health:organ-donation',
+    defaultMessage: 'Líffæragjöf',
+  },
+  organDonationDescription: {
+    id: 'sp.health:organ-donation-description',
+    defaultMessage:
+      'Íslendingar eru sjálfkrafa skráðir líffæragjafar. Þau sem vilja geta breytt afstöðu sinni.',
+  },
+  readAboutOrganDonation: {
+    id: 'sp.health:read-about-organ-donation',
+    defaultMessage: 'Lesa um líffæragjöf',
+  },
+  takeOnOrganDonation: {
+    id: 'sp.health:take-on-organ-donation',
+    defaultMessage: 'Afstaða til líffæragjafar',
+  },
+  changeTake: {
+    id: 'sp.health:change-take',
+    defaultMessage: 'Breyta afstöðu',
+  },
+  organDonationLink: {
+    id: 'sp.health:organ-donation-link',
+    defaultMessage: 'https://island.is/liffaeragjof',
+  },
+  organRegistrationOtherLabel: {
+    id: 'sp.health:organ-registration-other-label',
+    defaultMessage: 'Skrifaðu hér',
+  },
+  organRegistrationOtherText: {
+    id: 'sp.health:organ-registration-other-text',
+    defaultMessage: 'Vinsamlegast skráðu hvaða líffæri hér',
+  },
+  organLimitationsError: {
+    id: 'sp.health:organ-limitations-error',
+    defaultMessage:
+      'Textareitur má ekki vera tómur sé þessi valkostur valinn. ',
+  },
+  other: {
+    id: 'sp.health:other-lower-case',
+    defaultMessage: 'annað',
+  },
+  registrationComplete: {
+    id: 'sp.health:registration-complete',
+    defaultMessage: 'Skráning tókst',
+  },
+  registrationFailed: {
+    id: 'sp.health:registration-failed',
+    defaultMessage: 'Skráning mistókst',
+  },
+  iAmOrganDonor: {
+    id: 'sp.health:i-am-organ-donor',
+    defaultMessage: 'Ég er líffæragjafi.',
+  },
+  iAmOrganDonorText: {
+    id: 'sp.health:i-am-organ-donor-text',
+    defaultMessage: 'Öll líffærin mín má nota til ígræðslu.',
+  },
+  iAmOrganDonorWithExceptions: {
+    id: 'sp.health:i-am-organ-donor-w-exceptions',
+    defaultMessage: 'Ég heimila líffæragjöf, með takmörkunum.',
+  },
+  iAmOrganDonorWithExceptionsText: {
+    id: 'sp.health:i-am-organ-donor-w-exceptions-text',
+    defaultMessage: 'Öll líffæri má nota til ígræðslu fyrir utan:',
+  },
+  iAmNotOrganDonor: {
+    id: 'sp.health:i-am-not-organ-donor',
+    defaultMessage: 'Ég banna líffæragjöf.',
+  },
+  iAmNotOrganDonorText: {
+    id: 'sp.health:i-am-not-organ-donor-text',
+    defaultMessage: 'Engin líffæri má nota til ígræðslu',
+  },
+  organDonationRegistrationOptIn: {
+    id: 'sp.health:organ-donation-registration-opt-in',
+    defaultMessage: 'Við andlát mitt má nota líffæri mín til líffæragjafa.',
+  },
+  organDonationRegistrationException: {
+    id: 'sp.health:organ-donation-registration-exception',
+    defaultMessage:
+      'Ég gef leyfi fyrir líffæragjöf að undanskildum eftirfarandi líffærum:',
+  },
+  organDonationRegistrationOptOut: {
+    id: 'sp.health:organ-donation-registration-opt-out',
+    defaultMessage: 'Ég banna líffæragjöf.',
+  },
+  vaccinations: {
+    id: 'sp.health:vaccinations',
+    defaultMessage: 'Bólusetningar',
+  },
+  vaccinationsIntro: {
+    id: 'sp.health:vaccinations-intro',
+    defaultMessage:
+      'Bólusetning er ónæmisaðgerð sem ætlað er að koma í veg fyrir alvarlegan smitsjúkdóm. Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar.',
+  },
+  generalVaccinations: {
+    id: 'sp.health:general-vaccinations',
+    defaultMessage: 'Almennar bólusetningar',
+  },
+  otherVaccinations: {
+    id: 'sp.health:other-vaccinations',
+    defaultMessage: 'Aðrar bólusetningar',
+  },
+  landlaeknirVaccinationsTooltip: {
+    id: 'sp.health:landlaeknir-tooltip',
+    defaultMessage:
+      'Landlæknir hefur umsjón með gögnum um þínar bólusetningar.',
+  },
+  readAboutVaccinations: {
+    id: 'sp.health:read-about-vaccinations',
+    defaultMessage: 'Lesa  um bólusetningar',
+  },
+  readAboutVaccinationsLink: {
+    id: 'sp.health:read-about-vaccinations-link',
+    defaultMessage:
+      'https://www.landlaeknir.is/heilsa/heilsufraedi/bolusetningar/',
+  },
+  makeVaccinationAppointment: {
+    id: 'sp.health:make-vaccination-appointment',
+    defaultMessage: 'Panta tíma í bólusetningu',
+  },
+  makeVaccinationAppointmentLink: {
+    id: 'sp.health:make-vaccination-appointment-link',
+    defaultMessage: 'https://www.heilsuvera.is/',
+  },
+  vaccinatedFor: {
+    id: 'sp.health:vaccinated-for',
+    defaultMessage: 'Bólusett gegn',
+  },
+  vaccinatedLast: {
+    id: 'sp.health:vaccinated-last',
+    defaultMessage: 'Síðast',
+  },
+  vaccinatedStatus: {
+    id: 'sp.health:vaccinated-status',
+    defaultMessage: 'Staða',
+  },
+  noVaccinesRegistered: {
+    id: 'sp.health:no-vaccines-registered',
+    defaultMessage: 'Engar bólusetningar skráðar',
+  },
+  years: {
+    id: 'sp.health:years',
+    defaultMessage: 'ára',
+  },
+  months: {
+    id: 'sp.health:months',
+    defaultMessage: 'mán.',
+  },
+  vaccinesTableHeaderNr: {
+    id: 'sp.health:vaccines-table-header-nr',
+    defaultMessage: 'Nr.',
+  },
+  vaccinesTableHeaderDate: {
+    id: 'sp.health:vaccines-table-header-date',
+    defaultMessage: 'Dags.',
+  },
+  vaccinesTableHeaderAge: {
+    id: 'sp.health:vaccines-table-header-age',
+    defaultMessage: 'Aldur',
+  },
+  vaccinesTableHeaderVaccine: {
+    id: 'sp.health:vaccines-table-header-vaccine',
+    defaultMessage: 'Bóluefni',
+  },
+  vaccinesTableHeaderLocation: {
+    id: 'sp.health:vaccines-table-header-location',
+    defaultMessage: 'Staður',
+  },
+  healthDirectorateErrorTag: {
+    id: 'sp.health:health-directorate-error-tag',
+    defaultMessage: 'Villa',
+  },
+  healthDirectorateErrorTitle: {
+    id: 'sp.health:health-directorate-error-title',
+    defaultMessage:
+      'Ekki tókst að sækja gögn frá Embætti Landlæknis. Vinsamlegast reynið aftur síðar',
+  },
+  medicinePrescriptions: {
+    id: 'sp.health:medicine-prescriptions',
+    defaultMessage: 'Lyfjaávísanir',
+  },
+  medicineDelegation: {
+    id: 'sp.health:medicine-delegation',
+    defaultMessage: 'Lyfjaumboð',
+  },
+  medicinePaymentParticipation: {
+    id: 'sp.health:medicine-payment-participation',
+    defaultMessage: 'Greiðsluþátttaka',
   },
 })

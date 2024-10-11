@@ -3,21 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/education/src",
   "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/service-portal/education/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/education/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/education/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/education"]
     },
@@ -44,7 +39,6 @@
       "options": {
         "commands": [
           "kubectl port-forward svc/socat-xroad 8081:80 -n socat &",
-          "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
           "yarn start api &",
           "yarn start services-user-profile &",
           "yarn start service-portal &"
@@ -59,6 +53,5 @@
         "command": "graphql-codegen --config libs/service-portal/education/codegen.yml"
       }
     }
-  },
-  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
+  }
 }

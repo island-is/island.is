@@ -38,7 +38,7 @@ test.describe('P-sign', () => {
     expect(new URL(page.url()).pathname.split('/').pop()).toMatch(uuidRegex.v4)
     await page.locator('input[name="approveExternalData"]').click()
     await page.locator('button[type="submit"]').click()
-    await expect(page.locator('[data-testid="alertMessage"]')).toBeHidden()
+    await expect(page.locator('[data-testid="alertMessage"]')).not.toBeVisible()
     await expect(page.locator('text=Símanúmer')).toBeVisible()
     const phoneLocator = page.locator('input[name="phone"]')
     await phoneLocator.selectText()

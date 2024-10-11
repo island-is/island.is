@@ -1,22 +1,23 @@
-import * as s from './RegulationsSidebarBox.css'
-
 import React, { useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'
+
 import { Icon, Text } from '@island.is/island-ui/core'
-import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import {
-  ISODate,
   interpolate,
+  ISODate,
   prettyName,
   RegulationHistoryItem,
   RegulationMaybeDiff,
 } from '@island.is/regulations'
+import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+
 import {
   RegulationsSidebarBox,
   RegulationsSidebarLink,
 } from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
+import * as s from './RegulationsSidebarBox.css'
 
 type Effects = Array<RegulationHistoryItem>
 
@@ -36,7 +37,7 @@ export const useRegulationEffectPrepper = (
     const effects = regulation.history.reduce<
       Record<'past' | 'future', Effects>
     >(
-      (obj, item, i) => {
+      (obj, item, _) => {
         const arr = item.date > today ? obj.future : obj.past
         arr.push(item)
         return obj
@@ -124,6 +125,8 @@ export const useRegulationEffectPrepper = (
               ? // Link to current version (no diff) because the impact (text-changes)
                 // has not been inserted yet.
                 linkToRegulation(item.name)
+              : item.effect === 'repeal' && item.status === 'published'
+              ? linkToRegulation(item.name)
               : undefined
 
           const active = isItemActive(item.date)
@@ -148,6 +151,9 @@ export const useRegulationEffectPrepper = (
               href={href}
               current={active}
               rel="nofollow"
+              className={
+                item.effect === 'repeal' ? s.sidebarNonLink : undefined
+              }
             >
               {Content}
             </RegulationsSidebarLink>

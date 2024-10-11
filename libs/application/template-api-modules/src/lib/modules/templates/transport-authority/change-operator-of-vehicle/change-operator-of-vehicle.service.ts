@@ -24,6 +24,10 @@ import {
   VehicleServiceFjsV1Client,
 } from '@island.is/clients/vehicle-service-fjs-v1'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
+import {
+  MileageReadingApi,
+  MileageReadingDto,
+} from '@island.is/clients/vehicles-mileage'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { applicationCheck } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
 import {
@@ -53,12 +57,17 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
+    private readonly mileageReadingApi: MileageReadingApi,
   ) {
     super(ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE)
   }
 
   private vehiclesApiWithAuth(auth: Auth) {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private mileageReadingApiWithAuth(auth: Auth) {
+    return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getCurrentVehiclesWithOperatorChangeChecks({
@@ -106,6 +115,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
         result?.map(async (vehicle) => {
           let validation: OperatorChangeValidation | undefined
           let debtStatus: VehicleDebtStatus | undefined
+          let mileageReadings: MileageReadingDto[] | undefined
 
           // Only validate if fewer than 5 items
           if (result.length <= 5) {
@@ -122,6 +132,9 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
                 auth,
                 vehicle.permno || '',
               )
+            mileageReadings = await this.mileageReadingApiWithAuth(
+              auth,
+            ).getMileageReading({ permno: vehicle.permno || '' })
           }
 
           const electricFuelCodes =
@@ -133,6 +146,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
             color: vehicle.color || undefined,
             role: vehicle.role || undefined,
             requireMileage: electricFuelCodes.includes(vehicle.fuelCode || ''),
+            mileageReading: (mileageReadings?.[0]?.mileage ?? '').toString(),
             isDebtLess: debtStatus?.isDebtLess,
             validationErrorMessages: validation?.hasError
               ? validation.errorMessages
@@ -237,9 +251,11 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
             (props) => generateRequestReviewEmail(props, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending email about initReview to ${recipientList[i].email}`,
+              `Error sending email about initReview in application: ID: ${application.id}, 
+            role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -251,9 +267,12 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
               generateRequestReviewSms(application, options, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about initReview to ${recipientList[i].phone}`,
+              `Error sending sms about initReview to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -292,9 +311,11 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
               ),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending email about rejectApplication to ${recipientList[i].email}`,
+              `Error sending email about rejectApplication in application: ID: ${application.id}, 
+            role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -310,9 +331,12 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
               ),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about rejectApplication to ${recipientList[i].phone}`,
+              `Error sending sms about rejectApplication to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -407,9 +431,11 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
               generateApplicationSubmittedEmail(props, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending email about submitApplication to ${recipientList[i].email}`,
+              `Error sending email about submitApplication in application: ID: ${application.id}, 
+            role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -421,9 +447,12 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
               generateApplicationSubmittedSms(application, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about submitApplication to ${recipientList[i].phone}`,
+              `Error sending sms about submitApplication to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${recipientList[i].role}`,
+              e,
             )
           })
       }

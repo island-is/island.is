@@ -6,23 +6,17 @@ import { FetchError } from './FetchError'
 interface ErrorLogOptions extends FetchMiddlewareOptions {
   name: string
   logger: Logger
-  treat400ResponsesAsErrors: boolean
 }
 
 export function withErrorLog({
   name,
   fetch,
-  treat400ResponsesAsErrors,
   logger,
 }: ErrorLogOptions): MiddlewareAPI {
-  return (request) => {
+  return async (request) => {
     return fetch(request).catch((error: Error) => {
       const logLevel =
-        error instanceof FetchError &&
-        error.status < 500 &&
-        !treat400ResponsesAsErrors
-          ? 'warn'
-          : 'error'
+        error instanceof FetchError && error.status < 500 ? 'warn' : 'error'
       const cacheStatus =
         (error instanceof FetchError &&
           error.response.headers.get('cache-status')) ??
@@ -39,6 +33,7 @@ export function withErrorLog({
         stack: error.stack,
         url: request.url,
         message: `Fetch failure (${name}): ${error.message}`,
+        fetch: { name },
         body,
         cacheStatus,
         // Do not log large response objects.

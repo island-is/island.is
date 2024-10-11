@@ -122,11 +122,14 @@ const continueFromType = (user: User, type: CaseType) => {
   const accessibleCaseStates = [
     CaseState.NEW,
     CaseState.DRAFT,
+    CaseState.WAITING_FOR_CONFIRMATION,
     CaseState.SUBMITTED,
+    CaseState.WAITING_FOR_CANCELLATION,
     CaseState.RECEIVED,
     CaseState.ACCEPTED,
     CaseState.REJECTED,
     CaseState.DISMISSED,
+    CaseState.COMPLETED,
   ]
 
   describe.each(

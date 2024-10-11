@@ -1,7 +1,12 @@
-import { AppLockScreen } from '../../screens/app-lock/app-lock'
+import { LoadingIcon } from '../../components/nav-loading-spinner/loading-icon'
+import { OfflineBanner } from '../../components/offline/offline-banner'
 import { isTestingApp } from '../../config'
 import { AirDiscountScreen } from '../../screens/air-discount/air-discount'
+import { AppLockScreen } from '../../screens/app-lock/app-lock'
 import { ApplicationsScreen } from '../../screens/applications/applications'
+import { ApplicationsCompletedScreen } from '../../screens/applications/applications-completed'
+import { ApplicationsInProgressScreen } from '../../screens/applications/applications-in-progress'
+import { ApplicationsIncompleteScreen } from '../../screens/applications/applications-incomplete'
 import { AssetsDetailScreen } from '../../screens/assets/assets-detail'
 import { AssetsOverviewScreen } from '../../screens/assets/assets-overview'
 import { CognitoAuthScreen } from '../../screens/cognito-auth/cognito-auth'
@@ -11,6 +16,7 @@ import { FamilyOverviewScreen } from '../../screens/family/family-overview'
 import { FinanceScreen } from '../../screens/finance/finance'
 import { FinanceStatusDetailScreen } from '../../screens/finance/finance-status-detail'
 import { HomeScreen } from '../../screens/home/home'
+import { HomeOptionsScreen } from '../../screens/home/home-options'
 import { InboxScreen } from '../../screens/inbox/inbox'
 import { InboxFilterScreen } from '../../screens/inbox/inbox-filter'
 import { LicenseScanDetailScreen } from '../../screens/license-scanner/license-scan-detail'
@@ -18,8 +24,9 @@ import { LicenseScannerScreen } from '../../screens/license-scanner/license-scan
 import { LoginScreen } from '../../screens/login/login'
 import { TestingLoginScreen } from '../../screens/login/testing-login'
 import { MoreScreen } from '../../screens/more/more'
+import { PasskeyScreen } from '../../screens/passkey/passkey'
+import { UpdateAppScreen } from '../../screens/update-app/update-app'
 import { PersonalInfoScreen } from '../../screens/more/personal-info'
-import { NotificationDetailScreen } from '../../screens/notification-detail/notification-detail'
 import { NotificationsScreen } from '../../screens/notifications/notifications'
 import { OnboardingBiometricsScreen } from '../../screens/onboarding/onboarding-biometrics'
 import { OnboardingNotificationsScreen } from '../../screens/onboarding/onboarding-notifications'
@@ -36,7 +43,10 @@ import { WalletPassScreen } from '../../screens/wallet-pass/wallet-pass'
 import { WalletPassportScreen } from '../../screens/wallet-passport/wallet-passport'
 import { WalletScreen } from '../../screens/wallet/wallet'
 import { WebViewScreen } from '../../screens/webview/webview'
-import { ComponentRegistry as CR } from '../component-registry'
+import {
+  ButtonRegistry as BR,
+  ComponentRegistry as CR,
+} from '../component-registry'
 import { registerComponent } from '../register-component'
 
 export function registerAllComponents() {
@@ -57,16 +67,21 @@ export function registerAllComponents() {
     CR.OnboardingNotificationsScreen,
     OnboardingNotificationsScreen,
   )
-  registerComponent(CR.HomeScreen, HomeScreen)
+
+  /**
+   * Tab screens
+   */
   registerComponent(CR.InboxScreen, InboxScreen)
   registerComponent(CR.WalletScreen, WalletScreen)
+  registerComponent(CR.HomeScreen, HomeScreen)
   registerComponent(CR.ApplicationsScreen, ApplicationsScreen)
+  registerComponent(CR.MoreScreen, MoreScreen)
+
   registerComponent(CR.AppLockScreen, AppLockScreen)
   registerComponent(CR.WalletPassScreen, WalletPassScreen)
   registerComponent(CR.WalletPassportScreen, WalletPassportScreen)
   registerComponent(CR.DocumentDetailScreen, DocumentDetailScreen)
   registerComponent(CR.NotificationsScreen, NotificationsScreen)
-  registerComponent(CR.NotificationDetailScreen, NotificationDetailScreen)
   registerComponent(CR.WebViewScreen, WebViewScreen)
   registerComponent(CR.LicenseScannerScreen, LicenseScannerScreen)
   registerComponent(CR.LicenseScanDetailScreen, LicenseScanDetailScreen)
@@ -75,7 +90,6 @@ export function registerAllComponents() {
   registerComponent(CR.VehicleMileageScreen, VehicleMileageScreen)
   registerComponent(CR.FamilyScreen, FamilyOverviewScreen)
   registerComponent(CR.FamilyDetailScreen, FamilyDetailScreen)
-  registerComponent(CR.MoreScreen, MoreScreen)
   registerComponent(CR.PersonalInfoScreen, PersonalInfoScreen)
   registerComponent(CR.AssetsOverviewScreen, AssetsOverviewScreen)
   registerComponent(CR.AssetsDetailScreen, AssetsDetailScreen)
@@ -89,4 +103,22 @@ export function registerAllComponents() {
   registerComponent(CR.FinanceStatusDetailScreen, FinanceStatusDetailScreen)
   registerComponent(CR.InboxFilterScreen, InboxFilterScreen)
   registerComponent(CR.AirDiscountScreen, AirDiscountScreen)
+  registerComponent(CR.PasskeyScreen, PasskeyScreen)
+  registerComponent(CR.UpdateAppScreen, UpdateAppScreen)
+  registerComponent(CR.HomeOptionsScreen, HomeOptionsScreen)
+  registerComponent(CR.ApplicationsCompletedScreen, ApplicationsCompletedScreen)
+  registerComponent(
+    CR.ApplicationsInProgressScreen,
+    ApplicationsInProgressScreen,
+  )
+  registerComponent(
+    CR.ApplicationsIncompleteScreen,
+    ApplicationsIncompleteScreen,
+  )
+
+  // Overlay
+  registerComponent(CR.OfflineBanner, OfflineBanner)
+
+  // Navigation buttons
+  registerComponent(BR.LoadingButton, LoadingIcon)
 }

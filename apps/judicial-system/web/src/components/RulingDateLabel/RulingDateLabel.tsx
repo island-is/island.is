@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
@@ -11,8 +11,7 @@ interface Props {
   rulingDate: string
 }
 
-const RulingDateLabel: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { rulingDate } = props
+const RulingDateLabel: FC<Props> = ({ rulingDate }) => {
   const { formatMessage } = useIntl()
 
   return (

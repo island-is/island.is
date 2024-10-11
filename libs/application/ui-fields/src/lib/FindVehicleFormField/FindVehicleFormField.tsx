@@ -25,7 +25,10 @@ import { useFormContext } from 'react-hook-form'
 import { FC, useEffect, useState } from 'react'
 import format from 'date-fns/format'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { energyFundsLabel } from './FindVehicleFormField.util'
+import {
+  energyFundsLabel,
+  mustInspectBeforeStreetRegistration,
+} from './FindVehicleFormField.util'
 
 interface VehicleDetails {
   permno: string
@@ -34,6 +37,7 @@ interface VehicleDetails {
   isDebtLess?: boolean
   validationErrorMessages?: VehicleValidationErrorMessage[]
   requireMileage?: boolean
+  mileageReading: string
 }
 
 interface Props extends FieldBaseProps {
@@ -52,6 +56,7 @@ const extractCommonVehicleInfo = function (
     make: basicInfo.make || '',
     color: basicInfo.color || '',
     requireMileage: basicInfo.requireMileage || false,
+    mileageReading: (basicInfo?.mileageReading || '') as string,
   }
 }
 
@@ -89,7 +94,7 @@ const extractDetails = function (
     return {
       ...extractCommonVehicleInfo(response.basicVehicleInformation),
       isDebtLess: response.isDebtLess ?? true,
-      validationErrorMessages: response.validationErrorMessages ?? [],
+      validationErrorMessages: response?.validationErrorMessages ?? [],
     }
   } else if (
     isVehicleType<VehiclePlateOrderChecksByPermno>(
@@ -99,6 +104,8 @@ const extractDetails = function (
   ) {
     return {
       ...extractCommonVehicleInfo(response.basicVehicleInformation),
+      isDebtLess: true,
+      validationErrorMessages: response?.validationErrorMessages ?? [],
     }
   } else if (
     isVehicleType<VehicleOperatorChangeChecksByPermno>(
@@ -109,7 +116,7 @@ const extractDetails = function (
     return {
       ...extractCommonVehicleInfo(response.basicVehicleInformation),
       isDebtLess: response.isDebtLess ?? true,
-      validationErrorMessages: response.validationErrorMessages ?? [],
+      validationErrorMessages: response?.validationErrorMessages ?? [],
     }
   } else if (isVehicleType<MachineDetails>(response, 'MachineDetails')) {
     return {
@@ -170,14 +177,12 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   )
   const [energyDetails, setEnergyDetails] =
     useState<EnergyFundVehicleDetailsWithGrant | null>(null)
-  const [machineId, setMachineId] = useState<string>(
-    getValueViaPath(application.answers, 'pickMachine.id', '') as string,
-  )
-  const MAX_LENGTH = isMachine ? 6 : 5
+
   const [submitButtonDisabledCalled, setSubmitButtonDisabledCalled] =
     useState(false)
   const updateInputState = (value: string) => {
-    setButtonDisabled(value.length !== MAX_LENGTH)
+    const maxLength = isMachine ? 7 : 5
+    setButtonDisabled(value.length !== maxLength && value.length !== 6)
     setPlate(value)
   }
   const findVehicleByPlate = async () => {
@@ -188,7 +193,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       }
 
       const response = await getDetails(plate.toUpperCase())
-
       const details:
         | VehicleDetails
         | MachineDetails
@@ -231,15 +235,41 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue(`${field.id}.plate`, plate)
     setValue(`${field.id}.color`, vehicleDetails.color || undefined)
     setValue(`${field.id}.requireMileage`, vehicleDetails.requireMileage)
+    setValue(`${field.id}.mileageReading`, vehicleDetails.mileageReading)
+    setValue('vehicleMileage.requireMileage', vehicleDetails?.requireMileage)
+    setValue('vehicleMileage.mileageReading', vehicleDetails?.mileageReading)
     setValue('vehicleInfo.plate', plate)
     setValue('vehicleInfo.type', vehicleDetails.make)
     setVehicleDetails(vehicleDetails)
   }
 
   const setMachineValues = (machineDetails: MachineDetails) => {
+    if (application.typeId === 'StreetRegistration') {
+      const mustInspect = mustInspectBeforeStreetRegistration(
+        application?.externalData,
+        machineDetails.regNumber || '',
+      )
+      if (mustInspect && !machineDetails.disabled) {
+        machineDetails = {
+          ...machineDetails,
+          disabled: true,
+          status:
+            validationErrors &&
+            formatText(
+              validationErrors.inspectBeforeRegistration,
+              application,
+              formatMessage,
+            ),
+        }
+      }
+    }
+    setValue('findVehicle', true)
+    setValue(
+      `${field.id}.paymentRequiredForOwnerChange`,
+      machineDetails.paymentRequiredForOwnerChange,
+    )
     setValue(`${field.id}.regNumber`, machineDetails.regNumber)
     setValue(`${field.id}.category`, machineDetails.category)
-
     setValue(`${field.id}.type`, machineDetails.type || '')
     setValue(`${field.id}.subType`, machineDetails.subType || '')
     setValue(`${field.id}.plate`, machineDetails.plate || '')
@@ -248,7 +278,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue('pickMachine.id', machineDetails.id)
     setValue(`${field.id}.date`, new Date().toISOString())
     setValue('pickMachine.isValid', machineDetails.disabled ? undefined : true)
-    setMachineId(machineDetails?.id || '')
+    setSubmitButtonDisabled &&
+      setSubmitButtonDisabled(!machineDetails.disabled || false)
     setMachineDetails(machineDetails)
   }
 
@@ -287,8 +318,11 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       setSubmitButtonDisabled && setSubmitButtonDisabled(true)
       setSubmitButtonDisabledCalled(true)
     }
-    if (plate.length === MAX_LENGTH) {
+    if (plate.length === 5 || plate.length === 6 || plate.length === 7) {
       setButtonDisabled(false)
+    }
+    if (machineDetails && machineDetails.disabled) {
+      setSubmitButtonDisabled && setSubmitButtonDisabled(true)
     }
     setFieldLoadingState?.(isLoading)
   }, [isLoading])
@@ -296,7 +330,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   return (
     <Box>
       <Box display="flex" alignItems="center">
-        <Box marginRight={2}>
+        <Box flexGrow={1} marginRight={2}>
           <InputController
             id={`${field.id}.permno`}
             name={`${field.id}.permno`}
@@ -312,13 +346,19 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
             rules={{
               required: true,
               validate: (value) => {
-                if (value.length !== MAX_LENGTH) {
-                  return false
+                if (isMachine) {
+                  if (value.length !== 6 && value.length !== 7) {
+                    return false
+                  }
+                } else {
+                  if (value.length !== 5) {
+                    return false
+                  }
                 }
                 return true
               },
             }}
-            maxLength={MAX_LENGTH}
+            maxLength={isMachine ? 7 : 5}
           />
         </Box>
         <Button onClick={findVehicleByPlate} disabled={buttonDisabled}>

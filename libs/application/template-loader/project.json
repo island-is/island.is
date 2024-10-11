@@ -3,24 +3,18 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/template-loader/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/template-loader/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/template-loader/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/template-loader/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/application/template-loader"]
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }

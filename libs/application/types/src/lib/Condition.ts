@@ -1,5 +1,5 @@
 import { FormValue, ExternalData } from './Application'
-import { User } from 'user'
+import { User } from '@island.is/shared/types'
 
 export enum Comparators {
   EQUALS = 'eq',

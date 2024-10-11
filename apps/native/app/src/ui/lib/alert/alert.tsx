@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
-  Animated,
   Image,
   ImageSourcePropType,
   LayoutAnimation,
   SafeAreaView,
-  View,
+  TouchableOpacity,
 } from 'react-native'
+import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 import close from '../../assets/alert/close.png'
 import info from '../../assets/alert/info-alert.png'
@@ -24,18 +24,23 @@ interface AlertProps {
   title?: string
   message?: string
   style?: any
+
   onClose?(): void
+
   onClosed?(): void
+
   visible?: boolean
   hideIcon?: boolean
   sharedAnimatedValue?: any
   hasBorder?: boolean
+  hasBottomBorder?: boolean
 }
 
 interface HostProps {
   backgroundColor: Colors
   borderColor: Colors
   hasBorder?: boolean
+  hasBottomBorder?: boolean
 }
 
 type VariantStyle = {
@@ -48,19 +53,21 @@ type VariantStyles = {
   [Type in AlertType]: VariantStyle
 }
 
+export const DARK_YELLOW_200 = '#1b1700'
+
 const darkBackgroundColor = (color: string, colors: any) => {
   if (color === colors.blue100) {
     return '#001333'
   }
   if (color === colors.yellow200) {
-    return '#1b1700'
+    return DARK_YELLOW_200
   }
   return color
 }
 
-const Host = styled(Animated.View)<HostProps>`
-  padding: 20px 18px;
-  border-width: ${({ hasBorder }) => (hasBorder ? '1px' : 0)};
+const Host = styled.View<HostProps>`
+  padding: ${({ theme }) => theme.spacing[2]}px;
+
   border-style: solid;
   border-color: ${dynamicColor((props) => ({
     light: props.theme.color[props.borderColor],
@@ -69,7 +76,10 @@ const Host = styled(Animated.View)<HostProps>`
       props.theme.color,
     ),
   }))};
+  border-width: ${({ hasBorder }) => (hasBorder ? '1px' : 0)};
+  ${({ hasBottomBorder }) => hasBottomBorder && 'border-bottom-width: 1px;'}
   border-radius: ${({ hasBorder }) => (hasBorder ? '8px' : 0)};
+
   background-color: ${dynamicColor((props) => ({
     light: props.theme.color[props.backgroundColor],
     dark: darkBackgroundColor(
@@ -79,10 +89,20 @@ const Host = styled(Animated.View)<HostProps>`
   }))};
 `
 
+const Container = styled(SafeAreaView)`
+  flex-direction: row;
+  align-items: center;
+`
+
 const Icon = styled.View`
   align-items: center;
   justify-content: center;
   align-self: flex-start;
+`
+
+const Content = styled.View`
+  padding-right: ${({ theme }) => theme.spacing[2]}px;
+  flex: 1;
 `
 
 const Title = styled.Text`
@@ -97,18 +117,20 @@ const Title = styled.Text`
 const Message = styled.Text`
   ${font({
     fontSize: 13,
+    lineHeight: 16,
   })}
 `
 
-const Content = styled.View`
-  padding-right: 34px;
-  flex: 1;
-`
-
-const Close = styled.TouchableOpacity`
+const Close = styled(TouchableOpacity)`
   padding: 10px;
   justify-content: center;
   align-items: center;
+  align-self: flex-start;
+`
+
+const CloseIcon = styled.Image`
+  width: 12px;
+  height: 12px;
 `
 
 const variantStyles: VariantStyles = {
@@ -144,10 +166,11 @@ export function Alert({
   onClosed,
   sharedAnimatedValue,
   hasBorder,
+  hasBottomBorder,
   ...rest
 }: AlertProps) {
+  const theme = useTheme()
   const [hidden, setHidden] = useState<boolean>()
-  const [height, setHeight] = useState(70)
   const variant = variantStyles[type]
 
   useEffect(() => {
@@ -168,45 +191,43 @@ export function Alert({
   }
 
   return (
-    <View style={!visible ? { height: 0 } : { height }}>
-      <Host
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 0,
-        }}
-        onLayout={(e) => setHeight(e.nativeEvent.layout.height)}
-        backgroundColor={variant.background}
-        borderColor={variant.borderColor}
-        hasBorder={hasBorder}
-        {...rest}
-      >
-        <SafeAreaView style={{ flexDirection: 'row', alignItems: 'center' }}>
-          {!hideIcon && (
-            <Icon>
-              <Image
-                source={variant.icon}
-                style={{ width: 32, height: 32, marginRight: 16 }}
-              />
-            </Icon>
-          )}
-          {message && (
-            <Content>
-              {title && <Title>{title}</Title>}
-              <Message>{message}</Message>
-            </Content>
-          )}
-          {onClose && (
-            <Close onPress={onClose}>
-              <Image
-                source={close as ImageSourcePropType}
-                style={{ width: 12, height: 12 }}
-              />
-            </Close>
-          )}
-        </SafeAreaView>
-      </Host>
-    </View>
+    <Host
+      backgroundColor={variant.background}
+      borderColor={variant.borderColor}
+      hasBorder={hasBorder}
+      hasBottomBorder={hasBottomBorder}
+      {...rest}
+    >
+      <Container>
+        {!hideIcon && (
+          <Icon>
+            <Image
+              source={variant.icon}
+              style={{ width: 32, height: 32, marginRight: 16 }}
+            />
+          </Icon>
+        )}
+
+        {message && (
+          <Content>
+            {title && <Title>{title}</Title>}
+            <Message>{message}</Message>
+          </Content>
+        )}
+
+        {onClose && (
+          <Close onPressIn={onClose}>
+            <CloseIcon
+              source={close}
+              style={{
+                tintColor: theme.isDark
+                  ? theme.color.white
+                  : theme.color.dark400,
+              }}
+            />
+          </Close>
+        )}
+      </Container>
+    </Host>
   )
 }

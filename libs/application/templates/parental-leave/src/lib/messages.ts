@@ -206,9 +206,9 @@ export const parentalLeaveFormMessages = {
     otherParentDescription: {
       id: 'pl.application:otherParent.description',
       defaultMessage:
-        'Skráður maki í þjóðskrá er valinn sjálfkrafa. Finnist ekki maki í þjóðskrá getur þú haldið áfram án skráningar, skráð þig sem einstætt foreldri eða skráð hitt foreldrið handvirkt.',
+        'Enginn maki fannst í Þjóðskrá. Þú getur haldið áfram án skráningar, skráð þig sem einstætt foreldri eða skráð hitt foreldrið handvirkt.',
       description:
-        'Your spouse according to Registers Iceland is preselected. If no spouse is found, you can continue without registration, register as a single parent or register the other parent manually.',
+        'No spouse was found in the National Registry. You can continue without registration, register as a single parent or register the other parent manually.',
     },
     otherParentTitle: {
       id: 'pl.application:otherParent.title',
@@ -248,8 +248,10 @@ export const parentalLeaveFormMessages = {
     },
     otherParentSpouse: {
       id: 'pl.application:otherParent.spouse',
-      defaultMessage: 'Hitt foreldrið er {spouseName} (kt. {spouseId})',
-      description: `The other parent is {spouseName} (kt. {spouseId})`,
+      defaultMessage:
+        'Hérna eru upplýsingar um maka/sambúðaraðila. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá.',
+      description:
+        'Here is information about spouses/partners. Note that if the following information is not correct, it must be changed in the National Registry.',
     },
     otherParentEmailSubSection: {
       id: 'pl.application:otherParentEmail.subSection',
@@ -909,6 +911,21 @@ export const parentalLeaveFormMessages = {
       id: 'pl.application:edit.periods.review.alert.message',
       defaultMessage: 'Engar breytingar fundust.',
       description: 'No changes were found.',
+    },
+    deletePeriod: {
+      id: 'pl.application:delete.period',
+      defaultMessage: 'Eyða tímabili',
+      description: 'Delete period',
+    },
+    periodPaid: {
+      id: 'pl.application:period.paid',
+      defaultMessage: 'Búið að greiða',
+      description: 'Paid',
+    },
+    periodInProgress: {
+      id: 'pl.application:period.in.progress',
+      defaultMessage: 'Tímabil í gangi, ekki hægt að breyta',
+      description: 'Period in progress, unable to edit',
     },
     additionalInformationSection: {
       id: 'pl.application:additional.information.section',
@@ -1572,6 +1589,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Eyða vinnuveitanda',
       description: 'Remove employer',
     },
+    editEmployer: {
+      id: 'pl.application:employer.editEmployer',
+      defaultMessage: 'Breyta vinnuveitanda',
+      description: 'Edit employer',
+    },
   }),
 
   selfEmployed: defineMessages({
@@ -1911,6 +1933,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Tímabilinu {index} - {ratio}%',
       description: 'Period copy',
     },
+    vmstPeriod: {
+      id: 'pl.application:review.vmst.period',
+      defaultMessage: 'Greiðslutímabil {index} - {ratio}%',
+      description: 'Payment period {index} - {ratio}%',
+    },
     periodActualDob: {
       id: 'pl.application:review.period.actual.dob',
       defaultMessage: 'Raunverulegum fæðingardegi - {duration} mánuðir',
@@ -2061,25 +2088,32 @@ export const parentalLeaveFormMessages = {
   finalScreen: defineMessages({
     title: {
       id: 'pl.application:finalscreen.title',
-      defaultMessage: 'Til hamingju, hér að neðan eru næstu skref',
-      description: 'Congratulations, below are the next steps',
+      defaultMessage: 'Umsókn send',
+      description: 'Application sent',
+    },
+    alertTitle: {
+      id: 'pl.application:finalscreen.alert.title',
+      defaultMessage: 'Umsókn hefur verið send áfram',
+      description: 'The application has been forwarded',
     },
     description: {
-      id: 'pl.application:finalscreen.description#markdown',
-      defaultMessage: `Hitt foreldrið þarf að samþykkja umsókn þína ef þú óskaðir eftir yfirfærslu á
-        hluta réttinda þess til þín, eða nýtingu á persónuafslætti þess. Síðan þarf
-        vinnuveitandinn þinn að samþykkja tilhögun þína til fæðingarorlofs. Að lokum
-        fer umsóknin á borð Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.`,
-      description: `The other parent will need to approve your request to use their shared month
-        (if you did so). Then, your employer will approve your parental leave dates.
-        And finally Vinnumálastofnun will review your application.`,
+      id: 'pl.application:finalscreen.description',
+      defaultMessage:
+        'Umsókn fer í samþykktarferli til hins foreldrisins og/eða atvinnveitanda, sé þess þörf, áður en hún fer til vinnslu hjá Fæðingarorlofssjóði.',
+      description:
+        'The application goes through an approval process to the other parent and/or employer, if necessary, before it is processed by the Parental leave Fund.',
+    },
+    expandableIntro: {
+      id: 'pl.application:finalscreen.expandable.intro',
+      defaultMessage: 'Hér fyrir neðan sérðu ferli umsóknar.',
+      description: 'Below you can see the application process.',
     },
     step3: {
       id: 'pl.application:finalscreen.step3',
       defaultMessage:
-        'Að lokum fer umsóknin á borð Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.',
+        'Umsóknin fer til Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.',
       description:
-        'Finally, the application goes to the Parental Leave Fund, where its final processing takes place.',
+        'The application is sent to the Parental Leave Fund where it will be processed.',
     },
     startDateInThePast: {
       id: 'pl.application:finalscreen.start.date.in.the.past',
@@ -2785,6 +2819,11 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Vinnuveitandi krefst aðgerða vegna umsóknar þinnar.',
     description: 'Description of the state - employerAction',
   },
+  employerActionDeleteChanges: {
+    id: 'pl.application:employerAction.delete.changes',
+    defaultMessage: 'Umsækjandi eyddi ósamþykktu tímabili.',
+    description: 'Applicant deleted unapproved period.',
+  },
 
   vinnumalastofnunApprovalTitle: {
     id: 'pl.application:vinnumalastofnunApproval.title',
@@ -2916,6 +2955,11 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Þú ert að sækja um dvalarstyrk.',
     description: 'You are applying for a residence grant',
   },
+  residenceGrantSubmitted: {
+    id: 'pl.application:residence.grant.submitted',
+    defaultMessage: 'Umsækjandi sótti um dvalarstyrk.',
+    description: 'Applicant applied for residence grant',
+  },
 
   otherParentRequestApprovalTitle: {
     id: 'pl.application:otherParentRequestApproval.title',
@@ -2975,6 +3019,12 @@ export const statesMessages = defineMessages({
     description: 'The employer has approved the dates',
   },
 
+  employerApprovalApprovePeriodHistoryLogMessage: {
+    id: 'pl.application:employerApproval.approve.period.historyLogMessage',
+    defaultMessage: 'Vinnuveitandi hefur samþykkt dagsetningar',
+    description: 'The employer has approved the dates',
+  },
+
   vinnumalastofnunApprovalApproveHistoryLogMessage: {
     id: 'pl.application:vinnumalastofnunApproval.approve.historyLogMessage',
     defaultMessage: 'Vinnumálastofnun hefur samþykkt umsóknina',
@@ -3002,11 +3052,6 @@ export const statesMessages = defineMessages({
     id: 'pl.application:editOrAddPeriods.submit.historyLogMessage',
     defaultMessage: 'Vinnuveitanda og tímabili breytt eða bætt við umsókn',
     description: 'Employer and period edited or added to application',
-  },
-  editOrAddPeriodsAbortHistoryLogMessage: {
-    id: 'pl.application:editOrAddPeriods.abort.historyLogMessage',
-    defaultMessage: 'Hætti við breytingar',
-    description: 'Changes aborted',
   },
 
   approvedClosedHistoryLogMessage: {

@@ -1,10 +1,10 @@
 import { dynamicColor, font } from '@ui'
 import { selectionAsync } from 'expo-haptics'
 import {
-  AuthenticationType,
   authenticateAsync,
+  AuthenticationType,
 } from 'expo-local-authentication'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Animated, Image, SafeAreaView, View } from 'react-native'
 import Keychain from 'react-native-keychain'
@@ -83,53 +83,50 @@ export const AppLockScreen: NavigationFunctionComponent<{
   const biometricType = useBiometricType()
   const intl = useIntl()
 
-  const resetLockScreen = useCallback(() => {
+  const resetLockScreen = () => {
     authStore.setState(() => ({
       lockScreenActivatedAt: undefined,
       lockScreenComponentId: undefined,
     }))
-  }, [])
+  }
 
-  const unlockApp = useCallback(() => {
+  const unlockApp = () => {
     Animated.spring(av, {
       toValue: 0,
       useNativeDriver: true,
       delay: 100,
     }).start(() => {
       resetLockScreen()
-      Navigation.dismissAllOverlays()
+      void Navigation.dismissOverlay(componentId)
       av.setValue(1)
     })
-  }, [componentId])
+  }
 
-  const authenticateWithBiometrics = useCallback(async () => {
-    if (!useBiometrics) {
-      // dont have biometrics
+  const authenticateWithBiometrics = async () => {
+    if (!useBiometrics || isPromptRef.current) {
+      // don't have biometrics or already prompted
       return
     }
-    if (isPromptRef.current) {
-      // dont show twice?
-      return
-    }
+
     isPromptRef.current = true
     const response = await authenticateAsync()
-    if (response.success === true) {
-      selectionAsync()
+
+    if (response.success) {
+      void selectionAsync()
       unlockApp()
     }
-  }, [isPromptRef])
+  }
 
   useEffect(() => {
     if (status === 'active' && isPromptRef.current) {
       isPromptRef.current = false
     } else if (status === 'active') {
-      authenticateWithBiometrics()
+      void authenticateWithBiometrics()
     }
   }, [status])
 
   useNavigationComponentDidAppear(() => {
     authStore.setState(() => ({
-      lockScreenActivatedAt: lockScreenActivatedAt ?? Date.now(),
       lockScreenComponentId: componentId,
     }))
     uiStore.setState({ initializedApp: true })

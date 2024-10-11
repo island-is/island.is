@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -11,15 +11,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  capitalize,
-  formatCaseType,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
   icCourtOverview,
-  requestCourtDate,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
@@ -27,6 +22,7 @@ import {
   AccordionListItem,
   CaseFilesAccordionItem,
   CaseResentExplanation,
+  CaseScheduledCard,
   CommentsAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
@@ -38,8 +34,7 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
-import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
+import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
@@ -56,6 +51,14 @@ const Overview = () => {
   const { user } = useContext(UserContext)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
+  const {
+    defendants,
+    policeCaseNumbers,
+    prosecutorsOffice,
+    requestedCourtDate,
+    prosecutor,
+    caseType,
+  } = useInfoCardItems()
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -105,70 +108,33 @@ const Overview = () => {
         </Box>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
-          workingCase.courtDate &&
+          workingCase.arraignmentDate?.date &&
           workingCase.court && (
             <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduled
+              <CaseScheduledCard
                 court={workingCase.court}
-                courtDate={workingCase.courtDate}
-                courtRoom={workingCase.courtRoom}
+                courtDate={workingCase.arraignmentDate.date}
+                courtRoom={workingCase.arraignmentDate.location}
               />
             </Box>
           )}
         <Box component="section" marginBottom={5}>
           <InfoCard
-            data={[
+            sections={[
               {
-                title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers?.map((n) => (
-                  <Text key={n}>{n}</Text>
-                )),
+                id: 'defendants-section',
+                items: [defendants(workingCase.type)],
               },
               {
-                title: formatMessage(core.prosecutor),
-                value: `${workingCase.prosecutorsOffice?.name}`,
-              },
-              {
-                title: formatMessage(requestCourtDate.heading),
-                value: `${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
-                    '',
-                )} eftir kl. ${formatDate(
-                  workingCase.requestedCourtDate,
-                  constants.TIME_FORMAT,
-                )}`,
-              },
-              {
-                title: formatMessage(core.prosecutorPerson),
-                value: NameAndEmail(
-                  workingCase.prosecutor?.name,
-                  workingCase.prosecutor?.email,
-                ),
-              },
-              {
-                title: formatMessage(core.caseType),
-                value: capitalize(formatCaseType(workingCase.type)),
-              },
-            ]}
-            defendants={
-              workingCase.defendants
-                ? {
-                    title: capitalize(
-                      formatMessage(core.defendant, {
-                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
-                      }),
-                    ),
-                    items: workingCase.defendants,
-                  }
-                : undefined
-            }
-            defenders={[
-              {
-                name: workingCase.defenderName,
-                defenderNationalId: workingCase.defenderNationalId,
-                sessionArrangement: workingCase.sessionArrangements,
-                email: workingCase.defenderEmail,
-                phoneNumber: workingCase.defenderPhoneNumber,
+                id: 'case-info-section',
+                items: [
+                  policeCaseNumbers,
+                  requestedCourtDate,
+                  prosecutorsOffice,
+                  caseType,
+                  prosecutor(workingCase.type),
+                ],
+                columns: 2,
               },
             ]}
           />

@@ -1,33 +1,33 @@
 import React, { ReactNode, useEffect, useMemo, useState } from 'react'
-import { useLazyQuery } from '@apollo/client'
 import {
-  useForm,
   Controller,
-  useFormContext,
   FormProvider,
+  useForm,
+  useFormContext,
 } from 'react-hook-form'
-import { useDebounce } from 'react-use'
 import { FormatInputValueFunction } from 'react-number-format'
+import { useDebounce } from 'react-use'
+import { useLazyQuery } from '@apollo/client'
+import slugify from '@sindresorhus/slugify'
 
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { InputController } from '@island.is/shared/form-fields'
+import { Organizations, SupportCategory } from '@island.is/api/schema'
 import {
   Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
-  Select,
-  Button,
-  Option,
   Input,
-  Text,
-  LinkContext,
   Link,
-  Stack,
+  LinkContext,
   LoadingDots,
+  Option,
+  Select,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { Organizations, SupportCategory } from '@island.is/api/schema'
-import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
+import { InputController } from '@island.is/shared/form-fields'
+import { sortAlpha } from '@island.is/shared/utils'
 import {
   ContentLanguage,
   GetSupportSearchResultsQuery,
@@ -36,13 +36,17 @@ import {
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import slugify from '@sindresorhus/slugify'
-import { FormNamespace } from '../../types'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useI18n } from '@island.is/web/i18n'
-import { CategoryId, SyslumennCategories } from './types'
-import { SjukratryggingarCategories } from '@island.is/web/screens/ServiceWeb/Forms/utils'
+import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
+import {
+  FiskistofaCategories,
+  SjukratryggingarCategories,
+} from '@island.is/web/screens/ServiceWeb/Forms/utils'
 import { getServiceWebSearchTagQuery } from '@island.is/web/screens/ServiceWeb/utils'
-import { sortAlpha } from '@island.is/shared/utils'
+
+import { FormNamespace } from '../../types'
+import { CategoryId, SyslumennCategories } from './types'
 
 type FormState = {
   message: string
@@ -88,6 +92,7 @@ const labels: Record<string, string> = {
   kennitala: 'Kennitala',
   malsnumer_ef_til_stadar: 'Málsnúmer (ef til staðar)',
   faedingardagur_eda_kennitala_malsadila: 'Fæðingardagur/Kennitala málsaðila',
+  skipaskrarnumer: 'Skipaskrárnúmer',
 }
 
 // these should be skipped in the message itself
@@ -428,6 +433,7 @@ export const StandardForm = ({
       case SjukratryggingarCategories.ONNUR_THJONUSTA_SJUKRATRYGGINGA:
       case SjukratryggingarCategories.HJUKRUNARHEIMILI:
       case SjukratryggingarCategories.TULKATHJONUSTA:
+      case SjukratryggingarCategories.EVROPSKA_SJUKRATRYGGINGAKORTID:
         fields = (
           <GridColumn span="12/12" paddingBottom={3}>
             <BasicInput
@@ -462,6 +468,18 @@ export const StandardForm = ({
               />
             </GridColumn>
           </>
+        )
+        break
+      case FiskistofaCategories.FISKVEIDAR:
+      case FiskistofaCategories.VEIDIHEIMILDIR:
+      case FiskistofaCategories.VEIDILEYFI:
+        fields = (
+          <GridColumn paddingBottom={3}>
+            <BasicInput
+              name="skipaskrarnumer"
+              label={fn('skipaskrarnumer', 'label', 'Skipaskrárnúmer')}
+            />
+          </GridColumn>
         )
         break
       default:

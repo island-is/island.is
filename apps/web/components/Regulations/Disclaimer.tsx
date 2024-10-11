@@ -1,7 +1,8 @@
-import * as s from './RegulationDisplay.css'
-
 import React, { memo } from 'react'
-import { AlertMessage, Box, Link, Text } from '@island.is/island-ui/core'
+
+import { AlertMessage, Box, LinkV2 } from '@island.is/island-ui/core'
+
+import * as s from './RegulationDisplay.css'
 
 const parseSimpleMarkdown = (content: string) =>
   content
@@ -26,7 +27,7 @@ const parseSimpleMarkdown = (content: string) =>
               const key = i + '|' + m.index
               children.push(line.substring(lastLastIdx, m.index))
               children.push(
-                <Link
+                <LinkV2
                   key={key}
                   href={m[2]}
                   color="blue400"
@@ -35,7 +36,7 @@ const parseSimpleMarkdown = (content: string) =>
                   pureChildren={false}
                 >
                   {m[1]}
-                </Link>,
+                </LinkV2>,
               )
               lastLastIdx = mdLinkRe.lastIndex
             }

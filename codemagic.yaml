@@ -1,0 +1,236 @@
+definitions:
+  base: &base
+    max_build_duration: 120
+    working_directory: apps/native/app
+    when:
+      changeset:
+        includes:
+          - 'apps/native/app'
+    # To save on build minutes, workflows are currently triggered manually and/or once per day.
+    #  default_triggers: &default_triggers
+    #    events:
+    #      - push
+    #    branch_patterns:
+    #      - pattern: "main"
+    #        include: true
+    #        source: true
+  shared_envs: &shared_envs
+    XCODE_WORKSPACE: 'IslandApp.xcworkspace'
+    CM_CLONE_DEPTH: 200
+    NODE_OPTIONS: '--max-old-space-size=8192'
+  scripts:
+    - &check_changes
+      name: Check changes since last build
+      working_directory: .
+      script: |
+        set -e
+
+        echo "Considering changes between $CM_PREVIOUS_COMMIT and $CM_COMMIT"
+        if git cat-file -e "$CM_PREVIOUS_COMMIT"^{commit} >& /dev/null; then
+          notes=$(git log --pretty=format:"%s (%an)" "$CM_PREVIOUS_COMMIT".."$CM_COMMIT" -- codemagic.yaml apps/native/app)
+          if [[ $notes == "" ]]; then
+            echo "No changes detected in native app. Exiting."
+            exit 1
+          else
+            echo "App changes since last build:"
+            echo "$notes" | tee apps/native/app/release_notes_en-US.txt
+          fi
+        else
+          echo "No previous commit detected. Continuing."
+        fi
+    - &set_android_location
+      name: Prepare Android configuration
+      script: |
+        echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
+        echo $ANDROID_FIREBASE_SECRET > android/app/google-services.json
+    - &npm_install
+      name: Install npm dependencies
+      working_directory: .
+      script: |
+        corepack enable
+        corepack prepare
+        yarn install --immutable
+    - &codegen
+      name: Run codegen
+      working_directory: .
+      script: |
+        yarn codegen
+    - &cocoapods
+      name: Install CocoaPods dependencies
+      script: |
+        cd ios && pod install
+    - &provisioning_profiles
+      name: Set up provisioning profiles settings on Xcode project
+      script: xcode-project use-profiles
+    - &increment_build_number
+      name: Increment build number
+      script: |
+        cd ios
+        LATEST_BUILD_NUMBER=$(app-store-connect get-latest-build-number "$APP_STORE_APPLE_ID")
+        agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
+    - &build_ipa
+      name: Build ipa for distribution
+      script: |
+        xcode-project build-ipa \
+          --workspace "ios/$XCODE_WORKSPACE" \
+          --scheme "$XCODE_SCHEME"
+    - &build_android
+      name: Build Android release
+      script: |
+        LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME")
+        if [ -z $LATEST_GOOGLE_PLAY_BUILD_NUMBER ]; then
+            exit 1
+        else
+            UPDATED_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
+        fi
+        cd android
+        ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
+  publishing:
+    ios_publishing: &ios_publishing
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: false
+        submit_to_app_store: false
+    android_publishing: &android_publishing
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+    slack_errors: &slack_errors
+      slack:
+        channel: '#team-app-builds'
+        notify:
+          # don't want to spam slack with 4 successful builds. Overridden in dev-app-ios.
+          success: false
+          failure: true
+
+workflows:
+  prod-app-ios:
+    <<: *base
+    name: Island.is Prod App iOS
+    instance_type: mac_mini_m1
+    cache: &ios_cache
+      cache_paths:
+        - ~/Library/Caches/CocoaPods
+        - $CM_BUILD_DIR/.yarn/cache
+        - $CM_BUILD_DIR/.cache/nx
+    integrations:
+      app_store_connect: 'Island.is API Key'
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: is.island.app
+      vars:
+        <<: *shared_envs
+        BUNDLE_ID: 'is.island.app'
+        XCODE_SCHEME: 'Ísland.is'
+        APP_STORE_APPLE_ID: 1569828682
+    scripts:
+      - *check_changes
+      - *npm_install
+      - *codegen
+      - *cocoapods
+      - *provisioning_profiles
+      - *increment_build_number
+      - *build_ipa
+    artifacts: &ios_artifacts
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      <<: *ios_publishing
+      <<: *slack_errors
+
+  dev-app-ios:
+    <<: *base
+    name: Island.is Dev App iOS
+    instance_type: mac_mini_m1
+    cache: *ios_cache
+    integrations:
+      app_store_connect: 'Island.is API Key'
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: is.island.app.dev
+      vars:
+        <<: *shared_envs
+        BUNDLE_ID: 'is.island.app.dev'
+        XCODE_SCHEME: 'Ísland.dev'
+        APP_STORE_APPLE_ID: 1570427360
+    scripts:
+      - *check_changes
+      - *npm_install
+      - *codegen
+      - *cocoapods
+      - *provisioning_profiles
+      - *increment_build_number
+      - *build_ipa
+    artifacts: *ios_artifacts
+    publishing:
+      <<: *ios_publishing
+      slack:
+        channel: '#team-app-builds'
+        notify:
+          success: true
+          failure: true
+
+  prod-app-android:
+    <<: *base
+    name: Island.is Prod App Android
+    instance_type: mac_mini_m1
+    ## Switch when we have billing
+    # instance_type: linux_x2
+    cache: &android_cache
+      cache_paths:
+        - ~/.gradle/caches
+        - $CM_BUILD_DIR/.yarn/cache
+        - $CM_BUILD_DIR/.cache/nx
+    environment:
+      android_signing:
+        - island-upload-keystore
+      groups:
+        - google_credentials
+        - firebase_credentials
+      vars:
+        <<: *shared_envs
+        PACKAGE_NAME: 'is.island.app'
+        ANDROID_APP: prod
+    scripts:
+      - *check_changes
+      - *set_android_location
+      - *npm_install
+      - *codegen
+      - *build_android
+    artifacts: &android_artifacts
+      - android/app/build/outputs/**/*.aab
+    publishing:
+      <<: *android_publishing
+      <<: *slack_errors
+
+  dev-app-android:
+    <<: *base
+    name: Island.is Dev App Android
+    instance_type: mac_mini_m1
+    ## Switch when we have billing
+    # instance_type: linux_x2
+    cache: *android_cache
+    environment:
+      android_signing:
+        - island-upload-keystore
+      groups:
+        - google_credentials
+        - firebase_credentials
+      vars:
+        <<: *shared_envs
+        PACKAGE_NAME: 'is.island.app.dev'
+        ANDROID_APP: dev
+    scripts:
+      - *check_changes
+      - *set_android_location
+      - *npm_install
+      - *codegen
+      - *build_android
+    artifacts: *android_artifacts
+    publishing:
+      <<: *android_publishing
+      <<: *slack_errors

@@ -63,17 +63,17 @@ test.describe.serial('Custody tests', () => {
       .fill(randomPoliceCaseNumber())
     await page.getByRole('button', { name: 'Skrá númer' }).click()
     await page.getByRole('checkbox').first().check()
-    await page.locator('input[name=accusedName]').fill(faker.name.findName())
+    await page.locator('input[name=inputName]').fill(faker.name.findName())
     await page.locator('input[name=accusedAddress]').fill('Einhversstaðar 1')
     await page.locator('#defendantGender').click()
     await page.locator('#react-select-defendantGender-option-0').click()
     await page
-      .locator('input[id=react-select-defenderName-input]')
+      .locator('input[id=react-select-advocateName-input]')
       .fill('Saul Goodman')
-    await page.locator('#react-select-defenderName-option-0').click()
+    await page.locator('#react-select-advocateName-option-0').click()
     await page
       .locator('input[name=defenderEmail]')
-      .fill('jl-auto-defender@kolibri.is')
+      .fill('jl+auto+defender@kolibri.is')
     await page.locator('input[id=defender-access-ready-for-court]').click()
     await page.locator('input[name=leadInvestigator]').fill('Stjórinn')
     await expect(

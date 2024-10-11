@@ -261,6 +261,22 @@ export const information = {
         defaultMessage: 'Gsm númer',
         description: 'Buyer phone number label',
       },
+      submitButton: {
+        id: 'aosh.tmo.application:information.labels.buyer.submitButton',
+        defaultMessage: 'Staðfesta',
+        description: 'Submit button for buyer',
+      },
+      alertTitle: {
+        id: 'aosh.tmo.application:information.labels.buyer.alertTitle',
+        defaultMessage: 'Kennitala sú sama og hjá seljanda',
+        description: `Buyer alert title`,
+      },
+      alertMessage: {
+        id: 'aosh.tmo.application:information.labels.buyer.alertMessage',
+        defaultMessage:
+          'Seljandi og kaupandi getur ekki verið sá sami. Vinsamlega skráðu nýja kennitölu.',
+        description: `Buyer alert message`,
+      },
     }),
     buyerOperators: defineMessages({
       title: {

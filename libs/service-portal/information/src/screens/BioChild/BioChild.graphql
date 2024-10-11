@@ -1,0 +1,31 @@
+query NationalRegistryBioChild(
+  $childNationalId: String
+  $useFakeData: Boolean
+) {
+  nationalRegistryPerson(useFakeData: $useFakeData) {
+    nationalId
+    fullName
+    biologicalChildren(childNationalId: $childNationalId) {
+      __typename
+      details {
+        nationalId
+        fullName
+        baseId
+        __typename
+        name {
+          firstName
+          middleName
+          lastName
+        }
+        housing {
+          address {
+            streetAddress
+          }
+        }
+        birthParents {
+          nationalId
+        }
+      }
+    }
+  }
+}

@@ -43,3 +43,11 @@ export class ApplicationApplicationsInstitutionAdminInput extends OmitType(
   @IsOptional()
   to?: string
 }
+
+@InputType()
+export class ApplicationApplicationsAdminStatisticsInput {
+  @Field(() => String)
+  startDate!: string
+  @Field(() => String)
+  endDate!: string
+}

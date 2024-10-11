@@ -9,6 +9,7 @@ import {
 } from '@island.is/judicial-system/consts'
 import {
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   NotificationType,
@@ -19,9 +20,8 @@ import { createTestingNotificationModule } from '../createTestingNotificationMod
 
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
-import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
+import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 
 jest.mock('../../../../factories')
@@ -34,19 +34,18 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  notificationDto: SendInternalNotificationDto,
+  notificationDto: CaseNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send ruling notifications', () => {
   const userId = uuid()
-  const notificationDto: SendInternalNotificationDto = {
+  const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
     type: NotificationType.RULING,
   }
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
-  let mockNotificationModel: typeof Notification
   let mockDefendantService: DefendantService
   let givenWhenThen: GivenWhenThen
 
@@ -56,18 +55,13 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const {
       emailService,
       notificationConfig,
-      notificationModel,
       defendantService,
       internalNotificationController,
     } = await createTestingNotificationModule()
 
     mockEmailService = emailService
     mockConfig = notificationConfig
-    mockNotificationModel = notificationModel
     mockDefendantService = defendantService
-
-    const mockFindAll = mockNotificationModel.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
 
     givenWhenThen = async (caseId: string, theCase: Case) => {
       const then = {} as Then
@@ -94,6 +88,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       type: CaseType.INDICTMENT,
       courtCaseNumber: '007-2022-07',
       court: { name: 'Héraðsdómur Reykjavíkur' },
+      indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
       prosecutor,
     } as Case
 
@@ -107,8 +102,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
-          subject: 'Dómur í máli 007-2022-07',
-          html: `Dómari hefur staðfest dóm í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          subject: 'Máli lokið 007-2022-07',
+          html: `Máli 007-2022-07 hjá Héraðsdómi Reykjavíkur hefur verið lokið.<br /><br />Niðurstaða: Sameinað<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -138,7 +133,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Úrskurður í máli 007-2022-07',
-          html: `Dómari hefur undirritað og staðfest úrskurð í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Dómari hefur undirritað og staðfest úrskurð í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -169,7 +164,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Úrskurður í máli 007-2022-07 leiðréttur',
-          html: `Dómari hefur leiðrétt úrskurð í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Dómari hefur leiðrétt úrskurð í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })

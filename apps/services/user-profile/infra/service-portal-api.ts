@@ -1,16 +1,16 @@
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import {
   EnvironmentVariables,
   Secrets,
 } from '../../../../infra/src/dsl/types/input-types'
-
-// We basically don't want it to run in a cron job
-// but manually, so set it to run once a year on dec 31st
-const schedule = '0 0 31 12 *'
+import {
+  Base,
+  Client,
+  NationalRegistryB2C,
+} from '../../../../infra/src/dsl/xroad'
 
 const namespace = 'service-portal'
 const serviceId = `${namespace}-api`
-const workerId = `${serviceId}-worker`
 const imageId = 'services-user-profile'
 
 const envVariables: EnvironmentVariables = {
@@ -31,11 +31,15 @@ const envVariables: EnvironmentVariables = {
     staging: 'false',
     prod: 'false',
   },
-  USER_PROFILE_WORKER_PAGE_SIZE: {
-    dev: '3000',
-    staging: '3000',
-    prod: '3000',
+  AUTH_DELEGATION_API_URL: {
+    dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+    staging:
+      'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+    prod: 'https://auth-delegation-api.internal.innskra.island.is',
   },
+  AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([
+    '@island.is/auth/delegations/index:system',
+  ]),
 }
 
 const secrets: Secrets = {
@@ -48,33 +52,11 @@ const secrets: Secrets = {
   EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME',
   ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
   ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
+  IDENTITY_SERVER_CLIENT_ID: `/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_ID`,
+  IDENTITY_SERVER_CLIENT_SECRET: `/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_SECRET`,
+  NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+    '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
 }
-
-export const workerSetup = (): ServiceBuilder<typeof workerId> =>
-  service(workerId)
-    .namespace(namespace)
-    .image(imageId)
-    .env(envVariables)
-    .secrets(secrets)
-    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
-    .command('node')
-    .args('main.js', '--job=worker')
-    .resources({
-      limits: { cpu: '800m', memory: '1024Mi' },
-      requests: { cpu: '400m', memory: '512Mi' },
-    })
-    .db()
-    .extraAttributes({
-      dev: {
-        schedule,
-      },
-      staging: {
-        schedule,
-      },
-      prod: {
-        schedule,
-      },
-    })
 
 export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
   service(serviceId)
@@ -83,6 +65,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
     .serviceAccount(serviceId)
     .env(envVariables)
     .secrets(secrets)
+    .xroad(Base, Client, NationalRegistryB2C)
     .migrations()
     .liveness('/liveness')
     .readiness('/readiness')
@@ -105,7 +88,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
     })
     .resources({
       limits: { cpu: '800m', memory: '1024Mi' },
-      requests: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '100m', memory: '512Mi' },
     })
     .db()
     .grantNamespaces(
@@ -113,4 +96,5 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
       'islandis',
       'user-notification',
       'identity-server',
+      'application-system',
     )

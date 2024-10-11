@@ -1,16 +1,17 @@
-import * as s from './RegulationDisplay.css'
-
 import React, { Fragment, memo } from 'react'
-import { Link } from '@island.is/island-ui/core'
+import uniqBy from 'lodash/uniqBy'
+
+import { LinkV2 } from '@island.is/island-ui/core'
 import {
   interpolate,
   prettyName,
   RegulationMaybeDiff,
 } from '@island.is/regulations'
-import { RegulationPageTexts } from './RegulationTexts.types'
-import uniqBy from 'lodash/uniqBy'
-import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+
+import { RegulationPageTexts } from './RegulationTexts.types'
+import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
+import * as s from './RegulationDisplay.css'
 
 export type AffectingRegulationsProps = {
   regulation: RegulationMaybeDiff
@@ -63,13 +64,13 @@ export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
         return (
           <Fragment key={i}>
             {separator}
-            <Link
+            <LinkV2
               href={linkToRegulation(name)}
               color="blue400"
               underline="small"
             >
               <span title={title}>{prettyName(name)}</span>
-            </Link>
+            </LinkV2>
           </Fragment>
         )
       })}

@@ -6,12 +6,12 @@
   "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "executor": "@nx/eslint:lint"
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
       "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/driving-license-book-update-instructor/**/*.{ts,tsx,js,jsx}"
-        ]
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/driving-license-book-update-instructor/src/lib/messages/*.ts'"
       }
     },
     "test": {
@@ -20,8 +20,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/driving-license-book-update-instructor"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/driving-license-book-update-instructor/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/driving-license-book-update-instructor/jest.config.ts"
       }
     }
   }

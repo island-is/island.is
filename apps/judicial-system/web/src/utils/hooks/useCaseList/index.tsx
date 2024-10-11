@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -10,26 +10,26 @@ import {
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
-  isIndictmentCase,
   isInvestigationCase,
+  isPrisonSystemUser,
+  isPublicProsecutorUser,
+  isRequestCase,
   isRestrictionCase,
+  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { UserContext } from '@island.is/judicial-system-web/src/components'
-import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/case.generated'
-import { useLimitedAccessCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/limitedAccessCase.generated'
 import {
-  CaseAppealState,
-  CaseState,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+  FormContext,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { findFirstInvalidStep } from '../../formHelper'
-import { isTrafficViolationIndictment } from '../../stepHelper'
 import useCase from '../useCase'
 
 const useCaseList = () => {
@@ -38,131 +38,126 @@ const useCaseList = () => {
   const [clickedCase, setClickedCase] = useState<
     [id: string | null, showLoading: boolean]
   >([null, false])
-  const [openCaseInNewTab, setOpenCaseInNewTab] = useState<boolean>(false)
-
   const { user, limitedAccess } = useContext(UserContext)
+  const { getCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { isTransitioningCase, isSendingNotification } = useCase()
   const router = useRouter()
 
-  const [getLimitedAccessCase] = useLimitedAccessCaseLazyQuery({
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-    onCompleted: (limitedAccessCaseData) => {
-      if (user && limitedAccessCaseData?.limitedAccessCase) {
-        openCase(limitedAccessCaseData.limitedAccessCase as Case, user)
-      }
-    },
-    onError: () => {
-      toast.error(formatMessage(errors.getCaseToOpen))
-    },
-  })
+  const openCase = useCallback(
+    (caseToOpen: Case, openCaseInNewTab?: boolean) => {
+      let routeTo = null
+      const isTrafficViolation = isTrafficViolationCase(caseToOpen)
 
-  const [getCase] = useCaseLazyQuery({
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-    onCompleted: (caseData) => {
-      if (user && caseData?.case) {
-        openCase(caseData.case as Case, user)
-      }
-    },
-    onError: () => {
-      toast.error(formatMessage(errors.getCaseToOpen))
-    },
-  })
-
-  const openCase = (caseToOpen: Case, user: User) => {
-    let routeTo = null
-    const isTrafficViolation = isTrafficViolationIndictment(caseToOpen)
-
-    if (isDefenceUser(user)) {
-      if (isIndictmentCase(caseToOpen.type)) {
-        routeTo = DEFENDER_INDICTMENT_ROUTE
-      } else {
-        routeTo = DEFENDER_ROUTE
-      }
-    } else if (
-      caseToOpen.state === CaseState.ACCEPTED ||
-      caseToOpen.state === CaseState.REJECTED ||
-      caseToOpen.state === CaseState.DISMISSED
-    ) {
-      if (isIndictmentCase(caseToOpen.type)) {
-        routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+      if (isDefenceUser(user)) {
+        if (isRequestCase(caseToOpen.type)) {
+          routeTo = DEFENDER_ROUTE
+        } else {
+          routeTo = DEFENDER_INDICTMENT_ROUTE
+        }
+      } else if (isPublicProsecutorUser(user)) {
+        // Public prosecutor users can only see completed indictments
+        routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
+        // Court of appeals users can only see appealed request cases
         if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
           routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
         } else {
           routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
         }
+      } else if (isDistrictCourtUser(user)) {
+        if (isRestrictionCase(caseToOpen.type)) {
+          if (isCompletedCase(caseToOpen.state)) {
+            routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+          } else {
+            routeTo = findFirstInvalidStep(
+              constants.courtRestrictionCasesRoutes,
+              caseToOpen,
+            )
+          }
+        } else if (isInvestigationCase(caseToOpen.type)) {
+          if (isCompletedCase(caseToOpen.state)) {
+            routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+          } else {
+            routeTo = findFirstInvalidStep(
+              constants.courtInvestigationCasesRoutes,
+              caseToOpen,
+            )
+          }
+        } else {
+          if (isCompletedCase(caseToOpen.state)) {
+            routeTo = constants.INDICTMENTS_COMPLETED_ROUTE
+          } else {
+            // Route to Indictment Overview section since it always a valid step and
+            // would be skipped if we route to the last valid step
+            routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
+          }
+        }
       } else {
-        routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+        // The user is a prosecution or prison system user. They can only see completed cases
+        if (isRestrictionCase(caseToOpen.type)) {
+          if (isCompletedCase(caseToOpen.state)) {
+            routeTo = isPrisonSystemUser(user)
+              ? constants.PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE
+              : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+          } else {
+            routeTo = findFirstInvalidStep(
+              constants.prosecutorRestrictionCasesRoutes,
+              caseToOpen,
+            )
+          }
+        } else if (isInvestigationCase(caseToOpen.type)) {
+          if (isCompletedCase(caseToOpen.state)) {
+            routeTo = isPrisonSystemUser(user)
+              ? constants.PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE
+              : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+          } else {
+            routeTo = findFirstInvalidStep(
+              constants.prosecutorInvestigationCasesRoutes,
+              caseToOpen,
+            )
+          }
+        } else {
+          if (isCompletedCase(caseToOpen.state)) {
+            routeTo = isPrisonSystemUser(user)
+              ? constants.PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE
+              : constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+          } else {
+            routeTo = findFirstInvalidStep(
+              constants.prosecutorIndictmentRoutes(isTrafficViolation),
+              caseToOpen,
+            )
+          }
+        }
       }
-    } else if (isDistrictCourtUser(user)) {
-      if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.courtRestrictionCasesRoutes,
-          caseToOpen,
-        )
-      } else if (isInvestigationCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.courtInvestigationCasesRoutes,
-          caseToOpen,
-        )
-      } else {
-        // Route to Indictment Overview section since it always a valid step and
-        // would be skipped if we route to the last valid step
-        routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
-      }
-    } else {
-      if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.prosecutorRestrictionCasesRoutes,
-          caseToOpen,
-        )
-      } else if (isInvestigationCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.prosecutorInvestigationCasesRoutes,
-          caseToOpen,
-        )
-      } else {
-        routeTo = findFirstInvalidStep(
-          constants.prosecutorIndictmentRoutes(isTrafficViolation),
-          caseToOpen,
-        )
-      }
-    }
 
-    if (openCaseInNewTab) {
-      window.open(`${routeTo}/${caseToOpen.id}`, '_blank')
-      setOpenCaseInNewTab(false)
-    } else if (routeTo) {
-      router.push(`${routeTo}/${caseToOpen.id}`)
-    }
-  }
+      if (openCaseInNewTab) {
+        window.open(`${routeTo}/${caseToOpen.id}`, '_blank')
+      } else if (routeTo) {
+        router.push(`${routeTo}/${caseToOpen.id}`)
+      }
+    },
+    [router, user],
+  )
 
   const handleOpenCase = useCallback(
     (id: string, openInNewTab?: boolean) => {
       Promise.all(timeouts.map((timeout) => clearTimeout(timeout)))
 
-      if (openInNewTab === true) {
-        setOpenCaseInNewTab(openInNewTab)
-      }
-
       if (clickedCase[0] !== id && !openInNewTab) {
         setClickedCase([id, false])
 
-        timeouts.push(
-          setTimeout(() => {
-            setClickedCase([id, true])
-          }, 2000),
-        )
+        timeouts.push(setTimeout(() => setClickedCase([id, true]), 2000))
       }
 
       const getCaseToOpen = (id: string) => {
-        limitedAccess
-          ? getLimitedAccessCase({ variables: { input: { id } } })
-          : getCase({ variables: { input: { id } } })
+        getCase(
+          id,
+          (caseData) => openCase(caseData, openInNewTab),
+          () => toast.error(formatMessage(errors.getCaseToOpen)),
+        )
       }
+
       if (
         isTransitioningCase ||
         isSendingNotification ||
@@ -176,11 +171,12 @@ const useCaseList = () => {
     },
     [
       clickedCase,
+      formatMessage,
       getCase,
-      getLimitedAccessCase,
       isSendingNotification,
       isTransitioningCase,
       limitedAccess,
+      openCase,
       timeouts,
     ],
   )

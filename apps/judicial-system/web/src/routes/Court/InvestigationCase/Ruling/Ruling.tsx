@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -69,7 +69,7 @@ const Ruling = () => {
       [
         {
           introduction: formatMessage(m.sections.introduction.autofill, {
-            date: formatDate(workingCase.courtDate, 'PPP'),
+            date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
           }),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(

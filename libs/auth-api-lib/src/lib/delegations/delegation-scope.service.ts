@@ -3,19 +3,31 @@ import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
-import { PersonalRepresentativeRightType } from '../personal-representative/models/personal-representative-right-type.model'
-import { PersonalRepresentativeRight } from '../personal-representative/models/personal-representative-right.model'
-import { PersonalRepresentativeScopePermission } from '../personal-representative/models/personal-representative-scope-permission.model'
+import { SyslumennService } from '@island.is/clients/syslumenn'
+import { logger } from '@island.is/logging'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
+
+import { PersonalRepresentativeDelegationTypeModel } from '../personal-representative/models/personal-representative-delegation-type.model'
 import { PersonalRepresentative } from '../personal-representative/models/personal-representative.model'
+import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { IdentityResource } from '../resources/models/identity-resource.model'
+import { DelegationProviderService } from './delegation-provider.service'
 import { DelegationConfig } from './DelegationConfig'
+import { DelegationsIndexService } from './delegations-index.service'
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
+import { DelegationDelegationType } from './models/delegation-delegation-type.model'
 import { DelegationScope } from './models/delegation-scope.model'
+import { DelegationTypeModel } from './models/delegation-type.model'
 import { Delegation } from './models/delegation.model'
+
+import type { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class DelegationScopeService {
@@ -26,8 +38,13 @@ export class DelegationScopeService {
     private apiScopeModel: typeof ApiScope,
     @InjectModel(IdentityResource)
     private identityResourceModel: typeof IdentityResource,
+    @InjectModel(Delegation)
+    private delegationModel: typeof Delegation,
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
+    private delegationProviderService: DelegationProviderService,
+    private readonly syslumennService: SyslumennService,
+    private readonly delegationsIndexService: DelegationsIndexService,
   ) {}
 
   async createOrUpdate(
@@ -74,15 +91,18 @@ export class DelegationScopeService {
   async delete(
     delegationId: string,
     scopeNames?: string[] | null,
+    transaction?: Transaction,
   ): Promise<number> {
     if (scopeNames) {
       return this.delegationScopeModel.destroy({
         where: { delegationId, scopeName: scopeNames },
+        transaction,
       })
     }
 
     return this.delegationScopeModel.destroy({
       where: { delegationId },
+      transaction,
     })
   }
 
@@ -94,6 +114,7 @@ export class DelegationScopeService {
 
   async findAll(delegationId: string): Promise<DelegationScope[]> {
     return this.delegationScopeModel.findAll({
+      useMaster: true,
       where: { delegationId },
       include: [
         {
@@ -107,11 +128,11 @@ export class DelegationScopeService {
     })
   }
 
-  async findAllValidCustomScopesTo(
+  private findValidCustomScopesTo(
     toNationalId: string,
     fromNationalId: string,
   ): Promise<DelegationScope[]> {
-    const today = startOfDay(new Date())
+    const today = new Date()
 
     return this.delegationScopeModel.findAll({
       where: {
@@ -133,78 +154,150 @@ export class DelegationScopeService {
         {
           model: ApiScope,
           where: {
-            allowExplicitDelegationGrant: true,
+            enabled: true,
           },
+          include: [
+            {
+              model: ApiScopeDelegationType,
+              include: [
+                {
+                  model: DelegationTypeModel,
+                  where: { provider: AuthDelegationProvider.Custom },
+                },
+              ],
+            },
+          ],
         },
       ],
     })
   }
 
-  async findAllProcurationScopes(): Promise<string[]> {
-    const apiScopes = await this.apiScopeModel.findAll({
-      attributes: ['name'],
-      where: {
-        grantToProcuringHolders: true,
-        alsoForDelegatedUser: false,
-      },
-    })
-
-    return apiScopes.map((s) => s.name)
-  }
-
-  async findAllLegalGuardianScopes(): Promise<string[]> {
-    const apiScopes = await this.apiScopeModel.findAll({
-      attributes: ['name'],
-      where: {
-        grantToLegalGuardians: true,
-        alsoForDelegatedUser: false,
-      },
-    })
-
-    return apiScopes.map((s) => s.name)
-  }
-
-  async findPersonalRepresentativeScopes(
+  private async findValidGeneralMandateScopesTo(
     toNationalId: string,
     fromNationalId: string,
+  ): Promise<string[]> {
+    const today = startOfDay(new Date())
+
+    const delegations = await this.delegationModel.findAll({
+      where: {
+        toNationalId,
+        fromNationalId,
+      },
+      include: [
+        {
+          model: DelegationDelegationType,
+          required: true,
+          where: {
+            delegationTypeId: AuthDelegationType.GeneralMandate,
+            validTo: {
+              [Op.or]: [{ [Op.is]: undefined }, { [Op.gte]: today }],
+            },
+          },
+        },
+      ],
+    })
+
+    if (delegations.length === 0) return []
+
+    return this.apiScopeModel
+      .findAll({
+        attributes: ['name'],
+        where: {
+          enabled: true,
+        },
+        include: [
+          {
+            model: ApiScopeDelegationType,
+            where: {
+              delegationType: AuthDelegationType.GeneralMandate,
+            },
+          },
+        ],
+      })
+      .then((apiScopes) => apiScopes.map((apiScope) => apiScope.name))
+  }
+
+  private async findAllNationalRegistryScopes(): Promise<string[]> {
+    const apiScopes = await this.apiScopeModel.findAll({
+      include: [
+        {
+          model: ApiScopeDelegationType,
+          required: true,
+          include: [
+            {
+              model: DelegationTypeModel,
+              where: {
+                provider: AuthDelegationProvider.NationalRegistry,
+              },
+            },
+          ],
+        },
+      ],
+      where: {
+        enabled: true,
+        alsoForDelegatedUser: false,
+      },
+      attributes: ['name'],
+    })
+    return apiScopes.map((s) => s.name)
+  }
+
+  private async findAllCompanyRegistryScopes(): Promise<string[]> {
+    const apiScopes = await this.apiScopeModel.findAll({
+      include: [
+        {
+          model: ApiScopeDelegationType,
+          required: true,
+          include: [
+            {
+              model: DelegationTypeModel,
+              where: {
+                provider: AuthDelegationProvider.CompanyRegistry,
+              },
+            },
+          ],
+        },
+      ],
+      where: {
+        enabled: true,
+        alsoForDelegatedUser: false,
+      },
+      attributes: ['name'],
+    })
+    return apiScopes.map((s) => s.name)
+  }
+
+  private async findPersonalRepresentativeRegistryScopes(
+    toNationalId: string,
+    fromNationalId: string,
+    delegationTypes: string[],
   ): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
       attributes: ['name'],
       where: {
         enabled: true,
-        grantToPersonalRepresentatives: true,
         alsoForDelegatedUser: false,
       },
       include: [
         {
-          model: PersonalRepresentativeScopePermission,
+          model: DelegationTypeModel,
           required: true,
+          where: {
+            id: delegationTypes,
+            provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
+          },
           include: [
             {
-              model: PersonalRepresentativeRightType,
+              model: PersonalRepresentativeDelegationTypeModel,
               required: true,
-              where: {
-                validFrom: {
-                  [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
-                },
-                validTo: {
-                  [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
-                },
-              },
               include: [
                 {
-                  model: PersonalRepresentativeRight,
+                  model: PersonalRepresentative,
                   required: true,
-                  include: [
-                    {
-                      model: PersonalRepresentative,
-                      required: true,
-                      where: {
-                        nationalIdPersonalRepresentative: toNationalId,
-                        nationalIdRepresentedPerson: fromNationalId,
-                      },
-                    },
-                  ],
+                  where: {
+                    nationalIdPersonalRepresentative: toNationalId,
+                    nationalIdRepresentedPerson: fromNationalId,
+                  },
                 },
               ],
             },
@@ -216,10 +309,63 @@ export class DelegationScopeService {
     return apiScopes.map((s) => s.name)
   }
 
-  async findAllAutomaticScopes(): Promise<string[]> {
+  private async findDistrictCommissionersRegistryScopesTo(
+    user: User,
+    fromNationalId: string,
+  ): Promise<string[]> {
+    // if no valid delegation exists, return empty array
+    try {
+      const delegationFound =
+        await this.syslumennService.checkIfDelegationExists(
+          user.nationalId,
+          fromNationalId,
+        )
+
+      if (!delegationFound) {
+        void this.delegationsIndexService.removeDelegationRecord(
+          {
+            fromNationalId,
+            toNationalId: user.nationalId,
+            type: AuthDelegationType.LegalRepresentative,
+            provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+          },
+          user,
+        )
+        return []
+      }
+    } catch (error) {
+      logger.error(
+        `Failed checking if delegation exists at provider '${AuthDelegationProvider.DistrictCommissionersRegistry}'`,
+      )
+      return []
+    }
+
+    // else return all enabled scopes for this provider and provided delegation types
     const apiScopes = await this.apiScopeModel.findAll({
       attributes: ['name'],
       where: {
+        enabled: true,
+      },
+      include: [
+        {
+          model: DelegationTypeModel,
+          required: true,
+          where: {
+            id: AuthDelegationType.LegalRepresentative,
+            provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+          },
+        },
+      ],
+    })
+
+    return apiScopes.map((s) => s.name)
+  }
+
+  private async findAllAutomaticScopes(): Promise<string[]> {
+    const apiScopes = await this.apiScopeModel.findAll({
+      attributes: ['name'],
+      where: {
+        enabled: true,
         automaticDelegationGrant: true,
       },
     })
@@ -227,6 +373,7 @@ export class DelegationScopeService {
     const identityResources = await this.identityResourceModel.findAll({
       attributes: ['name'],
       where: {
+        enabled: true,
         automaticDelegationGrant: true,
       },
     })
@@ -235,5 +382,72 @@ export class DelegationScopeService {
       ...apiScopes.map((s) => s.name),
       ...identityResources.map((s) => s.name),
     ]
+  }
+
+  async findAllScopesTo(
+    user: User,
+    fromNationalId: string,
+    delegationTypes: string[],
+  ): Promise<string[]> {
+    const scopePromises = []
+
+    const providers: string[] =
+      await this.delegationProviderService.findProviders(delegationTypes)
+
+    if (providers.includes(AuthDelegationProvider.NationalRegistry)) {
+      scopePromises.push(this.findAllNationalRegistryScopes())
+    }
+
+    if (providers.includes(AuthDelegationProvider.CompanyRegistry)) {
+      scopePromises.push(this.findAllCompanyRegistryScopes())
+    }
+
+    if (
+      providers.includes(AuthDelegationProvider.PersonalRepresentativeRegistry)
+    ) {
+      scopePromises.push(
+        this.findPersonalRepresentativeRegistryScopes(
+          user.nationalId,
+          fromNationalId,
+          delegationTypes,
+        ),
+      )
+    }
+
+    if (delegationTypes?.includes(AuthDelegationType.Custom)) {
+      scopePromises.push(
+        this.findValidCustomScopesTo(user.nationalId, fromNationalId).then(
+          (delegationScopes: DelegationScope[]) =>
+            delegationScopes.map((ds) => ds.scopeName),
+        ),
+      )
+    }
+
+    if (delegationTypes?.includes(AuthDelegationType.GeneralMandate)) {
+      scopePromises.push(
+        this.findValidGeneralMandateScopesTo(user.nationalId, fromNationalId),
+      )
+    }
+
+    if (
+      providers.includes(AuthDelegationProvider.DistrictCommissionersRegistry)
+    )
+      scopePromises.push(
+        this.findDistrictCommissionersRegistryScopesTo(user, fromNationalId),
+      )
+
+    const scopeSets = await Promise.all(scopePromises)
+
+    let scopes = ([] as string[]).concat(...scopeSets)
+
+    if (
+      scopes.length > 0 ||
+      providers.includes(AuthDelegationProvider.NationalRegistry) ||
+      providers.includes(AuthDelegationProvider.CompanyRegistry)
+    ) {
+      scopes = [...scopes, ...(await this.findAllAutomaticScopes())]
+    }
+
+    return [...new Set(scopes)]
   }
 }

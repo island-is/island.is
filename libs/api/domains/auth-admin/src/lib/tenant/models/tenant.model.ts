@@ -1,7 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import { Environment } from '@island.is/shared/types'
-
 import { TenantEnvironment } from './tenant-environment.model'
 
 @ObjectType('AuthAdminTenant')
@@ -13,10 +11,4 @@ export class Tenant {
 
   @Field(() => [TenantEnvironment])
   environments!: TenantEnvironment[]
-
-  @Field(() => [Environment])
-  availableEnvironments?: Environment[]
-
-  @Field(() => TenantEnvironment)
-  defaultEnvironment?: TenantEnvironment
 }

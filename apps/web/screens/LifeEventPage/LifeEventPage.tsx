@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from 'react'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { parseAsBoolean } from 'next-usequerystate'
@@ -202,6 +202,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                             const cardUrl = linkResolver(
                               thing?.type as LinkType,
                               [thing?.slug ?? ''],
+                              locale,
                             )
                             return cardUrl?.href && cardUrl?.href.length > 0 ? (
                               <Tag
@@ -250,13 +251,6 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                     lifeEvent?.content as SliceType[],
                     {
                       renderComponent: {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore make web strict
-                        Form: (form) => (
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore make web strict
-                          <Form form={form} namespace={namespace} />
-                        ),
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore make web strict
                         SectionWithImage: (slice) => {

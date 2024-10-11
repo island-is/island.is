@@ -1,4 +1,5 @@
 import {
+  DebtTypes,
   InheritanceEstateMember,
   InheritanceReportAsset,
   InheritanceReportInfo,
@@ -32,6 +33,13 @@ const generateRandomAsset = (n: number, i = 1): InheritanceReportAsset => {
     ),
     amount: String(1_000_000 + Math.round(Math.random() * 9_000_000)),
     exchangeRateOrInterest: String(1 + Math.round(Math.random() * 99)),
+    debtType: [
+      DebtTypes.CreditCard,
+      DebtTypes.Loan,
+      DebtTypes.InsuranceCompany,
+      DebtTypes.Overdraft,
+      DebtTypes.PropertyFees,
+    ].sort(() => 0.5 - Math.random())[0],
   }
 }
 
@@ -59,6 +67,7 @@ const generateRandomHeir = (
         }
       : {}),
     email: name.split(' ').at(-1) + '@gervimadur.com',
+    phone: '9999999',
     enabled: true,
     relationWithApplicant: ['Bróðir', 'Systir', 'Móðir', 'Faðir'].sort(
       () => 0.5 - Math.random(),

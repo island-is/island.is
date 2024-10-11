@@ -4,30 +4,50 @@ import {
   buildSection,
   buildTextField,
   buildSubmitField,
-  buildCustomField,
   buildDividerField,
+  buildDescriptionField,
+  buildCheckboxField,
+  buildLinkField,
 } from '@island.is/application/core'
 import { Form, ApplicationTypes, FormModes } from '@island.is/application/types'
-import { m } from './messages'
+import { m } from '../lib/messages'
+import { AnswerOptions } from '../lib/types'
 
 export const DocumentProviderOnboarding: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
   title: m.formName,
   mode: FormModes.DRAFT,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'termsOfAgreement',
       title: m.termsSection,
       children: [
-        buildCustomField(
-          {
-            id: 'termsOfAgreement',
-            title: m.termsTitle,
-            description: m.termsSubTitle,
-            component: 'TermsOfAgreement',
-          },
-          {},
-        ),
+        buildMultiField({
+          id: 'termsOfAgreement',
+          title: m.termsTitle,
+          children: [
+            buildDescriptionField({
+              id: 'description',
+              title: '',
+              description: m.termsSubTitle,
+              marginBottom: 3,
+            }),
+            buildLinkField({
+              id: 'link',
+              title: m.termsUserAgreementTitle,
+              link: m.termsUserAgreementUrl,
+              iconProps: { icon: 'open' },
+            }),
+            buildCheckboxField({
+              id: 'termsOfAgreement.userTerms',
+              title: '',
+              options: [
+                { value: AnswerOptions.YES, label: m.userAgreementOptionLabel },
+              ],
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
@@ -272,14 +292,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
             }),
           ],
         }),
-        buildCustomField(
-          {
-            id: 'thankYouScreen',
-            title: m.thankYouScreenTitle,
-            component: 'ThankYouScreen',
-          },
-          {},
-        ),
       ],
     }),
   ],

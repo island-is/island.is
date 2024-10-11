@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendApi } from '../../data-sources'
+import { BackendService } from '../backend'
 import { CreateIndictmentCountInput } from './dto/createIndictmentCount.input'
 import { DeleteIndictmentCountInput } from './dto/deleteIndictmentCount.input'
 import { UpdateIndictmentCountInput } from './dto/updateIndictmentCount.input'
@@ -35,7 +35,8 @@ export class IndictmentCountResolver {
     @Args('input', { type: () => CreateIndictmentCountInput })
     input: CreateIndictmentCountInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<IndictmentCount> {
     this.logger.debug(
       `Creating a new indictment count for case ${input.caseId}`,
@@ -44,7 +45,7 @@ export class IndictmentCountResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_INDICTMENT_COUNT,
-      backendApi.createIndictmentCount(input),
+      backendService.createIndictmentCount(input),
       (theIndictmentCount) => theIndictmentCount.id,
     )
   }
@@ -54,7 +55,8 @@ export class IndictmentCountResolver {
     @Args('input', { type: () => UpdateIndictmentCountInput })
     input: UpdateIndictmentCountInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<IndictmentCount> {
     this.logger.debug(
       `Updating indictment count ${input.indictmentCountId} for case ${input.caseId}`,
@@ -63,7 +65,7 @@ export class IndictmentCountResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_INDICTMENT_COUNT,
-      backendApi.updateIndictmentCount(input),
+      backendService.updateIndictmentCount(input),
       input.indictmentCountId,
     )
   }
@@ -73,7 +75,8 @@ export class IndictmentCountResolver {
     @Args('input', { type: () => DeleteIndictmentCountInput })
     input: DeleteIndictmentCountInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<DeleteIndictmentCountResponse> {
     this.logger.debug(
       `Deleting indictment count ${input.indictmentCountId} for case ${input.caseId}`,
@@ -82,7 +85,7 @@ export class IndictmentCountResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_INDICTMENT_COUNT,
-      backendApi.deleteIndictmentCount(input),
+      backendService.deleteIndictmentCount(input),
       input.indictmentCountId,
     )
   }

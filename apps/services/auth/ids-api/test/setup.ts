@@ -3,22 +3,26 @@ import { TestingModuleBuilder } from '@nestjs/testing'
 
 import {
   ApiScope,
+  DelegationsIndexService,
   Domain,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 import { IdsUserGuard, MockAuthGuard, User } from '@island.is/auth-nest-tools'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
-import { UserProfileApi } from '@island.is/clients/user-profile'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
+import { SyslumennService } from '@island.is/clients/syslumenn'
+import { V2MeApi } from '@island.is/clients/user-profile'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
-  createDomain,
   createApiScope,
+  createDomain,
   CreateDomain,
 } from '@island.is/services/auth/testing'
 import {
   createCurrentUser,
+  createNationalId,
   createUniqueWords,
 } from '@island.is/testing/fixtures'
 import {
@@ -65,6 +69,8 @@ export const defaultScopes: Scopes = {
   },
 }
 
+export const nonExistingLegalRepresentativeNationalId = createNationalId()
+
 class MockNationalRegistryClientService
   implements Partial<NationalRegistryClientService>
 {
@@ -72,21 +78,36 @@ class MockNationalRegistryClientService
   getCustodyChildren = jest.fn().mockResolvedValue([])
 }
 
+class MockNationalRegistryV3ClientService
+  implements Partial<NationalRegistryV3ClientService>
+{
+  getAllDataIndividual = jest.fn().mockResolvedValue({})
+}
+
 class MockUserProfile {
   withMiddleware = () => this
-  userProfileControllerFindOneByNationalId = jest.fn().mockResolvedValue({})
+  meUserProfileControllerFindUserProfile = jest.fn().mockResolvedValue({})
+}
+
+class MockSyslumennService {
+  checkIfDelegationExists = jest.fn(
+    (_toNationalId: string, fromNationalId: string) =>
+      fromNationalId !== nonExistingLegalRepresentativeNationalId,
+  )
 }
 
 interface SetupOptions {
   user: User
   scopes?: Scopes
   domains?: CreateDomain[]
+  features?: Features[]
 }
 
 export const setupWithAuth = async ({
   user,
   scopes = defaultScopes,
   domains = defaultDomains,
+  features,
 }: SetupOptions): Promise<TestApp> => {
   // Setup app with authentication and database
   const app = await testServer({
@@ -103,7 +124,9 @@ export const setupWithAuth = async ({
         )
         .overrideProvider(NationalRegistryClientService)
         .useClass(MockNationalRegistryClientService)
-        .overrideProvider(UserProfileApi)
+        .overrideProvider(NationalRegistryV3ClientService)
+        .useClass(MockNationalRegistryV3ClientService)
+        .overrideProvider(V2MeApi)
         .useClass(MockUserProfile)
         .overrideProvider(CompanyRegistryClientService)
         .useValue({
@@ -113,8 +136,13 @@ export const setupWithAuth = async ({
         .useValue({
           getIndividualRelationships: jest.fn().mockResolvedValue(null),
         })
+        .overrideProvider(SyslumennService)
+        .useClass(MockSyslumennService)
         .overrideProvider(FeatureFlagService)
-        .useValue({ getValue: () => true }),
+        .useValue({
+          getValue: (feature: Features) =>
+            !features || features.includes(feature),
+        }),
     hooks: [
       useAuth({ auth: user }),
       useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
@@ -127,6 +155,12 @@ export const setupWithAuth = async ({
   // Create scopes
   const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
   await apiScopeModel.bulkCreate(Object.values(scopes).map(createApiScope))
+
+  // Mock delegation indexing
+  const delegationIndexService = app.get(DelegationsIndexService)
+  delegationIndexService.indexDelegations = jest
+    .fn()
+    .mockImplementation(() => Promise.resolve())
 
   return app
 }

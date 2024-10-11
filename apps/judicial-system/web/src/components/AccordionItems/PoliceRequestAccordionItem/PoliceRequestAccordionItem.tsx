@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
@@ -28,9 +28,7 @@ interface Props {
   workingCase: Case
 }
 
-const PoliceRequestAccordionItem: React.FC<React.PropsWithChildren<Props>> = ({
-  workingCase,
-}: Props) => {
+const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
 
   return (

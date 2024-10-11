@@ -32,16 +32,12 @@ runs:
         echo "CODECOV_REV=v0.3.2" >> $GITHUB_ENV
       shell: bash
 
-    - name: Setup yarn
-      run: npm install -g yarn
-      shell: bash
-
-    - uses: actions/setup-node@v2
+    - uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version-file: 'package.json'
 
     - name: Setup yarn
-      run: npm install -g yarn
+      run: corepack enable
       shell: bash
 
     - name: Running tests
@@ -53,7 +49,7 @@ runs:
 
     - name: Cached codecov uploader
       id: codecov-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: codecov
         key: ${{ runner.os }}-codeconv-${{ env.CODECOV_REV }}

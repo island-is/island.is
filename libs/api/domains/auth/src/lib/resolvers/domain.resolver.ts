@@ -7,8 +7,8 @@ import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Domain } from '../models/domain.model'
 import { DomainService } from '../services/domain.service'
 import { DomainsInput } from '../dto/domains.input'
-import { OrganizationLogoLoader } from '@island.is/cms'
-import type { LogoUrl, OrganizationLogoDataLoader } from '@island.is/cms'
+import { OrganizationLogoByTitleLoader } from '@island.is/cms'
+import type { LogoUrl, OrganizationLogoByTitleDataLoader } from '@island.is/cms'
 import { Loader } from '@island.is/nest/dataloader'
 
 @UseGuards(IdsUserGuard)
@@ -28,8 +28,8 @@ export class DomainResolver {
 
   @ResolveField('organisationLogoUrl', () => String, { nullable: true })
   async resolveOrganisationLogoUrl(
-    @Loader(OrganizationLogoLoader)
-    organizationLogoLoader: OrganizationLogoDataLoader,
+    @Loader(OrganizationLogoByTitleLoader)
+    organizationLogoLoader: OrganizationLogoByTitleDataLoader,
     @Parent() domain: Domain,
   ): Promise<LogoUrl> {
     return organizationLogoLoader.load(domain.organisationLogoKey)

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import * as s from './EditBasics.css'
 import {
   Box,
   Accordion,
@@ -7,9 +6,12 @@ import {
   Divider,
   Text,
   Button,
+  AlertMessage,
+  AlertBanner,
+  Select,
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
-import { editorMsgs as msg, errorMsgs } from '../lib/messages'
+import { editorMsgs as msg, errorMsgs, m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
@@ -19,21 +21,34 @@ import {
   formatAmendingRegTitle,
   formatAmendingBodyWithArticlePrefix,
 } from '../utils/formatAmendingRegulation'
-import { HTMLText } from '@island.is/regulations'
+import { HTMLText, RegName, Regulation } from '@island.is/regulations'
 import { findRegulationType } from '../utils/guessers'
 import { RegulationDraftTypes } from '../types'
+import ConfirmModal from './ConfirmModal/ConfirmModal'
+import { ReferenceText } from './impacts/ReferenceText'
+import { DraftChangeForm, DraftImpactForm } from '../state/types'
+import { makeDraftAppendixForm } from '../state/makeFields'
+import { hasAnyChange } from '../utils/formatAmendingUtils'
+
+const updateText =
+  'Ósamræmi er í texta stofnreglugerðar og breytingareglugerðar. Texti breytingareglugerðar þarf að samræmast breytingum sem gerðar hafa verið á stofnreglugerð, eigi breytingarnar að færast inn með réttum hætti.'
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
-  const { draft, actions } = useDraftingState()
+  const { draft, actions, ministries } = useDraftingState()
   const [editorKey, setEditorKey] = useState('initial')
   const [titleError, setTitleError] = useState<string | undefined>(undefined)
+  const [hasUpdated, setHasUpdated] = useState<boolean>(false)
+  const [hasUpdatedAppendix, setHasUpdatedAppendix] = useState<boolean>(false)
+  const [references, setReferences] = useState<DraftImpactForm[]>()
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(true)
+  const [hasConfirmed, setHasConfirmed] = useState<boolean>(false)
+  const [hasSeenModal, setHasSeenModal] = useState<boolean>(false)
 
   const { text, appendixes } = draft
   const { updateState } = actions
 
-  const startTextExpanded =
-    !text.value || appendixes.length === 0 || !!text.error
+  const startTextExpanded = true
 
   const regType =
     draft.type.value &&
@@ -96,15 +111,63 @@ export const EditBasics = () => {
       updateEditorText()
       setEditorKey('newKey')
     }
+
+    if (draft.type.value === RegulationDraftTypes.amending) {
+      const impacts = Object.values(draft.impacts).flat() as DraftChangeForm[]
+      setReferences(impacts)
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.impacts])
+
+  useEffect(() => {
+    if (!hasUpdatedAppendix && hasUpdated) {
+      updateAppendixes()
+      setHasUpdatedAppendix(true)
+    }
+  }, [hasUpdated, hasUpdatedAppendix])
+
+  const updateAppendixes = () => {
+    // FORMAT AMENDING REGULATION APPENDIXES
+    const impactArray = Object.values(draft.impacts).flat()
+    const amendingArray = impactArray.filter(
+      (item) => item.type === 'amend',
+    ) as DraftChangeForm[]
+
+    if (appendixes?.length > 0) {
+      appendixes.splice(0, appendixes.length)
+    }
+
+    amendingArray.map((item) => {
+      item.appendixes.map((apx, idx) => {
+        if (apx.diff?.value && hasAnyChange(apx.diff.value)) {
+          const defaultTitle = apx.title.value ?? `Viðauki ${idx + 1}`
+          const defaultText = apx.text.value
+          if (
+            appendixes?.length === 0 ||
+            !appendixes.some((ap) => ap.text.value === defaultText)
+          ) {
+            appendixes.push(
+              makeDraftAppendixForm(
+                { title: defaultTitle, text: defaultText },
+                String(appendixes.length),
+              ),
+            )
+          }
+        }
+      })
+    })
+  }
 
   const updateEditorText = () => {
     const additions = formatAmendingBodyWithArticlePrefix(draft.impacts)
 
     setEditorKey(Date.now().toString())
+    updateState('title', formatAmendingRegTitle(draft))
     const additionString = additions.join('') as HTMLText
     updateState('text', additionString)
+
+    setHasUpdated(true)
   }
 
   return (
@@ -133,17 +196,6 @@ export const EditBasics = () => {
           <Text variant="small" color="dark200">
             {regType ? `(${regType})` : ' '}
           </Text>
-          {draft.type.value === RegulationDraftTypes.amending ? (
-            <Button
-              icon="reload"
-              onClick={updateEditorText}
-              title="Uppfæra texta reglugerðar með breytingum frá fyrsta skrefi. Allur viðbættur texti í núverandi skrefi verður hreinsaður út."
-              variant="text"
-              size="small"
-            >
-              Uppfæra texta
-            </Button>
-          ) : null}
         </Box>
       </Box>
       <Box marginBottom={[6, 6, 8]}>
@@ -153,6 +205,15 @@ export const EditBasics = () => {
             label={t(msg.text)}
             startExpanded={startTextExpanded}
           >
+            {draft.type.value === RegulationDraftTypes.amending ? (
+              <Box marginBottom={3}>
+                <AlertBanner
+                  description={t(msg.diffPrecisionWarning)}
+                  variant="info"
+                  dismissable
+                />
+              </Box>
+            ) : undefined}
             <Box marginBottom={3}>
               <EditorInput
                 key={editorKey} // Force re-render of TinyMCE
@@ -164,11 +225,65 @@ export const EditBasics = () => {
                 error={text.showError && text.error && t(text.error)}
               />
             </Box>
+            {!hasConfirmed && hasSeenModal ? (
+              <Box marginBottom={3}>
+                <AlertMessage
+                  type="default"
+                  title="Uppfæra texta"
+                  message={
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      flexDirection="row"
+                    >
+                      <Text variant="small">{updateText}</Text>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        height="full"
+                        flexShrink={0}
+                      >
+                        <Button
+                          icon="reload"
+                          onClick={() => setIsModalVisible(true)}
+                          variant="text"
+                          size="small"
+                        >
+                          Uppfæra
+                        </Button>
+                      </Box>
+                    </Box>
+                  }
+                />
+              </Box>
+            ) : undefined}
+
+            {references &&
+            references.length === 1 &&
+            references[0].type === 'amend' ? (
+              <ReferenceText
+                regulation={
+                  {
+                    title: references[0].regTitle ?? '',
+                    text: references[0].diff?.value ?? '',
+                    name: (references[0].name as RegName) ?? '',
+                    appendixes: references[0].appendixes.map((apx) => ({
+                      title: apx.title.value,
+                      text: apx.diff?.value,
+                    })),
+                  } as Regulation
+                }
+                key={references[0].id}
+                asBase
+                baseName={'' as RegName}
+              />
+            ) : undefined}
             <Box>
               <Divider />
               {' '}
             </Box>
-            {draft.signedDocumentUrl.value && (
+            {draft.signedDocumentUrl.value ? (
               <Box marginBottom={[4, 4, 6]}>
                 <EditorInput
                   label={t(msg.signatureText)}
@@ -178,10 +293,64 @@ export const EditBasics = () => {
                   readOnly
                 />
               </Box>
+            ) : (
+              ministries.length > 0 &&
+              !draft.signatureText.value && (
+                <Select
+                  size="sm"
+                  label={t(m.regulationAdminMinistries)}
+                  name="setMinistry"
+                  isSearchable
+                  value={
+                    draft.ministry.value
+                      ? {
+                          value: draft.ministry.value,
+                          label: draft.ministry.value,
+                        }
+                      : undefined
+                  }
+                  placeholder={t(msg.selectMinistry)}
+                  options={[
+                    {
+                      label: t(msg.selectMinistry),
+                      value: '',
+                    },
+                    ...ministries.map((ministry) => ({
+                      value: ministry.name,
+                      label: ministry.name,
+                    })),
+                  ].filter((item) => item.label)}
+                  required={false}
+                  onChange={(option) => actions.setMinistry(option?.value)}
+                  backgroundColor="white"
+                />
+              )
             )}
           </AccordionItem>
         </Accordion>
-
+        {!hasUpdated ? (
+          <ConfirmModal
+            isVisible={
+              draft.type.value === RegulationDraftTypes.amending &&
+              isModalVisible
+            }
+            title="Uppfæra texta"
+            message={updateText}
+            onConfirm={() => {
+              updateEditorText()
+              setIsModalVisible(false)
+              setHasConfirmed(true)
+            }}
+            onVisibilityChange={(visibility: boolean) => {
+              setIsModalVisible(visibility)
+              if (visibility === false && !hasSeenModal) {
+                setHasSeenModal(true)
+              }
+            }}
+            confirmMessage="Uppfæra"
+            confirmGhost
+          />
+        ) : undefined}
         <Appendixes
           draftId={draft.id}
           appendixes={appendixes}

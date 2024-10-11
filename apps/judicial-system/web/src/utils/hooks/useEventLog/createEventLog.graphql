@@ -1,0 +1,3 @@
+mutation CreateEventLog($input: CreateEventLogInput!) {
+  createEventLog(input: $input)
+}

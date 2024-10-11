@@ -16,6 +16,7 @@ export const createTerms = (termStrings: string[]): string[] => {
 export const extractStringsFromObject = (
   contentObject: object,
   maxDepth = 100,
+  minimumWordCountToBeIncluded = 4,
 ): string => {
   // we have reached the max depth in the object
   if (maxDepth === 0) {
@@ -25,20 +26,37 @@ export const extractStringsFromObject = (
     if (Array.isArray(content)) {
       // lets extract string from nested arrays
       return (
-        contentString + extractStringsFromObject({ ...content }, maxDepth - 1)
+        contentString +
+        extractStringsFromObject(
+          { ...content },
+          maxDepth - 1,
+          minimumWordCountToBeIncluded,
+        )
       )
     } else if (content && typeof content === 'object') {
       // lets extract string from nested objects
-      return contentString + extractStringsFromObject(content, maxDepth - 1)
+      return (
+        contentString +
+        extractStringsFromObject(
+          content,
+          maxDepth - 1,
+          minimumWordCountToBeIncluded,
+        )
+      )
     } else if (typeof content === 'string') {
       try {
         const parsedContent = JSON.parse(content)
         return (
-          contentString + extractStringsFromObject(parsedContent, maxDepth - 1)
+          contentString +
+          extractStringsFromObject(
+            parsedContent,
+            maxDepth - 1,
+            minimumWordCountToBeIncluded,
+          )
         )
       } catch (e) {
-        // we only consider string of more than 3 words valid content strings
-        if (content.split(/\s+/).length > 3) {
+        // only include strings that are at least of a minimum word count length
+        if (content.split(/\s+/).length >= minimumWordCountToBeIncluded) {
           return `${contentString} ${content}`
         }
       }
@@ -198,4 +216,46 @@ export const pruneNonSearchableSliceUnionFields = (
     }
   }
   return slice
+}
+
+export const extractChildEntryIds = <T>(rootNode: {
+  fields: T
+  sys: { id: string }
+}): string[] => {
+  const childIds: string[] = []
+
+  // Keys that don't lead to an entry id if traversed further down
+  const skippedKeys = ['contentType', 'space', 'environment']
+
+  const extractChildEntryIdsRecursive = (
+    node: T,
+    visited = new Set(),
+    keyAbove = '',
+  ) => {
+    if (!node || visited.has(node)) return
+
+    visited.add(node)
+
+    for (const key in node) {
+      const value = node[key]
+      if (
+        typeof value === 'string' &&
+        keyAbove === 'sys' &&
+        key === 'id' &&
+        value !== rootNode.sys.id // The root node is not it's own child
+      ) {
+        childIds.push(value)
+      } else if (
+        typeof value === 'object' &&
+        value !== null &&
+        !skippedKeys.includes(key)
+      ) {
+        extractChildEntryIdsRecursive(value as T, visited, key)
+      }
+    }
+  }
+
+  extractChildEntryIdsRecursive(rootNode.fields)
+
+  return childIds
 }

@@ -2,7 +2,7 @@ import {
   CaseAppealState,
   CaseState,
   CaseType,
-  completedCaseStates,
+  completedRequestCaseStates,
   courtOfAppealsRoles,
   InstitutionType,
   investigationCases,
@@ -33,7 +33,7 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
   })
 
   describe.each(accessibleCaseTypes)('accessible case type %s', (type) => {
-    const accessibleCaseStates = completedCaseStates
+    const accessibleCaseStates = completedRequestCaseStates
 
     describe.each(
       Object.values(CaseState).filter(

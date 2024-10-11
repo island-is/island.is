@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import cn from 'classnames'
 
 import { Box, Icon, Text } from '@island.is/island-ui/core'
@@ -14,7 +14,7 @@ interface Props {
   dataTestid?: string
 }
 
-const SortButton: React.FC<Props> = (props) => {
+const SortButton: FC<Props> = (props) => {
   const { title, onClick, sortAsc, sortDes, isActive, dataTestid } = props
 
   return (
@@ -39,6 +39,7 @@ const SortButton: React.FC<Props> = (props) => {
       >
         <Icon icon="caretDown" size="small" />
       </Box>
+      <p className="visually-hidden">Sort button</p>
     </Box>
   )
 }

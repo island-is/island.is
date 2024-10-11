@@ -7,14 +7,19 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     indictmentSubtypes
     state
     policeCaseNumbers
-    courtDate
     caseFiles {
       id
       created
+      modified
       name
+      type
       category
+      state
       key
-      policeCaseNumber
+      size
+      userGeneratedFilename
+      displayDate
+      submittedBy
     }
     defendants {
       id
@@ -28,7 +33,13 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      defendantWaivesRightToCounsel
+      defenderChoice
+      verdictViewDate
+      verdictAppealDeadline
+      subpoenas {
+        id
+        created
+      }
     }
     defenderName
     defenderNationalId
@@ -131,9 +142,85 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
     }
+    arraignmentDate {
+      date
+      location
+    }
+    courtDate {
+      date
+      location
+    }
     prosecutorsOffice {
       id
       name
+    }
+    postponedIndefinitelyExplanation
+    indictmentDecision
+    indictmentRulingDecision
+    indictmentCompletedDate
+    indictmentReviewDecision
+    indictmentReviewer {
+      id
+      name
+    }
+    courtSessionType
+    eventLogs {
+      id
+      created
+      eventType
+    }
+    mergeCase {
+      id
+      courtCaseNumber
+    }
+    indictmentCounts {
+      id
+      caseId
+      policeCaseNumber
+      created
+      modified
+      vehicleRegistrationNumber
+      offenses
+      substances
+      lawsBroken
+      incidentDescription
+      legalArguments
+    }
+    mergedCases {
+      id
+      courtCaseNumber
+      type
+      caseFiles {
+        id
+        created
+        modified
+        name
+        type
+        category
+        state
+        key
+        size
+        userGeneratedFilename
+        displayDate
+        submittedBy
+      }
+      policeCaseNumbers
+      indictmentSubtypes
+    }
+    hasCivilClaims
+    civilClaimants {
+      id
+      caseId
+      name
+      nationalId
+      noNationalId
+      hasSpokesperson
+      spokespersonIsLawyer
+      spokespersonNationalId
+      spokespersonName
+      spokespersonEmail
+      spokespersonPhoneNumber
+      caseFilesSharedWithSpokesperson
     }
   }
 }

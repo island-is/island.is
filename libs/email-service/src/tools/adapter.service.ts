@@ -78,7 +78,7 @@ export class AdapterService {
             throw new Error(`This component doesn't exist ${component}`)
           }
 
-          if (component === 'image') {
+          if (component === 'image' || component === 'imagewithlink') {
             const image = item as ImageComponent
             const path = image.context.src
             const filename = basename(path)

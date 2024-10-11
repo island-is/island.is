@@ -1,5 +1,6 @@
 import { applyDecorators, HttpCode } from '@nestjs/common'
 import {
+  ApiAcceptedResponse,
   ApiBadRequestResponse,
   ApiConflictResponse,
   ApiCreatedResponse,
@@ -58,6 +59,8 @@ const getResponseDecorators = ({
         ApiCreatedResponse(response),
         ApiConflictResponse({ type: HttpProblemResponse }),
       ]
+    case 202:
+      return [ApiAcceptedResponse(response)]
     case 204:
       return [ApiNoContentResponse(response)]
     default:

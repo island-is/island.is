@@ -21,14 +21,14 @@ const SummaryBlock = ({ children, editAction }: Props) => {
       borderColor="blue300"
     >
       <Box width="full">{children}</Box>
-      <Button
+      {/* <Button
         icon="pencil"
         iconType="filled"
         variant="utility"
         onClick={editAction}
       >
         {formatMessage(review.labels.changeButtonText)}
-      </Button>
+      </Button> */}
     </Box>
   )
 }

@@ -237,7 +237,7 @@ export class LicenseService {
     }
 
     if (updateRes.ok) {
-      this.logger.debug('License update successful', {
+      this.logger.info('License update successful', {
         category: LOG_CATEGORY,
         requestId,
         updateType: inputData.licenseUpdateType,
@@ -276,7 +276,7 @@ export class LicenseService {
     })
 
     if (revokeRes.ok) {
-      this.logger.debug('License revoked successfully', {
+      this.logger.info('License revoked successfully', {
         category: LOG_CATEGORY,
         requestId,
       })
@@ -372,6 +372,10 @@ export class LicenseService {
     const verifyRes = await service.verify(inputData.barcodeData, requestId)
 
     if (verifyRes.ok) {
+      this.logger.info('License verified successfully', {
+        category: LOG_CATEGORY,
+        requestId,
+      })
       return {
         valid: verifyRes.data.valid,
         passIdentity: verifyRes.data.passIdentity,

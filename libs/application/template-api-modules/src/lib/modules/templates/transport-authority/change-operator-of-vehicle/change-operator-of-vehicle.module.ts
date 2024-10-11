@@ -1,7 +1,6 @@
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { SharedTemplateAPIModule } from '../../../shared'
-import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { ChangeOperatorOfVehicleService } from './change-operator-of-vehicle.service'
 import {
   ChargeFjsV2ClientConfig,
@@ -27,33 +26,35 @@ import {
   VehiclesClientModule,
   VehiclesClientConfig,
 } from '@island.is/clients/vehicles'
+import {
+  VehiclesMileageClientModule,
+  VehiclesMileageClientConfig,
+} from '@island.is/clients/vehicles-mileage'
 
-export class ChangeOperatorOfVehicleModule {
-  static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: ChangeOperatorOfVehicleModule,
-      imports: [
-        SharedTemplateAPIModule.register(baseConfig),
-        ChargeFjsV2ClientModule,
-        VehicleOperatorsClientModule,
-        VehicleOwnerChangeClientModule,
-        VehicleCodetablesClientModule,
-        VehicleServiceFjsV1ClientModule,
-        VehiclesClientModule,
-        ConfigModule.forRoot({
-          isGlobal: true,
-          load: [
-            ChargeFjsV2ClientConfig,
-            VehicleOperatorsClientConfig,
-            VehicleOwnerChangeClientConfig,
-            VehicleCodetablesClientConfig,
-            VehicleServiceFjsV1ClientConfig,
-            VehiclesClientConfig,
-          ],
-        }),
+@Module({
+  imports: [
+    SharedTemplateAPIModule,
+    ChargeFjsV2ClientModule,
+    VehicleOperatorsClientModule,
+    VehicleOwnerChangeClientModule,
+    VehicleCodetablesClientModule,
+    VehicleServiceFjsV1ClientModule,
+    VehiclesClientModule,
+    VehiclesMileageClientModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [
+        ChargeFjsV2ClientConfig,
+        VehicleOperatorsClientConfig,
+        VehicleOwnerChangeClientConfig,
+        VehicleCodetablesClientConfig,
+        VehicleServiceFjsV1ClientConfig,
+        VehiclesClientConfig,
+        VehiclesMileageClientConfig,
       ],
-      providers: [ChangeOperatorOfVehicleService],
-      exports: [ChangeOperatorOfVehicleService],
-    }
-  }
-}
+    }),
+  ],
+  providers: [ChangeOperatorOfVehicleService],
+  exports: [ChangeOperatorOfVehicleService],
+})
+export class ChangeOperatorOfVehicleModule {}

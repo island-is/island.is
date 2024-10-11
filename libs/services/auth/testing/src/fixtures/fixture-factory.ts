@@ -3,13 +3,10 @@ import addYears from 'date-fns/addYears'
 import startOfDay from 'date-fns/startOfDay'
 import faker from 'faker'
 import { Model } from 'sequelize'
-import {
-  AuthDelegationProvider,
-  AuthDelegationType,
-} from '@island.is/shared/types'
 
 import {
   ApiScope,
+  ApiScopeDelegationType,
   ApiScopeGroup,
   ApiScopeUser,
   ApiScopeUserAccess,
@@ -17,17 +14,21 @@ import {
   Client,
   ClientAllowedScope,
   ClientClaim,
+  ClientDelegationType,
   ClientGrantType,
   ClientPostLogoutRedirectUri,
   ClientRedirectUri,
   ClientSecret,
   Delegation,
   DelegationIndex,
+  DelegationProviderModel,
   DelegationScope,
+  DelegationTypeModel,
   Domain,
   IdentityResource,
   Language,
   PersonalRepresentative,
+  PersonalRepresentativeDelegationTypeModel,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeScopePermission,
@@ -35,6 +36,10 @@ import {
   Translation,
   UserIdentity,
 } from '@island.is/auth-api-lib'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
@@ -55,6 +60,8 @@ import {
   CreateCustomDelegation,
   CreateCustomDelegationScope,
   CreateDelegationIndexRecord,
+  CreateDelegationProvider,
+  CreateDelegationType,
   CreateIdentityResource,
   CreatePersonalRepresentativeDelegation,
   CreatePersonalRepresentativeRightType,
@@ -91,7 +98,11 @@ export class FixtureFactory {
     })
     domain.scopes = await Promise.all(
       apiScopes.map((apiScope, order) =>
-        this.createApiScope({ domainName: domain.name, order, ...apiScope }),
+        this.createApiScope({
+          domainName: domain.name,
+          order,
+          ...apiScope,
+        }),
       ),
     )
     return domain
@@ -101,6 +112,22 @@ export class FixtureFactory {
     const createdClient = await this.get(Client).create(
       createClientFixture(client),
     )
+
+    if (client?.supportedDelegationTypes) {
+      createdClient.supportedDelegationTypes = await Promise.all(
+        client.supportedDelegationTypes.map(async (id) => {
+          const type = await this.createDelegationType({
+            id,
+            providerId: this.getProvider(id),
+          })
+
+          return this.get(ClientDelegationType).create({
+            clientId: createdClient.clientId,
+            delegationType: type.id,
+          })
+        }),
+      )
+    }
 
     createdClient.redirectUris = await Promise.all(
       client?.redirectUris
@@ -242,7 +269,7 @@ export class FixtureFactory {
     if (!domainName) {
       domainName = (await this.createDomain({ name: faker.random.word() })).name
     }
-    return this.get(ApiScope).create({
+    const createdScope = await this.get(ApiScope).create({
       enabled: apiScope.enabled ?? true,
       name: apiScope.name ?? faker.random.word(),
       displayName: apiScope.displayName ?? faker.random.word(),
@@ -264,6 +291,41 @@ export class FixtureFactory {
       groupId: apiScope.groupId,
       domainName,
     })
+
+    if (apiScope?.supportedDelegationTypes) {
+      createdScope.supportedDelegationTypes = await Promise.all(
+        apiScope.supportedDelegationTypes.map(async (id) => {
+          const type = await this.createDelegationType({
+            id,
+            providerId: this.getProvider(id),
+          })
+
+          return this.get(ApiScopeDelegationType).create({
+            apiScopeName: createdScope.name,
+            delegationType: type.id,
+          })
+        }),
+      )
+    }
+
+    return createdScope
+  }
+
+  getProvider = (delegationType: string): string => {
+    switch (delegationType) {
+      case AuthDelegationType.Custom:
+        return AuthDelegationProvider.Custom
+      case AuthDelegationType.LegalGuardian:
+        return AuthDelegationProvider.NationalRegistry
+      case AuthDelegationType.ProcurationHolder:
+        return AuthDelegationProvider.CompanyRegistry
+      case AuthDelegationType.PersonalRepresentative:
+        return AuthDelegationProvider.PersonalRepresentativeRegistry
+      case AuthDelegationType.LegalRepresentative:
+        return AuthDelegationProvider.DistrictCommissionersRegistry
+      default:
+        return ''
+    }
   }
 
   async createApiScopeGroup({
@@ -314,6 +376,7 @@ export class FixtureFactory {
     domainName,
     fromName,
     scopes = [],
+    referenceId,
   }: CreateCustomDelegation): Promise<Delegation> {
     const delegation = await this.get(Delegation).create({
       id: faker.datatype.uuid(),
@@ -322,6 +385,7 @@ export class FixtureFactory {
       domainName,
       fromDisplayName: fromName ?? faker.name.findName(),
       toName: faker.name.findName(),
+      referenceId: referenceId ?? undefined,
     })
 
     delegation.delegationScopes = await Promise.all(
@@ -353,7 +417,7 @@ export class FixtureFactory {
   }): Promise<DelegationScope> {
     const scope = await this.get(DelegationScope).create({
       id: faker.datatype.uuid(),
-      delegationId: delegationId,
+      delegationId,
       scopeName,
       validFrom: validFrom ?? startOfDay(new Date()),
       validTo: validTo ?? addYears(new Date(), 1),
@@ -381,6 +445,36 @@ export class FixtureFactory {
     return personalRepresentativeRightType
   }
 
+  async createDelegationTypeForPersonalRepresentative(id: string) {
+    // create DelegationProvider first to attach to the delegation Type
+    const [delegationProvider] = await this.get(
+      DelegationProviderModel,
+    ).findCreateFind({
+      where: { id: 'talsmannagrunnur' },
+      defaults: {
+        id: 'talsmannagrunnur',
+        name: 'Talsmannagrunnur',
+        description: 'Talsmannagrunnur',
+        delegationTypes: [],
+      },
+    })
+
+    const [delegationType] = await this.get(DelegationTypeModel).findCreateFind(
+      {
+        where: { id },
+        defaults: {
+          id: `PersonalRepresentative:${id}`,
+          name: `Personal Representative: ${id}`,
+          providerId: delegationProvider.id,
+          provider: delegationProvider,
+          description: `Personal representative delegation type for right type ${id}`,
+        },
+      },
+    )
+
+    return delegationType
+  }
+
   async createPersonalRepresentativeRight({
     rightTypeCode,
     personalRepresentativeId,
@@ -394,6 +488,22 @@ export class FixtureFactory {
       id: id ?? faker.datatype.uuid(),
       personalRepresentativeId,
       rightTypeCode,
+    })
+  }
+
+  async createPersonalRepresentativeDelegationType({
+    delegationTypeCode,
+    personalRepresentativeId,
+    id,
+  }: {
+    delegationTypeCode: string
+    personalRepresentativeId: string
+    id?: string | null
+  }) {
+    return this.get(PersonalRepresentativeDelegationTypeModel).create({
+      id: id ?? faker.datatype.uuid(),
+      personalRepresentativeId: personalRepresentativeId,
+      delegationTypeId: delegationTypeCode,
     })
   }
 
@@ -455,13 +565,33 @@ export class FixtureFactory {
         : [this.createPersonalRepresentativeRightType()],
     )
 
+    const delegationTypes = await Promise.all(
+      rightTypes
+        ? rightTypes.map((rightType) =>
+            this.createDelegationType({ id: rightType?.code ?? '' }),
+          )
+        : [],
+    )
+
     await Promise.all(
-      personalRepresentativeRightTypes.map((personalRepresentativeRightType) =>
-        this.createPersonalRepresentativeRight({
+      delegationTypes.map((delegationType) => {
+        this.createPersonalRepresentativeDelegationType({
           id: personalRepresentative.id,
           personalRepresentativeId: personalRepresentative.id,
-          rightTypeCode: personalRepresentativeRightType.code,
-        }),
+          delegationTypeCode: delegationType.id,
+        })
+      }),
+    )
+
+    await Promise.all(
+      personalRepresentativeRightTypes.map(
+        (personalRepresentativeRightType) => {
+          this.createPersonalRepresentativeRight({
+            id: personalRepresentative.id,
+            personalRepresentativeId: personalRepresentative.id,
+            rightTypeCode: personalRepresentativeRightType.code,
+          })
+        },
       ),
     )
 
@@ -547,5 +677,44 @@ export class FixtureFactory {
       issuer,
       originalIssuer,
     })
+  }
+
+  async createDelegationProvider({
+    id = faker.random.word(),
+    name = faker.random.word(),
+    description = faker.random.words(3),
+  }: CreateDelegationProvider) {
+    const [provider] = await this.get(DelegationProviderModel).findCreateFind({
+      where: { id },
+      defaults: { id, name, description, delegationTypes: [] },
+    })
+
+    return provider
+  }
+
+  async createDelegationType({
+    id = faker.random.word(),
+    name = faker.random.word(),
+    description = faker.random.words(3),
+    providerId,
+  }: CreateDelegationType) {
+    const delegationProvider = await this.createDelegationProvider({
+      id: providerId,
+    })
+
+    const [delegationType] = await this.get(DelegationTypeModel).findCreateFind(
+      {
+        where: { id },
+        defaults: {
+          id,
+          name,
+          description,
+          providerId: delegationProvider.id,
+          provider: delegationProvider,
+        },
+      },
+    )
+
+    return delegationType
   }
 }

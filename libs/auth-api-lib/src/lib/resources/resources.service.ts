@@ -36,6 +36,7 @@ import { ResourceTranslationService } from './resource-translation.service'
 import type { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
+import { CreateApiScopeDTO } from './dto/api-scope-create.dto'
 @Injectable()
 export class ResourcesService {
   constructor(
@@ -516,7 +517,7 @@ export class ResourcesService {
   }
 
   /** Creates a new Api Scope */
-  async createApiScope(apiScope: ApiScopeDTO): Promise<ApiScope> {
+  async createApiScope(apiScope: CreateApiScopeDTO): Promise<ApiScope> {
     this.logger.debug('Creating a new api scope')
 
     await this.assertSameAsGroup(apiScope)
@@ -526,7 +527,7 @@ export class ResourcesService {
 
   /** Updates an existing API scope */
   async updateApiScope(
-    apiScopeData: ApiScopeDTO,
+    apiScopeData: CreateApiScopeDTO,
     name: string,
   ): Promise<ApiScope> {
     this.logger.debug('Updating api scope with name: ', name)
@@ -959,7 +960,7 @@ export class ResourcesService {
 
   // #endregion Domain
 
-  private async assertSameAsGroup(apiScope: ApiScopeDTO) {
+  private async assertSameAsGroup(apiScope: CreateApiScopeDTO) {
     if (apiScope.groupId) {
       const scopeGroup = await this.apiScopeGroupModel.findByPk(
         apiScope.groupId,

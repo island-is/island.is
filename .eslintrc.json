@@ -10,7 +10,7 @@
           "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": [],
+            "allow": ["infra/src/dsl/"],
             "depConstraints": [
               {
                 "sourceTag": "*",
@@ -311,6 +311,11 @@
           {
             "selector": "enumMember",
             "format": ["camelCase", "UPPER_CASE", "PascalCase"]
+          },
+          {
+            "selector": "import",
+            "leadingUnderscore": "allow",
+            "format": ["camelCase", "PascalCase"]
           }
         ],
         "@typescript-eslint/no-empty-interface": [
@@ -318,13 +323,17 @@
           {
             "allowSingleExtends": true
           }
-        ]
+        ],
+        "no-extra-semi": "off"
       }
     },
     {
       "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nx/javascript"],
-      "rules": {}
+      "rules": {
+        "@typescript-eslint/no-extra-semi": "error",
+        "no-extra-semi": "off"
+      }
     },
     {
       "files": ["schema.d.ts"],

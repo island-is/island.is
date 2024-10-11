@@ -88,7 +88,7 @@ const generateOrganizationSubpageLink = (subpage: IOrganizationSubpage) => {
       },
     },
     fields: {
-      text: subpage.fields.title,
+      text: subpage.fields.shortTitle || subpage.fields.title,
       url: `/${prefix}/${subpage.fields.organizationPage.fields.slug}/${subpage.fields.slug}`,
     },
   })
@@ -112,7 +112,7 @@ const generateProjectSubpageLink = (
       },
     },
     fields: {
-      text: subpage.fields.title,
+      text: subpage.fields.shortTitle || subpage.fields.title,
       url: `/${prefix}/${pageAbove?.fields.slug}/${subpage.fields.slug}`,
     },
   })

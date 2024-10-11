@@ -20,8 +20,23 @@ query Case($input: CaseQueryInput!) {
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      defendantWaivesRightToCounsel
+      defenderChoice
       defendantPlea
+      serviceRequirement
+      verdictViewDate
+      verdictAppealDeadline
+      subpoenaType
+      subpoenas {
+        id
+        created
+        serviceStatus
+        serviceDate
+        servedBy
+        comment
+        defenderNationalId
+        caseId
+        subpoenaId
+      }
     }
     defenderName
     defenderNationalId
@@ -69,9 +84,7 @@ query Case($input: CaseQueryInput!) {
     }
     courtCaseNumber
     sessionArrangements
-    courtDate
     courtLocation
-    courtRoom
     courtStartDate
     courtEndTime
     isClosedCourtHidden
@@ -169,6 +182,7 @@ query Case($input: CaseQueryInput!) {
       userGeneratedFilename
       displayDate
       policeFileId
+      submittedBy
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
@@ -240,10 +254,91 @@ query Case($input: CaseQueryInput!) {
       nationalId
       userRole
     }
+    arraignmentDate {
+      date
+      location
+    }
+    courtDate {
+      date
+      location
+    }
     prosecutorsOffice {
       id
       name
       policeCaseNumberPrefix
     }
+    postponedIndefinitelyExplanation
+    indictmentRulingDecision
+    indictmentReviewer {
+      id
+      name
+    }
+    indictmentAppealDeadline
+    indictmentVerdictViewedByAll
+    indictmentVerdictAppealDeadlineExpired
+    indictmentDecision
+    indictmentReviewDecision
+    indictmentCompletedDate
+    courtSessionType
+    mergeCase {
+      id
+      courtCaseNumber
+    }
+    mergedCases {
+      id
+      courtCaseNumber
+      type
+      court {
+        id
+        name
+      }
+      judge {
+        id
+        name
+        title
+        email
+      }
+      prosecutor {
+        id
+        name
+        email
+      }
+      prosecutorsOffice {
+        id
+        name
+      }
+      caseFiles {
+        id
+        created
+        modified
+        name
+        type
+        category
+        state
+        key
+        size
+        userGeneratedFilename
+        displayDate
+        submittedBy
+      }
+      policeCaseNumbers
+      indictmentSubtypes
+    }
+    civilClaimants {
+      id
+      caseId
+      name
+      nationalId
+      noNationalId
+      hasSpokesperson
+      spokespersonIsLawyer
+      spokespersonNationalId
+      spokespersonName
+      spokespersonEmail
+      spokespersonPhoneNumber
+      caseFilesSharedWithSpokesperson
+    }
+    civilDemands
+    hasCivilClaims
   }
 }

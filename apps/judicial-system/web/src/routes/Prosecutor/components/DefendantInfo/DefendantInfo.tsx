@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import InputMask from 'react-input-mask'
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -16,6 +15,8 @@ import {
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import InputName from '@island.is/judicial-system-web/src/components/Inputs/InputName'
+import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
 import {
   Defendant,
   Gender,
@@ -37,17 +38,17 @@ import * as strings from './DefendantInfo.strings'
 interface Props {
   defendant: Defendant
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   onChange: (updatedDefendant: UpdateDefendantInput) => void
   updateDefendantState: (
     update: UpdateDefendantInput,
-    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
   ) => void
   onDelete?: (defendant: Defendant) => Promise<void>
   nationalIdImmutable: boolean
 }
 
-const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const DefendantInfo: FC<Props> = (props) => {
   const {
     defendant,
     workingCase,
@@ -67,12 +68,7 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
     { label: formatMessage(core.otherGender), value: Gender.OTHER },
   ]
 
-  const [nationalIdErrorMessage, setNationalIdErrorMessage] =
-    useState<string>('')
   const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
-
-  const [accusedNameErrorMessage, setAccusedNameErrorMessage] =
-    useState<string>('')
 
   const [accusedAddressErrorMessage, setAccusedAddressErrorMessage] =
     useState<string>('')
@@ -97,9 +93,8 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
     }
 
     if (personData && personData.items && personData.items.length > 0) {
-      setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
-      setNationalIdErrorMessage('')
+      setNationalIdNotFound(false)
       setIsGenderAndCitizenshipDisabled(false)
 
       onChange({
@@ -110,7 +105,9 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
         address: personData.items[0].permanent_address.street?.nominative,
       })
     }
-  }, [defendant.id, onChange, personData, personError, workingCase.id])
+    // We only want this to run when a lookup is done in the national registry.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [personData, personError])
 
   useEffect(() => {
     if (businessError || (businessData && businessData.items?.length === 0)) {
@@ -119,9 +116,7 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
     }
 
     if (businessData && businessData.items && businessData.items.length > 0) {
-      setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
-      setNationalIdErrorMessage('')
       setIsGenderAndCitizenshipDisabled(true)
 
       onChange({
@@ -133,7 +128,9 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
         citizenship: undefined,
       })
     }
-  }, [businessData, businessError, defendant.id, onChange, workingCase.id])
+    // We only want this to run when a lookup is done in the national registry.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [businessData, businessError])
 
   return (
     <BlueBox>
@@ -162,14 +159,13 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
           checked={Boolean(defendant.noNationalId)}
           onChange={() => {
             setNationalIdNotFound(false)
-            setNationalIdErrorMessage('')
 
             updateDefendantState(
               {
                 caseId: workingCase.id,
                 defendantId: defendant.id,
                 noNationalId: !defendant.noNationalId,
-                nationalId: undefined,
+                nationalId: null,
               },
               setWorkingCase,
             )
@@ -178,7 +174,7 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
               caseId: workingCase.id,
               defendantId: defendant.id,
               noNationalId: !defendant.noNationalId,
-              nationalId: undefined,
+              nationalId: null,
             })
           }}
           filled
@@ -187,65 +183,29 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
         />
       </Box>
       <Box marginBottom={2}>
-        <InputMask
-          // eslint-disable-next-line local-rules/disallow-kennitalas
-          mask={defendant.noNationalId ? '99.99.9999' : '999999-9999'}
-          maskPlaceholder={null}
+        <InputNationalId
+          isDateOfBirth={Boolean(defendant.noNationalId)}
           value={defendant.nationalId ?? ''}
-          onChange={(evt) => {
-            setNationalIdNotFound(false)
-            removeErrorMessageIfValid(
-              defendant.noNationalId
-                ? ['date-of-birth']
-                : ['empty', 'national-id'],
-              evt.target.value,
-              nationalIdErrorMessage,
-              setNationalIdErrorMessage,
-            )
-
+          onBlur={(value) =>
+            onChange({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              nationalId: value,
+            })
+          }
+          onChange={(value) =>
             updateDefendantState(
               {
                 caseId: workingCase.id,
                 defendantId: defendant.id,
-                nationalId: evt.target.value,
+                nationalId: value,
               },
               setWorkingCase,
             )
-          }}
-          onBlur={async (evt) => {
-            validateAndSetErrorMessage(
-              defendant.noNationalId
-                ? ['date-of-birth']
-                : ['empty', 'national-id'],
-              evt.target.value,
-              setNationalIdErrorMessage,
-            )
-
-            onChange({
-              caseId: workingCase.id,
-              defendantId: defendant.id,
-              nationalId: evt.target.value,
-            })
-          }}
+          }
           disabled={nationalIdImmutable}
-        >
-          <Input
-            data-testid="nationalId"
-            name="accusedNationalId"
-            autoComplete="off"
-            label={formatMessage(
-              defendant.noNationalId ? core.dateOfBirth : core.nationalId,
-            )}
-            placeholder={formatMessage(
-              defendant.noNationalId
-                ? core.dateOfBirthPlaceholder
-                : core.nationalId,
-            )}
-            errorMessage={nationalIdErrorMessage}
-            hasError={nationalIdErrorMessage !== ''}
-            required={!defendant.noNationalId}
-          />
-        </InputMask>
+          required={!defendant.noNationalId}
+        />
         {defendant.nationalId?.length === 11 && nationalIdNotFound && (
           <Text color="red600" variant="eyebrow" marginTop={1}>
             {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
@@ -253,44 +213,24 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
         )}
       </Box>
       <Box marginBottom={2}>
-        <Input
-          data-testid="accusedName"
-          name="accusedName"
-          autoComplete="off"
-          label={formatMessage(core.fullName)}
-          placeholder={formatMessage(core.fullName)}
+        <InputName
           value={defendant.name ?? ''}
-          errorMessage={accusedNameErrorMessage}
-          hasError={accusedNameErrorMessage !== ''}
-          onChange={(evt) => {
-            removeErrorMessageIfValid(
-              ['empty'],
-              evt.target.value,
-              accusedNameErrorMessage,
-              setAccusedNameErrorMessage,
-            )
-
+          onBlur={(value) =>
+            onChange({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              name: value.trim(),
+            })
+          }
+          onChange={(value) => {
             updateDefendantState(
               {
                 caseId: workingCase.id,
                 defendantId: defendant.id,
-                name: evt.target.value,
+                name: value,
               },
               setWorkingCase,
             )
-          }}
-          onBlur={(evt) => {
-            validateAndSetErrorMessage(
-              ['empty'],
-              evt.target.value,
-              setAccusedNameErrorMessage,
-            )
-
-            onChange({
-              caseId: workingCase.id,
-              defendantId: defendant.id,
-              name: evt.target.value.trim(),
-            })
           }}
           required
         />

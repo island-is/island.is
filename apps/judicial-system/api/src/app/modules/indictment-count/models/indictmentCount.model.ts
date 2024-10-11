@@ -12,19 +12,19 @@ export class IndictmentCount {
   @Field(() => ID)
   readonly id!: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly created?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly modified?: string
 
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   readonly caseId?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly policeCaseNumber?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly vehicleRegistrationNumber?: string
 
   @Field(() => [IndictmentCountOffense], { nullable: true })
@@ -36,9 +36,9 @@ export class IndictmentCount {
   @Field(() => [[Number, Number]], { nullable: true })
   readonly lawsBroken?: [number, number][]
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly incidentDescription?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly legalArguments?: string
 }

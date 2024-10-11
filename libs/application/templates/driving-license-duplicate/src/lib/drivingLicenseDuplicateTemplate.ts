@@ -14,6 +14,7 @@ import {
   UserProfileApi,
   JurisdictionApi,
   InstitutionNationalIds,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -24,7 +25,10 @@ import {
   DrivingLicenseDuplicateFeatureFlags,
   getApplicationFeatureFlags,
 } from './getApplicationFeatureFlags'
-import { SyslumadurPaymentCatalogApi } from '../dataProviders'
+import {
+  DuplicateEligibilityApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import {
   coreHistoryMessages,
   getValueViaPath,
@@ -53,6 +57,9 @@ const getCodes = (application: Application) => {
   return [chargeItemCode]
 }
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.DRIVING_LICENSE_DUPLICATE]
+
 const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -61,6 +68,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_LICENSE_DUPLICATE,
   name: m.applicationTitle,
   dataSchema: dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -116,6 +124,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                 QualitySignatureApi,
                 QualityPhotoApi,
                 UserProfileApi,
+                DuplicateEligibilityApi,
               ],
               write: 'all',
               delete: true,

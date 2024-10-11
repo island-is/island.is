@@ -1,19 +1,16 @@
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../shared'
-import { BaseTemplateAPIModuleConfig } from '../../../types'
-import { OfficialJournalOfIcelandService } from './official-journal-of-iceland.service'
-import { MinistryOfJusticeModule } from '@island.is/api/domains/ministry-of-justice'
+import { OfficialJournalOfIcelandTemaplateService } from './official-journal-of-iceland.service'
+import { OfficialJournalOfIcelandModule } from '@island.is/api/domains/official-journal-of-iceland'
+import { OfficialJournalOfIcelandApplicationModule } from '@island.is/api/domains/official-journal-of-iceland-application'
 
-export class OfficialJournalOfIcelandModule {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: OfficialJournalOfIcelandModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        MinistryOfJusticeModule,
-      ],
-      providers: [OfficialJournalOfIcelandService],
-      exports: [OfficialJournalOfIcelandService],
-    }
-  }
-}
+@Module({
+  imports: [
+    SharedTemplateAPIModule,
+    OfficialJournalOfIcelandModule,
+    OfficialJournalOfIcelandApplicationModule,
+  ],
+  providers: [OfficialJournalOfIcelandTemaplateService],
+  exports: [OfficialJournalOfIcelandTemaplateService],
+})
+export class OfficialJournalOfIcelandTemplateModule {}

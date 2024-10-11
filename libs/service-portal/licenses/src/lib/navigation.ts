@@ -16,6 +16,11 @@ export const licenseNavigation: PortalNavigationItem = {
     {
       navHide: true,
       name: m.detailInfo,
+      path: LicensePaths.LicensesDetailV2,
+    },
+    {
+      navHide: true,
+      name: m.detailInfo,
       path: LicensePaths.LicensesDetail,
     },
     {

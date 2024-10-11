@@ -1,9 +1,10 @@
-import * as s from './RegulationDisplay.css'
-
 import React, { memo } from 'react'
-import { HTMLText, RegulationMaybeDiff } from '@island.is/regulations'
+
 import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
+import { HTMLText, RegulationMaybeDiff } from '@island.is/regulations'
+
 import { HTMLBox } from './HTMLBox'
+import * as s from './RegulationDisplay.css'
 
 const hasDiff = (text: string) => /<(?:del|ins)/.test(text)
 

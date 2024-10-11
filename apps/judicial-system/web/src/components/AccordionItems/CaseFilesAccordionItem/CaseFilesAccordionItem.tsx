@@ -1,4 +1,4 @@
-import React from 'react'
+import { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -21,13 +21,11 @@ import { UploadStateMessage } from './UploadStateMessage'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   user: User
 }
 
-const CaseFilesAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
+const CaseFilesAccordionItem: FC<Props> = (props) => {
   const { workingCase, setWorkingCase, user } = props
 
   const { formatMessage } = useIntl()

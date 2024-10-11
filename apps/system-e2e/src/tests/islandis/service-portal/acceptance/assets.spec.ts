@@ -66,7 +66,7 @@ test.describe('MS - Fasteignir', () => {
     await expect(propertyNumber).toBeVisible()
 
     await expect(page.locator('role=table').first()).toContainText(
-      'Þinglýstir eigendur',
+      label(messages.legalOwners),
     )
   })
 })

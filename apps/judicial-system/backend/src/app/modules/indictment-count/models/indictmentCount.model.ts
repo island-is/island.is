@@ -26,28 +26,28 @@ export class IndictmentCount extends Model {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id!: string
 
   @CreatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   created!: Date
 
   @UpdatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   modified!: Date
 
   @ForeignKey(() => Case)
   @Column({ type: DataType.UUID, allowNull: false })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   caseId!: string
 
   @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   policeCaseNumber?: string
 
   @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   vehicleRegistrationNumber?: string
 
   @Column({ type: DataType.JSONB, allowNull: true })
@@ -55,18 +55,18 @@ export class IndictmentCount extends Model {
   offenses?: IndictmentCountOffense[]
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Object })
   substances?: SubstanceMap
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  @ApiPropertyOptional({ type: [[Number, Number]], isArray: true })
+  @ApiPropertyOptional({ type: [Number, Number], isArray: true })
   lawsBroken?: [number, number][]
 
   @Column({ type: DataType.TEXT, allowNull: true })
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   incidentDescription?: string
 
   @Column({ type: DataType.TEXT, allowNull: true })
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   legalArguments?: string
 }

@@ -3,13 +3,16 @@ import { Test } from '@nestjs/testing'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
 
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import {
+  SharedAuthModule,
+  sharedAuthModuleConfig,
+} from '@island.is/judicial-system/auth'
 
-import { environment } from '../../../../environments'
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { InternalCaseService } from '../../case/internalCase.service'
 import { EventService } from '../../event'
+import { SubpoenaService } from '../../subpoena'
 import { policeModuleConfig } from '../police.config'
 import { PoliceController } from '../police.controller'
 import { PoliceService } from '../police.service'
@@ -18,23 +21,24 @@ jest.mock('../../event/event.service')
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../case/case.service.ts')
 jest.mock('../../case/internalCase.service.ts')
+jest.mock('../../subpoena/subpoena.service.ts')
 
 export const createTestingPoliceModule = async () => {
   const policeModule = await Test.createTestingModule({
     imports: [
-      SharedAuthModule.register({
-        jwtSecret: environment.auth.jwtSecret,
-        secretToken: environment.auth.secretToken,
+      ConfigModule.forRoot({
+        load: [sharedAuthModuleConfig, policeModuleConfig],
       }),
-      ConfigModule.forRoot({ load: [policeModuleConfig] }),
     ],
     controllers: [PoliceController],
     providers: [
+      SharedAuthModule,
       EventService,
       AwsS3Service,
       CaseService,
       InternalCaseService,
       PoliceService,
+      SubpoenaService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {

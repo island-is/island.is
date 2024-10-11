@@ -5,12 +5,15 @@ import cn from 'classnames'
 import { Box } from '../Box/Box'
 import * as styles from './Button.css'
 import { Icon } from '../IconRC/Icon'
+import type { IconProps } from '../IconRC/types'
 import { TestSupport } from '@island.is/island-ui/utils'
-import { ButtonProps, ButtonTypes } from './types'
+import type { ButtonProps, ButtonTypes } from './types'
+
+export type ButtonBaseProps = ButtonProps & ButtonTypes
 
 export const Button = forwardRef<
   HTMLButtonElement,
-  ButtonProps & ButtonTypes & TestSupport
+  ButtonBaseProps & TestSupport
 >(
   (
     {
@@ -52,13 +55,12 @@ export const Button = forwardRef<
           {
             [styles.truncate]: truncate,
             [styles.size[size]]:
-              variant !== 'utility' &&
-              !circle &&
-              !(variant === 'text' && size === 'small'),
+              variant !== 'utility' && !circle && variant !== 'text',
             [styles.fluid]: fluid,
             [styles.nowrap]: nowrap,
             [styles.size.utility]: variant === 'utility',
             [styles.size.textSmall]: variant === 'text' && size === 'small',
+            [styles.size.text]: variant === 'text',
             [styles.circleSizes[size]]: circle,
             [styles.circle]: circle,
             [styles.padding[size]]:
@@ -109,16 +111,16 @@ export const Button = forwardRef<
 )
 
 type ButtonIconProps = {
-  icon: ButtonProps['icon']
-  type: ButtonProps['iconType']
+  icon: IconProps['icon']
+  type: IconProps['type']
   transparent?: boolean
   preText?: boolean
 }
 
 const ButtonIcon = ({ icon, type, transparent, preText }: ButtonIconProps) => (
   <Icon
-    icon={icon!}
-    type={type!}
+    icon={icon}
+    type={type}
     color={transparent ? 'transparent' : 'currentColor'}
     className={cn(
       styles.icon,

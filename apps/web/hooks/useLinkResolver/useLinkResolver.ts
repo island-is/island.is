@@ -187,6 +187,14 @@ export const routesTemplate = {
     is: '/v/[slug]',
     en: '/en/p/[slug]',
   },
+  organizationsubpagelistitem: {
+    is: '/s/[organization]/[slug]/[listItemSlug]',
+    en: '/en/o/[organization]/[slug]/[listItemSlug]',
+  },
+  projectsubpagelistitem: {
+    is: '/v/[project]/[slug]/[listItemSlug]',
+    en: '/en/p/[project]/[slug]/[listItemSlug]',
+  },
   lifeevents: {
     is: '/lifsvidburdir',
     en: '/en/life-events',
@@ -209,6 +217,22 @@ export const routesTemplate = {
   },
   regulationshome: {
     is: '/reglugerdir',
+    en: '',
+  },
+  ojoiadvert: {
+    is: '/stjornartidindi/nr/[number]',
+    en: '',
+  },
+  ojoisearch: {
+    is: '/stjornartidindi/leit',
+    en: '',
+  },
+  ojoicategories: {
+    is: '/stjornartidindi/malaflokkar',
+    en: '',
+  },
+  ojoihome: {
+    is: '/stjornartidindi',
     en: '',
   },
   login: {

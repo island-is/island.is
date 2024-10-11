@@ -5,13 +5,25 @@ import { PaginatedResponse } from '@island.is/nest/pagination'
 import { Category } from './category.model'
 import { Type } from './type.model'
 
+@ObjectType('DocumentV2Action')
+export class Action {
+  @Field({ nullable: true })
+  title?: string
+
+  @Field({ nullable: true })
+  type?: string
+
+  @Field({ nullable: true })
+  data?: string
+
+  @Field({ nullable: true })
+  icon?: string
+}
+
 @ObjectType('DocumentV2')
 export class Document {
   @Field(() => ID)
   id!: string
-
-  @Field(() => Int, { nullable: true })
-  pageNumber?: number
 
   @Field({ nullable: true })
   name?: string
@@ -19,8 +31,8 @@ export class Document {
   @Field({ nullable: true })
   categoryId?: string
 
-  @Field(() => GraphQLISODateTime)
-  publicationDate!: Date
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  publicationDate?: Date
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   documentDate?: Date
@@ -42,6 +54,24 @@ export class Document {
 
   @Field(() => DocumentContent, { nullable: true })
   content?: DocumentContent
+
+  @Field({
+    nullable: true,
+    description: 'URL in download service. For downloading PDFs',
+  })
+  downloadUrl?: string
+
+  @Field(() => Action, { nullable: true })
+  alert?: Action
+
+  @Field(() => Action, { nullable: true })
+  confirmation?: Action
+
+  @Field(() => [Action], { nullable: true })
+  actions?: Array<Action>
+
+  @Field(() => Boolean, { nullable: true })
+  isUrgent?: boolean
 }
 
 @ObjectType('DocumentsV2')
@@ -57,4 +87,10 @@ export class PaginatedDocuments extends PaginatedResponse(Document) {
 
   @Field(() => [Sender], { nullable: true })
   senders?: Array<Sender>
+}
+
+@ObjectType()
+export class DocumentPageNumber {
+  @Field(() => Int)
+  pageNumber!: number
 }

@@ -21,7 +21,7 @@ import { valueToNumber } from '../../lib/utils/helpers'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import { m } from '../../lib/messages'
 import { Answers } from '../../types'
-import { YES } from '../../lib/constants'
+import { YES } from '@island.is/application/core'
 
 type CustomField = {
   id: string
@@ -35,8 +35,6 @@ type FieldProps = {
     }
   }
 }
-
-const MARGIN_BOTTOM = 2
 
 export const FuneralCost: FC<
   PropsWithChildren<FieldBaseProps<Answers> & FieldProps>
@@ -139,7 +137,7 @@ export const FuneralCost: FC<
 
         return (
           <GridColumn key={index} span={['1/1', '1/2']}>
-            <Box marginBottom={MARGIN_BOTTOM}>
+            <Box marginBottom={2}>
               <InputController
                 id={fieldName}
                 name={fieldName}
@@ -181,7 +179,7 @@ export const FuneralCost: FC<
       {hasOther && (
         <Fragment>
           <GridColumn span="1/1">
-            <Box marginBottom={MARGIN_BOTTOM}>
+            <Box marginBottom={2}>
               <InputController
                 id={otherField}
                 name={otherField}
@@ -202,7 +200,7 @@ export const FuneralCost: FC<
             </Box>
           </GridColumn>
           <GridColumn span="1/1">
-            <Box marginBottom={MARGIN_BOTTOM}>
+            <Box marginBottom={2}>
               <InputController
                 id={otherDetailsField}
                 name={otherDetailsField}

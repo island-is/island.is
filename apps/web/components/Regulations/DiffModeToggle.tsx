@@ -1,12 +1,13 @@
-import * as s from './DiffModeToggle.css'
-
-import { Link, ToggleSwitchLink } from '@island.is/island-ui/core'
 import React from 'react'
-import { RegulationPageTexts } from './RegulationTexts.types'
-import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { useRegulationLinkResolver } from './regulationUtils'
-import { ISODate, RegulationMaybeDiff } from '@island.is/regulations'
 import cl from 'classnames'
+
+import { LinkV2, ToggleSwitchLink } from '@island.is/island-ui/core'
+import { ISODate, RegulationMaybeDiff } from '@island.is/regulations'
+import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+
+import { RegulationPageTexts } from './RegulationTexts.types'
+import { useRegulationLinkResolver } from './regulationUtils'
+import * as s from './DiffModeToggle.css'
 
 export type DiffModeToggleProps = {
   regulation: RegulationMaybeDiff
@@ -64,7 +65,7 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
       {showSecondaryButton && (
         <div className={s.totalToggler}>
           {diffIsAgainstOriginal ? (
-            <Link
+            <LinkV2
               href={linkToRegulation(regulation.name, {
                 diff: true,
                 ...(props.urlDate
@@ -73,11 +74,12 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
               })}
               color="blue400"
               underline="small"
+              pureChildren
             >
               <a rel="nofollow">{txt('showDiff_fromLast')}</a>
-            </Link>
+            </LinkV2>
           ) : (
-            <Link
+            <LinkV2
               href={linkToRegulation(regulation.name, {
                 diff: true,
                 ...(props.urlDate
@@ -88,9 +90,10 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
               })}
               color="blue400"
               underline="small"
+              pureChildren
             >
               <a rel="nofollow">{txt('showDiff_fromOriginal')}</a>
-            </Link>
+            </LinkV2>
           )}
         </div>
       )}

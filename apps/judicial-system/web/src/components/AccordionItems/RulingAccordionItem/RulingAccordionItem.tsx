@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
@@ -12,7 +12,7 @@ interface Props {
   startExpanded?: boolean
 }
 
-const RulingAccordionItem: React.FC<React.PropsWithChildren<Props>> = ({
+const RulingAccordionItem: FC<Props> = ({
   workingCase,
   startExpanded,
 }: Props) => {

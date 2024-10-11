@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql'
-import { IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 
 @InputType('DocumentInput')
 export class DocumentInput {
@@ -7,6 +7,14 @@ export class DocumentInput {
   @IsString()
   readonly id!: string
 
+  @Field({ nullable: true, description: 'Optional. For logging only.' })
+  @IsOptional()
+  @IsString()
+  readonly provider?: string
+
   @Field({ defaultValue: 10 })
   readonly pageSize!: number
+
+  @Field(() => Boolean, { nullable: true, defaultValue: true })
+  readonly includeDocument?: boolean
 }

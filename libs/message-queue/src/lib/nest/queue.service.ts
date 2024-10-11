@@ -1,7 +1,6 @@
 import assert from 'assert'
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common'
 import { ClientService } from './client.service'
-import type { Logger } from '@island.is/logging'
 import { DAY, MINUTE } from './time'
 import type { Queue } from './types'
 
@@ -9,11 +8,7 @@ import type { Queue } from './types'
 export class QueueService implements OnApplicationBootstrap {
   private _url: string | null = null
 
-  constructor(
-    private client: ClientService,
-    private config: Queue,
-    private logger: Logger,
-  ) {}
+  constructor(private client: ClientService, private config: Queue) {}
 
   // NB: We initialize the queues using "onApplicationBootstrap" rather than an
   // async "useFactory" because creating the nest application (like the
@@ -48,7 +43,7 @@ export class QueueService implements OnApplicationBootstrap {
   private async createMainQueue(): Promise<string> {
     const deadLetterTargetArn = await this.createDeadLetterQueue()
 
-    return this.client.createOrUpdateQueue(this.config.queueName, {
+    return await this.client.createOrUpdateQueue(this.config.queueName, {
       MessageRetentionPeriod: (
         this.config.messageRetentionPeriod ?? DAY * 7
       ).toString(),

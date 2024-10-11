@@ -4,7 +4,7 @@ export const application = {
   general: defineMessages({
     name: {
       id: 'an.application:general.name',
-      defaultMessage: 'Slysatilkynning til Sjúkratryggingar Íslands ',
+      defaultMessage: 'Slysatilkynning til Sjúkratrygginga Íslands ',
       description: 'Accident notification to Sjúkratryggingar Íslands',
     },
     institutionName: {
@@ -28,6 +28,19 @@ export const application = {
       id: 'an.application:deliveryOfData.name',
       defaultMessage: 'Afhending skjala',
       description: 'Delivery of data',
+    },
+  }),
+  labels: defineMessages({
+    warningTitle: {
+      id: 'an.application:application.warningTitle',
+      defaultMessage: 'Athugið',
+      description: 'Warning',
+    },
+    warningMessage: {
+      id: 'an.application:application.warningDescription',
+      defaultMessage:
+        'Ef hinn slasaði þiggur greiðslur frá íþróttafélaginu þá er málið meðhöndlað sem vinnuslys.',
+      description: 'Warning description',
     },
   }),
 }

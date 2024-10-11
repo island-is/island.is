@@ -22,7 +22,7 @@ import { PensionSupplementAttachments } from '../types'
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber = getValueViaPath(
     answers,
-    'applicantInfo.phonenumber',
+    'applicant.phoneNumber',
   ) as string
 
   const applicationReason = getValueViaPath(
@@ -139,6 +139,16 @@ export const getApplicationExternalData = (
     'nationalRegistry.data.nationalId',
   ) as string
 
+  const userProfileEmail = getValueViaPath(
+    externalData,
+    'userProfile.data.email',
+  ) as string
+
+  const userProfilePhoneNumber = getValueViaPath(
+    externalData,
+    'userProfile.data.mobilePhoneNumber',
+  ) as string
+
   const applicantAddress = getValueViaPath(
     externalData,
     'nationalRegistry.data.address.streetAddress',
@@ -179,7 +189,11 @@ export const getApplicationExternalData = (
   return {
     applicantName,
     applicantNationalId,
+    userProfileEmail,
+    userProfilePhoneNumber,
+    applicantPostalCode,
     applicantAddress,
+    applicantLocality,
     applicantMunicipality,
     email,
     bankInfo,

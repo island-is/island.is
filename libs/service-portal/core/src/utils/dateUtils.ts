@@ -10,6 +10,26 @@ export const dateParse = (startDate: string) => {
   return new Date(year, month - 1, day)
 }
 
+export const isDateAfterToday = (date: Date | string | undefined) => {
+  if (!date) {
+    return null
+  }
+
+  let argDate: Date
+  if (typeof date === 'string') {
+    const tmpDate = new Date(date)
+    if (!isNaN(tmpDate.getTime())) {
+      argDate = tmpDate
+    } else {
+      return null
+    }
+  } else {
+    argDate = date
+  }
+
+  return argDate > new Date()
+}
+
 // Takes in date string or date, with optional format
 export const formatDate = (
   date?: string | Date | null,
@@ -61,3 +81,6 @@ export const displayMonthOrYear = (date: string, l: Locale) => {
     return date
   }
 }
+
+export const getDateLocale = (locale: Locale) =>
+  locale === 'en' ? 'en-US' : 'is-IS'

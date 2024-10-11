@@ -13,6 +13,7 @@ export interface IApplication {
   workExperienceList: IApplicationWorkExperience[]
   extraFieldList: IApplicationExtraFields[]
   educationOption?: string
+  attachments?: Array<IApplicationAttachment | undefined>
 }
 
 export interface IApplicationApplicant {
@@ -45,6 +46,12 @@ export interface IApplicationEducation {
 export interface IApplicationWorkExperience {
   company: string
   jobTitle: string
+}
+
+export interface IApplicationAttachment {
+  fileName: string
+  fileType: string
+  url: string
 }
 
 export interface IApplicationExtraFields {

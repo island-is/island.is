@@ -7,10 +7,11 @@ import {
   Patch,
   Controller,
   HttpStatus,
+  Post,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
-import { NotificationsScope } from '@island.is/auth/scopes'
+import { DocumentsScope } from '@island.is/auth/scopes'
 import { NotificationsService } from './notifications.service'
 import {
   CurrentUser,
@@ -19,6 +20,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
+import type { Locale } from '@island.is/shared/types'
 
 import {
   UpdateNotificationDto,
@@ -31,8 +33,8 @@ import {
 import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(NotificationsScope.read)
-@ApiSecurity('oauth2', [NotificationsScope.read])
+@Scopes(DocumentsScope.main)
+@ApiSecurity('oauth2', [DocumentsScope.main])
 @ApiTags('user-notification')
 @Controller({
   path: 'me/notifications',
@@ -83,14 +85,12 @@ export class MeNotificationsController {
   findOne(
     @CurrentUser() user: User,
     @Param('id') id: number,
-    @Query('locale') locale: string,
+    @Query('locale') locale?: Locale,
   ): Promise<RenderedNotificationDto> {
     return this.notificationService.findOne(user, id, locale)
   }
 
-  @Patch('/mark-all-as-seen')
-  @Scopes(NotificationsScope.write)
-  @ApiSecurity('oauth2', [NotificationsScope.write])
+  @Post('/mark-all-as-seen')
   @Documentation({
     summary: 'Updates all of  current user notifications as seen',
     response: { status: HttpStatus.NO_CONTENT },
@@ -99,18 +99,25 @@ export class MeNotificationsController {
     await this.notificationService.markAllAsSeen(user)
   }
 
+  @Post('/mark-all-as-read')
+  @Documentation({
+    summary: 'Updates all of  current user notifications as read',
+    response: { status: HttpStatus.NO_CONTENT },
+  })
+  async markAllAsRead(@CurrentUser() user: User): Promise<void> {
+    await this.notificationService.markAllAsRead(user)
+  }
+
   @Documentation({
     summary: 'Updates current user specific notification',
     response: { status: HttpStatus.OK, type: RenderedNotificationDto },
   })
   @Patch(':id')
-  @Scopes(NotificationsScope.write)
-  @ApiSecurity('oauth2', [NotificationsScope.write])
   update(
     @CurrentUser() user: User,
     @Param('id') id: number,
     @Body() updateNotificationDto: UpdateNotificationDto,
-    @Query('locale') locale: string,
+    @Query('locale') locale?: Locale,
   ): Promise<RenderedNotificationDto> {
     return this.notificationService.update(
       user,

@@ -1,4 +1,4 @@
-query Documents($input: DocumentsV2DocumentsInput!) {
+query DocumentsV2($input: DocumentsV2DocumentsInput!) {
   documentsV2(input: $input) {
     data {
       id
@@ -14,6 +14,7 @@ query Documents($input: DocumentsV2DocumentsInput!) {
       opened
       bookmarked
       archived
+      downloadUrl
       content {
         type
         value
@@ -25,7 +26,43 @@ query Documents($input: DocumentsV2DocumentsInput!) {
       id
       name
     }
-    types {
+    senders {
+      id
+      name
+    }
+  }
+}
+
+query DocumentsV3($input: DocumentsV2DocumentsInput!) {
+  documentsV2(input: $input) {
+    data {
+      id
+      name
+      categoryId
+      publicationDate
+      documentDate
+      subject
+      sender {
+        id
+        name
+      }
+      opened
+      bookmarked
+      archived
+      downloadUrl
+      content {
+        type
+        value
+      }
+      isUrgent
+      confirmation {
+        title
+        data
+      }
+    }
+    totalCount
+    unreadCount
+    categories {
       id
       name
     }
@@ -33,5 +70,50 @@ query Documents($input: DocumentsV2DocumentsInput!) {
       id
       name
     }
+  }
+}
+
+query GetDocumentInboxLineV3($input: DocumentInput!, $locale: String) {
+  documentV2(input: $input, locale: $locale) {
+    content {
+      type
+      value
+    }
+    actions {
+      type
+      title
+      data
+      icon
+    }
+    confirmation {
+      title
+      data
+    }
+    alert {
+      title
+      data
+    }
+  }
+}
+
+query GetDocumentInboxLineV2($input: DocumentInput!) {
+  documentV2(input: $input) {
+    content {
+      type
+      value
+    }
+  }
+}
+
+query DocumentConfirmActions($input: DocumentConfirmActionsInput!) {
+  documentV2ConfirmActions(input: $input) {
+    id
+    confirmed
+  }
+}
+
+mutation MailActionV2($input: DocumentsV2MailActionInput!) {
+  postMailActionV2(input: $input) {
+    success
   }
 }

@@ -25,6 +25,8 @@ const getDeniedByServiceMessageDescription = (
     case RequirementKey.HasDeprivation:
     case RequirementKey.HasPoints:
       return requirementsMessages.hasPointsOrDeprivation
+    case RequirementKey.NoExtendedDrivingLicense:
+      return requirementsMessages.noExtendedDrivingLicenseTitle
     default:
       return requirementsMessages.rlsDefaultDeniedDescription
   }
@@ -50,7 +52,6 @@ const requirementKeyToStep = (
         description: requirementsMessages.drivingAssessmentDescription,
       }
     case RequirementKey.DeniedByService:
-    case RequirementKey.HasNoPhoto:
     case RequirementKey.HasDeprivation:
     case RequirementKey.HasNoSignature:
     case RequirementKey.HasPoints:
@@ -73,6 +74,23 @@ const requirementKeyToStep = (
       return {
         title: requirementsMessages.localResidencyTitle,
         description: requirementsMessages.currentLocalResidencyDescription,
+      }
+    //TODO: Remove when RLS/SGS supports health certificate in BE license
+    case RequirementKey.BeRequiresHealthCertificate:
+      return {
+        title: requirementsMessages.beLicenseRequiresHealthCertificateTitle,
+        description:
+          requirementsMessages.beLicenseRequiresHealthCertificateDescription,
+      }
+    case RequirementKey.HasNoPhoto:
+      return {
+        title: requirementsMessages.beLicenseQualityPhotoTitle,
+        description: requirementsMessages.beLicenseQualityPhotoDescription,
+      }
+    case RequirementKey.NoExtendedDrivingLicense:
+      return {
+        title: requirementsMessages.noExtendedDrivingLicenseTitle,
+        description: requirementsMessages.noExtendedDrivingLicenseDescription,
       }
     default:
       throw new Error('Unknown requirement reason - should not happen')

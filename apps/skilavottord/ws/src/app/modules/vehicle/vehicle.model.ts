@@ -80,6 +80,18 @@ export class VehicleModel extends Model<VehicleModel> {
   @Field(() => [RecyclingRequestModel], { nullable: true })
   @HasMany(() => RecyclingRequestModel)
   recyclingRequests!: RecyclingRequestModel[]
+
+  @Field({ nullable: true })
+  @Column({
+    type: DataType.BOOLEAN,
+  })
+  plateLost?: boolean
+
+  @Field({ nullable: true })
+  @Column({
+    type: DataType.INTEGER,
+  })
+  plateCount?: number
 }
 
 @ObjectType()

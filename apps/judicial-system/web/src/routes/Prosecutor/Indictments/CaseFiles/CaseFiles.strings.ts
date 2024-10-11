@@ -22,11 +22,6 @@ export const caseFiles = defineMessages({
     defaultMessage: 'Velja gögn til að hlaða upp',
     description: 'Texti í tökkum í öllum file upload svæðum.',
   },
-  coverLetterSection: {
-    id: 'judicial.system.core:indictments.case_files.cover_letter_section',
-    defaultMessage: 'Fylgibréf',
-    description: 'Titill á fylgibréf hluta á dómskjalaskjá í ákærum.',
-  },
   indictmentSection: {
     id: 'judicial.system.core:indictments.case_files.indictment_section',
     defaultMessage: 'Ákæra',
@@ -46,6 +41,17 @@ export const caseFiles = defineMessages({
     id: 'judicial.system.core:indictments.case_files.other_documents_section',
     defaultMessage: 'Önnur gögn',
     description: 'Titill á önnur gögn hluta á dómskjalaskjá í ákærum.',
+  },
+  civilClaimSection: {
+    id: 'judicial.system.core:indictments.case_files.civil_claim_section',
+    defaultMessage: 'Bótakröfur',
+    description: 'Titill á Bótakröfur hluta á dómskjalaskjá í ákærum.',
+  },
+  criminalRecordUpdateSection: {
+    id: 'judicial.system.core:indictments.case_files.criminal_record_update_section',
+    defaultMessage: 'Tilkynning til sakaskrár',
+    description:
+      'Titill á Tilkynning til sakaskrár hluta á dómskjalaskjá í ákærum.',
   },
   trafficViolationIndictmentTitle: {
     id: 'judicial.system.core:indictments.case_files.traffic_violation_indictment_title',

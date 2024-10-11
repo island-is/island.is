@@ -1,22 +1,23 @@
+import { Inject, Logger } from '@nestjs/common'
+
 import {
   IndividualDto,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AuditService } from '@island.is/nest/audit'
-import { Inject, Logger } from '@nestjs/common'
-import { isDefined } from '@island.is/shared/utils'
-import { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
-import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
-import { DelegationDTO } from './dto/delegation.dto'
-import { partitionWithIndex } from './utils/partitionWithIndex'
-import { ApiScopeInfo } from './delegations-incoming.service'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
 
-export const UNKNOWN_NAME = 'Óþekkt nafn'
+import { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
+import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
+import { UNKNOWN_NAME } from './constants/names'
+import { ApiScopeInfo } from './delegations-incoming.service'
+import { DelegationDTO } from './dto/delegation.dto'
+import { partitionWithIndex } from './utils/partitionWithIndex'
 
 type FindAllIncomingOptions = {
   nationalId: string
@@ -45,7 +46,11 @@ export class DelegationsIncomingRepresentativeService {
       requireApiScopes &&
       clientAllowedApiScopes &&
       !clientAllowedApiScopes.some(
-        (s) => s.grantToPersonalRepresentatives && !s.isAccessControlled,
+        (s) =>
+          s.supportedDelegationTypes?.some(
+            (dt) =>
+              dt.delegationType == AuthDelegationType.PersonalRepresentative,
+          ) && !s.isAccessControlled,
       )
     ) {
       return []
@@ -62,6 +67,7 @@ export class DelegationsIncomingRepresentativeService {
         type: AuthDelegationType.PersonalRepresentative,
         provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
         rights: representative.rights,
+        prDelegationType: representative.prDelegationTypes,
       })
 
       const personalRepresentatives =
@@ -71,6 +77,23 @@ export class DelegationsIncomingRepresentativeService {
           },
           useMaster,
         )
+      // Filter if personal representative actually has a scope in client allowed scopes
+      personalRepresentatives.filter((pr) => {
+        if (pr.prDelegationTypes) {
+          return pr.prDelegationTypes.some((type) =>
+            clientAllowedApiScopes?.some(
+              (scope) =>
+                scope.supportedDelegationTypes?.some(
+                  (dt) =>
+                    dt.delegationType ==
+                    AuthDelegationType.PersonalRepresentative,
+                ) &&
+                scope.name === type.name &&
+                !scope.isAccessControlled,
+            ),
+          )
+        }
+      })
 
       const personPromises = personalRepresentatives.map(
         ({ nationalIdRepresentedPerson }) =>

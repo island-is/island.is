@@ -1,4 +1,4 @@
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 
 import {
   LiveChatIncChatPanelProps,
@@ -111,7 +111,7 @@ export const watsonConfig: Record<
 
     // Samgöngustofa - Organization
     '6IZT17s7stKJAmtPutjpD7': {
-      integrationID: '1e649a3f-9476-4995-ba24-0e72040b0cc0',
+      integrationID: 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,
@@ -122,7 +122,7 @@ export const watsonConfig: Record<
   is: {
     // Samgöngustofa - Organization
     '6IZT17s7stKJAmtPutjpD7': {
-      integrationID: 'fe12e960-329c-46d5-9ae1-8bd8b8219f43',
+      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,

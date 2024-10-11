@@ -1,10 +1,11 @@
-import * as s from './RegulationDisplay.css'
-
-import { NamespaceGetter } from '@island.is/web/hooks'
-import React, { useState, MouseEvent, useEffect } from 'react'
-import type { IndexTree } from './useRegulationIndexer'
-import { Button, Text, Box, Link } from '@island.is/island-ui/core'
+import React, { MouseEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { NamespaceGetter } from '@island.is/web/hooks'
+
+import type { IndexTree } from './useRegulationIndexer'
+import * as s from './RegulationDisplay.css'
 
 const SCROLL_OFFSET = 150
 const scrollToElm = (id?: string): boolean => {

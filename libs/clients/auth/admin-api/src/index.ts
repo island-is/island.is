@@ -1,6 +1,7 @@
 export {
   AdminApi,
   AdminCreateClientDto,
+  AdminScopeDTO,
   ClientSecretDto,
   ClientType,
   CreateClientType,
@@ -10,6 +11,10 @@ export {
   RefreshTokenExpiration,
   AdminClientDto,
   TenantDto,
+  PaginatedDelegationProviderDto,
+  DelegationProviderDto,
+  DelegationAdminApi,
+  DelegationAdminCustomDto,
 } from '../gen/fetch'
 export * from './lib/apis'
 export * from './lib/auth-admin-api-client.config'

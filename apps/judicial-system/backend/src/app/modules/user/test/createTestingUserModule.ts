@@ -6,9 +6,11 @@ import { Test } from '@nestjs/testing'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule } from '@island.is/nest/config'
 
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import {
+  SharedAuthModule,
+  sharedAuthModuleConfig,
+} from '@island.is/judicial-system/auth'
 
-import { environment } from '../../../../environments'
 import { userModuleConfig } from '../user.config'
 import { UserController } from '../user.controller'
 import { User } from '../user.model'
@@ -17,14 +19,13 @@ import { UserService } from '../user.service'
 export const createTestingUserModule = async () => {
   const userModule = await Test.createTestingModule({
     imports: [
-      SharedAuthModule.register({
-        jwtSecret: environment.auth.jwtSecret,
-        secretToken: environment.auth.secretToken,
+      ConfigModule.forRoot({
+        load: [sharedAuthModuleConfig, userModuleConfig],
       }),
-      ConfigModule.forRoot({ load: [userModuleConfig] }),
     ],
     controllers: [UserController],
     providers: [
+      SharedAuthModule,
       {
         provide: LOGGER_PROVIDER,
         useValue: {

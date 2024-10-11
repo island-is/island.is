@@ -11,7 +11,7 @@ import { nowFactory } from '../../../../factories'
 import { createCaseFilesRecord } from '../../../../formatters'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
-import { CourtDocumentType, PoliceService } from '../../../police'
+import { PoliceDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -34,7 +34,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
   const user = { id: uuid() } as User
   const caseId = uuid()
   const caseType = CaseType.INDICTMENT
-  const caseState = CaseState.ACCEPTED
+  const caseState = CaseState.COMPLETED
   const policeCaseNumber = uuid()
   const defendantNationalId = '0123456789'
   const courtId = uuid()
@@ -107,13 +107,9 @@ describe('InternalCaseController - Deliver case files record to police', () => {
     })
 
     it('should update the police case', () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
-        1,
-        `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-      )
-      expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
-        2,
-        `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
+        caseType,
+        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
       )
       expect(createCaseFilesRecord).toHaveBeenCalledWith(
         theCase,
@@ -122,7 +118,8 @@ describe('InternalCaseController - Deliver case files record to police', () => {
         expect.any(Function),
       )
       expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
-        `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        theCase.type,
+        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
         pdf.toString(),
       )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
@@ -131,12 +128,13 @@ describe('InternalCaseController - Deliver case files record to police', () => {
         caseType,
         caseState,
         policeCaseNumber,
+        courtCaseNumber,
         defendantNationalId,
         date,
         '',
         [
           {
-            type: CourtDocumentType.RVMG,
+            type: PoliceDocumentType.RVMG,
             courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ],
@@ -145,10 +143,10 @@ describe('InternalCaseController - Deliver case files record to police', () => {
     })
   })
 
-  describe('pdf returned from AWS S3 indictment completed folder', () => {
+  describe('pdf returned from AWS S3', () => {
     beforeEach(async () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockReturnValueOnce(pdf)
+      mockGetObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, policeCaseNumber, theCase)
     })
@@ -160,41 +158,13 @@ describe('InternalCaseController - Deliver case files record to police', () => {
         caseType,
         caseState,
         policeCaseNumber,
+        courtCaseNumber,
         defendantNationalId,
         date,
         '',
         [
           {
-            type: CourtDocumentType.RVMG,
-            courtDocument: Base64.btoa(pdf.toString('binary')),
-          },
-        ],
-      )
-    })
-  })
-
-  describe('pdf returned from AWS S3 indictment folder', () => {
-    beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockRejectedValueOnce(new Error('Some error'))
-      mockGetObject.mockReturnValueOnce(pdf)
-
-      await givenWhenThen(caseId, policeCaseNumber, theCase)
-    })
-
-    it('should use the AWS S3 pdf', () => {
-      expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
-        user,
-        caseId,
-        caseType,
-        caseState,
-        policeCaseNumber,
-        defendantNationalId,
-        date,
-        '',
-        [
-          {
-            type: CourtDocumentType.RVMG,
+            type: PoliceDocumentType.RVMG,
             courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ],

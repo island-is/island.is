@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Tooltip } from '@island.is/island-ui/core'
@@ -10,10 +10,7 @@ interface Props {
   isIndictment?: boolean
 }
 
-const ProsecutorSectionHeading: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
-  const { isIndictment = false } = props
+const ProsecutorSectionHeading: FC<Props> = ({ isIndictment = false }) => {
   const { formatMessage } = useIntl()
 
   return (

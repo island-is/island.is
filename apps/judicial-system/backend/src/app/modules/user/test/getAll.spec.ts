@@ -41,7 +41,7 @@ describe('UserController - Get all', () => {
 
     beforeEach(async () => {
       const mockFindAll = mockUserModel.findAll as jest.Mock
-      mockFindAll.mockReturnValueOnce(users)
+      mockFindAll.mockResolvedValueOnce(users)
 
       then = await givenWhenThen(UserRole.ADMIN)
     })
@@ -63,7 +63,7 @@ describe('UserController - Get all', () => {
 
     beforeEach(async () => {
       const mockFindAll = mockUserModel.findAll as jest.Mock
-      mockFindAll.mockReturnValueOnce(users)
+      mockFindAll.mockResolvedValueOnce(users)
 
       then = await givenWhenThen(role)
     })

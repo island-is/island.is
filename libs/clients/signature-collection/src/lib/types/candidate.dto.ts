@@ -7,6 +7,7 @@ export interface Candidate extends UserBase {
   phone: string
   email: string
   collectionId: string
+  partyBallotLetter: string
 }
 
 export const mapCandidate = (candidate: FrambodBaseDTO): Candidate => {
@@ -25,5 +26,6 @@ export const mapCandidate = (candidate: FrambodBaseDTO): Candidate => {
     phone: candidate.simi ?? '',
     email: candidate.netfang ?? '',
     collectionId: candidate.medmaelasofnunID?.toString() ?? '',
+    partyBallotLetter: candidate.listabokstafur ?? '',
   }
 }

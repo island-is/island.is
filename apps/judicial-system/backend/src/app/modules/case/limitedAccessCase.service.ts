@@ -13,32 +13,37 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  CaseMessage,
-  MessageService,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
   CaseState,
+  DateType,
+  EventType,
   NotificationType,
+  StringType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { Defendant, DefendantService } from '../defendant'
+import { CivilClaimant, Defendant, DefendantService } from '../defendant'
+import { EventLog } from '../event-log'
 import {
   CaseFile,
   defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
 } from '../file'
+import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
+import { Subpoena } from '../subpoena'
 import { User } from '../user'
 import { Case } from './models/case.model'
-import { PDFService } from './pdf.service'
+import { CaseString } from './models/caseString.model'
+import { DateLog } from './models/dateLog.model'
+import { PdfService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
   'id',
@@ -59,7 +64,6 @@ export const attributes: (keyof Case)[] = [
   'requestedCustodyRestrictions',
   'prosecutorId',
   'courtCaseNumber',
-  'courtDate',
   'courtEndTime',
   'decision',
   'validToDate',
@@ -94,6 +98,13 @@ export const attributes: (keyof Case)[] = [
   'appealRulingModifiedHistory',
   'requestAppealRulingNotToBePublished',
   'prosecutorsOfficeId',
+  'indictmentDecision',
+  'indictmentRulingDecision',
+  'indictmentHash',
+  'courtSessionType',
+  'indictmentReviewDecision',
+  'indictmentReviewerId',
+  'hasCivilClaims',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -105,6 +116,10 @@ export interface LimitedAccessUpdateCase
     | 'openedByDefender'
     | 'appealRulingDecision'
   > {}
+
+const eventTypes = Object.values(EventType)
+const dateTypes = Object.values(DateType)
+const stringTypes = Object.values(StringType)
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -149,9 +164,31 @@ export const include: Includeable[] = [
     as: 'appealJudge3',
     include: [{ model: Institution, as: 'institution' }],
   },
+  {
+    model: User,
+    as: 'indictmentReviewer',
+    include: [{ model: Institution, as: 'institution' }],
+  },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
-  { model: Defendant, as: 'defendants' },
+  {
+    model: Defendant,
+    as: 'defendants',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: Subpoena,
+        as: 'subpoenas',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+  { model: IndictmentCount, as: 'indictmentCounts' },
+  { model: CivilClaimant, as: 'civilClaimants' },
   {
     model: CaseFile,
     as: 'caseFiles',
@@ -168,20 +205,75 @@ export const include: Includeable[] = [
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
         CaseFileCategory.APPEAL_RULING,
+        CaseFileCategory.APPEAL_COURT_RECORD,
         CaseFileCategory.COURT_RECORD,
-        CaseFileCategory.COVER_LETTER,
         CaseFileCategory.INDICTMENT,
         CaseFileCategory.CRIMINAL_RECORD,
         CaseFileCategory.COST_BREAKDOWN,
         CaseFileCategory.CASE_FILE,
-        CaseFileCategory.APPEAL_COURT_RECORD,
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIM,
       ],
     },
+  },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    where: { eventType: { [Op.in]: eventTypes } },
+    order: [['created', 'DESC']],
+    separate: true,
+  },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: { [Op.in]: dateTypes } },
+  },
+  {
+    model: CaseString,
+    as: 'caseStrings',
+    required: false,
+    where: { stringType: { [Op.in]: stringTypes } },
+  },
+  { model: Case, as: 'mergeCase', attributes },
+  {
+    model: Case,
+    as: 'mergedCases',
+    where: { state: CaseState.COMPLETED },
+    include: [
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: {
+          state: { [Op.not]: CaseFileState.DELETED },
+          category: {
+            [Op.in]: [
+              CaseFileCategory.INDICTMENT,
+              CaseFileCategory.COURT_RECORD,
+              CaseFileCategory.CRIMINAL_RECORD,
+              CaseFileCategory.COST_BREAKDOWN,
+              CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+              CaseFileCategory.CASE_FILE,
+              CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIM,
+            ],
+          },
+        },
+        separate: true,
+      },
+    ],
+    separate: true,
   },
 ]
 
 export const order: OrderItem[] = [
-  [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
+  [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
+  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
 ]
 
 @Injectable()
@@ -189,7 +281,7 @@ export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
     private readonly defendantService: DefendantService,
-    private readonly pdfService: PDFService,
+    private readonly pdfService: PdfService,
     private readonly awsS3Service: AwsS3Service,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -235,7 +327,7 @@ export class LimitedAccessCaseService {
       )
     }
 
-    const messages: CaseMessage[] = []
+    const messages = []
 
     if (update.appealState === CaseAppealState.APPEALED) {
       theCase.caseFiles
@@ -325,7 +417,7 @@ export class LimitedAccessCaseService {
     return this.caseModel
       .findOne({
         where: {
-          defenderNationalId: nationalId,
+          defenderNationalId: normalizeAndFormatNationalId(nationalId),
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },
@@ -358,9 +450,7 @@ export class LimitedAccessCaseService {
       })
   }
 
-  private zipFiles(
-    files: Array<{ data: Buffer; name: string }>,
-  ): Promise<Buffer> {
+  private zipFiles(files: { data: Buffer; name: string }[]): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const buffs: Buffer[] = []
       const converter = new Writable()
@@ -391,7 +481,7 @@ export class LimitedAccessCaseService {
   }
 
   async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
-    const filesToZip: Array<{ data: Buffer; name: string }> = []
+    const filesToZip: { data: Buffer; name: string }[] = []
 
     const caseFilesByCategory =
       theCase.caseFiles?.filter(
@@ -403,9 +493,10 @@ export class LimitedAccessCaseService {
           ),
       ) ?? []
 
+    // TODO: speed this up by fetching all files in parallel
     for (const file of caseFilesByCategory) {
       await this.awsS3Service
-        .getObject(file.key ?? '')
+        .getObject(theCase.type, file.key)
         .then((content) => filesToZip.push({ data: content, name: file.name }))
         .catch((reason) =>
           // Tolerate failure, but log what happened

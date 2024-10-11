@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/sessions/src",
   "projectType": "application",
+  "tags": ["scope:nest"],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -31,6 +32,7 @@
       },
       "configurations": {
         "production": {
+          "outputPath": "dist/apps/services/sessions",
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
@@ -51,11 +53,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/services/sessions/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -75,10 +73,20 @@
         "args": ["--job", "worker"]
       }
     },
+    "cleanup": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-sessions:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/sessions/cleanup"
+        },
+        "args": ["--job", "cleanup"]
+      }
+    },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/services/sessions"
       }
     },
@@ -113,7 +121,8 @@
         "cwd": "apps/services/sessions"
       }
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

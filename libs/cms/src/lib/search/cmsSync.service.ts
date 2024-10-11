@@ -16,7 +16,7 @@ import { LifeEventPageSyncService } from './importers/lifeEventPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
 import { Entry } from 'contentful'
-import { ElasticService } from '@island.is/content-search-toolkit'
+import { ElasticService, SearchInput } from '@island.is/content-search-toolkit'
 import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
@@ -34,6 +34,8 @@ import { EventSyncService } from './importers/event.service'
 import { ManualSyncService } from './importers/manual.service'
 import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
 import { CustomPageSyncService } from './importers/customPage.service'
+import { GenericListItemSyncService } from './importers/genericListItem.service'
+import { TeamListSyncService } from './importers/teamList.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -80,6 +82,8 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly manualSyncService: ManualSyncService,
     private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
     private readonly customPageSyncService: CustomPageSyncService,
+    private readonly genericListItemSyncService: GenericListItemSyncService,
+    private readonly teamListSyncService: TeamListSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -104,6 +108,8 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.manualSyncService,
       this.manualChapterItemSyncService,
       this.customPageSyncService,
+      this.genericListItemSyncService,
+      this.teamListSyncService,
     ]
   }
 
@@ -153,40 +159,64 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     return hashResult.hash.toString()
   }
 
+  async getNextSyncToken(syncType: SyncOptions['syncType']) {
+    if (syncType === 'fromLast') {
+      return ''
+    }
+
+    let nextPageToken: string | undefined = ''
+    let nextSyncToken = ''
+
+    // We don't get the next sync token until we've reached the last page
+    while (!nextSyncToken) {
+      const response = await this.contentfulService.getSyncData({
+        initial: true,
+        nextPageToken,
+      })
+      nextPageToken = response.nextPageToken
+      nextSyncToken = response.nextSyncToken
+    }
+    return nextSyncToken
+  }
+
   // this is triggered from ES indexer service
   async doSync(
     options: SyncOptions,
   ): Promise<SyncResponse<PostSyncOptions> | null> {
     logger.info('Doing cms sync', options)
-    let cmsSyncOptions: SyncOptions
+    let cmsSyncOptions: SyncOptions = options
 
     /**
      * We don't want full sync to run every time we start a new pod
      * We want full sync to run once when the first pod initializes the first container
      * and then never again until a new index is deployed
      */
-    let folderHash
+    let folderHash = options.folderHash
+
     if (options.syncType === 'initialize') {
       const { elasticIndex = getElasticsearchIndex(options.locale) } = options
-
-      folderHash = await this.getModelsFolderHash()
-      const lastFolderHash = await this.getLastFolderHash(elasticIndex)
-      if (folderHash !== lastFolderHash) {
-        logger.info(
-          'Folder and index folder hash do not match, running full sync',
-          { locale: options.locale },
-        )
-        cmsSyncOptions = { ...options, syncType: 'full' }
-      } else {
-        logger.info('Folder and index folder hash match, skipping sync', {
-          locale: options.locale,
-        })
-        // we skip import if it is not needed
-        return null
+      cmsSyncOptions = { ...options, syncType: 'full' }
+      if (folderHash === undefined) {
+        folderHash = await this.getModelsFolderHash()
+        const lastFolderHash = await this.getLastFolderHash(elasticIndex)
+        if (folderHash !== lastFolderHash) {
+          logger.info(
+            'Folder and index folder hash do not match, running full sync',
+            { locale: options.locale },
+          )
+        } else {
+          logger.info('Folder and index folder hash match, skipping sync', {
+            locale: options.locale,
+          })
+          // we skip import if it is not needed
+          return null
+        }
       }
     } else if (options.syncType === 'full') {
       cmsSyncOptions = options
-      folderHash = await this.getModelsFolderHash() // we know full will update all models so we can set the folder hash here
+      if (folderHash === undefined) {
+        folderHash = await this.getModelsFolderHash() // we know full will update all models so we can set the folder hash here
+      }
     } else {
       cmsSyncOptions = options
       folderHash = '' // this will always be a partial update so we don't want to update folder hash
@@ -227,6 +257,36 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     return true
   }
 
+  private async fetchIdsFromElasticsearch(
+    elasticIndex: string,
+    types: SearchInput['types'],
+    tags: SearchInput['tags'],
+  ) {
+    const ids: string[] = []
+    let shouldContinueFetching = true
+    let page = 1
+
+    while (shouldContinueFetching) {
+      const response = await this.elasticService.search(elasticIndex, {
+        queryString: '*',
+        types,
+        tags,
+        page,
+      })
+
+      const responseItems = response?.body?.hits?.hits ?? []
+
+      for (const item of responseItems) {
+        ids.push(item._id)
+      }
+
+      shouldContinueFetching = responseItems.length > 0
+      page += 1
+    }
+
+    return ids
+  }
+
   async handleDocumentDeletion(
     elasticIndex: string,
     document: Pick<Entry<unknown>, 'sys'>,
@@ -236,27 +296,11 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       document.sys.contentType.sys.id === 'manual' ||
       document.sys.contentType.sys.id === 'manualChapter'
     ) {
-      const manualChapterItemIds: string[] = []
-      let shouldContinueFetching = true
-      let page = 1
-
-      while (shouldContinueFetching) {
-        const response = await this.elasticService.search(elasticIndex, {
-          queryString: '*',
-          types: ['webManualChapterItem'],
-          tags: [{ key: document.sys.id, type: 'referencedBy' }],
-          page,
-        })
-
-        const responseItems = response?.body?.hits?.hits ?? []
-
-        for (const item of responseItems) {
-          manualChapterItemIds.push(item._id)
-        }
-
-        shouldContinueFetching = responseItems.length > 0
-        page += 1
-      }
+      const manualChapterItemIds = await this.fetchIdsFromElasticsearch(
+        elasticIndex,
+        ['webManualChapterItem'],
+        [{ key: document.sys.id, type: 'referencedBy' }],
+      )
 
       return this.elasticService.deleteByIds(
         elasticIndex,
@@ -274,6 +318,38 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       return this.elasticService.deleteByIds(
         elasticIndex,
         [document.sys.id].concat(subArticles.map((s) => s.sys.id)),
+      )
+    }
+
+    // If a generic list gets deleted then all of its items should also be deleted
+    if (document.sys.contentType.sys.id === 'genericList') {
+      const listItems = await this.contentfulService.getContentfulData(100, {
+        content_type: 'genericListItem',
+        'fields.genericList.sys.id': document.sys.id,
+      })
+
+      return this.elasticService.deleteByIds(
+        elasticIndex,
+        [document.sys.id].concat(listItems.map((i) => i.sys.id)),
+      )
+    }
+
+    // If a custom page gets deleted make sure all of its subpages are also deleted
+    if (document.sys.contentType.sys.id === 'customPage') {
+      const subpageIds = await this.fetchIdsFromElasticsearch(
+        elasticIndex,
+        ['webCustomPage'],
+        [
+          {
+            key: document.sys.id,
+            type: 'referencedBy',
+          },
+        ],
+      )
+
+      return this.elasticService.deleteByIds(
+        elasticIndex,
+        [document.sys.id].concat(subpageIds),
       )
     }
 

@@ -4,7 +4,6 @@ import {
   buildFileUploadField,
   buildForm,
   buildMultiField,
-  buildPhoneField,
   buildRadioField,
   buildRepeater,
   buildSection,
@@ -20,10 +19,8 @@ import {
   FormModes,
   FormValue,
   NO,
-  NationalRegistryIndividual,
   YES,
 } from '@island.is/application/types'
-import * as kennitala from 'kennitala'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
@@ -34,7 +31,6 @@ import {
   getAvailableYears,
   isEarlyRetirement,
 } from '../lib/oldAgePensionUtils'
-import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
@@ -44,7 +40,10 @@ import {
   getYesNoOptions,
   getTaxOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMultiField,
+  buildFormConclusionSection,
+} from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import {
   BankAccountType,
@@ -61,11 +60,6 @@ export const OldAgePensionForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: 'prerequisites',
-      title: oldAgePensionFormMessage.pre.prerequisitesSection,
-      children: [],
-    }),
-    buildSection({
       id: 'applicant',
       title: socialInsuranceAdministrationMessage.info.section,
       children: [
@@ -73,105 +67,12 @@ export const OldAgePensionForm: Form = buildForm({
           id: 'info',
           title: socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
           children: [
-            buildMultiField({
-              id: 'applicantInfo',
-              title:
-                socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
-              description:
+            applicantInformationMultiField({
+              emailRequired: false,
+              emailDisabled: true,
+              applicantInformationDescription:
                 socialInsuranceAdministrationMessage.info
                   .infoSubSectionDescription,
-              children: [
-                buildTextField({
-                  id: 'applicantInfo.name',
-                  title: oldAgePensionFormMessage.applicant.applicantInfoName,
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const nationalRegistry = application.externalData
-                      .nationalRegistry.data as NationalRegistryIndividual
-                    return nationalRegistry.fullName
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.ID',
-                  title:
-                    socialInsuranceAdministrationMessage.confirm.nationalId,
-                  format: '######-####',
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) =>
-                    kennitala.format(application.applicant),
-                }),
-                buildTextField({
-                  id: 'applicantInfo.address',
-                  title:
-                    oldAgePensionFormMessage.applicant.applicantInfoAddress,
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const nationalRegistry = application.externalData
-                      .nationalRegistry.data as NationalRegistryIndividual
-                    return nationalRegistry?.address?.streetAddress
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.postcode',
-                  title:
-                    oldAgePensionFormMessage.applicant.applicantInfoPostalcode,
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const nationalRegistry = application.externalData
-                      .nationalRegistry.data as NationalRegistryIndividual
-                    return nationalRegistry?.address?.postalCode
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.municipality',
-                  title:
-                    oldAgePensionFormMessage.applicant
-                      .applicantInfoMunicipality,
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const nationalRegistry = application.externalData
-                      .nationalRegistry.data as NationalRegistryIndividual
-                    return nationalRegistry?.address?.locality
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.email',
-                  title:
-                    socialInsuranceAdministrationMessage.info.applicantEmail,
-                  width: 'half',
-                  variant: 'email',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.emailAddress
-                  },
-                }),
-                buildPhoneField({
-                  id: 'applicantInfo.phonenumber',
-                  title:
-                    socialInsuranceAdministrationMessage.info
-                      .applicantPhonenumber,
-                  width: 'half',
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.phoneNumber
-                  },
-                }),
-              ],
             }),
           ],
         }),

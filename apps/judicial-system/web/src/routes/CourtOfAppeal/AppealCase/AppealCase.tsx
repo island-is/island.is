@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -38,7 +38,7 @@ import { appealCase as strings } from './AppealCase.strings'
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type AssistantSelectOption = ReactSelectOption & { assistant: User }
 
-const AppealCase = () => {
+const AppealCase: FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const {
     updateCase,
@@ -185,40 +185,37 @@ const AppealCase = () => {
           <Box component="section" marginBottom={8}>
             <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
             <BlueBox>
-              {defaultJudges.map((judge, index) => {
-                return (
-                  <Box marginBottom={2} key={`judgeBox${index + 1}`}>
-                    <Select
-                      name="judge"
-                      label={formatMessage(
-                        index === 0
-                          ? strings.judgeForepersonLabel
-                          : strings.judgeLabel,
-                      )}
-                      placeholder={formatMessage(
-                        index === 0
-                          ? strings.judgeForepersonPlaceholder
-                          : strings.judgePlaceholder,
-                      )}
-                      value={
-                        judge?.id
-                          ? { label: judge.name ?? '', value: judge.id }
-                          : undefined
-                      }
-                      options={judges}
-                      onChange={(selectedOption) => {
-                        const judgeUpdate = (
-                          selectedOption as JudgeSelectOption
-                        ).judge.id
-                        const judgeProperty = `appealJudge${index + 1}Id`
+              {defaultJudges.map((judge, index) => (
+                <Box marginBottom={2} key={`${index}`}>
+                  <Select
+                    name="judge"
+                    label={formatMessage(
+                      index === 0
+                        ? strings.judgeForepersonLabel
+                        : strings.judgeLabel,
+                    )}
+                    placeholder={formatMessage(
+                      index === 0
+                        ? strings.judgeForepersonPlaceholder
+                        : strings.judgePlaceholder,
+                    )}
+                    value={
+                      judge?.id
+                        ? { label: judge.name ?? '', value: judge.id }
+                        : undefined
+                    }
+                    options={judges}
+                    onChange={(selectedOption) => {
+                      const judgeUpdate = (selectedOption as JudgeSelectOption)
+                        .judge.id
+                      const judgeProperty = `appealJudge${index + 1}Id`
 
-                        handleChange(judgeUpdate, judgeProperty)
-                      }}
-                      required
-                    />
-                  </Box>
-                )
-              })}
+                      handleChange(judgeUpdate, judgeProperty)
+                    }}
+                    required
+                  />
+                </Box>
+              ))}
             </BlueBox>
           </Box>
         </FormContentContainer>

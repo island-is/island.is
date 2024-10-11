@@ -6,6 +6,11 @@ import {
   CreatedAt,
   UpdatedAt,
 } from 'sequelize-typescript'
+import type {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 
 @Table({
   tableName: 'user_device_tokens',
@@ -16,20 +21,23 @@ import {
     },
   ],
 })
-export class UserDeviceTokens extends Model<UserDeviceTokens> {
+export class UserDeviceTokens extends Model<
+  InferAttributes<UserDeviceTokens>,
+  InferCreationAttributes<UserDeviceTokens>
+> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @CreatedAt
-  created!: Date
+  created!: CreationOptional<Date>
 
   @UpdatedAt
-  modified!: Date
+  modified!: CreationOptional<Date>
 
   @Column({
     type: DataType.STRING,

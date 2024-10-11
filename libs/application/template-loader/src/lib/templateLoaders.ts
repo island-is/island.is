@@ -63,9 +63,15 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/mortgage-certificate'),
   [ApplicationTypes.NO_DEBT_CERTIFICATE]: () =>
     import('@island.is/application/templates/no-debt-certificate'),
+  [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: () =>
+    import('@island.is/application/templates/financial-statement-cemetery'),
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: () =>
     import('@island.is/application/templates/financial-statements-inao'),
-  [ApplicationTypes.OPERATING_LCENSE]: () =>
+  [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: () =>
+    import(
+      '@island.is/application/templates/financial-statement-individual-election'
+    ),
+  [ApplicationTypes.OPERATING_LICENSE]: () =>
     import('@island.is/application/templates/operating-license'),
   [ApplicationTypes.MARRIAGE_CONDITIONS]: () =>
     import('@island.is/application/templates/marriage-conditions'),
@@ -129,13 +135,21 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.CAR_RECYCLING]: () =>
     import('@island.is/application/templates/car-recycling'),
-  [ApplicationTypes.SIGNATURE_LIST_CREATION]: () =>
+  [ApplicationTypes.PRESIDENTIAL_LIST_CREATION]: () =>
     import(
-      '@island.is/application/templates/signature-collection/signature-list-creation'
+      '@island.is/application/templates/signature-collection/presidential-list-creation'
     ),
-  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: () =>
+  [ApplicationTypes.PRESIDENTIAL_LIST_SIGNING]: () =>
     import(
-      '@island.is/application/templates/signature-collection/signature-list-signing'
+      '@island.is/application/templates/signature-collection/presidential-list-signing'
+    ),
+  [ApplicationTypes.PARLIAMENTARY_LIST_CREATION]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/parliamentary-list-creation'
+    ),
+  [ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/parliamentary-list-signing'
     ),
   [ApplicationTypes.CITIZENSHIP]: () =>
     import(
@@ -146,11 +160,13 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
       '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
     ),
   [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: () =>
-    import('@island.is/application-templates-official-journal-of-iceland'),
+    import('@island.is/application/templates/official-journal-of-iceland'),
   [ApplicationTypes.ENERGY_FUNDS]: () =>
     import('@island.is/application/templates/energy-funds'),
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: () =>
     import('@island.is/application/templates/healthcare-license-certificate'),
+  [ApplicationTypes.HEALTHCARE_WORK_PERMIT]: () =>
+    import('@island.is/application/templates/healthcare-work-permit'),
   [ApplicationTypes.PENSION_SUPPLEMENT]: () =>
     import(
       '@island.is/application/templates/social-insurance-administration/pension-supplement'
@@ -169,8 +185,22 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/aosh/deregister-machine'),
   [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: () =>
     import('@island.is/application/templates/grindavik-housing-buyout'),
+  [ApplicationTypes.STREET_REGISTRATION]: () =>
+    import('@island.is/application/templates/aosh/street-registration'),
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: () =>
     import('@island.is/application/templates/aosh/request-for-inspection'),
+  [ApplicationTypes.ID_CARD]: () =>
+    import('@island.is/application/templates/id-card'),
+  [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: () =>
+    import('@island.is/application/templates/health-insurance-declaration'),
+  [ApplicationTypes.INCOME_PLAN]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/income-plan'
+    ),
+  [ApplicationTypes.NEW_PRIMARY_SCHOOL]: () =>
+    import('@island.is/application/templates/new-primary-school'),
+  [ApplicationTypes.MACHINE_REGISTRATION]: () =>
+    import('@island.is/application/templates/aosh/register-new-machine'),
 }
 
 export default templates

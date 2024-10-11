@@ -3,5 +3,4 @@ export enum ModeOfDelivery {
   REMOTE = 'REMOTE',
   ONLINE = 'ONLINE',
   MIXED = 'MIXED',
-  UNDEFINED = 'UNDEFINED', //TODO possibly stop allowing this value
 }

@@ -21,6 +21,7 @@ import { createTestingApplicationModule } from './createTestingApplicationModule
 import type { User } from '@island.is/auth-nest-tools'
 import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 import { DirectTaxPaymentService } from '../../directTaxPayment'
+import { ChildrenService } from '../../children'
 
 interface Then {
   result: ApplicationModel
@@ -45,6 +46,7 @@ describe('ApplicationController - Update', () => {
   let mockMunicipalityService: MunicipalityService
   let mockEmailService: EmailService
   let mockDirectTaxPaymentService: DirectTaxPaymentService
+  let mockChildrenService: ChildrenService
 
   beforeEach(async () => {
     const {
@@ -57,6 +59,7 @@ describe('ApplicationController - Update', () => {
       municipalityService,
       emailService,
       directTaxPaymentService,
+      childrenService,
     } = await createTestingApplicationModule()
 
     mockApplicationModel = applicationModel
@@ -67,6 +70,7 @@ describe('ApplicationController - Update', () => {
     mockMunicipalityService = municipalityService
     mockEmailService = emailService
     mockDirectTaxPaymentService = directTaxPaymentService
+    mockChildrenService = childrenService
 
     givenWhenThen = async (
       id: string,
@@ -158,6 +162,8 @@ describe('ApplicationController - Update', () => {
       const getDirectTaxPayment =
         mockDirectTaxPaymentService.getByApplicationId as jest.Mock
       getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
+      const getChildren = mockChildrenService.findById as jest.Mock
+      getChildren.mockReturnValueOnce(Promise.resolve([]))
 
       then = await givenWhenThen(id, applicationUpdate, user)
     })
@@ -273,6 +279,8 @@ describe('ApplicationController - Update', () => {
       const getDirectTaxPayment =
         mockDirectTaxPaymentService.getByApplicationId as jest.Mock
       getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
+      const getChildren = mockChildrenService.findById as jest.Mock
+      getChildren.mockReturnValueOnce(Promise.resolve([]))
     })
 
     describe('Allowed events', () => {
@@ -308,6 +316,7 @@ describe('ApplicationController - Update', () => {
         ${ApplicationEventType.APPROVED}
         ${ApplicationEventType.STAFFCOMMENT}
         ${ApplicationEventType.ASSIGNCASE}
+        ${ApplicationEventType.DATECHANGED}
         ${ApplicationEventType.NEW}
         ${ApplicationEventType.INPROGRESS}
       `.describe('$event', ({ event }) => {
@@ -382,6 +391,8 @@ describe('ApplicationController - Update', () => {
       const getDirectTaxPayment =
         mockDirectTaxPaymentService.getByApplicationId as jest.Mock
       getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
+      const getChildren = mockChildrenService.findById as jest.Mock
+      getChildren.mockReturnValueOnce(Promise.resolve([]))
     })
 
     describe('Forbidden events', () => {
@@ -413,6 +424,7 @@ describe('ApplicationController - Update', () => {
         ${ApplicationEventType.APPROVED}
         ${ApplicationEventType.STAFFCOMMENT}
         ${ApplicationEventType.ASSIGNCASE}
+        ${ApplicationEventType.DATECHANGED}
         ${ApplicationEventType.NEW}
         ${ApplicationEventType.INPROGRESS}
       `.describe('$event', ({ event }) => {
@@ -498,6 +510,8 @@ describe('ApplicationController - Update', () => {
       const getDirectTaxPayment =
         mockDirectTaxPaymentService.getByApplicationId as jest.Mock
       getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
+      const getChildren = mockChildrenService.findById as jest.Mock
+      getChildren.mockReturnValueOnce(Promise.resolve([]))
 
       then = await givenWhenThen(id, applicationUpdate, staff)
     })

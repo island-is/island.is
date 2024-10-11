@@ -43,20 +43,37 @@ export const formatValueForPresentation = (
 
       let divider = 1
       let postfix = ''
-      let precision = 0
+      let precision = increasePrecisionBy
 
       if (reduceAndRoundValue && value >= 1e6) {
         divider = 1e6
         postfix = messages[activeLocale].millionPostfix
-        precision = 1 + increasePrecisionBy
+        precision += 1
       } else if (reduceAndRoundValue && value >= 1e4) {
         divider = 1e3
         postfix = messages[activeLocale].thousandPostfix
       }
 
-      const v = round(value / divider, precision)
+      let v = value
 
-      return `${v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}${postfix}`
+      if (reduceAndRoundValue) {
+        v = round(value / divider, precision)
+      }
+
+      const thousandSeparator = messages[activeLocale].thousandSeparator ?? '.'
+      const fractionSeparator = messages[activeLocale].fractionSeparator ?? ','
+
+      const [integer, fraction] = v.toString().split('.')
+
+      // Add thousand separator
+      let result = integer.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator)
+
+      // Add fraction separator
+      if (fraction) {
+        result += `${fractionSeparator}${fraction}`
+      }
+
+      return `${result}${postfix}`
     }
   } catch {
     // pass
@@ -67,19 +84,28 @@ export const formatValueForPresentation = (
 
 export const formatPercentageForPresentation = (
   percentage: number,
-  precision: number | undefined = undefined,
+  numberOfDecimals = 1,
 ) => {
-  return `${round(percentage * 100, precision ?? percentage < 0.1 ? 1 : 0)}%`
+  return `${round(percentage * 100, numberOfDecimals)}%`
 }
 
 export const createTickFormatter =
-  (activeLocale: Locale, xAxisValueType?: string, xAxisFormat?: string) =>
+  (
+    activeLocale: Locale,
+    xAxisValueType?: string,
+    xAxisFormat?: string,
+    reduceAndRoundValue?: boolean,
+  ) =>
   (value: unknown) => {
     // Date is the default is value type is undefined
     if (!xAxisValueType || xAxisValueType === 'date') {
       return formatDate(activeLocale, value as Date, xAxisFormat || undefined)
     } else if (xAxisValueType === 'number') {
-      return formatValueForPresentation(activeLocale, value as string | number)
+      return formatValueForPresentation(
+        activeLocale,
+        value as string | number,
+        reduceAndRoundValue ?? true,
+      )
     }
 
     return value as string

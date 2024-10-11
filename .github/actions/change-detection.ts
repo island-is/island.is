@@ -29,36 +29,43 @@ export async function findBestGoodRefBranch(
   baseBranch: string,
   workflowId: WorkflowID,
 ): Promise<LastGoodBuild> {
-  const log = app.extend('findBestGoodRefBranch')
-  log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
-  const commits = await getCommits(git, headBranch, baseBranch, 'HEAD~1')
-  const builds = await githubApi.getLastGoodBranchBuildRun(
-    headBranch,
-    workflowId,
-    commits,
-  )
-  if (builds)
-    return {
-      sha: builds.head_commit,
-      run_number: builds.run_nr,
-      branch: headBranch,
-      ref: builds.head_commit,
+  return new Promise(async (resolve) => {
+    const log = app.extend('findBestGoodRefBranch')
+    log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
+    const commits = await getCommits(git, headBranch, baseBranch, 'HEAD~1')
+    const builds = await githubApi.getLastGoodBranchBuildRun(
+      headBranch,
+      workflowId,
+      commits,
+    )
+    if (builds) {
+      resolve({
+        sha: builds.head_commit,
+        run_number: builds.run_nr,
+        branch: headBranch,
+        ref: builds.head_commit,
+      })
+      return
     }
 
-  const baseCommits = await githubApi.getLastGoodBranchBuildRun(
-    baseBranch,
-    workflowId,
-    commits,
-  )
-  if (baseCommits)
-    return {
-      ref: baseCommits.head_commit,
-      sha: baseCommits.head_commit,
-      run_number: baseCommits.run_nr,
-      branch: baseBranch,
+    const baseCommits = await githubApi.getLastGoodBranchBuildRun(
+      baseBranch,
+      workflowId,
+      commits,
+    )
+    if (baseCommits) {
+      resolve({
+        ref: baseCommits.head_commit,
+        sha: baseCommits.head_commit,
+        run_number: baseCommits.run_nr,
+        branch: baseBranch,
+      })
+      return
     }
 
-  return 'rebuild'
+    resolve('rebuild')
+    return
+  })
 }
 
 /***
@@ -111,82 +118,89 @@ export async function findBestGoodRefPR(
   prBranch: string,
   workflowId: WorkflowID,
 ): Promise<LastGoodBuild> {
-  const log = app.extend('findBestGoodRefPR')
-  log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
-  const lastCommitSha = await git.lastCommit()
-  const prCommits = await getCommits(git, headBranch, baseBranch, 'HEAD')
+  return new Promise(async (resolve) => {
+    const log = app.extend('findBestGoodRefPR')
+    log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
+    const lastCommitSha = await git.lastCommit()
+    const prCommits = await getCommits(git, headBranch, baseBranch, 'HEAD')
 
-  const prRun = await githubApi.getLastGoodPRRun(
-    headBranch,
-    workflowId,
-    prCommits,
-  )
-  const prBuilds: {
-    distance: number
-    hash: string
-    run_nr: number
-    branch: string
-    ref: string
-  }[] = []
-  if (prRun) {
-    log(`Found a PR run candidate: ${JSON.stringify(prRun)}`)
-    try {
-      const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
-      await git.checkoutBranch(tempBranch, prRun.base_commit)
-      log(`Branch checked out`)
-      const mergeCommitSha = await git.merge(prRun.head_commit)
-      log(`Simulated previous PR merge commit`)
-      const distance = await githubApi.getChangedComponents(
+    const prRun = await githubApi.getLastGoodPRRun(
+      headBranch,
+      workflowId,
+      prCommits,
+    )
+    const prBuilds: {
+      distance: number
+      hash: string
+      run_nr: number
+      branch: string
+      ref: string
+    }[] = []
+    if (prRun) {
+      log(`Found a PR run candidate: ${JSON.stringify(prRun)}`)
+      try {
+        const tempBranch = `${headBranch}-${Math.round(
+          Math.random() * 1000000,
+        )}`
+        await git.checkoutBranch(tempBranch, prRun.base_commit)
+        log(`Branch checked out`)
+        const mergeCommitSha = await git.merge(prRun.head_commit)
+        log(`Simulated previous PR merge commit`)
+        const distance = await githubApi.getChangedComponents(
+          git,
+          lastCommitSha,
+          mergeCommitSha,
+        )
+        log(`Affected components since candidate PR run are ${distance}`)
+        prBuilds.push({
+          distance: diffWeight(distance),
+          hash: prRun.head_commit,
+          run_nr: prRun.run_nr,
+          branch: headBranch,
+          ref: mergeCommitSha,
+        })
+      } catch (e) {
+        log(
+          `Error processing PR candidate(${prRun.run_nr}) but continuing: %O`,
+          e,
+        )
+      } finally {
+        await git.checkout(prBranch)
+      }
+    }
+
+    const baseCommits = await getCommits(git, prBranch, baseBranch, 'HEAD~1')
+
+    const baseGoodBuilds = await githubApi.getLastGoodBranchBuildRun(
+      baseBranch,
+      'push',
+      baseCommits,
+    )
+    if (baseGoodBuilds) {
+      let affectedComponents = await githubApi.getChangedComponents(
         git,
         lastCommitSha,
-        mergeCommitSha,
+        baseGoodBuilds.head_commit,
       )
-      log(`Affected components since candidate PR run are ${distance}`)
       prBuilds.push({
-        distance: diffWeight(distance),
-        hash: prRun.head_commit,
-        run_nr: prRun.run_nr,
-        branch: headBranch,
-        ref: mergeCommitSha,
+        distance: diffWeight(affectedComponents),
+        hash: baseGoodBuilds.head_commit,
+        run_nr: baseGoodBuilds.run_nr,
+        branch: baseBranch,
+        ref: baseGoodBuilds.head_commit,
       })
-    } catch (e) {
-      log(
-        `Error processing PR candidate(${prRun.run_nr}) but continuing: %O`,
-        e,
-      )
-    } finally {
-      await git.checkout(prBranch)
     }
-  }
-
-  const baseCommits = await getCommits(git, prBranch, baseBranch, 'HEAD~1')
-
-  const baseGoodBuilds = await githubApi.getLastGoodBranchBuildRun(
-    baseBranch,
-    'push',
-    baseCommits,
-  )
-  if (baseGoodBuilds) {
-    let affectedComponents = await githubApi.getChangedComponents(
-      git,
-      lastCommitSha,
-      baseGoodBuilds.head_commit,
-    )
-    prBuilds.push({
-      distance: diffWeight(affectedComponents),
-      hash: baseGoodBuilds.head_commit,
-      run_nr: baseGoodBuilds.run_nr,
-      branch: baseBranch,
-      ref: baseGoodBuilds.head_commit,
-    })
-  }
-  prBuilds.sort((a, b) => (a.distance > b.distance ? 1 : -1))
-  if (prBuilds.length > 0)
-    return {
-      sha: prBuilds[0].hash,
-      run_number: prBuilds[0].run_nr,
-      branch: prBuilds[0].branch.replace('origin/', ''),
-      ref: prBuilds[0].ref,
+    prBuilds.sort((a, b) => (a.distance > b.distance ? 1 : -1))
+    if (prBuilds.length > 0) {
+      resolve({
+        sha: prBuilds[0].hash,
+        run_number: prBuilds[0].run_nr,
+        branch: prBuilds[0].branch.replace('origin/', ''),
+        ref: prBuilds[0].ref,
+      })
+      return
     }
-  return 'rebuild'
+    resolve('rebuild')
+    return
+  })
 }

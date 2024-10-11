@@ -1,0 +1,7 @@
+export { StudentTranscriptApi as LHIApi } from './gen/fetch'
+export { StudentTrackInstitution as LHIStudentTrackInstitution } from './gen/fetch'
+export { StudentTrack as LHIStudentTrack } from './gen/fetch'
+export { NemandiGetLocaleEnum as LHILocale } from './gen/fetch'
+export { NemandiFerillFerillFileTranscriptGetLocaleEnum as LHITranscriptLocale } from './gen/fetch'
+export { NemandiFerillFerillGetLocaleEnum as LHIFerillLocale } from './gen/fetch'
+export * from './icelandUniversityOfTheArtsCareerClient.config'

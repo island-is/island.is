@@ -15,6 +15,7 @@ import {
   isInvestigationCase,
   isProsecutionUser,
   isRestrictionCase,
+  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
@@ -24,16 +25,14 @@ import {
   CaseState,
   CaseType,
   Gender,
+  IndictmentDecision,
   InstitutionType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
-import {
-  isTrafficViolationIndictment,
-  shouldUseAppealWithdrawnRoutes,
-} from '../../stepHelper'
+import { shouldUseAppealWithdrawnRoutes } from '../../stepHelper'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -399,17 +398,21 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id, type, state } = workingCase
-    const caseHasBeenReceivedByCourt = state === CaseState.RECEIVED
-    const isTrafficViolation = isTrafficViolationIndictment(workingCase)
+    const substepsShouldBeHidden =
+      state === CaseState.RECEIVED ||
+      state === CaseState.WAITING_FOR_CANCELLATION ||
+      router.pathname === `${constants.INDICTMENTS_ADD_FILES_ROUTE}/[id]`
+    const isTrafficViolation = isTrafficViolationCase(workingCase)
 
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       isActive:
         isProsecutionUser(user) &&
         isIndictmentCase(type) &&
+        state !== CaseState.RECEIVED &&
         !isCompletedCase(state),
       // Prosecutor can only view the overview when case has been received by court
-      children: caseHasBeenReceivedByCourt
+      children: substepsShouldBeHidden
         ? []
         : [
             {
@@ -536,11 +539,11 @@ const useSections = (
                 ),
               ),
               href: `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`,
-              isActive: caseHasBeenReceivedByCourt
+              isActive: substepsShouldBeHidden
                 ? false
                 : isActive(constants.INDICTMENTS_CASE_FILES_ROUTE),
               onClick:
-                !isActive(constants.INDICTMENTS_CASE_FILE_ROUTE) &&
+                !isActive(constants.INDICTMENTS_CASE_FILES_ROUTE) &&
                 validateFormStepper(
                   isValid,
                   [
@@ -593,7 +596,6 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id, parentCase, state } = workingCase
-
     return {
       name: formatMessage(sections.courtSection.title),
       isActive:
@@ -893,100 +895,133 @@ const useSections = (
   }
 
   const getIndictmentsCourtSections = (workingCase: Case, user?: User) => {
-    const { id, state } = workingCase
+    const { id, state, indictmentDecision } = workingCase
 
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        (isDistrictCourtUser(user) || isDefenceUser(user)) &&
-        !isCompletedCase(state),
-      children: [
-        {
-          name: formatMessage(sections.indictmentsCourtSection.overview),
-          isActive: isDefenceUser(user)
-            ? false
-            : isActive(constants.INDICTMENTS_COURT_OVERVIEW_ROUTE),
-          href: `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`,
-        },
-        {
-          name: formatMessage(
-            sections.indictmentsCourtSection.receptionAndAssignment,
-          ),
-          isActive: isActive(
-            constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
-          ),
-          href: `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
-          onClick:
-            !isActive(constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE) &&
-            validateFormStepper(isValid, [], workingCase) &&
-            onNavigationTo
-              ? async () =>
-                  await onNavigationTo(
+        (isProsecutionUser(user) && state === CaseState.RECEIVED) ||
+        ((isDistrictCourtUser(user) || isDefenceUser(user)) &&
+          !isCompletedCase(state)),
+      children: isDistrictCourtUser(user)
+        ? [
+            {
+              name: formatMessage(sections.indictmentsCourtSection.overview),
+              isActive: isActive(constants.INDICTMENTS_COURT_OVERVIEW_ROUTE),
+              href: `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`,
+            },
+            {
+              name: formatMessage(
+                sections.indictmentsCourtSection.receptionAndAssignment,
+              ),
+              isActive: isActive(
+                constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+              ),
+              href: `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
+              onClick:
+                !isActive(
+                  constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                ) &&
+                validateFormStepper(isValid, [], workingCase) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(
+                        constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                      )
+                  : undefined,
+            },
+            {
+              name: formatMessage(sections.indictmentsCourtSection.subpoena),
+              isActive: isActive(constants.INDICTMENTS_SUBPOENA_ROUTE),
+              href: `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${id}`,
+              onClick:
+                !isActive(constants.INDICTMENTS_SUBPOENA_ROUTE) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_OVERVIEW_ROUTE,
                     constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
-                  )
-              : undefined,
-        },
-        {
-          name: formatMessage(sections.indictmentsCourtSection.subpoena),
-          isActive: isActive(constants.INDICTMENTS_SUBPOENA_ROUTE),
-          href: `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${id}`,
-          onClick:
-            !isActive(constants.INDICTMENTS_SUBPOENA_ROUTE) &&
-            validateFormStepper(
-              isValid,
-              [
-                constants.INDICTMENTS_OVERVIEW_ROUTE,
-                constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
-              ],
-              workingCase,
-            ) &&
-            onNavigationTo
-              ? async () =>
-                  await onNavigationTo(constants.INDICTMENTS_SUBPOENA_ROUTE)
-              : undefined,
-        },
-        {
-          name: formatMessage(sections.indictmentsCourtSection.defender),
-          isActive: isActive(constants.INDICTMENTS_DEFENDER_ROUTE),
-          href: `${constants.INDICTMENTS_DEFENDER_ROUTE}/${id}`,
-          onClick:
-            !isActive(constants.INDICTMENTS_DEFENDER_ROUTE) &&
-            validateFormStepper(
-              isValid,
-              [
-                constants.INDICTMENTS_OVERVIEW_ROUTE,
-                constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
-                constants.INDICTMENTS_SUBPOENA_ROUTE,
-              ],
-              workingCase,
-            ) &&
-            onNavigationTo
-              ? async () =>
-                  await onNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
-              : undefined,
-        },
-        {
-          name: formatMessage(sections.indictmentsCourtSection.courtRecord),
-          isActive: isActive(constants.INDICTMENTS_COURT_RECORD_ROUTE),
-          href: `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${id}`,
-          onClick:
-            !isActive(constants.INDICTMENTS_COURT_RECORD_ROUTE) &&
-            validateFormStepper(
-              isValid,
-              [
-                constants.INDICTMENTS_OVERVIEW_ROUTE,
-                constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
-                constants.INDICTMENTS_SUBPOENA_ROUTE,
-                constants.INDICTMENTS_DEFENDER_ROUTE,
-              ],
-              workingCase,
-            ) &&
-            onNavigationTo
-              ? async () =>
-                  await onNavigationTo(constants.INDICTMENTS_COURT_RECORD_ROUTE)
-              : undefined,
-        },
-      ],
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(constants.INDICTMENTS_SUBPOENA_ROUTE)
+                  : undefined,
+            },
+            {
+              name: formatMessage(sections.indictmentsCourtSection.defender),
+              isActive: isActive(constants.INDICTMENTS_DEFENDER_ROUTE),
+              href: `${constants.INDICTMENTS_DEFENDER_ROUTE}/${id}`,
+              onClick:
+                !isActive(constants.INDICTMENTS_DEFENDER_ROUTE) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_OVERVIEW_ROUTE,
+                    constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                    constants.INDICTMENTS_SUBPOENA_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+                  : undefined,
+            },
+            {
+              name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+              isActive: isActive(constants.INDICTMENTS_CONCLUSION_ROUTE),
+              href: `${constants.INDICTMENTS_CONCLUSION_ROUTE}/${id}`,
+              onClick:
+                !isActive(constants.INDICTMENTS_CONCLUSION_ROUTE) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_OVERVIEW_ROUTE,
+                    constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                    constants.INDICTMENTS_SUBPOENA_ROUTE,
+                    constants.INDICTMENTS_DEFENDER_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(
+                        constants.INDICTMENTS_CONCLUSION_ROUTE,
+                      )
+                  : undefined,
+            },
+            {
+              name: formatMessage(sections.indictmentsCourtSection.summary),
+              isActive: isActive(constants.INDICTMENTS_SUMMARY_ROUTE),
+              href: `${constants.INDICTMENTS_SUMMARY_ROUTE}/${id}`,
+              onClick:
+                !isActive(constants.INDICTMENTS_SUMMARY_ROUTE) &&
+                /**
+                 * This is a special case where we need to check the intent of the judge
+                 * because this last step should only be clicable if the judge intends to
+                 * close the case.
+                 */
+                indictmentDecision === IndictmentDecision.COMPLETING &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_OVERVIEW_ROUTE,
+                    constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                    constants.INDICTMENTS_SUBPOENA_ROUTE,
+                    constants.INDICTMENTS_DEFENDER_ROUTE,
+                    constants.INDICTMENTS_CONCLUSION_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(constants.INDICTMENTS_SUMMARY_ROUTE)
+                  : undefined,
+            },
+          ]
+        : [],
     }
   }
 
@@ -1195,14 +1230,12 @@ const useSections = (
         name: formatMessage(sections.courtOfAppealSection.appealed),
         isActive:
           !isCourtOfAppealsUser(user) &&
-          (appealState === CaseAppealState.RECEIVED ||
-            appealState === CaseAppealState.APPEALED),
+          appealState === CaseAppealState.APPEALED,
         children: [],
       },
       {
         name: formatMessage(sections.courtOfAppealSection.result),
         isActive:
-          appealState === CaseAppealState.APPEALED ||
           appealState === CaseAppealState.RECEIVED ||
           appealState === CaseAppealState.WITHDRAWN,
         children: isCourtOfAppealsUser(user)

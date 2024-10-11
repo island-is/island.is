@@ -60,23 +60,31 @@ export class VehicleService {
     }
   }
 
-  async updateMileage(permno: string, mileage: number): Promise<boolean> {
+  async updateVehicleInfo(
+    permno: string,
+    mileage: number,
+    plateCount: number,
+    plateLost: boolean,
+  ): Promise<boolean> {
     const findVehicle = await this.findByVehicleId(permno)
     if (findVehicle) {
       findVehicle.mileage = mileage ?? 0
+      findVehicle.plateCount = plateCount
+      findVehicle.plateLost = plateLost
+
       await findVehicle.save()
       return true
     } else {
-      const errorMsg = `failed to update mileage: ${mileage} on vehicle: ${permno}`
+      const errorMsg = `Failed to update vehicleInfo for vehicle: ${permno}`
       this.logger.error(
-        `car-recycling: Failed to update mileage: ${mileage} on vehicle: ${permno.slice(
+        `car-recycling: Failed to update vehicleInfo for vehicle: ${permno.slice(
           -3,
         )}`,
+        { mileage, plateCount, plateLost },
       )
       throw new Error(errorMsg)
     }
   }
-
   async create(vehicle: VehicleModel): Promise<boolean> {
     try {
       // check if vehicle is already in db
@@ -85,6 +93,11 @@ export class VehicleService {
       if (findVehicle) {
         findVehicle.mileage = vehicle.mileage
         if (vehicle.ownerNationalId !== findVehicle.ownerNationalId) {
+          this.logger.info(
+            `car-recycling: Changing owner of the vehicle: ${vehicle.vehicleId.slice(
+              -3,
+            )}`,
+          )
           findVehicle.ownerNationalId = vehicle.ownerNationalId
         }
         await findVehicle.save()

@@ -1,5 +1,6 @@
 import { mock } from 'jest-mock-extended'
 
+import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -9,6 +10,7 @@ import { CourtClientService } from '@island.is/judicial-system/court-client'
 
 import { courtModuleConfig } from '../court.config'
 import { CourtService } from '../court.service'
+import { RobotLog } from '../models/robotLog.model'
 
 export const createTestingCourtModule = async () => {
   const courtModule = await Test.createTestingModule({
@@ -24,6 +26,13 @@ export const createTestingCourtModule = async () => {
           debug: jest.fn(),
           info: jest.fn(),
           error: jest.fn(),
+        },
+      },
+      {
+        provide: getModelToken(RobotLog),
+        useValue: {
+          create: jest.fn(),
+          update: jest.fn(),
         },
       },
       CourtService,

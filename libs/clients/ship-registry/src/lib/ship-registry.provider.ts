@@ -18,7 +18,6 @@ export const ApiConfig = {
       fetchApi: createEnhancedFetch({
         name: 'clients-ship-registry',
         logErrorResponseBody: true,
-        treat400ResponsesAsErrors: true,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {

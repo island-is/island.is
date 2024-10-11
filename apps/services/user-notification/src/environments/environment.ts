@@ -1,5 +1,3 @@
-import { processJob } from '@island.is/infra-nest-server'
-
 let env = process.env
 
 const isDevelopment = env.NODE_ENV === 'development'
@@ -12,24 +10,20 @@ if (!env.NODE_ENV || isDevelopment) {
     SQS_ENDPOINT: 'http://localhost:4566',
     SQS_ACCESS_KEY: 'testing',
     SQS_SECRET_ACCESS_KEY: 'testing',
-    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev',
     ...env,
   }
 }
 
 const required = (name: string): string => env[name] ?? ''
 
-const job = processJob()
-
 export const environment = {
-  appProtocol: required('USER_NOTIFICATION_APP_PROTOCOL'),
-
-  isWorker: job === 'worker', // refactor this
-
-  firebaseCredentials: required('FIREBASE_CREDENTIALS'),
-
   mainQueueName: required('MAIN_QUEUE_NAME'),
   deadLetterQueueName: env.DEAD_LETTER_QUEUE_NAME,
+  auth: {
+    issuer:
+      env.IDENTITY_SERVER_ISSUER_URL ??
+      'https://identity-server.dev01.devland.is',
+  },
 
   sqsConfig: {
     endpoint: env.SQS_ENDPOINT,
@@ -42,24 +36,6 @@ export const environment = {
         },
       }),
   },
-  contentfulAccessToken: env.CONTENTFUL_ACCESS_TOKEN,
-  auth: {
-    issuer:
-      env.IDENTITY_SERVER_ISSUER_URL ??
-      'https://identity-server.dev01.devland.is',
-  },
-
-  emailOptions: isDevelopment
-    ? {
-        useTestAccount: true,
-        useNodemailerApp: env.USE_NODEMAILER_APP === 'true' ?? false,
-      }
-    : {
-        useTestAccount: false,
-        options: {
-          region: env.EMAIL_REGION ?? 'eu-west-1',
-        },
-      },
 }
 
 export type Config = typeof environment

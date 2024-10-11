@@ -30,6 +30,12 @@ export class ChartNumberBox {
 
   @Field({ nullable: true })
   numberBoxDate?: string
+
+  @Field({ nullable: true })
+  reduceAndRoundValue?: boolean
+
+  @Field({ nullable: true })
+  displayTimestamp?: boolean
 }
 
 export const mapChartNumberBox = ({
@@ -48,5 +54,7 @@ export const mapChartNumberBox = ({
       'displayChangeYearOverYear',
     ]),
     numberBoxDate: fields.numberBoxDate ?? undefined,
+    reduceAndRoundValue: fields.reduceAndRoundValue ?? true,
+    displayTimestamp: fields.displayTimestamp ?? false,
   }
 }

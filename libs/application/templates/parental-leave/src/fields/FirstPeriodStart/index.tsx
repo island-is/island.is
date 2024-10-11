@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-
 import { extractRepeaterIndexFromField } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
@@ -9,13 +8,12 @@ import {
   RadioController,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-
 import {
-  getExpectedDateOfBirthOrAdoptionDate,
   getApplicationAnswers,
   getBeginningOfThisMonth,
   isParentalGrant,
   isFosterCareAndAdoption,
+  getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { StartDateOptions } from '../../constants'
@@ -30,15 +28,17 @@ const FirstPeriodStart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const expectedDateOfBirthOrAdoptionDate =
-    getExpectedDateOfBirthOrAdoptionDate(application)
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
+  const expectedDateOfBirthOrAdoptionDateOrBirthDate =
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
   const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
 
   let isDisable = true
-  if (expectedDateOfBirthOrAdoptionDate) {
+  if (expectedDateOfBirthOrAdoptionDateOrBirthDate) {
     const expectedDateTime = new Date(
-      expectedDateOfBirthOrAdoptionDate,
+      expectedDateOfBirthOrAdoptionDateOrBirthDate,
     ).getTime()
     const beginningOfMonth = getBeginningOfThisMonth()
     const today = new Date()
@@ -160,9 +160,10 @@ const FirstPeriodStart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             type="hidden"
             value={
               statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
-              statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH ||
               statefulAnswer === StartDateOptions.ADOPTION_DATE
                 ? expectedDateOfBirthOrAdoptionDate
+                : statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH
+                ? expectedDateOfBirthOrAdoptionDateOrBirthDate
                 : undefined
             }
             {...register(startDateFieldId)}

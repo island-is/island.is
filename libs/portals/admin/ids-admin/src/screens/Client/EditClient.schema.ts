@@ -156,12 +156,10 @@ export const schema = {
     }),
   [ClientFormTypes.delegations]: z
     .object({
-      supportsProcuringHolders: booleanCheckbox,
-      supportsLegalGuardians: booleanCheckbox,
       promptDelegations: booleanCheckbox,
-      supportsPersonalRepresentatives: booleanCheckbox,
-      supportsCustomDelegation: booleanCheckbox,
       requireApiScopes: booleanCheckbox,
+      removedDelegationTypes: zfd.repeatable(z.optional(z.array(z.string()))),
+      addedDelegationTypes: zfd.repeatable(z.optional(z.array(z.string()))),
     })
     .merge(defaultEnvironmentSchema),
   [ClientFormTypes.advancedSettings]: z

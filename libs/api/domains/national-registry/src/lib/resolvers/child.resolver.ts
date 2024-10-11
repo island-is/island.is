@@ -11,8 +11,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
-import { SoffiaService } from '../v1/soffia.service'
-import { FamilyChild } from '../v1/types'
+import { NationalRegistryService } from '../nationalRegistry.service'
+import { FamilyChild } from '../v3/types'
 import { Child } from '../shared/models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -20,7 +20,7 @@ import { Child } from '../shared/models'
 @Resolver(() => Child)
 @Audit({ namespace: '@island.is/api/national-registry' })
 export class ChildResolver {
-  constructor(private readonly soffiaService: SoffiaService) {}
+  constructor(private readonly service: NationalRegistryService) {}
 
   @Query(() => [Child], {
     name: 'nationalRegistryChildren',
@@ -29,14 +29,19 @@ export class ChildResolver {
       'Up for removal. Query children/childCustody for authenticated user instead',
   })
   @Audit()
-  getMyChildren(@CurrentUser() user: AuthUser): Promise<FamilyChild[]> {
-    return this.soffiaService.getChildren(user.nationalId)
+  async getMyChildren(
+    @CurrentUser() user: AuthUser,
+  ): Promise<FamilyChild[] | null> {
+    return this.service.getChildren(user.nationalId)
   }
 
   @ResolveField('legalResidence', () => String, { nullable: true })
   resolveLegalResidence(
     @Parent() { homeAddress, postal }: FamilyChild,
-  ): string {
+  ): string | null {
+    if (!homeAddress || !postal) {
+      return null
+    }
     return `${homeAddress}, ${postal}`
   }
 }

@@ -1,14 +1,6 @@
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
 
-interface PetitionListResponse {
-  endorsementSystemGetGeneralPetitionLists: any
-}
-
-interface PetitionListEndorsementsResponse {
-  endorsementSystemGetGeneralPetitionEndorsements: any
-}
-
 const GetGeneralPetitionLists = gql`
   query endorsementSystemGetGeneralPetitionLists(
     $input: EndorsementPaginationInput!
@@ -27,6 +19,7 @@ const GetGeneralPetitionLists = gql`
         description
         closedDate
         openedDate
+        endorsementCounter
         adminLock
         meta
         owner
@@ -35,58 +28,18 @@ const GetGeneralPetitionLists = gql`
   }
 `
 
-const GetGeneralPetitionListEndorsements = gql`
-  query endorsementSystemGetGeneralPetitionEndorsements(
-    $input: PaginatedEndorsementInput!
-  ) {
-    endorsementSystemGetGeneralPetitionEndorsements(input: $input) {
-      totalCount
-      data {
-        id
-        endorser
-        created
-        meta {
-          fullName
-        }
-      }
-    }
-  }
-`
-
 export const useGetPetitionLists = () => {
-  const { data: endorsementListsResponse } = useQuery<PetitionListResponse>(
-    GetGeneralPetitionLists,
-    {
-      variables: {
-        input: {
-          tags: 'generalPetition',
-          limit: 1000,
-        },
+  const { data, loading } = useQuery(GetGeneralPetitionLists, {
+    variables: {
+      input: {
+        tags: 'generalPetition',
+        limit: 1000,
       },
     },
-  )
+  })
 
-  return (
-    endorsementListsResponse?.endorsementSystemGetGeneralPetitionLists ?? []
-  )
-}
-
-export const useGetPetitionListEndorsements = (listId: string) => {
-  const { data: endorsementListsResponse } =
-    useQuery<PetitionListEndorsementsResponse>(
-      GetGeneralPetitionListEndorsements,
-      {
-        variables: {
-          input: {
-            listId: listId,
-            limit: 1000,
-          },
-        },
-      },
-    )
-
-  return (
-    endorsementListsResponse?.endorsementSystemGetGeneralPetitionEndorsements ??
-    []
-  )
+  return {
+    data: data?.endorsementSystemGetGeneralPetitionLists?.data ?? [],
+    loading,
+  }
 }

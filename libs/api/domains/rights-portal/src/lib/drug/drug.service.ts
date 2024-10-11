@@ -54,7 +54,10 @@ export class DrugService {
   async getCalculations(user: User, input: DrugCalculatorInput) {
     return await this.api
       .withMiddleware(new AuthMiddleware(user as Auth))
-      .drugCalculator(input)
+      .drugCalculator({
+        minarsidurAPIModelsDrugsDrugCalculatorRequestDTO:
+          input.drugCalculatorRequestDTO,
+      })
       .catch(handle404)
   }
 

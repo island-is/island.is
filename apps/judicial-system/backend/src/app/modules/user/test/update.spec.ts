@@ -42,9 +42,9 @@ describe('UserController - Update', () => {
 
     beforeEach(async () => {
       const mockUpdate = mockUserModel.update as jest.Mock
-      mockUpdate.mockReturnValueOnce([1])
+      mockUpdate.mockResolvedValueOnce([1])
       const mockFindByPk = mockUserModel.findByPk as jest.Mock
-      mockFindByPk.mockReturnValueOnce(user)
+      mockFindByPk.mockResolvedValueOnce(user)
 
       then = await givenWhenThen()
     })

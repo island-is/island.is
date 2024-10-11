@@ -317,6 +317,28 @@ export class ProgramBase extends Model<
   @ApiHideProperty()
   @UpdatedAt
   readonly modified!: CreationOptional<Date>
+
+  @ApiProperty({
+    description:
+      'Whether the application period for the program is open and applications can be submitted',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  applicationPeriodOpen!: boolean
+
+  @ApiProperty({
+    description:
+      'Whether applications for the program should be submitted via University Gateway or the application portals of each university',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  applicationInUniversityGateway!: boolean
 }
 /*
   This Model is for program information that are passed into the application, it doesn't need all the values passed to the Program model or ProgramBase so a new model was created with the necessary information
@@ -459,26 +481,4 @@ export class Program extends ProgramBase {
   })
   @HasMany(() => ProgramExtraApplicationField)
   extraApplicationFields?: ProgramExtraApplicationField[]
-
-  @ApiProperty({
-    description:
-      'Whether the application period for the program is open and applications can be submitted',
-    example: true,
-  })
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-  })
-  applicationPeriodOpen!: boolean
-
-  @ApiProperty({
-    description:
-      'Whether applications for the program should be submitted via University Gateway or the application portals of each university',
-    example: true,
-  })
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-  })
-  applicationInUniversityGateway!: boolean
 }

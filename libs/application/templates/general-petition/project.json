@@ -3,21 +3,16 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/general-petition/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/general-petition/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/general-petition/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/general-petition/jest.config.ts"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/application/templates/general-petition"
@@ -46,7 +41,6 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
           "yarn start application-system-api $NX_OPTIONS &",
           "yarn start application-system-form $NX_OPTIONS &",
           "yarn start services-endorsements-api $NX_OPTIONS &",
@@ -62,6 +56,5 @@
       },
       "outputs": ["{projectRoot}/src/types/schema.ts"]
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }

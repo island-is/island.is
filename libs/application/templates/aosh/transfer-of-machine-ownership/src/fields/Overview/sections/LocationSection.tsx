@@ -44,6 +44,13 @@ export const LocationSection: FC<
               ? `${location.address} - ${location.postCode}`
               : formatMessage(overview.labels.noLocation)}
           </Text>
+          <Text color="dark400">
+            {location?.moreInfo
+              ? `${location.moreInfo.slice(0, 25)}${
+                  location.moreInfo.length > 25 ? '...' : ''
+                }`
+              : ''}
+          </Text>
         </GridColumn>
       </GridRow>
     </ReviewGroup>

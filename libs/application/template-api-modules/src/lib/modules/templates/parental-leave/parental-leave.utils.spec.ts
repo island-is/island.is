@@ -161,6 +161,7 @@ describe('getEmployer', () => {
   it('should return employer if applicant is employee', () => {
     const expectedEmail = 'employer@test.test'
     const expectedNationalRegistryId = '1234567889'
+    const expectedApproverNationalRegistryId = '1234567899'
 
     set(application.answers, 'employer.email', expectedEmail)
     set(
@@ -168,11 +169,17 @@ describe('getEmployer', () => {
       'employerNationalRegistryId',
       expectedNationalRegistryId,
     )
+    set(
+      application.answers,
+      'employerReviewerNationalRegistryId',
+      expectedApproverNationalRegistryId,
+    )
 
     expect(getEmployer(application)).toEqual([
       {
         email: expectedEmail,
         nationalRegistryId: expectedNationalRegistryId,
+        approverNationalRegistryId: expectedApproverNationalRegistryId,
       },
     ])
   })
@@ -180,6 +187,7 @@ describe('getEmployer', () => {
   it('should return employer array if applicant is employee', () => {
     const expectedEmail1 = 'employer@test.test'
     const expectedNationalRegistryId1 = '1234567889'
+    const expectedApproverNationalRegistryId1 = '1234567899'
 
     set(application.answers, 'employers[0].email', expectedEmail1)
     set(application.answers, 'employers[0].ratio', '100')
@@ -188,11 +196,17 @@ describe('getEmployer', () => {
       'employers[0].companyNationalRegistryId',
       expectedNationalRegistryId1,
     )
+    set(
+      application.answers,
+      'employers[0].reviewerNationalRegistryId',
+      expectedApproverNationalRegistryId1,
+    )
 
     expect(getEmployer(application)).toEqual([
       {
         email: expectedEmail1,
         nationalRegistryId: expectedNationalRegistryId1,
+        approverNationalRegistryId: expectedApproverNationalRegistryId1,
       },
     ])
   })
@@ -200,9 +214,11 @@ describe('getEmployer', () => {
   it('should return multiple employers if applicant is employee', () => {
     const expectedEmail1 = 'employer@test.test'
     const expectedNationalRegistryId1 = '1234567889'
+    const expectedApproverNationalRegistryId1 = '1234567899'
 
     const expectedEmail2 = 'employer2@test2.test2'
     const expectedNationalRegistryId2 = '0987654119'
+    const expectedApproverNationalRegistryId2 = '1134567899'
 
     set(application.answers, 'employers[0].email', expectedEmail1)
     set(application.answers, 'employers[0].ratio', '100')
@@ -210,6 +226,11 @@ describe('getEmployer', () => {
       application.answers,
       'employers[0].companyNationalRegistryId',
       expectedNationalRegistryId1,
+    )
+    set(
+      application.answers,
+      'employers[0].reviewerNationalRegistryId',
+      expectedApproverNationalRegistryId1,
     )
 
     set(application.answers, 'employers[1].email', expectedEmail2)
@@ -219,15 +240,22 @@ describe('getEmployer', () => {
       'employers[1].companyNationalRegistryId',
       expectedNationalRegistryId2,
     )
+    set(
+      application.answers,
+      'employers[1].reviewerNationalRegistryId',
+      expectedApproverNationalRegistryId2,
+    )
 
     expect(getEmployer(application)).toEqual([
       {
         email: expectedEmail1,
         nationalRegistryId: expectedNationalRegistryId1,
+        approverNationalRegistryId: expectedApproverNationalRegistryId1,
       },
       {
         email: expectedEmail2,
         nationalRegistryId: expectedNationalRegistryId2,
+        approverNationalRegistryId: expectedApproverNationalRegistryId2,
       },
     ])
   })
@@ -268,6 +296,7 @@ describe('getPensionFund', () => {
 
     set(application.answers, 'payments.privatePensionFund', expectedId)
     set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
+    set(application.answers, 'payments.usePrivatePensionFund', YES)
 
     expect(getPensionFund(application, true)).toEqual({
       id: expectedId,
@@ -309,6 +338,7 @@ describe('getPrivatePensionFundRatio', () => {
       expectedValue.toString(),
     )
     set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
+    set(application.answers, 'payments.usePrivatePensionFund', YES)
 
     expect(getPrivatePensionFundRatio(application)).toBe(expectedValue)
   })

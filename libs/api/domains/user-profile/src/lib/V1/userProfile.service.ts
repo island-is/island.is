@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import { ApolloError, ForbiddenError } from 'apollo-server-express'
+import { ForbiddenError } from 'apollo-server-express'
 
 import {
   ConfirmationDtoResponse,
@@ -9,7 +9,6 @@ import {
   UserProfileApi,
   UserProfileControllerCreateRequest,
   UserProfileControllerUpdateRequest,
-  V2MeApi,
 } from '@island.is/clients/user-profile'
 import { handle204, handle404 } from '@island.is/clients/middlewares'
 import { UpdateUserProfileInput } from '../dto/updateUserProfileInput'
@@ -22,18 +21,6 @@ import { UserProfile } from '../userProfile.model'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from '../islykill.service'
 import { DataStatus } from '../types/dataStatus.enum'
-
-/** Category to attach each log message to */
-const LOG_CATEGORY = 'userprofile-service'
-
-// eslint-disable-next-line
-const handleError = (error: any, details?: string) => {
-  logger.error(details || 'Userprofile error', {
-    error: JSON.stringify(error),
-    category: LOG_CATEGORY,
-  })
-  throw new ApolloError('Failed to resolve request', error.status)
-}
 
 @Injectable()
 export class UserProfileServiceV1 {
@@ -132,9 +119,9 @@ export class UserProfileServiceV1 {
       createUserProfileDto: createUserDto,
     }
 
-    const userProfileResponse = await this.userProfileApiWithAuth(user)
-      .userProfileControllerCreate(request)
-      .catch((e) => handleError(e, `createUserProfile error`))
+    const userProfileResponse = await this.userProfileApiWithAuth(
+      user,
+    ).userProfileControllerCreate(request)
 
     if (input.email || input.mobilePhoneNumber) {
       const islyklarData = await this.islyklarService.getIslykillSettings(
@@ -153,27 +140,19 @@ export class UserProfileServiceV1 {
       }
 
       if (islyklarData.noUserFound) {
-        await this.islyklarService
-          .createIslykillSettings(user.nationalId, {
-            email: emailVerified ? input.email : undefined,
-            mobile: mobileVerified ? input.mobilePhoneNumber : undefined,
-          })
-          .catch((e) =>
-            handleError(e, `createUserProfile:createIslykillSettings error`),
-          )
+        await this.islyklarService.createIslykillSettings(user.nationalId, {
+          email: emailVerified ? input.email : undefined,
+          mobile: mobileVerified ? input.mobilePhoneNumber : undefined,
+        })
       } else {
-        await this.islyklarService
-          .updateIslykillSettings(user.nationalId, {
-            email: emailVerified ? input.email : islyklarData.email,
-            mobile: mobileVerified
-              ? input.mobilePhoneNumber
-              : islyklarData.mobile,
-            bankInfo: islyklarData.bankInfo,
-            canNudge: islyklarData.canNudge,
-          }) // Current version does not return the updated user in the response.
-          .catch((e) =>
-            handleError(e, `createUserProfile:updateIslykillSettings error`),
-          )
+        await this.islyklarService.updateIslykillSettings(user.nationalId, {
+          email: emailVerified ? input.email : islyklarData.email,
+          mobile: mobileVerified
+            ? input.mobilePhoneNumber
+            : islyklarData.mobile,
+          bankInfo: islyklarData.bankInfo,
+          canNudge: islyklarData.canNudge,
+        })
       }
     }
 
@@ -208,11 +187,9 @@ export class UserProfileServiceV1 {
       user.nationalId,
     )
 
-    const updatedUserProfile = await this.userProfileApiWithAuth(user)
-      .userProfileControllerUpdate(request)
-      .catch((e) =>
-        handleError(e, `updateUserProfile:userProfileControllerUpdate error`),
-      )
+    const updatedUserProfile = await this.userProfileApiWithAuth(
+      user,
+    ).userProfileControllerUpdate(request)
 
     const emailVerified = updatedUserProfile.emailStatus === DataStatus.VERIFIED
     const mobileVerified =
@@ -225,33 +202,23 @@ export class UserProfileServiceV1 {
     }
 
     if (islyklarData.noUserFound) {
-      await this.islyklarService
-        .createIslykillSettings(user.nationalId, {
-          email:
-            input.email && emailVerified ? input.email : islyklarData.email,
-          mobile:
-            input.mobilePhoneNumber && mobileVerified
-              ? input.mobilePhoneNumber
-              : islyklarData.mobile,
-        })
-        .catch((e) =>
-          handleError(e, `updateUserProfile:createIslykillSettings error`),
-        )
+      await this.islyklarService.createIslykillSettings(user.nationalId, {
+        email: input.email && emailVerified ? input.email : islyklarData.email,
+        mobile:
+          input.mobilePhoneNumber && mobileVerified
+            ? input.mobilePhoneNumber
+            : islyklarData.mobile,
+      })
     } else {
-      await this.islyklarService
-        .updateIslykillSettings(user.nationalId, {
-          email:
-            input.email && emailVerified ? input.email : islyklarData.email,
-          mobile:
-            input.mobilePhoneNumber && mobileVerified
-              ? input.mobilePhoneNumber
-              : islyklarData.mobile,
-          canNudge: input.canNudge ?? islyklarData.canNudge,
-          bankInfo: input.bankInfo ?? islyklarData.bankInfo,
-        })
-        .catch((e) =>
-          handleError(e, `updateUserProfile:updateIslykillSettings error`),
-        )
+      await this.islyklarService.updateIslykillSettings(user.nationalId, {
+        email: input.email && emailVerified ? input.email : islyklarData.email,
+        mobile:
+          input.mobilePhoneNumber && mobileVerified
+            ? input.mobilePhoneNumber
+            : islyklarData.mobile,
+        canNudge: input.canNudge ?? islyklarData.canNudge,
+        bankInfo: input.bankInfo ?? islyklarData.bankInfo,
+      })
     }
 
     return updatedUserProfile
@@ -262,9 +229,9 @@ export class UserProfileServiceV1 {
     user: User,
   ): Promise<void> {
     const createSmsVerificationDto = { nationalId: user.nationalId, ...input }
-    await this.userProfileApiWithAuth(user)
-      .userProfileControllerCreateSmsVerification({ createSmsVerificationDto })
-      .catch((e) => handleError(e, `createSmsVerification error`))
+    await this.userProfileApiWithAuth(
+      user,
+    ).userProfileControllerCreateSmsVerification({ createSmsVerificationDto })
   }
 
   async createEmailVerification(
@@ -272,19 +239,19 @@ export class UserProfileServiceV1 {
     user: User,
   ): Promise<void> {
     const createEmailVerificationDto = { nationalId: user.nationalId, ...input }
-    await this.userProfileApiWithAuth(user)
-      .userProfileControllerCreateEmailVerification({
-        createEmailVerificationDto,
-      })
-      .catch((e) => handleError(e, `createEmailVerification error`))
+    await this.userProfileApiWithAuth(
+      user,
+    ).userProfileControllerCreateEmailVerification({
+      createEmailVerificationDto,
+    })
   }
 
   async resendEmailVerification(user: User): Promise<void> {
-    await this.userProfileApiWithAuth(user)
-      .userProfileControllerRecreateVerification({
-        nationalId: user.nationalId,
-      })
-      .catch((e) => handleError(e, `resendEmailVerification error`))
+    await this.userProfileApiWithAuth(
+      user,
+    ).userProfileControllerRecreateVerification({
+      nationalId: user.nationalId,
+    })
   }
 
   async confirmSms(
@@ -292,12 +259,12 @@ export class UserProfileServiceV1 {
     user: User,
   ): Promise<ConfirmationDtoResponse> {
     const { ...confirmSmsDto } = input
-    return await this.userProfileApiWithAuth(user)
-      .userProfileControllerConfirmSms({
-        nationalId: user.nationalId,
-        confirmSmsDto,
-      })
-      .catch((e) => handleError(e, `confirmSms error`))
+    return await this.userProfileApiWithAuth(
+      user,
+    ).userProfileControllerConfirmSms({
+      nationalId: user.nationalId,
+      confirmSmsDto,
+    })
   }
 
   async confirmEmail(
@@ -305,11 +272,11 @@ export class UserProfileServiceV1 {
     user: User,
   ): Promise<ConfirmationDtoResponse> {
     const { ...confirmEmailDto } = input
-    return await this.userProfileApiWithAuth(user)
-      .userProfileControllerConfirmEmail({
-        nationalId: user.nationalId,
-        confirmEmailDto,
-      })
-      .catch((e) => handleError(e, `confirmEmail error`))
+    return await this.userProfileApiWithAuth(
+      user,
+    ).userProfileControllerConfirmEmail({
+      nationalId: user.nationalId,
+      confirmEmailDto,
+    })
   }
 }

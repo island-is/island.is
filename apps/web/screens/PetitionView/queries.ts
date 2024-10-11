@@ -1,13 +1,10 @@
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
-
-interface PetitionListResponse {
-  endorsementSystemGetGeneralPetitionList: any
-}
-
-interface PetitionListEndorsementsResponse {
-  endorsementSystemGetGeneralPetitionEndorsements: any
-}
+import {
+  EndorsementList,
+  PaginatedEndorsementResponse,
+} from '@island.is/web/graphql/schema'
+import { pageSize } from './utils'
 
 const GetGeneralPetitionList = gql`
   query endorsementSystemGetGeneralPetitionList(
@@ -33,6 +30,12 @@ const GetGeneralPetitionListEndorsements = gql`
   ) {
     endorsementSystemGetGeneralPetitionEndorsements(input: $input) {
       totalCount
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        startCursor
+        endCursor
+      }
       data {
         id
         endorser
@@ -51,7 +54,7 @@ export const useGetPetitionList = (listId: string) => {
     data: endorsementListsResponse,
     loading,
     error,
-  } = useQuery<PetitionListResponse>(GetGeneralPetitionList, {
+  } = useQuery(GetGeneralPetitionList, {
     variables: {
       input: {
         listId: listId,
@@ -60,28 +63,36 @@ export const useGetPetitionList = (listId: string) => {
   })
 
   const list =
-    endorsementListsResponse?.endorsementSystemGetGeneralPetitionList ?? []
+    (endorsementListsResponse?.endorsementSystemGetGeneralPetitionList as EndorsementList) ??
+    []
   return { list, loading, error }
 }
 
-export const useGetPetitionListEndorsements = (listId: string) => {
-  const { data: endorsementListsResponse, loading: loadingEndorsements } =
-    useQuery<PetitionListEndorsementsResponse>(
-      GetGeneralPetitionListEndorsements,
-      {
-        variables: {
-          input: {
-            listId: listId,
-            limit: 1000,
-          },
-        },
+export const useGetPetitionListEndorsements = (
+  listId: string,
+  cursor?: string,
+  pageDirection?: 'before' | 'after' | '',
+) => {
+  const {
+    data: endorsementListsResponse,
+    loading: loadingEndorsements,
+    refetch,
+  } = useQuery(GetGeneralPetitionListEndorsements, {
+    variables: {
+      input: {
+        before: pageDirection === 'before' ? cursor : '',
+        after: pageDirection === 'after' ? cursor : '',
+        listId: listId,
+        limit: pageSize,
       },
-    )
+    },
+  })
 
   return {
     listEndorsements:
-      endorsementListsResponse?.endorsementSystemGetGeneralPetitionEndorsements ??
+      (endorsementListsResponse?.endorsementSystemGetGeneralPetitionEndorsements as PaginatedEndorsementResponse) ??
       [],
     loadingEndorsements,
+    refetch,
   }
 }

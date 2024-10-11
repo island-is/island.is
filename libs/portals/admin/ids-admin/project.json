@@ -3,15 +3,10 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/admin/ids-admin/src",
   "projectType": "library",
+  "tags": ["scope:portals-admin", "lib:portals-admin"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "libs/portals/admin/ids-admin/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
@@ -24,10 +19,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/portals/admin/ids-admin"],
       "options": {
-        "jestConfig": "libs/portals/admin/ids-admin/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/portals/admin/ids-admin/jest.config.ts"
       }
     }
-  },
-  "tags": ["scope:portals-admin", "lib:portals-admin"]
+  }
 }

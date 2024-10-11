@@ -1,11 +1,11 @@
 import { IsNotEmpty, IsString } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class ConfirmSmsDto {
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
-  readonly code!: string
+  @ApiPropertyOptional()
+  readonly code?: string
 
   @IsNotEmpty()
   @IsString()

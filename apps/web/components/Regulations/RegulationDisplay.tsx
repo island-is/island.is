@@ -1,32 +1,33 @@
-import * as s from './RegulationDisplay.css'
-
 import React, { useState } from 'react'
+
+import { Button, Hidden, LinkV2, Stack, Text } from '@island.is/island-ui/core'
 import {
   HTMLText,
   ISODate,
   prettyName,
   RegulationMaybeDiff,
 } from '@island.is/regulations'
-import { RegulationPageTexts } from './RegulationTexts.types'
-import { Button, Stack, Text, Hidden, Link } from '@island.is/island-ui/core'
 import { Sticky } from '@island.is/web/components'
-import { RegulationLayout } from './RegulationLayout'
-import { useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { RegulationStatus } from './RegulationStatus'
-import { Appendixes } from './Appendixes'
-import { HTMLBox } from './HTMLBox'
-import { CommentsBox } from './CommentsBox'
-import { Disclaimer } from './Disclaimer'
-import { RegulationInfoBox } from './RegulationInfoBox'
-import { RegulationEffectsBox } from './RegulationEffectsBox'
-import { RegulationChangelog } from './RegulationChangelog'
+
 import { AffectingRegulations } from './AffectingRegulations'
-import { RegulationTimeline } from './RegulationTimeline'
+import { Appendixes } from './Appendixes'
+import { CommentsBox } from './CommentsBox'
 import { DiffModeToggle } from './DiffModeToggle'
+import { Disclaimer } from './Disclaimer'
 import { HistoryStepper } from './HistoryStepper'
-import { useRegulationIndexer } from './useRegulationIndexer'
+import { HTMLBox } from './HTMLBox'
+import { RegulationChangelog } from './RegulationChangelog'
+import { RegulationEffectsBox } from './RegulationEffectsBox'
 import { RegulationIndex } from './RegulationIndex'
+import { RegulationInfoBox } from './RegulationInfoBox'
+import { RegulationLayout } from './RegulationLayout'
+import { RegulationStatus } from './RegulationStatus'
+import { RegulationPageTexts } from './RegulationTexts.types'
+import { RegulationTimeline } from './RegulationTimeline'
+import { useRegulationLinkResolver } from './regulationUtils'
+import { useRegulationIndexer } from './useRegulationIndexer'
+import * as s from './RegulationDisplay.css'
 
 // ---------------------------------------------------------------------------
 
@@ -149,9 +150,9 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
                   size="small"
                   variant="text"
                 >
-                  <Link href={linkResolver('regulationshome').href}>
+                  <LinkV2 href={linkResolver('regulationshome').href}>
                     {txt('goHome')}
-                  </Link>
+                  </LinkV2>
                 </Button>
               </Hidden>
 

@@ -24,6 +24,8 @@ import { getEditUrl } from './routing'
 import { createHash } from 'crypto'
 import { RegulationDraftTypes, StepNames } from '../types'
 
+export const fileUrl = 'https://files.reglugerd.is'
+
 type QueryResult<T> =
   | {
       data: T
@@ -44,8 +46,10 @@ type QueryResult<T> =
 // ---------------------------------------------------------------------------
 
 export const CreatePresignedPostMutation = gql`
-  mutation CreatePresignedPostMutation($input: CreatePresignedPostInput!) {
-    createPresignedPost(input: $input)
+  mutation CreatePresignedPostMutation(
+    $input: CreateRegulationPresignedPostInput!
+  ) {
+    regulationCreatePresignedPost(input: $input)
   }
 `
 export type UploadingState =
@@ -95,7 +99,7 @@ export const useS3Upload = () => {
           },
         },
       })
-      return post.data?.createPresignedPost.data
+      return post.data?.regulationCreatePresignedPost.data
     } catch (error) {
       setUploadStatus({
         uploading: false,
@@ -133,7 +137,7 @@ export const useS3Upload = () => {
         })
         return
       }
-      const location = `https://files.reglugerd.is/${key}`
+      const location = `${fileUrl}/${key}`
       setUploadLocation(location)
       setUploadStatus({ uploading: false })
     })

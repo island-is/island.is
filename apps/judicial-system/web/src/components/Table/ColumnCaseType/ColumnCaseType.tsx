@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -15,7 +15,7 @@ interface Props {
   parentCaseId?: string | null
 }
 
-const ColumnCaseType: React.FC<Props> = ({ type, decision, parentCaseId }) => {
+const ColumnCaseType: FC<Props> = ({ type, decision, parentCaseId }) => {
   const { formatMessage } = useIntl()
 
   return (

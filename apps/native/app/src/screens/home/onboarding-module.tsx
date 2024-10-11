@@ -4,7 +4,7 @@ import { SafeAreaView, TouchableOpacity } from 'react-native'
 import { useTheme } from 'styled-components/native'
 import illustration1 from '../../assets/illustrations/digital-services-m3.png'
 import illustration3 from '../../assets/illustrations/le-company-s2.png'
-import illustration2 from '../../assets/illustrations/le-retirement-s3.png'
+import illustration2 from '../../assets/illustrations/le-retirement-s3-large.png'
 import illustration4 from '../../assets/illustrations/le_jobs_s5.png'
 
 import { useIntl } from 'react-intl'

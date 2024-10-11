@@ -1,37 +1,16 @@
-import { Injectable, Inject } from '@nestjs/common'
+import {
+  Injectable,
+  Inject,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import * as firebaseAdmin from 'firebase-admin'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Notification } from './types'
-import { isDefined } from './utils'
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { V2UsersApi } from '@island.is/clients/user-profile'
-
-export class PushNotificationError extends Error {
-  constructor(public readonly firebaseErrors: firebaseAdmin.FirebaseError[]) {
-    super(firebaseErrors.map((e) => e.message).join('. '))
-  }
-}
-
-// invalid/outdated token errors are expected
-// https://firebase.google.com/docs/cloud-messaging/manage-tokens#detect-invalid-token-responses-from-the-fcm-backend
-const isTokenError = (e: firebaseAdmin.FirebaseError): boolean => {
-  // NB: if there is an issue with the push token we want to ignore the error.
-  // If there is an error with any other request parameters we want to scream
-  // error so we can fix it.
-  // Firebase responds with invalid-argument for both invalid push tokens
-  // and any other issues with the request parameters. The error code docs
-  // (https://firebase.google.com/docs/reference/fcm/rest/v1/ErrorCode) says
-  // that the server responds with which field is invalid, but the FirebaseError
-  // contains no such information, which means we have no way to tell the
-  // difference other than inspecting the error message, which is really not
-  // ideal since technically it might change at any time without notice.
-  return (
-    (e.code === 'messaging/invalid-argument' &&
-      e.message.includes('not a valid FCM registration token')) ||
-    e.code === 'messaging/registration-token-not-registered'
-  )
-}
+import type { FirebaseError } from 'firebase-admin/lib/utils/error'
 
 @Injectable()
 export class NotificationDispatchService {
@@ -45,55 +24,17 @@ export class NotificationDispatchService {
     notification,
     nationalId,
     messageId,
+    notificationId,
   }: {
     notification: Notification
     nationalId: string
     messageId: string
+    notificationId?: number | null
   }): Promise<void> {
-    const deviceTokensResponse =
-      await this.userProfileApi.userTokenControllerFindUserDeviceToken({
-        xParamNationalId: nationalId,
-      })
-
-    const tokens = deviceTokensResponse.map((token) => token.deviceToken)
+    const tokens = await this.getDeviceTokens(nationalId, messageId)
 
     if (tokens.length === 0) {
-      this.logger.info('No push-notification tokens found for user', {
-        messageId,
-      })
       return
-    } else {
-      this.logger.info(
-        `Found user push-notification tokens (${tokens.length})`,
-        { messageId },
-      )
-    }
-
-    const multiCastMessage = {
-      tokens,
-      notification: {
-        title: notification.title,
-        body: notification.body,
-      },
-
-      ...(notification.category && {
-        apns: {
-          payload: {
-            aps: {
-              category: notification.category,
-            },
-          },
-        },
-      }),
-      data: {
-        createdAt: new Date().toISOString(),
-        messageId,
-        ...(notification.appURI && {
-          url: notification.appURI,
-          islandIsUrl: notification.appURI,
-        }),
-        ...(notification.dataCopy && { copy: notification.dataCopy }),
-      },
     }
 
     this.logger.info(`Notification content for message (${messageId})`, {
@@ -101,42 +42,149 @@ export class NotificationDispatchService {
       ...notification,
     })
 
-    const { responses, successCount } = await this.firebase
-      .messaging()
-      .sendMulticast(multiCastMessage)
-
-    const errors = responses
-      .map((r) => r.error)
-      .filter(isDefined)
-      .filter((e) => !isTokenError(e))
-
-    this.logger.info(`Firebase responses for message (${messageId})`, {
-      responses,
-    })
-
-    // throw if unsuccessful and there are unexpected errors
-    if (successCount === 0 && errors.length > 0) {
-      throw new PushNotificationError(errors)
-    }
-
-    // log otherwise
-    for (const r of responses) {
-      if (r.error && isTokenError(r.error)) {
-        this.logger.info('Invalid/outdated push notification token', {
-          error: r.error,
+    for (const token of tokens) {
+      try {
+        await this.sendNotificationToToken(
+          notification,
+          token,
           messageId,
+          notificationId,
+        )
+      } catch (error) {
+        await this.handleSendError(error, nationalId, token, messageId)
+      }
+    }
+  }
+
+  private async getDeviceTokens(
+    nationalId: string,
+    messageId: string,
+  ): Promise<string[]> {
+    try {
+      const deviceTokensResponse =
+        await this.userProfileApi.userTokenControllerFindUserDeviceToken({
+          xParamNationalId: nationalId,
         })
-      } else if (r.error) {
-        this.logger.error('Push notification error', {
-          error: r.error,
+      const tokens = deviceTokensResponse.map((token) => token.deviceToken)
+
+      if (tokens.length === 0) {
+        this.logger.info('No push-notification tokens found for user', {
           messageId,
         })
       } else {
-        this.logger.info(`Push notification success`, {
-          firebaseMessageId: r.messageId,
+        this.logger.info(
+          `Found user push-notification tokens (${tokens.length})`,
+          { messageId },
+        )
+      }
+
+      return tokens
+    } catch (error) {
+      this.logger.error('Error fetching device tokens', { error, messageId })
+      throw new InternalServerErrorException('Error fetching device tokens')
+    }
+  }
+
+  private async sendNotificationToToken(
+    notification: Notification,
+    token: string,
+    messageId: string,
+    notificationId?: number | null,
+  ): Promise<void> {
+    const message = {
+      token,
+      notification: {
+        title: notification.title,
+        body: notification.externalBody,
+      },
+      data: {
+        messageId,
+        clickActionUrl: notification.clickActionUrl,
+        ...(notificationId && { notificationId: String(notificationId) }),
+      },
+    }
+
+    await this.firebase.messaging().send(message)
+    this.logger.info('Push notification success', {
+      messageId,
+    })
+  }
+
+  private async handleSendError(
+    error: FirebaseError,
+    nationalId: string,
+    token: string,
+    messageId: string,
+  ): Promise<void> {
+    switch (error.code) {
+      case 'messaging/invalid-argument':
+      case 'messaging/registration-token-not-registered':
+      case 'messaging/invalid-recipient':
+      case 'messaging/mismatched-credential':
+        this.logger.warn(
+          'Firebase response.error calls for removing deviceToken',
+          {
+            error,
+            messageId,
+          },
+        )
+        await this.removeInvalidToken(nationalId, token, messageId)
+        break
+      case 'messaging/invalid-payload':
+      case 'messaging/invalid-data-key':
+      case 'messaging/invalid-options':
+        this.logger.warn('Invalid message payload or options', {
+          error,
           messageId,
         })
-      }
+        break
+      case 'messaging/quota-exceeded':
+        this.logger.error('Quota exceeded for sending messages', {
+          error,
+          messageId,
+        })
+        break
+      case 'messaging/server-unavailable':
+      case 'messaging/unavailable':
+        this.logger.warn('FCM server unavailable, retrying', {
+          error,
+          messageId,
+        })
+        break
+      case 'messaging/message-rate-exceeded':
+        throw new BadRequestException(error.code)
+      case 'auth/invalid-credential':
+        throw new InternalServerErrorException(error.code)
+      case 'messaging/too-many-messages':
+        this.logger.warn('Too many messages sent to the device', {
+          error,
+          messageId,
+        })
+        break
+      case 'internal-error':
+      case 'messaging/unknown-error':
+      default:
+        this.logger.error('Push notification error', { error, messageId })
+        throw new InternalServerErrorException(error.code)
+    }
+  }
+
+  private async removeInvalidToken(
+    nationalId: string,
+    token: string,
+    messageId: string,
+  ): Promise<void> {
+    try {
+      await this.userProfileApi.userTokenControllerDeleteUserDeviceToken({
+        xParamNationalId: nationalId,
+        deviceToken: token,
+      })
+      this.logger.info('Removed invalid device token', { token, messageId })
+    } catch (error) {
+      this.logger.error('Error removing device token for user', {
+        error,
+        messageId,
+      })
     }
   }
 }

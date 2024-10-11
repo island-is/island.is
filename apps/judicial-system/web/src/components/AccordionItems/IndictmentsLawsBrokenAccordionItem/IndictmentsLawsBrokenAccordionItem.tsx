@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Accordion, AccordionItem, Text } from '@island.is/island-ui/core'
@@ -23,7 +23,7 @@ export const useIndictmentsLawsBroken = (workingCase: Case) => {
   return lawsBroken
 }
 
-const IndictmentsLawsBrokenAccordionItem: React.FC<Props> = (props) => {
+const IndictmentsLawsBrokenAccordionItem: FC<Props> = (props) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)

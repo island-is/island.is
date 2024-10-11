@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 import { Environment } from '@island.is/shared/types'
 
@@ -12,10 +12,6 @@ registerEnumType(Environment, {
 
 @ObjectType('AuthAdminTenantEnvironment')
 export class TenantEnvironment {
-  @Field(() => ID)
-  // Setting the id as optional to reuse this type in tenants.service.ts when creating the tenantMap
-  id?: TenantEnvironmentId
-
   @Field(() => Environment)
   environment!: Environment
 

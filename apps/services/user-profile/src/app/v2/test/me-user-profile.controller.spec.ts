@@ -4,7 +4,7 @@ import subMonths from 'date-fns/subMonths'
 import faker from 'faker'
 import request, { SuperTest, Test } from 'supertest'
 
-import { UserProfileScope } from '@island.is/auth/scopes'
+import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
 import { setupApp, TestApp } from '@island.is/testing/nest'
 import {
   createCurrentUser,
@@ -13,6 +13,7 @@ import {
   createVerificationCode,
 } from '@island.is/testing/fixtures'
 import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
+import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 
 import { FixtureFactory } from '../../../../test/fixture-factory'
 import { AppModule } from '../../app.module'
@@ -26,8 +27,12 @@ import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { NudgeType } from '../../types/nudge-type'
 import { PostNudgeDto } from '../dto/post-nudge.dto'
 import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
+import { ActorProfile } from '../models/actor-profile.model'
+import { ClientType } from '../../types/ClientType'
 
 type StatusFieldType = 'emailStatus' | 'mobileStatus'
+
+const MIGRATION_DATE = new Date('2024-05-10')
 
 const testUserProfile = {
   nationalId: createNationalId(),
@@ -75,6 +80,7 @@ describe('MeUserProfileController', () => {
 
       server = request(app.getHttpServer())
       fixtureFactory = new FixtureFactory(app)
+
       userProfileModel = app.get(getModelToken(UserProfile))
     })
 
@@ -103,6 +109,64 @@ describe('MeUserProfileController', () => {
         locale: null,
         documentNotifications: true,
         needsNudge: null,
+      })
+    })
+
+    it('should return 200 with userprofile and no restrictions since lastNudge is newer then MIGRATION_DATE', async () => {
+      // Arrange
+      await fixtureFactory.createUserProfile({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: true,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: true,
+        lastNudge: addMonths(MIGRATION_DATE, 1),
+        nextNudge: subMonths(new Date(), 1),
+      })
+      // Act
+      const res = await server.get(`/v2/me`)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: true,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: true,
+        locale: null,
+        documentNotifications: true,
+        needsNudge: true,
+        isRestricted: false,
+      })
+    })
+
+    it('should return 200 with userprofile and isRestricted set to true', async () => {
+      // Arrange
+      await fixtureFactory.createUserProfile({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: true,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: true,
+        lastNudge: subMonths(MIGRATION_DATE, 1),
+        nextNudge: subMonths(new Date(), 1),
+      })
+      // Act
+      const res = await server.get(`/v2/me`)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: true,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: true,
+        locale: null,
+        documentNotifications: true,
+        needsNudge: true,
+        isRestricted: true,
       })
     })
 
@@ -136,6 +200,7 @@ describe('MeUserProfileController', () => {
       ${null}                           | ${false}   | ${null}        | ${NUDGE_INTERVAL} | ${null}
       ${null}                           | ${false}   | ${currentDate} | ${NUDGE_INTERVAL} | ${false}
       ${null}                           | ${false}   | ${expiredDate} | ${NUDGE_INTERVAL} | ${true}
+      ${['email', 'mobilePhoneNumber']} | ${true}    | ${expiredDate} | ${SKIP_INTERVAL}  | ${true}
     `(
       'should return needsNudge=$needsNudgeExpected when $verifiedField is set and lastNudge=$lastNudge',
       async ({
@@ -169,7 +234,9 @@ describe('MeUserProfileController', () => {
         })
 
         // Act
-        const res = await server.get('/v2/me')
+        const res = await server.get(
+          `/v2/me?clientType=${ClientType.FIRST_PARTY}`,
+        )
 
         // Assert
         expect(res.status).toEqual(200)
@@ -1118,5 +1185,253 @@ describe('MeUserProfileController', () => {
         expect(userProfile[field]).toBe(dbStatus)
       },
     )
+  })
+
+  describe('GET v2/me/actor-profiles', () => {
+    let app: TestApp = null
+    let server: SuperTest<Test> = null
+    let fixtureFactory: FixtureFactory = null
+    let userProfileModel: typeof UserProfile = null
+    let actorProfileModel: typeof ActorProfile = null
+    let delegationsApi: DelegationsApi = null
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          nationalId: testUserProfile.nationalId,
+          scope: [ApiScope.internal],
+        }),
+      })
+
+      server = request(app.getHttpServer())
+      fixtureFactory = new FixtureFactory(app)
+      delegationsApi = app.get(DelegationsApi)
+      userProfileModel = app.get(getModelToken(UserProfile))
+      actorProfileModel = app.get(getModelToken(ActorProfile))
+    })
+
+    beforeEach(async () => {
+      await userProfileModel.destroy({
+        truncate: true,
+      })
+      await actorProfileModel.destroy({
+        truncate: true,
+      })
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+    it('should return 200 and the actor profile for each delegation', async () => {
+      const testNationalId1 = createNationalId('person')
+      const testNationalId2 = createNationalId('person')
+
+      // Arrange
+      jest
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValue({
+          data: [
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId1,
+              subjectId: null,
+            },
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId2,
+              subjectId: null,
+            },
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
+          },
+          totalCount: 2,
+        })
+
+      // only create actor profile for one of the delegations
+      await fixtureFactory.createActorProfile({
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId1,
+        emailNotifications: false,
+      })
+
+      // Act
+      const res = await server.get('/v2/me/actor-profiles')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body.data[0]).toStrictEqual({
+        fromNationalId: testNationalId1,
+        emailNotifications: false,
+      })
+      // Should default to true because we don't have a record for this delegation
+      expect(res.body.data[1]).toStrictEqual({
+        fromNationalId: testNationalId2,
+        emailNotifications: true,
+      })
+
+      expect(
+        delegationsApi.delegationsControllerGetDelegationRecords,
+      ).toHaveBeenCalledWith({
+        xQueryNationalId: testUserProfile.nationalId,
+        scope: '@island.is/documents',
+        direction: 'incoming',
+      })
+    })
+  })
+
+  describe('PATCH v2/me/actor-profiles/.from-national-id', () => {
+    let app: TestApp = null
+    let server: SuperTest<Test> = null
+    let fixtureFactory: FixtureFactory = null
+    let userProfileModel: typeof UserProfile = null
+    let delegationPreferenceModel: typeof ActorProfile = null
+    let delegationsApi: DelegationsApi = null
+    const testNationalId1 = createNationalId('person')
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          nationalId: testUserProfile.nationalId,
+          scope: [ApiScope.internal],
+        }),
+      })
+
+      server = request(app.getHttpServer())
+      fixtureFactory = new FixtureFactory(app)
+      delegationsApi = app.get(DelegationsApi)
+      userProfileModel = app.get(getModelToken(UserProfile))
+      delegationPreferenceModel = app.get(getModelToken(ActorProfile))
+    })
+
+    beforeEach(async () => {
+      await userProfileModel.destroy({
+        truncate: true,
+      })
+      await delegationPreferenceModel.destroy({
+        truncate: true,
+      })
+
+      jest
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValue({
+          data: [
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId1,
+              subjectId: null,
+            },
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
+          },
+          totalCount: 1,
+        })
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    it('should create new actor profile for delegation if it does not exist', async () => {
+      // Act
+      const res = await server
+        .patch('/v2/me/actor-profiles/.from-national-id')
+        .set('X-Param-From-National-Id', testNationalId1)
+        .send({ emailNotifications: false })
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toStrictEqual({
+        fromNationalId: testNationalId1,
+        emailNotifications: false,
+      })
+
+      const actorProfile = await delegationPreferenceModel.findAll({
+        where: {
+          toNationalId: testUserProfile.nationalId,
+          fromNationalId: testNationalId1,
+        },
+      })
+
+      expect(actorProfile).toHaveLength(1)
+      expect(actorProfile[0]).not.toBeNull()
+      expect(actorProfile[0].emailNotifications).toBe(false)
+      expect(
+        delegationsApi.delegationsControllerGetDelegationRecords,
+      ).toHaveBeenCalledWith({
+        xQueryNationalId: testUserProfile.nationalId,
+        scope: '@island.is/documents',
+        direction: 'incoming',
+      })
+    })
+
+    it('should update existing actor profile', async () => {
+      // Arrange
+      await fixtureFactory.createActorProfile({
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId1,
+        emailNotifications: true,
+      })
+
+      // Act
+      const res = await server
+        .patch('/v2/me/actor-profiles/.from-national-id')
+        .set('X-Param-From-National-Id', testNationalId1)
+        .send({ emailNotifications: false })
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toStrictEqual({
+        fromNationalId: testNationalId1,
+        emailNotifications: false,
+      })
+
+      const actorProfile = await delegationPreferenceModel.findAll({
+        where: {
+          toNationalId: testUserProfile.nationalId,
+          fromNationalId: testNationalId1,
+        },
+      })
+
+      expect(actorProfile).toHaveLength(1)
+      expect(actorProfile[0]).not.toBeNull()
+      expect(actorProfile[0].emailNotifications).toBe(false)
+    })
+
+    it('should throw no content exception if delegation is not found', async () => {
+      // Arrange
+      jest
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValue({
+          data: [],
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
+          },
+          totalCount: 1,
+        })
+
+      // Act
+      const res = await server
+        .patch('/v2/me/actor-profiles/.from-national-id')
+        .set('X-Param-From-National-Id', testNationalId1)
+        .send({ emailNotifications: false })
+
+      // Assert
+      expect(res.status).toEqual(204)
+    })
   })
 })

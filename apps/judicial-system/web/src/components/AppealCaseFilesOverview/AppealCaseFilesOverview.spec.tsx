@@ -1,15 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React from 'react'
 import { IntlProvider } from 'react-intl'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { CaseState } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
-  CaseFile,
   CaseFileCategory,
+  CaseState,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'

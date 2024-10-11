@@ -1,21 +1,24 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
-  IsString,
-  IsOptional,
   IsArray,
   IsDateString,
+  IsOptional,
+  IsString,
   ValidateNested,
 } from 'class-validator'
-import {
-  DelegationScopeDTO,
-  UpdateDelegationScopeDTO,
-} from './delegation-scope.dto'
-import { PersonalRepresentativeRightTypeDTO } from '../../personal-representative/dto/personal-representative-right-type.dto'
+
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
+
+import { PersonalRepresentativeRightTypeDTO } from '../../personal-representative/dto/personal-representative-right-type.dto'
+import {
+  DelegationScopeDTO,
+  UpdateDelegationScopeDTO,
+} from './delegation-scope.dto'
+import { DelegationTypeDto } from './delegation-type.dto'
 
 /** @deprecated - use AuthDelegationProvider from @island.is/shared/types instead */
 export enum DelegationProvider {
@@ -61,6 +64,16 @@ export class DelegationDTO {
   provider!: AuthDelegationProvider
 
   @IsOptional()
+  @ApiPropertyOptional({ nullable: true, type: String })
+  @IsString()
+  referenceId?: string | null
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ nullable: true, type: String })
+  createdByNationalId?: string | null
+
+  @IsOptional()
   @ApiPropertyOptional({ type: [DelegationScopeDTO] })
   @IsArray()
   scopes?: DelegationScopeDTO[]
@@ -71,6 +84,9 @@ export class DelegationDTO {
 
   // This property is only used in delegation index
   rights?: PersonalRepresentativeRightTypeDTO[]
+
+  // This property is only used in delegation index
+  prDelegationType?: DelegationTypeDto[]
 }
 
 export class PatchDelegationDTO {

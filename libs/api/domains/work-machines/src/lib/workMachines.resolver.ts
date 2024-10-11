@@ -28,6 +28,11 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { MachineDetails } from './models/machineDetails'
+import { Model } from './models/model'
+import { GetMachineParentCategoryByTypeAndModelInput } from './dto/getMachineParentCategoryByTypeAndModel.input'
+import { Category } from './models/category'
+import { SubCategory } from './models/subCategory'
+import { TechInfoItem } from './models/techInfoItem'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -104,8 +109,9 @@ export class WorkMachinesResolver {
   async getWorkerMachineDetails(
     @CurrentUser() auth: User,
     @Args('id') id: string,
+    @Args('rel') rel: string,
   ) {
-    return this.workMachinesService.getMachineDetails(auth, id)
+    return this.workMachinesService.getMachineDetails(auth, id, rel)
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
@@ -124,7 +130,59 @@ export class WorkMachinesResolver {
   async getWorkerMachineByRegno(
     @CurrentUser() auth: User,
     @Args('regno') regno: string,
+    @Args('rel') rel: string,
   ) {
-    return this.workMachinesService.getMachineByRegno(auth, regno)
+    return this.workMachinesService.getMachineByRegno(auth, regno, rel)
+  }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => [Model])
+  @Audit()
+  async getMachineModels(
+    @CurrentUser() auth: User,
+    @Args('type') type: string,
+  ) {
+    return this.workMachinesService.getMachineModels(auth, type)
+  }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => [Category])
+  @Audit()
+  async getMachineParentCategoryByTypeAndModel(
+    @CurrentUser() auth: User,
+    @Args('input') input: GetMachineParentCategoryByTypeAndModelInput,
+  ) {
+    return this.workMachinesService.getMachineParentCategoriesTypeModelGet(
+      auth,
+      input,
+    )
+  }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => [SubCategory])
+  @Audit()
+  async getMachineSubCategories(
+    @CurrentUser() auth: User,
+    @Args('parentCategory') parentCategory: string,
+  ) {
+    return this.workMachinesService.getMachineSubCategories(
+      auth,
+      parentCategory,
+    )
+  }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => [TechInfoItem])
+  @Audit()
+  async getTechnicalInfoInputs(
+    @CurrentUser() auth: User,
+    @Args('parentCategory') parentCategory: string,
+    @Args('subCategory') subCategory: string,
+  ) {
+    return this.workMachinesService.getTechnicalInfoInputs(
+      auth,
+      parentCategory,
+      subCategory,
+    )
   }
 }

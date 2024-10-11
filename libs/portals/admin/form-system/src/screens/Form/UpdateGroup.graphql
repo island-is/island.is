@@ -1,0 +1,3 @@
+mutation formSystemUpdateGroup($input: FormSystemUpdateGroupInput!) {
+  formSystemUpdateGroup(input: $input)
+}

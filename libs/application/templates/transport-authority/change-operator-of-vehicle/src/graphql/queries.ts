@@ -44,6 +44,7 @@ export const GET_VEHICLE_OPERATOR_CHANGE_CHECKS_BY_PERMNO = `
         color
         role
         requireMileage
+        mileageReading
       }
     }
   } 

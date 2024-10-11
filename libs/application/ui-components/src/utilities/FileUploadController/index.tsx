@@ -1,4 +1,4 @@
-import React, { FC, useState, useReducer, useEffect } from 'react'
+import { useState, useReducer, useEffect } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { FileRejection } from 'react-dropzone'
@@ -17,9 +17,9 @@ import {
   DELETE_ATTACHMENT,
 } from '@island.is/application/graphql'
 
-import { uploadFileToS3 } from './utils'
 import { Action, ActionTypes } from './types'
 import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
+import { DEFAULT_TOTAL_MAX_SIZE, uploadFileToS3 } from './utils'
 
 type UploadFileAnswer = {
   name: string
@@ -36,7 +36,7 @@ const answerToUploadFile = ({ name, key }: UploadFile): UploadFile => {
   return { name, key, status: 'done' }
 }
 
-function reducer(state: UploadFile[], action: Action) {
+const reducer = (state: UploadFile[], action: Action) => {
   switch (action.type) {
     case ActionTypes.ADD:
       return state.concat(action.payload.newFiles)
@@ -72,12 +72,11 @@ interface FileUploadControllerProps {
   readonly accept?: string
   readonly maxSize?: number
   readonly maxSizeErrorText?: string
+  readonly totalMaxSize?: number
   readonly forImageUpload?: boolean
 }
 
-export const FileUploadController: FC<
-  React.PropsWithChildren<FileUploadControllerProps>
-> = ({
+export const FileUploadController = ({
   id,
   error,
   application,
@@ -88,8 +87,9 @@ export const FileUploadController: FC<
   accept,
   maxSize,
   maxSizeErrorText,
+  totalMaxSize = DEFAULT_TOTAL_MAX_SIZE,
   forImageUpload,
-}) => {
+}: FileUploadControllerProps) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue } = useFormContext()
   const [uploadError, setUploadError] = useState<string | undefined>(error)
@@ -97,6 +97,7 @@ export const FileUploadController: FC<
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
   const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
+  const [sumOfFileSizes, setSumOfFileSizes] = useState(0)
   const initialUploadFiles: UploadFile[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
@@ -163,6 +164,22 @@ export const FileUploadController: FC<
 
     clearErrors(id)
     setUploadError(undefined)
+
+    const totalNewFileSize = addedUniqueFiles
+      .map((f) => f.size)
+      .reduce((a, b) => a + b, 0)
+
+    // Show an error if the sum of the file sizes exceeds totalMaxSize.
+    if (totalMaxSize && totalNewFileSize + sumOfFileSizes > totalMaxSize) {
+      setUploadError(
+        formatMessage(coreErrorMessages.fileMaxSumSizeLimitExceeded, {
+          maxSizeInMb: totalMaxSize / 1000000,
+        }),
+      )
+      return
+    }
+
+    setSumOfFileSizes(totalNewFileSize + sumOfFileSizes)
 
     const newUploadFiles = addedUniqueFiles.map((f) =>
       fileToObject(f, 'uploading'),

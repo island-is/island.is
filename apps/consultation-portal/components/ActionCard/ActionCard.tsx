@@ -59,7 +59,11 @@ const ActionCard = ({ heading, text, button, input }: Props) => {
       dataTestId="action-card"
     >
       <Box display="flex" flexDirection="column">
-        {!!heading && <Text variant="h3">{heading}</Text>}
+        {!!heading && (
+          <Text as="h2" variant="h3">
+            {heading}
+          </Text>
+        )}
         {!!text && <Text paddingTop={1}>{text}</Text>}
       </Box>
       {noInput ? (

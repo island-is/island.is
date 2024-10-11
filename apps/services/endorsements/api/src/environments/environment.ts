@@ -8,12 +8,6 @@ const isProductionEnvironment = process.env.NODE_ENV === 'production'
 
 const devConfig = {
   production: isProductionEnvironment,
-  nationalRegistry: {
-    baseSoapUrl: 'https://localhost:8443',
-    user: process.env.SOFFIA_USER ?? '',
-    password: process.env.SOFFIA_PASS ?? '',
-    host: 'soffiaprufa.skra.is',
-  },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: ['@island.is', '@admin.island.is'],
@@ -26,23 +20,11 @@ const devConfig = {
     sender: 'devland.is',
     address: 'development@island.is',
   },
-  emailOptions: {
-    useTestAccount: false,
-    useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
-    options: {
-      region: 'eu-west-1',
-    },
-  },
+  exportsBucketName: process.env.ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME,
 }
 
 const prodConfig = {
   production: isProductionEnvironment,
-  nationalRegistry: {
-    baseSoapUrl: process.env.SOFFIA_SOAP_URL ?? '',
-    user: process.env.SOFFIA_USER ?? '',
-    password: process.env.SOFFIA_PASS ?? '',
-    host: process.env.SOFFIA_HOST_URL ?? '',
-  },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: ['@island.is', '@admin.island.is'],
@@ -57,13 +39,7 @@ const prodConfig = {
     sender: process.env.EMAIL_FROM_NAME ?? '',
     address: process.env.EMAIL_FROM_ADDRESS ?? '',
   },
-  emailOptions: {
-    useTestAccount: false,
-    useNodemailerApp: false,
-    options: {
-      region: 'eu-west-1',
-    },
-  },
+  exportsBucketName: process.env.ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME,
 }
 
 export default isProductionEnvironment ? prodConfig : devConfig

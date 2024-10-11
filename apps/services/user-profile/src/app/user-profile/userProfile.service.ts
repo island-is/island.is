@@ -25,13 +25,6 @@ export class UserProfileService {
     private readonly userDeviceTokensModel: typeof UserDeviceTokens,
   ) {}
 
-  async findById(id: string): Promise<UserProfile | null> {
-    this.logger.debug(`Finding user profile by id "${id}"`)
-    return this.userProfileModel.findOne({
-      where: { id },
-    })
-  }
-
   async create(userProfileDto: CreateUserProfileDto): Promise<UserProfile> {
     return this.userProfileModel.create({ ...userProfileDto })
   }
@@ -70,11 +63,19 @@ export class UserProfileService {
 
   async addDeviceToken(body: DeviceTokenDto, user: User) {
     try {
+      const token = await this.userDeviceTokensModel.findOne({
+        where: { nationalId: user.nationalId, deviceToken: body.deviceToken },
+      })
+
+      if (token) {
+        return token
+      }
+
       return await this.userDeviceTokensModel.create({
         ...body,
         nationalId: user.nationalId,
       })
-    } catch (e: any) {
+    } catch (e) {
       throw new BadRequestException(e.errors)
     }
   }

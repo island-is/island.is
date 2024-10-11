@@ -33,7 +33,9 @@ export const ActionBox = ({ heading, text, cta }: Props) => {
       columnGap={3}
     >
       <Box display="flex" flexDirection="column">
-        <Text variant="h3">{heading}</Text>
+        <Text as="h3" variant="h3">
+          {heading}
+        </Text>
         <Text paddingTop={1}>{text}</Text>
       </Box>
       <Box

@@ -14,29 +14,33 @@ You can easily be extended to include other transports supported by nodemailer.
 
 ## NestJS Standalone - not recommended
 
-Assuming `environment.emailOptions` implements `EmailServiceOptions`, add the module to your Module imports:
+Add `EmailModule` to your Module imports:
 
 ```typescript
 @Module({
-  imports: [
-    EmailModule.register(environment.emailOptions),
-  ],
+  imports: [EmailModule],
 })
+```
+
+Add `emailModuleConfig` to your App Module imports:
+
+```typescript
+@Module(
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [emailModuleConfig],
+    }),
+  ]
+)
 ```
 
 ## Test account
 
-To enable the test account, pass the following option when importing the EmailModule.
+You can get a preview link in the console by setting the following environment variable:
 
-```typescript
-@Module({
-  imports: [
-    EmailModule.register({
-      ...
-      useTestAccount: true,
-    }),
-  ],
-})
+```bash
+EMAIL_USE_TEST_ACCOUNT=true
 ```
 
 When using the `sendEmail` method, the email will use [Ethereal](https://ethereal.email/) and return a link where you will be able to preview the email on their website.
@@ -54,19 +58,6 @@ To use the app:
 
 ```bash
 USE_NODEMAILER_APP=true
-```
-
-- You will need your module to be configured as follow:
-
-```typescript
-@Module({
-  imports: [
-    EmailModule.register({
-      ...
-      useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
-    }),
-  ],
-})
 ```
 
 ## Design template

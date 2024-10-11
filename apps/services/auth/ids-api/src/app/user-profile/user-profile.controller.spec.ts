@@ -1,5 +1,6 @@
-import request from 'supertest'
+// TODO: Delete this file when shouldAuthIdsApiUseNationalRegistryV3 feature flag is removed
 import * as faker from 'faker'
+import request from 'supertest'
 
 import {
   IndividualDto,
@@ -11,19 +12,20 @@ import {
   CompanyRegistryClientService,
 } from '@island.is/clients/rsk/company-registry'
 import {
-  UserProfile,
-  UserProfileApi,
+  UserProfileDto,
   UserProfileLocaleEnum,
+  V2MeApi,
 } from '@island.is/clients/user-profile'
-import { TestApp } from '@island.is/testing/nest'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Features } from '@island.is/nest/feature-flags'
 import {
   createCurrentUser,
   createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
+import { TestApp } from '@island.is/testing/nest'
 
 import { setupWithAuth } from '../../../test/setup'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mocked<T extends (...args: any) => any>(value: T) {
@@ -69,23 +71,21 @@ function createCompany(): CompanyExtendedInfo {
   } as CompanyExtendedInfo
 }
 
-function createUserProfile(): UserProfile {
+function createUserProfile({ isRestricted = false }): UserProfileDto {
   return {
+    nationalId: faker.datatype.string(),
     email: faker.internet.email(),
-    emailVerified: faker.datatype.boolean(),
     mobilePhoneNumber: faker.phone.phoneNumber(),
-    mobilePhoneNumberVerified: faker.datatype.boolean(),
-    profileImageUrl: faker.internet.url(),
     locale: faker.random.arrayElement(
       Object.values(UserProfileLocaleEnum) as UserProfileLocaleEnum[],
     ),
-    created: faker.date.past(),
-    id: faker.datatype.uuid(),
+    mobilePhoneNumberVerified: faker.datatype.boolean(),
+    emailVerified: faker.datatype.boolean(),
     documentNotifications: faker.datatype.boolean(),
-    emailStatus: faker.datatype.string(),
-    mobileStatus: faker.datatype.string(),
-    modified: faker.date.past(),
-    nationalId: faker.datatype.string(),
+    profileImageUrl: faker.internet.url(),
+    needsNudge: false,
+    emailNotifications: false,
+    isRestricted,
   }
 }
 
@@ -106,6 +106,7 @@ describe('UserProfileController', () => {
           nationalIdType: 'person',
           scope: ['@identityserver.api/authentication'],
         }),
+        features: [Features.userProfileClaims],
       })
       server = request(app.getHttpServer())
     })
@@ -121,7 +122,7 @@ describe('UserProfileController', () => {
           .spyOn(app.get<Logger>(LOGGER_PROVIDER), 'error')
           .mockImplementation()
         mocked(
-          app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
+          app.get(V2MeApi).meUserProfileControllerFindUserProfile,
         ).mockRejectedValue({ status: 404 })
         mocked(
           app.get(NationalRegistryClientService).getIndividual,
@@ -141,7 +142,7 @@ describe('UserProfileController', () => {
           .spyOn(app.get<Logger>(LOGGER_PROVIDER), 'error')
           .mockImplementation()
         mocked(
-          app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
+          app.get(V2MeApi).meUserProfileControllerFindUserProfile,
         ).mockRejectedValue(new Error('500'))
         mocked(
           app.get(NationalRegistryClientService).getIndividual,
@@ -157,12 +158,12 @@ describe('UserProfileController', () => {
 
       it('with full registries should return all claims', async () => {
         // Arrange
-        const userProfile = createUserProfile()
+        const userProfile = createUserProfile({})
         const individual = createNationalRegistryUser({
           genderCode: faker.random.arrayElement(['1', '3']),
         })
         mocked(
-          app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
+          app.get(V2MeApi).meUserProfileControllerFindUserProfile,
         ).mockResolvedValue(userProfile)
         mockNationalRegistry(app.get(NationalRegistryClientService), individual)
 
@@ -196,6 +197,53 @@ describe('UserProfileController', () => {
           name: individual.name,
           phoneNumber: userProfile.mobilePhoneNumber,
           phoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+          picture: userProfile.profileImageUrl,
+        }
+
+        // Act
+        const res = await server.get(path).expect(200)
+
+        // Assert
+        expect(res.body).toEqual(expected)
+      })
+
+      it('with isRestricted should not return email and phone data', async () => {
+        // Arrange
+        const userProfile = createUserProfile({ isRestricted: true })
+        const individual = createNationalRegistryUser({
+          genderCode: faker.random.arrayElement(['1', '3']),
+        })
+        mocked(
+          app.get(V2MeApi).meUserProfileControllerFindUserProfile,
+        ).mockResolvedValue(userProfile)
+        mockNationalRegistry(app.get(NationalRegistryClientService), individual)
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const domicile = individual.legalDomicile!
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const address = individual.residence!
+        const expected = {
+          address: {
+            formatted: `${address.streetAddress}\n${address.postalCode} ${address.locality}\nÍsland`,
+            locality: address.locality,
+            postalCode: address.postalCode,
+            streetAddress: address.streetAddress,
+            country: 'Ísland',
+          },
+          birthdate: individual.birthdate.toISOString().split('T')[0],
+          legalDomicile: {
+            formatted: `${domicile.streetAddress}\n${domicile.postalCode} ${domicile.locality}\nÍsland`,
+            streetAddress: domicile.streetAddress,
+            postalCode: domicile.postalCode,
+            locality: domicile.locality,
+            country: 'Ísland',
+          },
+          familyName: individual.familyName,
+          gender: 'male',
+          givenName: individual.givenName,
+          locale: userProfile.locale,
+          middleName: individual.middleName,
+          name: individual.name,
           picture: userProfile.profileImageUrl,
         }
 

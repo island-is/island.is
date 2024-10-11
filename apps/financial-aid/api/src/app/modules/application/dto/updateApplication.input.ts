@@ -26,6 +26,10 @@ export class UpdateApplicationInput implements UpdateApplication {
 
   @Allow()
   @Field({ nullable: true })
+  readonly appliedDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly rejection?: string
 
   @Allow()
@@ -58,7 +62,7 @@ export class UpdateApplicationInput implements UpdateApplication {
 
   @Allow()
   @Field({ nullable: true })
-  readonly spouseHasFetchedDirectTaxPayment!: boolean
+  readonly spouseHasFetchedDirectTaxPayment?: boolean
 
   @Allow()
   @Field(() => [DirectTaxPaymentInput], { nullable: true })

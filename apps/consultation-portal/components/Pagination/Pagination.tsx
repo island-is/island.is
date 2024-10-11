@@ -37,13 +37,9 @@ const Pagination = ({
         totalPages={totalPages}
         variant="blue"
         renderLink={(pageNumber, className, children) => (
-          <Box
-            cursor="pointer"
-            className={className}
-            onClick={() => goToPage(pageNumber - 1)}
-          >
-            {children}
-          </Box>
+          <button onClick={() => goToPage(pageNumber - 1)}>
+            <span className={className}>{children}</span>
+          </button>
         )}
       />
     </Box>

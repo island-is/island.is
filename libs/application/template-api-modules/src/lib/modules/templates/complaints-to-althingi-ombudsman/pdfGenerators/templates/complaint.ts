@@ -9,7 +9,7 @@ import { addHeader, addSubheader, addValue, newDocument } from '../pdfUtils'
 import { format as formatNationalId } from 'kennitala'
 import { PdfConstants } from '../constants'
 
-export async function generateComplaintPdf(application: Application) {
+export const generateComplaintPdf = async (application: Application) => {
   const answers = application.answers as ComplaintsToAlthingiOmbudsmanAnswers
   const complainedFor =
     answers.complainedFor.decision === ComplainedForTypes.MYSELF
@@ -22,7 +22,7 @@ export async function generateComplaintPdf(application: Application) {
     buffers.push(buffer)
   })
 
-  addHeader('Kvörtun til Umboðsmans Alþingis', doc)
+  addHeader('Kvörtun til umboðsmanns Alþingis', doc)
 
   addValue(
     `${answers.applicant.name}, ${formatNationalId(

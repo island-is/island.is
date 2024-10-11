@@ -3,10 +3,13 @@ import {
   ImageSourcePropType,
   Platform,
   SafeAreaView,
-  ViewStyle,
   useWindowDimensions,
+  ViewStyle,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { LoadingIcon } from '../../../components/nav-loading-spinner/loading-icon'
+import { OfflineIcon } from '../../../components/offline/offline-icon'
+import { useOfflineStore } from '../../../stores/offline-store'
 import closeIcon from '../../assets/icons/close.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
@@ -41,9 +44,15 @@ const Handle = styled.View`
   opacity: 1;
 `
 
+const IconsWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing[1]}px;
+`
+
 const CloseButton = styled.TouchableOpacity`
-  width: ${({ theme }) => theme.spacing[3]}px;
-  height: ${({ theme }) => theme.spacing[3]}px;
+  width: ${({ theme }) => theme.spacing[4]}px;
+  height: ${({ theme }) => theme.spacing[4]}px;
   border-radius: ${({ theme }) => theme.spacing[2]}px;
   background-color: ${dynamicColor((props) => ({
     dark: props.theme.color.dark400,
@@ -54,20 +63,25 @@ const CloseButton = styled.TouchableOpacity`
 `
 
 const CloseIcon = styled.Image`
-  width: ${({ theme }) => theme.spacing[2]}px;
-  height: ${({ theme }) => theme.spacing[2]}px;
+  width: ${({ theme }) => theme.spacing[3]}px;
+  height: ${({ theme }) => theme.spacing[3]}px;
 `
 
 export function NavigationBarSheet({
   title,
   onClosePress,
   style,
+  showLoading,
+  closable = true,
 }: {
   title?: React.ReactNode
   componentId: string
   onClosePress(): void
   style?: ViewStyle
+  showLoading?: boolean
+  closable?: boolean
 }) {
+  const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const wd = useWindowDimensions()
   const theme = useTheme()
   const isLandscape = wd.width > wd.height
@@ -78,33 +92,42 @@ export function NavigationBarSheet({
 
   return (
     <>
-      {isHandle && <Handle />}
+      {isHandle && closable && <Handle />}
       <SafeAreaView>
-        <Header style={style}>
-          {typeof title === 'string' ? (
-            <HeaderTitle>{title}</HeaderTitle>
-          ) : (
-            title
-          )}
-          <CloseButton
-            onPress={onClosePress}
-            testID="NAVBAR_SHEET_CLOSE_BUTTON"
-            accessibilityLabel="Close"
-            hitSlop={{
-              top: 10,
-              bottom: 10,
-              left: 10,
-              right: 10,
-            }}
-          >
-            <CloseIcon
-              style={{
-                tintColor: theme.color.blue400,
-              }}
-              source={closeIcon as ImageSourcePropType}
-            />
-          </CloseButton>
-        </Header>
+        {(closable || title) && (
+          <Header style={style}>
+            {typeof title === 'string' ? (
+              <HeaderTitle>{title}</HeaderTitle>
+            ) : (
+              title
+            )}
+            <IconsWrapper>
+              {/*Only show loading icon if connected*/}
+              {showLoading && isConnected ? <LoadingIcon /> : null}
+              <OfflineIcon />
+              {closable && (
+                <CloseButton
+                  onPress={onClosePress}
+                  testID="NAVBAR_SHEET_CLOSE_BUTTON"
+                  accessibilityLabel="Close"
+                  hitSlop={{
+                    top: 10,
+                    bottom: 10,
+                    left: 10,
+                    right: 10,
+                  }}
+                >
+                  <CloseIcon
+                    style={{
+                      tintColor: theme.color.blue400,
+                    }}
+                    source={closeIcon as ImageSourcePropType}
+                  />
+                </CloseButton>
+              )}
+            </IconsWrapper>
+          </Header>
+        )}
       </SafeAreaView>
     </>
   )

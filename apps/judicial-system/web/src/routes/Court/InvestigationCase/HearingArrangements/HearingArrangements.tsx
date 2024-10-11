@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -24,7 +24,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  formatDateForServer,
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -46,17 +45,21 @@ const HearingArrangements = () => {
     useCase()
   const {
     courtDate,
-    setCourtDate,
     courtDateHasChanged,
     handleCourtDateChange,
-  } = useCourtArrangements(workingCase)
+    handleCourtRoomChange,
+    sendCourtDateToServer,
+  } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [checkedRadio, setCheckedRadio] = useState<SessionArrangements>()
 
   const initialize = useCallback(() => {
-    if (!workingCase.courtDate) {
-      setCourtDate(workingCase.requestedCourtDate)
+    if (!workingCase.arraignmentDate && workingCase.requestedCourtDate) {
+      setWorkingCase((theCase) => ({
+        ...theCase,
+        arraignmentDate: { date: theCase.requestedCourtDate },
+      }))
     }
 
     setAndSendCaseToServer(
@@ -70,24 +73,13 @@ const HearingArrangements = () => {
       workingCase,
       setWorkingCase,
     )
-  }, [setAndSendCaseToServer, setCourtDate, setWorkingCase, workingCase])
+  }, [setAndSendCaseToServer, setWorkingCase, workingCase])
 
   useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      await setAndSendCaseToServer(
-        [
-          {
-            courtDate: courtDate
-              ? formatDateForServer(new Date(courtDate))
-              : undefined,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
+      await sendCourtDateToServer()
 
       const isCorrectingRuling = workingCase.notifications?.some(
         (notification) => notification.type === NotificationType.RULING,
@@ -107,10 +99,9 @@ const HearingArrangements = () => {
       }
     },
     [
-      workingCase,
-      setAndSendCaseToServer,
-      courtDate,
-      setWorkingCase,
+      sendCourtDateToServer,
+      workingCase.notifications,
+      workingCase.id,
       courtDateHasChanged,
     ],
   )
@@ -118,6 +109,10 @@ const HearingArrangements = () => {
   const stepIsValid = isCourtHearingArrangementsStepValidIC(
     workingCase,
     courtDate,
+  )
+
+  const isCorrectingRuling = workingCase.notifications?.some(
+    (notification) => notification.type === NotificationType.RULING,
   )
 
   return (
@@ -305,10 +300,11 @@ const HearingArrangements = () => {
             </Box>
             <Box marginBottom={2}>
               <CourtArrangements
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
                 handleCourtDateChange={handleCourtDateChange}
-                selectedCourtDate={courtDate}
+                handleCourtRoomChange={handleCourtRoomChange}
+                courtDate={workingCase.arraignmentDate}
+                courtRoomDisabled={isCorrectingRuling}
+                dateTimeDisabled={isCorrectingRuling}
               />
             </Box>
           </Box>

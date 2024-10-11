@@ -48,7 +48,7 @@ export interface EnvironmentStore extends State {
 export const environmentStore = create<EnvironmentStore>(
   persist(
     (set, get) => ({
-      environment: environments.prod,
+      environment: config.isTestingApp ? environments.dev : environments.prod,
       result: [],
       fetchedAt: 0,
       cognito: null,
@@ -113,9 +113,11 @@ export const environmentStore = create<EnvironmentStore>(
         const { state, version } = JSON.parse(str)
         delete state.actions
         delete state.loading
+
         if (!config.isTestingApp) {
           state.environment = environments.prod
         }
+
         return { state, version }
       },
     },

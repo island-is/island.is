@@ -16,21 +16,49 @@ import {
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
-import {
-  Application,
-  useListApplicationsQuery,
-} from '../../graphql/types/schema'
+
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { notificationsStore } from '../../stores/notifications-store'
+import { useAndroidNotificationPermission } from '../../hooks/use-android-notification-permission'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useDeepLinkHandling } from '../../hooks/use-deep-link-handling'
+import { useNotificationsStore } from '../../stores/notifications-store'
+import {
+  preferencesStore,
+  usePreferencesStore,
+} from '../../stores/preferences-store'
 import { useUiStore } from '../../stores/ui-store'
+import { isAndroid } from '../../utils/devices'
+import { needsToUpdateAppVersion } from '../../utils/minimum-app-version'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
-import { ApplicationsModule } from './applications-module'
-import { NotificationsModule } from './notifications-module'
+import { navigateTo } from '../../lib/deep-linking'
+import {
+  AirDiscountModule,
+  useGetAirDiscountQuery,
+  validateAirDiscountInitialData,
+} from './air-discount-module'
+import {
+  ApplicationsModule,
+  useListApplicationsQuery,
+  validateApplicationsInitialData,
+} from './applications-module'
+import { HelloModule } from './hello-module'
+import {
+  InboxModule,
+  useListDocumentsQuery,
+  validateInboxInitialData,
+} from './inbox-module'
+import {
+  LicensesModule,
+  useGetLicensesData,
+  validateLicensesInitialData,
+} from './licenses-module'
 import { OnboardingModule } from './onboarding-module'
-import { VehiclesModule } from './vehicles-module'
+import {
+  useListVehiclesQuery,
+  validateVehiclesInitialData,
+  VehiclesModule,
+} from './vehicles-module'
 
 interface ListItem {
   id: string
@@ -46,12 +74,12 @@ const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
       topBar: {
-        title: {
-          text: initialized
-            ? intl.formatMessage({ id: 'home.screenTitle' })
-            : '',
-        },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+        rightButtons: initialized
+          ? getRightButtons({
+              icons: ['notifications', 'options'],
+              theme: theme as any,
+            })
+          : [],
       },
       bottomTab: {
         ...({
@@ -60,7 +88,7 @@ const { useNavigationOptions, getNavigationOptions } =
         // selectedIconColor: null as any,
         // iconColor: null as any,
         textColor: initialized
-          ? Platform.OS === 'android'
+          ? isAndroid
             ? theme.shade.foreground
             : { light: 'black', dark: 'white' }
           : theme.shade.background,
@@ -75,9 +103,6 @@ const { useNavigationOptions, getNavigationOptions } =
     {
       topBar: {
         rightButtons: [],
-        largeTitle: {
-          visible: true,
-        },
         scrollEdgeAppearance: {
           active: true,
           noBorder: true,
@@ -98,21 +123,131 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+
+  useAndroidNotificationPermission()
+  const syncToken = useNotificationsStore(({ syncToken }) => syncToken)
+  const checkUnseen = useNotificationsStore(({ checkUnseen }) => checkUnseen)
+  const getAndSetLocale = usePreferencesStore(
+    ({ getAndSetLocale }) => getAndSetLocale,
+  )
+  const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
+  const vehiclesWidgetEnabled = usePreferencesStore(
+    ({ vehiclesWidgetEnabled }) => vehiclesWidgetEnabled,
+  )
+  const inboxWidgetEnabled = usePreferencesStore(
+    ({ inboxWidgetEnabled }) => inboxWidgetEnabled,
+  )
+  const licensesWidgetEnabled = usePreferencesStore(
+    ({ licensesWidgetEnabled }) => licensesWidgetEnabled,
+  )
+  const applicationsWidgetEnabled = usePreferencesStore(
+    ({ applicationsWidgetEnabled }) => applicationsWidgetEnabled,
+  )
+  const airDiscountWidgetEnabled = usePreferencesStore(
+    ({ airDiscountWidgetEnabled }) => airDiscountWidgetEnabled,
+  )
+  const widgetsInitialised = usePreferencesStore(
+    ({ widgetsInitialised }) => widgetsInitialised,
+  )
 
-  useActiveTabItemPress(2, () => {
-    flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
+  useDeepLinkHandling()
+
+  const applicationsRes = useListApplicationsQuery({
+    skip: !applicationsWidgetEnabled,
   })
 
-  const applicationsRes = useListApplicationsQuery()
+  const inboxRes = useListDocumentsQuery({
+    variables: {
+      input: { page: 1, pageSize: 3 },
+    },
+    skip: !inboxWidgetEnabled,
+  })
 
-  // Get feature flag for mileage
-  const isMileageEnabled = useFeatureFlag(
-    'isServicePortalVehicleMileagePageEnabled',
-    false,
-  )
-  const [loading, setLoading] = useState(false)
+  const licensesRes = useGetLicensesData({
+    skipFetching: !licensesWidgetEnabled,
+  })
+
+  const airDiscountRes = useGetAirDiscountQuery({
+    fetchPolicy: 'network-only',
+    skip: !airDiscountWidgetEnabled,
+  })
+
+  const vehiclesRes = useListVehiclesQuery({
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 15,
+        showDeregeristered: false,
+        showHistory: false,
+      },
+    },
+    skip: !vehiclesWidgetEnabled,
+  })
+
+  useEffect(() => {
+    // If widgets have not been initialized, validate data and set state accordingly
+    if (!widgetsInitialised) {
+      const shouldShowInboxWidget = validateInboxInitialData({ ...inboxRes })
+
+      const shouldShowLicensesWidget = validateLicensesInitialData({
+        ...licensesRes,
+      })
+
+      const shouldShowApplicationsWidget = validateApplicationsInitialData({
+        ...applicationsRes,
+      })
+
+      const shouldShowVehiclesWidget = validateVehiclesInitialData({
+        ...vehiclesRes,
+      })
+
+      const shouldShowAirDiscountWidget = validateAirDiscountInitialData({
+        ...airDiscountRes,
+      })
+
+      preferencesStore.setState({
+        inboxWidgetEnabled: shouldShowInboxWidget,
+        licensesWidgetEnabled: shouldShowLicensesWidget,
+        applicationsWidgetEnabled: shouldShowApplicationsWidget,
+        vehiclesWidgetEnabled: shouldShowVehiclesWidget,
+        airDiscountWidgetEnabled: shouldShowAirDiscountWidget,
+      })
+
+      // Don't set initialized state if any of the queries are still loading
+      if (
+        licensesRes.loading ||
+        applicationsRes.loading ||
+        inboxRes.loading ||
+        airDiscountRes.loading ||
+        vehiclesRes.loading
+      ) {
+        return
+      }
+
+      preferencesStore.setState({ widgetsInitialised: true })
+    }
+  }, [
+    licensesRes.loading,
+    applicationsRes.loading,
+    inboxRes.loading,
+    airDiscountRes.loading,
+    vehiclesRes.loading,
+  ])
+
+  useConnectivityIndicator({
+    componentId,
+    rightButtons: getRightButtons({ icons: ['notifications', 'options'] }),
+    queryResult: [
+      applicationsRes,
+      inboxRes,
+      licensesRes,
+      airDiscountRes,
+      vehiclesRes,
+    ],
+    refetching,
+  })
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<ListItem>) => item.component,
@@ -121,20 +256,54 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const keyExtractor = useCallback((item: ListItem) => item.id, [])
   const scrollY = useRef(new Animated.Value(0)).current
 
-  useEffect(() => {
-    // Sync push tokens
-    notificationsStore.getState().actions.syncToken()
+  const isAppUpdateRequired = useCallback(async () => {
+    const needsUpdate = await needsToUpdateAppVersion()
+    if (needsUpdate) {
+      navigateTo('/update-app', { closable: false })
+    }
   }, [])
 
-  const refetch = async () => {
-    setLoading(true)
+  useEffect(() => {
+    // Sync push tokens and unseen notifications
+    syncToken()
+    checkUnseen()
+    // Get user locale from server
+    getAndSetLocale()
+    // Check if upgrade wall should be shown
+    isAppUpdateRequired()
+  }, [])
+
+  const refetch = useCallback(async () => {
+    setRefetching(true)
+
     try {
-      await applicationsRes.refetch()
+      const promises = [
+        applicationsWidgetEnabled && applicationsRes.refetch(),
+        inboxWidgetEnabled && inboxRes.refetch(),
+        licensesWidgetEnabled && licensesRes.refetch(),
+        licensesWidgetEnabled && licensesRes.refetchPassport(),
+        airDiscountWidgetEnabled && airDiscountRes.refetch(),
+        vehiclesWidgetEnabled && vehiclesRes.refetch(),
+      ].filter(Boolean)
+
+      await Promise.all(promises)
     } catch (err) {
       // noop
     }
-    setLoading(false)
-  }
+
+    setRefetching(false)
+  }, [
+    applicationsRes,
+    inboxRes,
+    licensesRes,
+    airDiscountRes,
+    vehiclesRes,
+    vehiclesWidgetEnabled,
+    airDiscountWidgetEnabled,
+    applicationsWidgetEnabled,
+    licensesWidgetEnabled,
+    inboxWidgetEnabled,
+  ])
 
   if (!ui.initializedApp) {
     return null
@@ -142,31 +311,41 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   const data = [
     {
+      id: 'hello',
+      component: <HelloModule />,
+    },
+    {
       id: 'onboarding',
       component: <OnboardingModule />,
     },
+
+    {
+      id: 'inbox',
+      component: inboxWidgetEnabled ? <InboxModule {...inboxRes} /> : null,
+    },
+    {
+      id: 'licenses',
+      component: licensesWidgetEnabled ? (
+        <LicensesModule {...licensesRes} />
+      ) : null,
+    },
     {
       id: 'applications',
-      component: (
-        <ApplicationsModule
-          applications={
-            (applicationsRes.data?.applicationApplications ??
-              []) as Application[]
-          }
-          loading={applicationsRes.loading}
-          componentId={componentId}
-        />
-      ),
+      component: applicationsWidgetEnabled ? (
+        <ApplicationsModule {...applicationsRes} componentId={componentId} />
+      ) : null,
     },
-    isMileageEnabled
-      ? {
-          id: 'vehicles',
-          component: <VehiclesModule />,
-        }
-      : null,
     {
-      id: 'notifications',
-      component: <NotificationsModule componentId={componentId} />,
+      id: 'vehicles',
+      component: vehiclesWidgetEnabled ? (
+        <VehiclesModule {...vehiclesRes} />
+      ) : null,
+    },
+    {
+      id: 'air-discount',
+      component: airDiscountWidgetEnabled ? (
+        <AirDiscountModule {...airDiscountRes} />
+      ) : null,
     },
   ].filter(Boolean) as Array<{
     id: string
@@ -194,10 +373,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           },
         )}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refetch} />
+          <RefreshControl refreshing={refetching} onRefresh={refetch} />
         }
       />
       <TopLine scrollY={scrollY} />
+
       <BottomTabsIndicator index={2} total={5} />
     </>
   )

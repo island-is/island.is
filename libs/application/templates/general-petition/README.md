@@ -30,23 +30,11 @@ Prerequisites
   - `brew install kubectl`
 - You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured
 
-1. Make sure the following environment variables are set:
-
-```bash
-SOFFIA_PASS
-SOFFIA_USER
-```
-
 - A good way to get environment variables is to run `yarn get-secrets service-portal`
 
 2. Get kubeconfig
 
 - Export aws variables `aws eks update-kubeconfig --name dev-cluster01`
-
-3. Socat Þjóðskrá
-
-- Run `kubectl port-forward svc/socat-soffia 8443:443 -n socat`
-- Keep this process running while running the project
 
 ### Current user companies provider
 

@@ -1,0 +1,5 @@
+export { MachineType } from './MachineType'
+export { Overview } from './Overview'
+export { AboutMachine } from './AboutMachine'
+export { TechnicalInfo } from './TechnicalInfo'
+export { ChangeAnswers } from './ChangeAnswers'

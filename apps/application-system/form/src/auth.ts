@@ -22,6 +22,7 @@ if (userMocked) {
     baseUrl: `${window.location.origin}/umsoknir`,
     redirectPath: '/signin-oidc',
     redirectPathSilent: '/silent/signin-oidc',
+    initiateLoginPath: '/login',
     authority: environment.identityServer.authority,
     client_id: '@island.is/web',
     scope: [

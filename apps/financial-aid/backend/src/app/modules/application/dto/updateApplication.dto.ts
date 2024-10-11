@@ -19,12 +19,17 @@ export class UpdateApplicationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly state: ApplicationState
+  readonly state?: ApplicationState
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
   readonly event: ApplicationEventType
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly appliedDate?: string
 
   @IsOptional()
   @IsString()

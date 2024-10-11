@@ -1,5 +1,5 @@
 export class IslyklarUpsertDto {
-  nationalId: string
+  nationalId!: string
 
   email?: string
 

@@ -13,8 +13,6 @@ import I18n, { isLocale } from './I18n'
 
 export const getLocaleFromPath = (path = ''): Locale => {
   const maybeLocale = path.split('/').find(Boolean)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
   return isLocale(maybeLocale) ? maybeLocale : defaultLanguage
 }
 
@@ -39,13 +37,11 @@ export const withLocale =
     }) => (
       <I18n locale={locale} translations={translations}>
         {/**
-         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-         // @ts-ignore make web strict */}
+           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+           // @ts-expect-error make web strict */}
         <Component {...pageProps} />
       </I18n>
     )
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
     NewComponent.getProps = async (ctx) => {
       const newContext = {
         ...ctx,
@@ -64,7 +60,7 @@ export const withLocale =
       }
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
+    // @ts-expect-error make web strict
     return NewComponent
   }
 

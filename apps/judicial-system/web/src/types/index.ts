@@ -1,6 +1,7 @@
 import { CourtDocument, SubstanceMap } from '@island.is/judicial-system/types'
 import {
   Case,
+  CaseListEntry,
   IndictmentCount,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -18,7 +19,7 @@ export enum LoginErrorCodes {
 }
 
 export type directionType = 'ascending' | 'descending'
-export type sortableTableColumn = 'defendant' | 'createdAt' | 'courtDate'
+export type sortableTableColumn = keyof CaseListEntry
 
 export interface SortConfig {
   column: sortableTableColumn
@@ -170,7 +171,6 @@ export interface NationalRegistryResponseBusiness {
  * We use this type so that we don't have to migrate all the code
  * at once and this type will be removed when we are done.
  */
-
 export interface TempIndictmentCount
   extends Omit<IndictmentCount, 'substances'> {
   substances?: SubstanceMap | null

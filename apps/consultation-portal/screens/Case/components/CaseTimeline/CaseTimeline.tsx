@@ -49,7 +49,7 @@ export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
   return (
     <Stack space={[2, 2, 2, 1, 1]}>
       {!isMobile && (
-        <Text variant="h3" color="blue400">
+        <Text as="h3" variant="h3" color="blue400">
           {loc.title}
         </Text>
       )}

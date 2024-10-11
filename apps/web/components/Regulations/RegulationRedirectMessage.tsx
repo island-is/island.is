@@ -1,11 +1,12 @@
 import React from 'react'
-import { Button, Hidden, Link, Stack, Text } from '@island.is/island-ui/core'
-import { RegulationLayout } from './RegulationLayout'
-import { prettyName, RegulationRedirect } from '@island.is/regulations'
-import { useRegulationLinkResolver } from './regulationUtils'
 
-import { RegulationPageTexts } from './RegulationTexts.types'
+import { Button, Hidden, LinkV2, Stack, Text } from '@island.is/island-ui/core'
+import { prettyName, RegulationRedirect } from '@island.is/regulations'
 import { useNamespace } from '@island.is/web/hooks'
+
+import { RegulationLayout } from './RegulationLayout'
+import { RegulationPageTexts } from './RegulationTexts.types'
+import { useRegulationLinkResolver } from './regulationUtils'
 
 export type RegulationRedirectMessageProps = {
   texts: RegulationPageTexts
@@ -34,25 +35,30 @@ export const RegulationRedirectMessage = (
             {prettyName(regulation.name)} {regulation.title}
           </Text>
           <Text>{txt('redirectText')}</Text>
-          <Link color="blue400" underline="small" href={regulation.redirectUrl}>
+          <LinkV2
+            color="blue400"
+            underline="small"
+            href={regulation.redirectUrl}
+          >
             {regulation.redirectUrl}
-          </Link>
+          </LinkV2>
         </>
       }
       sidebar={
         <Stack space={2}>
           <Hidden print={true}>
-            <Link href={linkResolver('regulationshome').href}>
+            <LinkV2 href={linkResolver('regulationshome').href}>
               <Button
                 preTextIcon="arrowBack"
                 preTextIconType="filled"
                 size="small"
                 type="button"
                 variant="text"
+                as="span"
               >
                 {txt('goHome')}
               </Button>
-            </Link>
+            </LinkV2>
           </Hidden>
         </Stack>
       }

@@ -14,6 +14,7 @@ import {
   NationalRegistryUserApi,
   HealthInsuranceApi,
   UserProfileApi,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { API_MODULE } from '../shared'
 import { answerValidators } from './answerValidators'
@@ -34,6 +35,9 @@ enum ApplicationStates {
 
 const applicationName = m.formTitle.defaultMessage
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.HEALTH_INSURANCE]
+
 const HealthInsuranceTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -42,6 +46,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
   type: ApplicationTypes.HEALTH_INSURANCE,
   name: applicationName,
   dataSchema: HealthInsuranceSchema,
+  translationNamespaces: [configuration.translation],
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUESITES,
@@ -134,7 +139,6 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           name: applicationName,
           onEntry: defineTemplateApi({
             action: API_MODULE.sendApplyHealthInsuranceApplication,
-            throwOnError: false,
           }),
           actionCard: {
             pendingAction: {

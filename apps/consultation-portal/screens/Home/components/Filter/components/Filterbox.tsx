@@ -114,7 +114,9 @@ export const FilterBox = ({
     >
       <Stack space={2}>
         <Inline justifyContent={'spaceBetween'}>
-          <Text variant={'h3'}>{title}</Text>
+          <Text as="h2" variant={'h3'}>
+            {title}
+          </Text>
           <Button
             colorScheme="light"
             circle

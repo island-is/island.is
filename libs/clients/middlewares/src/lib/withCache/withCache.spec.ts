@@ -414,6 +414,50 @@ describe('EnhancedFetch#withCache', () => {
     )
   })
 
+  it('catches cache read error', async () => {
+    // Arrange
+    const cacheManager = await caching('memory', { ttl: 0 })
+    jest.spyOn(cacheManager, 'get').mockRejectedValue(new Error('Cache error'))
+    env = setupTestEnv({
+      cache: { cacheManager },
+    })
+    mockResponse()
+
+    // Act
+    const response = await env.enhancedFetch(testUrl)
+
+    // Assert
+    expect(env.fetch).toHaveBeenCalledTimes(1)
+    await expect(response.text()).resolves.toEqual('Response 1')
+    expect(env.logger.warn).toHaveBeenCalledWith(
+      'Fetch cache (test): Error fetching from cache - Cache error',
+      { stack: expect.stringContaining('Cache error') },
+    )
+  })
+
+  it('catches bad cache error', async () => {
+    // Arrange
+    const cacheManager = await caching('memory', { ttl: 0 })
+    jest
+      .spyOn(cacheManager, 'get')
+      .mockResolvedValue({ body: 'something', policy: 'weird' })
+    env = setupTestEnv({
+      cache: { cacheManager },
+    })
+    mockResponse()
+
+    // Act
+    const response = await env.enhancedFetch(testUrl)
+
+    // Assert
+    expect(env.fetch).toHaveBeenCalledTimes(1)
+    await expect(response.text()).resolves.toEqual('Response 1')
+    expect(env.logger.warn).toHaveBeenCalledWith(
+      'Fetch cache (test): Error fetching from cache - Invalid serialization',
+      { stack: expect.stringContaining('Invalid serialization') },
+    )
+  })
+
   it('cache-control can be overridden', async () => {
     // Arrange
     const cacheManager = await caching('memory', { ttl: 0 })

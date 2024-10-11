@@ -64,12 +64,6 @@ export interface EnhancedFetchOptions {
   forwardAuthUserAgent?: boolean
 
   /**
-   * By default, 400 responses are considered warnings and will not open the circuit.
-   * Either way they will be logged and thrown.
-   */
-  treat400ResponsesAsErrors?: boolean
-
-  /**
    * If true (default), Enhanced Fetch will log error response bodies.
    * Should be set to false if error objects may have sensitive information or PII.
    */
@@ -159,7 +153,6 @@ export const createEnhancedFetch = (
     metricsClient = new DogStatsD({ prefix: `${options.name}.` }),
     organizationSlug,
   } = options
-  const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
   const freeSocketTimeout =
     typeof keepAlive === 'number'
       ? keepAlive
@@ -207,7 +200,6 @@ export const createEnhancedFetch = (
     builder.wrap(withCircuitBreaker, {
       name,
       logger,
-      treat400ResponsesAsErrors,
       opossum,
     })
   }
@@ -233,7 +225,6 @@ export const createEnhancedFetch = (
   builder.wrap(withErrorLog, {
     name,
     logger,
-    treat400ResponsesAsErrors,
   })
 
   return builder.getFetch()

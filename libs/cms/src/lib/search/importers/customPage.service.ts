@@ -5,6 +5,7 @@ import { MappedData } from '@island.is/content-search-indexer/types'
 import { ICustomPage } from '../../generated/contentfulTypes'
 import { mapCustomPage } from '../../models/customPage.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class CustomPageSyncService implements CmsSyncProvider<ICustomPage> {
@@ -12,7 +13,7 @@ export class CustomPageSyncService implements CmsSyncProvider<ICustomPage> {
     return entries.filter(
       (entry) =>
         entry.sys.contentType.sys.id === 'customPage' &&
-        entry.fields.uniqueIdentifier,
+        (entry.fields.uniqueIdentifier || entry.fields.parentPage?.sys?.id),
     )
   }
 
@@ -31,17 +32,40 @@ export class CustomPageSyncService implements CmsSyncProvider<ICustomPage> {
             return false
           }
 
+          const tags =
+            entry.fields.parentPage?.sys?.id && entry.fields.slug
+              ? [
+                  {
+                    key: entry.fields.slug,
+                    type: 'slug',
+                  },
+                  {
+                    key: entry.fields.parentPage.sys.id,
+                    type: 'referencedBy',
+                  },
+                ]
+              : [
+                  {
+                    key: mapped.uniqueIdentifier,
+                    type: 'slug',
+                  },
+                ]
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+          for (const id of childEntryIds) {
+            tags.push({
+              key: id,
+              type: 'hasChildEntryWithId',
+            })
+          }
+
           return {
             _id: mapped.id,
             title: entry.fields.title || '',
             type: 'webCustomPage',
             response: JSON.stringify(mapped),
-            tags: [
-              {
-                key: mapped.uniqueIdentifier,
-                type: 'slug',
-              },
-            ],
+            tags,
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
           }

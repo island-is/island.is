@@ -13,6 +13,7 @@ import {
   Filter,
   FootNote,
   VINNUEFTIRLITID_SLUG,
+  formatDate,
 } from '@island.is/service-portal/core'
 import {
   Box,
@@ -26,9 +27,9 @@ import {
   Pagination,
   Text,
 } from '@island.is/island-ui/core'
-import { messages } from '../../lib/messages'
+import { messages, vehicleMessage } from '../../lib/messages'
 import { useDebounce } from 'react-use'
-import { WorkMachinesFileType } from '@island.is/api/schema'
+import { WorkMachine, WorkMachinesFileType } from '@island.is/api/schema'
 import { AssetsPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -123,6 +124,7 @@ const WorkMachinesOverview = () => {
       },
     })
   }
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -130,7 +132,6 @@ const WorkMachinesOverview = () => {
         intro={formatMessage(messages.workMachinesDescription)}
         serviceProviderSlug={VINNUEFTIRLITID_SLUG}
         serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
-        fixedImgWidth
       />
       <GridRow marginTop={[2, 2, 6]}>
         <GridColumn span="12/12">
@@ -256,7 +257,11 @@ const WorkMachinesOverview = () => {
           return (
             <Box marginBottom={3} key={index}>
               <ActionCard
-                text={wm.registrationNumber ?? ''}
+                text={`${formatMessage(vehicleMessage.lastInspection)}: ${
+                  wm.dateLastInspection
+                    ? formatDate(wm.dateLastInspection)
+                    : formatMessage(messages.noInspection)
+                }`}
                 heading={wm.type ?? ''}
                 cta={{
                   label: formatMessage(m.seeDetails),

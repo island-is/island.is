@@ -1,25 +1,22 @@
-import { useEffect, useState } from 'react'
-import { PortalNavigationItem } from '@island.is/portals/core'
 import {
   Box,
-  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
-  Inline,
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
-import cn from 'classnames'
+import { useLocale } from '@island.is/localization'
+import { PortalNavigationItem } from '@island.is/portals/core'
+import { useOrganization } from '@island.is/service-portal/graphql'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
-import { SubTabItem } from './SubTabItem'
-import * as styles from './TabNavigation.css'
-import LinkResolver from '../LinkResolver/LinkResolver'
-import { useOrganization } from '@island.is/service-portal/graphql'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
+import * as styles from './TabNavigation.css'
+import { TabBar } from './TabBar'
+import { TabNavigationInstitutionPanel } from './TabNavigationInstitutionPanel'
 
 interface Props {
   pathname?: string
@@ -27,74 +24,58 @@ interface Props {
   items: PortalNavigationItem[]
 }
 
+interface ActivePath extends PortalNavigationItem {
+  activeChild?: PortalNavigationItem
+}
+
 export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
   const { formatMessage } = useLocale()
-  const [activeItem, setActiveItem] = useState<
-    PortalNavigationItem | undefined
-  >()
-  const [activeItemChildren, setActiveItemChildren] = useState<
-    PortalNavigationItem[] | undefined
-  >()
-  const [currentChild, setCurrentChild] = useState<
-    PortalNavigationItem | undefined
-  >()
+
   const navigate = useNavigate()
   const { width } = useWindowSize()
 
-  const { data: organization, loading } = useOrganization(
-    currentChild?.serviceProvider ?? activeItem?.serviceProvider,
-  )
-
-  useEffect(() => {
-    const activeItem = items.filter((itm) => itm.active)?.[0] ?? undefined
-    const activeChildren = activeItem?.children?.filter((itm) => !itm.navHide)
-    setActiveItem(activeItem)
-    setActiveItemChildren(activeChildren)
-
-    const currentActiveChild = activeChildren?.find(
-      (itemChild) => pathname === itemChild.path,
-    )
-    setCurrentChild(currentActiveChild)
+  const activePath: ActivePath | undefined = useMemo(() => {
+    const active = items?.find((i) => i.active)
+    if (!active) {
+      //default to first one
+      return items[0]
+    }
+    return {
+      ...active,
+      activeChild: active?.children?.find((c) => c.active),
+    }
   }, [items])
 
   const tabChangeHandler = (id?: string) => {
-    if (id && id !== pathname) {
+    if (id && pathname && !(id === pathname || id === activePath.path)) {
       navigate(id)
     }
   }
-
+  const serviceProvider =
+    activePath?.activeChild?.serviceProvider ?? activePath.serviceProvider
   const descriptionText =
-    activeItemChildren?.find((itemChild) => pathname === itemChild.path)
-      ?.description ?? activeItem?.description
-
+    activePath.activeChild?.description ?? activePath?.description
   const tooltipText =
-    currentChild && currentChild?.serviceProviderTooltip
-      ? currentChild?.serviceProviderTooltip
-      : activeItem?.serviceProviderTooltip
+    activePath.activeChild?.serviceProviderTooltip ??
+    activePath.serviceProviderTooltip
 
   const isMobile = width < theme.breakpoints.md
+
   return (
     <>
-      <Box printHidden className={styles.tabList}>
-        {items?.map((item, index) => (
-          <FocusableBox
-            component={LinkResolver}
-            key={index}
-            id={item.path}
-            justifyContent="center"
-            alignItems="center"
-            padding={1}
-            className={cn(styles.tab, {
-              [styles.tabSelected]: item.active,
-              [styles.tabNotSelected]: !item.active,
-            })}
-            href={item.path}
-          >
-            {formatMessage(item.name)}
-          </FocusableBox>
-        ))}
-      </Box>
-      {activeItem && activeItem.path && isMobile && (
+      <TabBar
+        aria-label={label}
+        tabs={items?.map((item, index) => {
+          const active = item.path === activePath.path
+          return {
+            id: `tab-item-${index}`,
+            active: active,
+            onClick: () => tabChangeHandler(item.path),
+            name: formatMessage(item.name),
+          }
+        })}
+      />
+      {activePath.path && isMobile && (
         <Box className={styles.select}>
           <Select
             size="sm"
@@ -106,76 +87,84 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
               value: item.path,
             }))}
             defaultValue={{
-              value: activeItem.path,
-              label: formatMessage(activeItem.name),
+              value: activePath.path,
+              label: formatMessage(activePath.name),
             }}
             isSearchable={false}
           />
         </Box>
       )}
-      {activeItem && (
-        <Box marginTop={[1, 1, 2, 4, 4]}>
-          <GridContainer>
-            <GridRow>
-              {(!!activeItem.description || !!activeItemChildren?.length) && (
-                <GridColumn span="6/8">
-                  <Box printHidden className={styles.description}>
-                    {(activeItemChildren?.length ?? 0) > 1 && (
-                      <Inline>
-                        {activeItemChildren?.map((itemChild, ii) => (
-                          <SubTabItem
-                            key={`subnav-${ii}`}
-                            href={itemChild.path ?? '/'}
-                            onClick={
-                              itemChild.path
-                                ? () => tabChangeHandler(itemChild.path)
-                                : undefined
-                            }
-                            title={formatMessage(itemChild.name)}
-                            isActive={pathname === itemChild.path}
-                            marginLeft={0}
-                          />
-                        ))}
-                      </Inline>
-                    )}
-                    {descriptionText && (
-                      <Box>
-                        <Text marginBottom={4}>
-                          {formatMessage(descriptionText, {
-                            br: (
-                              <>
-                                <br />
-                                <br />
-                              </>
-                            ),
-                          })}
-                        </Text>
-                      </Box>
-                    )}
-                  </Box>
-                </GridColumn>
-              )}
-              {(activeItem.displayServiceProviderLogo ||
-                currentChild?.displayServiceProviderLogo) &&
-                !isMobile && (
-                  <GridColumn span="1/8" offset="1/8">
-                    {organization?.logo && (
-                      <InstitutionPanel
-                        loading={loading}
-                        linkHref={organization.link ?? ''}
-                        img={organization.logo?.url ?? ''}
-                        tooltipText={
-                          tooltipText ? formatMessage(tooltipText) : ''
+      <Box marginTop={[0, 0, 2, 4, 4]}>
+        <GridContainer>
+          <GridRow>
+            {(!!activePath.description || !!activePath.children?.length) && (
+              <GridColumn span="6/8">
+                <Box printHidden className={styles.description}>
+                  <TabBar
+                    label={formatMessage(activePath.name)}
+                    variant="alternative"
+                    tabs={
+                      activePath.children?.map((itemChild, ii) => {
+                        const activeChild = itemChild.path
+                          ? itemChild?.path === pathname
+                          : false
+
+                        return {
+                          id: `subnav-item-${ii}`,
+                          active: activeChild,
+                          onClick: () => tabChangeHandler(itemChild.path),
+                          name: formatMessage(itemChild.name),
                         }
-                        imgContainerDisplay={isMobile ? 'block' : 'flex'}
+                      }) ?? []
+                    }
+                  />
+                  {activePath.children && activePath.name && isMobile && (
+                    <Box className={styles.select}>
+                      <Select
+                        size="sm"
+                        name={formatMessage(activePath.name)}
+                        label={formatMessage(activePath.name)}
+                        onChange={(opt) => tabChangeHandler(opt?.value)}
+                        options={activePath.children.map((itemChild) => ({
+                          label: formatMessage(itemChild.name),
+                          value: itemChild.path,
+                        }))}
+                        defaultValue={{
+                          label: formatMessage(activePath.children[0].name),
+                          value: activePath.children[0].path,
+                        }}
+                        isSearchable={false}
                       />
-                    )}
-                  </GridColumn>
-                )}
-            </GridRow>
-          </GridContainer>
-        </Box>
-      )}
+                    </Box>
+                  )}
+                  {descriptionText && (
+                    <Box>
+                      <Text marginBottom={4}>
+                        {formatMessage(descriptionText, {
+                          br: (
+                            <>
+                              <br />
+                              <br />
+                            </>
+                          ),
+                        })}
+                      </Text>
+                    </Box>
+                  )}
+                </Box>
+              </GridColumn>
+            )}
+            {activePath?.displayServiceProviderLogo &&
+              serviceProvider &&
+              !isMobile && (
+                <TabNavigationInstitutionPanel
+                  serviceProvider={serviceProvider}
+                  tooltipText={tooltipText}
+                />
+              )}
+          </GridRow>
+        </GridContainer>
+      </Box>
     </>
   )
 }

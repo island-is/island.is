@@ -26,7 +26,6 @@ export const ApiConfig = {
         name: 'clients-icelandic-government-institution-vacancies',
         organizationSlug: 'fjarsysla-rikisins',
         logErrorResponseBody: true,
-        treat400ResponsesAsErrors: true,
         timeout: 20000,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,

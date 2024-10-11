@@ -7,7 +7,13 @@ import {
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
+import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { AuditModule } from '@island.is/nest/audit'
+import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 
 import { environment } from '../environments'
@@ -20,9 +26,11 @@ import { ResourcesModule } from './modules/resources/resources.module'
 import { TranslationModule } from './modules/translation/translation.module'
 import { UsersModule } from './modules/users/users.module'
 import { ClientsModule as ClientsV2Module } from './v2/clients/clients.module'
+import { DelegationAdminModule } from './v2/delegations/delegation-admin.module'
+import { ProvidersModule } from './v2/providers/providers.module'
+import { ScopesModule } from './v2/scopes/scopes.module'
 import { ClientSecretsModule } from './v2/secrets/client-secrets.module'
 import { TenantsModule } from './v2/tenants/tenants.module'
-import { ScopesModule } from './v2/scopes/scopes.module'
 
 @Module({
   imports: [
@@ -43,10 +51,21 @@ import { ScopesModule } from './v2/scopes/scopes.module'
     ClientsV2Module,
     ClientSecretsModule,
     ProblemModule,
+    ProvidersModule,
     ScopesModule,
+    DelegationAdminModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [DelegationConfig],
+      load: [
+        DelegationConfig,
+        RskRelationshipsClientConfig,
+        NationalRegistryClientConfig,
+        CompanyRegistryConfig,
+        FeatureFlagConfig,
+        XRoadConfig,
+        IdsClientConfig,
+        SyslumennClientConfig,
+      ],
       envFilePath: ['.env', '.env.secret'],
     }),
   ],

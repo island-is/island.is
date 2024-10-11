@@ -15,14 +15,17 @@ export const ComponentRegistry = {
   OnboardingBiometricsScreen: `${prefix}.screens.OnboardingBiometrics`,
   OnboardingNotificationsScreen: `${prefix}.screens.OnboardingNotifications`,
   HomeScreen: `${prefix}.screens.Home`,
+  HomeOptionsScreen: `${prefix}.screens.HomeOptions`,
   InboxScreen: `${prefix}.screens.Inbox`,
   ApplicationsScreen: `${prefix}.screens.ApplicationsScreen`,
+  ApplicationsCompletedScreen: `${prefix}.screens.ApplicationsCompletedScreen`,
+  ApplicationsInProgressScreen: `${prefix}.screens.ApplicationsInProgressScreen`,
+  ApplicationsIncompleteScreen: `${prefix}.screens.ApplicationsIncompleteScreen`,
   WalletScreen: `${prefix}.screens.Wallet`,
   WalletPassScreen: `${prefix}.screens.WalletPass`,
   WalletPassportScreen: `${prefix}.screens.WalletPassport`,
   DocumentDetailScreen: `${prefix}.screens.DocumentDetail`,
   NotificationsScreen: `${prefix}.screens.Notifications`,
-  NotificationDetailScreen: `${prefix}.screens.NotificationDetail`,
   WebViewScreen: `${prefix}.screens.WebViewScreen`,
   LicenseScannerScreen: `${prefix}.screens.LicenseScannerScreen`,
   LicenseScanDetailScreen: `${prefix}.screens.LicenseScanDetailScreen`,
@@ -44,9 +47,19 @@ export const ComponentRegistry = {
   FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
   InboxFilterScreen: `${prefix}.screens.InboxFilterScreen`,
   AirDiscountScreen: `${prefix}.screens.AirDiscountScreen`,
+  PasskeyScreen: `${prefix}.screens.PasskeyScreen`,
+  UpdateAppScreen: `${prefix}.screens.UpdateAppScreen`,
+
+  // custom navigation icons
+  OfflineIcon: `${prefix}.navigation.OfflineIcon`,
+
+  // overlays
+  OfflineBanner: `${prefix}.overlay.OfflineBanner`,
 }
 
 export const ButtonRegistry = {
+  LoadingButton: `${prefix}.button.LoadingButton`,
+  OfflineButton: `${prefix}.button.OfflineButton`,
   SettingsButton: `${prefix}.button.SettingsButton`,
   // to do remove this unused user button
   UserButton: `${prefix}.button.UserButton`,
@@ -56,6 +69,8 @@ export const ButtonRegistry = {
   ScanLicenseDoneButton: `${prefix}.button.ScanLicenseDoneButton`,
   DocumentStarButton: `${prefix}.button.DocumentStarButton`,
   DocumentArchiveButton: `${prefix}.button.DocumentArchiveButton`,
+  InboxFilterClearButton: `${prefix}.button.InboxFilterClearButton`,
+  HomeScreenOptionsButton: `${prefix}.button.HomeScreenOptionsButton`,
 }
 
 export const StackRegistry = {

@@ -11,7 +11,7 @@ import {
   lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
-  completedCaseStates,
+  completedRequestCaseStates,
   isRestrictionCase,
   SessionArrangements,
   User,
@@ -33,11 +33,11 @@ import {
   setTitle,
 } from './pdfHelpers'
 
-export function formatCourtEndDate(
+export const formatCourtEndDate = (
   formatMessage: FormatMessage,
   courtStartDate?: Date,
   courtEndTime?: Date,
-): string {
+): string => {
   return courtEndTime
     ? formatMessage(courtRecord.signOff, {
         endDate:
@@ -49,11 +49,11 @@ export function formatCourtEndDate(
     : formatMessage(courtRecord.inSession)
 }
 
-function constructRestrictionCourtRecordPdf(
+const constructRestrictionCourtRecordPdf = (
   theCase: Case,
   formatMessage: FormatMessage,
   user?: User,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -94,9 +94,9 @@ function constructRestrictionCourtRecordPdf(
     doc,
     formatMessage(courtRecord.intro, {
       courtDate: formatDate(theCase.courtStartDate, 'PPP'),
-      judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
-        theCase.judge?.title ?? '?'
-      }`,
+      judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${lowercase(
+        theCase.judge?.title,
+      )}`,
       courtLocation: theCase.courtLocation
         ? ` ${lowercase(
             theCase.courtLocation?.slice(theCase.courtLocation.length - 1) ===
@@ -263,7 +263,9 @@ function constructRestrictionCourtRecordPdf(
     addNormalJustifiedText(
       doc,
       formatMessage(courtRecord.registrarWitness, {
-        registrarNameAndTitle: `${theCase.registrar.name} ${theCase.registrar.title}`,
+        registrarNameAndTitle: `${theCase.registrar.name} ${lowercase(
+          theCase.registrar.title,
+        )}`,
       }),
     )
   }
@@ -279,7 +281,7 @@ function constructRestrictionCourtRecordPdf(
   )
   addFooter(
     doc,
-    completedCaseStates.includes(theCase.state) && user
+    completedRequestCaseStates.includes(theCase.state) && user
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name || 'NONE',
@@ -295,11 +297,11 @@ function constructRestrictionCourtRecordPdf(
   )
 }
 
-function constructInvestigationCourtRecordPdf(
+const constructInvestigationCourtRecordPdf = (
   theCase: Case,
   formatMessage: FormatMessage,
   user?: User,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -340,9 +342,9 @@ function constructInvestigationCourtRecordPdf(
     doc,
     formatMessage(courtRecord.intro, {
       courtDate: formatDate(theCase.courtStartDate, 'PPP'),
-      judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
-        theCase.judge?.title ?? '?'
-      }`,
+      judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${lowercase(
+        theCase.judge?.title,
+      )}`,
       courtLocation: theCase.courtLocation
         ? ` ${lowercase(
             theCase.courtLocation?.slice(theCase.courtLocation.length - 1) ===
@@ -514,7 +516,9 @@ function constructInvestigationCourtRecordPdf(
     addNormalJustifiedText(
       doc,
       formatMessage(courtRecord.registrarWitness, {
-        registrarNameAndTitle: `${theCase.registrar.name} ${theCase.registrar.title}`,
+        registrarNameAndTitle: `${theCase.registrar.name} ${lowercase(
+          theCase.registrar.title,
+        )}`,
       }),
     )
   }
@@ -530,7 +534,7 @@ function constructInvestigationCourtRecordPdf(
   )
   addFooter(
     doc,
-    completedCaseStates.includes(theCase.state) && user
+    completedRequestCaseStates.includes(theCase.state) && user
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name || 'NONE',
@@ -546,29 +550,29 @@ function constructInvestigationCourtRecordPdf(
   )
 }
 
-function constructCourtRecordPdf(
+const constructCourtRecordPdf = (
   theCase: Case,
   formatMessage: FormatMessage,
   user?: User,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   return isRestrictionCase(theCase.type)
     ? constructRestrictionCourtRecordPdf(theCase, formatMessage, user)
     : constructInvestigationCourtRecordPdf(theCase, formatMessage, user)
 }
 
-export function getCourtRecordPdfAsString(
+export const getCourtRecordPdfAsString = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<string> {
+): Promise<string> => {
   return constructCourtRecordPdf(theCase, formatMessage).then((buffer) =>
     buffer.toString('binary'),
   )
 }
 
-export function getCourtRecordPdfAsBuffer(
+export const getCourtRecordPdfAsBuffer = (
   theCase: Case,
   formatMessage: FormatMessage,
   user?: User,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   return constructCourtRecordPdf(theCase, formatMessage, user)
 }

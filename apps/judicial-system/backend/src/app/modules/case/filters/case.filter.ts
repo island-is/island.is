@@ -1,29 +1,37 @@
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
-  InstitutionType,
+  EventType,
+  getIndictmentVerdictAppealDeadlineStatus,
+  IndictmentCaseReviewDecision,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
-  isInvestigationCase,
-  isPrisonSystemUser,
+  isPrisonAdminUser,
+  isPrisonStaffUser,
   isProsecutionUser,
+  isPublicProsecutorUser,
+  isRequestCase,
   isRestrictionCase,
   RequestSharedWithDefender,
+  ServiceRequirement,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
+import { DateLog } from '../models/dateLog.model'
 
-function canProsecutionUserAccessCase(
+const canProsecutionUserAccessCase = (
   theCase: Case,
   user: User,
   forUpdate = true,
-): boolean {
+): boolean => {
   // Check case type access
   if (user.role !== UserRole.PROSECUTOR && !isIndictmentCase(theCase.type)) {
     return false
@@ -36,10 +44,12 @@ function canProsecutionUserAccessCase(
       CaseState.DRAFT,
       CaseState.WAITING_FOR_CONFIRMATION,
       CaseState.SUBMITTED,
+      CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
+      CaseState.COMPLETED,
     ].includes(theCase.state)
   ) {
     return false
@@ -49,7 +59,8 @@ function canProsecutionUserAccessCase(
   if (
     user.institution?.id !== theCase.prosecutorsOfficeId &&
     (forUpdate ||
-      user.institution?.id !== theCase.sharedWithProsecutorsOfficeId)
+      user.institution?.id !== theCase.sharedWithProsecutorsOfficeId) &&
+    user.id !== theCase.indictmentReviewerId
   ) {
     return false
   }
@@ -66,7 +77,42 @@ function canProsecutionUserAccessCase(
   return true
 }
 
-function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
+const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
+  // Check case type access
+  if (!isIndictmentCase(theCase.type)) {
+    return false
+  }
+
+  // Check case state access
+  if (theCase.state !== CaseState.COMPLETED) {
+    return false
+  }
+
+  // Check indictment ruling decision access
+  if (
+    !theCase.indictmentRulingDecision ||
+    ![
+      CaseIndictmentRulingDecision.FINE,
+      CaseIndictmentRulingDecision.RULING,
+    ].includes(theCase.indictmentRulingDecision)
+  ) {
+    return false
+  }
+
+  // Make sure the indictment has been sent to the public prosecutor
+  if (
+    !theCase.eventLogs?.some(
+      (eventLog) =>
+        eventLog.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+    )
+  ) {
+    return false
+  }
+
+  return true
+}
+
+const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
   // Check case type access
   if (
     ![
@@ -80,7 +126,7 @@ function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
   }
 
   // Check case state access
-  if (isRestrictionCase(theCase.type) || isInvestigationCase(theCase.type)) {
+  if (isRequestCase(theCase.type)) {
     if (
       ![
         CaseState.DRAFT,
@@ -96,10 +142,9 @@ function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
   } else if (
     ![
       CaseState.SUBMITTED,
+      CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
-      CaseState.ACCEPTED,
-      CaseState.REJECTED,
-      CaseState.DISMISSED,
+      CaseState.COMPLETED,
     ].includes(theCase.state)
   ) {
     return false
@@ -113,9 +158,9 @@ function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
   return true
 }
 
-function canAppealsCourtUserAccessCase(theCase: Case): boolean {
+const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
   // Check case type access
-  if (!isRestrictionCase(theCase.type) && !isInvestigationCase(theCase.type)) {
+  if (!isRequestCase(theCase.type)) {
     return false
   }
 
@@ -150,25 +195,17 @@ function canAppealsCourtUserAccessCase(theCase: Case): boolean {
   return true
 }
 
-function canPrisonSystemUserAccessCase(
+const canPrisonStaffUserAccessCase = (
   theCase: Case,
-  user: User,
   forUpdate = true,
-): boolean {
-  // Prison system users cannot update cases
+): boolean => {
+  // Prison staff users cannot update cases
   if (forUpdate) {
     return false
   }
 
   // Check case type access
-  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
-    if (
-      !isRestrictionCase(theCase.type) &&
-      theCase.type !== CaseType.PAROLE_REVOCATION
-    ) {
-      return false
-    }
-  } else if (
+  if (
     ![
       CaseType.CUSTODY,
       CaseType.ADMISSION_TO_FACILITY,
@@ -183,8 +220,44 @@ function canPrisonSystemUserAccessCase(
     return false
   }
 
-  // Check prison access to alternative travel ban
-  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
+  // Check decision access
+  if (
+    !theCase.decision ||
+    ![CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
+      theCase.decision,
+    )
+  ) {
+    return false
+  }
+
+  return true
+}
+
+const canPrisonAdminUserAccessCase = (
+  theCase: Case,
+  forUpdate = true,
+): boolean => {
+  // Prison admin users cannot update cases
+  if (forUpdate) {
+    return false
+  }
+
+  // Check case type access
+  if (
+    !isRestrictionCase(theCase.type) &&
+    theCase.type !== CaseType.PAROLE_REVOCATION &&
+    !isIndictmentCase(theCase.type)
+  ) {
+    return false
+  }
+
+  if (isRequestCase(theCase.type)) {
+    // Check case state access
+    if (theCase.state !== CaseState.ACCEPTED) {
+      return false
+    }
+
+    // Check decision access
     if (
       !theCase.decision ||
       ![
@@ -195,13 +268,40 @@ function canPrisonSystemUserAccessCase(
     ) {
       return false
     }
-  } else {
+  }
+
+  if (isIndictmentCase(theCase.type)) {
+    // Check case state access
+    if (theCase.state !== CaseState.COMPLETED) {
+      return false
+    }
+
+    // Check case indictment ruling decision access
     if (
-      !theCase.decision ||
-      ![CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
-        theCase.decision,
-      )
+      theCase.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING
     ) {
+      return false
+    }
+
+    // Check indictment case review decision access
+    if (
+      theCase.indictmentReviewDecision !== IndictmentCaseReviewDecision.ACCEPT
+    ) {
+      return false
+    }
+
+    // Check defendant verdict appeal deadline access
+    const verdictInfo = theCase.defendants?.map<[boolean, Date | undefined]>(
+      (defendant) => [
+        defendant.serviceRequirement !== ServiceRequirement.NOT_REQUIRED,
+        defendant.verdictViewDate,
+      ],
+    )
+
+    const [_, indictmentVerdictAppealDeadlineExpired] =
+      getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
+
+    if (!indictmentVerdictAppealDeadlineExpired) {
       return false
     }
   }
@@ -209,23 +309,27 @@ function canPrisonSystemUserAccessCase(
   return true
 }
 
-function canDefenceUserAccessCase(theCase: Case, user: User): boolean {
+const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
   // Check case state access
   if (
     ![
       CaseState.SUBMITTED,
+      CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
+      CaseState.COMPLETED,
     ].includes(theCase.state)
   ) {
     return false
   }
 
+  const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
+
   // Check submitted case access
   const canDefenderAccessSubmittedCase =
-    (isRestrictionCase(theCase.type) || isInvestigationCase(theCase.type)) &&
+    isRequestCase(theCase.type) &&
     theCase.requestSharedWithDefender ===
       RequestSharedWithDefender.READY_FOR_COURT
 
@@ -241,24 +345,35 @@ function canDefenceUserAccessCase(theCase: Case, user: User): boolean {
     const canDefenderAccessReceivedCase =
       isIndictmentCase(theCase.type) ||
       canDefenderAccessSubmittedCase ||
-      Boolean(theCase.courtDate)
+      Boolean(arraignmentDate)
 
     if (!canDefenderAccessReceivedCase) {
       return false
     }
   }
 
+  const normalizedAndFormattedNationalId = normalizeAndFormatNationalId(
+    user.nationalId,
+  )
+
   // Check case defender access
   if (isIndictmentCase(theCase.type)) {
     if (
       !theCase.defendants?.some(
-        (defendant) => defendant.defenderNationalId === user.nationalId,
+        (defendant) =>
+          defendant.defenderNationalId &&
+          normalizedAndFormattedNationalId.includes(
+            defendant.defenderNationalId,
+          ),
       )
     ) {
       return false
     }
   } else {
-    if (theCase.defenderNationalId !== user.nationalId) {
+    if (
+      !theCase.defenderNationalId ||
+      !normalizedAndFormattedNationalId.includes(theCase.defenderNationalId)
+    ) {
       return false
     }
   }
@@ -266,11 +381,11 @@ function canDefenceUserAccessCase(theCase: Case, user: User): boolean {
   return true
 }
 
-export function canUserAccessCase(
+export const canUserAccessCase = (
   theCase: Case,
   user: User,
   forUpdate = true,
-): boolean {
+): boolean => {
   if (isProsecutionUser(user)) {
     return canProsecutionUserAccessCase(theCase, user, forUpdate)
   }
@@ -283,12 +398,20 @@ export function canUserAccessCase(
     return canAppealsCourtUserAccessCase(theCase)
   }
 
-  if (isPrisonSystemUser(user)) {
-    return canPrisonSystemUserAccessCase(theCase, user, forUpdate)
+  if (isPrisonStaffUser(user)) {
+    return canPrisonStaffUserAccessCase(theCase, forUpdate)
+  }
+
+  if (isPrisonAdminUser(user)) {
+    return canPrisonAdminUserAccessCase(theCase, forUpdate)
   }
 
   if (isDefenceUser(user)) {
     return canDefenceUserAccessCase(theCase, user)
+  }
+
+  if (isPublicProsecutorUser(user)) {
+    return canPublicProsecutionUserAccessCase(theCase)
   }
 
   // Other users cannot access cases

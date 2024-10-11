@@ -7,13 +7,19 @@ interface ConfirmModalProps {
   onConfirm: () => void
   onVisibilityChange: (visibility: boolean) => void
   message: string
+  title?: string
+  confirmMessage?: string
+  confirmGhost?: boolean
 }
 
 const ConfirmModal: FC<React.PropsWithChildren<ConfirmModalProps>> = ({
   isVisible,
   message,
+  title,
+  confirmMessage = 'Eyða',
   onConfirm,
   onVisibilityChange,
+  confirmGhost,
 }) => {
   return (
     <ModalBase
@@ -31,6 +37,7 @@ const ConfirmModal: FC<React.PropsWithChildren<ConfirmModalProps>> = ({
           padding={6}
         >
           <Stack space={3}>
+            <Text variant="h3">{title}</Text>
             <Text>{message}</Text>
             <Box display="flex" justifyContent="spaceBetween">
               <Button onClick={closeModal} size="small" variant="ghost">
@@ -40,8 +47,9 @@ const ConfirmModal: FC<React.PropsWithChildren<ConfirmModalProps>> = ({
                 onClick={onConfirm}
                 size="small"
                 colorScheme="destructive"
+                variant={confirmGhost ? 'ghost' : undefined}
               >
-                Eyða
+                {confirmMessage}
               </Button>
             </Box>
           </Stack>

@@ -10,10 +10,15 @@ import {
 } from '@island.is/island-ui/core'
 import {
   EmailSignup,
+  GenericListWrapper,
   RichText,
   SectionWithVideo,
 } from '@island.is/web/components'
-import { Slice } from '@island.is/web/graphql/schema'
+import {
+  GenericList as GenericListSchema,
+  Slice,
+  TeamList,
+} from '@island.is/web/graphql/schema'
 import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
 
 import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
@@ -88,6 +93,18 @@ const AnchorPageListSlice = dynamic(() =>
 
 const PowerBiSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.PowerBiSlice),
+)
+
+const TeamListSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.TeamListSlice),
+)
+
+const ChartNumberBox = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.ChartNumberBox),
+)
+
+const LatestGenericListItems = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LatestGenericListItems),
 )
 
 interface SliceMachineProps {
@@ -177,6 +194,31 @@ const renderSlice = (
           contain={true}
         />
       )
+    case 'GenericList':
+      return (
+        <GenericListWrapper
+          id={slice.id}
+          searchInputPlaceholder={
+            (slice as GenericListSchema).searchInputPlaceholder
+          }
+          itemType={(slice as GenericListSchema).itemType}
+          filterTags={(slice as GenericListSchema).filterTags}
+        />
+      )
+    case 'TeamList':
+      return (
+        <TeamListSlice
+          id={(slice as TeamList).id}
+          teamMembers={slice.teamMembers}
+          filterTags={(slice as TeamList).filterTags}
+          variant={(slice as TeamList).variant as 'card' | 'accordion'}
+        />
+      )
+    case 'ChartNumberBox':
+      return <ChartNumberBox slice={slice} />
+    case 'LatestGenericListItems': {
+      return <LatestGenericListItems slice={slice} />
+    }
     default:
       return <RichText body={[slice]} />
   }

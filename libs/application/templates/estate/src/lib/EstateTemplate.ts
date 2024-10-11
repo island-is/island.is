@@ -15,6 +15,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   DefaultEvents,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { m } from './messages'
 import { estateSchema } from './dataSchema'
@@ -26,6 +27,8 @@ import {
   getApplicationFeatureFlags,
   EstateFeatureFlags,
 } from './getApplicationFeatureFlags'
+
+const configuration = ApplicationConfigurations[ApplicationTypes.ESTATE]
 
 const EstateTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -39,6 +42,7 @@ const EstateTemplate: ApplicationTemplate<
       : m.prerequisitesTitle.defaultMessage,
   institution: m.institution,
   dataSchema: estateSchema,
+  translationNamespaces: [configuration.translation],
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.prerequisites,

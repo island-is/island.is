@@ -133,6 +133,7 @@ describe('InternalCaseController - Create', () => {
         {
           ...caseToCreate,
           origin: CaseOrigin.LOKE,
+          state: CaseState.NEW,
           creatingProsecutorId: userId,
           prosecutorId: userId,
           courtId,
@@ -259,7 +260,6 @@ describe('InternalCaseController - Create', () => {
           origin: CaseOrigin.LOKE,
           state: CaseState.DRAFT,
           creatingProsecutorId: userId,
-          courtId,
           prosecutorsOfficeId,
         },
         {
@@ -295,6 +295,7 @@ describe('InternalCaseController - Create', () => {
         {
           ...caseToCreate,
           origin: CaseOrigin.LOKE,
+          state: CaseState.NEW,
           creatingProsecutorId: userId,
           prosecutorId: userId,
           courtId,

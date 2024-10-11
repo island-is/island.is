@@ -3,12 +3,14 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
+  buildFileUploadField,
   buildKeyValueField,
   buildMultiField,
   buildSection,
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { InheritanceReport } from '../../lib/dataSchema'
@@ -18,7 +20,6 @@ import {
   shouldShowCustomSpouseShare,
   valueToNumber,
 } from '../../lib/utils/helpers'
-import { YES } from '../../lib/constants'
 
 export const heirs = buildSection({
   id: 'heirs',
@@ -61,24 +62,6 @@ export const heirs = buildSection({
               id: 'netPropertyForExchange',
               title: '',
             }),
-            buildDescriptionField({
-              id: 'customSpouseSharePercentage',
-              title: '',
-            }),
-            buildCheckboxField({
-              id: 'hasCustomSpouseSharePercentage',
-              title: '',
-              large: false,
-              backgroundColor: 'white',
-              defaultValue: [],
-              condition: shouldShowCustomSpouseShare,
-              options: [
-                {
-                  value: YES,
-                  label: m.assetsToShareHasCustomSpousePercentage,
-                },
-              ],
-            }),
             buildCustomField({
               title: '',
               id: 'share',
@@ -111,7 +94,7 @@ export const heirs = buildSection({
                 title: '',
                 id: 'heirs.data',
                 doesNotRequireAnswer: true,
-                component: 'HeirsAndPartitionRepeater',
+                component: 'HeirsRepeater',
               },
               {
                 customFields: [
@@ -124,14 +107,14 @@ export const heirs = buildSection({
                     id: 'heirsPercentage',
                   },
                   {
-                    title: m.taxFreeInheritance,
-                    id: 'taxFreeInheritance',
+                    title: m.inheritanceAmount,
+                    id: 'inheritance',
                     readOnly: true,
                     currency: true,
                   },
                   {
-                    title: m.inheritanceAmount,
-                    id: 'inheritance',
+                    title: m.taxFreeInheritance,
+                    id: 'taxFreeInheritance',
                     readOnly: true,
                     currency: true,
                   },
@@ -165,12 +148,50 @@ export const heirs = buildSection({
           title: m.heirAdditionalInfo,
           description: m.heirAdditionalInfoDescription,
           children: [
+            buildDescriptionField({
+              id: 'heirsAdditionalInfoFiles',
+              title: m.info,
+              titleVariant: 'h5',
+              marginBottom: 'smallGutter',
+            }),
             buildTextField({
               id: 'heirsAdditionalInfo',
-              title: m.info,
+              title: '',
               placeholder: m.infoPlaceholder,
               variant: 'textarea',
-              rows: 7,
+              rows: 4,
+              maxLength: 1800,
+            }),
+            buildDescriptionField({
+              id: 'heirsAdditionalInfoFilesPrivateTitle',
+              title: m.fileUploadPrivateTransfer,
+              description: m.uploadPrivateTransferUserGuidelines,
+              titleVariant: 'h5',
+              space: 'containerGutter',
+              marginBottom: 'smallGutter',
+            }),
+            buildFileUploadField({
+              id: 'heirsAdditionalInfoPrivateTransferFiles',
+              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+              uploadDescription: m.uploadPrivateTransferDescription,
+              uploadMultiple: false,
+              title: '',
+              uploadHeader: '',
+            }),
+            buildDescriptionField({
+              id: 'heirsAdditionalInfoFilesOtherDocumentsTitle',
+              title: m.fileUploadOtherDocuments,
+              description: m.uploadOtherDocumentsUserGuidelines,
+              titleVariant: 'h5',
+              space: 'containerGutter',
+              marginBottom: 'smallGutter',
+            }),
+            buildFileUploadField({
+              id: 'heirsAdditionalInfoFilesOtherDocuments',
+              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+              uploadDescription: m.uploadOtherDocumentsDescription,
+              title: '',
+              uploadHeader: '',
             }),
           ],
         }),
@@ -182,7 +203,8 @@ export const heirs = buildSection({
       children: [
         buildMultiField({
           id: 'heirsOverview',
-          title: m.overview,
+          title: m.overviewHeirsTitle,
+          description: m.overviewHeirsDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({
@@ -191,23 +213,6 @@ export const heirs = buildSection({
               titleVariant: 'h3',
               space: 'gutter',
               marginBottom: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.netProperty,
-              display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(
-                  String(
-                    roundedValueToNumber(
-                      getValueViaPath<number>(answers, 'netTotal'),
-                    ),
-                  ),
-                ),
-            }),
-            buildDescriptionField({
-              id: 'space',
-              title: '',
-              space: 'gutter',
             }),
             buildKeyValueField({
               label: m.totalDeduction,
@@ -256,7 +261,7 @@ export const heirs = buildSection({
               title: '',
               id: 'overviewHeirs',
               doesNotRequireAnswer: true,
-              component: 'HeirsOverview',
+              component: 'OverviewHeirs',
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -360,6 +365,48 @@ export const heirs = buildSection({
               label: m.info,
               value: ({ answers }) =>
                 getValueViaPath<string>(answers, 'heirsAdditionalInfo'),
+            }),
+            buildDescriptionField({
+              id: 'heirs_space5',
+              title: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.fileUploadPrivateTransfer,
+              value: ({ answers }) => {
+                const file = getValueViaPath<any>(
+                  answers,
+                  'heirsAdditionalInfoPrivateTransferFiles',
+                )?.[0]
+                return file?.name ?? ''
+              },
+            }),
+            buildDescriptionField({
+              id: 'heirs_space6',
+              title: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.fileUploadOtherDocuments,
+              value: ({ answers }) => {
+                const files = getValueViaPath<any>(
+                  answers,
+                  'heirsAdditionalInfoFilesOtherDocuments',
+                )
+                return files.map((file: any) => file.name).join(', ')
+              },
+            }),
+            buildDescriptionField({
+              id: 'heirs_space7',
+              title: '',
+              marginBottom: 'containerGutter',
+            }),
+            buildCheckboxField({
+              id: 'heirsConfirmation',
+              title: '',
+              large: false,
+              backgroundColor: 'white',
+              options: [{ value: YES, label: m.heirsOverviewConfirmation }],
             }),
             buildCustomField({
               title: '',

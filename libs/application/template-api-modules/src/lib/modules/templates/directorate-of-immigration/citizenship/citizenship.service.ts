@@ -17,11 +17,16 @@ import {
 } from '@island.is/application/templates/directorate-of-immigration/citizenship'
 import {
   ApplicantResidenceConditionViewModel,
+  CitizenshipValidity,
   CountryOfResidenceViewModel,
   DirectorateOfImmigrationClient,
+  ResidenceAbroadViewModel,
+  TravelDocumentViewModel,
 } from '@island.is/clients/directorate-of-immigration'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { YES } from '@island.is/application/core'
+import { Auth } from '@island.is/auth-nest-tools'
+import { ApplicantInformation } from './types'
 
 @Injectable()
 export class CitizenshipService extends BaseTemplateApiService {
@@ -33,20 +38,89 @@ export class CitizenshipService extends BaseTemplateApiService {
     super(ApplicationTypes.CITIZENSHIP)
   }
 
-  async getResidenceConditionInfo({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<ApplicantResidenceConditionViewModel> {
+  async getResidenceConditionInfo(
+    auth: Auth,
+  ): Promise<ApplicantResidenceConditionViewModel> {
     return this.directorateOfImmigrationClient.getCitizenshipResidenceConditionInfo(
       auth,
     )
   }
 
-  async getCurrentCountryOfResidenceList({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<CountryOfResidenceViewModel[]> {
+  async getCurrentStayAbroadList(
+    auth: Auth,
+  ): Promise<ResidenceAbroadViewModel[]> {
+    return this.directorateOfImmigrationClient.getCurrentStayAbroadList(auth)
+  }
+
+  async getCurrentPassportItem(
+    auth: Auth,
+  ): Promise<TravelDocumentViewModel | undefined> {
+    return this.directorateOfImmigrationClient.getCurrentPassportItem(auth)
+  }
+
+  async getCurrentCountryOfResidenceList(
+    auth: Auth,
+  ): Promise<CountryOfResidenceViewModel[]> {
     return this.directorateOfImmigrationClient.getCurrentCountryOfResidenceList(
       auth,
     )
+  }
+
+  async getApplicantValidity(auth: Auth): Promise<CitizenshipValidity> {
+    return this.directorateOfImmigrationClient.getApplicantValidity(auth)
+  }
+
+  async getApplicantInformation({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<ApplicantInformation> {
+    const validApplicant = await this.getApplicantValidity(auth)
+    const validOptions = []
+
+    for (const [key, value] of Object.entries(validApplicant)) {
+      if (value) {
+        validOptions.push(key)
+      }
+    }
+
+    if (validOptions.length === 0) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.applicationConditionsNotMet,
+          summary: errorMessages.applicationConditionsNotMet,
+        },
+        400,
+      )
+    }
+
+    const applicantInformationItem: ApplicantInformation = {}
+
+    if (validApplicant.applicantExists === true) {
+      const [
+        countryOfResidenceList,
+        passportItem,
+        staysAbroadList,
+        residenceConditionInfo,
+      ] = await Promise.all([
+        this.getCurrentCountryOfResidenceList(auth),
+        this.getCurrentPassportItem(auth),
+        this.getCurrentStayAbroadList(auth),
+        this.getResidenceConditionInfo(auth),
+      ])
+
+      applicantInformationItem.currentCountryOfResidenceList =
+        countryOfResidenceList
+      applicantInformationItem.currentPassportItem = passportItem
+      applicantInformationItem.currentStaysAbroadList = staysAbroadList
+      applicantInformationItem.residenceConditionInfo = residenceConditionInfo
+    } else {
+      applicantInformationItem.eesNordicCitizen =
+        validApplicant.eesNordicCitizen
+      applicantInformationItem.eesResidenceCondition =
+        validApplicant.eesResidenceCondition
+      applicantInformationItem.spouseIsCitizen = validApplicant.spouseIsCitizen
+    }
+
+    return applicantInformationItem
   }
 
   async getResidenceInIcelandLastChangeDate({
@@ -100,24 +174,20 @@ export class CitizenshipService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const answers = application.answers as CitizenshipAnswers
+    const validApplicant = await this.getApplicantValidity(auth)
+    const validOptions = []
 
-    const residenceConditionInfo =
-      await this.directorateOfImmigrationClient.getCitizenshipResidenceConditionInfo(
-        auth,
-      )
+    for (const [key, value] of Object.entries(validApplicant)) {
+      if (value) {
+        validOptions.push(key)
+      }
+    }
 
-    // throw error in case the residence condition list changed since prerequisite step and
-    // user does not fulfill any other condition
-    if (
-      !residenceConditionInfo.isAnyResConValid &&
-      answers.parentInformation?.hasValidParents !== YES &&
-      answers.formerIcelander !== YES
-    ) {
+    if (validOptions.length === 0) {
       throw new TemplateApiError(
         {
-          title: errorMessages.noResidenceConditionPossible,
-          summary: errorMessages.noResidenceConditionPossible,
+          title: errorMessages.applicationConditionsNotMet,
+          summary: errorMessages.applicationConditionsNotMet,
         },
         400,
       )
@@ -216,17 +286,31 @@ export class CitizenshipService extends BaseTemplateApiService {
       auth,
       {
         selectedChildren:
-          answers.selectedChildrenExtraData?.map((c) => ({
-            nationalId: c.nationalId,
-            otherParentNationalId: c.otherParentNationalId,
-            otherParentBirtDate: c.otherParentBirtDate
-              ? new Date(c.otherParentBirtDate)
-              : undefined,
-            otherParentName: c.otherParentName,
-          })) || [],
+          answers.selectedChildrenExtraData?.map((c) => {
+            const childrenCustodyInformation = application.externalData
+              .childrenCustodyInformation
+              .data as ApplicantChildCustodyInformation[]
+
+            const thisChild = childrenCustodyInformation.find(
+              (x) => x.nationalId === c.nationalId,
+            )
+
+            return {
+              nationalId: c.nationalId,
+              otherParentNationalId: c.otherParentNationalId,
+              otherParentBirtDate: c.otherParentBirtDate
+                ? new Date(c.otherParentBirtDate)
+                : undefined,
+              otherParentName: c.otherParentName,
+              citizenship: thisChild?.citizenship?.code || '',
+            }
+          }) || [],
         isFormerIcelandicCitizen: answers.formerIcelander === YES,
-        givenName: individual?.givenName,
-        familyName: individual?.familyName,
+        givenName:
+          individual?.givenName ||
+          individual?.fullName.split(' ').slice(0, -1).join(' '), //if given name is not available then remove last name and return the rest of the name as the given name
+        familyName:
+          individual?.familyName || individual?.fullName.split(' ').pop(),
         fullName: individual?.fullName,
         address: individual?.address?.streetAddress,
         postalCode: individual?.address?.postalCode,
@@ -236,7 +320,7 @@ export class CitizenshipService extends BaseTemplateApiService {
         citizenshipCode: individual?.citizenship?.code,
         residenceInIcelandLastChangeDate: residenceInIcelandLastChangeDate,
         birthCountry: nationalRegistryBirthplace?.location,
-        maritalStatusCode: spouseDetails?.maritalStatus,
+        maritalStatus: individual?.maritalTitle?.description || '',
         dateOfMaritalStatus: spouseDetails?.lastModified,
         spouse: spouseDetails?.nationalId
           ? {

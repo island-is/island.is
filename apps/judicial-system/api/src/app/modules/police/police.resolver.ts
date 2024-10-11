@@ -14,12 +14,14 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendApi } from '../../data-sources'
+import { BackendService } from '../backend'
 import { PoliceCaseFilesQueryInput } from './dto/policeCaseFiles.input'
 import { PoliceCaseInfoQueryInput } from './dto/policeCaseInfo.input'
+import { SubpoenaStatusQueryInput } from './dto/subpoenaStatus.input'
 import { UploadPoliceCaseFileInput } from './dto/uploadPoliceCaseFile.input'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
+import { SubpoenaStatus } from './models/subpoenaStatus.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -36,14 +38,35 @@ export class PoliceResolver {
     @Args('input', { type: () => PoliceCaseFilesQueryInput })
     input: PoliceCaseFilesQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<PoliceCaseFile[]> {
     this.logger.debug(`Getting all police case files for case ${input.caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_POLICE_CASE_FILES,
-      backendApi.getPoliceCaseFiles(input.caseId),
+      backendService.getPoliceCaseFiles(input.caseId),
+      input.caseId,
+    )
+  }
+
+  @Query(() => SubpoenaStatus, { nullable: true })
+  subpoenaStatus(
+    @Args('input', { type: () => SubpoenaStatusQueryInput })
+    input: SubpoenaStatusQueryInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<SubpoenaStatus> {
+    this.logger.debug(
+      `Getting subpoena status for subpoena ${input.subpoenaId} of case ${input.caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_SUBPOENA_STATUS,
+      backendService.getSubpoenaStatus(input.caseId, input.subpoenaId),
       input.caseId,
     )
   }
@@ -53,14 +76,15 @@ export class PoliceResolver {
     @Args('input', { type: () => PoliceCaseInfoQueryInput })
     input: PoliceCaseInfoQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<PoliceCaseInfo[]> {
     this.logger.debug(`Getting all police case info for case ${input.caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_POLICE_CASE_INFO,
-      backendApi.getPoliceCaseInfo(input.caseId),
+      backendService.getPoliceCaseInfo(input.caseId),
       input.caseId,
     )
   }
@@ -70,7 +94,8 @@ export class PoliceResolver {
     @Args('input', { type: () => UploadPoliceCaseFileInput })
     input: UploadPoliceCaseFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<UploadPoliceCaseFileResponse> {
     const { caseId, ...uploadPoliceFile } = input
     this.logger.debug(
@@ -80,7 +105,7 @@ export class PoliceResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPLOAD_POLICE_CASE_FILE,
-      backendApi.uploadPoliceFile(input.caseId, uploadPoliceFile),
+      backendService.uploadPoliceFile(input.caseId, uploadPoliceFile),
       input.caseId,
     )
   }

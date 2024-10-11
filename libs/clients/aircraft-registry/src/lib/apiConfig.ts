@@ -18,7 +18,6 @@ export const ApiConfig = {
       fetchApi: createEnhancedFetch({
         name: 'clients-aircraft-registry',
         organizationSlug: 'samgongustofa',
-        treat400ResponsesAsErrors: true,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {

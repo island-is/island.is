@@ -1,64 +1,156 @@
 import {
+  AlertMessage,
   Box,
   Button,
   Icon,
   Input,
   ModalBase,
+  Pagination,
   RadioButton,
   SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './AdvertModal.css'
+import * as styles from './Advert.css'
 import { useLocale } from '@island.is/localization'
 import { advert, error, general } from '../lib/messages'
-import { useQuery } from '@apollo/client'
-import { ADVERTS_QUERY } from '../graphql/queries'
+import { useApplication } from '../hooks/useUpdateApplication'
+import { useAdverts } from '../hooks/useAdverts'
+import { useState } from 'react'
+import {
+  DEBOUNCE_INPUT_TIMER,
+  DEFAULT_PAGE,
+  DEFAULT_PAGE_SIZE,
+  OJOI_INPUT_HEIGHT,
+} from '../lib/constants'
+import { useAdvert } from '../hooks/useAdvert'
 import debounce from 'lodash/debounce'
-import { DEBOUNCE_INPUT_TIMER } from '../lib/constants'
-import { ChangeEvent, useState } from 'react'
-import { MinistryOfJusticeGraphqlResponse } from '../lib/types'
+import set from 'lodash/set'
+import { InputFields } from '../lib/types'
+import { useFormContext } from 'react-hook-form'
 type Props = {
+  applicationId: string
   visible: boolean
-  setVisibility: (visibility: boolean) => void
-  setSelectedAdvertId: React.Dispatch<React.SetStateAction<string | null>>
+  setVisible: (visible: boolean) => void
+  onConfirmChange?: () => void
 }
+
+type UpdateAdvertFields = {
+  title: string
+  departmentId: string
+  typeId: string
+  html: string
+  categories: string[]
+}
+
 export const AdvertModal = ({
+  applicationId,
   visible,
-  setVisibility,
-  setSelectedAdvertId,
+  setVisible,
+  onConfirmChange,
 }: Props) => {
-  const { formatMessage: f } = useLocale()
-
-  const [localSelectedAdvertId, setLocalSelectedAdvertId] = useState<
-    string | null
-  >(null)
-
+  const [page, setPage] = useState(DEFAULT_PAGE)
   const [search, setSearch] = useState('')
+  const [selectedAdvertId, setSelectedAdvertId] = useState<string | null>(null)
 
-  const updateSearch = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setSearch(e.target.value)
-  }
-
-  const { data, loading } = useQuery<
-    MinistryOfJusticeGraphqlResponse<'adverts'>
-  >(ADVERTS_QUERY, {
-    variables: { input: { search } },
+  const { formatMessage: f } = useLocale()
+  const { setValue } = useFormContext()
+  const { application, updateApplication } = useApplication({
+    applicationId,
   })
 
-  const debouncedSearch = debounce(updateSearch, DEBOUNCE_INPUT_TIMER)
+  const { adverts, paging, loading } = useAdverts({
+    page: page,
+    search: search,
+  })
+
+  const [updateAdvertFields, setUpdateAdvertFields] =
+    useState<UpdateAdvertFields | null>(null)
+
+  const { loading: loadingAdvert, error: advertError } = useAdvert({
+    advertId: selectedAdvertId,
+    onCompleted: (ad) => {
+      setUpdateAdvertFields({
+        title: ad.title,
+        departmentId: ad.department.id,
+        typeId: ad.type.id,
+        html: ad.document.html,
+        categories: ad.categories.map((c) => c.id),
+      })
+    },
+  })
+
+  const disableConfirmButton = !selectedAdvertId || !!advertError
+
+  const onSelectAdvert = (advertId: string) => {
+    setSelectedAdvertId(advertId)
+  }
+
+  const onSearchChange = (value: string) => {
+    setSearch(value)
+  }
+
+  const handleSearchChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    debouncedSearch.cancel()
+    debouncedSearch(e.target.value)
+  }
+
+  const onConfirm = () => {
+    if (!updateAdvertFields) {
+      return
+    }
+
+    const currentAnswers = structuredClone(application.answers)
+
+    let updatedAnswers = set(
+      currentAnswers,
+      InputFields.advert.title,
+      updateAdvertFields.title,
+    )
+    updatedAnswers = set(
+      updatedAnswers,
+      InputFields.advert.departmentId,
+      updateAdvertFields.departmentId,
+    )
+    updatedAnswers = set(
+      updatedAnswers,
+      InputFields.advert.typeId,
+      updateAdvertFields.typeId,
+    )
+    updatedAnswers = set(
+      updatedAnswers,
+      InputFields.advert.html,
+      updateAdvertFields.html,
+    )
+    updatedAnswers = set(
+      updatedAnswers,
+      InputFields.advert.categories,
+      updateAdvertFields.categories,
+    )
+
+    setValue(InputFields.advert.title, updateAdvertFields.title)
+    setValue(InputFields.advert.departmentId, updateAdvertFields.departmentId)
+    setValue(InputFields.advert.typeId, updateAdvertFields.typeId)
+    setValue(InputFields.advert.html, updateAdvertFields.html)
+    setValue(InputFields.advert.categories, updateAdvertFields.categories)
+
+    updateApplication(updatedAnswers)
+    onConfirmChange && onConfirmChange()
+    setVisible(false)
+  }
+
+  const debouncedSearch = debounce(onSearchChange, DEBOUNCE_INPUT_TIMER)
 
   return (
     <ModalBase
       baseId="advertModal"
-      isVisible={visible}
       className={styles.modalBase}
-      onVisibilityChange={(visibility) => {
-        if (!visibility) {
-          setSearch('')
-          setVisibility(visibility)
+      isVisible={visible}
+      onVisibilityChange={(isVisible) => {
+        if (!isVisible) {
+          setVisible(false)
         }
       }}
     >
@@ -78,45 +170,72 @@ export const AdvertModal = ({
                   name="modal-search"
                   backgroundColor="blue"
                   placeholder={f(advert.modal.search)}
-                  onChange={debouncedSearch}
+                  onChange={handleSearchChange}
                 />
               </Box>
-              {data?.ministryOfJusticeAdverts.adverts.length ? (
-                <Box
-                  paddingY={1}
-                  borderColor="blue200"
-                  borderTopWidth="standard"
-                  borderBottomWidth="standard"
-                >
+              {!!advertError && (
+                <AlertMessage
+                  type="error"
+                  title={f(error.fetchAdvertFailed)}
+                  message={f(error.fetchAdvertFailedMessage)}
+                />
+              )}
+              <Box
+                paddingY={1}
+                borderColor="blue200"
+                borderTopWidth="standard"
+                borderBottomWidth="standard"
+              >
+                {loading && (
+                  <SkeletonLoader
+                    repeat={DEFAULT_PAGE_SIZE}
+                    height={OJOI_INPUT_HEIGHT}
+                    space={1}
+                    borderRadius="standard"
+                  />
+                )}
+                {adverts?.length !== 0 ? (
                   <Stack space={2} dividers="regular">
-                    {data.ministryOfJusticeAdverts.adverts.map((advert, i) => (
+                    {adverts?.map((advert, i) => (
                       <RadioButton
-                        name={advert.id}
                         key={i}
+                        name={advert.id}
                         label={advert.title}
-                        checked={localSelectedAdvertId === advert.id}
-                        onChange={() => setLocalSelectedAdvertId(advert.id)}
+                        checked={selectedAdvertId === advert.id}
+                        onChange={() => onSelectAdvert(advert.id)}
                       />
                     ))}
                   </Stack>
-                </Box>
-              ) : loading ? (
-                <SkeletonLoader height={80} repeat={3} space={2} />
-              ) : (
-                <Text>{f(error.noResults)}</Text>
-              )}
+                ) : (
+                  <Box paddingY={2}>
+                    <Text>{f(error.noResults)}</Text>
+                  </Box>
+                )}
+              </Box>
+            </Box>
+            <Box>
+              <Pagination
+                page={page}
+                totalPages={paging?.totalPages}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => setPage(page)}
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
             </Box>
             <Box className={styles.buttonWrapper}>
               <Button onClick={closeModal} variant="ghost">
                 {f(general.cancel)}
               </Button>
               <Button
-                onClick={() => {
-                  setSelectedAdvertId(localSelectedAdvertId)
-                  setLocalSelectedAdvertId(null)
-                  setSearch('')
-                  setVisibility(false)
-                }}
+                disabled={disableConfirmButton}
+                loading={loadingAdvert}
+                onClick={onConfirm}
               >
                 {f(general.confirm)}
               </Button>

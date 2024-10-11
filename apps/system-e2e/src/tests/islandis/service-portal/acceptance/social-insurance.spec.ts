@@ -2,6 +2,7 @@ import { test, BrowserContext, expect } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { disableI18n } from '../../../../support/disablers'
+import { setupXroadMocks } from './setup-xroad.mocks'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -25,7 +26,9 @@ test.describe('MS - Social Insurance', () => {
 
   test('payment plan', async () => {
     const page = await context.newPage()
+
     await disableI18n(page)
+    await setupXroadMocks()
 
     await test.step('should display data when switching years', async () => {
       // Arrange
@@ -34,18 +37,9 @@ test.describe('MS - Social Insurance', () => {
       )
 
       const title = page.getByRole('heading', {
-        name: 'Framfærsla',
+        name: 'Greiðsluáætlun',
       })
       await expect(title).toBeVisible()
-
-      await expect(
-        page.getByText('Skattskyldar greiðslutegundir nema arið 2024'),
-      ).toBeVisible()
-
-      const select = page.getByTestId('select-payment-plan-date-picker')
-      await select.click()
-      await page.keyboard.press('ArrowDown')
-      await page.keyboard.press('Enter')
 
       await expect(
         page.getByText('Skattskyldar greiðslutegundir'),

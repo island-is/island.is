@@ -1,3 +1,4 @@
+import { dynamicColor } from '@ui'
 import { ActionSheetIOS } from 'react-native'
 import DialogAndroid from 'react-native-dialogs'
 import { uiStore } from '../stores/ui-store'
@@ -52,6 +53,21 @@ export interface ShowPickerOptions {
 interface ShowPickerResponse {
   action: 'select' | 'negative' | 'neutral' | 'dismiss'
   selectedItem?: ShowPickerItem
+}
+
+const parseAndroidAction = (action: string) => {
+  switch (action) {
+    case 'actionPositive':
+      return 'positive'
+    case 'actionNegative':
+      return 'negative'
+    case 'actionNeutral':
+      return 'neutral'
+    case 'actionDismiss':
+      return 'dismiss'
+    default:
+      return 'select'
+  }
 }
 
 export function showPicker(
@@ -138,4 +154,29 @@ export function showPicker(
     })
   }
   return Promise.resolve({ action: 'neutral' })
+}
+
+export function showAndroidPrompt(
+  title: string,
+  content?: string,
+  options?: DialogAndroid.OptionsPrompt,
+): Promise<DialogAndroid.PromptResponse> {
+  const theme = uiStore.getState().theme!
+
+  return DialogAndroid.prompt(title, content, {
+    positiveColor: theme.color.blue400,
+    negativeColor: theme.color.red600,
+    widgetColor: theme.color.blue400,
+    contentColor: theme.shade.foreground,
+    backgroundColor: theme.shade.background,
+    neutralColor: theme.shade.foreground,
+    titleColor: theme.shade.foreground,
+    ...options,
+  }).then(({ action, text, ...rest }: any) => {
+    return {
+      action: parseAndroidAction(action),
+      text,
+      ...rest,
+    }
+  })
 }

@@ -1,173 +1,63 @@
-import React from 'react'
+import { FC, ReactNode } from 'react'
+import cn from 'classnames'
 
-import { Box, Icon, IconMapIcon, LinkV2, Text } from '@island.is/island-ui/core'
-import { formatDOB } from '@island.is/judicial-system/formatters'
-import {
-  Defendant,
-  SessionArrangements,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { Box, Text } from '@island.is/island-ui/core'
 
-import { link } from '../MarkdownWrapper/MarkdownWrapper.css'
 import * as styles from './InfoCard.css'
 
-interface Defender {
-  name?: string | null
-  defenderNationalId?: string | null
-  sessionArrangement?: SessionArrangements | null
-  email?: string | null
-  phoneNumber?: string | null
+interface Section {
+  id: string // Used as a key
+  items: Item[]
+  columns?: number
 }
 
-interface UniqueDefendersProps {
-  defenders: Defender[]
+export interface Item {
+  id: string // Used as a key
+  title: string
+  values: string[] | ReactNode[]
 }
 
 interface Props {
-  courtOfAppealData?: Array<{ title: string; value?: React.ReactNode }>
-  data: Array<{ title: string; value?: React.ReactNode }>
-  defendants?: { title: string; items: Defendant[] }
-  defenders?: Defender[]
-  icon?: IconMapIcon
+  sections: Section[]
 }
 
-export const NameAndEmail = (name?: string | null, email?: string | null) => [
-  ...(name ? [<Text key={name}>{name}</Text>] : []),
-  ...(email
-    ? [
-        <LinkV2 href={`mailto:${email}`} key={email} className={link}>
-          <Text as="span">{email}</Text>
-        </LinkV2>,
-      ]
-    : []),
-]
-
-const UniqueDefenders: React.FC<
-  React.PropsWithChildren<UniqueDefendersProps>
-> = (props) => {
-  const { defenders } = props
-  const uniqueDefenders = defenders?.filter(
-    (defender, index, self) =>
-      index === self.findIndex((d) => d.email === defender.email),
-  )
+const InfoCard: FC<Props> = (props) => {
+  const { sections } = props
 
   return (
-    <>
-      <Text variant="h4">
-        {defenders[0].sessionArrangement ===
-        SessionArrangements.ALL_PRESENT_SPOKESPERSON
-          ? 'Talsmaður'
-          : `Verj${uniqueDefenders.length > 1 ? 'endur' : 'andi'}`}
-      </Text>
-      {uniqueDefenders.map((defender, index) =>
-        defender?.name ? (
-          <Box display="flex" key={defender.name} role="paragraph">
-            <Text as="span">{defender.name}</Text>
-            {defender.email && <Text as="span" whiteSpace="pre">{`, `}</Text>}
-            {NameAndEmail(null, defender.email)}
-            <Text as="span">
-              {defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''}
-            </Text>
-          </Box>
-        ) : (
-          <Text key={`defender_not_registered_${index}`}>
-            Hefur ekki verið skráður
-          </Text>
-        ),
-      )}
-    </>
-  )
-}
-
-const InfoCard: React.FC<Props> = (props) => {
-  const { data, defendants, defenders, courtOfAppealData, icon } = props
-
-  return (
-    <Box
-      className={styles.infoCardContainer}
-      padding={[2, 2, 3, 3]}
-      data-testid="infoCard"
-    >
-      <Box
-        className={(defendants || defenders) && styles.infoCardTitleContainer}
-        marginBottom={(defendants || defenders) && [2, 2, 3, 3]}
-        paddingBottom={(defendants || defenders) && [2, 2, 3, 3]}
-      >
-        {defendants && (
-          <>
-            <Text variant="h4">{defendants.title}</Text>
-            <Box marginBottom={defenders ? [2, 2, 3, 3] : 0}>
-              {defendants.items.map((defendant) => (
-                <Text key={defendant.id}>
-                  <span className={styles.infoCardDefendant}>
-                    <Text
-                      as="span"
-                      fontWeight="semiBold"
-                    >{`${defendant.name}, `}</Text>
-                    <Text as="span" fontWeight="semiBold">
-                      {defendant.nationalId
-                        ? `${formatDOB(
-                            defendant.nationalId,
-                            defendant.noNationalId,
-                          )}, `
-                        : ''}
-                    </Text>
-                    <Text as="span">
-                      {defendant.citizenship && ` (${defendant.citizenship}), `}
-                    </Text>
-                    {defendant.address && (
-                      <Text as="span">{`${defendant.address}`}</Text>
-                    )}
-                  </span>
+    <Box className={styles.infoCardContainer} paddingX={[2, 2, 3, 3]}>
+      {sections.map((section, index) => (
+        <Box
+          className={cn(
+            styles.grid,
+            index < sections.length - 1 ? styles.infoCardTitleContainer : null,
+            {
+              [styles.twoCols]: section.columns === 2,
+            },
+          )}
+          paddingY={[2, 2, 3, 3]}
+          key={section.id}
+        >
+          {section.items.map((item) => (
+            <Box key={item.id}>
+              {typeof item.title === 'string' ? (
+                <Text variant="h4" as="h4">
+                  {item.title}
                 </Text>
-              ))}
-            </Box>
-          </>
-        )}
-        {defenders && <UniqueDefenders defenders={defenders} />}
-      </Box>
-      <Box className={styles.infoCardDataContainer}>
-        {data.map((dataItem, index) => {
-          return (
-            <Box
-              data-testid={`infoCardDataContainer${index}`}
-              key={dataItem.title}
-              marginBottom={1}
-            >
-              <Text variant="h4">{dataItem.title}</Text>
-              {typeof dataItem.value === 'string' ? (
-                <Text>{dataItem.value}</Text>
               ) : (
-                dataItem.value
+                item.title
+              )}
+              {item.values.map((value, index) =>
+                typeof value === 'string' ? (
+                  <Text key={`${value}-${index}`}>{value}</Text>
+                ) : (
+                  <Box key={`${value}-${index}`}>{value}</Box>
+                ),
               )}
             </Box>
-          )
-        })}
-      </Box>
-      {courtOfAppealData && (
-        <Box className={styles.infoCardCourtOfAppealDataContainer}>
-          {courtOfAppealData.map((dataItem, index) => {
-            return (
-              <Box
-                data-testid={`infoCardDataContainer${index}`}
-                key={dataItem.title}
-                margin={1}
-              >
-                <Text variant="h4">{dataItem.title}</Text>
-                {typeof dataItem.value === 'string' ? (
-                  <Text>{dataItem.value}</Text>
-                ) : (
-                  dataItem.value
-                )}
-              </Box>
-            )
-          })}
+          ))}
         </Box>
-      )}
-      {icon && (
-        <Box position="absolute" top={[2, 2, 3, 3]} right={[2, 2, 3, 3]}>
-          <Icon icon={icon} type="outline" color="blue400" size="large" />
-        </Box>
-      )}
+      ))}
     </Box>
   )
 }

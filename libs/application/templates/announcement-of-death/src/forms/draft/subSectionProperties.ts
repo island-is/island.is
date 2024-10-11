@@ -6,7 +6,7 @@ import {
   buildCheckboxField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { OtherPropertiesEnum } from '../../types'
+import { PropertiesEnum } from '../../types'
 
 export const subSectionProperties = buildSubSection({
   id: 'propertiesStep',
@@ -18,37 +18,6 @@ export const subSectionProperties = buildSubSection({
       description: m.propertiesDescription,
       space: 2,
       children: [
-        buildDescriptionField({
-          id: 'realEstatesTitle',
-          title: m.realEstatesTitle,
-          titleVariant: 'h3',
-          description: m.realEstatesDescription,
-        }),
-        buildCustomField({
-          title: 'realEstateRepeater',
-          id: 'assets',
-          component: 'RealEstateRepeater',
-        }),
-        buildDescriptionField({
-          id: 'vehiclesTitle',
-          title: m.vehiclesTitle,
-          description: m.vehiclesDescription,
-          space: 5,
-          titleVariant: 'h3',
-        }),
-        buildCustomField({
-          title: 'Vehicles!',
-          id: 'vehicles',
-          component: 'VehiclesRepeater',
-          childInputIds: ['vehicles.vehicles', 'vehicles.encountered'],
-        }),
-        buildDescriptionField({
-          id: 'otherPropertiesTitle',
-          title: m.otherPropertiesTitle,
-          titleVariant: 'h3',
-          description: m.otherPropertiesDescription,
-          space: 5,
-        }),
         buildCheckboxField({
           id: 'otherProperties',
           title: '',
@@ -58,20 +27,28 @@ export const subSectionProperties = buildSubSection({
           defaultValue: '',
           options: [
             {
+              label: m.propertiesRealEstate,
+              value: PropertiesEnum.REAL_ESTATE,
+            },
+            {
+              label: m.propertiesVehicles,
+              value: PropertiesEnum.VEHICLES,
+            },
+            {
               label: m.otherPropertiesAccounts,
-              value: OtherPropertiesEnum.ACCOUNTS,
+              value: PropertiesEnum.ACCOUNTS,
             },
             {
               label: m.otherPropertiesOwnBusiness,
-              value: OtherPropertiesEnum.OWN_BUSINESS,
+              value: PropertiesEnum.OWN_BUSINESS,
             },
             {
               label: m.otherPropertiesResidence,
-              value: OtherPropertiesEnum.RESIDENCE,
+              value: PropertiesEnum.RESIDENCE,
             },
             {
               label: m.otherPropertiesAssetsAbroad,
-              value: OtherPropertiesEnum.ASSETS_ABROAD,
+              value: PropertiesEnum.ASSETS_ABROAD,
             },
           ],
         }),

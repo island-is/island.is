@@ -3,11 +3,16 @@ import { PortalModule, PortalModuleRoutesProps } from '@island.is/portals/core'
 import React, { lazy } from 'react'
 import { m } from './lib/messages'
 import { ApplicationSystemPaths } from './lib/paths'
+import { Navigate } from 'react-router-dom'
+
+const Root = lazy(() => import('./screens/Root/Root'))
 
 const Overview = lazy(() => import('./screens/Overview/Overview'))
 const InstitutionOverview = lazy(() =>
   import('./screens/Overview/InstitutionOverview'),
 )
+
+const Statistics = lazy(() => import('./screens/Statistics/Statistics'))
 
 const allowedScopes: string[] = [
   AdminPortalScope.applicationSystemAdmin,
@@ -23,14 +28,34 @@ const getScreen = ({ userInfo }: PortalModuleRoutesProps): React.ReactNode => {
 export const applicationSystemAdminModule: PortalModule = {
   name: m.applicationSystem,
   layout: 'full',
-  enabled: ({ userInfo }) => {
-    return userInfo.scopes.some((scope) => allowedScopes.includes(scope))
-  },
+  enabled: ({ userInfo }) =>
+    userInfo.scopes.some((scope) => allowedScopes.includes(scope)),
   routes: (props) => [
     {
       name: m.overview,
       path: ApplicationSystemPaths.Root,
-      element: getScreen(props),
+      element: <Root />,
+      children: [
+        {
+          name: 'index',
+          path: ApplicationSystemPaths.Root,
+          index: true,
+          element: <Navigate to={ApplicationSystemPaths.Overview} />,
+        },
+        {
+          name: m.overview,
+          path: ApplicationSystemPaths.Overview,
+          element: getScreen(props),
+        },
+        {
+          name: m.statistics,
+          path: ApplicationSystemPaths.Statistics,
+          element: <Statistics />,
+          enabled: props.userInfo.scope?.includes(
+            AdminPortalScope.applicationSystemAdmin,
+          ),
+        },
+      ],
     },
   ],
 }

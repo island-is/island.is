@@ -1,18 +1,20 @@
 import React, { useMemo } from 'react'
 import { useQuery } from '@apollo/client'
+
 import {
-  GridContainer,
-  Logo,
-  Icon,
   Box,
-  Text,
-  Link,
+  GridContainer,
   Hidden,
+  Icon,
+  Link,
+  Logo,
+  Text,
 } from '@island.is/island-ui/core'
+import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
 import { useNamespaceStrict } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
-import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
+
 import * as styles from './OrganizationIslandFooter.css'
 
 export const OrganizationIslandFooter = () => {
@@ -24,7 +26,7 @@ export const OrganizationIslandFooter = () => {
   })
 
   const namespace = useMemo(
-    () => JSON.parse(data?.getNamespace?.fields ?? '{}'),
+    () => JSON.parse(data?.getNamespace?.fields || '{}'),
     [data?.getNamespace?.fields],
   )
 
@@ -32,7 +34,7 @@ export const OrganizationIslandFooter = () => {
 
   return (
     <footer>
-      <Box background="blue100" width="full" padding={5}>
+      <Box width="full" padding={5}>
         <GridContainer className={styles.contentContainer}>
           <Box className={styles.leftContent}>
             <Hidden below="sm">

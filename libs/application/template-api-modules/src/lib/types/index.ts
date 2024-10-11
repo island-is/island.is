@@ -1,49 +1,31 @@
 import { Injectable, Type } from '@nestjs/common'
 
-import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-record'
 import {
   Application,
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import { User } from '@island.is/auth-nest-tools'
-import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
-import { HealthInsuranceV2Options } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
-import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
 import { Message } from '@island.is/email-service'
 
 import type { Locale } from '@island.is/shared/types'
+import { sharedModuleConfig } from '../modules/shared'
+import { ConfigType } from '@nestjs/config'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
   jwtSecret: string
   clientLocationOrigin: string
-  emailOptions: {
-    useTestAccount: boolean
-    useNodemailerApp?: boolean
-    options?: {
-      region: string
-    }
-  }
   baseApiUrl: string
   email: {
     sender: string
     address: string
   }
-  smsOptions: {
-    url: string
-    username: string
-    password: string
-    acceptUnauthorized?: boolean
-  }
-  criminalRecord: CriminalRecordConfig
   attachmentBucket: string
   presignBucket: string
   generalPetition: {
     endorsementsApiBasePath: string
   }
-  healthInsuranceV2: HealthInsuranceV2Options
-  dataProtectionComplaint: DataProtectionComplaintClientConfig
   applicationService: Type<BaseTemplateApiApplicationService>
   userProfile: {
     serviceBasePath: string
@@ -56,6 +38,9 @@ export interface BaseTemplateAPIModuleConfig {
   }
   islykill: IslykillApiModuleConfig
 }
+
+export interface SharedModuleConfig
+  extends ConfigType<typeof sharedModuleConfig> {}
 
 export interface TemplateApiModuleActionProps<Params = unknown> {
   application: ApplicationWithAttachments

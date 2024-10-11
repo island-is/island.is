@@ -1,7 +1,10 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
 import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationContext } from '@island.is/application/types'
+import {
+  ApplicantChildCustodyInformation,
+  ApplicationContext,
+} from '@island.is/application/types'
 
 import {
   FamilyStatus,
@@ -15,10 +18,12 @@ import {
   CurrentApplication,
   FAApplication,
   OverrideAnswerSchema,
+  SchoolType,
   UploadFileType,
 } from '..'
 import { UploadFile } from '@island.is/island-ui/core'
 import { ApplicationStates } from './constants'
+import sortBy from 'lodash/sortBy'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -88,6 +93,7 @@ export function hasActiveCurrentApplication(context: ApplicationContext) {
     externalData,
     'currentApplication.data',
   ) as CurrentApplication
+
   return currentApplication?.currentApplicationId != null
 }
 
@@ -104,4 +110,15 @@ export const waitingForSpouse = (state: string) => {
     state === ApplicationStates.SPOUSE ||
     state === ApplicationStates.PREREQUISITESSPOUSE
   )
+}
+
+export const sortChildrenUnderAgeByAge = (
+  children: ApplicantChildCustodyInformation[],
+): ApplicantChildCustodyInformation[] => {
+  const childrenUnderAge = children.filter(
+    (child) => kennitala.info(child.nationalId)?.age < 18,
+  )
+  return sortBy(childrenUnderAge, (child) => {
+    return kennitala.info(child.nationalId)?.birthday
+  })
 }

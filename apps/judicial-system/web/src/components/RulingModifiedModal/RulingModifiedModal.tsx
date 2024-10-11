@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -24,7 +24,7 @@ interface Props {
   >
 }
 
-const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
+const RulingModifiedModal: FC<Props> = ({
   onCancel,
   onContinue,
   continueDisabled = false,

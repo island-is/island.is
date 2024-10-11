@@ -4,7 +4,7 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import useCase from '../useCase'
 
-const useDeb = (workingCase: Case, keys: Array<keyof Case> | keyof Case) => {
+const useDeb = (workingCase: Case, keys: (keyof Case)[] | keyof Case) => {
   const { updateCase } = useCase()
   const newKeys = Array.isArray(keys) ? keys : [keys]
 
@@ -26,7 +26,7 @@ const useDeb = (workingCase: Case, keys: Array<keyof Case> | keyof Case) => {
         ...update,
       })
     },
-    2000,
+    4000,
     [...newKeys.map((key) => workingCase[key])],
   )
 }

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -12,12 +12,8 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
-  CaseFileCategory,
   isDefenceUser,
   isProsecutionUser,
-  NotificationType,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -32,6 +28,12 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
+import {
+  CaseAppealDecision,
+  CaseFileCategory,
+  NotificationType,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useS3Upload,
@@ -82,7 +84,7 @@ const AppealFiles = () => {
 
   const handleNextButtonClick = useCallback(async () => {
     const allSucceeded = await handleUpload(
-      uploadFiles.filter((file) => !file.key),
+      uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
 
@@ -109,8 +111,8 @@ const AppealFiles = () => {
     }
   }
 
-  const handleChange = (files: File[], type: CaseFileCategory) => {
-    addUploadFiles(files, type, 'done')
+  const handleChange = (files: File[]) => {
+    addUploadFiles(files, { category: appealCaseFilesType, status: 'done' })
   }
 
   return (
@@ -179,10 +181,8 @@ const AppealFiles = () => {
               fileEndings: '.pdf',
             })}
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-            onChange={(files) => {
-              handleChange(files, appealCaseFilesType)
-            }}
-            onRemove={(file) => handleRemoveFile(file)}
+            onChange={handleChange}
+            onRemove={handleRemoveFile}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
           />
@@ -202,9 +202,8 @@ const AppealFiles = () => {
               ? strings.uploadFailedNextButtonText
               : strings.nextButtonText,
           )}
-          nextButtonIcon={undefined}
           nextIsLoading={!allFilesDoneOrError}
-          nextIsDisabled={uploadFiles.length === 0}
+          nextIsDisabled={uploadFiles.length === 0 || !allFilesDoneOrError}
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
         />
       </FormContentContainer>

@@ -1,25 +1,26 @@
-import { Allow, IsNumber, Min, ValidateIf } from 'class-validator'
+import { Allow, IsNumber, IsOptional, Min, ValidateIf } from 'class-validator'
 
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, ID, InputType, Int } from '@nestjs/graphql'
 
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 @InputType()
 export class CreateFileInput {
   @Allow()
-  @Field()
+  @Field(() => ID)
   readonly caseId!: string
 
   @Allow()
-  @Field()
+  @Field(() => String)
   readonly type!: string
 
   @Allow()
+  @IsOptional()
   @Field(() => CaseFileCategory, { nullable: true })
   readonly category?: CaseFileCategory
 
   @Allow()
-  @Field()
+  @Field(() => String)
   readonly key!: string
 
   @Allow()
@@ -27,10 +28,12 @@ export class CreateFileInput {
   readonly size!: number
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly policeCaseNumber?: string
 
   @Allow()
+  @IsOptional()
   @Field(() => Int, {
     nullable: true,
     description:
@@ -42,6 +45,7 @@ export class CreateFileInput {
   readonly chapter?: number
 
   @Allow()
+  @IsOptional()
   @Field(() => Int, {
     nullable: true,
     description:
@@ -53,10 +57,17 @@ export class CreateFileInput {
   readonly orderWithinChapter?: number
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly displayDate?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly policeFileId?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly userGeneratedFilename?: string
 }

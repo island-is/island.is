@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { FC, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import getConfig from 'next/config'
 import Link from 'next/link'
@@ -25,6 +25,7 @@ import {
   isAdminUser,
   isCourtOfAppealsUser,
   isDefenceUser,
+  isPrisonSystemUser,
 } from '@island.is/judicial-system/types'
 import { api } from '@island.is/judicial-system-web/src/services'
 
@@ -36,7 +37,7 @@ import * as styles from './Header.css'
 
 const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
 
-const LogoIcon: React.FC<React.PropsWithChildren<unknown>> = () => (
+const LogoIcon = () => (
   <>
     <Hidden above="sm">
       <Logo width={40} iconOnly />
@@ -47,9 +48,7 @@ const LogoIcon: React.FC<React.PropsWithChildren<unknown>> = () => (
   </>
 )
 
-const Container: React.FC<React.PropsWithChildren<unknown>> = ({
-  children,
-}) => {
+const Container: FC<PropsWithChildren> = ({ children }) => {
   return (
     <Box paddingX={[3, 3, 4]}>
       <GridContainer className={styles.gridContainer}>
@@ -70,7 +69,7 @@ const Container: React.FC<React.PropsWithChildren<unknown>> = ({
   )
 }
 
-const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
+const HeaderContainer = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
   const [isRobot, setIsRobot] = useState<boolean>()
@@ -92,6 +91,8 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
       ? constants.USERS_ROUTE
       : isCourtOfAppealsUser(user)
       ? constants.COURT_OF_APPEAL_CASES_ROUTE
+      : isPrisonSystemUser(user)
+      ? constants.PRISON_CASES_ROUTE
       : constants.CASES_ROUTE
 
   const handleLogout = () => {

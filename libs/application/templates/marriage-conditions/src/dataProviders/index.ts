@@ -1,4 +1,8 @@
-import { defineTemplateApi } from '@island.is/application/types'
+import {
+  InstitutionNationalIds,
+  PaymentCatalogApi,
+  defineTemplateApi,
+} from '@island.is/application/types'
 
 export {
   NationalRegistryUserApi,
@@ -14,3 +18,11 @@ export const ReligionCodesApi = defineTemplateApi({
   action: 'religionCodes',
   externalDataId: 'religions',
 })
+
+export const DistrictCommissionersPaymentCatalogApi =
+  PaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.SYSLUMENN,
+    },
+    externalDataId: 'paymentDistrictCommissioners',
+  })

@@ -88,15 +88,32 @@ export const m = defineMessages({
     description:
       "I've lived in Iceland according to VIII and here by confirm that I meet the conditions to apply for a driving license",
   },
+  glassesPrescriptionTitle: {
+    id: 'dl.application:glassesPrescription.title',
+    defaultMessage: 'Gleraugnavottorð',
+    description: 'Glasses prescription',
+  },
+  glassesPrescriptionSubTitle: {
+    id: 'dl.application:glassesPrescription.subtitle',
+    defaultMessage:
+      'Til þess að auðvelda umsóknarferlið er sótt gleraugnavottorð frá samgöngustofu',
+    description:
+      'In order to facilitate the application process, a glasses certificate is obtained from the transport office',
+  },
   informationSectionTitle: {
     id: 'dl.application:informationSection.title',
     defaultMessage: 'Sýslumannsembætti',
     description: 'Information',
   },
   pickupLocationTitle: {
-    id: 'dl.application:pickuplocation',
+    id: 'dl.application:pickupLocationTitle',
     defaultMessage: 'Afhendingarstaður',
     description: 'location for pickup',
+  },
+  pickupLocationHeader: {
+    id: 'dl.application:pickupLocationHeader',
+    defaultMessage: 'Hvar viltu sækja/fá ökuskírteinið?',
+    description: 'Where do you want to pick up your driving license?',
   },
   informationApplicant: {
     id: 'dl.application:information.applicant',
@@ -105,18 +122,47 @@ export const m = defineMessages({
   },
   healthDeclarationSectionTitle: {
     id: 'dl.application:healthDeclarationSection.title',
-    defaultMessage: 'Heilbrigðisyfirlýsing',
+    defaultMessage: 'Læknisvottorð',
     description: 'Health declaration',
   },
   healthDeclarationMultiFieldTitle: {
     id: 'dl.application:healthDeclarationMultiField.title',
-    defaultMessage: 'Heilbrigðisyfirlýsing',
+    defaultMessage: 'Læknisvottorð',
+    description: 'Health declaration',
+  },
+  healthDeclarationMultiField65Description: {
+    id: 'dl.application:healthDeclarationMultiField65Description#markdown',
+    defaultMessage:
+      'Þú þarft að skila inn læknisvottorði vegna ökuleyfis til að endurnýja ökuskírteini þitt. Læknisvottorðið þarf að vera frá **heimilislækni** og vegna ökuleyfis. Þegar búið er að ljúka umsókn þarf að skila inn læknisvottorði á valið sýslumannsembætti til að hægt sé að panta skírteinið.  **Athugið að skírteinið verður ekki pantað fyrr en búið er að skila inn vottorði.**',
     description: 'Health declaration',
   },
   healthDeclarationMultiFieldSubTitle: {
     id: 'dl.application:healthDeclarationMultiField.subTitle',
     defaultMessage: 'Yfirlýsing um líkamlegt og andlegt heilbrigði',
     description: 'Statement of physical and mental health',
+  },
+  declaration: {
+    id: 'dl.application:declaration',
+    defaultMessage: 'Yfirlýsing',
+    description: '',
+  },
+  healthDeclarationSubTitle: {
+    id: 'dl.application:healthDeclarationSubTitle',
+    defaultMessage:
+      'Ef einhverri spurningu er svarað játandi í heilbrigðisyfirlýsingu þarf læknisvottorð frá heimilislækni eða viðeigandi sérfræðilækni.',
+    description: '',
+  },
+  healthDeclarationAge65MultiFieldSubTitle: {
+    id: 'dl.application:healthDeclarationAge65MultiFieldSubTitle.subTitle',
+    defaultMessage:
+      'Við endurnýjun ökuskírteinis fyrir 65 ára og eldri þarf að skila inn læknisvottorði frá heimilislækni. Vottorðið má ekki vera eldra en 3 mánaða.',
+    description: 'Health declaration for 65+',
+  },
+  alertHealthDeclarationGlassesMismatch: {
+    id: 'dl.application:alertHealthDeclarationGlassesMismatch',
+    defaultMessage:
+      'Athugaðu að þar sem breyting hefur orðið á sjón síðan síðast var sótt um ökuskírteini þarftu að skila vottorði frá heimilislækni þess efnis.',
+    description: '',
   },
   healthDeclaration1: {
     id: 'dl.application:healthDeclaration.1',
@@ -295,46 +341,10 @@ export const m = defineMessages({
     `,
     description: 'Description of photo requirements',
   },
-  qualityPhotoInstructionsBulletOne: {
-    id: 'dl.application:qualityPhoto.instructionsbulletone',
-    defaultMessage: `
-    Ljósmynd af umsækjanda þarf að vera tekin beint að framan.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletTwo: {
-    id: 'dl.application:qualityPhoto.instructionsbullettwo',
-    defaultMessage: `
-    Sýna þarf höfuð (án höfuðfats) og herðar.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletThree: {
-    id: 'dl.application:qualityPhoto.instructionsbulletthree',
-    defaultMessage: `
-    Lýsing andlits þarf að vera jöfn.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletFour: {
-    id: 'dl.application:qualityPhoto.instructionsbulletfour',
-    defaultMessage: `
-    Athuga þarf að ekki glampi á gleraugu og skyggi á augu.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletFive: {
-    id: 'dl.application:qualityPhoto.instructionsbulletfive',
-    defaultMessage: `
-    Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletSix: {
-    id: 'dl.application:qualityPhoto.instructionsbulletsix',
-    defaultMessage: `
-    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
-    `,
+  qualityPhotoInstructionBullets: {
+    id: 'dl.application:qualityPhoto.instructionbullets#markdown',
+    defaultMessage:
+      '* Myndin skal vera andlitsmynd, tekin þannig að andlitið snúi beint að myndavél og bæði augu sjáist.\n* Umsækjandi má ekki bera höfuðfat. Þó má heimila slíkt ef umsækjandi fer fram á það af trúarástæðum.\n* Lýsing andlits þarf að vera jöfn og góð.\n* Umsækjandi má ekki bera dökk gleraugu eða gleraugu með speglun.\n* Myndin skal vera jafnlýst, bakgrunnur ljósgrár, hlutlaus og án skugga.\n* Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.',
     description: 'Description of photo requirements',
   },
   overviewBringAlongTitle: {
@@ -346,6 +356,16 @@ export const m = defineMessages({
     id: 'dl.application:overview.bringCertificateData',
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',
     description: `I'll bring a certificate from a doctor`,
+  },
+  overviewPickupPost: {
+    id: 'dl.application:overview.pickupPost',
+    defaultMessage: 'Sent heim í pósti',
+    description: 'By mail',
+  },
+  overviewPickupDistrict: {
+    id: 'dl.application:overview.pickupDistrict',
+    defaultMessage: 'Sækja á afhendingarstað',
+    description: 'Pickup location',
   },
   applicationDone: {
     id: 'dl.application:overview.done',
@@ -439,6 +459,39 @@ export const m = defineMessages({
     description:
       'Your application for a full driving license has been received. Before a full driving license can be applied for, you must bring the following to the district commissioner.',
   },
+  digitalLicenseInfoTitle: {
+    id: 'dl.application:digitalLicenseInfoTitle',
+    defaultMessage: 'Stafrænt ökuskírteini',
+    description: 'Digital driving license',
+  },
+  digitalLicenseInfoDescription: {
+    id: 'dl.application:digitalLicenseInfoDescription',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    description: 'Digital driving license',
+  },
+  digitalLicenseInfoAlertTitle: {
+    id: 'dl.application:digitalLicenseInfoAlertTitle',
+    defaultMessage: 'Athugið',
+    description: 'Digital driving license',
+  },
+  digitalLicenseInfoAlertMessageBTemp: {
+    id: 'dl.application:digitalLicenseInfoAlertMessageBTemp#markdown',
+    defaultMessage:
+      'Þú ert að sækja um bráðabirgðaökuskírteini. Ökuskírteini þitt verður einungis gefið út sem stafrænt ökuskírteini og verður aðgengilegt fyrir þig um leið og öll skilyrði fyrir bráðabirgðaökuskírteini eru uppfyllt.',
+    description: 'Digital driving license',
+  },
+  digitalLicenseInfoAlertMessageBFull: {
+    id: 'dl.application:digitalLicenseInfoAlertMessageBFull#markdown',
+    defaultMessage:
+      'Þú ert að sækja um fullnaðarökuskírteini. Ökuskírteini þitt verður núna einungis gefið út sem stafrænt ökuskírteini og verður aðgengilegt fyrir þig þegar þú hefur lokið þessari pöntun um fullnaðarökuskírteini. Fullnaðarökuskírteini þitt verður framleitt í plasti í byrjun febrúar 2025 og sent til þín með Póstinum, á skráð lögheimili þitt um leið og plastökuskírteinið er tilbúið.',
+    description: 'Digital driving license',
+  },
+  digitalLicenseInfoAlertMessageExtraInfo: {
+    id: 'dl.application:digitalLicenseInfoAlertMessageExtraInfo#markdown',
+    defaultMessage:
+      'Upplýsingar um stafrænt ökuskírteini, hvernig þú sækir það og hleður því í símannn þinn eru aðgengilegar hér [https://island.is/okuskirteini](https://island.is/okuskirteini)',
+    description: 'Digital driving license',
+  },
   congratulationsTempHelpText: {
     id: 'dl.application:congratulationsTempHelpText',
     defaultMessage:
@@ -469,6 +522,23 @@ export const m = defineMessages({
       'Umsókn þín um að hefja ökunám og fá bráðabirgðaskírteini hefur verið móttekin. ',
     description: 'Application received',
   },
+  applicationDoneAlertMessageBFull: {
+    id: 'dl.application:applicationDoneAlertMessageBFull',
+    defaultMessage: 'Umsókn þín um fullnaðarskírteini hefur verið móttekin.',
+    description: 'Application received',
+  },
+  applicationDoneAlertMessage65Renewal: {
+    id: 'dl.application:applicationDoneAlertMessage65Renewal',
+    defaultMessage:
+      'Umsókn þín um endurnýjun ökuskírteina fyrir 65 og eldra hefur verið móttekin.',
+    description: 'Application received',
+  },
+  applicationDoneAlertMessageBE: {
+    id: 'dl.application:applicationDoneAlertMessageBE',
+    defaultMessage:
+      'Umsókn þín um að hefja ökunám fyrir BE réttindi hefur verið móttekin.',
+    description: 'Application received',
+  },
   nextStepsTitle: {
     id: 'dl.application:nextStepsTitle',
     defaultMessage: 'Næstu skref',
@@ -477,8 +547,32 @@ export const m = defineMessages({
   nextStepsDescription: {
     id: 'dl.application:nextStepsDescription#markdown',
     defaultMessage:
-      'Næst þarf umsækjandi að mæta til sýslumanns með mynd og gefa rithandarsýnishorn.',
+      'Næst þarf umsækjandi að mæta til sýslumanns með mynd og gefa rithandarsýnishorn. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: 'Next steps',
+  },
+  nextStepsDescriptionBFull: {
+    id: 'dl.application:nextStepsDescriptionBFull#markdown',
+    defaultMessage:
+      'Næst þarf umsækjandi að mæta til sýslumanns. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
+    description: '',
+  },
+  nextStepsDescriptionBE: {
+    id: 'dl.application:nextStepsDescriptionBE#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
+    description: '',
+  },
+  nextStepsDescription65Renewal: {
+    id: 'dl.application:nextStepsDescription65Renewal#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at euismod nisi. In lobortis nisi purus, sit amet porta sem auctor vitae. Nunc aliquet elit nec ex gravida, a placerat quam eleifend.',
+    description: '',
+  },
+  nextStepsInfoLink: {
+    id: 'dl.application:nextStepsInfoLink#markdown',
+    defaultMessage:
+      '[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
+    description: '',
   },
   congratulationsCertificateTitle: {
     id: 'dl.application:congratulationsCertificateTitle',
@@ -537,10 +631,15 @@ export const m = defineMessages({
     defaultMessage: 'Sýslumannsembætti',
     description: 'Title for district commissioner',
   },
-  districtCommisionerPickup: {
+  districtCommissionerPickup: {
     id: 'dl.application:districtCommisionerPickup',
     defaultMessage: 'Afhending',
     description: 'Pickup for district commissioner',
+  },
+  districtCommissionerPickupPlaceholder: {
+    id: 'dl.application:districtCommisionerPickupPlaceholder',
+    defaultMessage: 'Veldu sýslumannsembætti',
+    description: 'Choose district commissioner',
   },
   chooseDistrictCommisionerForFullLicense: {
     id: 'dl.application:chooseDistrictCommisionerForFullLicense',
@@ -614,6 +713,11 @@ export const m = defineMessages({
     defaultMessage: 'Réttindi sem sótt er um',
     description: 'Driving license type that is requested',
   },
+  informationFullName: {
+    id: 'dl.application:informationFullName',
+    defaultMessage: 'Nafn',
+    description: 'Full Name',
+  },
   informationStreetAddress: {
     id: 'dl.application:informationStreetAddress',
     defaultMessage: 'Heimilisfang',
@@ -681,6 +785,28 @@ export const m = defineMessages({
     description:
       'Option description for selecting to apply for temporary driving license',
   },
+  applicationForRenewalLicenseTitle: {
+    id: 'dl.application:applicationForRenewalLicenseTitle',
+    defaultMessage: 'Endurnýjun ökuskírteina fyrir 65 ára og eldri',
+    description: 'Option title for selecting to renew driving license',
+  },
+  applicationForRenewalLicenseDescription: {
+    id: 'dl.application:applicationForRenewalLicenseDescription',
+    defaultMessage:
+      'Umsókn um endurnýjun ökuréttinda í B flokki (fólksbifreið), fyrir 65 ára og eldri.',
+    description: 'Option description for selecting to renew driving license',
+  },
+  applicationForBELicenseTitle: {
+    id: 'dl.application:applicationForBELicenseTitle',
+    defaultMessage: 'Eftirvagn BE',
+    description: 'Option title for selecting to apply for trailer license',
+  },
+  applicationForBELicenseDescription: {
+    id: 'dl.application:applicationForBELicenseDescription',
+    defaultMessage:
+      'Almenn ökuréttindi gefa réttindi til að mega draga kerrur sem eru allt að 750 kg, til að mega draga þyngri kerrur, hjólhýsi, hestakerrur ofl þarf réttindi sem kallast BE réttindi.',
+    description: 'Option title for selecting to apply for trailer license',
+  },
   declinedOtherCountryHelpText: {
     id: 'dl.application:declinedOtherCountryHelpText',
     defaultMessage:
@@ -733,18 +859,24 @@ export const m = defineMessages({
     description:
       'Alert message for health remarks on temporary driving license',
   },
-
   phoneNumberTitle: {
     id: 'dl.application:phoneNumberTitle',
     defaultMessage: 'Símanúmer',
     description: 'Phone number',
   },
-
   phoneNumberDescription: {
     id: 'dl.application:phoneNumberDescription',
     defaultMessage:
       'Vinsamlegast gefðu upp símanúmerið þitt eða þá staðfestu að símanúmerið þitt sé rétt',
     description: 'Your phone number',
+  },
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  beLicenseHealthDeclarationRequiresHealthCertificate: {
+    id: 'dl.application:requirementunmet.beLicenseHealthDeclarationRequiresHealthCertificate',
+    defaultMessage:
+      'Athugaðu að þar sem þú þarft að skila inn læknisvottorði getur þú ekki haldið áfram með umsóknina. Þú þarft þú að mæta í þitt sýslumanns embætti með læknisvottorð og leggja inn umsókn á staðnum',
+    description:
+      'Health declaration answers indicate that health certificate is required and BE application does not support health certificate requirement',
   },
 })
 
@@ -817,5 +949,45 @@ export const requirementsMessages = defineMessages({
     defaultMessage:
       'Þú þarft að hafa búsetu á Íslandi til að geta sótt um fullnaðarskírteini.',
     description: 'requirement unmet api returned false',
+  },
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  beLicenseRequiresHealthCertificateDescription: {
+    id: 'dl.application:requirementunmet.beLicenseRequiresHealthCertificateDescription',
+    defaultMessage:
+      'Ef tákntölur sem varða heilsufar/sjón eru skráðar á fyrri ökuskírteini eða umsækjandi er nú þegar með aukin ökuréttindi, þarf umsækjandi að mæta í sitt sýslumanns embætti með vottorð og leggja inn umsókn á staðnum',
+    description:
+      'BE application does not support health certificate requirement',
+  },
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  beLicenseRequiresHealthCertificateTitle: {
+    id: 'dl.application:requirementunmet.beLicenseRequiresHealthCertificateTitle',
+    defaultMessage: 'Læknisvottorð',
+    description:
+      'BE application does not support health certificate requirement',
+  },
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  beLicenseQualityPhotoTitle: {
+    id: 'dl.application:requirementunmet.beLicenseQualityPhotoTitle',
+    defaultMessage: 'Gæðavottuð mynd',
+    description:
+      'requirement unmet api returned false for an unspecified reason',
+  },
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  beLicenseQualityPhotoDescription: {
+    id: 'dl.application:requirementunmet.beLicenseQualityPhotoDescription',
+    defaultMessage:
+      'Ef ekki er til gæðavottuð mynd, þarf umsækjandi að mæta í sitt sýslumanns embætti með nýja mynd og leggja inn umsókn á staðnum',
+    description:
+      'requirement unmet api returned false for an unspecified reason',
+  },
+  noExtendedDrivingLicenseTitle: {
+    id: 'dl.application:requirementunmet.noExtendedDrivingLicenseTitle',
+    defaultMessage: 'Ekki hægt að sækja um endurnýjun á 65+ ökuskírteini.',
+    description: 'requirement unmet 65 plus renewal',
+  },
+  noExtendedDrivingLicenseDescription: {
+    id: 'dl.application:requirementunmet.noExtendedDrivingLicenseDescription#markdown',
+    defaultMessage: 'Ekki hægt að sækja um endurnýjun á 65+ ökuskírteini.',
+    description: 'requirement unmet 65 plus renewal',
   },
 })

@@ -34,6 +34,10 @@ import {
   VehicleServiceFjsV1Client,
 } from '@island.is/clients/vehicle-service-fjs-v1'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
+import {
+  MileageReadingApi,
+  MileageReadingDto,
+} from '@island.is/clients/vehicles-mileage'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { applicationCheck } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -51,12 +55,17 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     private readonly vehicleCodetablesClient: VehicleCodetablesClient,
     private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
+    private readonly mileageReadingApi: MileageReadingApi,
   ) {
     super(ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP)
   }
 
   private vehiclesApiWithAuth(auth: Auth) {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private mileageReadingApiWithAuth(auth: Auth) {
+    return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getInsuranceCompanyList() {
@@ -109,6 +118,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         result?.map(async (vehicle) => {
           let validation: OwnerChangeValidation | undefined
           let debtStatus: VehicleDebtStatus | undefined
+          let mileageReadings: MileageReadingDto[] | undefined
 
           // Only validate if fewer than 5 items
           if (result.length <= 5) {
@@ -125,6 +135,9 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
                 auth,
                 vehicle.permno || '',
               )
+            mileageReadings = await this.mileageReadingApiWithAuth(
+              auth,
+            ).getMileageReading({ permno: vehicle.permno || '' })
           }
 
           const electricFuelCodes =
@@ -136,6 +149,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
             color: vehicle.color || undefined,
             role: vehicle.role || undefined,
             requireMileage: electricFuelCodes.includes(vehicle.fuelCode || ''),
+            mileageReading: (mileageReadings?.[0]?.mileage ?? '').toString(),
             isDebtLess: debtStatus?.isDebtLess,
             validationErrorMessages: validation?.hasError
               ? validation.errorMessages
@@ -267,9 +281,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
             (props) => generateRequestReviewEmail(props, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending email about initReview to ${recipientList[i].email}`,
+              `Error sending email about initReview in application: ID: ${application.id}, 
+            role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -281,9 +297,12 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               generateRequestReviewSms(application, options, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about initReview to ${recipientList[i].phone}`,
+              `Error sending sms about initReview to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -388,9 +407,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               generateRequestReviewEmail(props, newlyAddedRecipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending email about addReview to ${newlyAddedRecipientList[i].email}`,
+              `Error sending email about addReview in application: ID: ${application.id}, 
+            role: ${newlyAddedRecipientList[i].role}`,
+              e,
             )
           })
       }
@@ -405,9 +426,12 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               ),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about addReview to ${newlyAddedRecipientList[i].phone}`,
+              `Error sending sms about addReview to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${newlyAddedRecipientList[i].role}`,
+              e,
             )
           })
       }
@@ -444,9 +468,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               ),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending email about rejectApplication to ${recipientList[i].email}`,
+              `Error sending email about rejectApplication in application: ID: ${application.id}, 
+            role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -462,9 +488,12 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               ),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about rejectApplication to ${recipientList[i].phone}`,
+              `Error sending sms about rejectApplication to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -568,9 +597,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               generateApplicationSubmittedEmail(props, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending email about submitApplication to ${recipientList[i].email}`,
+              `Error sending email about submitApplication in application: ID: ${application.id}, 
+            role: ${recipientList[i].role}`,
+              e,
             )
           })
       }
@@ -582,9 +613,12 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               generateApplicationSubmittedSms(application, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
-              `Error sending sms about submitApplication to ${recipientList[i].phone}`,
+              `Error sending sms about rejectApplication to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${recipientList[i].role}`,
+              e,
             )
           })
       }

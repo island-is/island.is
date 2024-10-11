@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import cn from 'classnames'
 
 import { IconMapIcon } from '@island.is/island-ui/core'
@@ -22,7 +22,7 @@ interface Props {
   onClick?: (fileId: string) => void
 }
 
-const CaseFile: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const CaseFile: FC<Props> = (props) => {
   const { name, size, color, id, icon, onClick } = props
 
   return (

@@ -8,42 +8,37 @@ import {
   Scopes,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
 import type { User } from '@island.is/auth-nest-tools'
 import { OverviewService } from './overview.service'
-import { InsuranceConfirmationResponse } from './models/insuranceConfirmation.response'
-import { InsuranceOverviewResponse } from './models/insuranceOverview.response'
+import { InsuranceConfirmation } from './models/insuranceConfirmation.model'
+import { InsuranceOverview } from './models/insuranceOverview.model'
 
 @Resolver()
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalHealthRightsModule)
-@FeatureFlag(Features.servicePortalHealthOverviewPage)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/overview' })
 @Scopes(ApiScope.healthRightsStatus)
 export class OverviewResolver {
   constructor(private readonly service: OverviewService) {}
 
-  @Query(() => InsuranceConfirmationResponse, {
+  @Query(() => InsuranceConfirmation, {
     name: 'rightsPortalInsuranceConfirmation',
+    nullable: true,
   })
   @Audit()
-  async getInsuranceConfirmation(
+  getInsuranceConfirmation(
     @CurrentUser() user: User,
-  ): Promise<InsuranceConfirmationResponse> {
-    return await this.service.getInsuranceConfirmation(user)
+  ): Promise<InsuranceConfirmation | null> {
+    return this.service.getInsuranceConfirmation(user)
   }
 
-  @Query(() => InsuranceOverviewResponse, {
+  @Query(() => InsuranceOverview, {
     name: 'rightsPortalInsuranceOverview',
+    nullable: true,
   })
   @Audit()
-  async getInsuranceOverview(
+  getInsuranceOverview(
     @CurrentUser() user: User,
-  ): Promise<InsuranceOverviewResponse> {
-    return await this.service.getInsuranceOverview(user)
+  ): Promise<InsuranceOverview | null> {
+    return this.service.getInsuranceOverview(user)
   }
 }

@@ -4,6 +4,7 @@
   "sourceRoot": "apps/application-system/api/src",
   "projectType": "application",
   "prefix": "application-system-api",
+  "tags": ["scope:application-system-api"],
   "generators": {},
   "targets": {
     "build": {
@@ -82,6 +83,11 @@
             "glob": "*",
             "input": "libs/application/template-api-modules/src/lib/modules/templates/complaints-to-althingi-ombudsman/emailGenerators/assets",
             "output": "./complaints-to-althingi-ombudsman-assets"
+          },
+          {
+            "glob": "*",
+            "input": "libs/application/template-api-modules/src/lib/modules/templates/aosh/transfer-of-machine-ownership/emailGenerators/assets",
+            "output": "./aosh-transfer-of-machine-ownership-assets"
           }
         ],
         "webpackConfig": "apps/application-system/api/webpack.config.js",
@@ -103,17 +109,13 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/application-system/api/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/application-system/api/jest.config.ts",
-        "runInBand": true,
-        "passWithNoTests": true
+        "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/application-system/api"]
     },
@@ -127,7 +129,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/application-system/api"
       }
     },
@@ -159,7 +161,9 @@
         "cwd": "apps/application-system/api"
       }
     },
-    "docker-express": {},
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    },
     "dev-init": {
       "executor": "nx:run-commands",
       "options": {
@@ -179,12 +183,10 @@
         "commands": [
           "yarn nx run api:dev",
           "yarn nx run services-user-profile:dev",
-          "yarn start application-system-api",
-          "scripts/run-soffia-proxy.sh"
+          "yarn start application-system-api"
         ],
         "parallel": true
       }
     }
-  },
-  "tags": ["scope:application-system-api"]
+  }
 }

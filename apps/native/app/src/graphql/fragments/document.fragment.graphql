@@ -1,15 +1,16 @@
 directive @client on FIELD
 
-fragment ListDocument on Document {
+fragment ListDocument on DocumentV2 {
   id
   subject
-  senderName
-  senderNatReg
-  date
-  fileType
-  url
+  publicationDate
+  downloadUrl
   opened
   categoryId
   bookmarked
+  sender {
+    id
+    name
+  }
   archived @client
 }

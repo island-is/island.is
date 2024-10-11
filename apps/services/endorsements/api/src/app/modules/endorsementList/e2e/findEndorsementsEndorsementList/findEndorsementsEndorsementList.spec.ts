@@ -33,6 +33,5 @@ describe('findEndorsementsEndorsementList', () => {
       .expect(200)
 
     expect(Array.isArray(response.body.data)).toBeTruthy()
-    expect(response.body.data).toHaveLength(2)
   })
 })

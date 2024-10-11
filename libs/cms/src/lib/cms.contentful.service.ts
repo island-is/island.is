@@ -153,7 +153,7 @@ export class CmsContentfulService {
 
     const params = {
       ['content_type']: 'organization',
-      include: 10,
+      include: 4,
       limit: 1000,
       ...organizationTitles,
       ...organizationReferenceIdentifiers,
@@ -174,36 +174,26 @@ export class CmsContentfulService {
   }
 
   async getOrganizationLogos(
-    organizationTitles: string[],
-    searchByKey?: boolean,
+    organizationFieldValues: string[],
+    searchByField: keyof types.IOrganizationFields,
   ): Promise<Array<string | null>> {
-    const fieldParam = searchByKey
-      ? 'fields.referenceIdentifier[in]'
-      : 'fields.title[in]'
     const params = {
       ['content_type']: 'organization',
-      select: 'fields.logo,fields.title,fields.referenceIdentifier',
-      [fieldParam]: organizationTitles.join(','),
+      select: `fields.logo,fields.${searchByField}`,
+      [`fields.${searchByField}[in]`]: organizationFieldValues.join(','),
     }
 
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IOrganizationFields>(null, params)
       .catch(errorHandler('getOrganizationsLogo'))
 
-    return organizationTitles.map((title) => {
+    return organizationFieldValues.map((title) => {
       if (!result.items) {
         return null
       } else {
-        let organization
-        if (searchByKey) {
-          organization = result.items.find(
-            (item) => item.fields.referenceIdentifier === title,
-          )
-        } else {
-          organization = result.items.find(
-            (item) => item.fields.title === title,
-          )
-        }
+        const organization = result.items.find(
+          (item) => item.fields[searchByField] === title,
+        )
 
         const image = organization?.fields.logo
           ? mapImage(organization?.fields.logo)
@@ -320,11 +310,19 @@ export class CmsContentfulService {
     )
   }
 
-  async getOrganization(slug: string, lang: string): Promise<Organization> {
+  async getOrganization(
+    slug: string,
+    lang: string,
+  ): Promise<Organization | null> {
+    if (!slug) {
+      return null
+    }
+
     const params = {
       ['content_type']: 'organization',
       include: 10,
       'fields.slug': slug,
+      limit: 1,
     }
 
     const result = await this.contentfulRepository
@@ -344,6 +342,25 @@ export class CmsContentfulService {
       ['content_type']: 'organization',
       include: 10,
       'fields.title[match]': title,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
+      .catch(errorHandler('getOrganization'))
+
+    return (
+      (result.items as types.IOrganization[]).map(mapOrganization)[0] ?? null
+    )
+  }
+
+  async getOrganizationByReferenceId(
+    referenceId: string,
+    lang: string,
+  ): Promise<Organization> {
+    const params = {
+      ['content_type']: 'organization',
+      include: 10,
+      'fields.referenceIdentifier': referenceId,
     }
 
     const result = await this.contentfulRepository
@@ -453,7 +470,7 @@ export class CmsContentfulService {
     }
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IProjectPageFields>(lang, params)
+      .getLocalizedEntries<types.IProjectPageFields>(lang, params, 5)
       .catch(errorHandler('getProjectPage'))
 
     return result.items.length
@@ -721,7 +738,7 @@ export class CmsContentfulService {
     )
   }
 
-  async getLifeEvents(lang: string): Promise<LifeEventPage[]> {
+  async getLifeEventsForOverview(lang: string): Promise<LifeEventPage[]> {
     const params = {
       ['content_type']: 'lifeEventPage',
       order: 'sys.createdAt',

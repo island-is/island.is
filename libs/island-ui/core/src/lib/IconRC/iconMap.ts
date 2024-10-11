@@ -32,6 +32,7 @@ export type Icon =
   | 'documents'
   | 'dots'
   | 'download'
+  | 'upload'
   | 'ellipse'
   | 'ellipsisHorizontal'
   | 'ellipsisVertical'
@@ -40,7 +41,9 @@ export type Icon =
   | 'eyeOff'
   | 'facebook'
   | 'fileTrayFull'
+  | 'fileTrayEmpty'
   | 'filter'
+  | 'gavel'
   | 'heart'
   | 'home'
   | 'homeWithCar'
@@ -89,6 +92,7 @@ export type Icon =
   | 'swapVertical'
   | 'thumbsUp'
   | 'thumbsDown'
+  | 'leaf'
 
 export default {
   filled: {
@@ -124,6 +128,7 @@ export default {
     documents: 'Documents',
     dots: 'Dots',
     download: 'Download',
+    upload: 'Upload',
     ellipse: 'Ellipse',
     ellipsisHorizontal: 'EllipsisHorizontal',
     ellipsisVertical: 'EllipsisVertical',
@@ -132,7 +137,9 @@ export default {
     expand: 'Expand',
     facebook: 'Facebook',
     fileTrayFull: 'FileTrayFull',
+    fileTrayEmpty: 'FileTrayEmpty',
     filter: 'Filter',
+    gavel: 'Gavel',
     heart: 'Heart',
     home: 'Home',
     homeWithCar: 'HomeWithCar',
@@ -181,6 +188,7 @@ export default {
     swapVertical: 'SwapVertical',
     thumbsUp: 'ThumbsUp',
     thumbsDown: 'ThumbsDown',
+    leaf: 'Leaf',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -215,6 +223,7 @@ export default {
     documents: 'DocumentsOutline',
     dots: 'Dots',
     download: 'DownloadOutline',
+    upload: 'UploadOutline',
     ellipse: 'EllipseOutline',
     ellipsisHorizontal: 'EllipsisHorizontalOutline',
     ellipsisVertical: 'EllipsisVerticalOutline',
@@ -223,7 +232,9 @@ export default {
     expand: 'ExpandOutline',
     facebook: 'Facebook',
     fileTrayFull: 'FileTrayFullOutline',
+    fileTrayEmpty: 'FileTrayEmptyOutline',
     filter: 'FilterOutline',
+    gavel: 'GavelOutline',
     heart: 'HeartOutline',
     home: 'HomeOutline',
     homeWithCar: 'HomeWithCarOutline',
@@ -272,5 +283,6 @@ export default {
     swapVertical: 'SwapVertical',
     thumbsUp: 'ThumbsUpOutline',
     thumbsDown: 'ThumbsDownOutline',
+    leaf: 'LeafOutline',
   },
 }

@@ -1,10 +1,14 @@
+import { compile, match } from 'path-to-regexp'
 import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
 import { bundleId } from '../config'
-import { notificationsStore } from '../stores/notifications-store'
+import {
+  GenericLicenseType,
+  NotificationMessage,
+} from '../graphql/types/schema'
 import { ComponentRegistry, MainBottomTabs } from '../utils/component-registry'
-import { openBrowser } from './rn-island'
+import { openNativeBrowser } from './rn-island'
 
 export type RouteCallbackArgs =
   | boolean
@@ -152,6 +156,7 @@ export const resetSchemes = () => {
 
 const navigateTimeMap = new Map()
 const NAVIGATE_TIMEOUT = 500
+
 /**
  * Navigate to a specific url within the app
  * @param url Navigating url (ex. /inbox, /inbox/my-document-id, /wallet etc.)
@@ -173,7 +178,7 @@ export function navigateTo(url: string, extraProps: any = {}) {
   // setup linking url
   const linkingUrl = `${bundleId}://${String(url).replace(/^\//, '')}`
 
-  // evalute and route
+  // evaluate and route
   return evaluateUrl(linkingUrl, extraProps)
 
   // @todo when to use native linking system?
@@ -181,30 +186,82 @@ export function navigateTo(url: string, extraProps: any = {}) {
 }
 
 /**
- * Navigate to a notification detail screen, or its link if defined.
- * You may pass any one of its actions link if you want to go there as well.
- * @param notification Notification object, requires `id` and an optional `link`
- * @param componentId use specific componentId to open web browser in
+ * Navigate to a specific universal link, if our mapping does not return a valid screen within the app - open a webview.
  */
-export function navigateToNotification(
-  notification: { id: string; link?: string },
-  componentId?: string,
-) {
-  const { id, link } = notification
-  // mark notification as read
-  if (id) {
-    notificationsStore.getState().actions.setRead(id)
-    const didNavigate = navigateTo(link ?? `/notification/${id}`)
-    if (!didNavigate && link) {
-      if (!componentId) {
-        // Use home tab for browser
-        Navigation.mergeOptions(MainBottomTabs, {
-          bottomTabs: {
-            currentTabIndex: 1,
-          },
-        })
-      }
-      openBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
+export function navigateToUniversalLink({
+  link,
+  componentId,
+  openBrowser = openNativeBrowser,
+}: {
+  // url to navigate to
+  link?: NotificationMessage['link']['url']
+  // componentId to open web browser in
+  componentId?: string
+  openBrowser?: (link: string, componentId?: string) => void
+}) {
+  // If no link do nothing
+  if (!link) return
+
+  const appRoute = findRoute(link)
+
+  if (appRoute) {
+    navigateTo(appRoute)
+
+    return
+  }
+
+  if (!componentId) {
+    // Use home tab for browser
+    Navigation.mergeOptions(MainBottomTabs, {
+      bottomTabs: {
+        currentTabIndex: 1,
+      },
+    })
+  }
+
+  openBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
+}
+
+// Map between notification link and app screen
+const urlMapping: { [key: string]: string } = {
+  '/minarsidur/postholf/:id': '/inbox/:id',
+  '/minarsidur/postholf': '/inbox',
+  '/minarsidur/min-gogn/stillingar': '/settings',
+  '/minarsidur/skirteini': '/wallet',
+  '/minarsidur/skirteini/tjodskra/vegabref/:id': '/walletpassport/:id',
+  '/minarsidur/skirteini/:provider/ehic/:id': `/wallet/${GenericLicenseType.Ehic}`,
+  '/minarsidur/skirteini/:provider/veidikort/:id': `/wallet/${GenericLicenseType.HuntingLicense}`,
+  '/minarsidur/skirteini/:provider/pkort/:id': `/wallet/${GenericLicenseType.PCard}`,
+  '/minarsidur/skirteini/:provider/okurettindi/:id': `/wallet/${GenericLicenseType.DriversLicense}`,
+  '/minarsidur/skirteini/:provider/adrrettindi/:id': `/wallet/${GenericLicenseType.AdrLicense}`,
+  '/minarsidur/skirteini/:provider/vinnuvelarettindi/:id': `/wallet/${GenericLicenseType.MachineLicense}`,
+  '/minarsidur/skirteini/:provider/skotvopnaleyfi/:id': `/wallet/${GenericLicenseType.FirearmLicense}`,
+  '/minarsidur/skirteini/:provider/ororkuskirteini/:id': `/wallet/${GenericLicenseType.DisabilityLicense}`,
+  '/minarsidur/eignir/fasteignir': '/assets',
+  '/minarsidur/eignir/fasteignir/:id': '/asset/:id',
+  '/minarsidur/fjarmal/stada': '/finance',
+  '/minarsidur/eignir/okutaeki/min-okutaeki': '/vehicles',
+  '/minarsidur/eignir/okutaeki/min-okutaeki/:id': '/vehicle/:id',
+  '/minarsidur/eignir/okutaeki/min-okutaeki/:id/kilometrastada':
+    '/vehicle-mileage/:id',
+  '/minarsidur/loftbru': '/air-discount',
+}
+
+const findRoute = (url: string) => {
+  // Remove trailing slash and spacess
+  const cleanLink = url.replace(/\/\s*$/, '')
+  // Remove domain
+  const path = cleanLink.replace(/https?:\/\/[^/]+/, '')
+
+  for (const [pattern, routeTemplate] of Object.entries(urlMapping)) {
+    const matcher = match(pattern, { decode: decodeURIComponent })
+    const matchResult = matcher(path)
+
+    if (matchResult) {
+      const compiler = compile(routeTemplate)
+      return compiler(matchResult.params)
     }
   }
+
+  return null
 }

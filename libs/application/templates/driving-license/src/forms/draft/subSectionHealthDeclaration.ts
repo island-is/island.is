@@ -2,10 +2,17 @@ import {
   buildMultiField,
   buildCustomField,
   buildSubSection,
+  buildAlertMessageField,
+  buildDescriptionField,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
-import { hasHealthRemarks } from '../../lib/utils/formUtils'
+import {
+  hasHealthRemarks,
+  needsHealthCertificateCondition,
+} from '../../lib/utils/formUtils'
+import { BE, B_FULL_RENEWAL_65 } from '../../lib/constants'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
@@ -15,13 +22,21 @@ export const subSectionHealthDeclaration = buildSubSection({
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
+      condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
       space: 2,
       children: [
+        buildDescriptionField({
+          id: 'healthDeclarationDescription',
+          title: '',
+          description: m.healthDeclarationSubTitle,
+          marginBottom: 2,
+        }),
         buildCustomField({
           id: 'remarks',
           title: '',
           component: 'HealthRemarks',
-          condition: (_, externalData) => hasHealthRemarks(externalData),
+          condition: (answers, externalData) =>
+            hasHealthRemarks(externalData) && answers.applicationFor !== BE,
         }),
         buildCustomField(
           {
@@ -124,6 +139,40 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration10,
           },
         ),
+        buildAlertMessageField({
+          id: 'healthDeclaration.contactGlassesMismatch',
+          title: '',
+          message: m.alertHealthDeclarationGlassesMismatch,
+          alertType: 'warning',
+          condition: (answers) =>
+            answers.applicationFor !== BE &&
+            (answers.healthDeclaration as any)?.contactGlassesMismatch,
+        }),
+        //TODO: Remove when RLS/SGS supports health certificate in BE license
+        buildDescriptionField({
+          id: 'healthDeclarationValidForBELicense',
+          title: '',
+        }),
+        buildAlertMessageField({
+          id: 'healthDeclaration.BE',
+          title: '',
+          message: m.beLicenseHealthDeclarationRequiresHealthCertificate,
+          alertType: 'warning',
+          condition: (answers, externalData) =>
+            needsHealthCertificateCondition(YES)(answers, externalData),
+        }),
+      ],
+    }),
+    buildMultiField({
+      id: 'healthDeclarationAge65',
+      title: m.healthDeclarationMultiFieldTitle,
+      condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+      children: [
+        buildDescriptionField({
+          id: 'healthDeclarationDescription65',
+          title: '',
+          description: m.healthDeclarationMultiField65Description,
+        }),
       ],
     }),
   ],

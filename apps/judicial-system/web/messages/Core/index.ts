@@ -184,11 +184,6 @@ export const core = defineMessages({
     defaultMessage: 'Tími handtöku',
     description: 'Notað fyrir orðið Tími handtöku í öllum flæðum.',
   },
-  confirmedCourtDate: {
-    id: 'judicial.system.core:confirmed_court_date',
-    defaultMessage: 'Staðfestur fyrirtökutími',
-    description: 'Notað fyrir orðið Staðfestur fyrirtökutími í öllum flæðum.',
-  },
   update: {
     id: 'judicial.system.core:update',
     defaultMessage: 'Uppfæra',

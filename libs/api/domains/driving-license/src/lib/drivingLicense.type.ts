@@ -7,12 +7,13 @@ export interface DrivingLicenseType {
   name: string
 }
 
-export type DrivingLicenseApplicationType = 'B-full' | 'B-temp'
+export type DrivingLicenseApplicationType = 'B-full' | 'B-temp' | 'BE'
 
 export interface NewDrivingLicenseInput {
   jurisdictionId: number
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
+  licenseCategory: DrivingLicenseCategory
 }
 
 export interface NewTemporaryDrivingLicenseInput {
@@ -22,6 +23,13 @@ export interface NewTemporaryDrivingLicenseInput {
   teacherNationalId: string
   email: string
   phone: string
+}
+
+export interface NewBEDrivingLicenseInput {
+  jurisdiction: number
+  instructorSSN: string
+  primaryPhoneNumber: string
+  studentEmail: string
 }
 
 export interface NewDrivingLicenseResult {
@@ -37,6 +45,11 @@ export interface NewDrivingAssessmentResult {
 export interface TeachingRightsStatus {
   nationalId: string
   hasTeachingRights: boolean
+}
+
+export interface DrivinglicenseDuplicateValidityStatus {
+  canGetNewDuplicate: boolean
+  meta: string
 }
 
 export interface StudentQueryInput {
@@ -59,6 +72,9 @@ export enum RequirementKey {
   hasPoints = 'HasPoints',
   personNotAtLeast24YearsOld = 'PersonNotAtLeast24YearsOld',
   hasHadValidCategoryForFiveYearsOrMore = 'HasHadValidCategoryForFiveYearsOrMore',
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  beRequiresHealthCertificate = 'beRequiresHealthCertificate',
+  noExtendedDrivingLicense = 'NoExtendedDrivingLicense',
 }
 
 export interface ApplicationEligibilityRequirement {
@@ -74,6 +90,7 @@ export interface ApplicationEligibility {
 
 export enum DrivingLicenseCategory {
   B = 'B',
+  BE = 'BE',
 }
 
 export enum NeedsHealhCertificate {

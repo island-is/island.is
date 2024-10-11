@@ -21,5 +21,5 @@ export interface JwtPayload {
     scope?: string | string[]
   }
   audkenni_sim_number?: string
-  client__delegation_provider?: AuthDelegationProvider
+  client_delegation_provider?: AuthDelegationProvider
 }

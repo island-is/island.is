@@ -30,6 +30,13 @@ import { SignatureCollectionManagerService } from './signatureCollectionManager.
 import { SignatureCollectionNationalIdInput } from './dto/nationalId.input'
 import { SignatureCollectionSignatureIdInput } from './dto/signatureId.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
+import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
+import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
+import { CanSignInfo } from './models/canSignInfo.model'
+import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
+import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
+import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
+import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -40,6 +47,27 @@ export class SignatureCollectionAdminResolver {
     private signatureCollectionService: SignatureCollectionAdminService,
     private signatureCollectionManagerService: SignatureCollectionManagerService,
   ) {}
+
+  @Query(() => CanSignInfo, { nullable: true })
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
+  async signatureCollectionAdminCanSignInfo(
+    @CurrentUser()
+    user: User,
+    @Args('input') input: SignatureCollectionCanSignFromPaperInput,
+  ): Promise<CanSignInfo> {
+    const canSignInfo = await this.signatureCollectionService.getCanSignInfo(
+      user,
+      input.signeeNationalId,
+    )
+
+    return {
+      reasons: canSignInfo,
+      success: true,
+    }
+  }
 
   @Query(() => SignatureCollection)
   @Scopes(
@@ -162,6 +190,24 @@ export class SignatureCollectionAdminResolver {
 
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
+  async signatureCollectionAdminRemoveCandidate(
+    @CurrentUser() user: User,
+    @Args('input') { candidateId }: SignatureCollectionCandidateIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.removeCandidate(candidateId, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAdminRemoveList(
+    @CurrentUser() user: User,
+    @Args('input') { listId }: SignatureCollectionListIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.removeList(listId, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
   async signatureCollectionAdminUnsign(
     @CurrentUser() user: User,
     @Args('input') { signatureId }: SignatureCollectionSignatureIdInput,
@@ -206,5 +252,48 @@ export class SignatureCollectionAdminResolver {
     @Args('input') input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSignature[]> {
     return this.signatureCollectionService.compareLists(input, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAdminUpdatePaperSignaturePageNumber(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionSignatureUpdateInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.updateSignaturePageNumber(
+      user,
+      input,
+    )
+  }
+
+  @Query(() => [SignatureCollectionSignature])
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
+  @Audit()
+  async signatureCollectionSignatureLookup(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionSignatureLookupInput,
+  ): Promise<SignatureCollectionSignature[]> {
+    return this.signatureCollectionService.signatureLookup(user, input)
+  }
+
+  @Query(() => SignatureCollectionAreaSummaryReport)
+  @Audit()
+  async signatureCollectionAreaSummaryReport(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionAreaSummaryReportInput,
+  ): Promise<SignatureCollectionAreaSummaryReport> {
+    return this.signatureCollectionService.getAreaSummaryReport(input, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionLockList(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionListIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.lockList(input, user)
   }
 }

@@ -3,21 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/consultation-portal/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/consultation-portal/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/consultation-portal"],
       "options": {
-        "jestConfig": "libs/clients/consultation-portal/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/consultation-portal/jest.config.ts"
       }
     },
     "codegen/backend-client": {
@@ -27,6 +22,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

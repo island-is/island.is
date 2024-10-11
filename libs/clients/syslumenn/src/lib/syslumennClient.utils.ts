@@ -10,7 +10,6 @@ import {
   VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
   TegundAndlags,
-  DanarbuUppl,
   DanarbuUpplRadstofun,
   EignirDanarbus,
   Fasteignasalar,
@@ -26,6 +25,10 @@ import {
   ErfdafjarskatturSvar,
   DanarbuUpplErfdafjarskatt,
   EignirDanarbusErfdafjarskatt,
+  SveinsbrefModel,
+  StarfsrettindiModel,
+  VedbandayfirlitRegluverkGeneralSvar,
+  Skip,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -61,6 +64,14 @@ import {
   InheritanceReportAsset,
   InheritanceEstateMember,
   InheritanceReportInfo,
+  DebtTypes,
+  JourneymanLicence,
+  ProfessionRight,
+  VehicleDetail,
+  RealEstateDetail,
+  ShipDetail,
+  MortgageCertificateValidation,
+  MortgageCertificate,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -82,13 +93,62 @@ export const mapDistrictCommissionersAgenciesResponse = (
   }
 }
 
+export const mapRealEstateResponse = (
+  response: VedbandayfirlitReguverkiSvarSkeyti,
+): RealEstateDetail => {
+  return {
+    propertyNumber: response.fastnum ?? '',
+    usage: response.notkun ?? '',
+    defaultAddress: response.heiti ?? '',
+  }
+}
+
+export const mapVehicleResponse = (response: Okutaeki): VehicleDetail => {
+  return {
+    licencePlate: response.numerOkutaekis ?? '',
+    propertyNumber: response.fastanumerOkutaekis ?? '',
+    manufacturer: response.framleidandi ?? '',
+    manufacturerType: response.framleidandaGerd ?? '',
+    color: response.litur ?? '',
+    dateOfRegistration: response.skraningardagur ?? new Date(),
+  }
+}
+
+export const mapShipResponse = (response: Skip): ShipDetail => {
+  return {
+    shipRegistrationNumber: response.shipRegistrationNumber?.toString() ?? '',
+    usageType: response.usageType ?? '',
+    name: response.name ?? '',
+    initialRegistrationDate: response.initialRegistrationDate ?? new Date(),
+    mainMeasurements: {
+      length: response.mainMeasurements?.length?.toString() ?? '',
+      bruttoWeightTons:
+        response.mainMeasurements?.bruttoWeightTons?.toString() ?? '',
+    },
+  }
+}
+
+export const mapPropertyCertificate = (
+  certificate: MortgageCertificate,
+): MortgageCertificateValidation => {
+  const exists = certificate.contentBase64.length !== 0
+  const hasKMarking =
+    exists && certificate.contentBase64 !== 'Precondition Required'
+
+  return {
+    propertyNumber: certificate.propertyNumber ?? '',
+    exists: exists,
+    hasKMarking: hasKMarking,
+  }
+}
+
 export const mapCertificateInfo = (
   response: VottordSkeyti,
 ): CertificateInfoResponse => {
   return {
-    nationalId: response.kennitala,
-    expirationDate: response.gildisTimi,
-    releaseDate: response.utgafudagur,
+    nationalId: response.kennitala ?? undefined,
+    expirationDate: response.gildisTimi ?? undefined,
+    releaseDate: response.utgafudagur ?? undefined,
   }
 }
 export const mapDataUploadResponse = (
@@ -96,9 +156,9 @@ export const mapDataUploadResponse = (
 ): DataUploadResponse => {
   return {
     success: response.skilabod === UPLOAD_DATA_SUCCESS,
-    message: response.skilabod,
-    id: response.audkenni,
-    caseNumber: response.malsnumer,
+    message: response.skilabod ?? undefined,
+    id: response.audkenni ?? undefined,
+    caseNumber: response.malsnumer ?? undefined,
   }
 }
 
@@ -110,8 +170,8 @@ export const mapHomestay = (homestay: VirkarHeimagistingar): Homestay => {
     manager: homestay.abyrgdarmadur ?? '',
     year: homestay.umsoknarAr ? parseInt(homestay.umsoknarAr) : undefined,
     city: homestay.sveitarfelag ?? '',
-    guests: homestay.gestafjoldi,
-    rooms: homestay.fjoldiHerbergja,
+    guests: homestay.gestafjoldi ?? undefined,
+    rooms: homestay.fjoldiHerbergja ?? undefined,
     propertyId: homestay.fastanumer ?? '',
     apartmentId: homestay.ibudanumer ?? '',
   }
@@ -152,29 +212,30 @@ export const mapOperatingLicense = (
   operatingLicense: VirkLeyfi,
 ): OperatingLicense => ({
   id: operatingLicense.rowNum,
-  issuedBy: operatingLicense.utgefidAf,
-  licenseNumber: operatingLicense.leyfisnumer,
-  location: operatingLicense.stadur,
-  name: operatingLicense.kallast,
-  street: operatingLicense.gata,
-  postalCode: operatingLicense.postnumer,
-  type: operatingLicense.tegund,
-  type2: operatingLicense.tegund2,
-  restaurantType: operatingLicense.tegundVeitingastadar,
-  validFrom: operatingLicense.gildirFra,
-  validTo: operatingLicense.gildirTil,
-  licenseHolder: operatingLicense.leyfishafi,
-  licenseResponsible: operatingLicense.abyrgdarmadur,
-  category: operatingLicense.flokkur,
-  outdoorLicense: operatingLicense.leyfiTilUtiveitinga,
-  alcoholWeekdayLicense: operatingLicense.afgrAfgengisVirkirdagar,
-  alcoholWeekendLicense: operatingLicense.afgrAfgengisAdfaranottFridaga,
+  issuedBy: operatingLicense.utgefidAf ?? undefined,
+  licenseNumber: operatingLicense.leyfisnumer ?? undefined,
+  location: operatingLicense.stadur ?? undefined,
+  name: operatingLicense.kallast ?? undefined,
+  street: operatingLicense.gata ?? undefined,
+  postalCode: operatingLicense.postnumer ?? undefined,
+  type: operatingLicense.tegund ?? undefined,
+  type2: operatingLicense.tegund2 ?? undefined,
+  restaurantType: operatingLicense.tegundVeitingastadar ?? undefined,
+  validFrom: operatingLicense.gildirFra ?? undefined,
+  validTo: operatingLicense.gildirTil ?? undefined,
+  licenseHolder: operatingLicense.leyfishafi ?? undefined,
+  licenseResponsible: operatingLicense.abyrgdarmadur ?? undefined,
+  category: operatingLicense.flokkur ?? undefined,
+  outdoorLicense: operatingLicense.leyfiTilUtiveitinga ?? undefined,
+  alcoholWeekdayLicense: operatingLicense.afgrAfgengisVirkirdagar ?? undefined,
+  alcoholWeekendLicense:
+    operatingLicense.afgrAfgengisAdfaranottFridaga ?? undefined,
   alcoholWeekdayOutdoorLicense:
-    operatingLicense.afgrAfgengisVirkirdagarUtiveitingar,
+    operatingLicense.afgrAfgengisVirkirdagarUtiveitingar ?? undefined,
   alcoholWeekendOutdoorLicense:
-    operatingLicense.afgrAfgengisAdfaranottFridagaUtiveitingar,
-  maximumNumberOfGuests: operatingLicense.hamarksfjoldiGesta,
-  numberOfDiningGuests: operatingLicense.fjoldiGestaIVeitingum,
+    operatingLicense.afgrAfgengisAdfaranottFridagaUtiveitingar ?? undefined,
+  maximumNumberOfGuests: operatingLicense.hamarksfjoldiGesta ?? undefined,
+  numberOfDiningGuests: operatingLicense.fjoldiGestaIVeitingum ?? undefined,
 })
 
 export const mapPaginationInfo = (
@@ -248,18 +309,19 @@ export const mapTemporaryEventLicence = (
   licenseResponsible: temporaryEventLicence.abyrgdarmadur?.trim() ?? '',
   maximumNumberOfGuests: temporaryEventLicence.hamarksfjoldi,
   estimatedNumberOfGuests: temporaryEventLicence.aaetladurFjoldi,
+  location: temporaryEventLicence.stadur?.trim() ?? '',
 })
 
-export function constructUploadDataObject(
+export const constructUploadDataObject = (
   id: string,
   persons: Person[],
   attachments: Attachment[] | undefined,
   extraData: { [key: string]: string },
   uploadDataName: string,
   uploadDataId?: string,
-): SyslMottakaGognPostRequest {
+): SyslMottakaGognPostRequest => {
   return {
-    payload: {
+    syslSkeyti: {
       audkenni: id,
       gognSkeytis: {
         audkenni: uploadDataId || uuid(),
@@ -289,7 +351,7 @@ export function constructUploadDataObject(
   }
 }
 
-function mapAdvocate(advocateRaw: Malsvari): Advocate {
+const mapAdvocate = (advocateRaw: Malsvari): Advocate => {
   return {
     address: advocateRaw.heimilisfang ?? '',
     email: advocateRaw.netfang ?? '',
@@ -299,7 +361,7 @@ function mapAdvocate(advocateRaw: Malsvari): Advocate {
   }
 }
 
-function mapPersonEnum(e: PersonType) {
+const mapPersonEnum = (e: PersonType) => {
   switch (e) {
     case PersonType.Plaintiff:
       return AdiliTegund.NUMBER_0
@@ -317,17 +379,18 @@ function mapPersonEnum(e: PersonType) {
 }
 
 export const mapAssetName = (
-  response: VedbandayfirlitReguverkiSvarSkeyti,
+  response: VedbandayfirlitRegluverkGeneralSvar,
 ): AssetName => {
-  return { name: response.heiti ?? '' }
+  const fasteign = response.fasteign?.length ? response.fasteign[0] : undefined
+  return { name: fasteign?.heiti ?? '' }
 }
 
 export const mapVehicle = (response: Okutaeki): VehicleRegistration => {
   return {
-    licensePlate: response.numerOkutaekis,
-    modelName: response.framleidandaGerd,
-    manufacturer: response.framleidandi,
-    color: response.litur,
+    licensePlate: response.numerOkutaekis ?? undefined,
+    modelName: response.framleidandaGerd ?? undefined,
+    manufacturer: response.framleidandi ?? undefined,
+    color: response.litur ?? undefined,
   }
 }
 
@@ -337,6 +400,8 @@ export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {
     nationalId: estateRaw.kennitala ?? '',
     relation: estateRaw.tengsl ?? 'Annað',
     advocate: estateRaw.malsvari ? mapAdvocate(estateRaw.malsvari) : undefined,
+    email: estateRaw.netfang ?? '',
+    phone: estateRaw.simi ?? '',
   }
 }
 
@@ -414,7 +479,7 @@ export const mapEstateRegistrant = (
     marriageSettlement: syslaData.kaupmaili ?? false,
     office: syslaData.embaetti ?? '',
     caseNumber: syslaData.malsnumer ?? '',
-    dateOfDeath: syslaData.danardagur ?? '',
+    dateOfDeath: syslaData.danardagur ?? new Date(),
     nameOfDeceased: syslaData.nafnLatins ?? '',
     nationalIdOfDeceased: syslaData.kennitalaLatins ?? '',
     ownBusinessManagement: syslaData.eiginRekstur ?? false,
@@ -470,18 +535,41 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
       : new Date(),
     districtCommissionerHasWill: Boolean(syslaData?.erfdaskra),
     knowledgeOfOtherWills: syslaData.erfdakraVitneskja ? 'Yes' : 'No',
-    marriageSettlement: syslaData.kaupmali,
+    marriageSettlement: syslaData.kaupmali ?? false,
     nameOfDeceased: syslaData?.nafn ?? '',
     nationalIdOfDeceased: syslaData?.kennitala ?? '',
     availableSettlements: mapAvailableSettlements(syslaData.mogulegSkipti),
   }
 }
+
 export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
   return {
-    name: licence.nafn,
-    dateOfPublication: licence.gildirFra,
-    profession: licence.idngrein,
-    office: licence.embaetti,
+    name: licence.nafn ?? undefined,
+    dateOfPublication: licence.gildirFra ?? undefined,
+    profession: licence.idngrein ?? undefined,
+    office: licence.embaetti ?? undefined,
+    nationalId: licence.kennitala ?? undefined,
+  }
+}
+
+export const mapJourneymanLicence = (
+  licence: SveinsbrefModel,
+): JourneymanLicence => {
+  return {
+    name: licence.nafn ?? undefined,
+    dateOfPublication: licence.gildirFra ?? undefined,
+    profession: licence.idngrein ?? undefined,
+    nationalId: licence.kennitala ?? undefined,
+  }
+}
+
+export const mapProfessionRight = (
+  professionRight: StarfsrettindiModel,
+): ProfessionRight => {
+  return {
+    name: professionRight.nafn ?? undefined,
+    profession: professionRight.starfsrettindi ?? undefined,
+    nationalId: professionRight.kennitala ?? undefined,
   }
 }
 
@@ -501,9 +589,9 @@ export const mapInheritanceTax = (
   inheritance: ErfdafjarskatturSvar,
 ): InheritanceTax => {
   return {
-    inheritanceTax: inheritance.erfdafjarskattur,
-    taxExemptionLimit: inheritance.skattfrelsismorkUpphaed,
-    validFrom: inheritance.gildirFra,
+    inheritanceTax: inheritance.erfdafjarskattur ?? 0,
+    taxExemptionLimit: inheritance.skattfrelsismorkUpphaed ?? 0,
+    validFrom: inheritance.gildirFra ?? new Date(),
   }
 }
 
@@ -521,7 +609,7 @@ const mapInheritanceReportAsset = (
   return {
     description: lysing ?? '',
     assetNumber: fastanumer ?? '',
-    share: parseShare(eignarhlutfall) ?? 100,
+    share: parseShare(eignarhlutfall ?? 100),
     propertyValuation: fasteignamat ?? '',
     amount: upphaed ?? '',
     exchangeRateOrInterest: gengiVextir ?? '',
@@ -536,10 +624,10 @@ const mapInheritanceReportHeirs = (
     nationalId: heir.kennitala ?? '',
     relation: heir.tengsl ?? 'Annað',
     advocate: heir.malsvari ? mapAdvocate(heir.malsvari) : undefined,
-    email: heir.netfang,
-    phone: heir.simi,
-    relationWithApplicant: heir.tengsl,
-    address: heir.heimilisfang,
+    email: heir.netfang ?? undefined,
+    phone: heir.simi ?? undefined,
+    relationWithApplicant: heir.tengsl ?? undefined,
+    address: heir.heimilisfang ?? undefined,
   }))
 }
 
@@ -565,6 +653,15 @@ const mapInheritanceReportAssets = (
 
   iAssets?.forEach((iAsset) => {
     const asset = mapInheritanceReportAsset(iAsset)
+
+    const assetTypeTodebtType = {
+      [TegundAndlags.NUMBER_17]: DebtTypes.PropertyFees,
+      [TegundAndlags.NUMBER_18]: DebtTypes.InsuranceCompany,
+      [TegundAndlags.NUMBER_19]: DebtTypes.Loan,
+      [TegundAndlags.NUMBER_20]: DebtTypes.CreditCard,
+      [TegundAndlags.NUMBER_21]: DebtTypes.Overdraft,
+    }
+
     switch (iAsset.tegundAngalgs) {
       case TegundAndlags.NUMBER_0:
         assets.push(asset)
@@ -620,6 +717,16 @@ const mapInheritanceReportAssets = (
       case TegundAndlags.NUMBER_16:
         debtsInBusiness.push(asset)
         break
+      case TegundAndlags.NUMBER_17:
+      case TegundAndlags.NUMBER_18:
+      case TegundAndlags.NUMBER_19:
+      case TegundAndlags.NUMBER_20:
+      case TegundAndlags.NUMBER_21:
+        otherDebts.push({
+          debtType: assetTypeTodebtType[iAsset.tegundAngalgs],
+          ...asset,
+        })
+        break
       default:
         break
     }
@@ -649,14 +756,14 @@ export const mapEstateToInheritanceReportInfo = (
   estate: DanarbuUpplErfdafjarskatt,
 ): InheritanceReportInfo => {
   return {
-    caseNumber: estate.malsnumer,
-    dateOfDeath: estate.danardagur,
-    will: estate.erfdaskra,
+    caseNumber: estate.malsnumer ?? undefined,
+    dateOfDeath: estate.danardagur ?? undefined,
+    will: estate.erfdaskra ?? undefined,
     knowledgeOfOtherWill: estate.erfdakraVitneskja,
     settlement: estate.kaupmali,
-    nameOfDeceased: estate.nafn,
-    nationalId: estate.kennitala,
-    addressOfDeceased: estate.logheimili,
+    nameOfDeceased: estate.nafn ?? undefined,
+    nationalId: estate.kennitala ?? undefined,
+    addressOfDeceased: estate.logheimili ?? undefined,
     heirs: mapInheritanceReportHeirs(estate.erfingar ?? []),
     ...mapInheritanceReportAssets(estate.eignir),
   }

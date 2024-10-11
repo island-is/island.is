@@ -1,18 +1,22 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class PoliceCaseFile {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id!: string
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   name!: string
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   policeCaseNumber!: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   chapter?: number
 
-  @ApiPropertyOptional()
+  // TODO: Make this a Date and transform data coming from LÖKE
+  @ApiPropertyOptional({ type: String })
   displayDate?: string
+
+  @ApiPropertyOptional({ type: String })
+  type?: string
 }

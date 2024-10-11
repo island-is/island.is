@@ -1,9 +1,6 @@
-import * as s from './RegulationsHomeIntro.css'
-
 import React, { ReactNode, useState } from 'react'
-import { NamespaceGetter } from '@island.is/web/hooks'
-import { RegulationHomeTexts } from './RegulationTexts.types'
-import { RegulationsHomeProps } from '@island.is/web/screens/Regulations/RegulationsHome'
+
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   Button,
@@ -13,7 +10,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { MarkdownText, RichText } from '@island.is/web/components'
-import { SliceType } from '@island.is/island-ui/contentful'
+import { NamespaceGetter } from '@island.is/web/hooks'
+import { RegulationsHomeProps } from '@island.is/web/screens/Regulations/RegulationsHome'
+
+import { RegulationHomeTexts } from './RegulationTexts.types'
+import * as s from './RegulationsHomeIntro.css'
 
 export type RegulationsHomeIntroProps = {
   document: RegulationsHomeProps['introText']
@@ -44,6 +45,7 @@ export const RegulationsHomeIntro = (props: RegulationsHomeIntroProps) => {
               <Button
                 variant="text"
                 size="small"
+                as="button"
                 icon={showDetails ? 'chevronUp' : 'chevronDown'}
                 onClick={() => setShowDetails(!showDetails)}
               >

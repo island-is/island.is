@@ -1,18 +1,18 @@
-import request from 'supertest'
-import { getConnectionToken } from '@nestjs/sequelize'
 import { Type } from '@nestjs/common'
+import { getConnectionToken } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import request from 'supertest'
 
-import { TestApp, truncate } from '@island.is/testing/nest'
-import { FixtureFactory } from '@island.is/services/auth/testing'
 import { DelegationRecordDTO } from '@island.is/auth-api-lib'
+import { FixtureFactory } from '@island.is/services/auth/testing'
+import { TestApp, truncate } from '@island.is/testing/nest'
 
+import { setupWithAuth } from '../../../../../test/setup'
 import {
-  user,
   TestCase,
+  user,
   userWithWrongScope,
 } from './delegations.controller-test-types'
-import { setupWithAuth } from '../../../../../test/setup'
 import {
   invalidTestCases,
   validTestCases,

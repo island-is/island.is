@@ -5,15 +5,18 @@ export class PoliceCaseFile {
   @Field(() => ID)
   readonly id!: string
 
-  @Field()
+  @Field(() => String)
   readonly name!: string
 
-  @Field()
+  @Field(() => String)
   readonly policeCaseNumber!: string
 
   @Field(() => Int, { nullable: true })
   readonly chapter?: number
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly displayDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly type?: string
 }

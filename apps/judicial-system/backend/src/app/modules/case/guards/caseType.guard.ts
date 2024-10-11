@@ -8,6 +8,8 @@ import {
 
 import { CaseType } from '@island.is/judicial-system/types'
 
+import { Case } from '../models/case.model'
+
 @Injectable()
 export class CaseTypeGuard implements CanActivate {
   constructor(readonly allowedCaseTypes: CaseType[]) {}
@@ -15,7 +17,7 @@ export class CaseTypeGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
-    const theCase = request.case
+    const theCase: Case = request.case
 
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')

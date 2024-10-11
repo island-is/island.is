@@ -15,17 +15,20 @@ import {
   FileModule,
   IndictmentCountModule,
   PoliceModule,
+  SubpoenaModule,
   UserModule,
 } from '../index'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
+import { CaseString } from './models/caseString.model'
+import { DateLog } from './models/dateLog.model'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 import { InternalCaseController } from './internalCase.controller'
 import { InternalCaseService } from './internalCase.service'
 import { LimitedAccessCaseController } from './limitedAccessCase.controller'
 import { LimitedAccessCaseService } from './limitedAccessCase.service'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 @Module({
   imports: [
@@ -33,6 +36,7 @@ import { PDFService } from './pdf.service'
     CmsTranslationsModule,
     MessageModule,
     forwardRef(() => DefendantModule),
+    forwardRef(() => SubpoenaModule),
     forwardRef(() => UserModule),
     forwardRef(() => FileModule),
     forwardRef(() => IndictmentCountModule),
@@ -41,19 +45,24 @@ import { PDFService } from './pdf.service'
     forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),
     forwardRef(() => EventLogModule),
-    SequelizeModule.forFeature([Case, CaseArchive]),
+    SequelizeModule.forFeature([Case, CaseArchive, DateLog, CaseString]),
   ],
   providers: [
     CaseService,
     InternalCaseService,
     LimitedAccessCaseService,
-    PDFService,
+    PdfService,
   ],
   controllers: [
     CaseController,
     InternalCaseController,
     LimitedAccessCaseController,
   ],
-  exports: [CaseService, LimitedAccessCaseService, InternalCaseService],
+  exports: [
+    CaseService,
+    LimitedAccessCaseService,
+    InternalCaseService,
+    PdfService,
+  ],
 })
 export class CaseModule {}

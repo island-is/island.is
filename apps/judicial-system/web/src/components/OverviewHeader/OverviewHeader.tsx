@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -10,7 +10,7 @@ interface Props {
   dataTestid?: string
 }
 
-const OverviewHeader: React.FC<Props> = (props) => {
+const OverviewHeader: FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { dataTestid } = props

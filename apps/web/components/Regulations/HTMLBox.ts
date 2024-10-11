@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { Box, BoxProps } from '@island.is/island-ui/core'
 import { HTMLText } from '@island.is/regulations'
 

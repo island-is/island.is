@@ -63,10 +63,10 @@ export const representativeOverview = [
     condition: (answers) =>
       !!getValueViaPath<string>(answers, 'representative.email'),
   }),
-  buildCustomField({
+  buildDescriptionField({
     id: 'representativeNotFilledOut',
     title: '',
-    component: 'NotFilledOut',
+    description: m.notFilledOutItalic,
     condition: (answers) =>
       !getValueViaPath<string>(answers, 'representative.nationalId'),
   }),

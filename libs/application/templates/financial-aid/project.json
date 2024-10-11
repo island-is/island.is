@@ -3,15 +3,11 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/financial-aid/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/financial-aid/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -19,7 +15,8 @@
         "{workspaceRoot}/coverage/libs/application/templates/financial-aid"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/financial-aid/jest.config.ts"
+        "jestConfig": "libs/application/templates/financial-aid/jest.config.ts",
+        "passWithNoTests": false
       }
     },
     "extract-strings": {
@@ -28,6 +25,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/financial-aid/src/**/*.{js,ts,tsx}'"
       }
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }

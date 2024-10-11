@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 
 import { IStepper } from '../generated/contentfulTypes'
-import { SystemMetadata } from 'api-cms-domain'
+import { SystemMetadata } from '@island.is/shared/types'
 import { mapStep, Step } from './step.model'
 
 @ObjectType()

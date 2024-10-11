@@ -18,6 +18,7 @@ export interface TimelinePeriod {
   color?: string
   canDelete?: boolean
   rawIndex: number
+  paid?: boolean
 }
 
 interface TimelineProps {

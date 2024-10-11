@@ -26,6 +26,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
   const date = randomDate()
   const defenderId = uuid()
   const defenderNationalId = '1234567890'
+  const formattedDefenderNationalId = '123456-7890'
   const defenderName = 'John Doe'
   const defenderPhoneNumber = '1234567'
   const defenderEmail = 'dummy@dummy.dy'
@@ -74,7 +75,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     it('should look for defender', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         where: {
-          defenderNationalId,
+          defenderNationalId: [defenderNationalId, formattedDefenderNationalId],
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },

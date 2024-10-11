@@ -7,12 +7,18 @@ import { ConfigType } from '@nestjs/config'
 import {
   Configuration,
   MachineCategoryApi,
+  MachineModelsApi,
   MachineOwnerChangeApi,
+  MachineParentCategoriesApi,
   MachineRequestInspectionApi,
   MachineStatusChangeApi,
+  MachineStreetRegistrationApi,
+  MachineSubCategoriesApi,
   MachineSupervisorChangeApi,
+  MachineTypesApi,
   MachinesApi,
   MachinesDocumentApi,
+  TechnicalInfoApi,
 } from '../../gen/fetch'
 import { WorkMachinesClientConfig } from './workMachines.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -88,9 +94,39 @@ export const apiProviders = [
     acceptHeader: 'application/json-patch+json',
   },
   {
+    api: MachineStreetRegistrationApi,
+    provide: MachineStreetRegistrationApi,
+    acceptHeader: 'application/json-patch+json',
+  },
+  {
     api: MachineRequestInspectionApi,
     provide: MachineRequestInspectionApi,
     acceptHeader: 'application/json-patch+json',
+  },
+  {
+    api: MachineTypesApi,
+    provide: MachineTypesApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: MachineModelsApi,
+    provide: MachineModelsApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: MachineParentCategoriesApi,
+    provide: MachineParentCategoriesApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: MachineSubCategoriesApi,
+    provide: MachineSubCategoriesApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: TechnicalInfoApi,
+    provide: TechnicalInfoApi,
+    acceptHeader: 'application/json',
   },
 ].map(({ api, provide, acceptHeader }) => ({
   provide: provide,

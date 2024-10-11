@@ -138,6 +138,12 @@ export const getEventData = (
         text: 'tók að sér málið',
         prefix: event.staffName ?? 'Starfsmaður',
       }
+    case ApplicationEventType.DATECHANGED:
+      return {
+        header: 'Tímabil umsóknar uppfærð',
+        text: 'uppfærði',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
   }
 }
 
@@ -190,6 +196,7 @@ export const getFileTypeName: KeyMapping<FileType, string> = {
   Income: 'Tekjugögn',
   Other: 'Innsend gögn',
   SpouseFiles: 'Gögn frá maka',
+  ChildrenFiles: 'Útgjöld vegna barna',
 }
 
 export const getAidAmountModalInfo = (

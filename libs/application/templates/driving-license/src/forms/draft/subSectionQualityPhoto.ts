@@ -5,11 +5,11 @@ import {
   buildRadioField,
   buildSubSection,
   getValueViaPath,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../lib/types'
-import { NO, YES } from '../../lib/constants'
-import { B_FULL } from '../../shared/constants'
+import { B_FULL, NO, YES, B_FULL_RENEWAL_65 } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
@@ -20,7 +20,7 @@ export const subSectionQualityPhoto = buildSubSection({
   id: 'photoStep',
   title: m.applicationQualityPhotoTitle,
   condition: isVisible(
-    isApplicationForCondition(B_FULL),
+    isApplicationForCondition([B_FULL, B_FULL_RENEWAL_65]),
     hasNoDrivingLicenseInOtherCountry,
   ),
   children: [
@@ -48,10 +48,10 @@ export const subSectionQualityPhoto = buildSubSection({
             { value: YES, label: m.qualityPhotoAcknowledgement },
           ],
         }),
-        buildCustomField({
-          id: 'photdesc',
+        buildDescriptionField({
+          id: 'photodesc',
           title: '',
-          component: 'Bullets',
+          description: m.qualityPhotoInstructionBullets,
           condition: (answers) =>
             getValueViaPath(answers, 'willBringQualityPhoto') === YES,
         }),
@@ -72,10 +72,15 @@ export const subSectionQualityPhoto = buildSubSection({
           component: 'QualityPhoto',
           id: 'qphoto',
         }),
-        buildCustomField({
-          id: 'photodescription',
+        buildDescriptionField({
+          id: 'photodesc',
           title: '',
-          component: 'Bullets',
+          description: m.qualityPhotoInstructionBullets,
+        }),
+        buildDescriptionField({
+          id: 'space',
+          title: '',
+          space: 'containerGutter',
         }),
         buildCheckboxField({
           id: 'willBringQualityPhoto',

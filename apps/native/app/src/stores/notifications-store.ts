@@ -1,20 +1,24 @@
 import AsyncStorage from '@react-native-community/async-storage'
 import messaging from '@react-native-firebase/messaging'
-import { NotificationResponse } from 'expo-notifications'
 import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
-import { client } from '../graphql/client'
+import { getApolloClientAsync } from '../graphql/client'
 import {
   AddUserProfileDeviceTokenDocument,
+  AddUserProfileDeviceTokenMutation,
   AddUserProfileDeviceTokenMutationVariables,
   DeleteUserProfileDeviceTokenDocument,
+  DeleteUserProfileDeviceTokenMutation,
   DeleteUserProfileDeviceTokenMutationVariables,
+  GetUserNotificationsUnseenCountDocument,
+  GetUserNotificationsUnseenCountQuery,
+  GetUserNotificationsUnseenCountQueryVariables,
 } from '../graphql/types/schema'
-import { navigateToNotification } from '../lib/deep-linking'
 import { ComponentRegistry } from '../utils/component-registry'
 import { getRightButtons } from '../utils/get-main-root'
+import { setBadgeCountAsync } from 'expo-notifications'
 
 export interface Notification {
   id: string
@@ -28,253 +32,132 @@ export interface Notification {
   read: boolean
 }
 
-interface NotificationsStore extends State {
-  items: Map<string, Notification>
-  unreadCount: number
+interface NotificationsState extends State {
+  unseenCount: number
   pushToken?: string
-  getNotifications(): Notification[]
-  actions: {
-    syncToken(): Promise<void>
-    handleNotificationResponse(response: NotificationResponse): Notification
-    setRead(notificationId: string): void
-    setUnread(notificationId: string): void
-  }
 }
 
-const firstNotification: Notification = {
-  id: 'FIRST_NOTIFICATION',
-  title: 'Stafrænt Ísland',
-  body: 'Fyrsta útgáfa af Ísland.is appinu',
-  copy: 'Í þessari fyrstu útgáfu af Ísland.is appinu getur þú nálgast rafræn skjöl og skírteini frá hinu opinbera, fengið tilkynningar og séð stöðu umsókna.',
-  date: new Date().getTime(),
-  data: {},
-  read: true,
+interface NotificationsActions {
+  syncToken(): Promise<void>
+  checkUnseen(): Promise<void>
+  updateNavigationUnseenCount(unseenCount: number): void
+  deletePushToken(pushToken: string): Promise<void>
+  reset(): void
 }
 
-export const notificationCategories = [
-  {
-    categoryIdentifier: 'NEW_DOCUMENT',
-    actions: [
-      {
-        identifier: 'ACTION_OPEN_DOCUMENT',
-        buttonTitle: 'Opna',
-        onPress: ({ id, data }: Notification, componentId?: string) => {
-          return navigateToNotification({ id, link: data.url }, componentId)
-        },
-      },
-      {
-        identifier: 'ACTION_MARK_AS_READ',
-        buttonTitle: 'Merkja sem lesið',
-        onPress: ({ id }: Notification) =>
-          notificationsStore.getState().actions.setRead(id),
-      },
-    ],
-    data: {
-      documentId: '',
-    },
-  },
-  {
-    categoryIdentifier: 'ISLANDIS_LINK',
-    actions: [
-      {
-        identifier: 'ACTION_OPEN_ON_ISLAND_IS',
-        buttonTitle: 'Opna á Ísland.is',
-        onPress: ({ id, data }: Notification, componentId?: string) =>
-          navigateToNotification({ id, link: data.islandIsUrl }, componentId),
-      },
-      {
-        identifier: 'ACTION_MARK_AS_READ',
-        buttonTitle: 'Merkja sem lesið',
-        onPress: ({ id }: Notification) =>
-          notificationsStore.getState().actions.setRead(id),
-      },
-    ],
-    data: {
-      islandIsUrl: '',
-    },
-  },
-]
+type NotificationsStore = NotificationsState & NotificationsActions
 
-const rightButtonScreens = [
-  ComponentRegistry.HomeScreen,
-  ComponentRegistry.InboxScreen,
-  ComponentRegistry.WalletScreen,
-  ComponentRegistry.ApplicationsScreen,
-]
-
-export function actionsForNotification(
-  notification: Notification,
-  componentId?: string,
-) {
-  const category = notificationCategories.find(
-    (c) => c.categoryIdentifier === notification.category,
-  )
-  if (category) {
-    return category.actions
-      .filter((action) => action.identifier !== 'ACTION_MARK_AS_READ')
-      .map((action) => ({
-        text: action.buttonTitle,
-        onPress: () => action.onPress(notification, componentId),
-      }))
-  }
-  if (notification.data.url) {
-    return [
-      {
-        text: 'Opna viðhengi',
-        onPress: () =>
-          navigateToNotification(
-            { id: notification.id, link: notification.data.url },
-            componentId,
-          ),
-      },
-    ]
-  }
-
-  return []
+const initialState: NotificationsState = {
+  unseenCount: 0,
+  pushToken: undefined,
 }
 
 export const notificationsStore = create<NotificationsStore>(
   persist(
     (set, get) => ({
-      items: new Map(),
-      unreadCount: 0,
-      pushToken: undefined,
-      getNotifications() {
-        return [...get().items.values()].sort((a, b) => b.date - a.date)
-      },
-      actions: {
-        async syncToken() {
-          const token = await messaging().getToken()
-          const { pushToken } = get()
-          if (pushToken !== token) {
-            if (pushToken) {
-              // Attempt to remove old push token
-              try {
-                await client.mutate<
-                  object,
-                  DeleteUserProfileDeviceTokenMutationVariables
-                >({
-                  mutation: DeleteUserProfileDeviceTokenDocument,
-                  variables: {
-                    input: {
-                      deviceToken: pushToken,
-                    },
-                  },
-                })
-              } catch (err) {
-                // noop
-                console.error('Error removing old push token', err)
-              }
-            }
+      ...initialState,
+
+      async syncToken() {
+        const client = await getApolloClientAsync()
+        const token = await messaging().getToken()
+        const { pushToken: oldToken, deletePushToken } = get()
+
+        if (oldToken !== token) {
+          if (oldToken) {
+            await deletePushToken(oldToken)
+          }
+
+          try {
             // Register the new push token
-            try {
-              await client
-                .mutate<object, AddUserProfileDeviceTokenMutationVariables>({
-                  mutation: AddUserProfileDeviceTokenDocument,
-                  variables: {
-                    input: {
-                      deviceToken: token,
-                    },
-                  },
-                })
-                .then((res) => {
-                  console.log('Registered push token', res)
-                  // Update push token in store
-                  set({ pushToken: token })
-                })
-            } catch (err) {
-              console.log('Failed to register push token', err)
-            }
-          }
-        },
-        handleNotificationResponse(response: NotificationResponse) {
-          const { items } = get()
-          const {
-            date,
-            request: { content, identifier, trigger },
-          } = response.notification
+            const res = await client.mutate<
+              AddUserProfileDeviceTokenMutation,
+              AddUserProfileDeviceTokenMutationVariables
+            >({
+              mutation: AddUserProfileDeviceTokenDocument,
+              variables: {
+                input: {
+                  deviceToken: token,
+                },
+              },
+            })
 
-          if (items.has(identifier)) {
-            // ignore notification model updates
-            return items.get(identifier)!
+            // Update push token in store
+            set({ pushToken: token })
+          } catch (err) {
+            console.error('Failed to register push token', err)
           }
+        }
+      },
+      async deletePushToken(deviceToken: string) {
+        const client = await getApolloClientAsync()
 
-          const data = {
-            ...(content.data || {}),
-            ...((trigger as any).payload || {}),
-          }
-          const model = {
-            id: identifier,
-            date: date * 1000,
-            category: (content as any).categoryIdentifier,
-            title: content.title ?? '',
-            subtitle: content.subtitle || undefined,
-            body: content.body || undefined,
-            copy: data.copy,
-            data,
-            read: false,
-          }
-          items.set(model.id, model)
-          set({ items: new Map(items) })
-          return model
-        },
-        setRead(notificationId: string) {
-          const { items } = get()
-          const notification = items.get(notificationId)
-          if (notification) {
-            notification.read = true
-          }
-          set({ items: new Map(items) })
-        },
-        setUnread(notificationId: string) {
-          const { items } = get()
-          const notification = items.get(notificationId)
-          if (notification) {
-            notification.read = false
-          }
-          set({ items: new Map(items) })
-        },
+        // Attempt to remove old push token
+        try {
+          await client.mutate<
+            DeleteUserProfileDeviceTokenMutation,
+            DeleteUserProfileDeviceTokenMutationVariables
+          >({
+            mutation: DeleteUserProfileDeviceTokenDocument,
+            variables: {
+              input: {
+                deviceToken,
+              },
+            },
+          })
+
+          set({
+            pushToken: undefined,
+          })
+        } catch (err) {
+          // noop
+          console.error('Error removing old push token', err)
+        }
+      },
+      updateNavigationUnseenCount(unseenCount: number) {
+        set({ unseenCount })
+        setBadgeCountAsync(unseenCount)
+
+        Navigation.mergeOptions(ComponentRegistry.HomeScreen, {
+          topBar: {
+            rightButtons: getRightButtons({
+              unseenCount,
+              icons: ['notifications', 'options'],
+            }),
+          },
+        })
+      },
+      async checkUnseen() {
+        const client = await getApolloClientAsync()
+
+        try {
+          const res = await client.query<
+            GetUserNotificationsUnseenCountQuery,
+            GetUserNotificationsUnseenCountQueryVariables
+          >({
+            query: GetUserNotificationsUnseenCountDocument,
+            fetchPolicy: 'network-only',
+            variables: {
+              input: {
+                limit: 1,
+              },
+            },
+          })
+
+          const unseenCount = res?.data?.userNotifications?.unseenCount ?? 0
+          get().updateNavigationUnseenCount(unseenCount)
+        } catch (err) {
+          // noop
+        }
+      },
+      reset() {
+        set(initialState)
       },
     }),
     {
-      name: 'notifications_06',
+      name: 'notifications_07',
       getStorage: () => AsyncStorage,
-      serialize({ state, version }) {
-        const res: any = { ...state }
-        res.items = [...res.items]
-        return JSON.stringify({ state: res, version })
-      },
-      deserialize(str: string) {
-        const { state, version } = JSON.parse(str)
-        delete state.actions
-        state.items = new Map(state.items)
-        return { state, version }
-      },
     },
   ),
 )
-
-notificationsStore.subscribe(
-  (items: Map<string, Notification>) => {
-    const unreadCount = [...items.values()].reduce((acc, item) => {
-      return acc + (item.read ? 0 : 1)
-    }, 0)
-    notificationsStore.setState({ unreadCount })
-    rightButtonScreens.forEach((componentId) => {
-      Navigation.mergeOptions(componentId, {
-        topBar: {
-          rightButtons: getRightButtons({ unreadCount }),
-        },
-      })
-    })
-  },
-  (s) => s.items,
-)
-
-if (notificationsStore.getState().items.size === 0) {
-  const { items } = notificationsStore.getState()
-  items.set(firstNotification.id, firstNotification)
-  notificationsStore.setState({ items })
-}
 
 export const useNotificationsStore = createUse(notificationsStore)

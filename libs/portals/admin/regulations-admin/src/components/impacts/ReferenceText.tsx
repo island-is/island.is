@@ -13,10 +13,12 @@ import {
 import * as s from './Impacts.css'
 import * as ed from '../Editor.css'
 import { RegulationDraftTypes } from '../../types'
+import cn from 'classnames'
 
 type ReferenceTextProps = {
   baseName: RegName
   regulation: Regulation
+  asBase?: boolean
 }
 
 const t = getTexts({
@@ -25,6 +27,7 @@ const t = getTexts({
   effectiveDate: 'Tekur gildi þann',
 
   referenceLegend: 'Texti áhrifareglugerðar {name}',
+  referenceBaseLegend: 'Texti grunnreglugerðarinnar {name}',
   referenceMeta: 'Útgáfudagur: {published}',
   referenceEditLink: 'Leiðrétta',
 
@@ -52,32 +55,42 @@ const t = getTexts({
 })
 
 export const ReferenceText = (props: ReferenceTextProps) => {
-  const { regulation } = props
+  const { regulation, asBase } = props
   const { name, text, type, publishedDate, appendixes, comments } = regulation
   return (
     <div className={s.referenceTextContainer}>
       <div className={s.referenceText}>
         <h2 className={s.referenceTextLegend}>
-          {t('referenceLegend', { name: prettyName(name) })}
+          {t(asBase ? 'referenceBaseLegend' : 'referenceLegend', {
+            name: prettyName(name),
+          })}
         </h2>
-        <div className={s.referenceTextMeta}>
-          {t.arr('referenceMeta', {
-            published: (
-              <strong key="1">
-                {formatdate(publishedDate, 'd. MMM yyyy')}
-              </strong>
-            ),
-          })}{' '}
-          {type === RegulationDraftTypes.base && (
-            <>&nbsp; ({mapRegulationTypeToDisplayString(type)})</>
-          )}
-        </div>
+        {publishedDate ? (
+          <div className={s.referenceTextMeta}>
+            {t.arr('referenceMeta', {
+              published: (
+                <strong key="1">
+                  {formatdate(publishedDate, 'd. MMM yyyy')}
+                </strong>
+              ),
+            })}{' '}
+            {type === RegulationDraftTypes.base && (
+              <>&nbsp; ({mapRegulationTypeToDisplayString(type)})</>
+            )}
+          </div>
+        ) : undefined}
         <div className={s.referenceTextInner}>
-          <HTMLDump className={ed.classes.editor} html={text as HTMLText} />
+          <HTMLDump
+            className={cn(ed.classes.editor, s.diff)}
+            html={text as HTMLText}
+          />
           {appendixes.map(({ title, text }, i) => (
             <div className={s.referenceTextAppendix} key={i}>
               <h2 className={s.referenceTextAppendixTitle}>{title}</h2>
-              <HTMLDump className={ed.classes.editor} html={text as HTMLText} />
+              <HTMLDump
+                className={cn(ed.classes.editor, s.diff)}
+                html={text as HTMLText}
+              />
             </div>
           ))}
 

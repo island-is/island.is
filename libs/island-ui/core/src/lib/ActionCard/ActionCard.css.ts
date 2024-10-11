@@ -10,6 +10,7 @@ export const tag = style({
     },
   }),
 })
+
 export const avatar = style({
   display: 'none',
   ...themeUtils.responsiveStyle({
@@ -24,7 +25,8 @@ export const avatar = style({
 export const button = style({
   ...themeUtils.responsiveStyle({
     sm: {
-      alignSelf: 'flex-end',
+      alignSelf: 'stretch',
+      alignItems: 'flex-end',
     },
   }),
 })

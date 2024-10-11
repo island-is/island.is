@@ -1,6 +1,5 @@
-import { IsPersonNationalId } from '@island.is/nest/core'
-import { Field, InputType, OmitType, registerEnumType } from '@nestjs/graphql'
-import { IsArray, IsBoolean, IsEnum, IsString } from 'class-validator'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+import { IsArray, IsEnum } from 'class-validator'
 
 export enum MailAction {
   BOOKMARK = 'bookmark',
@@ -17,11 +16,6 @@ export class MailActionInput {
   @Field(() => [String])
   @IsArray()
   documentIds!: Array<string>
-
-  @Field()
-  @IsString()
-  @IsPersonNationalId()
-  nationalId!: string
 
   @Field()
   @IsEnum(MailAction)

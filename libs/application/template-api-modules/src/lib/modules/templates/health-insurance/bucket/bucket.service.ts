@@ -33,7 +33,7 @@ export class BucketService {
         Bucket: bucketName,
         Key: filename,
       }
-      this.s3.getObject(params, function (err, data) {
+      this.s3.getObject(params, (err, data) => {
         if (err) {
           reject(err)
         } else {

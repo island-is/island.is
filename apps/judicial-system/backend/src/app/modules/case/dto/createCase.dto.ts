@@ -21,45 +21,45 @@ import {
 
 export class CreateCaseDto {
   @IsNotEmpty()
-  @IsString()
+  @IsEnum(CaseType)
   @ApiProperty({ enum: CaseType })
   readonly type!: CaseType
 
   @IsOptional()
   @IsObject()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Object })
   readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly description?: string
 
   @IsNotEmpty()
   @IsArray()
   @ArrayMinSize(1)
   @IsString({ each: true })
-  @ApiProperty()
+  @ApiProperty({ type: String, isArray: true })
   readonly policeCaseNumbers!: string[]
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderName?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderEmail?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderPhoneNumber?: string
 
   @IsOptional()
@@ -69,11 +69,11 @@ export class CreateCaseDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly leadInvestigator?: string
 
   @IsOptional()
   @IsObject()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Object })
   readonly crimeScenes?: CrimeSceneMap
 }

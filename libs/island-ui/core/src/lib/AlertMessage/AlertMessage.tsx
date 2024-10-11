@@ -104,7 +104,7 @@ export const AlertMessage: React.FC<
         )}
         <Box display="flex" width="full" flexDirection="column">
           <Stack space={1}>
-            {title && (
+            {!!title && (
               <Text as="h5" variant="h5">
                 {title}
               </Text>

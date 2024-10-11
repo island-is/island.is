@@ -57,7 +57,7 @@ interface SubtitleComponent {
 
 interface SpacerComponent {
   component: 'Spacer'
-  context?: {}
+  context?: object
 }
 
 interface TextWithLinkComponent {
@@ -80,6 +80,16 @@ interface TagComponent {
   }
 }
 
+interface ImageWithLinkComponent {
+  component: 'ImageWithLink'
+  context: {
+    src: string
+    alt: string
+    href: string
+    height?: string
+  }
+}
+
 export type Body =
   | ImageComponent
   | HeadingComponent
@@ -90,6 +100,7 @@ export type Body =
   | SpacerComponent
   | TextWithLinkComponent
   | TagComponent
+  | ImageWithLinkComponent
 
 export interface Template {
   title: string

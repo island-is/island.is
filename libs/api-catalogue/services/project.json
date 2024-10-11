@@ -3,19 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api-catalogue/services/src",
   "projectType": "library",
+  "tags": ["lib:nest", "scope:nest"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/api-catalogue/services/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api-catalogue/services/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api-catalogue/services/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/api-catalogue/services"]
     },
@@ -26,10 +23,9 @@
         "commands": [
           "yarn openapi-generator -o libs/api-catalogue/services/gen/fetch/xrd -i libs/api-catalogue/services/config/xrd-meta-oas.yaml",
           "yarn openapi-generator -o libs/api-catalogue/services/gen/fetch/xrd-rest -i libs/api-catalogue/services/config/xrd-rest-meta-oas.yaml"
-        ],
-        "outputs": ["{projectRoot}/gen/fetch"]
-      }
+        ]
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:nest", "scope:nest"]
+  }
 }

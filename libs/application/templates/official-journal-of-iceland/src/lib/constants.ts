@@ -1,6 +1,6 @@
 export const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
-export const UPLOAD_ACCEPT = '.pdf'
+export const ALLOWED_FILE_TYPES = ['.pdf', '.doc', '.docx']
 
 export const FILE_SIZE_LIMIT = 10000000
 
@@ -12,12 +12,20 @@ export enum AnswerOption {
   NO = 'no',
 }
 
+export enum ApplicationAttachmentType {
+  ORIGINAL = 'frumrit',
+  ADDITIONS = 'fylgiskjol',
+}
+
+export const DEFAULT_PAGE = 1
+export const DEFAULT_PAGE_SIZE = 10
+
 export const MINIMUM_WEEKDAYS = 10
 
 export enum Routes {
-  TEST = 'test',
-  COMMENTS = 'comments',
   REQUIREMENTS = 'requirements',
+  INVOLVED_PARTY = 'involvedParty',
+  COMMENTS = 'comments',
   ADVERT = 'advert',
   SIGNATURE = 'signature',
   ATTACHMENTS = 'attachments',
@@ -26,6 +34,7 @@ export enum Routes {
   PUBLISHING = 'publishing',
   SUMMARY = 'summary',
   COMPLETE = 'complete',
+  MISC = 'misc',
 }
 
 // this will be replaced with correct values once the api is ready
@@ -38,7 +47,7 @@ export enum TypeIds {
 }
 
 export const MEMBER_INDEX = '{memberIndex}'
-export const INSTITUTION_INDEX = '{institutionIndex}'
+export const SIGNATURE_INDEX = '{institutionIndex}'
 
 export const INTERVAL_TIMER = 3000
 export const DEBOUNCE_INPUT_TIMER = 333
@@ -48,67 +57,21 @@ export enum FileNames {
   ADDITIONS = 'additions',
 }
 
-export const INITIAL_ANSWERS = {
-  [Routes.TEST]: {
-    name: '',
-    department: '',
-    job: '',
-  },
-  [Routes.REQUIREMENTS]: {
-    approveExternalData: false,
-  },
-  [Routes.ADVERT]: {
-    department: '',
-    type: '',
-    subType: '',
-    title: '',
-    template: '',
-    document: '',
-  },
-  [Routes.SIGNATURE]: {
-    type: 'regular',
-    signature: '',
-    regular: [
-      {
-        institution: '',
-        date: '',
-        members: [
-          {
-            above: '',
-            name: '',
-            below: '',
-            after: '',
-          },
-        ],
-      },
-    ],
-    committee: {
-      institution: '',
-      date: '',
-      chairman: {
-        above: '',
-        name: '',
-        after: '',
-        below: '',
-      },
-      members: [
-        {
-          name: '',
-          below: '',
-        },
-      ],
-    },
-    additional: '',
-  },
-  [Routes.ATTACHMENTS]: {
-    files: [],
-    fileNames: [],
-  },
-  [Routes.PUBLISHING]: {
-    date: '',
-    fastTrack: '',
-    contentCategories: [],
-    communicationChannels: [],
-    message: '',
-  },
+export const OJOI_INPUT_HEIGHT = 64
+
+export type SignatureType = 'regular' | 'committee'
+export enum SignatureTypes {
+  REGULAR = 'regular',
+  COMMITTEE = 'committee',
 }
+
+export const ONE = 1
+export const MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT = 1
+export const DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT = 1
+export const MAXIMUM_REGULAR_SIGNATURE_MEMBER_COUNT = 10
+export const MINIMUM_REGULAR_SIGNATURE_COUNT = 1
+export const DEFAULT_REGULAR_SIGNATURE_COUNT = 1
+export const MAXIMUM_REGULAR_SIGNATURE_COUNT = 3
+export const MINIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT = 2
+export const DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT = 2
+export const MAXIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT = 10

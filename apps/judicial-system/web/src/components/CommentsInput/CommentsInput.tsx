@@ -1,4 +1,4 @@
-import React from 'react'
+import { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
@@ -13,9 +13,9 @@ import { useCase, useDeb } from '../../utils/hooks'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
 }
-const CommentsInput: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const CommentsInput: FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()

@@ -151,7 +151,6 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   title = 'Efnisyfirlit',
   titleLink,
   titleIcon,
-
   activeItemTitle,
   label,
   colorScheme = 'blue',
@@ -168,7 +167,28 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   mobileNavigationButtonCloseLabel = 'Close',
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [activeAccordions, setActiveAccordions] = useState<Array<string>>([])
+
+  const [activeAccordions, setActiveAccordions] = useState<Array<string>>(
+    () => {
+      const initialActivePathIndex = items?.findIndex(
+        (item) => item.active && item.accordion,
+      )
+
+      if (initialActivePathIndex > 0) {
+        //first level only
+        return [
+          `1-${items?.findIndex(
+            (item) =>
+              item.active &&
+              item.accordion &&
+              item.items?.some((child) => child.active),
+          )}`,
+        ]
+      }
+
+      return []
+    },
+  )
 
   const color = colorSchemeColors[colorScheme]['color']
   const activeColor = colorSchemeColors[colorScheme]['activeColor']
@@ -473,6 +493,7 @@ export const NavigationTree: FC<
       {({ baseId, activeAccordions, toggleAccordion }) => (
         <Box
           component="ul"
+          role="menu"
           {...(id && { id: `navigation-tree-${id}` })}
           {...(labelId && { 'aria-labelledby': labelId })}
           className={cn(styles.ul, styles.level[level])}

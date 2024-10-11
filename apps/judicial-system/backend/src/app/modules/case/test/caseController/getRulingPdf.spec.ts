@@ -3,6 +3,8 @@ import { uuid } from 'uuidv4'
 
 import { Logger } from '@island.is/logging'
 
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
+
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
@@ -30,8 +32,15 @@ describe('CaseController - Get ruling pdf', () => {
   beforeEach(async () => {
     const { awsS3Service, logger, caseController } =
       await createTestingCaseModule()
+
     mockAwsS3Service = awsS3Service
     mockLogger = logger
+
+    const mockGetGeneratedObject =
+      mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
+    mockGetGeneratedObject.mockRejectedValue(new Error('Some error'))
+    const getMock = getRulingPdfAsBuffer as jest.Mock
+    getMock.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (caseId: string, theCase: Case, res: Response) => {
       const then = {} as Then
@@ -46,36 +55,31 @@ describe('CaseController - Get ruling pdf', () => {
     }
   })
 
-  describe('AWS S3 lookup', () => {
-    const caseId = uuid()
-    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
-    const res = {} as Response
-
-    beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, res)
-    })
-
-    it('should lookup pdf', () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
-        `generated/${caseId}/ruling.pdf`,
-      )
-    })
-  })
-
   describe('AWS S3 pdf returned', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
+    const caseType = CaseType.EXPULSION_FROM_HOME
+    const caseState = CaseState.REJECTED
+    const theCase = {
+      id: caseId,
+      type: caseType,
+      state: caseState,
+      rulingSignatureDate: nowFactory(),
+    } as Case
     const res = { end: jest.fn() } as unknown as Response
     const pdf = {}
 
     beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockResolvedValueOnce(pdf)
+      const mockGetGeneratedObject =
+        mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
+      mockGetGeneratedObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, theCase, res)
     })
 
     it('should return pdf', () => {
+      expect(
+        mockAwsS3Service.getGeneratedRequestCaseObject,
+      ).toHaveBeenCalledWith(caseType, `${caseId}/ruling.pdf`)
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
   })
@@ -84,12 +88,9 @@ describe('CaseController - Get ruling pdf', () => {
     const caseId = uuid()
     const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
     const res = {} as Response
-    const error = new Error('Some ignored error')
+    const error = new Error('Some error')
 
     beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockRejectedValueOnce(error)
-
       await givenWhenThen(caseId, theCase, res)
     })
 
@@ -101,43 +102,25 @@ describe('CaseController - Get ruling pdf', () => {
     })
   })
 
-  describe('pdf generated', () => {
+  describe('generated pdf returned', () => {
     const caseId = uuid()
     const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
-    const res = {} as Response
+    const res = { end: jest.fn() } as unknown as Response
+    const pdf = {}
 
     beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
+      const getMock = getRulingPdfAsBuffer as jest.Mock
+      getMock.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, theCase, res)
     })
 
-    it('should generate pdf', () => {
+    it('should return pdf', () => {
       expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
       )
-    })
-  })
-
-  describe('pdf generated', () => {
-    const caseId = uuid()
-    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
-    const res = {} as Response
-
-    beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
-
-      await givenWhenThen(caseId, theCase, res)
-    })
-
-    it('should generate pdf', () => {
-      expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
+      expect(res.end).toHaveBeenCalledWith(pdf)
     })
   })
 
@@ -158,26 +141,6 @@ describe('CaseController - Get ruling pdf', () => {
     })
   })
 
-  describe('generated pdf returned', () => {
-    const caseId = uuid()
-    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
-    const res = { end: jest.fn() } as unknown as Response
-    const pdf = {}
-
-    beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
-      const getMock = getRulingPdfAsBuffer as jest.Mock
-      getMock.mockResolvedValueOnce(pdf)
-
-      await givenWhenThen(caseId, theCase, res)
-    })
-
-    it('should return pdf', () => {
-      expect(res.end).toHaveBeenCalledWith(pdf)
-    })
-  })
-
   describe('pdf generation fails', () => {
     const caseId = uuid()
     const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
@@ -185,11 +148,6 @@ describe('CaseController - Get ruling pdf', () => {
     const res = {} as Response
 
     beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
-      const getMock = getRulingPdfAsBuffer as jest.Mock
-      getMock.mockRejectedValueOnce(new Error('Some error'))
-
       then = await givenWhenThen(caseId, theCase, res)
     })
 

@@ -4,6 +4,7 @@
   "sourceRoot": "apps/judicial-system/api/src",
   "projectType": "application",
   "prefix": "judicial-system-api",
+  "tags": ["scope:judicial-system-api"],
   "generators": {},
   "targets": {
     "build": {
@@ -31,16 +32,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/judicial-system/api/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/judicial-system/api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/judicial-system/api/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/api"]
     },
@@ -51,7 +48,8 @@
       },
       "outputs": ["{projectRoot}/src/api.graphql"]
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:judicial-system-api"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

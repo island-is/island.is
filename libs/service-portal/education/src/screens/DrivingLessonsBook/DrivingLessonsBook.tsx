@@ -16,7 +16,6 @@ import {
   m,
   formatDate,
   IntroHeader,
-  EmptyState,
   FootNote,
   LinkResolver,
   SAMGONGUSTOFA_SLUG,
@@ -29,6 +28,7 @@ import {
 import PhysicalLessons from '../../components/DrivingLessonsTables/PhysicalLessons'
 import DrivingLessonsSchools from '../../components/DrivingLessonsTables/DrivingLessonsSchools'
 import Exams from '../../components/DrivingLessonsTables/Exams'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const GET_STUDENT_BOOK = gql`
   query GetUserDrivingLessonsBook {
@@ -102,6 +102,21 @@ const DrivingLessonsBook = () => {
       {loading && (
         <Box padding={3}>
           <SkeletonLoader space={1} height={40} repeat={5} />
+        </Box>
+      )}
+      {!loading && !error && !book?.createdOn && (
+        <Box>
+          <LinkResolver href={formatMessage(urls.licenseApplication)}>
+            <Button
+              colorScheme="default"
+              icon="receipt"
+              iconType="outline"
+              variant="utility"
+              size="small"
+            >
+              {formatMessage(messages.signupToDrivingSchool)}
+            </Button>
+          </LinkResolver>
         </Box>
       )}
       {book?.createdOn && !loading && (
@@ -198,26 +213,25 @@ const DrivingLessonsBook = () => {
               data={book?.testResults}
             />
           )}
+          <FootNote
+            serviceProviderSlug={SAMGONGUSTOFA_SLUG}
+            notes={[
+              { text: formatMessage(messages.vehicleDrivingLessonsInfoNote) },
+            ]}
+          />
         </>
       )}
       {!loading && !error && !book?.createdOn && (
-        <Box marginTop={8}>
-          <EmptyState />
-          <Box display="flex" alignItems="center" justifyContent="center">
-            <LinkResolver href={formatMessage(urls.licenseApplication)}>
-              <Button as="span" unfocusable>
-                {formatMessage(messages.signupToDrivingSchool)}
-              </Button>
-            </LinkResolver>
-          </Box>
+        <Box marginTop={4}>
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noData)}
+            message={formatMessage(m.noDataFoundDetail)}
+            imgSrc="./assets/images/sofa.svg"
+          />
         </Box>
       )}
-      <FootNote
-        serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-        notes={[
-          { text: formatMessage(messages.vehicleDrivingLessonsInfoNote) },
-        ]}
-      />
     </>
   )
 }

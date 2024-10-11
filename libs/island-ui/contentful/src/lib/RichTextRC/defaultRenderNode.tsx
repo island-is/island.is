@@ -146,7 +146,11 @@ export const defaultRenderNodeObject: RenderNode = {
       <hr />
     </Box>
   ),
-  [BLOCKS.TABLE]: (_node, children) => <T.Table>{children}</T.Table>,
+  [BLOCKS.TABLE]: (_node, children) => (
+    <Box className={styles.clearBoth}>
+      <T.Table>{children}</T.Table>
+    </Box>
+  ),
   [BLOCKS.TABLE_ROW]: (_node, children) => {
     if (
       (children as { nodeType: string }[])?.every(
@@ -244,7 +248,17 @@ export const defaultRenderNodeObject: RenderNode = {
           href = `/${href}`
         }
 
-        return href ? <Hyperlink href={href}>{children}</Hyperlink> : null
+        return href ? (
+          <Hyperlink
+            href={`${
+              !entry?.sys?.locale || entry.sys.locale === 'is-IS'
+                ? ''
+                : `/${entry.sys.locale}`
+            }${href}`}
+          >
+            {children}
+          </Hyperlink>
+        ) : null
       }
       case 'organizationPage': {
         const prefix = getOrganizationPageUrlPrefix(entry?.sys?.locale)

@@ -17,6 +17,8 @@ import { UserProfileController } from './user-profile.controller'
 import { UserTokenController } from './userToken.controller'
 import { UserTokenService } from './userToken.service'
 import { UserDeviceTokens } from '../user-profile/userDeviceTokens.model'
+import { ActorProfile } from './models/actor-profile.model'
+import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
 
 @Module({
   imports: [
@@ -25,14 +27,14 @@ import { UserDeviceTokens } from '../user-profile/userDeviceTokens.model'
       EmailVerification,
       SmsVerification,
       UserDeviceTokens,
+      ActorProfile,
     ]),
-    EmailModule.register(environment.emailOptions),
-    SmsModule.register(environment.smsOptions),
+    EmailModule,
+    SmsModule,
     IslykillApiModule.register({
-      basePath: environment.islykillConfig.basePath,
-      cert: environment.islykillConfig.cert,
-      passphrase: environment.islykillConfig.passphrase,
+      ...environment.islykillConfig,
     }),
+    AuthDelegationApiClientModule,
   ],
   controllers: [
     MeUserProfileController,

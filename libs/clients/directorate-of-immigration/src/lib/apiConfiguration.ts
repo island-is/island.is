@@ -16,6 +16,7 @@ import {
   ResidenceAbroadApi,
   StudyApi,
   TravelDocumentApi,
+  ApplicantApi,
 } from '../../gen/fetch'
 
 const configFactory = (
@@ -28,6 +29,7 @@ const configFactory = (
     name: 'clients-directorate-of-immigration',
     organizationSlug: 'utlendingastofnun',
     logErrorResponseBody: true,
+    timeout: 1000 * 60,
     autoAuth: idsClientConfig.isConfigured
       ? {
           mode: 'auto',
@@ -56,6 +58,7 @@ export const exportedApis = [
   ResidenceAbroadApi,
   StudyApi,
   TravelDocumentApi,
+  ApplicantApi,
 ].map((Api) => ({
   provide: Api,
   useFactory: (

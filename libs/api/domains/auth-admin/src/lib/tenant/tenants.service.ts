@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'
+import groupBy from 'lodash/groupBy'
 
 import { User } from '@island.is/auth-nest-tools'
-import { Environment } from '@island.is/shared/types'
 
+import { environments } from '../shared/constants/environments'
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { TenantEnvironment } from './models/tenant-environment.model'
 import { TenantsPayload } from './dto/tenants.payload'
@@ -11,89 +12,68 @@ import { Tenant } from './models/tenant.model'
 @Injectable()
 export class TenantsService extends MultiEnvironmentService {
   async getTenants(user: User): Promise<TenantsPayload> {
-    const tenants = await Promise.all([
-      this.adminDevApiWithAuth(user)
-        ?.meTenantsControllerFindAll()
-        .catch((error) => this.handleError(error, Environment.Development)),
-      this.adminStagingApiWithAuth(user)
-        ?.meTenantsControllerFindAll()
-        .catch((error) => this.handleError(error, Environment.Staging)),
-      this.adminProdApiWithAuth(user)
-        ?.meTenantsControllerFindAll()
-        .catch((error) => this.handleError(error, Environment.Production)),
-    ])
+    const tenantsSettledPromises = await Promise.allSettled(
+      environments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meTenantsControllerFindAllRaw(),
+        ),
+      ),
+    )
 
-    const tenantMap = new Map<string, TenantEnvironment[]>()
+    const tenantsEnvironments: TenantEnvironment[] = this.handleSettledPromises(
+      tenantsSettledPromises,
+      {
+        mapper: (tenants, index) =>
+          tenants.map((tenant) => ({
+            name: tenant.name,
+            displayName: tenant.displayName,
+            environment: environments[index],
+          })),
+        prefixErrorMessage: 'Failed to fetch tenants',
+      },
+    ).flat()
 
-    for (const [index, env] of [
-      Environment.Development,
-      Environment.Staging,
-      Environment.Production,
-    ].entries()) {
-      for (const tenant of tenants[index] ?? []) {
-        if (!tenantMap.has(tenant.name)) {
-          tenantMap.set(tenant.name, [])
-        }
+    const groupedTenants = groupBy(tenantsEnvironments, 'name')
 
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        tenantMap.get(tenant.name)!.push({
-          name: tenant.name,
-          environment: env,
-          displayName: tenant.displayName,
-        })
-      }
-    }
-
-    const tenantArray: Tenant[] = []
-    for (const [id, environments] of tenantMap.entries()) {
-      tenantArray.push({
-        id,
-        environments,
-      })
-    }
-
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    tenantArray.sort((a, b) => a.id!.localeCompare(b.id!))
+    const tenants: Tenant[] = Object.entries(groupedTenants)
+      .map(([tenantName, tenants]) => ({
+        id: tenantName,
+        environments: tenants,
+      }))
+      .sort((a, b) => a.id.localeCompare(b.id))
 
     return {
-      data: tenantArray,
-      totalCount: tenantArray.length,
+      data: tenants,
+      totalCount: tenants.length,
       pageInfo: { hasNextPage: false },
     }
   }
 
   async getTenantById(id: string, user: User): Promise<Tenant> {
-    const tenants = await Promise.all([
-      this.adminDevApiWithAuth(user)
-        ?.meTenantsControllerFindById({ tenantId: id })
-        .catch((error) => this.handleError(error, Environment.Development)),
-      this.adminStagingApiWithAuth(user)
-        ?.meTenantsControllerFindById({ tenantId: id })
-        .catch((error) => this.handleError(error, Environment.Staging)),
-      this.adminProdApiWithAuth(user)
-        ?.meTenantsControllerFindById({ tenantId: id })
-        .catch((error) => this.handleError(error, Environment.Production)),
-    ])
+    const tenantSettledPromises = await Promise.allSettled(
+      environments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meTenantsControllerFindByIdRaw({
+            tenantId: id,
+          }),
+        ),
+      ),
+    )
 
-    const tenantMap: TenantEnvironment[] = []
+    const tenantEnvironments: TenantEnvironment[] = this.handleSettledPromises(
+      tenantSettledPromises,
+      {
+        mapper: (tenant, index): TenantEnvironment => ({
+          ...tenant,
+          environment: environments[index],
+        }),
+        prefixErrorMessage: `Failed to fetch tenant ${id}`,
+      },
+    )
 
-    for (const [index, env] of [
-      Environment.Development,
-      Environment.Staging,
-      Environment.Production,
-    ].entries()) {
-      const tenant = tenants[index]
-      if (tenant) {
-        tenantMap.push({
-          name: tenant.name,
-          environment: env,
-          displayName: tenant.displayName,
-        })
-      }
-    }
     return {
-      id: id,
-      environments: tenantMap,
+      id,
+      environments: tenantEnvironments,
     }
   }
 }

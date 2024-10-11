@@ -55,7 +55,7 @@ parse_build_args() {
     esac
   done
 
-  ./scripts/ci/_podman.sh "$dockerfile" "$target"
+  ./scripts/ci/_docker.sh "$dockerfile" "$target"
 }
 
 print_run_usage() {
@@ -81,7 +81,7 @@ parse_run_args() {
   local secrets_files=(".env.secret")
   local dryrun=false
   local secrets_out_file=".env.local-e2e"
-  local volumes=("${PWD}/node_modules:/data/node_modules:z" "${PWD}/.cache:/data/.cache:z" "${PWD}/.yarn/cache:/data/.yarn/cache:z")
+  local volumes=()
   local playwright_output=true
 
   while [[ $# -gt 0 ]]; do

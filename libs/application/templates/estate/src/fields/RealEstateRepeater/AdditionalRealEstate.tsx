@@ -67,6 +67,7 @@ export const AdditionalRealEstate = ({
     // The lot number is a six digit informationless sequence with prefix L
     const propertyNumber = propertyNumberInput.trim().toUpperCase()
     setValue(addressField, '')
+
     if (isValidRealEstate(propertyNumber)) {
       clearErrors(propertyNumberField)
       getProperty({
@@ -82,6 +83,7 @@ export const AdditionalRealEstate = ({
         type: 'validate',
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getProperty, propertyNumberInput, setValue, setError])
 
   return (

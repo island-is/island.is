@@ -142,6 +142,7 @@ describe('CaseController - Extend', () => {
         {
           origin,
           type,
+          state: CaseState.NEW,
           description,
           policeCaseNumbers,
           defenderName,
@@ -245,6 +246,7 @@ describe('CaseController - Extend', () => {
       id: caseId,
       origin,
       type,
+      state: CaseState.NEW,
       description,
       policeCaseNumbers,
       defenderName,
@@ -275,6 +277,7 @@ describe('CaseController - Extend', () => {
         {
           origin,
           type,
+          state: CaseState.NEW,
           description,
           policeCaseNumbers,
           defenderName,

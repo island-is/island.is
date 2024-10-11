@@ -1,29 +1,46 @@
 import React, { useEffect, useRef } from 'react'
-import { useRouter } from 'next/router'
 import { LoadingBarRef } from 'react-top-loading-bar'
+import { useRouter } from 'next/router'
+
 import { PageLoader as PageLoaderUI } from '@island.is/island-ui/core'
+
+type RouteChangeFunction = (url: string, props: { shallow: boolean }) => void
 
 export const PageLoader = () => {
   const router = useRouter()
   const ref = useRef<LoadingBarRef>(null)
+  const state = useRef<'idle' | 'loading'>('idle')
 
   useEffect(() => {
-    const start = () => {
-      ref?.current?.continuousStart()
+    const onStart: RouteChangeFunction = (_, { shallow }) => {
+      if (!shallow) {
+        state.current = 'loading'
+        ref.current?.continuousStart()
+      }
     }
-    const done = () => {
-      ref.current?.complete()
+    const onComplete: RouteChangeFunction = (_, { shallow }) => {
+      if (!shallow) {
+        state.current = 'idle'
+        ref.current?.complete()
+      }
     }
-    router.events.on('routeChangeStart', start)
-    router.events.on('routeChangeComplete', done)
-    router.events.on('routeChangeError', done)
+    const onError = () => {
+      if (state.current === 'loading') {
+        ref.current?.complete()
+        state.current = 'idle'
+      }
+    }
+
+    router.events.on('routeChangeStart', onStart)
+    router.events.on('routeChangeComplete', onComplete)
+    router.events.on('routeChangeError', onError)
 
     return () => {
-      router.events.off('routeChangeStart', start)
-      router.events.off('routeChangeComplete', done)
-      router.events.off('routeChangeError', done)
+      router.events.off('routeChangeStart', onStart)
+      router.events.off('routeChangeComplete', onComplete)
+      router.events.off('routeChangeError', onError)
     }
-  }, [])
+  }, [router.events])
 
   return <PageLoaderUI ref={ref} />
 }

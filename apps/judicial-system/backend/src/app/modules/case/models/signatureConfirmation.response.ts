@@ -1,12 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class SignatureConfirmationResponse {
-  @ApiProperty()
+  @ApiProperty({ type: Boolean })
   documentSigned!: boolean
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   code?: number
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   message?: string
 }

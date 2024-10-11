@@ -219,6 +219,7 @@ export const MobileFilter = ({
             />
             <Stack space={2}>
               <DatePicker
+                name="date-picker-from"
                 size="sm"
                 locale="is"
                 label={loc.filter.datePickerFromLabel}
@@ -228,6 +229,7 @@ export const MobileFilter = ({
                 appearInline
               />
               <DatePicker
+                name="date-picker-to"
                 size="sm"
                 locale="is"
                 label={loc.filter.datePickerToLabel}
@@ -240,6 +242,7 @@ export const MobileFilter = ({
                 filtersPeriodToAsDate !== initialPeriodToAsDate) && (
                 <Box textAlign="right">
                   <Button
+                    title="clear-date-button"
                     size="small"
                     icon="reload"
                     variant="text"

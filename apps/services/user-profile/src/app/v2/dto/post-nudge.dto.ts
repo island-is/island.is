@@ -6,5 +6,5 @@ import { NudgeType } from '../../types/nudge-type'
 export class PostNudgeDto {
   @IsEnum(NudgeType)
   @ApiProperty({ enum: NudgeType })
-  nudgeType: NudgeType
+  nudgeType!: NudgeType
 }

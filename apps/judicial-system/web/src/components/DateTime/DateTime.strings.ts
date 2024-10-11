@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const dateTime = defineMessages({
+export const strings = defineMessages({
   timeLabel: {
     id: 'judicial.system.core:date_time.time_label',
     defaultMessage: 'Tímasetning',

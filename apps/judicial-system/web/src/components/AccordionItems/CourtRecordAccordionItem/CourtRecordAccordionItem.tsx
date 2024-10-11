@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import isSameDay from 'date-fns/isSameDay'
 
@@ -22,9 +22,7 @@ interface Props {
   workingCase: Case
 }
 
-const CourtRecordAccordionItem: React.FC<React.PropsWithChildren<Props>> = ({
-  workingCase,
-}: Props) => {
+const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
 
   const prosecutorAppeal = formatAppeal(

@@ -58,7 +58,7 @@ Categories.getProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res?.data?.getNamespace?.fields ?? '{}')),
+      .then((res) => JSON.parse(res?.data?.getNamespace?.fields || '{}')),
   ])
 
   return {

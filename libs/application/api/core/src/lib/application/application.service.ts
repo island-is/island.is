@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op, WhereOptions } from 'sequelize'
+import { Op, QueryTypes, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import {
   ExternalData,
@@ -8,7 +8,11 @@ import {
   ApplicationStatus,
   ApplicationLifecycle,
 } from '@island.is/application/types'
-import { Application, ApplicationPaginatedResponse } from './application.model'
+import {
+  Application,
+  ApplicationPaginatedResponse,
+  ApplicationsStatistics,
+} from './application.model'
 import { getTypeIdsForInstitution } from '@island.is/application/utils'
 
 const applicationIsNotSetToBePruned = () => ({
@@ -52,6 +56,28 @@ export class ApplicationService {
   ): Promise<Application | null> {
     return this.applicationModel.findOne({
       where: applicationByNationalId(id, nationalId),
+    })
+  }
+
+  async getApplicationCountByTypeIdAndStatus(
+    startDate: string,
+    endDate: string,
+  ): Promise<ApplicationsStatistics[]> {
+    const query = `SELECT 
+        type_id as typeid, 
+        COUNT(*) as count, 	
+        COUNT(*) FILTER (WHERE status = 'draft') AS draft,
+        COUNT(*) FILTER (WHERE status = 'inprogress') AS inprogress,    
+        COUNT(*) FILTER (WHERE status = 'completed') AS completed,	
+        COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,	
+        COUNT(*) FILTER (WHERE status = 'approved') AS approved 
+      FROM public.application 
+      WHERE modified BETWEEN :startDate AND :endDate 
+      GROUP BY typeid;`
+
+    return this.sequelize.query<ApplicationsStatistics>(query, {
+      replacements: { startDate, endDate },
+      type: QueryTypes.SELECT,
     })
   }
 
@@ -273,6 +299,7 @@ export class ApplicationService {
         | 'applicantActors'
         | 'draftTotalSteps'
         | 'draftFinishedSteps'
+        | 'pruneAt'
       >
     >,
   ) {

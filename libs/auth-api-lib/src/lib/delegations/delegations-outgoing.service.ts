@@ -1,14 +1,18 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { and, Op, WhereOptions } from 'sequelize'
 import { isUuid, uuid } from 'uuidv4'
+import startOfDay from 'date-fns/startOfDay'
 
 import { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
+import { NotificationsApi } from '../user-notification'
 
 import { ApiScope } from '../resources/models/api-scope.model'
 import { DelegationScopeService } from './delegation-scope.service'
@@ -29,6 +33,15 @@ import { getDelegationNoActorWhereClause } from './utils/delegations'
 import { DelegationResourcesService } from '../resources/delegation-resources.service'
 import { DelegationDirection } from './types/delegationDirection'
 import { DelegationsIndexService } from './delegations-index.service'
+import {
+  NEW_DELEGATION_TEMPLATE_ID,
+  UPDATED_DELEGATION_TEMPLATE_ID,
+} from './constants/hnipp'
+import { Features } from '@island.is/feature-flags'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { DelegationDelegationType } from './models/delegation-delegation-type.model'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 /**
  * Service class for outgoing delegations.
@@ -43,6 +56,10 @@ export class DelegationsOutgoingService {
     private delegationResourceService: DelegationResourcesService,
     private delegationIndexService: DelegationsIndexService,
     private namesService: NamesService,
+    private notificationsApi: NotificationsApi,
+    private featureFlagService: FeatureFlagService,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
   async findAll(
@@ -54,42 +71,71 @@ export class DelegationsOutgoingService {
     if (otherUser) {
       return this.findByOtherUser(user, otherUser, domainName)
     }
-    const delegations = await this.delegationModel.findAll({
-      where: and(
-        {
+
+    const [delegations, delegationTypesDelegations] = await Promise.all([
+      this.delegationModel.findAll({
+        where: and(
+          {
+            fromNationalId: user.nationalId,
+          },
+          domainName ? { domainName } : {},
+          getDelegationNoActorWhereClause(user),
+          ...(await this.delegationResourceService.apiScopeFilter({
+            user,
+            prefix: 'delegationScopes->apiScope',
+            direction: DelegationDirection.OUTGOING,
+          })),
+        ),
+        include: [
+          {
+            model: DelegationScope,
+            include: [
+              {
+                attributes: ['displayName'],
+                model: ApiScope,
+                required: true,
+                include: [
+                  ...this.delegationResourceService.apiScopeInclude(
+                    user,
+                    DelegationDirection.OUTGOING,
+                  ),
+                ],
+              },
+            ],
+            required: validity !== DelegationValidity.ALL,
+            where: getScopeValidityWhereClause(validity),
+          },
+        ],
+      }),
+      this.delegationModel.findAll({
+        where: {
           fromNationalId: user.nationalId,
         },
-        domainName ? { domainName } : {},
-        getDelegationNoActorWhereClause(user),
-        ...(await this.delegationResourceService.apiScopeFilter({
-          user,
-          prefix: 'delegationScopes->apiScope',
-          direction: DelegationDirection.OUTGOING,
-        })),
-      ),
-      include: [
-        {
-          model: DelegationScope,
-          include: [
-            {
-              attributes: ['displayName'],
-              model: ApiScope,
-              required: true,
-              include: [
-                ...this.delegationResourceService.apiScopeInclude(
-                  user,
-                  DelegationDirection.OUTGOING,
-                ),
-              ],
+        include: [
+          {
+            model: DelegationDelegationType,
+            where: {
+              delegationTypeId: AuthDelegationType.GeneralMandate,
+              validTo: {
+                [Op.or]: {
+                  [Op.gte]: startOfDay(new Date()),
+                  [Op.is]: null,
+                },
+              },
             },
-          ],
-          required: validity !== DelegationValidity.ALL,
-          where: getScopeValidityWhereClause(validity),
-        },
-      ],
-    })
+            required: true,
+          },
+        ],
+      }),
+    ])
 
-    return delegations.map((d) => d.toDTO())
+    const delegationTypesDTO = delegationTypesDelegations.map((d) =>
+      d.toDTO(AuthDelegationType.GeneralMandate),
+    )
+
+    const delegationsDTO = delegations.map((d) => d.toDTO())
+
+    return [...delegationsDTO, ...delegationTypesDTO]
   }
 
   async findByOtherUser(
@@ -197,6 +243,9 @@ export class DelegationsOutgoingService {
         fromNationalId: user.nationalId,
         toNationalId: createDelegation.toNationalId,
         domainName: createDelegation.domainName,
+        createdByNationalId: user.actor?.nationalId ?? user.nationalId,
+        // TODO: should not persist names with the delegation
+        // should always look it up to avoid being out of sync
         fromDisplayName,
         toName,
       })
@@ -224,9 +273,76 @@ export class DelegationsOutgoingService {
     // Index custom delegations for the toNationalId
     void this.delegationIndexService.indexCustomDelegations(
       createDelegation.toNationalId,
+      user,
     )
 
     return newDelegation
+  }
+
+  private async notifyDelegationUpdate(
+    user: User,
+    delegation: DelegationDTO,
+    hasExistingScopes: boolean,
+  ) {
+    try {
+      const allowDelegationNotification =
+        await this.featureFlagService.getValue(
+          Features.isDelegationNotificationEnabled,
+          false,
+          user,
+        )
+
+      if (
+        !allowDelegationNotification ||
+        !delegation.scopes ||
+        !delegation.domainName
+      ) {
+        return
+      }
+
+      const fromDisplayName = await this.namesService.getUserName(user)
+      const domainName = delegation.domainName
+
+      const domainNameIs = await this.delegationResourceService.findOneDomain(
+        user,
+        domainName,
+        'is',
+      )
+      const domainNameEn = await this.delegationResourceService.findOneDomain(
+        user,
+        domainName,
+        'en',
+      )
+
+      const args = [
+        { key: 'name', value: fromDisplayName },
+        {
+          key: 'domainNameIs',
+          value: domainNameIs.displayName,
+        },
+        {
+          key: 'domainNameEn',
+          value: domainNameEn.displayName,
+        },
+      ]
+
+      // Notify toNationalId of the delegation update
+      await this.notificationsApi.notificationsControllerCreateHnippNotification(
+        {
+          createHnippNotificationDto: {
+            args,
+            recipient: delegation.toNationalId,
+            // If there are existing scopes we are updating the delegation
+            // else it is a new delegation
+            templateId: hasExistingScopes
+              ? UPDATED_DELEGATION_TEMPLATE_ID
+              : NEW_DELEGATION_TEMPLATE_ID,
+          },
+        },
+      )
+    } catch (e) {
+      this.logger.error(`Failed to send delegation notification`, e)
+    }
   }
 
   async patch(
@@ -244,6 +360,13 @@ export class DelegationsOutgoingService {
           getDelegationNoActorWhereClause(user),
         ],
       },
+      include: [
+        {
+          model: DelegationScope,
+          required: false,
+          as: 'delegationScopes',
+        },
+      ],
     })
     if (!currentDelegation) {
       throw new NoContentException()
@@ -252,7 +375,7 @@ export class DelegationsOutgoingService {
     if (
       !(await this.delegationResourceService.validateScopeAccess(
         user,
-        currentDelegation.domainName,
+        currentDelegation.domainName ?? null,
         DelegationDirection.OUTGOING,
         [
           ...(patchedDelegation.updateScopes ?? []).map((scope) => scope.name),
@@ -296,7 +419,13 @@ export class DelegationsOutgoingService {
     // Index custom delegations for the toNationalId
     void this.delegationIndexService.indexCustomDelegations(
       delegation.toNationalId,
+      user,
     )
+
+    const hasExistingScopes =
+      (currentDelegation.delegationScopes?.length ?? 0) > 0
+
+    void this.notifyDelegationUpdate(user, delegation, hasExistingScopes)
 
     return delegation
   }
@@ -309,7 +438,7 @@ export class DelegationsOutgoingService {
 
     const userScopes = await this.delegationResourceService.findScopes(
       user,
-      delegation.domainName,
+      delegation.domainName ?? null,
     )
     await this.delegationScopeService.delete(
       delegationId,
@@ -331,6 +460,7 @@ export class DelegationsOutgoingService {
     // Index custom delegations for the toNationalId
     void this.delegationIndexService.indexCustomDelegations(
       delegation.toNationalId,
+      user,
     )
   }
 
@@ -363,7 +493,7 @@ export class DelegationsOutgoingService {
     // Verify and filter scopes.
     const userScopes = await this.delegationResourceService.findScopeNames(
       user,
-      delegation.domainName,
+      delegation.domainName ?? null,
       direction,
     )
     if (!userScopes.length) {

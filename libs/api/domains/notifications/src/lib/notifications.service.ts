@@ -2,16 +2,17 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import {
-  // UpdateNotificationDtoStatusEnum,
-  UserNotificationApi,
-} from '@island.is/clients/user-notification'
+import { UserNotificationApi } from '@island.is/clients/user-notification'
 import type { Locale } from '@island.is/shared/types'
 import {
+  NotificationsMarkAllAsSeenResponse,
   MarkNotificationReadResponse,
   NotificationResponse,
   NotificationsInput,
   NotificationsResponse,
+  NotificationsUnreadCount,
+  NotificationsUnseenCount,
+  NotificationsMarkAllAsReadResponse,
 } from './notifications.model'
 import { notificationMapper } from '../utils/helpers'
 
@@ -50,7 +51,6 @@ export class NotificationsService {
     return {
       data: notifications.data.map((item) => notificationMapper(item)),
       totalCount: notifications.totalCount,
-      unreadCount: undefined, // TODO: Add when service supports unreadCount
       pageInfo: notifications.pageInfo,
     }
   }
@@ -73,6 +73,54 @@ export class NotificationsService {
     return { data: notificationMapper(notification) }
   }
 
+  async markAllNotificationsAsSeen(
+    user: User,
+  ): Promise<NotificationsMarkAllAsSeenResponse | null> {
+    this.logger.debug('marking all notifications as seen')
+
+    await this.userNotificationsWAuth(
+      user,
+    ).meNotificationsControllerMarkAllAsSeen()
+
+    return {
+      success: true,
+    }
+  }
+
+  async markAllNotificationsAsRead(
+    user: User,
+  ): Promise<NotificationsMarkAllAsReadResponse | null> {
+    this.logger.debug('marking all notifications as read')
+
+    await this.userNotificationsWAuth(
+      user,
+    ).meNotificationsControllerMarkAllAsRead()
+
+    return {
+      success: true,
+    }
+  }
+
+  async getUnreadCount(user: User): Promise<NotificationsUnreadCount | null> {
+    this.logger.debug('getting unread count')
+
+    const res = await this.userNotificationsWAuth(
+      user,
+    ).meNotificationsControllerGetUnreadNotificationsCount()
+
+    return res
+  }
+
+  async getUnseenCount(user: User): Promise<NotificationsUnseenCount | null> {
+    this.logger.debug('getting unseen count')
+
+    const res = await this.userNotificationsWAuth(
+      user,
+    ).meNotificationsControllerGetUnseenNotificationsCount()
+
+    return res
+  }
+
   async markNotificationAsRead(
     id: number,
     locale: Locale,
@@ -88,6 +136,7 @@ export class NotificationsService {
       id,
       updateNotificationDto: {
         read: true,
+        seen: true,
       },
     })
 

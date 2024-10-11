@@ -49,7 +49,7 @@ describe('CaseController - Get all', () => {
       const mockGetCasesQueryFilter = getCasesQueryFilter as jest.Mock
       mockGetCasesQueryFilter.mockReturnValueOnce(filter)
       const mockFindAll = mockCaseModel.findAll as jest.Mock
-      mockFindAll.mockReturnValueOnce(cases)
+      mockFindAll.mockResolvedValueOnce(cases)
 
       then = await givenWhenThen()
     })

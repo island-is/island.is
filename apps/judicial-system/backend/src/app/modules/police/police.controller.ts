@@ -21,7 +21,11 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
+import {
+  districtCourtJudgeRule,
+  prosecutorRepresentativeRule,
+  prosecutorRule,
+} from '../../guards'
 import {
   Case,
   CaseExistsGuard,
@@ -30,6 +34,7 @@ import {
   CaseReadGuard,
   CurrentCase,
 } from '../case'
+import { Subpoena } from '../subpoena'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
@@ -69,6 +74,26 @@ export class PoliceController {
     return this.policeService.getAllPoliceCaseFiles(theCase.id, user)
   }
 
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+  )
+  @Get('subpoenaStatus/:subpoenaId')
+  @ApiOkResponse({
+    type: Subpoena,
+    description: 'Gets subpoena status',
+  })
+  getSubpoenaStatus(
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentHttpUser() user: User,
+  ): Promise<Subpoena> {
+    this.logger.debug(`Gets subpoena status in case ${theCase.id}`)
+
+    return this.policeService.getSubpoenaStatus(subpoenaId, user)
+  }
+
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Get('policeCaseInfo')
@@ -91,7 +116,7 @@ export class PoliceController {
   @Post('policeFile')
   @ApiOkResponse({
     type: UploadPoliceCaseFileResponse,
-    description: 'Uploads a police files of a case to AWS S3',
+    description: 'Uploads a police file of a case to AWS S3',
   })
   uploadPoliceCaseFile(
     @Param('caseId') caseId: string,

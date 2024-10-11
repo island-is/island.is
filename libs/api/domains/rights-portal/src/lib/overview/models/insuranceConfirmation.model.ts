@@ -2,12 +2,12 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('RightsPortalInsuranceConfirmation')
 export class InsuranceConfirmation {
-  @Field(() => String, { nullable: true })
-  fileName?: string | null
+  @Field()
+  fileName!: string
 
-  @Field(() => String, { nullable: true })
-  contentType?: string | null
+  @Field()
+  contentType!: string
 
-  @Field(() => String, { nullable: true })
-  data?: string | null
+  @Field()
+  data!: string
 }

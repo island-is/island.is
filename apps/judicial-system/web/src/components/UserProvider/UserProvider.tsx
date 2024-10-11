@@ -1,4 +1,10 @@
-import React, { createContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  FC,
+  PropsWithChildren,
+  useEffect,
+  useState,
+} from 'react'
 import Cookies from 'js-cookie'
 
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
@@ -6,6 +12,7 @@ import {
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isProsecutionUser,
+  isPublicProsecutorUser,
 } from '@island.is/judicial-system/types'
 import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -24,7 +31,7 @@ interface Props {
   authenticated?: boolean
 }
 
-export const UserProvider: React.FC<React.PropsWithChildren<Props>> = ({
+export const UserProvider: FC<PropsWithChildren<Props>> = ({
   children,
   authenticated = false,
 }) => {
@@ -55,7 +62,9 @@ export const UserProvider: React.FC<React.PropsWithChildren<Props>> = ({
           user && // Needed for e2e tests as they do not have a logged in user
           !isProsecutionUser(user) &&
           !isDistrictCourtUser(user) &&
-          !isCourtOfAppealsUser(user),
+          !isCourtOfAppealsUser(user) &&
+          !isPublicProsecutorUser(user),
+
         user,
       }}
     >

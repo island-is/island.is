@@ -3,21 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nest/swagger/src",
   "projectType": "library",
+  "tags": ["lib:nest", "scope:nest"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/nest/swagger/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/nest/swagger"],
       "options": {
-        "jestConfig": "libs/nest/swagger/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/nest/swagger/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:nest", "scope:nest"]
+  }
 }

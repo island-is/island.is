@@ -1,4 +1,10 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+import {
+  Field,
+  GraphQLISODateTime,
+  ID,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql'
 import { Action, ExternalLink } from '../workMachines.types'
 import { PaginatedResponse } from '@island.is/nest/pagination'
 
@@ -24,8 +30,8 @@ export class WorkMachine {
   @Field(() => String, { nullable: true })
   subCategory?: string | null
 
-  @Field(() => String, { nullable: true })
-  dateLastInspection?: string | null
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  dateLastInspection?: Date
 
   @Field(() => String, { nullable: true })
   registrationNumber?: string | null

@@ -15,6 +15,8 @@ import {
   Placeholder,
   SingleValue,
   ValueContainer,
+  MultiValue,
+  MultiValueLabel,
   customStyles,
 } from './Components'
 import { Option as OptionType, SelectProps } from './Select.types'
@@ -41,6 +43,8 @@ export const Select = <
   icon = 'chevronDown',
   isSearchable = true,
   isCreatable = false,
+  isMulti,
+  closeMenuOnSelect = !isMulti,
   size = 'md',
   backgroundColor = 'white',
   required,
@@ -48,6 +52,7 @@ export const Select = <
   isClearable,
   dataTestId,
   filterConfig,
+  isLoading = false,
 }: SelectProps<OptionType<Value>, IsMulti, Group>) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -68,9 +73,6 @@ export const Select = <
       })}
       data-testid={`creatable-select-${name}`}
     >
-      {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict*/}
       <CreatableReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
         aria-labelledby={id}
@@ -82,6 +84,7 @@ export const Select = <
         styles={customStyles()}
         classNamePrefix="island-select"
         onChange={onChange}
+        isLoading={isLoading}
         options={options}
         label={label}
         value={value}
@@ -92,6 +95,8 @@ export const Select = <
         isOptionDisabled={(option) => !!option.disabled}
         hasError={hasError}
         isSearchable={isSearchable}
+        isMulti={isMulti}
+        closeMenuOnSelect={closeMenuOnSelect}
         size={size}
         required={required}
         formatGroupLabel={formatGroupLabel}
@@ -109,6 +114,8 @@ export const Select = <
           IndicatorsContainer,
           Menu,
           Option,
+          MultiValue,
+          MultiValueLabel,
         }}
         isClearable
         backspaceRemovesValue
@@ -130,15 +137,13 @@ export const Select = <
       })}
       data-testid={`select-${name}`}
     >
-      {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict*/}
       <ReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
         aria-labelledby={id}
         ariaError={ariaError}
         noOptionsMessage={() => noOptionsMessage || null}
         id={id}
+        isLoading={isLoading}
         name={name}
         isDisabled={isDisabled}
         styles={customStyles()}
@@ -150,6 +155,8 @@ export const Select = <
         dataTestId={dataTestId}
         icon={icon}
         placeholder={placeholder}
+        isMulti={isMulti}
+        closeMenuOnSelect={closeMenuOnSelect}
         defaultValue={defaultValue}
         isOptionDisabled={(option) => !!option.disabled}
         hasError={hasError}
@@ -168,6 +175,8 @@ export const Select = <
           IndicatorsContainer,
           Menu,
           Option,
+          MultiValue,
+          MultiValueLabel,
         }}
         isClearable={isClearable}
         backspaceRemovesValue={isClearable}

@@ -7,6 +7,7 @@ import {
   FormModes,
   SubmitField,
   CallToAction,
+  FormText,
 } from '@island.is/application/types'
 
 import * as styles from './ScreenFooter.css'
@@ -25,6 +26,7 @@ interface FooterProps {
   shouldLastScreenButtonSubmit?: boolean
   renderLastScreenBackButton?: boolean
   submitButtonDisabled?: boolean
+  nextButtonText?: FormText
 }
 
 type SubmitButton = Omit<ButtonTypes, 'circle'> & {
@@ -65,6 +67,7 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   renderLastScreenButton,
   renderLastScreenBackButton,
   submitButtonDisabled,
+  nextButtonText,
 }) => {
   const { formatMessage } = useLocale()
   const { userInfo: user } = useAuth()
@@ -82,7 +85,7 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
     return null
   }
 
-  function renderSubmitButtons() {
+  const renderSubmitButtons = () => {
     if (!submitField || submitField.placement === 'screen') {
       return (
         <Button
@@ -168,7 +171,9 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
                   type="submit"
                   disabled={submitButtonDisabled}
                 >
-                  {formatMessage(coreMessages.buttonNext)}
+                  {nextButtonText
+                    ? formatText(nextButtonText, application, formatMessage)
+                    : formatMessage(coreMessages.buttonNext)}
                 </Button>
               </Box>
             )}

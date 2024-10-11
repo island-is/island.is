@@ -61,7 +61,7 @@ test.describe('Service portal access control concents', () => {
       // Act - Click on the first consent action card to expand it
       await page.getByTestId(actionCardDataTestId).first().click()
 
-      const firstToggleSwitch = page
+      const firstToggleSwitch = await page
         .getByTestId('consent-scope')
         .first()
         .locator('button')

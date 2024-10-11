@@ -12,6 +12,7 @@ import {
   FormModes,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { householdSupplementFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
@@ -65,18 +66,30 @@ export const PrerequisitesForm: Form = buildForm({
                 householdSupplementFormMessage.pre.skraInformationSubTitle,
             }),
             buildDataProviderItem({
+              provider: NationalRegistrySpouseApi,
+              title: '',
+            }),
+            buildDataProviderItem({
               provider: NationalRegistryCohabitantsApi,
               title: '',
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationApplicantApi,
+              provider: UserProfileApi,
               title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
               subTitle:
-                socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationInformationDescription,
+                socialInsuranceAdministrationMessage.pre.contactInfoDescription,
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationCurrenciesApi,
+              provider: SocialInsuranceAdministrationApplicantApi,
+              title:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationDescription,
+            }),
+            buildDataProviderItem({
+              id: 'sia.data',
               title:
                 socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationInformationTitle,
@@ -85,7 +98,7 @@ export const PrerequisitesForm: Form = buildForm({
                   .socialInsuranceAdministrationDataDescription,
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+              id: 'sia.privacy',
               title:
                 socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationPrivacyTitle,
@@ -94,7 +107,11 @@ export const PrerequisitesForm: Form = buildForm({
                   .socialInsuranceAdministrationPrivacyDescription,
             }),
             buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
+              provider: SocialInsuranceAdministrationCurrenciesApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
               title: '',
             }),
           ],
@@ -122,41 +139,6 @@ export const PrerequisitesForm: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'infoSection',
-      title: socialInsuranceAdministrationMessage.info.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'householdSupplementSection',
-      title: householdSupplementFormMessage.shared.householdSupplement,
-      children: [],
-    }),
-    buildSection({
-      id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.overviewTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'fileUpload',
-      title: socialInsuranceAdministrationMessage.fileUpload.title,
-      children: [],
-    }),
-    buildSection({
-      id: 'additionalInfo',
-      title: socialInsuranceAdministrationMessage.additionalInfo.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirm',
-      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'conclusion',
-      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
-      children: [],
     }),
   ],
 })

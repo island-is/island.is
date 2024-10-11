@@ -31,20 +31,16 @@ export const overviewAttachments = [
       return files?.attached?.file?.length > 0
     },
   }),
-  buildCustomField({
+  buildDescriptionField({
     id: 'attachmentsNotFilledOut',
     title: '',
-    component: 'NotFilledOut',
+    description: m.notFilledOutItalic,
+    space: 'gutter',
     condition: (answers) => {
       const files = getValueViaPath(answers, 'estateAttachments') as {
         attached: { file: { length: number } }
       }
       return files?.attached?.file?.length === 0
     },
-  }),
-  buildDescriptionField({
-    id: 'spaceAttachments',
-    title: '',
-    space: 'gutter',
   }),
 ]

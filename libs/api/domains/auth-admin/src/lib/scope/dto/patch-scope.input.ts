@@ -23,18 +23,40 @@ export class AdminPatchScopeInput {
   @Field(() => Boolean, { nullable: true })
   grantToAuthenticatedUser?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, {
+    nullable: true,
+    deprecationReason:
+      'Use addedDelegationTypes or removedDelegationTypes instead',
+  })
   grantToLegalGuardians?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, {
+    nullable: true,
+    deprecationReason:
+      'Use addedDelegationTypes or removedDelegationTypes instead',
+  })
   grantToProcuringHolders?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, {
+    nullable: true,
+    deprecationReason:
+      'Use addedDelegationTypes or removedDelegationTypes instead',
+  })
   allowExplicitDelegationGrant?: boolean
 
   @Field(() => Boolean, { nullable: true })
   isAccessControlled?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, {
+    nullable: true,
+    deprecationReason:
+      'Use addedDelegationTypes or removedDelegationTypes instead',
+  })
   grantToPersonalRepresentatives?: boolean
+
+  @Field(() => [String], { nullable: true })
+  addedDelegationTypes?: string[]
+
+  @Field(() => [String], { nullable: true })
+  removedDelegationTypes?: string[]
 }

@@ -8,6 +8,7 @@ import { logger } from '@island.is/logging'
 import { CreateVehicleInput } from './dto/createVehicle.input'
 import { VehicleModel } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
+import { getShortPermno } from '../../utils/skilavottordUtils'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleModel)
@@ -19,9 +20,12 @@ export class VehicleAppSysResolver {
     @CurrentUser() user: User,
     @Args('input') input: CreateVehicleInput,
   ) {
-    logger.info(`car-recycling: Creating Vehicle ${input.permno.slice(-3)}`, {
-      mileage: input.mileage,
-    })
+    logger.info(
+      `car-recycling: Creating Vehicle ${getShortPermno(input.permno)}`,
+      {
+        mileage: input.mileage,
+      },
+    )
 
     const newVehicle = new VehicleModel()
     newVehicle.vinNumber = input.vin

@@ -5,8 +5,14 @@ import {
   buildSection,
   buildSubmitField,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  ApplicantChildCustodyInformation,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 import { ApproveOptions, ExternalData } from '../lib/types'
 
 import * as m from '../lib/messages'
@@ -26,6 +32,7 @@ export const Application: Form = buildForm({
             (externalData as unknown as ExternalData).nationalRegistrySpouse
               .data != null,
           title: m.inRelationship.general.sectionTitle,
+          id: Routes.INRELATIONSHIP,
           children: [
             buildCustomField({
               id: Routes.INRELATIONSHIP,
@@ -39,11 +46,52 @@ export const Application: Form = buildForm({
             (externalData as unknown as ExternalData).nationalRegistrySpouse
               .data == null,
           title: m.unknownRelationship.general.sectionTitle,
+          id: Routes.UNKNOWNRELATIONSHIP,
           children: [
             buildCustomField({
               id: Routes.UNKNOWNRELATIONSHIP,
               title: m.unknownRelationship.general.pageTitle,
               component: 'UnknownRelationshipForm',
+            }),
+          ],
+        }),
+        buildSubSection({
+          condition: (_, externalData) => {
+            const childWithInfo = getValueViaPath(
+              externalData,
+              'childrenCustodyInformation.data',
+              [],
+            ) as ApplicantChildCustodyInformation[]
+
+            return Boolean(childWithInfo?.length)
+          },
+          id: Routes.CHILDRENSCHOOLINFO,
+          title: m.childrenForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: Routes.CHILDRENSCHOOLINFO,
+              title: m.childrenForm.general.pageTitle,
+              component: 'ChildrenForm',
+            }),
+          ],
+        }),
+        buildSubSection({
+          condition: (_, externalData) => {
+            const childWithInfo = getValueViaPath(
+              externalData,
+              'childrenCustodyInformation.data',
+              [],
+            ) as ApplicantChildCustodyInformation[]
+
+            return Boolean(childWithInfo?.length)
+          },
+          id: Routes.CHILDRENFILES,
+          title: m.childrenFilesForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: Routes.CHILDRENFILES,
+              title: m.childrenFilesForm.general.pageTitle,
+              component: 'ChildrenFilesForm',
             }),
           ],
         }),

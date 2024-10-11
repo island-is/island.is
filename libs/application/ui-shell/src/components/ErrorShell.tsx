@@ -53,6 +53,11 @@ const messageTypes = {
     subTitle: coreErrorScreenMessages.badSubjectSubTitle,
     description: coreErrorScreenMessages.badSubjectDescription,
   },
+  pruned: {
+    title: coreErrorScreenMessages.prunedTitle,
+    subTitle: coreErrorScreenMessages.prunedSubTitle,
+    description: coreErrorScreenMessages.prunedDescription,
+  },
 }
 
 interface Props {
@@ -66,6 +71,7 @@ interface Props {
     | 'notExist'
     | 'idNotFound'
     | 'badSubject'
+    | 'pruned'
   applicationType?: ApplicationTypes
 }
 

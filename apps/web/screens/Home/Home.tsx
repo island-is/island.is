@@ -26,9 +26,9 @@ import {
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
-import { QueryGetNewsArgs } from '@island.is/api/schema'
+import { LifeEventPage, QueryGetNewsArgs } from '@island.is/api/schema'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { watsonConfig } from './config'
 
 interface HomeProps {
@@ -39,7 +39,7 @@ interface HomeProps {
 }
 
 const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
-  const namespace = JSON.parse(page?.namespace?.fields ?? '{}')
+  const namespace = JSON.parse(page?.namespace?.fields || '{}')
   const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
@@ -81,7 +81,12 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
         <LifeEventsSection
           heading={n('lifeEventsTitle')}
           headingId="life-events-title"
-          items={page?.lifeEvents ?? []}
+          items={(page?.lifeEvents as LifeEventPage[]) ?? []}
+          seeMoreText={n('seeMoreLifeEvents')}
+          cardsButtonTitle={n(
+            'LifeEventsCardsButtonTitle',
+            'Skoða lífsviðburð',
+          )}
         />
       </Box>
       <Box
@@ -108,27 +113,6 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
           seeMoreText={gn('seeMore')}
           items={news}
         />
-      </Box>
-      <Box
-        component="section"
-        paddingTop={[4, 4, 6]}
-        aria-label={n('newsTickerHeading')}
-      >
-        <GridContainer>
-          <NewLinks
-            heading={n('newsTickerHeading')}
-            seeMoreText={n('newsTickerSeeMore')}
-            items={(page?.linkList?.links ?? [])
-              .filter((x) => x.date)
-              .map(({ date, text, url }) => {
-                return {
-                  text,
-                  date: new Date(date),
-                  href: url,
-                }
-              })}
-          />
-        </GridContainer>
       </Box>
       {watsonConfig[locale] && (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

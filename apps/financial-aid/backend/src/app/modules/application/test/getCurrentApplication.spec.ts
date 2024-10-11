@@ -56,7 +56,7 @@ describe('ApplicationController - Get current application', () => {
               spouseNationalId: user.nationalId,
             },
           ],
-          created: { [Op.gte]: firstDateOfMonth() },
+          appliedDate: { [Op.gte]: firstDateOfMonth() },
         },
       })
     })

@@ -21,7 +21,6 @@ import {
   HttpCode,
   Delete,
   Patch,
-  NotFoundException,
 } from '@nestjs/common'
 import { NoContentException } from '@island.is/nest/problem'
 import {
@@ -49,6 +48,7 @@ import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
 import { DataStatus } from './types/dataStatusTypes'
 import { ActorLocale } from './dto/actorLocale'
+import { Locale } from './types/localeTypes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
@@ -113,7 +113,7 @@ export class UserProfileController {
 
     return {
       nationalId: userProfile.nationalId,
-      locale: userProfile.locale,
+      locale: userProfile.locale ?? Locale.ICELANDIC,
     }
   }
 
@@ -201,8 +201,7 @@ export class UserProfileController {
     try {
       return await this.findOneByNationalId(nationalId, user)
     } catch (error) {
-      const ret = await this.create({ nationalId }, user)
-      return ret
+      return this.create({ nationalId }, user)
     }
   }
 
@@ -459,7 +458,10 @@ export class UserProfileController {
     } else {
       // findOrCreateUserProfile for edge cases - fragmented onboarding
       await this.findOrCreateUserProfile(nationalId, user)
-      return await this.userProfileService.addDeviceToken(body, user)
+      // The behaviour of returning the token if it already exists is not following API Design Guide
+      // It should respond with 303 See Other and a Location header to the existing resource
+      // But as the v1 of the user profile is not following this, we will keep the same behaviour.
+      return this.userProfileService.addDeviceToken(body, user)
     }
   }
 

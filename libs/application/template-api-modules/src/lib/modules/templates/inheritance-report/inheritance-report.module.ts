@@ -1,22 +1,18 @@
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 
 import { SharedTemplateAPIModule } from '../../shared'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 
-import { BaseTemplateAPIModuleConfig } from '../../../types'
-
 import { InheritanceReportService } from './inheritance-report.service'
+import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 
-export class InheritanceReportModule {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: InheritanceReportModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        SyslumennClientModule,
-      ],
-      providers: [InheritanceReportService],
-      exports: [InheritanceReportService],
-    }
-  }
-}
+@Module({
+  imports: [
+    SharedTemplateAPIModule,
+    SyslumennClientModule,
+    NationalRegistryXRoadModule,
+  ],
+  providers: [InheritanceReportService],
+  exports: [InheritanceReportService],
+})
+export class InheritanceReportModule {}

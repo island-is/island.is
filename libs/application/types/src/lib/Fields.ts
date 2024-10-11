@@ -15,7 +15,7 @@ import { CallToAction } from './StateMachine'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
 import { FormatInputValueFunction } from 'react-number-format'
-import React from 'react'
+import React, { CSSProperties } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
@@ -60,6 +60,16 @@ export type TableRepeaterFields =
   | 'radio'
   | 'checkbox'
   | 'date'
+  | 'nationalIdWithName'
+
+type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
+
+type TableRepeaterOptions =
+  | RepeaterOption[]
+  | ((
+      application: Application,
+      activeField?: Record<string, string>,
+    ) => RepeaterOption[] | [])
 
 export type TableRepeaterItem = {
   component: TableRepeaterFields
@@ -69,15 +79,43 @@ export type TableRepeaterItem = {
   displayInTable?: boolean
   label?: StaticText
   placeholder?: StaticText
-  options?: { label: StaticText; value: string }[]
+  options?: TableRepeaterOptions
   backgroundColor?: 'blue' | 'white'
-  width?: 'half' | 'full'
+  width?: 'half' | 'full' | 'third'
   required?: boolean
   condition?: (
     application: Application,
     activeField?: Record<string, string>,
   ) => boolean
   dataTestId?: string
+  readonly?:
+    | boolean
+    | ((
+        application: Application,
+        activeField?: Record<string, string>,
+      ) => boolean)
+  disabled?:
+    | boolean
+    | ((
+        application: Application,
+        activeField?: Record<string, string>,
+      ) => boolean)
+  updateValueObj?: {
+    valueModifier: (
+      application: Application,
+      activeField?: Record<string, string>,
+    ) => unknown
+    watchValues:
+      | string
+      | string[]
+      | ((
+          activeField?: Record<string, string>,
+        ) => string | string[] | undefined)
+  }
+  defaultValue?: (
+    application: Application,
+    activeField?: Record<string, string>,
+  ) => unknown
 } & (
   | {
       component: 'input'
@@ -88,6 +126,7 @@ export type TableRepeaterItem = {
       rows?: number
       maxLength?: number
       currency?: boolean
+      suffix?: string
     }
   | {
       component: 'date'
@@ -102,8 +141,8 @@ export type TableRepeaterItem = {
   | {
       component: 'select'
       label: StaticText
-      options: { label: StaticText; value: string }[]
       isSearchable?: boolean
+      isMulti?: boolean
     }
   | {
       component: 'radio'
@@ -112,6 +151,9 @@ export type TableRepeaterItem = {
   | {
       component: 'checkbox'
       large?: boolean
+    }
+  | {
+      component: 'nationalIdWithName'
     }
 )
 
@@ -190,6 +232,7 @@ export enum FieldTypes {
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
   STATIC_TABLE = 'STATIC_TABLE',
+  SLIDER = 'SLIDER',
 }
 
 export enum FieldComponents {
@@ -221,6 +264,7 @@ export enum FieldComponents {
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
   STATIC_TABLE = 'StaticTableFormField',
+  SLIDER = 'SliderFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -232,13 +276,14 @@ export interface CheckboxField extends BaseField {
   required?: boolean
   backgroundColor?: InputBackgroundColor
   onSelect?: ((s: string[]) => void) | undefined
+  spacing?: 0 | 1 | 2
 }
 
 export interface DateField extends BaseField {
   readonly type: FieldTypes.DATE
   placeholder?: FormText
   component: FieldComponents.DATE
-  maxDate?: Date
+  maxDate?: MaybeWithApplicationAndField<Date>
   minDate?: MaybeWithApplicationAndField<Date>
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
@@ -267,6 +312,8 @@ export interface RadioField extends BaseField {
   largeButtons?: boolean
   required?: boolean
   space?: BoxProps['paddingTop']
+  hasIllustration?: boolean
+  widthWithIllustration?: '1/1' | '1/2' | '1/3'
   onSelect?(s: string): void
 }
 
@@ -278,6 +325,7 @@ export interface SelectField extends BaseField {
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   required?: boolean
+  isMulti?: boolean
 }
 
 export interface CompanySearchField extends BaseField {
@@ -300,6 +348,7 @@ export interface AsyncSelectField extends BaseField {
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   required?: boolean
+  isMulti?: boolean
 }
 
 export interface TextField extends BaseField {
@@ -310,6 +359,9 @@ export interface TextField extends BaseField {
   rightAlign?: boolean
   minLength?: number
   maxLength?: number
+  max?: number
+  min?: number
+  step?: string
   placeholder?: FormText
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor
@@ -351,6 +403,10 @@ export interface FileUploadField extends BaseField {
    */
   readonly maxSize?: number
   readonly maxSizeErrorText?: FormText
+  /**
+   * Defaults to 100MB
+   */
+  readonly totalMaxSize?: number
   readonly forImageUpload?: boolean
 }
 
@@ -377,6 +433,7 @@ export interface KeyValueField extends BaseField {
   divider?: boolean
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
+  paddingBottom?: BoxProps['padding']
 }
 
 export interface CustomField extends BaseField {
@@ -409,7 +466,7 @@ export interface MessageWithLinkButtonField extends BaseField {
 export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
-  introText?: StaticText
+  introText?: FormText
   description: FormText
   startExpanded?: boolean
 }
@@ -428,7 +485,7 @@ export interface LinkField extends BaseField {
   readonly type: FieldTypes.LINK
   component: FieldComponents.LINK
   s3key?: FormText
-  link?: string
+  link?: FormText
   iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
 
@@ -442,15 +499,19 @@ export interface PaymentChargeOverviewField extends BaseField {
   ) => { chargeItemCode: string; extraLabel?: StaticText }[]
 }
 
+type ImageWidthProps = 'full' | 'auto' | '50%'
+type ImagePositionProps = 'left' | 'right' | 'center'
+
 export interface ImageField extends BaseField {
   readonly type: FieldTypes.IMAGE
   component: FieldComponents.IMAGE
   image: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | string
   alt?: string
-  imageWidth?: 'full' | 'auto'
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
+  imageWidth?: ImageWidthProps | Array<ImageWidthProps>
+  imagePosition?: ImagePositionProps | Array<ImagePositionProps>
 }
 
 export interface PdfLinkButtonField extends BaseField {
@@ -466,6 +527,8 @@ export interface PdfLinkButtonField extends BaseField {
     filename: string
   }[]
   setViewPdfFile?: (file: { base64: string; filename: string }) => void
+  viewPdfFile?: boolean
+  downloadButtonTitle?: StaticText
 }
 
 export interface NationalIdWithNameField extends BaseField {
@@ -483,14 +546,33 @@ export interface NationalIdWithNameField extends BaseField {
   minAgePerson?: number
 }
 
+type Modify<T, R> = Omit<T, keyof R> & R
+
 export type ActionCardListField = BaseField & {
   readonly type: FieldTypes.ACTION_CARD_LIST
   component: FieldComponents.ACTION_CARD_LIST
-  items: (application: Application) => ActionCardProps[]
+  items: (
+    application: Application,
+    lang: Locale,
+  ) => ApplicationActionCardProps[]
   space?: BoxProps['paddingTop']
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }
+
+export type ApplicationActionCardProps = Modify<
+  ActionCardProps,
+  {
+    heading?: FormText
+    text?: FormText
+    tag?: Modify<ActionCardProps['tag'], { label: FormText }>
+    cta?: Modify<ActionCardProps['cta'], { label: FormText }>
+    unavailable?: Modify<
+      ActionCardProps['unavailable'],
+      { label?: FormText; message?: FormText }
+    >
+  }
+>
 
 export type TableRepeaterField = BaseField & {
   readonly type: FieldTypes.TABLE_REPEATER
@@ -500,10 +582,17 @@ export type TableRepeaterField = BaseField & {
   saveItemButtonText?: StaticText
   getStaticTableData?: (application: Application) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
+  editButtonTooltipText?: StaticText
+  editField?: boolean
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
   fields: Record<string, TableRepeaterItem>
+  /**
+   * Maximum rows that can be added to the table.
+   * When the maximum is reached, the button to add a new row is disabled.
+   */
+  maxRows?: number
   table?: {
     /**
      * List of strings to render,
@@ -566,6 +655,43 @@ export interface StaticTableField extends BaseField {
     | ((application: Application) => { label: StaticText; value: StaticText }[])
 }
 
+export interface SliderField extends BaseField {
+  readonly type: FieldTypes.SLIDER
+  readonly color?: Colors
+  component: FieldComponents.SLIDER
+  min: number
+  max: MaybeWithApplicationAndField<number>
+  step?: number
+  snap?: boolean
+  trackStyle?: CSSProperties
+  calculateCellStyle: (index: number) => CSSProperties
+  showLabel?: boolean
+  showMinMaxLabels?: boolean
+  showRemainderOverlay?: boolean
+  showProgressOverlay?: boolean
+  showToolTip?: boolean
+  label: {
+    singular: FormText
+    plural: FormText
+  }
+  rangeDates?: {
+    start: {
+      date: string
+      message: string
+    }
+    end: {
+      date: string
+      message: string
+    }
+  }
+  currentIndex?: number
+  onChange?: (index: number) => void
+  onChangeEnd?(index: number): void
+  labelMultiplier?: number
+  id: string
+  saveAsString?: boolean
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -597,3 +723,4 @@ export type Field =
   | HiddenInputField
   | FindVehicleField
   | StaticTableField
+  | SliderField

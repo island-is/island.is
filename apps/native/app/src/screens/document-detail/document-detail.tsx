@@ -1,36 +1,32 @@
-import { useFragment_experimental } from '@apollo/client'
-import { blue400, dynamicColor, Header, Loader, Typography } from '@ui'
+import { useApolloClient, useFragment_experimental } from '@apollo/client'
+import { blue400, dynamicColor, Header, Loader } from '@ui'
+import { Problem } from '@ui/lib/problem/problem'
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Animated, Platform, StyleSheet, View } from 'react-native'
 import {
-  Navigation,
   NavigationFunctionComponent,
+  OptionsTopBarButton,
 } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
-  useNavigationComponentDidDisappear,
 } from 'react-native-navigation-hooks/dist'
 import Pdf, { Source } from 'react-native-pdf'
 import Share from 'react-native-share'
 import WebView from 'react-native-webview'
-import styled from 'styled-components/native'
-import { client } from '../../graphql/client'
+import styled, { useTheme } from 'styled-components/native'
 import {
-  Document,
+  DocumentV2,
   ListDocumentFragmentDoc,
-  ListDocumentsDocument,
   useGetDocumentQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { toggleAction } from '../../lib/post-mail-action'
 import { authStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
-import {
-  ButtonRegistry,
-  ComponentRegistry,
-} from '../../utils/component-registry'
+import { ButtonRegistry } from '../../utils/component-registry'
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;
@@ -49,26 +45,65 @@ const PdfWrapper = styled.View`
   flex: 1;
   background-color: ${dynamicColor('background')};
 `
+const regexForBr = /<br\s*\/>/gi
 
-function getRightButtons({
+// Styles for html documents
+const useHtmlStyles = () => {
+  const theme = useTheme()
+  return `<style>
+    body {
+      font-family: "IBM Plex Sans", San Francisco, Segoe UI, sans-serif;
+      margin: ${theme.spacing[3]}px;
+    }
+    h1 {
+      color: ${theme.color.text};
+      font-size: 32px;
+      line-height: 38px;
+    }
+    h2 {
+      color: ${theme.color.text};
+      font-size: 26px;
+      line-height: 32px;
+    }
+    h3 {
+      color: ${theme.color.text};
+      font-size: 20px;
+      line-height: 26px;
+    }
+    p {
+      color: ${theme.color.text};
+      font-size: 16px;
+      line-height: 24px;
+    }
+    a {
+      color: ${theme.color.blue400};
+      text-decoration: none;
+    }
+    </style>
+    <meta name="viewport" content="width=device-width">`
+}
+
+function getRightButtonsForDocumentDetail({
   archived,
   bookmarked,
 }: {
   archived?: boolean
   bookmarked?: boolean
-} = {}) {
+} = {}): OptionsTopBarButton[] {
+  const iconBackground = {
+    color: 'transparent',
+    cornerRadius: 8,
+    width: 32,
+    height: 32,
+  }
+
   return [
     {
       id: ButtonRegistry.ShareButton,
       icon: require('../../assets/icons/navbar-share.png'),
       color: blue400,
       accessibilityLabel: 'Share',
-      iconBackground: {
-        color: 'transparent',
-        cornerRadius: 8,
-        width: 32,
-        height: 32,
-      },
+      iconBackground: iconBackground,
     },
     {
       id: ButtonRegistry.DocumentArchiveButton,
@@ -77,12 +112,7 @@ function getRightButtons({
         : require('../../assets/icons/tray.png'),
       color: blue400,
       accessibilityLabel: 'Archive',
-      iconBackground: {
-        color: 'transparent',
-        cornerRadius: 8,
-        width: 32,
-        height: 32,
-      },
+      iconBackground: iconBackground,
     },
     {
       id: ButtonRegistry.DocumentStarButton,
@@ -91,12 +121,7 @@ function getRightButtons({
         : require('../../assets/icons/star.png'),
       color: blue400,
       accessibilityLabel: 'Star',
-      iconBackground: {
-        color: 'transparent',
-        cornerRadius: 8,
-        width: 32,
-        height: 32,
-      },
+      iconBackground: iconBackground,
     },
   ]
 }
@@ -117,7 +142,7 @@ const { useNavigationOptions, getNavigationOptions } =
       },
       topBar: {
         noBorder: true,
-        rightButtons: getRightButtons(),
+        rightButtons: getRightButtonsForDocumentDetail(),
       },
     },
   )
@@ -177,93 +202,81 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
 }> = ({ componentId, docId }) => {
   useNavigationOptions(componentId)
+
+  const client = useApolloClient()
   const intl = useIntl()
+  const htmlStyles = useHtmlStyles()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   const [accessToken, setAccessToken] = useState<string>()
   const [error, setError] = useState(false)
 
-  const doc = useFragment_experimental<Document>({
+  // Check if we have the document in the cache
+  const doc = useFragment_experimental<DocumentV2>({
     fragment: ListDocumentFragmentDoc,
     from: {
-      __typename: 'Document',
+      __typename: 'DocumentV2',
       id: docId,
     },
     returnPartialData: true,
   })
 
+  // Fetch the document to get the content information
   const docRes = useGetDocumentQuery({
-    client,
     variables: {
       input: {
         id: docId,
       },
     },
+    fetchPolicy: 'no-cache',
   })
 
   const Document = {
-    ...(docRes.data?.getDocument || {}),
-    ...doc.data,
+    ...(doc?.data || {}),
+    ...(docRes.data?.documentV2 || {}),
   }
-
-  useEffect(() => {
-    if (doc.missing) {
-      client.query({
-        query: ListDocumentsDocument,
-        variables: {
-          input: {
-            page: 1,
-            pageSize: 50,
-          },
-        },
-      })
-    }
-  }, [doc])
 
   const [visible, setVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
-  const [touched, setTouched] = useState(false)
-  const hasPdf = Document.fileType?.toLocaleLowerCase() === 'pdf'
-  const isHtml = typeof Document.html === 'string' && Document.html !== ''
 
-  useEffect(() => {
-    Navigation.mergeOptions(componentId, {
-      topBar: {
-        rightButtons: getRightButtons({
-          archived: doc.data?.archived ?? false,
-          bookmarked: doc.data?.bookmarked ?? false,
-        }),
-      },
-    })
-  }, [componentId, doc.data])
+  const loading = docRes.loading || !accessToken
+  const fileTypeLoaded = !!Document?.content?.type
+  const hasError = error || docRes.error
+
+  const hasPdf = Document?.content?.type.toLocaleLowerCase() === 'pdf'
+  const isHtml =
+    Document?.content?.type.toLocaleLowerCase() === 'html' &&
+    Document.content?.value !== ''
+
+  useConnectivityIndicator({
+    componentId,
+    rightButtons: getRightButtonsForDocumentDetail({
+      archived: doc.data?.archived ?? false,
+      bookmarked: doc.data?.bookmarked ?? false,
+    }),
+    extraData: [doc.data],
+  })
 
   useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === ButtonRegistry.DocumentArchiveButton) {
-      toggleAction(
-        Document.archived ? 'unarchive' : 'archive',
-        Document.id!,
-        // true,
-      )
-      setTouched(true)
+      toggleAction(Document.archived ? 'unarchive' : 'archive', Document.id!)
     }
     if (buttonId === ButtonRegistry.DocumentStarButton) {
       toggleAction(
         Document.bookmarked ? 'unbookmark' : 'bookmark',
         Document.id!,
-        // true,
       )
-      setTouched(true)
     }
-    if (buttonId === ButtonRegistry.ShareButton) {
+    if (buttonId === ButtonRegistry.ShareButton && loaded) {
       if (Platform.OS === 'android') {
         authStore.setState({ noLockScreenUntilNextAppStateActive: true })
       }
       Share.open({
         title: Document.subject!,
         subject: Document.subject!,
-        message: `${Document.senderName!} \n ${Document.subject!}`,
+        message: `${Document.sender!.name!} \n ${Document.subject!}`,
         type: hasPdf ? 'application/pdf' : undefined,
-        url: hasPdf ? `file://${pdfUrl}` : Document.url!,
+        url: hasPdf ? `file://${pdfUrl}` : Document.downloadUrl!,
       })
     }
   }, componentId)
@@ -272,27 +285,31 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     setVisible(true)
   })
 
-  useNavigationComponentDidDisappear(() => {
-    setVisible(false)
-    if (hasPdf) {
-      setLoaded(false)
-    }
-    if (touched) {
-      Navigation.updateProps(ComponentRegistry.InboxScreen, {
-        refresh: Math.random(),
-      })
-    }
-  })
-
   useEffect(() => {
-    // Lets mark the document as read
+    if (Document.opened) {
+      return
+    }
+
+    // Let's mark the document as read in the cache and decrease unreadCount if it is not 0
     client.cache.modify({
       id: client.cache.identify({
-        __typename: 'Document',
+        __typename: 'DocumentV2',
         id: Document.id,
       }),
       fields: {
         opened: () => true,
+      },
+    })
+
+    client.cache.modify({
+      fields: {
+        documentsV2: (existing) => {
+          return {
+            ...existing,
+            unreadCount:
+              existing.unreadCount > 0 ? existing.unreadCount - 1 : 0,
+          }
+        },
       },
     })
   }, [Document.id])
@@ -312,8 +329,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [])
 
-  const loading = docRes.loading || !accessToken
-
   const fadeAnim = useRef(new Animated.Value(0)).current
 
   React.useEffect(() => {
@@ -330,12 +345,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     <>
       <Host>
         <Header
-          title={Document.senderName}
-          date={<FormattedDate value={Document.date} />}
+          title={Document.sender?.name ?? ''}
+          date={
+            Document.publicationDate ? (
+              <FormattedDate value={Document.publicationDate} />
+            ) : undefined
+          }
           message={Document.subject}
-          isLoading={loading}
+          isLoading={loading && !Document.subject}
           hasBorder={false}
-          logo={getOrganizationLogoUrl(Document.senderName!, 75)}
+          logo={getOrganizationLogoUrl(Document.sender?.name ?? '', 75)}
         />
       </Host>
       <Border />
@@ -350,56 +369,69 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             opacity: fadeAnim,
           }}
         >
-          {isHtml ? (
-            <WebView
-              source={{ html: Document.html ?? '' }}
-              scalesPageToFit
-              onLoadEnd={() => {
-                setLoaded(true)
-              }}
-            />
-          ) : hasPdf ? (
-            <PdfWrapper>
-              {visible && accessToken && (
-                <PdfViewer
-                  url={Document.url ?? ''}
-                  body={`documentId=${Document.id}&__accessToken=${accessToken}`}
-                  onLoaded={(filePath: any) => {
-                    setPdfUrl(filePath)
-                    setLoaded(true)
-                  }}
-                  onError={() => {
-                    setLoaded(true)
-                    setError(true)
-                  }}
-                />
-              )}
-            </PdfWrapper>
-          ) : (
-            <WebView
-              source={{ uri: Document.url! }}
-              onLoadEnd={() => {
-                setLoaded(true)
-              }}
-            />
-          )}
+          {fileTypeLoaded &&
+            !error &&
+            (isHtml ? (
+              <WebView
+                source={{
+                  html: Document.content?.value
+                    ? // Removing all <br /> tags to fix a bug in react-native that renders <br /> with too much vertical space
+                      // https://github.com/facebook/react-native/issues/32062
+                      `${htmlStyles}${Document.content?.value.replace(
+                        regexForBr,
+                        '',
+                      )}`
+                    : '',
+                }}
+                scalesPageToFit
+                onLoadEnd={() => {
+                  setLoaded(true)
+                }}
+              />
+            ) : hasPdf ? (
+              <PdfWrapper>
+                {visible && accessToken && (
+                  <PdfViewer
+                    url={`data:application/pdf;base64,${Document.content?.value}`}
+                    body={`documentId=${Document.id}&__accessToken=${accessToken}`}
+                    onLoaded={(filePath: any) => {
+                      setPdfUrl(filePath)
+                      setLoaded(true)
+                    }}
+                    onError={() => {
+                      setLoaded(true)
+                      setError(true)
+                    }}
+                  />
+                )}
+              </PdfWrapper>
+            ) : (
+              <WebView
+                source={{ uri: Document.content?.value ?? '' }}
+                onLoadEnd={() => {
+                  setLoaded(true)
+                }}
+                onError={() => {
+                  setLoaded(true)
+                  setError(true)
+                }}
+              />
+            ))}
         </Animated.View>
 
-        {(!loaded || !accessToken || error) && (
+        {(!loaded || !accessToken || hasError) && (
           <View
             style={[
               StyleSheet.absoluteFill,
               {
-                alignItems: 'center',
                 justifyContent: 'center',
-                maxHeight: 300,
+
+                maxHeight: 500,
               },
             ]}
           >
-            {error ? (
-              <Typography>
-                {intl.formatMessage({ id: 'licenseScanDetail.errorUnknown' })}
-              </Typography>
+            {hasError ? (
+              <Problem type="error" withContainer />
             ) : (
               <Loader
                 text={intl.formatMessage({ id: 'documentDetail.loadingText' })}

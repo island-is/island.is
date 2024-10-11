@@ -19,10 +19,7 @@ import {
   NO,
   MINIMUM_PERIOD_LENGTH,
 } from '../../constants'
-import {
-  getApplicationExternalData,
-  getExpectedDateOfBirthOrAdoptionDate,
-} from '../parentalLeaveUtils'
+import { getExpectedDateOfBirthOrAdoptionDateOrBirthDate } from '../parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minimumRatio,
@@ -124,13 +121,20 @@ export const validatePeriod = (
   ) => AnswerValidationError,
 ) => {
   const expectedDateOfBirthOrAdoptionDate =
-    getExpectedDateOfBirthOrAdoptionDate(application)
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
+  const expectedDateOfBirthOrAdoptionDateOrBirthDate =
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
 
-  if (!expectedDateOfBirthOrAdoptionDate) {
+  if (
+    !expectedDateOfBirthOrAdoptionDate ||
+    !expectedDateOfBirthOrAdoptionDateOrBirthDate
+  ) {
     return buildError(null, errorMessages.dateOfBirth)
   }
 
-  const dob = parseISO(expectedDateOfBirthOrAdoptionDate)
+  const dob = StartDateOptions.ACTUAL_DATE_OF_BIRTH
+    ? parseISO(expectedDateOfBirthOrAdoptionDateOrBirthDate)
+    : parseISO(expectedDateOfBirthOrAdoptionDate)
   const today = new Date()
   const minimumStartDate = addMonths(
     dob,
@@ -165,20 +169,12 @@ export const validatePeriod = (
     return buildError('startDate', errorMessages.periodsStartMissing)
   } else if (hasBeenAnswered(startDate)) {
     if (isFirstPeriod && parseISO(startDate) > today) {
-      if (firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH) {
-        const { dateOfBirth } = getApplicationExternalData(
-          application.externalData,
-        )
-        const dateOB = dateOfBirth?.data?.dateOfBirth
-        startDateValue = dateOB ? parseISO(dateOB) : dob
-      } else if (
+      startDateValue =
+        firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH ||
         firstPeriodStart === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
         firstPeriodStart === StartDateOptions.ADOPTION_DATE
-      ) {
-        startDateValue = dob
-      } else {
-        startDateValue = parseISO(startDate)
-      }
+          ? dob
+          : parseISO(startDate)
     } else {
       startDateValue = parseISO(startDate)
     }

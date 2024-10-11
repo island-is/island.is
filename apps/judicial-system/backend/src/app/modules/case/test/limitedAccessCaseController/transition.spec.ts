@@ -10,6 +10,7 @@ import {
   CaseFileState,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 
@@ -98,7 +99,13 @@ describe('LimitedAccessCaseController - Transition', () => {
         then.result = await limitedAccessCaseController.transition(
           caseId,
           user,
-          { id: caseId, state, caseFiles, appealState } as Case,
+          {
+            id: caseId,
+            type: CaseType.EXPULSION_FROM_HOME,
+            state,
+            caseFiles,
+            appealState,
+          } as Case,
           { transition },
         )
       } catch (error) {

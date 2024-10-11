@@ -17,6 +17,7 @@ export const ApplicationQuery = gql`
       state
       amount {
         aidAmount
+        childrenAidAmount
         income
         personalTaxCredit
         spousePersonalTaxCredit

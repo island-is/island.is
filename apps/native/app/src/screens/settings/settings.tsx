@@ -1,4 +1,4 @@
-import messaging from '@react-native-firebase/messaging'
+import { useApolloClient } from '@apollo/client'
 import {
   Alert,
   NavigationBarSheet,
@@ -10,11 +10,10 @@ import { authenticateAsync } from 'expo-local-authentication'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  Alert as RNAlert,
   Image,
   Linking,
   Platform,
-  Pressable,
-  Alert as RNAlert,
   ScrollView,
   Switch,
   TouchableOpacity,
@@ -28,12 +27,13 @@ import {
 } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 import editIcon from '../../assets/icons/edit.png'
+import chevronForward from '../../ui/assets/icons/chevron-forward.png'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
-import { client } from '../../graphql/client'
 import {
   UpdateProfileDocument,
   UpdateProfileMutation,
   UpdateProfileMutationVariables,
+  useDeletePasskeyMutation,
   useGetProfileQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
@@ -49,6 +49,7 @@ import { ComponentRegistry } from '../../utils/component-registry'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { testIDs } from '../../utils/test-ids'
 import { useBiometricType } from '../onboarding/onboarding-biometrics'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
@@ -62,6 +63,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
 
+  const client = useApolloClient()
   const intl = useIntl()
   const theme = useTheme()
   const {
@@ -70,19 +72,18 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     locale,
     setLocale,
     hasAcceptedBiometrics,
-    appearanceMode,
-    setAppearanceMode,
     useBiometrics,
     setUseBiometrics,
     appLockTimeout,
+    hasCreatedPasskey,
   } = usePreferencesStore()
   const [loadingCP, setLoadingCP] = useState(false)
   const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
-  const [pushToken, setPushToken] = useState('loading...')
   const efficient = useRef<any>({}).current
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
   const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)
+  const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
 
   const onLogoutPress = async () => {
     await authStore.getState().logout()
@@ -93,10 +94,46 @@ export const SettingsScreen: NavigationFunctionComponent = ({
   }
 
   const userProfile = useGetProfileQuery()
+  const [deletePasskey] = useDeletePasskeyMutation()
 
   const [documentNotifications, setDocumentNotifications] = useState(
     userProfile.data?.getUserProfile?.documentNotifications,
   )
+
+  const [emailNotifications, setEmailNotifications] = useState(
+    !!userProfile.data?.getUserProfile?.canNudge,
+  )
+
+  const onRemovePasskeyPress = () => {
+    return RNAlert.alert(
+      intl.formatMessage({ id: 'settings.security.removePasskeyPromptTitle' }),
+      intl.formatMessage({
+        id: 'settings.security.removePasskeyPromptDescription',
+      }),
+      [
+        {
+          text: intl.formatMessage({
+            id: 'settings.security.removePasskeyCancelButton',
+          }),
+          style: 'cancel',
+        },
+        {
+          text: intl.formatMessage({
+            id: 'settings.security.removePasskeyButton',
+          }),
+          style: 'destructive',
+          onPress: async () => {
+            preferencesStore.setState({
+              hasCreatedPasskey: false,
+              hasOnboardedPasskeys: false,
+              lastUsedPasskey: 0,
+            })
+            await deletePasskey()
+          },
+        },
+      ],
+    )
+  }
 
   const onLanguagePress = () => {
     showPicker({
@@ -113,6 +150,8 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     }).then(({ selectedItem }: any) => {
       if (selectedItem) {
         setLocale(selectedItem.id)
+        const locale = selectedItem.id === 'is-IS' ? 'is' : 'en'
+        updateLocale(locale)
       }
     })
   }
@@ -125,14 +164,10 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         setLoadingCP(false)
         setLocalPackage(p)
       })
-      messaging()
-        .getToken()
-        .then((token) => setPushToken(token))
-        .catch(() => setPushToken('no token in simulator'))
     }, 330)
   }, [])
 
-  function updateDocumentNotifications(value: boolean) {
+  const updateDocumentNotifications = (value: boolean) => {
     client
       .mutate<UpdateProfileMutation, UpdateProfileMutationVariables>({
         mutation: UpdateProfileDocument,
@@ -152,7 +187,71 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         },
       })
       .catch((err) => {
-        RNAlert.alert('Villa', err.message)
+        console.error(err)
+        RNAlert.alert(
+          intl.formatMessage({
+            id: 'settings.communication.newNotificationsErrorTitle',
+          }),
+          intl.formatMessage({
+            id: 'settings.communication.newNotificationsErrorDescription',
+          }),
+        )
+      })
+  }
+
+  const updateEmailNotifications = (value: boolean) => {
+    client
+      .mutate<UpdateProfileMutation, UpdateProfileMutationVariables>({
+        mutation: UpdateProfileDocument,
+        update(cache, { data }) {
+          cache.modify({
+            fields: {
+              getUserProfile: (existing) => {
+                return { ...existing, ...data?.updateProfile }
+              },
+            },
+          })
+        },
+        variables: {
+          input: {
+            canNudge: value,
+          },
+        },
+      })
+      .catch((err) => {
+        console.error(err)
+        RNAlert.alert(
+          intl.formatMessage({
+            id: 'settings.communication.newNotificationsErrorTitle',
+          }),
+          intl.formatMessage({
+            id: 'settings.communication.newNotificationsErrorDescription',
+          }),
+        )
+      })
+  }
+
+  const updateLocale = (value: string) => {
+    client
+      .mutate<UpdateProfileMutation, UpdateProfileMutationVariables>({
+        mutation: UpdateProfileDocument,
+        update(cache, { data }) {
+          cache.modify({
+            fields: {
+              getUserProfile: (existing) => {
+                return { ...existing, ...data?.updateProfile }
+              },
+            },
+          })
+        },
+        variables: {
+          input: {
+            locale: value,
+          },
+        },
+      })
+      .catch(() => {
+        // noop
       })
   }
 
@@ -161,6 +260,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
       setDocumentNotifications(
         userProfile.data?.getUserProfile?.documentNotifications,
       )
+      setEmailNotifications(!!userProfile.data?.getUserProfile?.canNudge)
     }
   }, [userProfile])
 
@@ -171,6 +271,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         title={intl.formatMessage({ id: 'setting.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
+        showLoading={userProfile.loading && !!userProfile.data}
       />
       <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_SETTINGS}>
         <Alert
@@ -265,7 +366,33 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         >
           <TableViewCell
             title={intl.formatMessage({
-              id: 'settings.communication.newDocumentsNotifications',
+              id: 'settings.communication.newNotificationsEmailLabel',
+            })}
+            subtitle={intl.formatMessage({
+              id: 'settings.communication.newNotificationsEmailDescription',
+            })}
+            accessory={
+              <Switch
+                onValueChange={(value) => {
+                  updateEmailNotifications(value)
+                  setEmailNotifications(value)
+                }}
+                disabled={userProfile.loading && !userProfile.data}
+                value={emailNotifications}
+                thumbColor={Platform.select({ android: theme.color.dark100 })}
+                trackColor={{
+                  false: theme.color.dark200,
+                  true: theme.color.blue400,
+                }}
+              />
+            }
+          />
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.communication.newNotificationsInAppLabel',
+            })}
+            subtitle={intl.formatMessage({
+              id: 'settings.communication.newNotificationsInAppDescription',
             })}
             accessory={
               <Switch
@@ -283,88 +410,8 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               />
             }
           />
-          {/* <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.communication.appUpdatesNotifications',
-              })}
-              accessory={<PreferencesSwitch name="notificationsAppUpdates" />}
-            />
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.communication.applicationsNotifications',
-              })}
-              accessory={
-                <PreferencesSwitch name="notificationsApplicationStatusUpdates" />
-              }
-            /> */}
         </TableViewGroup>
-        <TableViewGroup
-          header={intl.formatMessage({
-            id: 'settings.accessibilityLayout.groupTitle',
-          })}
-        >
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.accessibilityLayout.sytemDarkMode',
-            })}
-            accessory={
-              <Switch
-                onValueChange={(value) => {
-                  setAppearanceMode(value ? 'automatic' : 'light')
-                }}
-                value={appearanceMode === 'automatic'}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            }
-          />
-          <Pressable
-            onPress={() => {
-              clearTimeout(efficient.ts)
-              efficient.count = (efficient.count ?? 0) + 1
-              if (efficient.count === 11) {
-                setAppearanceMode('efficient')
-              }
-              efficient.ts = setTimeout(() => {
-                efficient.count = 0
-              }, 500)
-            }}
-          >
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.accessibilityLayout.darkMode',
-              })}
-              accessory={
-                <Switch
-                  onValueChange={(value) =>
-                    setAppearanceMode(value ? 'dark' : 'light')
-                  }
-                  value={appearanceMode === 'dark'}
-                  thumbColor={Platform.select({ android: theme.color.dark100 })}
-                  trackColor={{
-                    false: theme.color.dark200,
-                    true: theme.color.blue400,
-                  }}
-                />
-              }
-            />
-          </Pressable>
-          <PressableHighlight onPress={onLanguagePress}>
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.accessibilityLayout.language',
-              })}
-              accessory={
-                <TableViewAccessory>
-                  {locale === 'is-IS' ? 'Íslenska' : 'English'}
-                </TableViewAccessory>
-              }
-            />
-          </PressableHighlight>
-        </TableViewGroup>
+
         <TableViewGroup
           header={intl.formatMessage({
             id: 'settings.security.groupTitle',
@@ -395,6 +442,12 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               subtitle={intl.formatMessage({
                 id: 'settings.security.changePinDescription',
               })}
+              accessory={
+                <Image
+                  source={chevronForward}
+                  style={{ width: 24, height: 24 }}
+                />
+              }
             />
           </PressableHighlight>
           <TableViewCell
@@ -451,6 +504,34 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               />
             }
           />
+          {isPasskeyEnabled && (
+            <PressableHighlight
+              onPress={() => {
+                hasCreatedPasskey
+                  ? onRemovePasskeyPress()
+                  : navigateTo('/passkey')
+              }}
+            >
+              <TableViewCell
+                title={intl.formatMessage({
+                  id: hasCreatedPasskey
+                    ? 'settings.security.removePasskeyLabel'
+                    : 'settings.security.createPasskeyLabel',
+                })}
+                subtitle={intl.formatMessage({
+                  id: hasCreatedPasskey
+                    ? 'settings.security.removePasskeyDescription'
+                    : 'settings.security.createPasskeyDescription',
+                })}
+                accessory={
+                  <Image
+                    source={chevronForward}
+                    style={{ width: 24, height: 24 }}
+                  />
+                }
+              />
+            </PressableHighlight>
+          )}
           <PressableHighlight
             onPress={() => {
               showPicker({
@@ -460,27 +541,33 @@ export const SettingsScreen: NavigationFunctionComponent = ({
                 items: [
                   {
                     id: '5000',
-                    label: intl.formatNumber(5, {
+                    label: `${intl.formatNumber(5, {
                       style: 'decimal',
                       unitDisplay: 'long',
                       unit: 'second',
-                    }),
+                    })} ${intl.formatMessage({
+                      id: 'settings.security.appLockTimeoutSeconds',
+                    })}`,
                   },
                   {
                     id: '10000',
-                    label: intl.formatNumber(10, {
+                    label: `${intl.formatNumber(10, {
                       style: 'decimal',
                       unitDisplay: 'long',
                       unit: 'second',
-                    }),
+                    })} ${intl.formatMessage({
+                      id: 'settings.security.appLockTimeoutSeconds',
+                    })}`,
                   },
                   {
                     id: '15000',
-                    label: intl.formatNumber(15, {
+                    label: `${intl.formatNumber(15, {
                       style: 'decimal',
                       unitDisplay: 'long',
                       unit: 'second',
-                    }),
+                    })} ${intl.formatMessage({
+                      id: 'settings.security.appLockTimeoutSeconds',
+                    })}`,
                   },
                 ],
                 cancel: true,
@@ -501,11 +588,13 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               })}
               accessory={
                 <TableViewAccessory>
-                  {intl.formatNumber(Math.floor(appLockTimeout / 1000), {
+                  {`${intl.formatNumber(Math.floor(appLockTimeout / 1000), {
                     style: 'decimal',
                     unitDisplay: 'short',
                     unit: 'second',
-                  })}
+                  })} ${intl.formatMessage({
+                    id: 'settings.security.appLockTimeoutSeconds',
+                  })}`}
                 </TableViewAccessory>
               }
             />
@@ -525,12 +614,30 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               subtitle={intl.formatMessage({
                 id: 'settings.security.privacySubTitle',
               })}
+              accessory={
+                <Image
+                  source={chevronForward}
+                  style={{ width: 24, height: 24 }}
+                />
+              }
             />
           </PressableHighlight>
         </TableViewGroup>
         <TableViewGroup
           header={intl.formatMessage({ id: 'settings.about.groupTitle' })}
         >
+          <PressableHighlight onPress={onLanguagePress}>
+            <TableViewCell
+              title={intl.formatMessage({
+                id: 'settings.accessibilityLayout.language',
+              })}
+              accessory={
+                <TableViewAccessory>
+                  {locale === 'is-IS' ? 'Íslenska' : 'English'}
+                </TableViewAccessory>
+              }
+            />
+          </PressableHighlight>
           <TableViewCell
             title={intl.formatMessage({ id: 'settings.about.versionLabel' })}
             subtitle={`${DeviceInfo.getVersion()} build ${DeviceInfo.getBuildNumber()}`}
@@ -546,23 +653,39 @@ export const SettingsScreen: NavigationFunctionComponent = ({
                   switch (status) {
                     case CodePush.SyncStatus.UP_TO_DATE:
                       return RNAlert.alert(
-                        'Up to date',
-                        'The app is up to date',
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpToDateTitle',
+                        }),
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpToDate',
+                        }),
                       )
                     case CodePush.SyncStatus.UPDATE_INSTALLED:
                       return RNAlert.alert(
-                        'Update installed',
-                        'The app has been updated',
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateInstalledTitle',
+                        }),
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateInstalledDescription',
+                        }),
                       )
                     case CodePush.SyncStatus.UPDATE_IGNORED:
                       return RNAlert.alert(
-                        'Update cancelled',
-                        'The update was cancelled',
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateCancelledTitle',
+                        }),
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateCancelledDescription',
+                        }),
                       )
                     case CodePush.SyncStatus.UNKNOWN_ERROR:
                       return RNAlert.alert(
-                        'Unknown error',
-                        'An unknown error occurred',
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateErrorTitle',
+                        }),
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateErrorDescription',
+                        }),
                       )
                   }
                 },

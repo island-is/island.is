@@ -80,6 +80,10 @@ export class CreateApplicationInput implements CreateApplication {
   readonly formComment?: string
 
   @Allow()
+  @Field({ nullable: true })
+  readonly childrenComment?: string
+
+  @Allow()
   @Field(() => String)
   readonly state!: ApplicationState
 

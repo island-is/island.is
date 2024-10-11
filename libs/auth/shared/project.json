@@ -2,6 +2,7 @@
   "name": "auth-shared",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/auth/shared/src",
+  "tags": ["lib:js", "scope:js"],
   "targets": {
     "build": {
       "executor": "@nrwl/js:tsc",
@@ -14,20 +15,14 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/auth/shared/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/auth/shared"],
       "options": {
-        "jestConfig": "libs/auth/shared/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/auth/shared/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:js", "scope:js"]
+  }
 }

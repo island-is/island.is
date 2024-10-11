@@ -664,35 +664,5 @@ export const PrerequisitesForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'theApplicant',
-      title: parentalLeaveFormMessages.shared.applicantSection,
-      children: [],
-    }),
-    buildSection({
-      id: 'rights',
-      title: parentalLeaveFormMessages.shared.rightsSection,
-      children: [],
-    }),
-    buildSection({
-      id: 'leavePeriods',
-      title: parentalLeaveFormMessages.shared.periodsSection,
-      children: [],
-    }),
-    buildSection({
-      id: 'additionalInformation',
-      title: parentalLeaveFormMessages.shared.additionalInformationSection,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirmation',
-      title: parentalLeaveFormMessages.confirmation.title,
-      children: [],
-    }),
-    buildSection({
-      id: 'conclusion',
-      title: conclusionMessages.information.sectionTitle,
-      children: [],
-    }),
   ],
 })

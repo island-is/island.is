@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendApi } from '../../data-sources'
+import { BackendService } from '../backend'
 import { CreateFileInput } from './dto/createFile.input'
 import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
 import { DeleteFileInput } from './dto/deleteFile.input'
@@ -38,7 +38,8 @@ export class LimitedAccessFileResolver {
     @Args('input', { type: () => CreatePresignedPostInput })
     input: CreatePresignedPostInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<PresignedPost> {
     const { caseId, ...createPresignedPost } = input
 
@@ -47,7 +48,7 @@ export class LimitedAccessFileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_PRESIGNED_POST,
-      backendApi.limitedAccessCreateCasePresignedPost(
+      backendService.limitedAccessCreateCasePresignedPost(
         caseId,
         createPresignedPost,
       ),
@@ -60,7 +61,8 @@ export class LimitedAccessFileResolver {
     @Args('input', { type: () => CreateFileInput })
     input: CreateFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<CaseFile> {
     const { caseId, ...createFile } = input
 
@@ -69,7 +71,7 @@ export class LimitedAccessFileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_FILE,
-      backendApi.limitedAccessCreateCaseFile(caseId, createFile),
+      backendService.limitedAccessCreateCaseFile(caseId, createFile),
       (file) => file.id,
     )
   }
@@ -79,16 +81,21 @@ export class LimitedAccessFileResolver {
     @Args('input', { type: () => GetSignedUrlInput })
     input: GetSignedUrlInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<SignedUrl> {
-    const { caseId, id } = input
+    const { caseId, id, mergedCaseId } = input
 
     this.logger.debug(`Getting a signed url for file ${id} of case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_SIGNED_URL,
-      backendApi.limitedAccessGetCaseFileSignedUrl(caseId, id),
+      backendService.limitedAccessGetCaseFileSignedUrl(
+        caseId,
+        id,
+        mergedCaseId,
+      ),
       id,
     )
   }
@@ -98,7 +105,8 @@ export class LimitedAccessFileResolver {
     @Args('input', { type: () => DeleteFileInput })
     input: DeleteFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<DeleteFileResponse> {
     const { caseId, id } = input
 
@@ -107,7 +115,7 @@ export class LimitedAccessFileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.DELETE_FILE,
-      backendApi.limitedAccessDeleteCaseFile(caseId, id),
+      backendService.limitedAccessDeleteCaseFile(caseId, id),
       id,
     )
   }

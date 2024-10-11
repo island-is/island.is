@@ -53,6 +53,7 @@ export type Machine = {
   category?: string
   plate?: string
   ownerNumber?: string
+  paymentRequiredForOwnerChange?: boolean
 }
 
 export type MachineLocation = {

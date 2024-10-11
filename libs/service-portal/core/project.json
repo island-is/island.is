@@ -3,19 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/core/src",
   "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/service-portal/core/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/core/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/core/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/core"]
     },
@@ -25,6 +22,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/core/src/{lib,components,helpers,screens}/**/*.{js,ts,tsx}'"
       }
     }
-  },
-  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
+  }
 }

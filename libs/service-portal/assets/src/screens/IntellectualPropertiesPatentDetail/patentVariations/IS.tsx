@@ -3,16 +3,15 @@ import {
   UserInfoLine,
   formatDate,
   m as coreMessages,
+  StackOrTableBlock,
+  StackWithBottomDivider,
 } from '@island.is/service-portal/core'
 import { IntellectualPropertiesPatentIs } from '@island.is/api/schema'
 import { Divider, Stack, Text } from '@island.is/island-ui/core'
-import { Problem } from '@island.is/react-spa/shared'
 import { ipMessages } from '../../../lib/messages'
 import { useMemo } from 'react'
 import Timeline from '../../../components/Timeline/Timeline'
 import { orderTimelineData } from '../../../utils/timelineMapper'
-import { StackOrTableBlock } from '../../../components/StackOrTableBlock/StackOrTableBlock'
-import { StackWithBottomDivider } from '../../../components/StackWithBottomDivider/StackWithBottomDivider'
 import { AssetsPaths } from '../../../lib/paths'
 
 interface Props {

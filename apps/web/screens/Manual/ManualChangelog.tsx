@@ -50,12 +50,13 @@ const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
       namespace={namespace}
       socialTitle={generateOgTitle(manual?.title, manualChangelogTitle)}
     >
-      <Stack space={2}>
+      <Stack space={5}>
         <LinkV2
-          className={styles.smallLink}
+          className={styles.link}
           underline="small"
           underlineVisibility="always"
           href={linkResolver('manual', [manual?.slug as string]).href}
+          color="blue400"
         >
           {n(
             'manualFrontpage',
@@ -63,7 +64,7 @@ const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
           )}
         </LinkV2>
         <Divider />
-        <Box paddingTop={2}>
+        <Box>
           <Stack space={2}>
             <Text variant="h2" as="h1">
               {manualChangelogTitle}
@@ -94,7 +95,7 @@ const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
         </Box>
       )}
       {changelog?.length > 0 && (
-        <Accordion>
+        <Accordion singleExpand={false}>
           {changelog.map(({ year, dates }) => (
             <AccordionItem
               labelUse="h2"
@@ -126,8 +127,7 @@ const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
                             >
                               {item.chapterTitle}
                             </LinkV2>
-
-                            <Text>{item.textualDescription}</Text>
+                            <Text>{nlToBr(item.textualDescription ?? '')}</Text>
                           </Stack>
                         ))}
                       </Stack>

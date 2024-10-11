@@ -25,9 +25,14 @@ export {
   formatCourtIndictmentReadyForCourtEmailNotification,
   formatDefenderRoute,
   formatDefenderReadyForCourtEmailNotification,
+  formatCourtOfAppealJudgeAssignedEmailNotification,
+  formatPostponedCourtDateEmailNotification,
   stripHtmlTags,
 } from './formatters'
+export { Confirmation } from './pdfHelpers'
 export { getRequestPdfAsBuffer, getRequestPdfAsString } from './requestPdf'
 export { getRulingPdfAsBuffer, getRulingPdfAsString } from './rulingPdf'
 export { createCaseFilesRecord } from './caseFilesRecordPdf'
 export { createIndictment } from './indictmentPdf'
+export { createConfirmedPdf } from './confirmedPdf'
+export { createSubpoena } from './subpoenaPdf'

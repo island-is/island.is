@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Modal } from '@island.is/judicial-system-web/src/components'
@@ -9,9 +9,7 @@ interface Props {
   dismiss: () => void
 }
 
-const FileNotFoundModal: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { dismiss } = props
-
+const FileNotFoundModal: FC<Props> = ({ dismiss }) => {
   const { formatMessage } = useIntl()
 
   return (

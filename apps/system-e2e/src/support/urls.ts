@@ -67,14 +67,13 @@ const addQueryParameters = (
 export const icelandicAndNoPopupUrl = (url: string) =>
   addQueryParameters(url, icelandicAndNoPopup)
 
-type Urls = {
-  authUrl: string
-  islandisBaseUrl: string
-  adsBaseUrl: string
-  judicialSystemBaseUrl: string
-}
 const envs: {
-  [envName in TestEnvironment]: Urls
+  [envName in TestEnvironment]: {
+    authUrl: string
+    islandisBaseUrl: string
+    adsBaseUrl: string
+    judicialSystemBaseUrl: string
+  }
 } = {
   dev: {
     authUrl: AuthUrl.dev,
@@ -104,8 +103,7 @@ const envs: {
   },
 }
 
-export const env = (process.env.TEST_ENVIRONMENT ??
-  (process.env.CI ? 'dev' : 'local')) as TestEnvironment
+export const env = (process.env.TEST_ENVIRONMENT ?? 'local') as TestEnvironment
 const hotEnv = process.env.TEST_URL
   ? { islandisBaseUrl: process.env.TEST_URL }
   : {}

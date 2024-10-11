@@ -21,8 +21,13 @@ export const CalculateTotalDebts: FC<
   const publicCharges = valueToNumber(
     getValueViaPath<number>(answers, 'debts.publicCharges'),
   )
+  const funeralCost = valueToNumber(
+    getValueViaPath<number>(answers, 'funeralCost.total'),
+  )
 
-  const [total] = useState(domesticAndForeignDebts + publicCharges)
+  const [total] = useState(
+    domesticAndForeignDebts + publicCharges + funeralCost,
+  )
 
   useEffect(() => {
     setValue('debts.debtsTotal', total)

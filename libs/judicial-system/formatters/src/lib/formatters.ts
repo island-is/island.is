@@ -7,6 +7,7 @@ import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
+  CaseIndictmentRulingDecision,
   CaseType,
   Gender,
   IndictmentSubtype,
@@ -24,7 +25,7 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
 
 export const formatDate = (
   date: Date | string | undefined | null,
-  formatPattern: string,
+  formatPattern = 'dd.MM.yyyy',
   shortenDayName?: boolean,
 ): string | undefined => {
   const theDate: Date = getAsDate(date)
@@ -53,7 +54,7 @@ export const capitalize = (text?: string | null): string => {
   return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
-export const lowercase = (text?: string): string => {
+export const lowercase = (text?: string | null): string => {
   if (!text) {
     return ''
   }
@@ -73,6 +74,24 @@ export const formatNationalId = (nationalId?: string | null): string => {
   } else {
     return nationalId
   }
+}
+
+export const normalizeAndFormatNationalId = (
+  nationalId?: string | null,
+): [string, string] => {
+  return [nationalId?.replace(/-/g, '') ?? '', formatNationalId(nationalId)]
+}
+
+export const getInitials = (name?: string | null): string | undefined => {
+  if (!name?.trim()) return undefined
+
+  const names = name.trim().split(' ')
+  const initials =
+    names.length > 1
+      ? `${names[0][0]}${names[names.length - 1][0]}`
+      : names[0][0]
+
+  return initials.toUpperCase()
 }
 
 export const formatPhoneNumber = (phoneNumber?: string | null) => {
@@ -99,9 +118,28 @@ export const laws = {
   _100_1: '1. mgr. 100. gr. sml.',
 }
 
+export const getHumanReadableCaseIndictmentRulingDecision = (
+  rulingDecision?: CaseIndictmentRulingDecision,
+) => {
+  switch (rulingDecision) {
+    case CaseIndictmentRulingDecision.RULING:
+      return 'Dómur'
+    case CaseIndictmentRulingDecision.FINE:
+      return 'Viðurlagaákvörðun'
+    case CaseIndictmentRulingDecision.DISMISSAL:
+      return 'Frávísun'
+    case CaseIndictmentRulingDecision.CANCELLATION:
+      return 'Niðurfelling máls'
+    case CaseIndictmentRulingDecision.MERGE:
+      return 'Sameinað'
+    default:
+      return 'Ekki skráð'
+  }
+}
+
 type CaseTypes = { [c in CaseType]: string }
 const caseTypes: CaseTypes = {
-  // Indicitment cases
+  // Indictment cases
   INDICTMENT: 'ákæra',
   // Restriction cases
   CUSTODY: 'gæsluvarðhald',
@@ -144,6 +182,8 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   LEGAL_ENFORCEMENT_LAWS: 'brot gegn lögreglulögum',
   POLICE_REGULATIONS: 'brot gegn lögreglusamþykkt',
   INTIMATE_RELATIONS: 'brot í nánu sambandi',
+  ANIMAL_PROTECTION: 'brot á lögum um dýravernd',
+  FOREIGN_NATIONALS: 'brot á lögum um útlendinga',
   PUBLIC_SERVICE_VIOLATION: 'brot í opinberu starfi',
   PROPERTY_DAMAGE: 'eignaspjöll',
   NARCOTICS_OFFENSE: 'fíkniefnalagabrot',
@@ -160,6 +200,8 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   MINOR_ASSAULT: 'líkamsárás - minniháttar',
   AGGRAVATED_ASSAULT: 'líkamsárás - sérlega hættuleg',
   ASSAULT_LEADING_TO_DEATH: 'líkamsárás sem leiðir til dauða',
+  BODILY_INJURY: 'líkamsmeiðingar',
+  MEDICINES_OFFENSE: 'lyfjalög',
   MURDER: 'manndráp',
   RAPE: 'nauðgun',
   UTILITY_THEFT: 'nytjastuldur',

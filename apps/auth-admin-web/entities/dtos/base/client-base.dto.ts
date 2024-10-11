@@ -45,6 +45,7 @@ export abstract class ClientBaseDTO {
     this.supportsProcuringHolders = false
     this.supportsPersonalRepresentatives = false
     this.requireApiScopes = false
+    this.supportedDelegationTypes = []
   }
 
   nationalId: string
@@ -93,4 +94,5 @@ export abstract class ClientBaseDTO {
   promptDelegations!: boolean
   requireApiScopes!: boolean
   domainName?: string
+  supportedDelegationTypes: string[]
 }

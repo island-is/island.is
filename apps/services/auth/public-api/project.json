@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/auth/public-api/src",
   "projectType": "application",
   "prefix": "services-auth-public-api",
+  "tags": ["scope:auth-api"],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -29,19 +30,13 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/services/auth/public-api/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/public-api"],
       "options": {
         "jestConfig": "apps/services/auth/public-api/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       }
     },
@@ -52,7 +47,8 @@
       },
       "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:auth-api"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

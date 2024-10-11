@@ -14,12 +14,13 @@ import { EndorsementListModule } from './modules/endorsementList/endorsementList
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { AccessGuard } from './guards/accessGuard/access.guard'
 import { LoggingModule } from '@island.is/logging'
-import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import {
   ConfigModule,
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
+import { emailModuleConfig } from '@island.is/email-service'
 
 @Module({
   imports: [
@@ -33,7 +34,12 @@ import {
     LoggingModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [NationalRegistryClientConfig, IdsClientConfig, XRoadConfig],
+      load: [
+        NationalRegistryV3ClientConfig,
+        IdsClientConfig,
+        XRoadConfig,
+        emailModuleConfig,
+      ],
     }),
   ],
   providers: [

@@ -5,7 +5,6 @@ import { MiddlewareAPI } from './nodeFetch'
 import { FetchError } from './FetchError'
 
 export interface CircuitBreakerOptions {
-  treat400ResponsesAsErrors: boolean
   opossum: CircuitBreaker.Options
   fetch: MiddlewareAPI
   name: string
@@ -13,20 +12,17 @@ export interface CircuitBreakerOptions {
 }
 
 export function withCircuitBreaker({
-  treat400ResponsesAsErrors,
   opossum,
   fetch,
   name,
   logger,
 }: CircuitBreakerOptions): MiddlewareAPI {
-  const errorFilter = treat400ResponsesAsErrors
-    ? opossum?.errorFilter
-    : (error: FetchError) => {
-        if (error.name === 'FetchError' && error.status < 500) {
-          return true
-        }
-        return opossum?.errorFilter?.(error) ?? false
-      }
+  const errorFilter = (error: FetchError) => {
+    if (error.name === 'FetchError' && error.status < 500) {
+      return true
+    }
+    return opossum?.errorFilter?.(error) ?? false
+  }
 
   const breaker = new CircuitBreaker(fetch, {
     name,

@@ -12,6 +12,8 @@ import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
 import { DEFAULT_LOCALE } from '../../constants'
 
+const RETRY_COUNT = 5
+
 const getSubpageContentTypeId = (pageContentTypeId?: string) => {
   if (pageContentTypeId === 'organizationPage') return 'organizationSubpage'
   if (pageContentTypeId === 'projectPage') return 'projectSubpage'
@@ -65,30 +67,42 @@ const useSubpageData = (): SubpageData => {
       return false
     }
 
-    Promise.allSettled(
-      // Check for all possible pages and whether they are linking to us
-      [fetchPageAbove('organizationPage'), fetchPageAbove('projectPage')],
-    )
-      .then((results) => {
-        const subpageDataWasFound = results.some(
-          (result) => result.status === 'fulfilled' && result.value,
-        )
-        if (!subpageDataWasFound) {
-          setData({
-            loading: false,
-            pageAbove: null,
-            subpageContentType: null,
-          })
+    const main = async () => {
+      let success = false
+
+      for (let i = 0; i < RETRY_COUNT; i += 1) {
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            resolve('')
+          }, (i + 1) * 1000)
+        })
+
+        try {
+          const results = await Promise.allSettled(
+            // Check for all possible pages and whether they are linking to us
+            [fetchPageAbove('organizationPage'), fetchPageAbove('projectPage')],
+          )
+          const subpageDataWasFound = results.some(
+            (result) => result.status === 'fulfilled' && result.value,
+          )
+          if (subpageDataWasFound) {
+            success = true
+            break
+          }
+        } catch (error) {
+          console.error(error)
         }
-      })
-      .catch((error) => {
-        console.error(error)
+      }
+      if (!success) {
         setData({
           loading: false,
           pageAbove: null,
           subpageContentType: null,
         })
-      })
+      }
+    }
+
+    main()
   }, [cma.contentType, cma.entry, sdk.entry])
 
   return data

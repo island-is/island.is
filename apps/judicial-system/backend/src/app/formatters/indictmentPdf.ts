@@ -3,19 +3,12 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import {
-  capitalize,
-  formatDate,
-  lowercase,
-} from '@island.is/judicial-system/formatters'
-import {
-  CaseState,
-  type IndictmentConfirmation,
-} from '@island.is/judicial-system/types'
+import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 
 import { nowFactory } from '../factories'
 import { indictment } from '../messages'
 import { Case } from '../modules/case'
+import { CaseString } from '../modules/case/models/caseString.model'
 import {
   addEmptyLines,
   addGiganticHeading,
@@ -24,6 +17,7 @@ import {
   addNormalPlusJustifiedText,
   addNormalPlusText,
   addNormalText,
+  Confirmation,
   setTitle,
 } from './pdfHelpers'
 
@@ -59,7 +53,7 @@ const roman = (num: number) => {
 export const createIndictment = async (
   theCase: Case,
   formatMessage: FormatMessage,
-  confirmation?: IndictmentConfirmation,
+  confirmation?: Confirmation,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -76,26 +70,18 @@ export const createIndictment = async (
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
-  const title = formatMessage(indictment.title)
-  const heading = formatMessage(indictment.heading)
+  setTitle(doc, formatMessage(indictment.title))
 
-  setTitle(doc, title)
-
-  if (theCase.state === CaseState.SUBMITTED && confirmation) {
-    addIndictmentConfirmation(
-      doc,
-      confirmation.actor,
-      confirmation.institution,
-      confirmation.date,
-    )
+  if (confirmation) {
+    addIndictmentConfirmation(doc, confirmation)
   }
 
-  addEmptyLines(doc, 4, doc.page.margins.left)
+  addEmptyLines(doc, 6, doc.page.margins.left)
 
-  addGiganticHeading(doc, heading, 'Times-Roman')
+  addGiganticHeading(doc, formatMessage(indictment.heading), 'Times-Roman')
   addNormalPlusText(doc, ' ')
   setLineCap(2)
-  addNormalPlusText(doc, theCase.indictmentIntroduction || '')
+  addNormalPlusText(doc, theCase.indictmentIntroduction ?? '')
 
   const hasManyCounts =
     theCase.indictmentCounts && theCase.indictmentCounts.length > 1
@@ -104,20 +90,26 @@ export const createIndictment = async (
 
     if (hasManyCounts) {
       addNormalPlusCenteredText(doc, `${roman(index + 1)}.`)
-      addNormalPlusJustifiedText(
-        doc,
-        capitalize(count.incidentDescription || ''),
-      )
+      addNormalPlusJustifiedText(doc, count.incidentDescription ?? '')
     } else {
-      addNormalPlusJustifiedText(doc, count.incidentDescription || '')
+      addNormalPlusJustifiedText(doc, count.incidentDescription ?? '')
     }
     addEmptyLines(doc)
-    addNormalPlusJustifiedText(doc, count.legalArguments || '')
-    addNormalText(doc, `M: ${count.policeCaseNumber || ''}`)
+    addNormalPlusJustifiedText(doc, count.legalArguments ?? '')
+    addNormalText(doc, `M: ${count.policeCaseNumber ?? ''}`)
   })
 
   addEmptyLines(doc, 2)
-  addNormalPlusJustifiedText(doc, theCase.demands || '')
+  addNormalPlusJustifiedText(doc, theCase.demands ?? '')
+
+  const civilDemands = CaseString.civilDemands(theCase.caseStrings)
+
+  if (civilDemands) {
+    addEmptyLines(doc, 2)
+    addNormalPlusText(doc, formatMessage(indictment.civilDemandsHeading))
+    addNormalPlusJustifiedText(doc, civilDemands)
+  }
+
   addEmptyLines(doc, 2)
   addNormalPlusCenteredText(
     doc,

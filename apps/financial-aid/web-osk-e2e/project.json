@@ -3,6 +3,8 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/financial-aid/web-osk-e2e/src",
   "projectType": "application",
+  "tags": ["scope:js"],
+  "implicitDependencies": ["financial-aid-web-osk"],
   "targets": {
     "e2e": {
       "executor": "@nx/cypress:cypress",
@@ -25,14 +27,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/financial-aid/web-osk-e2e/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     }
-  },
-  "tags": ["scope:js"],
-  "implicitDependencies": ["financial-aid-web-osk"]
+  }
 }

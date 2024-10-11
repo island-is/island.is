@@ -57,6 +57,7 @@ import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
 import { Screen } from '../types'
+import { extractOrganizationSlugFromPathname } from '../utils/organization'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
@@ -69,7 +70,7 @@ const { publicRuntimeConfig = {} } = getConfig() ?? {}
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+// @ts-expect-error make web strict
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
   let host = req
@@ -109,10 +110,10 @@ export interface LayoutProps {
   languageToggleQueryParams?: Record<Locale, Record<string, string>>
   footerVersion?: 'default' | 'organization'
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   respOrigin
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   megaMenuData
   children?: React.ReactNode
 }
@@ -131,7 +132,7 @@ if (
   })
 }
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+// @ts-expect-error make web strict
 const Layout: Screen<LayoutProps> = ({
   showSearchInHeader = true,
   wrapContent = true,
@@ -187,7 +188,7 @@ const Layout: Screen<LayoutProps> = ({
   useEffect(() => {
     setAlertBanners(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
+      // @ts-expect-error make web strict
       [
         {
           bannerId: `alert-${stringHash(
@@ -245,6 +246,11 @@ const Layout: Screen<LayoutProps> = ({
   ]
 
   const isServiceWeb = pathIsRoute(router.asPath, 'serviceweb', activeLocale)
+
+  const organizationSearchFilter = extractOrganizationSlugFromPathname(
+    router.asPath,
+    activeLocale,
+  )
 
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
@@ -332,50 +338,50 @@ const Layout: Screen<LayoutProps> = ({
         {alertBanners.map((banner) => (
           <AlertBanner
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
+            // @ts-expect-error make web strict
             key={banner.bannerId}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
+            // @ts-expect-error make web strict
             title={banner.title}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
+            // @ts-expect-error make web strict
             description={banner.description}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
+            // @ts-expect-error make web strict
             link={{
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+              // @ts-expect-error make web strict
               ...(!!banner.link &&
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
+                // @ts-expect-error make web strict
                 !!banner.linkTitle && {
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
+                  // @ts-expect-error make web strict
                   href: linkResolver(banner.link.type as LinkType, [
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore make web strict
+                    // @ts-expect-error make web strict
                     banner.link.slug,
                   ]).href,
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
+                  // @ts-expect-error make web strict
                   title: banner.linkTitle,
                 }),
             }}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
+            // @ts-expect-error make web strict
             variant={banner.bannerVariant as AlertBannerVariants}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
+            // @ts-expect-error make web strict
             dismissable={banner.isDismissable}
             onDismiss={() => {
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+              // @ts-expect-error make web strict
               if (banner.dismissedForDays !== 0) {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
+                // @ts-expect-error make web strict
                 Cookies.set(banner.bannerId, 'hide', {
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
+                  // @ts-expect-error make web strict
                   expires: banner.dismissedForDays,
                 })
               }
@@ -395,7 +401,7 @@ const Layout: Screen<LayoutProps> = ({
           {showHeader && (
             <ColorSchemeContext.Provider
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+              // @ts-expect-error make web strict
               value={{ colorScheme: headerColorScheme }}
             >
               <Header
@@ -403,6 +409,7 @@ const Layout: Screen<LayoutProps> = ({
                 showSearchInHeader={showSearchInHeader}
                 megaMenuData={megaMenuData}
                 languageToggleQueryParams={languageToggleQueryParams}
+                organizationSearchFilter={organizationSearchFilter}
               />
             </ColorSchemeContext.Provider>
           )}
@@ -456,6 +463,7 @@ const Layout: Screen<LayoutProps> = ({
               url('/fonts/ibm-plex-sans-v7-latin-300.woff2') format('woff2'),
               url('/fonts/ibm-plex-sans-v7-latin-300.woff') format('woff');
           }
+
           @font-face {
             font-family: 'IBM Plex Sans';
             font-style: normal;
@@ -465,6 +473,7 @@ const Layout: Screen<LayoutProps> = ({
               url('/fonts/ibm-plex-sans-v7-latin-regular.woff2') format('woff2'),
               url('/fonts/ibm-plex-sans-v7-latin-regular.woff') format('woff');
           }
+
           @font-face {
             font-family: 'IBM Plex Sans';
             font-style: italic;
@@ -474,6 +483,7 @@ const Layout: Screen<LayoutProps> = ({
               url('/fonts/ibm-plex-sans-v7-latin-italic.woff2') format('woff2'),
               url('/fonts/ibm-plex-sans-v7-latin-italic.woff') format('woff');
           }
+
           @font-face {
             font-family: 'IBM Plex Sans';
             font-style: normal;
@@ -483,6 +493,7 @@ const Layout: Screen<LayoutProps> = ({
               url('/fonts/ibm-plex-sans-v7-latin-500.woff2') format('woff2'),
               url('/fonts/ibm-plex-sans-v7-latin-500.woff') format('woff');
           }
+
           @font-face {
             font-family: 'IBM Plex Sans';
             font-style: normal;
@@ -498,7 +509,7 @@ const Layout: Screen<LayoutProps> = ({
   )
 }
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+// @ts-expect-error make web strict
 Layout.getProps = async ({ apolloClient, locale, req }) => {
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
 
@@ -537,7 +548,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
         .then((res) => {
           // map data here to reduce data processing in component
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
+          // @ts-expect-error make web strict
           return JSON.parse(res.data.getNamespace.fields)
         }),
       apolloClient
@@ -560,7 +571,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
 
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   const mapLinks = (item: Menu) =>
@@ -593,13 +604,13 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     footerMiddleMenu: [],
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
     if (IS_MOCK) {
       const key = Object.keys(menus)[idx]
       if (key) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
+        // @ts-expect-error make web strict
         menus[key] = mapLinks(menu as Menu)
       }
       return menus
@@ -609,31 +620,31 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
       // Footer lower
       case '6vTuiadpCKOBhAlSjYY8td':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
+        // @ts-expect-error make web strict
         menus.footerLowerMenu = mapLinks(menu as Menu)
         break
       // Footer middle
       case '7hSbSQm5F5EBc0KxPTFVAS':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
+        // @ts-expect-error make web strict
         menus.footerMiddleMenu = mapLinks(menu as Menu)
         break
       // Footer tags
       case '6oGQDyWos4xcKX9BdMHd5R':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
+        // @ts-expect-error make web strict
         menus.footerTagsMenu = mapLinks(menu as Menu)
         break
       // Footer upper
       case '62Zh6hUc3bi0JwNRnqV8Nm':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
+        // @ts-expect-error make web strict
         menus.footerUpperInfo = mapLinks(menu as Menu)
         break
       // Footer upper contact
       case '5yUCZ4U6aZ8rZ9Jigme7GI':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
+        // @ts-expect-error make web strict
         menus.footerUpperContact = mapLinks(menu as Menu)
         break
       default:
@@ -648,9 +659,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     alertBannerContent: {
       ...alertBanner,
       showAlertBanner:
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        alertBanner.showAlertBanner &&
+        alertBanner?.showAlertBanner &&
         (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),
     },
@@ -692,9 +701,9 @@ export const withMainLayout = <T,>(
   }) => {
     return (
       <Layout {...layoutProps}>
-        {/** 
+        {/**
          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-         // @ts-ignore make web strict */}
+         // @ts-expect-error make web strict */}
         <Component {...componentProps} />
       </Layout>
     )
@@ -717,13 +726,13 @@ export const withMainLayout = <T,>(
     ])
     const layoutComponentProps = componentProps as LayoutComponentProps
 
-    const themeConfig = layoutComponentProps.themeConfig ?? {}
+    const themeConfig = layoutComponentProps?.themeConfig ?? {}
     const organizationAlertBannerContent =
-      layoutComponentProps.organizationPage?.alertBanner
-    const articleAlertBannerContent = layoutComponentProps.article?.alertBanner
-    const customAlertBannerContent = layoutComponentProps.customAlertBanner
+      layoutComponentProps?.organizationPage?.alertBanner
+    const articleAlertBannerContent = layoutComponentProps?.article?.alertBanner
+    const customAlertBannerContent = layoutComponentProps?.customAlertBanner
     const languageToggleQueryParams =
-      layoutComponentProps.languageToggleQueryParams
+      layoutComponentProps?.languageToggleQueryParams
 
     return {
       layoutProps: {

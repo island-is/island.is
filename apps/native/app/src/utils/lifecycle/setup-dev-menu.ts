@@ -4,6 +4,7 @@ import { ActionSheetIOS, DevSettings } from 'react-native'
 import DialogAndroid from 'react-native-dialogs'
 import { Navigation } from 'react-native-navigation'
 import { authStore } from '../../stores/auth-store'
+import { clearAllStorages } from '../../stores/mmkv'
 import { preferencesStore } from '../../stores/preferences-store'
 import { ComponentRegistry } from '../component-registry'
 import { isAndroid, isIos } from '../devices'
@@ -84,6 +85,7 @@ export function setupDevMenu() {
       TOGGLE_LANGUAGE: 'Toggle language',
       RESET_PREFERENCES: 'Reset preferences',
       CLEAR_ASYNC_STORAGE: 'Clear async storage',
+      CLEAR_MKKV: 'Clear MKKV',
       LOGOUT: 'Logout',
     }
 
@@ -107,6 +109,8 @@ export function setupDevMenu() {
           return loginCognito()
         case 'CLEAR_ASYNC_STORAGE':
           return clearAsyncStorage()
+        case 'CLEAR_MKKV':
+          return clearAllStorages()
       }
     }
 

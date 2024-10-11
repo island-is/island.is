@@ -4,25 +4,53 @@ import {
   CustomersListDocumentsSortByEnum,
   CustomersWantsPaperMailRequest,
 } from '../../gen/fetch'
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
+import type { Logger } from '@island.is/logging'
 import { DocumentDto, mapToDocument } from './dto/document.dto'
 import { ListDocumentsInputDto } from './dto/listDocuments.input'
 import { ListDocumentsDto } from './dto/documentList.dto'
 import { isDefined } from '@island.is/shared/utils'
 import { mapToDocumentInfoDto } from './dto/documentInfo.dto'
 import { MailAction } from './dto/mailAction.dto'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+const LOG_CATEGORY = 'clients-documents-v2'
 
 @Injectable()
 export class DocumentsClientV2Service {
-  constructor(private api: CustomersApi) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private api: CustomersApi,
+  ) {}
 
   async getDocumentList(
     input: ListDocumentsInputDto,
   ): Promise<ListDocumentsDto | null> {
-    const documents = await this.api.customersListDocuments({
+    /**
+     *
+     * @param input List input object. Example: { dateFrom: undefined, nationalId: '123' }
+     * @returns List object sanitized of unnecessary values. Example: { nationalId: '123' }
+     */
+    const sanitizeObject = function <T extends { [key: string]: any }>(
+      obj: T,
+    ): T {
+      const sanitizedObj = {} as T
+      for (const key in obj) {
+        if (obj[key] || key === 'opened') {
+          sanitizedObj[key] = obj[key]
+        }
+      }
+      return sanitizedObj
+    }
+
+    const inputObject = sanitizeObject({
       ...input,
       kennitala: input.nationalId,
-      senderKennitala: input.senderNationalId,
+      page: input.page ?? 1,
+      senderKennitala:
+        input.senderNationalId && input.senderNationalId.length > 0
+          ? input.senderNationalId.join()
+          : undefined,
       order: input.order
         ? CustomersListDocumentsOrderEnum[input.order]
         : undefined,
@@ -30,6 +58,8 @@ export class DocumentsClientV2Service {
         ? CustomersListDocumentsSortByEnum[input.sortBy]
         : undefined,
     })
+
+    const documents = await this.api.customersListDocuments(inputObject)
 
     if (!documents.totalCount) {
       return null
@@ -48,14 +78,37 @@ export class DocumentsClientV2Service {
   async getCustomersDocument(
     customerId: string,
     documentId: string,
+    locale?: string,
+    includeDocument?: boolean,
   ): Promise<DocumentDto | null> {
     const document = await this.api.customersDocument({
       kennitala: customerId,
       messageId: documentId,
       authenticationType: 'HIGH',
+      locale: locale,
+      includeDocument: includeDocument,
     })
 
-    return mapToDocument(document)
+    const mappedDocument = mapToDocument(document, includeDocument)
+
+    if (!mappedDocument) {
+      this.logger.warn('No document content available for findDocumentById', {
+        category: LOG_CATEGORY,
+        documentId,
+        documentProvider: document?.senderName ?? 'No provider available',
+      })
+      return null
+    }
+
+    if (!mappedDocument?.senderNationalId || !mappedDocument?.date) {
+      this.logger.warn('Document display data missing', {
+        category: LOG_CATEGORY,
+        documentId,
+        documentProvider: document?.senderName ?? 'No provider available',
+      })
+    }
+
+    return mappedDocument
   }
 
   async getPageNumber(
@@ -91,6 +144,14 @@ export class DocumentsClientV2Service {
         wantsPaper: wantsPaper,
       },
     })
+  }
+  async markAllMailAsRead(nationalId: string) {
+    await this.api.customersReadAllDocuments({
+      kennitala: nationalId,
+    })
+    return {
+      success: true,
+    }
   }
   async archiveMail(nationalId: string, documentId: string) {
     await this.api.customersArchive({

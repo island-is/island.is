@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -11,12 +11,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
   laws,
   rcCourtOverview,
-  requestCourtDate,
   restrictionsV2,
   titles,
 } from '@island.is/judicial-system-web/messages'
@@ -25,6 +24,7 @@ import {
   AccordionListItem,
   CaseFilesAccordionItem,
   CaseResentExplanation,
+  CaseScheduledCard,
   CommentsAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
@@ -36,8 +36,7 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
-import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
+import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseLegalProvisions,
   CaseState,
@@ -50,7 +49,7 @@ import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-w
 
 import { DraftConclusionModal } from '../../components'
 
-export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const JudgeOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
@@ -59,6 +58,14 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const id = router.query.id
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
+  const {
+    defendants,
+    policeCaseNumbers,
+    prosecutor,
+    prosecutorsOffice,
+    requestedCourtDate,
+    parentCaseValidToDate,
+  } = useInfoCardItems()
 
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
@@ -110,85 +117,33 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
         </Box>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
-          workingCase.courtDate &&
+          workingCase.arraignmentDate?.date &&
           workingCase.court && (
             <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduled
+              <CaseScheduledCard
                 court={workingCase.court}
-                courtDate={workingCase.courtDate}
-                courtRoom={workingCase.courtRoom}
+                courtDate={workingCase.arraignmentDate.date}
+                courtRoom={workingCase.arraignmentDate.location}
               />
             </Box>
           )}
         <Box component="section" marginBottom={5}>
           <InfoCard
-            data={[
+            sections={[
               {
-                title: formatMessage(core.prosecutor),
-                value: `${workingCase.prosecutorsOffice?.name}`,
+                id: 'defendants-section',
+                items: [defendants(workingCase.type)],
               },
               {
-                title: formatMessage(requestCourtDate.heading),
-                value: `${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
-                    '',
-                )} eftir kl. ${formatDate(
-                  workingCase.requestedCourtDate,
-                  constants.TIME_FORMAT,
-                )}`,
-              },
-              {
-                title: formatMessage(core.prosecutorPerson),
-                value: NameAndEmail(
-                  workingCase.prosecutor?.name,
-                  workingCase.prosecutor?.email,
-                ),
-              },
-              {
-                title: workingCase.parentCase
-                  ? formatMessage(core.pastRestrictionCase, {
-                      caseType: workingCase.type,
-                    })
-                  : formatMessage(core.arrestDate),
-                value: workingCase.parentCase
-                  ? `${capitalize(
-                      formatDate(
-                        workingCase.parentCase.validToDate,
-                        'PPPP',
-                        true,
-                      ) ?? '',
-                    )} kl. ${formatDate(
-                      workingCase.parentCase.validToDate,
-                      constants.TIME_FORMAT,
-                    )}`
-                  : workingCase.arrestDate
-                  ? `${capitalize(
-                      formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
-                    )} kl. ${formatDate(
-                      workingCase.arrestDate,
-                      constants.TIME_FORMAT,
-                    )}`
-                  : 'Var ekki skráður',
-              },
-            ]}
-            defendants={
-              workingCase.defendants
-                ? {
-                    title: capitalize(
-                      formatMessage(core.defendant, {
-                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
-                      }),
-                    ),
-                    items: workingCase.defendants,
-                  }
-                : undefined
-            }
-            defenders={[
-              {
-                name: workingCase.defenderName ?? '',
-                email: workingCase.defenderEmail,
-                sessionArrangement: workingCase.sessionArrangements,
-                phoneNumber: workingCase.defenderPhoneNumber,
+                id: 'case-info-section',
+                items: [
+                  policeCaseNumbers,
+                  requestedCourtDate,
+                  prosecutorsOffice,
+                  parentCaseValidToDate,
+                  prosecutor(workingCase.type),
+                ],
+                columns: 2,
               },
             ]}
           />

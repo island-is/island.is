@@ -8,6 +8,7 @@ import { m } from '../../lib/messages'
 import CoatOfArms from '../../assets/CoatOfArms'
 import { subSectionFiles } from './subSectionFiles'
 import { sectionOverview } from './sectionOverview'
+import { subSectionFirearms } from './subSectionFirearms'
 
 export const draft: Form = buildForm({
   id: 'AnnouncementOfDeathApplicationDraftForm',
@@ -35,6 +36,7 @@ export const draft: Form = buildForm({
         subSectionWillAndTrade,
         subSectionInheritance,
         subSectionProperties,
+        subSectionFirearms,
         subSectionFiles,
       ],
     }),

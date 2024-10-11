@@ -10,6 +10,7 @@ const radioButtonCheckSize = 12
 export const checkMarkWidth = theme.spacing[2]
 
 export const container = style({
+  display: 'flex',
   position: 'relative',
 })
 
@@ -34,6 +35,7 @@ export const label = style({
   display: 'flex',
   fontSize: theme.typography.baseFontSize,
   lineHeight: theme.typography.baseLineHeight,
+  width: '100%',
 })
 export const labelText = style({
   display: 'flex',

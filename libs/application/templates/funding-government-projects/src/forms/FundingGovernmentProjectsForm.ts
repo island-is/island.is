@@ -6,6 +6,9 @@ import {
   buildMultiField,
   buildFileUploadField,
   buildSubmitField,
+  buildSliderField,
+  buildDescriptionField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
@@ -18,7 +21,10 @@ import {
   overview,
   submitted,
   informationAboutInstitution,
+  shared,
 } from '../lib/messages'
+import { theme } from '@island.is/island-ui/theme'
+import { Application } from '@island.is/api/schema'
 
 const FILE_SIZE_LIMIT = 10000000
 
@@ -108,10 +114,36 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
               placeholder: project.labels.costPlaceholder,
               required: true,
             }),
-            buildCustomField({
-              id: 'project.refundableYears',
+            buildDescriptionField({
+              id: 'refundableYearsDescription',
               title: project.labels.years,
-              component: 'YearSlider',
+              titleVariant: 'h4',
+              marginTop: 6,
+              marginBottom: 4,
+            }),
+            buildSliderField({
+              id: 'project.refundableYears',
+              label: {
+                singular: shared.yearSingular,
+                plural: shared.yearPlural,
+              },
+              min: 5,
+              max: 10,
+              step: 1,
+              defaultValue: (application: Application) =>
+                getValueViaPath(
+                  application.answers,
+                  'project.refundableYears',
+                  5,
+                ),
+              showMinMaxLabels: true,
+              showToolTip: true,
+              trackStyle: { gridTemplateRows: 5 },
+              calculateCellStyle: () => {
+                return {
+                  background: theme.color.dark200,
+                }
+              },
             }),
             buildCustomField(
               {

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase } from 'beygla/strict'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -17,9 +17,11 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseOrigin,
   Defendant,
   IndictmentCountOffense,
   Institution,
@@ -75,7 +77,7 @@ export const getIndictmentIntroductionAutofill = (
     : []
 }
 
-const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Indictment = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -95,7 +97,8 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
     indictmentIntroductionErrorMessage,
     setIndictmentIntroductionErrorMessage,
   ] = useState<string>('')
-  const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
+  const [demandsErrorMessage, setDemandsErrorMessage] = useState('')
+  const [civilDemandsErrorMessage, setCivilDemandsErrorMessage] = useState('')
 
   const { data: policeCaseData } = usePoliceCaseInfoQuery({
     variables: {
@@ -103,7 +106,7 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
         caseId: workingCase.id,
       },
     },
-    skip: !workingCase.id,
+    skip: workingCase.origin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
     onCompleted: (data) => {
       if (!data.policeCaseInfo) {
@@ -310,6 +313,7 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <SectionHeading
             title={formatMessage(strings.indictmentIntroductionTitle)}
@@ -423,7 +427,7 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
               name="demands"
               label={formatMessage(strings.demandsLabel)}
               placeholder={formatMessage(strings.demandsPlaceholder)}
-              value={workingCase.demands || ''}
+              value={workingCase.demands ?? ''}
               errorMessage={demandsErrorMessage}
               hasError={demandsErrorMessage !== ''}
               onChange={(event) =>
@@ -454,6 +458,46 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
             />
           </BlueBox>
         </Box>
+        {workingCase.hasCivilClaims && (
+          <Box marginBottom={6}>
+            <SectionHeading title={formatMessage(strings.civilDemandsTitle)} />
+            <BlueBox>
+              <Input
+                name="civilDemands"
+                label={formatMessage(strings.civilDemandsLabel)}
+                placeholder={formatMessage(strings.civilDemandsPlaceholder)}
+                value={workingCase.civilDemands ?? ''}
+                errorMessage={civilDemandsErrorMessage}
+                hasError={civilDemandsErrorMessage !== ''}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'civilDemands',
+                    event.target.value,
+                    ['empty'],
+                    setWorkingCase,
+                    civilDemandsErrorMessage,
+                    setCivilDemandsErrorMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'civilDemands',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setCivilDemandsErrorMessage,
+                  )
+                }
+                textarea
+                autoComplete="off"
+                required
+                rows={7}
+                autoExpand={{ on: true, maxHeight: 300 }}
+              />
+            </BlueBox>
+          </Box>
+        )}
         <Box marginBottom={10}>
           <PdfButton
             caseId={workingCase.id}

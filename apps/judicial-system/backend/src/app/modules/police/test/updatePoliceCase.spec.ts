@@ -14,7 +14,7 @@ import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 import { randomDate } from '../../../test'
 import { policeModuleConfig } from '../police.config'
-import { CourtDocumentType } from '../police.service'
+import { PoliceDocumentType } from '../police.service'
 
 jest.mock('node-fetch')
 
@@ -31,12 +31,13 @@ describe('PoliceController - Update Police Case', () => {
   const caseType = CaseType.CUSTODY
   const caseState = CaseState.ACCEPTED
   const policeCaseNumber = uuid()
+  const courtCaseNumber = uuid()
   const defendantNationalId = uuid()
   const validToDate = randomDate()
   const caseConclusion = 'test conclusion'
   const courtDocuments = [
-    { type: CourtDocumentType.RVKR, courtDocument: 'test request pdf' },
-    { type: CourtDocumentType.RVTB, courtDocument: 'test court record pdf' },
+    { type: PoliceDocumentType.RVKR, courtDocument: 'test request pdf' },
+    { type: PoliceDocumentType.RVTB, courtDocument: 'test court record pdf' },
   ]
 
   let mockConfig: ConfigType<typeof policeModuleConfig>
@@ -70,6 +71,7 @@ describe('PoliceController - Update Police Case', () => {
           caseType,
           caseState,
           policeCaseNumber,
+          courtCaseNumber,
           defendantNationalId,
           validToDate,
           caseConclusion,
@@ -104,6 +106,7 @@ describe('PoliceController - Update Police Case', () => {
           body: JSON.stringify({
             rvMal_ID: caseId,
             caseNumber: policeCaseNumber,
+            courtCaseNumber,
             ssn: defendantNationalId,
             type: caseType,
             courtVerdict: caseState,

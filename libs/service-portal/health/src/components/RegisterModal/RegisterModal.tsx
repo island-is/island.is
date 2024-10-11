@@ -54,9 +54,14 @@ export const RegisterModal = ({
         <Box className={styles.modalGridStyle}>
           <Box className={styles.modalGridContentStyle}>
             <Text variant="h2">{title}</Text>
-            <Text marginTop={2} marginBottom={3}>
-              {description}
-            </Text>
+            {description ? (
+              <Text marginTop={2} marginBottom={3}>
+                {description}
+              </Text>
+            ) : (
+              // Temp fix - will refactor and use core model component
+              <Box marginY={15}></Box>
+            )}
             {healthCenterDoctors?.length ? (
               <Box marginBottom={3}>
                 <Select

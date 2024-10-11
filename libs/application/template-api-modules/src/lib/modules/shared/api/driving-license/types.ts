@@ -29,9 +29,14 @@ export type DrivingLicenseCategory = {
   nr?: string | null
 }
 
+export interface Remark {
+  code: string
+  description: string
+}
+
 export type DrivingLicense = {
   currentLicense: string | null
-  remarks?: string[]
+  remarks?: Remark[]
   categories?: DrivingLicenseCategory[]
   id?: number
   birthCountry?: string | null

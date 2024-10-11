@@ -1,0 +1,13 @@
+query getIncomePlanDetail {
+  socialInsuranceIncomePlan {
+    isEligibleForChange {
+      isEligible
+      reason
+    }
+    incomeCategories {
+      typeName
+      annualSum
+      currency
+    }
+  }
+}

@@ -16,6 +16,6 @@ export const FormerEducationSection = buildSection({
     NotFinishedEducationSubSection,
     ThirdLevelEducationSubSection,
     ExemptionSubSection,
-    OtherDocumentsSection,
+    // OtherDocumentsSection, //TODO replace again when there are some programs that request otherDocuments
   ],
 })

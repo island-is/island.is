@@ -1,9 +1,6 @@
-import * as s from './RegulationDisplay.css'
-
-import { RegName, prettyName } from '@island.is/regulations'
-import { RegulationPageTexts } from './RegulationTexts.types'
-
 import React, { useRef } from 'react'
+import { useIntersection } from 'react-use'
+
 import {
   Box,
   Breadcrumbs,
@@ -11,10 +8,12 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
-import { useNamespace } from '@island.is/web/hooks'
+import { prettyName, RegName } from '@island.is/regulations'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
+
+import { RegulationPageTexts } from './RegulationTexts.types'
 import { useRegulationLinkResolver } from './regulationUtils'
-import { useIntersection } from 'react-use'
+import * as s from './RegulationDisplay.css'
 
 export type RegulationLayoutProps = {
   name: RegName
@@ -24,7 +23,7 @@ export type RegulationLayoutProps = {
 }
 
 export const RegulationLayout = (props: RegulationLayoutProps) => {
-  const n = useNamespace(props.texts)
+  // const n = useNamespace(props.texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
   const mainElmRef = useRef<HTMLDivElement>(null)
   const isIntersecting =

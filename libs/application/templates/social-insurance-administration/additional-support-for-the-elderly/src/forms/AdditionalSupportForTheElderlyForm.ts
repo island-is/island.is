@@ -4,7 +4,6 @@ import {
   buildFileUploadField,
   buildForm,
   buildMultiField,
-  buildPhoneField,
   buildRadioField,
   buildSection,
   buildSelectField,
@@ -42,8 +41,10 @@ import {
   getApplicationExternalData,
   getAvailableYears,
 } from '../lib/additionalSupportForTheElderlyUtils'
-import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMultiField,
+  buildFormConclusionSection,
+} from '@island.is/application/ui-forms'
 import { getApplicationAnswers } from '../lib/additionalSupportForTheElderlyUtils'
 import isEmpty from 'lodash/isEmpty'
 
@@ -54,52 +55,19 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: 'prerequisites',
-      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
-      children: [],
-    }),
-    buildSection({
       id: 'infoSection',
       title: socialInsuranceAdministrationMessage.info.section,
       children: [
         buildSubSection({
           id: 'info',
-          title: socialInsuranceAdministrationMessage.info.subSectionTitle,
+          title: socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
           children: [
-            buildMultiField({
-              id: 'applicantInfo',
-              title: socialInsuranceAdministrationMessage.info.subSectionTitle,
-              description:
-                socialInsuranceAdministrationMessage.info.subSectionDescription,
-              children: [
-                buildTextField({
-                  id: 'applicantInfo.email',
-                  title:
-                    socialInsuranceAdministrationMessage.info.applicantEmail,
-                  width: 'half',
-                  variant: 'email',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.emailAddress
-                  },
-                }),
-                buildPhoneField({
-                  id: 'applicantInfo.phonenumber',
-                  title:
-                    socialInsuranceAdministrationMessage.info
-                      .applicantPhonenumber,
-                  width: 'half',
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.phoneNumber
-                  },
-                }),
-              ],
+            applicantInformationMultiField({
+              emailRequired: false,
+              emailDisabled: true,
+              applicantInformationDescription:
+                socialInsuranceAdministrationMessage.info
+                  .infoSubSectionDescription,
             }),
           ],
         }),

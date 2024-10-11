@@ -7,7 +7,7 @@ import {
 import { m } from '../../lib/messages'
 import { Application } from '@island.is/api/schema'
 import { isApplicationForCondition } from '../../lib/utils'
-import { B_FULL } from '../../shared'
+import { B_FULL } from '../../lib/constants'
 
 export const subSectionPhone = buildSubSection({
   id: 'phone',

@@ -1,7 +1,7 @@
 import { uuid } from 'uuidv4'
 import { SQSClient } from '@aws-sdk/client-sqs'
 
-import { CaseMessage } from '../message'
+import { Message } from '../message'
 import { messageModuleConfig } from '../message.config'
 import { createTestingMessageModule } from './createTestingMessageModule'
 
@@ -12,7 +12,7 @@ interface Then {
 }
 
 type GivenWhenThen = (
-  callback: (message: CaseMessage) => Promise<boolean>,
+  callback: (message: Message) => Promise<boolean>,
 ) => Promise<Then>
 
 describe('MessageService - Receive messages from queue', () => {
@@ -30,7 +30,7 @@ describe('MessageService - Receive messages from queue', () => {
     mockSqs = sqs
 
     givenWhenThen = async (
-      callback: (message: CaseMessage) => Promise<boolean>,
+      callback: (message: Message) => Promise<boolean>,
     ) => {
       const then = {} as Then
 
@@ -45,7 +45,7 @@ describe('MessageService - Receive messages from queue', () => {
   })
 
   describe('message received from queue', () => {
-    const message = { caseId: uuid() } as CaseMessage
+    const message = { caseId: uuid() } as Message
     const receiptHandle = uuid()
     const callback = jest.fn().mockResolvedValueOnce(true)
 
@@ -76,7 +76,7 @@ describe('MessageService - Receive messages from queue', () => {
   })
 
   describe('message received from queue but not handled by callback', () => {
-    const message = { caseId: uuid() } as CaseMessage
+    const message = { caseId: uuid() } as Message
     const receiptHandle = uuid()
     const callback = jest.fn().mockResolvedValueOnce(false)
     const now = Date.now()
@@ -124,7 +124,7 @@ describe('MessageService - Receive messages from queue', () => {
       caseId: uuid(),
       numberOfRetries: 1,
       nextRetry: now + 1000,
-    } as CaseMessage
+    } as Message
     const receiptHandle = uuid()
     const callback = jest.fn()
 
@@ -165,7 +165,7 @@ describe('MessageService - Receive messages from queue', () => {
     const message = {
       caseId: uuid(),
       numberOfRetries: config.maxNumberOfRetries,
-    } as CaseMessage
+    } as Message
     const receiptHandle = uuid()
     const callback = jest.fn().mockResolvedValueOnce(false)
 

@@ -1,5 +1,4 @@
 import { json, ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
-import { settings } from '../../../infra/src/dsl/settings'
 import {
   AdrAndMachine,
   Base,
@@ -26,7 +25,6 @@ import {
   Properties,
   RskCompanyInfo,
   TransportAuthority,
-  UniversityOfIceland,
   Vehicles,
   VehiclesMileage,
   VehicleServiceFjsV1,
@@ -37,14 +35,21 @@ import {
   HousingBenefitCalculator,
   OccupationalLicenses,
   ShipRegistry,
-  DistrictCommissioners,
+  DistrictCommissionersPCard,
+  DistrictCommissionersLicenses,
   DirectorateOfImmigration,
   Hunting,
   SignatureCollection,
   SocialInsuranceAdministration,
   IntellectualProperties,
   Inna,
+  UniversityCareers,
   OfficialJournalOfIceland,
+  OfficialJournalOfIcelandApplication,
+  JudicialSystemServicePortal,
+  Frigg,
+  HealthDirectorateOrganDonation,
+  HealthDirectorateVaccination,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -58,6 +63,7 @@ export const serviceSetup = (services: {
   sessionsApi: ServiceBuilder<'services-sessions'>
   authAdminApi: ServiceBuilder<'services-auth-admin-api'>
   universityGatewayApi: ServiceBuilder<'services-university-gateway'>
+  userNotificationService: ServiceBuilder<'services-user-notification'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -67,6 +73,9 @@ export const serviceSetup = (services: {
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
+      ),
+      USER_NOTIFICATION_API_URL: ref(
+        (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
       ICELANDIC_NAMES_REGISTRY_BACKEND_URL: ref(
         (h) => `http://${h.svc(services.icelandicNameRegistryBackend)}`,
@@ -121,7 +130,7 @@ export const serviceSetup = (services: {
         staging: 'development@island.is',
         prod: 'island@island.is',
       },
-      SERVICE_USER_PROFILE_URL: ref(
+      USER_PROFILE_CLIENT_URL: ref(
         (h) => `http://${h.svc(services.servicePortalApi)}`,
       ),
       FILE_DOWNLOAD_BUCKET: {
@@ -162,11 +171,6 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
-      USER_NOTIFICATION_CLIENT_URL: {
-        dev: 'http://user-notification-xrd.internal.dev01.devland.is',
-        staging: 'http://user-notification-xrd.internal.staging01.devland.is',
-        prod: 'https://user-notification-xrd.internal.island.is',
-      },
       MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
         dev: 'http://web-financial-aid-backend',
         staging: 'http://web-financial-aid-backend',
@@ -191,20 +195,24 @@ export const serviceSetup = (services: {
         staging: 'https://api-staging.thinglysing.is/business/tolfraedi',
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
+      FORM_SYSTEM_API_BASE_PATH: {
+        dev: 'https://profun.island.is/umsoknarkerfi',
+        staging: '',
+        prod: '',
+      },
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
         staging: 'https://samradapi-test.devland.is',
         prod: 'https://samradapi.island.is',
       },
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
-      SOFFIA_SOAP_URL: {
-        dev: ref((h) => h.svc('https://soffiaprufa.skra.is')),
-        staging: ref((h) => h.svc('https://soffiaprufa.skra.is')),
-        prod: ref((h) => h.svc('https://soffia2.skra.is')),
-        local: ref((h) => h.svc('https://localhost:8443')),
-      },
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
       SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
+      AUTH_ADMIN_API_PATH: {
+        dev: 'https://identity-server.dev01.devland.is/backend',
+        staging: 'https://identity-server.staging01.devland.is/backend',
+        prod: 'https://innskra.island.is/backend',
+      },
       AUTH_ADMIN_API_PATHS: {
         dev: json({
           development: 'https://identity-server.dev01.devland.is/backend',
@@ -287,12 +295,9 @@ export const serviceSetup = (services: {
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
       REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
-      SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN',
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
       ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
-      SOFFIA_USER: settings.SOFFIA_USER,
-      SOFFIA_PASS: settings.SOFFIA_PASS,
       POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID',
       POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET',
       POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL',
@@ -378,6 +383,11 @@ export const serviceSetup = (services: {
         '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY',
       LICENSE_SERVICE_BARCODE_SECRET_KEY:
         '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY',
+      ULTRAVIOLET_RADIATION_API_KEY: '/k8s/api/ULTRAVIOLET_RADIATION_API_KEY',
+      UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL:
+        '/k8s/api/UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL',
+      VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY:
+        '/k8s/api/VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY',
     })
     .xroad(
       AdrAndMachine,
@@ -394,7 +404,8 @@ export const serviceSetup = (services: {
       Labor,
       DrivingLicense,
       Payment,
-      DistrictCommissioners,
+      DistrictCommissionersPCard,
+      DistrictCommissionersLicenses,
       Finance,
       Education,
       NationalRegistry,
@@ -412,7 +423,7 @@ export const serviceSetup = (services: {
       TransportAuthority,
       ChargeFjsV2,
       EnergyFunds,
-      UniversityOfIceland,
+      UniversityCareers,
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
       RskProcuring,
@@ -424,6 +435,11 @@ export const serviceSetup = (services: {
       SignatureCollection,
       SocialInsuranceAdministration,
       OfficialJournalOfIceland,
+      JudicialSystemServicePortal,
+      OfficialJournalOfIcelandApplication,
+      Frigg,
+      HealthDirectorateOrganDonation,
+      HealthDirectorateVaccination,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
@@ -447,8 +463,8 @@ export const serviceSetup = (services: {
     .readiness('/health')
     .liveness('/liveness')
     .resources({
-      limits: { cpu: '600m', memory: '2048Mi' },
-      requests: { cpu: '250m', memory: '896Mi' },
+      limits: { cpu: '1200m', memory: '3200Mi' },
+      requests: { cpu: '400m', memory: '896Mi' },
     })
     .replicaCount({
       default: 2,

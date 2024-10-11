@@ -1,109 +1,71 @@
-import React from 'react'
 import { defineMessage } from 'react-intl'
 
+import { UniversityCareersUniversityId } from '@island.is/api/schema'
 import {
+  AlertMessage,
   Box,
   Button,
-  Divider,
   GridColumn,
   GridRow,
-  SkeletonLoader,
-  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  EmptyState,
-  ErrorScreen,
-  formatDate,
-  formSubmit,
-  IntroHeader,
-  m,
-  UNI_HI_SLUG,
-  UserInfoLine,
-} from '@island.is/service-portal/core'
-import { Query } from '@island.is/api/schema'
-import { gql, useQuery } from '@apollo/client'
 import { formatNationalId } from '@island.is/portals/core'
-import { useParams } from 'react-router-dom'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
 import { Problem } from '@island.is/react-spa/shared'
-
-const GetStudentInfoQuery = gql`
-  query universityOfIcelandStudentInfo(
-    $input: UniversityOfIcelandStudentInfoInput!
-  ) {
-    universityOfIcelandStudentInfo(input: $input) {
-      track(input: $input) {
-        transcript {
-          degree
-          faculty
-          graduationDate
-          institution {
-            id
-            displayName
-          }
-          name
-          nationalId
-          school
-          studyProgram
-          trackNumber
-        }
-        files {
-          type
-          locale
-          displayName
-          fileName
-        }
-        body {
-          description
-          footer
-          unconfirmedData
-        }
-        downloadServiceURL
-      }
-    }
-  }
-`
-
+import {
+  InfoLineStack,
+  IntroHeader,
+  InfoLine,
+  formSubmit,
+  formatDate,
+  m,
+} from '@island.is/service-portal/core'
+import { useParams } from 'react-router-dom'
+import {
+  mapSlugToContentfulSlug,
+  mapSlugToUniversity,
+} from '../../utils/mapUniversitySlug'
+import { useStudentTrackQuery } from './EducationGraduationDetail.generated'
 type UseParams = {
   id: string
+  uni: string
 }
 
 export const EducationGraduationDetail = () => {
   useNamespaces('sp.education-graduation')
-  const { id } = useParams() as UseParams
+  const { id, uni } = useParams() as UseParams
   const { formatMessage, lang } = useLocale()
 
-  const { data, loading, error } = useQuery<Query>(GetStudentInfoQuery, {
+  const { data, loading, error } = useStudentTrackQuery({
     variables: {
       input: {
         trackNumber: parseInt(id),
         locale: lang,
+        universityId:
+          mapSlugToUniversity(uni) ??
+          UniversityCareersUniversityId.UNIVERSITY_OF_ICELAND,
       },
     },
   })
 
-  const studentInfo = data?.universityOfIcelandStudentInfo?.track?.transcript
-  const text = data?.universityOfIcelandStudentInfo?.track?.body
-  const files = data?.universityOfIcelandStudentInfo?.track?.files
+  const studentInfo = data?.universityCareersStudentTrack?.transcript
+  const text = data?.universityCareersStudentTrack?.metadata
+  const files = data?.universityCareersStudentTrack?.files
   const downloadServiceURL =
-    data?.universityOfIcelandStudentInfo?.track?.downloadServiceURL
+    data?.universityCareersStudentTrack?.downloadServiceURL
 
   const graduationDate = studentInfo
     ? formatDate(studentInfo?.graduationDate)
     : undefined
 
-  const noFiles = files?.length === 0
+  const filesAvailable = (files?.length ?? 0) > 0
 
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
         title={m.educationGraduation}
         intro={text?.description || ''}
-        serviceProviderSlug={UNI_HI_SLUG}
-        serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
+        serviceProviderSlug={mapSlugToContentfulSlug(uni) ?? 'haskoli-islands'}
       />
       <GridRow marginBottom={[1, 1, 1, 3]}>
         <GridColumn span="12/12">
@@ -115,9 +77,12 @@ export const EducationGraduationDetail = () => {
             printHidden
           >
             {files &&
-              files?.length > 0 &&
+              filesAvailable &&
               downloadServiceURL &&
-              files?.map((item, index) => {
+              files.map((item, index) => {
+                const shortOrgId =
+                  data.universityCareersStudentTrack?.transcript?.institution
+                    ?.shortId
                 return (
                   <Box
                     key={`education-graduation-button-${index}`}
@@ -131,7 +96,9 @@ export const EducationGraduationDetail = () => {
                       iconType="outline"
                       onClick={() =>
                         formSubmit(
-                          `${downloadServiceURL}${item.locale}/${studentInfo?.trackNumber}`,
+                          `${downloadServiceURL}${item.locale}/${
+                            shortOrgId ?? uni
+                          }/${studentInfo?.trackNumber}`,
                         )
                       }
                     >
@@ -140,30 +107,20 @@ export const EducationGraduationDetail = () => {
                   </Box>
                 )
               })}
-            {noFiles ? (
-              <Box marginTop={1}>
-                {text?.unconfirmedData && (
-                  <Button
-                    variant="utility"
-                    size="small"
-                    icon="document"
-                    iconType="outline"
-                    disabled
-                  >
-                    {formatMessage(m.educationCareer)}
-                  </Button>
-                )}
-                <Text marginTop={1}>{text?.unconfirmedData || ''}</Text>
+            {!filesAvailable && !loading && (
+              <Box width="full">
+                <AlertMessage
+                  type="warning"
+                  title={formatMessage(m.noTranscriptForDownload)}
+                  message={text?.unconfirmedData}
+                />
               </Box>
-            ) : undefined}
+            )}
           </Box>
         </GridColumn>
       </GridRow>
       {error && !loading && <Problem error={error} noBorder={false} />}
 
-      {loading && !error && (
-        <SkeletonLoader height={20} width={500} repeat={3} />
-      )}
       {!loading && !error && !studentInfo && (
         <Box marginTop={8}>
           <Problem
@@ -177,40 +134,39 @@ export const EducationGraduationDetail = () => {
       )}
       {!error && (loading || studentInfo) && (
         <>
-          <Stack space={1}>
-            <UserInfoLine
-              title={formatMessage(m.overview)}
+          <InfoLineStack label={formatMessage(m.overview)}>
+            <InfoLine
               label={m.fullName}
               loading={loading}
               content={studentInfo?.name}
               translate="no"
             />
-            <Divider />
-            <UserInfoLine
+            <InfoLine
               label={m.date}
               loading={loading}
               content={graduationDate}
             />
-            <Divider />
-            <UserInfoLine
-              label={defineMessage({
-                id: 'sp.education-graduation:education-grad-detail-degree',
-                defaultMessage: 'Gráða',
-              })}
-              loading={loading}
-              content={formatNationalId(studentInfo?.degree ?? '')}
-            />
-            <Divider />
-            <UserInfoLine
-              label={defineMessage({
-                id: 'sp.education-graduation:education-grad-detail-program',
-                defaultMessage: 'Námsleið',
-              })}
-              loading={loading}
-              content={formatNationalId(studentInfo?.studyProgram ?? '')}
-            />
-            <Divider />
-            <UserInfoLine
+            {studentInfo?.degree && (
+              <InfoLine
+                label={defineMessage({
+                  id: 'sp.education-graduation:education-grad-detail-degree',
+                  defaultMessage: 'Gráða',
+                })}
+                loading={loading}
+                content={formatNationalId(studentInfo.degree)}
+              />
+            )}
+            {studentInfo?.studyProgram && (
+              <InfoLine
+                label={defineMessage({
+                  id: 'sp.education-graduation:education-grad-detail-program',
+                  defaultMessage: 'Námsleið',
+                })}
+                loading={loading}
+                content={formatNationalId(studentInfo?.studyProgram ?? '')}
+              />
+            )}
+            <InfoLine
               label={defineMessage({
                 id: 'sp.education-graduation:education-grad-detail-faculty',
                 defaultMessage: 'Deild',
@@ -218,8 +174,7 @@ export const EducationGraduationDetail = () => {
               loading={loading}
               content={formatNationalId(studentInfo?.faculty ?? '')}
             />
-            <Divider />
-            <UserInfoLine
+            <InfoLine
               label={defineMessage({
                 id: 'sp.education-graduation:education-grad-detail-school',
                 defaultMessage: 'Svið',
@@ -227,8 +182,7 @@ export const EducationGraduationDetail = () => {
               loading={loading}
               content={formatNationalId(studentInfo?.school ?? '')}
             />
-            <Divider />
-            <UserInfoLine
+            <InfoLine
               label={defineMessage({
                 id: 'sp.education-graduation:education-grad-detail-instutution',
                 defaultMessage: 'Stofnun',
@@ -238,10 +192,8 @@ export const EducationGraduationDetail = () => {
                 studentInfo?.institution?.displayName ?? '',
               )}
             />
-            <Divider />
-          </Stack>
+          </InfoLineStack>
           <Box marginTop={5}>
-            {loading && !error && <SkeletonLoader height={20} repeat={2} />}
             <Text variant="small">{text?.footer}</Text>
           </Box>
         </>

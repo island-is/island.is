@@ -1,100 +1,95 @@
-import React, { useContext } from 'react'
-import { useIntl } from 'react-intl'
+import { FC, useContext } from 'react'
 
-import { Text } from '@island.is/island-ui/core'
-import {
-  capitalize,
-  formatCaseType,
-  readableIndictmentSubtypes,
-} from '@island.is/judicial-system/formatters'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
-
+import { EventType } from '../../graphql/schema'
 import { FormContext } from '../FormProvider/FormProvider'
-import InfoCard, { NameAndEmail } from './InfoCard'
-import { infoCardActiveIndictment as m } from './InfoCard.strings'
+import { DefendantInfoActionButton } from './DefendantInfo/DefendantInfo'
+import InfoCard from './InfoCard'
+import useInfoCardItems from './useInfoCardItems'
 
-const InfoCardClosedIndictment: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+export interface Props {
+  defendantInfoActionButton?: DefendantInfoActionButton
+  displayAppealExpirationInfo?: boolean
+  displayVerdictViewDate?: boolean
+}
+
+const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
-  const { formatMessage } = useIntl()
-  const defenders = workingCase.defendants?.map((defendant) => {
-    return {
-      name: defendant.defenderName || '',
-      defenderNationalId: defendant.defenderNationalId || '',
-      sessionArrangement: undefined,
-      email: defendant.defenderEmail || '',
-      phoneNumber: defendant.defenderPhoneNumber || '',
-    }
-  })
+
+  const {
+    defendants,
+    policeCaseNumbers,
+    courtCaseNumber,
+    prosecutorsOffice,
+    mergeCase,
+    court,
+    prosecutor,
+    judge,
+    offence,
+    indictmentReviewer,
+    indictmentReviewDecision,
+    indictmentReviewedDate,
+    civilClaimants,
+  } = useInfoCardItems()
+
+  const {
+    defendantInfoActionButton,
+    displayAppealExpirationInfo,
+    displayVerdictViewDate,
+  } = props
+
+  const reviewedDate = workingCase.eventLogs?.find(
+    (log) => log.eventType === EventType.INDICTMENT_REVIEWED,
+  )?.created
 
   return (
     <InfoCard
-      data={[
+      sections={[
         {
-          title: formatMessage(core.policeCaseNumber),
-          value: workingCase.policeCaseNumbers?.map((n) => (
-            <Text key={n}>{n}</Text>
-          )),
+          id: 'defendants-section',
+          items: [
+            defendants(
+              workingCase.type,
+              displayAppealExpirationInfo,
+              defendantInfoActionButton,
+              displayVerdictViewDate,
+            ),
+          ],
         },
+        ...(workingCase.hasCivilClaims
+          ? [{ id: 'civil-claimant-section', items: [civilClaimants] }]
+          : []),
         {
-          title: formatMessage(core.courtCaseNumber),
-          value: workingCase.courtCaseNumber,
+          id: 'case-info-section',
+          items: [
+            policeCaseNumbers,
+            courtCaseNumber,
+            prosecutorsOffice,
+            ...(workingCase.mergeCase ? [mergeCase] : []),
+            court,
+            prosecutor(workingCase.type),
+            judge,
+            offence,
+          ],
+          columns: 2,
         },
-        {
-          title: formatMessage(core.prosecutor),
-          value: `${workingCase.prosecutorsOffice?.name}`,
-        },
-        {
-          title: formatMessage(core.court),
-          value: workingCase.court?.name,
-        },
-        {
-          title: formatMessage(m.prosecutor),
-          value: NameAndEmail(
-            workingCase.prosecutor?.name,
-            workingCase.prosecutor?.email,
-          ),
-        },
-        {
-          title: formatMessage(core.judge),
-          value: NameAndEmail(
-            workingCase.judge?.name,
-            workingCase.judge?.email,
-          ),
-        },
-        {
-          title: formatMessage(m.offence),
-          value: isIndictmentCase(workingCase.type) ? (
-            <>
-              {readableIndictmentSubtypes(
-                workingCase.policeCaseNumbers,
-                workingCase.indictmentSubtypes,
-              ).map((subtype) => (
-                <Text key={subtype}>{capitalize(subtype)}</Text>
-              ))}
-            </>
-          ) : (
-            formatCaseType(workingCase.type)
-          ),
-        },
+        ...(workingCase.indictmentReviewer?.name
+          ? [
+              {
+                id: 'additional-data-section',
+                items: [
+                  indictmentReviewer,
+                  ...(workingCase.indictmentReviewDecision
+                    ? [indictmentReviewDecision]
+                    : []),
+                  ...(indictmentReviewedDate
+                    ? [indictmentReviewedDate(reviewedDate)]
+                    : []),
+                ],
+                columns: 2,
+              },
+            ]
+          : []),
       ]}
-      defendants={
-        workingCase.defendants
-          ? {
-              title: capitalize(
-                workingCase.defendants.length > 1
-                  ? formatMessage(core.indictmentDefendants)
-                  : formatMessage(core.indictmentDefendant, {
-                      gender: workingCase.defendants[0].gender,
-                    }),
-              ),
-              items: workingCase.defendants,
-            }
-          : undefined
-      }
-      defenders={defenders}
     />
   )
 }

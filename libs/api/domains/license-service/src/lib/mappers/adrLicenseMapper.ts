@@ -4,84 +4,114 @@ import {
   FlattenedAdrDto,
   FlattenedAdrRightsDto,
 } from '@island.is/clients/license-client'
-import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import {
-  GenericLicenseDataField,
-  GenericLicenseDataFieldType,
-  GenericLicenseLabels,
-  GenericLicenseMapper,
-  GenericUserLicensePayload,
-} from '../licenceService.type'
-import { getLabel } from '../utils/translations'
+  DEFAULT_LICENSE_ID,
+  LICENSE_NAMESPACE,
+} from '../licenseService.constants'
 import { Injectable } from '@nestjs/common'
+import { IntlService } from '@island.is/cms-translations'
+import { m } from '../messages'
+import { formatDate, expiryTag } from '../utils'
+import {
+  GenericLicenseDataFieldType,
+  GenericLicenseMappedPayloadResponse,
+  GenericLicenseMapper,
+} from '../licenceService.type'
+import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 
 @Injectable()
 export class AdrLicensePayloadMapper implements GenericLicenseMapper {
-  parsePayload(
+  constructor(private readonly intlService: IntlService) {}
+  async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
-    labels?: GenericLicenseLabels,
-  ): Array<GenericUserLicensePayload> {
-    if (!payload) return []
+  ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
+    if (!payload) return Promise.resolve([])
 
     const typedPayload = payload as Array<FlattenedAdrDto>
 
-    const label = labels?.labels
+    const { formatMessage } = await this.intlService.useIntl(
+      [LICENSE_NAMESPACE],
+      locale,
+    )
 
-    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
-      (t) => {
+    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload.map((t) => {
+        const isExpired: boolean | undefined = t.gildirTil
+          ? !isAfter(new Date(t.gildirTil), new Date())
+          : undefined
+
         const data: Array<GenericLicenseDataField> = [
           {
-            name: getLabel('basicInfoLicense', locale, label),
+            name: formatMessage(m.basicInfoLicense),
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('licenseNumber', locale, label),
+            label: formatMessage(m.licenseNumber),
             value: t.skirteinisNumer?.toString(),
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('fullName', locale, label),
+            label: formatMessage(m.fullName),
             value: t.fulltNafn ?? '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('publisher', locale, label),
+            label: formatMessage(m.publisher),
             value: 'Vinnueftirlitið',
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('validTo', locale, label),
-            value: t.gildirTil ?? '',
+            label: formatMessage(m.validTo),
+            value: t.gildirTil ? formatDate(new Date(t.gildirTil)) : '',
+            tag: expiryTag(formatMessage, isExpired),
           },
         ]
 
         const adrRights = (t.adrRettindi ?? []).filter((field) => field.grunn)
         const tankar = this.parseRights(
-          getLabel('tanks', locale, label) ?? '',
+          formatMessage(m.tanks) ?? '',
           adrRights.filter((field) => field.tankar),
         )
 
         if (tankar) data.push(tankar)
 
         const grunn = this.parseRights(
-          getLabel('otherThanTanks', locale, label) ?? '',
+          formatMessage(m.otherThanTanks) ?? '',
           adrRights,
         )
         if (grunn) data.push(grunn)
 
         return {
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.skirteinisNumer?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired: t.gildirTil
-              ? !isAfter(new Date(t.gildirTil), new Date())
-              : null,
-            expireDate: t.gildirTil ?? undefined,
+          licenseName: formatMessage(m.adrLicense),
+          type: 'user',
+          payload: {
+            data,
+            rawData: JSON.stringify(t),
+            metadata: {
+              licenseNumber: t.skirteinisNumer ?? '',
+              subtitle: formatMessage(m.licenseNumberVariant, {
+                arg: t.skirteinisNumer ?? formatMessage(m.unknown),
+              }),
+              licenseId: DEFAULT_LICENSE_ID,
+              expired: isExpired,
+              expireDate: t.gildirTil ?? undefined,
+              displayTag: expiryTag(
+                formatMessage,
+                isExpired,
+                t.gildirTil
+                  ? formatMessage(m.validUntil, {
+                      arg: formatDate(new Date(t.gildirTil)),
+                    })
+                  : undefined,
+              ),
+              name: formatMessage(m.adrLicense),
+              title: formatMessage(m.yourADRLicense),
+              description: [
+                { text: formatMessage(m.yourAdrLicenseDescription) },
+              ],
+            },
           },
         }
-      },
-    )
+      })
 
     return mappedPayload
   }
@@ -101,7 +131,6 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
         type: GenericLicenseDataFieldType.Category,
         name: field.flokkur ?? '',
         label: field.heiti ?? '',
-        description: field.heiti ?? '',
       })),
     }
   }

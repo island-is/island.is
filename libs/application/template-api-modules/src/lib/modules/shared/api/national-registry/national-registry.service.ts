@@ -17,6 +17,7 @@ import { NationalRegistryClientService } from '@island.is/clients/national-regis
 import { AssetsXRoadService } from '@island.is/api/domains/assets'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
+import { EES } from './EES'
 
 @Injectable()
 export class NationalRegistryService extends BaseTemplateApiService {
@@ -32,7 +33,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
     const individual = await this.getIndividual(auth.nationalId)
-
     //Check if individual is found in national registry
     if (!individual) {
       throw new TemplateApiError(
@@ -49,6 +49,25 @@ export class NationalRegistryService extends BaseTemplateApiService {
     if (params?.allowPassOnChild) {
       const children = await this.nationalRegistryApi.getCustodyChildren(auth)
       await this.validateChildren(params, children)
+    }
+
+    //allow parents whose children are icelandic citizenships in, but if no children, then check citizenship
+    if (params?.allowIfChildHasCitizenship) {
+      const children = await this.nationalRegistryApi.getCustodyChildren(auth)
+      if (children.length > 0) {
+        let foundChildWithIcelandicCitizenship = false
+        for (const child of children) {
+          const individual = await this.getIndividual(child)
+          if (individual?.citizenship?.code === 'IS') {
+            foundChildWithIcelandicCitizenship = true
+            break
+          }
+        }
+        //if child validates with icelandic citizenship, then do not check parents citizenship
+        if (foundChildWithIcelandicCitizenship) {
+          params = { ...params, icelandicCitizenship: false }
+        }
+      }
     }
 
     // Validate individual
@@ -73,6 +92,10 @@ export class NationalRegistryService extends BaseTemplateApiService {
     if (params?.ageToValidate && !isChild) {
       this.validateAge(params, individual)
     }
+
+    if (params?.citizenshipWithinEES) {
+      this.validateCitizenshipWithinEES(individual)
+    }
   }
 
   private async validateChildren(
@@ -84,6 +107,22 @@ export class NationalRegistryService extends BaseTemplateApiService {
       if (individual) {
         this.validateIndividual(individual, true, params)
       }
+    }
+  }
+
+  private validateCitizenshipWithinEES(individual: NationalRegistryIndividual) {
+    const isWithinEES = EES.some(
+      (country) => country.alpha2Code === individual.citizenship?.code,
+    )
+    if (!isWithinEES) {
+      // If individuals citizenship is not within EES
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryCitizenshipNotWithinEES,
+          summary: coreErrorMessages.nationalRegistryCitizenshipNotWithinEES,
+        },
+        400,
+      )
     }
   }
 

@@ -12,6 +12,7 @@ import {
 export type PortalMeta = {
   portalType: PortalType
   basePath: string
+  portalTitle: string
 }
 
 export type PortalContextProps = {

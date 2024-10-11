@@ -297,7 +297,13 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
     let scriptElement: HTMLScriptElement | null = null
 
-    if (hasButtonBeenClicked || showLauncher) {
+    const queryParam = new URLSearchParams(window.location.search).get('wa_lid')
+
+    if (
+      hasButtonBeenClicked ||
+      showLauncher ||
+      (queryParam && ['t10', 't11'].includes(queryParam))
+    ) {
       setLoading(true)
       scriptElement = loadScript(
         {
@@ -328,11 +334,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
             if (
               // Útlendingastofnun
-              props.integrationID !== '89a03e83-5c73-4642-b5ba-cd3771ceca54' &&
-              // Samgöngustofa
-              props.integrationID !== 'fe12e960-329c-46d5-9ae1-8bd8b8219f43' &&
-              // Samgöngustofa - english
-              props.integrationID !== '1e649a3f-9476-4995-ba24-0e72040b0cc0'
+              props.integrationID !== '89a03e83-5c73-4642-b5ba-cd3771ceca54'
             ) {
               // Keep the chat log in memory
               instance.on({

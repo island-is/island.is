@@ -8,6 +8,7 @@ import { renderServiceEnvVars } from './render-env-vars'
 import { renderLocalServices, runLocalServices } from './render-local-mocks'
 
 const cli = yargs(process.argv.slice(2))
+  .scriptName('yarn cli')
   .command(
     'render-env',
     'Render a chart for environment',
@@ -57,26 +58,42 @@ const cli = yargs(process.argv.slice(2))
     'Render environment variables needed by service.\nThis is to be used when developing locally and loading of the environment variables for "dev" environment is needed.',
     (yargs) => {
       return yargs
-        .option('service', { demandOption: true, array: true, type: 'string' })
+        .positional('services', {
+          type: 'string',
+          array: true,
+          demandOption: true,
+        })
         .option('json', { type: 'boolean', default: false })
-        .option('dry', { type: 'boolean', default: true })
-        .option('no-update-secrets', { type: 'boolean', default: false })
+        .option('dry', { type: 'boolean', default: false })
+        .option('no-update-secrets', {
+          type: 'boolean',
+          default: false,
+          alias: ['nosecrets', 'no-secrets'],
+        })
+        .demandCommand(1, 'You must pass at least one service to run!')
     },
-    async (argv) =>
-      await renderLocalServices({
-        services: argv.service,
+    async (argv) => {
+      const services = await renderLocalServices({
+        services: argv.services,
         dryRun: argv.dry,
         json: argv.json,
         print: true,
         noUpdateSecrets: argv['no-update-secrets'],
-      }),
+      })
+
+      return
+    },
   )
   .command(
     'run-local-env',
     'Render environment and run the local environment.\nThis is to be used when developing locally and loading of the environment variables for "dev" environment is needed.',
     (yargs) => {
       return yargs
-        .option('service', { array: true, type: 'string', demandOption: true })
+        .positional('services', {
+          type: 'string',
+          array: true,
+          demandOption: true,
+        })
         .option('dependencies', { array: true, type: 'string', default: [] })
         .option('json', { type: 'boolean', default: false })
         .option('dry', { type: 'boolean', default: false })
@@ -92,9 +109,10 @@ const cli = yargs(process.argv.slice(2))
           type: 'boolean',
           default: false,
         })
+        .demandCommand(1, 'You must pass at least one service to run!')
     },
     async (argv) =>
-      await runLocalServices(argv.service, argv.dependencies, {
+      await runLocalServices(argv.services, argv.dependencies, {
         dryRun: argv.dry,
         json: argv.json,
         neverFail: argv['never-fail'],

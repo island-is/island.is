@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { MMSApi } from '@island.is/clients/mms'
-import { HealthDirectorateClientService } from '@island.is/clients/health-directorate'
+import {
+  HealthDirectorateClientService,
+  HealthDirectorateLicenseStatus,
+} from '@island.is/clients/health-directorate'
 import type { User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -23,13 +26,6 @@ import type { ConfigType } from '@island.is/nest/config'
 import { handle404 } from '@island.is/clients/middlewares'
 
 const LOG_CATEGORY = 'occupational-licenses-service'
-
-type HealthDirectorateStatusValues =
-  | 'Í gildi'
-  | 'Ógilt'
-  | 'Í gildi - Takmörkun'
-  | 'Svipting'
-  | 'Afsal'
 
 type OccupationalLicenseResult<T> =
   | {
@@ -57,21 +53,21 @@ export class OccupationalLicensesService {
   ) {}
 
   private checkHealthDirectorateValidity = (
-    status: HealthDirectorateStatusValues | string,
+    status: HealthDirectorateLicenseStatus,
   ): OccupationalLicenseStatus => {
     switch (status) {
-      case 'Í gildi':
+      case 'VALID':
         return OccupationalLicenseStatus.valid
-      case 'Í gildi - Takmörkun':
+      case 'LIMITED':
         return OccupationalLicenseStatus.limited
-      case 'Svipting':
-        return OccupationalLicenseStatus.revoked
-      case 'Afsal':
-        return OccupationalLicenseStatus.waived
-      case 'Ógilt':
+      case 'INVALID':
         return OccupationalLicenseStatus.error
+      case 'REVOKED':
+        return OccupationalLicenseStatus.revoked
+      case 'WAIVED':
+        return OccupationalLicenseStatus.waived
       default:
-        this.logger.log('Unknown health directorate status', {
+        this.logger.warn('Unknown health directorate status', {
           category: LOG_CATEGORY,
           status: status,
         })
@@ -93,37 +89,24 @@ export class OccupationalLicensesService {
   ): Promise<OccupationalLicenseResponse> {
     try {
       const licenses = await this.healthDirectorateApi
-        .getHealthDirectorateLicense(user)
+        .getHealthDirectorateLicenseToPractice(user)
         .catch(handle404)
 
       const item =
         licenses &&
         licenses
-          .map((license) => {
-            if (
-              !license.leyfi ||
-              !license.starfsstett ||
-              !license.gildirFra ||
-              !license.leyfisnumer ||
-              !license.id ||
-              !license.logadiliID ||
-              !license.kennitala ||
-              !license.nafn ||
-              !license.stada
-            )
-              return null
-            return {
-              institution: OccupationalLicenseType.HEALTH,
-              id: license.id.toString(),
-              legalEntityId: license.logadiliID,
-              holderName: license.nafn,
-              profession: license.starfsstett,
-              type: license.leyfi,
-              number: license.leyfisnumer,
-              validFrom: license.gildirFra?.toString(),
-              status: this.checkHealthDirectorateValidity(license.stada),
-            }
-          })
+          .map((license) => ({
+            institution: OccupationalLicenseType.HEALTH,
+            id: license.id.toString(),
+            licenseNumber: license.licenseNumber,
+            legalEntityId: license.legalEntityId,
+            holderName: license.licenseHolderName,
+            profession: license.profession,
+            type: license.practice,
+            number: license.licenseNumber,
+            validFrom: license.validFrom?.toString(),
+            status: this.checkHealthDirectorateValidity(license.status),
+          }))
           .filter(isDefined)
           .find((license) => license.id === id)
 
@@ -154,37 +137,23 @@ export class OccupationalLicensesService {
   ): Promise<OccupationalLicenseResult<HealthDirectorateLicense>> {
     try {
       const licenses = await this.healthDirectorateApi
-        .getHealthDirectorateLicense(user)
+        .getHealthDirectorateLicenseToPractice(user)
         .catch(handle404)
 
       const items =
         licenses &&
         licenses
-          .map((license) => {
-            if (
-              !license.leyfi ||
-              !license.starfsstett ||
-              !license.gildirFra ||
-              !license.leyfisnumer ||
-              !license.id ||
-              !license.logadiliID ||
-              !license.kennitala ||
-              !license.nafn ||
-              !license.stada
-            )
-              return null
-            return {
-              institution: OccupationalLicenseType.HEALTH,
-              id: license.id.toString(),
-              legalEntityId: license.logadiliID,
-              holderName: license.nafn,
-              profession: license.starfsstett,
-              type: license.leyfi,
-              number: license.leyfisnumer,
-              validFrom: license.gildirFra?.toString(),
-              status: this.checkHealthDirectorateValidity(license.stada),
-            }
-          })
+          .map((license) => ({
+            institution: OccupationalLicenseType.HEALTH,
+            id: license.id.toString(),
+            legalEntityId: license.legalEntityId,
+            holderName: license.licenseHolderName,
+            profession: license.profession,
+            type: license.practice,
+            number: license.licenseNumber,
+            validFrom: license.validFrom?.toString(),
+            status: this.checkHealthDirectorateValidity(license.status),
+          }))
           .filter(isDefined)
 
       return {

@@ -1,43 +1,28 @@
 import { coreMessages, formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
-  StaticText,
   TableRepeaterField,
 } from '@island.is/application/types'
 import {
-  Stack,
+  AlertMessage,
   Box,
   Button,
+  GridRow,
+  Icon,
+  Stack,
   Table as T,
   Text,
-  Icon,
   Tooltip,
-  GridRow,
-  GridColumn,
-  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  CheckboxController,
-  DatePickerController,
-  FieldDescription,
-  InputController,
-  RadioController,
-  SelectController,
-} from '@island.is/shared/form-fields'
+import { FieldDescription } from '@island.is/shared/form-fields'
 import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { handleCustomMappedValues } from './utils'
+import { Item } from './TableRepeaterItem'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
-}
-
-const componentMapper = {
-  input: InputController,
-  select: SelectController,
-  checkbox: CheckboxController,
-  date: DatePickerController,
-  radio: RadioController,
 }
 
 export const TableRepeaterFormField: FC<Props> = ({
@@ -59,6 +44,9 @@ export const TableRepeaterFormField: FC<Props> = ({
     addItemButtonText = coreMessages.buttonAdd,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
+    editButtonTooltipText = coreMessages.editFieldText,
+    editField = false,
+    maxRows,
   } = data
 
   const items = Object.keys(rawItems).map((key) => ({
@@ -81,6 +69,10 @@ export const TableRepeaterFormField: FC<Props> = ({
   const tableHeader = table?.header ?? tableItems.map((item) => item.label)
   const tableRows = table?.rows ?? tableItems.map((item) => item.id)
   const staticData = getStaticTableData?.(application)
+  const canAddItem = maxRows ? savedFields.length < maxRows : true
+
+  // check for components that might need some custom value mapping
+  const customMappedValues = handleCustomMappedValues(tableItems, values)
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
@@ -104,14 +96,8 @@ export const TableRepeaterFormField: FC<Props> = ({
     remove(index)
   }
 
-  const getFieldError = (id: string) => {
-    /**
-     * Errors that occur in a field-array have incorrect typing
-     * This hack is needed to get the correct type
-     */
-    const errorList = error as unknown as Record<string, string>[] | undefined
-    const errors = errorList?.[activeIndex]
-    return errors?.[id]
+  const handleEditItem = (index: number) => {
+    setActiveIndex(index)
   }
 
   const formatTableValue = (key: string, item: Record<string, string>) => {
@@ -176,18 +162,42 @@ export const TableRepeaterFormField: FC<Props> = ({
                             type="button"
                             onClick={() => handleRemoveItem(index)}
                           >
-                            <Icon
-                              icon="removeCircle"
-                              type="outline"
-                              color="dark200"
-                            />
+                            <Icon icon="trash" type="outline" color="blue400" />
                           </button>
                         </Tooltip>
+                        &nbsp;&nbsp;
+                        {editField && (
+                          <Tooltip
+                            placement="left"
+                            text={formatText(
+                              editButtonTooltipText,
+                              application,
+                              formatMessage,
+                            )}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleEditItem(index)}
+                            >
+                              <Icon
+                                icon="pencil"
+                                color="blue400"
+                                type="outline"
+                                size="small"
+                              />
+                            </button>
+                          </Tooltip>
+                        )}
                       </Box>
                     </T.Data>
                     {tableRows.map((item, idx) => (
                       <T.Data key={`${item}-${idx}`}>
-                        {formatTableValue(item, values[index])}
+                        {formatTableValue(
+                          item,
+                          customMappedValues.length
+                            ? customMappedValues[index]
+                            : values[index],
+                        )}
                       </T.Data>
                     ))}
                   </T.Row>
@@ -202,70 +212,17 @@ export const TableRepeaterFormField: FC<Props> = ({
                 </Text>
               )}
               <GridRow rowGap={[2, 2, 2, 3]}>
-                {items.map((item) => {
-                  const {
-                    component,
-                    id: itemId,
-                    backgroundColor = 'blue',
-                    label = '',
-                    placeholder = '',
-                    options,
-                    width = 'full',
-                    condition,
-                    ...props
-                  } = item
-                  const isHalfColumn = component !== 'radio' && width === 'half'
-                  const span = isHalfColumn ? '1/2' : '1/1'
-                  const Component = componentMapper[component]
-                  const id = `${data.id}[${activeIndex}].${itemId}`
-                  const activeValues =
-                    activeIndex >= 0 && values ? values[activeIndex] : undefined
-
-                  const translatedOptions = options?.map((option) => ({
-                    ...option,
-                    label: formatText(option.label, application, formatMessage),
-                  }))
-
-                  if (condition && !condition(application, activeValues)) {
-                    return null
-                  }
-
-                  return (
-                    <GridColumn key={id} span={['1/1', '1/1', '1/1', span]}>
-                      {component === 'radio' && label && (
-                        <Text
-                          variant="h4"
-                          as="h4"
-                          id={id + 'title'}
-                          marginBottom={3}
-                        >
-                          {formatText(label, application, formatMessage)}
-                        </Text>
-                      )}
-                      <Component
-                        id={id}
-                        name={id}
-                        label={formatText(label, application, formatMessage)}
-                        options={translatedOptions}
-                        placeholder={formatText(
-                          placeholder,
-                          application,
-                          formatMessage,
-                        )}
-                        split={width === 'half' ? '1/2' : '1/1'}
-                        error={getFieldError(itemId)}
-                        control={methods.control}
-                        backgroundColor={backgroundColor}
-                        onChange={() => {
-                          if (error) {
-                            methods.clearErrors(id)
-                          }
-                        }}
-                        {...props}
-                      />
-                    </GridColumn>
-                  )
-                })}
+                {items.map((item) => (
+                  <Item
+                    key={`${data.id}[${activeIndex}].${item.id}`}
+                    application={application}
+                    error={error}
+                    item={item}
+                    dataId={data.id}
+                    activeIndex={activeIndex}
+                    values={values}
+                  />
+                ))}
               </GridRow>
               <Box display="flex" justifyContent="flexEnd">
                 <Button
@@ -284,6 +241,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                 type="button"
                 onClick={handleNewItem}
                 icon="add"
+                disabled={!canAddItem}
               >
                 {formatText(addItemButtonText, application, formatMessage)}
               </Button>

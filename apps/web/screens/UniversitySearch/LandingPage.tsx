@@ -7,15 +7,17 @@ import {
   AccordionItem,
   Box,
   GridColumn,
+  GridContainer,
+  GridRow,
   Hidden,
   Icon,
   Input,
   LinkV2,
   Text,
 } from '@island.is/island-ui/core'
+import { haskolanamTrackSearchQuery } from '@island.is/plausible'
 import {
   getThemeConfig,
-  NewsCard,
   OrganizationWrapper,
   SliceMachine,
 } from '@island.is/web/components'
@@ -84,6 +86,25 @@ const LandingPage: Screen<LandingPageProps> = ({
     })) ?? []
   const routeToSearch = () => {
     router.push(`${linkResolver('universitysearch').href}?search=${searchTerm}`)
+  }
+
+  const renderFirstSlice = (): React.ReactNode | null => {
+    const slice = organizationPage?.slices?.[0]
+    if (!slice) return null
+    return (
+      <Box>
+        <SliceMachine
+          key={slice.id}
+          slice={slice}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          namespace={namespace}
+          slug={organizationPage.slug}
+          fullWidth={false}
+          marginBottom={5}
+        />
+      </Box>
+    )
   }
 
   return (
@@ -198,52 +219,66 @@ const LandingPage: Screen<LandingPageProps> = ({
           display="flex"
           flexDirection={'column'}
         >
-          <GridColumn
-            span={['9/9', '9/9', '11/12']}
-            offset={['0', '0', '1/12']}
-          >
-            <Box>
-              <Text variant="h3" paddingBottom={1}>
-                {n('landingPageIntroTitle', 'Finndu þitt nám hér')}
-              </Text>
-              <Text variant="default">
-                {n(
-                  'landingPageIntroSubTitle',
-                  'Leitaðu upplýsinga um háskólanám á Íslandi.',
-                )}
-              </Text>
-            </Box>
-          </GridColumn>
-          <GridColumn
-            span={['9/9', '9/9', '11/12']}
-            offset={['0', '0', '1/12']}
-          >
-            <Input
-              placeholder={n('searchPrograms', 'Leit í háskólanámi')}
-              id="searchuniversity"
-              name="filterInput"
-              size="md"
-              value={searchTerm}
-              className={cn(styles.searchInput)}
-              backgroundColor="blue"
-              onChange={(e) => {
-                setSearchTerm(e.target.value)
-              }}
-              onKeyDown={(k) => {
-                if (k.code === 'Enter') {
-                  routeToSearch()
-                }
-              }}
-            />
-            <button
-              aria-label="Search"
-              className={cn(styles.searchIcon)}
-              onClick={() => routeToSearch()}
-            >
-              <Icon size="large" icon="search" color="blue400" />
-            </button>
-          </GridColumn>
+          {renderFirstSlice()}
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                span={['9/9', '9/9', '7/9']}
+                offset={['0', '0', '1/9']}
+              >
+                <Box>
+                  <Text variant="h3" paddingBottom={1}>
+                    {n('landingPageIntroTitle', 'Finndu þitt nám hér')}
+                  </Text>
+                  <Text variant="default">
+                    {n(
+                      'landingPageIntroSubTitle',
+                      'Leitaðu upplýsinga um háskólanám á Íslandi.',
+                    )}
+                  </Text>
+                </Box>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                span={['9/9', '9/9', '7/9']}
+                offset={['0', '0', '1/9']}
+              >
+                <Input
+                  placeholder={n('searchPrograms', 'Leit í háskólanámi')}
+                  id="searchuniversity"
+                  name="filterInput"
+                  size="md"
+                  value={searchTerm}
+                  className={cn(styles.searchInput)}
+                  backgroundColor="blue"
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value)
+                  }}
+                  onKeyDown={(k) => {
+                    if (k.code === 'Enter') {
+                      haskolanamTrackSearchQuery(searchTerm)
+                      routeToSearch()
+                    }
+                  }}
+                />
+                <button
+                  aria-label="Search"
+                  className={cn(styles.searchIcon)}
+                  onClick={() => {
+                    haskolanamTrackSearchQuery(searchTerm)
+                    routeToSearch()
+                  }}
+                >
+                  <Icon size="large" icon="search" color="blue400" />
+                </button>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
           {organizationPage?.slices?.map((slice, index) => {
+            if (index === 0) return null
             return (
               <Box key={index}>
                 <SliceMachine
@@ -264,30 +299,6 @@ const LandingPage: Screen<LandingPageProps> = ({
               </Box>
             )
           })}
-          <GridColumn
-            span={['9/9', '9/9', '11/12']}
-            offset={['0', '0', '1/12']}
-          >
-            <NewsCard
-              title={n('whatToLearn', 'Veistu hvað þú vilt læra?')}
-              readMoreText={`${n(
-                'searchForProgram',
-                'Leitaðu að háskólanámi',
-              )}`}
-              introduction={n(
-                'straightToApplying',
-                'Ef þú hefur ákveðið hvaða námsleið þú stefnir á í háskóla þá geturðu farið beint í umsóknarferlið',
-              )}
-              image={{
-                url: 'https://images.ctfassets.net/8k0h54kbe6bj/442DRqHvfQcYnuffRbnbHD/5d27a2e0a399aef064d5b3702821ff0b/woman_in_chair.png',
-              }}
-              href={
-                locale === 'is'
-                  ? 'https://island.is/haskolanam/leit'
-                  : 'https://island.is/en/university-studies/search'
-              }
-            />
-          </GridColumn>
         </Box>
       }
     >
@@ -301,8 +312,6 @@ const LandingPage: Screen<LandingPageProps> = ({
           slug={organizationPage.slug}
           fullWidth={true}
           params={{
-            latestNewsSliceBackground:
-              organizationPage.theme === 'landing_page' ? 'white' : 'purple100',
             latestNewsSliceColorVariant:
               organizationPage.theme === 'landing_page' ? 'blue' : 'default',
           }}

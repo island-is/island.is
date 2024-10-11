@@ -87,6 +87,12 @@ export class UniversityGatewayProgram {
 
   @CacheField(() => [String])
   modeOfDelivery!: string[]
+
+  @Field()
+  applicationPeriodOpen!: boolean
+
+  @Field()
+  applicationInUniversityGateway!: boolean
 }
 
 @ObjectType('UniversityGatewayProgramDetails')

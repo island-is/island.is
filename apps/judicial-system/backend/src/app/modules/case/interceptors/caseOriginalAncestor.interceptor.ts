@@ -1,5 +1,3 @@
-import { Observable } from 'rxjs'
-
 import {
   CallHandler,
   ExecutionContext,
@@ -9,24 +7,22 @@ import {
 } from '@nestjs/common'
 
 import { InternalCaseService } from '../internalCase.service'
+import { Case } from '../models/case.model'
 
 @Injectable()
 export class CaseOriginalAncestorInterceptor implements NestInterceptor {
   constructor(private readonly internalCaseService: InternalCaseService) {}
 
-  async intercept(
-    context: ExecutionContext,
-    next: CallHandler,
-  ): Promise<Observable<unknown>> {
+  async intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
 
-    if (!request.case) {
+    const theCase: Case = request.case
+
+    if (!theCase) {
       throw new InternalServerErrorException('Missing case')
     }
 
-    request.case = await this.internalCaseService.findOriginalAncestor(
-      request.case,
-    )
+    request.case = await this.internalCaseService.findOriginalAncestor(theCase)
 
     return next.handle()
   }

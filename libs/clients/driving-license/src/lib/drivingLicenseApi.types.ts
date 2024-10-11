@@ -28,16 +28,21 @@ export interface Disqualification {
   from?: Date | null
 }
 
+export interface Remark {
+  code: string
+  description: string
+}
 export interface DriversLicense {
   id: number
   name: string
   issued?: Date | null
   expires?: Date | null
   categories: DriversLicenseCategory[]
-  remarks?: string[]
+  remarks?: Remark[]
   disqualification?: Disqualification | null
   birthCountry?: string | null
   publishPlaceName?: string | null
+  comments?: LicenseComments[] | null
 }
 
 export interface RemarkCode {
@@ -49,6 +54,49 @@ export interface TeacherV4 {
   name: string
   nationalId: string
   driverLicenseId: number | null | undefined
+}
+
+export interface DriverLicenseWithoutImages {
+  id?: number
+  name?: string | null
+  socialSecurityNumber?: string | null
+  birthPlace?: string | null
+  birthPlaceName?: string | null
+  publishDate?: Date | null
+  dateValidTo?: Date
+  publishPlaceNr?: number
+  publishPlaceName?: string | null
+  categories?: Category[] | null
+  licenseComments?: string | null
+  comments?: LicenseComments[] | null
+  deprivation?: Deprivation
+}
+
+export interface Category {
+  id?: number
+  nr?: string | null
+  categoryName?: string | null
+  publishDate?: Date | null
+  dateTo?: Date
+  validToCode?: number
+  validToText?: string | null
+  comment?: string | null
+}
+
+interface Deprivation {
+  dateFrom?: Date | null
+  dateTo?: Date | null
+  licenseLost?: boolean | null
+  deprivationName?: string | null
+  deprivationType?: number | null
+  licenseExpired?: boolean | null
+  retakeLicense?: boolean | null
+}
+
+interface LicenseComments {
+  id?: number
+  nr?: string | null
+  comment?: string | null
 }
 
 export interface Jurisdiction {

@@ -13,13 +13,17 @@ interface Props {
   avatar?: ReactNode
   onClick?: (event: MouseEvent<HTMLElement>) => void
   large?: boolean
+  as?: 'div' | 'button'
+  imageClass?: string
 }
 
-const AvatarImage: FC<Props> = ({
+export const AvatarImage: FC<Props> = ({
   img,
   background,
   avatar,
   large,
+  imageClass,
+  as = 'button',
   onClick,
 }) => {
   const { formatMessage } = useLocale()
@@ -38,14 +42,24 @@ const AvatarImage: FC<Props> = ({
       className={cn(styles.imageContainer, {
         [styles.largeAvatar]: large,
       })}
-      component="button"
-      aria-label={formatMessage(messages.markAsBulkSelection)}
+      component={as}
+      aria-label={
+        as === 'button'
+          ? formatMessage(messages.markAsBulkSelection)
+          : undefined
+      }
       onClick={onClick}
     >
       {avatar ? (
         avatar
       ) : (
-        <img className={styles.image} src={img} alt="document" />
+        <img
+          className={cn(styles.image, {
+            [`${imageClass}`]: imageClass,
+          })}
+          src={img}
+          alt=""
+        />
       )}
     </Box>
   )

@@ -23,4 +23,10 @@ export const error = defineMessages({
     defaultMessage: 'Villa kom upp við að skila inn umsókn',
     description: 'Failed to submit application',
   },
+  invalidMileage: {
+    id: 'ta.tvo.application:error.invalidMileage',
+    defaultMessage:
+      'Km skráning þarf að vera sama eða hærri en síðasta skráning',
+    description: 'Invalid mileage error',
+  },
 })

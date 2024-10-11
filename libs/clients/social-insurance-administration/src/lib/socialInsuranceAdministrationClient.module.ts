@@ -1,14 +1,9 @@
 import { Module } from '@nestjs/common'
 import { SocialInsuranceAdministrationClientService } from './socialInsuranceAdministrationClient.service'
-import { ApiConfiguration } from './apiConfiguration'
-import { exportedApis } from './apis'
+import { apiProvider } from './apiProvider'
 
 @Module({
-  providers: [
-    ApiConfiguration,
-    ...exportedApis,
-    SocialInsuranceAdministrationClientService,
-  ],
+  providers: [...apiProvider, SocialInsuranceAdministrationClientService],
   exports: [SocialInsuranceAdministrationClientService],
 })
 export class SocialInsuranceAdministrationClientModule {}

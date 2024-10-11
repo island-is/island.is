@@ -68,7 +68,6 @@ const ATTACHMENTS = [
 
 const VALID_ESTATE_APPLICANT = '0101302399'
 const VALID_DEPARTED_PERSON = '0101302399'
-const INVALID_ESTATE_APPLICANT = '0101303019'
 
 const config = defineConfig({
   name: 'SyslumennApi',
@@ -234,26 +233,31 @@ describe('SyslumennService', () => {
 
   describe('getMortgageCertificate', () => {
     it('content should not be empty', async () => {
-      const response = await service.getMortgageCertificate(
-        MOCK_PROPERTY_NUMBER_OK,
-      )
+      const response = await service.getMortgageCertificate([
+        { propertyNumber: MOCK_PROPERTY_NUMBER_OK, propertyType: '0' },
+      ])
 
-      expect(response.contentBase64).toBeTruthy()
+      expect(response[0].contentBase64).toBeTruthy()
     })
 
     it('content should be a specific error message', async () => {
-      const response = await service.getMortgageCertificate(
-        MOCK_PROPERTY_NUMBER_NO_KMARKING,
-      )
+      const response = await service.getMortgageCertificate([
+        { propertyNumber: MOCK_PROPERTY_NUMBER_NO_KMARKING, propertyType: '0' },
+      ])
 
-      expect(response.contentBase64).toStrictEqual(
+      expect(response[0].contentBase64).toStrictEqual(
         MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
       )
     })
 
     it('should throw an error', async () => {
       return await service
-        .getMortgageCertificate(MOCK_PROPERTY_NUMBER_NOT_EXISTS)
+        .getMortgageCertificate([
+          {
+            propertyNumber: MOCK_PROPERTY_NUMBER_NOT_EXISTS,
+            propertyType: '0',
+          },
+        ])
         .catch((e) => {
           expect(e).toBeTruthy()
           expect.assertions(1)
@@ -263,27 +267,38 @@ describe('SyslumennService', () => {
 
   describe('validateMortgageCertificate', () => {
     it('hasKMarking should be true', async () => {
-      const res = await service.validateMortgageCertificate(
-        MOCK_PROPERTY_NUMBER_OK,
-        undefined,
-      )
-      expect(res.hasKMarking).toStrictEqual(true)
+      const res = await service.validateMortgageCertificate([
+        { propertyNumber: MOCK_PROPERTY_NUMBER_OK, propertyType: '0' },
+      ])
+      expect(res[0].hasKMarking).toStrictEqual(true)
     })
 
     it('hasKMarking should be false', async () => {
-      const res = await service.validateMortgageCertificate(
-        MOCK_PROPERTY_NUMBER_NO_KMARKING,
-        undefined,
-      )
-      expect(res.hasKMarking).toStrictEqual(false)
+      const res = await service.validateMortgageCertificate([
+        { propertyNumber: MOCK_PROPERTY_NUMBER_NO_KMARKING, propertyType: '0' },
+      ])
+      expect(res[0].hasKMarking).toStrictEqual(false)
     })
 
-    it('exists should be false', async () => {
-      const res = await service.validateMortgageCertificate(
-        MOCK_PROPERTY_NUMBER_NOT_EXISTS,
-        undefined,
-      )
-      expect(res.exists).toStrictEqual(false)
+    it('should throw an error', async () => {
+      return await service
+        .validateMortgageCertificate([
+          {
+            propertyNumber: MOCK_PROPERTY_NUMBER_NOT_EXISTS,
+            propertyType: '0',
+          },
+        ])
+        .catch((e) => {
+          expect(e).toBeTruthy()
+          expect.assertions(1)
+        })
+    })
+  })
+
+  describe('getAllPropertyDetails', () => {
+    it('property real estate address should exist', async () => {
+      const response = await service.getAllPropertyDetails('135791', '0')
+      expect(response.propertyNumber).toStrictEqual('135791')
     })
   })
 })

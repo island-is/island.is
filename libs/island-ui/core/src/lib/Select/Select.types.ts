@@ -18,6 +18,28 @@ export interface AriaError {
   'aria-invalid': boolean
   'aria-describedby': string
 }
+
+export type PropsBase = {
+  // Common custom props added for our custom Select
+  backgroundColor?: InputBackgroundColor
+  errorMessage?: string
+  filterConfig?: FilterConfig
+  hasError?: boolean
+  icon?: IconTypes
+  isCreatable?: boolean
+  label?: string
+  size?: 'xs' | 'sm' | 'md'
+
+  // Added as prop to forward to custom Input component
+  ariaError?: AriaError
+
+  // Added for CountryCodeSelect to forward prop to custom IndicatorsContainer component
+  inputHasLabel?: boolean
+
+  // Added for test support
+  dataTestId?: string
+}
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 declare module 'react-select/dist/declarations/src/Select' {
@@ -25,29 +47,10 @@ declare module 'react-select/dist/declarations/src/Select' {
     Option,
     IsMulti extends boolean,
     Group extends GroupBase<Option>,
-  > {
-    // Common custom props added for our custom Select
-    backgroundColor?: InputBackgroundColor
-    errorMessage?: string
-    filterConfig?: FilterConfig
-    hasError?: boolean
-    icon?: IconTypes
-    isCreatable?: boolean
-    label?: string
-    size?: 'xs' | 'sm' | 'md'
-
-    // Added as prop to forward to custom Input component
-    ariaError?: AriaError
-
-    // Added for CountryCodeSelect to forward prop to custom IndicatorsContainer component
-    inputHasLabel?: boolean
-
-    // Added for test support
-    dataTestId?: string
-  }
+  > extends PropsBase {}
 }
 
-// The typescript declaration customisations above does not allow to change existing props signature.
+// The typescript declaration customizations above does not allow to change existing props signature.
 // Therefore, we create our own Prop type to overwrite props.
 export type SelectProps<
   Option,
@@ -57,7 +60,7 @@ export type SelectProps<
   // @ts-ignore make web strict
 > = Omit<Props<Option, IsMulti, Group>, 'noOptionsMessage'> & {
   noOptionsMessage?: string
-}
+} & PropsBase
 
 // The Option type needs to be generic as the react-select library is generic.
 export type Option<Value> = {

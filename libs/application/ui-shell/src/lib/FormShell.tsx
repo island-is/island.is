@@ -1,21 +1,21 @@
 import React, { FC, useEffect, useReducer, useState } from 'react'
-import cn from 'classnames'
 
 import {
   Application,
   Form,
   FormModes,
   Schema,
+  SectionChildren,
 } from '@island.is/application/types'
 import {
   Box,
   GridColumn,
   GridContainer,
   GridRow,
+  Text,
 } from '@island.is/island-ui/core'
 
 import Screen from '../components/Screen'
-import FormStepper from '../components/FormStepper'
 import {
   ApplicationReducer,
   initializeReducer,
@@ -27,6 +27,9 @@ import { useHeaderInfo } from '../context/HeaderInfoProvider'
 import * as styles from './FormShell.css'
 import { ErrorShell } from '../components/ErrorShell'
 import { useAuth } from '@island.is/auth/react'
+import { useLocale } from '@island.is/localization'
+import { MessageDescriptor } from 'react-intl'
+import FormStepper from '../components/FormStepper'
 
 export const FormShell: FC<
   React.PropsWithChildren<{
@@ -54,6 +57,7 @@ export const FormShell: FC<
     },
     initializeReducer,
   )
+  const { formatMessage } = useLocale()
   const {
     activeScreen,
     application: storedApplication,
@@ -169,12 +173,11 @@ export const FormShell: FC<
                 className={styles.sidebarInner}
               >
                 <FormStepper
-                  application={storedApplication}
-                  mode={mode}
-                  showTag={showProgressTag}
                   form={form}
                   sections={sections}
-                  screen={currentScreen}
+                  screens={screens}
+                  currentScreen={currentScreen}
+                  application={application}
                 />
                 {FormLogo && (
                   <Box

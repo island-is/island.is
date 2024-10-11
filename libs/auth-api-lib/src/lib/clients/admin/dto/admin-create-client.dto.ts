@@ -1,5 +1,13 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
+import { ApiProperty, OmitType } from '@nestjs/swagger'
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator'
+
+import { AuthDelegationType } from '@island.is/shared/types'
 
 import { ClientType } from '../../../types'
 import { AdminPatchClientDto } from './admin-patch-client.dto'
@@ -15,7 +23,10 @@ const CreateClientType = {
   [ClientType.web]: ClientType.web,
 }
 
-export class AdminCreateClientDto extends AdminPatchClientDto {
+export class AdminCreateClientDto extends OmitType(AdminPatchClientDto, [
+  'removedDelegationTypes',
+  'addedDelegationTypes',
+]) {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
@@ -38,4 +49,13 @@ export class AdminCreateClientDto extends AdminPatchClientDto {
     example: 'Client name',
   })
   readonly clientName!: string
+
+  @IsArray()
+  @IsOptional()
+  @IsEnum(AuthDelegationType, { each: true })
+  @ApiProperty({
+    example: ['Custom'],
+    type: [String],
+  })
+  supportedDelegationTypes?: AuthDelegationType[]
 }

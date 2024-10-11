@@ -12,6 +12,7 @@ import {
   FormModes,
   NationalRegistryUserApi,
   DefaultEvents,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
@@ -65,11 +66,19 @@ export const PrerequisitesForm: Form = buildForm({
                   .skraInformationSubTitle,
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationApplicantApi,
+              provider: UserProfileApi,
               title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
               subTitle:
+                socialInsuranceAdministrationMessage.pre.contactInfoDescription,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationApplicantApi,
+              title:
                 socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationInformationDescription,
+                  .socialInsuranceAdministrationTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationDescription,
             }),
             buildDataProviderItem({
               id: 'sia.data',
@@ -124,31 +133,6 @@ export const PrerequisitesForm: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'infoSection',
-      title: socialInsuranceAdministrationMessage.info.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.overviewTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'additionalInformation',
-      title: socialInsuranceAdministrationMessage.additionalInfo.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirm',
-      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'conclusion',
-      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
-      children: [],
     }),
   ],
 })

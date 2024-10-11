@@ -1,4 +1,4 @@
-import React, { SetStateAction, useCallback } from 'react'
+import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
@@ -10,9 +10,9 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { useCreateDefendantMutation } from './createDefendantt.generated'
-import { useDeleteDefendantMutation } from './deleteDefendantt.generated'
-import { useUpdateDefendantMutation } from './updateDefendantt.generated'
+import { useCreateDefendantMutation } from './createDefendant.generated'
+import { useDeleteDefendantMutation } from './deleteDefendant.generated'
+import { useUpdateDefendantMutation } from './updateDefendant.generated'
 
 const useDefendants = () => {
   const { formatMessage } = useIntl()
@@ -50,13 +50,10 @@ const useDefendants = () => {
           variables: { input: { caseId, defendantId } },
         })
 
-        if (data?.deleteDefendant?.deleted) {
-          return true
-        } else {
-          return false
-        }
+        return Boolean(data?.deleteDefendant?.deleted)
       } catch (error) {
-        formatMessage(errors.deleteDefendant)
+        toast.error(formatMessage(errors.deleteDefendant))
+        return false
       }
     },
     [deleteDefendantMutation, formatMessage],
@@ -71,13 +68,10 @@ const useDefendants = () => {
           },
         })
 
-        if (data) {
-          return true
-        } else {
-          return false
-        }
+        return Boolean(data)
       } catch (error) {
         toast.error(formatMessage(errors.updateDefendant))
+        return false
       }
     },
     [formatMessage, updateDefendantMutation],
@@ -86,7 +80,7 @@ const useDefendants = () => {
   const updateDefendantState = useCallback(
     (
       update: UpdateDefendantInput,
-      setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<Case>>,
     ) => {
       setWorkingCase((prevWorkingCase: Case) => {
         if (!prevWorkingCase.defendants) {
@@ -112,7 +106,7 @@ const useDefendants = () => {
   const setAndSendDefendantToServer = useCallback(
     (
       update: UpdateDefendantInput,
-      setWorkingCase: React.Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<Case>>,
     ) => {
       updateDefendantState(update, setWorkingCase)
       updateDefendant(update)

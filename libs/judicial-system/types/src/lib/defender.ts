@@ -48,6 +48,6 @@ export const mapToLawyer = (lawyer: LawyerFull): Lawyer => {
     practice: lawyer.Practice,
     email: lawyer.Email,
     phoneNr: lawyer.GSM,
-    nationalId: lawyer.SSN,
+    nationalId: lawyer.SSN.replace(/\D/g, ''), // Remove all non-numeric characters
   }
 }

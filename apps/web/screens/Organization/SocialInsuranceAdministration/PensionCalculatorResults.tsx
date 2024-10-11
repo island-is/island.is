@@ -268,6 +268,8 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
 
   const higlightedItemIsPresent = highlightedItems.length > 0
 
+  const isTurnedOff = customPageData?.configJson?.isTurnedOff ?? false
+
   return (
     <>
       <Box printHidden>
@@ -278,96 +280,53 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
           ogImageUrl={organizationPage.featuredImage?.url}
           indexableBySearchEngine={false}
         >
-          <GridContainer>
-            <GridRow>
-              <GridColumn
-                offset={['0', '0', '0', '1/9']}
-                className={styles.fullWidth}
-              >
-                <Box paddingY={6}>
-                  <Stack space={5}>
-                    <Stack space={2}>
+          {isTurnedOff && (
+            <GridContainer>
+              <GridRow>
+                <GridColumn
+                  offset={['0', '0', '0', '1/9']}
+                  className={styles.fullWidth}
+                >
+                  <Box paddingY={5}>
+                    <Stack space={3}>
                       <Text variant="h1" as="h1">
                         {title}
                       </Text>
-                      <Box className={styles.textMaxWidth}>
-                        <Text>
-                          {formatMessage(translationStrings.resultDisclaimer)}
-                        </Text>
-                      </Box>
+                      <Text>
+                        {formatMessage(translationStrings.isTurnedOff)}
+                      </Text>
                     </Stack>
-                    {higlightedItemIsPresent && (
-                      <HighlightedItems
-                        customPageData={customPageData}
-                        highlightedItems={highlightedItems}
-                        firstItemRightAlignedContent={
-                          <Hidden print below="md">
-                            <LinkV2
-                              href={`${
-                                linkResolver('pensioncalculator').href
-                              }?${queryParamString}`}
-                            >
-                              <Button unfocusable={true} size="small">
-                                {formatMessage(
-                                  translationStrings.changeAssumptions,
-                                )}
-                              </Button>
-                            </LinkV2>
-                          </Hidden>
-                        }
-                      />
-                    )}
-                    <Hidden print above="sm">
-                      <LinkV2
-                        href={`${
-                          linkResolver('pensioncalculator').href
-                        }?${queryParamString}`}
-                      >
-                        <Button unfocusable={true} size="small">
-                          {formatMessage(translationStrings.changeAssumptions)}
-                        </Button>
-                      </LinkV2>
-                    </Hidden>
+                  </Box>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          )}
 
-                    {!calculationIsPresent && (
-                      <AlertMessage
-                        type="warning"
-                        message={formatMessage(
-                          translationStrings.noResultsCanBeShown,
-                        )}
-                      />
-                    )}
-
-                    {calculationIsPresent && (
-                      <Accordion dividerOnTop={false}>
-                        <AccordionItem
-                          startExpanded={!higlightedItemIsPresent}
-                          id="resultDetails"
-                          labelVariant="h3"
-                          labelUse="h3"
-                          label={formatMessage(
-                            translationStrings.resultDetailsLabel,
-                          )}
-                        >
-                          <Box paddingBottom={3}>
-                            <Stack space={3}>
-                              <Box display="flex" justifyContent="flexEnd">
-                                <Hidden print>
-                                  <Button
-                                    icon="print"
-                                    variant="utility"
-                                    onClick={() => {
-                                      window.print()
-                                    }}
-                                  >
-                                    {formatMessage(translationStrings.print)}
-                                  </Button>
-                                </Hidden>
-                              </Box>
-                              <ResultTable groups={calculation.groups} />
-                            </Stack>
-
-                            <Hidden print>
+          {!isTurnedOff && (
+            <GridContainer>
+              <GridRow>
+                <GridColumn
+                  offset={['0', '0', '0', '1/9']}
+                  className={styles.fullWidth}
+                >
+                  <Box paddingY={6}>
+                    <Stack space={5}>
+                      <Stack space={2}>
+                        <Text variant="h1" as="h1">
+                          {title}
+                        </Text>
+                        <Box className={styles.textMaxWidth}>
+                          <Text>
+                            {formatMessage(translationStrings.resultDisclaimer)}
+                          </Text>
+                        </Box>
+                      </Stack>
+                      {higlightedItemIsPresent && (
+                        <HighlightedItems
+                          customPageData={customPageData}
+                          highlightedItems={highlightedItems}
+                          firstItemRightAlignedContent={
+                            <Hidden print below="md">
                               <LinkV2
                                 href={`${
                                   linkResolver('pensioncalculator').href
@@ -380,15 +339,84 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                                 </Button>
                               </LinkV2>
                             </Hidden>
-                          </Box>
-                        </AccordionItem>
-                      </Accordion>
-                    )}
-                  </Stack>
-                </Box>
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
+                          }
+                        />
+                      )}
+                      <Hidden print above="sm">
+                        <LinkV2
+                          href={`${
+                            linkResolver('pensioncalculator').href
+                          }?${queryParamString}`}
+                        >
+                          <Button unfocusable={true} size="small">
+                            {formatMessage(
+                              translationStrings.changeAssumptions,
+                            )}
+                          </Button>
+                        </LinkV2>
+                      </Hidden>
+
+                      {!calculationIsPresent && (
+                        <AlertMessage
+                          type="warning"
+                          message={formatMessage(
+                            translationStrings.noResultsCanBeShown,
+                          )}
+                        />
+                      )}
+
+                      {calculationIsPresent && (
+                        <Accordion dividerOnTop={false}>
+                          <AccordionItem
+                            startExpanded={!higlightedItemIsPresent}
+                            id="resultDetails"
+                            labelVariant="h3"
+                            labelUse="h3"
+                            label={formatMessage(
+                              translationStrings.resultDetailsLabel,
+                            )}
+                          >
+                            <Box paddingBottom={3}>
+                              <Stack space={3}>
+                                <Box display="flex" justifyContent="flexEnd">
+                                  <Hidden print>
+                                    <Button
+                                      icon="print"
+                                      variant="utility"
+                                      onClick={() => {
+                                        window.print()
+                                      }}
+                                    >
+                                      {formatMessage(translationStrings.print)}
+                                    </Button>
+                                  </Hidden>
+                                </Box>
+                                <ResultTable groups={calculation.groups} />
+                              </Stack>
+
+                              <Hidden print>
+                                <LinkV2
+                                  href={`${
+                                    linkResolver('pensioncalculator').href
+                                  }?${queryParamString}`}
+                                >
+                                  <Button unfocusable={true} size="small">
+                                    {formatMessage(
+                                      translationStrings.changeAssumptions,
+                                    )}
+                                  </Button>
+                                </LinkV2>
+                              </Hidden>
+                            </Box>
+                          </AccordionItem>
+                        </Accordion>
+                      )}
+                    </Stack>
+                  </Box>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          )}
         </PensionCalculatorWrapper>
       </Box>
 

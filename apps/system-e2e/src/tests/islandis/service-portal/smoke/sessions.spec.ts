@@ -35,7 +35,7 @@ test.describe('Service portal, in session history', () => {
 
     // Act
     await page.goto(sessionHistoryUrl, {
-      waitUntil: 'load',
+      waitUntil: 'networkidle',
     })
     await expect(page.getByRole('heading', { name: 'Notkun' })).toBeVisible()
     const sessionsRows = page.locator('table > tbody > tr')
@@ -76,7 +76,7 @@ test.describe('Service portal, in session history', () => {
 
     // Act
     await page.goto(icelandicAndNoPopupUrl(sessionHistoryUrl), {
-      waitUntil: 'load',
+      waitUntil: 'networkidle',
     })
     const sessionsRows = page.getByRole('row')
 

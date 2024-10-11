@@ -36,6 +36,8 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     largeButtons,
     backgroundColor,
     required,
+    hasIllustration,
+    widthWithIllustration,
   } = field
   const { formatMessage } = useLocale()
 
@@ -73,7 +75,13 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
           id={id}
           disabled={disabled}
           error={error}
-          split={width === 'half' ? '1/2' : '1/1'}
+          split={
+            widthWithIllustration
+              ? widthWithIllustration
+              : width === 'half'
+              ? '1/2'
+              : '1/1'
+          }
           name={id}
           defaultValue={
             ((getValueViaPath(application.answers, id) as string[]) ??
@@ -93,6 +101,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
             }),
           }))}
           onSelect={field.onSelect}
+          hasIllustration={hasIllustration}
         />
       </Box>
     </Box>

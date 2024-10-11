@@ -1,17 +1,26 @@
-import { TestApp, truncate } from '@island.is/testing/nest'
-import { testCases } from './delegations-filters-test-cases'
-import request from 'supertest'
-import faker from 'faker'
-import { setupWithAuth } from '../../../../test/setup'
-import { createNationalRegistryUser } from '@island.is/testing/fixtures'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { DelegationDTO } from '@island.is/auth-api-lib'
-import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
-import { user } from './delegations-filters-types'
-import { Sequelize } from 'sequelize-typescript'
-import { getConnectionToken } from '@nestjs/sequelize'
 import { Type } from '@nestjs/common'
+import { getConnectionToken } from '@nestjs/sequelize'
+import faker from 'faker'
+import { Sequelize } from 'sequelize-typescript'
+import request from 'supertest'
+
+import { MergedDelegationDTO } from '@island.is/auth-api-lib'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { FixtureFactory } from '@island.is/services/auth/testing'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
+import { createNationalRegistryUser } from '@island.is/testing/fixtures'
+import { TestApp, truncate } from '@island.is/testing/nest'
+
+import {
+  nonExistingLegalRepresentativeNationalId,
+  setupWithAuth,
+} from '../../../../test/setup'
+import { testCases } from './delegations-filters-test-cases'
+import { user } from './delegations-filters-types'
 
 describe('DelegationsController', () => {
   let sequelize: Sequelize
@@ -20,7 +29,6 @@ describe('DelegationsController', () => {
   let factory: FixtureFactory
   let nationalRegistryApi: NationalRegistryClientService
   let rskApi: RskRelationshipsClient
-
   beforeAll(async () => {
     app = await setupWithAuth({
       user: user,
@@ -38,7 +46,6 @@ describe('DelegationsController', () => {
           name: faker.name.findName(),
         }),
       )
-
     rskApi = app.get(RskRelationshipsClient)
 
     factory = new FixtureFactory(app)
@@ -58,7 +65,9 @@ describe('DelegationsController', () => {
       beforeAll(async () => {
         await truncate(sequelize)
 
-        await factory.createDomain(testCase.domain)
+        await Promise.all(
+          testCase.domains.map((domain) => factory.createDomain(domain)),
+        )
 
         await factory.createClient(testCase.client)
 
@@ -84,6 +93,17 @@ describe('DelegationsController', () => {
           ),
         )
 
+        await Promise.all(
+          testCase.fromLegalRepresentative.map((nationalId) =>
+            factory.createDelegationIndexRecord({
+              fromNationalId: nationalId,
+              toNationalId: testCase.user.nationalId,
+              type: AuthDelegationType.LegalRepresentative,
+              provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+            }),
+          ),
+        )
+
         jest
           .spyOn(nationalRegistryApi, 'getCustodyChildren')
           .mockImplementation(async () => testCase.fromChildren)
@@ -93,15 +113,76 @@ describe('DelegationsController', () => {
           .mockImplementation(async () => testCase.procuration)
       })
 
+      let res: request.Response
+
       it(`GET ${path} returns correct filtered delegations`, async () => {
-        const res = await server.get(path)
+        res = await server.get(path)
 
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(testCase.expectedFrom.length)
         expect(
-          res.body.map((d: DelegationDTO) => d.fromNationalId).sort(),
+          res.body.map((d: MergedDelegationDTO) => d.fromNationalId).sort(),
         ).toEqual(testCase.expectedFrom.sort())
+        if (testCase.expectedTypes) {
+          expect(res.body[0].types.sort()).toEqual(
+            testCase.expectedTypes.sort(),
+          )
+        }
       })
     },
   )
+
+  describe('verify', () => {
+    const testCase = testCases['legalRepresentative1']
+    testCase.user = user
+    const path = '/v1/delegations/verify'
+
+    beforeAll(async () => {
+      await truncate(sequelize)
+
+      await Promise.all(
+        testCase.domains.map((domain) => factory.createDomain(domain)),
+      )
+
+      await factory.createClient(testCase.client)
+
+      await Promise.all(
+        testCase.clientAllowedScopes.map((scope) =>
+          factory.createClientAllowedScope(scope),
+        ),
+      )
+
+      await Promise.all(
+        testCase.apiScopes.map((scope) => factory.createApiScope(scope)),
+      )
+
+      await factory.createDelegationIndexRecord({
+        fromNationalId: nonExistingLegalRepresentativeNationalId,
+        toNationalId: testCase.user.nationalId,
+        type: AuthDelegationType.LegalRepresentative,
+        provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+      })
+    })
+
+    let res: request.Response
+    it(`POST ${path} returns verified response`, async () => {
+      res = await server.post(path).send({
+        fromNationalId: testCase.fromLegalRepresentative[0],
+        delegationTypes: [AuthDelegationType.LegalRepresentative],
+      })
+
+      expect(res.status).toEqual(200)
+      expect(res.body.verified).toEqual(true)
+    })
+
+    it(`POST ${path} returns non-verified response`, async () => {
+      res = await server.post(path).send({
+        fromNationalId: nonExistingLegalRepresentativeNationalId,
+        delegationTypes: [AuthDelegationType.LegalRepresentative],
+      })
+
+      expect(res.status).toEqual(200)
+      expect(res.body.verified).toEqual(false)
+    })
+  })
 })

@@ -1,28 +1,34 @@
-import {
-  buildForm,
-  buildCustomField,
-  buildMultiField,
-} from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { m } from '../lib/messages'
+import { PREPAID_INHERITANCE } from '../lib/constants'
 
 export const done: Form = buildForm({
   id: 'inheritanceReportDone',
   title: '',
   mode: FormModes.COMPLETED,
-  renderLastScreenButton: true,
   children: [
-    buildMultiField({
-      id: 'done',
-      title: m.doneTitle,
-      description: m.doneDescription,
-      children: [
-        buildCustomField({
-          id: 'doneImage',
-          component: 'DoneImage',
-          title: '',
-        }),
-      ],
+    buildFormConclusionSection({
+      sectionTitle: '',
+      multiFieldTitle: m.doneMultiFieldTitleEFS,
+      alertTitle: m.doneAlertTitleEFS,
+      alertMessage: ({ answers }) =>
+        answers.applicationFor === PREPAID_INHERITANCE
+          ? m.doneTitlePrepaidEFS
+          : m.doneTitleEFS,
+      expandableHeader: ({ answers }) =>
+        answers.applicationFor === PREPAID_INHERITANCE
+          ? m.expandableHeaderPrepaid
+          : m.expandableHeaderEFS,
+      expandableIntro: ({ answers }) =>
+        answers.applicationFor === PREPAID_INHERITANCE
+          ? m.expandableIntroPrepaid
+          : m.expandableIntroEFS,
+      expandableDescription: ({ answers }) =>
+        answers.applicationFor === PREPAID_INHERITANCE
+          ? m.doneDescriptionPrepaidEFS
+          : m.doneDescriptionEFS,
     }),
   ],
 })

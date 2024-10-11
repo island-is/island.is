@@ -5,21 +5,19 @@ import { useGetWorkMachineByIdQuery } from './WorkMachinesDetail.generated'
 import {
   IntroHeader,
   TableGrid,
-  UserInfoLine,
+  InfoLine,
   formatDate,
   m,
   VINNUEFTIRLITID_SLUG,
+  InfoLineStack,
 } from '@island.is/service-portal/core'
 import { messages, vehicleMessage } from '../../lib/messages'
 import {
   Box,
   Button,
-  Divider,
   GridColumn,
   GridRow,
   Inline,
-  Stack,
-  Text,
   IconMapIcon,
   Link,
 } from '@island.is/island-ui/core'
@@ -38,6 +36,7 @@ const OrderedLinks = [
   WorkMachinesAction.REQUEST_INSPECTION,
   WorkMachinesAction.REGISTER_FOR_TRAFFIC,
   WorkMachinesAction.CHANGE_STATUS,
+  WorkMachinesAction.SUPERVISOR_CHANGE,
 ]
 
 const WorkMachinesDetail = () => {
@@ -153,47 +152,49 @@ const WorkMachinesDetail = () => {
             </GridColumn>
           </GridRow>
           <Box marginBottom={[2, 2, 6]}>
-            <Stack space={2}>
-              <Text variant="eyebrow" color="purple400">
-                {formatMessage(messages.baseInfoWorkMachineTitle)}
-              </Text>
-              <UserInfoLine
+            <InfoLineStack
+              label={formatMessage(messages.baseInfoWorkMachineTitle)}
+            >
+              <InfoLine
                 label={labels.registrationNumber ?? ''}
                 content={workMachine?.registrationNumber ?? ''}
                 loading={loading}
               />
-              <Divider />
-              <UserInfoLine
+              <InfoLine
                 label={labels.type ?? ''}
                 content={workMachine?.type ?? ''}
                 loading={loading}
               />
-              <Divider />
-              <UserInfoLine
+              <InfoLine
                 label={labels.category ?? ''}
                 content={workMachine?.category ?? ''}
                 loading={loading}
               />
-              <Divider />
-              <UserInfoLine
+              <InfoLine
                 label={labels.subCategory ?? ''}
                 content={workMachine?.subCategory ?? ''}
                 loading={loading}
               />
-              <Divider />
-              <UserInfoLine
+              <InfoLine
+                label={labels.dateLastInspection ?? ''}
+                content={
+                  workMachine?.dateLastInspection
+                    ? formatDate(workMachine.dateLastInspection)
+                    : formatMessage(messages.noInspection)
+                }
+                loading={loading}
+              />
+              <InfoLine
                 label={labels.registrationDate ?? ''}
                 content={formatDate(workMachine?.registrationDate ?? '')}
                 loading={loading}
               />
-              <Divider />
-              <UserInfoLine
+              <InfoLine
                 label={labels.status ?? ''}
                 content={workMachine?.status ?? ''}
                 loading={loading}
               />
-              <Divider />
-            </Stack>
+            </InfoLineStack>
           </Box>
           <Box marginBottom={[2, 2, 6]}>
             <TableGrid
@@ -267,64 +268,52 @@ const WorkMachinesDetail = () => {
             />
           </Box>
           <Box marginBottom={[2, 2, 6]}>
-            <Stack space={2}>
-              <UserInfoLine
-                title={formatMessage(m.owner)}
+            <InfoLineStack label={formatMessage(m.owner)}>
+              <InfoLine
                 label={labels.ownerName}
                 content={workMachine?.ownerName ?? ''}
                 loading={loading}
               />
-              <Divider />
-              <UserInfoLine
+              <InfoLine
                 label={labels.ownerNationalId}
                 content={format(workMachine?.ownerNationalId ?? '')}
                 loading={loading}
               />
-              <Divider />
-              <UserInfoLine
+              <InfoLine
                 label={labels.ownerAddress}
                 content={workMachine?.ownerAddress ?? ''}
                 loading={loading}
               />
-              <Divider />
-              <UserInfoLine
+              <InfoLine
                 label={labels.ownerPostcode}
                 content={workMachine?.ownerPostcode ?? ''}
                 loading={loading}
               />
-              <Divider />
-            </Stack>
+            </InfoLineStack>
           </Box>
           <Box marginBottom={[2, 2, 6]}>
-            <Stack space={2}>
-              <Text variant="eyebrow" color="purple400">
-                {formatMessage(vehicleMessage.operator)}
-              </Text>
-              <UserInfoLine
+            <InfoLineStack label={formatMessage(vehicleMessage.operator)}>
+              <InfoLine
                 label={labels.supervisorName}
                 content={workMachine?.supervisorName ?? ''}
                 loading={loading}
               />
-              <Divider />
-              <UserInfoLine
+              <InfoLine
                 label={labels.supervisorNationalId}
                 content={format(workMachine?.supervisorNationalId ?? '')}
                 loading={loading}
               />
-              <Divider />
-              <UserInfoLine
+              <InfoLine
                 label={labels.supervisorAddress}
                 content={workMachine?.supervisorAddress ?? ''}
                 loading={loading}
               />
-              <Divider />
-              <UserInfoLine
+              <InfoLine
                 label={labels.supervisorPostcode}
                 content={workMachine?.supervisorPostcode ?? ''}
                 loading={loading}
               />
-              <Divider />
-            </Stack>
+            </InfoLineStack>
           </Box>
         </>
       )}

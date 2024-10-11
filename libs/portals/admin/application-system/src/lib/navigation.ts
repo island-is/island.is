@@ -12,7 +12,12 @@ export const applicationSystemNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.overview,
-      path: ApplicationSystemPaths.Root,
+      path: ApplicationSystemPaths.Overview,
+      activeIfExact: true,
+    },
+    {
+      name: m.statistics,
+      path: ApplicationSystemPaths.Statistics,
       activeIfExact: true,
     },
   ],

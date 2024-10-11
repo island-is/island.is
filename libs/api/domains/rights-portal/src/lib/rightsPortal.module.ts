@@ -11,14 +11,13 @@ import { HealthCenterResolver } from './healthCenter/healthCenter.resolver'
 import { HealthCenterService } from './healthCenter/healthCenter.service'
 import { TherapyService } from './therapy/therapy.service'
 import { TherapyResolver } from './therapy/therapy.resolver'
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { OverviewService } from './overview/overview.service'
 import { OverviewResolver } from './overview/overview.resolver'
 import { PaymentResolver } from './payment/payment.resolver'
 import { PaymentService } from './payment/payment.service'
 
 @Module({
-  imports: [RightsPortalClientModule, AuthModule, FeatureFlagModule],
+  imports: [RightsPortalClientModule, AuthModule],
   providers: [
     AidOrNutritionResolver,
     AidOrNutritionService,

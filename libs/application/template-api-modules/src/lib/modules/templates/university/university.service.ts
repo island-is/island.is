@@ -4,7 +4,6 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
-  ApplicationWithAttachments,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 
@@ -23,7 +22,10 @@ import {
   CreateApplicationDtoEducationOptionEnum,
 } from '@island.is/clients/university-gateway-api'
 
-import { UniversityAnswers } from '@island.is/application/templates/university'
+import {
+  UniversityAnswers,
+  UniversityGatewayProgram,
+} from '@island.is/application/templates/university'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { InnaClientService } from '@island.is/clients/inna'
 
@@ -120,6 +122,14 @@ export class UniversityService extends BaseTemplateApiService {
       email: userFromAnswers.email,
       phone: userFromAnswers.phone,
     }
+    const programs = externalData.programs
+      ?.data as Array<UniversityGatewayProgram>
+    const modesOfDeliveryFromChosenProgram = programs.find(
+      (x) => x.id === answers.programInformation.program,
+    )
+    const defaultModeOfDelivery = modesOfDeliveryFromChosenProgram
+      ?.modeOfDelivery[0]
+      .modeOfDelivery as CreateApplicationDtoModeOfDeliveryEnum
 
     //all possible types of education data from the application answers
     const educationOptionChosen =
@@ -136,9 +146,17 @@ export class UniversityService extends BaseTemplateApiService {
     const exemptionData =
       educationOptionChosen === UniversityApplicationTypes.EXEMPTION
         ? {
-            degreeAttachments: await this.getFilesFromAttachment(
-              application,
-              answers.educationDetails.exemptionDetails?.degreeAttachments,
+            degreeAttachments: await this.getAttachmentUrls(
+              answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
+                (x, i) => {
+                  const type = this.mapFileTypes(i)
+                  return {
+                    name: x.name,
+                    key: x.key,
+                    type: type,
+                  }
+                },
+              ),
             ),
             moreDetails: answers.educationDetails.exemptionDetails?.moreDetails,
           }
@@ -158,9 +176,17 @@ export class UniversityService extends BaseTemplateApiService {
             degreeEndDate: answers.educationDetails.thirdLevelDetails?.endDate,
             moreDetails:
               answers.educationDetails.thirdLevelDetails?.moreDetails,
-            degreeAttachments: await this.getFilesFromAttachment(
-              application,
-              answers.educationDetails.thirdLevelDetails?.degreeAttachments,
+            degreeAttachments: await this.getAttachmentUrls(
+              answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
+                (x, i) => {
+                  const type = this.mapFileTypes(i)
+                  return {
+                    name: x.name,
+                    key: x.key,
+                    type: type,
+                  }
+                },
+              ),
             ),
           }
         : undefined
@@ -169,9 +195,15 @@ export class UniversityService extends BaseTemplateApiService {
         answers.educationDetails.finishedDetails.map(async (item) => {
           return {
             ...item,
-            degreeAttachments: await this.getFilesFromAttachment(
-              application,
-              item.degreeAttachments,
+            degreeAttachments: await this.getAttachmentUrls(
+              item.degreeAttachments?.map((x, i) => {
+                const type = this.mapFileTypes(i)
+                return {
+                  name: x.name,
+                  key: x.key,
+                  type: type,
+                }
+              }),
             ),
           }
         })) ||
@@ -213,13 +245,16 @@ export class UniversityService extends BaseTemplateApiService {
           universityId: answers.programInformation.university,
           programId: answers.programInformation.program,
           modeOfDelivery: mapStringToEnum(
-            answers.modeOfDeliveryInformation.chosenMode,
+            answers.modeOfDeliveryInformation?.chosenMode ||
+              defaultModeOfDelivery,
             CreateApplicationDtoModeOfDeliveryEnum,
+            'CreateApplicationDtoModeOfDeliveryEnum',
           ),
           applicant: user,
           educationOption: mapStringToEnum(
             educationOptionChosen,
             CreateApplicationDtoEducationOptionEnum,
+            'CreateApplicationDtoEducationOptionEnum',
           ),
           educationList: combinedEducationList,
           workExperienceList: [],
@@ -231,22 +266,40 @@ export class UniversityService extends BaseTemplateApiService {
     ).universityApplicationControllerCreateApplication(createApplicationDto)
   }
 
-  private async getFilesFromAttachment(
-    application: ApplicationWithAttachments,
-    attachments?: { name: string; key: string }[],
-  ): Promise<{ fileName: string; base64: string }[]> {
+  private async getAttachmentUrls(
+    attachments?: { name: string; key: string; type: string }[],
+  ): Promise<{ fileName: string; fileType: string; url: string }[]> {
+    const expiry = 36000
+
     return await Promise.all(
       attachments?.map(async (file) => {
-        const base64 =
-          await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
-            application,
-            file.key,
-          )
         return {
           fileName: file.name,
-          base64,
+          fileType: file.type,
+          url: await this.sharedTemplateAPIService.getAttachmentUrl(
+            file.key,
+            expiry,
+          ),
         }
       }) || [],
     )
+  }
+
+  private mapFileTypes = (fileIndex: number): string => {
+    let type
+    switch (fileIndex) {
+      case 1:
+        type = 'profskirteini'
+        break
+      case 2:
+        type = 'profskirteini2'
+        break
+      case 3:
+        type = 'profskirteini3'
+        break
+      default:
+        type = ''
+    }
+    return type
   }
 }

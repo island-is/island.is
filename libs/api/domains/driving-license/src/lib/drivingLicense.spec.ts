@@ -25,6 +25,7 @@ import ResidenceHistory from '../lib/__mock-data__/residenceHistory.json'
 import { ConfigModule } from '@island.is/nest/config'
 
 import isLeapYear from 'date-fns/isLeapYear'
+import { DrivingLicenseCategory } from './drivingLicense.type'
 
 const daysOfResidency = isLeapYear(new Date()) ? 366 : 365
 
@@ -392,6 +393,7 @@ describe('DrivingLicenseService', () => {
         jurisdictionId: 11,
         needsToPresentHealthCertificate: false,
         needsToPresentQualityPhoto: false,
+        licenseCategory: DrivingLicenseCategory.B,
       })
 
       expect(response).toStrictEqual({
@@ -408,6 +410,7 @@ describe('DrivingLicenseService', () => {
           jurisdictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
+          licenseCategory: DrivingLicenseCategory.B,
         })
         .catch((e) => expect(e).toBeTruthy())
     })

@@ -22,7 +22,7 @@ import { OrganizationSubpage } from './models/organizationSubpage.model'
 import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
 import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.model'
 import { ApiResponse } from '@elastic/elasticsearch'
-import { SearchResponse } from 'elastic'
+import { SearchResponse } from '@island.is/shared/types'
 import { MappedData } from '@island.is/content-search-indexer/types'
 import { SupportQNA } from './models/supportQNA.model'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
@@ -34,8 +34,18 @@ import { Manual } from './models/manual.model'
 import { GetCategoryPagesInput } from './dto/getCategoryPages.input'
 import { CategoryPage } from './models/categoryPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
-import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import {
+  ElasticsearchIndexLocale,
+  getElasticsearchIndex,
+} from '@island.is/content-search-index-manager'
 import { CustomPage } from './models/customPage.model'
+import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
+import { GenericListItemResponse } from './models/genericListItemResponse.model'
+import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
+import { GetGenericListItemBySlugInput } from './dto/getGenericListItemBySlug.input'
+import { GenericListItem } from './models/genericListItem.model'
+import { GetTeamMembersInput } from './dto/getTeamMembers.input'
+import { TeamMemberResponse } from './models/teamMemberResponse.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -384,6 +394,200 @@ export class CmsElasticsearchService {
       type: 'webCustomPage',
       slug: input.uniqueIdentifier,
     })
+  }
+
+  async getCustomSubpage(
+    input: GetCustomSubpageInput,
+  ): Promise<CustomPage | null> {
+    const index = getElasticsearchIndex(input.lang)
+    const must = [
+      {
+        term: {
+          type: {
+            value: 'webCustomPage',
+          },
+        },
+      },
+      {
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    'tags.key': input.parentPageId,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'referencedBy',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    ]
+
+    const response: ApiResponse<SearchResponse<MappedData>> =
+      await this.elasticService.findByQuery(index, {
+        query: {
+          bool: {
+            must,
+          },
+        },
+      })
+
+    return (
+      response.body.hits.hits.map((item) =>
+        JSON.parse(item._source.response ?? 'null'),
+      )[0] ?? null
+    )
+  }
+
+  async getGenericListItemBySlug(
+    input: GetGenericListItemBySlugInput,
+  ): Promise<GenericListItem | null> {
+    return this.getSingleDocumentTypeBySlug(getElasticsearchIndex(input.lang), {
+      slug: input.slug,
+      type: 'webGenericListItem',
+    })
+  }
+
+  private async getListItems<
+    ListItemType extends 'webGenericListItem' | 'webTeamMember',
+  >(input: {
+    listId: string
+    lang: ElasticsearchIndexLocale
+    page?: number
+    size?: number
+    queryString?: string
+    tags?: string[]
+    tagGroups?: Record<string, string[]>
+    type: ListItemType
+  }): Promise<
+    ListItemType extends 'webGenericListItem'
+      ? Omit<GenericListItemResponse, 'input'>
+      : Omit<TeamMemberResponse, 'input'>
+  > {
+    let must: Record<string, unknown>[] = [
+      {
+        term: {
+          type: {
+            value: input.type,
+          },
+        },
+      },
+      {
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    'tags.key': input.listId,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'referencedBy',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    ]
+
+    let queryString = input.queryString ? input.queryString.toLowerCase() : ''
+
+    if (input.lang === 'is') {
+      queryString = queryString.replace('`', '')
+    }
+
+    must.push({
+      simple_query_string: {
+        query: queryString + '*',
+        fields: ['title^100', 'content'],
+        analyze_wildcard: true,
+      },
+    })
+
+    const size = input.size ?? 10
+
+    const sort: ('_score' | sortRule)[] = [
+      {
+        [SortField.RELEASE_DATE]: {
+          order: SortDirection.DESC,
+        },
+      },
+      // Sort items with equal values by ascending title order
+      { 'title.sort': { order: SortDirection.ASC } },
+    ]
+
+    // Order by score first in case there is a query string
+    if (queryString.length > 0 && queryString !== '*') {
+      sort.unshift('_score')
+    }
+
+    if (input.tags && input.tags.length > 0 && input.tagGroups) {
+      must = must.concat(
+        generateGenericTagGroupQueries(input.tags, input.tagGroups),
+      )
+    }
+
+    const response: ApiResponse<SearchResponse<MappedData>> =
+      await this.elasticService.findByQuery(getElasticsearchIndex(input.lang), {
+        query: {
+          bool: {
+            must,
+          },
+        },
+        sort,
+        size,
+        from: ((input.page ?? 1) - 1) * size,
+      })
+
+    return {
+      items: response.body.hits.hits
+        .map((item) => JSON.parse(item._source.response ?? 'null'))
+        .filter(Boolean),
+      total: response.body.hits.total.value,
+    }
+  }
+
+  async getTeamMembers(
+    input: GetTeamMembersInput,
+  ): Promise<TeamMemberResponse> {
+    const response = await this.getListItems({
+      ...input,
+      type: 'webTeamMember',
+      listId: input.teamListId,
+    })
+
+    return {
+      ...response,
+      input,
+    }
+  }
+
+  async getGenericListItems(
+    input: GetGenericListItemsInput,
+  ): Promise<GenericListItemResponse> {
+    const response = await this.getListItems({
+      ...input,
+      type: 'webGenericListItem',
+      listId: input.genericListId,
+    })
+
+    return {
+      ...response,
+      input,
+    }
   }
 
   async getVacancies(index: string) {

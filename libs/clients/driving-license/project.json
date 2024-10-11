@@ -3,21 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/driving-license/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/driving-license/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/driving-license"],
       "options": {
-        "jestConfig": "libs/clients/driving-license/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/driving-license/jest.config.ts"
       }
     },
     "update-openapi-document": {
@@ -55,6 +50,5 @@
         "parallel": false
       }
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

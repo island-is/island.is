@@ -14,6 +14,15 @@ export const gridContainer = style({
   }),
 })
 
+export const gridContainerSubpage = style({
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateRows: 'auto',
+      gridTemplateColumns: '100fr',
+    },
+  }),
+})
+
 export const gridContainerWidth = style({
   maxWidth: '1342px',
   margin: '0 auto',
@@ -38,6 +47,25 @@ export const textContainer = style({
   }),
 })
 
+export const textContainerSubpage = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      minHeight: '90px',
+      paddingLeft: '15px',
+      paddingRight: '15px',
+      paddingTop: '15px',
+      paddingBottom: '15px',
+      textAlign: 'left',
+    },
+    lg: {
+      minHeight: '115px',
+      paddingTop: '15px',
+      paddingLeft: '0px',
+      paddingRight: '0px',
+    },
+  }),
+})
+
 export const textInnerContainer = style({
   ...themeUtils.responsiveStyle({
     lg: {
@@ -49,6 +77,22 @@ export const textInnerContainer = style({
       paddingRight: '16px',
       paddingBottom: '105px',
       justifyContent: 'center',
+    },
+  }),
+})
+
+export const textInnerContainerSubpage = style({
+  ...themeUtils.responsiveStyle({
+    lg: {
+      paddingLeft: '288px',
+      paddingBottom: '0',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+    },
+    xs: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   }),
 })
@@ -78,9 +122,18 @@ export const logoContainer = style({
   zIndex: 1,
 })
 
+export const logoContainerSubpage = style({
+  bottom: '-48px',
+})
+
 export const logo = style({
   width: '70px',
   height: '70px',
+})
+
+export const logoSubpage = style({
+  width: '30px',
+  height: '30px',
 })
 
 export const contentContainer = style({
@@ -92,7 +145,10 @@ export const contentContainer = style({
   transform: 'translate(-50%, 0)',
   paddingLeft: '48px',
   paddingRight: '48px',
-  zIndex: 1,
+})
+
+export const contentContainerSubpage = style({
+  height: '115px',
 })
 
 export const innerContentContainer = style({
@@ -112,6 +168,12 @@ export const logoContainerMobile = style({
   marginBottom: '4px',
 })
 
+export const logoContainerMobileSubpage = style({
+  width: '60px',
+  height: '60px',
+  marginBottom: '0px',
+})
+
 export const title = style({
-  zIndex: 1,
+  zIndex: 0,
 })

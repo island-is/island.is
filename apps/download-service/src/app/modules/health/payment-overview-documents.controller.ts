@@ -1,16 +1,3 @@
-import {
-  Controller,
-  Header,
-  Post,
-  Res,
-  Param,
-  UseGuards,
-  Inject,
-  Body,
-} from '@nestjs/common'
-import { ApiOkResponse } from '@nestjs/swagger'
-import { Response } from 'express'
-import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   AuthMiddleware,
@@ -19,16 +6,19 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
+import { PaymentsOverviewApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { AuditService } from '@island.is/nest/audit'
-import { PaymentApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
-import { GetGetHealthPaymentDocumentDto } from './dto/getHealthPaymentDocument.dto'
+import { Controller, Header, Param, Post, Res, UseGuards } from '@nestjs/common'
+import { ApiOkResponse } from '@nestjs/swagger'
+import { Response } from 'express'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.healthPayments)
 @Controller('health')
 export class HealthPaymentsOverviewController {
   constructor(
-    private readonly paymentApi: PaymentApi,
+    private readonly paymentApi: PaymentsOverviewApi,
     private readonly auditService: AuditService,
   ) {}
 
@@ -42,16 +32,10 @@ export class HealthPaymentsOverviewController {
   async getHealthPaymentOverviewPdf(
     @Param('documentId') documentId: string,
     @CurrentUser() user: User,
-    @Body() resource: GetGetHealthPaymentDocumentDto,
     @Res() res: Response,
   ) {
-    const authUser = {
-      ...user,
-      authorization: `Bearer ${resource.__accessToken}`,
-    }
-
     const documentResponse = await this.paymentApi
-      .withMiddleware(new AuthMiddleware(authUser))
+      .withMiddleware(new AuthMiddleware(user))
       .getPaymentsOverviewDocument({
         documentId: parseInt(documentId),
       })
@@ -73,19 +57,15 @@ export class HealthPaymentsOverviewController {
 
       const buffer = Buffer.from(documentResponse.data, 'base64')
 
-      // const contentArrayBuffer =
-      //   await documentResponse.contentType.arrayBuffer()
-      // const buffer = Buffer.from(contentArrayBuffer)
-
       res.header('Content-length', buffer.length.toString())
       res.header(
         'Content-Disposition',
         `inline; filename=${user.nationalId}-health-payment-overview-${documentResponse.fileName}.pdf`,
       )
-      res.header('Content-Type: application/pdf')
-      res.header('Pragma: no-cache')
-      res.header('Cache-Control: no-cache')
-      res.header('Cache-Control: nmax-age=0')
+      res.header('Content-Type', 'application/pdf')
+      res.header('Pragma', 'no-cache')
+      res.header('Cache-Control', 'no-cache')
+      res.header('Cache-Control', 'nmax-age=0')
       return res.status(200).end(buffer)
     }
     return res.end()

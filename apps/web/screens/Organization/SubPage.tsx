@@ -1,10 +1,11 @@
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
+  BreadCrumbItem,
   GridColumn,
   GridContainer,
   GridRow,
@@ -14,7 +15,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
-  Form,
   getThemeConfig,
   OrganizationWrapper,
   SignLanguageButton,
@@ -49,11 +49,15 @@ import {
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../queries'
 
-interface SubPageProps {
+export interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
   namespace: Record<string, string>
   locale: Locale
+  customContent?: React.ReactNode
+  backLink?: { text: string; url: string }
+  customBreadcrumbItems?: BreadCrumbItem[]
+  customContentfulIds?: (string | undefined)[]
 }
 
 const SubPage: Screen<SubPageProps> = ({
@@ -61,6 +65,10 @@ const SubPage: Screen<SubPageProps> = ({
   subpage,
   namespace,
   locale,
+  customContent,
+  customBreadcrumbItems,
+  customContentfulIds,
+  backLink,
 }) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
@@ -68,9 +76,13 @@ const SubPage: Screen<SubPageProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  useContentfulId(organizationPage?.id, subpage?.id)
+  const contentfulIds = customContentfulIds
+    ? customContentfulIds
+    : [organizationPage?.id, subpage?.id]
 
-  const pathWithoutHash = router.asPath.split('#')[0]
+  useContentfulId(...contentfulIds)
+
+  const pathname = new URL(router.asPath, 'https://island.is').pathname
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
@@ -78,12 +90,12 @@ const SubPage: Screen<SubPageProps> = ({
       title: primaryLink?.text,
       href: primaryLink?.url,
       active:
-        primaryLink?.url === pathWithoutHash ||
-        childrenLinks.some((link) => link.url === pathWithoutHash),
+        primaryLink?.url === pathname ||
+        childrenLinks.some((link) => link.url === pathname),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === pathWithoutHash,
+        active: url === pathname,
       })),
     }),
   )
@@ -108,13 +120,7 @@ const SubPage: Screen<SubPageProps> = ({
           >
             {webRichText(
               subpage?.description as SliceType[],
-              {
-                renderComponent: {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  Form: (slice) => <Form form={slice} namespace={namespace} />,
-                },
-              },
+              undefined,
               activeLocale,
             )}
           </GridColumn>
@@ -156,20 +162,25 @@ const SubPage: Screen<SubPageProps> = ({
       pageFeaturedImage={
         subpage?.featuredImage ?? organizationPage?.featuredImage
       }
-      breadcrumbItems={[
-        {
-          title: 'Ísland.is',
-          href: linkResolver('homepage', [], locale).href,
-        },
-        {
-          title: organizationPage?.title ?? '',
-          href: linkResolver(
-            'organizationpage',
-            [organizationPage?.slug ?? ''],
-            locale,
-          ).href,
-        },
-      ]}
+      backLink={backLink}
+      breadcrumbItems={
+        customBreadcrumbItems
+          ? customBreadcrumbItems
+          : [
+              {
+                title: 'Ísland.is',
+                href: linkResolver('homepage', [], locale).href,
+              },
+              {
+                title: organizationPage?.title ?? '',
+                href: linkResolver(
+                  'organizationpage',
+                  [organizationPage?.slug ?? ''],
+                  locale,
+                ).href,
+              },
+            ]
+      }
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
@@ -188,56 +199,62 @@ const SubPage: Screen<SubPageProps> = ({
                       subpage?.links?.length ? '7/12' : '12/12',
                     ]}
                   >
-                    <Box className="rs_read" marginBottom={2}>
-                      <Text variant="h1" as="h1">
-                        {subpage?.title}
-                      </Text>
-                    </Box>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      columnGap={2}
-                      rowGap={2}
-                      marginBottom={3}
-                      flexWrap="wrap"
-                    >
-                      <Webreader
-                        marginTop={0}
-                        marginBottom={0}
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore make web strict
-                        readId={null}
-                        readClass="rs_read"
-                      />
-                      {subpage?.signLanguageVideo?.url && (
-                        <SignLanguageButton
-                          videoUrl={subpage.signLanguageVideo.url}
-                          videoThumbnailImageUrl={
-                            subpage.signLanguageVideo.thumbnailImageUrl
-                          }
-                          content={
-                            <>
-                              <Box className="rs_read" marginBottom={2}>
-                                <Text variant="h2">{subpage.title}</Text>
-                              </Box>
-                              {content}
-                              {renderSlices(
-                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                // @ts-ignore make web strict
-                                subpage.slices,
-                                subpage.sliceCustomRenderer,
-                                subpage.sliceExtraText,
-                                namespace,
-                                organizationPage?.slug,
-                              )}
-                            </>
-                          }
-                        />
-                      )}
-                    </Box>
+                    {customContent ? (
+                      customContent
+                    ) : (
+                      <>
+                        <Box className="rs_read" marginBottom={2}>
+                          <Text variant="h1" as="h1">
+                            {subpage?.title}
+                          </Text>
+                        </Box>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          columnGap={2}
+                          rowGap={2}
+                          marginBottom={3}
+                          flexWrap="wrap"
+                        >
+                          <Webreader
+                            marginTop={0}
+                            marginBottom={0}
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore make web strict
+                            readId={null}
+                            readClass="rs_read"
+                          />
+                          {subpage?.signLanguageVideo?.url && (
+                            <SignLanguageButton
+                              videoUrl={subpage.signLanguageVideo.url}
+                              videoThumbnailImageUrl={
+                                subpage.signLanguageVideo.thumbnailImageUrl
+                              }
+                              content={
+                                <>
+                                  <Box className="rs_read" marginBottom={2}>
+                                    <Text variant="h2">{subpage.title}</Text>
+                                  </Box>
+                                  {content}
+                                  {renderSlices(
+                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                    // @ts-ignore make web strict
+                                    subpage.slices,
+                                    subpage.sliceCustomRenderer,
+                                    subpage.sliceExtraText,
+                                    namespace,
+                                    organizationPage?.slug,
+                                  )}
+                                </>
+                              }
+                            />
+                          )}
+                        </Box>
+                      </>
+                    )}
                   </GridColumn>
                 </GridRow>
-                {content}
+                {!customContent && content}
               </GridContainer>
             </GridColumn>
           </GridRow>
@@ -288,7 +305,6 @@ const renderSlices = (
               marginBottom={index === slices.length - 1 ? 5 : 0}
               params={{
                 renderAnchorPagesAsProfileCards: true,
-                latestNewsSliceBackground: 'white',
                 forceTitleSectionHorizontalPadding: 'true',
               }}
               fullWidth={true}
@@ -305,7 +321,6 @@ const renderSlices = (
             marginBottom={index === slices.length - 1 ? 5 : 0}
             params={{
               renderAnchorPagesAsProfileCards: true,
-              latestNewsSliceBackground: 'white',
               forceTitleSectionHorizontalPadding: 'true',
             }}
           />

@@ -1,4 +1,11 @@
-import React, { useRef, useState } from 'react'
+import {
+  FC,
+  FocusEvent,
+  KeyboardEvent,
+  PropsWithChildren,
+  useRef,
+  useState,
+} from 'react'
 import InputMask from 'react-input-mask'
 
 import { Button, Input } from '@island.is/island-ui/core'
@@ -16,14 +23,10 @@ interface MultipleValueListProps {
   isDisabled: (value?: string) => boolean
   hasError?: boolean
   errorMessage?: string
-  onBlur?: (
-    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void
+  onBlur?: (event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void
 }
 
-const MultipleValueList: React.FC<
-  React.PropsWithChildren<MultipleValueListProps>
-> = ({
+const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
   children,
   onAddValue,
   inputLabel,
@@ -49,7 +52,7 @@ const MultipleValueList: React.FC<
   }
 
   const handleEnter = (
-    event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     if (event.key === 'Enter' && !isDisabled(value)) {
       onAddValue(value)

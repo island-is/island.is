@@ -66,7 +66,7 @@ import { getOrganizationLink } from '@island.is/web/utils/organization'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+// @ts-expect-error make web strict
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
 
 const getThemeConfig = (article: Article) => {
@@ -134,7 +134,7 @@ const createArticleNavigation = (
     }
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   return nav
 }
 
@@ -224,7 +224,7 @@ const ArticleNavigation: FC<
         }
         isMenuDialog={isMenuDialog}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
+        // @ts-expect-error make web strict
         renderLink={(link, { typename, slug }) => {
           return (
             <NextLink
@@ -254,6 +254,7 @@ const ArticleNavigation: FC<
     )
   )
 }
+
 interface ArticleSidebarProps {
   article: Article
   activeSlug?: string | string[]
@@ -297,7 +298,7 @@ const ArticleSidebar: FC<React.PropsWithChildren<ArticleSidebarProps>> = ({
           locale={activeLocale}
           linkProps={{
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
+            // @ts-expect-error make web strict
             href: getOrganizationLink(article.organization[0], activeLocale),
           }}
           imgContainerDisplay={['block', 'block', 'none', 'block']}
@@ -336,15 +337,15 @@ const ArticleScreen: Screen<ArticleProps> = ({
   const [isVisible, setIsVisible] = useState(true)
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
+    // @ts-expect-error make web strict
     portalRef.current = document.querySelector('#__next')
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
+    // @ts-expect-error make web strict
     processEntryRef.current = document.querySelector('#processRef')
     setMounted(true)
   }, [])
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   const n = useNamespace(namespace)
   const { query, asPath } = useRouter()
   const { linkResolver } = useLinkResolver()
@@ -368,7 +369,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
       const elementPosition =
         processEntryRef && processEntryRef.current
           ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
+            // @ts-expect-error make web strict
             processEntryRef?.current.getBoundingClientRect().bottom +
             (px - currPos.y)
           : 0
@@ -378,7 +379,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
     },
     [setIsVisible],
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
+    // @ts-expect-error make web strict
     null,
     false,
     150,
@@ -457,7 +458,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
         <Box className="rs_read">
           {webRichText(
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
+            // @ts-expect-error make web strict
             (subArticle ?? article).body as SliceType[],
             {
               renderComponent: {
@@ -474,9 +475,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
                     />
                   </Box>
                 ),
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                Form: (form) => <Form form={form} namespace={namespace} />,
               },
             },
             activeLocale,
@@ -493,12 +491,12 @@ const ArticleScreen: Screen<ArticleProps> = ({
       >
         {/**
          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-         // @ts-ignore make web strict */}
+         // @ts-expect-error make web strict */}
         {processEntry?.processLink && <ProcessEntry {...processEntry} />}
       </Box>
       {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
+        // @ts-expect-error make web strict
         article.organization.length > 0 && (
           <Box
             marginTop={[3, 3, 3, 10, 20]}
@@ -507,24 +505,24 @@ const ArticleScreen: Screen<ArticleProps> = ({
           >
             <InstitutionsPanel
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+              // @ts-expect-error make web strict
               img={article.organization[0].logo?.url ?? ''}
               institution={{
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
+                // @ts-expect-error make web strict
                 title: article.organization[0].title,
                 label: n('organization'),
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
+                // @ts-expect-error make web strict
                 href: getOrganizationLink(
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
+                  // @ts-expect-error make web strict
                   article.organization[0],
                   activeLocale,
                 ),
               }}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+              // @ts-expect-error make web strict
               responsibleParty={article.responsibleParty.map(
                 (responsibleParty) => ({
                   title: responsibleParty.title,
@@ -533,13 +531,13 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 }),
               )}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+              // @ts-expect-error make web strict
               relatedInstitution={article.relatedOrganization.map(
                 (relatedOrganization) => ({
                   title: relatedOrganization.title,
                   label: n('relatedOrganization'),
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
+                  // @ts-expect-error make web strict
                   href: getOrganizationLink(relatedOrganization, activeLocale),
                 }),
               )}
@@ -552,18 +550,18 @@ const ArticleScreen: Screen<ArticleProps> = ({
       <Box display={['block', 'block', 'none']} printHidden>
         {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
+          // @ts-expect-error make web strict
           (article.relatedArticles.length > 0 ||
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
+            // @ts-expect-error make web strict
             article.relatedContent.length > 0) && (
             <RelatedContent
               title={n('relatedMaterial')}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+              // @ts-expect-error make web strict
               articles={article.relatedArticles}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+              // @ts-expect-error make web strict
               otherContent={article.relatedContent}
             />
           )
@@ -608,7 +606,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
           {!inStepperView && (
             <Breadcrumbs
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+              // @ts-expect-error make web strict
               items={breadcrumbItems}
               renderLink={(link, { typename, slug }) => {
                 return (
@@ -691,7 +689,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               {!inStepperView && (
                 <Webreader
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
+                  // @ts-expect-error make web strict
                   readId={null}
                   readClass="rs_read"
                 />
@@ -699,11 +697,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
               {(subArticle
                 ? subArticle.signLanguageVideo?.url
                 : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
+                  // @ts-expect-error make web strict
                   article.signLanguageVideo?.url) && (
                 <SignLanguageButton
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
+                  // @ts-expect-error make web strict
                   videoUrl={(subArticle ?? article).signLanguageVideo.url}
                   videoThumbnailImageUrl={
                     (subArticle ?? article)?.signLanguageVideo
@@ -715,13 +713,13 @@ const ArticleScreen: Screen<ArticleProps> = ({
                         <Text variant="h2">
                           <span
                             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-ignore make web strict
+                            // @ts-expect-error make web strict
                             id={slugify((subArticle ?? article).title)}
                             className="rs_read"
                           >
                             {
                               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                              // @ts-ignore make web strict
+                              // @ts-expect-error make web strict
                               (subArticle ?? article).title
                             }
                           </span>
@@ -752,7 +750,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             >
               {/**
                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-               // @ts-ignore make web strict */}
+               // @ts-expect-error make web strict */}
               <ProcessEntry {...processEntry} />
             </Box>
           )}
@@ -762,7 +760,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             <GridRow>
               <GridColumn
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
+                // @ts-expect-error make web strict
                 span={[null, '4/7', '5/7', '4/7', '3/7']}
               >
                 <TOC
@@ -788,18 +786,18 @@ const ArticleScreen: Screen<ArticleProps> = ({
             <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
               {/**
                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-               // @ts-ignore make web strict */}
+               // @ts-expect-error make web strict */}
               <ProcessEntry fixed {...processEntry} />
             </Box>,
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
+            // @ts-expect-error make web strict
             portalRef.current,
           )}
       </SidebarLayout>
       <ArticleChatPanel
         article={article}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
+        // @ts-expect-error make web strict
         pushUp={isVisible && processEntry?.processLink && mounted}
       />
       <OrganizationFooter
@@ -852,7 +850,7 @@ ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
       })
       .then((content) => {
         // map data here to reduce data processing in component
-        return JSON.parse(content?.data?.getNamespace?.fields ?? '{}')
+        return JSON.parse(content?.data?.getNamespace?.fields || '{}')
       }),
   ])
 

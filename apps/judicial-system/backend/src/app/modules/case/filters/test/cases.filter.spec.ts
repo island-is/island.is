@@ -1,17 +1,23 @@
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
-  completedCaseStates,
+  completedIndictmentCaseStates,
+  completedRequestCaseStates,
   courtOfAppealsRoles,
+  DateType,
   districtCourtRoles,
+  EventType,
+  IndictmentCaseReviewDecision,
   indictmentCases,
   InstitutionType,
   investigationCases,
+  publicProsecutorRoles,
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
@@ -37,23 +43,34 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
-        { isArchived: false },
+        { is_archived: false },
+        {
+          type: [
+            ...restrictionCases,
+            ...investigationCases,
+            ...indictmentCases,
+          ],
+        },
         {
           state: [
             CaseState.NEW,
             CaseState.DRAFT,
             CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
+            CaseState.WAITING_FOR_CANCELLATION,
             CaseState.RECEIVED,
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
+            CaseState.COMPLETED,
           ],
         },
+
         {
           [Op.or]: [
             { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
+            { indictment_reviewer_id: 'Prosecutor Id' },
           ],
         },
         {
@@ -62,13 +79,6 @@ describe('getCasesQueryFilter', () => {
             { is_heightened_security_level: false },
             { creating_prosecutor_id: 'Prosecutor Id' },
             { prosecutor_id: 'Prosecutor Id' },
-          ],
-        },
-        {
-          type: [
-            ...restrictionCases,
-            ...investigationCases,
-            ...indictmentCases,
           ],
         },
       ],
@@ -92,23 +102,27 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
-        { isArchived: false },
+        { is_archived: false },
+        { type: indictmentCases },
         {
           state: [
             CaseState.NEW,
             CaseState.DRAFT,
             CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
+            CaseState.WAITING_FOR_CANCELLATION,
             CaseState.RECEIVED,
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
+            CaseState.COMPLETED,
           ],
         },
         {
           [Op.or]: [
             { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
+            { indictment_reviewer_id: 'Prosecutor Id' },
           ],
         },
         {
@@ -119,7 +133,6 @@ describe('getCasesQueryFilter', () => {
             { prosecutor_id: user.id },
           ],
         },
-        { type: indictmentCases },
       ],
     })
   })
@@ -141,7 +154,7 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
-          { isArchived: false },
+          { is_archived: false },
           {
             [Op.or]: [
               { court_id: { [Op.is]: null } },
@@ -171,10 +184,9 @@ describe('getCasesQueryFilter', () => {
                   {
                     state: [
                       CaseState.SUBMITTED,
+                      CaseState.WAITING_FOR_CANCELLATION,
                       CaseState.RECEIVED,
-                      CaseState.ACCEPTED,
-                      CaseState.REJECTED,
-                      CaseState.DISMISSED,
+                      CaseState.COMPLETED,
                     ],
                   },
                 ],
@@ -208,7 +220,7 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
-          { isArchived: false },
+          { is_archived: false },
           {
             [Op.or]: [
               { court_id: { [Op.is]: null } },
@@ -219,10 +231,9 @@ describe('getCasesQueryFilter', () => {
           {
             state: [
               CaseState.SUBMITTED,
+              CaseState.WAITING_FOR_CANCELLATION,
               CaseState.RECEIVED,
-              CaseState.ACCEPTED,
-              CaseState.REJECTED,
-              CaseState.DISMISSED,
+              CaseState.COMPLETED,
             ],
           },
         ],
@@ -247,7 +258,7 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
-          { isArchived: false },
+          { is_archived: false },
           { type: [...restrictionCases, ...investigationCases] },
           {
             state: [
@@ -277,6 +288,42 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
+  describe.each(publicProsecutorRoles)('given %s role', (role) => {
+    it('should get public prosecutor filter', () => {
+      // Arrange
+      const user = {
+        id: 'Public Prosecutor Office Id',
+        role,
+        institution: {
+          id: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
+          type: InstitutionType.PROSECUTORS_OFFICE,
+        },
+      }
+
+      // Act
+      const res = getCasesQueryFilter(user as User)
+
+      // Assert
+      expect(res).toStrictEqual({
+        [Op.and]: [
+          { is_archived: false },
+          { type: indictmentCases },
+          { state: CaseState.COMPLETED },
+          {
+            indictment_ruling_decision: [
+              CaseIndictmentRulingDecision.FINE,
+              CaseIndictmentRulingDecision.RULING,
+            ],
+          },
+          {
+            '$eventLogs.event_type$':
+              EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          },
+        ],
+      })
+    })
+  })
+
   it('should get prison staff filter', () => {
     // Arrange
     const user = {
@@ -294,7 +341,7 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
-        { isArchived: false },
+        { is_archived: false },
         { state: CaseState.ACCEPTED },
         {
           type: [
@@ -326,16 +373,26 @@ describe('getCasesQueryFilter', () => {
 
     // Assert
     expect(res).toStrictEqual({
-      [Op.and]: [
-        { isArchived: false },
-        { state: CaseState.ACCEPTED },
+      is_archived: false,
+
+      [Op.or]: [
         {
-          type: [
-            CaseType.CUSTODY,
-            CaseType.ADMISSION_TO_FACILITY,
-            CaseType.PAROLE_REVOCATION,
-            CaseType.TRAVEL_BAN,
-          ],
+          state: CaseState.ACCEPTED,
+          type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
+        },
+        {
+          type: indictmentCases,
+          state: CaseState.COMPLETED,
+          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+          indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
+          id: {
+            [Op.notIn]: Sequelize.literal(`
+            (SELECT case_id
+              FROM defendant
+              WHERE service_requirement <> 'NOT_REQUIRED'
+              AND (verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '28 days'))
+          `),
+          },
         },
       ],
     })
@@ -355,7 +412,7 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
-        { isArchived: false },
+        { is_archived: false },
         {
           [Op.or]: [
             {
@@ -375,21 +432,35 @@ describe('getCasesQueryFilter', () => {
                     {
                       [Op.and]: [
                         { state: CaseState.RECEIVED },
-                        { court_date: { [Op.not]: null } },
+                        { '$dateLogs.date_type$': DateType.ARRAIGNMENT_DATE },
                       ],
                     },
-                    { state: completedCaseStates },
+                    { state: completedRequestCaseStates },
                   ],
                 },
-                { defender_national_id: user.nationalId },
+                {
+                  defender_national_id: [user.nationalId, user.nationalId],
+                },
               ],
             },
             {
               [Op.and]: [
                 { type: indictmentCases },
-                { state: [CaseState.RECEIVED, ...completedCaseStates] },
                 {
-                  '$defendants.defender_national_id$': user.nationalId,
+                  state: [
+                    CaseState.WAITING_FOR_CANCELLATION,
+                    CaseState.RECEIVED,
+                    ...completedIndictmentCaseStates,
+                  ],
+                },
+                {
+                  id: {
+                    [Op.in]: Sequelize.literal(`
+                (SELECT case_id
+                  FROM defendant
+                  WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}'))
+              `),
+                  },
                 },
               ],
             },

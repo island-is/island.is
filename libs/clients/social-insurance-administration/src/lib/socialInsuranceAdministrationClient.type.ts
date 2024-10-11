@@ -1,4 +1,36 @@
-import { TrWebCommonsExternalPortalsApiModelsDocumentsDocument } from '../../gen/fetch'
+import {
+  ApplicantApi,
+  ApplicationApi,
+  DocumentsApi,
+  GeneralApi,
+  IncomePlanApi,
+  PaymentPlanApi,
+  PensionCalculatorApi,
+  TestApi,
+} from '../../gen/fetch'
+
+export type Scope =
+  | '@tr.is/umsaekjandi:read'
+  | '@tr.is/umsoknir:read'
+  | '@tr.is/umsoknir:write'
+  | '@tr.is/stadgreidsla:read'
+  | '@tr.is/tekjuaetlun:read'
+  | '@tr.is/greidsluaetlun:read'
+  | '@tr.is/almennt:read'
+  | '@tr.is/fylgiskjol:write'
+
+export type Api =
+  | typeof ApplicationApi
+  | typeof ApplicationWriteApi
+  | typeof ApplicantApi
+  | typeof DocumentsApi
+  | typeof GeneralApi
+  | typeof IncomePlanApi
+  | typeof PaymentPlanApi
+  | typeof PensionCalculatorApi
+  | typeof TestApi
+
+export class ApplicationWriteApi extends ApplicationApi {}
 
 export interface Period {
   year: number
@@ -50,23 +82,31 @@ export interface Months {
   december?: number
 }
 
-export interface ApplicationDTO {
-  period?: Period
-  comment?: string
-  reasons?: Array<string>
-  applicationId?: string
-  domesticBankInfo?: DomesticBankInfo
-  foreignBankInfo?: ForeignBankInfo
-  taxInfo?: TaxInfo
-  applicantInfo?: ApplicantInfo
-  hasAbroadResidence?: boolean
-  hasOneTimePayment?: boolean
-  isSailorPension?: boolean
-  isRental?: boolean
-  hasAStudyingAdolescenceResident?: boolean
-  uploads?: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>
-  employment?: string
-  employers?: Array<Employer>
+export interface IncomePlanInfo {
+  incomeYear: number
+  incomeTypes: Array<IncomeTypes>
+}
+
+export interface IncomeTypes {
+  incomeTypeNumber: number
+  incomeTypeCode: string
+  incomeTypeName: string
+  currencyCode: string
+  incomeCategoryNumber: number
+  incomeCategoryCode: string
+  incomeCategoryName: string
+  amountJan: number
+  amountFeb: number
+  amountMar: number
+  amountApr: number
+  amountMay: number
+  amountJun: number
+  amountJul: number
+  amountAug: number
+  amountSep: number
+  amountOct: number
+  amountNov: number
+  amountDec: number
 }
 
 export enum DocumentTypeEnum {
@@ -84,3 +124,5 @@ export enum DocumentTypeEnum {
   HOUSE_RENT_AGREEMENT = 'houseRentAgreement',
   HOUSE_RENT_ALLOWANCE = 'houseRentAllowance',
 }
+
+export type IncomePlanStatus = 'Accepted' | 'Cancelled' | 'InProgress'

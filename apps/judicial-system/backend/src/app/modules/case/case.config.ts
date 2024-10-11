@@ -7,5 +7,8 @@ export const caseModuleConfig = defineConfig({
       'ARCHIVE_ENCRYPTION_KEY',
       'secret-archive-encryption-key',
     ),
+    robotMessageDelay: +(
+      (env.optional('ROBOT_MESSAGE_DELAY') ?? '300') // 5 minutes, convert to number with +
+    ),
   }),
 })

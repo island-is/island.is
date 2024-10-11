@@ -341,6 +341,24 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-label-deleteConfirmation',
     defaultMessage: 'Ertu alveg viss um að þú viljir eyða ',
   },
+  uploadingWordDocument: {
+    id: 'ap.regulations-admin:uploading-word-document',
+    defaultMessage: 'Hleð inn Word skjali',
+  },
+  diffPrecisionWarning: {
+    id: 'ap.regulations-admin:diff-precision-warning',
+    defaultMessage:
+      'Vakin er athygli á því að kerfið útbýr tillögu að breytingareglugerð sem starfsmaður þarf að rýna gaumgæfilega áður en haldið er áfram. Ekki er öruggt að inngangsliðir og efnisákvæði færist réttilega inn í breytingareglugerðina.',
+  },
+  selectMinistry: {
+    id: 'ap.regulations-admin:select-ministry',
+    defaultMessage: 'Veldu ráðuneyti',
+  },
+  publishEffectiveWarning: {
+    id: 'ap.regulations-admin:publish-effective-warning',
+    defaultMessage:
+      'Valinn gildistökudagur er á undan útgáfudegi. Almennt er miðað við að reglugerð öðlist gildi eftir birtingu.',
+  },
 })
 
 export const impactMsgs = defineMessages({
@@ -386,12 +404,17 @@ export const impactMsgs = defineMessages({
     defaultMessage: 'Ertu viss um að þú viljir eyða þessari skráningu?',
   },
 
+  specificDateApply: {
+    id: 'ap.regulations-admin:change-applied-on-specific-date',
+    defaultMessage: 'Breyting tekur gildi á ákveðinni dagsetningu',
+  },
+
   // ---------------------------------------------------------------------------
 
   regExplainer: {
     id: 'ap.regulations-admin:draft-impactedreg-explainer',
     defaultMessage:
-      'ATH: Einungis er hægt að breyta reglugerðum sem minnst er á með skýrum hætti í texta reglugerðarinnar.',
+      'ATH: Sé ætlunin að breyta annarri reglugerð, þarf að minnast á þá reglugerð með skýrum hætti í þessari stofnreglugerð.',
   },
   regExplainer_editLink: {
     id: 'ap.regulations-admin:draft-impactedreg-editlink',

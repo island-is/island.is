@@ -11,13 +11,14 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
 
-import environment from '../../environments/environment'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { EmailVerification } from './emailVerification.model'
 import { SmsVerification } from './smsVerification.model'
+import { UserProfileConfig } from '../../config'
+import type { ConfigType } from '@island.is/nest/config'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'verification-service'
@@ -27,28 +28,28 @@ export const SMS_VERIFICATION_MAX_TRIES = 5
 export const EMAIL_VERIFICATION_MAX_TRIES = 5
 
 /**
-  *- email verification procedure
-    *- New user
-      *- User confirms before User profile Creation
-      *- Create email confirmation
-      *- Confirm Directly with emailCode
-      *- On profile creation check for confirmation and mark email as verified
-    *- Update user
-      *- Create email confirmation
-      *- Confirm Directly with code
-      *- update email check db for confirmation save email as verified
+ *- email verification procedure
+ *- New user
+ *- User confirms before User profile Creation
+ *- Create email confirmation
+ *- Confirm Directly with emailCode
+ *- On profile creation check for confirmation and mark email as verified
+ *- Update user
+ *- Create email confirmation
+ *- Confirm Directly with code
+ *- update email check db for confirmation save email as verified
 
 
-  *- SMS verification procedure
-    *- New user
-      *- User confirms before User profile Creation
-      *- Create sms confirmation
-      *- Confirm Directly with smsCode
-      *- On profile creation check for confirmation and mark phone as verified
-    *- Update user
-      *- Create sms confirmation
-      *- Confirm Directly with code
-      *- update Phonenumber check db for confirmation save phone as verified
+ *- SMS verification procedure
+ *- New user
+ *- User confirms before User profile Creation
+ *- Create sms confirmation
+ *- Confirm Directly with smsCode
+ *- On profile creation check for confirmation and mark phone as verified
+ *- Update user
+ *- Create sms confirmation
+ *- Confirm Directly with code
+ *- update Phonenumber check db for confirmation save phone as verified
  */
 @Injectable()
 export class VerificationService {
@@ -62,6 +63,8 @@ export class VerificationService {
     private readonly smsService: SmsService,
     @Inject(EmailService)
     private readonly emailService: EmailService,
+    @Inject(UserProfileConfig.KEY)
+    private config: ConfigType<typeof UserProfileConfig>,
   ) {}
 
   async createEmailVerification(
@@ -287,8 +290,8 @@ export class VerificationService {
     try {
       await this.emailService.sendEmail({
         from: {
-          name: environment.email.fromName,
-          address: environment.email.fromEmail,
+          name: this.config.email.fromName,
+          address: this.config.email.fromEmail,
         },
         to: [
           {

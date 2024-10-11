@@ -12,6 +12,7 @@ import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { getValueViaPath } from '@island.is/application/core'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
+import { generalPetitionNotificationEmail } from './emailGenerators/generalPetitionNotification'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
   mutation EndorsementSystemCreateEndorsementList($input: CreateEndorsementListDto!) {
@@ -87,6 +88,15 @@ export class GeneralPetitionService extends BaseTemplateApiService {
       )
       throw new Error('Failed to create endorsement list')
     }
+
+    await this.sharedTemplateAPIService
+      .sendEmail(
+        (props) => generalPetitionNotificationEmail(props),
+        application,
+      )
+      .catch((error) => {
+        this.logger.error('Failed to send email', error)
+      })
 
     // This gets written to externalData under the key createEndorsementList
     return {

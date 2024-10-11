@@ -3,22 +3,17 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/driving-learners-permit/src",
   "projectType": "library",
-  "generators": {},
   "schematics": {},
+  "tags": ["scope:application-system", "lib:application-system"],
+  "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/driving-learners-permit/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/driving-learners-permit/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/driving-learners-permit/jest.config.js"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/application/templates/driving-learners-permit"
@@ -36,6 +31,5 @@
         "command": "graphql-codegen --config libs/application/templates/driving-learners-permit/codegen.yml"
       }
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }

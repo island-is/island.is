@@ -2,9 +2,9 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class RequestSignatureResponse {
-  @Field()
+  @Field(() => String)
   controlCode!: string
 
-  @Field()
+  @Field(() => String)
   documentToken!: string
 }

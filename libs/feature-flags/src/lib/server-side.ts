@@ -3,10 +3,12 @@ import { ServerSideFeature } from './features'
 
 export class ServerSideFeatures implements ServerSideFeatureClientType {
   input?: string
-  processed = false
-  featuresOn: ServerSideFeature[] = []
+  processed
+  featuresOn: ServerSideFeature[]
 
   constructor(featuresOn?: string) {
+    this.processed = false
+    this.featuresOn = []
     const isDev = process.env.NODE_ENV !== 'production'
     this.input = isDev ? featuresOn ?? '' : featuresOn
   }

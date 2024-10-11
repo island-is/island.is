@@ -29,6 +29,9 @@ import { OpenListInput } from './dto/openList.input'
 import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
 import { sendPdfEmailInput } from './dto/sendPdfEmail.input'
 
+import { ExportUrlResponse } from './dto/exportUrl.response'
+import { ExportEndorsementListInput } from './dto/exportEndorsementList.input'
+
 @UseGuards(IdsUserGuard)
 @Resolver(() => EndorsementList)
 export class EndorsementSystemResolver {
@@ -251,6 +254,17 @@ export class EndorsementSystemResolver {
     @CurrentUser() user: User,
   ): Promise<{ success: boolean }> {
     return await this.endorsementSystemService.endorsementListControllerSendPdfEmail(
+      input,
+      user,
+    )
+  }
+
+  @Mutation(() => ExportUrlResponse)
+  async endorsementSystemExportList(
+    @Args('input') input: ExportEndorsementListInput,
+    @CurrentUser() user: User,
+  ): Promise<ExportUrlResponse> {
+    return await this.endorsementSystemService.endorsementListControllerExportList(
       input,
       user,
     )

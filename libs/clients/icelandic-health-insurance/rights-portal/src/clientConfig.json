@@ -10,6 +10,217 @@
     }
   ],
   "paths": {
+    "/v1/accidentreports/submit": {
+      "post": {
+        "tags": ["accidentreports"],
+        "operationId": "SubmitAccidentReport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.Response.SubmitAccidentReportResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/accidentreports/{reportId}/attachment": {
+      "post": {
+        "tags": ["accidentreports"],
+        "operationId": "SubmitAccidentReportAttachment",
+        "parameters": [
+          {
+            "name": "reportId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.MethodResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/accidentreports/{reportId}/confirmation": {
+      "post": {
+        "tags": ["accidentreports"],
+        "operationId": "SubmitAccidentReportConfirmation",
+        "parameters": [
+          {
+            "name": "reportId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportConfirmationDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.MethodResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/accidentreports/{reportId}/status": {
+      "get": {
+        "tags": ["accidentreports"],
+        "operationId": "GetAccidentReportStatus",
+        "parameters": [
+          {
+            "name": "reportId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.Response.GetAccidentReportStatusResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/v1/admin/rollnationalid/{nationalid}/{service}": {
       "post": {
         "tags": ["admin"],
@@ -19,7 +230,6 @@
             "name": "nationalid",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "string"
             }
@@ -28,7 +238,6 @@
             "name": "service",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "string"
             }
@@ -36,7 +245,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -59,7 +268,7 @@
             "description": "Unauthorized"
           },
           "500": {
-            "description": "Server Error"
+            "description": "Internal Server Error"
           }
         }
       }
@@ -74,7 +283,101 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AidsAndNutritionDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.AidsAndNutrition.AidsAndNutritionDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/application": {
+      "post": {
+        "tags": ["application"],
+        "operationId": "Application",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Minarsidur.API.Models.Application.ApplicationSystem"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Application.Response.ApplicationResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/application/upload": {
+      "post": {
+        "tags": ["application"],
+        "operationId": "ApplicationUpload",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Minarsidur.API.Models.Application.ApplicationFilesContent"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Application.Response.ApplicationResponseDTO"
                 }
               }
             }
@@ -103,7 +406,7 @@
     },
     "/v1/dentists/status": {
       "get": {
-        "tags": ["dentist"],
+        "tags": ["dentists"],
         "operationId": "dentiststatus",
         "responses": {
           "200": {
@@ -111,7 +414,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DentistStatusDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Dentists.DentistStatusDTO"
                 }
               }
             }
@@ -140,7 +443,7 @@
     },
     "/v1/dentists/current": {
       "get": {
-        "tags": ["dentist"],
+        "tags": ["dentists"],
         "operationId": "GetCurrentDentist",
         "responses": {
           "200": {
@@ -148,7 +451,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CurrentDentistDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Dentists.CurrentDentistDTO"
                 }
               }
             }
@@ -177,14 +480,13 @@
     },
     "/v1/dentists": {
       "get": {
-        "tags": ["dentist"],
+        "tags": ["dentists"],
         "operationId": "GetDentists",
         "parameters": [
           {
             "name": "contractType",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -192,7 +494,6 @@
           {
             "name": "nameStartsWith",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -200,7 +501,6 @@
           {
             "name": "limit",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -209,7 +509,6 @@
           {
             "name": "pageNumber",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -218,7 +517,6 @@
           {
             "name": "before",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -226,7 +524,6 @@
           {
             "name": "after",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -238,7 +535,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetDentistsResponseDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Dentists.GetDentistsResponseDTO"
                 }
               }
             }
@@ -267,14 +564,13 @@
     },
     "/v1/dentists/{id}/register": {
       "post": {
-        "tags": ["dentist"],
+        "tags": ["dentists"],
         "operationId": "RegisterDentist",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -309,25 +605,25 @@
     },
     "/v1/dentists/bills": {
       "get": {
-        "tags": ["dentist"],
+        "tags": ["dentists"],
         "operationId": "GetDentistBills",
         "parameters": [
           {
             "name": "dateFrom",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date"
             }
           },
           {
             "name": "dateTo",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date"
             }
           }
         ],
@@ -339,7 +635,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/DentistBillDTO"
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.Dentists.DentistBillDTO"
                   }
                 }
               }
@@ -369,7 +665,7 @@
     },
     "/v1/drugs/paymentperiods": {
       "get": {
-        "tags": ["drug"],
+        "tags": ["drugs"],
         "operationId": "GetDrugPaymentPeriods",
         "responses": {
           "200": {
@@ -379,7 +675,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/DrugPaymentPeriodDTO"
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.Drugs.DrugPaymentPeriodDTO"
                   }
                 }
               }
@@ -409,14 +705,13 @@
     },
     "/v1/drugs/paymentperiods/{paymentPeriodId}/bills": {
       "get": {
-        "tags": ["drug"],
+        "tags": ["drugs"],
         "operationId": "GetDrugBills",
         "parameters": [
           {
             "name": "paymentPeriodId",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -431,7 +726,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/DrugBillDTO"
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.Drugs.DrugBillDTO"
                   }
                 }
               }
@@ -461,14 +756,13 @@
     },
     "/v1/drugs/paymentperiods/{paymentPeriodId}/bills/{billId}/lineitems": {
       "get": {
-        "tags": ["drug"],
+        "tags": ["drugs"],
         "operationId": "GetDrugBillLineItems",
         "parameters": [
           {
             "name": "paymentPeriodId",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -478,7 +772,6 @@
             "name": "billId",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -493,7 +786,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/DrugBillLineItemDTO"
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.Drugs.DrugBillLineItemDTO"
                   }
                 }
               }
@@ -523,13 +816,12 @@
     },
     "/v1/drugs/drugs": {
       "get": {
-        "tags": ["drug"],
+        "tags": ["drugs"],
         "operationId": "GetDrugs",
         "parameters": [
           {
             "name": "nameStartsWith",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -537,7 +829,6 @@
           {
             "name": "limit",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -546,7 +837,6 @@
           {
             "name": "pageNumber",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -555,7 +845,6 @@
           {
             "name": "before",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -563,7 +852,6 @@
           {
             "name": "after",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -575,7 +863,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetDrugsResponseDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Drugs.GetDrugsResponseDTO"
                 }
               }
             }
@@ -604,13 +892,13 @@
     },
     "/v1/drugs/drugcalculator": {
       "post": {
-        "tags": ["drug"],
+        "tags": ["drugs"],
         "operationId": "DrugCalculator",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DrugCalculatorRequestDTO"
+                "$ref": "#/components/schemas/Minarsidur.API.Models.Drugs.DrugCalculatorRequestDTO"
               }
             }
           },
@@ -622,7 +910,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DrugCalculatorResponseDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Drugs.DrugCalculatorResponseDTO"
                 }
               }
             }
@@ -651,7 +939,7 @@
     },
     "/v1/drugs/certificates": {
       "get": {
-        "tags": ["drug"],
+        "tags": ["drugs"],
         "operationId": "GetDrugCertificates",
         "responses": {
           "200": {
@@ -661,7 +949,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/DrugCertificateDTO"
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.Drugs.DrugCertificateDTO"
                   }
                 }
               }
@@ -699,7 +987,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BasicCardInfoDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Ehic.BasicCardInfoDTO"
                 }
               }
             }
@@ -736,7 +1024,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TempPDFCardResponseDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.DocumentDTO"
                 }
               }
             }
@@ -772,7 +1060,6 @@
             "name": "applicantnationalids",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "string"
             }
@@ -786,7 +1073,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CardStatusResponseDTO"
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.Ehic.CardStatusResponseDTO"
                   }
                 }
               }
@@ -823,7 +1110,6 @@
             "name": "applicantnationalid",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "string"
             }
@@ -832,7 +1118,6 @@
             "name": "cardtype",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "string"
             }
@@ -844,7 +1129,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardStatusResponseDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Ehic.CardStatusResponseDTO"
                 }
               }
             }
@@ -880,7 +1165,6 @@
             "name": "applicantnationalid",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "string"
             }
@@ -889,7 +1173,6 @@
             "name": "cardnumber",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "string"
             }
@@ -901,7 +1184,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TempPDFCardResponseDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.DocumentDTO"
                 }
               }
             }
@@ -930,13 +1213,12 @@
     },
     "/v1/healthcenters": {
       "get": {
-        "tags": ["healthcenter"],
+        "tags": ["healthcenters"],
         "operationId": "GetHealthCenters",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -945,7 +1227,6 @@
           {
             "name": "pageNumber",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -954,7 +1235,6 @@
           {
             "name": "before",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -962,7 +1242,6 @@
           {
             "name": "after",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -974,7 +1253,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetHealthCentersResponseDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.HealthCenters.GetHealthCentersResponseDTO"
                 }
               }
             }
@@ -1003,14 +1282,13 @@
     },
     "/v1/healthcenters/{id}/doctors": {
       "get": {
-        "tags": ["healthcenter"],
+        "tags": ["healthcenters"],
         "operationId": "GetHealthCenterDoctors",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "string"
             }
@@ -1024,7 +1302,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/DoctorDTO"
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.HealthCenters.DoctorDTO"
                   }
                 }
               }
@@ -1054,7 +1332,7 @@
     },
     "/v1/healthcenters/current": {
       "get": {
-        "tags": ["healthcenter"],
+        "tags": ["healthcenters"],
         "operationId": "GetCurrentHealthCenter",
         "responses": {
           "200": {
@@ -1062,7 +1340,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CurrentHealthCenterDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.HealthCenters.CurrentHealthCenterDTO"
                 }
               }
             }
@@ -1091,14 +1369,13 @@
     },
     "/v1/healthcenters/{id}/register": {
       "post": {
-        "tags": ["healthcenter"],
+        "tags": ["healthcenters"],
         "operationId": "RegisterHealthCenter",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "string"
             }
@@ -1106,7 +1383,6 @@
           {
             "name": "doctorId",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -1141,25 +1417,25 @@
     },
     "/v1/healthcenters/history": {
       "get": {
-        "tags": ["healthcenter"],
+        "tags": ["healthcenters"],
         "operationId": "GetHealthCenterHistory",
         "parameters": [
           {
             "name": "dateFrom",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date"
             }
           },
           {
             "name": "dateTo",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date"
             }
           }
         ],
@@ -1171,7 +1447,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/HealthCenterHistoryEntryDTO"
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.HealthCenters.HealthCenterHistoryEntryDTO"
                   }
                 }
               }
@@ -1210,17 +1486,249 @@
         }
       }
     },
-    "/v1/overview/insurance": {
+    "/v1/insurancestatements/status/{applicantNationalId}": {
       "get": {
-        "tags": ["overview"],
-        "operationId": "GetInsuranceOverview",
+        "tags": ["insurancestatements"],
+        "operationId": "GetInsuranceStatementStatus",
+        "parameters": [
+          {
+            "name": "applicantNationalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InsuranceOverviewDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.InsuranceStatements.InsuranceStatementStatusDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/insurancestatements/continents": {
+      "get": {
+        "tags": ["insurancestatements"],
+        "operationId": "GetInsuranceStatementContinents",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.InsuranceStatements.ContinentDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/insurancestatements/countries": {
+      "get": {
+        "tags": ["insurancestatements"],
+        "operationId": "GetInsuranceStatementCountries",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.InsuranceStatements.CountryDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/insurancestatements/studentapplication": {
+      "post": {
+        "tags": ["insurancestatements"],
+        "operationId": "InsuranceStatementStudentApplication",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Minarsidur.API.Models.InsuranceStatements.StudentApplicationDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.InsuranceStatements.Response.InsuranceStatementApplicationResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/insurancestatements/touristapplication": {
+      "post": {
+        "tags": ["insurancestatements"],
+        "operationId": "InsuranceStatementTouristApplication",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Minarsidur.API.Models.InsuranceStatements.TouristApplicationDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.InsuranceStatements.Response.InsuranceStatementApplicationResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/insurancestatements/pdf/{documentId}": {
+      "get": {
+        "tags": ["insurancestatements"],
+        "operationId": "GetInsuranceStatementPdf",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.DocumentDTO"
                 }
               }
             }
@@ -1249,7 +1757,7 @@
     },
     "/v1/overview/insurance/confirmation": {
       "get": {
-        "tags": ["overview"],
+        "tags": ["overview-insurance"],
         "operationId": "GetInsuranceConfirmation",
         "responses": {
           "200": {
@@ -1257,7 +1765,44 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InsuranceConfirmationDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Overview.InsuranceConfirmationDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/overview/insurance": {
+      "get": {
+        "tags": ["overview-insurance"],
+        "operationId": "GetInsuranceOverview",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Overview.InsuranceOverviewDTO"
                 }
               }
             }
@@ -1286,7 +1831,7 @@
     },
     "/v1/payments/copayment/status": {
       "get": {
-        "tags": ["payment"],
+        "tags": ["payments-copayment"],
         "operationId": "GetCopaymentStatus",
         "responses": {
           "200": {
@@ -1294,7 +1839,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CopaymentStatusDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Copayment.CopaymentStatusDTO"
                 }
               }
             }
@@ -1323,25 +1868,25 @@
     },
     "/v1/payments/copayment/periods": {
       "get": {
-        "tags": ["payment"],
+        "tags": ["payments-copayment"],
         "operationId": "GetCopaymentPeriods",
         "parameters": [
           {
             "name": "dateFrom",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date"
             }
           },
           {
             "name": "dateTo",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date"
             }
           }
         ],
@@ -1353,7 +1898,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CopaymentPeriodDTO"
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.Copayment.CopaymentPeriodDTO"
                   }
                 }
               }
@@ -1383,14 +1928,13 @@
     },
     "/v1/payments/copayment/periods/{periodId}/bills": {
       "get": {
-        "tags": ["payment"],
+        "tags": ["payments-copayment"],
         "operationId": "GetCopaymentBills",
         "parameters": [
           {
             "name": "periodId",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -1403,7 +1947,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CopaymentBillsDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Copayment.CopaymentBillsDTO"
                 }
               }
             }
@@ -1432,7 +1976,7 @@
     },
     "/v1/payments/overview/servicetypes": {
       "get": {
-        "tags": ["payment"],
+        "tags": ["payments-overview"],
         "operationId": "GetPaymentsOverviewServiceTypes",
         "responses": {
           "200": {
@@ -1442,7 +1986,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/PaymentOverviewServiceTypeDTO"
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.Payments.PaymentOverviewServiceTypeDTO"
                   }
                 }
               }
@@ -1472,31 +2016,30 @@
     },
     "/v1/payments/overview": {
       "get": {
-        "tags": ["payment"],
+        "tags": ["payments-overview"],
         "operationId": "GetPaymentsOverview",
         "parameters": [
           {
             "name": "dateFrom",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date"
             }
           },
           {
             "name": "dateTo",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date"
             }
           },
           {
             "name": "serviceTypeCode",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -1508,7 +2051,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentOverviewDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.Payments.PaymentOverviewDTO"
                 }
               }
             }
@@ -1537,14 +2080,13 @@
     },
     "/v1/payments/overview/documents/{documentId}": {
       "get": {
-        "tags": ["payment"],
+        "tags": ["payments-overview"],
         "operationId": "GetPaymentsOverviewDocument",
         "parameters": [
           {
             "name": "documentId",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -1557,7 +2099,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DocumentDTO"
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.DocumentDTO"
                 }
               }
             }
@@ -1584,9 +2126,255 @@
         }
       }
     },
+    "/v1/sicknessallowance/applications": {
+      "get": {
+        "tags": ["sicknessallowance"],
+        "operationId": "GetSicknessAllowanceApplications",
+        "parameters": [
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.SicknessAllowance.PastApplicationDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/sicknessallowance/applications/documents/{documentId}": {
+      "get": {
+        "tags": ["sicknessallowance"],
+        "operationId": "GetSicknessAllowanceApplicationDocument",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.DocumentDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/sicknessallowance/doctorCertificates": {
+      "get": {
+        "tags": ["sicknessallowance"],
+        "operationId": "GetSicknessAllowanceDoctorCertificates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.SicknessAllowance.DoctorCertificateDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/sicknessallowance/applications/submit": {
+      "post": {
+        "tags": ["sicknessallowance"],
+        "operationId": "SubmitSicknessAllowanceApplication",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Minarsidur.API.Models.SicknessAllowance.ApplicationDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.SicknessAllowance.Response.SubmitSicknessAllowanceApplicationResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/sicknessallowance/applications/{applicationId}/attachment": {
+      "post": {
+        "tags": ["sicknessallowance"],
+        "operationId": "SubmitSicknessAllowanceApplicationAttachment",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Minarsidur.API.Models.DocumentDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/v1/therapies": {
       "get": {
-        "tags": ["therapy"],
+        "tags": ["therapies"],
         "operationId": "GetTherapies",
         "responses": {
           "200": {
@@ -1596,7 +2384,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TherapyDTO"
+                    "$ref": "#/components/schemas/Minarsidur.API.Models.Therapies.TherapyDTO"
                   }
                 }
               }
@@ -1627,7 +2415,448 @@
   },
   "components": {
     "schemas": {
-      "AidOrNutritionDTO": {
+      "Minarsidur.API.Models.AccidentReports.AccidentDTO": {
+        "required": [
+          "datetime",
+          "dateTimeOfDoctorVisit",
+          "description",
+          "symptoms",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "subtype": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "datetime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "symptoms": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateTimeOfDoctorVisit": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fatal": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "automobile": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentLocationEnum"
+          },
+          "locationDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "dockName": {
+            "type": "string",
+            "nullable": true
+          },
+          "dockGps": {
+            "type": "string",
+            "nullable": true
+          },
+          "atHome": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtHomeDTO"
+          },
+          "atWork": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtWorkDTO"
+          },
+          "atSailorWork": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtSailorWorkDTO"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtHomeDTO": {
+        "required": ["address", "city", "postcode"],
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "postcode": {
+            "type": "string",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtSailorWorkDTO": {
+        "required": ["shipDesignation", "shipLocation", "shipName"],
+        "type": "object",
+        "properties": {
+          "shipLocation": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtSailorWorkDTO_AccidentAtSailorWorkShipLocationEnum"
+          },
+          "shipName": {
+            "type": "string",
+            "nullable": true
+          },
+          "shipDesignation": {
+            "type": "string",
+            "nullable": true
+          },
+          "shipHomePort": {
+            "type": "string",
+            "nullable": true
+          },
+          "shipRegistryNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtSailorWorkDTO_AccidentAtSailorWorkShipLocationEnum": {
+        "enum": [1, 2, 3],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtWorkDTO": {
+        "required": ["machineDescription"],
+        "type": "object",
+        "properties": {
+          "machineDescription": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentLocationEnum": {
+        "enum": [0, 1, 2],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentDTO": {
+        "required": ["document", "type"],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentTypeEnum"
+          },
+          "document": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.DocumentDTO"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentTypeEnum": {
+        "enum": [1, 2, 3, 4],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Minarsidur.API.Models.AccidentReports.AccidentReportConfirmationDTO": {
+        "required": ["accepted", "party"],
+        "type": "object",
+        "properties": {
+          "party": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportConfirmationPartyEnum"
+          },
+          "accepted": {
+            "type": "boolean"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.AccidentReportConfirmationPartyEnum": {
+        "enum": [1, 2],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Minarsidur.API.Models.AccidentReports.AccidentReportDTO": {
+        "required": ["accident", "injured", "reporter"],
+        "type": "object",
+        "properties": {
+          "reporter": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.ReporterDTO"
+          },
+          "injured": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.InjuredDTO"
+          },
+          "accident": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentDTO"
+          },
+          "employer": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.EmployerDTO"
+          },
+          "club": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.ClubDTO"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.ClubDTO": {
+        "required": ["accidentType", "name", "nationalId"],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "accidentType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.EmployerDTO": {
+        "required": [
+          "companyName",
+          "companyNationalId",
+          "representativeEmail",
+          "representativeName"
+        ],
+        "type": "object",
+        "properties": {
+          "companyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "representativeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "representativeEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "representativePhone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.InjuredDTO": {
+        "required": ["email", "name", "nationalId"],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "occupation": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.ReporterDTO": {
+        "required": [
+          "address",
+          "city",
+          "email",
+          "name",
+          "nationalId",
+          "postcode",
+          "reportingFor"
+        ],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "postcode": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "reportingFor": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.ReporterDTO_ReportingForEnum"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.ReporterDTO_ReportingForEnum": {
+        "enum": [1, 2, 3, 4],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Minarsidur.API.Models.AccidentReports.Response.GetAccidentReportStatusResponseDTO": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "success": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.Response.GetAccidentReportStatusResponseDTO_AccidentReportStatusEnum"
+          },
+          "confirmations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.Response.GetAccidentReportStatusResponseDTO_ConfirmationStatusDTO"
+            },
+            "nullable": true
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.Response.GetAccidentReportStatusResponseDTO_AttachmentStatusDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.Response.GetAccidentReportStatusResponseDTO_AccidentReportStatusEnum": {
+        "enum": [1, 2, 3, 4],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Minarsidur.API.Models.AccidentReports.Response.GetAccidentReportStatusResponseDTO_AttachmentStatusDTO": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentTypeEnum"
+          },
+          "received": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.Response.GetAccidentReportStatusResponseDTO_ConfirmationStatusDTO": {
+        "type": "object",
+        "properties": {
+          "party": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportConfirmationPartyEnum"
+          },
+          "received": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AccidentReports.Response.SubmitAccidentReportResponseDTO": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "requestId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.SaveDocumentMethodReponseDTO_ErrorDTO"
+            },
+            "nullable": true
+          },
+          "errorStack": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "reportId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AidsAndNutrition.AidOrNutritionDTO": {
         "type": "object",
         "properties": {
           "id": {
@@ -1647,7 +2876,7 @@
             "nullable": true
           },
           "refund": {
-            "$ref": "#/components/schemas/AidOrNutritionRefundDTO"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AidsAndNutrition.AidOrNutritionRefundDTO"
           },
           "maxMonthlyAmount": {
             "type": "number",
@@ -1687,7 +2916,7 @@
         },
         "additionalProperties": false
       },
-      "AidOrNutritionRefundDTO": {
+      "Minarsidur.API.Models.AidsAndNutrition.AidOrNutritionRefundDTO": {
         "type": "object",
         "properties": {
           "type": {
@@ -1702,143 +2931,267 @@
         },
         "additionalProperties": false
       },
-      "AidsAndNutritionDTO": {
+      "Minarsidur.API.Models.AidsAndNutrition.AidsAndNutritionDTO": {
         "type": "object",
         "properties": {
           "aids": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AidOrNutritionDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.AidsAndNutrition.AidOrNutritionDTO"
             },
             "nullable": true
           },
           "nutrition": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AidOrNutritionDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.AidsAndNutrition.AidOrNutritionDTO"
             },
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "BasicCardInfoDTO": {
+      "Minarsidur.API.Models.Application.Adilar": {
         "type": "object",
         "properties": {
-          "cardHolderName": {
+          "kennitala": {
             "type": "string",
             "nullable": true
           },
-          "cardHolderNationalId": {
+          "heiti": {
             "type": "string",
             "nullable": true
           },
-          "cardNumber": {
+          "heimili": {
             "type": "string",
             "nullable": true
           },
-          "expiryDate": {
+          "stadur": {
             "type": "string",
-            "format": "date",
             "nullable": true
           },
-          "issued": {
+          "postnumer": {
             "type": "string",
-            "format": "date",
             "nullable": true
           },
-          "sent": {
+          "tegund": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.Application.ApplicantType"
+          },
+          "hlutverk": {
             "type": "string",
-            "format": "date",
             "nullable": true
           },
-          "hasTempCard": {
-            "type": "boolean",
+          "netfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "simi": {
+            "type": "string",
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "CardInfoDTO": {
+      "Minarsidur.API.Models.Application.ApplicantType": {
+        "enum": [0, 1, 2, -2],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Minarsidur.API.Models.Application.ApplicationFileTypes": {
+        "enum": [1, 2, 3, 4, 5],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Minarsidur.API.Models.Application.ApplicationFiles": {
         "type": "object",
         "properties": {
-          "cardNumber": {
+          "flokkur": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.Application.ApplicationFileTypes"
+          },
+          "heiti": {
             "type": "string",
             "nullable": true
           },
-          "expiryDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "issued": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "sent": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "resent": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "cardType": {
+          "heitiSkjals": {
             "type": "string",
             "nullable": true
           },
-          "sentStatus": {
+          "dags": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "tegund": {
             "type": "string",
             "nullable": true
           },
-          "comment": {
+          "fileID": {
             "type": "string",
             "nullable": true
           },
-          "isPlastic": {
-            "type": "boolean",
-            "readOnly": true
+          "ending": {
+            "type": "string",
+            "nullable": true
           },
-          "isTemp": {
-            "type": "boolean",
+          "fileTypeFromHeiti": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
             "readOnly": true
           }
         },
         "additionalProperties": false
       },
-      "CardStatusResponseDTO": {
+      "Minarsidur.API.Models.Application.ApplicationFilesContent": {
         "type": "object",
         "properties": {
-          "applicantNationalId": {
+          "fileID": {
             "type": "string",
             "nullable": true
           },
-          "isInsured": {
-            "type": "boolean",
+          "applicationID": {
+            "type": "string",
             "nullable": true
           },
-          "canApply": {
-            "type": "boolean",
+          "content": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.Application.ApplicationSystem": {
+        "required": ["adilar", "notandagogn"],
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
             "nullable": true
           },
-          "canApplyForPDF": {
-            "type": "boolean",
+          "portalApplicationID": {
+            "type": "string",
             "nullable": true
           },
-          "cards": {
+          "applicationType": {
+            "type": "string",
+            "nullable": true
+          },
+          "dagssetning": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "adilar": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CardInfoDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.Application.Adilar"
             },
+            "nullable": true
+          },
+          "notandagogn": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.Application.Notandagogn"
+            },
+            "nullable": true
+          },
+          "greidsla": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.Application.Greidsla"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.Application.ApplicationFiles"
+            },
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.Application.CurrentApplicationStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.Application.CurrentApplicationStatus": {
+        "enum": [70, 71, 73, 80, 90, 100, 1100],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Minarsidur.API.Models.Application.Greidsla": {
+        "type": "object",
+        "properties": {
+          "upphaed": {
+            "type": "string",
+            "nullable": true
+          },
+          "dags": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "korthafi": {
+            "type": "string",
+            "nullable": true
+          },
+          "kortanumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegundKorts": {
+            "type": "string",
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "CopaymentBillDTO": {
+      "Minarsidur.API.Models.Application.Notandagogn": {
+        "type": "object",
+        "properties": {
+          "flokkur": {
+            "type": "string",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegund": {
+            "type": "string",
+            "nullable": true
+          },
+          "gildi": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.Application.Response.ApplicationResponseDTO": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.Application.ResultStatus"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.Application.ResultStatus": {
+        "enum": [200, 300, 400],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Minarsidur.API.Models.Copayment.CopaymentBillDTO": {
         "type": "object",
         "properties": {
           "id": {
@@ -1878,7 +3231,7 @@
         },
         "additionalProperties": false
       },
-      "CopaymentBillsDTO": {
+      "Minarsidur.API.Models.Copayment.CopaymentBillsDTO": {
         "type": "object",
         "properties": {
           "totalTotalAmount": {
@@ -1904,14 +3257,14 @@
           "bills": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CopaymentBillDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.Copayment.CopaymentBillDTO"
             },
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "CopaymentInsuranceStatusDTO": {
+      "Minarsidur.API.Models.Copayment.CopaymentInsuranceStatusDTO": {
         "type": "object",
         "properties": {
           "display": {
@@ -1925,7 +3278,7 @@
         },
         "additionalProperties": false
       },
-      "CopaymentPeriodDTO": {
+      "Minarsidur.API.Models.Copayment.CopaymentPeriodDTO": {
         "type": "object",
         "properties": {
           "id": {
@@ -1934,7 +3287,7 @@
             "nullable": true
           },
           "status": {
-            "$ref": "#/components/schemas/CopaymentInsuranceStatusDTO"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.Copayment.CopaymentInsuranceStatusDTO"
           },
           "month": {
             "type": "string",
@@ -1963,11 +3316,11 @@
         },
         "additionalProperties": false
       },
-      "CopaymentStatusDTO": {
+      "Minarsidur.API.Models.Copayment.CopaymentStatusDTO": {
         "type": "object",
         "properties": {
           "insuranceStatus": {
-            "$ref": "#/components/schemas/CopaymentInsuranceStatusDTO"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.Copayment.CopaymentInsuranceStatusDTO"
           },
           "maximumMonthlyPayment": {
             "type": "integer",
@@ -1987,7 +3340,7 @@
         },
         "additionalProperties": false
       },
-      "CurrentDentistDTO": {
+      "Minarsidur.API.Models.Dentists.CurrentDentistDTO": {
         "type": "object",
         "properties": {
           "id": {
@@ -2002,29 +3355,7 @@
         },
         "additionalProperties": false
       },
-      "CurrentHealthCenterDTO": {
-        "type": "object",
-        "properties": {
-          "healthCenter": {
-            "type": "string",
-            "nullable": true
-          },
-          "url": {
-            "type": "string",
-            "nullable": true
-          },
-          "doctor": {
-            "type": "string",
-            "nullable": true
-          },
-          "canRegister": {
-            "type": "boolean",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "DentistBillDTO": {
+      "Minarsidur.API.Models.Dentists.DentistBillDTO": {
         "type": "object",
         "properties": {
           "number": {
@@ -2054,7 +3385,7 @@
         },
         "additionalProperties": false
       },
-      "DentistDTO": {
+      "Minarsidur.API.Models.Dentists.DentistDTO": {
         "type": "object",
         "properties": {
           "id": {
@@ -2073,14 +3404,14 @@
           "practices": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/DentistPracticeDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.Dentists.DentistPracticeDTO"
             },
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "DentistPracticeDTO": {
+      "Minarsidur.API.Models.Dentists.DentistPracticeDTO": {
         "type": "object",
         "properties": {
           "practice": {
@@ -2102,7 +3433,7 @@
         },
         "additionalProperties": false
       },
-      "DentistStatusDTO": {
+      "Minarsidur.API.Models.Dentists.DentistStatusDTO": {
         "type": "object",
         "properties": {
           "isInsured": {
@@ -2120,32 +3451,29 @@
         },
         "additionalProperties": false
       },
-      "DoctorDTO": {
+      "Minarsidur.API.Models.Dentists.GetDentistsResponseDTO": {
         "type": "object",
         "properties": {
-          "id": {
+          "dentists": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.Dentists.DentistDTO"
+            },
+            "nullable": true
+          },
+          "pageInfo": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.PageInfoDTO"
+          },
+          "totalCount": {
             "type": "integer",
             "format": "int32",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "availableFrom": {
-            "type": "string",
-            "format": "date",
-            "nullable": true
-          },
-          "availableTo": {
-            "type": "string",
-            "format": "date",
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "DocumentDTO": {
+      "Minarsidur.API.Models.DocumentDTO": {
+        "required": ["data", "fileName"],
         "type": "object",
         "properties": {
           "fileName": {
@@ -2164,7 +3492,7 @@
         },
         "additionalProperties": false
       },
-      "DrugBillDTO": {
+      "Minarsidur.API.Models.Drugs.DrugBillDTO": {
         "type": "object",
         "properties": {
           "id": {
@@ -2218,7 +3546,7 @@
         },
         "additionalProperties": false
       },
-      "DrugBillLineItemDTO": {
+      "Minarsidur.API.Models.Drugs.DrugBillLineItemDTO": {
         "type": "object",
         "properties": {
           "billId": {
@@ -2275,7 +3603,7 @@
         },
         "additionalProperties": false
       },
-      "DrugCalculationInDTO": {
+      "Minarsidur.API.Models.Drugs.DrugCalculationInDTO": {
         "type": "object",
         "properties": {
           "lineNumber": {
@@ -2297,7 +3625,7 @@
         },
         "additionalProperties": false
       },
-      "DrugCalculationOutDTO": {
+      "Minarsidur.API.Models.Drugs.DrugCalculationOutDTO": {
         "type": "object",
         "properties": {
           "lineNumber": {
@@ -2342,26 +3670,26 @@
         },
         "additionalProperties": false
       },
-      "DrugCalculatorRequestDTO": {
+      "Minarsidur.API.Models.Drugs.DrugCalculatorRequestDTO": {
         "type": "object",
         "properties": {
           "drugs": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/DrugCalculationInDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.Drugs.DrugCalculationInDTO"
             },
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "DrugCalculatorResponseDTO": {
+      "Minarsidur.API.Models.Drugs.DrugCalculatorResponseDTO": {
         "type": "object",
         "properties": {
           "drugs": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/DrugCalculationOutDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.Drugs.DrugCalculationOutDTO"
             },
             "nullable": true
           },
@@ -2383,7 +3711,7 @@
         },
         "additionalProperties": false
       },
-      "DrugCertificateDTO": {
+      "Minarsidur.API.Models.Drugs.DrugCertificateDTO": {
         "type": "object",
         "properties": {
           "id": {
@@ -2422,9 +3750,11 @@
             "type": "string",
             "nullable": true
           },
+          "status": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.Drugs.DrugCertificateDTO_DrugCertificateStatusEnum"
+          },
           "processed": {
             "type": "boolean",
-            "nullable": true,
             "readOnly": true
           },
           "approved": {
@@ -2443,7 +3773,6 @@
           },
           "valid": {
             "type": "boolean",
-            "nullable": true,
             "readOnly": true
           },
           "comment": {
@@ -2458,14 +3787,19 @@
           "methylDoctors": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/MethylDoctorDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.Drugs.MethylDoctorDTO"
             },
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "DrugDTO": {
+      "Minarsidur.API.Models.Drugs.DrugCertificateDTO_DrugCertificateStatusEnum": {
+        "enum": [0, 1, 2, 3],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Minarsidur.API.Models.Drugs.DrugDTO": {
         "type": "object",
         "properties": {
           "nordicCode": {
@@ -2500,7 +3834,7 @@
         },
         "additionalProperties": false
       },
-      "DrugPaymentPeriodDTO": {
+      "Minarsidur.API.Models.Drugs.DrugPaymentPeriodDTO": {
         "type": "object",
         "properties": {
           "id": {
@@ -2550,39 +3884,18 @@
         },
         "additionalProperties": false
       },
-      "GetDentistsResponseDTO": {
-        "type": "object",
-        "properties": {
-          "dentists": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DentistDTO"
-            },
-            "nullable": true
-          },
-          "pageInfo": {
-            "$ref": "#/components/schemas/PageInfoDTO"
-          },
-          "totalCount": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "GetDrugsResponseDTO": {
+      "Minarsidur.API.Models.Drugs.GetDrugsResponseDTO": {
         "type": "object",
         "properties": {
           "drugs": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/DrugDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.Drugs.DrugDTO"
             },
             "nullable": true
           },
           "pageInfo": {
-            "$ref": "#/components/schemas/PageInfoDTO"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.PageInfoDTO"
           },
           "totalCount": {
             "type": "integer",
@@ -2592,18 +3905,195 @@
         },
         "additionalProperties": false
       },
-      "GetHealthCentersResponseDTO": {
+      "Minarsidur.API.Models.Drugs.MethylDoctorDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.Ehic.BasicCardInfoDTO": {
+        "type": "object",
+        "properties": {
+          "cardHolderName": {
+            "type": "string",
+            "nullable": true
+          },
+          "cardHolderNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "cardNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "issued": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "sent": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "hasTempCard": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.Ehic.CardInfoDTO": {
+        "type": "object",
+        "properties": {
+          "cardNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "issued": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "sent": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "resent": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "cardType": {
+            "type": "string",
+            "nullable": true
+          },
+          "sentStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "isPlastic": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "isTemp": {
+            "type": "boolean",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.Ehic.CardStatusResponseDTO": {
+        "type": "object",
+        "properties": {
+          "applicantNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isInsured": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "canApply": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "canApplyForPDF": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "cards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.Ehic.CardInfoDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.HealthCenters.CurrentHealthCenterDTO": {
+        "type": "object",
+        "properties": {
+          "healthCenter": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "doctor": {
+            "type": "string",
+            "nullable": true
+          },
+          "neighborhoodCenter": {
+            "type": "string",
+            "nullable": true
+          },
+          "canRegister": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.HealthCenters.DoctorDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "availableFrom": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "availableTo": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.HealthCenters.GetHealthCentersResponseDTO": {
         "type": "object",
         "properties": {
           "healthCenters": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/HealthCenterDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.HealthCenters.HealthCenterDTO"
             },
             "nullable": true
           },
           "pageInfo": {
-            "$ref": "#/components/schemas/PageInfoDTO"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.PageInfoDTO"
           },
           "totalCount": {
             "type": "integer",
@@ -2613,7 +4103,7 @@
         },
         "additionalProperties": false
       },
-      "HealthCenterDTO": {
+      "Minarsidur.API.Models.HealthCenters.HealthCenterDTO": {
         "type": "object",
         "properties": {
           "id": {
@@ -2656,7 +4146,7 @@
         },
         "additionalProperties": false
       },
-      "HealthCenterHistoryEntryDTO": {
+      "Minarsidur.API.Models.HealthCenters.HealthCenterHistoryEntryDTO": {
         "type": "object",
         "properties": {
           "dateFrom": {
@@ -2679,12 +4169,12 @@
             "nullable": true
           },
           "healthCenter": {
-            "$ref": "#/components/schemas/HealthCenterRegistrationDTO"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.HealthCenters.HealthCenterRegistrationDTO"
           }
         },
         "additionalProperties": false
       },
-      "HealthCenterRegistrationDTO": {
+      "Minarsidur.API.Models.HealthCenters.HealthCenterRegistrationDTO": {
         "type": "object",
         "properties": {
           "healthCenter": {
@@ -2702,7 +4192,237 @@
         },
         "additionalProperties": false
       },
-      "InsuranceConfirmationDTO": {
+      "Minarsidur.API.Models.InsuranceStatements.ApplicantDTO": {
+        "required": ["name", "nationalId", "type"],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.InsuranceStatements.ApplicantDTO_InsuranceApplicantTypeEnum"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.InsuranceStatements.ApplicantDTO_InsuranceApplicantTypeEnum": {
+        "enum": [0, 1, 2],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Minarsidur.API.Models.InsuranceStatements.ContinentDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "icelandicName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.InsuranceStatements.CountryDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "icelandicName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.InsuranceStatements.InsuranceStatementStatusDTO": {
+        "type": "object",
+        "properties": {
+          "canApply": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "isInsured": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "hasInsuranceStatement": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "insuranceStatementValidUntil": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.InsuranceStatements.Response.InsuranceStatementApplicationResponseDTO": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "requestId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.SaveDocumentMethodReponseDTO_ErrorDTO"
+            },
+            "nullable": true
+          },
+          "errorStack": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "applicationId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "applicants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.InsuranceStatements.Response.InsuranceStatementApplicationResponseDTO_ResponseApplicantDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.InsuranceStatements.Response.InsuranceStatementApplicationResponseDTO_ResponseApplicantDTO": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "approved": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.InsuranceStatements.StudentApplicationDTO": {
+        "required": ["applicants", "attachment"],
+        "type": "object",
+        "properties": {
+          "applicants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.InsuranceStatements.ApplicantDTO"
+            },
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateFrom": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "dateTo": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "attachment": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.DocumentDTO"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.InsuranceStatements.TouristApplicationDTO": {
+        "required": ["applicants"],
+        "type": "object",
+        "properties": {
+          "applicants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.InsuranceStatements.ApplicantDTO"
+            },
+            "nullable": true
+          },
+          "continentCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateFrom": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "dateTo": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.MethodResponseDTO": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "success": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.Overview.InsuranceConfirmationDTO": {
         "type": "object",
         "properties": {
           "fileName": {
@@ -2721,7 +4441,7 @@
         },
         "additionalProperties": false
       },
-      "InsuranceOverviewDTO": {
+      "Minarsidur.API.Models.Overview.InsuranceOverviewDTO": {
         "type": "object",
         "properties": {
           "isInsured": {
@@ -2738,7 +4458,7 @@
             "nullable": true
           },
           "status": {
-            "$ref": "#/components/schemas/InsuranceStatusDTO"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.Overview.InsuranceStatusDTO"
           },
           "maximumPayment": {
             "type": "integer",
@@ -2753,7 +4473,7 @@
         },
         "additionalProperties": false
       },
-      "InsuranceStatusDTO": {
+      "Minarsidur.API.Models.Overview.InsuranceStatusDTO": {
         "type": "object",
         "properties": {
           "display": {
@@ -2767,17 +4487,7 @@
         },
         "additionalProperties": false
       },
-      "MethylDoctorDTO": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "PageInfoDTO": {
+      "Minarsidur.API.Models.PageInfoDTO": {
         "type": "object",
         "properties": {
           "hasPreviousPage": {
@@ -2799,7 +4509,7 @@
         },
         "additionalProperties": false
       },
-      "PaymentOverviewBillDTO": {
+      "Minarsidur.API.Models.Payments.PaymentOverviewBillDTO": {
         "type": "object",
         "properties": {
           "id": {
@@ -2808,7 +4518,7 @@
             "nullable": true
           },
           "serviceType": {
-            "$ref": "#/components/schemas/PaymentOverviewServiceTypeDTO"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.Payments.PaymentOverviewServiceTypeDTO"
           },
           "date": {
             "type": "string",
@@ -2833,7 +4543,7 @@
         },
         "additionalProperties": false
       },
-      "PaymentOverviewDTO": {
+      "Minarsidur.API.Models.Payments.PaymentOverviewDTO": {
         "type": "object",
         "properties": {
           "credit": {
@@ -2859,14 +4569,14 @@
           "bills": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PaymentOverviewBillDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.Payments.PaymentOverviewBillDTO"
             },
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "PaymentOverviewServiceTypeDTO": {
+      "Minarsidur.API.Models.Payments.PaymentOverviewServiceTypeDTO": {
         "type": "object",
         "properties": {
           "code": {
@@ -2880,26 +4590,297 @@
         },
         "additionalProperties": false
       },
-      "TempPDFCardResponseDTO": {
+      "Minarsidur.API.Models.SaveDocumentMethodReponseDTO_ErrorDTO": {
         "type": "object",
         "properties": {
-          "data": {
-            "type": "string",
-            "format": "byte",
-            "nullable": true
-          },
-          "fileName": {
+          "type": {
             "type": "string",
             "nullable": true
           },
-          "contentType": {
+          "message": {
             "type": "string",
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "TherapyDTO": {
+      "Minarsidur.API.Models.SicknessAllowance.ApplicantDTO": {
+        "required": [
+          "address",
+          "bankAccountNumber",
+          "email",
+          "name",
+          "nationalId",
+          "phone",
+          "postcode"
+        ],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "postcode": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankAccountNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.SicknessAllowance.ApplicationDTO": {
+        "required": ["applicant", "applicationDetails"],
+        "type": "object",
+        "properties": {
+          "applicant": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.SicknessAllowance.ApplicantDTO"
+          },
+          "applicationDetails": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.SicknessAllowance.ApplicationDetailsDTO"
+          },
+          "doctorCertificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.SicknessAllowance.SubmittedDoctorCertificateDTO"
+            },
+            "nullable": true
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.DocumentDTO"
+            },
+            "nullable": true
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.SicknessAllowance.ChildDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.SicknessAllowance.ApplicationDetailsDTO": {
+        "required": [
+          "comment",
+          "employee",
+          "homeAssistance",
+          "homeBirth",
+          "homeworker",
+          "independent",
+          "receivedDate",
+          "rehab",
+          "sicknessSalary",
+          "student",
+          "unemployed"
+        ],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "employee": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "student": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "homeworker": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "independent": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "unemployed": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "rehab": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "homeBirth": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "jobPercentage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "dateWhenLeftJob": {
+            "type": "string",
+            "format": "date"
+          },
+          "sicknessSalary": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "homeAssistance": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "receivedDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "dateOfLatestAttachment": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.SicknessAllowance.ChildDTO": {
+        "required": ["name", "nationalId"],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.SicknessAllowance.DoctorCertificateDTO": {
+        "type": "object",
+        "properties": {
+          "documentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "documentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentType": {
+            "type": "string",
+            "nullable": true
+          },
+          "doctorName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.SicknessAllowance.PastApplicationDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "documentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "received": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.SicknessAllowance.Response.SubmitSicknessAllowanceApplicationResponseDTO": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "requestId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Minarsidur.API.Models.SaveDocumentMethodReponseDTO_ErrorDTO"
+            },
+            "nullable": true
+          },
+          "errorStack": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "applicationId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.SicknessAllowance.SubmittedDoctorCertificateDTO": {
+        "required": ["certificate", "confirmed"],
+        "type": "object",
+        "properties": {
+          "certificate": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.SicknessAllowance.DoctorCertificateDTO"
+          },
+          "confirmed": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.Therapies.TherapyDTO": {
         "type": "object",
         "properties": {
           "name": {
@@ -2913,19 +4894,19 @@
             "readOnly": true
           },
           "state": {
-            "$ref": "#/components/schemas/TherapyStateDTO"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.Therapies.TherapyStateDTO"
           },
           "periods": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/TherapyPeriodDTO"
+              "$ref": "#/components/schemas/Minarsidur.API.Models.Therapies.TherapyPeriodDTO"
             },
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "TherapyPeriodDTO": {
+      "Minarsidur.API.Models.Therapies.TherapyPeriodDTO": {
         "type": "object",
         "properties": {
           "from": {
@@ -2939,12 +4920,12 @@
             "nullable": true
           },
           "sessions": {
-            "$ref": "#/components/schemas/TherapySessionsDTO"
+            "$ref": "#/components/schemas/Minarsidur.API.Models.Therapies.TherapySessionsDTO"
           }
         },
         "additionalProperties": false
       },
-      "TherapySessionsDTO": {
+      "Minarsidur.API.Models.Therapies.TherapySessionsDTO": {
         "type": "object",
         "properties": {
           "available": {
@@ -2960,7 +4941,7 @@
         },
         "additionalProperties": false
       },
-      "TherapyStateDTO": {
+      "Minarsidur.API.Models.Therapies.TherapyStateDTO": {
         "type": "object",
         "properties": {
           "display": {

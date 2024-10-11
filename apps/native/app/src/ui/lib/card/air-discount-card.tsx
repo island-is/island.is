@@ -6,6 +6,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 import { Typography } from '../typography/typography'
+import { ViewStyle } from 'react-native'
 
 const Host = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing[1]}px;
@@ -84,6 +85,7 @@ interface AirDiscountProps {
   code?: string | null
   text?: string | null
   validUntil?: string | Date | null
+  style?: ViewStyle
 }
 
 export function AirDiscountCard({
@@ -92,12 +94,13 @@ export function AirDiscountCard({
   text,
   validUntil,
   credit,
+  style,
 }: AirDiscountProps) {
   const intl = useIntl()
   const theme = useTheme()
   const discountCode = credit === 0 ? undefined : code ?? '0'
   return (
-    <Host>
+    <Host style={style}>
       <Content>
         <Message>
           <Typography

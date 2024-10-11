@@ -17,6 +17,7 @@ import {
   YES,
   defineTemplateApi,
   NationalRegistrySpouseApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -37,7 +38,6 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
-import { Features } from '@island.is/feature-flags'
 import {
   Events,
   Roles,
@@ -55,7 +55,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
   type: ApplicationTypes.HOUSEHOLD_SUPPLEMENT,
   name: householdSupplementFormMessage.shared.applicationTitle,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  featureFlag: Features.householdSupplementApplication,
   translationNamespaces:
     ApplicationConfigurations.HouseholdSupplement.translation,
   dataSchema,
@@ -87,6 +86,11 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistryCohabitantsApi,
                 NationalRegistrySpouseApi,
+                UserProfileApi.configure({
+                  params: {
+                    validateEmail: true,
+                  },
+                }),
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,

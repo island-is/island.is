@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendApi } from '../../data-sources'
+import { BackendService } from '../backend'
 import { CaseQueryInput } from './dto/case.input'
 import { TransitionCaseInput } from './dto/transitionCase.input'
 import { UpdateCaseInput } from './dto/updateCase.input'
@@ -37,14 +37,15 @@ export class LimitedAccessCaseResolver {
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<Case> {
     this.logger.debug(`Getting case ${input.id}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASE,
-      backendApi.limitedAccessGetCase(input.id),
+      backendService.limitedAccessGetCase(input.id),
       input.id,
     )
   }
@@ -55,7 +56,8 @@ export class LimitedAccessCaseResolver {
     @Args('input', { type: () => UpdateCaseInput })
     input: UpdateCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<Case> {
     const { id, ...updateCase } = input
 
@@ -64,7 +66,7 @@ export class LimitedAccessCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_CASE,
-      backendApi.limitedAccessUpdateCase(id, updateCase),
+      backendService.limitedAccessUpdateCase(id, updateCase),
       id,
     )
   }
@@ -75,7 +77,8 @@ export class LimitedAccessCaseResolver {
     @Args('input', { type: () => TransitionCaseInput })
     input: TransitionCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<Case> {
     const { id, ...transitionCase } = input
 
@@ -84,7 +87,7 @@ export class LimitedAccessCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.TRANSITION_CASE,
-      backendApi.limitedAccessTransitionCase(id, transitionCase),
+      backendService.limitedAccessTransitionCase(id, transitionCase),
       id,
     )
   }

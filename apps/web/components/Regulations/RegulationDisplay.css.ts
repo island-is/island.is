@@ -1,12 +1,13 @@
-import { style, globalStyle } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
+
+import { spacing, theme } from '@island.is/island-ui/theme'
 import {
-  regulationContentStyling,
   diffStyling,
+  regulationContentStyling,
   regulationTitleStyling,
 } from '@island.is/regulations/styling'
-import { theme, spacing } from '@island.is/island-ui/theme'
 import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
-const { color, typography, border, shadows } = theme
+const { color, typography } = theme
 
 export const scrolled = style({})
 

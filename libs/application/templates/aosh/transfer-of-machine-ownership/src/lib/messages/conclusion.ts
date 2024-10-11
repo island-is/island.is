@@ -74,7 +74,8 @@ export const conclusion = {
   rejected: defineMessages({
     alertMessage: {
       id: 'aosh.tmo.application:conclusion.rejected.alertMessage',
-      defaultMessage: 'Tilkynning um eigendaskipti - Umsókn afturkölluð!',
+      defaultMessage:
+        'Tilkynning um eigendaskipti - Umsókn afturkölluð! {regNumber}',
       description: 'Conclusion rejected alert message',
     },
     firstText: {

@@ -8,6 +8,7 @@ import {
   Checkbox,
   Icon,
   Text,
+  InputError,
 } from '@island.is/island-ui/core'
 import { Markdown } from '@island.is/shared/components'
 import {
@@ -30,11 +31,12 @@ import {
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 
-import { ExternalDataProviderScreen } from '../types'
+import { ExternalDataProviderScreen, MOCKPAYMENT } from '../types'
 import { verifyExternalData } from '../utils'
 
 import { handleServerError } from '@island.is/application/ui-components'
 import { ProviderErrorReason } from '@island.is/shared/problem'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 const ItemHeader: React.FC<
   React.PropsWithChildren<{
@@ -193,6 +195,7 @@ const FormExternalDataProvider: FC<
     addExternalData(data: ExternalData): void
     setBeforeSubmitCallback: SetBeforeSubmitCallback
     externalData: ExternalData
+    enableMockPayment?: boolean
     externalDataProvider: ExternalDataProviderScreen
     formValue: FormValue
     errors: RecordObject
@@ -202,6 +205,7 @@ const FormExternalDataProvider: FC<
   setBeforeSubmitCallback,
   application,
   applicationId,
+  enableMockPayment = false,
   externalData,
   externalDataProvider,
   formValue,
@@ -270,6 +274,11 @@ const FormExternalDataProvider: FC<
     }
   }
 
+  useEffect(() => {
+    if (!id) return
+    setValue(id, false)
+  }, [id, setValue])
+
   return (
     <Box>
       <Box marginTop={2} marginBottom={5}>
@@ -319,33 +328,67 @@ const FormExternalDataProvider: FC<
         rules={{ required: true }}
         render={({ field: { onChange, value } }) => {
           return (
-            <Checkbox
-              large={true}
-              onChange={(e) => {
-                const isChecked = e.target.checked
-                clearErrors(id)
-                setValue(id as string, isChecked)
-                onChange(isChecked)
-                activateBeforeSubmitCallback(isChecked)
-              }}
-              checked={value}
-              hasError={error !== undefined}
-              errorMessage={id ? (errors[id] as string) : undefined}
-              backgroundColor="blue"
-              dataTestId="agree-to-data-providers"
-              name={`${id}`}
-              label={
-                <Markdown>
-                  {checkboxLabel
-                    ? formatMessage(checkboxLabel)
-                    : formatMessage(coreMessages.externalDataAgreement)}
-                </Markdown>
-              }
-              value={id}
-            />
+            <>
+              <Checkbox
+                large={true}
+                onChange={(e) => {
+                  const isChecked = e.target.checked
+                  clearErrors(id)
+                  setValue(id as string, isChecked)
+                  onChange(isChecked)
+                  activateBeforeSubmitCallback(isChecked)
+                }}
+                checked={value}
+                hasError={error !== undefined}
+                backgroundColor="blue"
+                dataTestId="agree-to-data-providers"
+                name={`${id}`}
+                label={
+                  <Markdown>
+                    {checkboxLabel
+                      ? formatMessage(checkboxLabel)
+                      : formatMessage(coreMessages.externalDataAgreement)}
+                  </Markdown>
+                }
+                value={id}
+              />
+              {error && <InputError errorMessage={error} />}
+            </>
           )
         }}
       />
+      {enableMockPayment &&
+        (isRunningOnEnvironment('dev') || isRunningOnEnvironment('local')) && (
+          <Controller
+            name={MOCKPAYMENT}
+            defaultValue={getValueViaPath(
+              formValue,
+              MOCKPAYMENT as string,
+              false,
+            )}
+            render={({ field: { onChange, value } }) => {
+              return (
+                <Box marginTop={2}>
+                  <Checkbox
+                    large={true}
+                    onChange={(e) => {
+                      const isChecked = e.target.checked
+                      clearErrors(MOCKPAYMENT)
+                      setValue(MOCKPAYMENT as string, isChecked)
+                      onChange(isChecked)
+                    }}
+                    checked={value}
+                    backgroundColor="blue"
+                    dataTestId="enable-mock-payment"
+                    name={MOCKPAYMENT}
+                    label={<Markdown>{'Enable mock payment'}</Markdown>}
+                    value={MOCKPAYMENT}
+                  />
+                </Box>
+              )
+            }}
+          />
+        )}
     </Box>
   )
 }

@@ -11,7 +11,7 @@ import {
   InstitutionNationalIds,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { dataSchema } from './dataSchema'
+import { partialSchema } from './dataSchema'
 import { general } from './messages'
 import { TemplateApiActions } from './types'
 import { Features } from '@island.is/feature-flags'
@@ -47,7 +47,7 @@ const OJOITemplate: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations.OfficialJournalOfIceland.translation,
   ],
-  dataSchema: dataSchema,
+  dataSchema: partialSchema,
   allowMultipleApplicationsInDraft: true,
   stateMachineOptions: {
     actions: {
@@ -93,23 +93,12 @@ const OJOITemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.DRAFT]: {
+        entry: 'assignToInstitution',
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'inprogress',
           progress: 0.66,
           lifecycle: pruneAfterDays(90),
-          onEntry: [
-            defineTemplateApi({
-              action: TemplateApiActions.departments,
-              externalDataId: 'departments',
-              order: 1,
-            }),
-            defineTemplateApi({
-              action: TemplateApiActions.types,
-              externalDataId: 'types',
-              order: 2,
-            }),
-          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -117,8 +106,8 @@ const OJOITemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               formLoader: () =>
-                import('../forms/DraftRetry').then((val) =>
-                  Promise.resolve(val.DraftRetry),
+                import('../forms/Draft').then((val) =>
+                  Promise.resolve(val.Draft),
                 ),
               actions: [
                 {
@@ -127,6 +116,11 @@ const OJOITemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -174,6 +168,11 @@ const OJOITemplate: ApplicationTemplate<
                 },
               ],
             },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -185,26 +184,31 @@ const OJOITemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.SUBMITTED]: {
-        entry: 'assignToInstitution',
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(90),
           onEntry: defineTemplateApi({
-            action: TemplateApiActions.submitApplication,
+            action: TemplateApiActions.postApplication,
             shouldPersistToExternalData: true,
-            externalDataId: 'submitApplication',
+            externalDataId: 'successfullyPosted',
             throwOnError: false,
           }),
           roles: [
             {
               id: Roles.APPLICANT,
               read: 'all',
+              write: 'all',
               formLoader: () =>
                 import('../forms/Submitted').then((val) =>
                   Promise.resolve(val.Submitted),
                 ),
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -233,6 +237,11 @@ const OJOITemplate: ApplicationTemplate<
                 import('../forms/Complete').then((val) =>
                   Promise.resolve(val.Complete),
                 ),
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
             },
           ],
         },

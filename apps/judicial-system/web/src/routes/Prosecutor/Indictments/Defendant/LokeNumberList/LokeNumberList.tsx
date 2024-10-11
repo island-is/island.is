@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
@@ -19,7 +19,7 @@ interface Props {
   addPoliceCaseNumbers: (policeCases: PoliceCase[]) => void
 }
 
-export const LokeNumberList: React.FC<Props> = (props) => {
+export const LokeNumberList: FC<Props> = (props) => {
   const { isLoading, loadingError, policeCaseInfo, addPoliceCaseNumbers } =
     props
   const { formatMessage } = useIntl()

@@ -3,6 +3,8 @@ import { FeatureFlagClient } from '@island.is/feature-flags'
 export enum DrivingLicenseFeatureFlags {
   ALLOW_FAKE = 'applicationTemplateDrivingLicenseAllowFakeData',
   ALLOW_LICENSE_SELECTION = 'applicationTemplateDrivingLicenseAllowLicenseSelection',
+  ALLOW_BE_LICENSE = 'isBEApplicationEnabled',
+  ALLOW_65_RENEWAL = 'is65RenewalApplicationEnabled',
 }
 
 export const getApplicationFeatureFlags = async (
@@ -11,6 +13,8 @@ export const getApplicationFeatureFlags = async (
   const featureFlags: DrivingLicenseFeatureFlags[] = [
     DrivingLicenseFeatureFlags.ALLOW_FAKE,
     DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION,
+    DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE,
+    DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL,
   ]
 
   return (

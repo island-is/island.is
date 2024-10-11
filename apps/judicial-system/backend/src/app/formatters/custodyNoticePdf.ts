@@ -6,6 +6,7 @@ import {
   capitalize,
   formatDate,
   formatDOB,
+  lowercase,
 } from '@island.is/judicial-system/formatters'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 
@@ -23,10 +24,10 @@ import {
   setTitle,
 } from './pdfHelpers'
 
-function constructCustodyNoticePdf(
+const constructCustodyNoticePdf = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -119,7 +120,7 @@ function constructCustodyNoticePdf(
   addNormalText(
     doc,
     theCase.prosecutor
-      ? `${theCase.prosecutor.name} ${theCase.prosecutor.title}`
+      ? `${theCase.prosecutor.name} ${lowercase(theCase.prosecutor.title)}`
       : 'Ekki skráður',
     'Helvetica',
   )
@@ -184,18 +185,18 @@ function constructCustodyNoticePdf(
   )
 }
 
-export function getCustodyNoticePdfAsString(
+export const getCustodyNoticePdfAsString = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<string> {
+): Promise<string> => {
   return constructCustodyNoticePdf(theCase, formatMessage).then((buffer) =>
     buffer.toString('binary'),
   )
 }
 
-export function getCustodyNoticePdfAsBuffer(
+export const getCustodyNoticePdfAsBuffer = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   return constructCustodyNoticePdf(theCase, formatMessage)
 }

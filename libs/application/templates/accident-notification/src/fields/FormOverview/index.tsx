@@ -507,30 +507,10 @@ export const FormOverview: FC<
       </Text>
       <ReviewGroup
         isLast
-        editAction={() => changeScreens('timePassedHindrance')}
+        editAction={() => changeScreens('sportsClubInfo.employee.field')}
         isEditable={application.state === States.DRAFT}
       >
         <GridRow>
-          <GridColumn span={['9/12', '9/12', '9/12', '10/12']}>
-            <ValueLine
-              label={hindrances.carAccident.radioFieldTitle}
-              value={
-                answers.carAccidentHindrance === YES
-                  ? applicationMessages.general.yesOptionLabel
-                  : applicationMessages.general.noOptionLabel
-              }
-            />
-          </GridColumn>
-          <GridColumn span={['9/12', '9/12', '9/12', '10/12']}>
-            <ValueLine
-              label={hindrances.timePassedHindrance.radioFieldTitle}
-              value={
-                answers.timePassedHindrance === YES
-                  ? applicationMessages.general.yesOptionLabel
-                  : applicationMessages.general.noOptionLabel
-              }
-            />
-          </GridColumn>
           {isProfessionalAthleteAccident(answers as FormValue) && (
             <GridColumn span={['9/12', '9/12', '9/12', '10/12']}>
               <ValueLine
@@ -596,7 +576,7 @@ export const FormOverview: FC<
             <GridColumn span={['9/12', '9/12', '9/12', '10/12']}>
               <ValueLine
                 label={overview.labels.workMachine}
-                value={answers.workMachine.desriptionOfMachine}
+                value={answers.workMachine.descriptionOfMachine}
               />
             </GridColumn>
           )}
@@ -604,6 +584,12 @@ export const FormOverview: FC<
             <ValueLine
               label={accidentDetails.labels.description}
               value={answers.accidentDetails.descriptionOfAccident}
+            />
+          </GridColumn>
+          <GridColumn span={['9/12', '9/12', '9/12', '10/12']}>
+            <ValueLine
+              label={accidentDetails.labels.symptoms}
+              value={answers.accidentDetails.accidentSymptoms}
             />
           </GridColumn>
           <GridColumn span="12/12">

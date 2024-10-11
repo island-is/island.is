@@ -5,14 +5,13 @@ import {
   Injectable,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Transaction } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 import omit from 'lodash/omit'
 
 import { validatePermissionId } from '@island.is/auth/shared'
 import { isDefined } from '@island.is/shared/utils'
 
 import { ApiScope } from '../models/api-scope.model'
-import { Client } from '../../clients/models/client.model'
 import { AdminCreateScopeDto } from './dto/admin-create-scope.dto'
 import { ApiScopeUserClaim } from '../models/api-scope-user-claim.model'
 import { AdminScopeDTO } from './dto/admin-scope.dto'
@@ -26,6 +25,12 @@ import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { ApiScopeDelegationType } from '../models/api-scope-delegation-type.model'
+import {
+  delegationTypeSuperUserFilter,
+  SUPER_USER_DELEGATION_TYPES,
+} from '../utils/filters'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -35,10 +40,10 @@ export class AdminScopeService {
   constructor(
     @InjectModel(ApiScope)
     private readonly apiScope: typeof ApiScope,
-    @InjectModel(Client)
-    private readonly clientModel: typeof Client,
     @InjectModel(ApiScopeUserClaim)
     private readonly apiScopeUserClaim: typeof ApiScopeUserClaim,
+    @InjectModel(ApiScopeDelegationType)
+    private readonly apiScopeDelegationType: typeof ApiScopeDelegationType,
     private readonly adminTranslationService: AdminTranslationService,
     private readonly translationService: TranslationService,
     private sequelize: Sequelize,
@@ -50,6 +55,9 @@ export class AdminScopeService {
         domainName: tenantId,
         enabled: true,
       },
+      include: [
+        { model: ApiScopeDelegationType, as: 'supportedDelegationTypes' },
+      ],
     })
 
     const translations =
@@ -84,6 +92,9 @@ export class AdminScopeService {
         domainName: tenantId,
         enabled: true,
       },
+      include: [
+        { model: ApiScopeDelegationType, as: 'supportedDelegationTypes' },
+      ],
     })
 
     if (!apiScope) {
@@ -107,6 +118,7 @@ export class AdminScopeService {
   async createScope(
     tenantId: string,
     input: AdminCreateScopeDto,
+    user: User,
   ): Promise<AdminScopeDTO> {
     if (
       !validatePermissionId({
@@ -149,10 +161,23 @@ export class AdminScopeService {
       throw new BadRequestException(translatedValuesErrorMsg)
     }
 
-    const apiScope = await this.sequelize.transaction(async (transaction) => {
+    // If user is not super admin, we remove the super admin fields from the input to default to the client base attributes
+    if (!this.isSuperAdmin(user)) {
+      input = {
+        ...input,
+        // Remove defined super admin fields
+        ...omit(input, superUserScopeFields),
+        // Remove personal representative from delegation types since it is not allowed for non-super admins
+        supportedDelegationTypes: delegationTypeSuperUserFilter(
+          input.supportedDelegationTypes ?? [],
+        ),
+      }
+    }
+
+    await this.sequelize.transaction(async (transaction) => {
       const scope = await this.apiScope.create(
         {
-          ...input,
+          ...omit(input, ['displayName', 'description']),
           displayName,
           description,
           domainName: tenantId,
@@ -177,8 +202,34 @@ export class AdminScopeService {
         transaction,
       )
 
+      if (
+        input.supportedDelegationTypes &&
+        input.supportedDelegationTypes.length > 0
+      ) {
+        await this.addScopeDelegationTypes({
+          apiScopeName: scope.name,
+          delegationTypes: input.supportedDelegationTypes,
+          transaction,
+        })
+      }
+
       return scope
     })
+
+    const apiScope = await this.apiScope.findOne({
+      where: {
+        name: input.name,
+        domainName: tenantId,
+      },
+      include: [
+        { model: ApiScopeDelegationType, as: 'supportedDelegationTypes' },
+      ],
+      useMaster: true,
+    })
+
+    if (!apiScope) {
+      throw new Error('Failed to create scope')
+    }
 
     const translations =
       await this.adminTranslationService.getApiScopeTranslations([
@@ -302,7 +353,14 @@ export class AdminScopeService {
       // Update apiScope row and get the Icelandic translations for displayName and description
       await this.apiScope.update(
         {
-          ...omit(input, ['displayName', 'description']),
+          ...omit(input, [
+            'displayName',
+            'description',
+            'grantToProcuringHolders',
+            'grantToLegalGuardians',
+            'grantToPersonalRepresentatives',
+            'allowExplicitDelegationGrant',
+          ]),
           ...(displayName && { displayName }),
           ...(description && { description }),
         },
@@ -313,6 +371,25 @@ export class AdminScopeService {
           transaction,
         },
       )
+
+      if (input.addedDelegationTypes && input.addedDelegationTypes.length > 0) {
+        await this.addScopeDelegationTypes({
+          apiScopeName: scopeName,
+          delegationTypes: input.addedDelegationTypes,
+          transaction,
+        })
+      }
+
+      if (
+        input.removedDelegationTypes &&
+        input.removedDelegationTypes.length > 0
+      ) {
+        await this.removeScopeDelegationTypes({
+          apiScopeName: scopeName,
+          delegationTypes: input.removedDelegationTypes,
+          transaction,
+        })
+      }
 
       await this.updateScopeTranslatedValueFields(scopeName, input, transaction)
     })
@@ -329,7 +406,22 @@ export class AdminScopeService {
   ): Promise<boolean> {
     const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
 
+    // Check if none SuperUser is trying to update PersonalRepresentative fields
+    const allDelegationTypes = [
+      ...(input.addedDelegationTypes ?? []),
+      ...(input.removedDelegationTypes ?? []),
+    ]
+
+    const hasSuperUserDelegationType = allDelegationTypes.some(
+      (delegationType) => SUPER_USER_DELEGATION_TYPES.includes(delegationType),
+    )
+
+    if (!isSuperUser && hasSuperUserDelegationType) {
+      return false
+    }
+
     const updatedFields = Object.keys(input)
+
     const superUserUpdatedFields = updatedFields.filter((field) =>
       superUserScopeFields.includes(field),
     )
@@ -340,5 +432,151 @@ export class AdminScopeService {
 
     // If there is a superUser field in the updated fields, the user must be a superUser
     return superUserUpdatedFields.length > 0 && isSuperUser
+  }
+
+  private async addScopeDelegationTypes({
+    apiScopeName,
+    delegationTypes = [],
+    transaction,
+  }: {
+    apiScopeName: string
+    delegationTypes?: string[]
+    transaction: Transaction
+  }) {
+    // boolean fields
+    const grantToProcuringHolders = delegationTypes?.includes(
+      AuthDelegationType.ProcurationHolder,
+    )
+    const grantToLegalGuardians = delegationTypes?.includes(
+      AuthDelegationType.LegalGuardian,
+    )
+    const grantToPersonalRepresentatives = delegationTypes?.some(
+      (delegationType) =>
+        delegationType.startsWith(AuthDelegationType.PersonalRepresentative),
+    )
+    const allowExplicitDelegationGrant = delegationTypes?.includes(
+      AuthDelegationType.Custom,
+    )
+
+    if (allowExplicitDelegationGrant) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
+    }
+
+    // add delegation type rows
+    await Promise.all(
+      delegationTypes.map((delegationType) =>
+        this.apiScopeDelegationType.upsert(
+          {
+            apiScopeName,
+            delegationType,
+          },
+          { transaction },
+        ),
+      ),
+    )
+
+    // update boolean fields
+    if (
+      grantToLegalGuardians ||
+      grantToPersonalRepresentatives ||
+      grantToProcuringHolders ||
+      allowExplicitDelegationGrant
+    ) {
+      await this.apiScope.update(
+        {
+          ...(grantToLegalGuardians ? { grantToLegalGuardians } : {}),
+          ...(grantToPersonalRepresentatives
+            ? { grantToPersonalRepresentatives }
+            : {}),
+          ...(grantToProcuringHolders ? { grantToProcuringHolders } : {}),
+          ...(allowExplicitDelegationGrant
+            ? { allowExplicitDelegationGrant }
+            : {}),
+        },
+        {
+          transaction,
+          where: {
+            name: apiScopeName,
+          },
+        },
+      )
+    }
+  }
+
+  private async removeScopeDelegationTypes({
+    apiScopeName,
+    delegationTypes = [],
+    transaction,
+  }: {
+    apiScopeName: string
+    delegationTypes?: string[]
+    transaction: Transaction
+  }) {
+    // boolean fields
+    const grantToProcuringHolders = delegationTypes?.includes(
+      AuthDelegationType.ProcurationHolder,
+    )
+      ? false
+      : undefined
+    const grantToLegalGuardians = delegationTypes?.includes(
+      AuthDelegationType.LegalGuardian,
+    )
+      ? false
+      : undefined
+    const grantToPersonalRepresentatives = delegationTypes?.some(
+      (delegationType) =>
+        delegationType.startsWith(AuthDelegationType.PersonalRepresentative),
+    )
+      ? false
+      : undefined
+    const allowExplicitDelegationGrant = delegationTypes?.includes(
+      AuthDelegationType.Custom,
+    )
+      ? false
+      : undefined
+
+    if (delegationTypes.includes(AuthDelegationType.Custom)) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
+    }
+
+    // remove delegation type rows
+    await Promise.all(
+      delegationTypes.map((delegationType) =>
+        this.apiScopeDelegationType.destroy({
+          transaction,
+          where: {
+            apiScopeName,
+            delegationType: { [Op.startsWith]: delegationType },
+          },
+        }),
+      ),
+    )
+
+    // update boolean fields
+    if (
+      grantToLegalGuardians === false ||
+      grantToPersonalRepresentatives === false ||
+      grantToProcuringHolders === false ||
+      allowExplicitDelegationGrant === false
+    ) {
+      await this.apiScope.update(
+        {
+          grantToLegalGuardians,
+          grantToPersonalRepresentatives,
+          grantToProcuringHolders,
+          allowExplicitDelegationGrant,
+        },
+        {
+          transaction,
+          where: {
+            name: apiScopeName,
+          },
+        },
+      )
+    }
+  }
+
+  private isSuperAdmin = (user: User) => {
+    return user.scope.includes(AdminPortalScope.idsAdminSuperUser)
   }
 }

@@ -28,20 +28,46 @@ export const informationNavigation: PortalNavigationItem = {
         {
           name: m.familyChild,
           navHide: true,
-          path: InformationPaths.Child,
+          path: InformationPaths.BioChild,
+        },
+        {
+          name: m.familyChild,
+          navHide: true,
+          path: InformationPaths.ChildCustody,
         },
       ],
     },
     {
       name: m.mySettings,
       path: InformationPaths.Settings,
+      children: [
+        {
+          name: m.mySettingsInformation,
+          path: InformationPaths.Settings,
+        },
+        {
+          name: m.mySettingsNotifications,
+          path: InformationPaths.SettingsNotifications,
+        },
+      ],
     },
     {
       name: m.lists,
       path: InformationPaths.Lists,
       children: [
         {
-          name: m.signatureCollectionLists,
+          name: m.signatureCollectionParliamentaryLists,
+          path: SignatureCollectionPaths.SignatureCollectionParliamentaryLists,
+          children: [
+            {
+              name: m.viewSignatureList,
+              navHide: true,
+              path: SignatureCollectionPaths.ViewParliamentaryList,
+            },
+          ],
+        },
+        {
+          name: m.signatureCollectionPresidentialLists,
           path: SignatureCollectionPaths.SignatureCollectionLists,
           children: [
             {
@@ -68,6 +94,10 @@ export const informationNavigation: PortalNavigationItem = {
           ],
         },
       ],
+    },
+    {
+      name: m.notifications,
+      path: InformationPaths.Notifications,
     },
   ],
   description: m.userInfoDescription,

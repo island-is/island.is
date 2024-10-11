@@ -233,24 +233,26 @@
         }
       }
     },
-    "/api/protected/v1/Applicant/onetimepayment": {
+    "/api/protected/v1/Applicant/balance": {
       "post": {
         "tags": ["Applicant"],
+        "summary": "This endpoint provides the balance of the estate.",
         "requestBody": {
+          "description": "Input model for national id and reference date",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.Applicant.BalanceOfEstateInputModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.Applicant.BalanceOfEstateInputModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.Applicant.BalanceOfEstateInputModel"
               }
             }
           }
@@ -341,359 +343,20 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
+                  "type": "integer",
+                  "format": "int32"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
+                  "type": "integer",
+                  "format": "int32"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/protected/v1/Applicant/onetimepayment/upload": {
-      "post": {
-        "tags": ["Applicant"],
-        "summary": "This endpoint is only used temporarily to imitate one time payment uploads. This and the endpoint associated\r\nwith uploading documents for withdrawal and one time payment will be combined to a single, generic endpoint",
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/protected/v1/Application/withdrawal": {
-      "post": {
-        "tags": ["Application"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/protected/v1/Application/withdrawal/upload": {
-      "post": {
-        "tags": ["Application"],
-        "summary": "This endpoint is only used temporarily to imitate withdrawal uploads. This and the endpoint associated\r\nwith uploading documents for withdrawal and one time payment will be combined to a single, generic endpoint",
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
+                  "type": "integer",
+                  "format": "int32"
                 }
               }
             }
@@ -970,6 +633,113 @@
           },
           "204": {
             "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/protected/v1/DeathBenefits/spousalinfo": {
+      "get": {
+        "tags": ["DeathBenefits"],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.UseCase.DeathBenefits.Models.ExternalSpousalInfo"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.UseCase.DeathBenefits.Models.ExternalSpousalInfo"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.UseCase.DeathBenefits.Models.ExternalSpousalInfo"
+                }
+              }
+            }
           }
         }
       }
@@ -1444,6 +1214,469 @@
                   "items": {
                     "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.ExternalIncomeTypeDto"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/IncomePlan/WithholdingTax": {
+      "get": {
+        "tags": ["IncomePlan"],
+        "summary": "Returns withholding tax (staðgreiðsluskrá) for the logged-in user.\r\nUsed for new TR customers that have no previous income plan as reference to prepopulate with.",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.WithholdingTaxDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.WithholdingTaxDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.WithholdingTaxDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/IncomePlan/LatestIncomePlan": {
+      "get": {
+        "tags": ["IncomePlan"],
+        "summary": "Returns the latest accepted income plan for the logged-in user",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/IncomePlan/TemporaryCalculations": {
+      "post": {
+        "tags": ["IncomePlan"],
+        "summary": "Returns temporary calculations (bráðabirgðaútreikningur) based on the submitted income plan",
+        "requestBody": {
+          "description": "The income plan to use as a basis for the temporary calculations",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/IncomePlan/IncomePlanConditions": {
+      "get": {
+        "tags": ["IncomePlan"],
+        "summary": "Returns information about various income plan conditions, such as for which year income plans\r\nare currently being accepted, whether or not to show temporary calculations etc.",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanConditionsDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanConditionsDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanConditionsDto"
                 }
               }
             }
@@ -2257,241 +2490,6 @@
           }
         }
       }
-    },
-    "/api/protected/v1/Validation/onetimepayment": {
-      "post": {
-        "tags": ["Validation"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput"
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/protected/v1/Validation/withdrawal": {
-      "post": {
-        "tags": ["Validation"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput"
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
     }
   },
   "components": {
@@ -2558,6 +2556,115 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto": {
+        "type": "object",
+        "properties": {
+          "incomeYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "splitIncomeByMonth": {
+            "type": "boolean"
+          },
+          "incomeTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomeTypeDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomeTypeDto": {
+        "type": "object",
+        "properties": {
+          "incomeTypeNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "incomeTypeCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "incomeTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "changesAllowed": {
+            "type": "boolean"
+          },
+          "currencyNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currencyCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "incomeCategoryNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "incomeCategoryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "incomeCategoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "amountJan": {
+            "type": "number",
+            "format": "double"
+          },
+          "amountFeb": {
+            "type": "number",
+            "format": "double"
+          },
+          "amountMar": {
+            "type": "number",
+            "format": "double"
+          },
+          "amountApr": {
+            "type": "number",
+            "format": "double"
+          },
+          "amountMay": {
+            "type": "number",
+            "format": "double"
+          },
+          "amountJun": {
+            "type": "number",
+            "format": "double"
+          },
+          "amountJul": {
+            "type": "number",
+            "format": "double"
+          },
+          "amountAug": {
+            "type": "number",
+            "format": "double"
+          },
+          "amountSep": {
+            "type": "number",
+            "format": "double"
+          },
+          "amountOct": {
+            "type": "number",
+            "format": "double"
+          },
+          "amountNov": {
+            "type": "number",
+            "format": "double"
+          },
+          "amountDec": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto": {
         "type": "object",
         "properties": {
@@ -2569,6 +2676,28 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.UseCase.DeathBenefits.Models.ExternalSpousalInfo": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfDeath": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "cohabitationLessThan1Year": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -2648,6 +2777,23 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Commons.ExternalPortals.Api.Models.Applicant.BalanceOfEstateInputModel": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "description": "The national id of the applicant",
+            "nullable": true
+          },
+          "referenceDate": {
+            "type": "string",
+            "description": "The reference date when getting the balance. If no date is provided the deceased date will be used.",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Commons.ExternalPortals.Api.Models.Applications.IsEligibleForApplicationReturn": {
         "type": "object",
         "properties": {
@@ -2658,6 +2804,11 @@
           "reason": {
             "type": "string",
             "description": "If the applicant is not eligible, a reason why he is not eligible is included",
+            "nullable": true
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "If the applicant is not eligible, a code representing the reason why",
             "nullable": true
           }
         },
@@ -2684,236 +2835,10 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application": {
-        "type": "object",
-        "properties": {
-          "language": {
-            "type": "string",
-            "description": "Value for the language, currently we support IS and EN",
-            "nullable": true
-          },
-          "portalApplicationID": {
-            "type": "string",
-            "description": "ID of the application in portal",
-            "nullable": true
-          },
-          "applicationType": {
-            "type": "string",
-            "description": "Identity for application type",
-            "nullable": true
-          },
-          "applicationName": {
-            "type": "string",
-            "nullable": true
-          },
-          "Dagssetning": {
-            "type": "string",
-            "description": "Date when application was last changed",
-            "format": "date-time"
-          },
-          "Adilar": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.AssociatedUser"
-            },
-            "description": "List of persons that have a role in the application",
-            "nullable": true
-          },
-          "Notandagogn": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.InputData"
-            },
-            "description": "Information extracted from the application that the ruleset can use.",
-            "nullable": true
-          },
-          "Greidsla": {
-            "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Payment"
-          },
-          "files": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.File"
-            },
-            "description": "Files that are in the application if any.",
-            "nullable": true
-          },
-          "status": {
-            "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.CurrentApplicationStatus"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.AssociatedUser": {
-        "type": "object",
-        "properties": {
-          "kennitala": {
-            "type": "string",
-            "nullable": true
-          },
-          "heiti": {
-            "type": "string",
-            "nullable": true
-          },
-          "heimili": {
-            "type": "string",
-            "nullable": true
-          },
-          "stadur": {
-            "type": "string",
-            "nullable": true
-          },
-          "postnumer": {
-            "type": "string",
-            "nullable": true
-          },
-          "tegund": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "hlutverk": {
-            "type": "string",
-            "nullable": true
-          },
-          "netfang": {
-            "type": "string",
-            "nullable": true
-          },
-          "simi": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "The associated user (Adilar)"
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.ApplicationFileTypes": {
-        "enum": [1, 2, 3, 4, 5],
-        "type": "integer",
-        "format": "int32"
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.CurrentApplicationStatus": {
-        "enum": [70, 71, 73, 80, 90, 100, 1100, 1200],
-        "type": "integer",
-        "format": "int32"
-      },
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.ExternalResultStatus": {
         "enum": [200, 300, 400],
         "type": "integer",
         "format": "int32"
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.PortalLanguage": {
-        "enum": [1, 2],
-        "type": "integer",
-        "format": "int32"
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.File": {
-        "type": "object",
-        "properties": {
-          "flokkur": {
-            "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.ApplicationFileTypes"
-          },
-          "heiti": {
-            "type": "string",
-            "description": "Name of the file",
-            "nullable": true
-          },
-          "dags": {
-            "type": "string",
-            "description": "Date when the file was uploaded into the application",
-            "format": "date-time"
-          },
-          "tegund": {
-            "type": "string",
-            "description": "Mimetype of file if known",
-            "nullable": true
-          },
-          "FileID": {
-            "type": "string",
-            "description": "The file id that can be used to fetch the file in LVG",
-            "nullable": true
-          },
-          "ending": {
-            "type": "string",
-            "description": "extension if the file if available else empty",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.InputData": {
-        "type": "object",
-        "properties": {
-          "guid": {
-            "type": "string",
-            "nullable": true
-          },
-          "flokkur": {
-            "type": "string",
-            "description": "Group name",
-            "nullable": true
-          },
-          "heiti": {
-            "type": "string",
-            "description": "Name of the variable",
-            "nullable": true
-          },
-          "tegund": {
-            "type": "string",
-            "description": "Type of variable",
-            "nullable": true
-          },
-          "gildi": {
-            "type": "string",
-            "description": "Value for inspection",
-            "nullable": true
-          },
-          "countryCode": {
-            "type": "string",
-            "description": "if tegund is \"landalisti\" then the countryCode is included.\r\nThis is a two letter countryCode, i.e. \"DK\" for Denmark",
-            "nullable": true
-          },
-          "nafn": {
-            "type": "string",
-            "description": "If tegund is \"kennitala\" then the name of the payer is included",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Data entered by the applicant (Notandagogn)"
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Payment": {
-        "type": "object",
-        "properties": {
-          "upphaed": {
-            "type": "string",
-            "description": "The amount",
-            "nullable": true
-          },
-          "dags": {
-            "type": "string",
-            "description": "Date when payment was made",
-            "format": "date-time",
-            "nullable": true
-          },
-          "korthafi": {
-            "type": "string",
-            "description": "The card holder",
-            "nullable": true
-          },
-          "kortanumer": {
-            "type": "string",
-            "description": "The card number",
-            "nullable": true
-          },
-          "tegundKorts": {
-            "type": "string",
-            "description": "The type of card",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Payment coming from the user (Greidsla)"
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet": {
         "type": "object",
@@ -2924,70 +2849,6 @@
           "message": {
             "type": "string",
             "description": "Message to be displayed to the user if the application is not valid.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset": {
-        "type": "object",
-        "properties": {
-          "flokkur": {
-            "type": "string",
-            "description": "Groupname for the variable",
-            "nullable": true
-          },
-          "heiti": {
-            "type": "string",
-            "description": "Name of the variable",
-            "nullable": true
-          },
-          "tegund": {
-            "type": "string",
-            "description": "Type of variable",
-            "nullable": true
-          },
-          "gildi": {
-            "type": "string",
-            "description": "The value to be set for the variable",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput": {
-        "type": "object",
-        "properties": {
-          "language": {
-            "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.PortalLanguage"
-          },
-          "Adilar": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.AssociatedUser"
-            },
-            "description": "List of persons that have a role in the application",
-            "nullable": true
-          },
-          "Notandagogn": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.InputData"
-            },
-            "description": "Information extracted from the application that the ruleset can use.",
-            "nullable": true
-          },
-          "Reglusett": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset"
-            },
-            "description": "Variable that the ruleset can set to be used in the application.\r\nCurrently we support String, Int and Date.",
-            "nullable": true
-          },
-          "applicationType": {
-            "type": "string",
-            "description": "Unique id for the application type this unique id is provided when\r\nthe application is made by the provider. This can be used to have\r\ndifferent behaviour depending on application type.",
             "nullable": true
           }
         },
@@ -3029,18 +2890,35 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanConditionsDto": {
+        "type": "object",
+        "properties": {
+          "incomePlanYear": {
+            "type": "integer",
+            "description": "The year for which income plans are currently being accepted",
+            "format": "int32"
+          },
+          "showTemporaryCalculations": {
+            "type": "boolean",
+            "description": "Whether or not to show temporary calculations"
+          }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanDto": {
         "type": "object",
         "properties": {
           "year": {
             "type": "integer",
             "description": "The year of the income plan",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "registrationDate": {
             "type": "string",
             "description": "The date when the income plan was registered",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -3066,19 +2944,164 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomeTypeLine": {
         "type": "object",
         "properties": {
-          "name": {
+          "incomeCategoryNumber": {
+            "type": "integer",
+            "description": "The number of the income category",
+            "format": "int32"
+          },
+          "incomeCategoryName": {
+            "type": "string",
+            "description": "The name of the income category",
+            "nullable": true
+          },
+          "incomeCategoryCode": {
+            "type": "string",
+            "description": "The code of the income type",
+            "nullable": true
+          },
+          "incomeTypeNumber": {
+            "type": "integer",
+            "description": "The number of the income type",
+            "format": "int32"
+          },
+          "incomeTypeName": {
             "type": "string",
             "description": "The name of the income type in Icelandic (lífeyrissjóður, laun etc.)",
             "nullable": true
           },
+          "incomeTypeCode": {
+            "type": "string",
+            "description": "The code of the income type",
+            "nullable": true
+          },
           "totalSum": {
             "type": "integer",
-            "description": "The total annual sum of this payment type, ie. the amount paid per year",
+            "description": "The total annual sum of this income type, ie. the amount earned per year",
             "format": "int32"
           },
           "currency": {
             "type": "string",
             "description": "A 3-letter currency code for this income type, such as ISK, EUR, USD etc.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.WithholdingTaxDto": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "description": "The year of the withholding tax",
+            "format": "int32"
+          },
+          "incomeTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.WithholdingTaxIncomeTypeDto"
+            },
+            "description": "List of income types, e.g. salary, pension, etc.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.WithholdingTaxIncomeTypeDto": {
+        "type": "object",
+        "properties": {
+          "incomeTypeNumber": {
+            "type": "integer",
+            "description": "The income type number, e.g. 5808",
+            "format": "int64"
+          },
+          "incomeTypeName": {
+            "type": "string",
+            "description": "The income type name, e.g. \"Laun\"",
+            "nullable": true
+          },
+          "incomeTypeCode": {
+            "type": "string",
+            "description": "The income type code, e.g. \"21F�O\"",
+            "nullable": true
+          },
+          "categoryNumber": {
+            "type": "integer",
+            "description": "Income type category number",
+            "format": "int64"
+          },
+          "categoryName": {
+            "type": "string",
+            "description": "Income type category name, e.g. \"Atvinnutekjur\", \"Fj�rmagnstekjur\" etc.",
+            "nullable": true
+          },
+          "categoryCode": {
+            "type": "string",
+            "description": "Income type category code",
+            "nullable": true
+          },
+          "january": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "february": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "march": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "april": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "may": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "june": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "july": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "august": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "september": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "october": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "november": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "december": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },
@@ -3360,6 +3383,13 @@
       },
       "ValidationProblemDetails": {
         "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset": {
+        "properties": {
+          "gildi": {
+            "type": "string"
+          }
+        }
       }
     },
     "securitySchemes": {

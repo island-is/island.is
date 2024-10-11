@@ -1,12 +1,5 @@
-import {
-  Args,
-  Int,
-  Mutation,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { UseGuards, Inject } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -16,13 +9,18 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
-import { AuditService } from '@island.is/nest/audit'
+import { AuditService, Audit } from '@island.is/nest/audit'
 
 import {
+  DocumentPageNumber,
   Document as DocumentV2,
   PaginatedDocuments,
 } from './models/v2/document.model'
-
+import {
+  FeatureFlagGuard,
+  FeatureFlagService,
+  Features,
+} from '@island.is/nest/feature-flags'
 import { PostRequestPaperInput } from './dto/postRequestPaperInput'
 import { DocumentInput } from './models/v2/document.input'
 import { DocumentServiceV2 } from './documentV2.service'
@@ -33,39 +31,93 @@ import { Sender } from './models/v2/sender.model'
 import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
 import { MailActionInput } from './models/v2/bulkMailAction.input'
 import { DocumentMailAction } from './models/v2/mailAction.model.'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
+import type { Locale } from '@island.is/shared/types'
+import { DocumentConfirmActionsInput } from './models/v2/confirmActions.input'
+import { DocumentConfirmActions } from './models/v2/confirmActions.model'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
-@Resolver(() => DocumentV2)
+const LOG_CATEGORY = 'documents-resolver'
+
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@Resolver(() => PaginatedDocuments)
+@Audit({ namespace: '@island.is/api/document-v2' })
 export class DocumentResolverV2 {
   constructor(
     private documentServiceV2: DocumentServiceV2,
     private readonly auditService: AuditService,
+    private readonly featureFlagService: FeatureFlagService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @Scopes(DocumentsScope.main)
   @Query(() => DocumentV2, { nullable: true, name: 'documentV2' })
   async documentV2(
     @Args('input') input: DocumentInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<DocumentV2 | null> {
-    return this.auditService.auditPromise(
-      {
-        auth: user,
-        namespace: '@island.is/api/document-v2',
-        action: 'getDocument',
-        resources: input.id,
-      },
-      this.documentServiceV2.findDocumentById(user.nationalId, input.id),
-    )
+    const ffEnabled = await this.getFeatureFlag()
+    try {
+      return await this.auditService.auditPromise(
+        {
+          auth: user,
+          namespace: '@island.is/api/document-v2',
+          action: 'getDocument',
+          resources: input.id,
+          meta: { includeDocument: input.includeDocument },
+        },
+        ffEnabled
+          ? this.documentServiceV2.findDocumentByIdV3(
+              user.nationalId,
+              input.id,
+              locale,
+              input.includeDocument,
+            )
+          : this.documentServiceV2.findDocumentById(user.nationalId, input.id),
+      )
+    } catch (e) {
+      this.logger.info('failed to get single document', {
+        category: LOG_CATEGORY,
+        provider: input.provider,
+        error: e,
+      })
+      throw e
+    }
   }
 
   @Scopes(DocumentsScope.main)
   @Query(() => PaginatedDocuments, { nullable: true })
-  documentsV2(
+  @Audit()
+  async documentsV2(
     @Args('input') input: DocumentsInput,
     @CurrentUser() user: User,
   ): Promise<PaginatedDocuments> {
+    const ffEnabled = await this.getFeatureFlag()
+    if (ffEnabled)
+      return this.documentServiceV2.listDocumentsV3(user.nationalId, input)
     return this.documentServiceV2.listDocuments(user.nationalId, input)
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Query(() => DocumentConfirmActions, {
+    nullable: true,
+    name: 'documentV2ConfirmActions',
+  })
+  async confirmActions(
+    @Args('input') input: DocumentConfirmActionsInput,
+    @CurrentUser() user: User,
+  ) {
+    this.auditService.audit({
+      auth: user,
+      namespace: '@island.is/api/document-v2',
+      action: 'confirmModal',
+      resources: input.id,
+      meta: { confirmed: input.confirmed },
+    })
+
+    return { id: input.id, confirmed: input.confirmed }
   }
 
   @ResolveField('categories', () => [Category])
@@ -83,11 +135,12 @@ export class DocumentResolverV2 {
     return this.documentServiceV2.getTypes(user.nationalId)
   }
 
-  @ResolveField('pageNumber', () => Int)
+  @Scopes(DocumentsScope.main)
+  @Query(() => DocumentPageNumber, { nullable: true })
   documentPageNumber(
     @CurrentUser() user: User,
     @Args('input') input: DocumentInput,
-  ) {
+  ): Promise<DocumentPageNumber | null> {
     return this.documentServiceV2.getPageNumber(
       user.nationalId,
       input.id,
@@ -105,6 +158,7 @@ export class DocumentResolverV2 {
 
   @Scopes(DocumentsScope.main)
   @Mutation(() => PaperMailPreferences, { nullable: true })
+  @Audit()
   postPaperMailInfo(
     @CurrentUser() user: User,
     @Args('input') input: PostRequestPaperInput,
@@ -116,25 +170,58 @@ export class DocumentResolverV2 {
   }
 
   @Scopes(DocumentsScope.main)
-  @Mutation(() => DocumentMailAction, { nullable: true })
+  @Mutation(() => DocumentV2MarkAllMailAsRead, {
+    nullable: true,
+    name: 'documentsV2MarkAllAsRead',
+  })
+  @Audit()
+  markAllMailAsRead(
+    @CurrentUser() user: User,
+  ): Promise<DocumentV2MarkAllMailAsRead> {
+    return this.documentServiceV2.markAllMailAsRead(user.nationalId)
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Mutation(() => DocumentMailAction, {
+    nullable: true,
+    name: 'postMailActionV2',
+  })
+  @Audit()
   async postMailAction(
     @CurrentUser() user: User,
     @Args('input') input: MailActionInput,
-  ): Promise<void> {
+  ): Promise<DocumentMailAction | null> {
     if (input.documentIds.length === 0) {
-      return
+      this.logger.warn('No document ids provided for posting action', {
+        category: LOG_CATEGORY,
+        action: input.action,
+      })
+      return null
     }
 
     const ids =
       input.documentIds.length === 1 ? input.documentIds[0] : input.documentIds
 
-    if (input.documentIds)
-      await this.documentServiceV2.postMailAction(
+    try {
+      return await this.documentServiceV2.postMailAction(
         user.nationalId,
         ids,
         input.action,
       )
+    } catch (e) {
+      this.logger.info('failed to post document action', {
+        category: LOG_CATEGORY,
+        action: input.action,
+        error: e,
+      })
+      throw e
+    }
+  }
 
-    return
+  private async getFeatureFlag(): Promise<boolean> {
+    return await this.featureFlagService.getValue(
+      Features.isServicePortalDocumentsV3PageEnabled,
+      false,
+    )
   }
 }

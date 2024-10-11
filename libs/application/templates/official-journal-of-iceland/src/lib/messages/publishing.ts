@@ -68,6 +68,11 @@ export const publishing = {
         defaultMessage: 'Efnisflokkar',
         description: 'Label of the content categories input',
       },
+      placeholder: {
+        id: 'ojoi.application:publishing.inputs.contentCategories.placeholder',
+        defaultMessage: 'Veldu efnisflokka',
+        description: 'Placeholder of the content categories input',
+      },
     }),
     messages: defineMessages({
       label: {

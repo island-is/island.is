@@ -17,6 +17,7 @@ import {
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
   NO,
+  UserProfileApi,
 } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { ApplicationType } from '../lib/constants'
@@ -113,18 +114,31 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistryResidenceHistoryApi,
-                  title:
-                    socialInsuranceAdministrationMessage.pre.contactInfoTitle,
-                  subTitle:
-                    socialInsuranceAdministrationMessage.pre
-                      .socialInsuranceAdministrationInformationDescription,
+                  title: '',
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistrySpouseApi,
                   title: '',
                 }),
                 buildDataProviderItem({
+                  provider: UserProfileApi,
+                  title:
+                    socialInsuranceAdministrationMessage.pre.contactInfoTitle,
+                  subTitle:
+                    socialInsuranceAdministrationMessage.pre
+                      .contactInfoDescription,
+                }),
+                buildDataProviderItem({
                   provider: SocialInsuranceAdministrationApplicantApi,
+                  title:
+                    socialInsuranceAdministrationMessage.pre
+                      .socialInsuranceAdministrationTitle,
+                  subTitle:
+                    socialInsuranceAdministrationMessage.pre
+                      .socialInsuranceAdministrationDescription,
+                }),
+                buildDataProviderItem({
+                  id: 'sia.data',
                   title:
                     socialInsuranceAdministrationMessage.pre
                       .socialInsuranceAdministrationInformationTitle,
@@ -133,13 +147,17 @@ export const PrerequisitesForm: Form = buildForm({
                       .socialInsuranceAdministrationDataDescription,
                 }),
                 buildDataProviderItem({
-                  provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+                  id: 'sia.privacy',
                   title:
                     socialInsuranceAdministrationMessage.pre
                       .socialInsuranceAdministrationPrivacyTitle,
                   subTitle:
                     socialInsuranceAdministrationMessage.pre
                       .socialInsuranceAdministrationPrivacyDescription,
+                }),
+                buildDataProviderItem({
+                  provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+                  title: '',
                 }),
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationCurrenciesApi,
@@ -230,36 +248,6 @@ export const PrerequisitesForm: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'applicant',
-      title: socialInsuranceAdministrationMessage.info.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.overviewTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'fileUpload',
-      title: socialInsuranceAdministrationMessage.fileUpload.title,
-      children: [],
-    }),
-    buildSection({
-      id: 'additionalInformation',
-      title: socialInsuranceAdministrationMessage.additionalInfo.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirm',
-      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'conclusion',
-      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
-      children: [],
     }),
   ],
 })

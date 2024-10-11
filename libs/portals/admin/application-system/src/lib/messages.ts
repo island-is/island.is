@@ -4,11 +4,11 @@ export const m = defineMessages({
   // General
   applicationSystem: {
     id: 'admin-portal.application-system:name',
-    defaultMessage: 'Umsóknarkerfi Ísland.is',
+    defaultMessage: 'Umsóknarkerfi',
   },
   applicationSystemDescription: {
     id: 'admin-portal.application-system:description',
-    defaultMessage: 'Tölfræðigögn og umsjá um umsóknarkerfi Ísland.is',
+    defaultMessage: 'Tölfræðigögn og umsjá umsóknarkerfis',
   },
   overview: {
     id: 'admin-portal.application-system:overview',
@@ -136,9 +136,22 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:tags.requiresAction',
     defaultMessage: 'Krefst aðgerða',
   },
+  tagsAll: {
+    id: 'admin-portal.application-system:tags.all',
+    defaultMessage: 'Allar',
+  },
   newApplication: {
     id: 'admin-portal.application-system:new.application',
     defaultMessage: 'Ný umsókn',
+  },
+  statistics: {
+    id: 'admin-portal.application-system:statistics',
+    defaultMessage: 'Tölfræði',
+  },
+  statisticsDescription: {
+    id: 'admin-portal.application-system:statisticsDescription',
+    defaultMessage:
+      'Staður til að sækja tölfræði um umsóknir og skoða gröf tengd þeim.',
   },
 
   // Filters
@@ -185,5 +198,37 @@ export const m = defineMessages({
   resultCount: {
     id: 'admin-portal.application-system:resultCount',
     defaultMessage: '{count} skjöl fundust',
+  },
+  tableHeaderType: {
+    id: 'admin-portal.application-system:tableHeaderType',
+    defaultMessage: 'Týpa',
+  },
+  tableHeaderTotal: {
+    id: 'admin-portal.application-system:tableHeaderTotal',
+    defaultMessage: 'Samtals',
+  },
+  tableHeaderDraft: {
+    id: 'admin-portal.application-system:tableHeaderDraft',
+    defaultMessage: 'Drög',
+  },
+  tableHeaderInProgress: {
+    id: 'admin-portal.application-system:tableHeaderInProgress',
+    defaultMessage: 'Í vinnslu',
+  },
+  tableHeaderCompleted: {
+    id: 'admin-portal.application-system:tableHeaderCompleted',
+    defaultMessage: 'Lokið',
+  },
+  tableHeaderApproved: {
+    id: 'admin-portal.application-system:tableHeaderApproved',
+    defaultMessage: 'Samþykkt',
+  },
+  tableHeaderRejected: {
+    id: 'admin-portal.application-system:tableHeaderRejected',
+    defaultMessage: 'Hafnað',
+  },
+  noData: {
+    id: 'admin-portal.application-system:noData',
+    defaultMessage: 'Engin gögn fundust á tímabilinu...',
   },
 })

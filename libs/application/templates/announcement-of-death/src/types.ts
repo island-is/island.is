@@ -12,7 +12,9 @@ export enum RelationEnum {
   SIBLING = 'sibling',
   SPOUSE = 'spouse',
 }
-export enum OtherPropertiesEnum {
+export enum PropertiesEnum {
+  REAL_ESTATE = 'realEstate',
+  VEHICLES = 'vehicles',
   ACCOUNTS = 'accounts',
   OWN_BUSINESS = 'ownBusiness',
   RESIDENCE = 'residence',
@@ -46,9 +48,11 @@ export type Answers = {
   }
   financesDataCollectionPermission?: boolean
   knowledgeOfOtherWills: 'yes' | 'no'
+  hadFirearms: 'yes' | 'no'
+  firearmApplicant: FirearmApplicant
   marriageSettlement: boolean
   occupationRightViaCondominium: boolean
-  otherProperties: OtherPropertiesEnum
+  otherProperties: PropertiesEnum
   ownBusinessManagement: boolean
   roleConfirmation: RoleConfirmationEnum
   vehicles: {
@@ -56,6 +60,13 @@ export type Answers = {
     encountered?: boolean
   }
 } & FormValue
+
+export interface FirearmApplicant {
+  nationalId: string
+  name: string
+  phone: string
+  email: string
+}
 
 export interface ElectPersonType {
   roleConfirmation: RoleConfirmationEnum

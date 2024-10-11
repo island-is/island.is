@@ -1,4 +1,4 @@
-import { IsPersonNationalId } from '@island.is/nest/core'
+import { IsNationalId } from '@island.is/nest/core'
 import {
   Field,
   GraphQLISODateTime,
@@ -9,8 +9,8 @@ import {
 import {
   IsArray,
   IsBoolean,
+  IsDate,
   IsEnum,
-  IsISO8601,
   IsInt,
   IsOptional,
   IsString,
@@ -34,23 +34,19 @@ registerEnumType(DocumentPageOrder, { name: 'DocumentsV2PageOrder' })
 
 @InputType('DocumentsV2DocumentsInput')
 export class DocumentsInput {
-  @Field()
-  @IsPersonNationalId()
-  readonly nationalId!: string
-
-  @Field({ nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsOptional()
-  @IsPersonNationalId()
-  readonly senderNationalId?: string
+  @IsArray()
+  readonly senderNationalId?: Array<string>
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   @IsOptional()
-  @IsISO8601()
+  @IsDate()
   readonly dateFrom?: Date
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   @IsOptional()
-  @IsISO8601()
+  @IsDate()
   readonly dateTo?: Date
 
   @Field(() => [String], { nullable: true })
@@ -83,12 +79,15 @@ export class DocumentsInput {
   @IsBoolean()
   readonly opened?: boolean
 
-  @Field(() => DocumentPageSort, { nullable: true })
+  @Field(() => DocumentPageSort, { nullable: true, defaultValue: 'Date' })
   @IsOptional()
   @IsEnum(DocumentPageSort)
   readonly sortBy?: DocumentPageSort
 
-  @Field(() => DocumentPageOrder, { nullable: true })
+  @Field(() => DocumentPageOrder, {
+    nullable: true,
+    defaultValue: 'Descending',
+  })
   @IsOptional()
   @IsEnum(DocumentPageOrder)
   readonly order?: DocumentPageOrder

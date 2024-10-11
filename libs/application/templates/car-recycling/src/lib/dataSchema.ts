@@ -5,13 +5,14 @@ const Vehicles = z
   .object({
     make: z.string(),
     role: z.string(),
-    color: z.string(),
     permno: z.string(),
     mileage: z.string().optional(),
-    fuelCode: z.string(),
+    fuelCode: z.string().optional(), // Not used any more, kept here to keep backwards compatibility
+    requiresMileageRegistration: z.boolean().optional(),
   })
   .refine(
-    ({ fuelCode, mileage }) =>
+    ({ requiresMileageRegistration, fuelCode, mileage }) =>
+      requiresMileageRegistration ||
       Object.values(FuelCodes).includes(fuelCode as FuelCodes)
         ? Boolean(mileage && mileage !== '' && mileage !== '0 ')
         : true,

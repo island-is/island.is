@@ -14,8 +14,8 @@ describe('InternalDefendantController - guards', () => {
     guards = Reflect.getMetadata('__guards__', InternalDefendantController)
   })
 
-  it('should have three guards', () => {
-    expect(guards).toHaveLength(3)
+  it('should have two guards', () => {
+    expect(guards).toHaveLength(2)
   })
 
   describe('TokenGuard', () => {
@@ -42,14 +42,14 @@ describe('InternalDefendantController - guards', () => {
     })
   })
 
-  describe('DefendantExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[2]()
-    })
-
-    it('should have DefendantExistsGuard as guard 3', () => {
+  describe('Method level guards', () => {
+    it('should have DefendantExistsGuard on deliverDefendantToCourt method', () => {
+      const methodGuards = Reflect.getMetadata(
+        '__guards__',
+        InternalDefendantController.prototype.deliverDefendantToCourt,
+      )
+      expect(methodGuards).toHaveLength(1)
+      const guard = new methodGuards[0]()
       expect(guard).toBeInstanceOf(DefendantExistsGuard)
     })
   })

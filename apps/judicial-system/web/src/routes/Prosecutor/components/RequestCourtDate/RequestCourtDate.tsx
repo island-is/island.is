@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
@@ -11,8 +11,7 @@ interface Props {
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
-const RequestCourtDate: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { workingCase, onChange } = props
+const RequestCourtDate: FC<Props> = ({ workingCase, onChange }) => {
   const { formatMessage } = useIntl()
 
   return (
@@ -30,11 +29,11 @@ const RequestCourtDate: React.FC<React.PropsWithChildren<Props>> = (props) => {
         selectedDate={workingCase.requestedCourtDate}
         onChange={onChange}
         timeLabel={formatMessage(m.dateInput.timeLabel)}
-        locked={Boolean(workingCase.courtDate)}
+        locked={Boolean(workingCase.arraignmentDate?.date)}
         minDate={new Date()}
         required
       />
-      {workingCase.courtDate && (
+      {workingCase.arraignmentDate?.date && (
         <Box marginTop={1}>
           <Text variant="eyebrow">{formatMessage(m.courtDate)}</Text>
         </Box>

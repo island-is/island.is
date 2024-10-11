@@ -12,7 +12,7 @@ export const InnaClientConfig = defineConfig<z.infer<typeof schema>>({
   load: (env) => ({
     xRoadServicePath: env.required(
       'XROAD_INNA_PATH',
-      'IS-DEV/EDU/10020/MMS-Protected/inna-v1',
+      'IS-DEV/GOV/10066/MMS-Protected/inna-v1',
     ),
     scope: ['api_resource.scope'],
   }),

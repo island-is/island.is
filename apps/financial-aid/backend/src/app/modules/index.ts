@@ -10,3 +10,4 @@ export { PersonalTaxReturnModule } from './personalTaxReturn/personalTaxReturn.m
 export { DirectTaxPaymentModule } from './directTaxPayment/directTaxPayment.module'
 export { OpenApiApplicationModule } from './openApiApplications/openApiApplication.module'
 export { ApiUserModule } from './municipalityApiUsers/user.module'
+export { ChildrenModule } from './children/children.module'

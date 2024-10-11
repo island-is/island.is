@@ -3,10 +3,8 @@ import {
   AlertMessage,
   Box,
   Button,
-  Checkbox,
   Column,
   Columns,
-  DatePicker,
   Inline,
   Input,
   InputFileUpload,
@@ -15,7 +13,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useDraftingState } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../lib/messages'
-import { getMinPublishDate } from '../utils'
 
 import { EditorInput } from './EditorInput'
 import { HTMLText, PlainText, URLString } from '@island.is/regulations'
@@ -23,18 +20,18 @@ import { downloadUrl } from '../utils/files'
 import { DownloadDraftButton } from './DownloadDraftButton'
 import { useLocale } from '@island.is/localization'
 import { useS3Upload } from '../utils/dataHooks'
+import { formatDate } from '../utils/formatAmendingUtils'
 
 // ---------------------------------------------------------------------------
 
 const defaultSignatureText = `
   <p class="Dags" align="center"><em>{ministry}nu, {dags}.</em></p>
-  <p class="FHUndirskr" align="center">f.h.r.</p>
-  <p class="Undirritun" align="center"><strong>NAFN</strong><br/>{minister}.</p>
+  <p class="FHUndirskr" align="center">F. h. r.</p>
+  <p class="Undirritun" align="center"><strong>NAFN</strong></p>
   <p class="Undirritun" align="right"><em>NAFN.</em></p>
 ` as HTMLText
 
 const getDefaultSignatureText = (
-  dateFormatter: (date: Date, str?: string) => string,
   /** The ministry of the author-type user that created the RegulationDraft */
   authorMinistry?: PlainText,
 ) => {
@@ -44,7 +41,7 @@ const getDefaultSignatureText = (
   const defaultMinister = '⸻ráðherra'
 
   return defaultSignatureText
-    .replace('{dags}', dateFormatter(new Date(), 'dd. MMMM yyyy'))
+    .replace('{dags}', formatDate(new Date()))
     .replace('{ministry}', authorMinistry || defaultMinistry)
     .replace('{minister}', authorMinister || defaultMinister) as HTMLText
 }
@@ -162,7 +159,7 @@ export const EditSignature = () => {
               draftId={draft.id}
               value={
                 draft.signatureText.value ||
-                getDefaultSignatureText(formatDateFns)
+                getDefaultSignatureText(draft.ministry.value)
               }
               onChange={(text) => updateState('signatureText', text)}
               required={!!draft.signatureText.required}
@@ -216,42 +213,6 @@ export const EditSignature = () => {
             </Column>
           </Columns>
 
-          <Box>
-            <Inline space="gutter" alignY="center">
-              {/* idealPublishDate Input */}
-              <DatePicker
-                size="sm"
-                label={t(msg.idealPublishDate)}
-                placeholderText={t(msg.idealPublishDate_default)}
-                minDate={getMinPublishDate(
-                  draft.fastTrack.value,
-                  draft.signatureDate.value,
-                )}
-                selected={draft.idealPublishDate.value}
-                handleChange={(date: Date) =>
-                  updateState('idealPublishDate', date)
-                }
-                hasError={
-                  draft.idealPublishDate.showError &&
-                  !!draft.idealPublishDate.error
-                }
-                errorMessage={
-                  draft.idealPublishDate.error &&
-                  t(draft.idealPublishDate.error)
-                }
-                backgroundColor="blue"
-              />
-              {/* Request fastTrack */}
-              <Checkbox
-                label={t(msg.applyForFastTrack)}
-                labelVariant="default"
-                checked={draft.fastTrack.value}
-                onChange={() => {
-                  updateState('fastTrack', !draft.fastTrack.value)
-                }}
-              />
-            </Inline>
-          </Box>
           <Box marginBottom={3}>
             {/* Clear idealPublishDate */}
             {!!draft.idealPublishDate.value && (

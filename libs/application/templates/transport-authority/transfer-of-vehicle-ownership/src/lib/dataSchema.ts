@@ -1,5 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { VehicleMileage } from '../shared'
+import { error } from './messages'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -24,16 +26,17 @@ const RemovableUserSchemaBase = z
     email: z.string().optional(),
     phone: z.string().optional(),
     wasRemoved: z.string().optional(),
+    needsAgeValidation: z.boolean().optional(),
   })
   .refine(
-    ({ nationalId, wasRemoved }) => {
+    ({ nationalId, wasRemoved, needsAgeValidation }) => {
       return (
         wasRemoved === 'true' ||
         (nationalId &&
           nationalId.length !== 0 &&
           kennitala.isValid(nationalId) &&
           (kennitala.isCompany(nationalId) ||
-            kennitala.info(nationalId).age >= 18))
+            (needsAgeValidation ? kennitala.info(nationalId).age >= 18 : true)))
       )
     },
     { path: ['nationalId'] },
@@ -99,15 +102,18 @@ export const TransferOfVehicleOwnershipSchema = z.object({
   vehicleMileage: z
     .object({
       isRequired: z.boolean().optional(),
+      mileageReading: z.string().optional(),
       value: z.string().optional(),
     })
     .refine(
-      (x) => {
+      (x: VehicleMileage) => {
         if (x.isRequired) {
           return (
-            x.value !== undefined &&
-            x.value !== '' &&
-            parseInt(x.value?.split(' ')[0]) > 0
+            (x.value !== undefined &&
+              x.value !== '' &&
+              parseInt(x.value?.split(' ')[0]) > 0 &&
+              x.mileageReading === undefined) ||
+            Number(x.value) >= Number(x.mileageReading)
           )
         } else {
           return (
@@ -119,6 +125,7 @@ export const TransferOfVehicleOwnershipSchema = z.object({
       },
       {
         path: ['value'],
+        message: error.invalidMileage.defaultMessage,
       },
     ),
   seller: UserInformationSchema,

@@ -1,4 +1,8 @@
 import { Injectable } from '@nestjs/common'
+
+import { handle204 } from '@island.is/clients/middlewares'
+import { isDefined } from '@island.is/shared/utils'
+
 import {
   EinstaklingarApi,
   EinstaklingurDTOAllt,
@@ -14,7 +18,6 @@ import {
   EinstaklingurDTOTru,
   GerviEinstaklingarApi,
 } from '../../gen/fetch'
-import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class NationalRegistryV3ClientService {
@@ -37,10 +40,16 @@ export class NationalRegistryV3ClientService {
       ? this.fakeApi.midlunV1GerviEinstaklingarNationalIdGet({
           nationalId,
         })
-      : this.individualApi.midlunV1EinstaklingarNationalIdGet({ nationalId })
+      : handle204(
+          this.individualApi.midlunV1EinstaklingarNationalIdGetRaw({
+            nationalId,
+          }),
+        )
   }
 
-  getFamily(nationalId: string): Promise<EinstaklingurDTOLogforeldrar | null> {
+  getBiologicalFamily(
+    nationalId: string,
+  ): Promise<EinstaklingurDTOLogforeldrar | null> {
     return this.individualApi.midlunV1EinstaklingarNationalIdLogforeldrarGet({
       nationalId,
     })

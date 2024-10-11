@@ -1,8 +1,6 @@
 import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
 
-import { ForbiddenException } from '@nestjs/common'
-
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileState,
@@ -65,8 +63,9 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
-    const mockPutObject = mockAwsS3Service.putObject as jest.Mock
-    mockPutObject.mockResolvedValue(uuid())
+    const mockPutGeneratedObject =
+      mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
+    mockPutGeneratedObject.mockResolvedValue(uuid())
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
     const mockPostMessageToQueue =
@@ -125,15 +124,12 @@ describe('CaseController - Get ruling signature confirmation', () => {
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
-    it('should set the ruling signature date', () => {
+    it('should return success', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
       )
-    })
-
-    it('should return success', () => {
-      expect(mockAwsS3Service.putObject).toHaveBeenCalled()
+      expect(mockAwsS3Service.putGeneratedRequestCaseObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
         {
@@ -169,10 +165,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
       )
-    })
-
-    it('should return success', () => {
-      expect(mockAwsS3Service.putObject).toHaveBeenCalled()
+      expect(mockAwsS3Service.putGeneratedRequestCaseObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
         {
@@ -217,25 +210,6 @@ describe('CaseController - Get ruling signature confirmation', () => {
       ])
     })
   })
-
-  describe('user is not the assigned judge', () => {
-    const caseId = uuid()
-    const theCase = { id: caseId, judgeId: uuid() } as Case
-    const documentToken = uuid()
-    let then: Then
-
-    beforeEach(async () => {
-      then = await givenWhenThen(caseId, user, theCase, documentToken)
-    })
-
-    it('should throw ForbiddenException', () => {
-      expect(then.error).toBeInstanceOf(ForbiddenException)
-      expect(then.error.message).toBe(
-        'A ruling must be signed by the assigned judge',
-      )
-    })
-  })
-
   describe('database update fails', () => {
     const caseId = uuid()
     const theCase = {
@@ -269,8 +243,9 @@ describe('CaseController - Get ruling signature confirmation', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockPutObject = mockAwsS3Service.putObject as jest.Mock
-      mockPutObject.mockRejectedValueOnce(new Error('Some error'))
+      const mockPutGeneratedObject =
+        mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
+      mockPutGeneratedObject.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
@@ -279,7 +254,6 @@ describe('CaseController - Get ruling signature confirmation', () => {
       expect(then.result.documentSigned).toBe(false)
       expect(then.result.message).toBeTruthy()
       expect(then.result.code).toBeUndefined()
-
       expect(mockCaseModel.update).not.toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 export class SendNotificationResponse {
-  @ApiProperty()
+  @ApiProperty({ type: Boolean })
   notificationSent!: boolean
 }

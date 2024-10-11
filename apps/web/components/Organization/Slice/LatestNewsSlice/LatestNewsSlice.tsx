@@ -1,7 +1,8 @@
 import React from 'react'
-import { LatestNewsSlice as LatestNewsSliceSchema } from '@island.is/web/graphql/schema'
+
+import { Box } from '@island.is/island-ui/core'
 import { NewsItems } from '@island.is/web/components'
-import { Box, BoxProps } from '@island.is/island-ui/core'
+import { LatestNewsSlice as LatestNewsSliceSchema } from '@island.is/web/graphql/schema'
 import { LinkType } from '@island.is/web/hooks'
 
 interface SliceProps {
@@ -9,7 +10,6 @@ interface SliceProps {
   slug: string
   linkType?: LinkType
   overview?: LinkType
-  latestNewsSliceBackground?: BoxProps['background']
   latestNewsSliceColorVariant?: 'default' | 'blue'
   forceTitleSectionHorizontalPadding?: boolean
 }
@@ -19,14 +19,12 @@ export const LatestNewsSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
   slug,
   linkType = 'organizationnews',
   overview = 'organizationnewsoverview',
-  latestNewsSliceBackground = 'purple100',
   latestNewsSliceColorVariant = 'default',
   forceTitleSectionHorizontalPadding = false,
 }) => {
   return (
     <Box
       component="section"
-      background={latestNewsSliceBackground}
       paddingTop={[5, 5, 8]}
       paddingBottom={[2, 2, 5]}
       aria-labelledby="news-items-title"

@@ -17,6 +17,7 @@ import {
   FamilyStatus,
   CreateApplicationFile,
   DirectTaxPayment,
+  Children,
 } from '@island.is/financial-aid/shared/lib'
 
 export class CreateApplicationDto {
@@ -105,6 +106,11 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly formComment: string
 
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly childrenComment: string
+
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
@@ -172,6 +178,10 @@ export class CreateApplicationDto {
   @IsArray()
   @ApiProperty()
   readonly directTaxPayments: DirectTaxPayment[]
+
+  @IsArray()
+  @ApiProperty()
+  readonly children: Children[]
 
   @IsOptional()
   @IsUUID()

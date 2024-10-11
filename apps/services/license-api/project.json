@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/license-api/src",
   "projectType": "application",
   "prefix": "license-api",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -37,16 +38,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/services/license-api/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/license-api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/license-api/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/license-api"]
     },
@@ -71,7 +68,8 @@
         "parallel": true
       }
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

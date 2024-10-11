@@ -15,7 +15,6 @@ concurrency:
 
 env:
   COMPOSE_HTTP_TIMEOUT: 180
-  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
 
@@ -30,141 +29,81 @@ jobs:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       CHUNK_SIZE: 7
       SERVERSIDE_FEATURES_ON: ''
+      DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+      DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
 
     outputs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
-      UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
-      BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
-      node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
-      generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
+      CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18.8.0'
+          node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Check node version
         run: |
+          set -euo pipefail
           node -v
           ls -l `which node`
-
       - name: Checking out relevant branches
         run: |
-          git checkout $GITHUB_HEAD_REF
-          git checkout $GITHUB_BASE_REF
-          git checkout $GITHUB_SHA
+          set -euo pipefail
+          git checkout "$GITHUB_HEAD_REF"
+          git checkout "$GITHUB_BASE_REF"
+          git checkout "$GITHUB_SHA"
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-          BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
-          HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
-          echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
+          BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
+      # This is to increase the retention days for our GitHub Actions run events
+      # See this for more information:
+      # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
       - name: Keep PR run event
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
         with:
           name: pr-event
           path: event.json
-          retention-days: 60
+          retention-days: 90
+          include-hidden-files: true
+          if-no-files-found: error
 
-      - name: Calculate cache key for node modules
-        id: calculate_node_modules_hash
-        run: |
-          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
-          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
-          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
-          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
-          echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
-
-      - name: Calculate cache keys for generated files
-        id: calculate_generated_files_cache_key
-        run: |
-          export HASH=$(./scripts/_hash-generated-files.sh)
-          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated-03
-          echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
-          echo "generated-files-cache-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
-
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
         with:
-          path: node_modules
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
-
-      - name: Check node-modules cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Building NodeJS dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true'
-        run: ./scripts/ci/10_prepare-host-deps.sh
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules,cypress,generated-files'
 
       - run: |
-          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          set -euo pipefail
+          echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
           export HEAD_REF="$GITHUB_HEAD_REF"
           export BASE_REF="$GITHUB_BASE_REF"
-          export PR_REF=$GITHUB_SHA
+          export PR_REF="$GITHUB_SHA"
           export SHELL=/usr/bin/bash
           export WORKFLOW_ID=pullrequest
-          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
-          git checkout $GITHUB_SHA
-          echo "BASE=$BASE" >> $GITHUB_ENV
+          source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          git checkout "$GITHUB_SHA"
+          echo "BASE=$BASE" >> "$GITHUB_ENV"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HTML_URL: ${{ github.event.pull_request.html_url }}
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
         name: Preparing HEAD and BASE tags
-
-      - name: Cache for cypress
-        id: cypress
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: /github/home/.cache/Cypress
-          key: cypress-cache-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
-
-      - name: Check cypress cache success
-        run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Verify cypress
-        id: cypress-check
-        run: npx cypress verify
-        continue-on-error: true
-
-      - name: Install cypress
-        if: steps.cypress-check.outcome != 'success'
-        run: npx cypress install
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
-          # force-cache-save: ${{ env.SKIP_GENERATED_CACHE }}
-
-      - name: Check generated files cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Run codegen
-        if: steps.generated-files-cache.outputs.cache-hit != 'true'
-        run: |
-          node --version
-          tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
-
-      # - name: Security audit Node modules
-      #   run: ./scripts/ci/20_security-audit.sh
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
@@ -176,28 +115,30 @@ jobs:
       - name: Set magic env if test-everything label is set
         if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] == 'admin' }}
         run: |
-          echo "AFFECTED_ALL=7913-$GITHUB_HEAD_REF" >> $GITHUB_ENV
+          echo "AFFECTED_ALL=7913-$GITHUB_HEAD_REF" >> "$GITHUB_ENV"
 
       - name: Warn if user does not have the required permissions
         if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] != 'admin' }}
         run: |
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
-          echo "User $GITHUB_ACTOR does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
+          echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Prepare lint targets
         id: lint_projects
         run: |
-          CHUNKS=$(./scripts/ci/generate-chunks.sh lint)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare test targets
         id: test_projects
         run: |
-          CHUNKS=$(./scripts/ci/generate-chunks.sh test)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare e2e targets
@@ -205,20 +146,22 @@ jobs:
         env:
           CHUNK_SIZE: 1
         run: |
-          CHUNKS=$(./scripts/ci/generate-chunks.sh e2e-ci)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
-          echo "BUILD_ID=$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> $GITHUB_OUTPUT
+          echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
 
       - name: Prepare build targets
         id: build_projects
         env:
           CHUNK_SIZE: 4
         run: |
-          CHUNKS=$(./scripts/ci/generate-chunks.sh build)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
       - name: Check release-manager approval
         id: check-release-manager-approval
@@ -226,6 +169,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           node -r esbuild-register .github/actions/check-team-approval.ts release-managers
   tests:
     needs:
@@ -237,46 +181,29 @@ jobs:
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 3
+      MAX_JOBS: 1
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check node-modules cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check generated-files cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+          enable-cache: 'node_modules,cypress,generated-files'
 
       - uses: ./.github/actions/unit-test
         with:
@@ -305,53 +232,25 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check node-modules cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for cypress
-        id: cypress
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: /github/home/.cache/Cypress
-          key: cypress-cache-${{ needs.prepare.outputs.node-modules-hash }}
-
-      - name: Check cypress cache success
-        run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check generated-files cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+          enable-cache: 'node_modules,cypress,generated-files'
 
       - name: Running e2e tests
-        run: ./scripts/ci/40_e2e.sh ${AFFECTED_PROJECT}
+        run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
 
   linting-workspace:
     needs:
@@ -361,23 +260,20 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v3
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
+          node-version-file: 'package.json'
       - name: Setup yarn
-        run: npm install -g yarn
-      - name: Check node-modules cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+        run: corepack enable
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+          enable-cache: 'node_modules,generated-files'
+
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
 
@@ -387,14 +283,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v3
-      - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@2.0.0
+      - uses: actions/checkout@v4
+      - uses: reviewdog/action-shellcheck@v1
         with:
-          ignore_paths: >-
-            node_modules
-            apps/native/app/android
-          severity: warning
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review
+          fail_on_error: true
+          level: info
+          exclude: >-
+            */node_modules/*
 
   formatting:
     needs:
@@ -404,31 +301,28 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
         with:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ github.ref == 'ref/heads/main' }}
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check node-modules cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+          enable-cache: 'node_modules'
 
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -456,37 +350,19 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
       - name: Setup yarn
-        run: npm install -g yarn
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+        run: corepack enable
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check node-modules cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check generated-files cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
-
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+          enable-cache: 'node_modules,generated-files'
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
@@ -505,36 +381,19 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
     if: needs.prepare.outputs.BUILD_CHUNKS
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
       - name: Setup yarn
-        run: npm install -g yarn
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+        run: corepack enable
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check node-modules cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check generated-files cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+          enable-cache: 'node_modules,generated-files'
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
@@ -543,7 +402,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: always()
+    if: ${{ !cancelled() }}
     needs:
       - prepare
       - linting-workspace

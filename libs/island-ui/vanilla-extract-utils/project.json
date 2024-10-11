@@ -3,14 +3,10 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/island-ui/vanilla-extract-utils/src",
   "projectType": "library",
+  "tags": ["lib:react", "scope:react"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/island-ui/vanilla-extract-utils/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -18,10 +14,8 @@
         "{workspaceRoot}/coverage/libs/island-ui/vanilla-extract-utils"
       ],
       "options": {
-        "jestConfig": "libs/island-ui/vanilla-extract-utils/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/island-ui/vanilla-extract-utils/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:react", "scope:react"]
+  }
 }

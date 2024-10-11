@@ -4,15 +4,18 @@ import {
   Injectable,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import omit from 'lodash/omit'
 import { Includeable, Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import omit from 'lodash/omit'
 
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { NoContentException } from '@island.is/nest/problem'
 import { validateClientId } from '@island.is/auth/shared'
+import { NoContentException } from '@island.is/nest/problem'
+import { AuthDelegationType } from '@island.is/shared/types'
 
+import { AdminScopeDTO } from '../../resources/admin/dto/admin-scope.dto'
+import { AdminTranslationService } from '../../resources/admin/services/admin-translation.service'
 import { ApiScope } from '../../resources/models/api-scope.model'
 import { Domain } from '../../resources/models/domain.model'
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
@@ -24,21 +27,24 @@ import {
   translateRefreshTokenExpiration,
 } from '../../types'
 import { ClientsService } from '../clients.service'
-import { Client } from '../models/client.model'
 import { ClientAllowedScope } from '../models/client-allowed-scope.model'
 import { ClientClaim } from '../models/client-claim.model'
 import { ClientGrantType } from '../models/client-grant-type.model'
-import { ClientRedirectUri } from '../models/client-redirect-uri.model'
 import { ClientPostLogoutRedirectUri } from '../models/client-post-logout-redirect-uri.model'
+import { ClientRedirectUri } from '../models/client-redirect-uri.model'
+import { Client } from '../models/client.model'
+import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
 import { AdminClientDto } from './dto/admin-client.dto'
 import { AdminCreateClientDto } from './dto/admin-create-client.dto'
 import {
   AdminPatchClientDto,
   superUserFields,
 } from './dto/admin-patch-client.dto'
-import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
-import { AdminTranslationService } from '../../resources/admin/services/admin-translation.service'
-import { AdminScopeDTO } from '../../resources/admin/dto/admin-scope.dto'
+import { ClientDelegationType } from '../models/client-delegation-type.model'
+import {
+  delegationTypeSuperUserFilter,
+  SUPER_USER_DELEGATION_TYPES,
+} from '../../resources/utils/filters'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -73,6 +79,8 @@ export class AdminClientsService {
     private readonly clientGrantType: typeof ClientGrantType,
     @InjectModel(ClientAllowedScope)
     private readonly clientAllowedScope: typeof ClientAllowedScope,
+    @InjectModel(ClientDelegationType)
+    private readonly clientDelegationType: typeof ClientDelegationType,
     @InjectModel(ApiScope)
     private readonly apiScopeModel: typeof ApiScope,
     private readonly translationService: TranslationService,
@@ -171,7 +179,12 @@ export class AdminClientsService {
         clientId: clientDto.clientId,
         clientType: clientDto.clientType,
         clientName: clientDto.clientName,
+        // Remove defined super admin fields
         ...omit(clientDto, superUserFields),
+        // Remove personal representative from delegation types since it is not allowed for non-super admins
+        supportedDelegationTypes: delegationTypeSuperUserFilter(
+          clientDto.supportedDelegationTypes ?? [],
+        ),
       }
     }
 
@@ -207,7 +220,10 @@ export class AdminClientsService {
           tenantId,
           displayName,
           refreshTokenExpiration,
-          clientAttributes,
+          clientAttributes: {
+            ...clientAttributes,
+            addedDelegationTypes: clientAttributes.supportedDelegationTypes,
+          },
           redirectUris,
           postLogoutRedirectUris,
           customClaims,
@@ -384,7 +400,7 @@ export class AdminClientsService {
       tenantId?: string
       displayName?: TranslatedValueDto[]
       refreshTokenExpiration?: RefreshTokenExpiration
-      clientAttributes?: Omit<
+      clientAttributes: Omit<
         AdminPatchClientDto,
         | 'customClaims'
         | 'displayName'
@@ -401,14 +417,26 @@ export class AdminClientsService {
       removedScopes?: string[]
     },
   ) {
-    if (Object.keys(data.clientAttributes as object).length > 0) {
+    const {
+      addedDelegationTypes,
+      removedDelegationTypes,
+      supportsCustomDelegation,
+      supportsProcuringHolders,
+      supportsPersonalRepresentatives,
+      supportsLegalGuardians,
+      ...clientAttributes
+    } = data.clientAttributes
+
+    if (Object.keys(clientAttributes as object).length > 0) {
       // Update includes client base attributes
+      const refreshTokenExpiration = data.refreshTokenExpiration
+        ? translateRefreshTokenExpiration(data.refreshTokenExpiration)
+        : undefined
+
       await this.clientModel.update(
         {
-          ...data.clientAttributes,
-          refreshTokenExpiration: translateRefreshTokenExpiration(
-            data.refreshTokenExpiration,
-          ),
+          ...clientAttributes,
+          refreshTokenExpiration,
         },
         {
           where: {
@@ -482,6 +510,26 @@ export class AdminClientsService {
         transaction,
       })
     }
+
+    if (addedDelegationTypes && addedDelegationTypes.length > 0) {
+      await this.clientsService.addClientDelegationTypes({
+        clientId: data.clientId,
+        delegationTypes: addedDelegationTypes,
+        options: {
+          transaction,
+        },
+      })
+    }
+
+    if (removedDelegationTypes && removedDelegationTypes.length > 0) {
+      await this.clientsService.removeClientDelegationTypes({
+        clientId: data.clientId,
+        delegationTypes: removedDelegationTypes,
+        options: {
+          transaction,
+        },
+      })
+    }
   }
 
   private defaultClientAttributes(clientType: ClientType) {
@@ -548,6 +596,11 @@ export class AdminClientsService {
           type: claim.type,
           value: claim.value,
         })) ?? [],
+      supportedDelegationTypes:
+        client.supportedDelegationTypes?.map(
+          (clientDelegationType) => clientDelegationType.delegationType,
+        ) ?? [],
+      allowedAcr: client.allowedAcr ?? [],
     }
   }
 
@@ -593,6 +646,7 @@ export class AdminClientsService {
       { model: ClientGrantType, as: 'allowedGrantTypes' },
       { model: ClientRedirectUri, as: 'redirectUris' },
       { model: ClientPostLogoutRedirectUri, as: 'postLogoutRedirectUris' },
+      { model: ClientDelegationType, as: 'supportedDelegationTypes' },
     ]
   }
 
@@ -607,6 +661,20 @@ export class AdminClientsService {
     tenantId: string,
   ) {
     const isSuperUser = this.isSuperAdmin(user)
+
+    // Verify if superuser delegation types are being updated that user is super user
+    const allDelegationTypes = [
+      ...(input.removedDelegationTypes ?? []),
+      ...(input.addedDelegationTypes ?? []),
+    ]
+
+    const hasSuperUserDelegationType = allDelegationTypes.some(
+      (delegationType) => SUPER_USER_DELEGATION_TYPES.includes(delegationType),
+    )
+
+    if (!isSuperUser && hasSuperUserDelegationType) {
+      return false
+    }
 
     const updatedFields = Object.keys(input)
     const superUserUpdatedFields = updatedFields.filter((field) =>

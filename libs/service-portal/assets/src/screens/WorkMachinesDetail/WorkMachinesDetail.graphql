@@ -20,6 +20,7 @@ query GetWorkMachineById($input: WorkMachinesInput!) {
     importer
     insurer
     licensePlateNumber
+    dateLastInspection
     links {
       href
       rel

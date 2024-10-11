@@ -21,6 +21,8 @@ import {
 } from './recyclingRequest.model'
 import { VehicleService, VehicleModel } from '../vehicle'
 import { IcelandicTransportAuthorityServices } from '../../services/icelandicTransportAuthority.services'
+import { ApiVersion } from '../../utils/const'
+import { getShortPermno } from '../../utils/skilavottordUtils'
 
 @Injectable()
 export class RecyclingRequestService {
@@ -39,7 +41,7 @@ export class RecyclingRequestService {
   async deRegisterVehicle(
     vehiclePermno: string,
     disposalStation: string,
-    mileage = 0,
+    vehicle: VehicleModel,
   ) {
     try {
       const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
@@ -51,7 +53,9 @@ export class RecyclingRequestService {
       const jsonAuthBody = JSON.stringify(jsonObj)
       const headerAuthRequest = {
         'Content-Type': 'application/json',
+        'Api-version': ApiVersion.REGISTRATIONS,
       }
+
       // TODO: saved jToken and use it in next 7 days ( until it expires )
       const authRes = await lastValueFrom(
         this.httpService.post(restAuthUrl, jsonAuthBody, {
@@ -63,24 +67,31 @@ export class RecyclingRequestService {
         this.logger.error(errorMessage)
         throw new Error(errorMessage)
       }
+
       // DeRegisterd vehicle
       const jToken = authRes.data['jwtToken']
       const jsonDeRegBody = JSON.stringify({
         permno: vehiclePermno,
         deRegisterDate: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
-        disposalstation: disposalStation,
+        disposalStation: disposalStation,
         explanation: 'Rafrænt afskráning',
-        mileage: mileage,
+        mileage: vehicle.mileage ?? 0,
+        plateCount: vehicle.plateCount,
+        lost: vehicle.plateLost ? 1 : 0,
       })
+
       const headerDeRegRequest = {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + jToken,
+        'Api-version': ApiVersion.REGISTRATIONS,
       }
+
       const deRegRes = await lastValueFrom(
         this.httpService.post(restDeRegUrl, jsonDeRegBody, {
           headers: headerDeRegRequest,
         }),
       )
+
       if (deRegRes.status < 300 && deRegRes.status >= 200) {
         return true
       } else {
@@ -88,10 +99,14 @@ export class RecyclingRequestService {
           `Failed on deregisterd on deRegisterVehicle with status: ${deRegRes.statusText}`,
         )
       }
-    } catch (err) {
-      delete err.data
-      this.logger.error(`Failed to deregister vehicle`, { error: err })
-      throw new Error(`Failed to deregister vehicle ${vehiclePermno.slice(-3)}`)
+    } catch (error) {
+      if (error?.config) {
+        error.config.data = undefined
+      }
+      this.logger.error(`Failed to deregister vehicle`, { error })
+      throw new Error(
+        `Failed to deregister vehicle ${getShortPermno(vehiclePermno)}`,
+      )
     }
   }
 
@@ -129,6 +144,9 @@ export class RecyclingRequestService {
     user: User,
     permno: string,
   ): Promise<VehicleModel> {
+    // We are only logging the last 3 chars in the vehicle number
+    const loggedPermno = getShortPermno(permno)
+
     try {
       // Check 'pendingRecycle' status
       const resRequestType = await this.findAllWithPermno(permno)
@@ -137,12 +155,12 @@ export class RecyclingRequestService {
           resRequestType[0]['dataValues']['requestType'] != 'pendingRecycle'
         ) {
           throw new Error(
-            `Lastest requestType of vehicle's number ${permno} is not 'pendingRecycle' but is: ${resRequestType[0]['dataValues']['requestType']}`,
+            `Lastest requestType of vehicle's number ${loggedPermno} is not 'pendingRecycle' but is: ${resRequestType[0]['dataValues']['requestType']}`,
           )
         }
       } else {
         throw new Error(
-          `Could not find any requestType for vehicle's number: ${permno} in database`,
+          `Could not find any requestType for vehicle's number: ${loggedPermno} in database`,
         )
       }
 
@@ -150,13 +168,13 @@ export class RecyclingRequestService {
       const res = await this.vehicleService.findByVehicleId(permno)
       if (!res) {
         throw new Error(
-          `Could not find any vehicle's information for vehicle's number: ${permno} in database`,
+          `Could not find any vehicle's information for vehicle's number: ${loggedPermno} in database`,
         )
       }
       return res
     } catch (err) {
       throw new Error(
-        `Failed on getVehicleInfoToDeregistered request ${user.name} with error: ${err}`,
+        `Failed on getVehicleInfoToDeregistered request from partner ${user.partnerId} with error: ${err}`,
       )
     }
   }
@@ -173,7 +191,7 @@ export class RecyclingRequestService {
     const errors = new RequestErrors()
 
     // We are only logging the last 3 chars in the vehicle number
-    const loggedPermno = permno.slice(-3)
+    const loggedPermno = getShortPermno(permno)
 
     this.logger.info(`car-recycling: Recycling request ${loggedPermno}`, {
       requestType: requestType,
@@ -272,10 +290,10 @@ export class RecyclingRequestService {
       // If we encounter error then update requestType to 'paymentFailed'
       // If we encounter error with 'partnerId' then there is no request saved
       if (requestType == 'deregistered') {
-        // 0. Ee need to be sure that the current owner is registered in our database
-        /* await this.icelandicTransportAuthorityServices.checkIfCurrentUser(
+        // 0. We need to be sure that the current owner is registered in our database
+        await this.icelandicTransportAuthorityServices.checkIfCurrentUser(
           permno,
-        )*/
+        )
 
         // 1. Check 'pendingRecycle'/'handOver' requestType
         const resRequestType = await this.findAllWithPermno(permno)
@@ -332,12 +350,14 @@ export class RecyclingRequestService {
           this.logger.info(
             `car-recycling: Degregistering vehicle ${loggedPermno} from Samgongustofa`,
             {
-              mileage: vehicle.mileage ?? 0,
               partnerId,
+              mileage: vehicle.mileage ?? 0,
+              plateCount: vehicle.plateCount,
+              lost: vehicle.plateLost ? 1 : 0,
             },
           )
 
-          await this.deRegisterVehicle(permno, partnerId, vehicle.mileage ?? 0)
+          await this.deRegisterVehicle(permno, partnerId, vehicle)
         } catch (err) {
           // Saved requestType back to 'pendingRecycle'
           const req = new RecyclingRequestModel()

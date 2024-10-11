@@ -1,6 +1,10 @@
 import { User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
-import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
+import {
+  SocialInsuranceAdministrationClientService,
+  TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+  IncomePlanStatus as IncomeStatus,
+} from '@island.is/clients/social-insurance-administration'
 import {
   CmsElasticsearchService,
   CustomPageUniqueIdentifier,
@@ -10,16 +14,20 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import { PensionCalculationInput } from './dtos/pensionCalculation.input'
-import { PensionCalculationResponse } from './models/pensionCalculation.model'
+import { PensionCalculationResponse } from './models/pension/pensionCalculation.model'
 import {
   getPensionCalculationHighlightedItems,
   groupPensionCalculationItems,
   mapPensionCalculationInput,
 } from './utils'
-import { PaymentGroup } from './models/paymentGroup.model'
-import { PaymentPlan } from './models/paymentPlan.model'
-import { Payments } from './models/payments.model'
-import { mapToPaymentGroupType } from './models/paymentGroupType.model'
+import { PaymentGroup } from './models/payments/paymentGroup.model'
+import { PaymentPlan } from './models/payments/paymentPlan.model'
+import { Payments } from './models/payments/payments.model'
+import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
+import { IncomePlan } from './models/income/incomePlan.model'
+import { IncomePlanStatus, LOG_CATEGORY } from './socialInsurance.type'
+import { IncomePlanEligbility } from './models/income/incomePlanEligibility.model'
+import { TemporaryCalculationInput } from './dtos/temporaryCalculation.input'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -30,10 +38,9 @@ export class SocialInsuranceService {
   ) {}
 
   async getPayments(user: User): Promise<Payments | undefined> {
-    const [payments, years] = await Promise.all([
-      this.socialInsuranceApi.getPayments(user),
-      this.socialInsuranceApi.getValidYearsForPaymentPlan(user),
-    ])
+    const payments = await this.socialInsuranceApi
+      .getPayments(user)
+      .catch(handle404)
 
     if (!payments) {
       return undefined
@@ -47,16 +54,12 @@ export class SocialInsuranceService {
     return {
       nextPayment: payments.nextPayment ?? undefined,
       previousPayment: payments.previousPayment ?? undefined,
-      paymentYears: years,
     }
   }
 
-  async getPaymentPlan(
-    user: User,
-    year: number,
-  ): Promise<PaymentPlan | undefined> {
+  async getPaymentPlan(user: User): Promise<PaymentPlan | undefined> {
     const paymentPlan = await this.socialInsuranceApi
-      .getPaymentPlan(user, year)
+      .getPaymentPlan(user)
       .catch(handle404)
 
     if (!paymentPlan) {
@@ -125,8 +128,58 @@ export class SocialInsuranceService {
       paymentGroups,
     }
   }
-  async getValidPaymentPlanYear(user: User): Promise<Array<number>> {
-    return this.socialInsuranceApi.getValidYearsForPaymentPlan(user)
+
+  async getIncomePlan(user: User): Promise<IncomePlan | undefined> {
+    const data = await this.socialInsuranceApi.getLatestIncomePlan(user)
+
+    if (!data?.registrationDate || !data?.status || !data.incomeTypeLines) {
+      this.logger.info('Income plan incomplete, returning', {
+        category: LOG_CATEGORY,
+      })
+      return
+    }
+
+    let hasIncompleteLines = false
+    const incomeCategories = data.incomeTypeLines
+      .map((i) => {
+        if (!i.incomeTypeName || !i.incomeCategoryName || !i.totalSum) {
+          hasIncompleteLines = true
+          return undefined
+        }
+        return {
+          name: i.incomeCategoryName,
+          typeName: i.incomeTypeName,
+          annualSum: i.totalSum,
+          currency: i.currency ?? undefined,
+        }
+      })
+      .filter(isDefined)
+
+    if (hasIncompleteLines) {
+      this.logger.info(
+        'Income category data filtered out some incomplete lines',
+        {
+          category: LOG_CATEGORY,
+        },
+      )
+    }
+
+    return {
+      registrationDate: data.registrationDate,
+      status: this.parseIncomePlanStatus(data.status),
+      incomeCategories,
+    }
+  }
+
+  async getIncomePlanChangeEligibility(
+    user: User,
+  ): Promise<IncomePlanEligbility> {
+    const data = await this.socialInsuranceApi.getIsEligible(user, 'incomeplan')
+
+    return {
+      isEligible: data.isEligible ?? undefined,
+      reason: data.reason ?? undefined,
+    }
   }
 
   async getPensionCalculation(
@@ -151,6 +204,26 @@ export class SocialInsuranceService {
     return {
       highlightedItems,
       groups,
+    }
+  }
+
+  async getTemporaryCalculations(
+    user: User,
+    input: TemporaryCalculationInput,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
+    return await this.socialInsuranceApi.getTemporaryCalculations(user, input)
+  }
+
+  parseIncomePlanStatus = (status: IncomeStatus): IncomePlanStatus => {
+    switch (status) {
+      case 'Accepted':
+        return IncomePlanStatus.ACCEPTED
+      case 'InProgress':
+        return IncomePlanStatus.IN_PROGRESS
+      case 'Cancelled':
+        return IncomePlanStatus.CANCELLED
+      default:
+        return IncomePlanStatus.UNKNOWN
     }
   }
 }

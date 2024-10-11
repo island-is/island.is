@@ -1,21 +1,39 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ApiMachineModelsGetRequest,
+  ApiMachineParentCategoriesTypeModelGetRequest,
   ApiMachineRequestInspectionPostRequest,
   ApiMachineStatusChangePostRequest,
+  ApiMachineSubCategoriesGetRequest,
   ApiMachinesGetRequest,
+  ApiMachinesPostRequest,
+  ApiTechnicalInfoInputsGetRequest,
   ExcelRequest,
   GetMachineRequest,
   MachineCategoryApi,
   MachineHateoasDto,
   MachineInspectionRequestCreateDto,
+  MachineModelDto,
+  MachineModelsApi,
   MachineOwnerChangeApi,
+  MachineParentCategoriesApi,
+  MachineParentCategoryDetailsDto,
+  MachineParentCategoryDto,
   MachineRequestInspectionApi,
   MachineStatusChangeApi,
+  MachineStreetRegistrationApi,
+  MachineStreetRegistrationCreateDto,
+  MachineSubCategoriesApi,
+  MachineSubCategoryDto,
   MachineSupervisorChangeApi,
+  MachineTypeDto,
+  MachineTypesApi,
   MachinesApi,
   MachinesDocumentApi,
   MachinesFriendlyHateaosDto,
+  TechInfoItemDto,
+  TechnicalInfoApi,
 } from '../../gen/fetch'
 import {
   MachineDto,
@@ -42,7 +60,13 @@ export class WorkMachinesClientService {
     private readonly machineCategoryApi: MachineCategoryApi,
     private readonly machineSupervisorChangeApi: MachineSupervisorChangeApi,
     private readonly machineStatusApi: MachineStatusChangeApi,
+    private readonly machineStreetApi: MachineStreetRegistrationApi,
     private readonly machineRequestInspection: MachineRequestInspectionApi,
+    private readonly machineTypesApi: MachineTypesApi,
+    private readonly machineModelsApi: MachineModelsApi,
+    private readonly machineParentCategoriesApi: MachineParentCategoriesApi,
+    private readonly machineSubCategoriesApi: MachineSubCategoriesApi,
+    private readonly technicalInfoApi: TechnicalInfoApi,
   ) {}
 
   private machinesApiWithAuth = (user: User) =>
@@ -69,10 +93,36 @@ export class WorkMachinesClientService {
     return this.machineStatusApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private machineStreetApiWithAuth(auth: Auth) {
+    return this.machineStreetApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   private machineRequestInspectionApiWithAuth(auth: Auth) {
     return this.machineRequestInspection.withMiddleware(
       new AuthMiddleware(auth),
     )
+  }
+
+  private machineTypesApiWithAuth(auth: Auth) {
+    return this.machineTypesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineModelsApiWithAuth(auth: Auth) {
+    return this.machineModelsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineParentCategoriesApiWithAuth(auth: Auth) {
+    return this.machineParentCategoriesApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
+  }
+
+  private machineSubCategoriesApiWithAuth(auth: Auth) {
+    return this.machineSubCategoriesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private technicalReadOnlyApiWithAuth(auth: Auth) {
+    return this.technicalInfoApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   getWorkMachines = async (
@@ -83,6 +133,7 @@ export class WorkMachinesClientService {
       .apiMachinesGet(input)
       .catch(handle404)
   }
+
   getWorkMachineById = async (
     user: User,
     input: GetMachineRequest,
@@ -94,13 +145,20 @@ export class WorkMachinesClientService {
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
 
-  async getMachines(auth: User): Promise<MachinesWithTotalCount> {
-    const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
+  async getMachines(
+    auth: User,
+    parameters?: ApiMachinesGetRequest,
+  ): Promise<MachinesWithTotalCount> {
+    const defaultOptions = {
       onlyShowOwnedMachines: true,
       pageSize: 20,
       pageNumber: 1,
-    })
+    }
 
+    const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
+      ...defaultOptions,
+      ...parameters,
+    })
     return {
       machines:
         result?.value?.map((machine) => {
@@ -110,24 +168,38 @@ export class WorkMachinesClientService {
             category: machine?.category || '',
             regNumber: machine?.registrationNumber || '',
             status: machine?.status || '',
+            paymentRequiredForOwnerChange:
+              machine?.paymentRequiredForOwnerChange ?? true,
           }
         }) || [],
       totalCount: result?.pagination?.totalCount || 0,
     }
   }
 
-  async getMachineByRegno(auth: User, regNumber: string): Promise<MachineDto> {
-    const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
+  async getMachineByRegno(
+    auth: User,
+    regNumber: string,
+    rel: string,
+    parameters?: ApiMachinesGetRequest,
+  ): Promise<MachineDto> {
+    const defaultOptions = {
       onlyShowOwnedMachines: true,
       searchQuery: regNumber,
+    }
+    const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
+      ...defaultOptions,
+      ...parameters,
     })
 
-    return await this.getMachineDetail(auth, result?.value?.[0]?.id || '')
+    return await this.getMachineDetail(auth, result?.value?.[0]?.id || '', rel)
   }
 
-  async getMachineDetail(auth: User, id: string): Promise<MachineDto> {
+  async getMachineDetail(
+    auth: User,
+    id: string,
+    rel: string,
+  ): Promise<MachineDto> {
     const result = await this.machineApiWithAuth(auth).getMachine({ id })
-
     const [type, ...subType] = result.type?.split(' ') || ''
     return {
       id: result.id,
@@ -139,7 +211,9 @@ export class WorkMachinesClientService {
       regNumber: result?.registrationNumber || '',
       supervisorName: result?.supervisorName || '',
       status: result?.status || '',
-      disabled: !result?.links?.some((link) => link?.rel === 'ownerChange'),
+      disabled: !result?.links?.some((link) => link?.rel === rel),
+      paymentRequiredForOwnerChange:
+        result?.paymentRequiredForOwnerChange ?? true,
     }
   }
 
@@ -192,6 +266,15 @@ export class WorkMachinesClientService {
     )
   }
 
+  async streetRegistration(
+    auth: Auth,
+    streetRegistration: MachineStreetRegistrationCreateDto,
+  ) {
+    await this.machineStreetApiWithAuth(auth).apiMachineStreetRegistrationPost({
+      machineStreetRegistrationCreateDto: streetRegistration,
+    })
+  }
+
   async requestInspection(
     auth: Auth,
     requestInspection: MachineInspectionRequestCreateDto,
@@ -201,5 +284,65 @@ export class WorkMachinesClientService {
     ).apiMachineRequestInspectionPost({
       machineInspectionRequestCreateDto: requestInspection,
     })
+  }
+
+  async mustInspectBeforeRegistration(auth: Auth) {
+    return await this.machineStreetApiWithAuth(
+      auth,
+    ).apiMachineStreetRegistrationMustInspectBeforeRegistrationGet({})
+  }
+
+  async getMachineTypes(auth: Auth): Promise<MachineTypeDto[]> {
+    return await this.machineTypesApiWithAuth(auth).apiMachineTypesGet({})
+  }
+
+  async getMachineModels(
+    auth: Auth,
+    requestParameters: ApiMachineModelsGetRequest,
+  ): Promise<MachineModelDto[]> {
+    return await this.machineModelsApiWithAuth(auth).apiMachineModelsGet(
+      requestParameters,
+    )
+  }
+
+  async getMachineParentCategoriesTypeModel(
+    auth: Auth,
+    requestParameters: ApiMachineParentCategoriesTypeModelGetRequest,
+  ): Promise<MachineParentCategoryDetailsDto[]> {
+    return await this.machineParentCategoriesApiWithAuth(
+      auth,
+    ).apiMachineParentCategoriesTypeModelGet(requestParameters)
+  }
+
+  async getMachineParentCategories(
+    auth: Auth,
+  ): Promise<MachineParentCategoryDto[]> {
+    return await this.machineParentCategoriesApiWithAuth(
+      auth,
+    ).apiMachineParentCategoriesGet({})
+  }
+
+  async getMachineSubCategories(
+    auth: Auth,
+    requestParameters: ApiMachineSubCategoriesGetRequest,
+  ): Promise<MachineSubCategoryDto[]> {
+    return await this.machineSubCategoriesApiWithAuth(
+      auth,
+    ).apiMachineSubCategoriesGet(requestParameters)
+  }
+
+  async getTechnicalInfoInputs(
+    auth: Auth,
+    requestParameters: ApiTechnicalInfoInputsGetRequest,
+  ): Promise<TechInfoItemDto[]> {
+    return await this.technicalReadOnlyApiWithAuth(
+      auth,
+    ).apiTechnicalInfoInputsGet(requestParameters)
+  }
+
+  async addNewMachine(auth: User, requestParameters: ApiMachinesPostRequest) {
+    return await this.machinesApiWithAuth(auth).apiMachinesPost(
+      requestParameters,
+    )
   }
 }

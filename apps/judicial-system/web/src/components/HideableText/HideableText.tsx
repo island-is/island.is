@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Icon, Text, Tooltip } from '@island.is/island-ui/core'
@@ -12,9 +12,12 @@ interface Props {
   tooltip?: string
 }
 
-const HideableText: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { text, onToggleVisibility, tooltip, isHidden } = props
-
+const HideableText: FC<Props> = ({
+  text,
+  onToggleVisibility,
+  tooltip,
+  isHidden,
+}) => {
   const renderVisibilityButton = () => (
     <button
       className={styles.eyeButton}

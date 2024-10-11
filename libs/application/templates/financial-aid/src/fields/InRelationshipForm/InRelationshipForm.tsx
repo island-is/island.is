@@ -41,7 +41,7 @@ const InRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
             error={spouseEmailError}
             defaultValue={answers.spouse?.email || ''}
             onChange={() => {
-              clearErrors(spouseEmailError)
+              clearErrors(spouseEmail)
             }}
           />
         </Box>

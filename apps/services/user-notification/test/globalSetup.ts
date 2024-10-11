@@ -1,25 +1,44 @@
-import { GenericContainer, Wait } from 'testcontainers'
 import { register } from 'tsconfig-paths'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const tsConfig = require(`../${require('../tsconfig.json').extends}`)
 register({ baseUrl: './', paths: tsConfig.compilerOptions.paths })
-import { startPostgres } from '@island.is/testing/containers'
+import { startPostgres, startLocalstack } from '@island.is/testing/containers'
+import { CreateQueueCommand, SQSClient } from '@aws-sdk/client-sqs'
+import { environment } from './environment'
+import { logger } from '@island.is/logging'
 
-const startSQS = async () => {
-  const lc = await new GenericContainer(
-    `${process.env.DOCKER_REGISTRY ?? ''}localstack/localstack:0.11.1`,
-  )
-    .withEnv('SERVICES', 'sqs')
-    .withExposedPorts(4566)
-    .withWaitStrategy(Wait.forLogMessage('Ready.'))
-    .start()
-  // eslint-disable-next-line
-  ;(global as any).__localstack__ = lc
+const setupSqsQueue = async () => {
+  try {
+    const client = new SQSClient({
+      region: environment.SQS_REGION,
+      endpoint: process.env.SQS_ENDPOINT,
+      credentials: {
+        accessKeyId: environment.SQS_ACCESS_KEY,
+        secretAccessKey: environment.SQS_SECRET_ACCESS_KEY,
+      },
+    })
 
-  process.env.SQS_ENDPOINT = `http://${lc.getHost()}:${lc.getMappedPort(4566)}`
+    logger.debug('Creating main queue...', { client })
+    await client.send(
+      new CreateQueueCommand({ QueueName: environment.MAIN_QUEUE_NAME }),
+    )
+    logger.debug('Main queue created.')
+
+    logger.debug('Creating dead letter queue...')
+    await client.send(
+      new CreateQueueCommand({ QueueName: environment.DEAD_LETTER_QUEUE_NAME }),
+    )
+    logger.debug('Dead letter queue created.')
+  } catch (error) {
+    console.error('Error setting up SQS queue', error)
+    throw error
+  }
 }
 
 export default async () => {
-  await Promise.all([startPostgres(), startSQS()])
+  await Promise.all([startPostgres(), startLocalstack()])
+
+  // Setting up the SQS queue to prevent concurrent issues between spec files.
+  await setupSqsQueue()
 }

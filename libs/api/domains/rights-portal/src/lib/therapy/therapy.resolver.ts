@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
@@ -9,17 +9,11 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import {
-  FeatureFlagGuard,
-  FeatureFlag,
-  Features,
-} from '@island.is/nest/feature-flags'
 import { TherapyService } from './therapy.service'
 import { PaginatedTherapyResponse } from './models/therapy.model'
 
 @Resolver()
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalHealthRightsModule)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/therapy' })
 export class TherapyResolver {
   constructor(private readonly service: TherapyService) {}

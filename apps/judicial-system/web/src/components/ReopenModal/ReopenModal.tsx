@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -25,7 +25,7 @@ interface Props {
   onClose: () => void
 }
 
-const ReopenModal: React.FC<React.PropsWithChildren<Props>> = ({ onClose }) => {
+const ReopenModal: FC<Props> = ({ onClose }) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { workingCase } = useContext(FormContext)

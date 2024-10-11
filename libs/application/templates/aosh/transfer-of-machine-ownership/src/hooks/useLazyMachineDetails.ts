@@ -10,6 +10,7 @@ export const useLazyMachineDetails = () => {
     },
     {
       id: string
+      rel: string
     }
   >(
     gql`
@@ -25,6 +26,7 @@ export const useLazyMachineDetailsByRegno = () => {
     },
     {
       regno: string
+      rel: string
     }
   >(
     gql`
