@@ -30,12 +30,6 @@ export const TherapiesWrapper = ({
 
   return (
     <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={formatMessage(messages.therapyTitle)}
-        intro={formatMessage(messages.therapyDescription)}
-        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-      />
       <TabNavigation
         label={formatMessage(messages.therapyTitle)}
         pathname={pathname}

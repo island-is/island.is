@@ -20,13 +20,6 @@ export const MedicineWrapper = ({
 
   return (
     <Box>
-      <IntroHeader
-        title={formatMessage(m.medicineTitle)}
-        intro={formatMessage(m.medicineTitleIntro)}
-        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-        serviceProviderTooltip={formatMessage(m.healthTooltip)}
-      />
-
       <Hidden print={true}>
         <TabNavigation
           label={formatMessage(m.medicineTitle)}

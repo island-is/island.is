@@ -48,13 +48,6 @@ const AidsAndNutrition = () => {
 
   return (
     <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={formatMessage(messages.aidsAndNutritionTitle)}
-        intro={formatMessage(messages.aidsAndNutritionDescription)}
-        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-      />
-
       {error && <Problem error={error} noBorder={false} />}
 
       {loading && !error && (

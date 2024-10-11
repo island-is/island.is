@@ -20,15 +20,6 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
 
   return (
     <Box>
-      <Box marginBottom={5}>
-        <IntroHeader
-          title={formatMessage(messages.payments)}
-          intro={formatMessage(messages.paymentsIntro)}
-          serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-          serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-        />
-      </Box>
-
       <TabNavigation
         label={formatMessage(messages.payments)}
         pathname={pathname}

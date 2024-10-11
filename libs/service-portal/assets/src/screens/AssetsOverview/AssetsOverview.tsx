@@ -79,20 +79,6 @@ export const AssetsOverview = () => {
 
   return (
     <>
-      <IntroHeader
-        title={{
-          id: 'sp.assets:title',
-          defaultMessage: 'Fasteignir',
-        }}
-        intro={{
-          id: 'sp.assets:intro',
-          defaultMessage:
-            'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
-        }}
-        serviceProviderSlug={HMS_SLUG}
-        serviceProviderTooltip={formatMessage(m.realEstateTooltip)}
-      />
-
       {loading && !error && <AssetCardLoader />}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {assetData?.properties && assetData?.properties?.length > 0 && (
