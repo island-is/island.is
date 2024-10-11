@@ -341,7 +341,8 @@ export class CitizenshipService extends BaseTemplateApiService {
           passportNumber: applicantPassport.passportNumber,
           passportTypeId: parseInt(applicantPassport.passportTypeId),
           countryOfIssuerId: applicantPassport.countryOfIssuerId,
-          file: await this.getFilesFromAttachment(
+          file: await this.getUrlForAttachment(
+            application,
             answers?.passport?.attachment,
           ),
         },
@@ -430,6 +431,26 @@ export class CitizenshipService extends BaseTemplateApiService {
     return await Promise.all(
       attachments?.map(async (file) => {
         const fileUrl = await this.sharedTemplateAPIService.getAttachmentUrl(
+          file.key,
+          300000,
+        )
+        return {
+          filename: file.name,
+          fileUrl,
+          countryId: file.countryId || '',
+        }
+      }) || [],
+    )
+  }
+
+  private async getUrlForAttachment(
+    application: ApplicationWithAttachments,
+    attachments?: { name: string; key: string; countryId?: string }[],
+  ): Promise<{ filename: string; fileUrl: string; countryId: string }[]> {
+    return await Promise.all(
+      attachments?.map(async (file) => {
+        const fileUrl = await this.sharedTemplateAPIService.getAttachmentUrl2(
+          application,
           file.key,
           300000,
         )
