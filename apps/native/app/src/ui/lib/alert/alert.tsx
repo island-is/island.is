@@ -14,8 +14,8 @@ import warning from '../../assets/alert/warning.png'
 import check from '../../assets/icons/check.png'
 import error from '../../assets/icons/error.png'
 import { dynamicColor } from '../../utils'
-import { font } from '../../utils/font'
 import { Colors } from '../../utils/theme'
+import { Typography } from '../typography/typography'
 
 export type AlertType = 'error' | 'info' | 'success' | 'warning'
 
@@ -105,20 +105,8 @@ const Content = styled.View`
   flex: 1;
 `
 
-const Title = styled.Text`
-  ${font({
-    fontSize: 16,
-    lineHeight: 20,
-    fontWeight: '600',
-  })}
+const Title = styled(Typography)`
   margin-bottom: 4px;
-`
-
-const Message = styled.Text`
-  ${font({
-    fontSize: 13,
-    lineHeight: 16,
-  })}
 `
 
 const Close = styled(TouchableOpacity)`
@@ -203,15 +191,19 @@ export function Alert({
           <Icon>
             <Image
               source={variant.icon}
-              style={{ width: 32, height: 32, marginRight: 16 }}
+              style={{
+                width: 32,
+                height: 32,
+                marginRight: 16,
+              }}
             />
           </Icon>
         )}
 
         {message && (
           <Content>
-            {title && <Title>{title}</Title>}
-            <Message>{message}</Message>
+            {title && <Title variant="heading5">{title}</Title>}
+            <Typography variant="body3">{message}</Typography>
           </Content>
         )}
 
