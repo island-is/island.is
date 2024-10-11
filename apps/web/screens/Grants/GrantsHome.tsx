@@ -17,10 +17,10 @@ import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
-  OfficialJournalOfIcelandAdvertMainCategory,
+  GenericTagGroup,
   Query,
+  QueryGetGenericTagsArgs,
   QueryGetOrganizationArgs,
-  QueryOfficialJournalOfIcelandMainCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -35,12 +35,12 @@ import {
   withCustomPageWrapper,
 } from '../CustomPage/CustomPageWrapper'
 import { GET_ORGANIZATION_QUERY } from '../queries'
-import { MAIN_CATEGORIES_QUERY } from '../queries/OfficialJournalOfIceland'
+import { GET_GENERIC_TAGS_QUERY } from '../queries/GenericTag'
 import { m } from './messages'
 
 const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
-  mainCategories,
   organization,
+  category,
   locale,
 }) => {
   const { formatMessage } = useIntl()
@@ -133,7 +133,8 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
             </Box>
 
             <GridRow>
-              {/* {mainCategories?.map((y, i) => ( */}
+              {category?.title}
+
               <GridColumn
                 span={['1/1', '1/2', '1/2', '1/3']}
                 paddingTop={3}
@@ -277,20 +278,20 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
 }
 
 interface GrantsHomeProps {
-  mainCategories?: OfficialJournalOfIcelandAdvertMainCategory[]
   organization?: Query['getOrganization']
+  category?: GenericTagGroup
   locale: Locale
 }
 
 const GrantsHome: CustomScreen<GrantsHomeProps> = ({
-  mainCategories,
+  category,
   organization,
   customPageData,
   locale,
 }) => {
   return (
     <GrantsHomePage
-      mainCategories={mainCategories}
+      category={category}
       organization={organization}
       locale={locale}
       customPageData={customPageData}
@@ -300,11 +301,15 @@ const GrantsHome: CustomScreen<GrantsHomeProps> = ({
 
 GrantsHome.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug = 'rannsoknamidstoed-islands-rannis'
+  const tagGroupCategory = 'grant-category'
   //Todo: add more organizations ??
 
   const [
     {
       data: { getOrganization },
+    },
+    {
+      data: { getGenericTags: tags },
     },
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationArgs>({
@@ -316,14 +321,27 @@ GrantsHome.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
+    apolloClient.query<Query, QueryGetGenericTagsArgs>({
+      query: GET_GENERIC_TAGS_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
   ])
 
   if (!getOrganization?.hasALandingPage) {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
+  console.log('TAGS ARE HERE ------------------_>', tags)
+  const category = tags?.find(
+    (tag) => tag.genericTagGroup?.slug === tagGroupCategory,
+  )?.genericTagGroup
   return {
     organization: getOrganization,
+    category: category ?? undefined,
     locale: locale as Locale,
     showSearchInHeader: false,
     themeConfig: {

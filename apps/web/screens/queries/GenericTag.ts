@@ -8,3 +8,15 @@ export const GET_GENERIC_TAG_BY_SLUG_QUERY = gql`
     }
   }
 `
+
+export const GET_GENERIC_TAGS_QUERY = gql`
+  query GetGenericTags($input: GetGenericTagsInput!) {
+    getGenericTags(input: $input) {
+      id
+      genericTagGroup {
+        id
+        title
+      }
+    }
+  }
+`
