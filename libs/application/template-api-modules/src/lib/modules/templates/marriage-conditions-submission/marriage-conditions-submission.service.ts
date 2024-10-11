@@ -54,6 +54,34 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     return this.handleReturn(maritalStatus)
   }
 
+  async birthCertificate({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps): Promise<{ hasBirthCertificate: boolean }> {
+    const fakeData = getValueViaPath<MarriageConditionsFakeData>(
+      application.answers,
+      'fakeData',
+    )
+
+    if (fakeData?.useFakeData === YES) {
+      const lastFour = auth.nationalId.slice(-4)
+      return {
+        hasBirthCertificate: [
+          '3019', // Gervimaður Afríka
+          '2399', // Gervimaður Færeyjar
+          '7789', // Gervimaður Útlönd
+        ].includes(lastFour),
+      }
+    }
+
+    const res = await this.syslumennService.checkIfBirthCertificateExists(
+      auth.nationalId,
+    )
+    return {
+      hasBirthCertificate: res,
+    }
+  }
+
   private formatMaritalStatus(maritalCode: string): string {
     return maritalStatuses[maritalCode]
   }

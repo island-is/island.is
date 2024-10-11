@@ -706,7 +706,24 @@ export class SyslumennService {
       kennitala: nationalId,
       simi: phoneNumber,
     })
+    // TODO: Implement mapping once positive data structure is known
+    //       or when fake data is implemented
+    // Only return true for now
+    return true
+  }
+
+  async checkIfBirthCertificateExists(nationalId: string): Promise<boolean> {
+    const { id, api } = await this.createApi()
+    const res = await api.kannaKonnunarvottordGet({
+      audkenni: id,
+      kennitala: nationalId,
+    })
+
     console.log(JSON.stringify(res))
+
+    // TODO: Implement mapping once positive data structure is known
+    //       or when fake data is implemented
+    // Only return true for now
     return true
   }
 }
