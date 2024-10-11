@@ -26,3 +26,7 @@ export const DistrictCommissionersPaymentCatalogApi =
     },
     externalDataId: 'paymentDistrictCommissioners',
   })
+
+export const BirthCertificateApi = defineTemplateApi({
+  action: 'birthCertificate',
+})
