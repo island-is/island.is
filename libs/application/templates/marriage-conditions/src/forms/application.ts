@@ -124,6 +124,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     title: m.phone,
                     width: 'half',
                     backgroundColor: 'blue',
+                    disableDropdown: true,
                     defaultValue: (application: Application) => {
                       const data = application.externalData.userProfile
                         .data as UserProfile
