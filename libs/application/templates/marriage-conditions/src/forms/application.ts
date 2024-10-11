@@ -15,6 +15,7 @@ import {
   buildAlertMessageField,
   buildNationalIdWithNameField,
   buildPhoneField,
+  buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
 import {
   Form,
@@ -159,6 +160,10 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     title: m.name,
                     required: true,
                     minAgePerson: 18,
+                  }),
+                  buildHiddenInputWithWatchedValue({
+                    id: 'spouse.nationalIdValidatorApplicant',
+                    watchValue: 'applicant.person.nationalId',
                   }),
                   buildCustomField({
                     id: 'spouse.phone',
@@ -389,6 +394,14 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     required: true,
                     minAgePerson: 18,
                   }),
+                  buildHiddenInputWithWatchedValue({
+                    id: 'witness1.nationalIdValidatorApplicant',
+                    watchValue: 'applicant.person.nationalId',
+                  }),
+                  buildHiddenInputWithWatchedValue({
+                    id: 'witness1.nationalIdValidatorSpouse',
+                    watchValue: 'spouse.person.nationalId',
+                  }),
                   buildCustomField({
                     id: 'witness1.phone',
                     title: m.phone,
@@ -413,6 +426,18 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     title: m.name,
                     required: true,
                     minAgePerson: 18,
+                  }),
+                  buildHiddenInputWithWatchedValue({
+                    id: 'witness2.nationalIdValidatorApplicant',
+                    watchValue: 'applicant.person.nationalId',
+                  }),
+                  buildHiddenInputWithWatchedValue({
+                    id: 'witness2.nationalIdValidatorSpouse',
+                    watchValue: 'spouse.person.nationalId',
+                  }),
+                  buildHiddenInputWithWatchedValue({
+                    id: 'witness2.nationalIdValidatorWitness',
+                    watchValue: 'witness1.person.nationalId',
                   }),
                   buildCustomField({
                     id: 'witness2.phone',

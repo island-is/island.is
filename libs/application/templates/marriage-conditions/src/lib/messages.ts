@@ -498,10 +498,22 @@ export const m = defineMessages({
     defaultMessage: 'Lokadagsetning má ekki vera á undan upphafsdagsetningu',
     description: 'Error message if date is empty',
   },
-  nationalIdDuplicateError: {
-    id: 'mac.application:nationalIdDuplicateError',
+  nationalIdDuplicateErrorSpouse: {
+    id: 'mac.application:nationalIdDuplicateErrorSpouse',
     defaultMessage:
       'Kennitala hjá hjónaefni 2 má ekki vera sú sama og hjá hjónaefni 1',
+    description: '',
+  },
+  nationalIdDuplicateErrorWitness: {
+    id: 'mac.application:nationalIdDuplicateErrorWitness',
+    defaultMessage:
+      'Kennitala hjá svaramanni 2 má ekki vera sú sama og hjá svaramanni 1',
+    description: '',
+  },
+  nationalIdDuplicateErrorMaritalSideVsWitness: {
+    id: 'mac.application:nationalIdDuplicateErrorMaritalSideVsWitness',
+    defaultMessage:
+      'Kennitala hjá svaramanni má ekki vera sú sama og hjá hjónaefni',
     description: '',
   },
   nationalIdWitnessUnderageError: {

@@ -19,8 +19,7 @@ export const done: Form = buildForm({
       description: (application: Application) => ({
         ...m.nextStepsDescriptionWithSpouseName,
         values: {
-          spouseName: (application.answers.spouse as Individual)
-            ?.person.name,
+          spouseName: (application.answers.spouse as Individual)?.person.name,
         },
       }),
       children: [

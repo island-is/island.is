@@ -21,6 +21,11 @@ const individualInfo = z.object({
   }),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   email: z.string().refine((v) => isValidEmail(v)),
+
+  //Validators
+  nationalIdValidatorApplicant: z.string().optional(),
+  nationalIdValidatorSpouse: z.string().optional(),
+  nationalIdValidatorWitness: z.string().optional(),
 })
 
 const personalInfo = z.object({
@@ -33,9 +38,70 @@ export const dataSchema = z.object({
   //applicant's part of the application
   approveExternalData: z.boolean().refine((v) => v),
   applicant: individualInfo,
-  spouse: individualInfo,
-  witness1: individualInfo,
-  witness2: individualInfo,
+  spouse: individualInfo.superRefine(
+    ({ person, nationalIdValidatorApplicant }, ctx) => {
+      if (
+        person.nationalId === nationalIdValidatorApplicant?.replace(/\D/g, '')
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: m.nationalIdDuplicateErrorSpouse.defaultMessage,
+          path: ['person', 'nationalId'],
+        })
+      }
+    },
+  ),
+  witness1: individualInfo.superRefine(
+    (
+      { person, nationalIdValidatorApplicant, nationalIdValidatorSpouse },
+      ctx,
+    ) => {
+      if (
+        person.nationalId ===
+          nationalIdValidatorApplicant?.replace(/\D/g, '') ||
+        person.nationalId === nationalIdValidatorSpouse?.replace(/\D/g, '')
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            m.nationalIdDuplicateErrorMaritalSideVsWitness.defaultMessage,
+          path: ['person', 'nationalId'],
+        })
+      }
+    },
+  ),
+  witness2: individualInfo.superRefine(
+    (
+      {
+        person,
+        nationalIdValidatorApplicant,
+        nationalIdValidatorSpouse,
+        nationalIdValidatorWitness,
+      },
+      ctx,
+    ) => {
+      if (
+        person.nationalId ===
+          nationalIdValidatorApplicant?.replace(/\D/g, '') ||
+        person.nationalId === nationalIdValidatorSpouse?.replace(/\D/g, '')
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            m.nationalIdDuplicateErrorMaritalSideVsWitness.defaultMessage,
+          path: ['person', 'nationalId'],
+        })
+      } else if (
+        person.nationalId === nationalIdValidatorWitness?.replace(/\D/g, '')
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: m.nationalIdDuplicateErrorWitness.defaultMessage,
+          path: ['person', 'nationalId'],
+        })
+      }
+    },
+  ),
   personalInfo: personalInfo,
   spousePersonalInfo: personalInfo,
   ceremony: z
