@@ -9,16 +9,16 @@ set -euo pipefail
 
 : "${RELEASE_GITHUB_ORGANIZATION:=island-is}"
 
-: "${RELEASE_ISLANDIS_REPO_PATH:=$(realpath ../island.is)}"
-: "${RELEASE_HELM_REPO_PATH:=$(realpath ../helm)}"
-: "${RELEASE_IDS_REPO_PATH:=$(realpath ../identity-server.web)}"
+# Don't use `realpath` for path resolution, since it isn't portable (MacOS)
+: "${RELEASE_ISLANDIS_REPO_PATH:=$(cd ../island.is && pwd)}"
+: "${RELEASE_HELM_REPO_PATH:=$(cd ../helm && pwd)}"
+: "${RELEASE_IDS_REPO_PATH:=$(cd ../identity-server.web && pwd)}"
 
 : "${RELEASE_ISLANDIS_NAME:="island.is"}"
 : "${RELEASE_HELM_NAME:="helm"}"
 : "${RELEASE_IDS_NAME:="identity-server.web"}"
 
-: "${DRY:=${RELEASE_DRY:+true}}"
-: "${RELEASE_DRY:=${DRY}}"
+: "${DRY:=${RELEASE_DRY:-false}}"
 
 : "${RELEASE_DD_DASHBOARD_URL:=https://app.datadoghq.eu/dashboard/fzx-xqc-dg7/errors-by-service-dasbboard}"
 : "${RELEASE_SPINNAKER_BASE_URL:=https://spinnaker.shared.devland.is/#}"
@@ -88,7 +88,7 @@ get-actions-url() {
 
 create-pre-release() {
   local REPO_NAME="${1}" BRANCH_NAME="${2:-${RELEASE_BRANCH}}" REPO_PATH COMMIT_HASH
-  REPO_PATH="$(realpath "../${REPO_NAME}")"
+  REPO_PATH="$(cd "../${REPO_NAME}" && pwd)"
   echo "Creating ${BRANCH_NAME} on git repository '${REPO_PATH}'"
   (
     cd "${REPO_PATH}"
@@ -104,7 +104,8 @@ rename-branch() {
   local OLD_BRANCH="${1}" NEW_BRANCH="${2}"
   ## Local
   # Don't rename if already renamed
-  if git branch --show-current | grep -q "^${NEW_BRANCH}$" && git branch --list | grep -q "^${OLD_BRANCH}\$"; then
+  if ! git branch --list | grep -q "^${NEW_BRANCH}$" &&
+    ! git branch --list | grep -q "^${OLD_BRANCH}\$"; then
     run git branch -m "${OLD_BRANCH}" "${NEW_BRANCH}"
   fi
   run git fetch origin
@@ -123,7 +124,7 @@ rename-branch() {
 promote-pre-release() {
   local REPO_PATH REPO_NAME="${1}" BRANCH_NAME="${2:-${RELEASE_BRANCH}}"
   BRANCH_NAME_PRE="pre-${BRANCH_NAME}"
-  REPO_PATH="$(realpath "../${REPO_NAME}")"
+  REPO_PATH="$(cd "../${REPO_NAME}" && pwd)"
   echo "Promoting ${BRANCH_NAME_PRE} --> ${BRANCH_NAME} on git repository '${REPO_PATH}'"
   (
     cd "${REPO_PATH}"
@@ -215,4 +216,4 @@ spinnaker-deploy "${RELEASE_ISLANDIS_SPINNAKER_URL}" "${ENV}"
 # Request monitoring
 echo "Monitor service errors in DataDog (${RELEASE_DD_DASHBOARD_URL}?tpl_var_env[0]=${ENV})"
 
-echo -e "\n>\n> 🚀 Realease complete! 🚀\n>\n"
+echo -e "\n>\n> 🚀 Release complete! 🚀\n>\n"
