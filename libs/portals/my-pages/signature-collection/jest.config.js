@@ -1,6 +1,6 @@
 module.exports = {
   displayName: 'portals-my-pages-signature-collection',
-  preset: './jest.preset.js',
+  preset: '../../../../jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
   transform: {

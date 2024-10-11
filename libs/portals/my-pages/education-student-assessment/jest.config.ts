@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'portals-my-pages-education-student-assessment',
-  preset: './jest.preset.js',
+  preset: '../../../../jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
   transform: {
