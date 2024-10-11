@@ -9,6 +9,7 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
+import { AdvocateType } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   FormContext,
@@ -87,8 +88,8 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               clientId={civilClaimant.id}
               advocateType={
                 civilClaimant.spokespersonIsLawyer
-                  ? 'defender'
-                  : 'legal_rights_protector'
+                  ? AdvocateType.LAWYER
+                  : AdvocateType.LEGAL_RIGHTS_PROTECTOR
               }
               disabled={
                 civilClaimant.spokespersonIsLawyer === null ||
