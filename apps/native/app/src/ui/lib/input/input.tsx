@@ -6,18 +6,19 @@ import CopyIcon from '../../assets/icons/copy.png'
 import { dynamicColor } from '../../utils'
 import { Skeleton } from '../skeleton/skeleton'
 import { Typography } from '../typography/typography'
+
 const Host = styled.SafeAreaView<{
   noBorder: boolean
-  blueberryBorder?: boolean
+  darkBorder?: boolean
   background?: boolean
 }>`
   flex: 1;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
   border-bottom-color: ${dynamicColor(
-    ({ theme, noBorder, blueberryBorder }) => ({
+    ({ theme, noBorder, darkBorder }) => ({
       light: noBorder
         ? 'transparent'
-        : blueberryBorder
+        : darkBorder
         ? theme.color.blueberry200
         : theme.color.blue200,
       dark: noBorder ? 'transparent' : theme.shades.dark.shade200,
@@ -47,7 +48,7 @@ interface InputProps {
   noBorder?: boolean
   size?: 'normal' | 'big'
   isCompact?: boolean
-  blueberryBorder?: boolean
+  darkBorder?: boolean
   copy?: boolean
 }
 
@@ -60,14 +61,14 @@ export function Input({
   noBorder = false,
   size = 'normal',
   isCompact = false,
-  blueberryBorder = false,
+  darkBorder = false,
   copy = false,
 }: InputProps) {
   const tvalue =
     value !== undefined && typeof value === 'string' && value.trim()
 
   return (
-    <Host noBorder={noBorder} blueberryBorder={blueberryBorder}>
+    <Host noBorder={noBorder} darkBorder={darkBorder}>
       <Content isCompact={isCompact}>
         <Label variant="body3">{label}</Label>
         {loading || error ? (

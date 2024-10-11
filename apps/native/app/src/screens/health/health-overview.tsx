@@ -213,7 +213,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               }
               loading={healthCenterRes.loading && !healthCenterRes.data}
               error={healthCenterRes.error && !healthCenterRes.data}
-              blueberryBorder
+              darkBorder
             />
           </InputRow>
           <InputRow background>
@@ -366,7 +366,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               }
               loading={paymentStatusRes.loading && !paymentStatusRes.data}
               error={paymentStatusRes.error && !paymentStatusRes.data}
-              blueberryBorder
+              darkBorder
             />
           </InputRow>
           <InputRow background>
@@ -385,7 +385,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               }
               loading={paymentStatusRes.loading && !paymentStatusRes.data}
               error={paymentStatusRes.error && !paymentStatusRes.data}
-              blueberryBorder
+              darkBorder
             />
           </InputRow>
           <InputRow background>
