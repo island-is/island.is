@@ -11,7 +11,15 @@ export class AppService {
 
   public async run() {
     this.logger.debug('Starting cms import worker...')
-    const grants = await this.repository.createGrant()
+    const grants = await this.repository.createGrant([
+      {
+        field: 'grantName',
+        value: {
+          en: 'Bing',
+          'is-IS': 'bang',
+        },
+      },
+    ])
 
     this.logger.debug('grants', grants)
     this.logger.debug('Cms import worker done.')

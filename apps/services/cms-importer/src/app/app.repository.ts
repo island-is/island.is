@@ -52,25 +52,28 @@ export class AppRepository {
 
   async updateGrant(getEntry: string) {}
 
-  async createGrant() {
+  async createGrant(
+    data: Array<{ field: string; value: { en: string; 'is-IS': string } }>,
+  ) {
     const client = this.getManagementClient()
     if (!client) {
       return
     }
 
-    const entry = await client
+    const environment = await client
       .getSpace(SPACE_ID)
       .then((space) => space.getEnvironment(ENVIRONMENT))
-      .then((environment) =>
-        environment.createEntry(CONTENT_TYPE, {
-          fields: {
-            grantName: {
-              en: 'TEST EN',
-              'is-IS': 'TEST IS',
-            },
-          },
-        }),
-      )
+
+    const contentType = await environment.getContentType(CONTENT_TYPE)
+    const inputFields = contentType.fields.map((f) => f.name)
+
+    const validInput = data.filter((d) => inputFields.includes(d.field))
+
+    const entry = await environment.createEntry(CONTENT_TYPE, {
+      fields: {
+        ...validInput,
+      },
+    })
 
     return entry
   }

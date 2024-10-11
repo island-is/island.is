@@ -5,7 +5,6 @@ import { AppRepository } from './app.repository'
 
 @Module({
   imports: [LoggingModule],
-  controllers: [],
   providers: [AppService, AppRepository],
 })
 export class AppModule {}
