@@ -22,7 +22,7 @@ import { strings } from './institutionNotification.strings'
 import { notificationModuleConfig } from './notification.config'
 
 @Injectable()
-export class InstitutionNotificationService extends BaseNotificationService {
+export class SubpoenaNotification extends BaseNotificationService {
   constructor(
     @InjectModel(Notification)
     notificationModel: typeof Notification,

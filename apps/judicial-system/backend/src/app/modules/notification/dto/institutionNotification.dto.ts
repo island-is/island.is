@@ -1,17 +1,22 @@
-import { IsEnum, IsNotEmpty, IsUUID } from 'class-validator'
+import { IsEnum, IsNotEmpty, IsOptional, IsUUID } from 'class-validator'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { NotificationType } from '@island.is/judicial-system/types'
 
-export class InstitutionNotificationDto {
+export class NotificationBodyDto {
   @IsNotEmpty()
   @IsEnum(NotificationType)
   @ApiProperty({ enum: NotificationType })
   readonly type!: NotificationType
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsUUID()
-  @ApiProperty({ type: String })
-  readonly prosecutorsOfficeId!: string
+  @ApiPropertyOptional({ type: String })
+  readonly prosecutorsOfficeId?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly subpoenaId?: string
 }

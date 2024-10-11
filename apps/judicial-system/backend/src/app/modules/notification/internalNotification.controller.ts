@@ -19,8 +19,7 @@ import {
 
 import { Case, CaseHasExistedGuard, CurrentCase } from '../case'
 import { CaseNotificationDto } from './dto/caseNotification.dto'
-import { InstitutionNotificationDto } from './dto/institutionNotification.dto'
-import { NotificationDto } from './dto/notification.dto'
+import { NotificationBodyDto } from './dto/institutionNotification.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { InstitutionNotificationService } from './institutionNotification.service'
 import { InternalNotificationService } from './internalNotification.service'
@@ -65,14 +64,19 @@ export class InternalNotificationController {
     description: 'Sends a new notification',
   })
   sendNotification(
-    @Body() notificationDto: InstitutionNotificationDto,
+    @Body() notificationDto: NotificationBodyDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Sending ${notificationDto.type} notification`)
 
-    return this.institutionNotificationService.sendNotification(
-      notificationDto.type,
-      notificationDto.prosecutorsOfficeId,
-    )
+    return notificationDto.prosecutorsOfficeId
+      ? this.institutionNotificationService.sendNotification(
+          notificationDto.type,
+          notificationDto.prosecutorsOfficeId,
+        )
+      : this.institutionNotificationService.sendNotification(
+          notificationDto.type,
+          notificationDto.prosecutorsOfficeId,
+        )
   }
 
   @Post(messageEndpoint[MessageType.NOTIFICATION_DISPATCH])
@@ -81,7 +85,7 @@ export class InternalNotificationController {
     description: 'Dispatches notifications',
   })
   dispatchNotification(
-    @Body() notificationDto: NotificationDto,
+    @Body() notificationDto: NotificationBodyDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Dispatching ${notificationDto.type} notification`)
 
