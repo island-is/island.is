@@ -32,8 +32,45 @@ const Host = styled(SafeAreaView)`
 const ButtonWrapper = styled(View)`
   flex-direction: row;
   margin-top: ${({ theme }) => theme.spacing[3]}px;
+  margin-bottom: ${({ theme }) => -theme.spacing[1]}px;
   gap: ${({ theme }) => theme.spacing[2]}px;
 `
+
+interface HeadingSectionProps {
+  title: string
+  onPress: () => void
+}
+
+const HeadingSection: React.FC<HeadingSectionProps> = ({ title, onPress }) => {
+  const theme = useTheme()
+  return (
+    <TouchableOpacity onPress={onPress} style={{ marginTop: theme.spacing[2] }}>
+      <Heading
+        small
+        button={
+          <TouchableOpacity
+            onPress={onPress}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <Typography
+              variant="heading5"
+              color={theme.color.blue400}
+              style={{ marginRight: 4 }}
+            >
+              <FormattedMessage id="button.seeAll" />
+            </Typography>
+            <Image source={externalLinkIcon} />
+          </TouchableOpacity>
+        }
+      >
+        {title}
+      </Heading>
+    </TouchableOpacity>
+  )
+}
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
@@ -160,44 +197,15 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               }
             />
           </ButtonWrapper>
-          <TouchableOpacity
+          <HeadingSection
+            title={intl.formatMessage({ id: 'health.overview.healthCenter' })}
             onPress={() =>
               openBrowser(
                 `${origin}/minarsidur/heilsa/heilsugaesla`,
                 componentId,
               )
             }
-            style={{ marginTop: theme.spacing[1] }}
-          >
-            <Heading
-              small
-              button={
-                <TouchableOpacity
-                  onPress={() =>
-                    openBrowser(
-                      `${origin}/minarsidur/heilsa/heilsugaesla`,
-                      componentId,
-                    )
-                  }
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Typography
-                    variant="heading5"
-                    color={theme.color.blue400}
-                    style={{ marginRight: 4 }}
-                  >
-                    <FormattedMessage id="button.seeAll" />
-                  </Typography>
-                  <Image source={externalLinkIcon} />
-                </TouchableOpacity>
-              }
-            >
-              <FormattedMessage id="health.overview.healthCenter" />
-            </Heading>
-          </TouchableOpacity>
+          />
           <InputRow background>
             <Input
               label={intl.formatMessage({
@@ -234,41 +242,12 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               noBorder
             />
           </InputRow>
-          <TouchableOpacity
+          <HeadingSection
+            title={intl.formatMessage({ id: 'health.overview.statusOfRights' })}
             onPress={() =>
               openBrowser(`${origin}/minarsidur/heilsa/yfirlit`, componentId)
             }
-            style={{ marginTop: theme.spacing[2] }}
-          >
-            <Heading
-              small
-              button={
-                <TouchableOpacity
-                  onPress={() =>
-                    openBrowser(
-                      `${origin}/minarsidur/heilsa/yfirlit`,
-                      componentId,
-                    )
-                  }
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Typography
-                    variant="heading5"
-                    color={theme.color.blue400}
-                    style={{ marginRight: 4 }}
-                  >
-                    <FormattedMessage id="button.seeAll" />
-                  </Typography>
-                  <Image source={externalLinkIcon} />
-                </TouchableOpacity>
-              }
-            >
-              <FormattedMessage id="health.overview.statusOfRights" />
-            </Heading>
-          </TouchableOpacity>
+          />
           {healthInsuranceRes.data?.rightsPortalInsuranceOverview?.isInsured ||
           healthInsuranceRes.loading ? (
             <InputRow background>
@@ -312,44 +291,17 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               hasBorder
             />
           )}
-          <TouchableOpacity
+          <HeadingSection
+            title={intl.formatMessage({
+              id: 'health.overview.payments',
+            })}
             onPress={() =>
               openBrowser(
                 `${origin}/minarsidur/heilsa/greidslur/greidsluthatttaka`,
                 componentId,
               )
             }
-            style={{ marginTop: theme.spacing[2] }}
-          >
-            <Heading
-              small
-              button={
-                <TouchableOpacity
-                  onPress={() =>
-                    openBrowser(
-                      `${origin}/minarsidur/heilsa/greidslur/greidsluthatttaka`,
-                      componentId,
-                    )
-                  }
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Typography
-                    variant="heading5"
-                    color={theme.color.blue400}
-                    style={{ marginRight: 4 }}
-                  >
-                    <FormattedMessage id="button.seeAll" />
-                  </Typography>
-                  <Image source={externalLinkIcon} />
-                </TouchableOpacity>
-              }
-            >
-              <FormattedMessage id="health.overview.payments" />
-            </Heading>
-          </TouchableOpacity>
+          />
           <InputRow background>
             <Input
               label={intl.formatMessage({
