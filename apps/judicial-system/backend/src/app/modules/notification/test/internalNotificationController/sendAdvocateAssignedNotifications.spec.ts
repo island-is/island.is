@@ -167,9 +167,9 @@ describe('InternalNotificationController - Send defender assigned notifications'
           address: mockConfig.email.replyToEmail,
         },
         attachments: undefined,
-        subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
+        subject: `Skráning í máli ${theCase.courtCaseNumber}`,
         text: expect.anything(), // same as html but stripped html tags
-        html: `Héraðsdómur Reykjavíkur hefur skráð þig lögmann einkaréttarkröfuhafa í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+        html: `Héraðsdómur Reykjavíkur hefur skráð þig lögmann einkaréttarkröfuhafa í máli ${theCase.courtCaseNumber}.<br /><br />Sjá nánar á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
       })
     })
   })
@@ -213,9 +213,9 @@ describe('InternalNotificationController - Send defender assigned notifications'
           address: mockConfig.email.replyToEmail,
         },
         attachments: undefined,
-        subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
+        subject: `Skráning í máli ${theCase.courtCaseNumber}`,
         text: expect.anything(), // same as html but stripped html tags
-        html: `Héraðsdómur Reykjavíkur hefur skráð þig réttargæslumann einkaréttarkröfuhafa í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+        html: `Héraðsdómur Reykjavíkur hefur skráð þig réttargæslumann einkaréttarkröfuhafa í máli ${theCase.courtCaseNumber}.<br /><br />Sjá nánar á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
       })
     })
   })
