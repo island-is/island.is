@@ -1,4 +1,4 @@
-import { Fragment, ReactNode } from 'react'
+import { Fragment } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -491,6 +491,7 @@ PensionCalculatorResults.getProps = async ({
   }
 
   const queryParams = convertToQueryParams(calculationInput)
+  const queryParamsObject = Object.fromEntries(queryParams)
 
   return {
     organizationPage: getOrganizationPage,
@@ -503,6 +504,10 @@ PensionCalculatorResults.getProps = async ({
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
     ),
+    languageToggleQueryParams: {
+      is: queryParamsObject,
+      en: queryParamsObject,
+    },
   }
 }
 
