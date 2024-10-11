@@ -2160,7 +2160,7 @@ services-documents:
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'islandis'
