@@ -12,7 +12,6 @@ import {
   getValueViaPath,
   buildDateField,
   buildExternalDataProvider,
-  buildAlertMessageField,
   buildNationalIdWithNameField,
   buildPhoneField,
   buildHiddenInputWithWatchedValue,
@@ -149,12 +148,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     titleVariant: 'h4',
                     space: 'containerGutter',
                   }),
-                  buildAlertMessageField({
-                    id: 'alert',
-                    title: '',
-                    alertType: 'info',
-                    message: m.informationAlertMessage,
-                  }),
                   buildNationalIdWithNameField({
                     id: 'spouse.person',
                     title: m.name,
@@ -181,6 +174,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       const info = application.answers.spouse as Individual
                       return info?.email ?? ''
                     },
+                  }),
+                  buildDescriptionField({
+                    id: 'info',
+                    title: '',
+                    space: 'gutter',
+                    description: m.informationAlertMessage,
                   }),
                 ],
               }),
@@ -258,7 +257,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                         label: 'Nei',
                       },
                     ],
-                    largeButtons: false,
+                    largeButtons: true,
                     width: 'half',
                   }),
                   buildDescriptionField({
@@ -291,7 +290,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     id: 'ceremony.date',
                     title: m.ceremonyDate,
                     placeholder: m.ceremonyDatePlaceholder,
-                    width: 'half',
+                    width: 'full',
                     minDate: new Date(),
                     // max date is set to 12 weeks from now
                     maxDate: new Date(
