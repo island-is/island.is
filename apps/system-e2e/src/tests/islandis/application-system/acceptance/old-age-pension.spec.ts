@@ -1,14 +1,14 @@
-import { expect, test as base, Page } from '@playwright/test'
-import { createMockPdf, deleteMockPdf } from '../../../../../src/support/utils'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { oldAgePensionFormMessage } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
+import { test as base, expect, Page } from '@playwright/test'
 import {
   disableI18n,
   disablePreviousApplications,
 } from '../../../../support/disablers'
-import { session } from '../../../../support/session'
-import { helpers } from '../../../../support/locator-helpers'
-import { oldAgePensionFormMessage } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { label } from '../../../../support/i18n'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { helpers } from '../../../../support/locator-helpers'
+import { session } from '../../../../support/session'
+import { setupXroadMocks } from './setup-xroad.mocks'
 
 const homeUrl = '/umsoknir/ellilifeyrir'
 
@@ -17,15 +17,18 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     const applicationContext = await session({
       browser,
       homeUrl,
-      phoneNumber: '0103019',
+      phoneNumber: '0103019', // Gervimaður Afríka
       idsLoginOn: true,
     })
 
     const applicationPage = await applicationContext.newPage()
     await disablePreviousApplications(applicationPage)
+
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
     await expect(applicationPage).toBeApplication()
+    await setupXroadMocks()
+
     await use(applicationPage)
 
     await applicationPage.close()
@@ -89,7 +92,7 @@ applicationTest.describe('Old Age Pension', () => {
         await expect(
           page.getByRole('heading', {
             name: label(
-              oldAgePensionFormMessage.applicant.applicantInfoSubSectionTitle,
+              socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
             ),
           }),
         ).toBeVisible()
@@ -100,7 +103,7 @@ applicationTest.describe('Old Age Pension', () => {
           ),
         })
         await phoneNumber.selectText()
-        await phoneNumber.type('6555555')
+        await phoneNumber.fill('6555555')
         await proceed()
       })
 
@@ -110,12 +113,11 @@ applicationTest.describe('Old Age Pension', () => {
             name: label(socialInsuranceAdministrationMessage.payment.title),
           }),
         ).toBeVisible()
-        // // TODO: Setja aftur inn? eða er í lagi að sleppa? (virkar ekki að senda inn umsókn ef breyti banka, skilar villu "An error occurred while saving bank information.")
-        // const paymentBank = page.getByRole('textbox', {
-        //   name: label(socialInsuranceAdministrationMessage.payment.bank),
-        // })
-        // await paymentBank.selectText()
-        // await paymentBank.type('051226054678')
+        const paymentBank = page.getByRole('textbox', {
+          name: label(socialInsuranceAdministrationMessage.payment.bank),
+        })
+        await paymentBank.selectText()
+        await paymentBank.fill('051226054678')
 
         await page
           .getByRole('region', {
@@ -130,7 +132,7 @@ applicationTest.describe('Old Age Pension', () => {
 
         const personalAllowance = page.getByTestId('personal-allowance-usage')
         await personalAllowance.selectText()
-        await personalAllowance.type('100')
+        await personalAllowance.fill('100')
 
         await page
           .getByRole('region', {
@@ -182,8 +184,9 @@ applicationTest.describe('Old Age Pension', () => {
         await page.getByTestId('select-period.year').click()
         await page.keyboard.press('Enter')
 
-        // TODO: Þurfum að skoða þetta betur, getur komið upp að mánuður er ekki gildur
+        // TODO: Need to look into this, it may happen that a month is not valid
         await page.getByTestId('select-period.month').click()
+        await page.keyboard.press('ArrowUp')
         await page.keyboard.press('Enter')
         await proceed()
       })
@@ -191,28 +194,11 @@ applicationTest.describe('Old Age Pension', () => {
       await applicationTest.step(
         'Upload attachments for pension payments',
         async () => {
-          // TODO: This does not work! Need to look into this better (applications that also upload files: financial-statements-inao and operating-licence test)
           await expect(
             page.getByRole('heading', {
               name: label(oldAgePensionFormMessage.fileUpload.pensionFileTitle),
             }),
           ).toBeVisible()
-
-          createMockPdf()
-          const fileChooserPromise = page.waitForEvent('filechooser')
-          page
-            .getByRole('button', {
-              name: label(
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              ),
-              exact: true,
-            })
-            .click()
-          const filechooser = await fileChooserPromise
-          await filechooser.setFiles('./mockPdf.pdf')
-          await page.waitForTimeout(1000)
-          deleteMockPdf()
           await proceed()
         },
       )
