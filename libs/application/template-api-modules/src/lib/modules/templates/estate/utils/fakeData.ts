@@ -1,3 +1,4 @@
+import { NO, YES } from '@island.is/application/core'
 import { ApplicationWithAttachments } from '@island.is/application/types'
 import { EstateInfo } from '@island.is/clients/syslumenn'
 
@@ -59,7 +60,7 @@ export const getFakeEstateInfo = (
         share: 100,
       },
     ],
-    knowledgeOfOtherWills: 'yes',
+    knowledgeOfOtherWills: YES,
     ships: [],
     flyers: [],
     guns: [
@@ -81,6 +82,7 @@ export const getFakeEstateInfo = (
         nationalId: '0101303019',
         email: 'fake@email.com',
         phone: '9999999',
+        foreignCitizenship: [NO],
       },
       {
         name: 'Gervimaður Færeyjar',
@@ -88,6 +90,7 @@ export const getFakeEstateInfo = (
         nationalId: '0101302399',
         email: 'fake2@email.com',
         phone: '9999998',
+        foreignCitizenship: [NO],
       },
       {
         name: 'Gervimaður Bretland',
@@ -95,6 +98,7 @@ export const getFakeEstateInfo = (
         nationalId: '0101304929',
         email: 'fake3@email.com',
         phone: '9999997',
+        foreignCitizenship: [NO],
       },
     ],
     caseNumber: `2020-00012${nationalIdOfDeceased.slice(-4)}`,

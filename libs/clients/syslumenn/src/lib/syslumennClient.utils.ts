@@ -402,11 +402,6 @@ export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {
     advocate: estateRaw.malsvari ? mapAdvocate(estateRaw.malsvari) : undefined,
     email: estateRaw.netfang ?? '',
     phone: estateRaw.simi ?? '',
-    // We can assume that heir is a foreign citizen if national id is missing or ends with '0000'
-    foreignCitizenship:
-      !estateRaw.kennitala || estateRaw.kennitala.endsWith('0000')
-        ? ['yes']
-        : ['no'],
   }
 }
 
