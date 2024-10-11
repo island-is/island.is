@@ -1,0 +1,166 @@
+import {
+  buildAlertMessageField,
+  buildDescriptionField,
+  buildDividerField,
+  buildFileUploadField,
+  buildMultiField,
+  buildRadioField,
+  buildSection,
+  buildSelectField,
+  buildTextField,
+} from '@island.is/application/core'
+import { m } from '../../lib/messages/messages'
+import { FormValue } from '@island.is/application/types'
+import {
+  requireConfirmationOfResidency,
+  requireWaitingPeriod,
+} from '../../healthInsuranceUtils'
+import { FILE_SIZE_LIMIT } from '../../utils/constants'
+import { countryOptions, getYesNoOptions } from '../../utils/options'
+
+export const formerInsuranceSection = buildSection({
+  id: 'formerInsuranceSection',
+  title: m.formerInsuranceSection,
+  children: [
+    buildMultiField({
+      id: 'formerInsurance',
+      title: m.formerInsuranceTitle,
+      children: [
+        buildRadioField({
+          id: 'formerInsurance.registration',
+          title: '',
+          description: m.formerInsuranceRegistration,
+          largeButtons: true,
+          required: true,
+          options: getYesNoOptions({ no: m.formerInsuranceNoOption }),
+        }),
+        buildSelectField({
+          id: 'formerInsurance.country',
+          title: m.formerInsuranceCountry,
+          description: m.formerInsuranceDetails,
+          placeholder: m.formerInsuranceCountryPlaceholder,
+          required: true,
+          backgroundColor: 'blue',
+          options: countryOptions,
+        }),
+        buildTextField({
+          id: 'formerInsurance.personalId',
+          title: m.formerPersonalId,
+          width: 'half',
+          backgroundColor: 'blue',
+          required: true,
+        }),
+        buildTextField({
+          id: 'formerInsurance.institution',
+          title: m.formerInsuranceInstitution,
+          width: 'half',
+          backgroundColor: 'blue',
+          required: true,
+        }),
+        buildAlertMessageField({
+          id: 'waitingPeriodInfo',
+          title: m.waitingPeriodTitle,
+          message: m.waitingPeriodDescription,
+          alertType: 'error',
+          condition: (answers: FormValue) => {
+            const formerCountry = (
+              answers as {
+                formerInsurance: { country: string }
+              }
+            )?.formerInsurance?.country
+            const citizenship = (
+              answers as {
+                citizenship: string
+              }
+            )?.citizenship
+            return (
+              !!formerCountry &&
+              requireWaitingPeriod(formerCountry, citizenship)
+            )
+          },
+        }),
+        buildFileUploadField({
+          id: 'formerInsurance.confirmationOfResidencyDocument',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          introduction: m.confirmationOfResidencyFileUpload,
+          uploadHeader: m.fileUploadHeader,
+          uploadDescription: m.fileUploadDescription,
+          uploadButtonLabel: m.fileUploadButton,
+          condition: (answers: FormValue) => {
+            const formerCountry = (
+              answers as {
+                formerInsurance: { country: string }
+              }
+            )?.formerInsurance?.country
+            return requireConfirmationOfResidency(formerCountry)
+          },
+        }),
+        buildDividerField({
+          title: ' ',
+          color: 'transparent',
+        }),
+        buildDescriptionField({
+          id: 'formerInsurance.entitlementDescription',
+          title: '',
+          description: m.formerInsuranceEntitlement,
+          tooltip: m.formerInsuranceEntitlementTooltip,
+          condition: (answers: FormValue) => {
+            const formerCountry = (
+              answers as {
+                formerInsurance: { country: string }
+              }
+            )?.formerInsurance?.country
+            const citizenship = (
+              answers as {
+                citizenship: string
+              }
+            )?.citizenship
+            return !requireWaitingPeriod(formerCountry, citizenship)
+          },
+        }),
+        buildRadioField({
+          id: 'formerInsurance.entitlement',
+          title: '',
+          width: 'half',
+          largeButtons: true,
+          options: getYesNoOptions({}),
+          condition: (answers: FormValue) => {
+            const formerCountry = (
+              answers as {
+                formerInsurance: { country: string }
+              }
+            )?.formerInsurance?.country
+            const citizenship = (
+              answers as {
+                citizenship: string
+              }
+            ).citizenship
+            return !requireWaitingPeriod(formerCountry, citizenship)
+          },
+        }),
+        buildTextField({
+          id: 'formerInsurance.entitlementReason',
+          title: m.formerInsuranceAdditionalInformation,
+          placeholder: m.formerInsuranceAdditionalInformationPlaceholder,
+          variant: 'textarea',
+          rows: 4,
+          backgroundColor: 'blue',
+          condition: (answers: FormValue) => {
+            const formerCountry = (
+              answers as {
+                formerInsurance: { country: string }
+              }
+            )?.formerInsurance?.country
+            const citizenship = (
+              answers as {
+                citizenship: string
+              }
+            )?.citizenship
+            return !requireWaitingPeriod(formerCountry, citizenship)
+          },
+        }),
+      ],
+    }),
+  ],
+})

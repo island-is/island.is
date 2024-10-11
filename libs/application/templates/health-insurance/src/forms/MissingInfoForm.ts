@@ -1,13 +1,16 @@
 import {
+  buildCheckboxField,
   buildCustomField,
+  buildDescriptionField,
   buildDividerField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Application, Form, FormModes, YES } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { m } from '../lib/messages/messages'
 
@@ -25,10 +28,13 @@ export const MissingInfoForm: Form = buildForm({
           title: m.missingInfoSection,
           description: '',
           children: [
-            buildCustomField({
+            buildDescriptionField({
               id: 'description',
-              title: 'Agent comments',
-              component: 'AgentComment',
+              title: m.agentCommentsTitle,
+              titleVariant: 'h4',
+              description: (application: Application) =>
+                getValueViaPath<string>(application.answers, 'agentComments') ??
+                m.agentCommentsEmpty,
             }),
             buildDividerField({
               title: m.missingInfoAnswersTitle,
@@ -58,10 +64,15 @@ export const MissingInfoForm: Form = buildForm({
               title: '',
               component: 'Review',
             }),
-            buildCustomField({
+            buildCheckboxField({
               id: 'confirmMissingInfo',
               title: '',
-              component: 'ConfirmCheckbox',
+              options: [
+                {
+                  value: YES,
+                  label: m.confirmCorrectInfo,
+                },
+              ],
             }),
             buildSubmitField({
               id: 'submit',
