@@ -15,6 +15,9 @@ import {
   buildNationalIdWithNameField,
   buildPhoneField,
   buildHiddenInputWithWatchedValue,
+  buildAlertMessageField,
+  buildImageField,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -37,6 +40,7 @@ import { UserProfile } from '../types/schema'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
 import { removeCountryCode } from '@island.is/application/ui-components'
+import DigitalServices from '../assets/DigitalServices'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -471,6 +475,52 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 id: 'overview',
                 title: '',
                 component: 'ApplicationOverview',
+              }),
+            ],
+          }),
+        ],
+      }),
+      buildSection({
+        id: 'missingInformation',
+        title: 'Gögn vantar',
+        children: [
+          buildMultiField({
+            id: 'missingInfo',
+            title: 'Athugið',
+            description:
+              'Því miður reyndist gagnaöflun ófullnægjandi. Vinsamlegast hafðu samband við næsta sýslumann.',
+            children: [
+              buildImageField({
+                id: 'image',
+                title: '',
+                image: DigitalServices,
+                imageWidth: '50%',
+                imagePosition: 'center',
+              }),
+              buildDescriptionField({
+                id: 'space',
+                title: '',
+                space: 'gutter',
+              }),
+              buildAlertMessageField({
+                id: 'missingInfoAlert',
+                title: 'Gögn vantar',
+                message:
+                  'Skila þarf inn fæðingarvottorði til að fullnægja kröfum um að fá staðfestingu á hjónavígslu.',
+                alertType: 'warning',
+              }),
+              buildCheckboxField({
+                id: 'applicantConfirmMissingInfo',
+                title: '',
+                large: true,
+                defaultValue: [],
+                options: [
+                  {
+                    value: YES,
+                    label:
+                      'Ég skil að ég þarf að skila inn fæðingarvottorði til syslumanns.',
+                  },
+                ],
               }),
               buildSubmitField({
                 id: 'submitApplication',
