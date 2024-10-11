@@ -4,12 +4,12 @@ import {
   buildValidationError,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { Status, FormerInsurance } from '../types'
+import { Status, FormerInsurance } from '../utils/types'
 import {
   requireConfirmationOfResidency,
   requireWaitingPeriod,
 } from '../healthInsuranceUtils'
-import { NO, StatusTypes, YES } from '../shared/constants'
+import { EmploymentStatus, NO, YES } from '../utils/constants'
 
 const STATUS = 'status'
 const FORMER_INSURANCE = 'formerInsurance'
@@ -19,13 +19,13 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [STATUS]: (newAnswer: unknown, _application: Application) => {
     const status = newAnswer as Status
 
-    if (!Object.values(StatusTypes).includes(status.type)) {
+    if (!Object.values(EmploymentStatus).includes(status.type)) {
       const field = `${STATUS}.type`
       const buildError = buildValidationError(field)
       return buildError('You must select one of the above', field)
     }
     if (
-      status.type === StatusTypes.STUDENT &&
+      status.type === EmploymentStatus.STUDENT &&
       !status.confirmationOfStudies.length
     ) {
       const field = `${STATUS}.confirmationOfStudies`

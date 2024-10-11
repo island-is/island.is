@@ -3,7 +3,7 @@ import { formatText, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Checkbox } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../forms/messages'
+import { m } from '../../lib/messages/messages'
 
 export const ConfirmCheckbox = ({
   error,

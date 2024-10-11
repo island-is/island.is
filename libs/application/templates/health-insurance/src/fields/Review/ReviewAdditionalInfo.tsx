@@ -8,13 +8,13 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { AdditionalInfoType, ReviewFieldProps } from '../../types'
-import { m } from '../../forms/messages'
+import { AdditionalInfoType, ReviewFieldProps } from '../../utils/types'
+import { m } from '../../lib/messages/messages'
 import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { NO, YES } from '../../shared/constants'
+import { NO, YES } from '../../utils/constants'
 
 interface Props extends ReviewFieldProps {
   additionalInfo: AdditionalInfoType

@@ -1,4 +1,4 @@
-import { m } from '../../forms/messages'
+import { m } from '../../lib/messages/messages'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { SummaryItem } from './SummaryItem'
@@ -75,7 +75,7 @@ export const PrerequisiteSummary = ({ application }: FieldBaseProps) => {
       {prerequisites.map((prerequisite, i) => {
         return (
           <SummaryItem
-            key={i}
+            key={`${prerequisite.name}-${i}`}
             index={i + 1}
             application={application}
             {...prerequisite}

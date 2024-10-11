@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Input } from '@island.is/island-ui/core'
-import { ExternalDataNationalRegistry } from '../../types'
+import { ExternalDataNationalRegistry } from '../../utils/types'
 
 export const CitizenshipField = ({ field, application }: FieldBaseProps) => {
   const { id } = field

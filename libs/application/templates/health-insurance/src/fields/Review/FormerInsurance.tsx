@@ -15,17 +15,17 @@ import {
   RadioController,
 } from '@island.is/shared/form-fields'
 import { TextWithTooltip } from '../TextWithTooltip/TextWithTooltip'
-import { m } from '../../forms/messages'
+import { m } from '../../lib/messages/messages'
 import {
   FormerInsurance as FormerInsuranceType,
   ReviewFieldProps,
-} from '../../types'
+} from '../../utils/types'
 import {
   requireConfirmationOfResidency,
   extractKeyFromStringObject,
 } from '../../healthInsuranceUtils'
 import { FileUploadController } from '@island.is/application/ui-components'
-import { FILE_SIZE_LIMIT, NO, YES } from '../../shared/constants'
+import { FILE_SIZE_LIMIT, NO, YES } from '../../utils/constants'
 
 export const FormerInsurance = ({
   application,

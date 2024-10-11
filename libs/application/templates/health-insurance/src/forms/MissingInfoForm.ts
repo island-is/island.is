@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { m } from './messages'
+import { m } from '../lib/messages/messages'
 
 export const MissingInfoForm: Form = buildForm({
   id: 'HealthInsuranceReview',

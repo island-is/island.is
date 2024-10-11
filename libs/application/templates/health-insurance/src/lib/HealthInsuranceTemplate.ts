@@ -16,9 +16,9 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
 } from '@island.is/application/types'
-import { m } from '../forms/messages'
+import { m } from './messages/messages'
 import { dataSchema } from './dataSchema'
-import { API_MODULE } from '../shared/constants'
+import { API_MODULE } from '../utils/constants'
 
 type Events = { type: DefaultEvents.SUBMIT }
 

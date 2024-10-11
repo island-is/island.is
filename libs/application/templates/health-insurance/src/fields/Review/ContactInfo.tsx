@@ -9,12 +9,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { m } from '../../forms/messages'
+import { m } from '../../lib/messages/messages'
 import {
   ExternalDataNationalRegistry,
   ExternalDataUserProfile,
   ReviewFieldProps,
-} from '../../types'
+} from '../../utils/types'
 
 export const ContactInfo = ({ application }: ReviewFieldProps) => {
   const { register } = useFormContext()

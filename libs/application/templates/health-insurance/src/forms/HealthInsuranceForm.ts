@@ -18,18 +18,18 @@ import {
   Comparators,
   FormValue,
 } from '@island.is/application/types'
-import { m } from './messages'
-import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../shared'
+import { m } from '../lib/messages/messages'
+import { YES, NO, FILE_SIZE_LIMIT, EmploymentStatus } from '../utils/constants'
 import Logo from '../assets/Logo'
 import {
   requireConfirmationOfResidency,
   requireWaitingPeriod,
 } from '../healthInsuranceUtils'
-import { Countries } from '../lib/Countries'
 import {
   applicantInformationMultiField,
   buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
+import { getCountryOptions } from '../utils/getCoutryOptions'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
@@ -65,22 +65,22 @@ export const HealthInsuranceForm: Form = buildForm({
               options: [
                 {
                   label: m.statusEmployed,
-                  value: StatusTypes.EMPLOYED,
+                  value: EmploymentStatus.EMPLOYED,
                   tooltip: m.statusEmployedInformation,
                 },
                 {
                   label: m.statusStudent,
-                  value: StatusTypes.STUDENT,
+                  value: EmploymentStatus.STUDENT,
                   tooltip: m.statusStudentInformation,
                 },
                 {
                   label: m.statusPensioner,
-                  value: StatusTypes.PENSIONER,
+                  value: EmploymentStatus.PENSIONER,
                   tooltip: m.statusPensionerInformation,
                 },
                 {
                   label: m.statusOther,
-                  value: StatusTypes.OTHER,
+                  value: EmploymentStatus.OTHER,
                   tooltip: m.statusOtherInformation,
                 },
               ],
@@ -92,7 +92,7 @@ export const HealthInsuranceForm: Form = buildForm({
               tooltip: m.confirmationOfStudiesTooltip,
               condition: (answers) =>
                 (answers.status as { type: string })?.type ===
-                StatusTypes.STUDENT,
+                EmploymentStatus.STUDENT,
             }),
             buildFileUploadField({
               id: 'status.confirmationOfStudies',
@@ -104,7 +104,7 @@ export const HealthInsuranceForm: Form = buildForm({
               uploadButtonLabel: m.fileUploadButton,
               condition: (answers) =>
                 (answers.status as { type: string })?.type ===
-                StatusTypes.STUDENT,
+                EmploymentStatus.STUDENT,
             }),
             buildRadioField({
               id: 'children',
@@ -118,10 +118,11 @@ export const HealthInsuranceForm: Form = buildForm({
                 { label: m.yesOptionLabel, value: YES },
               ],
             }),
-            buildCustomField({
+            buildAlertMessageField({
               id: 'childrenInfo',
-              title: '',
-              component: 'ChildrenInfoMessage',
+              title: m.childrenInfoMessageTitle,
+              message: m.childrenInfoMessageText,
+              alertType: 'info',
               condition: (answers) => answers.children === YES,
             }),
           ],
@@ -154,13 +155,7 @@ export const HealthInsuranceForm: Form = buildForm({
               placeholder: m.formerInsuranceCountryPlaceholder,
               required: true,
               backgroundColor: 'blue',
-              options: Countries.map(({ name, alpha2Code: countryCode }) => {
-                const option = { name, countryCode }
-                return {
-                  label: name,
-                  value: JSON.stringify(option),
-                }
-              }),
+              options: getCountryOptions(),
             }),
             buildTextField({
               id: 'formerInsurance.personalId',
