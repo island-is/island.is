@@ -28,6 +28,8 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { isValidNumberForRegion } from 'libphonenumber-js'
 import { generateResidenceChangePdf } from './pdfGenerators'
+import { NotificationsService } from '../../../notification/notifications.service'
+import { NotificationType } from '../../../notification/notificationsTemplates'
 
 type Props = Override<
   TemplateApiModuleActionProps,
@@ -41,6 +43,7 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly smsService: SmsService,
     private nationalRegistryApi: NationalRegistryClientService,
+    private readonly notificationsService: NotificationsService,
   ) {
     super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2)
   }
@@ -166,8 +169,26 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
   }
 
   async sendNotificationToCounterParty({ application }: Props) {
-    const { answers } = application
+    const { answers, externalData } = application
     const { counterParty } = answers
+
+    const applicant = externalData.nationalRegistry.data
+    const otherParent =
+      externalData.childrenCustodyInformation.data[0].otherParent
+
+    if (otherParent) {
+      this.notificationsService.sendNotification({
+        type: NotificationType.ChildrenResidenceChange,
+        messageParties: {
+          recipient: otherParent.nationalId,
+          sender: applicant.nationalId,
+        },
+        args: {
+          applicantName: applicant.fullName,
+          applicationId: application.id,
+        },
+      })
+    }
 
     if (counterParty.email) {
       await this.sharedTemplateAPIService.sendEmail(
