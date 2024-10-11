@@ -213,7 +213,7 @@ export class DirectorateOfImmigrationClient {
     const attachmentList: {
       attachmentType: AttachmentType
       fileName: string
-      base64Contents: string
+      fileLink: string
       countryCode?: string
     }[] = []
 
@@ -221,7 +221,7 @@ export class DirectorateOfImmigrationClient {
       attachmentList.push({
         attachmentType: AttachmentType.Passport,
         fileName: file.filename,
-        base64Contents: file.fileUrl,
+        fileLink: file.fileUrl,
       })
     })
 
@@ -229,7 +229,7 @@ export class DirectorateOfImmigrationClient {
       attachmentList.push({
         attachmentType: AttachmentType.BirtCertificate,
         fileName: file.filename,
-        base64Contents: file.fileUrl,
+        fileLink: file.fileUrl,
       })
     })
 
@@ -237,7 +237,7 @@ export class DirectorateOfImmigrationClient {
       attachmentList.push({
         attachmentType: AttachmentType.ProofOfFinancialCapabilityApplicant,
         fileName: file.filename,
-        base64Contents: file.fileUrl,
+        fileLink: file.fileUrl,
       })
     })
 
@@ -246,7 +246,7 @@ export class DirectorateOfImmigrationClient {
         attachmentList.push({
           attachmentType: AttachmentType.ProofOfFinancialCapabilityMunicipality,
           fileName: file.filename,
-          base64Contents: file.fileUrl,
+          fileLink: file.fileUrl,
         })
       },
     )
@@ -256,7 +256,7 @@ export class DirectorateOfImmigrationClient {
         attachmentList.push({
           attachmentType: AttachmentType.DomicileHistory,
           fileName: file.filename,
-          base64Contents: file.fileUrl,
+          fileLink: file.fileUrl,
         })
       },
     )
@@ -265,7 +265,7 @@ export class DirectorateOfImmigrationClient {
       attachmentList.push({
         attachmentType: AttachmentType.ConfirmationIcelandicLanguage,
         fileName: file.filename,
-        base64Contents: file.fileUrl,
+        fileLink: file.fileUrl,
       })
     })
 
@@ -273,16 +273,16 @@ export class DirectorateOfImmigrationClient {
       attachmentList.push({
         attachmentType: AttachmentType.CriminalRecord,
         fileName: file.filename,
-        base64Contents: file.fileUrl,
+        fileLink: file.fileUrl,
         countryCode: file.countryId,
       })
     })
 
     await this.applicationAttachmentApiWithAuth(
       auth,
-    ).apiApplicationAttachmentNewItemsApplicationIdPost({
+    ).apiApplicationAttachmentFileLinkNewItemsApplicationIdPost({
       applicationId,
-      applicationAttachmentArrayNewModel: {
+      applicationAttachmentArrayFileLinkNewModel: {
         applicationAttachments: attachmentList,
       },
     })
@@ -353,7 +353,7 @@ export class DirectorateOfImmigrationClient {
       const childAttachmentList: {
         attachmentType: AttachmentType
         fileName: string
-        base64Contents: string
+        fileLink: string
         countryCode?: string
       }[] = []
 
@@ -361,7 +361,7 @@ export class DirectorateOfImmigrationClient {
         childAttachmentList.push({
           attachmentType: AttachmentType.Passport,
           fileName: file.filename,
-          base64Contents: file.fileUrl,
+          fileLink: file.fileUrl,
         })
       })
 
@@ -369,7 +369,7 @@ export class DirectorateOfImmigrationClient {
         childAttachmentList.push({
           attachmentType: AttachmentType.BirtCertificate,
           fileName: file.filename,
-          base64Contents: file.fileUrl,
+          fileLink: file.fileUrl,
         })
       })
 
@@ -377,7 +377,7 @@ export class DirectorateOfImmigrationClient {
         childAttachmentList.push({
           attachmentType: AttachmentType.WrittenConfirmationChild,
           fileName: file.filename,
-          base64Contents: file.fileUrl,
+          fileLink: file.fileUrl,
         })
       })
 
@@ -385,7 +385,7 @@ export class DirectorateOfImmigrationClient {
         childAttachmentList.push({
           attachmentType: AttachmentType.ConfirmationOtherParent,
           fileName: file.filename,
-          base64Contents: file.fileUrl,
+          fileLink: file.fileUrl,
         })
       })
 
@@ -393,15 +393,15 @@ export class DirectorateOfImmigrationClient {
         childAttachmentList.push({
           attachmentType: AttachmentType.CustodyDocuments,
           fileName: file.filename,
-          base64Contents: file.fileUrl,
+          fileLink: file.fileUrl,
         })
       })
 
       await this.applicationAttachmentApiWithAuth(
         auth,
-      ).apiApplicationAttachmentNewItemsApplicationIdPost({
+      ).apiApplicationAttachmentFileLinkNewItemsApplicationIdPost({
         applicationId: childApplicationId,
-        applicationAttachmentArrayNewModel: {
+        applicationAttachmentArrayFileLinkNewModel: {
           applicationAttachments: childAttachmentList,
         },
       })
