@@ -46,10 +46,6 @@ export class DelegationDTO {
   toNationalId!: string
 
   @IsString()
-  @ApiPropertyOptional()
-  createdByNationalId?: string | null
-
-  @IsString()
   @ApiPropertyOptional({ nullable: true, type: String })
   toName?: string | null
 
@@ -81,6 +77,10 @@ export class DelegationDTO {
   @ApiPropertyOptional({ type: String, nullable: true })
   domainName?: string | null
 
+  @IsString()
+  @ApiPropertyOptional({ nullable: true, type: String })
+  createdByNationalId?: string | null
+  
   // This property is only used in delegation index
   rights?: PersonalRepresentativeRightTypeDTO[]
 
