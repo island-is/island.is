@@ -82,7 +82,7 @@ describe('NotificationController - Send court date notification', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: NotificationType.DEFENDER_ASSIGNED },
+          body: { type: NotificationType.ADVOCATE_ASSIGNED },
         },
       ])
       expect(then.result).toEqual({ notificationSent: true })
