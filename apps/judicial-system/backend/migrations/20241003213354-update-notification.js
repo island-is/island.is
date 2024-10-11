@@ -16,6 +16,7 @@ module.exports = {
         'RULING',
         'MODIFIED',
         'REVOKED',
+        'DEFENDER_ASSIGNED',
         'ADVOCATE_ASSIGNED', // Changed value
         'DEFENDANTS_NOT_UPDATED_AT_COURT',
         'APPEAL_TO_COURT_OF_APPEALS',
