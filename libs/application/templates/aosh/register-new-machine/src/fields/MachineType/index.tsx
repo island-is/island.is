@@ -143,36 +143,13 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
         ?.registrationNumberPrefix ?? ''
 
     const categories = response?.getMachineParentCategoryByTypeAndModel?.map(
-      (
-        {
-          name,
-          nameEn,
-          subCategoryName,
-          subCategoryNameEn,
-          registrationNumberPrefix,
-        },
-        index,
-      ) => {
-        setValue(
-          `machine.aboutMachine.subcategories[${index}].categoryIs`,
-          name,
-        )
-        setValue(
-          `machine.aboutMachine.subcategories[${index}].categoryEn`,
-          nameEn,
-        )
-        setValue(
-          `machine.aboutMachine.subcategories[${index}].subcategoryIs`,
-          subCategoryName,
-        )
-        setValue(
-          `machine.aboutMachine.subcategories[${index}].subcategoryEn`,
-          subCategoryNameEn,
-        )
-        setValue(
-          `machine.aboutMachine.subcategories[${index}].registrationNumberPrefix`,
-          registrationNumberPrefix,
-        )
+      ({
+        name,
+        nameEn,
+        subCategoryName,
+        subCategoryNameEn,
+        registrationNumberPrefix,
+      }) => {
         return {
           categoryIs: name ?? '',
           categoryEn: nameEn ?? name ?? '',
@@ -183,6 +160,7 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
       },
     )
 
+    setValue('machine.aboutMachine.categories', categories)
     setValue(
       'machine.aboutMachine.type',
       type && type !== 'unknown' ? type : '',
