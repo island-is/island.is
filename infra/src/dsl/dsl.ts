@@ -460,10 +460,28 @@ export class ServiceBuilder<ServiceType extends string> {
 
   /**
    * You can allow ingress traffic (traffic from the internet) to your service by creating an ingress controller. Mapped to an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#what-is-ingress).
-   * @param ingress - Ingress parameters
+   * @param ingresses - Ingress parameters
    */
-  ingress(ingress: { [name: string]: Ingress }) {
-    this.serviceDef.ingress = ingress
+  ingress(ingresses: IngressMapping): this {
+    const FORCED_ANNOTATIONS: { [key: string]: string } = {
+      'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+    }
+    this.serviceDef.ingress = ingresses
+
+    if (!ingresses.primary) {
+      // Early return if no primary
+      return this
+    }
+    const ingressAnnotations = ingresses.primary.extraAnnotations
+    for (const [_env, annotations] of Object.entries(
+      ingressAnnotations ?? {},
+    )) {
+      for (const annotation of Object.keys(annotations)) {
+        // Apply any forced annotations
+        annotations[annotation] =
+          FORCED_ANNOTATIONS[annotation] ?? annotations[annotation]
+      }
+    }
     return this
   }
 
