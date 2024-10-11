@@ -51,7 +51,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const theme = useTheme()
   const { openBrowser } = useBrowser()
-  const origin = getConfig().apiUrl.replace(/api$/, '')
+  const origin = getConfig().apiUrl.replace(/\/api$/, '')
   const [refetching, setRefetching] = useState(false)
 
   const now = useMemo(() => new Date().toISOString(), [])
@@ -91,7 +91,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         healthCenterRes.refetch(),
         paymentStatusRes.refetch(),
         paymentOverviewRes.refetch(),
-      ].filter(Boolean)
+      ]
       await Promise.all(promises)
     } catch (e) {
       // noop
@@ -137,7 +137,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               ellipsis
               onPress={() =>
                 openBrowser(
-                  `${origin}minarsidur/heilsa/thjalfun/sjukrathjalfun`,
+                  `${origin}/minarsidur/heilsa/thjalfun/sjukrathjalfun`,
                   componentId,
                 )
               }
@@ -154,7 +154,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               ellipsis
               onPress={() =>
                 openBrowser(
-                  `${origin}minarsidur/heilsa/hjalpartaeki-og-naering`,
+                  `${origin}/minarsidur/heilsa/hjalpartaeki-og-naering`,
                   componentId,
                 )
               }
@@ -163,7 +163,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           <TouchableOpacity
             onPress={() =>
               openBrowser(
-                `${origin}minarsidur/heilsa/heilsugaesla`,
+                `${origin}/minarsidur/heilsa/heilsugaesla`,
                 componentId,
               )
             }
@@ -175,7 +175,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 <TouchableOpacity
                   onPress={() =>
                     openBrowser(
-                      `${origin}minarsidur/heilsa/heilsugaesla`,
+                      `${origin}/minarsidur/heilsa/heilsugaesla`,
                       componentId,
                     )
                   }
@@ -236,7 +236,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           </InputRow>
           <TouchableOpacity
             onPress={() =>
-              openBrowser(`${origin}minarsidur/heilsa/yfirlit`, componentId)
+              openBrowser(`${origin}/minarsidur/heilsa/yfirlit`, componentId)
             }
             style={{ marginTop: theme.spacing[2] }}
           >
@@ -246,7 +246,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 <TouchableOpacity
                   onPress={() =>
                     openBrowser(
-                      `${origin}minarsidur/heilsa/yfirlit`,
+                      `${origin}/minarsidur/heilsa/yfirlit`,
                       componentId,
                     )
                   }
@@ -315,7 +315,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           <TouchableOpacity
             onPress={() =>
               openBrowser(
-                `${origin}minarsidur/heilsa/greidslur/greidsluthatttaka`,
+                `${origin}/minarsidur/heilsa/greidslur/greidsluthatttaka`,
                 componentId,
               )
             }
@@ -327,7 +327,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 <TouchableOpacity
                   onPress={() =>
                     openBrowser(
-                      `${origin}minarsidur/heilsa/greidslur/greidsluthatttaka`,
+                      `${origin}/minarsidur/heilsa/greidslur/greidsluthatttaka`,
                       componentId,
                     )
                   }
