@@ -41,11 +41,19 @@ export class NotificationDispatchService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
+  private async dispatchServiceStatusUpdatedNotification(): Promise<void> {
+    // TODO: Implement this,
+    return
+  }
+
   async dispatchNotification(type: NotificationType): Promise<DeliverResponse> {
     try {
       switch (type) {
         case NotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION:
           await this.dispatchIndictmentsWaitingForConfirmationNotification()
+          break
+        case NotificationType.SERVICE_STATUS_UPDATED:
+          await this.dispatchServiceStatusUpdatedNotification()
           break
         default:
           throw new InternalServerErrorException(

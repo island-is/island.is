@@ -11,11 +11,15 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
-import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import type { User } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  NotificationType,
+  ServiceStatus,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
@@ -36,11 +40,22 @@ export class SubpoenaService {
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
     private readonly pdfService: PdfService,
-    private readonly emailService: EmailService,
+    private readonly messageService: MessageService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  private isSuccessfulServiceStatus(serviceStatus?: ServiceStatus) {
+    return (
+      serviceStatus &&
+      [
+        ServiceStatus.ELECTRONICALLY,
+        ServiceStatus.DEFENDER,
+        ServiceStatus.IN_PERSON,
+      ].includes(serviceStatus)
+    )
+  }
 
   async createSubpoena(
     defendantId: string,
@@ -87,6 +102,7 @@ export class SubpoenaService {
       defenderEmail,
       defenderPhoneNumber,
       defenderName,
+      serviceStatus,
     } = update
 
     const [numberOfAffectedRows] = await this.subpoenaModel.update(update, {
@@ -120,6 +136,22 @@ export class SubpoenaService {
       this.logger.error(
         `Unexpected number of rows ${numberOfAffectedRows} affected when updating subpoena`,
       )
+    }
+
+    if (this.isSuccessfulServiceStatus(serviceStatus)) {
+      this.messageService
+        .sendMessagesToQueue([
+          {
+            type: MessageType.NOTIFICATION_DISPATCH,
+            body: {
+              type: NotificationType.SERVICE_STATUS_UPDATED,
+            },
+          },
+        ])
+        .catch((reason) =>
+          // Tolerate failure, but log
+          this.logger.error('Failed to dispatch notifications', { reason }),
+        )
     }
 
     const updatedSubpoena = await this.findBySubpoenaId(subpoena.subpoenaId)
