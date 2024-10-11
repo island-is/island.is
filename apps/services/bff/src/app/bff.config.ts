@@ -78,7 +78,7 @@ export const BffConfig = defineConfig({
         // Redis nodes are only required in production
         // In development, we can use a local Redis server or
         // rely on the default in-memory cache provided by CacheModule
-        nodes: env.requiredJSON('BFF_REDIS_URL_NODES', []),
+        nodes: env.requiredJSON('REDIS_URL_NODE_01', []),
         ssl: env.optionalJSON('BFF_REDIS_SSL', false) ?? true,
       },
       ids: {
