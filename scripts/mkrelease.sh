@@ -37,11 +37,17 @@ gray() { echo "${COLOR_GRAY}${*}${COLOR_RESET}"; }
 echo -e "$(gray "$(echo -e "Environment debug:\n###\n$(set | grep '^RELEASE_')\n###")")\n"
 
 run() {
-  local CMD EXIT_CODE
+  local CMD EXIT_CODE DEFAULT_VALUE
+  if [[ "${1}" =~ (--default|--default=*) ]]; then
+    if [[ "${1}" == --default ]]; then shift; fi
+    DEFAULT_VALUE="${1#*=}"
+    shift
+  fi
   CMD=("${@:1}")
   if [[ "${DRY}" == true ]]; then
     CMD=("echo" "DRY:" "${CMD[@]}")
-    "${CMD[@]}"
+    "${CMD[@]}" >&2
+    echo -ne "${DEFAULT_VALUE}${DEFAULT_VALUE:+\n}"
     return
   fi
   # echo -e "$(gray "$(echo -e "[CMD] Command: ${CMD[1]}")")"
@@ -86,7 +92,7 @@ create-pre-release() {
   echo "Creating ${BRANCH_NAME} on git repository '${REPO_PATH}'"
   (
     cd "${REPO_PATH}"
-    COMMIT_HASH="$(run git log origin/main -n 1 --format=format:%H)"
+    COMMIT_HASH="$(run --default="fake0hash9" git log origin/main -n 1 --format=format:%H)"
     run git fetch origin
     run git checkout -f origin/main
     run git checkout -B "${BRANCH_NAME}" "${COMMIT_HASH}"
