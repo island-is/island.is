@@ -1,7 +1,7 @@
 module.exports = {
   displayName: 'portals-my-pages-social-insurance-maintenance',
   preset: './jest.preset.js',
-  rootDir: '../../..',
+  rootDir: '../../../..',
   roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': [

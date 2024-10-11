@@ -2,7 +2,7 @@
 export default {
   displayName: 'portals-my-pages-education-license',
   preset: './jest.preset.js',
-  rootDir: '../../..',
+  rootDir: '../../../..',
   roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': [
