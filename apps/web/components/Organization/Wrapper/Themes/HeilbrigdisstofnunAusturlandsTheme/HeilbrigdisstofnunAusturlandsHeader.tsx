@@ -50,7 +50,7 @@ const HeilbrigdisstofnunAusturlandsHeader: React.FC<
   const { linkResolver } = useLinkResolver()
 
   const namespace = useMemo(
-    () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
+    () => JSON.parse(organizationPage.organization?.namespace?.fields || '{}'),
     [organizationPage.organization?.namespace?.fields],
   )
 
