@@ -17,6 +17,7 @@ import {
   ServiceDefinition,
   XroadConfig,
   PodDisruptionBudget,
+  IngressMapping,
 } from './types/input-types'
 import { logger } from '../logging'
 import { COMMON_SECRETS } from './consts'
@@ -65,7 +66,7 @@ export class ServiceBuilder<ServiceType extends string> {
       grantNamespaces: [],
       grantNamespacesEnabled: false,
       secrets: COMMON_SECRETS,
-      ingress: {},
+      ingress: {} as IngressMapping, // Force type conformance for initialization
       namespace: 'islandis',
       serviceAccountEnabled: false,
       securityContext: {
