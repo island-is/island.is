@@ -3,30 +3,32 @@ import { ConfigService } from '@nestjs/config'
 import * as utils from './shared.utils'
 
 const mockConfig = {
-  clientLocationOrigin: 'http://localhost:4242',
-  baseApiUrl: 'http://localhost:4444',
-  attachmentBucket: 'attachmentBucket',
-  templateApi: {
-    clientLocationOrigin: 'http://localhost:4242/umsoknir',
-    email: {
-      sender: 'Devland.is',
-      address: 'development@island.is',
-    },
-    jwtSecret: 'supersecret',
-    xRoadBasePathWithEnv: '',
+  SharedModuleConfig: {
+    clientLocationOrigin: 'http://localhost:4242',
     baseApiUrl: 'http://localhost:4444',
-    presignBucket: '',
-    attachmentBucket: 'island-is-dev-storage-application-system',
-    generalPetition: {
-      endorsementApiBasePath: 'http://localhost:4246',
-    },
-    userProfile: {
-      serviceBasePath: 'http://localhost:3366',
-    },
-    islykill: {
-      cert: '',
-      passphrase: '',
-      basePath: '',
+    attachmentBucket: 'attachmentBucket',
+    templateApi: {
+      clientLocationOrigin: 'http://localhost:4242/umsoknir',
+      email: {
+        sender: 'Devland.is',
+        address: 'development@island.is',
+      },
+      jwtSecret: 'supersecret',
+      xRoadBasePathWithEnv: '',
+      baseApiUrl: 'http://localhost:4444',
+      presignBucket: '',
+      attachmentBucket: 'island-is-dev-storage-application-system',
+      generalPetition: {
+        endorsementApiBasePath: 'http://localhost:4246',
+      },
+      userProfile: {
+        serviceBasePath: 'http://localhost:3366',
+      },
+      islykill: {
+        cert: '',
+        passphrase: '',
+        basePath: '',
+      },
     },
   },
 }
@@ -92,7 +94,7 @@ describe('shared utils', () => {
   let configService: ConfigService<SharedModuleConfig>
 
   beforeEach(() => {
-    configService = new ConfigService<SharedModuleConfig>(mockConfig)
+    configService = new ConfigService(mockConfig)
   })
 
   it('should get the client location origin from the config', () => {
