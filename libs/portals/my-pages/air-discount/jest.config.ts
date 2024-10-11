@@ -8,5 +8,5 @@ export default {
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/my-pages/air-discount',
+  coverageDirectory: '<rootDir>/coverage/libs/portals/my-pages/air-discount',
 }
