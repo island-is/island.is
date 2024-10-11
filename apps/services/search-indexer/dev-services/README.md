@@ -18,7 +18,7 @@ Wait ~30 seconds. Access Elasticsearch at `localhost:9200` and Kibana at `localh
 
 Set environment variables:
 
-- `CONTENTFUL_HOST=preview.contentful.com`
+- `CONTENTFUL_HOST=preview.contentful.com` (or cdn.contentful.com for non-draft entries)
 - `CONTENTFUL_ACCESS_TOKEN=` (obtain from Contentful or via `yarn get-secrets api`)
 - `ELASTIC_NODE=http://localhost:9200/`
 
