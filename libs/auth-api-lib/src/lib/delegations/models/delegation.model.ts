@@ -141,7 +141,7 @@ export class Delegation extends Model<
       fromNationalId: this.fromNationalId,
       toNationalId: this.toNationalId,
       toName: this.toName,
-      createdByNationalId: this.createdByNationalId,
+      createdBy: this.createdByNationalId,
       validTo: this.validTo,
       scopes: this.delegationScopes
         ? this.delegationScopes.map((scope) => scope.toDTO())
