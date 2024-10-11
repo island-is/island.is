@@ -38,7 +38,7 @@ Add `API_MOCKS=true` to your `.env`, or `export API_MOCKS=true` to your `.env.se
 
 The web depends on `cms` and `content-search` domains of the API, which require Elasticsearch. Choose your approach based on your task:
 
-- **Working on `cms`/`content-search`:** Run Elasticsearch locally. Find instructions under [search-indexer dev-services](https://docs.devland.is/apps/services/search-indexer/dev-services).
+- **Working on `cms`/`content-search`:** Run Elasticsearch locally. Find instructions under [search-indexer dev-services](https://github.com/island-is/island.is/tree/main/apps/services/search-indexer/dev-services).
 - **Accessing real data:** Use the Elasticsearch proxy server to access the dev environment's Elasticsearch instance. This uses fewer resources.
 
 To access the Elasticsearch instance from the dev environment:
@@ -62,9 +62,9 @@ yarn start api
 
 Ensure env variables for `cms` and `content-search` are set:
 
-- `CONTENTFUL_HOST=`
-- `CONTENTFUL_ACCESS_TOKEN=`
-- `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN=`
+- `CONTENTFUL_HOST=` Get from Contentful (depends on whether you use prod or preview tokens)
+- `CONTENTFUL_ACCESS_TOKEN=` Get from Contentful or by running `yarn get-secrets api`
+- `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN=` Get from Contentful (used when generating models from Contentful in API)
 - `ELASTIC_NODE=http://localhost:9200/`
 
 ### Start the Web Server
@@ -83,7 +83,7 @@ This starts a server on `localhost:4200`.
 yarn nx extract-strings web
 ```
 
-Currently, only the `Custom Page` content type uses the `Translation Namespace` content type for translations.
+Currently, only the `Custom Page` and `Connected Component` content types use the `Translation Namespace` content type for translations.
 
 ## Further Documentation
 
