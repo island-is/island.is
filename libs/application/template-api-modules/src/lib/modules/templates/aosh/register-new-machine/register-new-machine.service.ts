@@ -66,7 +66,11 @@ export class RegisterNewMachineTemplateService extends BaseTemplateApiService {
     answers.techInfo.forEach(({ variableName, value }) => {
       if (variableName && value) {
         techInfo[variableName] =
-          value === 'yes' ? true : value === 'no' ? false : value
+          value.nameIs === 'yes'
+            ? true
+            : value.nameIs === 'no'
+            ? false
+            : value.nameIs
       }
     })
 
@@ -126,8 +130,8 @@ export class RegisterNewMachineTemplateService extends BaseTemplateApiService {
         used: answers.machine.basicInformation?.isUsed === 'used',
         type: answers.machine.aboutMachine?.type ?? '',
         model: answers.machine.aboutMachine?.model ?? '',
-        parentCategory: answers.machine.aboutMachine?.category ?? '',
-        subCategory: answers.machine.aboutMachine?.subcategory ?? '',
+        parentCategory: answers.machine.aboutMachine?.category?.nameIs ?? '',
+        subCategory: answers.machine.aboutMachine?.subcategory?.nameIs ?? '',
         streetRegistrationRequested:
           answers.machine.streetRegistration?.registerToTraffic === 'yes',
         plateSize: answers.machine.streetRegistration?.size

@@ -27,6 +27,7 @@ export const sectionExternalData = buildSubSection({
       id: 'approveExternalData',
       subTitle: m.externalDataSubTitle,
       checkboxLabel: m.externalDataAgreement,
+      enableMockPayment: true,
       dataProviders: [
         buildDataProviderItem({
           provider: NationalRegistryUserApi,

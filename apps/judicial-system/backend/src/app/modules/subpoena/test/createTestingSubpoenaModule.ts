@@ -13,6 +13,7 @@ import {
 
 import { CaseService, PdfService } from '../../case'
 import { Defendant } from '../../defendant'
+import { FileService } from '../../file'
 import { PoliceService } from '../../police'
 import { UserService } from '../../user'
 import { InternalSubpoenaController } from '../internalSubpoena.controller'
@@ -25,6 +26,7 @@ jest.mock('../../user/user.service')
 jest.mock('../../case/case.service')
 jest.mock('../../case/pdf.service')
 jest.mock('../../police/police.service')
+jest.mock('../../file/file.service')
 
 export const createTestingSubpoenaModule = async () => {
   const subpoenaModule = await Test.createTestingModule({
@@ -41,6 +43,7 @@ export const createTestingSubpoenaModule = async () => {
       CaseService,
       PdfService,
       PoliceService,
+      FileService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -79,6 +82,10 @@ export const createTestingSubpoenaModule = async () => {
 
   const pdfService = subpoenaModule.get<PdfService>(PdfService)
 
+  const policeService = subpoenaModule.get<PoliceService>(PoliceService)
+
+  const fileService = subpoenaModule.get<FileService>(FileService)
+
   const subpoenaModel = await subpoenaModule.resolve<typeof Subpoena>(
     getModelToken(Subpoena),
   )
@@ -101,6 +108,8 @@ export const createTestingSubpoenaModule = async () => {
   return {
     userService,
     pdfService,
+    policeService,
+    fileService,
     subpoenaModel,
     subpoenaService,
     subpoenaController,

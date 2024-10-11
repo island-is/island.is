@@ -209,7 +209,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
     slug: 'skil-arsreikninga-kirkjugardar',
-    translation: 'fsck.application',
+    translation: 'fsc.application',
   },
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     slug: 'skilarsreikninga',
