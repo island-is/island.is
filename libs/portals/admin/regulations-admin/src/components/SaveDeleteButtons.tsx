@@ -48,7 +48,7 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
             onClick={() => propose()}
             icon="open"
             iconType="outline"
-            variant="text"
+            variant="utility"
             size="small"
             disabled={saving}
           >
