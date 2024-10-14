@@ -12,4 +12,3 @@ runs:
           core.exportVariable('ACTIONS_CACHE_URL', 'https://cache.dev01.devland.is/')
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
           core.exportVariable('ACTIONS_RUNTIME_URL', process.env['ACTIONS_RUNTIME_URL'])
-    
