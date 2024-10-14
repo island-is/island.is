@@ -1,7 +1,9 @@
 import { useIntl } from 'react-intl'
 import NextLink from 'next/link'
+import { useQuery } from '@apollo/client'
 
 import {
+  AlertMessage,
   ArrowLink,
   Box,
   Breadcrumbs,
@@ -9,6 +11,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -18,8 +21,10 @@ import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
   OfficialJournalOfIcelandAdvertMainCategory,
+  OfficialJournalOfIcelandAdvertsResponse,
   Query,
   QueryGetOrganizationArgs,
+  QueryOfficialJournalOfIcelandAdvertsArgs,
   QueryOfficialJournalOfIcelandMainCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
@@ -27,7 +32,9 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
+  OJOIAdvertCards,
   OJOIHomeIntro,
+  OJOISearchListView,
   OJOIWrapper,
 } from '../../components/OfficialJournalOfIceland'
 import {
@@ -35,7 +42,10 @@ import {
   withCustomPageWrapper,
 } from '../CustomPage/CustomPageWrapper'
 import { GET_ORGANIZATION_QUERY } from '../queries'
-import { MAIN_CATEGORIES_QUERY } from '../queries/OfficialJournalOfIceland'
+import {
+  ADVERTS_QUERY,
+  MAIN_CATEGORIES_QUERY,
+} from '../queries/OfficialJournalOfIceland'
 import { m } from './messages'
 
 const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
@@ -59,6 +69,75 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
       title: organization?.title ?? '',
       href: baseUrl,
     },
+  ]
+
+  const {
+    data: aAdverts,
+    loading: aLoading,
+    error: aError,
+  } = useQuery<
+    {
+      officialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
+    },
+    QueryOfficialJournalOfIcelandAdvertsArgs
+  >(ADVERTS_QUERY, {
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 1,
+        department: ['a-deild'],
+      },
+    },
+    fetchPolicy: 'no-cache',
+  })
+
+  const {
+    data: bAdverts,
+    loading: bLoading,
+    error: bError,
+  } = useQuery<
+    {
+      officialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
+    },
+    QueryOfficialJournalOfIcelandAdvertsArgs
+  >(ADVERTS_QUERY, {
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 1,
+        department: ['b-deild'],
+      },
+    },
+    fetchPolicy: 'no-cache',
+  })
+
+  const {
+    data: cAdverts,
+    loading: cLoading,
+    error: cError,
+  } = useQuery<
+    {
+      officialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
+    },
+    QueryOfficialJournalOfIcelandAdvertsArgs
+  >(ADVERTS_QUERY, {
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 1,
+        department: ['c-deild'],
+      },
+    },
+    fetchPolicy: 'no-cache',
+  })
+
+  const loading = aLoading || bLoading || cLoading
+  const error = aError || bError || cError
+
+  const adverts = [
+    ...(aAdverts?.officialJournalOfIcelandAdverts.adverts ?? []),
+    ...(bAdverts?.officialJournalOfIcelandAdverts.adverts ?? []),
+    ...(cAdverts?.officialJournalOfIcelandAdverts.adverts ?? []),
   ]
 
   return (
@@ -124,16 +203,56 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
 
         <Box background="blue100" paddingTop={8} paddingBottom={8}>
           <GridContainer>
-            <Box
-              display={'flex'}
-              justifyContent={'spaceBetween'}
-              alignItems="flexEnd"
-            >
-              <Text variant="h3">{formatMessage(m.home.mainCategories)}</Text>
-              <ArrowLink href={categoriesUrl}>
-                {formatMessage(m.home.allCategories)}
-              </ArrowLink>
-            </Box>
+            <GridRow>
+              <GridColumn span="12/12">
+                <Box
+                  display={'flex'}
+                  justifyContent={'spaceBetween'}
+                  alignItems="flexEnd"
+                  marginBottom={3}
+                >
+                  <Text variant="h3">
+                    {formatMessage(m.home.mainCategories)}
+                  </Text>
+                  <ArrowLink href={categoriesUrl}>
+                    {formatMessage(m.home.allCategories)}
+                  </ArrowLink>
+                </Box>
+              </GridColumn>
+            </GridRow>
+
+            <GridRow>
+              <GridColumn span="12/12">
+                <Text marginBottom={3} variant="h3">
+                  {formatMessage(m.home.latestAdverts)}
+                </Text>
+                {loading ? (
+                  <SkeletonLoader repeat={4} height={200} />
+                ) : (
+                  <Stack space={3}>
+                    {error && (
+                      <AlertMessage
+                        type="warning"
+                        message={formatMessage(
+                          m.search.errorFetchingAdvertsMessage,
+                        )}
+                        title={formatMessage(
+                          m.search.errorFetchingAdvertsTitle,
+                        )}
+                      />
+                    )}
+                    {!error && !adverts?.length && (
+                      <AlertMessage
+                        type="info"
+                        message={formatMessage(m.search.emptySearchResult)}
+                      />
+                    )}
+
+                    <OJOIAdvertCards adverts={adverts} locale={locale} />
+                  </Stack>
+                )}
+              </GridColumn>
+            </GridRow>
 
             <GridRow>
               {mainCategories?.map((y, i) => (
