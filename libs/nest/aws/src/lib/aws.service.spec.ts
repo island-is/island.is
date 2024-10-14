@@ -11,15 +11,14 @@ import { sdkStreamMixin } from '@smithy/util-stream'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AwsService, EncodingString } from './aws.service'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { Logger } from '@nestjs/common'
 
 jest.mock('@aws-sdk/s3-request-presigner')
 const s3Mock = mockClient(S3Client)
-const loggerMock = {
-  error: jest.fn(),
-}
 
 describe('AwsService', () => {
   let awsService: AwsService
+  let logger: Logger
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,7 +26,9 @@ describe('AwsService', () => {
         AwsService,
         {
           provide: LOGGER_PROVIDER,
-          useValue: loggerMock,
+          useValue: {
+            error: jest.fn(),
+          }
         },
         {
           provide: S3Client,
@@ -37,9 +38,9 @@ describe('AwsService', () => {
     }).compile()
 
     awsService = module.get<AwsService>(AwsService)
-
+    logger = module.get<Logger>(LOGGER_PROVIDER)
+    
     s3Mock.reset()
-    loggerMock.error.mockClear()
   })
 
   it('should return a file from a bucket if one exists', async () => {
@@ -134,7 +135,7 @@ describe('AwsService', () => {
 
       await awsService.deleteObject({ bucket: 'x', key: 'y' })
 
-      expect(loggerMock.error).toBeCalledTimes(0)
+      expect(logger.error).toBeCalledTimes(0)
     },
   )
 
@@ -144,10 +145,12 @@ describe('AwsService', () => {
       const metadata = { httpStatusCode: code }
       s3Mock.on(DeleteObjectCommand).resolvesOnce({ $metadata: metadata })
 
-      await awsService.deleteObject({ bucket: 'x', key: 'y' })
+      const act = () => awsService.deleteObject({ bucket: 'x', key: 'y' })
 
-      expect(loggerMock.error).toBeCalledTimes(1)
-      expect(loggerMock.error).toBeCalledWith(
+      await expect(act()).rejects.toThrow()
+
+      expect(logger.error).toBeCalledTimes(1)
+      expect(logger.error).toBeCalledWith(
         'Error occurred while deleting file from S3',
         Error('Unexpected http response when deleting object from S3'),
       )
