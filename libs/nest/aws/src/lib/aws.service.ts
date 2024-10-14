@@ -118,7 +118,7 @@ export class AwsService {
 
   public async deleteObject(
     BucketKeyPairOrFilename: BucketKeyPair | string,
-  ): Promise<boolean> {
+  ): Promise<void> {
     try {
       const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
       const result = await this.s3Client.send(
@@ -134,11 +134,9 @@ export class AwsService {
       ) {
         throw new Error('Unexpected http response when deleting object from S3')
       }
-
-      return true
     } catch (error) {
       this.logger.error('Error occurred while deleting file from S3', error)
-      return false
+      throw error
     }
   }
 
