@@ -5,17 +5,22 @@ export enum API_MODULE {
 export const YES = 'yes'
 export const NO = 'no'
 
+export enum YesOrNo {
+  YES = 'yes',
+  NO = 'no',
+}
+
+export enum EmploymentStatus {
+  EMPLOYED = 'employed',
+  PENSIONER = 'pensioner',
+  STUDENT = 'student',
+  OTHER = 'other',
+}
+
 export const FILE_SIZE_LIMIT = 10000000
 
 export const EU = 'EU'
 export const EFTA = 'EFTA'
-
-export enum StatusTypes {
-  PENSIONER = 'pensioner',
-  STUDENT = 'student',
-  OTHER = 'other',
-  EMPLOYED = 'employed',
-}
 
 export enum NordicCountriesCountryCode {
   'NO',
