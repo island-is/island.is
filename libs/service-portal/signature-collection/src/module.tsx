@@ -64,7 +64,7 @@ export const signatureCollectionModule: PortalModule = {
   companyRoutes: ({ userInfo }) => [
     {
       name: m.signatureCollectionParliamentaryLists,
-      path: SignatureCollectionPaths.SignatureCollectionParliamentaryLists,
+      path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
       key: 'ParliamentaryLists',
       enabled: userInfo.scopes.includes(ApiScope.company),
       element: <SignatureListsParliamentary />,

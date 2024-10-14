@@ -6,7 +6,6 @@ import { applicationsNavigation } from '@island.is/service-portal/applications'
 import { assetsNavigation } from '@island.is/service-portal/assets'
 import { educationNavigation } from '@island.is/service-portal/education'
 import {
-  SignatureCollectionNavigation,
   companyNavigation,
   informationNavigation,
 } from '@island.is/service-portal/information'
@@ -23,6 +22,7 @@ import { consentNavigation } from '@island.is/service-portal/consent'
 import { ServicePortalPaths } from '@island.is/service-portal/core'
 import { socialInsuranceMaintenanceNavigation } from '@island.is/service-portal/social-insurance-maintenance'
 import { lawAndOrderNavigation } from '@island.is/service-portal/law-and-order'
+import { companySignatureCollectionNavigation } from '@island.is/service-portal/signature-collection'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -48,7 +48,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
       ],
     },
     companyNavigation,
-    SignatureCollectionNavigation,
+    companySignatureCollectionNavigation,
     informationNavigation,
     socialInsuranceMaintenanceNavigation,
     assetsNavigation,
