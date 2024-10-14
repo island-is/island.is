@@ -32,7 +32,9 @@ const MyPdfDocument = ({
                 <Text style={styles.text}>{list.candidateName}</Text>
 
                 <Text style={styles.header}>Dagsetning:</Text>
-                <Text style={styles.text}>{format(new Date(), 'dd.MM.yyyy HH:mm')}</Text>
+                <Text style={styles.text}>
+                  {format(new Date(), 'dd.MM.yyyy HH:mm')}
+                </Text>
 
                 <Text style={styles.header}>Listabókstafur:</Text>
                 <Text style={styles.text}>{list.partyBallotLetter}</Text>
