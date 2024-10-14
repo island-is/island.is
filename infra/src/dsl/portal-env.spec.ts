@@ -146,11 +146,14 @@ describe('BFF PortalEnv serialization', () => {
       BFF_NAME: 'stjornbord',
       BFF_CLIENT_KEY_PATH: `/${bffType}`,
       BFF_PAR_SUPPORT_ENABLED: 'false',
-      BFF_ALLOWED_REDIRECT_URIS: json(['https://beta.dev01.devland.is']),
-      BFF_CLIENT_BASE_URL: 'https://beta.dev01.devland.is',
-      BFF_LOGOUT_REDIRECT_URI: 'https://beta.dev01.devland.is',
-      BFF_CALLBACKS_BASE_PATH: `https://beta.dev01.devland.is/${bffType}/bff/callbacks`,
-      BFF_PROXY_API_ENDPOINT: 'https://beta.dev01.devland.is/api/graphql',
+      BFF_ALLOWED_REDIRECT_URIS: json([
+        'https://featbff-beta.dev01.devland.is',
+      ]),
+      BFF_CLIENT_BASE_URL: 'https://featbff-beta.dev01.devland.is',
+      BFF_LOGOUT_REDIRECT_URI: 'https://featbff-beta.dev01.devland.is',
+      BFF_CALLBACKS_BASE_PATH: `https://featbff-beta.dev01.devland.is/${bffType}/bff/callbacks`,
+      BFF_PROXY_API_ENDPOINT:
+        'https://featbff-beta.dev01.devland.is/api/graphql',
       BFF_ALLOWED_EXTERNAL_API_URLS: json(['https://api.dev01.devland.is']),
       BFF_CACHE_USER_PROFILE_TTL_MS: (
         ONE_HOUR_IN_MS - FIVE_SECONDS_IN_MS

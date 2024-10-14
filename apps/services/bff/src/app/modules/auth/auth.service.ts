@@ -486,8 +486,6 @@ export class AuthService {
   }
 
   async callbackLogout(body: CallbackLogoutDto) {
-    // TODO: Remove this log statement when done testing on feature deploy
-    this.logger.warn('callbackBackchannelLogout', JSON.stringify(body, null, 2))
     const logoutToken = body.logout_token
 
     if (!logoutToken) {
