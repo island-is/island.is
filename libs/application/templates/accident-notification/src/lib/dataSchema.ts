@@ -24,11 +24,6 @@ import {
 import { isValid24HFormatTime } from '../utils'
 import { error } from './messages/error'
 
-export enum OnBehalf {
-  MYSELF = 'myself',
-  OTHERS = 'others',
-}
-
 const FileSchema = z.object({
   name: z.string(),
   key: z.string(),
