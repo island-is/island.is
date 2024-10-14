@@ -4,10 +4,10 @@ import {
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { UserProfile } from '@island.is/api/schema'
-import { StatusTypes } from './shared'
+import { EmploymentStatus } from './constants'
 
 export interface Status {
-  type: StatusTypes
+  type: EmploymentStatus
   confirmationOfStudies: FileType[]
 }
 
