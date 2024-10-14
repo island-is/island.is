@@ -10,6 +10,7 @@ import {
 import logo from './logo.png'
 import { dark200 } from '@island.is/island-ui/theme'
 import { SignatureCollectionAreaSummaryReport } from '@island.is/api/schema'
+import format from 'date-fns/format'
 
 const MyPdfDocument = ({
   report,
@@ -29,6 +30,9 @@ const MyPdfDocument = ({
 
                 <Text style={styles.header}>Flokkur:</Text>
                 <Text style={styles.text}>{list.candidateName}</Text>
+
+                <Text style={styles.header}>Dagsetning:</Text>
+                <Text style={styles.text}>{format(new Date(), 'dd.MM.yyyy HH:mm')}</Text>
 
                 <Text style={styles.header}>Listabókstafur:</Text>
                 <Text style={styles.text}>{list.partyBallotLetter}</Text>
