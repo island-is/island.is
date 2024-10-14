@@ -286,25 +286,34 @@ export class CitizenshipService extends BaseTemplateApiService {
       auth,
       {
         selectedChildren:
-          answers.selectedChildrenExtraData?.map((c) => {
+          answers.selectedChildren?.map((y) => {
+            const childExtraInformation =
+              answers.selectedChildrenExtraData?.find((z) => z.nationalId === y)
+
+            if (!childExtraInformation) {
+              throw new Error('Vantar upplýsingar um börn')
+            }
+
             const childrenCustodyInformation = application.externalData
               .childrenCustodyInformation
               .data as ApplicantChildCustodyInformation[]
 
             const thisChild = childrenCustodyInformation.find(
-              (x) => x.nationalId === c.nationalId,
+              (x) => x.nationalId === childExtraInformation.nationalId,
             )
 
             return {
-              nationalId: c.nationalId,
-              otherParentNationalId: c.otherParentNationalId,
-              otherParentBirtDate: c.otherParentBirtDate
-                ? new Date(c.otherParentBirtDate)
+              nationalId: childExtraInformation.nationalId,
+              otherParentNationalId:
+                childExtraInformation.otherParentNationalId,
+              otherParentBirtDate: childExtraInformation.otherParentBirtDate
+                ? new Date(childExtraInformation.otherParentBirtDate)
                 : undefined,
-              otherParentName: c.otherParentName,
+              otherParentName: childExtraInformation.otherParentName,
               citizenship: thisChild?.citizenship?.code || '',
             }
           }) || [],
+
         isFormerIcelandicCitizen: answers.formerIcelander === YES,
         givenName:
           individual?.givenName ||
