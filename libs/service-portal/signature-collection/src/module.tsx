@@ -66,7 +66,7 @@ export const signatureCollectionModule: PortalModule = {
       name: m.signatureCollectionParliamentaryLists,
       path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
       key: 'ParliamentaryLists',
-      enabled: userInfo.scopes.includes(ApiScope.company),
+      enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
       element: <SignatureListsParliamentary />,
     },
   ],

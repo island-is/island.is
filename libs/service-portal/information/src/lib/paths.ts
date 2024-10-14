@@ -12,5 +12,4 @@ export enum InformationPaths {
   Notifications = '/min-gogn/tilkynningar',
   NotificationDetail = '/min-gogn/tilkynningar/:id',
   Lists = '/min-gogn/listar',
-  SignatureCollection = '/min-gogn/listar/althingis-medmaelasofnun',
 }

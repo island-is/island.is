@@ -55,6 +55,7 @@ export const informationNavigation: PortalNavigationItem = {
       name: m.lists,
       path: InformationPaths.Lists,
       children: [
+        // Parliamentary
         {
           name: m.signatureCollectionParliamentaryLists,
           path: SignatureCollectionPaths.SignatureCollectionParliamentaryLists,
@@ -66,6 +67,7 @@ export const informationNavigation: PortalNavigationItem = {
             },
           ],
         },
+        // Presidential
         {
           name: m.signatureCollectionPresidentialLists,
           path: SignatureCollectionPaths.SignatureCollectionLists,
@@ -77,6 +79,7 @@ export const informationNavigation: PortalNavigationItem = {
             },
           ],
         },
+        // General Petitions
         {
           name: m.generalPetitions,
           path: PetitionPaths.Petitions,
