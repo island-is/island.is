@@ -156,6 +156,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 MaritalStatusApi,
                 ReligionCodesApi,
                 DistrictCommissionersPaymentCatalogApi,
+                BirthCertificateApi,
               ],
             },
           ],
