@@ -361,13 +361,11 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                         </Text>
                         <Box className={styles.textMaxWidth}>
                           <Text>
-                            {highlighted2025ItemIsPresent
-                              ? formatMessage(
-                                  translationStrings.result2025Disclaimer,
-                                )
-                              : formatMessage(
-                                  translationStrings.resultDisclaimer,
-                                )}
+                            {formatMessage(
+                              highlighted2025ItemIsPresent
+                                ? translationStrings.result2025Disclaimer
+                                : translationStrings.resultDisclaimer,
+                            )}
                           </Text>
                         </Box>
                       </Stack>
