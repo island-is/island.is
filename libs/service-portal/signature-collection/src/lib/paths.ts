@@ -8,6 +8,7 @@ export enum SignatureCollectionPaths {
 
   // Parliamentary - Company
   CompanySignatureCollectionParliamentaryLists = '/fyrirtaeki/listar/althingis-medmaelasofnun',
+  CompanyViewParliamentaryList = '/fyrirtaeki/listar/althingis-medmaelasofnun/:id',
 
   // Presidential
   SignatureCollectionLists = '/min-gogn/listar/medmaelasofnun',

@@ -20,6 +20,7 @@ export const signatureCollectionModule: PortalModule = {
   name: m.signatureCollectionLists,
   routes: ({ userInfo }) => {
     const applicationRoutes: PortalRoute[] = [
+      // General Petitions
       {
         name: m.signatureCollectionParliamentaryLists,
         path: SignatureCollectionPaths.RootPath,
@@ -29,6 +30,7 @@ export const signatureCollectionModule: PortalModule = {
           <Navigate to={SignatureCollectionPaths.GeneralPetitions} replace />
         ),
       },
+      // Parliamentary
       {
         name: m.signatureCollectionParliamentaryLists,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
@@ -43,6 +45,7 @@ export const signatureCollectionModule: PortalModule = {
         key: 'ParliamentaryLists',
         element: <ViewListParliamentary />,
       },
+      // Presidential
       {
         name: m.signatureCollectionPresidentialLists,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
@@ -62,12 +65,20 @@ export const signatureCollectionModule: PortalModule = {
     return applicationRoutes
   },
   companyRoutes: ({ userInfo }) => [
+    // Parliamentary
     {
       name: m.signatureCollectionParliamentaryLists,
       path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
       key: 'ParliamentaryLists',
       enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
       element: <SignatureListsParliamentary />,
+    },
+    {
+      name: m.signatureCollectionParliamentaryLists,
+      path: SignatureCollectionPaths.CompanyViewParliamentaryList,
+      key: 'ParliamentaryLists',
+      enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+      element: <ViewListParliamentary />,
     },
   ],
 }
