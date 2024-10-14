@@ -12,7 +12,7 @@ export const ZendeskServiceConfig = defineConfig<z.infer<typeof schema>>({
   schema,
   load: (env) => ({
     subdomain: env.required('ZENDESK_CONTACT_FORM_SUBDOMAIN', 'digitaliceland'),
-    formToken: env.required('ZENDESK_CONTACT_FORM_TOKEN'),
+    formToken: env.required('ZENDESK_CONTACT_FORM_TOKEN', 'undefined'),
     formEmail: env.required(
       'ZENDESK_CONTACT_FORM_EMAIL',
       'stafraentisland@gmail.com',
