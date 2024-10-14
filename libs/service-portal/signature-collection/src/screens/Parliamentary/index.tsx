@@ -22,7 +22,7 @@ const SignatureListsParliamentary = () => {
     <Box>
       <IntroHeader
         title={formatMessage(m.pageTitleParliamentary)}
-        intro={formatMessage(m.pageDescriptionSignee)}
+        intro={formatMessage(m.pageDescriptionParliamentary)}
         serviceProviderTooltip={formatMessage(m.infoProviderTooltip)}
         serviceProviderSlug={THJODSKRA_SLUG}
       />

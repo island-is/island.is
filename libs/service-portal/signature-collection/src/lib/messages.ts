@@ -341,7 +341,7 @@ export const m = defineMessages({
   pageDescriptionParliamentary: {
     id: 'sp.signatureCollection:pageDescriptionParliamentary',
     defaultMessage:
-      'Hægt er að gera einstaklinga að umsjónaraðilum hér að neðan. Fjöldi meðmælenda er margfeldi af þingsætatölu hvers kjördæmis og 30 að lágmarki og 40 að hámarki. Söfnun lýkur 16.10.2024.',
+      '',
     description: '',
   },
   infoProviderTooltip: {
