@@ -62,6 +62,10 @@ export class SubpoenaService {
     )
   }
 
+  private isFailedServiceStatus(serviceStatus?: ServiceStatus) {
+    return serviceStatus && serviceStatus === ServiceStatus.FAILED
+  }
+
   async createSubpoena(
     defendantId: string,
     caseId: string,
@@ -143,13 +147,18 @@ export class SubpoenaService {
       )
     }
 
-    if (this.isSuccessfulServiceStatus(serviceStatus)) {
+    if (
+      this.isSuccessfulServiceStatus(serviceStatus) ||
+      this.isFailedServiceStatus(serviceStatus)
+    ) {
       this.messageService
         .sendMessagesToQueue([
           {
             type: MessageType.NOTIFICATION,
             body: {
-              type: NotificationType.SERVICE_STATUS_UPDATED,
+              type: this.isSuccessfulServiceStatus(serviceStatus)
+                ? NotificationType.SERVICE_SUCCESSFUL
+                : NotificationType.SERVICE_FAILED,
               subpoenaId: subpoena.subpoenaId,
             },
           },

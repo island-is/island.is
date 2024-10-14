@@ -35,7 +35,7 @@ import { SubpoenaService } from './subpoena.service'
 
 @Controller('api/internal/')
 @ApiTags('internal subpoenas')
-@UseGuards(TokenGuard)
+// @UseGuards(TokenGuard)
 export class InternalSubpoenaController {
   constructor(
     private readonly subpoenaService: SubpoenaService,
