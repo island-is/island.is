@@ -24,6 +24,7 @@ import { DeliverResponse } from './models/deliver.response'
 import { InstitutionNotificationService } from './institutionNotification.service'
 import { InternalNotificationService } from './internalNotification.service'
 import { NotificationDispatchService } from './notificationDispatch.service'
+import { SubpoenaNotificationService } from './subpoenaNotification.service'
 
 @UseGuards(TokenGuard)
 @Controller('api/internal')
@@ -33,6 +34,7 @@ export class InternalNotificationController {
     private readonly internalNotificationService: InternalNotificationService,
     private readonly notificationDispatchService: NotificationDispatchService,
     private readonly institutionNotificationService: InstitutionNotificationService,
+    private readonly subpoenaNotificationService: SubpoenaNotificationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -73,9 +75,9 @@ export class InternalNotificationController {
           notificationDto.type,
           notificationDto.prosecutorsOfficeId,
         )
-      : this.institutionNotificationService.sendNotification(
+      : this.subpoenaNotificationService.sendNotification(
           notificationDto.type,
-          notificationDto.prosecutorsOfficeId,
+          notificationDto.subpoenaId,
         )
   }
 

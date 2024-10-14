@@ -66,6 +66,8 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       )
     }
 
+    await this.refreshFormatMessage()
+
     const subject = this.formatMessage(strings.serviceStatusUpdatedSubject, {
       courtCaseNumber: theCase.courtCaseNumber,
     })

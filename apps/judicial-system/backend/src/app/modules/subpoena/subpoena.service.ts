@@ -150,7 +150,7 @@ export class SubpoenaService {
             type: MessageType.NOTIFICATION,
             body: {
               type: NotificationType.SERVICE_STATUS_UPDATED,
-              subpoenaId: subpoena.id,
+              subpoenaId: subpoena.subpoenaId,
             },
           },
         ])
