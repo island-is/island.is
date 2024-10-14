@@ -351,7 +351,8 @@ export const m = defineMessages({
   },
   supervisorsInfo: {
     id: 'sp.signatureCollection:supervisorsInfo',
-    defaultMessage: 'Umsjónaraðilar hafa aðgang að öllum upplýsingum safnananna en geta ekki eytt söfnununum. ',
+    defaultMessage:
+      'Umsjónaraðilar hafa aðgang að öllum upplýsingum safnananna en geta ekki eytt söfnununum. ',
     description: '',
   },
   add: {
