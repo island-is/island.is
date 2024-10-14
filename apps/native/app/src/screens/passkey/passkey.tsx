@@ -99,7 +99,6 @@ export const PasskeyScreen: NavigationFunctionComponent<{
   const { height } = useWindowDimensions()
   const isSmallDevice = height < 800
   const [isLoading, setIsLoading] = useState(false)
-
   const { registerPasskey } = useRegisterPasskey()
   const { authenticatePasskey } = useAuthenticatePasskey()
 
@@ -159,14 +158,16 @@ export const PasskeyScreen: NavigationFunctionComponent<{
               </LinkText>
             </TouchableOpacity>
           </LinkWrapper>
-          <Image
-            source={illustrationSrc}
-            style={{
-              width: isSmallDevice ? 120 : 174,
-              height: isSmallDevice ? 140 : 204,
-            }}
-            resizeMode="contain"
-          />
+          {height > 650 && (
+            <Image
+              source={illustrationSrc}
+              style={{
+                width: isSmallDevice ? 120 : 174,
+                height: isSmallDevice ? 140 : 204,
+              }}
+              resizeMode="contain"
+            />
+          )}
           <SettingsMessage variant="body3" isSmallDevice={isSmallDevice}>
             <FormattedMessage id="passkeys.settings" />
           </SettingsMessage>
