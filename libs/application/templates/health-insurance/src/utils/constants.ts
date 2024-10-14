@@ -5,7 +5,7 @@ export enum API_MODULE {
 export const YES = 'yes'
 export const NO = 'no'
 
-export enum YesNo {
+export enum YesOrNo {
   YES = 'yes',
   NO = 'no',
 }
