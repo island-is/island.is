@@ -1,5 +1,8 @@
-import { Injectable } from '@nestjs/common'
-import { TemplateApiModuleActionProps } from '../../../types'
+import { Inject, Injectable } from '@nestjs/common'
+import {
+  SharedModuleConfig,
+  TemplateApiModuleActionProps,
+} from '../../../types'
 import {
   SyslumennService,
   Person,
@@ -13,7 +16,7 @@ import {
 } from '@island.is/application/templates/family-matters-core/utils'
 import { Override } from '@island.is/application/templates/family-matters-core/types'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change-v2'
-import { SharedTemplateApiService } from '../../shared'
+import { SharedTemplateApiService, sharedModuleConfig } from '../../shared'
 import { generateSyslumennNotificationEmail } from './emailGenerators'
 import { Application, ApplicationTypes } from '@island.is/application/types'
 import { syslumennDataFromPostalCode } from './utils'
@@ -23,6 +26,8 @@ import { generateResidenceChangePdf } from './pdfGenerators'
 import { NotificationsService } from '../../../notification/notifications.service'
 import { NotificationType } from '../../../notification/notificationsTemplates'
 import { getSlugFromType } from '@island.is/application/core'
+import { ConfigService, ConfigType } from '@nestjs/config'
+import { getConfigValue } from '../../shared/shared.utils'
 
 type Props = Override<
   TemplateApiModuleActionProps,
@@ -35,6 +40,9 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
+    private readonly configService: ConfigService<SharedModuleConfig>,
   ) {
     super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2)
   }
@@ -282,8 +290,10 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
   }
 
   private async getApplicationLink(application: CRCApplication) {
-    const clientLocationOrigin =
-      await this.sharedTemplateAPIService.getConfigValue('clientLocationOrigin')
+    const clientLocationOrigin = getConfigValue(
+      this.configService,
+      'clientLocationOrigin',
+    ) as string
 
     return `${clientLocationOrigin}/${
       getSlugFromType(application.typeId) as string
