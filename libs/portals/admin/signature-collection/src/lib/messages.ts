@@ -468,6 +468,12 @@ export const m = defineMessages({
     defaultMessage: 'Læsa söfnun',
     description: '',
   },
+  lockListDescription: {
+    id: 'admin-portal.signature-collection:lockListDescription',
+    defaultMessage:
+      'Ýtið hér ef framboð hefur skilað inn framboðsgögnum fyrir lok framboðsfrest',
+    description: '',
+  },
   lockListSuccess: {
     id: 'admin-portal.signature-collection:lockListSuccess',
     defaultMessage: 'Tókst að læsa söfnun',
