@@ -387,6 +387,9 @@
       "@island.is/application/templates/financial-statement-individual-election/types": [
         "libs/application/templates/inao/financial-statement-individual-election/src/types/types.ts"
       ],
+      "@island.is/application/templates/financial-statement-political-party": [
+        "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
+      ],
       "@island.is/application/templates/financial-statements-inao": [
         "libs/application/templates/financial-statements-inao/src/index.ts"
       ],
@@ -1122,6 +1125,9 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
+      ],
+      "application/templates/inao/financial-statement-political-party": [
+        "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
       ],
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
     }
