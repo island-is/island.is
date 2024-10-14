@@ -53,18 +53,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       return
     }
 
-    const subpoena = await this.subpoenaService.findBySubpoenaId(subpoenaId)
-    const theCase = await this.caseService.findById(subpoena.caseId)
-
-    if (!theCase.id) {
-      throw new InternalServerErrorException(`Case not found`)
-    }
-
-    if (!theCase.courtCaseNumber || !theCase.id) {
-      throw new InternalServerErrorException(
-        `Unable to find courtCaseNumber for case ${theCase.id}`,
-      )
-    }
+    const theCase = await this.getCase(subpoenaId)
 
     await this.refreshFormatMessage()
 
@@ -95,18 +84,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       return
     }
 
-    const subpoena = await this.subpoenaService.findBySubpoenaId(subpoenaId)
-    const theCase = await this.caseService.findById(subpoena.caseId)
-
-    if (!theCase.id) {
-      throw new InternalServerErrorException(`Case not found`)
-    }
-
-    if (!theCase.courtCaseNumber || !theCase.id) {
-      throw new InternalServerErrorException(
-        `Unable to find courtCaseNumber for case ${theCase.id}`,
-      )
-    }
+    const theCase = await this.getCase(subpoenaId)
 
     await this.refreshFormatMessage()
 
@@ -137,18 +115,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       return
     }
 
-    const subpoena = await this.subpoenaService.findBySubpoenaId(subpoenaId)
-    const theCase = await this.caseService.findById(subpoena.caseId)
-
-    if (!theCase.id) {
-      throw new InternalServerErrorException(`Case not found`)
-    }
-
-    if (!theCase.courtCaseNumber || !theCase.id) {
-      throw new InternalServerErrorException(
-        `Unable to find courtCaseNumber for case ${theCase.id}`,
-      )
-    }
+    const theCase = await this.getCase(subpoenaId)
 
     await this.refreshFormatMessage()
 
@@ -173,6 +140,23 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       theCase.registrar?.name,
       theCase.registrar?.email,
     )
+  }
+
+  private async getCase(subpoenaId: string) {
+    const subpoena = await this.subpoenaService.findBySubpoenaId(subpoenaId)
+    const theCase = await this.caseService.findById(subpoena.caseId)
+
+    if (!theCase.id) {
+      throw new InternalServerErrorException(`Case not found`)
+    }
+
+    if (!theCase.courtCaseNumber || !theCase.id) {
+      throw new InternalServerErrorException(
+        `Unable to find courtCaseNumber for case ${theCase.id}`,
+      )
+    }
+
+    return theCase
   }
 
   private sendEmails(
