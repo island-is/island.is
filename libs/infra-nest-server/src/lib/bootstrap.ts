@@ -70,8 +70,14 @@ export const createApp = async ({
     }),
   )
 
-  if (options.globalPrefix) {
-    app.setGlobalPrefix(options.globalPrefix, options.globalPrefixOptions)
+  const globalPrefix = options.globalPrefix
+
+  if (globalPrefix) {
+    if (typeof globalPrefix === 'string') {
+      app.setGlobalPrefix(globalPrefix)
+    } else {
+      app.setGlobalPrefix(globalPrefix.prefix, globalPrefix.options)
+    }
   }
 
   if (options.collectMetrics !== false) {

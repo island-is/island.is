@@ -41,11 +41,12 @@ export type RunServerOptions = {
   /**
    * Global url prefix for the app
    */
-  globalPrefix?: string
-  /**
-   * Global prefix options to be used with the global prefix
-   */
-  globalPrefixOptions?: GlobalPrefixOptions
+  globalPrefix?:
+    | string
+    | {
+        prefix: string
+        options?: GlobalPrefixOptions
+      }
 
   stripNonClassValidatorInputs?: boolean
 
