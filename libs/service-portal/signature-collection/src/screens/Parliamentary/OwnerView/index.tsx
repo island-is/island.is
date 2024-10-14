@@ -106,7 +106,7 @@ const OwnerView = ({
                   withLabel: true,
                 }}
                 eyebrow={list.title.split(' - ')[0]}
-                cta={{
+                cta={list.active ? {
                   label: formatMessage(m.viewList),
                   variant: 'text',
                   icon: 'arrowForward',
@@ -120,8 +120,8 @@ const OwnerView = ({
                       },
                     })
                   },
-                }}
-                tag={{
+                } : undefined}
+                tag={list.active ? {
                   label: 'Cancel collection',
                   renderTag: () => (
                     <DialogPrompt
@@ -157,6 +157,9 @@ const OwnerView = ({
                       )}
                     />
                   ),
+                } : {
+                  label: formatMessage(m.listSubmitted),
+                  variant: 'blueberry',
                 }}
               />
             </Box>
