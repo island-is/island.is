@@ -26,6 +26,7 @@ import { ApplicationService } from '@island.is/application/api/core'
 import jwt from 'jsonwebtoken'
 import { uuid } from 'uuidv4'
 import { AwsService } from '@island.is/nest/aws'
+import { getConfigValue } from './shared.utils'
 
 @Injectable()
 export class SharedTemplateApiService {

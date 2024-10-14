@@ -30,6 +30,7 @@ import { isValidNumberForRegion } from 'libphonenumber-js'
 import { generateResidenceChangePdf } from './pdfGenerators'
 import { NotificationsService } from '../../../notification/notifications.service'
 import { NotificationType } from '../../../notification/notificationsTemplates'
+import { getSlugFromType } from '@island.is/application/core'
 
 type Props = Override<
   TemplateApiModuleActionProps,
@@ -175,17 +176,18 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
     const applicant = externalData.nationalRegistry.data
     const otherParent =
       externalData.childrenCustodyInformation.data[0].otherParent
+    const applicationLink = await this.getApplicationLink(application)
 
     if (otherParent) {
       this.notificationsService.sendNotification({
-        type: NotificationType.ChildrenResidenceChange,
+        type: NotificationType.AssignCounterParty,
         messageParties: {
           recipient: otherParent.nationalId,
           sender: applicant.nationalId,
         },
         args: {
           applicantName: applicant.fullName,
-          applicationId: application.id,
+          contractLink: applicationLink,
         },
       })
     }
@@ -211,6 +213,8 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
     const { parentA, parentB } = answers
     const { nationalRegistry } = externalData
     const applicant = nationalRegistry.data
+    const otherParent =
+      externalData.childrenCustodyInformation.data[0].otherParent
     const childResidenceInfo = childrenResidenceInfo(
       applicant,
       externalData.childrenCustodyInformation.data,
@@ -218,14 +222,40 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
     )
     const caseNumber = externalData.submitApplication?.data?.caseNumber
 
+    if (!otherParent) {
+      throw new Error('Other parent was undefined')
+    }
+
     if (!childResidenceInfo.future?.address?.postalCode) {
       throw new Error('Future residence postal code was not found')
     }
 
     const pdf = await generateResidenceChangePdf(application)
+    const applicationLink = await this.getApplicationLink(application)
     const syslumennData = syslumennDataFromPostalCode(
       childResidenceInfo.future.address.postalCode,
     )
+
+    this.notificationsService.sendNotification({
+      type: NotificationType.ChildrenResidenceChangeApprovedByOrg,
+      messageParties: {
+        recipient: applicant.nationalId,
+      },
+      args: {
+        applicationLink,
+        caseNumber: caseNumber || '',
+      },
+    })
+    this.notificationsService.sendNotification({
+      type: NotificationType.ChildrenResidenceChangeApprovedByOrg,
+      messageParties: {
+        recipient: otherParent.nationalId,
+      },
+      args: {
+        applicationLink,
+        caseNumber: caseNumber || '',
+      },
+    })
 
     await this.sharedTemplateAPIService.sendEmail(
       (props) =>
@@ -253,6 +283,21 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
   }
 
   async rejectedByCounterParty({ application }: Props) {
+    const { externalData } = application
+    const { nationalRegistry } = externalData
+    const applicant = nationalRegistry.data
+    const otherParent =
+      externalData.childrenCustodyInformation.data[0].otherParent
+
+    this.notificationsService.sendNotification({
+      type: NotificationType.RejectedByCounterParty,
+      messageParties: {
+        recipient: applicant.nationalId,
+      },
+      args: {
+        counterPartyName: otherParent?.fullName || '',
+      },
+    })
     await this.sharedTemplateAPIService.sendEmail(
       applicationRejectedEmail,
       application as unknown as Application,
@@ -264,5 +309,14 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
       applicationRejectedByOrganizationEmail,
       application as unknown as Application,
     )
+  }
+
+  private async getApplicationLink(application: CRCApplication) {
+    const clientLocationOrigin =
+      await this.sharedTemplateAPIService.getConfigValue('clientLocationOrigin')
+
+    return `${clientLocationOrigin}/${
+      getSlugFromType(application.typeId) as string
+    }/${application.id}` as string
   }
 }
