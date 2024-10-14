@@ -11,7 +11,7 @@ import {
   toast,
   Button,
 } from '@island.is/island-ui/core'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
@@ -37,6 +37,8 @@ const OwnerView = ({
   currentCollection: SignatureCollection
 }) => {
   const navigate = useNavigate()
+  const location = useLocation()
+
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
     useGetListsForOwner(currentCollection?.id || '')
@@ -109,17 +111,14 @@ const OwnerView = ({
                   variant: 'text',
                   icon: 'arrowForward',
                   onClick: () => {
-                    navigate(
-                      SignatureCollectionPaths.ViewParliamentaryList.replace(
-                        ':id',
-                        list.id,
-                      ),
-                      {
-                        state: {
-                          collectionId: currentCollection?.id || '',
-                        },
+                    const path = location.pathname.includes('fyrirtaeki')
+                      ? SignatureCollectionPaths.CompanyViewParliamentaryList
+                      : SignatureCollectionPaths.ViewParliamentaryList
+                    navigate(path.replace(':id', list.id), {
+                      state: {
+                        collectionId: currentCollection?.id || '',
                       },
-                    )
+                    })
                   },
                 }}
                 tag={{
